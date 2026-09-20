@@ -1,0 +1,60 @@
+{
+  "as_of": "2026-09-20",
+  "scope": "Metadata-only root verification; no EEG, questionnaire responses or weights downloaded.",
+  "candidates": [
+    {
+      "id": "KU-Leuven-Multi-Paradigm-2026",
+      "doi": "10.48804/3EUSTS",
+      "source": "https://rdr.kuleuven.be/dataset.xhtml?persistentId=doi%3A10.48804%2F3EUSTS",
+      "api": "https://rdr.kuleuven.be/api/datasets/:persistentId/?persistentId=doi:10.48804/3EUSTS",
+      "metadata_snapshot": "ku_leuven_2026-source.json",
+      "readme_snapshot": "ku_leuven_2026-ReadMe.md",
+      "access_verified": "Official public API returned status OK. Unrestricted 5907-byte README was retrieved; restricted waveform files were not requested.",
+      "version": 1,
+      "released_at": "2026-06-11T12:31:03Z",
+      "participants_advertised": 34,
+      "license": "CC-BY-NC-4.0",
+      "access_request_enabled": true,
+      "files": 44,
+      "restricted_files": 40,
+      "all_listed_bytes": 49987324582,
+      "size_caveat": "Includes alternative raw, preprocessed and epoched representations; not a count of unique EEG data. Raw uses split ZIP volumes.",
+      "tasks": ["SSVEP", "motor imagery", "imagined speech"],
+      "artifact_conditions": ["single/double blink", "jaw clench", "breath hold", "right-hand clench"],
+      "continuous_evidence": "README describes test_block containing whole test EEG blocks and aligned test_state_blocks with rest=0 and task-specific integer labels. Catalog describes randomly interleaved test blocks.",
+      "limits": [
+        "Actual access requires request; no immediate unrestricted EEG availability claim.",
+        "Naturalistic no-control exposure, trial timing, channel count and complete consent/ethics evidence were not established by this metadata pass.",
+        "Structured rest is not automatically unrestricted daily idle.",
+        "Preprocessed representation includes ICA and filtering; causal online preprocessing must be separately audited.",
+        "Pickle derivatives require safe handling; prefer a reviewed loader and non-executable signal format where available.",
+        "Questionnaire response files are restricted and unnecessary for the proposed initial signal-only benchmark."
+      ],
+      "priority": "High-interest future continuous mixed-task track, blocked on access and scientific/rights preflight; no access request sent."
+    },
+    {
+      "id": "Ma2022-SHU-MultiSessionMI",
+      "paper": "https://www.nature.com/articles/s41597-022-01647-1",
+      "paper_doi": "10.1038/s41597-022-01647-1",
+      "verification": "Primary paper retrieved through web search; dataset file manifest was not inspected.",
+      "participants": 25,
+      "sessions_per_participant": 5,
+      "nominal_trials_per_session": 100,
+      "channels": 32,
+      "sampling_hz": 250,
+      "released_trial_seconds": 4,
+      "task": "left versus right hand motor imagery",
+      "preprocessing": "Bad segments removed, baseline removed, 0.5-40 Hz FIR-filtered before disclosure; fewer trials in some sessions.",
+      "consent_ethics": "Paper reports signed experimental consent and Shanghai Second Rehabilitation Hospital approval ECSHSRH 2018-0101.",
+      "dataset_license": null,
+      "dataset_bytes": null,
+      "payload_endpoint_verified": false,
+      "limits": [
+        "Do not infer dataset license from CC BY 4.0 article license.",
+        "Paper documents five sessions; exact gaps and reconstructible elapsed calibration time require event/file verification.",
+        "Pre-cleaned release cannot support claims of robustness to all raw artifacts."
+      ],
+      "priority": "Candidate compact external chronological MI cohort after metadata and rights preflight."
+    }
+  ]
+}

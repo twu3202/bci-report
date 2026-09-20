@@ -139,6 +139,15 @@ for(const t of data.tracks){
   assert.ok(built.includes('data-track="'+t.id+'"'),t.id+': needs a protocol tab');
 }
 assert.equal(count(/class="track-tab"/g),data.tracks.length);
+// The small-cohort caveat is a claim about what the published numbers allow,
+// not decoration: on the four-person idle track the mean is invertible to a
+// count. Pinned so a copy edit cannot quietly drop it.
+const policy=readFileSync(new URL('../dist/data-use/index.html',import.meta.url),'utf8');
+assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-cohort caveat');
+assert.match(policy,/cannot recover is which person is which/,'it must say what is and is not recoverable');
+const idle=data.tracks.find(t=>t.id==='idle');
+assert.equal(idle.subjects,4,'the caveat names a cohort of four; update both together if this changes');
+assert.ok(idle.rows.some(r=>r.abstain>0),'the caveat relies on abstention counts being published');
 assert.equal(count(/aria-selected="true"/g),1,'exactly one protocol tab starts selected');
 
 console.log('PASS: coverage matrix, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');

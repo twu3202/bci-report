@@ -1,0 +1,266 @@
+{
+  "checked_at": "2026-09-20",
+  "scope": "Primary-source review of 2025-2026 EEG foundation-model evaluation methods. No data or weights were downloaded and no training was run. Public paper PDFs were read only to verify protocols.",
+  "bci_arena_context": {
+    "current_models": ["LaBraM", "CBraMod", "EEGPT"],
+    "publication_note": "EEGPT publication remains held for weight-license ambiguity.",
+    "current_protocols": [
+      "Five participant folds",
+      "EEGNet trained for 20 epochs",
+      "BETA70 with 4- and 8-selected-channel conditions",
+      "Cue-gated idle analysis on 4 people",
+      "New three-seed EEGNet runs only on ds003810 and EEGMAT"
+    ]
+  },
+  "novelty_boundary": "Cross-subject transfer, within-subject few-shot calibration, reduced-channel evaluation, generic corruption/noise robustness, linear probing, full fine-tuning, LoRA/parameter-efficient tuning, channel adapters, and test-time adaptation under dataset/device shifts are established evaluation axes. BCI Arena should claim a distinctive, operational benchmark package and prespecified decision metrics, not invention of those component methods.",
+  "verified_overlap": [
+    {
+      "work": "EEG-FM-Compass: Progress, Benchmarking, and Future Directions for EEG Foundation Models (v3; National Science Review, 2026)",
+      "primary_url": "https://arxiv.org/abs/2601.17883v3",
+      "code_url": "https://github.com/Dingkun0817/EEG-FM-Benchmark",
+      "verified_protocols": [
+        "12 open-source EEG FMs and 8 specialist baselines on 13 datasets spanning 9 paradigms",
+        "Cross-subject LOSO or subject-disjoint evaluation; Sleep-EDFx and TUAB use ten subject folds",
+        "Within-subject few-shot adaptation with dataset-specific calibration fractions, including 30% of one MI session, 5-10% for P300, 10% for Sleep-EDFx and SEED-VIG, and first-seizure adaptation for CHB-MIT",
+        "Full-parameter fine-tuning versus frozen-encoder linear probing",
+        "Three seeds, individually tuned hyperparameters, task-appropriate metrics, and leakage-aware rankings that omit downstream datasets disclosed in pretraining"
+      ],
+      "implication": "Do not present cross-subject, few-shot, linear-probe/full-tune comparison, or a pretraining-overlap-aware summary as novel by itself. Compass few-shot uses labeled subsets, but it does not package strictly chronological calibration prefixes with a fixed minute budget and forward-only later-session scoring."
+    },
+    {
+      "work": "Are EEG Foundation Models Worth It? Comparative Evaluation with Traditional Decoders in Diverse BCI Tasks (ICLR 2026)",
+      "primary_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/f0f39b7686634fc81ca0112566b2c05f-Abstract-Conference.html",
+      "code_url": "https://github.com/mpicek/are_EEG_FMs_worth_it",
+      "verified_protocols": [
+        "Six decoding protocols: population, per-subject self, per-subject transfer, leave-one-subject-out zero-shot, leave-one-subject-out fine-tune, and post-fine-tune drop on source subjects",
+        "Foundation models in frozen linear-probe and fully fine-tuned modes compared with compact neural and classical non-neural decoders",
+        "Broad classification and regression task coverage with rigorous statistical testing"
+      ],
+      "implication": "Population, personal, transfer, zero-shot, limited adaptation, and catastrophic-forgetting views already exist. Distinction must come from causal time order, explicit budgets, device-paired data, or operational risk metrics."
+    },
+    {
+      "work": "A Multi-dimensional Framework for Evaluating Generalization in EEG Foundation Models (CHIL/PMLR 2026)",
+      "primary_url": "https://proceedings.mlr.press/v333/kommineni26a.html",
+      "verified_protocols": [
+        "LaBraM, CSBrain and CBraMod versus supervised EEG baselines on six datasets",
+        "Parameter efficiency via full fine-tuning, LoRA and linear probing",
+        "Sample efficiency at fixed total labeled-sample budgets while varying subject diversity and samples per subject",
+        "Channel efficiency using structured sparse montages with 1-3 channels per cortical lobe and lobe-restricted frontal, central, or midline configurations",
+        "Balanced accuracy, macro-F1 and Cohen's kappa; folds/seeds depend on dataset"
+      ],
+      "implication": "Limited labels, sparse channels, LoRA, and a generic multidimensional scorecard are established. Fixed wall-clock calibration minutes and real paired hardware shifts remain meaningfully different from sample-count and simulated-channel ablations."
+    },
+    {
+      "work": "A Negative-Control Protocol for Clinical EEG Foundation-Model Benchmarks: Dataset Identity and External-Cohort Stress Testing (arXiv v3, 2026)",
+      "primary_url": "https://arxiv.org/html/2607.24519",
+      "verified_protocols": [
+        "Five frozen EEG encoders on five benchmark tasks plus one external Korean cohort",
+        "Subject-disjoint probes where IDs exist; recording-level folds plus an annotated no-overlap sensitivity when IDs are unavailable",
+        "Stronger handcrafted comparators, matched fully random initialization, label permutation, raw-signal random features, and scrambled-label adaptation",
+        "Dataset-identity probes with in-fold PCA and balanced subsampling",
+        "Explicit pretraining-exposure notes and bounded attribution rather than causal or clinical claims"
+      ],
+      "implication": "Random initialization, random features, label permutation, stronger classical features, dataset-ID prediction, and external-cohort stress are established controls. BCI Arena can make them a mandatory Phase-0 gate, but should not market the controls themselves as new."
+    },
+    {
+      "work": "Channel Adaptation for EEG Foundation Models: A Systematic Benchmark Across Architectures, Tasks, and Training Regimes (arXiv v1, 2026)",
+      "primary_url": "https://arxiv.org/html/2604.23091",
+      "verified_protocols": [
+        "Conv1d projection, spherical-spline interpolation, source-space decomposition, Riemannian re-centering, and native handling",
+        "Five models, five tasks, frozen-probe and supervised full fine-tuning, with 10-15 seeds",
+        "Architecture-dependent adapter effects and probe-versus-fine-tuning asymmetry"
+      ],
+      "implication": "Channel adapters and adapter sensitivity are established. Intentional unit, reference, channel-order and metadata transformations should be framed as an ingestion-contract/correctness gate, while true paired device data can support a separate robustness track."
+    },
+    {
+      "work": "Test-Time Adaptation for EEG Foundation Models: A Systematic Study under Real-World Distribution Shifts / NeuroAdapt-Bench (arXiv v3, 2026)",
+      "primary_url": "https://arxiv.org/html/2604.16926",
+      "code_url": "https://github.com/leegabriel/NeuroAdapt-Bench",
+      "verified_protocols": [
+        "Tent, SHOT and T3A against no adaptation",
+        "Four EEG-FM variants on five datasets with patient-disjoint splits",
+        "Subject, cross-dataset/task, and extreme EarEEG modality/device shifts",
+        "Online and offline, gradient and optimization-free adaptation; adaptation batch-size, runtime and memory analyses"
+      ],
+      "implication": "Generic test-time adaptation and EarEEG/device-shift evaluation are already covered. A BCI Arena track should focus on paired same-participant, same-label wet/dry acquisition and fixed labeled recalibration budgets rather than claim TTA novelty."
+    }
+  ],
+  "candidate_tracks": [
+    {
+      "id": "T1",
+      "name": "Prospective chronological drift with a recalibration-minute budget",
+      "recommendation_rank": 1,
+      "status": "Recommended distinctive package; component ideas overlap with few-shot and session-transfer literature",
+      "hypothesis": "A model that looks strong under randomized few-shot selection may require materially more calibration or degrade faster when calibration is restricted to the first causal minutes and testing moves forward in time.",
+      "leakage_safe_protocol": [
+        "Outer split by participant; within the held-out participant preserve recording/session timestamp order.",
+        "Train population model only on other participants. Select all preprocessing, optimizer, adapter rank, early stopping and thresholds without future target data.",
+        "Expose only a chronological prefix of the target stream at budgets 0, 2, 5 and 10 recorded minutes; report both wall-clock protocol time and retained labeled EEG time.",
+        "Calibrate once on the prefix, then freeze and score the remaining current session and every later session in order. Never reshuffle future trials into calibration.",
+        "If repeated recalibration is studied, prescribe its trigger and cumulative labeled-minute budget in advance and charge every target label to the budget."
+      ],
+      "training_only_calibration": "Fit normalization statistics, probability calibration, thresholds and debounce parameters on population-train/validation data plus the allowed target prefix only. Test labels and later-session data remain inaccessible.",
+      "metrics": [
+        "Balanced accuracy or macro-F1 versus cumulative labeled minutes",
+        "Area under the calibration-budget curve",
+        "Forward-session performance drop and worst-later-session score",
+        "Minutes needed to reach a prespecified performance floor, reported with participants that never reach it",
+        "Per-participant paired deltas with bootstrap confidence intervals"
+      ],
+      "required_data": "Repeated sessions with reliable timestamps/order, stable task labels, participant IDs, and enough trials after each prefix. SHU-style repeated MI or existing multi-session assets are suitable after license and chronology checks.",
+      "confounds": ["Practice/fatigue is entangled with time", "Class order may be blocked", "Recording gaps inflate wall-clock budget", "Offline replay cannot establish interactive closed-loop benefit"],
+      "compute_burden": "Moderate: one population model plus 4 target-budget adaptations per fold/model/seed; avoid an unconstrained hyperparameter grid.",
+      "overlap_and_distinction": "Compass evaluates labeled within-subject subsets and ICLR 2026 evaluates LOO fine-tuning. The proposed contribution is a prespecified causal prefix, minute accounting, forward-only scoring, and cumulative recalibration cost."
+    },
+    {
+      "id": "T2",
+      "name": "Risk-coverage and abstention under a fixed false-activation budget",
+      "recommendation_rank": 2,
+      "status": "Recommended distinctive operational packaging; selective prediction is established generally, but this event-level BCI formulation was not found in the reviewed EEG-FM benchmarks",
+      "hypothesis": "Accuracy ranking will change when systems must abstain and satisfy the same false-command activation budget on explicitly labeled no-control exposure.",
+      "leakage_safe_protocol": [
+        "Use continuous replay with strictly causal filtering, windowing, inference and debounce; no centered windows or zero-phase filtering that sees future samples.",
+        "Split participants first and preserve contiguous no-control intervals. Never split overlapping windows across train/validation/test.",
+        "Select confidence score, class thresholds, hold time and refractory period only on validation participants/intervals.",
+        "Set each system to the same prespecified false activation events/hour target, then freeze the policy before test.",
+        "Count event-level triggers after debounce rather than correlated window errors."
+      ],
+      "training_only_calibration": "Fit temperature/Platt/isotonic calibration and all decision thresholds on training/validation only. Report a separate uncalibrated sensitivity so calibration quality is not confused with representation quality.",
+      "metrics": [
+        "Command recall and wrong-command rate at fixed false activations/hour",
+        "Risk-coverage curve and area under selective-risk curve",
+        "Detection latency from allowed command onset to first stable trigger",
+        "No-control exposure hours and confidence intervals for the false-activation rate",
+        "Balanced accuracy on eligible command windows as a secondary diagnostic"
+      ],
+      "required_data": "Continuous recordings with explicit command and genuine no-control/idle annotations, enough contiguous no-control exposure to estimate rare event rates, and trustworthy event timing. Cue-gated idle is only a pilot, not open-world unknown intent.",
+      "confounds": ["Always abstaining trivially minimizes false activations", "Window overlap understates uncertainty", "Prompted idle differs from natural activity", "Replay excludes user feedback and closed-loop adaptation"],
+      "compute_burden": "Low to moderate after logits exist; the main burden is long, semantically valid no-control exposure rather than GPU time.",
+      "overlap_and_distinction": "The reviewed benchmarks emphasize BCA/AUROC/F1 and adaptation deltas. This package changes the decision question to usable coverage at an identical event-level false-trigger budget."
+    },
+    {
+      "id": "T3",
+      "name": "Paired real-device shift: wet versus dry or laboratory versus wearable",
+      "recommendation_rank": 3,
+      "status": "Recommended if paired data are available; generic device/TTA shift is established",
+      "hypothesis": "Model rankings and adaptation needs under a genuine acquisition-chain change will differ from rankings under channel subsampling or synthetic noise.",
+      "leakage_safe_protocol": [
+        "Require the same participant and same label semantics in both devices; hold out participants from every train and validation decision.",
+        "Train on device A only, evaluate zero-calibration on device B, then adapt using a fixed chronological prefix from B and evaluate on later B trials.",
+        "Also report A-to-A, B-to-B and B-to-A where available to separate task difficulty from shift direction.",
+        "Use only physically shared electrodes for the primary paired comparison; treat interpolated or reconstructed montages as secondary adapter analyses.",
+        "Lock label alignment, channel map, units, reference and sampling conversion before test."
+      ],
+      "training_only_calibration": "Fit device-specific normalization or adapters on source training participants and the allowed target prefix only. Do not estimate target-wide covariance from the test recording unless explicitly labeled as transductive TTA.",
+      "metrics": ["Paired cross-device performance drop", "Recovery per labeled target minute", "Worst-participant drop", "Expected calibration error", "Latency and memory on the named deployment device"],
+      "required_data": "Paired same-participant, same-task wet/dry or lab/wearable recordings with device metadata. A small public paired wearable dataset can support a feasibility benchmark; larger restricted corpora remain future work.",
+      "confounds": ["Device order and fatigue", "Different electrode locations or task timing", "Reference and unit differences", "Session gap versus hardware effect", "Too few participants for stable ranking"],
+      "compute_burden": "Moderate; paired design improves power, but adaptation budgets multiply runs.",
+      "overlap_and_distinction": "NeuroAdapt-Bench already includes extreme EarEEG shift and TTA. The narrower contribution is paired within-person, same-label acquisition shift with source-only and fixed labeled-target-minute accounting."
+    },
+    {
+      "id": "T4",
+      "name": "Acquisition-contract metamorphic gate",
+      "recommendation_rank": 4,
+      "status": "Recommended mandatory correctness gate, separate from the robustness leaderboard",
+      "hypothesis": "Some apparent robustness failures are ingestion bugs or undocumented invariance assumptions rather than representation failure.",
+      "leakage_safe_protocol": [
+        "Create paired transformations with known semantics: V-to-uV scaling, channel permutation plus matching metadata permutation, reference conversion, polarity inversion where valid, and resample-then-restore controls.",
+        "Define expected invariance or expected rejection for each transform before running models.",
+        "Use identical examples before/after transformation; do not retrain to pass this gate.",
+        "Add destructive controls where metadata is intentionally not updated to verify the gate detects the mismatch."
+      ],
+      "training_only_calibration": "None for the primary gate. Any learned adapter moves the result to a separate robustness analysis and must be trained without test examples.",
+      "metrics": ["Logit/embedding deviation for semantically equivalent inputs", "Prediction agreement", "Explicit rejection rate for invalid contracts", "Pass/fail by prespecified tolerance"],
+      "required_data": "Existing held-out examples plus authoritative unit, montage, coordinate and reference metadata.",
+      "confounds": ["Average-reference conversion is not invertible without assumptions", "Channel permutation is only equivalent when coordinates/names move too", "Amplitude normalization may hide unit bugs"],
+      "compute_burden": "Low; inference only.",
+      "overlap_and_distinction": "Channel Adaptation 2026 compares learned and physics-based montage mappings. This gate tests software and input-contract correctness, so it should not be scored as evidence that a model handles real hardware shift."
+    },
+    {
+      "id": "T5",
+      "name": "Attribution and negative-control gate",
+      "recommendation_rank": 5,
+      "status": "Established method; recommended Phase 0 before adding new leaderboards",
+      "hypothesis": "A claimed pretrained-model benefit should disappear under controls that remove pretrained weights or task-label information and should exceed strong non-FM baselines under the same split and tuning budget.",
+      "leakage_safe_protocol": [
+        "Reuse exactly the same participant folds, preprocessing, head capacity and tuning budget for pretrained, random-initialized and no-pretraining/scratch encoders.",
+        "Permute labels at the participant or contiguous recording unit appropriate to the task, not independently across overlapping windows.",
+        "Include strong classical and compact EEGNet-style baselines with equal validation access.",
+        "Add EOG-only or non-EEG-channel controls when those signals exist; never synthesize an EOG control from absent channels.",
+        "Decode dataset/device identity as a confound probe and state that success localizes dataset structure, not its cause."
+      ],
+      "training_only_calibration": "All probes, PCA, thresholds and baseline choices must be fitted inside training folds. Never perform PCA, normalization or feature selection across held-out participants.",
+      "metrics": ["Pretrained-minus-random paired delta", "Pretrained-minus-strong-baseline delta", "Permutation null distribution", "Dataset/device identity AUROC", "Confidence intervals over participants and seeds"],
+      "required_data": "Existing benchmark datasets and model architectures; optional EOG channels for the artifact control.",
+      "confounds": ["Random initialization tests architecture plus preprocessing, not every pretraining mechanism", "Small seed counts give unstable deltas", "EOG may contain genuine task timing as well as artifact"],
+      "compute_burden": "Moderate to high if encoders are trained from scratch; frozen random-encoder and classical controls are cheaper and can be the first gate.",
+      "overlap_and_distinction": "The targeted negative-control paper already establishes this logic. BCI Arena's value is consistent enforcement across every headline track, not novelty."
+    },
+    {
+      "id": "T6",
+      "name": "Pretraining exposure ledger and post-cutoff evaluation",
+      "recommendation_rank": 6,
+      "status": "Audit layer; leakage-aware rankings are established, while honest uncertainty and date-bounded test curation improve evidence quality",
+      "hypothesis": "Rankings will change after separating confirmed exposure, adjacent-distribution exposure, likely clean post-cutoff data and unknown provenance.",
+      "leakage_safe_protocol": [
+        "For every model-dataset pair, record checkpoint release date, declared pretraining corpora, dataset versions/DOIs, subject overlap evidence and confidence status.",
+        "Classify exposure as confirmed seen, confirmed absent from disclosed inventory, post-cutoff likely unseen, adjacent distribution, or unknown; never collapse unknown into unseen.",
+        "Freeze a post-cutoff test list before inspecting model results.",
+        "Report full and exposure-restricted rankings side by side; do not infer memorization from exposure alone."
+      ],
+      "training_only_calibration": "Dataset selection and exposure labels must be fixed before test results. Hyperparameters still use only training/validation partitions of each selected dataset.",
+      "metrics": ["Performance by exposure stratum", "Rank stability after excluding confirmed seen pairs", "Fraction of leaderboard cells with unknown provenance", "Sensitivity to alternative conservative exposure rules"],
+      "required_data": "Model cards, papers, repository histories, checkpoint dates, dataset release/version records and subject identifiers where available.",
+      "confounds": ["Published inventories may be incomplete", "Dataset aliases and derived corpora obscure overlap", "Post-cutoff reduces but cannot prove absence from private pretraining", "Distribution adjacency can remain even without exact overlap"],
+      "compute_burden": "Low additional training cost; high provenance-review burden.",
+      "overlap_and_distinction": "Compass already reports leakage-aware ranks and the negative-control study documents exposure. BCI Arena should formalize evidence states and retain unknowns rather than claim a perfectly clean leaderboard."
+    },
+    {
+      "id": "T7",
+      "name": "Fair adaptation under fixed label, parameter and compute budgets",
+      "recommendation_rank": 7,
+      "status": "Supporting analysis with substantial literature overlap; not a headline novelty claim",
+      "hypothesis": "Model rankings depend on whether tuning is equalized by labels, trainable parameters, wall-clock compute, or validation trials; a single fixed recipe can unfairly favor an architecture.",
+      "leakage_safe_protocol": [
+        "Use nested participant-disjoint validation for hyperparameter selection.",
+        "Compare frozen head, limited-budget full fine-tuning and parameter-efficient tuning under prespecified label count, trainable-parameter count, optimizer-step and validation-evaluation caps.",
+        "Give every model the same number of selection trials or the same fixed candidate set; report both tuned and shared-recipe sensitivities.",
+        "Include native channel handling and adapter choices only where architecturally valid."
+      ],
+      "training_only_calibration": "All learning-rate, layer-unfreezing, adapter-rank and early-stopping choices are selected in inner training/validation folds. Test participants receive one final evaluation.",
+      "metrics": ["Task score versus trainable parameters", "Score versus labeled minutes", "Score versus GPU-hours", "Peak memory", "Rank stability across reasonable tuning budgets"],
+      "required_data": "Existing labeled benchmark datasets; full training logs and named hardware.",
+      "confounds": ["Wall-clock comparisons are hardware and implementation dependent", "Equal steps are not equal optimization opportunity", "Adapter families are architecture dependent"],
+      "compute_burden": "High if exhaustive; keep to a prespecified small grid and three seeds, then expand only where rank conclusions are unstable.",
+      "overlap_and_distinction": "PMLR 2026 covers linear probe, LoRA and full fine-tuning; Channel Adaptation 2026 covers adapter-by-architecture interactions. Use this track for fairness and sensitivity reporting, not novelty."
+    }
+  ],
+  "recommended_release_order": [
+    {
+      "phase": "Phase 0",
+      "content": "Attribution gate (T5), exposure ledger (T6), and acquisition-contract gate (T4) on current assets.",
+      "claim_limit": "Pipeline audit and bounded attribution only."
+    },
+    {
+      "phase": "Phase 1",
+      "content": "Chronological calibration-minute curves (T1) and event-level abstention at fixed false activation budget (T2), conditional on valid time order and enough true no-control exposure.",
+      "claim_limit": "Offline prospective-style replay; no closed-loop or clinical-use claim."
+    },
+    {
+      "phase": "Phase 2",
+      "content": "Paired real-device shift (T3) with wet/dry or lab/wearable data and fixed target-label budget.",
+      "claim_limit": "Dataset-specific acquisition robustness; no general device or population guarantee."
+    }
+  ],
+  "publication_language": {
+    "safe": "BCI Arena packages causal time order, explicit calibration cost, event-level false-trigger budgets, paired hardware shifts, and mandatory attribution controls into a reproducible evaluation suite.",
+    "avoid": [
+      "First cross-subject/few-shot/channel/noise benchmark",
+      "First adapter or test-time adaptation evaluation",
+      "Unseen data unless exposure is evidenced; use likely post-cutoff or provenance unknown",
+      "Real-world/closed-loop validation for offline replay",
+      "Clinical readiness or diagnostic benefit"
+    ]
+  }
+}

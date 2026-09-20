@@ -1,0 +1,442 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-09-20",
+  "scope": "Metadata-only candidates for deployment-oriented BCI Arena tracks. No EEG payloads or model weights were downloaded.",
+  "inventory_crosscheck": {
+    "file_checked": "research/dataset_expansion_v2/BCI Arena Dataset Inventory.json",
+    "finding": "None of these six appears in the inventory's acquired full/sample/single-participant holdings. BrainInvaders2014a, Stieger2021, and the two Lee2021 mobile paradigms do appear in the older discovery snapshot research/dataset_expansion_v2/eegdash-dataset-summary.csv; they are therefore prior discoveries, not newly discovered cohorts.",
+    "do_not_count_as_new_local_assets": [
+      "BrainInvaders2014a / NEMAR nm000244",
+      "Stieger2021 / NEMAR nm000339",
+      "Lee2021 mobile SSVEP / NEMAR nm000125",
+      "Lee2021 mobile ERP / NEMAR nm000201"
+    ]
+  },
+  "selection_principles": [
+    "Prefer a real acquisition-domain shift or online/deployment target over another conventional cross-subject classification dataset.",
+    "Treat mirrors and converted subsets as access paths, not independent cohorts.",
+    "Do not call an instructed rest command natural idle, and do not call separately epoched control/non-control trials continuous asynchronous data.",
+    "Unknown metadata stays unknown until a manifest or payload-level preflight is performed."
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "canonical_id": "Zhu2021-WearableSSVEP-DryWet",
+      "title": "An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces",
+      "deployment_track": "paired dry-to-wet hardware transfer and long-use degradation",
+      "priority": "P0",
+      "prior_inventory_status": "Not found in the checked inventory or its local discovery files; genuinely new to the reviewed local research assets.",
+      "original": {
+        "dataset_doi": "10.6084/m9.figshare.13560281",
+        "dataset_url": "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+        "paper_doi": "10.3390/s21041256",
+        "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/"
+      },
+      "mirrors": [
+        {
+          "url": "http://bci.med.tsinghua.edu.cn/download.html",
+          "status": "Paper-listed alternative endpoint; not fetched or independently verified in this pass."
+        }
+      ],
+      "participants_sessions_channels_task": {
+        "participants": 102,
+        "sessions": "One approximately two-hour visit per participant; 10 consecutive blocks with wet electrodes and 10 with dry electrodes.",
+        "channels": "8 occipital EEG channels, 250 Hz.",
+        "task": "Cue-guided 12-target SSVEP selection; 240 epochs per participant (12 targets x 10 blocks x 2 electrode types), 2.84 s each with 2 s stimulation."
+      },
+      "labels_and_no_control": {
+        "labels": "Target index with stimulus frequency/phase mapping plus paired electrode type (wet/dry); impedance and comfort questionnaire information are described.",
+        "no_control_availability": "No explicit idle or non-control class."
+      },
+      "shift": {
+        "kind": "native",
+        "enabled": "Within-person wet-to-dry and dry-to-wet transfer; early-to-late block drift/fatigue; cross-participant generalization under a wearable 8-channel montage.",
+        "pairing_strength": "Strong: both electrode types were recorded for every participant under the same paradigm. Electrode order/counterbalancing must be checked before causal claims."
+      },
+      "license_ethics": {
+        "dataset_license": "CC BY 4.0, displayed on the Figshare record.",
+        "ethics": "Paper reports Tsinghua University Research Ethics Committee approval No. 20200020, Declaration of Helsinki compliance, signed informed consent, and consent-compatible sharing.",
+        "unknowns": "The paper says participants were informed about non-commercial scientific research, while Figshare displays CC BY 4.0. Commercial-use interpretation should be reviewed before product use."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Public Figshare dataset listing verified.",
+        "version": 4,
+        "advertised_total_size": "928.82 MB",
+        "advertised_files": "102 participant MAT files plus stimulation_information.pdf described in the paper.",
+        "file_endpoint_status": "Archive link was visible; no archive or individual payload endpoint was fetched."
+      },
+      "acquisition_adapter_burden": "Low-medium. Compact MAT release and explicit 5-D layout [channel, time, electrode, block, target]; adapter must preserve paired wet/dry identity and block order.",
+      "why_distinct": "The cleanest large paired real-hardware shift among the candidates. It directly measures whether a model calibrated on gel/wet data survives a wearable dry-electrode deployment.",
+      "recommended_tests": [
+        "Train wet, test dry and reverse, paired by participant.",
+        "Calibration curves versus number of dry blocks.",
+        "Accuracy/ITR and abstention drift from block 1 to block 10.",
+        "Eight-channel latency and memory budget under short windows."
+      ],
+      "evidence": [
+        {
+          "source": "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+          "supports": "102 participants, 8 channels, paired 10 wet and 10 dry blocks, total size, version, and CC BY 4.0."
+        },
+        {
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
+          "supports": "Protocol, matrix layout, 250 Hz/2.84 s epochs, informed consent, ethics approval, and repository links."
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "canonical_id": "Lee2021-Mobile-ScalpEar-ERP-SSVEP",
+      "title": "Mobile BCI dataset of scalp- and ear-EEGs with ERP and SSVEP paradigms while standing, walking, and running",
+      "deployment_track": "simultaneous scalp-to-ear transfer under locomotion and motion artifact",
+      "priority": "P0",
+      "prior_inventory_status": "Already catalogued, but not acquired or scored: ERP and SSVEP conversions appear separately in the prior EEGDash discovery snapshot as nm000201 and nm000125. Count them as one cohort.",
+      "original": {
+        "dataset_doi": "10.6084/m9.figshare.13604078",
+        "dataset_url": "https://figshare.com/articles/dataset/Mobile_BCI_dataset_of_scalp-_and_ear-EEG_with_ERP_and_SSVEP_paradigms_during_standing_walking_and_running/13604078",
+        "paper_doi": "10.1038/s41597-021-01094-4",
+        "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8688416/"
+      },
+      "mirrors": [
+        {
+          "url": "https://www.nemar.org/dataset/nm000201",
+          "status": "ERP BIDS conversion; prior local discovery metadata reports 24 participants, 113 recordings, 5.2 GB, CC BY 4.0."
+        },
+        {
+          "url": "https://www.nemar.org/dataset/nm000125",
+          "status": "SSVEP BIDS conversion; prior local discovery metadata reports 23 participants, 85 recordings, 1.3 GB, CC BY 4.0."
+        }
+      ],
+      "participants_sessions_channels_task": {
+        "participants": "Paper: 24 healthy participants for ERP; 23 for SSVEP. Running was optional, leaving 17 ERP and 16 SSVEP participants in the 2.0 m/s condition. The Figshare landing-page description says 18 subjects, creating a repository/paper discrepancy that requires manifest preflight.",
+        "sessions": "Per paper/BIDS naming: training plus standing, 0.8 m/s walking, 1.6 m/s walking, and optional 2.0 m/s running sessions; ERP and SSVEP tasks at each speed.",
+        "channels": "Simultaneous 32-channel scalp EEG, 14-channel around-ear EEG, 4-channel EOG, and three 9-axis IMUs (forehead and both ankles).",
+        "task": "Visual ERP and SSVEP BCI tasks under four locomotion speeds."
+      },
+      "labels_and_no_control": {
+        "labels": "Task/session/speed and modality are encoded in the BIDS-like file organization; ERP target/non-target and SSVEP stimulus-event labels are described by the paper.",
+        "no_control_availability": "No dedicated intentional non-control class. Standing is a locomotion baseline, not BCI idle."
+      },
+      "shift": {
+        "kind": "native",
+        "enabled": "Scalp-to-ear sensor transfer and standing-to-walking/running artifact shift, with IMU/EOG references recorded simultaneously.",
+        "pairing_strength": "Very strong: sensor modalities and motion sensors are simultaneous within participant/condition."
+      },
+      "license_ethics": {
+        "dataset_license": "CC BY 4.0 on the Figshare record and prior NEMAR discovery metadata.",
+        "ethics": "Paper reports Korea University IRB approval KUIRB-2019-0194-01, written informed consent, and Declaration of Helsinki compliance.",
+        "unknowns": "Confirm whether every participant/file advertised by the paper is present in the current Figshare version; the landing page's 18-subject wording conflicts with the paper's 24-person cohort."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Public Figshare listing verified; primary paper and prior NEMAR metadata verified.",
+        "advertised_total_size": "8.34 GB on Figshare; NEMAR paradigm conversions total about 6.5 GB but are not an independent release/cohort.",
+        "advertised_files": "Paper describes subject/session/task EEG and IMU files; exact current file count was not exposed in the retrieved landing-page metadata.",
+        "file_endpoint_status": "Archive button visible, but payload endpoints and manifest were not fetched."
+      },
+      "acquisition_adapter_burden": "Medium-high. Synchronization is the scientific value and the adapter risk: preserve scalp/ear/EOG/IMU clocks, speed condition, optional-running missingness, and ERP versus SSVEP event semantics.",
+      "why_distinct": "One cohort supplies two deployment shifts at once: wearable ear sensors and severe real movement contamination, with simultaneous scalp and motion references rather than synthetic noise.",
+      "recommended_tests": [
+        "Train scalp/standing, test ear/standing; then ear/walking and ear/running.",
+        "Artifact robustness with and without EOG/IMU-assisted cleaning.",
+        "Speed-conditioned calibration and abstention.",
+        "ERP versus SSVEP degradation under the same motion regime."
+      ],
+      "evidence": [
+        {
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8688416/",
+          "supports": "24/23 participant counts, optional running counts, simultaneous channel/modalities, four speeds, task design, file naming, consent, and IRB."
+        },
+        {
+          "source": "https://figshare.com/articles/dataset/Mobile_BCI_dataset_of_scalp-_and_ear-EEG_with_ERP_and_SSVEP_paradigms_during_standing_walking_and_running/13604078",
+          "supports": "Public listing, 8.34 GB, CC BY 4.0, and the conflicting 18-subject landing-page description."
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "canonical_id": "Stieger2021-Longitudinal-ContinuousSMR",
+      "title": "Human EEG Dataset for Brain-Computer Interface and Meditation / Continuous sensorimotor rhythm based brain computer interface learning in a large population",
+      "deployment_track": "longitudinal continual adaptation and continuous closed-loop control",
+      "priority": "P0 if storage can be subsetted; otherwise P1",
+      "prior_inventory_status": "Already catalogued, but not acquired or scored: Stieger2021 appears in the prior EEGDash discovery snapshot as NEMAR nm000339.",
+      "original": {
+        "dataset_doi": "10.6084/m9.figshare.13123148",
+        "dataset_url": "https://figshare.com/articles/dataset/Human_EEG_Dataset_for_Brain-Computer_Interface_and_Meditation/13123148",
+        "paper_doi": "10.1038/s41597-021-00883-1",
+        "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8016873/"
+      },
+      "mirrors": [
+        {
+          "url": "https://www.nemar.org/dataset/nm000339",
+          "status": "BIDS/NEMAR mirror with subset-capable access and a published manifest URL; not fetched in this pass."
+        },
+        {
+          "url": "https://github.com/nemarDatasets/nm000339",
+          "status": "Metadata/git-annex mirror listed by NEMAR; no annexed data fetched."
+        }
+      ],
+      "participants_sessions_channels_task": {
+        "participants": 62,
+        "sessions": "598 session files; 7-11 sessions per participant, including a baseline eight weeks before the main training; approximately 60 minutes and 450 online trials per file.",
+        "channels": "Original record describes 62 electrodes at 1000 Hz; the NEMAR discovery record exposes 60 EEG channels, so auxiliary/reference-channel handling must be reconciled.",
+        "task": "Online sensorimotor-rhythm BCI control in 1-D and 2-D cursor tasks using left hand, right hand, both hands, and rest imagery/control states; cursor X/Y trajectories are stored."
+      },
+      "labels_and_no_control": {
+        "labels": "Trial metadata plus task/class, online success, target and continuous cursor positionX/positionY traces.",
+        "no_control_availability": "A rest state exists, but it is an instructed BCI command/control state; it must not be treated as free natural idle."
+      },
+      "shift": {
+        "kind": "native",
+        "enabled": "Day/session drift over up to 11 sessions, learning curves, continual adaptation, delayed baseline-to-training transfer, and continuous trajectory decoding.",
+        "pairing_strength": "Strong longitudinal within-participant design, but session counts vary and intervention/training history must be retained."
+      },
+      "license_ethics": {
+        "dataset_license": "Original Figshare record displays CC BY 4.0. The NEMAR page/discovery metadata says CC-BY-NC-4.0; this mirror/source conflict must be resolved before redistribution or commercial use.",
+        "ethics": "The primary paper describes de-identified healthy-volunteer data and informed consent/IRB-governed study procedures; the exact approval identifier was not recovered in this metadata pass.",
+        "unknowns": "Authoritative license reconciliation and exact per-session channel typing remain open."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Original Figshare and NEMAR listings verified.",
+        "advertised_total_size": "351.01 GB on Figshare; prior EEGDash/NEMAR snapshot 371.5 GB; current NEMAR page advertises 722.5 GB. Differences likely reflect version/conversion accounting and require manifest-level reconciliation.",
+        "advertised_files": "598 subject-session MAT records in the original paper.",
+        "file_endpoint_status": "NEMAR advertises stable manifest/direct-file and subject/session subset access; no manifest or payload URL was fetched."
+      },
+      "acquisition_adapter_burden": "High overall, medium for a designed subset. Large per-session MAT structures, variable 7-11 session histories, trial cells, online feedback trajectories, and source/mirror metadata discrepancies require a careful adapter.",
+      "why_distinct": "This is not merely multi-session classification: it contains hundreds of hours of online continuous cursor control and behavioral trajectories, allowing realistic continual-learning and closed-loop regression tests.",
+      "recommended_tests": [
+        "Session 1 calibration, sequential evaluation through sessions 2-11 without future leakage.",
+        "Fixed model versus supervised and unsupervised continual adaptation.",
+        "Continuous cursor-velocity/position decoding and stability, not only trial accuracy.",
+        "Catastrophic forgetting and calibration-budget curves."
+      ],
+      "evidence": [
+        {
+          "source": "https://figshare.com/articles/dataset/Human_EEG_Dataset_for_Brain-Computer_Interface_and_Meditation/13123148",
+          "supports": "62 participants, 7-11 sessions, 62 electrodes, behavioral data, 351.01 GB, and CC BY 4.0."
+        },
+        {
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8016873/",
+          "supports": "598 sessions, more than 600 hours, 450 trials/session, MAT fields including cursor trajectories, and longitudinal/continuous-control purpose."
+        },
+        {
+          "source": "https://www.nemar.org/dataset/nm000339",
+          "supports": "BIDS mirror, 60 EEG channels, subset/direct-manifest access, mirror size, and mirror-declared CC-BY-NC-4.0."
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "canonical_id": "Zhao2024-YSU-AsynchronousSSVEP",
+      "title": "YSU: an EEG dataset for studying asynchronous SSVEP-BCI",
+      "deployment_track": "intentional control versus multiple non-control states",
+      "priority": "P1",
+      "prior_inventory_status": "Not found in the checked inventory or local discovery files; genuinely new to the reviewed local research assets.",
+      "original": {
+        "dataset_doi": "10.6084/m9.figshare.24906300.v3",
+        "dataset_url": "https://figshare.com/articles/dataset/YSU-an_EEG_dataset_for_studying_asynchronous_SSVEP-BCI/24906300/3",
+        "paper_doi": "10.1080/27706710.2024.2418650",
+        "paper_url": "https://www.tandfonline.com/doi/full/10.1080/27706710.2024.2418650"
+      },
+      "mirrors": [],
+      "participants_sessions_channels_task": {
+        "participants": 24,
+        "sessions": "All tasks were recorded within approximately three hours in one visit; CS and non-control tasks were collected in separate sessions/blocks, including two NS3 sessions.",
+        "channels": "63-channel actiCHamp EEG at 5000 Hz; Fz reference and FPz ground.",
+        "task": "Eight-frequency SSVEP control state (8, 9, 10.5, 11, 12, 13, 14, 15 Hz) plus three non-control tasks."
+      },
+      "labels_and_no_control": {
+        "labels": "CS has 96 trials and explicit target frequency; NS1 has 24 trials watching feedback with stimuli off; NS2 has 24 trials resting/gazing at a white wall; NS3 has 48 trials watching feedback while stimuli continue flickering.",
+        "no_control_availability": "Yes, three intentionally different non-control conditions. Data are pre-epoched by state, not a single continuous stream."
+      },
+      "shift": {
+        "kind": "native",
+        "enabled": "Control-state versus non-control detection, including the hard case where distractor stimuli continue flickering (NS3), and out-of-non-control-type generalization.",
+        "pairing_strength": "Within-participant state collection, but state blocks are separate and may permit block/session confounds."
+      },
+      "license_ethics": {
+        "dataset_license": "CC BY 4.0 on the Figshare v3 record.",
+        "ethics": "Paper reports Qinhuangdao First Hospital ethics committee approval and written informed consent.",
+        "unknowns": "No approval identifier was visible in the retrieved article text."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Public Figshare v3 listing verified.",
+        "advertised_total_size": "18.38 GB",
+        "advertised_files": "Per article: 24 subject folders, four MAT task files per subject, Subjects' Info.xlsx, and Channel Loc.xlsx; v3 specifically corrected the channel-location index/name mapping.",
+        "file_endpoint_status": "Public archive listing verified; individual payload endpoints were not fetched."
+      },
+      "acquisition_adapter_burden": "Medium. Simple MAT tensors but very high native sample rate and unequal epoch lengths; adapter must avoid learning task-file/block artifacts and must retain NS subtype.",
+      "why_distinct": "It supplies real non-control EEG designed for asynchronous rejection rather than manufacturing idle windows from a synchronous benchmark.",
+      "recommended_tests": [
+        "Train CS versus two NS types, hold out the third NS type as an unknown idle condition.",
+        "Frequency classification conditional on accepted control state.",
+        "Selective risk/false activation rate under NS3 continuous flicker.",
+        "Downsampling and short-window latency sweep."
+      ],
+      "limitations": "The authors explicitly state that separately acquired, pre-epoched CS/NS data are unsuitable for evaluating a fully continuous online all-state system. Use this for gate/rejection benchmarking, not claims of continuous streaming deployment.",
+      "evidence": [
+        {
+          "source": "https://www.tandfonline.com/doi/full/10.1080/27706710.2024.2418650",
+          "supports": "24 participants, task definitions, trial counts/tensors, 63 channels at 5000 Hz, ethics/consent, and the non-continuous limitation."
+        },
+        {
+          "source": "https://figshare.com/articles/dataset/YSU-an_EEG_dataset_for_studying_asynchronous_SSVEP-BCI/24906300/3",
+          "supports": "Public v3 record, 18.38 GB, CC BY 4.0, and corrected channel-location file history."
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "canonical_id": "Luciw2014-WAY-EEG-GAL",
+      "title": "WAY-EEG-GAL: Multi-channel EEG Recordings During 3,936 Grasp and Lift Trials with Varying Weight and Friction",
+      "deployment_track": "continuous kinematic and force regression from EEG with multimodal leakage controls",
+      "priority": "P1",
+      "prior_inventory_status": "Not found in the checked inventory or local discovery files; genuinely new to the reviewed local research assets.",
+      "original": {
+        "dataset_doi": "10.6084/m9.figshare.c.988376.v2",
+        "dataset_url": "https://springernature.figshare.com/collections/WAY_EEG_GAL_Multi_channel_EEG_Recordings_During_3_936_Grasp_and_Lift_Trials_with_Varying_Weight_and_Friction/988376",
+        "paper_doi": "10.1038/sdata.2014.47",
+        "paper_url": "https://doi.org/10.1038/sdata.2014.47"
+      },
+      "mirrors": [],
+      "participants_sessions_channels_task": {
+        "participants": 12,
+        "sessions": "Exact independent visit/session count was not recovered; treat as unknown rather than assuming one session.",
+        "channels": "32-channel EEG plus EMG from five arm/hand muscles, 3-D hand/object position, and bilateral contact-plate force/torque.",
+        "task": "Naturalistic grasp-and-lift trials crossing three object weights (165, 330, 660 g) and three surface frictions (silk, suede, sandpaper). The collection title advertises 3,936 trials."
+      },
+      "labels_and_no_control": {
+        "labels": "Continuous force/torque and kinematics plus event stages such as hand start, first digit touch, load phase, lift-off, replace, and release are the intended targets.",
+        "no_control_availability": "No explicit BCI no-control state. Inter-trial periods may exist but must not be relabeled as intentional idle without payload/protocol verification."
+      },
+      "shift": {
+        "kind": "native",
+        "enabled": "Continuous regression of force and 3-D movement, event forecasting, weight/friction condition shift, and robustness to natural executed-movement contamination.",
+        "pairing_strength": "Strong synchronous multimodal ground truth; strict EEG-only inputs are required to avoid EMG/force/kinematic leakage."
+      },
+      "license_ethics": {
+        "dataset_license": "Unknown from the retrieved primary collection metadata; do not infer the dataset license from the paper's publication license.",
+        "ethics": "Human-subject ethics/consent evidence was not recovered from the accessible metadata in this pass; check the primary paper before acquisition.",
+        "unknowns": "Dataset license, exact current file count/bytes, and independent session count."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Public Springer Nature Figshare collection and DOI were verified through indexed metadata, but the collection page returned 403 to the browser tool.",
+        "advertised_total_size": "Unknown.",
+        "advertised_files": "Unknown; no file manifest was exposed in the retrieved metadata.",
+        "file_endpoint_status": "Public listing verified; file endpoints not verified."
+      },
+      "acquisition_adapter_burden": "High. Multimodal clocks, variable-length executed-movement trials, event alignment, and leakage-safe feature selection must be audited. Small N also favors subject-held-out evaluation with uncertainty intervals.",
+      "why_distinct": "It changes the benchmark target from trial class accuracy to time-resolved motor-output estimation with measured physical ground truth.",
+      "recommended_tests": [
+        "EEG-only force and vertical-object-position regression under leave-one-subject-out splits.",
+        "Forecast first digit touch and lift-off before the event.",
+        "Train on two weights/frictions and test the held-out condition.",
+        "Explicit EMG leakage audit using low-pass and channel-exclusion controls."
+      ],
+      "evidence": [
+        {
+          "source": "https://springernature.figshare.com/collections/WAY_EEG_GAL_Multi_channel_EEG_Recordings_During_3_936_Grasp_and_Lift_Trials_with_Varying_Weight_and_Friction/988376",
+          "supports": "Public collection identity, DOI, advertised 3,936 trials, 32 EEG channels, EMG, 3-D position, and force/torque modalities."
+        },
+        {
+          "source": "https://doi.org/10.1038/sdata.2014.47",
+          "supports": "Primary data descriptor and acquisition/task design."
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "canonical_id": "BrainInvaders2014a-DryP300",
+      "title": "Brain Invaders calibration-less P300-based BCI using dry EEG electrodes (bi2014a)",
+      "deployment_track": "dry-electrode P300 calibration-free and low-channel deployment",
+      "priority": "P2",
+      "prior_inventory_status": "Already catalogued, but not acquired or scored: BrainInvaders2014a appears in the prior EEGDash discovery snapshot as NEMAR nm000244. BrainInvaders2014b is also in the older official-repository discovery file and is a separate wet collaborative cohort.",
+      "original": {
+        "dataset_doi": "10.5281/zenodo.3266223",
+        "dataset_url": "https://zenodo.org/records/3266223",
+        "paper_url": "https://hal.science/hal-02171575"
+      },
+      "mirrors": [
+        {
+          "url": "https://www.nemar.org/dataset/nm000244",
+          "status": "BIDS/NEMAR conversion. Current/locally indexed metadata contains only 64 participants versus 71 at the canonical Zenodo source, so it is not verified as a complete mirror."
+        },
+        {
+          "url": "https://github.com/plcrodrigues/py.BI.EEG.2014a-GIPSA",
+          "status": "Author-linked manipulation code, not an independent data cohort."
+        }
+      ],
+      "participants_sessions_channels_task": {
+        "participants": "71 at the canonical Zenodo source; NEMAR conversion exposes 64.",
+        "sessions": "Up to three Brain Invaders game sessions per participant; nine game levels with repeated attempts are described.",
+        "channels": "16 active dry EEG electrodes, 512 Hz in the NEMAR discovery metadata.",
+        "task": "Visual oddball P300 game with one target among 36 symbols; online adaptive/calibration-less feedback."
+      },
+      "labels_and_no_control": {
+        "labels": "Target versus non-target flash events, game/session/level structure, and online interaction context.",
+        "no_control_availability": "No intentional idle/no-control state. Non-target flashes are still active task events and must not be treated as idle."
+      },
+      "shift": {
+        "kind": "native within this cohort; cross-hardware comparison requires a second cohort",
+        "enabled": "Dry-electrode robustness, 16-channel latency/throughput, cross-session calibration-free transfer. A dry-to-wet test can be added against BI2015a/BI2014b only as an unpaired cross-cohort shift with protocol confounds.",
+        "pairing_strength": "No paired wet recording for the same participants."
+      },
+      "license_ethics": {
+        "dataset_license": "NEMAR conversion declares CC-BY-4.0. The retrieved canonical Zenodo metadata did not expose a license field, so canonical-license confirmation remains required.",
+        "ethics": "No explicit approval identifier or consent statement was recovered from the retrieved repository/paper metadata; verify before acquisition.",
+        "unknowns": "Canonical license/ethics evidence and why seven canonical participants are absent from NEMAR."
+      },
+      "observed_download_metadata": {
+        "listing_status": "Canonical Zenodo record and NEMAR listing verified.",
+        "advertised_total_size": "3.4 GB at Zenodo; the prior NEMAR discovery snapshot reports about 1.0 GB for 64 converted participants.",
+        "advertised_files": "Zenodo page exposed Header.csv and a 3.4 GB total, but the complete individual-file index was not visible in retrieved metadata.",
+        "file_endpoint_status": "Public listings verified; payload endpoints not fetched."
+      },
+      "acquisition_adapter_burden": "Medium. MAT/CSV author tools exist, but the source/mirror participant mismatch, multiple attempts/levels, and online adaptive timing need audit before defining trials and leakage-safe splits.",
+      "why_distinct": "A large real dry-electrode ERP cohort with online adaptive play is useful for low-channel/calibration-free validation, though it is weaker than the paired dry/wet SSVEP candidate for hardware-transfer claims.",
+      "recommended_tests": [
+        "Session-one calibration versus zero-calibration transfer to later sessions.",
+        "Trial/level-aware false-positive and time-to-selection metrics.",
+        "16-channel streaming latency and confidence calibration.",
+        "Optional unpaired dry-to-wet stress test against BI2015a with explicit cohort/protocol caveats."
+      ],
+      "evidence": [
+        {
+          "source": "https://zenodo.org/records/3266223",
+          "supports": "Canonical DOI, 71 participants, 16 active dry electrodes, up to three sessions, task description, author code link, and 3.4 GB total."
+        },
+        {
+          "source": "https://www.nemar.org/dataset/nm000244",
+          "supports": "BIDS mirror identity, 16 channels, mirror-declared CC-BY-4.0, and a smaller converted participant set."
+        }
+      ]
+    }
+  ],
+  "strongest_three": [
+    {
+      "canonical_id": "Zhu2021-WearableSSVEP-DryWet",
+      "reason": "Large paired real dry/wet hardware shift with a small download and a simple adapter."
+    },
+    {
+      "canonical_id": "Lee2021-Mobile-ScalpEar-ERP-SSVEP",
+      "reason": "Simultaneous scalp/ear/EOG/IMU data across standing-to-running conditions supports genuine wearable and artifact tests."
+    },
+    {
+      "canonical_id": "Stieger2021-Longitudinal-ContinuousSMR",
+      "reason": "Up to 11 sessions and continuous cursor trajectories enable continual adaptation and closed-loop regression rather than another trial classifier."
+    }
+  ],
+  "deferred_leads": [
+    {
+      "name": "Lee2019 / OpenBMI",
+      "reason": "High-quality 54-participant, two-session, three-paradigm data with EEG/EMG and resting recordings, but it adds less deployment novelty than the six selected tracks and is very large (the NEMAR SSVEP derivative alone advertises 73.2 GB). Keep as a multi-paradigm baseline, not a first expansion acquisition."
+    },
+    {
+      "name": "Shin2017 EEG+NIRS",
+      "reason": "Useful multimodal/rest and physiological-artifact lead (29 participants, three days/six experiment records depending representation), but it requires acceptance terms in common adapters and is less direct than paired sensor/motion or continuous-control tracks."
+    },
+    {
+      "name": "EESM19",
+      "reason": "Longitudinal ear/scalp sleep monitoring is promising for device transfer, but the prior inventory already flags the ear-EEG bundle as metadata-only with unresolved license and pairing provenance. The Lee2021 mobile dataset gives a cleaner simultaneous scalp/ear BCI test first."
+    }
+  ]
+}
