@@ -9,12 +9,17 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "WRANGLER_SEND_METRICS=false wrangler deploy",
+    "cf": "WRANGLER_SEND_METRICS=false wrangler"
   },
   "dependencies": {
     "astro": "^7.3.1"
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "wrangler": "^4.135.0"
   }
 }

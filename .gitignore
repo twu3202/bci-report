@@ -26,6 +26,7 @@ output/
 site/dist/
 site/node_modules/
 site/.astro/
+site/.wrangler/
 site/.git.superseded-*/
 .venv/
 __pycache__/

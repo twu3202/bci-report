@@ -12,6 +12,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bci-report",
   "compatibility_date": "2026-09-20",
+  // Off for the same reason `observability` below is off: wrangler otherwise
+  // posts command telemetry (OS build, Node version, which command ran) to
+  // Cloudflare on every invocation.
+  //
+  // ⚠ This key alone is not enough. Measured on 4.135.0: it suppresses 3 of the
+  // 7 events; the other 4 fire before the config file is read (their payload
+  // reports configFileType "none"). Only WRANGLER_SEND_METRICS=false, which is
+  // set from process start, suppresses all 7 — which is why the `deploy` and
+  // `cf` scripts in package.json exist. Use those rather than bare `wrangler`.
+  // The alternative, `wrangler telemetry disable`, is deliberately not used: it
+  // writes to ~/.config/.wrangler and would change every other project on this
+  // machine.
+  "send_metrics": false,
   "assets": {
     "directory": "./dist",
     // Serve /data-use/ for /data-use, and return the real 404 page for a missing

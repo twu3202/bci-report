@@ -37,9 +37,20 @@ do and do not establish.
 ## Deploying
 
 Cloudflare Workers Static Assets, configured in `wrangler.jsonc`, which pins the
-upload scope to `./dist`. Always run `wrangler deploy` from this directory and
-never pass a directory argument by hand — `site/.git.superseded-20260920` still
-contains per-participant rows from an earlier export and must never be uploaded.
+upload scope to `./dist` — a dry run reports 28 files, exactly the set
+`check_site_artifact.py` accepts.
+
+```bash
+npm run cf -- login     # one-time; opens a browser for you to authorise
+npm run deploy          # uploads ./dist and nothing else
+npm run cf -- <other wrangler command>
+```
+
+Use these scripts rather than bare `wrangler`: they set
+`WRANGLER_SEND_METRICS=false`, which the `send_metrics` key in `wrangler.jsonc`
+cannot fully do on its own (see the comment there). Never pass a directory
+argument by hand — `site/.git.superseded-20260920` still contains
+per-participant rows from an earlier export and must never be uploaded.
 
 No backend, GPU, raw EEG, checkpoint distribution, telemetry SDK or automated
 updater is involved.
