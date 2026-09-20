@@ -54,13 +54,13 @@
     "data/sleep-scalp-results.csv": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
     "favicon.ico": "abc8e622580241ee8ec914fc1b7fbbd354709dc5bef3cbca040d7b21833aed68",
     "favicon.svg": "a51b4859e908aa6244b40dbb00570c755918a3778a089cfd1f2a9a83f8d711d4",
-    "index.html": "0ac3a3542002f523a39a06fedfb0c39ee052fa8f7d0261a81c01c5d166c7e58d",
+    "index.html": "18b73caa145ab67011998f90f1eb9cab778086d9ed2dd95cf24690efb533861a",
     "og.png": "e424c3c122839eb83bf0cecbbe15c9d31b0a9ff154055ce3d603a18c654e0024",
     "robots.txt": "a9139481e1a64b98d6a3f4664b8a81d03dfade6a50c748514fc9002df79eba04",
     "sitemap.xml": "09c57d55450175113119ed5ed82e0ffb746f953bb50a9a2c0935eefc99c3fdc3",
-    "topics/calibration-budget/index.html": "d7e36a7c8f325194ee708a889c4583852e161d83ce488822fab8b79efc99d4e8",
-    "topics/does-pretraining-help/index.html": "099ac705be12216823f216cc2eb45f66450b6a952d12b3748b8c4cf8d22b6d4d",
-    "topics/dry-vs-wet/index.html": "f05dc6b048bdacf9074acc76788b28fd1dec322486bb1cad28103d346e6d4635",
-    "topics/on-the-move/index.html": "ab701089cb8f3bedcf02f5066be973e65d56d6e9797a9ee183666c775ba5cfd6"
+    "topics/calibration-budget/index.html": "b9cd7fa39e985b20ca720204aa083b658c637bda6f0fec2563d8edcbae5493cf",
+    "topics/does-pretraining-help/index.html": "816828eaf891bf7e7e207c866e1a15e79713740eb06899c229a586dcb5c22f95",
+    "topics/dry-vs-wet/index.html": "cfa3542bfe938ce7c3bb41517f8294a85b33efa4324bf102a2387bffbeddea59",
+    "topics/on-the-move/index.html": "4355ab9582d25179dbd500821363915ded6de1a1f801db6b6a47b9032e09a20d"
   }
 }

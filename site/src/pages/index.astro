@@ -3,6 +3,7 @@ import data from '../data/mvp.json';
 import deployment from '../data/deployment-topics.json';
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
+import { homeDataset, websiteEntity } from '../data/structured';
 import '../styles/global.css';
 import '../styles/matrix.css';
 import '../styles/generated.css';
@@ -75,7 +76,9 @@ const stats=[
 <!doctype html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={site.description}/><meta name="theme-color" content="#b3450e"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><title>{title}</title>
 <meta property="og:type" content="website"/><meta property="og:site_name" content={site.name}/><meta property="og:title" content={title}/><meta property="og:description" content={site.description}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogImage}/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content={`${site.name} — core benchmark matrix: ${data.coverage.displayedProtocols} protocols, ${datasetCount} datasets, ${data.coverage.displayedComparisons} comparisons, ${matrixRows.length} methods.`}/>
-<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={site.description}/><meta name="twitter:image" content={ogImage}/></head>
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={site.description}/><meta name="twitter:image" content={ogImage}/>
+<script type="application/ld+json" set:html={JSON.stringify(homeDataset())}/>
+<script type="application/ld+json" set:html={JSON.stringify(websiteEntity())}/></head>
 <body><a class="skip" href="#overview">Skip to results</a>
 <header><a class="brand" href="/"><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{site.stage}</small></a><nav aria-label="Main navigation"><a href="#overview">Results</a><a href="#topics">Explore</a><a href="#benchmarks">Protocols</a><a href="#models">Models</a><a href="#datasets">Datasets</a><a href="#news">Updates</a><a href="/data-use/">Data use</a></nav></header>
 <main><section class="masthead"><div><p class="eyebrow">Open EEG evaluation · Snapshot {data.generatedAt.slice(0,10)}</p><h1>Every EEG score, with the protocol that produced it.</h1><p class="lede">The core matrix covers {matrixRows.length} decoding methods under {data.coverage.displayedProtocols} fixed protocols on {datasetCount} public datasets. Four deployment topics add {deployment.rows.length} measurements on sensors, movement, calibration and pretraining.</p></div><dl class="stat-rail" aria-label="Core matrix coverage">{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}<span class="live"><i></i>{site.stage}</span></dl></section>

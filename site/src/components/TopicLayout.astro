@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
+import { topicDataset } from '../data/structured';
 import SiteHeader from './SiteHeader.astro';
 import '../styles/global.css';
 import '../styles/topics.css';
@@ -40,6 +41,8 @@ const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
   <meta name="twitter:title" content={pageTitle}/>
   <meta name="twitter:description" content={description}/>
   <meta name="twitter:image" content={ogImage}/>
+  <script type="application/ld+json"
+          set:html={JSON.stringify(topicDataset(activeSlug, title, description, path))}/>
 </head>
 <body>
   <a class="skip" href="#topic-content">Skip to evidence</a>
