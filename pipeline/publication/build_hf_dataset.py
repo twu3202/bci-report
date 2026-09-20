@@ -110,12 +110,18 @@ def protocol_table(snapshot):
 
 
 def card(snapshot, n_rows, topics):
-    tracks, models = len(snapshot['tracks']), len(snapshot['models'])
+    tracks = len(snapshot['tracks'])
+    # Methods that actually produced a row, not the size of the model catalogue.
+    # The card said 18 for a table containing 9, because `snapshot['models']`
+    # also lists methods reviewed but not yet scored.
+    models = len({r['name'] for t in snapshot['tracks'] for r in t['rows']})
+    catalogued = len(snapshot['models'])
     n_topic_rows = len(topics['rows'])
     n_topics = len(topics['topics'])
     n_contrasts = len(topics['paired_contrasts'])
     n_seed_groups = len(topics['seed_sensitivity'])
     topic_slugs = ', '.join(f"`{t['id']}`" for t in topics['topics'])
+    datasets = len({t['dataset'] for t in snapshot['tracks']})
     return f"""---
 license: cc-by-4.0
 language:
@@ -140,43 +146,48 @@ configs:
     data_files: seed-sensitivity.csv
 ---
 
-# BCI Report — aggregate EEG decoding results
+# BCI Report
 
-Cohort-level results for public EEG decoding protocols, each reported with the
-protocol that produced it: cohort size, electrode count, evaluation mode, chance
-level, training budget and known limitations. Release
-`{snapshot['releaseId']}`, reviewed {snapshot['generatedAt'][:10]}.
+**Every EEG decoding score, reported with the protocol that produced it.**
 
-Rendered, with the charts and the method notes: **<https://bci.report>**
-Code, publication boundary and the rights review behind these numbers:
-**<https://github.com/twu3202/bci-report>**
+[Website](https://bci.report) · [Code](https://github.com/twu3202/bci-report) ·
+[Data use & privacy](https://bci.report/data-use/)
+
+{n_rows + n_topic_rows} reviewed measurements from public EEG datasets, each
+carrying the cohort, electrode count, evaluation mode, chance level and training
+budget that produced it. Release `{snapshot['releaseId']}`, reviewed
+{snapshot['generatedAt'][:10]}.
 
 ```python
 from datasets import load_dataset
+
 load_dataset("Twu31/bci-report", "results")   # {n_rows} protocol × model scores
 load_dataset("Twu31/bci-report", "topics")    # {n_topic_rows} deployment-condition measurements
 ```
 
-## What this contains
+## What is in here
 
-**Two separate bodies of measurement. They are not one ranking, and rows from
-one do not belong in a table with rows from the other.**
+**Two separate bodies of measurement.** Not one ranking, and rows from one do
+not belong in a table with rows from the other.
 
-`{MERGED}` — {n_rows} rows, one per (protocol, model) pair, {tracks} protocols,
-{models} methods, values in percent. `protocols/` carries the full descriptor for
-each protocol (preprocessing, split, budget, audit hashes). `snapshot.json` is
-the complete machine-readable release the website reads.
+| Config | Rows | What it covers | Unit |
+|---|---:|---|---|
+| `results` | {n_rows} | {models} methods × {tracks} fixed protocols, {datasets} public datasets | percent |
+| `topics` | {n_topic_rows} | {n_topics} deployment questions: {topic_slugs} | **proportion [0,1]** |
+| `contrasts` | {n_contrasts} | paired within-participant differences | percentage points |
+| `seed_sensitivity` | {n_seed_groups} | repeated training runs of one model | percent |
 
-`{TOPICS}` — {n_topic_rows} measurements across {n_topics} deployment questions
-({topic_slugs}), **values as proportions in [0,1], not percent**. Companion
-tables: `contrasts.csv` ({n_contrasts} paired contrasts, differences in
-percentage points) and `seed-sensitivity.csv` ({n_seed_groups} groups of repeated
-training runs). `deployment-topics.json` is the reviewed export these come from.
+Alongside: `protocols/` (full descriptor per protocol — preprocessing, split,
+budget, audit hashes), `snapshot.json` and `deployment-topics.json` (the reviewed
+exports the website itself reads).
 
 Every row in `{MERGED}` carries its own `license`, `license_url` and
 `attribution`, so a row lifted out of that table keeps its credit with it;
 `{TOPICS}` cites its sources in `deployment-topics.json` under
 `dataset_citations`.
+
+{models} of {catalogued} catalogued methods have been scored. A method with no
+row has not been run, which is not the same as having failed.
 
 ## What this does not contain
 

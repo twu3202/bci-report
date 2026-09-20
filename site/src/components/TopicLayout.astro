@@ -2,6 +2,7 @@
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
 import { topicDataset } from '../data/structured';
+import { defaultLocale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
 import '../styles/global.css';
 import '../styles/topics.css';
@@ -46,7 +47,7 @@ const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
 </head>
 <body>
   <a class="skip" href="#topic-content">Skip to evidence</a>
-  <SiteHeader active="topics" />
+  <SiteHeader locale={defaultLocale} path={path} active="topics" />
   <main class="topic-page" id="topic-content">
     <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/#topics">Explore</a></li><li aria-current="page">{title}</li></ol></nav>
     <section class="topic-hero">

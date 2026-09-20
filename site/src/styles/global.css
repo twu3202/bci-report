@@ -78,6 +78,19 @@ header{
 nav{display:flex;gap:26px;font-size:.875rem}
 nav a[aria-current]{color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
 
+/* Language switcher. Pushed to the trailing edge with `margin-left:auto` rather
+   than a fixed width, so it stays put whichever locale's nav is longer — the
+   Chinese labels are visibly narrower than the English ones. */
+.lang{
+  margin-left:auto;display:flex;align-items:center;gap:9px;
+  font-size:.8125rem;white-space:nowrap;
+}
+.lang a{color:var(--muted);border-bottom:1px solid transparent}
+.lang a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.lang-on{color:var(--ink);font-weight:600}
+.lang-on::before{content:"";display:inline-block;width:5px;height:5px;margin-right:6px;
+  border-radius:50%;background:var(--accent);vertical-align:middle}
+
 main{max-width:1412px;margin:auto;padding:0 26px}
 
 /* --- Standing head --------------------------------------------------------
@@ -279,6 +292,9 @@ td .flag{margin-top:6px}
 @media(max-width:860px){
   header{gap:18px;padding:11px 20px}
   nav{gap:15px}
+  /* The switcher keeps its own row at phone width: `margin-left:auto` on a
+     wrapped flex line would otherwise strand it alone against the right edge. */
+  .lang{margin-left:0;order:-1;width:100%;justify-content:flex-end}
   main{padding:0 20px}
   .masthead{display:block;padding:24px 0 18px}
   .masthead h1{font-size:1.7rem}

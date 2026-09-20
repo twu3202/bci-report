@@ -1,65 +1,88 @@
+<div align="center">
+
 # BCI Report
 
-An English-language workbench for public EEG evaluation. Every score is reported
-with the protocol that produced it — cohort, electrode count, training budget,
-chance level and known limitations — rather than as a universal model ranking.
+**Every EEG decoding score, reported with the protocol that produced it.**
 
-**Status: research preview `research-preview-20260920`, live at <https://bci.report>.**
-8 protocols · 7 distinct datasets · 39 displayed configurations · 9 methods.
+[![Website](https://img.shields.io/badge/site-bci.report-b3450e)](https://bci.report)
+[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-Twu31%2Fbci--report-yellow)](https://huggingface.co/datasets/Twu31/bci-report)
+[![License](https://img.shields.io/badge/results-CC%20BY%204.0-blue)](https://creativecommons.org/licenses/by/4.0/)
 
-The same 39 results are mirrored as a Hugging Face dataset,
-[`Twu31/bci-report`](https://huggingface.co/datasets/Twu31/bci-report), built by
-`pipeline/publication/build_hf_dataset.py` from the payload the site already
-serves — no second export path, so both mirrors pass the same gate.
+[Website](https://bci.report) · [Dataset](https://huggingface.co/datasets/Twu31/bci-report) · [Data use & privacy](https://bci.report/data-use/)
 
-> ### Scope of this repository
->
-> Raw EEG, model weights and per-participant results are **not** here and must
-> not be added — see `.gitignore` and `/data-use/` on the site.
->
-> `docs/` is gitignored: internal planning, run records and interpretation
-> notes, written for the operator and a reviewer rather than for readers. It
-> stays on disk and out of the public record. Absolute paths are gitignored the
-> same way (`pipeline/publication/local_paths.json`); everything committed uses
-> `<evidence-root>/`, `<repo>/` and `<workstation-home>/` placeholders instead of
-> naming one machine's directory layout.
+</div>
 
-> ### The name `bciarena` still appears, on purpose
->
-> The project was renamed from BCI Arena on 2026-09-20. Two places keep the old
-> string and should not be "fixed":
->
-> - `run_by: "bciarena"` is a stable internal provenance tag written into every
->   `verified_results.csv` row. It is never displayed; renaming it would
->   invalidate the existing store. See the comment at `pipeline/validation.py`.
-> - `research/` holds dated records of decisions made when the project was still
->   heading for `bciarena.ai`, including why that domain was dropped. Editing
->   them to match a later rename would make the evidence trail say something
->   that was not true at the time.
+---
 
-## Layout
+A benchmark is only readable with its conditions. BCI Report publishes EEG
+decoding results together with the cohort, electrode count, evaluation mode,
+chance level, training budget and known limitations that produced each number —
+and refuses to collapse them into one ranking, because the protocols do not
+share a scale.
 
-| Path | What it is |
-|---|---|
-| `site/` | The Astro static site. The page reads only `site/src/data/mvp.json`. |
-| `pipeline/publication/` | The release boundary: `export_snapshot.py` builds the public snapshot from reviewed runs; `check_site_artifact.py` inspects the built payload. |
-| `pipeline/` | Literature catalogue, verified-result store, news ingestion with a manual approval gate. |
-| `data/` | Hand-maintained catalogues (models, benchmarks, verified results, curated news). |
-| `docs/` | **Not in git.** Plans, run records and interpretation notes. Internal. |
-| `research/` | Rights and privacy review evidence, screening and acquisition records. |
-| `experiments/` | **Not in git.** Raw data, prepared arrays, weights, run outputs (7+ GB, local and on an external volume). |
+**121 reviewed measurements.** 39 model-by-protocol scores across 8 fixed
+protocols and 7 public datasets, plus 82 measurements across 4 deployment
+questions. No raw EEG, no per-participant scores, no model weights.
 
-## What is published
+## Get the data
 
-Only cohort-level aggregates. The flow is: private sources → fixed local
-experiments → independent audits → source and model release decisions →
-field-selected export → `site/dist/` → host → visitor. Raw EEG, trial rows,
-participant identifiers, embeddings, trained heads and pretrained weights never
-cross the export boundary. Aggregate publication does not by itself resolve
-every upstream processing right, which is what the review evidence in
-`research/publication_review_20260920/` is for.
+```python
+from datasets import load_dataset
 
-## Checks
+load_dataset("Twu31/bci-report", "results")   # 39 protocol × model scores
+load_dataset("Twu31/bci-report", "topics")    # 82 deployment-condition measurements
+```
+
+Or straight from the site, no account:
+
+```bash
+curl -O https://bci.report/data/experiments.json        # full release snapshot
+curl -O https://bci.report/data/deployment-topics.json  # the four topic questions
+```
+
+## What is measured
+
+| Protocol | Dataset | Cohort | Chance |
+|---|---|---:|---:|
+| Motor imagery vs. rest | ds003810 | 10 | 50% |
+| SSVEP, 4 and 8 electrodes | BETA | 70 | 2.5% |
+| P300 target | ds006593 | 21 | 50% |
+| Semantic target | TMNRED | 30 | 50% |
+| Mental arithmetic | EEGMAT | 36 | 50% |
+| Sleep staging | EESM19 | 20 | 20% |
+| Idle false activation | ds005342 | 4 | — |
+
+Four deployment questions sit alongside, each with its own protocol:
+[dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
+[standing, walking, running](https://bci.report/topics/on-the-move/) ·
+[what calibration buys](https://bci.report/topics/calibration-budget/) ·
+[does pretraining help](https://bci.report/topics/does-pretraining-help/)
+
+## Read this before ranking anything
+
+- **Chance level differs per protocol.** 57% on 40-class SSVEP is far above
+  chance; 57% on a binary task is barely above it. Sorting across protocols
+  compares numbers that do not share a scale.
+- **Intervals are descriptive.** Bootstrap spreads over the scoring set, not
+  confidence intervals, and not a basis for significance claims.
+- **Most comparisons use one seed.** Two protocols add a three-seed check.
+- **Electrode subsets are not headsets.** A 4-channel subset of a lab recording
+  does not validate a 4-channel device.
+- **A small cohort is close to its parts.** The idle protocol has four people,
+  and its published mean can be turned back into a count. The arithmetic is
+  [written out on the site](https://bci.report/data-use/#small-cohorts) rather
+  than left for a reader to discover.
+
+## How it is built
+
+Private sources → fixed local experiments → independent audits → source and
+model release decisions → reviewed export → `site/dist/` → host.
+
+Raw EEG, trial rows, participant identifiers, embeddings, trained heads and
+pretrained weights never cross the export boundary. Every published number is
+reproduced from pinned inputs and checked against a review audit before it can
+ship; the Hugging Face mirror is built from the same bytes the site serves, so
+there is no second export path.
 
 ```bash
 cd site && npm run build && node scripts/check-workbench.mjs
@@ -68,54 +91,39 @@ cd site && npm run build && node scripts/check-workbench.mjs
 .venv/bin/python pipeline/publication/check_site_artifact.py
 ```
 
-`check_site_artifact.py` compares the built payload against the recorded build
-and fails on drift; re-run with `--accept` after an intended change. Passing it
-is not proof of anonymity — it matches known-bad shapes and cannot reason about
-reconstruction from small denominators. See `site/VALIDATION.md`.
+Passing these is not proof of anonymity. They match known-bad shapes and cannot
+reason about reconstruction from small denominators — which is why the idle
+cohort's invertibility is disclosed rather than asserted away.
 
-The release tests and the export both need the run outputs, which live on an
-external volume. Copy `pipeline/publication/local_paths.example.json` to
-`local_paths.json` and point it at your own; without it the tests that read real
-runs skip rather than pass quietly. Regenerating the published snapshot:
+| Path | What it is |
+|---|---|
+| `site/` | The Astro site. Zero framework JS; the coverage matrix is server-rendered. |
+| `pipeline/publication/` | The release boundary: reviewed export, artifact inspection, dataset mirror. |
+| `pipeline/` | Literature catalogue, verified-result store, news ingestion with a manual gate. |
+| `data/` | Hand-maintained catalogues of models, benchmarks and verified results. |
+| `research/` | Rights and privacy review evidence, per dataset. |
 
-```bash
-.venv/bin/python pipeline/publication/export_snapshot.py \
-  --manifest research/publication_review_20260920/release-manifest.json \
-  --legacy   research/publication_review_20260920/previous-mvp.private.json \
-  --batch    "$(jq -r .batchState pipeline/publication/local_paths.json)" \
-  --beta-root "$(jq -r .betaRoot pipeline/publication/local_paths.json)" \
-  --output   research/publication_review_20260920/release-output
-```
+## Corrections
 
-Then copy `mvp.json` to `site/src/data/` and `data/*` to `site/public/data/`.
+Scientific corrections, benchmark-method questions, and rights, privacy or
+attribution concerns are welcome — **including ones that would withdraw a
+published result.** Affected results can be withheld while an issue is reviewed.
 
-## Still open
+Open an issue, or write to <contact@bci.report> for scientific corrections and
+<privacy@bci.report> for rights, privacy and withdrawal requests. Please do not
+send raw EEG, participant names or health records.
 
-1. **Zone settings live outside this repository.** HTTP→HTTPS is a zone switch
-   (Cloudflare → SSL/TLS → Edge Certificates → Always Use HTTPS), enabled
-   2026-09-20; `http://bci.report/` now answers `301` to the HTTPS origin. It
-   could not have been fixed from here: `_redirects` matches path only and
-   explicitly does not support scheme or domain rules — a rule was written,
-   deployed, proven ineffective and removed. The same ceiling applies to
-   everything else at the zone: the OAuth token wrangler obtains carries
-   `zone:read` only, which is the whole zone scope the login flow offers, so
-   DNS and Email Routing changes need the dashboard or a separately created API
-   token.
-2. **The domain receives mail but does not send it.** `contact@bci.report` and
-   `privacy@bci.report` are live and were verified end to end on 2026-09-20
-   (public-resolver MX and SPF, verified destination, enabled rules, catch-all
-   left at `drop`, and a real message from an outside mailbox delivered).
-   Cloudflare Email Routing is inbound forwarding only, and sending *as* the
-   domain was declined for now on cost, so replies come from the maintainer's
-   own mailbox — `/data-use/` says so. DMARC is `p=reject`, which is what a
-   non-sending domain wants; adding sending later means revisiting SPF, DKIM and
-   DMARC together. One switch for all of it: `site/src/data/site.ts`.
-3. **The host injects an analytics beacon.** Cloudflare Web Analytics adds
-   `static.cloudflareinsights.com/beacon.min.js` to every response at the edge.
-   The site's own CSP (`script-src 'self'`) blocks it, so it does not execute,
-   and `/data-use/` remains accurate as written. If Web Analytics is ever wanted
-   for real, both have to change together — the CSP to let it load, and that
-   sentence to disclose it.
-4. The superseded `site/.git.superseded-20260920` holds the previous single-commit
-   history, which contained per-participant rows. It is local only and is
-   gitignored. Do not push it anywhere.
+## Credit and licence
+
+Results were computed from public datasets released by other researchers. Credit
+belongs to them; this project adds only the measurements. Every published row
+carries its own source, licence and attribution.
+
+The aggregate result tables and protocol descriptors are
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). That covers the
+measurements this project produced — it does not and cannot relicense the
+underlying recordings, which keep their own terms.
+
+> **Status: research preview.** Six of eight protocols run a single seed, the
+> smallest cohort is four people, and 9 of 18 catalogued methods have been
+> scored. The label comes off when that changes, not before.

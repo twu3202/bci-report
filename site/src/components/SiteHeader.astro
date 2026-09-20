@@ -1,17 +1,43 @@
 ---
+/**
+ * The one header. Three pages used to carry their own copy of this markup, and
+ * they had already drifted — index.astro listed an "Updates" link the shared
+ * component did not have. A language switcher would have made that four copies
+ * to keep in step, so the copies go first.
+ */
 import { site } from '../data/site';
-interface Props { active?: 'topics' | 'data-use' | 'home' }
-const { active } = Astro.props;
+import { chrome, localeNames, locales, localizePath, swapLocale, type Locale } from '../data/i18n';
+
+interface Props {
+  locale: Locale;
+  /** Current path without a locale prefix, e.g. `/` or `/topics/on-the-move/`. */
+  path: string;
+  active?: 'home' | 'topics' | 'data-use';
+  /** The homepage anchors work in place; other pages have to travel home first. */
+  anchorsAreLocal?: boolean;
+}
+const { locale, path, active, anchorsAreLocal = false } = Astro.props;
+const t = chrome[locale];
+const home = localizePath('/', locale);
+const anchor = (id: string) => (anchorsAreLocal ? `#${id}` : `${home}#${id}`);
+const current = localizePath(path, locale);
 ---
 <header>
-  <a class="brand" href="/"><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{site.stage}</small></a>
-  <nav aria-label="Main navigation">
-    <a href="/#overview" aria-current={active === 'home' ? 'page' : undefined}>Results</a>
-    <a href="/#topics" aria-current={active === 'topics' ? 'page' : undefined}>Explore</a>
-    <a href="/#benchmarks">Protocols</a>
-    <a href="/#models">Models</a>
-    <a href="/#datasets">Datasets</a>
-    <a href="/data-use/" aria-current={active === 'data-use' ? 'page' : undefined}>Data use</a>
+  <a class="brand" href={home}><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{t.stage}</small></a>
+  <nav aria-label={t.mainNav}>
+    <a href={anchor('overview')} aria-current={active === 'home' ? 'page' : undefined}>{t.nav.results}</a>
+    <a href={anchor('topics')} aria-current={active === 'topics' ? 'page' : undefined}>{t.nav.explore}</a>
+    <a href={anchor('benchmarks')}>{t.nav.protocols}</a>
+    <a href={anchor('models')}>{t.nav.models}</a>
+    <a href={anchor('datasets')}>{t.nav.datasets}</a>
+    <a href={anchor('news')}>{t.nav.updates}</a>
+    <a href={localizePath('/data-use/', locale)} aria-current={active === 'data-use' ? 'page' : undefined}>{t.nav.dataUse}</a>
   </nav>
+  <div class="lang" role="group" aria-label={t.languageLabel}>
+    {locales.map((code) => (
+      code === locale
+        ? <span class="lang-on" aria-current="true">{localeNames[code]}</span>
+        : <a href={swapLocale(current, code)} hreflang={code} rel="alternate">{localeNames[code]}</a>
+    ))}
+  </div>
 </header>
-

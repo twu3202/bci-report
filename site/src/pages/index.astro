@@ -4,6 +4,8 @@ import deployment from '../data/deployment-topics.json';
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
 import { homeDataset, websiteEntity } from '../data/structured';
+import { chrome, defaultLocale } from '../data/i18n';
+import SiteHeader from '../components/SiteHeader.astro';
 import '../styles/global.css';
 import '../styles/matrix.css';
 import '../styles/generated.css';
@@ -14,6 +16,8 @@ const canonical=new URL('/',Astro.site ?? site.origin).href;
 const ogImage=new URL('/og.png',Astro.site ?? site.origin).href;
 const title=`${site.name} · Public EEG Model Evaluation`;
 const chanceOf=(t:typeof tracks[number])=>(t as {chanceLevel?:number|null}).chanceLevel ?? null;
+const locale=defaultLocale;
+const t=chrome[locale];
 
 // The same caveats workbench.ts attaches on re-render, applied to the first
 // paint so the static HTML — what a crawler and a no-JS reader get — carries
@@ -79,8 +83,8 @@ const stats=[
 <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={site.description}/><meta name="twitter:image" content={ogImage}/>
 <script type="application/ld+json" set:html={JSON.stringify(homeDataset())}/>
 <script type="application/ld+json" set:html={JSON.stringify(websiteEntity())}/></head>
-<body><a class="skip" href="#overview">Skip to results</a>
-<header><a class="brand" href="/"><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{site.stage}</small></a><nav aria-label="Main navigation"><a href="#overview">Results</a><a href="#topics">Explore</a><a href="#benchmarks">Protocols</a><a href="#models">Models</a><a href="#datasets">Datasets</a><a href="#news">Updates</a><a href="/data-use/">Data use</a></nav></header>
+<body><a class="skip" href="#overview">{t.skipToResults}</a>
+<SiteHeader locale={locale} path="/" active="home" anchorsAreLocal={true}/>
 <main><section class="masthead"><div><p class="eyebrow">Open EEG evaluation · Snapshot {data.generatedAt.slice(0,10)}</p><h1>Every EEG score, with the protocol that produced it.</h1><p class="lede">The core matrix covers {matrixRows.length} decoding methods under {data.coverage.displayedProtocols} fixed protocols on {datasetCount} public datasets. Four deployment topics add {deployment.rows.length} measurements on sensors, movement, calibration and pretraining.</p></div><dl class="stat-rail" aria-label="Core matrix coverage">{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}<span class="live"><i></i>{site.stage}</span></dl></section>
 
 <section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">Deployment questions</p><h2>Four ways to read the new evidence</h2></div><p>{deployment.rows.length} additional aggregate measurements, organized by the decision they can inform. They are repeated conditions within protocols, not {deployment.rows.length} independent experiments and not an overall ranking.</p></div>
