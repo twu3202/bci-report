@@ -1,7 +1,7 @@
 {
   "status": "pass",
   "releaseId": "research-preview-20260920",
-  "files": 26,
+  "files": 28,
   "downloadFiles": 17,
   "comparisons": 39,
   "protocols": 8,
@@ -16,10 +16,11 @@
     "hashes compared against the previous audit record"
   ],
   "built_artifact_sha256": {
-    "404.html": "2f5278b8caa94e91e2329f29c1a8490f949b081a492d93c5c8d2cb81ce776241",
+    "404.html": "1fa019e52cb00652f9cf9aca883726b1b37d816310d7ebe6619e847a33cec2a6",
     "_astro/global.D7X91FcY.css": "74415d987cb507a5984544987510130f16defac1fed146dbf6aa1faa719bb745",
     "_astro/index.astro_astro_type_script_index_0_lang.D_6de4SV.js": "da7539ca9b265fe791bbb840016855d56e99883cf8d899e101018a6538c89886",
-    "data-use/index.html": "e0fa707a979f882cc86822b238aa4cb2a34b9099c52bbfbba2198b6c5eb65f83",
+    "apple-touch-icon.png": "48ece99723ed026338cee9302322ef65d79038f6f68c6e8d7697d76ddb17c896",
+    "data-use/index.html": "02ac06b1841e35461bef62e0b39d0791eb2f0204b8e0b3f627625658bb8a8536",
     "data/arithmetic-rest-protocol.json": "a2d8a9f182916b1ae611b163d65b3b7184bdbf79e4fa39ee47e778c02c301c6b",
     "data/arithmetic-rest-results.csv": "bed02323936f2980eac7bf3a8e8b2595630fa1609c1466600d33acc2f83928dc",
     "data/beta-4ch-protocol.json": "749d13951729e00935724fce9b790e8f23978e3290a9dd9df6e5a276736e69a1",
@@ -37,8 +38,9 @@
     "data/semantic-target-results.csv": "b4baad3795b5512a033609512c90055894caf915b62c9c303fd77310d98caaaa",
     "data/sleep-scalp-protocol.json": "2acf18c0ba2f94329fc103a36452e76e4f2fe60509228edff778055d0e252afe",
     "data/sleep-scalp-results.csv": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
+    "favicon.ico": "2a4d3ac4eb5a2047ca3944ada41976898e947ca14e7f7defe1a2a30c29bbbf14",
     "favicon.svg": "3846e4d746f433bde61ebb627c69450d26e2891a615e36ed699fd638f4b1a114",
-    "index.html": "2fe1c3c1a367ae0c07063d9450477f46a60ae78e64c602e893c242b2eed55172",
+    "index.html": "97d2d8d5012fc90b907fda00b284433de6205d429f4240446c659c1b6d90eb38",
     "og.png": "3f6e5c05a5e79d0d6ed6b0fdb0d60b7b83814c96cf2bc39a16558520017993ca",
     "robots.txt": "ceebe7407a9b35fa88d7d567d9acb27088922709760623f2c81a11f70a44f4dc",
     "sitemap.xml": "1c591638c640eea65e1d4dd392d2ee61a12b403ac061f8d794beba3e8b741ab3"
