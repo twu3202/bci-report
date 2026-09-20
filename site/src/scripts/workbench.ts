@@ -4,7 +4,10 @@ type Row=Track['rows'][number];
 const $=<T extends HTMLElement=HTMLElement>(s:string)=>document.querySelector<T>(s)!;
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 let track:Track=data.tracks[0];
-const colors=['#143bd1','#0f947a','#ad6d21','#9754b7','#d25e74','#567994','#6b832e','#7a6a56'];
+/* Warm series, deliberately with no blue in it: slate blue is reserved for the
+   chance reference line, which must never read as one more model. */
+const colors=['#b3450e','#1f6f63','#8a6d1f','#7a4a8c','#a8382f','#5c7a2e','#93552a','#6b3f5e'];
+const CHANCE_LINE='#2f5f74';
 const pct=(v:number)=>v.toFixed(1)+'%';
 const xValue=(r:Row)=>track.type==='tradeoff'?pct(r.x):r.x.toFixed(3);
 
@@ -62,6 +65,16 @@ function chanceFlag(r:Row){
   if(iv&&iv[0]<=c)return '<span class="flag">Interval reaches the '+c+'% chance level</span>';
   return '';
 }
+/* All eight protocols are listed as tabs rather than hidden in a <select>, so
+   the shape of the release is visible before anything is chosen. Roving
+   tabindex keeps the group a single stop in the tab order. */
+const tabs=[...document.querySelectorAll<HTMLElement>('.track-tab')];
+function syncTabs(){
+  $('#track-tabs').setAttribute('data-active',track.id);
+  $('#track-panel').setAttribute('aria-labelledby','tab-'+track.id);
+  for(const b of tabs){const on=b.dataset.track===track.id;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;}
+}
+
 const dialog=$<HTMLDialogElement>('#detail-dialog');
 function show(title:string,body:string){$('#dialog-title').textContent=title;$('#dialog-body').innerHTML=body;dialog.showModal();}
 function visibleRows(){const f=$<HTMLSelectElement>('#family-filter').value,s=$<HTMLSelectElement>('#sort-results').value;return track.rows.filter(r=>f==='all'||r.family===f).slice().sort((a,b)=>s==='y-desc'?b.y-a.y:s==='x-asc'?(track.type==='tradeoff'?a.x-b.x:b.x-a.x):a.name.localeCompare(b.name));}
@@ -72,7 +85,7 @@ $('#track-meta').textContent=track.dataset+' · '+track.subjects+' subjects · '
 $('#track-limitation').textContent=track.limitation;
 $('#track-rights').textContent=track.license+' · Aggregate research results';
 $<HTMLAnchorElement>('#track-source').href=track.source;
-$<HTMLSelectElement>('#track-select').value=track.id;
+syncTabs();
 $('#secondary-sort').textContent=track.type==='tradeoff'?'Secondary metric ↑':'Secondary metric ↓';
 $('#metric-y-heading').textContent=track.yLabel;$('#metric-x-heading').textContent=track.xLabel;
 $<HTMLAnchorElement>('#download-results').href='/data/'+track.id+'-results.csv';
@@ -95,10 +108,10 @@ $('#chart-legend').innerHTML=rows.map((r,i)=>'<span><i style="background:'+color
 if(!rows.length){$('#result-chart').innerHTML='<p class="empty">No results to display</p>';return;}
 const x0=38,y0=176,w=210,h=145;
 let svg='<svg viewBox="0 0 280 220" role="img" aria-label="'+esc(track.yLabel)+' and '+esc(track.xLabel)+' chart">';
-[0,25,50,75,100].forEach(v=>{const y=y0-h*v/100;svg+='<line x1="'+x0+'" x2="'+(x0+w)+'" y1="'+y+'" y2="'+y+'" stroke="#e0e5ee"/><text x="29" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';});
+[0,25,50,75,100].forEach(v=>{const y=y0-h*v/100;svg+='<line x1="'+x0+'" x2="'+(x0+w)+'" y1="'+y+'" y2="'+y+'" stroke="#e7dccd"/><text x="29" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';});
 if(tradeoff){const maxX=Math.max(5,...rows.map(r=>r.x))*1.2;
 [0,maxX/2,maxX].forEach(v=>{const x=x0+w*v/maxX;svg+='<text x="'+x+'" y="195" text-anchor="middle">'+v.toFixed(1)+'%</text>';});
-rows.forEach((r,i)=>{const x=x0+w*r.x/maxX,y=y0-h*r.y/100;svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+colors[i%colors.length]+'" stroke="white" stroke-width="1.5"><title>'+esc(r.name)+': detection '+pct(r.y)+', false activation '+pct(r.x)+'</title></circle>';});
+rows.forEach((r,i)=>{const x=x0+w*r.x/maxX,y=y0-h*r.y/100;svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+colors[i%colors.length]+'" stroke="#fffdfa" stroke-width="1.5"><title>'+esc(r.name)+': detection '+pct(r.y)+', false activation '+pct(r.x)+'</title></circle>';});
 svg+='<text x="145" y="216" text-anchor="middle">Idle false activation rate →</text><text x="38" y="16">Command detection % ↑</text>';
 }else{const gap=w/rows.length,chance=chanceOf(track);
 // Without this line a 10.8% on a 40-class task and a 49.4% on a 2-class task
@@ -106,13 +119,25 @@ svg+='<text x="145" y="216" text-anchor="middle">Idle false activation rate →<
 // Named in the note rather than on the line: at 2.5% chance the label would sit
 // on top of the bars, and the note has room to say what the line means.
 if(chance!==null){const cy=y0-h*chance/100;
-svg+='<line x1="'+x0+'" x2="'+(x0+w)+'" y1="'+cy+'" y2="'+cy+'" stroke="#d25e74" stroke-width="1" stroke-dasharray="4 3"/>';}
-rows.forEach((r,i)=>{const x=x0+gap*(i+.5),height=h*r.y/100;svg+='<rect x="'+(x-gap*.25)+'" y="'+(y0-height)+'" width="'+gap*.5+'" height="'+height+'" rx="2" fill="'+colors[i%colors.length]+'"><title>'+esc(r.name)+'：'+pct(r.y)+'</title></rect><text x="'+x+'" y="'+(y0-height-7)+'" text-anchor="middle">'+r.y.toFixed(1)+'</text><text x="'+x+'" y="195" text-anchor="middle">'+(i+1)+'</text>';if('interval' in r&&Array.isArray(r.interval)){const [a,b]=r.interval;svg+='<path d="M'+x+','+(y0-h*a/100)+'V'+(y0-h*b/100)+' M'+(x-4)+','+(y0-h*a/100)+'h8 M'+(x-4)+','+(y0-h*b/100)+'h8" stroke="#17213b" stroke-width="1"/>';}});
+svg+='<line x1="'+x0+'" x2="'+(x0+w)+'" y1="'+cy+'" y2="'+cy+'" stroke="'+CHANCE_LINE+'" stroke-width="1.2" stroke-dasharray="5 3"/>';}
+rows.forEach((r,i)=>{const x=x0+gap*(i+.5),height=h*r.y/100;svg+='<rect x="'+(x-gap*.25)+'" y="'+(y0-height)+'" width="'+gap*.5+'" height="'+height+'" rx="2" fill="'+colors[i%colors.length]+'"><title>'+esc(r.name)+'：'+pct(r.y)+'</title></rect><text x="'+x+'" y="'+(y0-height-7)+'" text-anchor="middle">'+r.y.toFixed(1)+'</text><text x="'+x+'" y="195" text-anchor="middle">'+(i+1)+'</text>';if('interval' in r&&Array.isArray(r.interval)){const [a,b]=r.interval;svg+='<path d="M'+x+','+(y0-h*a/100)+'V'+(y0-h*b/100)+' M'+(x-4)+','+(y0-h*a/100)+'h8 M'+(x-4)+','+(y0-h*b/100)+'h8" stroke="#241c15" stroke-width="1"/>';}});
 svg+='<text x="38" y="16">Balanced accuracy % ↑</text><text x="145" y="216" text-anchor="middle">Configurations follow legend order</text>';
 }$('#result-chart').innerHTML=svg+'</svg>';
 }
 function selectTrack(id:string){const found=data.tracks.find(t=>t.id===id);if(!found)throw new Error('Unknown track');track=found;$('#track-panel').setAttribute('aria-label',track.title+' results');render();}
-$('#track-select').addEventListener('change',()=>selectTrack($<HTMLSelectElement>('#track-select').value));
+$('#track-tabs').addEventListener('click',e=>{const b=(e.target as HTMLElement).closest<HTMLElement>('.track-tab');if(b?.dataset.track)selectTrack(b.dataset.track);});
+$('#track-tabs').addEventListener('keydown',e=>{
+  const key=(e as KeyboardEvent).key,at=tabs.findIndex(b=>b.dataset.track===track.id);
+  const next=key==='ArrowRight'||key==='ArrowDown'?at+1:key==='ArrowLeft'||key==='ArrowUp'?at-1:key==='Home'?0:key==='End'?tabs.length-1:-1;
+  if(next<0&&key!=='Home')return;
+  e.preventDefault();
+  const target=tabs[(next+tabs.length)%tabs.length];
+  if(!target?.dataset.track)return;
+  selectTrack(target.dataset.track);target.focus();
+});
+/* A column heading in the coverage matrix opens that protocol below. The href
+   still works without JavaScript; it just lands on the default protocol. */
+$('#overview').addEventListener('click',e=>{const a=(e.target as HTMLElement).closest<HTMLElement>('[data-jump]');if(a?.dataset.jump)selectTrack(a.dataset.jump);});
 $('#family-filter').addEventListener('change',render);$('#sort-results').addEventListener('change',render);
 $('#open-protocol').addEventListener('click',()=>show(track.title+' · Protocol',
 '<p>'+esc(track.subtitle)+'</p><ol>'+track.protocol.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+

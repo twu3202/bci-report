@@ -1,3 +1,96 @@
-.section{padding-top:64px}.section-heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px;gap:24px}.section-heading>p{font-size:.875rem}.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.model-card{border:1px solid var(--line);border-radius:8px;padding:20px;display:flex;flex-direction:column}.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.family,.status{font-size:.75rem}.family{color:var(--muted)}.status{padding:2px 7px;background:#f1f2f6;border-radius:4px;color:#5d6575}.status.ready{color:#226e5b;background:#eaf6f1}.model-card h3{margin-top:15px;font-size:1.25rem}.parameter{font-size:1.7rem;color:var(--ink);letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:5px 0}.parameter span{font-size:.75rem;letter-spacing:0;color:var(--muted)}.model-card>p:not(.parameter){font-size:.875rem;flex:1}.card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #edf0f6;padding-top:13px;margin-top:20px;font-size:.75rem;gap:12px}.card-footer span{color:var(--muted)}.card-footer a{color:var(--blue);white-space:nowrap}.dataset-list{border-top:1px solid var(--line)}.dataset-row{display:grid;grid-template-columns:minmax(0,1fr) 300px 200px;align-items:center;gap:35px;padding:24px 0;border-bottom:1px solid var(--line)}.dataset-row h3{margin:5px 0}.dataset-row p{font-size:.875rem}.dataset-row dl{display:flex;justify-content:space-between;gap:15px;margin:0}.dataset-row dt{font-size:.75rem;color:var(--muted)}.dataset-row dd{margin:4px 0 0;font-size:1.1rem;font-variant-numeric:tabular-nums}.dataset-status{text-align:right}.dataset-status small{margin-top:7px}.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.news-card{border-top:2px solid var(--ink);padding-top:15px}.news-card time{font-size:.75rem;color:var(--muted);white-space:nowrap}.news-card h3{margin:18px 0 10px;line-height:1.65}.news-card p{font-size:.875rem}.source{display:block;font-size:.75rem;color:var(--muted);margin-top:18px}.methods{display:grid;grid-template-columns:1fr 1.5fr;gap:70px;border-top:1px solid var(--line);margin-top:64px;padding:40px 0 0}.methods>div>p:not(.eyebrow){font-size:.9375rem;margin:15px 0 20px}.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.method-grid article>span{font-size:.75rem;color:var(--blue);font-weight:650}.method-grid h3{font-size:.9375rem;margin:5px 0 7px}.method-grid p{font-size:.875rem}.detail-note{margin-top:20px}@media(max-width:1100px){.dataset-row{grid-template-columns:1fr 260px;gap:20px}.dataset-status{grid-column:1/-1;text-align:left}.methods{gap:30px}}@media(max-width:800px){.model-grid,.news-grid{grid-template-columns:1fr 1fr}.methods{grid-template-columns:1fr}.section-heading{display:block}.section-heading>p{margin-top:10px}}@media(max-width:520px){.model-grid,.news-grid{grid-template-columns:1fr}.dataset-row{grid-template-columns:1fr;gap:14px}.dataset-row dl{justify-content:start;gap:35px}.dataset-status{grid-column:auto}.section{padding-top:42px}.method-grid{grid-template-columns:1fr}.methods{padding-top:30px;margin-top:42px}.news-card{padding-bottom:10px}}
+/* ---------------------------------------------------------------------------
+   Directory sections: model cards, dataset register, field notes, method notes.
+   Same warm-paper treatment as global.css — rules instead of shadows, square
+   corners instead of pills, monospace for anything numeric.
+   --------------------------------------------------------------------------- */
 
-.card-top{flex-wrap:wrap}.card-footer{align-items:start}.dataset-row dl{min-width:0}.dataset-row dl>div{min-width:0}.dataset-row dd{font-size:.9375rem;overflow-wrap:anywhere}.dataset-status .status{display:inline-block}.model-card h3{margin-top:12px}.dataset-row{grid-template-columns:minmax(0,1fr) 280px 220px}.model-card>p{overflow-wrap:anywhere}@media(max-width:1100px){.dataset-row{grid-template-columns:minmax(0,1fr) 260px}.dataset-status{grid-column:1/-1}}@media(max-width:520px){.dataset-row{grid-template-columns:1fr}}
+.section{padding-top:60px}
+.section-heading{
+  display:flex;justify-content:space-between;align-items:end;gap:24px;
+  margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rule);
+}
+.section-heading>p{font-size:.875rem;max-width:460px}
+
+/* --- Model directory ------------------------------------------------------ */
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.model-card{background:var(--panel);padding:18px;display:flex;flex-direction:column}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.family,.status{font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase}
+.family{color:var(--muted);font-weight:600}
+.status{padding:2px 7px;background:var(--soft);border-radius:2px;color:var(--muted);font-weight:600}
+.status.ready{color:var(--good);background:var(--good-bg)}
+.model-card h3{margin-top:12px;font-family:var(--serif);font-size:1.22rem;font-weight:600}
+.parameter{
+  font-family:var(--mono);font-size:1.5rem;color:var(--ink);letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;margin:4px 0 6px;
+}
+.parameter span{font-family:var(--sans);font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.model-card>p:not(.parameter){font-size:.8125rem;flex:1;overflow-wrap:anywhere}
+.card-footer{
+  display:flex;align-items:start;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line);padding-top:11px;margin-top:16px;font-size:.6875rem;
+}
+.card-footer span{color:var(--muted)}
+.card-footer a{color:var(--accent);white-space:nowrap}
+
+/* --- Dataset register ----------------------------------------------------- */
+.dataset-list{border-top:1px solid var(--rule)}
+.dataset-row{
+  display:grid;grid-template-columns:minmax(0,1fr) 270px 210px;
+  align-items:center;gap:30px;padding:20px 0;border-bottom:1px solid var(--line);
+}
+.dataset-row h3{margin:4px 0;font-family:var(--serif);font-size:1.12rem;font-weight:600}
+.dataset-row p{font-size:.8125rem}
+.dataset-row dl{display:flex;justify-content:space-between;gap:14px;margin:0;min-width:0}
+.dataset-row dl>div{min-width:0}
+.dataset-row dt{font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dataset-row dd{
+  margin:3px 0 0;font-family:var(--mono);font-size:.9375rem;
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+.dataset-status{text-align:right}
+.dataset-status .status{display:inline-block}
+.dataset-status small{margin-top:6px}
+.dataset-status a{color:var(--accent)}
+
+/* --- Field notes ---------------------------------------------------------- */
+.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.news-card{border-top:2px solid var(--ink);padding-top:13px}
+.news-card time{font-family:var(--mono);font-size:.6875rem;color:var(--muted);white-space:nowrap}
+.news-card h3{margin:14px 0 9px;font-family:var(--serif);font-size:1.08rem;font-weight:600;line-height:1.42}
+.news-card p{font-size:.8125rem}
+.source{display:block;font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+
+/* --- Method notes --------------------------------------------------------- */
+.methods{
+  display:grid;grid-template-columns:1fr 1.5fr;gap:60px;
+  border-top:3px double var(--rule);margin-top:60px;padding:36px 0 0;
+}
+.methods>div>p:not(.eyebrow){font-size:.9375rem;margin:13px 0 18px}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
+.method-grid article{padding-top:12px;border-top:1px solid var(--line)}
+.method-grid article>span{font-family:var(--mono);font-size:.75rem;color:var(--accent);font-weight:600}
+.method-grid h3{font-size:.9375rem;margin:4px 0 6px}
+.method-grid p{font-size:.8125rem}
+.detail-note{margin-top:18px}
+
+@media(max-width:1180px){
+  .dataset-row{grid-template-columns:minmax(0,1fr) 250px;gap:20px}
+  .dataset-status{grid-column:1/-1;text-align:left}
+  .methods{gap:30px}
+}
+@media(max-width:860px){
+  .model-grid,.news-grid{grid-template-columns:1fr 1fr}
+  .methods{grid-template-columns:1fr}
+  .section-heading{display:block}
+  .section-heading>p{margin-top:9px}
+}
+@media(max-width:560px){
+  .model-grid,.news-grid{grid-template-columns:1fr}
+  .dataset-row{grid-template-columns:1fr;gap:12px}
+  .dataset-row dl{justify-content:start;gap:32px}
+  .dataset-status{grid-column:auto}
+  .section{padding-top:40px}
+  .method-grid{grid-template-columns:1fr}
+  .methods{padding-top:28px;margin-top:40px}
+}

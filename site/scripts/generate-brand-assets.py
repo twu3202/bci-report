@@ -26,16 +26,29 @@ except ImportError:  # pragma: no cover - environment guidance, not logic
 
 SITE = Path(__file__).resolve().parents[1]
 PUBLIC = SITE / "public"
-INK, BLUE, MUTED, LINE = (23, 33, 59), (20, 59, 209), (98, 109, 131), (224, 229, 238)
+# Warm palette, matching src/styles/global.css. Keep the two in step: the share
+# card is the only place these values are duplicated, because PNG has no
+# stylesheet to read them from.
+INK = (36, 28, 21)
+ACCENT = (179, 69, 14)
+MUTED = (119, 102, 90)
+LINE = (212, 197, 176)
+PAPER = (251, 247, 242)
+WASH = (251, 234, 219)
+
+# Serif for the name and headline, sans for labels — the same split the site
+# uses. Falls back silently on a machine without these faces.
 FONTS = {
-    True: "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-    False: "/System/Library/Fonts/Supplemental/Arial.ttf",
+    ("serif", True): "/System/Library/Fonts/Supplemental/Georgia Bold.ttf",
+    ("serif", False): "/System/Library/Fonts/Supplemental/Georgia.ttf",
+    ("sans", True): "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    ("sans", False): "/System/Library/Fonts/Supplemental/Arial.ttf",
 }
 
 
-def font(size: int, bold: bool = False):
+def font(size: int, bold: bool = False, family: str = "sans"):
     try:
-        return ImageFont.truetype(FONTS[bold], size)
+        return ImageFont.truetype(FONTS[(family, bold)], size)
     except OSError:
         return ImageFont.load_default(size)
 
@@ -53,40 +66,42 @@ def read_site_config() -> dict[str, str]:
 
 
 def mark(px: int, letter: str) -> Image.Image:
-    """The rounded blue square with the name's initial, as in favicon.svg."""
+    """The rust square with the name's initial, as in favicon.svg."""
     s = px * 8  # supersample, then downscale, so small sizes stay clean
     img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 9 / 40), fill=BLUE + (255,))
-    d.text((s / 2, s * 0.52), letter, font=font(int(s * 0.66), True),
-           fill=(255, 255, 255, 255), anchor="mm")
+    d.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 3 / 40), fill=ACCENT + (255,))
+    d.text((s / 2, s * 0.53), letter, font=font(int(s * 0.62), True, "serif"),
+           fill=PAPER + (255,), anchor="mm")
     return img.resize((px, px), Image.LANCZOS)
 
 
 def share_card(name: str, stage: str, stats: list[tuple[str, str]]) -> Image.Image:
-    img = Image.new("RGB", (1200, 630), "white")
+    img = Image.new("RGB", (1200, 630), PAPER)
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, 10, 630], fill=BLUE)
+    d.rectangle([0, 0, 10, 630], fill=ACCENT)
+    wordmark = font(38, True, "serif")
     img.paste(mark(64, name[0]), (72, 64), mark(64, name[0]))
-    d.text((152, 96), name, font=font(40, True), fill=INK, anchor="lm")
+    d.text((152, 96), name, font=wordmark, fill=INK, anchor="lm")
 
-    badge_x = 152 + d.textlength(name, font=font(40, True)) + 20
+    badge_x = 152 + d.textlength(name, font=wordmark) + 20
     label = stage.upper()
     badge_w = int(d.textlength(label, font=font(17, True))) + 36
-    d.rounded_rectangle([badge_x, 82, badge_x + badge_w, 112], 8, fill=(234, 240, 255))
-    d.text((badge_x + badge_w / 2, 97), label, font=font(17, True), fill=BLUE, anchor="mm")
+    d.rounded_rectangle([badge_x, 82, badge_x + badge_w, 112], 2, fill=WASH)
+    d.text((badge_x + badge_w / 2, 97), label, font=font(17, True), fill=ACCENT, anchor="mm")
 
-    d.text((72, 218), "EEG models,", font=font(78, True), fill=INK, anchor="lt")
-    d.text((72, 306), "measured in context.", font=font(78, True), fill=INK, anchor="lt")
-    d.text((72, 418), "Every score reported with its protocol, cohort, electrode",
+    headline = font(70, True, "serif")
+    d.text((72, 214), "Every EEG score, with the", font=headline, fill=INK, anchor="lt")
+    d.text((72, 300), "protocol that produced it.", font=headline, fill=INK, anchor="lt")
+    d.text((72, 418), "Cohort, electrode count, training budget and chance",
            font=font(30), fill=MUTED, anchor="lt")
-    d.text((72, 460), "count, training budget and chance level.",
+    d.text((72, 460), "level travel with every number.",
            font=font(30), fill=MUTED, anchor="lt")
 
     d.line([72, 528, 1128, 528], fill=LINE, width=2)
     number_font, label_font, x = font(38, True), font(24), 72
     for value, caption in stats:
-        d.text((x, 556), value, font=number_font, fill=BLUE, anchor="lt")
+        d.text((x, 556), value, font=number_font, fill=ACCENT, anchor="lt")
         x += d.textlength(value, font=number_font) + 10
         d.text((x, 572), caption, font=label_font, fill=MUTED, anchor="lt")
         x += d.textlength(caption, font=label_font) + 46

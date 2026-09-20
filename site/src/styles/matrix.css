@@ -1,0 +1,97 @@
+/* ---------------------------------------------------------------------------
+   Coverage matrix — the first thing on the page.
+
+   Previously the homepage opened on one protocol chosen from a dropdown, so a
+   first-time reader saw five rows and had no idea the release holds 39. This
+   grid puts every measured comparison on screen at once: methods down the side,
+   protocols across the top, "not evaluated" left visibly blank.
+
+   It deliberately has no total column and no overall rank. Each column is
+   scaled against its OWN chance level, which differs by task (50%, 20%, 2.5%),
+   so bar lengths are readable down a column and meaningless across one. The
+   caption says so in the page itself, not only here.
+   --------------------------------------------------------------------------- */
+
+.overview{padding-top:8px}
+.matrix-frame{border:1px solid var(--line);background:var(--panel)}
+
+.matrix{width:100%;border-collapse:collapse;font-size:.8125rem;white-space:nowrap}
+
+/* Column heads: the protocol, its cohort size and the chance level a reader
+   has to know before the number below means anything. */
+.matrix thead th{
+  vertical-align:bottom;padding:10px 12px;min-width:132px;
+  background:var(--soft);border-bottom:1px solid var(--rule);
+  text-transform:none;letter-spacing:0;font-size:.8125rem;
+}
+.matrix .colhead a{display:block;font-weight:620;color:var(--ink);white-space:normal}
+.matrix .colhead a:hover{color:var(--accent)}
+.matrix .colhead small{margin-top:3px;font-family:var(--mono);font-size:.6875rem}
+
+/* First column stays put while the rest scrolls sideways. */
+.matrix th.corner,.matrix th.rowhead{
+  position:sticky;left:0;z-index:2;
+  min-width:196px;width:196px;padding-left:16px;
+  border-right:1px solid var(--rule);
+}
+.matrix th.corner{background:var(--soft);vertical-align:bottom}
+.matrix th.rowhead{
+  background:var(--panel);text-align:left;text-transform:none;letter-spacing:0;
+  font-weight:400;padding:9px 12px 9px 16px;border-bottom:1px solid var(--line);
+}
+.matrix tbody tr:last-child th,.matrix tbody tr:last-child td{border-bottom:0}
+.matrix .mname{display:block;font-size:.9375rem;font-weight:640;color:var(--ink);letter-spacing:-.005em}
+.matrix .rowhead small{margin-top:1px}
+
+/* Family is carried by a colour on the sticky edge rather than another chip. */
+.matrix th.rowhead{box-shadow:inset 3px 0 var(--fam,transparent)}
+.matrix tr[data-family=foundation] th.rowhead{--fam:var(--accent)}
+.matrix tr[data-family=small] th.rowhead{--fam:var(--good)}
+.matrix tr[data-family=classical] th.rowhead{--fam:#a8927b}
+
+.matrix .cell{
+  position:relative;height:46px;padding:0 12px;
+  border-bottom:1px solid var(--line);border-left:1px solid #f1e8db;
+  text-align:right;vertical-align:middle;
+}
+.matrix tbody tr:hover th.rowhead,.matrix tbody tr:hover .cell{background:#fdf8f1}
+
+/* The bar is the measurement; the number is its label. Bars grow from the left
+   so the eye can rank a column without reading any digits. */
+.matrix .bar{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  height:24px;width:var(--w,0);background:#efcaa6;
+}
+.matrix .cell[data-rank=lead] .bar{background:var(--accent-bright)}
+.matrix .num{
+  position:relative;font-family:var(--mono);font-size:.875rem;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.matrix .cell[data-rank=lead] .num{font-weight:700;color:var(--accent-deep)}
+.matrix .cell.none{background:repeating-linear-gradient(-45deg,#0000 0 6px,#f6efe4 6px 7px)}
+.matrix .cell.none .num{color:#c3b4a2}
+.matrix .cmark{
+  display:block;position:relative;font-family:var(--sans);
+  font-size:.625rem;line-height:1.3;color:var(--warn-ink);
+}
+
+.matrix-note{
+  display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;
+  padding:11px 16px;font-size:.75rem;border-top:1px solid var(--line);background:var(--soft);
+}
+.matrix-note .key{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.matrix-note .key i{width:15px;height:9px;display:inline-block}
+.matrix-note .key i.lead{background:var(--accent-bright)}
+.matrix-note .key i.plain{background:#efcaa6}
+.matrix-note .key i.gap{background:repeating-linear-gradient(-45deg,#fffdfa 0 4px,#e6dbcb 4px 5px);border:1px solid var(--line)}
+.matrix-caveat{font-size:.8125rem;margin-top:10px;max-width:96ch}
+
+@media(max-width:860px){
+  .matrix th.corner,.matrix th.rowhead{min-width:168px;width:168px}
+  .matrix .mname{font-size:.875rem}
+  .matrix thead th{min-width:118px}
+}
+@media(max-width:560px){
+  .matrix th.corner,.matrix th.rowhead{min-width:146px;width:146px;padding-left:12px}
+  .matrix .cell{padding:0 9px}
+}

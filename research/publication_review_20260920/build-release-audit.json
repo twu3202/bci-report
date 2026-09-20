@@ -16,11 +16,11 @@
     "hashes compared against the previous audit record"
   ],
   "built_artifact_sha256": {
-    "404.html": "1d0cdce19260b5036c36ff0a6c355fb0b811c273c143963cfac75c9ad820c8b2",
-    "_astro/global.D7X91FcY.css": "74415d987cb507a5984544987510130f16defac1fed146dbf6aa1faa719bb745",
-    "_astro/index.astro_astro_type_script_index_0_lang.BSDffVGt.js": "d6011d29dac3dcbefa6a46f1cbf13979b3fe33123be5b473b622670790462120",
-    "apple-touch-icon.png": "48ece99723ed026338cee9302322ef65d79038f6f68c6e8d7697d76ddb17c896",
-    "data-use/index.html": "5818ba2adaac411e499b488844a29dff22dc33ee8ed52638c99e48984eea72bc",
+    "404.html": "19770fb6c774afe7202a80b5849a4d6f9ff161637fb4c90317b5baf6c15d3f40",
+    "_astro/global.CX0raLHj.css": "217aa3b196c528c50d23373d33a71eba1f5e184f883161a06cb02b8ded42face",
+    "_astro/index.astro_astro_type_script_index_0_lang.DRHW5fTP.js": "121c6807894ea11520949b11249c78aa53167cdc08ca2e8a7acf2f7c7c90db00",
+    "apple-touch-icon.png": "b37fe2b7a28fde2c8dff7437a98a6d1847ec72313d2c522b17d7a707ebf6b11f",
+    "data-use/index.html": "38cabb4594f58242f1c3eb384ec1c43c7f89fb9b955da6d3e59c3d8eaf8adda5",
     "data/arithmetic-rest-protocol.json": "a2d8a9f182916b1ae611b163d65b3b7184bdbf79e4fa39ee47e778c02c301c6b",
     "data/arithmetic-rest-results.csv": "bed02323936f2980eac7bf3a8e8b2595630fa1609c1466600d33acc2f83928dc",
     "data/beta-4ch-protocol.json": "749d13951729e00935724fce9b790e8f23978e3290a9dd9df6e5a276736e69a1",
@@ -38,10 +38,10 @@
     "data/semantic-target-results.csv": "b4baad3795b5512a033609512c90055894caf915b62c9c303fd77310d98caaaa",
     "data/sleep-scalp-protocol.json": "2acf18c0ba2f94329fc103a36452e76e4f2fe60509228edff778055d0e252afe",
     "data/sleep-scalp-results.csv": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
-    "favicon.ico": "2a4d3ac4eb5a2047ca3944ada41976898e947ca14e7f7defe1a2a30c29bbbf14",
-    "favicon.svg": "3846e4d746f433bde61ebb627c69450d26e2891a615e36ed699fd638f4b1a114",
-    "index.html": "bcddc4870e05b116cb8b3138e7894e89a71045d249379122343313f74f0db989",
-    "og.png": "4bc48db4b0104c2e3ea736539b8872bf75996eb3060c6f28e4924d0e7863c32c",
+    "favicon.ico": "abc8e622580241ee8ec914fc1b7fbbd354709dc5bef3cbca040d7b21833aed68",
+    "favicon.svg": "a51b4859e908aa6244b40dbb00570c755918a3778a089cfd1f2a9a83f8d711d4",
+    "index.html": "8432aaac6f71e85f12493f58ee13e2b08d0036afc976e403a66209472381f1fa",
+    "og.png": "e424c3c122839eb83bf0cecbbe15c9d31b0a9ff154055ce3d603a18c654e0024",
     "robots.txt": "a9139481e1a64b98d6a3f4664b8a81d03dfade6a50c748514fc9002df79eba04",
     "sitemap.xml": "fe606e8cc68c99cf63a0477acae5178dd84a8cb8aefa42f6a99206ff799c6cae"
   }

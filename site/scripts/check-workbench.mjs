@@ -1,6 +1,6 @@
 // Application-state tests with minimal DOM doubles; this is not browser or WebMCP integration QA.
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {existsSync,readFileSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
 const data=JSON.parse(readFileSync(new URL('../src/data/mvp.json',import.meta.url),'utf8'));
@@ -30,7 +30,8 @@ for(const t of data.tracks){
   const output=tool.execute({trackId:t.id,family:'all'});
   assert.equal(output.models.length,t.rows.length);
   assert.equal(get('#download-results').href,'/data/'+t.id+'-results.csv');
-  assert.equal(get('#track-select').value,t.id);
+  assert.equal(get('#track-tabs').attributes['data-active'],t.id);
+  assert.equal(get('#track-panel').attributes['aria-labelledby'],'tab-'+t.id);
   assert.equal(get('#track-title').textContent,t.subtitle);
 }
 assert.throws(()=>tool.execute({trackId:'transfer',family:'all'}),/Invalid/,'removed tracks must not resolve');
@@ -49,6 +50,13 @@ assert.equal(get('#track-title').textContent,state);
 tool.execute({trackId:'idle',family:'all'});
 get('#sort-results').value='y-desc';get('#sort-results').events.change();
 assert.ok(get('#result-rows').innerHTML.indexOf('ShallowFBCSPNet')<get('#result-rows').innerHTML.indexOf('EEGNet'));
+// A coverage-matrix column heading must drive the protocol panel below it.
+get('#overview').events.click({target:{closest:()=>({dataset:{jump:'sleep-scalp'}})}});
+assert.equal(get('#track-tabs').attributes['data-active'],'sleep-scalp');
+assert.equal(get('#track-title').textContent,data.tracks.find(t=>t.id==='sleep-scalp').subtitle);
+get('#overview').events.click({target:{closest:()=>null}});
+assert.equal(get('#track-tabs').attributes['data-active'],'sleep-scalp','a click on matrix whitespace must change nothing');
+tool.execute({trackId:'idle',family:'all'});
 get('#open-protocol').events.click();assert.equal(get('#detail-dialog').open,true);
 assert.match(get('#dialog-body').innerHTML,/calibration/);
 get('#close-dialog').events.click();assert.equal(get('#detail-dialog').open,false);
@@ -95,5 +103,43 @@ get('#open-protocol').events.click();
 assert.match(get('#dialog-body').innerHTML,/no best-seed selection/,'protocol dialog must render seedSensitivity.scope');
 assert.match(get('#dialog-body').innerHTML,/retained seed is also the highest/,'protocol dialog must state where the retained seed sits');
 get('#close-dialog').events.click();
-console.log('PASS: track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+// --- Coverage matrix -------------------------------------------------------
+// It is server-rendered, so the client script above never touches it and none
+// of the assertions so far cover it — yet it is now the first thing a visitor
+// reads. Check it against the data rather than trusting the template.
+const builtPath=new URL('../dist/index.html',import.meta.url);
+assert.ok(existsSync(builtPath),'run `npm run build` first: the coverage matrix is checked against dist/index.html');
+const built=readFileSync(builtPath,'utf8');
+const attr=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const count=re=>(built.match(re)||[]).length;
+let cells=0,below=0;
+const named=new Set();
+for(const t of data.tracks) for(const r of t.rows){
+  cells++;named.add(r.name);
+  assert.ok(built.includes(attr(r.name+' · '+t.title+': '+r.y.toFixed(1)+'% '+t.yLabel.toLowerCase())),
+    'matrix is missing '+r.name+' on '+t.id);
+  // The bar is normalised against this protocol's OWN chance level. A global
+  // normalisation would invite exactly the cross-task reading the page denies.
+  const c=t.chanceLevel ?? 0,w=Math.max(0,Math.min(100,(r.y-c)/(100-c)*100)).toFixed(1);
+  assert.ok(built.includes('style="--w:'+w+'%"></i><span class="num">'+r.y.toFixed(1)+'</span>'),
+    t.id+'/'+r.id+': bar length must be chance-relative and tied to its own number');
+  if(t.chanceLevel!=null&&r.y<=t.chanceLevel)below++;
+}
+assert.equal(cells,data.coverage.displayedComparisons,'matrix must show every displayed comparison');
+assert.equal(count(/class="cell none"/g),named.size*data.tracks.length-cells,'blank cells must be methods x protocols minus comparisons');
+assert.equal(count(/data-rank="sub"/g),below,'every at-or-below-chance cell must be marked');
+assert.equal(count(/data-rank="lead"/g),data.tracks.filter(t=>t.type!=='tradeoff').length,'exactly one leader per accuracy protocol');
+for(const tag of built.match(/<td class="cell"[^>]*>/g)||[])
+  if(tag.includes('data-rank="lead"'))
+    assert.ok(!tag.includes('Idle &amp; command'),'detection alone must not crown a leader on the tradeoff protocol');
+assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>across<\/strong>/,'the matrix must say bars do not compare sideways');
+// Every protocol is reachable without JavaScript and without a dropdown.
+for(const t of data.tracks){
+  assert.ok(built.includes('data-jump="'+t.id+'"'),t.id+': needs a matrix column heading');
+  assert.ok(built.includes('data-track="'+t.id+'"'),t.id+': needs a protocol tab');
+}
+assert.equal(count(/class="track-tab"/g),data.tracks.length);
+assert.equal(count(/aria-selected="true"/g),1,'exactly one protocol tab starts selected');
+
+console.log('PASS: coverage matrix, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');
