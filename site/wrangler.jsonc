@@ -25,6 +25,13 @@
   // writes to ~/.config/.wrangler and would change every other project on this
   // machine.
   "send_metrics": false,
+  // The real domain. `custom_domain: true` makes wrangler create and own the
+  // DNS record for it, which needs more than the zone:read the OAuth login
+  // grants — if the deploy is refused, add the record in the dashboard instead
+  // and leave this here so the intent stays recorded.
+  "routes": [
+    { "pattern": "bci.report", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     // Serve /data-use/ for /data-use, and return the real 404 page for a missing

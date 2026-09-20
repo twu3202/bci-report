@@ -89,6 +89,10 @@
 .matrix-note .key i.lead{background:var(--accent-bright)}
 .matrix-note .key i.plain{background:#efcaa6}
 .matrix-note .key i.gap{background:repeating-linear-gradient(-45deg,#fffdfa 0 4px,#e6dbcb 4px 5px);border:1px solid var(--line)}
+/* The full export sits with the legend rather than in the masthead: it belongs
+   next to the numbers it contains, not competing with the site name. */
+.matrix-note a{margin-left:auto;color:var(--accent);white-space:nowrap;border-bottom:1px solid #e4c3a5}
+.matrix-note a:hover{color:var(--accent-deep);border-bottom-color:var(--accent)}
 .matrix-caveat{font-size:.8125rem;margin-top:10px;max-width:96ch}
 
 @media(max-width:860px){
