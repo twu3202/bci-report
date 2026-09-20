@@ -1,0 +1,229 @@
+[
+  {
+    "repo_id": "EEGDash/ds005048",
+    "evidence_id": "EEGDash/ds005048@50a4943233ca30a7576e6e23c33725721d06832c",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "auditory_evoked"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 35,
+    "channel_count_claim": 19,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Auditory entrainment task indicated; labels and split protocol unknown.",
+    "cohort_relationship": "OpenNeuro ds005048 / NEMAR canonical source",
+    "evidence_refs": [
+      "raw_cached/a67f23769a0c711fbfbe7b8d236635582f6755bdb0d5afd1b6d5ab1985c7083a.json"
+    ],
+    "uncertainties": [
+      "Pointer; canonical source and waveform access need verification",
+      "19 channels are an indexed claim, scalp montage unverified",
+      "Subject count and license require source verification"
+    ],
+    "next_action": "Verify the OpenNeuro source, participant independence, scalp montage, event labels, and CC0 terms before acquisition.",
+    "reason": "Small claimed 19-channel auditory EEG cohort could add task diversity, pending primary-source verification."
+  },
+  {
+    "repo_id": "EEGDash/nm000121",
+    "evidence_id": "EEGDash/nm000121@ec14dfbe5f2d8af6404838ca34c099bceba48f17",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "ssvep_cvep"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 11,
+    "channel_count_claim": 14,
+    "license_declared": "ODC-By-1.0",
+    "labels_and_split_evidence": "SSVEP visual-perception task indicated; label semantics and split protocol unknown.",
+    "cohort_relationship": "MAMEM3; NEMAR canonical source",
+    "evidence_refs": [
+      "raw_cached/ceffc3f9ad148337a6cb56c1d4f50219db07a0f7e3414178adc16fffaa8fef98.json"
+    ],
+    "uncertainties": [
+      "Pointer; canonical source and waveform access need verification",
+      "14 channels and 11 subjects are indexed claims",
+      "Possible overlap with other MAMEM releases",
+      "License and subject-level splits require verification"
+    ],
+    "next_action": "Verify the canonical MAMEM3 source, montage, subject-level session splits, label definitions, and ODC-By terms.",
+    "reason": "Claimed 14-channel SSVEP cohort offers few-channel visual BCI coverage, subject to overlap and source checks."
+  },
+  {
+    "repo_id": "EEGDash/nm000123",
+    "evidence_id": "EEGDash/nm000123@5d4149544b9075766619fb91e2ca3eb76841b03b",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "ssvep_cvep"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 12,
+    "channel_count_claim": 8,
+    "license_declared": "CC-BY-4.0",
+    "labels_and_split_evidence": "SSVEP exoskeleton visual-perception task indicated; task labels and session splits unknown.",
+    "cohort_relationship": "Kalunga2016; NEMAR canonical source",
+    "evidence_refs": [
+      "raw_cached/ff40fd9dcc1e02e574b2ea74d6d020df66079224935a22a92f83983a5537610c.json"
+    ],
+    "uncertainties": [
+      "Pointer; canonical source and waveform access need verification",
+      "8 channels and 12 subjects are indexed claims",
+      "Exoskeleton/device context and cross-session structure need audit",
+      "License requires source verification"
+    ],
+    "next_action": "Verify the canonical source, eight-channel scalp montage, device/session structure, labels, and CC-BY terms.",
+    "reason": "Very small claimed eight-channel SSVEP cohort is attractive for few-channel transfer if source metadata confirms it."
+  },
+  {
+    "repo_id": "EEGDash/nm000163",
+    "evidence_id": "EEGDash/nm000163@d2f5bd3b871cb6754ac1032717bb9c9a172187c7",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "ssvep_cvep"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 12,
+    "channel_count_claim": 32,
+    "license_declared": "CC-BY-4.0",
+    "labels_and_split_evidence": "c-VEP and burst-VEP visual-attention task indicated; split and label protocol unknown.",
+    "cohort_relationship": "Castillos2023_VEP; NEMAR canonical source",
+    "evidence_refs": [
+      "raw_cached/7e09af96b71eb72beac7580495436071086a919609faa9997df6dbbaf6db6d7d.json"
+    ],
+    "uncertainties": [
+      "Pointer; canonical source and waveform access need verification",
+      "32 channels and 12 subjects are indexed claims",
+      "Possible overlap with Castillos split entries",
+      "Montage, splits, and license require verification"
+    ],
+    "next_action": "Verify the canonical source, cohort overlap, montage, subject-level splits, event labels, and CC-BY terms.",
+    "reason": "c-VEP/burst-VEP adds visual BCI task diversity, though 32-channel claims and cohort overlap need checking."
+  },
+  {
+    "repo_id": "perottofederico/things-eeg",
+    "evidence_id": "perottofederico/things-eeg@2850daa7ed87ac25939b2cee4df6fc8d66dde788",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "visual_language"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": null,
+    "channel_count_claim": 63,
+    "license_declared": null,
+    "labels_and_split_evidence": "Subject-named train/test splits; integer labels and image/text fields present, but split semantics require verification.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/9215ba40ba60cb6de4bafa0a33ead6b75f9b7c4665a29b77cd113db31c961687.json",
+      "raw_cached/9715e5b0ee6de61e2927f5f95bb26924c75f00fc051acc4ff859613926ee9d9f.md"
+    ],
+    "uncertainties": [
+      "63-channel arrays may not map directly to scalp electrodes",
+      "Subject count and source cohort are unverified",
+      "HF card declares no license; upstream terms govern",
+      "Very large storage footprint",
+      "Waveform preprocessing and split leakage require audit"
+    ],
+    "next_action": "Verify upstream provenance, electrode montage, preprocessing, subject splits, label task, and applicable license before acquisition.",
+    "reason": "Human EEG with explicit subject splits could support visual decoding, but storage, licensing, and montage risks are material."
+  },
+  {
+    "repo_id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "evidence_id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset@4036680b5fb0015472d55589da2f34c5a87a3c10",
+    "status": "hold",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "human_waveform_claimed",
+    "subject_count_claim": 30,
+    "channel_count_claim": null,
+    "license_declared": "cc-by-nc-sa-4.0",
+    "labels_and_split_evidence": "Four-class imagined-handwriting labels; subject-independent train/test subjects claimed (01-20/21-30).",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/5bbe7d5d987ac7ba13005403a249056b49f648fad0784e3bbb2f8710c5c74848.md"
+    ],
+    "uncertainties": [
+      "Gated access and hidden test labels",
+      "EEG channel count and scalp montage absent",
+      "Multimodal EEG/fNIRS alignment and upstream provenance need audit",
+      "Noncommercial share-alike terms require review"
+    ],
+    "next_action": "Obtain permitted source metadata and verify EEG montage, subject/session counts, labels, and NC-SA access terms.",
+    "reason": "Subject-independent imagined-handwriting EEG is potentially useful, but gated multimodal data and missing montage details warrant hold."
+  },
+  {
+    "repo_id": "monster-monash/STEW",
+    "evidence_id": "monster-monash/STEW@923edf62979de38b907b2c2ad684e3b734126bee",
+    "status": "reference_control",
+    "task_family": [
+      "workload"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 48,
+    "channel_count_claim": 14,
+    "license_declared": "CC BY 4.0",
+    "labels_and_split_evidence": "Workload ratings and binary labels described; cross-validation folds are participant-based, but exact window-to-subject mapping and split labels remain unresolved.",
+    "cohort_relationship": "IEEE DataPort STEW; acquired reference",
+    "evidence_refs": [
+      "raw_cached/03e741ad244b2b2c6282592c86b20ee26d7e69229a2eefe0abc422784b5a2e39.md"
+    ],
+    "uncertainties": [
+      "Acquired reference, not a new dataset",
+      "Processed release provenance needs verification",
+      "Window and split labels remain unresolved",
+      "14 recorded channels require montage confirmation"
+    ],
+    "next_action": "Audit the acquired files against the primary STEW source for participant folds, window provenance, montage, and license.",
+    "reason": "Useful workload reference with claimed 14-channel EEG; retain as a control while split and processing provenance remain unresolved."
+  },
+  {
+    "repo_id": "roychowdhuryresearch/IESSEEG",
+    "evidence_id": "roychowdhuryresearch/IESSEEG@394aec131a1ea117ee955bc8345b52c8b90091ab",
+    "status": "reference_control",
+    "task_family": [
+      "clinical"
+    ],
+    "signal_kind": "human_waveform_claimed",
+    "subject_count_claim": 100,
+    "channel_count_claim": null,
+    "license_declared": "CC-BY-4.0",
+    "labels_and_split_evidence": "Benchmark fold files are listed; device seizure markers are not verified clinician seizure labels.",
+    "cohort_relationship": "IESSEEG acquired reference",
+    "evidence_refs": [
+      "raw_cached/aa6c98e04b2b0a4ef55a04dc168b2a7809be856d5a36e9a198e291810ede617a.md"
+    ],
+    "uncertainties": [
+      "Acquired reference, not a new dataset",
+      "Device markers are not verified clinical seizure labels",
+      "Recorded-channel count and scalp typing need physical audit",
+      "Clinical evaluation remains unqualified",
+      "DOI and source provenance need verification"
+    ],
+    "next_action": "Audit source annotations and channel types with clinical provenance before any clinical claim or score.",
+    "reason": "Infant EEG reference supports clinical-event metadata auditing, while label validity and channel typing remain unverified."
+  },
+  {
+    "repo_id": "EEGDash/ds003810",
+    "evidence_id": "EEGDash/ds003810@ad3f9e2b0a9b1808a51521974a891e0d7e24044c",
+    "status": "reference_control",
+    "task_family": [
+      "motor_imagery_idle"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 10,
+    "channel_count_claim": 15,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Title indicates motor imagery versus rest; RUN0 grasping is excluded from motor-imagery use pending source-level task mapping.",
+    "cohort_relationship": "OpenNeuro ds003810 / NEMAR canonical source; acquired reference",
+    "evidence_refs": [
+      "raw_cached/52e8e624a13573eac131a7adcc7d4edf926ad3445f53d6a61a9bd412beb90688.json"
+    ],
+    "uncertainties": [
+      "Acquired reference, not a new dataset",
+      "RUN0 grasping must stay excluded from MI",
+      "15 channels are an indexed claim, scalp montage unverified",
+      "Subject/session labels and source provenance require audit"
+    ],
+    "next_action": "Verify source task/run labels and montage, exclude RUN0 grasping, and document any valid MI/rest subsets.",
+    "reason": "Low-cost EEG reference may support MI/rest controls after explicit RUN0 grasping exclusion and source audit."
+  }
+]

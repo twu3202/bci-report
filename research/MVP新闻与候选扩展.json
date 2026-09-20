@@ -1,0 +1,261 @@
+{
+  "title": "BCI Arena MVP 新闻与候选模型扩展",
+  "checked_at": "2026-09-10",
+  "scope": "近期 EEG/BCI foundation-model 动态、五个未进入现有九候选清单的模型资源初筛，以及网站 MVP 内容边界。未下载任何大模型权重，未复现论文性能。",
+  "existing_candidates_excluded_from_extension": [
+    "LaBraM",
+    "EEGPT",
+    "CBraMod",
+    "EEGNet",
+    "ShallowFBCSPNet",
+    "Deep4Net",
+    "CSP+LDA",
+    "BIOT",
+    "REVE Base"
+  ],
+  "news": [
+    {
+      "title": "一项新基准系统比较 EEG foundation models 与专用解码器",
+      "summary": "研究者整理了 50 个代表模型，并在 13 个数据集、9 类 BCI 范式上实测 12 个开源 foundation models 与专用基线。论文的核心提醒很适合 BCI Arena：线性探测常常不足，模型更大不必然带来更好泛化，评测必须同时固定跨受试者与少样本校准协议。",
+      "date": "2026-01-25",
+      "source": "arXiv 原始论文",
+      "sourceUrl": "https://arxiv.org/abs/2601.17883",
+      "tag": "基准评测",
+      "reviewed": true
+    },
+    {
+      "title": "REVE 发布面向不同电极配置的 EEG foundation model",
+      "summary": "REVE 报告使用 92 个数据集、约 6 万小时 EEG 和 2.5 万名受试者预训练，并通过位置编码处理不同电极布局。项目同时公开代码、权重与教程；这使“同一模型跨 montage 迁移”成为可审计的评测方向，而不是只比较同一数据集内的准确率。",
+      "date": "2025-10-24",
+      "source": "arXiv 原始论文；NeurIPS 2025 正式论文页",
+      "sourceUrl": "https://arxiv.org/abs/2510.21585",
+      "tag": "模型发布",
+      "reviewed": true
+    },
+    {
+      "title": "NeurIPT 把异构 EEG 配置纳入统一预训练框架",
+      "summary": "NeurIPT 面向不同 BCI 任务与电极配置建模同质和异质时空关系，并以 NeurIPS 2025 poster 公开论文。其官方仓库目前仍说明代码恢复中，因此这条动态适合研究资讯，不应被展示成已经可复跑的模型卡。",
+      "date": "2025-09-18",
+      "source": "OpenReview / NeurIPS 2025",
+      "sourceUrl": "https://openreview.net/forum?id=D4hcJPkJ3y",
+      "tag": "研究发布",
+      "reviewed": true
+    },
+    {
+      "title": "CSBrain 用跨尺度时空结构改造通用 EEG 解码",
+      "summary": "CSBrain 将局部时间窗、脑区和结构化稀疏注意力组合起来，并报告覆盖 16 个数据集、11 类任务的实验。官方仓库已经提供预训练和下游脚本及公开权重入口，适合作为 BCI Arena 下一轮“多任务但同协议”候选。",
+      "date": "2025-06-29",
+      "source": "arXiv 原始论文；NeurIPS 2025 论文页",
+      "sourceUrl": "https://arxiv.org/abs/2506.23075",
+      "tag": "模型发布",
+      "reviewed": true
+    },
+    {
+      "title": "八导联、低预处理的 EEG 自监督模型瞄准实时 BCI",
+      "summary": "这项工作把 HuBERT 风格的自监督学习用于八导联头皮 EEG，并同时考察运动想象、P300、个体差异和 alpha 节律。它提示 MVP 除了“大模型排名”，还可以单列少导联、低预处理和实时预算等部署约束。",
+      "date": "2025-06-02",
+      "source": "arXiv 原始论文",
+      "sourceUrl": "https://arxiv.org/abs/2506.01867",
+      "tag": "实时 BCI",
+      "reviewed": true
+    }
+  ],
+  "candidate_extensions": [
+    {
+      "name": "BENDR",
+      "category": "EEG foundation model",
+      "official_code_url": "https://github.com/SPOClab-ca/BENDR",
+      "official_weights_url": "https://github.com/SPOClab-ca/BENDR/releases/tag/v0.1-alpha",
+      "anonymous_access": {
+        "code": true,
+        "weights": true,
+        "evidence": "官方公开 GitHub 仓库和无需令牌的 release API 均可读取。"
+      },
+      "weights": [
+        {
+          "name": "encoder.pt",
+          "bytes": 15893001,
+          "download_url": "https://github.com/SPOClab-ca/BENDR/releases/download/v0.1-alpha/encoder.pt"
+        },
+        {
+          "name": "contextualizer.pt",
+          "bytes": 612693181,
+          "download_url": "https://github.com/SPOClab-ca/BENDR/releases/download/v0.1-alpha/contextualizer.pt"
+        }
+      ],
+      "weight_total_bytes": 628586182,
+      "license": {
+        "code": "未核清：官方仓库根目录未见 LICENSE，GitHub API license 字段为空",
+        "weights": "未核清：release 页面没有单独权重许可",
+        "action": "可做内部技术验证；公开镜像、再分发或商业使用前向作者取得明确许可或书面说明。"
+      },
+      "fit_for_17ch_ds005342": "有条件适配。BENDR 原工作流依赖 DN3/Deep1010 的标准通道映射；17 个有名称的 10-20 导联可映射到其固定输入布局，但必须公开缺失通道处理和插值规则，不能把它称为原生 17 通道运行。",
+      "mvp_priority": "高：权重入口稳定且大小明确，先做映射审计和安全加载。",
+      "source_evidence": [
+        "https://github.com/SPOClab-ca/BENDR#readme",
+        "https://github.com/SPOClab-ca/BENDR/releases/tag/v0.1-alpha"
+      ]
+    },
+    {
+      "name": "CSBrain",
+      "category": "EEG foundation model",
+      "official_code_url": "https://github.com/yuchen2199/CSBrain",
+      "official_weights_url": "https://drive.google.com/drive/folders/1-GsVVewRM0B93H08yts5m53yU2whxYvj?usp=sharing",
+      "anonymous_access": {
+        "code": true,
+        "weights": "入口可匿名打开；本轮未逐文件下载或确认 Google Drive 配额行为",
+        "evidence": "官方 README 指向该公开 Drive 文件夹，并说明 pth 为预训练权重、pth_downtasks 为下游权重。"
+      },
+      "weights": {
+        "size": null,
+        "size_note": "官方 README 与匿名 Drive 落地页未公开稳定的逐文件字节数；未下载大文件，因此本轮不估算。"
+      },
+      "license": {
+        "code": "未核清：官方仓库没有 LICENSE，GitHub API license 字段为空",
+        "weights": "未核清：README/Drive 入口未附独立权重许可",
+        "action": "在许可证补齐前只列为候选和内部复现，不镜像权重。"
+      },
+      "fit_for_17ch_ds005342": "结构上合理但需要新适配器。CSBrain 主干接收由调用方提供的 brain_regions 和 sorted_indices，通道数不是主干全局常量；但官方 BCIC 下游头硬编码 22 通道。对 ds005342 应定义 17 导联脑区顺序、替换分类头，并报告实际加载到的预训练键比例。",
+      "mvp_priority": "中高：研究新、任务覆盖广；先解决许可、权重精确清单与 17 导联适配。",
+      "source_evidence": [
+        "https://github.com/yuchen2199/CSBrain#readme",
+        "https://github.com/yuchen2199/CSBrain/blob/main/models/CSBrain.py",
+        "https://github.com/yuchen2199/CSBrain/blob/main/models/model_for_bciciv2a.py",
+        "https://papers.nips.cc/paper_files/paper/2025/hash/7e199ad8ae40eb19b2980f61f659cb07-Abstract-Conference.html"
+      ]
+    },
+    {
+      "name": "Neuro-GPT",
+      "category": "EEG foundation model",
+      "official_code_url": "https://github.com/wenhui0206/NeuroGPT",
+      "official_weights_url": "https://huggingface.co/wenhuic/Neuro-GPT/tree/main/pretrained_model",
+      "anonymous_access": {
+        "code": true,
+        "weights": true,
+        "evidence": "官方 README 直链 Hugging Face；未登录页面可见 pytorch_model.bin 与安全扫描信息。"
+      },
+      "weights": {
+        "name": "pretrained_model/pytorch_model.bin",
+        "displayed_size": "318 MB",
+        "exact_bytes": null,
+        "size_note": "Hugging Face 官方页面显示 318 MB；本轮未下载，匿名 metadata 请求网络超时，未取得精确字节数。"
+      },
+      "license": {
+        "code": "GPL-3.0",
+        "weights": "Hugging Face 模型卡标 GPL-3.0",
+        "action": "使用和分发时遵守 GPL-3.0；仍应单独登记训练数据来源与评测重叠。"
+      },
+      "fit_for_17ch_ds005342": "不是即插即用。官方训练入口把 EEGConformer 写成 22 通道，空间卷积核权重随通道数变化；直接改为 17 会出现预训练形状不匹配。可研究将 17 个命名导联映射/补齐到固定 22 通道，或舍弃并重训空间层，但两种方案都必须单列为适配实验。",
+      "mvp_priority": "中：权重与许可较清楚，但通道适配成本高于 BENDR。",
+      "source_evidence": [
+        "https://github.com/wenhui0206/NeuroGPT#readme",
+        "https://huggingface.co/wenhuic/Neuro-GPT/tree/main/pretrained_model",
+        "https://github.com/wenhui0206/NeuroGPT/blob/main/src/train_gpt.py",
+        "https://github.com/wenhui0206/NeuroGPT/blob/main/src/encoder/conformer_braindecode.py"
+      ]
+    },
+    {
+      "name": "EEG-Conformer",
+      "category": "task-specific neural baseline",
+      "official_code_url": "https://github.com/eeyhsong/EEG-Conformer",
+      "official_weights_url": null,
+      "anonymous_access": {
+        "code": true,
+        "weights": false,
+        "evidence": "官方仓库公开；GitHub releases 为空，README 没有发布预训练 checkpoint。"
+      },
+      "weights": {
+        "size": 0,
+        "size_note": "没有官方发布权重；论文结果不能替代本地 checkpoint。"
+      },
+      "license": {
+        "code": "GPL-3.0",
+        "weights": "不适用：未发现官方发布权重",
+        "action": "作为从头训练基线时保留 GPL-3.0 来源与修改记录。"
+      },
+      "fit_for_17ch_ds005342": "可从头训练，但作者脚本把空间卷积核高度和若干形状写死为 22 通道。需要改成 17 通道或使用参数化的 Braindecode EEGConformer；两者均不是加载作者权重后的迁移。",
+      "mvp_priority": "中：适合作为强专用基线，不放进 foundation-model 权重榜。",
+      "source_evidence": [
+        "https://github.com/eeyhsong/EEG-Conformer#readme",
+        "https://github.com/eeyhsong/EEG-Conformer/blob/main/conformer.py"
+      ]
+    },
+    {
+      "name": "EEGSimpleConv",
+      "category": "task-specific neural baseline",
+      "official_code_url": "https://github.com/elouayas/EEGSimpleConv",
+      "maintained_implementation_url": "https://braindecode.org/stable/generated/braindecode.models.EEGSimpleConv.html",
+      "official_weights_url": null,
+      "anonymous_access": {
+        "code": true,
+        "weights": false,
+        "evidence": "作者仓库和 Braindecode 实现公开；Braindecode 模型卡明确写明不分发预训练权重。"
+      },
+      "weights": {
+        "size": 0,
+        "size_note": "没有公开预训练 checkpoint。"
+      },
+      "license": {
+        "author_repository": "未核清：作者仓库无 LICENSE，GitHub API license 字段为空",
+        "braindecode_implementation": "BSD-3-Clause",
+        "weights": "不适用：没有公开权重",
+        "action": "MVP 优先使用有明确 BSD-3-Clause 许可的 Braindecode 实现。"
+      },
+      "fit_for_17ch_ds005342": "直接适配。构造函数显式接受 n_chan/n_chans 和 sfreq，17 通道可原生实例化；因为没有权重，它应按统一训练协议从头训练并归入专用基线。",
+      "mvp_priority": "高：实现简单、17 导联适配清楚，适合检验 foundation model 是否真的优于轻量基线。",
+      "source_evidence": [
+        "https://github.com/elouayas/EEGSimpleConv#readme",
+        "https://huggingface.co/braindecode/EEGSimpleConv/blob/main/README.md",
+        "https://braindecode.org/stable/generated/braindecode.models.EEGSimpleConv.html"
+      ]
+    }
+  ],
+  "mvp_content_recommendations": [
+    {
+      "section": "首页主结论",
+      "content": "先展示本站已经完成的真实数据资产、运行协议和可复核结果；模型数量、论文名次和宣传性 SOTA 句子放在次级位置。"
+    },
+    {
+      "section": "榜单分轨",
+      "content": "至少分为“本站同协议实测”“论文报告”“候选待复跑”。只有相同数据版本、切分、预处理、适配方式和 protocol hash 的本站结果可以排序。"
+    },
+    {
+      "section": "异步预览边界",
+      "content": "当前 ds005342 是有视觉提示的 explicit-idle、cue-gated replay。页面应标成“提示门控预览”，展示该协议下的误触发率、命中率和延迟；不得进入通用异步总榜，也不得外推到自然、长期或安全关键场景。"
+    },
+    {
+      "section": "模型卡状态",
+      "content": "每个候选固定显示代码可达、权重可达、许可、权重大小、通道适配、预训练数据重叠和本站运行状态。未知项直接显示“未核清”，不以可下载推导可再分发。"
+    },
+    {
+      "section": "首发扩展顺序",
+      "content": "优先加入 EEGSimpleConv 作为17导联轻量基线，再审计 BENDR 的通道映射和安全加载；CSBrain 等许可证和权重清单明确后进入候选；Neuro-GPT 与 EEG-Conformer 先展示适配限制。"
+    },
+    {
+      "section": "新闻流",
+      "content": "新闻卡只写原创短摘要、原始发布日期和一手来源链接；会议接收、预印本、代码可用、权重可用应使用不同标签。"
+    }
+  ],
+  "evidence_limits": [
+    "可匿名看到代码或文件页不等于已验证模型能运行，也不自动授予权重再分发权。",
+    "权重大小只在官方 API 或文件页明确给出时记录；CSBrain 和 Neuro-GPT 的未核精确字节数不作推测。",
+    "17 导联适配是根据官方输入层和配置代码做的工程初筛，不是性能测量。",
+    "本文件不把论文报告结果写入本站总榜，也不作临床、可靠性或安全声明。"
+  ],
+  "primary_sources": [
+    "https://arxiv.org/abs/2601.17883",
+    "https://arxiv.org/abs/2510.21585",
+    "https://papers.nips.cc/paper_files/paper/2025/hash/20a917f77773ac0fa8bea2bdd6606b66-Abstract-Conference.html",
+    "https://openreview.net/forum?id=D4hcJPkJ3y",
+    "https://arxiv.org/abs/2506.23075",
+    "https://papers.nips.cc/paper_files/paper/2025/hash/7e199ad8ae40eb19b2980f61f659cb07-Abstract-Conference.html",
+    "https://arxiv.org/abs/2506.01867",
+    "https://github.com/SPOClab-ca/BENDR",
+    "https://github.com/yuchen2199/CSBrain",
+    "https://github.com/wenhui0206/NeuroGPT",
+    "https://huggingface.co/wenhuic/Neuro-GPT/tree/main/pretrained_model",
+    "https://github.com/eeyhsong/EEG-Conformer",
+    "https://github.com/elouayas/EEGSimpleConv",
+    "https://huggingface.co/braindecode/EEGSimpleConv/blob/main/README.md"
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "as_of": "2026-09-10",
+  "scope": "New acquisitions and discovery catalogs; this inventory must not be used as a scored leaderboard.",
+  "full_multi_participant_acquisitions": [
+    {
+      "canonical_id": "OpenNeuro-ds003810-v2.0.2",
+      "source_url": "https://openneuro.org/datasets/ds003810/versions/2.0.2",
+      "revision": "c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+      "acquisition_scope": "full_recordings",
+      "local_manifest": "experiments/dataset_expansion_v2/root/ds003810/manifest.json",
+      "verified_payload_bytes": 72366316,
+      "subject_count": 10,
+      "subject_count_basis": "dataset metadata/local inspection",
+      "license_as_declared": "CC0",
+      "readiness": "full waveform files parsed; event-to-task mapping and leakage protocol need independent audit before scoring",
+      "benchmark_scored": false,
+      "notes": [
+        "RUN0 is real grasping, not motor imagery; exclude from MI scoring.",
+        "15 EEG channels at 125 Hz, left earlobe reference; upstream acquisition applies a third-order 0.5\u201345 Hz Butterworth filter.",
+        "Event names OVTK_GDF_Right and OVTK_GDF_Tongue map to MI and rest respectively; literal tongue must not be interpreted as tongue imagery."
+      ]
+    },
+    {
+      "canonical_id": "physionet-eegmat-1.0.0",
+      "acquisition_scope": "full_selected_release",
+      "verified_payload_bytes": 183620001,
+      "subject_count": 36,
+      "local_manifest": "experiments/dataset_expansion_v2/official/download-and-parse-manifest.json",
+      "benchmark_scored": false,
+      "license_as_declared": "Open Data Commons Attribution License v1.0",
+      "source_url": "https://physionet.org/content/eegmat/1.0.0/",
+      "readiness": "full waveforms downloaded and parsed; task adapter and protocol not scored"
+    },
+    {
+      "canonical_id": "BNCI2014-008",
+      "acquisition_scope": "full_selected_release",
+      "verified_payload_bytes": 172688772,
+      "subject_count": 8,
+      "local_manifest": "experiments/dataset_expansion_v2/official/download-and-parse-manifest.json",
+      "benchmark_scored": false,
+      "license_as_declared": "CC BY-NC-ND 4.0 as listed by BNCI/MOABB",
+      "source_url": "https://lampx.tugraz.at/~bci/database/008-2014/",
+      "readiness": "full waveforms downloaded and parsed; task adapter and protocol not scored"
+    },
+    {
+      "canonical_id": "BNCI2014-009",
+      "acquisition_scope": "full_selected_release",
+      "verified_payload_bytes": 185291565,
+      "subject_count": 10,
+      "local_manifest": "experiments/dataset_expansion_v2/official/download-and-parse-manifest.json",
+      "benchmark_scored": false,
+      "license_as_declared": "CC BY-NC-ND 4.0 as listed by BNCI/MOABB",
+      "source_url": "https://lampx.tugraz.at/~bci/database/009-2014/",
+      "readiness": "full waveforms downloaded and parsed; task adapter and protocol not scored"
+    },
+    {
+      "canonical_id": "STEW-MONSTER",
+      "acquisition_scope": "full_minimal_processed_release",
+      "verified_payload_bytes": 409318225,
+      "subject_count": 48,
+      "source_url": "https://huggingface.co/datasets/monster-monash/STEW",
+      "local_manifest": "experiments/dataset_expansion_v2/hf_general/download-audit.json",
+      "benchmark_scored": false,
+      "license_as_declared": "CC BY 4.0 per MONSTER card/upstream citation",
+      "readiness": "28,512 waveform windows, subject IDs and labels parsed; split/label provenance review required"
+    }
+  ],
+  "sample_acquisitions": [
+    {
+      "canonical_id": "IESSEEG",
+      "source_url": "https://huggingface.co/datasets/roychowdhuryresearch/IESSEEG",
+      "revision": "394aec131a1ea117ee955bc8345b52c8b90091ab",
+      "acquisition_scope": "one_recording_sample",
+      "local_manifest": "experiments/dataset_expansion_v2/root/IESSEEG/manifest.json",
+      "verified_payload_bytes": 30458374,
+      "subject_count": 100,
+      "subject_count_basis": "author advertised, only one recording checked",
+      "license_as_declared": "CC BY 4.0 stated in original dataset_description and author toolbox",
+      "readiness": "real EDF parsed; promising clinical task, but original paper/DOI, labels and subject-level split need review before scoring",
+      "benchmark_scored": false,
+      "notes": [
+        "The HF viewer displays split-list text; actual EEG EDF files are present.",
+        "Dataset description still says DOI To be updated; do not invent a paper citation.",
+        "The sidecar labels all 41 signals EEG, including POL EKG, EOG, respiration, SpO2 and other auxiliary signals. By name inspection only 19 are conventional scalp EEG, plus 2 ear references and 20 POL signals; an adapter must correct channel types.",
+        "Observed events include device SeizureDetected markers, recording setup annotations and timestamps. They are not verified clinician seizure intervals or diagnosis labels."
+      ]
+    },
+    {
+      "canonical_id": "neurofusion-eeg-restingstate",
+      "source_url": "https://huggingface.co/datasets/neurofusion/eeg-restingstate",
+      "revision": "fe43ac768e0e0df525c5925edb9c27c186730b3b",
+      "acquisition_scope": "one_recording_sample",
+      "local_manifest": "experiments/dataset_expansion_v2/root/neurofusion--eeg-restingstate/manifest.json",
+      "verified_payload_bytes": 5888868,
+      "subject_count": 1,
+      "subject_count_basis": "dataset metadata/local inspection",
+      "license_as_declared": "Apache-2.0 per author card",
+      "readiness": "raw waveform feasibility sample; no independent command labels, device calm/focus values are model predictions not ground truth",
+      "benchmark_scored": false,
+      "notes": [
+        "Sample rate is inferred from timestamps, not verified against acquisition settings.",
+        "CSV contains an index column; exclude it and unixTimestamp from EEG channels.",
+        "No independently annotated task target; use for ingestion/stream stability checks only.",
+        "815 adjacent timestamps are duplicate or non-increasing (minimum difference -4 ms). Reconstructing a stable sample clock requires device-format review; do not treat timestamps as a clean uniform clock."
+      ]
+    },
+    {
+      "canonical_id": "Cavanagh2018b",
+      "acquisition_scope": "one_recording_sample",
+      "verified_payload_bytes": 19269509,
+      "subject_count_advertised": 56,
+      "subjects_downloaded": 1,
+      "source_url": "https://huggingface.co/datasets/jalauer/Cavanagh2018b",
+      "local_manifest": "experiments/dataset_expansion_v2/hf_general/download-audit.json",
+      "benchmark_scored": false,
+      "readiness": "one complete MAT parsed; subject/session labels and original license provenance need review",
+      "overlap_note": "same participant cohort as Cavanagh2018a"
+    }
+  ],
+  "single_participant_collections": [
+    {
+      "canonical_id": "Twu31-cap32-mi-eeg",
+      "source_url": "https://huggingface.co/datasets/Twu31/cap32-mi-eeg",
+      "revision": "663cd808cd945f7646ad33cf165436b6c847b62e",
+      "acquisition_scope": "single_participant_task_files",
+      "local_manifest": "experiments/dataset_expansion_v2/root/Twu31--cap32-mi-eeg/manifest.json",
+      "verified_payload_bytes": 24501661,
+      "subject_count": 1,
+      "subject_count_basis": "dataset metadata/local inspection",
+      "license_as_declared": "CC BY 4.0",
+      "readiness": "single-subject integration/robustness case study, not a population benchmark",
+      "benchmark_scored": false,
+      "notes": []
+    },
+    {
+      "canonical_id": "Twu31-cap32-ssvep",
+      "source_url": "https://huggingface.co/datasets/Twu31/cap32-ssvep",
+      "revision": "8096d4bc410dee7b936ea2cfb4cb2016986f693d",
+      "acquisition_scope": "single_participant_task_files",
+      "local_manifest": "experiments/dataset_expansion_v2/root/Twu31--cap32-ssvep/manifest.json",
+      "verified_payload_bytes": 3693071,
+      "subject_count": 1,
+      "subject_count_basis": "dataset metadata/local inspection",
+      "license_as_declared": "CC BY 4.0",
+      "readiness": "single-subject integration/robustness case study, not a population benchmark",
+      "benchmark_scored": false,
+      "notes": []
+    }
+  ],
+  "metadata_only_holds": [
+    {
+      "canonical_id": "ear-eeg-fm-benchmark-data",
+      "source_url": "https://huggingface.co/datasets/Zachary1150/ear-eeg-fm-benchmark-data",
+      "acquisition_scope": "metadata_only",
+      "readiness": "upstream license and paired scalp/ear montage review needed",
+      "benchmark_scored": false,
+      "notes": [
+        "Multiple underlying corpora, including SAAD and EESM23; do not count this bundle as another independent cohort.",
+        "Related ear-eeg-motor-raw upload advertises six participants; no clear license verified."
+      ]
+    },
+    {
+      "canonical_id": "NeuroMM-2026",
+      "source_url": "https://huggingface.co/datasets/NeuroMM/NeuroMM-2026",
+      "acquisition_scope": "metadata_only",
+      "readiness": "manual gating and academic/noncommercial restrictions; no access request submitted",
+      "benchmark_scored": false
+    },
+    {
+      "canonical_id": "Neurazum-Disorders-and-Diagnosis-v5",
+      "source_url": "https://huggingface.co/datasets/Neurazum/Disorders_and_Diagnosis_EEG_Dataset-v5",
+      "acquisition_scope": "metadata_only",
+      "readiness": "excluded_from_human_eeg_benchmark",
+      "benchmark_scored": false,
+      "notes": [
+        "Uploader explicitly describes synthetic signals generated by a model."
+      ]
+    }
+  ],
+  "discovery": {
+    "hf_query_repository_count": 971,
+    "eegdash_listing_count": 736,
+    "small_eeg_metadata_candidates": 40,
+    "counts_are_not_unique_cohorts": true,
+    "catalogs": [
+      "research/dataset_expansion_v2/official_repositories.json",
+      "research/dataset_expansion_v2/huggingface_general.json",
+      "research/dataset_expansion_v2/community_and_openneuro.json",
+      "research/dataset_expansion_v2/small-open-eeg-candidates.json"
+    ],
+    "hf_deep_screened_entries": 15,
+    "official_source_screened_entries": 18
+  },
+  "integrity_audit": "experiments/dataset_expansion_v2/Local Dataset Integrity Audit.json",
+  "verified_local_payload_bytes": 1107096362,
+  "notes": [
+    "Array counts and recording counts are distinct from subjects.",
+    "Do not count mirrors, task variants or repeated sessions as independent cohorts.",
+    "Current website scores remain based on previously reviewed datasets."
+  ],
+  "verified_local_file_count": 293,
+  "full_selected_release_bytes": 1023284879
+}

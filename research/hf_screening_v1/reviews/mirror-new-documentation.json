@@ -1,0 +1,88 @@
+[
+  {
+    "repo_id": "Zachary1150/EESM19-Processed",
+    "evidence_id": "Zachary1150/EESM19-Processed@fb045012b58a0b755f9fedf5931dff9b64a9797f",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "sleep"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 20,
+    "channel_count_claim": [
+      8,
+      12
+    ],
+    "license_declared": "cc0-1.0",
+    "labels_and_split_evidence": "Five AASM sleep stages, 30 s epochs; card claims four source nights/person and 73,780 retained paired epochs after exclusions; subject-aware evaluation split remains unverified.",
+    "cohort_relationship": "Explicit export of OpenNeuro EESM19, doi:10.18112/openneuro.ds005185.v1.0.2",
+    "evidence_refs": [
+      "raw/8ef8fdf0d8ffc88c2e003775a784d96af3bbfe47c2d23420e803e91bd5742a41.json",
+      "raw/164d408ca1e400bf4b980b4eae2afa0f3bf9b99e04e3d32bd2d0314036e7e852.md"
+    ],
+    "uncertainties": [
+      "Mirror retrieved; upstream freshness unverified",
+      "Card claims 8 scalp/mastoid channels (M1/F3/C3/O1/M2/F4/C4/O2) and 12 ear channels; EEG/EOG/EMG selection requires source confirmation",
+      "Card reports two truncated source sessions dropped; retained pairing and integrity require checks",
+      "Licence terms require source confirmation",
+      "Subject/session-aware splits and label mapping require verification"
+    ],
+    "next_action": "Verify the OpenNeuro source README, participant/session inventory, channel maps, and split or leakage constraints against the cited revision.",
+    "reason": "Card documents sleep waveforms with paired scalp/ear channels across multiple nights; source and exclusion checks are warranted before acquisition."
+  },
+  {
+    "repo_id": "Zachary1150/EventAAD-Processed",
+    "evidence_id": "Zachary1150/EventAAD-Processed@4998746d91b0b893b627aba1155db3da58aeb8f6",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "auditory_attention"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 24,
+    "channel_count_claim": [
+      30,
+      12
+    ],
+    "license_declared": "cc-by-4.0",
+    "labels_and_split_evidence": "Word-attention labels; card splits trials 0–13/14–16/17–19, grouping recording_id with split_group_id to prevent overlapping epochs leaking. It also describes LOSO; default temporal split does not establish unseen-subject performance.",
+    "cohort_relationship": "EventAAD Paradigm 3 export; source accession/relationship not established in the excerpt.",
+    "evidence_refs": [
+      "raw/2ce786088d102977c01326724d6c8bf097901e5e9e6a545c75fe4da3f5fda84f.json",
+      "raw/991d4e9b9a5cb2f536be63055db598b8c51c6fdf53a68ef09e0347bc7876d4b0.md"
+    ],
+    "uncertainties": [
+      "Mirror retrieved; upstream freshness unverified",
+      "Counts of 30 scalp and 12 ear channels, 24 people and aligned rows are card claims",
+      "Source accession, cohort provenance and licence terms need confirmation",
+      "Overlapping word epochs require source-sample and trial-group leakage audit",
+      "Use a subject-held-out protocol for transfer; default trial split retains the same people"
+    ],
+    "next_action": "Verify original EventAAD accession, participant IDs, montage, label construction and subject-held-out splits with overlap groups preserved.",
+    "reason": "Auditory-attention scalp waveforms with paired ear EEG and trial-level split evidence could add task diversity; verify provenance and leakage first."
+  },
+  {
+    "repo_id": "WymanYYY/Sleep-EDF-V2",
+    "evidence_id": "WymanYYY/Sleep-EDF-V2@63af957e8256617dd69aa96d7dfbf9b7562d24ef",
+    "status": "hold",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "unknown",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": null,
+    "labels_and_split_evidence": "unknown",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw/2659c951dadb707beb018309f4c3b160ee85303420173d7f27d4040f562bb7a5.json",
+      "raw/095af3a1538c82806c981876cd047f4cbe80b42b2611fd40782ce0d24700cb47.json"
+    ],
+    "uncertainties": [
+      "README/card evidence is missing",
+      "Task and signal type cannot be inferred from repository name",
+      "Licence, cohort, channels, labels, and splits are unknown",
+      "Mirror retrieved; upstream freshness unverified"
+    ],
+    "next_action": "Check the original repository README and metadata for modality, cohort, licence, labels, and subject-aware splits.",
+    "reason": "No documentation evidence is available; hold pending original-source metadata rather than inferring sleep or schema from the name."
+  }
+]

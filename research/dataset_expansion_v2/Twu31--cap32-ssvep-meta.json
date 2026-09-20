@@ -1,0 +1,91 @@
+{
+  "_id": "6a86931fc5ba612874687bf7",
+  "id": "Twu31/cap32-ssvep",
+  "author": "Twu31",
+  "sha": "8096d4bc410dee7b936ea2cfb4cb2016986f693d",
+  "lastModified": "2026-08-20T05:45:49.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "task_categories:time-series-forecasting",
+    "language:en",
+    "language:zh",
+    "license:cc-by-4.0",
+    "size_categories:n<1K",
+    "modality:document",
+    "modality:tabular",
+    "modality:text",
+    "region:us",
+    "eeg",
+    "ssvep",
+    "brain-computer-interface",
+    "bci",
+    "dry-electrode",
+    "ads1299",
+    "biosignal"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tcap32-ssvep \u2014 SSVEP calibration on a 32-channel dry-electrode cap\n\t\n\nFour SSVEP calibration sessions from one subject on a low-cost 32-channel dry-electrode cap\n(TI ADS1299, 250 Hz, WiFi/UDP). Recorded for a drone-control project; published because the\nfailure mode is more informative than the accuracy.\nCode and analysis: github.com/twu3202/EEG_SSVEP_Drone\nMotor-imagery data from the same cap: Twu31/cap32-mi-eeg\n\n\u26a0 These files hold 10 posterior channels, not 32. Channel selection\u2026 See the full description on the dataset page: https://huggingface.co/datasets/Twu31/cap32-ssvep.",
+  "downloads": 53,
+  "likes": 0,
+  "cardData": {
+    "license": "cc-by-4.0",
+    "language": [
+      "en",
+      "zh"
+    ],
+    "tags": [
+      "eeg",
+      "ssvep",
+      "brain-computer-interface",
+      "bci",
+      "dry-electrode",
+      "ads1299",
+      "biosignal"
+    ],
+    "pretty_name": "cap32-ssvep \u2014 SSVEP calibration on a 32-channel dry-electrode cap",
+    "size_categories": [
+      "n<1K"
+    ],
+    "task_categories": [
+      "time-series-forecasting"
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_150031.json"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_150031.npz"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_160927.json"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_160927.npz"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_164720.json"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_164720.npz"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_171821.json"
+    },
+    {
+      "rfilename": "data/ssvep_20260725_171821.npz"
+    },
+    {
+      "rfilename": "docs/lowfreq_bias_report.pdf"
+    }
+  ],
+  "createdAt": "2026-08-20T05:39:43.000Z",
+  "usedStorage": 4160979
+}

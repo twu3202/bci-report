@@ -1,0 +1,280 @@
+# 模型目录（手工维护）。slug 全站唯一。reproducible: full（权重+代码+微调脚本齐）| partial | paper_only
+# ⚠ 种子数据：待 research/models_catalog.json 到位后核对补全（尤其许可证、参数量、权重链接）。
+- slug: labram-base
+  name: LaBraM
+  variant: Base
+  org: Peking University
+  year: 2024
+  venue: ICLR 2024
+  paper_url: https://openreview.net/forum?id=QzTpTRVtrP
+  code_url: https://github.com/935963004/LaBraM
+  weights_url: https://github.com/935963004/LaBraM
+  license: MIT
+  params_m: 5.8
+  modality: EEG
+  architecture: 神经 tokenizer（VQ）+ 掩码 EEG 建模，通道-时间 patch Transformer
+  pretrain_hours: 2500
+  pretrain_datasets: [TUEG 子集, SEED 系列, Emobrain, 多个公开数据集共约 2,500 h]
+  reproducible: full
+- slug: labram-large
+  name: LaBraM
+  variant: Large
+  org: Peking University
+  year: 2024
+  venue: ICLR 2024
+  paper_url: https://openreview.net/forum?id=QzTpTRVtrP
+  code_url: https://github.com/935963004/LaBraM
+  weights_url: null
+  license: MIT
+  params_m: 46
+  modality: EEG
+  architecture: 同 Base，更大
+  pretrain_hours: 2500
+  pretrain_datasets: [同 Base]
+  reproducible: paper_only
+- slug: labram-huge
+  name: LaBraM
+  variant: Huge
+  org: Peking University
+  year: 2024
+  venue: ICLR 2024
+  paper_url: https://openreview.net/forum?id=QzTpTRVtrP
+  code_url: https://github.com/935963004/LaBraM
+  weights_url: null
+  license: MIT
+  params_m: 369
+  modality: EEG
+  architecture: 同 Base，更大
+  pretrain_hours: 2500
+  pretrain_datasets: [同 Base]
+  reproducible: paper_only
+- slug: cbramod
+  name: CBraMod
+  variant: null
+  org: Zhejiang University
+  year: 2025
+  venue: ICLR 2025
+  paper_url: https://openreview.net/forum?id=NPNUHgHF2w
+  code_url: https://github.com/wjq-learning/CBraMod
+  weights_url: https://huggingface.co/weighting666/CBraMod
+  license: MIT
+  params_m: 4.0
+  modality: EEG
+  architecture: Criss-cross（时间轴/空间轴分离注意力）Transformer + 非对称条件位置编码，掩码重建
+  pretrain_hours: 27000
+  pretrain_datasets: [TUEG]
+  reproducible: full
+- slug: biot
+  name: BIOT
+  variant: null
+  org: UIUC
+  year: 2023
+  venue: NeurIPS 2023
+  paper_url: https://arxiv.org/abs/2305.10351
+  code_url: https://github.com/ycq091044/BIOT
+  weights_url: https://github.com/ycq091044/BIOT
+  license: MIT
+  params_m: 3.2
+  modality: EEG
+  architecture: 通道-时间 token 线性 Transformer，跨数据集/跨通道预训练
+  pretrain_hours: null
+  pretrain_datasets: [TUAB, TUEV, CHB-MIT, IIIC, PTB-XL, HAR（多任务/无监督）]
+  reproducible: full
+- slug: eegpt
+  name: EEGPT
+  variant: null
+  org: Harbin Institute of Technology
+  year: 2024
+  venue: NeurIPS 2024
+  paper_url: https://openreview.net/forum?id=lvS2b8CjG5
+  code_url: https://github.com/BINE022/EEGPT
+  weights_url: https://github.com/BINE022/EEGPT
+  license: Apache-2.0
+  params_m: 25
+  modality: EEG
+  architecture: 双自监督（时空表征对齐 + 掩码重建），冻结骨干 + 线性探针范式
+  pretrain_hours: null
+  pretrain_datasets: [PhysioNet-MI, HGD, TSU, SEED, M3CV 等]
+  reproducible: full
+- slug: neurolm-b
+  name: NeuroLM
+  variant: B
+  org: Peking University
+  year: 2025
+  venue: ICLR 2025
+  paper_url: https://openreview.net/forum?id=Io9yFt7XH7
+  code_url: https://github.com/935963004/NeuroLM
+  weights_url: https://github.com/935963004/NeuroLM
+  license: MIT
+  params_m: 254
+  modality: EEG
+  architecture: EEG 对齐到 GPT-2 词表的多任务指令调优模型（文本 + EEG token）
+  pretrain_hours: 25000
+  pretrain_datasets: [TUEG 等]
+  reproducible: partial
+- slug: brainbert
+  name: BrainBERT
+  variant: null
+  org: MIT
+  year: 2023
+  venue: ICLR 2023
+  paper_url: https://openreview.net/forum?id=xmcYx_reUn6
+  code_url: https://github.com/czlwang/BrainBERT
+  weights_url: https://github.com/czlwang/BrainBERT
+  license: MIT
+  params_m: 43
+  modality: iEEG
+  architecture: 单电极时频谱掩码建模 Transformer
+  pretrain_hours: 44
+  pretrain_datasets: [Brain Treebank 前身 iEEG 数据]
+  reproducible: full
+- slug: brant
+  name: Brant
+  variant: null
+  org: Zhejiang University
+  year: 2023
+  venue: NeurIPS 2023
+  paper_url: https://openreview.net/forum?id=DDkl9vaJyE
+  code_url: https://github.com/yzz673/Brant
+  weights_url: null
+  license: null
+  params_m: 500
+  modality: iEEG
+  architecture: 时间 + 空间编码器，掩码重建，颅内私有数据预训练
+  pretrain_hours: 2500
+  pretrain_datasets: [私有 sEEG 语料]
+  reproducible: partial
+- slug: bendr
+  name: BENDR
+  variant: null
+  org: University of Toronto
+  year: 2021
+  venue: Frontiers in Human Neuroscience 2021
+  paper_url: https://www.frontiersin.org/articles/10.3389/fnhum.2021.653659
+  code_url: https://github.com/SPOClab-ca/BENDR
+  weights_url: https://github.com/SPOClab-ca/BENDR
+  license: MIT
+  params_m: null
+  modality: EEG
+  architecture: wav2vec 2.0 式对比预训练（卷积编码 + Transformer 上下文）
+  pretrain_hours: 1500
+  pretrain_datasets: [TUEG]
+  reproducible: full
+- slug: eegformer
+  name: EEGFormer
+  variant: null
+  org: Microsoft Research Asia
+  year: 2024
+  venue: arXiv 2024
+  paper_url: https://arxiv.org/abs/2401.10278
+  code_url: null
+  weights_url: null
+  license: null
+  params_m: null
+  modality: EEG
+  architecture: 向量量化 Transformer，可解释离散码本
+  pretrain_hours: 1700
+  pretrain_datasets: [TUEG]
+  reproducible: paper_only
+- slug: neuro-gpt
+  name: Neuro-GPT
+  variant: null
+  org: USC
+  year: 2024
+  venue: ISBI 2024
+  paper_url: https://arxiv.org/abs/2311.03764
+  code_url: https://github.com/wenhui0206/NeuroGPT
+  weights_url: https://github.com/wenhui0206/NeuroGPT
+  license: null
+  params_m: null
+  modality: EEG
+  architecture: EEG 编码器 + GPT-2 自回归预测下一 chunk
+  pretrain_hours: 5600
+  pretrain_datasets: [TUEG]
+  reproducible: partial
+# ---- 常用非预训练 baseline（排行榜里作为参照，标 baseline: true）----
+- slug: sparcnet
+  name: SPaRCNet
+  variant: null
+  org: Harvard / MGH
+  year: 2023
+  venue: Neurology 2023
+  paper_url: https://doi.org/10.1212/WNL.0000000000207127
+  code_url: null
+  weights_url: null
+  license: null
+  params_m: 0.79
+  modality: EEG
+  architecture: 1D 密集卷积网络（无预训练）
+  pretrain_hours: 0
+  pretrain_datasets: []
+  reproducible: partial
+  baseline: true
+- slug: st-transformer
+  name: ST-Transformer
+  variant: null
+  org: —
+  year: 2021
+  venue: arXiv 2021
+  paper_url: https://arxiv.org/abs/2106.11170
+  code_url: null
+  weights_url: null
+  license: null
+  params_m: 3.5
+  modality: EEG
+  architecture: 时空 Transformer（无预训练）
+  pretrain_hours: 0
+  pretrain_datasets: []
+  reproducible: partial
+  baseline: true
+- slug: contrawr
+  name: ContraWR
+  variant: null
+  org: UIUC
+  year: 2022
+  venue: AMIA 2022
+  paper_url: https://arxiv.org/abs/2110.15278
+  code_url: https://github.com/ycq091044/ContraWR
+  weights_url: null
+  license: MIT
+  params_m: 1.6
+  modality: EEG
+  architecture: 对比学习 + 时频谱编码器
+  pretrain_hours: 0
+  pretrain_datasets: []
+  reproducible: partial
+  baseline: true
+- slug: cnn-transformer
+  name: CNN-Transformer
+  variant: null
+  org: —
+  year: 2022
+  venue: —
+  paper_url: null
+  code_url: null
+  weights_url: null
+  license: null
+  params_m: 3.2
+  modality: EEG
+  architecture: CNN 前端 + Transformer（无预训练）
+  pretrain_hours: 0
+  pretrain_datasets: []
+  reproducible: partial
+  baseline: true
+- slug: ffcl
+  name: FFCL
+  variant: null
+  org: —
+  year: 2022
+  venue: —
+  paper_url: null
+  code_url: null
+  weights_url: null
+  license: null
+  params_m: 2.4
+  modality: EEG
+  architecture: CNN + LSTM 特征融合（无预训练）
+  pretrain_hours: 0
+  pretrain_datasets: []
+  reproducible: partial
+  baseline: true

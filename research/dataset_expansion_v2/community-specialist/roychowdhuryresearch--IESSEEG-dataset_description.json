@@ -1,0 +1,21 @@
+{
+    "Name": "IESSEEG: Infantile Epileptic-Spasm EEG Dataset (v1.0)",
+    "BIDSVersion": "1.9.0",
+    "DatasetType": "raw",
+    "Authors": [
+      "Mingjian Lu",
+      "Yipeng Zhang",
+      "Atsuro Daida",
+      "Sotaro Kanai",
+      "Rajsekar Rajaraman",
+      "Hiroki Nariai",
+      "Shingo Oana",
+      "Shaun A. Hussain",
+      "Vwani Roychowdhury",
+      "Roychowdhury Lab"
+    ],
+    "License": "CC-BY-4.0",
+    "HowToAcknowledge": "Please cite our NeurIPS 2025 paper and the DOI below.",
+    "DatasetDOI": "To be updated"
+  }
+  

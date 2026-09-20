@@ -1,0 +1,26 @@
+[
+  {
+    "repo_id": "sajjad5221/emmt-eeg-raw-phases",
+    "evidence_id": "sajjad5221/emmt-eeg-raw-phases@9806cb29b09eb313301723075ec2dd911fabf06a",
+    "status": "exclude_features_or_synthetic",
+    "task_family": [
+      "visual_language"
+    ],
+    "signal_kind": "features_only_claimed",
+    "subject_count_claim": 27,
+    "channel_count_claim": 4,
+    "license_declared": "cc-by-4.0 (HF card declaration)",
+    "labels_and_split_evidence": "Card declares phase labels and participant-level splits of 18/4/5 people. Its schema describes band_power/motion/contact features, not raw scalp voltages.",
+    "cohort_relationship": "EMMT derivative; same underlying corpus as other EMMT mirrors/label variants.",
+    "evidence_refs": [
+      "raw_cached/d2d0f3934f5964b84d6f4868186039015511747159bedd39288e265bb733574d.md#L22-L34"
+    ],
+    "uncertainties": [
+      "No raw-voltage field is documented in this release.",
+      "Original-source terms and any separate raw recording release remain to be checked.",
+      "Counts and split claims are cached documentation, not independently revalidated."
+    ],
+    "next_action": "Exclude this representation from waveform-model acquisition; follow original source only if raw voltage recordings can be documented.",
+    "reason": "Negative control: the title says raw EEG, but the card schema explicitly lists band powers, motion and contact quality. It cannot stand in for voltage input to EEG foundation models."
+  }
+]

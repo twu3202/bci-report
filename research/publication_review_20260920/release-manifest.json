@@ -1,0 +1,405 @@
+{
+  "releaseId": "research-preview-20260920",
+  "reviewedAt": "2026-09-20",
+  "scope": "Personal noncommercial research, free, no ads or fees; private owner preview; no raw data, uploads or participant-level publication.",
+  "datasets": [
+    {
+      "id": "ds003810",
+      "name": "ds003810",
+      "task": "Motor imagery / rest",
+      "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+      "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+      "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Clear CC0 snapshot plus dataset-specific ethics and signed-consent evidence; aggregate-only publication materially limits privacy exposure.",
+      "rightsRestrictions": "No copyright attribution condition, but cite the dataset and Peterson et al.; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; no mirror in the reviewed acquisition path.",
+      "subjects": 10,
+      "channels": 15,
+      "trackId": "mi-rest",
+      "title": "Motor imagery & rest",
+      "short": "Transfer to a new person",
+      "subtitle": "Rest versus right-hand imagery",
+      "order": 1,
+      "limitation": "Ten-person laboratory task with prompted rest. This is not continuous-idle monitoring or a physical low-channel headset test."
+    },
+    {
+      "id": "physionet-eegmat-1.0.0",
+      "name": "EEGMAT",
+      "task": "Arithmetic / rest",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Attribution license and study-specific approval/consent are documented; eligibility assumes aggregate-only output and exclusion of subject-info fields.",
+      "rightsRestrictions": "Attribute the database and cite both the record and Zyma et al.; the license does not grant rights in individual contents or privacy rights.",
+      "provenance": "Direct pinned PhysioNet release.",
+      "subjects": 36,
+      "channels": 19,
+      "trackId": "arithmetic-rest",
+      "title": "Arithmetic & rest",
+      "short": "Transfer to a new person",
+      "subtitle": "Serial subtraction versus resting EEG",
+      "order": 4,
+      "limitation": "Thirty nonoverlapping 2-second windows from each of two conditions per person. Published signals were already cleaned with ICA; task performance groups are not evaluated."
+    },
+    {
+      "id": "eesm19-scalp-sleep",
+      "name": "EESM19 scalp subset",
+      "task": "Five-stage sleep",
+      "source": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+      "version": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2 · {\"mirror\": \"fb045012b58a0b755f9fedf5931dff9b64a9797f\", \"upstream\": \"0857858f7a2ba1582930f23eca3ec56f90a96da9\"}",
+      "license": "CC0-1.0 declared by upstream and mirror",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+      "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "https://www.nature.com/articles/s41598-019-53115-3"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Clear upstream CC0 and study ethics evidence; use only the pinned scalp-signal derivative and publish aggregates, with provenance disclosed.",
+      "rightsRestrictions": "Cite the dataset and EESM19 publication; privacy and third-party rights remain.",
+      "provenance": "Processed H5 mirror derived from OpenNeuro ds005185. The mirror card agrees on CC0, but the derived-file transformation is described by the mirror rather than independently certified by upstream.",
+      "subjects": 20,
+      "channels": 6,
+      "trackId": "sleep-scalp",
+      "title": "Sleep staging",
+      "short": "Transfer to a new person",
+      "subtitle": "Five stages · balanced scalp-EEG sample",
+      "order": 7,
+      "limitation": "Balanced quality-screened scalp subset, not whole-night deployment prevalence and not ear-EEG. Frozen encoders average fifteen 2-second representations; EEGNet receives 10 epochs."
+    },
+    {
+      "id": "BETA",
+      "name": "BETA",
+      "task": "40-target SSVEP",
+      "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+      "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Eligible only under the stated personal, research-led, noncommercial operation. Any ads, sponsorship, fees, or use directed toward commercial advantage requires fresh review or permission.",
+      "rightsRestrictions": "Attribution required. Participant consent described use for non-commercial scientific research, a narrower operational boundary than the copyright license; minors required parental consent.",
+      "provenance": "Processed mirror identifies the canonical Figshare record and repeats CC BY 4.0; upstream version is pinned separately.",
+      "subjects": 70,
+      "channels": "4 / 8 selected",
+      "order": 3
+    },
+    {
+      "id": "BNCI2014-008",
+      "name": "BNCI2014-008",
+      "task": "Research source",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets/008-2014",
+      "version": "BNCI Horizon 2020 catalog · Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-NC-ND 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "attribution": "BNCI Horizon 2020 catalog · Original researchers credited at source.",
+      "privacyReview": "Study paper reports Fondazione Santa Lucia ethics approval and informed consent. The eight-person ALS cohort is highly sensitive; the description links pseudonymous codes to exact age, sex, ALSFRS-R score, and onset type. Consent for public secondary benchmark publication was not located.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://bnci-horizon-2020.eu/database/data-sets/008-2014/description.pdf",
+        "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2013.00732/full"
+      ],
+      "decision": "withhold",
+      "publicNote": "Small clinical cohort and linked health attributes create disproportionate reidentification risk; aggregate-only output does not resolve the missing secondary-publication consent evidence.",
+      "rightsRestrictions": "Attribution required; noncommercial use only; adapted material may not be distributed. Cite the associated publication.",
+      "provenance": "Direct BNCI record; no separate release hash exposed."
+    },
+    {
+      "id": "BNCI2014-009",
+      "name": "BNCI2014-009",
+      "task": "Research source",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets/009-2014",
+      "version": "BNCI Horizon 2020 catalog · Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-NC-ND 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "attribution": "BNCI Horizon 2020 catalog · Original researchers credited at source.",
+      "privacyReview": "Ten healthy participants, all female; the description links exact ages to pseudonymous IDs. Dataset-specific ethics approval and consent language were not located in the record or cited GeoSpell article.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://bnci-horizon-2020.eu/database/data-sets/009-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ],
+      "decision": "withhold",
+      "publicNote": "License permits only noncommercial unadapted redistribution, and the consent/ethics chain for public secondary results remains unverified.",
+      "rightsRestrictions": "Attribution required; noncommercial use only; adapted material may not be distributed. Cite the associated publication.",
+      "provenance": "Direct BNCI record; no separate release hash exposed."
+    },
+    {
+      "id": "stew-monster-processed",
+      "name": "stew-monster-processed",
+      "task": "Research source",
+      "source": "https://ieee-dataport.org/open-access/simultaneous-task-eeg-workload-dataset",
+      "version": "monster-monash/STEW Hugging Face processed mirror · 923edf62979de38b907b2c2ad684e3b734126bee",
+      "license": "Mirror declares CC BY 4.0; exact upstream DataPort license not independently verified",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "monster-monash/STEW Hugging Face processed mirror · Original researchers credited at source.",
+      "privacyReview": "Paper reports written consent, Declaration of Helsinki compliance, and NTU IRB-2014-04-026. The exact consent scope and DataPort reuse terms were not accessible in this review.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://huggingface.co/datasets/monster-monash/STEW/tree/923edf62979de38b907b2c2ad684e3b734126bee",
+        "https://personal.ntu.edu.sg/elpwang/PDF_web/08478165.pdf"
+      ],
+      "decision": "withhold",
+      "publicNote": "Ethics evidence is positive, but upstream license and the processed mirror's authority to apply CC BY remain unresolved.",
+      "rightsRestrictions": "Primary paper describes availability to qualified investigators for scientific research. Do not treat the mirror's CC BY tag as expanding upstream permission.",
+      "provenance": "Mirror contains processed CSV/NPY products and subject identifiers derived from STEW; a complete upstream-to-derivative rights chain was not found."
+    },
+    {
+      "id": "ds005383",
+      "name": "TMNRED / ds005383",
+      "task": "Semantic target ERP",
+      "source": "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+      "version": "OpenNeuro snapshot 1.0.0 · ad78f3db430e636595b1b1c08417492f3067a25e",
+      "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Yanru Bai, Qi Tang et al. · TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments (2025), doi:10.1038/s41597-025-05036-2. OpenNeuro ds005383 v1.0.0.",
+      "privacyReview": "Paper reports Tianjin University ethics approval TJUE-2024-402, written consent, deidentification, and explicit participant permission for open sharing. Local participants.tsv appears column-shifted/malformed, so it must not feed public metadata.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+        "https://www.nature.com/articles/s41597-025-05036-2"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Strong study-specific open-sharing evidence. Aggregate metrics avoid redistribution of stimulus text and participant metadata; credit under CC BY.",
+      "rightsRestrictions": "Honor the stricter CC BY attribution requirement. Do not reproduce third-party Chinese stimulus text sourced from Baidu Baike, WeChat accounts, or news.",
+      "provenance": "Direct OpenNeuro snapshot; publication also points to author-hosted raw/preprocessed data. The license-label mismatch is conservatively resolved in favor of attribution.",
+      "subjects": 30,
+      "channels": 30,
+      "trackId": "semantic-target",
+      "title": "Semantic target ERP",
+      "short": "Transfer to a new person",
+      "subtitle": "Reading · target versus nontarget events",
+      "order": 6,
+      "limitation": "Balanced event subset with collapsed semantic categories. Natural class prevalence is not preserved. Third-party reading passages and participant metadata are excluded from this website."
+    },
+    {
+      "id": "ds006593",
+      "name": "ds006593",
+      "task": "P300 target ERP",
+      "source": "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+      "version": "OpenNeuro snapshot 1.0.0 · b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "OpenNeuro ds006593 contributors · version 1.0.0, doi:10.18112/openneuro.ds006593.v1.0.0; original author credits retained at the linked source.",
+      "privacyReview": "Dataset metadata/README report IRB approval #10-05-2022 and written informed consent. Participant metadata contains pseudonymous IDs and study descriptors without demographic fields. Eye-tracking and raw signals remain off-site.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "https://nemar.org/dataset/on006593"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Pinned CC0 release with dataset-specific IRB and consent evidence and comparatively low metadata exposure.",
+      "rightsRestrictions": "No copyright attribution condition, but cite the dataset; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; NEMAR independently identifies its copy as derived from this OpenNeuro record.",
+      "subjects": 21,
+      "channels": 19,
+      "trackId": "p300-target",
+      "title": "P300 target ERP",
+      "short": "Transfer to a new person",
+      "subtitle": "Visual target versus nontarget events",
+      "order": 5,
+      "limitation": "Balanced target/nontarget sample changes the source 1:9 prevalence. One-second windows include later flashes at 0.3-second intervals; this is not an online speller estimate."
+    },
+    {
+      "id": "physionet-eegmmidb-1.0.0",
+      "name": "physionet-eegmmidb-1.0.0",
+      "task": "Research source",
+      "source": "https://physionet.org/content/eegmmidb/1.0.0/",
+      "version": "PhysioNet EEG Motor Movement/Imagery Dataset 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "PhysioNet EEG Motor Movement/Imagery Dataset 1.0.0 · Original researchers credited at source.",
+      "privacyReview": "PhysioNet describes hosted records as deidentified. Dataset-specific IRB approval, participant consent, and consent for public secondary use were not located on the record or in the cited methods paper.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmmidb/1.0.0/",
+        "https://opendatacommons.org/licenses/by/1-0/",
+        "https://archive.physionet.org/faq.shtml"
+      ],
+      "decision": "withhold",
+      "publicNote": "Reuse license is clear, but the dataset-specific human-subject consent and ethics chain is not evidenced strongly enough for a new public benchmark release.",
+      "rightsRestrictions": "Attribute the database and cite both the PhysioNet record and BCI2000 paper; contents and privacy rights are outside the database license.",
+      "provenance": "Direct pinned PhysioNet release."
+    },
+    {
+      "id": "BNCI2014-001",
+      "name": "BNCI2014-001",
+      "task": "Research source",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets/001-2014",
+      "version": "BNCI Horizon 2020 catalog · Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-ND 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nd/4.0/",
+      "attribution": "BNCI Horizon 2020 catalog · Original researchers credited at source.",
+      "privacyReview": "Nine healthy participants. Dataset-specific ethics approval, consent wording, and public-sharing scope were not located in the description; BNCI's general submission requirements are not a substitute.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://bnci-horizon-2020.eu/database/data-sets/001-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ],
+      "decision": "withhold",
+      "publicNote": "Per-dataset license is verified, but consent evidence and the application of ND to the planned publication pipeline should be clarified.",
+      "rightsRestrictions": "Attribution required; adapted material may not be distributed. Cite the associated publication. Internal processing followed by aggregate benchmark facts reduces, but does not conclusively eliminate, ND ambiguity.",
+      "provenance": "Direct BNCI record; no release hash exposed."
+    },
+    {
+      "id": "BNCI2014-004",
+      "name": "BNCI2014-004",
+      "task": "Research source",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets/004-2014",
+      "version": "BNCI Horizon 2020 catalog · Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-ND 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nd/4.0/",
+      "attribution": "BNCI Horizon 2020 catalog · Original researchers credited at source.",
+      "privacyReview": "Nine healthy participants. Dataset-specific ethics approval, consent wording, and public-sharing scope were not located in the description; BNCI's general submission requirements are not a substitute.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://bnci-horizon-2020.eu/database/data-sets/004-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ],
+      "decision": "withhold",
+      "publicNote": "Per-dataset license is verified, but consent evidence and the application of ND to the planned publication pipeline should be clarified.",
+      "rightsRestrictions": "Attribution required; adapted material may not be distributed. Cite the associated publication. Internal processing followed by aggregate benchmark facts reduces, but does not conclusively eliminate, ND ambiguity.",
+      "provenance": "Direct BNCI record; no release hash exposed."
+    },
+    {
+      "id": "ds005342",
+      "name": "ds005342",
+      "task": "Cue-gated idle / command",
+      "source": "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+      "version": "OpenNeuro snapshot 1.0.3 · 30bb3b67d76ce007b822fed801e496fafe5598a0",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "OpenNeuro ds005342 contributors · version 1.0.3, doi:10.18112/openneuro.ds005342.v1.0.3; associated study doi:10.3389/fninf.2022.961089. Original author credits are retained at the linked source.",
+      "privacyReview": "README reports voluntary signed consent and Universidad Antonio Nariño ethics approval. participants.tsv links pseudonymous IDs to exact age, sex, handedness, and academic major. The current evaluated subset has only four people.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+        "https://eegdash.org/api/dataset/eegdash.dataset.DS005342.html",
+        "https://doi.org/10.3389/fninf.2022.961089"
+      ],
+      "decision": "aggregate_preview",
+      "publicNote": "Eligible only as an aggregate-only case study: remove all participant IDs/results and condition breakdowns, label n=4 prominently, avoid subgroup claims, and make no claim that the cohort is anonymous.",
+      "rightsRestrictions": "No copyright attribution condition, but cite the dataset and associated paper; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; EEGDash/NEMAR identify the same canonical OpenNeuro DOI.",
+      "subjects": "4 evaluated / 32 prepared",
+      "channels": 17,
+      "trackId": "idle",
+      "order": 2,
+      "legacyAuditFiles": [
+        "experiments/idle_replay_v1/outputs/run-20260910-mps-v1/independent-audit.json",
+        "experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1/independent-audit.json"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "labram",
+      "name": "LaBraM",
+      "decision": "aggregate_preview",
+      "rightsNote": "Code/repository: MIT · Checkpoint: committed in that repository; no separate weight terms",
+      "evidence": [
+        "https://github.com/935963004/LaBraM/blob/c431221e6cfd23dbfa9950e0180682fb322b0548/LICENSE",
+        "https://github.com/935963004/LaBraM/tree/c431221e6cfd23dbfa9950e0180682fb322b0548/checkpoints",
+        "https://github.com/935963004/LaBraM/blob/c431221e6cfd23dbfa9950e0180682fb322b0548/README.md",
+        "https://github.com/935963004/LaBraM/commit/d52cb6d1801bb038e10ea1b6b3292c0bd569a9d5",
+        "https://api.github.com/repos/935963004/LaBraM/releases"
+      ]
+    },
+    {
+      "id": "eegpt",
+      "name": "EEGPT",
+      "decision": "withhold",
+      "rightsNote": "Code: Apache-2.0 · Checkpoint: license unresolved; excluded from new public scope",
+      "evidence": [
+        "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/LICENSE",
+        "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/README.md#pretrained-models",
+        "https://figshare.com/s/e37df4f8a907a866df4b",
+        "https://ndownloader.figshare.com/files/46452745?private_link=e37df4f8a907a866df4b",
+        "https://api.figshare.com/v2/articles/search",
+        "https://papers.neurips.cc/paper_files/paper/2024/hash/4540d267eeec4e5dbd9dae9448f0b739-Abstract-Conference.html"
+      ]
+    },
+    {
+      "id": "cbramod",
+      "name": "CBraMod",
+      "decision": "aggregate_preview",
+      "rightsNote": "Code: MIT · Weights: Apache-2.0 (official model card)",
+      "evidence": [
+        "https://github.com/wjq-learning/CBraMod/blob/b9e961003214326972c567eff390e75b0287e32a/LICENSE",
+        "https://github.com/wjq-learning/CBraMod/blob/b9e961003214326972c567eff390e75b0287e32a/README.md",
+        "https://huggingface.co/weighting666/CBraMod/blob/500543c7e30bda1b22bfd51a49301b238dee21fd/README.md"
+      ]
+    },
+    {
+      "id": "eegnet",
+      "name": "EEGNet",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "shallowfbcspnet",
+      "name": "ShallowFBCSPNet",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "deep4net",
+      "name": "Deep4Net",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "csp-lda",
+      "name": "CSP+LDA",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "spectral-ridge",
+      "name": "Spectral ridge",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "temporal-ridge",
+      "name": "Temporal ridge",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    },
+    {
+      "id": "cca",
+      "name": "Standard CCA",
+      "decision": "aggregate_preview",
+      "rightsNote": "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used."
+    }
+  ],
+  "policy": "Editorial risk screening, not a legal certification. Unresolved sources remain excluded, not declared unlawful.",
+  "seedSensitivity": "experiments/parallel_benchmark_v1/seed-sensitivity-v1/aggregate.json"
+}

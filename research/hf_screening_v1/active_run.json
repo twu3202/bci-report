@@ -1,0 +1,25 @@
+{
+  "stage": "authorized_acquisition_running",
+  "updated_at": "2026-09-12T15:24:51.739845+00:00",
+  "run_dir": "<evidence-root>/acquisition/2026-09-12",
+  "screening_run_dir": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+  "volume_uuid": "698ECB7A-A9AD-45B9-8AFE-8AF7F17852D6",
+  "scope": "screening_and_selected_eeg_acquisition",
+  "authorization": "User: You can start the workflow and download them now.",
+  "signal_download_authorized": true,
+  "reviewed_candidates": 36,
+  "selected_dataset_releases": 15,
+  "planned_download_assets": 3703,
+  "planned_download_bytes": 23124284218,
+  "dataset_root": "<evidence-root>/datasets",
+  "task_processes_running": true,
+  "system_service_installed": false,
+  "scheduled_retry": false,
+  "actual_model_token_usage": null,
+  "read_first": [
+    "run_state.json",
+    "completion-state.json",
+    "acquisition-jobs.json"
+  ],
+  "next_action": "Finite downloads and per-cohort validation run locally; inspect completion-state for completed, failed or still-running jobs. Resume partial failures using pinned manifests; no leaderboard scores until split/protocol audit."
+}

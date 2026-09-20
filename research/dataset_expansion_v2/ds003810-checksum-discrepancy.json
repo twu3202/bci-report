@@ -1,0 +1,58 @@
+[
+  {
+    "file": "sub-02/eeg/sub-02_task-MIvsRest_run-1_eeg.edf",
+    "bytes": 1731560,
+    "expectedBytes": 1731560,
+    "expectedMD5": "1b405d2d4729cc4d99be8278eb0a9ed4",
+    "actualMD5": "0e12c33c2770b81a478bb74385718479",
+    "match": false
+  },
+  {
+    "file": "sub-02/eeg/sub-02_task-MIvsRest_run-0_eeg.edf",
+    "bytes": 487352,
+    "expectedBytes": 487352,
+    "expectedMD5": "70f76ac370426271545c229e4d455cda",
+    "actualMD5": "5ca1035f1535e8a4aa3b87aa82dc71b5",
+    "match": false
+  },
+  {
+    "file": "sub-02/eeg/sub-02_task-MIvsRest_run-2_eeg.edf",
+    "bytes": 1696784,
+    "expectedBytes": 1692920,
+    "expectedMD5": "0c537a8b6e1f0b9e7c411c86c99c9842",
+    "actualMD5": "8f39c8693068f90a5faaf912a42c3b15",
+    "match": false
+  },
+  {
+    "file": "sub-02/eeg/sub-02_task-MIvsRest_run-3_eeg.edf",
+    "bytes": 1314248,
+    "expectedBytes": 1314248,
+    "expectedMD5": "c8c12ed967c8cc430ac14f8f3efcba7e",
+    "actualMD5": "1bb169bffd093600f913823b41149ecb",
+    "match": false
+  },
+  {
+    "file": "sub-02/eeg/sub-02_task-MIvsRest_run-4_eeg.edf",
+    "bytes": 1669736,
+    "expectedBytes": 1669736,
+    "expectedMD5": "f81f42f33e42379dd442ded0542cf94d",
+    "actualMD5": "4a2cca6cb3f4a56c9dd8b5f79f80a6d7",
+    "match": false
+  },
+  {
+    "file": "sub-03/eeg/sub-03_task-MIvsRest_run-1_eeg.edf",
+    "bytes": 1662008,
+    "expectedBytes": 1658144,
+    "expectedMD5": "bb0f003474c81bf63e50fcb9c553252c",
+    "actualMD5": "9f700da5f93c49ec5e789def538fc657",
+    "match": false
+  },
+  {
+    "file": "sub-03/eeg/sub-03_task-MIvsRest_run-0_eeg.edf",
+    "bytes": 498944,
+    "expectedBytes": 498944,
+    "expectedMD5": "cc4f47a7894e06d06d72f1f80a4a1924",
+    "actualMD5": "82e40a4b96e890974bae1d307fe517d8",
+    "match": false
+  }
+]

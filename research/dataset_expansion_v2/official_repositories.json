@@ -1,0 +1,963 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-09-10T07:50:00Z",
+  "scope": "Official or primary-upstream public EEG repositories screened for subject-level evaluation beyond ds005342, BNCI2014-001, BNCI2014-004, PhysioNet EEGMMIDB, Sleep-EDF, OpenNeuro ds007554, and BCI Competition IV 1.",
+  "method": {
+    "requirements": [
+      "actual EEG signals rather than fMRI-only or feature-only data",
+      "meaningful experimental or clinical labels",
+      "enough distinct participants for a subject-level split",
+      "anonymous download without an application whenever marked ready",
+      "license and access status kept separate from technical readiness"
+    ],
+    "source_policy": "Repository records, primary dataset pages, and official MOABB loaders were used. Aggregate discovery catalogs were used only to locate upstream records.",
+    "size_note": "Sizes can describe an upstream archive, an EEG-only converted copy, or local HTTP Content-Length. The basis is explicit per corpus.",
+    "commercial_note": "CC BY-NC-ND corpora are research candidates and must not be described as cleared for a commercial service. Technical download readiness is not commercial permission."
+  },
+  "download_manifest": "experiments/dataset_expansion_v2/official/download-and-parse-manifest.json",
+  "corpora": [
+    {
+      "canonical_id": "physionet-eegmat-1.0.0",
+      "title": "EEG During Mental Arithmetic Tasks",
+      "task_family": [
+        "mental_arithmetic",
+        "rest",
+        "attention_workload"
+      ],
+      "labels": [
+        "rest_before_task",
+        "mental_arithmetic",
+        "count_quality_good",
+        "count_quality_bad"
+      ],
+      "subjects": 36,
+      "sessions_or_records": "two EDF recordings per subject: pre-task background and mental arithmetic",
+      "electrodes": {
+        "stored_signal_channels": 21,
+        "scalp_eeg_channels": 19,
+        "other_stored_channels": [
+          "EEG A2-A1",
+          "ECG ECG"
+        ],
+        "acquisition_system_description": "23-channel monopolar system with interconnected-ear reference; local EDF arrays contain 21 signals, not 21 scalp EEG channels"
+      },
+      "sampling_rate_hz": 500,
+      "size": {
+        "bytes": 182988920,
+        "display": "174.5 MiB",
+        "basis": "official/NEMAR EEG release metadata; PhysioNet page reports 175.1 MB uncompressed"
+      },
+      "primary_sources": [
+        {
+          "role": "official_repository",
+          "url": "https://physionet.org/content/eegmat/1.0.0/"
+        },
+        {
+          "role": "versioned_file_endpoint",
+          "url": "https://physionet.org/files/eegmat/1.0.0/"
+        },
+        {
+          "role": "doi",
+          "url": "https://doi.org/10.13026/C2JQ1P"
+        }
+      ],
+      "license": {
+        "id": "ODC-By-1.0",
+        "commercial_use": "allowed subject to attribution; legal review still applies"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; keep both condition recordings from each participant in the same fold",
+      "practical_status": "downloaded_full_validated",
+      "flags": [
+        "condition duration differs between _1 and _2 recordings",
+        "count-quality group is a participant attribute and must not be confused with per-record condition",
+        "Exclude ECG ECG from EEG model input; EEG A2-A1 is an ear difference, not a standard scalp electrode."
+      ]
+    },
+    {
+      "canonical_id": "BNCI2014-008",
+      "title": "ALS visual P300 speller",
+      "task_family": [
+        "ERP",
+        "P300",
+        "clinical_BCI"
+      ],
+      "labels": [
+        "Target",
+        "NonTarget"
+      ],
+      "subjects": 8,
+      "sessions_or_records": "one session per participant",
+      "electrodes": {
+        "eeg_channels": 8,
+        "montage": "10-10",
+        "reference": "right earlobe"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 172688772,
+        "display": "164.7 MiB",
+        "basis": "2026-09-10 HTTP Content-Length across all eight official MAT files"
+      },
+      "primary_sources": [
+        {
+          "role": "repository",
+          "url": "https://bnci-horizon-2020.eu/database/data-sets"
+        },
+        {
+          "role": "official_file_base",
+          "url": "https://lampx.tugraz.at/~bci/database/008-2014/"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2014_008.html"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-NC-ND-4.0",
+        "commercial_use": "not cleared; noncommercial and no-derivatives restrictions"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready for leave-one-participant-out; a single session cannot test cross-session generalization",
+      "practical_status": "downloaded_full_validated",
+      "flags": [
+        "ALS clinical cohort",
+        "strong Target/NonTarget imbalance",
+        "source is already preprocessed and artifact-rejected"
+      ]
+    },
+    {
+      "canonical_id": "BNCI2014-009",
+      "title": "Grid-speller and GeoSpell P300 recordings",
+      "task_family": [
+        "ERP",
+        "P300",
+        "visual_attention"
+      ],
+      "labels": [
+        "Target",
+        "NonTarget"
+      ],
+      "subjects": 10,
+      "sessions_or_records": "three sessions per participant; official MOABB loader selects grid-speller data",
+      "electrodes": {
+        "eeg_channels": 16,
+        "montage": "10-10",
+        "reference": "linked earlobes"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 185291565,
+        "display": "176.7 MiB",
+        "basis": "2026-09-10 HTTP Content-Length across all ten official MAT files"
+      },
+      "primary_sources": [
+        {
+          "role": "repository",
+          "url": "https://bnci-horizon-2020.eu/database/data-sets"
+        },
+        {
+          "role": "official_file_base",
+          "url": "https://lampx.tugraz.at/~bci/database/009-2014/"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2014_009.html"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-NC-ND-4.0",
+        "commercial_use": "not cleared; noncommercial and no-derivatives restrictions"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready for leave-one-participant-out; within-participant sessions permit a separate cross-session protocol",
+      "practical_status": "downloaded_full_validated",
+      "flags": [
+        "lock grid-speller versus GeoSpell scope before scoring",
+        "Target/NonTarget imbalance",
+        "official loader applies a documented divide-by-ten amplitude correction"
+      ]
+    },
+    {
+      "canonical_id": "BNCI2015-003",
+      "title": "AMUSE auditory P300 speller",
+      "task_family": [
+        "ERP",
+        "P300",
+        "auditory_attention"
+      ],
+      "labels": [
+        "Target",
+        "NonTarget"
+      ],
+      "subjects": 10,
+      "sessions_or_records": "one session, two runs per participant",
+      "electrodes": {
+        "eeg_channels": 8,
+        "montage": "10-05",
+        "reference": "nose"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 22835171,
+        "display": "21.8 MiB",
+        "basis": "NEMAR EEG-converted record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "repository",
+          "url": "https://bnci-horizon-2020.eu/database/data-sets"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2015_003.html"
+        },
+        {
+          "role": "paper",
+          "url": "https://doi.org/10.3389/fnins.2011.00112"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-NC-ND-4.0",
+        "commercial_use": "not cleared"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready for leave-one-participant-out; no independent session test",
+      "practical_status": "strong_next_download_candidate",
+      "flags": [
+        "MOABB prose has a visual-P300 copy error; primary paper identifies an auditory spatial paradigm",
+        "preprocessed/downsampled variants require exact version lock"
+      ]
+    },
+    {
+      "canonical_id": "BNCI2015-004",
+      "title": "Five mental tasks in participants with motor disability",
+      "task_family": [
+        "mental_tasks",
+        "workload",
+        "clinical_BCI"
+      ],
+      "labels": [
+        "math",
+        "letter",
+        "rotation",
+        "count",
+        "baseline"
+      ],
+      "subjects": 9,
+      "sessions_or_records": "two sessions per participant",
+      "electrodes": {
+        "eeg_channels": 30,
+        "montage": "10-20",
+        "reference": "linked mastoids"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": null,
+        "display": "unknown from stable upstream metadata",
+        "basis": "must HEAD official file list before acquisition"
+      },
+      "primary_sources": [
+        {
+          "role": "repository",
+          "url": "https://bnci-horizon-2020.eu/database/data-sets"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2015_004.html"
+        },
+        {
+          "role": "paper",
+          "url": "https://doi.org/10.1371/journal.pone.0123727"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-NC-ND-4.0",
+        "commercial_use": "not cleared"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; two sessions also support cross-session evaluation",
+      "practical_status": "high_value_deferred_for_size_check",
+      "flags": [
+        "stroke and spinal-cord-injury cohort",
+        "do not compare directly with healthy-cohort scores"
+      ]
+    },
+    {
+      "canonical_id": "BNCI2015-006",
+      "title": "Multi-stream musical auditory oddball",
+      "task_family": [
+        "ERP",
+        "P300",
+        "auditory_attention",
+        "music"
+      ],
+      "labels": [
+        "Target",
+        "NonTarget"
+      ],
+      "subjects": 11,
+      "sessions_or_records": "one session per participant",
+      "electrodes": {
+        "eeg_channels": 64,
+        "montage": "10-10",
+        "reference": "left mastoid"
+      },
+      "sampling_rate_hz": 200,
+      "size": {
+        "bytes": null,
+        "display": "unknown from stable upstream metadata",
+        "basis": "must HEAD official file list"
+      },
+      "primary_sources": [
+        {
+          "role": "repository",
+          "url": "https://bnci-horizon-2020.eu/database/data-sets"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2015_006.html"
+        },
+        {
+          "role": "paper",
+          "url": "https://doi.org/10.1088/1741-2560/11/2/026009"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-NC-ND-4.0",
+        "commercial_use": "not cleared"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready for leave-one-participant-out",
+      "practical_status": "good_auditory_task_deferred_for_size_check",
+      "flags": [
+        "single session",
+        "event imbalance and attended-instrument semantics need event-table audit"
+      ]
+    },
+    {
+      "canonical_id": "Kalunga2016",
+      "repository_id": "NEMAR nm000123 / Zenodo 2392979",
+      "title": "SSVEP Exo dataset",
+      "task_family": [
+        "SSVEP",
+        "visual_attention",
+        "reject_option"
+      ],
+      "labels": [
+        "13Hz",
+        "17Hz",
+        "21Hz",
+        "reject"
+      ],
+      "subjects": 12,
+      "sessions_or_records": "one session; NEMAR exposes 30 EEG records",
+      "electrodes": {
+        "eeg_channels": 8,
+        "montage": "standard_1005",
+        "reference": "right mastoid"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 82000354,
+        "display": "78.2 MiB",
+        "basis": "NEMAR EEG-converted record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "upstream_record",
+          "url": "https://zenodo.org/records/2392979"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.Kalunga2016.html"
+        },
+        {
+          "role": "paper",
+          "url": "https://doi.org/10.1016/j.neucom.2016.01.007"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready for leave-one-participant-out",
+      "practical_status": "strong_next_download_candidate",
+      "flags": [
+        "17 Hz and 21 Hz event notation was corrected by MOABB; lock corrected label mapping"
+      ]
+    },
+    {
+      "canonical_id": "AlphaWaves-Rodrigues2017",
+      "repository_id": "NEMAR nm000221 / Zenodo 2348892",
+      "title": "AlphaWaves eyes-open versus eyes-closed resting EEG",
+      "task_family": [
+        "rest",
+        "eyes_open_closed",
+        "alpha_rhythm"
+      ],
+      "labels": [
+        "eyes_closed",
+        "eyes_open"
+      ],
+      "subjects": 19,
+      "sessions_or_records": "one recording per participant",
+      "electrodes": {
+        "eeg_channels": 16,
+        "montage": "standard_1010",
+        "reference": "right earlobe"
+      },
+      "sampling_rate_hz": 512,
+      "size": {
+        "bytes": 85647715,
+        "display": "81.7 MiB",
+        "basis": "NEMAR EEG-converted record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "upstream_record",
+          "url": "https://zenodo.org/records/2348892"
+        },
+        {
+          "role": "repository_mirror",
+          "url": "https://www.nemar.org/dataset/nm000221"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; alternate-condition segments from one participant must remain in one fold",
+      "practical_status": "strong_next_download_candidate",
+      "flags": [
+        "no independent sessions",
+        "segment boundaries and alternating order require event audit"
+      ]
+    },
+    {
+      "canonical_id": "BrainInvaders2014b",
+      "repository_id": "NEMAR nm000215 / Zenodo 3267301",
+      "title": "Collaborative Brain Invaders visual P300",
+      "task_family": [
+        "ERP",
+        "P300",
+        "visual_attention",
+        "collaboration"
+      ],
+      "labels": [
+        "Target",
+        "NonTarget"
+      ],
+      "subjects": 38,
+      "sessions_or_records": "Solo1, Solo2, and Collaboration conditions; one acquisition session",
+      "electrodes": {
+        "eeg_channels": 32,
+        "montage": "10-10",
+        "reference": "right earlobe"
+      },
+      "sampling_rate_hz": 512,
+      "size": {
+        "bytes": 1331439862,
+        "display": "1.24 GiB",
+        "basis": "NEMAR v1.0.2 published archive"
+      },
+      "primary_sources": [
+        {
+          "role": "versioned_repository",
+          "url": "https://www.nemar.org/dataset/nm000215"
+        },
+        {
+          "role": "upstream_doi",
+          "url": "https://doi.org/10.5281/zenodo.3267301"
+        },
+        {
+          "role": "direct_manifest",
+          "url": "https://data.nemar.org/nm000215/v1.0.2/manifest.json"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; paired participants and collaboration condition should be grouped to prevent partner leakage",
+      "practical_status": "high_value_above_current_download_budget",
+      "flags": [
+        "pair-level dependence",
+        "Target/NonTarget imbalance"
+      ]
+    },
+    {
+      "canonical_id": "ERP-CORE",
+      "repository_id": "NEMAR nm000132 / OSF thsqg",
+      "title": "ERP CORE",
+      "task_family": [
+        "ERP",
+        "P3b",
+        "N170",
+        "MMN",
+        "N2pc",
+        "N400",
+        "LRP",
+        "ERN"
+      ],
+      "labels": [
+        "paradigm-specific stimulus and response events across six tasks"
+      ],
+      "subjects": 40,
+      "sessions_or_records": "six paradigms per participant; 240 EEG records",
+      "electrodes": {
+        "stored_channels": 33,
+        "eeg_channels": 30,
+        "note": "exact EEG/auxiliary channel types must be checked in each BIDS channels.tsv"
+      },
+      "sampling_rate_hz": 1024,
+      "size": {
+        "bytes": 18809446653,
+        "display": "17.5 GiB",
+        "basis": "NEMAR EEG record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "project_repository",
+          "url": "https://github.com/lucklab/ERP_CORE"
+        },
+        {
+          "role": "data_repository",
+          "url": "https://osf.io/thsqg/"
+        },
+        {
+          "role": "repository_mirror",
+          "url": "https://www.nemar.org/dataset/nm000132"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution; scripts/stimuli may have separate terms"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready if all six paradigms for a participant remain in one fold",
+      "practical_status": "reference_suite_subset_download_recommended",
+      "flags": [
+        "large release",
+        "task-specific labels cannot be collapsed into one accuracy"
+      ]
+    },
+    {
+      "canonical_id": "OpenNeuro-ds003061-v1.1.0",
+      "title": "EEG data from an auditory oddball task",
+      "task_family": [
+        "ERP",
+        "auditory_oddball",
+        "attention"
+      ],
+      "labels": [
+        "standard",
+        "deviant_or_target; exact event vocabulary requires events.tsv audit"
+      ],
+      "subjects": 13,
+      "sessions_or_records": "39 EEG records; session structure not yet verified",
+      "electrodes": {
+        "stored_channels": 79,
+        "eeg_channel_count": null,
+        "flag": "channel types not yet audited"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 2421802195,
+        "display": "2.3 GB",
+        "basis": "OpenNeuro/NEMAR EEG record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "official_repository",
+          "url": "https://openneuro.org/datasets/ds003061/versions/1.1.0"
+        },
+        {
+          "role": "doi",
+          "url": "https://doi.org/10.18112/openneuro.ds003061.v1.1.0"
+        }
+      ],
+      "license": {
+        "id": "CC0-1.0",
+        "commercial_use": "allowed"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "feasible; all records from a participant must remain together",
+      "practical_status": "promising_but_event_and_channel_audit_required",
+      "flags": [
+        "session count unknown",
+        "stored montage includes unverified auxiliary channels"
+      ]
+    },
+    {
+      "canonical_id": "OpenNeuro-ds002718-v1.1.0",
+      "title": "Face processing EEG dataset for EEGLAB",
+      "task_family": [
+        "ERP",
+        "face_processing",
+        "visual_perception"
+      ],
+      "labels": [
+        "famous_face",
+        "unfamiliar_face",
+        "scrambled_face",
+        "behavioral_response"
+      ],
+      "subjects": 18,
+      "sessions_or_records": "one EEG record per participant",
+      "electrodes": {
+        "stored_channels": 74,
+        "eeg_channel_count": null,
+        "flag": "EEG versus auxiliary channel types require channels.tsv audit"
+      },
+      "sampling_rate_hz": 250,
+      "size": {
+        "bytes": 4623904945,
+        "display": "4.3 GiB",
+        "basis": "OpenNeuro/NEMAR EEG record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "official_repository",
+          "url": "https://openneuro.org/datasets/ds002718/versions/1.1.0"
+        },
+        {
+          "role": "doi",
+          "url": "https://doi.org/10.18112/openneuro.ds002718.v1.1.0"
+        }
+      ],
+      "license": {
+        "id": "CC0-1.0",
+        "commercial_use": "allowed"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready after channel/event audit",
+      "practical_status": "good_visual_ERP_dataset_above_current_budget",
+      "flags": [
+        "face-image stimulus redistribution terms must be checked separately",
+        "stored channel count includes unverified auxiliary signals"
+      ]
+    },
+    {
+      "canonical_id": "PhysioNet-CHBMIT-1.0.0",
+      "title": "CHB-MIT Scalp EEG Database",
+      "task_family": [
+        "clinical",
+        "seizure_detection",
+        "continuous_monitoring"
+      ],
+      "labels": [
+        "seizure",
+        "non_seizure"
+      ],
+      "subjects": 22,
+      "sessions_or_records": "24 case directories, 664 EDF files, 129 files with seizure annotations",
+      "electrodes": {
+        "typical_channels": 23,
+        "montage": "bipolar; varies across files"
+      },
+      "sampling_rate_hz": 256,
+      "size": {
+        "bytes": 42600000000,
+        "display": "42.6 GB uncompressed",
+        "basis": "official PhysioNet release page"
+      },
+      "primary_sources": [
+        {
+          "role": "official_repository",
+          "url": "https://physionet.org/content/chbmit/1.0.0/"
+        },
+        {
+          "role": "versioned_file_endpoint",
+          "url": "https://physionet.org/files/chbmit/1.0.0/"
+        },
+        {
+          "role": "doi",
+          "url": "https://doi.org/10.13026/C2K01R"
+        }
+      ],
+      "license": {
+        "id": "ODC-By-1.0",
+        "commercial_use": "allowed subject to attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "required; random EDF/window splits would leak patient identity and recording context",
+      "practical_status": "clinical_track_only_above_current_budget",
+      "flags": [
+        "extreme class imbalance",
+        "patient/case mapping and montage vary",
+        "clinical result must remain separate from BCI task scores"
+      ]
+    },
+    {
+      "canonical_id": "PhysioNet-Siena-Scalp-EEG-1.0.0",
+      "title": "Siena Scalp EEG Database",
+      "task_family": [
+        "clinical",
+        "seizure_detection",
+        "continuous_monitoring"
+      ],
+      "labels": [
+        "seizure intervals",
+        "interictal recording"
+      ],
+      "subjects": 14,
+      "sessions_or_records": "one to five EDF files per patient; 47 seizures over about 128 hours",
+      "electrodes": {
+        "eeg_channels": "variable by subject/file",
+        "montage": "listed per patient in seizure text files"
+      },
+      "sampling_rate_hz": "variable; parse each patient metadata file",
+      "size": {
+        "bytes": null,
+        "display": "large; individual EDF files can reach 2.11 GB",
+        "basis": "official PhysioNet page"
+      },
+      "primary_sources": [
+        {
+          "role": "official_repository",
+          "url": "https://physionet.org/content/siena-scalp-eeg/1.0.0/"
+        },
+        {
+          "role": "versioned_file_endpoint",
+          "url": "https://physionet.org/files/siena-scalp-eeg/1.0.0/"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "required and feasible",
+      "practical_status": "clinical_track_subset_only",
+      "flags": [
+        "unknown aggregate size",
+        "variable montage and sampling rate",
+        "seizure time annotations require timezone-free elapsed-time parsing"
+      ]
+    },
+    {
+      "canonical_id": "Han2024-SSVEP-Fatigue",
+      "repository_id": "NEMAR nm000124 / Zenodo 10507229",
+      "title": "SSVEP fatigue dataset with low- and high-frequency paradigms",
+      "task_family": [
+        "SSVEP",
+        "fatigue",
+        "visual_attention"
+      ],
+      "labels": [
+        "16 low-frequency targets",
+        "16 high-frequency targets",
+        "training_state",
+        "fatigue_state"
+      ],
+      "subjects": 24,
+      "sessions_or_records": "48 EEG records, training and fatigue-inducing sessions",
+      "electrodes": {
+        "eeg_channels": 64,
+        "montage": "10-10"
+      },
+      "sampling_rate_hz": 1000,
+      "size": {
+        "bytes": 18297663024,
+        "display": "17.0 GiB EEG records / 32.3 GB NEMAR archive",
+        "basis": "NEMAR catalog and versioned repository page"
+      },
+      "primary_sources": [
+        {
+          "role": "versioned_repository",
+          "url": "https://www.nemar.org/dataset/nm000124"
+        },
+        {
+          "role": "upstream_record",
+          "url": "https://zenodo.org/records/10507229"
+        },
+        {
+          "role": "direct_manifest",
+          "url": "https://data.nemar.org/nm000124/v1.0.1/manifest.json"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; both fatigue states and frequency paradigms from one participant must stay together",
+      "practical_status": "valuable_fatigue_track_subset_or_streaming_only",
+      "flags": [
+        "large archive",
+        "frequency target and fatigue-state factors require a factorial protocol"
+      ]
+    },
+    {
+      "canonical_id": "Neuroergonomics2021-Hinss",
+      "repository_id": "NEMAR nm000206 / Zenodo 5055046",
+      "title": "Cross-session mental workload estimation",
+      "task_family": [
+        "mental_workload",
+        "attention",
+        "passive_BCI",
+        "rest"
+      ],
+      "labels": [
+        "rest",
+        "easy",
+        "medium",
+        "difficult"
+      ],
+      "subjects": 15,
+      "sessions_or_records": "three acquisition sessions one week apart in the upstream release; current NEMAR benchmark conversion exposes a two-session competition split",
+      "electrodes": {
+        "eeg_channels": 62,
+        "montage": "10-20",
+        "reference": "Fpz"
+      },
+      "sampling_rate_hz": 500,
+      "size": {
+        "bytes": 1310000000,
+        "display": "about 1.22 GB NEMAR archive",
+        "basis": "NEMAR nm000206 record"
+      },
+      "primary_sources": [
+        {
+          "role": "upstream_record",
+          "url": "https://zenodo.org/records/5055046"
+        },
+        {
+          "role": "versioned_repository",
+          "url": "https://www.nemar.org/dataset/nm000206"
+        },
+        {
+          "role": "official_challenge",
+          "url": "https://www.neuroergonomicsconference.um.ifi.lmu.de/pbci/"
+        }
+      ],
+      "license": {
+        "id": "verify_upstream_record_before_redistribution",
+        "commercial_use": "unknown until exact Zenodo version license is snapshotted"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready; also designed for cross-session within-person adaptation",
+      "practical_status": "very_strong_workload_candidate_just_above_current_budget",
+      "flags": [
+        "two-session competition conversion versus three-session full study must not be conflated",
+        "license field requires exact version snapshot"
+      ]
+    },
+    {
+      "canonical_id": "EmotionEEG-SanchezReolid-2025",
+      "repository_id": "Zenodo 14787743",
+      "title": "EEG Dataset for Emotion Classification Using Low-Cost and High-End Equipment",
+      "task_family": [
+        "emotion",
+        "affective_EEG",
+        "cross_device"
+      ],
+      "labels": [
+        "high_valence_high_arousal",
+        "high_valence_low_arousal",
+        "low_valence_high_arousal",
+        "low_valence_low_arousal"
+      ],
+      "subjects": 20,
+      "sessions_or_records": "raw and preprocessed recordings from BrainVision and Emotiv EPOC+ systems; exact session count requires file-manifest audit",
+      "electrodes": {
+        "eeg_channels": "device-dependent; exact BrainVision and EPOC+ channel lists not verified"
+      },
+      "sampling_rate_hz": "device-dependent; not verified from current repository landing-page metadata",
+      "size": {
+        "bytes": null,
+        "display": "unknown until Zenodo API file manifest is captured",
+        "basis": "not yet verified"
+      },
+      "primary_sources": [
+        {
+          "role": "upstream_record",
+          "url": "https://zenodo.org/records/14787743"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public_as_listed",
+      "subject_level_split": "feasible only after confirming participant IDs align across both devices",
+      "practical_status": "promising_emotion_candidate_metadata_audit_required",
+      "flags": [
+        "sampling rate unknown",
+        "exact montage unknown",
+        "subject/device pairing not yet parsed",
+        "IAPS stimulus rights are separate from EEG data license"
+      ]
+    },
+    {
+      "canonical_id": "Cho2017-GigaDB-100295",
+      "title": "Large motor imagery EEG dataset",
+      "task_family": [
+        "motor_imagery"
+      ],
+      "labels": [
+        "left_hand",
+        "right_hand"
+      ],
+      "subjects": 52,
+      "sessions_or_records": "one session, approximately five to six runs per participant",
+      "electrodes": {
+        "eeg_channels": 64,
+        "auxiliary": "4 EMG channels excluded from EEG-only scoring"
+      },
+      "sampling_rate_hz": 512,
+      "size": {
+        "bytes": 7243985570,
+        "display": "6.7 GiB",
+        "basis": "NEMAR EEG-converted record metadata"
+      },
+      "primary_sources": [
+        {
+          "role": "GigaDB_dataset",
+          "url": "https://doi.org/10.5524/100295"
+        },
+        {
+          "role": "official_loader_metadata",
+          "url": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.Cho2017.html"
+        },
+        {
+          "role": "NEMAR_mirror",
+          "url": "https://www.nemar.org/dataset/nm000245"
+        }
+      ],
+      "license": {
+        "id": "CC-BY-4.0",
+        "commercial_use": "allowed with attribution"
+      },
+      "access": "anonymous_public",
+      "subject_level_split": "ready and statistically attractive due to 52 participants",
+      "practical_status": "large_MI_reference_deferred",
+      "flags": [
+        "single session",
+        "bad-trial indices and EMG exclusion require source audit"
+      ]
+    }
+  ],
+  "excluded_after_access_review": [
+    {
+      "canonical_id": "NeuroSense-Zenodo-14002375",
+      "reason": "Landing page is public but EEG files require an application and a research-only data-use agreement; it is not anonymous public data."
+    },
+    {
+      "canonical_id": "EAV-Zenodo-10205702",
+      "reason": "Files are restricted despite a public metadata page."
+    },
+    {
+      "canonical_id": "EMAP-Zenodo-8327283",
+      "reason": "Files are restricted and governed by a separate custom license."
+    },
+    {
+      "canonical_id": "PeakAffectDS-Zenodo-6403363",
+      "reason": "No EEG is present; signals are facial EMG, ECG, and respiration."
+    }
+  ]
+}

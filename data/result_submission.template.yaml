@@ -1,0 +1,31 @@
+# Copy this file and fill it only after a BCI Arena run has been completed and reviewed.
+# This template intentionally contains no placeholder score.
+schema_version: 1
+submission:
+  protocol_id: ""
+  dataset_version: ""
+  split_id: ""  # Exact subject/session folds, including LOSO when applicable
+  evaluation_mode: ""  # scratch | zero_shot | frozen_linear_probe | partial_finetune | full_finetune
+  preprocessing_id: ""
+  run_id: ""
+  verified_at: ""  # ISO 8601 UTC, for example YYYY-MM-DDTHH:MM:SSZ
+  verifier: ""
+  verification_method: ""
+  evidence_url: ""
+  artifact_sha256: ""
+  code_commit: ""
+  source_title: ""
+  source_url: ""
+  table_ref: ""
+  notes: ""
+  date_added: ""  # YYYY-MM-DD
+  results: []
+  # Add reviewed measurements in this form:
+  # - model_slug: ""
+  #   benchmark_slug: ""
+  #   metric: ""
+  #   value: <measured numeric value>
+  #   value_scale: percent  # percent | unit_interval | raw
+  #   std: <optional measured standard deviation>
+  #   uncertainty_type: standard_deviation  # required when std is present
+  #   n_seeds: <optional integer>

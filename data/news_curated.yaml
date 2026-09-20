@@ -1,0 +1,4 @@
+# Manual publication whitelist. RSS items remain pending until their normalized URL
+# appears here with approved: true and a human-written summary. Keep an empty list
+# when nothing has been reviewed; feed excerpts and LLM text are never exported.
+[]

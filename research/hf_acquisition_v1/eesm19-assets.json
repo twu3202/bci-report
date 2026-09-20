@@ -1,0 +1,23 @@
+{
+  "assets": [
+    {
+      "dataset_id": "hf--Zachary1150--EESM19-Processed",
+      "relative_path": "fb045012b58a0b755f9fedf5931dff9b64a9797f/README.md",
+      "url": "https://hf-mirror.com/datasets/Zachary1150/EESM19-Processed/resolve/fb045012b58a0b755f9fedf5931dff9b64a9797f/README.md?download=true",
+      "expected_bytes": 10746,
+      "source_revision": "fb045012b58a0b755f9fedf5931dff9b64a9797f",
+      "license_status": "CC0 verified in canonical ds005185 v1.0.2 description; derivative CC0 card, local waveform validation required",
+      "git_blob_sha1": "fcbb947075f9fba3bdcaf0ef521123dc42eb52c7"
+    },
+    {
+      "dataset_id": "hf--Zachary1150--EESM19-Processed",
+      "relative_path": "fb045012b58a0b755f9fedf5931dff9b64a9797f/eesm19-scalp-eeg-200hz.h5",
+      "url": "https://hf-mirror.com/datasets/Zachary1150/EESM19-Processed/resolve/fb045012b58a0b755f9fedf5931dff9b64a9797f/eesm19-scalp-eeg-200hz.h5?download=true",
+      "expected_bytes": 14196769672,
+      "source_revision": "fb045012b58a0b755f9fedf5931dff9b64a9797f",
+      "license_status": "CC0 verified in canonical ds005185 v1.0.2 description; derivative CC0 card, local waveform validation required",
+      "sha256": "ec5d9f46f58a0b03c13dd4b1a71f32f3aea1e0637518c6b9e1d12ed033687eef"
+    }
+  ],
+  "selection": "Complete 20-subject scalp export at200Hz; ear and500Hz alternatives deferred to avoid duplicate large exports in first pass"
+}

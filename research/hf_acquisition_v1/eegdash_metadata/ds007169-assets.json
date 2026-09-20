@@ -1,0 +1,1150 @@
+{
+  "dataset_id": "ds007169",
+  "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+  "status": "ready",
+  "asset_count": 114,
+  "total_bytes": 442136142,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/CHANGES",
+      "expected_bytes": 338,
+      "md5": "a9455ca254d0fa1aae557d40c4d8b6c3",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "53a5afd21027daaaa574c62d0a96af3ce63cc19e7f72ee99b7269e54cecef44b"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/README",
+      "expected_bytes": 4048,
+      "md5": "f4e7e4a9ed078670f4b5342a4fc3ee06",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "13d14017439ff653c269501d29919ff656c191c9e5d1d2a6884204091ccebf6b"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/dataset_description.json",
+      "expected_bytes": 569,
+      "md5": "30106ef0356d7ef38fe3bad5b56e5357",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7ae503606712b0a2dd4b722bd22b92dfad1f0940cd6bddccd06780b8348219cd"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "participants.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/participants.json",
+      "expected_bytes": 1124,
+      "md5": "2add8e4023976112e5f2feb5be1e7ea7",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "264ca10454e3b12fb195cdb9d005edcec610d824b1ae2c47b0300ccbc813eeec"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/participants.tsv",
+      "expected_bytes": 575,
+      "md5": "32d91a734fe4f378428551cf400e2ea5",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "b6146fd681a517721ba9d1fea1d78b00cc629dc349362df93e75976265f027ae"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_eeg.eeg",
+      "expected_bytes": 23004288,
+      "md5": "4636002df0ea638177fe483e944efdf5",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "3c11cf303edcc5a4b304570cce0649c8effaeed260d58e5f35374fc2401bf8e9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "dae7b4e373bc6343aea8000bc765564f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "3af51b80ce907894bd0ed7fd0b688ccfcd4927df95729d876b91bee8d0864d32"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "6c5ac228f110397088a3400fe7953925",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "da6fa3b809a7e4d5deec2d5d32a55350b167b980ee610fffc2c59c403eda46fd"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "b1d346ab5b654f6a3d65368e5b955c4d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "3d166fb280ec16d7f15962829b475c2da5f9d753021917dd1915b8a6a12ced34"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-001/eeg/sub-001_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-001/eeg/sub-001_task-nback_events.tsv",
+      "expected_bytes": 96896,
+      "md5": "5a874529f132693ab54fedfecbc34f19",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "b8430487a5d38530868b6e12c855beed10380fe4dd06d672a7c52738d427a559"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_eeg.eeg",
+      "expected_bytes": 22831488,
+      "md5": "6130c47e2f64a0c4589c23c695cdf64a",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "efa4596e6e242069294e2ddd2cff2cc53d41f4158fd048a1b7603e5a99857911"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "576960e502e5ebd0cbd650794eb5a444",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "af729cd9a62e3ff35a69e02ca293c2e24f6dac46f4d90e82a1e773e41b7810bf"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "2e4a079fb175e32dc50e83b361fc9782",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "296c5eddcca51c0c362fb632d1f6462f5cdebe3aab5e202f1c4ae024457ee19a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "45c09b1ea2edcf055db74c7f88499f14",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "24a02697e04e5058cd1b87bff5fcf3e87b72454877ede08520d946ab8fa8f445"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-002/eeg/sub-002_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-002/eeg/sub-002_task-nback_events.tsv",
+      "expected_bytes": 84431,
+      "md5": "f56f658a9666c6a76cd26ff709be7cdd",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "e14d172209b2c63900c33d754620dd567f5fbccbbc318c6f08ae3749e0bf2dd6"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_eeg.eeg",
+      "expected_bytes": 23492736,
+      "md5": "2ee74375afaa20525eeed526281f2a95",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "eada2f16948720e3f89266a69229244f0fde7ece85ff9609f87c4e22a687eb17"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_eeg.json",
+      "expected_bytes": 412,
+      "md5": "6a24343d22fd95e902860115d20f5f63",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "2b5f1b3700abe86b96420853d61bc2d859fc8da4327948bb635849b57789cd18"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "1616b5df129a9eb774f8c9b55cd1d29a",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f929c8af853e657943d29eb367ca3e41a6191f21208fdbd3ea93ead7be45c4d9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "fb37695f4f3e5d6ed85d69f79432e7d2",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "32e6d392fd330e19b6de6579e7d328f63f157184999d8e233e1b33759362ebd1"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-003/eeg/sub-003_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-003/eeg/sub-003_task-nback_events.tsv",
+      "expected_bytes": 124807,
+      "md5": "d1a20ce94705284505d88f8b0c50ec28",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "0b3ddc70898be53bf682e6550470f5420c93bb4e866ed77104876b8367b94e0b"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_eeg.eeg",
+      "expected_bytes": 23856192,
+      "md5": "0ab69b1c3d8f2e8e432a935747d89176",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "a010fd514af56e0b6bca631e081635893fb40e4555fd555da3997e85af3b6ad6"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "40aec431fb91444409f674d8db7a28d2",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "3c0a505adef5bb2f541c36d6b1076151adf6cf752472c4dade3a550892bce78f"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "cae2a8352ed726c4a736d782b55b5b67",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "1e5775331c7a2576b389d8538e64c154e5ae95942c9b9b9b4b7d88a9ee04002b"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "29c6823b7b6879683735f9e6bc7436d9",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "4ff35e3a6a5cd7a5d92b25d8c6fda9942dd5fbcb1bdfedb685890451a0e7a6b2"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-004/eeg/sub-004_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-004/eeg/sub-004_task-nback_events.tsv",
+      "expected_bytes": 124147,
+      "md5": "eb09b499746a12c5746e616d66d0cce0",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f0cc0e6f4e4901cd28b3b0ca479b63767e26158fe39271e12e201accf7823f19"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_eeg.eeg",
+      "expected_bytes": 25128000,
+      "md5": "3214c58b51b960b90c84975b1eac5d78",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7127d758029d5e4d8b1887a648c821112de3672de76f2959b33b0cd73095dcf8"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "a25a22b0ad0e78d66ebdd21df4beabbe",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f8e7c33d0f8bb4337eb15953964f41829974ec792bce46aeb5f5ef0c62bb41ce"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "96428a720d5b64c70aa1c62d9476966b",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "0b71b4e2db0b22828ede1686581ed289689a5fac97a8875e77faa43ec85919dc"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "cb83513b9679271e54b66b5000e9fbcb",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "fe5321e962398dc7e09925a4b1ee3e4ee76c7900ed0e4b23c1cf57d1747d994a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-005/eeg/sub-005_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-005/eeg/sub-005_task-nback_events.tsv",
+      "expected_bytes": 131375,
+      "md5": "2c215caa22c7743e5d98b3d15f12e9ee",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "a63fde8ab95b3bb11970050514fa4a9ccda6da9d9ae1c82d3ee88fccfde190b4"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_eeg.eeg",
+      "expected_bytes": 27846144,
+      "md5": "d4be434e1c55716addad7b87ce5530c7",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "91406957752a76068fa84ecf4a274dfba01a67cdb998cf81b08ac25e11d4a0d5"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "d8419f2744d2e11a55d6916a8f1c8238",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "e15c8d0fe94f0a142bf31a423b163c7f14a09e9b899b326897e30495b71ffcbc"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "49c7ddf5850974ff7d7e3dcf857546bf",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "a5a67a00c50b220adca5c8e38ec53e251d8a60107740c95dfb291a1f24a40cad"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "4798a27f169282195297acc21e0cb8b7",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "e6917dea12176ebe791f080da3294c1e739203334fe4274f59f91d9c96110e67"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-006/eeg/sub-006_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-006/eeg/sub-006_task-nback_events.tsv",
+      "expected_bytes": 100896,
+      "md5": "40005fb4e1a04f7a36f420e7b2302b02",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "521273d1aedf5d39a13ca5642240d16c6af3d9fe774c28b94aa6f33129f511ee"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_eeg.eeg",
+      "expected_bytes": 23495616,
+      "md5": "cbddaef84815a52e1527bd52d73ea818",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "638ec0397c894cf221997563fcd769717a68844a6689a355e6593f6960bc3b1e"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_eeg.json",
+      "expected_bytes": 412,
+      "md5": "fe99a8980e6039e72c33857a538a5f68",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "a65e14fa24959c7d96b2ac30e8eb548fac8342897247fd0b075fcf178d49c4cf"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "ca103f12e1edc38ae2efa9eee439c5c3",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "819bec0564f488868b6d31a2bed50f836bc1ba791fdc2561553ee4ad802c9e60"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "bf8f2b6c22a2bf36e674c9521d0fe762",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "865d49dbd05568ff6de55490693a55d7c3fc7aca4d3b034678eda3a4ca06c0b1"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-007/eeg/sub-007_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-007/eeg/sub-007_task-nback_events.tsv",
+      "expected_bytes": 141654,
+      "md5": "bf91458ee70a4eca74831dc5641ac7ad",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28aa9aa9c8d55b1ec8b2ad52f094e4405ea428ef782b2f7567166e8333706000"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_eeg.eeg",
+      "expected_bytes": 24755904,
+      "md5": "6a2f7790ba073a42cfb47edd549fc69f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c86b937ecfed41ee30ddfdaca468de93aba9caff7b0b1eab37ec791293489cac"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "3b8f43336c2fc0517863b59c01e7eb89",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "6ba94ebfed4c35d4506b885efec7597d3e46876c6271cf4c2b1a6eea3482d189"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "bf2da6a853292b5311244cf04f9b4053",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "cd04e54e5bd9692d61ead0557329b24d30beda1cf9fd1e77c28c00f0acf87f82"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "c9175e7a6b9db61e6c8ceee8e24cf9ee",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7e4b1c5a8b5c9e17afad1c95ce9cd631dbcfbcf65420783dceafd13eab3e2171"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-008/eeg/sub-008_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-008/eeg/sub-008_task-nback_events.tsv",
+      "expected_bytes": 164560,
+      "md5": "9c6f429d1fb2f34a83e2c6c2db01ce0e",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "adf80f16742327d36a28010eee918c847b101bb9317580d7503bffd2219a8bb8"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_eeg.eeg",
+      "expected_bytes": 25535808,
+      "md5": "352952d81d87f31d9fd7be43282d8284",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "4338349153499070f31230e13c42ae66feeaf083ca2eb3bbb20be63b53063a88"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "aa2a352d8855495e03ecd7752f76d8af",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "1176a3e372e682bd300e6ce1b986aea06d38ce679f0af4631e1fc3ed6a4432f8"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "5c45a676f7c620ce90e2a00a308f24a3",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "0822a26610c5382c848bdf696b9165fa68a56d0deb5aeaa9fe49f7c598d874bd"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "c78eb88ff8df7092ea4ad06a6c3b3e4f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "56738fdcf99bec8b9fe7c9304b3d90498974eb4829f075096299b7a34e64b646"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-009/eeg/sub-009_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-009/eeg/sub-009_task-nback_events.tsv",
+      "expected_bytes": 112091,
+      "md5": "f4dd95f5c18ad85f70570195a283fab9",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f745e2b007d711a428e8eea89611589435a5cc47395dcaa5ba2b0ee4b8bbed94"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_eeg.eeg",
+      "expected_bytes": 23733504,
+      "md5": "5328563a256ff688a253b471af298ae4",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "963a9a0d22af22304808f8e582c8fc614c2d863247f56dde9834552a3bd1bb5c"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "a05e4c36df395c7b34c2cec07f92f55b",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "9f80f854c2dec8a947663e4c1ca56f66abd52ed80ebae70deb76e374d6a1b6eb"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "5a75b9ba68d24d5f60b235d63d8a01a0",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7bce995a2bcc4ae06627a56201c34824e460a9e45ab4c0a2282f259b1381d9c0"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "89bd39f8311b2f0377053935910f716f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c73c9fc4a4eceb62c3fca569ef94a05e11d829d99a7474d810df7cf1a6d4729"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-010/eeg/sub-010_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-010/eeg/sub-010_task-nback_events.tsv",
+      "expected_bytes": 127716,
+      "md5": "df08b03acf07f28088f82a445da071ba",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "26166a6d60bcd9cf752503a07233ccba2b18b5bb012d58c05754045838a592f3"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_eeg.eeg",
+      "expected_bytes": 25860096,
+      "md5": "3e43c7768a59e257eca817db88e7bfcf",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f8fb9a6b7c673a98fa350d454107ffd90f83108856f01e11ddf76db749aceb7e"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_eeg.json",
+      "expected_bytes": 412,
+      "md5": "de69587396cf284149099b73292f1ee5",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "1a1cc9977e962416a7d63cada9dc048b8dfcb93c9bafb2502f1f7a28ddd92c1f"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "9ad49cf5e8d4e7d78573042529c216c9",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "5bf284327a093e094f482852017e6f9ac1b1f20c0d009262ec2f4c9ab3c921da"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "883ad8181de4c3def97c85b56d9a1218",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "d082a464f66393412185012b55f97b70089ef0268b011ba8ce5d7136f9ed06e9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-011/eeg/sub-011_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-011/eeg/sub-011_task-nback_events.tsv",
+      "expected_bytes": 189861,
+      "md5": "99a85d6aab004f2e4e6410f429d2e883",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "f3d702c1f3604eae34e90e8c8b2d3ab16a8a4eb472aec377c3dfb74693c6696d"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_eeg.eeg",
+      "expected_bytes": 25812288,
+      "md5": "cb39739057f074f2d42fa779d9c1902b",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "dbe0a434b295ca0a68ae70ccaf1e284a669886f871588916ea6befddcf9b95e5"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "460638866edc5ca33165be959354bf5c",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "900a72f7d9e17c44a939afa21d00982c0674ebceca95a19ce0d95fcc95a0d27f"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "4b6fdf1fba2ddcd9877be09c18ca0cbc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c32aa601fe4496a0acd378a417161bd3092036480dc7e43bdf721a7cb8f1623"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "2eaf435dd73fdb0c85bfc38f1ae7a72d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7bf3635d70d67fd37b9986bc910f3aa10c87a58c3deaff07f3cff9a6005794c9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-012/eeg/sub-012_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-012/eeg/sub-012_task-nback_events.tsv",
+      "expected_bytes": 218329,
+      "md5": "06d28eccbdc99e7357e47c28d24c1037",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "d6f73e634827c10e49b5108528e67c83bb9581442a2a8ad569c44196c6200458"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_eeg.eeg",
+      "expected_bytes": 23076288,
+      "md5": "0a7206f5d9432a5e7a5b82da23efc89b",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "82fd41d263f3d6182b7b82055ec29fc9fd203c05e69dab911ec4f17f57bd4ffa"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "4ada586f43896f3a1e516b7819b41771",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "5c9c73b7c870179be3602c04232bed430828ef378bccf549d5385aed4449ed3d"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "7bae23160fb1fee17e5c21df34a7a407",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7beb5a8d924626c0e5924d4a4b160fbacc006c5f4baa5e4a53ba1f8696c1006c"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "ed49cd63fe41a5857db5b04584527e8e",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "0f9441def5441dc23b7f48fdb74e71ce41e077e80dd5a9e2f0b33148ba156821"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-014/eeg/sub-014_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-014/eeg/sub-014_task-nback_events.tsv",
+      "expected_bytes": 97937,
+      "md5": "7a45237fbe6bcfa1425c9c0d6ad41b09",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "d920b94a2f9040d1f8bd37b5c8e52471615f3ded17f07addee4d6dd7461a765e"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_eeg.eeg",
+      "expected_bytes": 24360192,
+      "md5": "ae80c31c649a22888c43b5b6c932dc53",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "669ce763abc47fa7b7daa68f86c2ae46c18c296f41ba1e73b7a42b7aa747169d"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_eeg.json",
+      "expected_bytes": 414,
+      "md5": "33610bd2d73d6eafbffb7d404d36172c",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "0cbe787f97acdf278aa171c339c6caf427b6190027343e156f8f52595e4f7c1c"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "0cf0c6b8b3d776bd18746f5466bd2464",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "23c4fa655f010eaa534fc632d7a1e6e08eae395ed854a18e158d00be5b21dd23"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "1fe9325bacb127a7dd31a5810b3def92",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "266d722e1a591ff12d679041121aeeb3380069b1d544b1d9fea43e0aac7c1ba0"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-015/eeg/sub-015_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-015/eeg/sub-015_task-nback_events.tsv",
+      "expected_bytes": 102602,
+      "md5": "f60e38f7aba3f7cecba0d42aef1df8fc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7f5fb55baccb8d1d7287b06ee6474ba394d0768cfc01536b537ad949cf8a6e7a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_eeg.eeg",
+      "expected_bytes": 23551488,
+      "md5": "d0b8f0c106132d225b7c98e3714f3439",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "4d2dadbf93a2a4e6ffb6e6557a1283c065a3dd75f43df8167055f462cdbc2a31"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "cb6adec3adbbf7f5df5667c8072cae1d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "e140aab7ddb13573ed5f0368b14c4131d36fdccbf0d635fcccc1cb4d19e11fcb"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "e15d01d100ba9973cee3d11f53422034",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "e08d052a315013b22c223b56cb640a3a5b1af92eda92cb8ed4d048ba9d09e0e9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "dae5f807755fbe030e63f51aac52e90a",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "d0ab495b937f7be32c443e4d349a4697c414be224ba7a05214874ea278ab95af"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-016/eeg/sub-016_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-016/eeg/sub-016_task-nback_events.tsv",
+      "expected_bytes": 105735,
+      "md5": "b002bd108e7c528162039c4dcd495fd6",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "46d802924c4ea1a3ee3297e51752e1f262aa26dfadae650049e28dd188e60487"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_eeg.eeg",
+      "expected_bytes": 23664384,
+      "md5": "f748287ad6585caf77d02584d34a8dc0",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "81948b5016953e1ebd91293716429324b50341ab88f278639f8c8a9e86627de3"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "1b0a2b4d93777e914a4c56133367cf09",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "85fed5fedd34d0efc6f7e0ba73c498e8cd113e7111b605aa48ceb3673e1db4b4"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "12bfa5fe4cf3b25c3bd34fd1577ead1d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c2d3ff491e9e46f2f0b748b1aa270e1e471144d92f46fdc14d807834e6360940"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "b5b549c951a0e8a04dd34360f380705f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "834ebfe101e9455b7d672c31ce2dd4a97698fa08412691113bc5500578128a41"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-018/eeg/sub-018_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-018/eeg/sub-018_task-nback_events.tsv",
+      "expected_bytes": 91194,
+      "md5": "d03d84c4e29c8f982e7d1b878e768a8f",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "a43f0f750646e73cd8beed351f7612be2bf8cec38a21b197251cd1e5efd7869c"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_eeg.eeg",
+      "expected_bytes": 25191936,
+      "md5": "41643309413c050ae83613f3696392fc",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c2c9787b3b5daae8bb8512e6f0c24dbcf714b7b8d538a00e70089556df6053ad"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_eeg.json",
+      "expected_bytes": 413,
+      "md5": "aa5493628cad3465c0e3c91c2992bb3a",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c79af36cd07b949ebd35ee51488d08ac808816796dafe973549c2dd295edc09e"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "9ffc71e4eae3a0708541c30580c6563e",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c7600bcda86ec1a3c2cc1c85136a00b479fe9cb1b797dd6034ff2a862b492a52"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "3e103cd3bf588a730c702155722475b1",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "97d87106e8062bd3c2e31d7d28475d56f962eb947941bae50d31c5029ee5af93"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-019/eeg/sub-019_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-019/eeg/sub-019_task-nback_events.tsv",
+      "expected_bytes": 98118,
+      "md5": "ef1b4effde963cb22d06256f4307163d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c43ea6cabe224b432a9e4c20364ef0016d90ed67619c6c9e5feb5aa533494358"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_eeg.eeg",
+      "expected_bytes": 24636096,
+      "md5": "afbc752ae48fb840a9bdbbaed75e927c",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "198de2cf50b9eb9271c20e46d94ebd330147bc3fd98c2d0e04a22f67b6ceba90"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_eeg.json",
+      "expected_bytes": 412,
+      "md5": "f94a8d75b158ca8149e3db7d2649a124",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "1785a1761fe7eb963ba57ff3b0f19a9b2816e24dae545a32394a424d580868b3"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_eeg.vhdr",
+      "expected_bytes": 1121,
+      "md5": "721ffd261ae48794ce4482689ec18f30",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "c322055bb9b0f578c2091d7006013130f7be4b0faf3693a1f6f21430e3bf576d"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_eeg.vmrk",
+      "expected_bytes": 522,
+      "md5": "52d12e4b919a6e68a5c22d4713683790",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "df342cbe38e1c82236bd239c9896e5477cfdbfa1c70a210e946ebd10f0c5970b"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "sub-020/eeg/sub-020_task-nback_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/sub-020/eeg/sub-020_task-nback_events.tsv",
+      "expected_bytes": 119408,
+      "md5": "d37f36241b35f955af5e275b906e8a17",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "93d216915c1e0a2825a4697a83009b571e10109b160d56e1516b981480f14641"
+    },
+    {
+      "dataset_id": "ds007169",
+      "relative_path": "task-nback_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007169/task-nback_events.json",
+      "expected_bytes": 2371,
+      "md5": "99b2b7b3f41b1f6aa17f9d1799c98f59",
+      "source_revision": "08649287ba6805b268bb24c507cbda533860ace4",
+      "license_status": "verified_cc0",
+      "sha256": "ba2ac3c96f6c206972022195cb4f91f322614d8577075145490216d113e8c70b"
+    }
+  ]
+}

@@ -1,0 +1,1150 @@
+{
+  "dataset_id": "ds007262",
+  "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+  "status": "ready",
+  "asset_count": 114,
+  "total_bytes": 397325197,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/CHANGES",
+      "expected_bytes": 952,
+      "md5": "d4f5e7ffffdb0efbd3e6f8f4cc5e1210",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "6fadd7b4e97181a12fb09c64726fc4350097f410a760156a03303ca49d55d4d2"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "README.md",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/README.md",
+      "expected_bytes": 3992,
+      "md5": "6aadbc3e1f21384f3a6b992210c069f9",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "a2e6554712e076e6a702423cb6d0bdd75d597f0b74aca50e1fda8a6fb993d349"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/dataset_description.json",
+      "expected_bytes": 550,
+      "md5": "853e9117b167c6417ff3315b20cb7f72",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "f2ba5d46432bcc37a74f17b49c0ad43ff8f4c64dd01b70cbb673701138392e7e"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "participants.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/participants.json",
+      "expected_bytes": 1124,
+      "md5": "2add8e4023976112e5f2feb5be1e7ea7",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "264ca10454e3b12fb195cdb9d005edcec610d824b1ae2c47b0300ccbc813eeec"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/participants.tsv",
+      "expected_bytes": 575,
+      "md5": "8fa48e94f50b380037cf657b6118b643",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "3e21fa2790f9eb0af811f0c1f043d855a3a220ea4d0a8074e83e5351ad2d5931"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_eeg.eeg",
+      "expected_bytes": 16579584,
+      "md5": "6bcb09fa2db858231545d283a0b7df2d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e07c82e1549d086a3a4065387a2bc91a2949d084ac509dcefe0588477cb88c48"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "843946b0c80a5022dccbac2efee1295c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "9c45e1bd7c38be9f38d4ab8a14d831fe4b7ed77e9ee596e6146a97ad3ad796fe"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "ab19ad6515b62d2ec97ff45acffcd629",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "089952c935cc9893ed69e7c08cfbeee2c44424ede3119faacd57c0cb2ce3172c"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "e0a893f3feaa3f505670eeb74af34bcf",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "1bfe04ea34904f01889496d4aec0ae2feab1da2488e1e9edb10e5ef58ce6fa75"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-001/eeg/sub-001_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-001/eeg/sub-001_task-arithmetic_events.tsv",
+      "expected_bytes": 31931,
+      "md5": "6080165a751467b6cc2bf246113f046f",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "22231aac957d201fafc3cd9d6db35731f8f43a01dd210ca6c157c9718590ff5b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_eeg.eeg",
+      "expected_bytes": 18156096,
+      "md5": "0f652b8ffe2ac159f847259e24bdfa49",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5f8eb9acfc442cda99bf54702c00c3110223412c4d9d96cbbffb3f4eee8c09dd"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_eeg.json",
+      "expected_bytes": 416,
+      "md5": "cc471ba911f3857297ac4184d9f7bfe4",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "6720d6bd28a8454697fc460b7728cc8aaa24ad84aafb372f484c42a8d44ab155"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "f58622a295d554ee97a6698a2ea57090",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "3f064df89cbb1a2308532063e619d31c80dffab6e6a123454e7ee7e4b197590c"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "70ca680203ae08c24900cf19e296c868",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "36ff3c4c1834997782283534fa0f11ebe5f32fa019b2ff320eba9c1188a73111"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-003/eeg/sub-003_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-003/eeg/sub-003_task-arithmetic_events.tsv",
+      "expected_bytes": 66789,
+      "md5": "7615527fbe984ac173af9d6197b68fdc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "95cb6ecc98a2ba29ce612e956cca2036e820b8d5045eb71ae29f2ef539c800fb"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_eeg.eeg",
+      "expected_bytes": 18540288,
+      "md5": "e7d46c368e2dfc434555537e5129f60d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "4bc6be64e57950ed7479b4411be017576eff5ca7866d6c7f75e663cfb066450e"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "58988e96f2e8a6a0c3d17755b1c68d22",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "bd028cb8300cbc1a1f21d16f8300e516faba5aa02b70a78ae3130acb32b3a9ad"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "7c3796b6556a9d53cb1ad49ca100a6a9",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "22741c69e1e633005624c86d39b7dc97a8a04ee78f6848210fae5fc393bf5f8b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "d081fa5543a32db13de601428228c897",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "63de57de588becb1abed5646b7817a382fede2b6a2726916a1c14fa849d3e04f"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-004/eeg/sub-004_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-004/eeg/sub-004_task-arithmetic_events.tsv",
+      "expected_bytes": 82476,
+      "md5": "45ffe309c6327b593412959e4a4c4e15",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "a711abe645ccfc5e48d9869220ec37c0681bc1a189beafa3a786b4c69e03d8a9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_eeg.eeg",
+      "expected_bytes": 22091904,
+      "md5": "8e12b3b3314284ce2d25b864866cf615",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "4c403492fa18c6cefb756cb169632f548457ea873afcebfed978b4420c1019b2"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "fd0bd61c3824fd1e6eef44fb4c527697",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "2f0efde5abc418fbc39461edba254410514c986fed26f2eb31ca540de7da11ca"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "f9007dfaa7d471273b50b65c1df6cb07",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5a1ea94e7daf6dcb2e80bca3e3831815ebeefa73b479457df5bdc7c8765bd280"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "a2da68a90d1ed84b55e81cb1c86ed048",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "9f9c6f706cf7c820b3986e69342899e7f4084325844d003b1c62cf614f8c6fc7"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-005/eeg/sub-005_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-005/eeg/sub-005_task-arithmetic_events.tsv",
+      "expected_bytes": 78455,
+      "md5": "f6058318c04f6c359401b21b633e6152",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7ec253ea22a23a05996213db6443a9b80a5a5cf4f55a171f52b85b7007a641ee"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_eeg.eeg",
+      "expected_bytes": 19788480,
+      "md5": "06c7460addd0758a618cdee7018088f4",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "1d555830a7a6f5ef80f1d5119da395110462f2c9ecb7217dc18f8f3dbeabd077"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "9685f1e064a2708687e6cf28e2ea143d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "011273993592661eabee89da4776967bdd79d970f81cc2dd6e65ca7fa2f00ed7"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "c5a8e7961c368075f342598dc5280b7d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e8172faa748ed3905863306b457c525b4f41bedb9286b362c353f780e657b36a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "7e75989639ba6cc6063e0127345ad036",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "1c9b4270ecc93ab6c35fe01515e3502ba7ac21e85db4d36ff9271b603f471cfa"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-006/eeg/sub-006_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-006/eeg/sub-006_task-arithmetic_events.tsv",
+      "expected_bytes": 56469,
+      "md5": "afb4b853b9b4ed214c86f8717bb15935",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "4df814d83423bd335aa72b16d44e8e913c079bcefd8c7122a7327b43bc6b4971"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_eeg.eeg",
+      "expected_bytes": 20559168,
+      "md5": "f91fe504476f2f27625b06cb95a324cc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "a47c94797515eaa4c7b61b0a1fe1bb34df768add0041d2f7ead58c7247fd5448"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "66f694f07778199f325bc5204b27a0ff",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "c12d738fe4a245aa4aab67bdc7fb7cfc3b1c00e61f008852bfc4f5172cf0487d"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "8e5f5a13a709231748f79a55d0b30a22",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "917b09b15a42c468897b84e70c71d28387239c3b5944220764d964514a0c0c09"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "b0b098da2d33e5751cd5c689610643f0",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "d12cf5a6b4352023cd64b932bdb15e3611368c0afe6a147f79fafae3da7f7b75"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-007/eeg/sub-007_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-007/eeg/sub-007_task-arithmetic_events.tsv",
+      "expected_bytes": 61222,
+      "md5": "0e4ced0d71c7826abc8d43fc4b601b74",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "ad67daf684f7d9a29aac8800a5fafc25ca321d4198f44a1d1d151b7019e42116"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_eeg.eeg",
+      "expected_bytes": 36887616,
+      "md5": "5a348b90b417b77b4fd0c749c97c4ade",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5427085afcd0d015d8b7cd56069353ae4fb5568d4af5b47a47b11c62a1bc21ae"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "ebaf4e4f4a277df02242fcce0633e3ad",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e53db02a717b64b47602d0c286497fea6c8587549eea7a6e027dd3404dd4fc1d"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "263fb95b3c493c9138a9dda03f958920",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "75ff99cb854484c5b4c1f3f1ef8fae26fc193404c776e8a69318c5b4b7e7b386"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "a7a7b345f5532b9ff875cb7dd0e71594",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "d1c8d7a577639fbe48c6460884b4f63e1ac8a4ace1dd34d373830595942bb48a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-008/eeg/sub-008_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-008/eeg/sub-008_task-arithmetic_events.tsv",
+      "expected_bytes": 132354,
+      "md5": "8255087655969d9cf5a7993f6739998a",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "69834cace3749a4a9b797978c8137dc459e145a41cfbfa44146e0aa183543f60"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_eeg.eeg",
+      "expected_bytes": 20587968,
+      "md5": "48dd1d21209803bc95572453acbeacc5",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "016e3d1d8853f95eb1ebfbceb7b9f8ada9a8332b96bbd5bd20748ad3fdca2a28"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "bba1c3fd4c708d4e7e894be6b264de08",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "2c50d8090cca13b92bb93de591764da5e724624f1da5cde775584a56c68e38bb"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "53ee1da810ded113e01e2d0393264715",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "6b2e737544d12e9f1830d34381e3e8e873d5eb444c1e9513127c1491c1137b32"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "7b7589e556578d194711debdc4833db3",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "bb51c03819637e7cd5dd1039cd6d3f17045afcd89753260127450f4f8c93c32f"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-009/eeg/sub-009_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-009/eeg/sub-009_task-arithmetic_events.tsv",
+      "expected_bytes": 44879,
+      "md5": "1762b9251e589ae5c122541801e2806e",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e518e7a784bf9b727d320578559d556d53870758c79c9ce682f4c2d972521e96"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_eeg.eeg",
+      "expected_bytes": 25668864,
+      "md5": "1c5c40f360ca005fd97b8379eaffdc8d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "57a8f7187894985a72e7c2b74dc75d6d46dfc69b4022d2ed3ad07b5af99598bb"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_eeg.json",
+      "expected_bytes": 419,
+      "md5": "7fa58a5cac65134896584c2fcf381ac0",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "515ff7f81af26c666d9b7f5ded8e35d0b6d2cc941fe1ac17ac21b4ca2069e081"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "c8060226705c0fd0faff20326c2d6285",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "2b29dfa1949e36ab2fe5f87e429542b7933c0430bd47ba7717fc034ad437ec01"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "433f43ad9e82f4ca24d4ad4eadfe56d8",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "1d0609a447140bfe74123e5ed58789d97b6ddc790a8b9c51b22812f3aee6dd88"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-010/eeg/sub-010_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-010/eeg/sub-010_task-arithmetic_events.tsv",
+      "expected_bytes": 52977,
+      "md5": "ebe974623aa9af8ddb49aed1897909c5",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "cfeffc81c8564a3456aad5c5412362ebfcbfaa24b103dfc89a9dab0ff0e3891e"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_eeg.eeg",
+      "expected_bytes": 28752192,
+      "md5": "b1886858656ce19ab124b1ec771cbd10",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "fa57b8c1be4bfb8155a6651f2a21df2928d0a89bc268f6bd40e25c156521ea5b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_eeg.json",
+      "expected_bytes": 419,
+      "md5": "8d98baefb27c98d2b59fc75777460c88",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "92c2bb18b42195ff1d92fb1ee934b2757585e4cd4ea0d53b275e5e6afb1bbaf7"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "dec51fb1f6cc959d703ba2f10b836d28",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "a6a8163f44a1c153c79b838e2d45401035c022cef930fcea552c0ff7ea9a7b1a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "b11ab6def35f55ffc5fcb9a53a49d114",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5caa7f8a74f313b8cb182c05bf0cf5db68cce95bb416c5a9155a7a7742c614cf"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-011/eeg/sub-011_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-011/eeg/sub-011_task-arithmetic_events.tsv",
+      "expected_bytes": 76272,
+      "md5": "956aa9c53861519bf46ba90a9c24ef2b",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "f9bc838cba6a37d4c098c9c3950d1aabd2ee2ee2a22bc0e3454120acd4c7a82b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_eeg.eeg",
+      "expected_bytes": 19008000,
+      "md5": "d16e6c39a9afbd2513a63e6374adb1e0",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "ea31efeb824b75c8eab4e085194ceb4c012e76a148bb82be9141e75eb377d8d0"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "9ec55a6894729f2a539ae364c8af7c7c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "3b0bbc225d8d23d837c8565702e5f42ecb4a3499742362d447848f62cc413b91"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "0756b2ad1ee24cbd555b3190c1cd245c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5d09dabc7da094a503871de35c9d533a8d2685ca49cddf8ea2285d9e22c27083"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "aee1be46ef850b97c587e737b9c66439",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "fb6d9172f872b0ee408816c939989f6c00124cc2a257ac937a559777ef20d08e"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-012/eeg/sub-012_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-012/eeg/sub-012_task-arithmetic_events.tsv",
+      "expected_bytes": 79745,
+      "md5": "d661753a3b64807e4eb4d4091898c6b3",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "d83456ea5991bb61bf65b173bc11b79e81122ea9d16d5981b78b323b603b9d6a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_eeg.eeg",
+      "expected_bytes": 19248192,
+      "md5": "8391ef1455b987b4cc59bdac66ff2340",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "ccc5027472ebb3b9389ec3edfd3a14c18a38bc9b5e6eef13c847e8062e243df2"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "8435ab3658388f70a8ec2cb7fd5b9174",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5c55a1b6b01f573488def8cd861720b2dcdb3bb63a9d0ff71afd6d5e8300c714"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "0297f5e6ad2bd288c1f86cd2b675ce54",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "9c83dd4e11d3fd6183aa599bccae290263bfb3a149cc909988cb2c7cce5575fb"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "27b8f56c2b74dd06aaeba6375e063ea6",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7e57ea4f57532a39b2974bcbd4ddb29e3443a33cc9f089f201084debbf5788ce"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-013/eeg/sub-013_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-013/eeg/sub-013_task-arithmetic_events.tsv",
+      "expected_bytes": 90108,
+      "md5": "ceb8026a993dfecdae542bdcdbb8838c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "20502b362fd589ff447f6e0b58674d5b3dc7bcb0923caf446230153be54e9599"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_eeg.eeg",
+      "expected_bytes": 21420288,
+      "md5": "e0744d526bf6a47e2283513dcca3c66d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "00cb56a753208e3d962f5c19dad050e1c842720f1d98dc969f69bccb5ee6551a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "b2e8a8cdb953f3948c62fc2c1b8dbac7",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "eb12f2868e1cfbba9034f216887a84943e763053e3a1f608bdc635006dd12e3a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "134ddd23128c1b2b5484c90550590f4a",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "4e9409015be59be4c736b87187dd3ba306537e752308a5fb6dd254c961ae5d11"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "ab635a5e365bfe73547a5a1fad98e1fb",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "0420711490cee2eccd270fffc715905b3ac9d9644410061b7337441115fcb5bd"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-014/eeg/sub-014_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-014/eeg/sub-014_task-arithmetic_events.tsv",
+      "expected_bytes": 53848,
+      "md5": "aec2841a7c7c20563c9cc26ddfafa408",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "39cb7f26205eee7e3a1d88a48e9c9832e4d7c4ba2e54c3aa43238095058ee3b6"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_eeg.eeg",
+      "expected_bytes": 19730880,
+      "md5": "0fd9c81ff0f67a6d50bcdd66abbdb49e",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "26d26fa5f98c7fbcbe8c68b25ed4be17631e486d64cf8865913db77e73c72d0f"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "ceb36c5d3f3bf5ea7af892151daad12b",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "a495b053805f513bb3ad2041493cfa813439b83b9f8b26a966a5dda010f81fa4"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "7e0f9afe82bc2ecf1b176cb99e96d986",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "99229afb597ec3ddcc67129c0a73aee98d6dee2e64b401a34f2c09d91c757c3e"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "02accebe35811456380619ab562c3a4b",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e1f6299e2640f4d8b5a4bf54c5fd6a393ef658124a36b57f0a4e5f25070d723f"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-015/eeg/sub-015_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-015/eeg/sub-015_task-arithmetic_events.tsv",
+      "expected_bytes": 67459,
+      "md5": "8ef581b4cfb341f1351273a9e222bfcc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "3fa26d9a6d87a3aba5b3fa766455740388afc0e6a0376cd4d5b4fb65b56fdce6"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_eeg.eeg",
+      "expected_bytes": 27324288,
+      "md5": "91363f25d4f452f44bc3ad64e3ab676c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5373ba87d8977f7020db12ad5ce9c57a0209311d220324442a69d877036ac414"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_eeg.json",
+      "expected_bytes": 419,
+      "md5": "0c75743e7546f760cdd3136f1782cbe0",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "63db6d6895e111e5f609ac8c9068e5e120e44b1fbae231ef66e5b0f8118f3e08"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "1577bb8553bece0e8a6c3cbc46cc19f3",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "708bb5c1eb482b214b10a5d46a752bc97b05b77e850be3feb35eaaab898b1355"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "7399478946f633693ef3cd99e7d4ea15",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "3ec215c97494fbbc7d8834c1c04a4b901d1f6d4a46ddcbbf441160852a0f58ab"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-016/eeg/sub-016_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-016/eeg/sub-016_task-arithmetic_events.tsv",
+      "expected_bytes": 80465,
+      "md5": "81a705d629d84803a470efc7bed7d8bd",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "e3bae279118b8e057c4b438f086ad648c013933e5724fcf6fa94e31678924d01"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_eeg.eeg",
+      "expected_bytes": 21863808,
+      "md5": "d673f9aa35c8d046e2cf1c41b13d0849",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "b07dc3c18b22ca1ed65cb4e87deac0ae8f0601480df61ce4034581320230ed39"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "33058d2533c7fef770d7dcfd3b525f8c",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7617f437e9be927f9f3f5b0b28df235e7715649eac36a917912ba942037a8670"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "ab38fbebfee412f070864d9047091d8e",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "ff105e533bcba9173d47ee05452543ca31d6377efdc9d8f21c2fef8ecd215c0c"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "7a532412b83ac63e77ab3b60bf75e649",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "c6d96214af6aea126a030831b57ebca2c89fe25672beeced131f99b97239d44b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-018/eeg/sub-018_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-018/eeg/sub-018_task-arithmetic_events.tsv",
+      "expected_bytes": 47542,
+      "md5": "86004db8218b130e5f3df5808af0d25a",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "646d37cb9defcb47909076652fe32cad5b88bc562b1c1164e873828291e81f78"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "9af9af337bd6d22f647487e3c8525acc",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "28cb373f00a697d907b696bb47bfd92c5c718826e72675c57dcdb38b8335c98a"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_eeg.eeg",
+      "expected_bytes": 20028672,
+      "md5": "c03ef1b1c7d2fdee18eeb553f8c66d1b",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "bab9acdbfe20c098eb851da01ba0c611dfb81c5375a8ab1a2c31a3f4c7e4fd8c"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "a512a75de34922c9d632a0c9e7784103",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "5eae4d5b86015dfa8a69987332f6fd382b36c649d3325ab73946ce5d0e51f610"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "6495a29d2131beee5ef2cc6e685675d4",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "76930ebe2b0a36120eea8aaf0b5cae11032dabed5cfae5771344316c538916b3"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "0b82a9f5ef369dfb36550bae5c437c66",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "d94a693d53c9315f88368c574cd76ec745bb5e1c314f14da32f3697bd039bead"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-019/eeg/sub-019_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-019/eeg/sub-019_task-arithmetic_events.tsv",
+      "expected_bytes": 60682,
+      "md5": "e3ecb3074e2ffba93e2ba8b4172e5051",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "f5d20ad5b9567486941d7e3f4bc2f9dd34af4cf1bffce02c02273c8e78ff80aa"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_channels.tsv",
+      "expected_bytes": 1439,
+      "md5": "0a0ba90037b8f57da990322cfc8b0c0d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7c0d4ff05e279b4832c7bc6a5ab2b4099dd08a4d391c2baed02cba6a51d50dd9"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_eeg.eeg",
+      "expected_bytes": 19772928,
+      "md5": "7e5cb3a6020eff5474deda5ae06520b6",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "7d2f4ba7a3ea260a41205eb3f2acab17a2f7deb01978d4668b0c93d41a0bf3ca"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_eeg.json",
+      "expected_bytes": 418,
+      "md5": "f1be3e82492227a6d42345206da03ef0",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "8f73fcb5797308ca1e441e8c88e8ac3c9b82b5d33476e674fe298e99ffa5393b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_eeg.vhdr",
+      "expected_bytes": 1131,
+      "md5": "0b32926d70e1c06c7122cf2c64a16865",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "6f35306010f5f9697302d179b2657a68d9704d8965356203e20d5ea3a0b1751b"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_eeg.vmrk",
+      "expected_bytes": 527,
+      "md5": "1b478105b4f0318d911427dd4ab8043f",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "c442ec1e7b1c97e3e719dcc361f313884eb1ba3a934da14b4c889e8c2e2c2875"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "sub-020/eeg/sub-020_task-arithmetic_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/sub-020/eeg/sub-020_task-arithmetic_events.tsv",
+      "expected_bytes": 79413,
+      "md5": "b364cfabbc6fdc5d2ea1a1c43858a24d",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "efaacd8c7e4df3fd2a240fdd591ac1f5123096560643421c0676375f9a214781"
+    },
+    {
+      "dataset_id": "ds007262",
+      "relative_path": "task-arithmetic_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds007262/task-arithmetic_events.json",
+      "expected_bytes": 2431,
+      "md5": "5ab74c8c067512017b6304475d9a4e62",
+      "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf",
+      "license_status": "verified_cc0",
+      "sha256": "acf982d319555d5cbb6d5c98a82d6d6a6048602ab2eb74fd601476867072476b"
+    }
+  ]
+}

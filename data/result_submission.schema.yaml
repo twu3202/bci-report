@@ -1,0 +1,71 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: BCI Arena verified result submission
+type: object
+additionalProperties: false
+required: [schema_version, submission]
+properties:
+  schema_version:
+    const: 1
+  submission:
+    type: object
+    additionalProperties: false
+    required:
+      - protocol_id
+      - dataset_version
+      - split_id
+      - evaluation_mode
+      - preprocessing_id
+      - run_id
+      - verified_at
+      - verifier
+      - verification_method
+      - results
+    anyOf:
+      - required: [evidence_url]
+      - required: [artifact_sha256]
+    properties:
+      protocol_id: {type: string, minLength: 1}
+      dataset_version: {type: string, minLength: 1}
+      split_id: {type: string, minLength: 1}
+      evaluation_mode:
+        enum: [scratch, zero_shot, frozen_linear_probe, partial_finetune, full_finetune]
+      preprocessing_id: {type: string, minLength: 1}
+      run_id: {type: string, minLength: 1}
+      verified_at: {type: string, format: date-time}
+      verifier: {type: string, minLength: 1}
+      verification_method: {type: string, minLength: 1}
+      evidence_url: {type: string, pattern: "^https?://"}
+      artifact_sha256: {type: string, pattern: "^[0-9a-fA-F]{64}$"}
+      code_commit: {type: string}
+      source_title: {type: string}
+      source_url: {type: string, pattern: "^https?://"}
+      table_ref: {type: string}
+      notes: {type: string}
+      date_added: {type: string, format: date}
+      results:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [model_slug, benchmark_slug, metric, value, value_scale]
+          properties:
+            model_slug: {type: string, minLength: 1}
+            benchmark_slug: {type: string, minLength: 1}
+            metric: {type: string, minLength: 1}
+            value: {type: number}
+            value_scale: {enum: [percent, unit_interval, raw]}
+            std: {type: number, minimum: 0}
+            uncertainty_type: {const: standard_deviation}
+            n_seeds: {type: integer, minimum: 1}
+        allOf:
+          - if:
+              properties:
+                results:
+                  contains: {required: [std]}
+            then:
+              properties:
+                results:
+                  items:
+                    if: {required: [std]}
+                    then: {required: [uncertainty_type]}

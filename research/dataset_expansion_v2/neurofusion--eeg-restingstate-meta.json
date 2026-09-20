@@ -1,0 +1,508 @@
+{
+  "_id": "64111ef7c100524d3cdfed62",
+  "id": "neurofusion/eeg-restingstate",
+  "author": "neurofusion",
+  "sha": "fe43ac768e0e0df525c5925edb9c27c186730b3b",
+  "lastModified": "2023-05-15T17:14:37.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "language:en",
+    "license:apache-2.0",
+    "doi:10.57967/hf/0745",
+    "region:us",
+    "neuro",
+    "eeg",
+    "powerspectra",
+    "focus",
+    "calm",
+    "longitudinal data"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tDataset Card for Dataset Name\n\t\n\n\n\t\n\t\t\n\t\n\t\n\t\tDataset Summary\n\t\n\nThis is a dataset of EEG data & derived metrics recorded on the Fusion platform from a single particpant through the course of a week.\nTask: Eyes closed for 10mins at least twice a day. Participant also gave a short summary at the start of every recording in events.csv\nDevice: Neurosity Crown - 8 channels [CP3, C3, F5, PO3, PO4, F6, C4, CP4]\n\n\t\n\t\t\n\t\n\t\n\t\tDataset Structure\n\t\n\n\n\t\n\t\t\n\t\n\t\n\t\tData Instances\n\t\n\nAll dataset are\u2026 See the full description on the dataset page: https://huggingface.co/datasets/neurofusion/eeg-restingstate.",
+  "downloads": 263,
+  "likes": 7,
+  "cardData": {
+    "language": [
+      "en"
+    ],
+    "tags": [
+      "neuro",
+      "eeg",
+      "powerspectra",
+      "focus",
+      "calm",
+      "longitudinal data"
+    ],
+    "license": "apache-2.0"
+  },
+  "siblings": [
+    {
+      "rfilename": ".DS_Store"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "calm/calm_1674239692.json"
+    },
+    {
+      "rfilename": "calm/calm_1674273747.json"
+    },
+    {
+      "rfilename": "calm/calm_1674322176.json"
+    },
+    {
+      "rfilename": "calm/calm_1674325610.json"
+    },
+    {
+      "rfilename": "calm/calm_1674336341.json"
+    },
+    {
+      "rfilename": "calm/calm_1674376426.json"
+    },
+    {
+      "rfilename": "calm/calm_1674454790.json"
+    },
+    {
+      "rfilename": "calm/calm_1674495760.json"
+    },
+    {
+      "rfilename": "calm/calm_1674520142.json"
+    },
+    {
+      "rfilename": "calm/calm_1674539317.json"
+    },
+    {
+      "rfilename": "calm/calm_1674569354.json"
+    },
+    {
+      "rfilename": "calm/calm_1674613052.json"
+    },
+    {
+      "rfilename": "calm/calm_1674630344.json"
+    },
+    {
+      "rfilename": "calm/calm_1674719194.json"
+    },
+    {
+      "rfilename": "calm/calm_1674748330.json"
+    },
+    {
+      "rfilename": "calm/calm_1674750807.json"
+    },
+    {
+      "rfilename": "calm/calm_1674791018.json"
+    },
+    {
+      "rfilename": "calm/calm_1674886663.json"
+    },
+    {
+      "rfilename": "calm/calm_1674916543.json"
+    },
+    {
+      "rfilename": "calm/calm_1674926222.json"
+    },
+    {
+      "rfilename": "calm/calm_1674959009.json"
+    },
+    {
+      "rfilename": "calm/calm_1674966879.json"
+    },
+    {
+      "rfilename": "calm/calm_1675001725.json"
+    },
+    {
+      "rfilename": "calm/calm_1675006569.json"
+    },
+    {
+      "rfilename": "calm/calm_1675029843.json"
+    },
+    {
+      "rfilename": "calm/calm_1675044968.json"
+    },
+    {
+      "rfilename": "calm/calm_1675054666.json"
+    },
+    {
+      "rfilename": "calm/calm_1675099686.json"
+    },
+    {
+      "rfilename": "calm/calm_1675120167.json"
+    },
+    {
+      "rfilename": "calm/calm_1675142192.json"
+    },
+    {
+      "rfilename": "calm/calm_1675187274.json"
+    },
+    {
+      "rfilename": "events.csv"
+    },
+    {
+      "rfilename": "focus/focus_1674239692.json"
+    },
+    {
+      "rfilename": "focus/focus_1674273747.json"
+    },
+    {
+      "rfilename": "focus/focus_1674322176.json"
+    },
+    {
+      "rfilename": "focus/focus_1674325610.json"
+    },
+    {
+      "rfilename": "focus/focus_1674336341.json"
+    },
+    {
+      "rfilename": "focus/focus_1674376426.json"
+    },
+    {
+      "rfilename": "focus/focus_1674454790.json"
+    },
+    {
+      "rfilename": "focus/focus_1674495760.json"
+    },
+    {
+      "rfilename": "focus/focus_1674520142.json"
+    },
+    {
+      "rfilename": "focus/focus_1674539317.json"
+    },
+    {
+      "rfilename": "focus/focus_1674569354.json"
+    },
+    {
+      "rfilename": "focus/focus_1674613052.json"
+    },
+    {
+      "rfilename": "focus/focus_1674630344.json"
+    },
+    {
+      "rfilename": "focus/focus_1674719194.json"
+    },
+    {
+      "rfilename": "focus/focus_1674748330.json"
+    },
+    {
+      "rfilename": "focus/focus_1674750807.json"
+    },
+    {
+      "rfilename": "focus/focus_1674791018.json"
+    },
+    {
+      "rfilename": "focus/focus_1674886663.json"
+    },
+    {
+      "rfilename": "focus/focus_1674916543.json"
+    },
+    {
+      "rfilename": "focus/focus_1674926222.json"
+    },
+    {
+      "rfilename": "focus/focus_1674959009.json"
+    },
+    {
+      "rfilename": "focus/focus_1674966879.json"
+    },
+    {
+      "rfilename": "focus/focus_1675001725.json"
+    },
+    {
+      "rfilename": "focus/focus_1675006569.json"
+    },
+    {
+      "rfilename": "focus/focus_1675029843.json"
+    },
+    {
+      "rfilename": "focus/focus_1675044968.json"
+    },
+    {
+      "rfilename": "focus/focus_1675054666.json"
+    },
+    {
+      "rfilename": "focus/focus_1675099686.json"
+    },
+    {
+      "rfilename": "focus/focus_1675120167.json"
+    },
+    {
+      "rfilename": "focus/focus_1675142192.json"
+    },
+    {
+      "rfilename": "focus/focus_1675187274.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674239692.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674273747.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674322176.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674325610.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674336341.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674376426.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674454790.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674495760.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674520142.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674539317.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674569354.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674613052.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674630344.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674719194.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674748330.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674750807.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674791018.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674886663.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674916543.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674926222.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674959009.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1674966879.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675001725.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675006569.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675029843.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675044968.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675054666.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675099686.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675120167.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675142192.json"
+    },
+    {
+      "rfilename": "powerByBand/powerByBand_1675187274.json"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674239692.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674322176.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674325610.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674454790.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674495760.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674520142.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674539317.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674569354.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674613052.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674630344.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674719194.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674748330.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674750807.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674791018.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674886663.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674916543.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674926222.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674959009.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1674966879.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675001725.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675006569.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675029843.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675044968.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675054666.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675099686.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675120167.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675142192.csv"
+    },
+    {
+      "rfilename": "rawBrainwaves/rawBrainwaves_1675187274.csv"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674239692.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674273747.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674322176.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674325610.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674336341.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674376426.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674454790.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674495760.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674520142.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674539317.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674569354.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674613052.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674630344.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674719194.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674748330.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674750807.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674791018.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674886663.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674916543.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674926222.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674959009.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1674966879.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675001725.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675006569.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675029843.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675044968.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675054666.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675099686.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675120167.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675142192.json"
+    },
+    {
+      "rfilename": "signalQuality/signalQuality_1675187274.json"
+    }
+  ],
+  "createdAt": "2023-03-15T01:27:19.000Z",
+  "usedStorage": 0
+}

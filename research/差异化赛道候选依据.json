@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-09-09",
+  "scope": "Bounded primary-source competitive and dataset review for product ideation; no new model execution or dataset download",
+  "novelty_boundary": "Few-shot adaptation, reduced channels, cross-session evaluation and corruption robustness already have publications or competitions. Differentiation is a proposed sustained, user-facing benchmark product, not a claim of scientific or market exclusivity.",
+  "overlapping_work": [
+    {"name":"CHIL 2026 multidimensional EEG evaluation","url":"https://proceedings.mlr.press/v333/kommineni26a.html","coverage":"Limited labels, reduced sensor coverage and short windows"},
+    {"name":"Beyond Accuracy","url":"https://arxiv.org/abs/2605.17562","coverage":"Six EEG FMs, noise, channel dropout, pooling and interpretation; preprint"},
+    {"name":"EEG-FM-Compass","url":"https://arxiv.org/abs/2601.17883","coverage":"Cross-subject and within-subject few-shot adaptation"},
+    {"name":"Neural Interfaces Challenge 2026","url":"https://neural-interfaces26.github.io/","coverage":"Cross-session cued BCI and cross-device wearable sleep among four tracks; newly announced corpora not available until September 16 according to official page"},
+    {"name":"OpenEEGBench","url":"https://github.com/braindecode/OpenEEGBench","coverage":"Live community-driven FM benchmarking and parameter-efficient adaptation"}
+  ],
+  "candidate_tracks": [
+    {
+      "name":"No-command false activations",
+      "user_question":"When no command is requested, does the decoder keep triggering? When a command is requested, how often and how quickly is it detected?",
+      "priority":"Strongest prospective product identity; data semantics must pass a feasibility gate",
+      "metrics":["False activation events per hour of explicitly labeled no-control intervals","Command event recall within a predefined response window","Detection delay including window acquisition, filtering, inference and debounce","Missed commands and wrong-command events"],
+      "guards":["Thresholds and postprocessing set using training/validation only","Always-abstain must not win: report command recall jointly with false activation rate","Strictly chronological causal processing; no future samples or current zero-phase pilot filter","Replay of recorded data is not prospective closed-loop or free-living validation","Prompt-defined idle is not open-world unknown-state rejection"]
+    },
+    {
+      "name":"Calibration time and later-session reuse",
+      "user_question":"How long must I calibrate, and does it still work the next time I wear the cap?",
+      "priority":"Fastest extension of existing BNCI two-session assets",
+      "metrics":["Performance versus 0/2/5/10-minute target calibration budget","Later-session performance and recalibration burden","Per-participant distribution and prespecified usability-threshold coverage"],
+      "guards":["Recording wall time includes protocol gaps, not just EEG crop duration","Chronological target calibration prefixes; no test-label selection","Use actual recorded session/date information rather than inventing next-day spacing","Current BNCI data are already used for development; final claims need additional fixed evaluation data"]
+    },
+    {
+      "name":"Cap and computer constrained model choice",
+      "user_question":"Which measured pipeline fits my electrode positions, calibration budget and computer?",
+      "priority":"Practical user interface and supporting dimension for the other two tracks",
+      "metrics":["Task performance at a fixed physical electrode subset","Measured end-to-end latency on named hardware","Memory footprint and calibration training time"],
+      "guards":["Electrode positions matter, not just channel count","Subsampling high-density public EEG is simulation, not validation of a different cap","Do not infer real device quality or population performance from one or two local users","Report only measured hardware/configuration combinations"]
+    }
+  ],
+  "explicit_idle_dataset_candidate": {
+    "name":"OpenNeuro ds005342",
+    "url":"https://openneuro.org/datasets/ds005342",
+    "official_mirror":"https://github.com/OpenNeuroDatasets/ds005342",
+    "metadata":"https://raw.githubusercontent.com/OpenNeuroDatasets/ds005342/main/dataset_description.json",
+    "declared_snapshot":"10.18112/openneuro.ds005342.v1.0.3",
+    "participants":32,
+    "eeg_channels":17,
+    "sampling_hz":250,
+    "license_as_declared":"CC0",
+    "status":"Official README and metadata reachable; EEG files not downloaded, parsed or tested here",
+    "useful_properties":"Continuous signal matrices and explicit MotorImageryA/B, IdleStateA/B, trial phase markers and original decoder detected events",
+    "critical_limits":["Experiment is visually prompted, with sitting/standing contexts; not unconstrained daily activity","Compare MI vs idle within posture/task to avoid learning posture as intention","Original decoder *_detected markers are model outputs, not ground-truth intent labels","Reconstruct phase durations and contiguous eligible exposure before reporting rates or onset delay","Pretraining overlap, actual signal availability and adapter compatibility remain unverified"]
+  },
+  "other_data_cautions": [
+    "PhysioNet EEGMMIDB has explicit T0 rest and larger population but is disclosed pretraining-seen for both LaBraM and EEGPT; cannot present it as clean unseen generalization.",
+    "BCI Competition IV dataset 1 has continuous idle but only a,b,f,g are human; c,d,e are synthetic, and LaBraM discloses this dataset in pretraining.",
+    "Existing BNCI2014-001 inter-trial blanks are not validated no-control ground truth."
+  ]
+}

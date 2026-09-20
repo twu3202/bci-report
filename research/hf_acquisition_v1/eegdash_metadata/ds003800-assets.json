@@ -1,0 +1,1166 @@
+{
+  "dataset_id": "ds003800",
+  "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+  "status": "ready",
+  "asset_count": 118,
+  "total_bytes": 198443567,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/CHANGES",
+      "expected_bytes": 22,
+      "md5": "040bf39c0a37c33be19e838f62833962",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "0273bcdb83a594bd8f293ba5acc58723bc04140dc46404586ba653871ac5258d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/README",
+      "expected_bytes": 2970,
+      "md5": "92dee8932f1d27549542550f77873ce5",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "89fcf319d67e7129bc41675a791b93b3e744b893432392a39f5ad3b47280a23c"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/dataset_description.json",
+      "expected_bytes": 1234,
+      "md5": "8081a327bdc2199bd2be77c33a8b973a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "01d3b71200f97b5ac09ef7b08d7c7e7e9b41cf73dc74af7d908fe88e8971e8c5"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "participants.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/participants.json",
+      "expected_bytes": 452,
+      "md5": "63b6e19f14020deab10066df3804e983",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "9527e2343ef68442056449b034db4ee1617d5ec844a339277f309a63df4703a7"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/participants.tsv",
+      "expected_bytes": 285,
+      "md5": "63630b2cc16b42b4a8ceb42cbe309819",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "822a72c36e83df8a44987be5561fb97b9a0504b9aad7345f8e765378ffe0f7d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285792,
+      "md5": "1be16ed932eec011a191f685d3615ddf",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-001/eeg/sub-001_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-001/eeg/sub-001_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "2045ee1a9bdfedaae5a5eb8b3742728f",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "448e74a8c6d48f12daba6d0bab08c37f",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-002/eeg/sub-002_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-002/eeg/sub-002_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "ebf9c5a53406aba8e1aa478a375d520b",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "5b0cdba32752a6680d96f6321145f403",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-003/eeg/sub-003_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-003/eeg/sub-003_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "dff091ab4ff0c0bd80cfb085242bd0fa",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "31e8147fb6ea214c4768344e374e69d0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-004/eeg/sub-004_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-004/eeg/sub-004_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "94158d499112276f567511ad623239d3",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "700e6b4e111a9eee1ca20a30d9656a7b",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-005/eeg/sub-005_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-005/eeg/sub-005_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "c505c497e0dc05c2886dd0605b615289",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "1ef4aaefdbdd05cb558a7781763d8ad4",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-006/eeg/sub-006_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-006/eeg/sub-006_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "60d41795a42d2c05f44ae9050a140a11",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "981435ddd937fe2a38c0ccd3d4f99089",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-007/eeg/sub-007_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-007/eeg/sub-007_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "e6f9cba4a07e37fffa681669bc93bdb6",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "72c54ef38907dee843542e2493f41dfd",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-008/eeg/sub-008_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-008/eeg/sub-008_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "e30f8fe0cad053f154ab8521a787e5d8",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285632,
+      "md5": "852cc6152554488e76a51035efc20389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-009/eeg/sub-009_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285640,
+      "md5": "798066cd7975bcedf86b54df1463c1d2",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-010/eeg/sub-010_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-010/eeg/sub-010_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "95084dc859df93579926841872ded2d6",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285640,
+      "md5": "f2f72bd70fcb23e821b36f1a52db9dbd",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-011/eeg/sub-011_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-011/eeg/sub-011_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "3f0ed4a3e9044db65330ccc3c3fbbcc8",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285640,
+      "md5": "24acf125e9662b17729a4f612c730d4b",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-Rest_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-Rest_eeg.json",
+      "expected_bytes": 995,
+      "md5": "b17afb4e142c02fdd89293d0fb950389",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "fb293d8c277296070741ea98923682b5f721dcf5ab204788eb8a751c7a1c73af"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-012/eeg/sub-012_task-Rest_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-012/eeg/sub-012_task-Rest_eeg.set",
+      "expected_bytes": 2332352,
+      "md5": "744e9d7447f2ce1ae3fd7bad4ad82269",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_coordsystem.json",
+      "expected_bytes": 97,
+      "md5": "1aff1c17d1e997a161df0236327049b9",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "38cbd743cd80f8243716dcfe326138c49c124855551fbed50f935724a5ee71d3"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_eeg.json",
+      "expected_bytes": 1907,
+      "md5": "54c37269bab8b42415a65508dc36e73c",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "b5e44de5af8b82ccaf092439b5d2bda2d1834a697143b2757962c2562fb2329d"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_eeg.set",
+      "expected_bytes": 13285688,
+      "md5": "a371587394e4ec0431b4e2b9f5d39143",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_electrodes.tsv",
+      "expected_bytes": 383,
+      "md5": "aa3a011dade592a647f9cc400831cc74",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "98b131926a435547c61c1010fbd1474ab2244552af343eeedf5d8d2208d96c81"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    },
+    {
+      "dataset_id": "ds003800",
+      "relative_path": "sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003800/sub-013/eeg/sub-013_task-AuditoryGammaEntrainment_events.tsv",
+      "expected_bytes": 419,
+      "md5": "08519955791816a44b611508d45ce2a0",
+      "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534",
+      "license_status": "verified_cc0",
+      "sha256": "d4c00db7ce55eee3ae9227b8d6f8ec25155ff335ef34b50a8b75fcb12b143d65"
+    }
+  ]
+}

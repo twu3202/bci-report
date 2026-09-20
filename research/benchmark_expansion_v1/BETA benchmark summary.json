@@ -1,0 +1,310 @@
+{
+  "completed_at": "2026-09-12T16:19:38.813461+00:00",
+  "protocol_id": "beta-ssvep-2s-posterior4and8-subject7fold-v1",
+  "score_invocation_seconds": 500.957115333993,
+  "results": [
+    {
+      "subject_mean_balanced_accuracy": 0.6311607142857143,
+      "subject_mean_macro_f1": 0.6262284336377374,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.5724062499999999,
+        0.6896428571428572
+      ],
+      "short_duration_group_balanced_accuracy": 0.6787500000000002,
+      "long_duration_group_balanced_accuracy": 0.6181818181818182,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "cca",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 1.754876459017396,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.5070535714285714,
+      "subject_mean_macro_f1": 0.49373413893529433,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.4556227678571428,
+        0.5575892857142856
+      ],
+      "short_duration_group_balanced_accuracy": 0.5495833333333333,
+      "long_duration_group_balanced_accuracy": 0.49545454545454537,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "spectral-ridge",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 1.366779665928334,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.10830357142857143,
+      "subject_mean_macro_f1": 0.09296091863206704,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.09526562499999999,
+        0.12196651785714284
+      ],
+      "short_duration_group_balanced_accuracy": 0.11708333333333333,
+      "long_duration_group_balanced_accuracy": 0.1059090909090909,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "labram",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 5.000138541217893,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.20267857142857146,
+      "subject_mean_macro_f1": 0.16916589853196437,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.18169419642857143,
+        0.22598214285714285
+      ],
+      "short_duration_group_balanced_accuracy": 0.22416666666666665,
+      "long_duration_group_balanced_accuracy": 0.1968181818181818,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "eegpt",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 27.535839958116412,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.3366964285714286,
+      "subject_mean_macro_f1": 0.31778213986710313,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.2983928571428572,
+        0.3760714285714286
+      ],
+      "short_duration_group_balanced_accuracy": 0.3954166666666667,
+      "long_duration_group_balanced_accuracy": 0.32068181818181823,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "cbramod",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 4.85779504198581,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.5575892857142857,
+      "subject_mean_macro_f1": 0.541059342838019,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.5014285714285713,
+        0.612955357142857
+      ],
+      "short_duration_group_balanced_accuracy": 0.655,
+      "long_duration_group_balanced_accuracy": 0.5310227272727271,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "eegnet",
+      "montage": "posterior8",
+      "channels": [
+        "PO5",
+        "PO3",
+        "POZ",
+        "PO4",
+        "PO6",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 285.79494579229504,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.5758035714285715,
+      "subject_mean_macro_f1": 0.5670723362358747,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.5179464285714286,
+        0.634825892857143
+      ],
+      "short_duration_group_balanced_accuracy": 0.6562499999999999,
+      "long_duration_group_balanced_accuracy": 0.5538636363636363,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "cca",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 1.086679874919355,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.48214285714285715,
+      "subject_mean_macro_f1": 0.4671589176778854,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.43062500000000004,
+        0.5329486607142857
+      ],
+      "short_duration_group_balanced_accuracy": 0.5279166666666666,
+      "long_duration_group_balanced_accuracy": 0.46965909090909086,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "spectral-ridge",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 0.7049391251057386,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.1288392857142857,
+      "subject_mean_macro_f1": 0.110318056846,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.11232142857142859,
+        0.14634151785714286
+      ],
+      "short_duration_group_balanced_accuracy": 0.14291666666666666,
+      "long_duration_group_balanced_accuracy": 0.125,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "labram",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 2.451408333145082,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.17312499999999997,
+      "subject_mean_macro_f1": 0.14364825832953287,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.15535714285714286,
+        0.19169866071428568
+      ],
+      "short_duration_group_balanced_accuracy": 0.19375,
+      "long_duration_group_balanced_accuracy": 0.16749999999999998,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "eegpt",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 20.190043666865677,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.2760714285714286,
+      "subject_mean_macro_f1": 0.2568676299952549,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.24080357142857137,
+        0.31277008928571426
+      ],
+      "short_duration_group_balanced_accuracy": 0.3016666666666667,
+      "long_duration_group_balanced_accuracy": 0.26909090909090905,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "cbramod",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 2.954518625047058,
+      "publication_status": "research_preview_pending_independent_audit"
+    },
+    {
+      "subject_mean_balanced_accuracy": 0.44125,
+      "subject_mean_macro_f1": 0.42073851241459875,
+      "descriptive_subject_bootstrap_95_percentile": [
+        0.38642857142857145,
+        0.4963392857142857
+      ],
+      "short_duration_group_balanced_accuracy": 0.5345833333333333,
+      "long_duration_group_balanced_accuracy": 0.41579545454545447,
+      "subjects": 70,
+      "trials": 11200,
+      "nominal_chance": 0.025,
+      "model": "eegnet",
+      "montage": "posterior4",
+      "channels": [
+        "POZ",
+        "O1",
+        "OZ",
+        "O2"
+      ],
+      "total_seconds": 146.67971933400258,
+      "publication_status": "research_preview_pending_independent_audit"
+    }
+  ],
+  "publication_status": "audited_local_research_preview_not_published",
+  "independent_audit_status": "passed",
+  "independent_audit_sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950"
+}

@@ -1,0 +1,121 @@
+{
+  "_id": "69f48c5680c5452e99ae1090",
+  "id": "NeuroMM/NeuroMM-2026",
+  "author": "NeuroMM",
+  "sha": "dcd61c427e0e524e3ff0d48a07c8407214b8c2e1",
+  "lastModified": "2026-05-18T15:01:51.000Z",
+  "private": false,
+  "gated": "manual",
+  "disabled": false,
+  "tags": [
+    "language:en",
+    "license:cc-by-nc-4.0",
+    "region:us",
+    "eeg",
+    "multimodal",
+    "seizure-detection",
+    "benchmark",
+    "neuromm-2026"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tNeuroMM-2026 \u2014 Train + Val Open Release\n\t\n\nThis repository contains two parts of the NeuroMM-2026 multimodal seizure detection challenge dataset:\n\nTrain + Val (root annotations/ + archives/): 25,426 EEG samples (20,298 train / 5,128 val) with labels and matching pre-extracted visual features from 7 vision backbones.\nTest-phase candidate set (candidate/): the test-phase inputs only \u2014 no labels. Predictions are submitted to and scored on the official Codabench leaderboards;\u2026 See the full description on the dataset page: https://huggingface.co/datasets/NeuroMM/NeuroMM-2026.",
+  "downloads": 67,
+  "likes": 18,
+  "cardData": {
+    "license": "cc-by-nc-4.0",
+    "viewer": false,
+    "extra_gated_prompt": "This dataset is provided for academic research and NeuroMM-2026 challenge participation only. By requesting access, your team confirms that all submitted information is accurate and complete. The dataset, annotations, and any derived files must not be redistributed, mirrored, modified, or used for commercial purposes without prior written permission. Access will be granted only after manual review by the NeuroMM-2026 organizers.",
+    "extra_gated_fields": {
+      "Team Name": "text",
+      "Team Leader Name": "text",
+      "Team Leader Email": "text",
+      "Team Members (comma-separated)": "text",
+      "Organization / University / Company": "text",
+      "Country / Region": "country",
+      "I confirm that my team will use this dataset for academic research and NeuroMM-2026 challenge participation only": "checkbox",
+      "I agree not to redistribute the dataset, annotations, or derived files without written permission": "checkbox"
+    },
+    "language": [
+      "en"
+    ],
+    "tags": [
+      "eeg",
+      "multimodal",
+      "seizure-detection",
+      "benchmark",
+      "neuromm-2026"
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "WechatGroup.jpg"
+    },
+    {
+      "rfilename": "annotations/neuromm2026_train_val.csv"
+    },
+    {
+      "rfilename": "archives/eeg.tar"
+    },
+    {
+      "rfilename": "archives/video_clip-base.tar"
+    },
+    {
+      "rfilename": "archives/video_dinov2-base.tar"
+    },
+    {
+      "rfilename": "archives/video_dinov2-large.tar"
+    },
+    {
+      "rfilename": "archives/video_siglip-base.tar"
+    },
+    {
+      "rfilename": "archives/video_timesformer-k400.tar"
+    },
+    {
+      "rfilename": "archives/video_videomae-base.tar"
+    },
+    {
+      "rfilename": "archives/video_videomae-large.tar"
+    },
+    {
+      "rfilename": "candidate/README.md"
+    },
+    {
+      "rfilename": "candidate/archives/eeg.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_clip-base.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_dinov2-base.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_dinov2-large.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_siglip-base.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_timesformer-k400.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_videomae-base.tar"
+    },
+    {
+      "rfilename": "candidate/archives/video_videomae-large.tar"
+    },
+    {
+      "rfilename": "candidate/candidate_ids.txt"
+    },
+    {
+      "rfilename": "splits/split.md"
+    }
+  ],
+  "createdAt": "2026-05-01T11:19:50.000Z",
+  "usedStorage": 15834015519
+}

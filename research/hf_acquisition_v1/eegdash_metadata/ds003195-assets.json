@@ -1,0 +1,830 @@
+{
+  "dataset_id": "ds003195",
+  "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+  "status": "ready",
+  "asset_count": 84,
+  "total_bytes": 126955244,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/CHANGES",
+      "expected_bytes": 145,
+      "md5": "a17d4754c042eb0254a03009eaae31c8",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "52002d4a44d135704dc8d88eba4dfd6d4053a84570ccd2be7fef295b985823c9"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/README",
+      "expected_bytes": 1844,
+      "md5": "c135ead423a5b42a95e22b5749c473be",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "f5f91f0028618f2773bd7c5d29a589f8bd8609a1fa77cd703e07eb1e96e904f1"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/dataset_description.json",
+      "expected_bytes": 823,
+      "md5": "acab370469a1f8ac8fe17df4390179bc",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "02931169968a6efb2b7778562c6bfb35430f529bd3c9e297999fe6ef1a200282"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/participants.tsv",
+      "expected_bytes": 171,
+      "md5": "7edc701bf0083ee47fc2f730fc8ab18e",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "2582bc59d324d8f0b82bf287795cb0213b08df760e7852b894688c0be832c4da"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5659520,
+      "md5": "118c9a0374042cec8f3d25bf8afd4dbd",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "db264c5f9e4c4f164a34431e3ad946fa",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "7060e6838a5391ae0985366638b86293ed195783902a5d9c5db6b522bd2efcc2"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebo6m/eeg/sub-PLAC02_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 490,
+      "md5": "2bdf08a1603f810cd3d13c018d27fd2a",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "536d8fbf210ec620e9174a18db6bb17415281d0b9b49ce50efdd84c657516fd6"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 7605120,
+      "md5": "ec077f7ed0d7ddf92ca48a7607e9f4e3",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "4094b6fcd1daf5be4a6826199cec151f",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "2cf7579f88cc94824717685b2533f0c28ba12eb0c87268f389f139eea9a66ffd"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC02/ses-placebopre/eeg/sub-PLAC02_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 695,
+      "md5": "cdb86b326b265c5226ea62e16d0067b9",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "bbf83ed8ec5ded55911957cb05730f84b888aa951505fde1d3073d2ab7e1bddb"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5416320,
+      "md5": "b91dd1e834fa0d87955f28ab320a9d19",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "e2a892c9ee12be34520b5d1462d6d9f2",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "46f0e95aa2274641c583fc7c869b34b35cb2aca963d4637de1f18f8f10cb4d6d"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebo6m/eeg/sub-PLAC05_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 589,
+      "md5": "57b6a7501d82a61839555a49e47924de",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "9e7466b2cf0a7557752caf56c61459d67f94ea340ce232abc036a2fb206df7d6"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 7787520,
+      "md5": "5e3db8ed89ccefb59bcad474bc0edacc",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 446,
+      "md5": "83b27986b0893777a4e91e76e36a0fb3",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "1459d0cad3454455acf44a61fa908e828169bffff26b6eefc8f3e92237f9daa5"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC05/ses-placebopre/eeg/sub-PLAC05_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 104656,
+      "md5": "761397bbebdcb64b3c0bccbced4fc426",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "4dc1abca3f6e17a40c553663e4bafa7abc5f8fd064900c7a57368511fd1f771e"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5416320,
+      "md5": "51660d0309f3d755452912a6135061c0",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 444,
+      "md5": "6c7cb6474610033ac52a8e7a30b411af",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "da3b67680c4652b7dccf5d1e9d22ae02b35af1ca7bac90c8b043307d5530e318"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebo6m/eeg/sub-PLAC08_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 659,
+      "md5": "d1c3c0c509a818920c7b5a2e6500da58",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "eac6faf06764a038894c73220c0bc787ea12ae66eb90e65d1465ecd86879decb"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 5902720,
+      "md5": "53c4e43302ca6b6835efe8bb5e75e3de",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "69cf893d6e86d54d165abc4350852780",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "f99e2140d11e8db08afdfcd35562ec61b143d79039e3e69fb9f13a4eecb98837"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC08/ses-placebopre/eeg/sub-PLAC08_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 22095,
+      "md5": "b37707b076f48b95e455bb3a30b87baf",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "e15f467968f0ca2683a0f95f500ff3670476e1f6251416957746d9cea4692322"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 9125120,
+      "md5": "52eaf5e2072c5da785a7b3ed808d418a",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "a7d94be296bd261048132de1b712129e",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "97f3b7a27602d080db00d1f1397e56dda1cfba161cd8d8b8ae432208818e769d"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebo6m/eeg/sub-PLAC10_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 453,
+      "md5": "78b9ba72c35d56bc8a451214e6708a16",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "e9e56c44e31a9514c47156cd202d17b29e0c40c0b6e7abf250ea032b6f506636"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 7483520,
+      "md5": "25c85d15f107fada6c2e33377300fc15",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 444,
+      "md5": "89960952ebd97455e94b2e1329d7ec61",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "34b21cdea78d5b460df70a7e31b22c1243c70a314182838ab5f6b594058f7577"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC10/ses-placebopre/eeg/sub-PLAC10_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 104137,
+      "md5": "83e33c0cb9062c0dd2cd83656d9769f0",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "b3ca64c20f20cfd7e7cccc8b61752bf29fe95d7fac5346f8902054cb159f0eae"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5112320,
+      "md5": "1354a330609fd616120aa236471124b8",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "0a16501095cf80e30d8aa53ef8df4d4f",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "a63f992f1717af7971621bc6ef6efe452713ad3dd5c62517ceb4b6cb93693a83"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebo6m/eeg/sub-PLAC13_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 451,
+      "md5": "39bb35b58810640ee279e7eef298f821",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "0e852795ce7027c6c52e3c5ea278886dad336cea046aa83138d7aab8057b7ff9"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 6814720,
+      "md5": "c8af897bab7672b9b3ae0e180c24d8d2",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "e47e8ac912a532d6bd06da172908912f",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "1fdba739a51be09906a434c570229808540260d364b2344e5c2d5ba8aa61c8ff"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC13/ses-placebopre/eeg/sub-PLAC13_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 589,
+      "md5": "171fc5abae4257414c0319058f8665db",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "747a003bf6b55cbf9522752dd01cafb3e6b06c0fb5c1f5f858992ce778702e1d"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 4808320,
+      "md5": "77eafa6a70619df83282bbfc269df619",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "1b756ab21bf2e072acccfd3b66994294",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "d44a24cc4c7b285510f1559e62544bbc72e3b2ff98f9bc73cb202346fddf60b8"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebo6m/eeg/sub-PLAC14_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 587,
+      "md5": "4e47466de3226d0cae2e1cc283ad4b80",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "90803e136f65878e94b906153ef2968f577f20f1a51d2e2ff460f6aa131ce8e7"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 7301120,
+      "md5": "f938549d76bbe9e489773160090de2cf",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "14b8edeb9ccfee22b9e763d94852a8d3",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "4d3069f7f4db7e27c8ed6fd10a6e01446cf9e8f3a6acbb8ad5b440ee555d1044"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC14/ses-placebopre/eeg/sub-PLAC14_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 523,
+      "md5": "7933824c5a8ba21ccd3b48a448b989ee",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "0b3e7631b137e91c71a498a8b7a483dc32fb58ec4bf35ceb4548f6caef576b3b"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5659520,
+      "md5": "eae14851ffde5cd1c0e81fb3eaeff1c8",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "4e2e074418233537a142f7c36df07323",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "bd47f1e4f6ab2add43d99b632fb379d030488e3ba15cea0ac5ed3c2f49086d35"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebo6m/eeg/sub-PLAC17_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 524,
+      "md5": "f74680369c9496014700e657df420633",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "1f27c9ed971481fa79485c7b117ef088cf89ba7e4a0ca8cebe56248a87ef2043"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 7301120,
+      "md5": "fe31bb7a6d3042f9529ef94907faa465",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "ac5a1e2cb3c88438252f7220f5b48dbf",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "d0dd2d5f908e13c172ae43aca1466908bdf0ef4496be49980c0acb6ce04cde0d"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC17/ses-placebopre/eeg/sub-PLAC17_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 718,
+      "md5": "27387c7b84087ebe3699488f78ebd33e",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "8593db1d3d64c2afcd9b059c1f31bf5b44293ea27501e9bc2eadf0e790498f1d"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5112320,
+      "md5": "837e215f315a792fb8fca043d6915997",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "7ca453078c7b524708480bc977e605d7",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "16d9958877c803c6123195a85a6735fc41ed420e1cd5cd6a29cff3c7172b06af"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebo6m/eeg/sub-PLAC19_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 588,
+      "md5": "c1631c59fc4d0015c4f19377e235da43",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "964d332390e455dd3379138ca09e64f6e837fc545330468588379aac42555b36"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 5233920,
+      "md5": "3931a9c4b83ad06391c4ebc37c0e5877",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "c9feed0f1d286699a86cbe8e50264913",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "463c79d55f3be78934ad48c33bad11e16e2f813c38a5ce359ff578a75c9ef450"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC19/ses-placebopre/eeg/sub-PLAC19_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 653,
+      "md5": "a5f92b5b2aa6c32f7260d3d8f27b18f9",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "e61b071d6cbe05af5076f0ec4838ee214f7995e73cf181acccc30683e06a5556"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 5294720,
+      "md5": "46577e05afbbec1d588ee1376a296121",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 444,
+      "md5": "2b27b2d296ded0f8deb606b8cf911f4c",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "9b10ac083d8f0c91e0d6ece9c28a26d3c52e7ebb63d9473fb09b838cf903c8f8"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebo6m/eeg/sub-PLAC23_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 660,
+      "md5": "1657eb2200299a26d1a78bb04f54383f",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "6b65eca31c61e23dc10779d5497d5d14b8e64eb8987f9568393aa516f842a599"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 5477120,
+      "md5": "687a07aeb14d5e2e59077a05df6fae95",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 445,
+      "md5": "039ea92917c6d2adbee5352df8c840ed",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "b1e412779d4b3340137fdf0b41ac1589c1255e615eeaa326f4d0f1dbe0b89c96"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC23/ses-placebopre/eeg/sub-PLAC23_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 659,
+      "md5": "2be5cb637549d4f1e2f2e7de865c1547",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "6821505fe5fd38cd754a9f0c37858cfe585c6ba151158f24ee026ef78ce116b9"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_eeg.edf",
+      "expected_bytes": 9185920,
+      "md5": "7a536a37a03a7d2230911ab26f2c8616",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_eeg.json",
+      "expected_bytes": 445,
+      "md5": "b12fb2c15a6c2c7a3270246858765a0d",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "d2764de3f2013d6151b5acd94d4d6757ac944eb4f4ac1e833c0e5ac6b827904a"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebo6m/eeg/sub-PLAC24_ses-placebo6m_task-taskplacebo6m_events.tsv",
+      "expected_bytes": 133,
+      "md5": "9abb9d96786e3cbb630ecc9c4f54756e",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "090ba8696a63d18af3c0059a50077dc16ea334a70f587c21b8358ca148df74df"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_eeg.edf",
+      "expected_bytes": 4990720,
+      "md5": "22c913fcdd311e0f73d93643e6d31203",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_eeg.json",
+      "expected_bytes": 444,
+      "md5": "0a35888603642fcde3ab1f2164a53705",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "28522f113302bfda0dadce1d1eb1555e376f946f1a7d45a9c7b7d5ee55a75933"
+    },
+    {
+      "dataset_id": "ds003195",
+      "relative_path": "sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003195/sub-PLAC24/ses-placebopre/eeg/sub-PLAC24_ses-placebopre_task-taskplacebopre_events.tsv",
+      "expected_bytes": 625,
+      "md5": "08f78fc47bfc3510ccbce85f8e456214",
+      "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b",
+      "license_status": "verified_cc0",
+      "sha256": "694ad64fab6793284a81368c95481d4cbe1c93a2ae59313da2fa6398adf8dfcd"
+    }
+  ]
+}

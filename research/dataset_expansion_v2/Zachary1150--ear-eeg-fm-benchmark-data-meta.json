@@ -1,0 +1,77 @@
+{
+  "_id": "6a1fc66beeedd013a4d81774",
+  "id": "Zachary1150/ear-eeg-fm-benchmark-data",
+  "author": "Zachary1150",
+  "sha": "39a7821a1912ef1528c3d80a10f813b14ca34130",
+  "lastModified": "2026-07-07T00:30:10.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "region:us"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tEar-EEG FM Benchmark \u2014 preprocessed datasets\n\t\n\nThis repository hosts preprocessed HDF5 files for the Ear-EEG FM Benchmark\n(https://github.com/zhikaili1150/Ear-EEG-FM-Benchmark).\nEach .h5 file follows the schema:\ndata       (N, C, T) float32    \u00b5V\nlabels     (N,)      int64       0..n_class-1\nsubject    (N,)      object      'sub-NN'\nsession    (N,)      object      'ses-NN'\ntrial_id   (N,)      int64\nch_names   (C,)      object      standard 10-20 names\nattrs      sfreq, n_class\u2026 See the full description on the dataset page: https://huggingface.co/datasets/Zachary1150/ear-eeg-fm-benchmark-data.",
+  "downloads": 64,
+  "likes": 0,
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "aarhus-aad-eeg.h5"
+    },
+    {
+      "rfilename": "aarhus-aad-in-ear-eeg.h5"
+    },
+    {
+      "rfilename": "aarhus-aad-singleword-eeg.h5"
+    },
+    {
+      "rfilename": "aarhus-aad-singleword-in-ear-eeg.h5"
+    },
+    {
+      "rfilename": "eesm23-ear-eeg.h5"
+    },
+    {
+      "rfilename": "eesm23-eeg.h5"
+    },
+    {
+      "rfilename": "motor-ear-eeg.h5"
+    },
+    {
+      "rfilename": "motor-eeg.h5"
+    },
+    {
+      "rfilename": "raw/motor/subject1.zip"
+    },
+    {
+      "rfilename": "raw/motor/subject2.zip"
+    },
+    {
+      "rfilename": "raw/motor/subject3.zip"
+    },
+    {
+      "rfilename": "raw/motor/subject4.zip"
+    },
+    {
+      "rfilename": "raw/motor/subject5.zip"
+    },
+    {
+      "rfilename": "raw/motor/subject6.zip"
+    },
+    {
+      "rfilename": "saad-ear-eeg.h5"
+    },
+    {
+      "rfilename": "saad-eeg.h5"
+    },
+    {
+      "rfilename": "saad-in-ear-eeg.h5"
+    }
+  ],
+  "createdAt": "2026-06-03T06:15:07.000Z",
+  "usedStorage": 42102545047
+}

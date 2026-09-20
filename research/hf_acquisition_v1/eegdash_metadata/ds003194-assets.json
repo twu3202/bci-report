@@ -1,0 +1,1181 @@
+{
+  "dataset_id": "ds003194",
+  "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+  "status": "ready",
+  "asset_count": 120,
+  "total_bytes": 198330899,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/CHANGES",
+      "expected_bytes": 145,
+      "md5": "0053cddf21318be5c5e39f971ed39278",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "a669dfdfc4c0eb03770db06e6c9c3f0fa768162a01b6de07a6e39b912a4a2d52"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/README",
+      "expected_bytes": 1845,
+      "md5": "8fa1630f8bebd3a0578ef5148f5e5941",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "54b110f489e904d87ed2ef31f9835445d2ecd76740a8661083a45b85f9607573"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/dataset_description.json",
+      "expected_bytes": 819,
+      "md5": "d6c9c445496b24e7076212a411576642",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "71d75dcdae1bfa15f6b7d6c74506cb00c5f32f8d57e4cfae8ad088543e60b212"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/participants.tsv",
+      "expected_bytes": 246,
+      "md5": "16a17f7dfb39a7ae04d252625d507999",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "13ac94014faa4e4a13492fb7627de2818f85082e6d8845f23920ab4884c3d060"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 780,
+      "md5": "f42d3d659f616806327448396e9f126d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "51cbf2a646a889ec370a8862bdc75a79a4e2855a127f8d21ebe728b43b3f6221"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 6501376,
+      "md5": "bc0195c10cb4cd4e0060da2aa038a540",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "c98296e820b362c11aefc675f7f4655d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "2ade23ecb58261b023c1d83dc686505e8f5f702db3f458d0ad989e9fc0479937"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-Nepopre/eeg/sub-NEPO01_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22077,
+      "md5": "615c998fd0a5379290590210248aab43",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "3cd9d65378f2efe4b00ede0f3c23fdb2a5769c2245705f8c80d704068a354f2c"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 4565120,
+      "md5": "aa7aff92656c74070eb9b519d93ea4f9",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "a9499bfced1df550952d12474af7eee1",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "eead100885d1580ec2bfefcb149399cb2cf1bd1c4b4b968903d7eda1fa033957"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO01/ses-nepo6m/eeg/sub-NEPO01_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 518,
+      "md5": "cdd7e8b8cf4e05b74d1f4e610339b6dd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "4fed360e8f1620f78936e55aa48b18fc770e1744f7fa14a4b6179ff22a1e4de2"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 9185920,
+      "md5": "d788acf6f8c23cc2f2fc0b9d219ab82e",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "c057184090346309bc23d08311313fb4",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "ad41282f6f7695fb9d206d1ad1f9203eac2e8519c447802107ba902727657328"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-Nepopre/eeg/sub-NEPO03_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 104825,
+      "md5": "0a413afbed5ae745384d7d45a92bd5b4",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "e64774d84a25690bbab4ffba34fd28072a76e0c59a1ef66352ed5c1da17c7fdb"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 9185920,
+      "md5": "81ab76783d96dd59e9bb7c85dcd31424",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "c8d1d264b860e76f85984bbb7bfb4e41",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "b889252838d55dc9a90e2c4797ac3120ec861b05d1b074c3c8e4494d640559f8"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO03/ses-nepo6m/eeg/sub-NEPO03_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 453,
+      "md5": "a1cec12eabfa40a8bc026ff216d2c322",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "89380073035a6cf59ca67112c2f4b66b6e1514f7b2a319d70d3ff68169a77132"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 780,
+      "md5": "f42d3d659f616806327448396e9f126d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "51cbf2a646a889ec370a8862bdc75a79a4e2855a127f8d21ebe728b43b3f6221"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 6445376,
+      "md5": "fd675f8dbda9c133026ee89743817946",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "3a00ccadc64798e4a9119c25ddd21f25",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "447f819cda2bbf8e3736558719c736376d37507fd42b41c53945f375f8624f23"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-Nepopre/eeg/sub-NEPO04_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22194,
+      "md5": "d8a3c5388bf9e0a1a0bddedaedeb7833",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "f1f8db01e1fc7a80445dd02c5cdaa3441e5e0206eb3ce94cbe58c6dc37a3e6e2"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 9429120,
+      "md5": "0cd8aa43db6a0cd36627f9b61645cae0",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "1c1eef45d7133eb8ed80674edb03870c",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "01c22e432aea981628c4d17fc1f2d5b12fcb44e53949e6e3c1d3cf475922f5a7"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO04/ses-nepo6m/eeg/sub-NEPO04_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 651,
+      "md5": "42f3000547ec0bcd12dfd74e56890c59",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "6878126670e9ba990010b3f100c9abf030535b6459e75e47f73b8f72ba43ff00"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 6389120,
+      "md5": "bba7501a7eb927f19ab6f1a957c4bdbd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "f525baf6b7f38f792a428e4397c1f316",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "483fba542d3640a491b5f430a4fff1f1079b2cbeb7895f6045bd01d9f1859f4f"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-Nepopre/eeg/sub-NEPO06_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22009,
+      "md5": "0a04d445899d7ae23125869594c0f44f",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "364c888f193a5e1a56aa65bddd71ec4d89a1be2a87d83018dfb0cb811343963d"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5477120,
+      "md5": "dd3f4db69ce0214ec78a5b1e087c2361",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "1c6e7a888f2d1dfbbc8fb5d5bc5ddecb",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "813ab82186b5774d72b450d7d6634102daf13d294e90f8e90e93b41860e541ff"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO06/ses-nepo6m/eeg/sub-NEPO06_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 658,
+      "md5": "3602bd330228a8dee7a3bcac863e1785",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "411474b088c2a54ffdd7c1717f1e8cba6b1505dc8df06e6b98caf959ddd344dc"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 6145920,
+      "md5": "f012e8403a45b80aa27c44a6a403ec1c",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "dadc174d3a531fb8fef29160678493d4",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "8273b06c5350eaf50b3692dae786a040eade7fe4da56ab04d06905c2f11ad480"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-Nepopre/eeg/sub-NEPO07_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22131,
+      "md5": "c8b63c752450e41938a598d20f0103cd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "3c8dc704ea6222bb92ee64bd67bde4935f61f3dcf2a75c1dfb5da266945601fa"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 7726720,
+      "md5": "01a763c510b6aea53cb9fb3a8bfb8065",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "d9cbcdd8e3036879d9851bc79163c4b3",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "79be21990e20e52c8d78cc6fc0436ca253f9e5b3b60e62b69d6f30f7e4e1b6e3"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO07/ses-nepo6m/eeg/sub-NEPO07_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 528,
+      "md5": "9d664c5c82991d75e97e723405d80647",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "9970718b43c4f2122a16a7d4a4fd0bd80dc8244fcc55e67f818667bcb6ce93ce"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 7240320,
+      "md5": "80445c391c002720b8b26d9640989108",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "5109601258d4df49d61d7f7816136563",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "5960b54a57a0a995c4d6a51b9ae0c657bd09b0b7b8ebd25f86de3b8c93796b7e"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-Nepopre/eeg/sub-NEPO09_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22019,
+      "md5": "8aa8b866cb90b51db89d4df9fca1eff4",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "a0d4a0b7f0f5a132aed3c2df9ee2e00fe07e4a6952f713f548a0226464c55f74"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5112320,
+      "md5": "49ce6d88fa988b664bf268b8bc1f30f2",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "9fbd3014abe0464bf33262f6774a7990",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "59a7150412530732f714905726d72371b4fc185a6ed65fa07b16cccba6a5b8c3"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO09/ses-nepo6m/eeg/sub-NEPO09_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 524,
+      "md5": "e46e3e6e6a101eed05327742f462bfab",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "5bd5a63819112566fc7d480fb41ecbc3113728ccc29df95b1fed10f15f73c9bc"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 7301120,
+      "md5": "a5c0a0c74265bbff9dd452b5c07ca8a7",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "321842c28892199260ebf747d9216dee",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "7950a452e54af893b9622474561ac41904202797f1325db084c8cb6d66dfc9a9"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-Nepopre/eeg/sub-NEPO12_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 104097,
+      "md5": "412a650aa17f6eba8416028eb74d92a9",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "b8c153b48ee2a385df8ddf50cec73cb8f39c58d9515a2a3b11d5ed4777647755"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5355520,
+      "md5": "249d3751e19c57fbda86935fb6253c4e",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "b779a5673a756579ace97230098fd621",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "6dce6abddab311e4c2a0bad6910ac96e7b2689e7619c7e19159ac2b5abd5c986"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO12/ses-nepo6m/eeg/sub-NEPO12_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 423,
+      "md5": "49a0584d0005a0cf889b4fd7058e6234",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "19e68fc7261fc0feb4ed91969c44a0f66b501ded4303eb39ea7a59ed5f8c7956"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 816,
+      "md5": "77472d5cd1473624b2c1aa3765d49f80",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "85265f0808ab97a09b60c99404219c9dadf863d926f41bc204391876a730e006"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 7590832,
+      "md5": "b35846ed0cbf19205fe805f2cdebebd1",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "5a1ca7f330b57ac5d0d294e7f3f307dd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "30152b066be1703154d72ff8ee7d9c75ec41001d4ffe712b6712e87c7f081e08"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-Nepopre/eeg/sub-NEPO15_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 22340,
+      "md5": "c968e513f2b10ce8e8646021143d65f8",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "b02a83c5eb8b9f1d016c1954ca65ef11b17e77560fe6fc54bb237d9134868521"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 4929920,
+      "md5": "4e3cd58840202c2fbae8d9e0003328d9",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "2be81a0da359059459ec287133b0c38e",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "e27097afff192ec0698260087a392ee94b2c66dc3d0dcf6a05a5f04f87e89ddb"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO15/ses-nepo6m/eeg/sub-NEPO15_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 523,
+      "md5": "8bfc2779615e482f375801c61dffed94",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "e74a91a96a3f48363f78ab3828f59d53ab18fce4c99c0bad9157070b24febc8c"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 6510720,
+      "md5": "4b4d0a4467c07647f961d019f0a71086",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "58d9d32515922987a9322ba0de112cc7",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "16e5e8c1973af8a585668a51c5d66e6c7b6a4160bd0d127cb72ea9bbd0e896ad"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-Nepopre/eeg/sub-NEPO16_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 21941,
+      "md5": "99d99b188f57fd01072c3eb73c33eea9",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "99611ae696b1e617c61555b8804552ffa97361a718faea8d336f54d950e9455d"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5112320,
+      "md5": "73af19d9ff4a72c3e1adb541b2d73b04",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "b902ddd804808d2c001b7e5d7568c64d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "f51f6881c4c1f19549f17bf7ba78972c7608067d60321143897549e0c175210a"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO16/ses-nepo6m/eeg/sub-NEPO16_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 554,
+      "md5": "3ac6ccd943f24871b5b09e2123b03b11",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "3cc7cb97307cbf02e23bd17d449565c1a1e0db9e3ad343e8734a2805e6e6bd38"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 8760320,
+      "md5": "684f78d9af36948460d8c030719a3755",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "eecf55b391ee36557092d16b359458b1",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "1b642a8d0bc82502cc6f5f9b7e4850de9d5e50a4438bc16d52f00f1e54694729"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-Nepopre/eeg/sub-NEPO18_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 104148,
+      "md5": "4fc957b34391169984d848a960532ebc",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "4a6d4899947e8f1525aa4640141fd03f2651d4e8270eae92af2e8be2e2e8f117"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5233920,
+      "md5": "19e0b7ba174d0f835aac95bb4be3bb9f",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "e1d88d9bbf05402c15acf7151daf3f71",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "21939e956278a07c08e8bf334357053a08976bcb37e27f74268721f981ada3cd"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO18/ses-nepo6m/eeg/sub-NEPO18_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 657,
+      "md5": "da670b7fa16500f4809a702494c92fa3",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "fa8c9fdef9be4e8ee547bab86b4288a3d4f10eb348b6e776cce4c64ec5c7bdb4"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 4990720,
+      "md5": "fb554086257e3047fe06a9a18cfa7959",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "30ae30ce5e4e3fee1ded221c08420a4e",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "e581a83fba33dc8e4ac3d30ad648320c594da662f9e43b5dca067dd6402390e8"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-Nepopre/eeg/sub-NEPO20_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 558,
+      "md5": "41e565cc2c33f30f4c793c3f9d1b9646",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "4f8f3de4727702a2566d13f89b29a18858a77dccd99b0fa1f314ddcfbd84b916"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 7301120,
+      "md5": "2a7dcb48c9c1a9e05cea9dc1048f35f3",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 440,
+      "md5": "8d4154788af9bf852daf7d6cd4b72367",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "821ea6b2228437251d48104d38890ff18bbc4dbfbb7a34c52a384cb65c74cca8"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO20/ses-nepo6m/eeg/sub-NEPO20_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 486,
+      "md5": "437abd23f7273ebea716f3ef3df2bfff",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c64de27f1f687abf2d073c872adbf89d6450c40ee5ceee549589e8da94b2d0f5"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 9976320,
+      "md5": "6d1f63f98ca7a626e438fc4d371445f3",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 443,
+      "md5": "af1db3f09d28080f29f4852820dec455",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "dfa28e5db3ee15d9aba1820162b08673ca61984ec8fe552d425f44fe31b50afa"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-Nepopre/eeg/sub-NEPO21_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 105070,
+      "md5": "31de68b6356aaf810da2dce7f5b6e3c2",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "b3abd8ba100d9ceba14f3d3bd45e95af875f16d1557c47fb8add700361a733bd"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5051520,
+      "md5": "1d4b74bc3d2962bd6f8c4e7510208c11",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 441,
+      "md5": "afc6f7c57d0b9459950b93f38b9d45c5",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "e1012298c2717b48457297d435935af7e5addd5c016a6d8bdf2e70489ddeb83f"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO21/ses-nepo6m/eeg/sub-NEPO21_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 521,
+      "md5": "174a043e596c819d1a7f5c2d6ed4a57e",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "46c1ebac8833788f881296e534a99712b761b987b0145debd63e16d36ae7f5bf"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5841920,
+      "md5": "dc24fa00905dfe13d584e1c884631f08",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "229a99a8da70971e3933f313724283cd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "39e12d4b9d5ddbd594b0a885bf3a2e75bf8b9d399207282271e7dfe12f02693d"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO22/ses-nepo6m/eeg/sub-NEPO22_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 527,
+      "md5": "91d96c437867680db39e8e1ed5c3b9fd",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "7e2167fbbdc10b3e0223508b5a95a3b274c017c35c5b655ec4f9d3baba3a7971"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 780,
+      "md5": "f42d3d659f616806327448396e9f126d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "51cbf2a646a889ec370a8862bdc75a79a4e2855a127f8d21ebe728b43b3f6221"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 5157376,
+      "md5": "bcf736532738896965e838a0efec7253",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "682635d5953a670529fb89a82c49e1f3",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "50cd019bbf7ce794a0142bda3f8d4f24f0918c5ad2087a2a7f7a0599ba3d2878"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-Nepopre/eeg/sub-NEPO25_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 519,
+      "md5": "ef2cda00f4fc336e99e5aecdac056643",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "746633254e39ec1dd35c691b7bbef74a3a2f4d4a0fe064afd8a37241c500d6ac"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 5051520,
+      "md5": "28f29f65f07501cca6b87581ddefa473",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "e0bf7426885d41c0c54af32efd28f2b8",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "86b045bc1464471ca4257859d5d82d173a0331782e35fdfd812decde82bb1db3"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO25/ses-nepo6m/eeg/sub-NEPO25_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 526,
+      "md5": "0fd90e951308b5549135ca0d803631c9",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "f45d6a6427aeea541da32eb5965cd0832b8355fc5695b3e5327756b67c87c157"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_channels.tsv",
+      "expected_bytes": 780,
+      "md5": "f42d3d659f616806327448396e9f126d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "51cbf2a646a889ec370a8862bdc75a79a4e2855a127f8d21ebe728b43b3f6221"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_eeg.edf",
+      "expected_bytes": 5605376,
+      "md5": "e719e7928c70ddc07b787d27ac27006f",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_eeg.json",
+      "expected_bytes": 442,
+      "md5": "09686dec0e5412857bf10aaf80b6664b",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "772868af4dd3e9c0beb3cee0b8e70bca3bcc8876313e547ccbd89dc54ee47a2b"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-Nepopre/eeg/sub-NEPO26_ses-Nepopre_task-taskprenepo_events.tsv",
+      "expected_bytes": 483,
+      "md5": "68c49e4881e54e09e630e86d50923d84",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "f6fd8db9a5bcc0e5a236812027174cb9b2c9d63fbf98ecf0523240bef238bd3e"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_channels.tsv",
+      "expected_bytes": 744,
+      "md5": "f964fdf39a1597c0df13f5b43e35f715",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "c260634e98d2210a4a3cc6829665a64941bb8d8befb6c823e36f93766e1ed312"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_eeg.edf",
+      "expected_bytes": 14536320,
+      "md5": "37da5a71d99dfda03ae3998a4e14e69c",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_eeg.json",
+      "expected_bytes": 443,
+      "md5": "dfcde7fb91b260aee0e78ae9b006ec3d",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "57bfe9ac7fc7b3591ec04f9ff8d5b717f53d14792bbd23045aa48ef7fcf6215d"
+    },
+    {
+      "dataset_id": "ds003194",
+      "relative_path": "sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds003194/sub-NEPO26/ses-nepo6m/eeg/sub-NEPO26_ses-nepo6m_task-task6mnepo_events.tsv",
+      "expected_bytes": 68,
+      "md5": "62863e846ec16d7c9d7e8e949eb7eb71",
+      "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996",
+      "license_status": "verified_cc0",
+      "sha256": "8a6bacaa17af843b8da6bd18a3cb011fcbc78c163e07fc0f83c86042180c51f1"
+    }
+  ]
+}

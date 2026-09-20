@@ -1,0 +1,241 @@
+# 评测任务目录（手工维护）。slug 全站唯一，小写连字符。
+# primary_metric 用于排行（两两对决）；其余指标仅展示。
+# access: open | registration | dua | application
+# ⚠ 种子数据：待 research/benchmarks_catalog.json 到位后核对补全。
+- slug: tuab
+  name: TUAB
+  full_name: TUH Abnormal EEG Corpus (v3.0.1)
+  task_family: abnormal_detection
+  modality: EEG
+  n_classes: 2
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, auc_pr, auroc]
+  higher_is_better: true
+  n_subjects: 2383
+  hours: 1142
+  n_channels: 16
+  sfreq_hz: 200
+  epoch_seconds: 10
+  standard_split: 官方 train/eval 划分；BIOT/LaBraM 协议再从 train 按受试者切 80/20 做 val
+  preprocessing: 0.1–75 Hz 带通，50 Hz 陷波，重采样 200 Hz，单位 0.1 mV，16 个双极/单极通道
+  access: dua
+  license: TUH EEG Corpus Data Use Agreement（需签署申请表，禁止再分发）
+  url: https://isip.piconepress.com/projects/nedc/html/tuh_eeg/
+- slug: tuev
+  name: TUEV
+  full_name: TUH EEG Events Corpus (v2.0.1)
+  task_family: event_classification
+  modality: EEG
+  n_classes: 6
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 370
+  hours: 112
+  n_channels: 16
+  sfreq_hz: 200
+  epoch_seconds: 5
+  standard_split: 官方 train/eval 划分；train 再按受试者切 80/20 做 val（BIOT/LaBraM 协议）
+  preprocessing: 同 TUAB；6 类：SPSW / GPED / PLED / EYEM / ARTF / BCKG
+  access: dua
+  license: TUH EEG Corpus Data Use Agreement
+  url: https://isip.piconepress.com/projects/nedc/html/tuh_eeg/
+- slug: bcic-iv-2a
+  name: BCIC-IV-2a
+  full_name: BCI Competition IV Dataset 2a (BNCI2014-001)
+  task_family: motor_imagery
+  modality: EEG
+  n_classes: 4
+  primary_metric: accuracy
+  metrics: [accuracy, cohen_kappa]
+  higher_is_better: true
+  n_subjects: 9
+  hours: 6
+  n_channels: 22
+  sfreq_hz: 250
+  epoch_seconds: 4
+  standard_split: 官方 session T 训练 / session E 测试（within-subject）；跨受试者协议另标
+  preprocessing: 0.3–100 Hz（原始），常见再做 4–40 Hz 带通；重采样 200 Hz（基础模型协议）
+  access: open
+  license: 开放（BNCI Horizon 2020 / MOABB 可直接下载）
+  url: https://www.bbci.de/competition/iv/
+- slug: physionet-mi
+  name: PhysioNet-MI
+  full_name: EEG Motor Movement/Imagery Dataset (EEGMMIDB)
+  task_family: motor_imagery
+  modality: EEG
+  n_classes: 4
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 109
+  hours: 47
+  n_channels: 64
+  sfreq_hz: 160
+  epoch_seconds: 4
+  standard_split: 跨受试者：约 70/15/15 按受试者划分（CBraMod 协议：1–70 / 71–89 / 90–109 剔除坏受试者）
+  access: open
+  license: ODC-By 1.0（PhysioNet open）
+  url: https://physionet.org/content/eegmmidb/1.0.0/
+- slug: shu-mi
+  name: SHU-MI
+  full_name: SHU Dataset (motor imagery, 25 subjects × 5 sessions)
+  task_family: motor_imagery
+  modality: EEG
+  n_classes: 2
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, auc_pr, auroc]
+  higher_is_better: true
+  n_subjects: 25
+  hours: 12
+  n_channels: 32
+  sfreq_hz: 250
+  epoch_seconds: 4
+  standard_split: 跨受试者 15/5/5（CBraMod 协议）
+  access: open
+  license: 开放（figshare, CC BY 4.0）
+  url: https://doi.org/10.6084/m9.figshare.19228725
+- slug: chb-mit
+  name: CHB-MIT
+  full_name: CHB-MIT Scalp EEG Database
+  task_family: seizure
+  modality: EEG
+  n_classes: 2
+  primary_metric: auc_pr
+  metrics: [balanced_accuracy, auc_pr, auroc]
+  higher_is_better: true
+  n_subjects: 23
+  hours: 980
+  n_channels: 16
+  sfreq_hz: 256
+  epoch_seconds: 10
+  standard_split: 按受试者划分（CBraMod 协议 19/2/2；BIOT 协议另有），极端类别不平衡
+  access: open
+  license: ODC-By 1.0（PhysioNet open）
+  url: https://physionet.org/content/chbmit/1.0.0/
+- slug: sleep-edfx
+  name: Sleep-EDFx
+  full_name: Sleep-EDF Database Expanded
+  task_family: sleep_staging
+  modality: EEG
+  n_classes: 5
+  primary_metric: macro_f1
+  metrics: [accuracy, macro_f1, cohen_kappa]
+  higher_is_better: true
+  n_subjects: 197
+  hours: 3300
+  n_channels: 2
+  sfreq_hz: 100
+  epoch_seconds: 30
+  standard_split: 按受试者划分；SC 子集 78 人为常用协议
+  access: open
+  license: ODC-By 1.0（PhysioNet open）
+  url: https://physionet.org/content/sleep-edfx/1.0.0/
+- slug: isruc
+  name: ISRUC
+  full_name: ISRUC-Sleep Subgroup 1
+  task_family: sleep_staging
+  modality: EEG
+  n_classes: 5
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 100
+  hours: 800
+  n_channels: 6
+  sfreq_hz: 200
+  epoch_seconds: 30
+  standard_split: 按受试者划分 80/10/10（CBraMod 协议）
+  access: open
+  license: 学术用途开放
+  url: https://sleeptight.isr.uc.pt/
+- slug: seed-v
+  name: SEED-V
+  full_name: SJTU Emotion EEG Dataset V
+  task_family: emotion
+  modality: EEG
+  n_classes: 5
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 16
+  hours: 11
+  n_channels: 62
+  sfreq_hz: 1000
+  epoch_seconds: 1
+  standard_split: 按 session/trial 划分（CBraMod 协议：每人 45 trials 按 5/10/… 切分）
+  access: application
+  license: 需向上海交大申请（仅学术用途，禁止再分发）
+  url: https://bcmi.sjtu.edu.cn/home/seed/seed-v.html
+- slug: faced
+  name: FACED
+  full_name: Finer-grained Affective Computing EEG Dataset
+  task_family: emotion
+  modality: EEG
+  n_classes: 9
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 123
+  hours: 41
+  n_channels: 32
+  sfreq_hz: 250
+  epoch_seconds: 10
+  standard_split: 跨受试者 80/21/22（CBraMod 协议）
+  access: registration
+  license: Synapse 注册后下载
+  url: https://www.synapse.org/Synapse:syn50614194
+- slug: mumtaz2016
+  name: Mumtaz2016
+  full_name: MDD vs healthy resting-state EEG (Mumtaz et al. 2016)
+  task_family: clinical_other
+  modality: EEG
+  n_classes: 2
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, auc_pr, auroc]
+  higher_is_better: true
+  n_subjects: 64
+  hours: 10
+  n_channels: 19
+  sfreq_hz: 256
+  epoch_seconds: 5
+  standard_split: 按受试者划分（CBraMod 协议）
+  access: open
+  license: figshare 开放
+  url: https://doi.org/10.6084/m9.figshare.4244171
+- slug: mental-arithmetic
+  name: MentalArithmetic
+  full_name: EEG During Mental Arithmetic Tasks (PhysioNet)
+  task_family: cognitive_load
+  modality: EEG
+  n_classes: 2
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, auc_pr, auroc]
+  higher_is_better: true
+  n_subjects: 36
+  hours: 2
+  n_channels: 20
+  sfreq_hz: 500
+  epoch_seconds: 5
+  standard_split: 按受试者划分 28/4/4（CBraMod 协议）
+  access: open
+  license: ODC-By 1.0（PhysioNet open）
+  url: https://physionet.org/content/eegmat/1.0.0/
+- slug: bcic2020-3
+  name: BCIC2020-3
+  full_name: BCI Competition 2020 Track 3 (Imagined Speech)
+  task_family: imagined_speech
+  modality: EEG
+  n_classes: 5
+  primary_metric: balanced_accuracy
+  metrics: [balanced_accuracy, cohen_kappa, weighted_f1]
+  higher_is_better: true
+  n_subjects: 15
+  hours: 3
+  n_channels: 64
+  sfreq_hz: 256
+  epoch_seconds: 3
+  standard_split: 官方 train/val/test
+  access: open
+  license: 竞赛开放数据
+  url: https://osf.io/pq7vb/

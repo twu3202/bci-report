@@ -1,0 +1,962 @@
+[
+  {
+    "type": "directory",
+    "oid": "6669ecd78b961471b84362eb4052a4421e17679e",
+    "size": 0,
+    "path": "calm"
+  },
+  {
+    "type": "directory",
+    "oid": "b5a4fcb3ad83803bceeaa4893a939eae3cc8b294",
+    "size": 0,
+    "path": "focus"
+  },
+  {
+    "type": "directory",
+    "oid": "8862b84cd4dec6acf2a0dedffa9a7e27227f732f",
+    "size": 0,
+    "path": "powerByBand"
+  },
+  {
+    "type": "directory",
+    "oid": "9d2e398f8e999e9244d6e9cb311221fb4ce022d1",
+    "size": 0,
+    "path": "rawBrainwaves"
+  },
+  {
+    "type": "directory",
+    "oid": "98cf504330f47ceedb0fd25cef4cf7093edace51",
+    "size": 0,
+    "path": "signalQuality"
+  },
+  {
+    "type": "file",
+    "oid": "7b2759cbb8f5de3793b9fdda26c9e9e3ac9a3d2f",
+    "size": 6148,
+    "path": ".DS_Store"
+  },
+  {
+    "type": "file",
+    "oid": "83bd8b211be6f61321790fe20f882cce4641f0f5",
+    "size": 1652,
+    "path": "README.md"
+  },
+  {
+    "type": "file",
+    "oid": "d12a5c26f998c6eacf74d409dcb59341f7c98989",
+    "size": 59758,
+    "path": "calm/calm_1674239692.json"
+  },
+  {
+    "type": "file",
+    "oid": "8a30c0f36206260a151655cdb4eaacd01bd02346",
+    "size": 59768,
+    "path": "calm/calm_1674273747.json"
+  },
+  {
+    "type": "file",
+    "oid": "568125bab34bb843a0989d39f4e9b3436cd09fdf",
+    "size": 12811,
+    "path": "calm/calm_1674322176.json"
+  },
+  {
+    "type": "file",
+    "oid": "0c08206ebc7f5a844dd3f0209223d0ccfada2b33",
+    "size": 39874,
+    "path": "calm/calm_1674325610.json"
+  },
+  {
+    "type": "file",
+    "oid": "487b8193743dee3ded0d8460c781b3d176aad048",
+    "size": 56787,
+    "path": "calm/calm_1674336341.json"
+  },
+  {
+    "type": "file",
+    "oid": "b4c09a4930ab6fb5e971330b62917ba80c74a44c",
+    "size": 59761,
+    "path": "calm/calm_1674376426.json"
+  },
+  {
+    "type": "file",
+    "oid": "561376cef33051b401cdcec7486742f79465cd9b",
+    "size": 58889,
+    "path": "calm/calm_1674454790.json"
+  },
+  {
+    "type": "file",
+    "oid": "26832a77efd5a0bade486874e26a92e5921d9679",
+    "size": 59398,
+    "path": "calm/calm_1674495760.json"
+  },
+  {
+    "type": "file",
+    "oid": "dd415b69686f7ae29f4fe38ba8e78a01c8425c44",
+    "size": 55645,
+    "path": "calm/calm_1674520142.json"
+  },
+  {
+    "type": "file",
+    "oid": "6bd6555128485f0bdebdc648f73e0e2546f2dad4",
+    "size": 59674,
+    "path": "calm/calm_1674539317.json"
+  },
+  {
+    "type": "file",
+    "oid": "7be44b2ce32db86b03e2df591642c4096471f9d4",
+    "size": 59673,
+    "path": "calm/calm_1674569354.json"
+  },
+  {
+    "type": "file",
+    "oid": "8c6cc0f00eeea6407aa635d10cf32fc9b9dd6768",
+    "size": 59701,
+    "path": "calm/calm_1674613052.json"
+  },
+  {
+    "type": "file",
+    "oid": "b0c5b9ea0ddecd7b4fc4a2240ff83272c6b79ecb",
+    "size": 59716,
+    "path": "calm/calm_1674630344.json"
+  },
+  {
+    "type": "file",
+    "oid": "c84c9ca16722583d555ec36f810cab88dd1c29fa",
+    "size": 13720,
+    "path": "calm/calm_1674719194.json"
+  },
+  {
+    "type": "file",
+    "oid": "dfe3f3511ee5d3a9906e3f7d497bdcd242773308",
+    "size": 15073,
+    "path": "calm/calm_1674748330.json"
+  },
+  {
+    "type": "file",
+    "oid": "481befceae04d03ad2d56b530fad49d15d9802d0",
+    "size": 59300,
+    "path": "calm/calm_1674750807.json"
+  },
+  {
+    "type": "file",
+    "oid": "41dcd1a64c44be76618514259373f2840f7555be",
+    "size": 59051,
+    "path": "calm/calm_1674791018.json"
+  },
+  {
+    "type": "file",
+    "oid": "85a3e4ba1398f5e8636349d3dcf28c0c2c8653f2",
+    "size": 59661,
+    "path": "calm/calm_1674886663.json"
+  },
+  {
+    "type": "file",
+    "oid": "e834c5897fdd3321bf82a928d7f4eb02dfc013c0",
+    "size": 28099,
+    "path": "calm/calm_1674916543.json"
+  },
+  {
+    "type": "file",
+    "oid": "776f191a7bcbc43b64b2199a7bb141718fc1c9da",
+    "size": 9059,
+    "path": "calm/calm_1674926222.json"
+  },
+  {
+    "type": "file",
+    "oid": "7430887ba7055566cb1f61e80c68858c4bf33030",
+    "size": 59721,
+    "path": "calm/calm_1674959009.json"
+  },
+  {
+    "type": "file",
+    "oid": "adb902d8279c6492a26d12109b884553086e3f30",
+    "size": 59280,
+    "path": "calm/calm_1674966879.json"
+  },
+  {
+    "type": "file",
+    "oid": "c1871169948fb01974369a47a97b85f02a58f0a9",
+    "size": 57686,
+    "path": "calm/calm_1675001725.json"
+  },
+  {
+    "type": "file",
+    "oid": "facdc1cfdd0a0e0b0e6947e637774e36d684b87d",
+    "size": 59674,
+    "path": "calm/calm_1675006569.json"
+  },
+  {
+    "type": "file",
+    "oid": "0063b02a495faa1c90aa6cd893e535c3d056e1e8",
+    "size": 59601,
+    "path": "calm/calm_1675029843.json"
+  },
+  {
+    "type": "file",
+    "oid": "8f263442ba67796321d986847daf49e1a3f8144d",
+    "size": 59764,
+    "path": "calm/calm_1675044968.json"
+  },
+  {
+    "type": "file",
+    "oid": "c853b888d0e50430e5ded1b0284f0b4b86d0c5e4",
+    "size": 28419,
+    "path": "calm/calm_1675054666.json"
+  },
+  {
+    "type": "file",
+    "oid": "37afa0bb82f892fdafccebf8d3103a6a6ea38654",
+    "size": 26986,
+    "path": "calm/calm_1675099686.json"
+  },
+  {
+    "type": "file",
+    "oid": "475259e5f2e3f873f9e9f7eef19116269df934b6",
+    "size": 59669,
+    "path": "calm/calm_1675120167.json"
+  },
+  {
+    "type": "file",
+    "oid": "1520b9ac92d89d9af04d752ff6236e4ee63ca680",
+    "size": 59548,
+    "path": "calm/calm_1675142192.json"
+  },
+  {
+    "type": "file",
+    "oid": "4e92086cbff718d1bbe41549213509e01b9b45fe",
+    "size": 59754,
+    "path": "calm/calm_1675187274.json"
+  },
+  {
+    "type": "file",
+    "oid": "66529439ad90491c045012e98500156c632aa756",
+    "size": 2963,
+    "path": "events.csv"
+  },
+  {
+    "type": "file",
+    "oid": "eec128f02066d5e81aeb72284d65690883f90efd",
+    "size": 60134,
+    "path": "focus/focus_1674239692.json"
+  },
+  {
+    "type": "file",
+    "oid": "6daf797bd1cff23849276445b4f52d20a261ec6f",
+    "size": 60300,
+    "path": "focus/focus_1674273747.json"
+  },
+  {
+    "type": "file",
+    "oid": "a33968e6d621e63ca8b06027541531cddee72d8e",
+    "size": 13497,
+    "path": "focus/focus_1674322176.json"
+  },
+  {
+    "type": "file",
+    "oid": "8249ccc7d0e0fd66dc53b93c2b5be87a1b009d4a",
+    "size": 40122,
+    "path": "focus/focus_1674325610.json"
+  },
+  {
+    "type": "file",
+    "oid": "ed4f6166f0f98c45f4ec77f2cdaf132a89b33a9c",
+    "size": 57370,
+    "path": "focus/focus_1674336341.json"
+  },
+  {
+    "type": "file",
+    "oid": "b9f4b21ea9787efdd692553c40aecd229fe6996a",
+    "size": 60122,
+    "path": "focus/focus_1674376426.json"
+  },
+  {
+    "type": "file",
+    "oid": "04f3dcf3cd9343ffee061e19dd75fb1a904f2e6e",
+    "size": 59330,
+    "path": "focus/focus_1674454790.json"
+  },
+  {
+    "type": "file",
+    "oid": "ad38d3f70bf3e8ad4bd25b5fb254df607aa209e8",
+    "size": 60110,
+    "path": "focus/focus_1674495760.json"
+  },
+  {
+    "type": "file",
+    "oid": "c0558831cada6934dfe6644d07c22d9fc1df6a4e",
+    "size": 56210,
+    "path": "focus/focus_1674520142.json"
+  },
+  {
+    "type": "file",
+    "oid": "5104d798d891a18f7e150ef6f57ebb8f52e16934",
+    "size": 60070,
+    "path": "focus/focus_1674539317.json"
+  },
+  {
+    "type": "file",
+    "oid": "1df8235e80537f96ef328ad44ca4308fb90cc02c",
+    "size": 60101,
+    "path": "focus/focus_1674569354.json"
+  },
+  {
+    "type": "file",
+    "oid": "8823481a105870f048a2a889b299e527b4676ae0",
+    "size": 60229,
+    "path": "focus/focus_1674613052.json"
+  },
+  {
+    "type": "file",
+    "oid": "f2c6d2d3fb1413b80a9e078865e44c6d59b2508e",
+    "size": 60174,
+    "path": "focus/focus_1674630344.json"
+  },
+  {
+    "type": "file",
+    "oid": "e14aa78ba006ec2cae6f5c9a81a5f7cdd0e91d44",
+    "size": 14805,
+    "path": "focus/focus_1674719194.json"
+  },
+  {
+    "type": "file",
+    "oid": "394151a95804116367cfe31d8dee9214fdbc2276",
+    "size": 15178,
+    "path": "focus/focus_1674748330.json"
+  },
+  {
+    "type": "file",
+    "oid": "853de428570ca1b6ae0c2e39d6a185a0b29cc06e",
+    "size": 59645,
+    "path": "focus/focus_1674750807.json"
+  },
+  {
+    "type": "file",
+    "oid": "d6ee0e41cc8bb9011a6938eade29b4918550409b",
+    "size": 59547,
+    "path": "focus/focus_1674791018.json"
+  },
+  {
+    "type": "file",
+    "oid": "4a19af4ad80d0603af4c352a7c1b3c265eb926db",
+    "size": 60090,
+    "path": "focus/focus_1674886663.json"
+  },
+  {
+    "type": "file",
+    "oid": "5552dca19c54532fe7c4021f48a9e35781dc08ad",
+    "size": 28281,
+    "path": "focus/focus_1674916543.json"
+  },
+  {
+    "type": "file",
+    "oid": "44bf36f8f6ef83b6861f331e45b9bd260d7075fb",
+    "size": 9236,
+    "path": "focus/focus_1674926222.json"
+  },
+  {
+    "type": "file",
+    "oid": "a0b1a64fe23a1f8f9805a8a19497957a55769010",
+    "size": 60161,
+    "path": "focus/focus_1674959009.json"
+  },
+  {
+    "type": "file",
+    "oid": "6d0be6f7777025ebb0545a4357d02f6535842e90",
+    "size": 59965,
+    "path": "focus/focus_1674966879.json"
+  },
+  {
+    "type": "file",
+    "oid": "77bb2647b7749209c098dbd306532410aafcebde",
+    "size": 58043,
+    "path": "focus/focus_1675001725.json"
+  },
+  {
+    "type": "file",
+    "oid": "f04a6987fd39429bc899c9721fca5cb941334650",
+    "size": 60117,
+    "path": "focus/focus_1675006569.json"
+  },
+  {
+    "type": "file",
+    "oid": "6afd752808875c6d731ac1d3652623d65b4d1143",
+    "size": 60064,
+    "path": "focus/focus_1675029843.json"
+  },
+  {
+    "type": "file",
+    "oid": "7a3e70e51d641df5fbe19f00ebe66f14a46084da",
+    "size": 60254,
+    "path": "focus/focus_1675044968.json"
+  },
+  {
+    "type": "file",
+    "oid": "28d57d36110252c216b250b7c5eccc837ff0d8e2",
+    "size": 28749,
+    "path": "focus/focus_1675054666.json"
+  },
+  {
+    "type": "file",
+    "oid": "3208ff97d8b766358aaaaafb7e050f9416afa21d",
+    "size": 27339,
+    "path": "focus/focus_1675099686.json"
+  },
+  {
+    "type": "file",
+    "oid": "20a0621824871ce507bb95dbc80d04cac2c0f221",
+    "size": 60134,
+    "path": "focus/focus_1675120167.json"
+  },
+  {
+    "type": "file",
+    "oid": "b5ec6c124493ab6e4bf0083b5202d13407b338e0",
+    "size": 59936,
+    "path": "focus/focus_1675142192.json"
+  },
+  {
+    "type": "file",
+    "oid": "cd18ec0dc1b7131862da18595ba685080c0b8582",
+    "size": 60225,
+    "path": "focus/focus_1675187274.json"
+  },
+  {
+    "type": "file",
+    "oid": "cd0c8702aab60739682a76a63113ddaf6deb1da4",
+    "size": 2965870,
+    "path": "powerByBand/powerByBand_1674239692.json"
+  },
+  {
+    "type": "file",
+    "oid": "54263ae91f6c17ece1fe367fb3d6fd17e0249531",
+    "size": 2955571,
+    "path": "powerByBand/powerByBand_1674273747.json"
+  },
+  {
+    "type": "file",
+    "oid": "197163e19dff233c71394b72d2699456899aab25",
+    "size": 661090,
+    "path": "powerByBand/powerByBand_1674322176.json"
+  },
+  {
+    "type": "file",
+    "oid": "0d2100e2e96ef97d35ffcaa0555acd66f13ee8d6",
+    "size": 1986831,
+    "path": "powerByBand/powerByBand_1674325610.json"
+  },
+  {
+    "type": "file",
+    "oid": "1055dedc2984eddf4feccaab20066927ccde92e8",
+    "size": 2818362,
+    "path": "powerByBand/powerByBand_1674336341.json"
+  },
+  {
+    "type": "file",
+    "oid": "2fac57df44c289e87d9cf78aff409bb1542ed483",
+    "size": 2974589,
+    "path": "powerByBand/powerByBand_1674376426.json"
+  },
+  {
+    "type": "file",
+    "oid": "fd9d5eab1a97728aa9ed6ac655ea7b4bbf4f24b0",
+    "size": 2923797,
+    "path": "powerByBand/powerByBand_1674454790.json"
+  },
+  {
+    "type": "file",
+    "oid": "76d330de04e8e8f2dbe1ed2c3bfe5beffbbf56ec",
+    "size": 2961032,
+    "path": "powerByBand/powerByBand_1674495760.json"
+  },
+  {
+    "type": "file",
+    "oid": "f5a83cfc80c725c0927173292c62a3ccf80e2d0e",
+    "size": 2773454,
+    "path": "powerByBand/powerByBand_1674520142.json"
+  },
+  {
+    "type": "file",
+    "oid": "3a9d081c82aeafde640c6bcf3ce016d6cf60b460",
+    "size": 2961972,
+    "path": "powerByBand/powerByBand_1674539317.json"
+  },
+  {
+    "type": "file",
+    "oid": "0cd9cac84c8ef0ed4e11ec86b90a7b1156701b42",
+    "size": 2967553,
+    "path": "powerByBand/powerByBand_1674569354.json"
+  },
+  {
+    "type": "file",
+    "oid": "a1944bd29417f0d520d59fe1e405d03245d0794b",
+    "size": 2950712,
+    "path": "powerByBand/powerByBand_1674613052.json"
+  },
+  {
+    "type": "file",
+    "oid": "95b65e2cbdb9fe8b3af739b1dba156697d86f4ce",
+    "size": 2943013,
+    "path": "powerByBand/powerByBand_1674630344.json"
+  },
+  {
+    "type": "file",
+    "oid": "d5f9afc18761e8b5b1334d1d74ef8b5d79b2d87d",
+    "size": 718361,
+    "path": "powerByBand/powerByBand_1674719194.json"
+  },
+  {
+    "type": "file",
+    "oid": "1730ba5201d0617cca8acfc29fede23b7460203a",
+    "size": 750964,
+    "path": "powerByBand/powerByBand_1674748330.json"
+  },
+  {
+    "type": "file",
+    "oid": "a33577a4e291ecf100f7f226948dd18c693b50aa",
+    "size": 2940007,
+    "path": "powerByBand/powerByBand_1674750807.json"
+  },
+  {
+    "type": "file",
+    "oid": "5cb51715f2b2a63d26548feb66926cbdf4ffd6d0",
+    "size": 2946810,
+    "path": "powerByBand/powerByBand_1674791018.json"
+  },
+  {
+    "type": "file",
+    "oid": "57666b6dffdd8a91191ecb28aecdd7484573b41f",
+    "size": 2959284,
+    "path": "powerByBand/powerByBand_1674886663.json"
+  },
+  {
+    "type": "file",
+    "oid": "47425ab93e57ba351522c2d4fa632c6a2725ac18",
+    "size": 1396655,
+    "path": "powerByBand/powerByBand_1674916543.json"
+  },
+  {
+    "type": "file",
+    "oid": "5897d1dc4f02b70817cc128c9b5c253bf57bdc3b",
+    "size": 449337,
+    "path": "powerByBand/powerByBand_1674926222.json"
+  },
+  {
+    "type": "file",
+    "oid": "4a8833221b6538224d3d1adb091b70343e476bb8",
+    "size": 2959715,
+    "path": "powerByBand/powerByBand_1674959009.json"
+  },
+  {
+    "type": "file",
+    "oid": "ddb4af3cb1b563183245a8271be14ecf3f5f514f",
+    "size": 2937330,
+    "path": "powerByBand/powerByBand_1674966879.json"
+  },
+  {
+    "type": "file",
+    "oid": "185c789673afe998b139f41880e8611454b70c56",
+    "size": 2863465,
+    "path": "powerByBand/powerByBand_1675001725.json"
+  },
+  {
+    "type": "file",
+    "oid": "4e38ce49aa07fba880fd0b44586af47c35dace4a",
+    "size": 2965090,
+    "path": "powerByBand/powerByBand_1675006569.json"
+  },
+  {
+    "type": "file",
+    "oid": "170fa56e4a94bcae58290aaabff5203a41cf4531",
+    "size": 2959233,
+    "path": "powerByBand/powerByBand_1675029843.json"
+  },
+  {
+    "type": "file",
+    "oid": "0c9e94c39008a7f6a5895b377c7493a9499a93a1",
+    "size": 2961241,
+    "path": "powerByBand/powerByBand_1675044968.json"
+  },
+  {
+    "type": "file",
+    "oid": "d81b55c302027cd3c3535f6352ab45a9265040ff",
+    "size": 1410435,
+    "path": "powerByBand/powerByBand_1675054666.json"
+  },
+  {
+    "type": "file",
+    "oid": "11faf45d3ec7a94bac5e40954317f9eb6f66d45c",
+    "size": 1339902,
+    "path": "powerByBand/powerByBand_1675099686.json"
+  },
+  {
+    "type": "file",
+    "oid": "7013988cfb437506a7d0bb6fdb005ccde700ddb6",
+    "size": 2954718,
+    "path": "powerByBand/powerByBand_1675120167.json"
+  },
+  {
+    "type": "file",
+    "oid": "1c186f6f6c08c773bb7bd6d6b14819fd5ca86df5",
+    "size": 2960898,
+    "path": "powerByBand/powerByBand_1675142192.json"
+  },
+  {
+    "type": "file",
+    "oid": "7be734d4c16ad11bfde99ebd6e81f95907659c0d",
+    "size": 2961611,
+    "path": "powerByBand/powerByBand_1675187274.json"
+  },
+  {
+    "type": "file",
+    "oid": "f80f0ca344822468fc13a986b79fc0c74c89b40a",
+    "size": 26087654,
+    "path": "rawBrainwaves/rawBrainwaves_1674239692.csv"
+  },
+  {
+    "type": "file",
+    "oid": "7535198d16c2f2e20b1fa227c2442ca5a6c350ae",
+    "size": 5888868,
+    "path": "rawBrainwaves/rawBrainwaves_1674322176.csv"
+  },
+  {
+    "type": "file",
+    "oid": "d4a6d6331a3281ea034522b055fd26f6c4f19f46",
+    "size": 17467276,
+    "path": "rawBrainwaves/rawBrainwaves_1674325610.csv"
+  },
+  {
+    "type": "file",
+    "oid": "2c27569e8d6e466796827d4267cacbe2153b9872",
+    "size": 25690186,
+    "path": "rawBrainwaves/rawBrainwaves_1674454790.csv"
+  },
+  {
+    "type": "file",
+    "oid": "6bdfa138b14e9b8d9bb25a7f2bfaf71cd08ccac4",
+    "size": 26092828,
+    "path": "rawBrainwaves/rawBrainwaves_1674495760.csv"
+  },
+  {
+    "type": "file",
+    "oid": "732e6ac1f62bfaf36c69923387da3bd8e54673c8",
+    "size": 24459845,
+    "path": "rawBrainwaves/rawBrainwaves_1674520142.csv"
+  },
+  {
+    "type": "file",
+    "oid": "c93740c5530312d67fe4d52d2c8d287779977e96",
+    "size": 26051008,
+    "path": "rawBrainwaves/rawBrainwaves_1674539317.csv"
+  },
+  {
+    "type": "file",
+    "oid": "404b115bf939604d5e18ba8d8658dac254e2655b",
+    "size": 26062820,
+    "path": "rawBrainwaves/rawBrainwaves_1674569354.csv"
+  },
+  {
+    "type": "file",
+    "oid": "07d6ee78554bb6de83b8bcc36ebe31e911971fbc",
+    "size": 26155310,
+    "path": "rawBrainwaves/rawBrainwaves_1674613052.csv"
+  },
+  {
+    "type": "file",
+    "oid": "45a7e687ad89cb65afb7e5f5fd3fae51ce555da8",
+    "size": 26191644,
+    "path": "rawBrainwaves/rawBrainwaves_1674630344.csv"
+  },
+  {
+    "type": "file",
+    "oid": "9bcceb2864636305fe440f9d1753ffa02f3cc799",
+    "size": 6395668,
+    "path": "rawBrainwaves/rawBrainwaves_1674719194.csv"
+  },
+  {
+    "type": "file",
+    "oid": "c48551a3f4a8bad00e510e001387b3824a935321",
+    "size": 6594440,
+    "path": "rawBrainwaves/rawBrainwaves_1674748330.csv"
+  },
+  {
+    "type": "file",
+    "oid": "ca9b40d470a6734a705f6484f664b5ddab8088f0",
+    "size": 25923553,
+    "path": "rawBrainwaves/rawBrainwaves_1674750807.csv"
+  },
+  {
+    "type": "file",
+    "oid": "2bcf08e9148a9874cd969adecb5a5365a49a1445",
+    "size": 25817375,
+    "path": "rawBrainwaves/rawBrainwaves_1674791018.csv"
+  },
+  {
+    "type": "file",
+    "oid": "82f1d2f89372af44eb457ed4b091f827c8f8dbd5",
+    "size": 26086676,
+    "path": "rawBrainwaves/rawBrainwaves_1674886663.csv"
+  },
+  {
+    "type": "file",
+    "oid": "76404901b26ffdcfd57a7313b9a97ed7cec5f9ec",
+    "size": 12247325,
+    "path": "rawBrainwaves/rawBrainwaves_1674916543.csv"
+  },
+  {
+    "type": "file",
+    "oid": "ce5e24d3d856a00cc11306c651c6797b34fa19a1",
+    "size": 3970063,
+    "path": "rawBrainwaves/rawBrainwaves_1674926222.csv"
+  },
+  {
+    "type": "file",
+    "oid": "b153ed73e0b565ff1acd5cada657ea128b5af579",
+    "size": 26099829,
+    "path": "rawBrainwaves/rawBrainwaves_1674959009.csv"
+  },
+  {
+    "type": "file",
+    "oid": "a27a9e690bfb1c3276ca578de9f38a31eca4c4a9",
+    "size": 26054710,
+    "path": "rawBrainwaves/rawBrainwaves_1674966879.csv"
+  },
+  {
+    "type": "file",
+    "oid": "6be889178307baf19772bc5e6367025464db8763",
+    "size": 25239577,
+    "path": "rawBrainwaves/rawBrainwaves_1675001725.csv"
+  },
+  {
+    "type": "file",
+    "oid": "9a2ad922e96b14bfb6948c777215d87ac6ae30c0",
+    "size": 26080445,
+    "path": "rawBrainwaves/rawBrainwaves_1675006569.csv"
+  },
+  {
+    "type": "file",
+    "oid": "20d906d5d0b2b5ae08f0880ca402d51ff0a395fe",
+    "size": 26110267,
+    "path": "rawBrainwaves/rawBrainwaves_1675029843.csv"
+  },
+  {
+    "type": "file",
+    "oid": "92645c9641326112691786479d5f2a046028a081",
+    "size": 26113005,
+    "path": "rawBrainwaves/rawBrainwaves_1675044968.csv"
+  },
+  {
+    "type": "file",
+    "oid": "470a7ab4ed59931abc37c99f7f9027ab0f6d9efd",
+    "size": 12409997,
+    "path": "rawBrainwaves/rawBrainwaves_1675054666.csv"
+  },
+  {
+    "type": "file",
+    "oid": "7ae026166f5a161313b7381208c388e9f656c0d8",
+    "size": 11882876,
+    "path": "rawBrainwaves/rawBrainwaves_1675099686.csv"
+  },
+  {
+    "type": "file",
+    "oid": "e454b01f397a6c209a057b4606364bb5599074ff",
+    "size": 26061992,
+    "path": "rawBrainwaves/rawBrainwaves_1675120167.csv"
+  },
+  {
+    "type": "file",
+    "oid": "7aeb5019f110e93d56595d1404cd1355fccf13f9",
+    "size": 26018795,
+    "path": "rawBrainwaves/rawBrainwaves_1675142192.csv"
+  },
+  {
+    "type": "file",
+    "oid": "08e5fd3b0514862de9aa806bd3446fb56ce16bb6",
+    "size": 26107758,
+    "path": "rawBrainwaves/rawBrainwaves_1675187274.csv"
+  },
+  {
+    "type": "file",
+    "oid": "83fef17eee7774b81096d460ddc4e097f9666b75",
+    "size": 775063,
+    "path": "signalQuality/signalQuality_1674239692.json"
+  },
+  {
+    "type": "file",
+    "oid": "7550cc084d08dda42f3f27584d12697e398607f3",
+    "size": 774654,
+    "path": "signalQuality/signalQuality_1674273747.json"
+  },
+  {
+    "type": "file",
+    "oid": "a689414a52272b7b2be8eb21fcac19acf86126c6",
+    "size": 173782,
+    "path": "signalQuality/signalQuality_1674322176.json"
+  },
+  {
+    "type": "file",
+    "oid": "8085cf5ccd666df21f7606cc36a57035a477195e",
+    "size": 521259,
+    "path": "signalQuality/signalQuality_1674325610.json"
+  },
+  {
+    "type": "file",
+    "oid": "4cdf7166ea5209aa7ee447b55a2af89fccc8bdfd",
+    "size": 738298,
+    "path": "signalQuality/signalQuality_1674336341.json"
+  },
+  {
+    "type": "file",
+    "oid": "2ff27cad12a683ea4347b19a77ae851d9ff6eaf3",
+    "size": 776788,
+    "path": "signalQuality/signalQuality_1674376426.json"
+  },
+  {
+    "type": "file",
+    "oid": "a56377d6083a9d7fc84662e9f8115757a373777e",
+    "size": 766148,
+    "path": "signalQuality/signalQuality_1674454790.json"
+  },
+  {
+    "type": "file",
+    "oid": "a7fd70fe7a8a791e53d438520b6afa81a30de478",
+    "size": 775433,
+    "path": "signalQuality/signalQuality_1674495760.json"
+  },
+  {
+    "type": "file",
+    "oid": "2a597cd12308385e5e9a8c2ce246139a00429402",
+    "size": 725471,
+    "path": "signalQuality/signalQuality_1674520142.json"
+  },
+  {
+    "type": "file",
+    "oid": "1c6d1649fe7dcc4b52ef426a6d8874db714a4c7e",
+    "size": 776444,
+    "path": "signalQuality/signalQuality_1674539317.json"
+  },
+  {
+    "type": "file",
+    "oid": "f7e7fe2353c1171f299ace5f4c7c2077d4c16bc9",
+    "size": 776832,
+    "path": "signalQuality/signalQuality_1674569354.json"
+  },
+  {
+    "type": "file",
+    "oid": "d5dc3f8b9d05e66326c7da07396ebbb2b9ec8790",
+    "size": 775032,
+    "path": "signalQuality/signalQuality_1674613052.json"
+  },
+  {
+    "type": "file",
+    "oid": "1029c39109da19da071ad6e5657c7fbf2932bf1f",
+    "size": 771539,
+    "path": "signalQuality/signalQuality_1674630344.json"
+  },
+  {
+    "type": "file",
+    "oid": "594444dda391702423cc4eadcfb77ec0692af661",
+    "size": 187768,
+    "path": "signalQuality/signalQuality_1674719194.json"
+  },
+  {
+    "type": "file",
+    "oid": "cb597194e1ef8dddfb77791367139f8f87ceabbe",
+    "size": 197440,
+    "path": "signalQuality/signalQuality_1674748330.json"
+  },
+  {
+    "type": "file",
+    "oid": "520ec4f0749b46b045a79318f409684d7872fca8",
+    "size": 769289,
+    "path": "signalQuality/signalQuality_1674750807.json"
+  },
+  {
+    "type": "file",
+    "oid": "355aba198ebca5f5a63f88cf9640bd9f1b889c4d",
+    "size": 770453,
+    "path": "signalQuality/signalQuality_1674791018.json"
+  },
+  {
+    "type": "file",
+    "oid": "286480663fe53aeff92fd8d995d635b6525a656c",
+    "size": 776430,
+    "path": "signalQuality/signalQuality_1674886663.json"
+  },
+  {
+    "type": "file",
+    "oid": "acbde01b76162fe2de48aa62e381297d769db606",
+    "size": 366188,
+    "path": "signalQuality/signalQuality_1674916543.json"
+  },
+  {
+    "type": "file",
+    "oid": "ddba49fda1603bff0a36a9c8e9e27ad9a127d8a2",
+    "size": 117912,
+    "path": "signalQuality/signalQuality_1674926222.json"
+  },
+  {
+    "type": "file",
+    "oid": "5997e7fa21600eede5f90d38217c7d86a4850fc1",
+    "size": 776095,
+    "path": "signalQuality/signalQuality_1674959009.json"
+  },
+  {
+    "type": "file",
+    "oid": "03a6a453ca7dd4d6ec1c7fba23db1a4a5cab3947",
+    "size": 770576,
+    "path": "signalQuality/signalQuality_1674966879.json"
+  },
+  {
+    "type": "file",
+    "oid": "6e85758303ef64d33fc0a99206841940f5ca1c20",
+    "size": 750430,
+    "path": "signalQuality/signalQuality_1675001725.json"
+  },
+  {
+    "type": "file",
+    "oid": "4ece01431f07154325418f81b18e136fc7a979ee",
+    "size": 777430,
+    "path": "signalQuality/signalQuality_1675006569.json"
+  },
+  {
+    "type": "file",
+    "oid": "c3cfec754b1c022f1ed0111a81dc2470f487e34c",
+    "size": 775801,
+    "path": "signalQuality/signalQuality_1675029843.json"
+  },
+  {
+    "type": "file",
+    "oid": "16e8d37c791b1d81a14ce3f5a3ef1580ba7926cc",
+    "size": 777293,
+    "path": "signalQuality/signalQuality_1675044968.json"
+  },
+  {
+    "type": "file",
+    "oid": "7abf9343f090958fccf654f0c05f6be1324ea7cb",
+    "size": 370807,
+    "path": "signalQuality/signalQuality_1675054666.json"
+  },
+  {
+    "type": "file",
+    "oid": "328dbea4b3e13bbd42b826b3552f58bd199c1077",
+    "size": 351643,
+    "path": "signalQuality/signalQuality_1675099686.json"
+  },
+  {
+    "type": "file",
+    "oid": "8f4bdfe15aaa242160270be1f1860a2069187f1a",
+    "size": 774018,
+    "path": "signalQuality/signalQuality_1675120167.json"
+  },
+  {
+    "type": "file",
+    "oid": "bcfdda99f6e275042f0ed86a7111813aea7e4242",
+    "size": 775701,
+    "path": "signalQuality/signalQuality_1675142192.json"
+  },
+  {
+    "type": "file",
+    "oid": "68b8bd0e2a8b9e52c8489e94fb42bfc78f4460f0",
+    "size": 775170,
+    "path": "signalQuality/signalQuality_1675187274.json"
+  }
+]

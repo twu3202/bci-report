@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-09-09",
+  "scope": "Technical planning evidence after the first verified BNCI2014-001 run; no new model downloads or website publication in this review",
+  "completed_run": "experiments/bnci_mi_v1/outputs/run-20260909-mps-v1/verification.json",
+  "assessment": {
+    "near_term_primary_bottleneck": "Protocol validity and model-specific adaptation; current global-mean pilot must not be interpreted as each foundation model's general capability",
+    "data_bottleneck": "Independent subject/dataset/device coverage and known pretraining overlap, rather than raw file volume",
+    "model_count": "Enough candidate families for a 3-4-family research preview; only LaBraM and EEGPT have been executed here",
+    "compute": "Current two-model frozen-probe MI run fits M5/32GiB; do not extrapolate its runtime to full fine-tuning, larger models or sleep/clinical datasets",
+    "product_risk": "Existing open EEG benchmarking frameworks already provide broad model/task coverage; sustained user value needs validation"
+  },
+  "current_framework_evidence": [
+    {
+      "name": "NeuralBench",
+      "official_url": "https://github.com/facebookresearch/neuroai/tree/main/neuralbench-repo",
+      "observed_readme_claim": "36 EEG tasks, 6 EEG foundation models and 8 task-specific models; versioned Core and Full suites",
+      "implication": "Prefer selective reuse of audited adapters/protocols over rebuilding a broad framework or downloading all datasets"
+    },
+    {
+      "name": "EEG-FM-Bench",
+      "official_url": "https://github.com/xw1216/EEG-FM-Bench",
+      "observed_readme_claim": "14 datasets, 10 paradigms; lists BENDR, BIOT, CBraMod, EEGPT, LaBraM, CSBrain and REVE, separately from general time-series models"
+    },
+    {
+      "name": "Are EEG Foundation Models Worth It?",
+      "official_url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/f0f39b7686634fc81ca0112566b2c05f-Abstract-Conference.html",
+      "evidence_scope": "ICLR 2026 abstract reports weak linear probing and task-dependent performance; not a replication or causal explanation of our pilot scores"
+    }
+  ],
+  "candidate_additions": [
+    {"name":"CBraMod","priority":1,"code":"https://github.com/wjq-learning/CBraMod","weights_status":"Official README links pretrained weights; not downloaded or executed here","reason":"Official example uses 22 channels and four 200-sample temporal patches","pretraining_overlap":"Disclosed TUEG pretraining; exact checkpoint/corpus audit remains required"},
+    {"name":"REVE","priority":2,"code":"https://github.com/elouayas/reve_eeg","model_page":"https://brain-bzh.github.io/reve/","weights_status":"Official pretrained and BCIC-IV-2a linear-probe entrypoints found; not downloaded or executed here","pretraining_overlap":"unknown for BNCI pending precise pretraining list inspection"},
+    {"name":"LUNA","priority":3,"code":"https://github.com/pulp-bio/BioFoundation","model_page":"https://huggingface.co/PulpBio/LUNA","weights_status":"Official model card inspected by subagent; not downloaded or executed here","pretraining_overlap":"unknown for BNCI; task adaptation and checkpoint terms need inspection"}
+  ],
+  "proposed_sequence": [
+    "Preserve pilot; predeclare an adapter/readout comparison and add a randomly initialized backbone control plus EEGNet and/or a Riemannian baseline. Select hyperparameters only within training folds. Treat already inspected BNCI scores as development evidence.",
+    "Download and strictly validate CBraMod, then evaluate under a named protocol. Keep REVE optional until access, overlap and adapter checks pass.",
+    "Add a fixed Sleep-EDF SC cohort and subject-disjoint sleep scoring with sleep-specific preprocessing, plus an independently selected MI dataset for external confirmation as feasible.",
+    "Release a research preview with explicit task/protocol tables, model/data cards, per-subject uncertainty, resource measurements and reproducible evidence. Aim for 3-4 model families and two task types; show unsupported combinations honestly.",
+    "Add fixed low-channel and low-label comparisons on public data; distinguish simulations from 1-2-person cap integration demonstrations. Validate recurring user demand before broad clinical expansion."
+  ],
+  "planning_time": "Approximately 1-2 weeks of engineering work for the proposed preview, conditional on checkpoint compatibility and protocol review; not a measured training-time estimate or scheduled background job"
+}

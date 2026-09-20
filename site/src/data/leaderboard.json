@@ -1,0 +1,77 @@
+{
+ "generatedAt": "2026-09-09T07:59:32+00:00",
+ "stats": {
+  "n_models": 17,
+  "n_ranked": 0,
+  "n_benchmarks": 13,
+  "n_results": 60,
+  "n_tasks_scored": 0,
+  "n_verified": 0,
+  "n_reproduced": 0,
+  "n_reported": 60
+ },
+ "rows": [],
+ "unranked": [
+  "labram-base",
+  "labram-large",
+  "labram-huge",
+  "cbramod",
+  "biot",
+  "eegpt",
+  "neurolm-b",
+  "brainbert",
+  "brant",
+  "bendr",
+  "eegformer",
+  "neuro-gpt",
+  "sparcnet",
+  "st-transformer",
+  "contrawr",
+  "cnn-transformer",
+  "ffcl"
+ ],
+ "tasks": [],
+ "h2h": {},
+ "params": {
+  "method": "within_protocol_raw_metric_rank",
+  "cross_task_aggregation": false,
+  "minimum_models_per_comparison": 2,
+  "uncertainty": "std is displayed as standard deviation; no 95% CI is inferred"
+ },
+ "familyLabel": {
+  "abnormal_detection": "Abnormal EEG",
+  "event_classification": "Event classification",
+  "seizure": "Seizure detection",
+  "sleep_staging": "Sleep staging",
+  "motor_imagery": "Motor imagery",
+  "emotion": "Emotion recognition",
+  "erp_p300": "ERP / P300",
+  "ssvep": "SSVEP",
+  "imagined_speech": "Imagined speech",
+  "cognitive_load": "Cognitive load",
+  "clinical_other": "Clinical (other)"
+ },
+ "metricLabel": {
+  "balanced_accuracy": "Balanced Acc.",
+  "accuracy": "Accuracy",
+  "auc_pr": "AUC-PR",
+  "auroc": "AUROC",
+  "cohen_kappa": "Cohen's κ",
+  "weighted_f1": "Weighted F1",
+  "macro_f1": "Macro F1",
+  "pearson_r": "Pearson r"
+ },
+ "evidencePolicy": {
+  "rankingTier": "verified",
+  "runBy": "bciarena",
+  "requiredProtocolFields": [
+   "protocol_id",
+   "dataset_version",
+   "split_id",
+   "evaluation_mode",
+   "preprocessing_id"
+  ],
+  "crossTaskAggregation": false,
+  "literatureResultsRanked": false
+ }
+}

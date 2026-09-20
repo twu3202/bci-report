@@ -1,0 +1,25 @@
+{
+  "scope": "Offline analysis of saved 2026-09-10 metadata; no new corpus classification or waveform checks.",
+  "repo_count": 971,
+  "pointer_org_count": 736,
+  "pointer_percent": 75.8,
+  "non_pointer_org_count": 235,
+  "non_pointer_cards_with_license": 92,
+  "non_pointer_cards_without_license": 143,
+  "pointer_rows_joined_to_catalog": 736,
+  "catalog_record_modalities": {
+    "eeg": 571,
+    "meg": 55,
+    "ieeg": 73,
+    "eeg, meg": 2,
+    "eeg, fnirs": 3,
+    "eeg, ieeg": 1,
+    "fnirs": 22,
+    "eeg, emg": 1,
+    "emg": 8
+  },
+  "original_file_bytes": 1842336,
+  "compact_projection_bytes": 219557,
+  "elapsed_seconds": 0.0126,
+  "note": "Byte sizes are not tokenizer measurements. Missing card license is an unresolved metadata field, not proof of no license."
+}

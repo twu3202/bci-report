@@ -1,0 +1,2384 @@
+{
+ "tuab": {
+  "slug": "tuab",
+  "name": "TUAB",
+  "full_name": "TUH Abnormal EEG Corpus (v3.0.1)",
+  "task_family": "abnormal_detection",
+  "modality": "EEG",
+  "n_classes": 2,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "auc_pr",
+   "auroc"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 2383,
+  "hours": 1142,
+  "n_channels": 16,
+  "sfreq_hz": 200,
+  "epoch_seconds": 10,
+  "standard_split": "官方 train/eval 划分；BIOT/LaBraM 协议再从 train 按受试者切 80/20 做 val",
+  "preprocessing": "0.1–75 Hz 带通，50 Hz 陷波，重采样 200 Hz，单位 0.1 mV，16 个双极/单极通道",
+  "access": "dua",
+  "license": "TUH EEG Corpus Data Use Agreement（需签署申请表，禁止再分发）",
+  "url": "https://isip.piconepress.com/projects/nedc/html/tuh_eeg/",
+  "family_label": "Abnormal EEG",
+  "results": [
+   {
+    "model": "sparcnet",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 78.96,
+    "std": 0.18,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI (LaBraM)",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI (LaBraM)",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.18,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "sparcnet",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 84.14,
+    "std": 0.22,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.22,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "sparcnet",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 86.76,
+    "std": 0.12,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.12,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 77.46,
+    "std": 0.41,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.41,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 84.21,
+    "std": 0.09,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.09,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 85.48,
+    "std": 0.58,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.58,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 77.77,
+    "std": 0.22,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.22,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 85.37,
+    "std": 0.3,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.3,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 86.28,
+    "std": 0.27,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.27,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 78.48,
+    "std": 0.38,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.38,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 84.48,
+    "std": 0.15,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.15,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 86.21,
+    "std": 0.66,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.66,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 79.66,
+    "std": 0.23,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.23,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 85.21,
+    "std": 0.22,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.22,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 87.07,
+    "std": 0.19,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.19,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 79.59,
+    "std": 0.57,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.57,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 87.92,
+    "std": 0.32,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.32,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 88.15,
+    "std": 0.43,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.43,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 81.4,
+    "std": 0.19,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.19,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 89.65,
+    "std": 0.39,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.39,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 90.22,
+    "std": 0.09,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.09,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 82.26,
+    "std": 0.15,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.15,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 90.34,
+    "std": 0.16,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.16,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 90.86,
+    "std": 0.09,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.09,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 82.58,
+    "std": 0.11,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.11,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 90.9,
+    "std": 0.19,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.19,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 91.62,
+    "std": 0.16,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 1",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 1",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.16,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuab",
+    "metric": "balanced_accuracy",
+    "value": 78.91,
+    "std": 0.21,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUAB)",
+    "notes": "SEED-待核对;论文原表为小数(0.7891)",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUAB)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.21,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuab",
+    "metric": "auc_pr",
+    "value": 89.72,
+    "std": 0.24,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUAB)",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUAB)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.24,
+     "is_95_ci": false
+    },
+    "metric_label": "AUC-PR"
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuab",
+    "metric": "auroc",
+    "value": 89.24,
+    "std": 0.18,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUAB)",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUAB)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.18,
+     "is_95_ci": false
+    },
+    "metric_label": "AUROC"
+   }
+  ]
+ },
+ "tuev": {
+  "slug": "tuev",
+  "name": "TUEV",
+  "full_name": "TUH EEG Events Corpus (v2.0.1)",
+  "task_family": "event_classification",
+  "modality": "EEG",
+  "n_classes": 6,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 370,
+  "hours": 112,
+  "n_channels": 16,
+  "sfreq_hz": 200,
+  "epoch_seconds": 5,
+  "standard_split": "官方 train/eval 划分；train 再按受试者切 80/20 做 val（BIOT/LaBraM 协议）",
+  "preprocessing": "同 TUAB；6 类：SPSW / GPED / PLED / EYEM / ARTF / BCKG",
+  "access": "dua",
+  "license": "TUH EEG Corpus Data Use Agreement",
+  "url": "https://isip.piconepress.com/projects/nedc/html/tuh_eeg/",
+  "family_label": "Event classification",
+  "results": [
+   {
+    "model": "sparcnet",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 41.61,
+    "std": 2.62,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.62,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "sparcnet",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 42.33,
+    "std": 1.81,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.81,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "sparcnet",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 70.24,
+    "std": 1.04,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.04,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 43.84,
+    "std": 3.49,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 3.49,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 39.12,
+    "std": 2.37,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.37,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "contrawr",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 68.93,
+    "std": 1.36,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.36,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 40.87,
+    "std": 1.61,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.61,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 38.15,
+    "std": 1.34,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.34,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "cnn-transformer",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 68.54,
+    "std": 2.93,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.93,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 39.79,
+    "std": 1.04,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.04,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 37.32,
+    "std": 1.88,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.88,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "ffcl",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 67.83,
+    "std": 1.2,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.2,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 39.84,
+    "std": 2.28,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.28,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 37.65,
+    "std": 3.06,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 3.06,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "st-transformer",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 68.23,
+    "std": 1.9,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.9,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 52.81,
+    "std": 2.25,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.25,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 52.73,
+    "std": 2.49,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 2.49,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "biot",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 74.92,
+    "std": 0.82,
+    "tier": "reported",
+    "run_by": "reproduced_by_source_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.82,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 64.09,
+    "std": 0.65,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.65,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 66.37,
+    "std": 0.93,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.93,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "labram-base",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 83.12,
+    "std": 0.52,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.52,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 66.81,
+    "std": 0.71,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.71,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 69.34,
+    "std": 0.95,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.95,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "labram-large",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 84.57,
+    "std": 0.29,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.29,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 68.02,
+    "std": 0.7,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.7,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 70.54,
+    "std": 0.85,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.85,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "labram-huge",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 85.22,
+    "std": 0.37,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "LaBraM",
+    "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+    "table_ref": "Table 2",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "LaBraM",
+     "source_url": "https://openreview.net/forum?id=QzTpTRVtrP",
+     "table_ref": "Table 2",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.37,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuev",
+    "metric": "balanced_accuracy",
+    "value": 66.71,
+    "std": 1.07,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUEV)",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUEV)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 1.07,
+     "is_95_ci": false
+    },
+    "metric_label": "Balanced Acc."
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuev",
+    "metric": "cohen_kappa",
+    "value": 67.72,
+    "std": 0.96,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUEV)",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUEV)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.96,
+     "is_95_ci": false
+    },
+    "metric_label": "Cohen's κ"
+   },
+   {
+    "model": "cbramod",
+    "benchmark": "tuev",
+    "metric": "weighted_f1",
+    "value": 83.42,
+    "std": 0.64,
+    "tier": "reported",
+    "run_by": "same_paper",
+    "source_title": "CBraMod",
+    "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+    "table_ref": "Table (TUEV)",
+    "notes": "SEED-待核对",
+    "evidence": {
+     "status": "reported",
+     "source_title": "CBraMod",
+     "source_url": "https://openreview.net/forum?id=NPNUHgHF2w",
+     "table_ref": "Table (TUEV)",
+     "ranking_eligible": false,
+     "reason": "literature result; not a BCI Arena verified run"
+    },
+    "protocol": {
+     "protocol_id": null,
+     "dataset_version": null,
+     "split_id": null,
+     "evaluation_mode": null,
+     "preprocessing_id": null
+    },
+    "uncertainty": {
+     "type": "standard_deviation",
+     "value": 0.64,
+     "is_95_ci": false
+    },
+    "metric_label": "Weighted F1"
+   }
+  ]
+ },
+ "bcic-iv-2a": {
+  "slug": "bcic-iv-2a",
+  "name": "BCIC-IV-2a",
+  "full_name": "BCI Competition IV Dataset 2a (BNCI2014-001)",
+  "task_family": "motor_imagery",
+  "modality": "EEG",
+  "n_classes": 4,
+  "primary_metric": "accuracy",
+  "metrics": [
+   "accuracy",
+   "cohen_kappa"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 9,
+  "hours": 6,
+  "n_channels": 22,
+  "sfreq_hz": 250,
+  "epoch_seconds": 4,
+  "standard_split": "官方 session T 训练 / session E 测试（within-subject）；跨受试者协议另标",
+  "preprocessing": "0.3–100 Hz（原始），常见再做 4–40 Hz 带通；重采样 200 Hz（基础模型协议）",
+  "access": "open",
+  "license": "开放（BNCI Horizon 2020 / MOABB 可直接下载）",
+  "url": "https://www.bbci.de/competition/iv/",
+  "family_label": "Motor imagery",
+  "results": []
+ },
+ "physionet-mi": {
+  "slug": "physionet-mi",
+  "name": "PhysioNet-MI",
+  "full_name": "EEG Motor Movement/Imagery Dataset (EEGMMIDB)",
+  "task_family": "motor_imagery",
+  "modality": "EEG",
+  "n_classes": 4,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 109,
+  "hours": 47,
+  "n_channels": 64,
+  "sfreq_hz": 160,
+  "epoch_seconds": 4,
+  "standard_split": "跨受试者：约 70/15/15 按受试者划分（CBraMod 协议：1–70 / 71–89 / 90–109 剔除坏受试者）",
+  "access": "open",
+  "license": "ODC-By 1.0（PhysioNet open）",
+  "url": "https://physionet.org/content/eegmmidb/1.0.0/",
+  "family_label": "Motor imagery",
+  "results": []
+ },
+ "shu-mi": {
+  "slug": "shu-mi",
+  "name": "SHU-MI",
+  "full_name": "SHU Dataset (motor imagery, 25 subjects × 5 sessions)",
+  "task_family": "motor_imagery",
+  "modality": "EEG",
+  "n_classes": 2,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "auc_pr",
+   "auroc"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 25,
+  "hours": 12,
+  "n_channels": 32,
+  "sfreq_hz": 250,
+  "epoch_seconds": 4,
+  "standard_split": "跨受试者 15/5/5（CBraMod 协议）",
+  "access": "open",
+  "license": "开放（figshare, CC BY 4.0）",
+  "url": "https://doi.org/10.6084/m9.figshare.19228725",
+  "family_label": "Motor imagery",
+  "results": []
+ },
+ "chb-mit": {
+  "slug": "chb-mit",
+  "name": "CHB-MIT",
+  "full_name": "CHB-MIT Scalp EEG Database",
+  "task_family": "seizure",
+  "modality": "EEG",
+  "n_classes": 2,
+  "primary_metric": "auc_pr",
+  "metrics": [
+   "balanced_accuracy",
+   "auc_pr",
+   "auroc"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 23,
+  "hours": 980,
+  "n_channels": 16,
+  "sfreq_hz": 256,
+  "epoch_seconds": 10,
+  "standard_split": "按受试者划分（CBraMod 协议 19/2/2；BIOT 协议另有），极端类别不平衡",
+  "access": "open",
+  "license": "ODC-By 1.0（PhysioNet open）",
+  "url": "https://physionet.org/content/chbmit/1.0.0/",
+  "family_label": "Seizure detection",
+  "results": []
+ },
+ "sleep-edfx": {
+  "slug": "sleep-edfx",
+  "name": "Sleep-EDFx",
+  "full_name": "Sleep-EDF Database Expanded",
+  "task_family": "sleep_staging",
+  "modality": "EEG",
+  "n_classes": 5,
+  "primary_metric": "macro_f1",
+  "metrics": [
+   "accuracy",
+   "macro_f1",
+   "cohen_kappa"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 197,
+  "hours": 3300,
+  "n_channels": 2,
+  "sfreq_hz": 100,
+  "epoch_seconds": 30,
+  "standard_split": "按受试者划分；SC 子集 78 人为常用协议",
+  "access": "open",
+  "license": "ODC-By 1.0（PhysioNet open）",
+  "url": "https://physionet.org/content/sleep-edfx/1.0.0/",
+  "family_label": "Sleep staging",
+  "results": []
+ },
+ "isruc": {
+  "slug": "isruc",
+  "name": "ISRUC",
+  "full_name": "ISRUC-Sleep Subgroup 1",
+  "task_family": "sleep_staging",
+  "modality": "EEG",
+  "n_classes": 5,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 100,
+  "hours": 800,
+  "n_channels": 6,
+  "sfreq_hz": 200,
+  "epoch_seconds": 30,
+  "standard_split": "按受试者划分 80/10/10（CBraMod 协议）",
+  "access": "open",
+  "license": "学术用途开放",
+  "url": "https://sleeptight.isr.uc.pt/",
+  "family_label": "Sleep staging",
+  "results": []
+ },
+ "seed-v": {
+  "slug": "seed-v",
+  "name": "SEED-V",
+  "full_name": "SJTU Emotion EEG Dataset V",
+  "task_family": "emotion",
+  "modality": "EEG",
+  "n_classes": 5,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 16,
+  "hours": 11,
+  "n_channels": 62,
+  "sfreq_hz": 1000,
+  "epoch_seconds": 1,
+  "standard_split": "按 session/trial 划分（CBraMod 协议：每人 45 trials 按 5/10/… 切分）",
+  "access": "application",
+  "license": "需向上海交大申请（仅学术用途，禁止再分发）",
+  "url": "https://bcmi.sjtu.edu.cn/home/seed/seed-v.html",
+  "family_label": "Emotion recognition",
+  "results": []
+ },
+ "faced": {
+  "slug": "faced",
+  "name": "FACED",
+  "full_name": "Finer-grained Affective Computing EEG Dataset",
+  "task_family": "emotion",
+  "modality": "EEG",
+  "n_classes": 9,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 123,
+  "hours": 41,
+  "n_channels": 32,
+  "sfreq_hz": 250,
+  "epoch_seconds": 10,
+  "standard_split": "跨受试者 80/21/22（CBraMod 协议）",
+  "access": "registration",
+  "license": "Synapse 注册后下载",
+  "url": "https://www.synapse.org/Synapse:syn50614194",
+  "family_label": "Emotion recognition",
+  "results": []
+ },
+ "mumtaz2016": {
+  "slug": "mumtaz2016",
+  "name": "Mumtaz2016",
+  "full_name": "MDD vs healthy resting-state EEG (Mumtaz et al. 2016)",
+  "task_family": "clinical_other",
+  "modality": "EEG",
+  "n_classes": 2,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "auc_pr",
+   "auroc"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 64,
+  "hours": 10,
+  "n_channels": 19,
+  "sfreq_hz": 256,
+  "epoch_seconds": 5,
+  "standard_split": "按受试者划分（CBraMod 协议）",
+  "access": "open",
+  "license": "figshare 开放",
+  "url": "https://doi.org/10.6084/m9.figshare.4244171",
+  "family_label": "Clinical (other)",
+  "results": []
+ },
+ "mental-arithmetic": {
+  "slug": "mental-arithmetic",
+  "name": "MentalArithmetic",
+  "full_name": "EEG During Mental Arithmetic Tasks (PhysioNet)",
+  "task_family": "cognitive_load",
+  "modality": "EEG",
+  "n_classes": 2,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "auc_pr",
+   "auroc"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 36,
+  "hours": 2,
+  "n_channels": 20,
+  "sfreq_hz": 500,
+  "epoch_seconds": 5,
+  "standard_split": "按受试者划分 28/4/4（CBraMod 协议）",
+  "access": "open",
+  "license": "ODC-By 1.0（PhysioNet open）",
+  "url": "https://physionet.org/content/eegmat/1.0.0/",
+  "family_label": "Cognitive load",
+  "results": []
+ },
+ "bcic2020-3": {
+  "slug": "bcic2020-3",
+  "name": "BCIC2020-3",
+  "full_name": "BCI Competition 2020 Track 3 (Imagined Speech)",
+  "task_family": "imagined_speech",
+  "modality": "EEG",
+  "n_classes": 5,
+  "primary_metric": "balanced_accuracy",
+  "metrics": [
+   "balanced_accuracy",
+   "cohen_kappa",
+   "weighted_f1"
+  ],
+  "higher_is_better": true,
+  "n_subjects": 15,
+  "hours": 3,
+  "n_channels": 64,
+  "sfreq_hz": 256,
+  "epoch_seconds": 3,
+  "standard_split": "官方 train/val/test",
+  "access": "open",
+  "license": "竞赛开放数据",
+  "url": "https://osf.io/pq7vb/",
+  "family_label": "Imagined speech",
+  "results": []
+ }
+}

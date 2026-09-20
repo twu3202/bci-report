@@ -1,0 +1,86 @@
+[
+  {
+    "model": "SPaRCNet",
+    "dataset": "TUAB",
+    "provenance": "paper_reported",
+    "source_audit_date": "2026-09-09",
+    "ranking_eligible": false,
+    "paper": "LaBraM, ICLR 2024",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "table": "Table 1",
+    "values_scale": "unit_interval",
+    "n_seeds": 5,
+    "uncertainty": "standard_deviation_not_95_ci",
+    "metrics": {
+      "balanced_accuracy": {
+        "mean": 0.7896,
+        "std": 0.0018
+      },
+      "auroc": {
+        "mean": 0.8676,
+        "std": 0.0012
+      },
+      "auc_pr": {
+        "mean": 0.8414,
+        "std": 0.0018
+      }
+    },
+    "provenance_note": "LaBraM paper imports baseline scores from BIOT paper; not all models rerun together by BCI Arena."
+  },
+  {
+    "model": "BIOT",
+    "dataset": "TUAB",
+    "provenance": "paper_reported",
+    "source_audit_date": "2026-09-09",
+    "ranking_eligible": false,
+    "paper": "LaBraM, ICLR 2024",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "table": "Table 1",
+    "values_scale": "unit_interval",
+    "n_seeds": 5,
+    "uncertainty": "standard_deviation_not_95_ci",
+    "metrics": {
+      "balanced_accuracy": {
+        "mean": 0.7959,
+        "std": 0.0057
+      },
+      "auroc": {
+        "mean": 0.8815,
+        "std": 0.0043
+      },
+      "auc_pr": {
+        "mean": 0.8792,
+        "std": 0.0023
+      }
+    },
+    "provenance_note": "LaBraM paper imports baseline scores from BIOT paper; not all models rerun together by BCI Arena."
+  },
+  {
+    "model": "LaBraM-Base",
+    "dataset": "TUAB",
+    "provenance": "paper_reported",
+    "source_audit_date": "2026-09-09",
+    "ranking_eligible": false,
+    "paper": "LaBraM, ICLR 2024",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "table": "Table 1",
+    "values_scale": "unit_interval",
+    "n_seeds": 5,
+    "uncertainty": "standard_deviation_not_95_ci",
+    "metrics": {
+      "balanced_accuracy": {
+        "mean": 0.814,
+        "std": 0.0019
+      },
+      "auroc": {
+        "mean": 0.9022,
+        "std": 0.0009
+      },
+      "auc_pr": {
+        "mean": 0.8965,
+        "std": 0.0016
+      }
+    },
+    "provenance_note": "LaBraM paper imports baseline scores from BIOT paper; not all models rerun together by BCI Arena."
+  }
+]

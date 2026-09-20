@@ -1,0 +1,215 @@
+{
+  "title": "BCI Arena 扩展 MVP：公开 EEG 数据集检索与实物可达性记录",
+  "as_of": "2026-09-10 Asia/Shanghai",
+  "scope": "闲置/连续流、跨 session、低导联候选；本文件不包含新增模型评分",
+  "selected_download": {
+    "dataset": "BNCI2014-004 / BCI Competition IV Dataset 2b",
+    "decision": "已下载，建议先作为低导联、受试者内跨 session 旁轨；不直接作为带标准电极位置编码的 foundation-model frozen-probe 轨",
+    "official_index": "https://bnci-horizon-2020.eu/database/data-sets",
+    "official_description": "https://www.bbci.de/competition/iv/desc_2b.pdf",
+    "official_competition_download": "https://www.bbci.de/competition/iv/download/",
+    "download_backend": "https://lampx.tugraz.at/~bci/database/004-2014/",
+    "license": {
+      "confirmed": "BNCI Horizon 条目列为 CC BY-ND 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nd/4.0/",
+      "practical_note": "许可没有 NC 条款，但 ND 对修改后材料的再分发有约束；本站应链接原始数据，模型产物、预处理片段或转换格式能否公开分发需单独判断，不能只凭‘公开下载’推定。"
+    },
+    "access_check": {
+      "result": "18/18 aggregate MAT files anonymous HTTPS downloaded and scipy.io.loadmat parsed",
+      "local_directory": "experiments/expanded_mvp_v1/datasets/BNCI2014-004",
+      "manifest": "experiments/expanded_mvp_v1/datasets/BNCI2014-004/download-and-schema-manifest.json",
+      "manifest_sha256": "2c4328409c9681b1312e31374020dc70af5042168d02e476fe73104a3948f53f",
+      "downloaded_bytes": 477981271,
+      "filesystem_size_reported": "466 MiB",
+      "subjects": 9,
+      "aggregate_files": 18,
+      "session_structs": 45,
+      "total_labeled_trials_observed": 6520,
+      "session_trial_count_distribution": {
+        "120": 16,
+        "140": 2,
+        "160": 27
+      },
+      "warning": "不要硬编码名义 720 trials/subject。官方 aggregate MAT 中不同受试者的 session 长度并不完全相同，但每个已解析 session 的左右手标签仍平衡。",
+      "publisher_checksum": "未找到；每个文件的本地 SHA-256 已写入 manifest",
+      "dataset_revision": "发布页未给语义版本；以 18 个 source URL 与逐文件 SHA-256 固定本次字节版本"
+    },
+    "first_file_schema": {
+      "file": "B01T.mat",
+      "source_url": "https://lampx.tugraz.at/~bci/database/004-2014/B01T.mat",
+      "http_probe": "Range GET returned 206; HEAD Content-Length 34203437; Last-Modified Wed, 12 Oct 2022 07:29:21 GMT",
+      "bytes": 34203437,
+      "sha256": "0da6e77ab0dab5b4aa1d2d5a6a542ac02f6768d3b7a76b0abe896ec1cf259919",
+      "mat_top_level_keys": [
+        "data"
+      ],
+      "data": "长度 3 的 MATLAB struct array，对应 01T、02T、03T",
+      "run_fields": {
+        "X": "float64 [samples, 6]；前 3 列 EEG 双极导联，后 3 列 EOG，只允许前 3 列进入分类器",
+        "fs": "250 Hz",
+        "trial": "每个 trial 的样本锚点，MATLAB 1-based；使用前应显式转为 0-based",
+        "y": "uint8；1=left hand，2=right hand",
+        "artifacts": "uint8；每 trial 0/1 专家伪迹标记",
+        "classes": "['left hand', 'right hand']",
+        "age_gender": "subject metadata"
+      },
+      "B01T_session_shapes": [
+        {
+          "X": [
+            604803,
+            6
+          ],
+          "trials": 120,
+          "artifact_flagged": 18
+        },
+        {
+          "X": [
+            552452,
+            6
+          ],
+          "trials": 120,
+          "artifact_flagged": 22
+        },
+        {
+          "X": [
+            469011,
+            6
+          ],
+          "trials": 160,
+          "artifact_flagged": 36
+        }
+      ]
+    },
+    "channel_semantics": {
+      "confirmed": "原始说明写的是 three bipolar recordings (C3, Cz, C4)，并说明三对双极电极的距离及前后位置会随受试者略有不同；Fz 是 EEG ground。EOG 才是三个单极通道、左乳突参考。",
+      "risk": "C3/Cz/C4 是双极 recording 的简写，不等于三个标准 10-20 单极电位。把它们直接映射到 LaBraM/EEGPT 的 C3/Cz/C4 channel embedding 会造成物理语义错配。MOABB 页面自动元数据显示 left-mastoid reference，与原始 PDF 对 EEG 的描述不一致，应以原始 PDF 为准。",
+      "allowed_initial_models": [
+        "CSP+LDA",
+        "EEGNet",
+        "ShallowFBCSPNet"
+      ],
+      "foundation_model_route": "只进入单独的 learned-channel-adapter 轨。EEGPT 官方实现用可训练 1x1 Conv 将 3 路映射为 C5/C3/C1/Cz/C2/C4/C6，再冻结 encoder；这不是纯 frozen feature + linear head。",
+      "official_eegpt_code": "https://github.com/BINE022/EEGPT/blob/main/downstream/linear_probe_EEGPT_BCIC2B.py"
+    },
+    "pretraining_overlap": {
+      "EEGPT": {
+        "status": "论文声明的 checkpoint pretraining list 未含 BCIC-2B；Table 1 将其明确列为 downstream",
+        "source": "https://proceedings.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+        "confidence": "confirmed for the paper-declared corpus; not a forensic proof about every future checkpoint"
+      },
+      "LaBraM": {
+        "status": "Appendix D 的完整声明清单含 BCI Competition IV-1，未列 IV-2b",
+        "source": "https://proceedings.iclr.cc/paper_files/paper/2024/file/47393e8594c82ce8fd83adc672cf9872-Paper-Conference.pdf",
+        "confidence": "not listed in the paper-declared pretraining corpus; do not shorten to an absolute ‘clean’ claim"
+      }
+    },
+    "recommended_locked_protocol": {
+      "task": "left-hand versus right-hand motor imagery",
+      "unit_of_generalization": "subject-dependent cross-session reuse",
+      "split": "per subject: aggregate sessions 01T+02T+03T train; 04E+05E test. No test-session normalization, feature fitting, threshold choice or model selection.",
+      "window": "anchor at MAT trial sample; [0,4.0 s) after cue onset as the fixed v0.1 epoch. Record that screening and feedback sessions have different visual-feedback context.",
+      "channels": "X[:,0:3] only; preserve bipolar voltages; no CAR; EOG excluded from prediction",
+      "preprocessing": "recorded online 0.5-100 Hz plus 50 Hz notch already exists; any additional 4-40 Hz offline filter/resampling must be identical across train/test and fitted operations must be train-only",
+      "artifact_policy": "artifact-free primary result to match the original competition evaluation; all-trial sensitivity result alongside it, both with exact denominators",
+      "metrics": "per-subject balanced accuracy, macro F1 and Cohen kappa; report mean across 9 subjects plus all 9 values and a subject bootstrap descriptive interval",
+      "track_labels": [
+        "native-three-bipolar baseline",
+        "learned channel adapter + frozen foundation encoder"
+      ],
+      "prohibited_claims": [
+        "不称真实 3-channel wearable/device validation",
+        "不把双极导联写成标准单极 C3/Cz/C4",
+        "不把 adapter 轨写成无训练 zero-shot/frozen linear probe",
+        "不与 BNCI2014-001 四分类 LOSO 分数直接排序"
+      ]
+    }
+  },
+  "other_candidates": [
+    {
+      "dataset": "BCI Competition IV Dataset 1",
+      "fit": "最直接的历史连续流/无控制意图候选：59 EEG；evaluation 含 1.5-8 s MI 与 1.5-8 s 间歇，目标是连续 -1/0/+1，竞赛忽略 cue 后 1 s transient。7 组中 a/b/f/g 为真人，c/d/e 为人工。",
+      "access_probe": "官方 100 Hz MAT zip anonymous Range GET=206；2026-09-10 HEAD Content-Length=252211988，Last-Modified=2009-08-03；官方网页仍标 209 MB。",
+      "download_url": "https://www.bbci.de/competition/download/competition_iv/BCICIV_1_mat.zip",
+      "description": "https://www.bbci.de/competition/iv/desc_1.html",
+      "labels_and_results": "https://www.bbci.de/competition/iv/results/index.html",
+      "license": "竞赛页要求同意条款、署名并引用，但本次未找到标准开放许可证；商业/再分发未确认。",
+      "pretraining": "LaBraM Appendix D 明确包含此 corpus，LaBraM 必须标 exact-corpus/pretraining-seen；EEGPT 论文预训练清单未列它。",
+      "decision": "高价值后续连续流轨，但先解决许可、目标重建和 LaBraM 污染展示。"
+    },
+    {
+      "dataset": "OpenNeuro ds007554 v1.0.0",
+      "fit": "2026 年新集；30 人、3 sessions、32 个标准单极 EEG、7 个认知/运动任务；适合未来跨日重用与多任务迁移。",
+      "doi": "https://doi.org/10.18112/openneuro.ds007554.v1.0.0",
+      "official_repository": "https://github.com/OpenNeuroDatasets/ds007554",
+      "pinned_repository_commit": "c76eec74254a1ba570224e210e744a2a1fcf3111",
+      "license": "CC0（dataset_description.json）",
+      "size": "NEMAR v1.0.0 页面列全部模态 4.21 GB，超过本轮小下载目标；可按 EEG/task 文件选择下载",
+      "size_source": "https://nemar.org/dataset/on007554",
+      "metadata_check": "sub-001/ses-01 motorimagery EEG 为 32ch uV、右耳垂参考、约250.0009Hz、216s。events.tsv 实际有19个 target，duration=0.5s；README 写18 targets，存在一项不一致；motorimagery eeg.json 的 TaskDescription 误写 auditory 2-back。",
+      "idle_status": "没有显式 idle/non-control event；只有 target beep 和 10±3s 间隔。间隔能否视作 idle、MI 持续多久，必须依据论文和信号/行为重新锁定，不能把所有非 target 时间自动当真值 idle。",
+      "pretraining": "数据于2026发布，时间上不可能进入2024版 LaBraM/EEGPT 官方 checkpoint；未来 checkpoint 另查。",
+      "decision": "高优先级后续数据工程；先做 BIDS 事件一致性审计，再定义 MI-vs-rest/跨session，不纳入本轮即时评分。"
+    },
+    {
+      "dataset": "BNCI2014-002",
+      "fit": "14 个条目主体、15 电极、512 Hz、右手 vs 双脚；单 session 内5个无反馈训练run+3个反馈验证run。电极围绕 C3/Cz/C4 用于构造3个 Laplacian derivations，不是广覆盖15个标准通道。",
+      "source": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2014_002.html",
+      "access_probe": "S01T.mat 与 S01E.mat 均匿名 Range GET=206；Content-Length 分别39794870、23769588；Last-Modified 2022-10-12。",
+      "license": "CC BY-ND 4.0",
+      "limitations": "没有跨日 session，也没有 idle；MOABB 页面同时出现14 subjects快照与正文13 participants，不应未经原始记录核验就固定人数。",
+      "decision": "不优先；相比004缺跨session价值，且空间语义也不适合直接位置映射FM。"
+    },
+    {
+      "dataset": "BNCI2014-005",
+      "fit": "2 participants，27 EEG+4 EOG，auditory oddball during hypnosis",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets",
+      "license": "CC BY-NC-ND 4.0",
+      "decision": "任务不匹配、样本太小且禁止商业使用；排除 MVP。"
+    },
+    {
+      "dataset": "Cho2017 / GigaDB 100295",
+      "fit": "52 subjects、64 scalp EEG+4 EMG、512 Hz，左右手MI；包含额外 non-task-related recordings，但只有一个 session。",
+      "source": "https://doi.org/10.5524/100295",
+      "paper": "https://doi.org/10.1093/gigascience/gix034",
+      "official_loader_source": "https://github.com/NeuroTechX/moabb/blob/develop/moabb/datasets/gigadb.py",
+      "access_probe": "官方对象 s01.mat anonymous Range GET=206；Content-Length=203446256，Last-Modified=2023-04-17。按单主体体积估计完整52人远超2GB，本轮未下载。",
+      "license": "CC BY 4.0（GigaDB/MOABB metadata）",
+      "pretraining": "LaBraM/EEGPT 论文声明清单均未明确列 Cho2017；仅能标 not-listed/unknown，不能绝对称 clean。",
+      "decision": "适合后续大样本跨主体和静息/伪迹研究，不适合本轮小磁盘跨session补测。"
+    },
+    {
+      "dataset": "BNCI2015-001",
+      "fit": "12 subjects、13 standard EEG、512 Hz、右手 vs 双脚；至少2 sessions，部分3 sessions，适合跨session且比004更接近标准单极空间语义。",
+      "source": "https://moabb.neurotechx.com/docs/generated/moabb.datasets.BNCI2015_001.html",
+      "license": "CC BY-NC-ND 4.0",
+      "limitations": "NC 对商业场景形成直接限制；公开网站是否构成商业使用需由实际运营模式判断。",
+      "decision": "科学上是004之后的优先候选，但产品首发先不纳入。"
+    }
+  ],
+  "source_notes": [
+    {
+      "url": "https://www.bbci.de/competition/iv/desc_2b.pdf",
+      "confirmed": "9 subjects、5 sessions、前三session有labels、三双极EEG+三单极EOG、250Hz、反馈时序、artifact policy"
+    },
+    {
+      "url": "https://www.bbci.de/competition/iv/results/index.html",
+      "confirmed": "competition true-label entry and real/artificial identity for Dataset 1"
+    },
+    {
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+      "confirmed": "EEGPT Table 1 pretraining/downstream separation and Appendix C BCIC2B 3-to-7 trainable spatial adapter"
+    },
+    {
+      "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/47393e8594c82ce8fd83adc672cf9872-Paper-Conference.pdf",
+      "confirmed": "LaBraM Appendix D includes BCI Competition IV-1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007554/main/dataset_description.json",
+      "confirmed": "CC0, raw dataset, DOI v1.0.0"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007554/main/README",
+      "confirmed": "30 participants, 3 sessions, 32 EEG, seven tasks, README target counts/inter-target interval"
+    }
+  ]
+}

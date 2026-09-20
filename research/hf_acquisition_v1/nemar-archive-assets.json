@@ -1,0 +1,75 @@
+{
+  "assets": [
+    {
+      "dataset_id": "nemar--nm000123",
+      "relative_path": "v1.0.1/nm000123-v1.0.1.zip",
+      "url": "https://data.nemar.org/nm000123/v1.0.1.zip",
+      "expected_bytes": 121271721,
+      "source_revision": "v1.0.1",
+      "license_status": "research acquisition approved; dataset declares CC-BY-4.0"
+    },
+    {
+      "dataset_id": "nemar--nm000121",
+      "relative_path": "v1.0.2/nm000121-v1.0.2.zip",
+      "url": "https://data.nemar.org/nm000121/v1.0.2.zip",
+      "expected_bytes": 226212685,
+      "source_revision": "v1.0.2",
+      "license_status": "research acquisition approved; dataset declares ODC-By-1.0"
+    },
+    {
+      "dataset_id": "nemar--nm000163",
+      "relative_path": "v1.0.0/nm000163-v1.0.0.zip",
+      "url": "https://data.nemar.org/nm000163/v1.0.0.zip",
+      "expected_bytes": 127330429,
+      "source_revision": "v1.0.0",
+      "license_status": "research acquisition approved; dataset declares CC-BY-4.0"
+    }
+  ],
+  "archive_candidates": [
+    {
+      "dataset_id": "nm000123",
+      "source_revision": "v1.0.1",
+      "url": "https://data.nemar.org/nm000123/v1.0.1.zip",
+      "head_http_status": 403,
+      "expected_bytes": 121271721,
+      "status": "range_size_confirmed",
+      "fallback_metadata_manifest": "<evidence-root>/acquisition/2026-09-12/source_metadata/nm000123-manifest.txt",
+      "selected_files": 208,
+      "selected_uncompressed_bytes": 76900023,
+      "raw_eeg_files": 30
+    },
+    {
+      "dataset_id": "nm000121",
+      "source_revision": "v1.0.2",
+      "url": "https://data.nemar.org/nm000121/v1.0.2.zip",
+      "head_http_status": 403,
+      "expected_bytes": 226212685,
+      "status": "range_size_confirmed",
+      "fallback_metadata_manifest": "<evidence-root>/acquisition/2026-09-12/source_metadata/nm000121-v1.0.2-manifest.txt",
+      "selected_files": 719,
+      "selected_uncompressed_bytes": 120780258,
+      "raw_eeg_files": 110
+    },
+    {
+      "dataset_id": "nm000163",
+      "source_revision": "v1.0.0",
+      "url": "https://data.nemar.org/nm000163/v1.0.0.zip",
+      "head_http_status": 403,
+      "expected_bytes": 127330429,
+      "status": "range_size_confirmed",
+      "fallback_metadata_manifest": "<evidence-root>/acquisition/2026-09-12/source_metadata/nm000163-v1.0.0-manifest.txt",
+      "selected_files": 136,
+      "selected_uncompressed_bytes": 157427400,
+      "raw_eeg_files": 12
+    }
+  ],
+  "probe": {
+    "method": "HEAD then GET Range bytes=0-0",
+    "bounded": true,
+    "connect_timeout_seconds": 15,
+    "max_time_seconds": 45,
+    "max_redirects": 5,
+    "response_body_bytes_per_archive": 1,
+    "result": "HEAD returned HTTP 403 without Content-Length. A subsequent one-byte range request returned HTTP 206 and an exact Content-Range total for every archive; those totals are used as expected_bytes."
+  }
+}

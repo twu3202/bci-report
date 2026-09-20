@@ -1,0 +1,114 @@
+{
+  "snapshot_schema": "bciarena.vast_offer_snapshot.v1",
+  "provider": "Vast.ai",
+  "purpose": "RTX 5090 单卡、verified、rentable、interruptible/bid 报价的只读快照",
+  "query_time_utc": "2026-09-09T09:05:18.039408Z",
+  "query_time_derivation": "原 curl 未打印 Date 响应头；时间由两条响应共同满足的 end_date - duration = 1788944718.0394082 Unix seconds 推得。它是响应生成时点，不声称具有外部时间戳认证效力。",
+  "request": {
+    "method": "POST",
+    "url": "https://console.vast.ai/api/v0/bundles/",
+    "authentication": "none",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "gpu_name": {
+        "eq": "RTX 5090"
+      },
+      "num_gpus": {
+        "eq": 1
+      },
+      "verified": {
+        "eq": true
+      },
+      "rentable": {
+        "eq": true
+      },
+      "type": "bid",
+      "order": [
+        [
+          "dph_total",
+          "asc"
+        ]
+      ],
+      "limit": 5
+    },
+    "exact_curl": "curl -sS --max-time 30 -X POST 'https://console.vast.ai/api/v0/bundles/' -H 'Content-Type: application/json' --data '{\"gpu_name\":{\"eq\":\"RTX 5090\"},\"num_gpus\":{\"eq\":1},\"verified\":{\"eq\":true},\"rentable\":{\"eq\":true},\"type\":\"bid\",\"order\":[[\"dph_total\",\"asc\"]],\"limit\":5}'"
+  },
+  "pricing_interpretation": {
+    "currency": "USD",
+    "min_bid_field": "min_bid 是 GPU 抢占式最低竞价，单位 USD/GPU-hour。",
+    "dph_total_field": "dph_total 是该 search 情景的每小时总价，至少包含 GPU 与 search.diskHour；不是纯 GPU 价。带宽按量另计。",
+    "request_disk_note": "请求体没有显式 disk 字段。两条响应的 search.diskHour 均为 0.0022222222222222222 USD/hour，storage_cost 均为 0.2 USD/GB/month。按响应采用的 30 天月折算，search 情景对应 8 GB：0.0022222222222222222 / (0.2 / (30 * 24)) = 8。",
+    "search_disk_gb": 8,
+    "search_disk_gb_status": "derived_from_returned_pricing_fields",
+    "offer_disk_space_warning": "raw 中的 disk_space 是机器可用磁盘容量，不是 search 情景所购买的磁盘 GB；不得用它解释 dph_total。",
+    "market_warning": "这是查询时刻的市场最低两条返回值，不是固定价格、可用性承诺或未来成交价。"
+  },
+  "lowest_two_offers_raw_excerpt": [
+    {
+      "id": 50302492,
+      "gpu_name": "RTX 5090",
+      "num_gpus": 1,
+      "gpu_ram": 32607,
+      "verification": "verified",
+      "rentable": true,
+      "geolocation": "Romania, RO",
+      "min_bid": 0.26666666666666666,
+      "dph_base": 0.26666666666666666,
+      "dph_total": 0.2688888888888889,
+      "storage_cost": 0.19999999999999998,
+      "storage_total_cost": 0.0022222222222222222,
+      "disk_space": 973.3333333333333,
+      "inet_up_cost": 0.052083333333333336,
+      "inet_down_cost": 0.0390625,
+      "internet_up_cost_per_tb": 53.333333333333336,
+      "internet_down_cost_per_tb": 40.0,
+      "end_date": 1788949207.0,
+      "duration": 4488.96059179306,
+      "search": {
+        "gpuCostPerHour": 0.26666666666666666,
+        "diskHour": 0.0022222222222222222,
+        "slaPremiumPerHour": 0.0,
+        "totalHour": 0.2688888888888889,
+        "discountTotalHour": 0,
+        "discountedTotalPerHour": 0.2688888888888889
+      }
+    },
+    {
+      "id": 50189881,
+      "gpu_name": "RTX 5090",
+      "num_gpus": 1,
+      "gpu_ram": 32607,
+      "verification": "verified",
+      "rentable": true,
+      "geolocation": "Ohio, US",
+      "min_bid": 0.26666666666666666,
+      "dph_base": 0.26666666666666666,
+      "dph_total": 0.2688888888888889,
+      "storage_cost": 0.19999999999999998,
+      "storage_total_cost": 0.0022222222222222222,
+      "disk_space": 1444.9625,
+      "inet_up_cost": 0.0390625,
+      "inet_down_cost": 0.0390625,
+      "internet_up_cost_per_tb": 40.0,
+      "internet_down_cost_per_tb": 40.0,
+      "end_date": 1804580040.8043287,
+      "duration": 15635322.764920473,
+      "search": {
+        "gpuCostPerHour": 0.26666666666666666,
+        "diskHour": 0.0022222222222222222,
+        "slaPremiumPerHour": 0.0,
+        "totalHour": 0.2688888888888889,
+        "discountTotalHour": 0,
+        "discountedTotalPerHour": 0.2688888888888889
+      }
+    }
+  ],
+  "source_docs": [
+    "https://docs.vast.ai/api-reference/creating-instances-with-api",
+    "https://docs.vast.ai/guides/instances/pricing",
+    "https://docs.vast.ai/guides/reference/faq/rental-types",
+    "https://docs.vast.ai/guides/reference/billing"
+  ]
+}

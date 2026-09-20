@@ -1,0 +1,28 @@
+{
+  // Cloudflare Workers Static Assets config for BCI Arena.
+  //
+  // Its main job is to pin the upload scope. `wrangler deploy` run from this
+  // directory publishes exactly ./dist and nothing else — so a deploy can no
+  // longer pick up site/.git (whose single commit still contains per-participant
+  // rows from an earlier export), .astro/, .openai/ or .DS_Store by mistake.
+  // Always deploy from here; never pass a directory argument by hand.
+  //
+  // ⚠ Confirm `name` against the actual Cloudflare account before first deploy;
+  // it decides the workers.dev subdomain. Nothing here has been applied yet.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bciarena",
+  "compatibility_date": "2026-09-20",
+  "assets": {
+    "directory": "./dist",
+    // Serve /data-use/ for /data-use, and return the real 404 page for a missing
+    // path. The handoff requires withdrawn CSV routes to 404 rather than answer
+    // 200 with the homepage.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    // Off by default: request logs are a privacy surface the data-use page has
+    // to describe accurately. Turn on deliberately, and update that page if so.
+    "enabled": false
+  }
+}

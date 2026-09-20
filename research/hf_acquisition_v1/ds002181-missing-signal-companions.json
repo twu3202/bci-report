@@ -1,0 +1,16 @@
+{
+  "checked_at_utc": "2026-09-13T02:33:15.683320+00:00",
+  "dataset_id": "ds002181",
+  "revision": "2ec6d5319a5ccd9b4fb45bebb07a30fe743b1810",
+  "download_status": "all_908_planned_assets_complete",
+  "validation_status": "hold_missing_signal_companions",
+  "failed_set_files": 226,
+  "error": "Each downloaded .set references a missing external .fdt signal file.",
+  "upstream_tree_url": "https://api.github.com/repos/OpenNeuroDatasets/ds002181/git/trees/2ec6d5319a5ccd9b4fb45bebb07a30fe743b1810?recursive=1",
+  "upstream_tree_truncated": false,
+  "upstream_tree_entries": 1590,
+  "upstream_fdt_files": 0,
+  "upstream_tree_response_sha256": "2fdc3a4bf97bcba35ac42250600655eb05d68b35648c6d9790c93c60f4b472d5",
+  "interpretation": "The pinned upstream Git release contains no .fdt companions. The selected transfer manifest completed, but this release is not waveform-complete or benchmark-ready. No missing companion download URL or accessible alternate version has been established.",
+  "action": "Keep ds002181 excluded from evaluation; preserve downloaded files and failure evidence."
+}

@@ -1,0 +1,41 @@
+# BCI Arena — private research repository.
+#
+# The rule behind this file: the repository holds the code, the reviewed
+# publication snapshot, and the written evidence trail. It never holds raw EEG,
+# participant-level results, model weights, or private infrastructure. Anything
+# that would be unsafe if this repository's visibility were ever flipped to
+# public does not belong here in the first place.
+
+# --- Raw research data, model weights, prepared arrays (7+ GB, and the exact
+# --- material the data-use policy says is never redistributed).
+experiments/
+
+# --- Participant-level backups of earlier exports. The handoff is explicit:
+# --- never publish this directory's private files.
+research/**/*.private.json
+research/**/*.private/
+research/**/*.private
+
+# --- Private network topology: Tailscale ACLs, tailnet addresses, SSH setup
+# --- for the two machines. Not credentials, but not project material either.
+ops/
+
+# --- Scratch, build output and local state.
+tmp/
+output/
+site/dist/
+site/node_modules/
+site/.astro/
+site/.git.superseded-*/
+.venv/
+__pycache__/
+*.pyc
+data/news.db
+*.log
+
+# --- Editor / OS noise.
+.DS_Store
+.vscode/
+
+# Local Claude Code permission state (machine-specific).
+.claude/settings.local.json

@@ -1,0 +1,56 @@
+[
+  {
+    "model": "LaBraM",
+    "dataset": "physionet-mi",
+    "status": "pretraining_seen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "location": "Appendix D, pp.16-17",
+    "checked_at": "2026-09-09"
+  },
+  {
+    "model": "LaBraM",
+    "dataset": "bnci2014-001",
+    "status": "paper_disclosed_unseen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "location": "Appendix D, pp.16-17",
+    "checked_at": "2026-09-09"
+  },
+  {
+    "model": "LaBraM",
+    "dataset": "sleep-edf-expanded",
+    "status": "paper_disclosed_unseen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://arxiv.org/pdf/2405.18765",
+    "location": "Appendix D, pp.16-17",
+    "checked_at": "2026-09-09"
+  },
+  {
+    "model": "EEGPT",
+    "dataset": "physionet-mi",
+    "status": "pretraining_seen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+    "location": "Table 1 / section 3.1",
+    "checked_at": "2026-09-09"
+  },
+  {
+    "model": "EEGPT",
+    "dataset": "bnci2014-001",
+    "status": "paper_disclosed_unseen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+    "location": "Table 1 / section 3.1",
+    "checked_at": "2026-09-09"
+  },
+  {
+    "model": "EEGPT",
+    "dataset": "sleep-edf-expanded",
+    "status": "paper_disclosed_unseen",
+    "evidence_scope": "paper disclosure; exact checkpoint SHA and recording/subject-level overlap audit pending",
+    "source_url": "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+    "location": "Table 1 / section 3.1",
+    "checked_at": "2026-09-09"
+  }
+]

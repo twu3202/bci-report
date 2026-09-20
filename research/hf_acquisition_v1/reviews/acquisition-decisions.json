@@ -1,0 +1,264 @@
+[
+  {
+    "repo_id": "Zachary1150/EESM19-Processed",
+    "acquisition_status": "downloading_selected_export",
+    "reason": "Original OpenNeuro v1.0.2 CC0 and20 participants verified; select200Hz scalp export14.2GB. Ear and500Hz alternatives deferred.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Zachary1150/EventAAD-Processed",
+    "acquisition_status": "hold_source_provenance",
+    "reason": "Pinned card claims CC BY4 and24 subjects, but exact original accession and label reconstruction provenance remain unresolved.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "WymanYYY/Sleep-EDF-V2",
+    "acquisition_status": "hold_missing_documentation",
+    "reason": "README missing; do not acquire name-only large archives.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "monster-monash/CrowdSourced",
+    "acquisition_status": "hold_source_terms",
+    "reason": "Original OSF9bvgh public node has node_license=null. Resolve explicit data reuse terms.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "monster-monash/DREAMERA",
+    "acquisition_status": "hold_original_access_restriction",
+    "reason": "Original Zenodo546113 files are restricted and require access application. Public HF derivative does not resolve source authorization.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Bingchuan/BETA",
+    "acquisition_status": "downloading_complete_release",
+    "reason": "Full70-subject release5.28GB; original Figshare andHF declareCC BY4. NEMAR alternative lists noncommercial; deployment rights discrepancy retained.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "alibabasglab/KUL-mix",
+    "acquisition_status": "defer_source_and_scope_review",
+    "reason": "Card links originalZenodo4004271 andCC BY-NC-SA4. Modified3.09GB export; provenance/preprocessing and intended-use assessment remain.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Alljoined/Alljoined-1.6M",
+    "acquisition_status": "hold_access_terms",
+    "reason": "Source card has additional researcher terms/access requirements; do not infer clearance from licence tag or pointer availability.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Zachary1150/ear-eeg-fm-benchmark-data",
+    "acquisition_status": "hold_bundle_provenance",
+    "reason": "Full card names multiple original cohorts but lacks derivative licence. LinkedGitHub benchmark README currently404; verify each includedcohort separately.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "EEGDash/ds002181",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 908 checksum-matched EEG/BIDS objects at tag 1.0.0, including 226 EEG files and participant/channel/event metadata.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "2ec6d5319a5ccd9b4fb45bebb07a30fe743b1810"
+  },
+  {
+    "repo_id": "EEGDash/ds003194",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 120 checksum-matched EEG/BIDS objects at pointer tag 1.0.3. Current S3 matches this selected snapshot; do not silently substitute newer tag 1.0.4.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "2b9a99f6b0a729af5c919acb865c2c0459954996"
+  },
+  {
+    "repo_id": "EEGDash/ds003195",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 84 checksum-matched EEG/BIDS objects at pointer tag 1.0.3. Current S3 matches this selected snapshot; do not silently substitute newer tag 1.0.4.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "e6ac96c65c47c97200d9fff575eeaba24ba5930b"
+  },
+  {
+    "repo_id": "EEGDash/ds005028",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 108 manifest objects from public OpenNeuro S3; validate MD5 while streaming and SHA256 against the pinned Git-annex pointer. The 105 EDF files total 442,566,400 bytes; three root metadata files account for the remainder.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb"
+  },
+  {
+    "repo_id": "EEGDash/ds005383",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 1,685 checksum-matched EEG/BIDS objects from public OpenNeuro S3 at tag 1.0.0; the manifest excludes non-EEG content and validates annex SHA256/MD5 keys against S3.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "ad78f3db430e636595b1b1c08417492f3067a25e"
+  },
+  {
+    "repo_id": "EEGDash/ds006593",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 194 checksum-matched EEG/BIDS objects at tag 1.0.0; non-EEG eye-tracking and other modality directories are excluded.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4"
+  },
+  {
+    "repo_id": "EEGDash/ds007169",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 114 checksum-matched EEG/BIDS objects from public OpenNeuro S3. The manifest excludes sourcedata XDF, pupil, and ECG payloads while retaining participants, task metadata, BrainVision EEG, channels, electrodes, coordinates, and events.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "08649287ba6805b268bb24c507cbda533860ace4"
+  },
+  {
+    "repo_id": "EEGDash/ds007262",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Use the 114-object v1.1.0 manifest against current public S3. Do not use the EEGDash-advertised v1.0.6 manifest with current S3: CHANGES, dataset_description.json, and all 18 events.tsv objects differ. EEG payload pointer sizes match, but mixed-version acquisition is rejected.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "b156c6185ba1704107305eb5ab049d090053ddcf"
+  },
+  {
+    "repo_id": "EEGDash/ds003800",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 118 checksum-matched EEG/BIDS objects at tag 1.0.0, retaining both task conditions and their metadata while excluding sourcedata duplicates.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "e61ffc2e44a5b3ab2e23e4f6a3db104b9e736534"
+  },
+  {
+    "repo_id": "EEGDash/ds005048",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "Download the 181 checksum-matched EEG/BIDS objects at tag 1.0.1, including paired SET/FDT payloads and BIDS metadata.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false,
+    "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad"
+  },
+  {
+    "repo_id": "EEGDash/nm000121",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "CanonicalNEMARv1.0.2 manifest, ODC-By1.0; archive226.2MB, selectedEEG+BIDS120.8MB,11subjects110recordings.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "EEGDash/nm000123",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "CanonicalNEMARv1.0.1 CC BY4; archive121.3MB,selectedEEG+BIDS76.9MB,12subjects30recordings. Checkcorrected17/21Hzlabels.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "EEGDash/nm000163",
+    "acquisition_status": "downloading_complete_eeg_selection",
+    "reason": "CanonicalNEMARv1.0.0 CC BY4;archive127.3MB,selectedEEG+BIDS157.4MB,12subjects12recordings.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "perottofederico/things-eeg",
+    "acquisition_status": "defer_large_undocumented_derivative",
+    "reason": "EEG arrays are mixed withimages/text/features; canonical version, rights andexport provenance unresolved. Avoid duplicated multi-GB image/features payloads.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "acquisition_status": "hold_gated_access",
+    "reason": "MirrorREADME401 andredactedLFS hashes; no authenticationoraccessbypass.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "monster-monash/STEW",
+    "acquisition_status": "reuse_existing_reference",
+    "reason": "Previously acquired reference; no redundant download scheduled.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "roychowdhuryresearch/IESSEEG",
+    "acquisition_status": "reuse_existing_reference",
+    "reason": "Previously acquired reference; no redundant download scheduled.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "EEGDash/ds003810",
+    "acquisition_status": "reuse_existing_reference",
+    "reason": "Previously acquired reference; no redundant download scheduled.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "sajjad5221/emmt-eeg-raw-phases",
+    "acquisition_status": "exclude_features_only",
+    "reason": "Negative control: the title says raw EEG, but the card schema explicitly lists band powers, motion and contact quality. It cannot stand in for voltage input to EEG foundation models.",
+    "prior_evidence_run": "<evidence-root>/screening/huggingface/runs/20260912T133838Z/hf-screening-20260912T135242Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "2Levi/EEG_fNIRS_4_BCI",
+    "acquisition_status": "hold",
+    "reason": "Potentially useful EEG is present, but the cache does not support a rights-safe, subject/label-specific acquisition decision.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Aersd1/workload",
+    "acquisition_status": "exclude",
+    "reason": "Fails the human EEG signal requirement.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "Alidr79/cueless_EEG_subject_identification",
+    "acquisition_status": "hold",
+    "reason": "Strong evidence of genuine multi-subject EEG, but acquisition rights are unresolved.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "abachu2005/mes-eeg-processed",
+    "acquisition_status": "hold",
+    "reason": "Subject-indexed MI/rest EEG is plausible and compact, but rights and signal representation remain unverified.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "abdo25/EEG_records",
+    "acquisition_status": "hold",
+    "reason": "Missing cards remain hold; the archive cannot be validated from available evidence.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "achiepatricia/han-cognitive-workload-balancing-dataset-v1",
+    "acquisition_status": "exclude",
+    "reason": "Explicitly synthetic agent workload data and fails the human EEG requirement.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "alexeykashevnik/EEGMeditation",
+    "acquisition_status": "hold",
+    "reason": "Genuine human EEG is strongly indicated, but the very large multimodal tree and unresolved rights require a hold.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  },
+  {
+    "repo_id": "alif-munim/eeg-filtered",
+    "acquisition_status": "hold",
+    "reason": "Array-shaped EEG and participant labels look plausible, but this is an undocumented processed single-split mirror.",
+    "evidence_run": "<evidence-root>/screening/huggingface/runs/hf-screening-20260912T142849Z",
+    "benchmark_ready": false
+  }
+]

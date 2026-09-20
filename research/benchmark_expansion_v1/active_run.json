@@ -1,0 +1,15 @@
+{
+  "benchmark": "beta-ssvep-v1",
+  "run_root": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2",
+  "progress": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/progress.json",
+  "plan": "docs/BCI Arena Benchmark Expansion Plan.md",
+  "protocol": "experiments/beta_ssvep_v1/protocol.json",
+  "runtime": "experiments/asset_readiness/.venv-modelcheck/bin/python",
+  "status": "complete_and_independently_audited",
+  "independent_audit": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2-independent-audit.json",
+  "results_document": "docs/BCI Arena BETA Benchmark Results.md",
+  "completed_comparisons": 12,
+  "scored_sweep_seconds": 500.957115333993,
+  "prior_preparation": "run-20260913-mps-v1 contains preparation only, no scored results; v2 adds independent-review integrity guards before any scoring",
+  "website_publication": false
+}

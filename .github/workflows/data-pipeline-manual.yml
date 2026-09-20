@@ -1,0 +1,29 @@
+name: Data pipeline manual check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m venv .venv
+      - run: .venv/bin/pip install -r pipeline/requirements.txt
+      - run: .venv/bin/python pipeline/run.py --validate-only
+      - run: .venv/bin/python -m unittest discover -s pipeline/tests -v
+      - run: >-
+          .venv/bin/python pipeline/run.py --skip-news
+          --output-dir build/data
+          --feed-path build/feed.xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-data-preview
+          path: build/

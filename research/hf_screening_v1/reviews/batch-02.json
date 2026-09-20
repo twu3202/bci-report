@@ -1,0 +1,243 @@
+[
+  {
+    "repo_id": "EEGDash/ds002181",
+    "evidence_id": "EEGDash/ds002181@b0739000ac1d71677596838dcc22b6925265b957",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "resting_state"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 226,
+    "channel_count_claim": 125,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Resting-state pointer; label and split definitions absent from cached excerpt.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/4f43114806f2fc3a2cfe384fe79e2900f8555bebb5dcfec22269216c7e35a7bd.json"
+    ],
+    "uncertainties": [
+      "OpenNeuro/NEMAR source and task labels require verification",
+      "125-channel count is indexed metadata only",
+      "subject count and splits unverified",
+      "Indexed DOI is mockDOI, not a valid persistent identifier",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify the canonical OpenNeuro source, valid DOI, montage, subject/session structure, and usable split metadata.",
+    "reason": "Large human EEG pointer with indexed resting-state coverage; 125 channels may limit few-channel use, so source verification is needed."
+  },
+  {
+    "repo_id": "EEGDash/ds003194",
+    "evidence_id": "EEGDash/ds003194@b1f7a0af149b4a03caf05c17507a6e4955679cf2",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "unknown",
+      "clinical"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 15,
+    "channel_count_claim": [
+      19,
+      20,
+      21
+    ],
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Two tasks and multisession title indexed; labels and split definitions absent.",
+    "cohort_relationship": "Possible relation to EEGDash/ds003195 Neuroepo/placebo cohort; independence unresolved.",
+    "evidence_refs": [
+      "raw_cached/428ac8f06d422a0f0a04c59586553ca1acedccbd9de2c4c1cc7b8c37ba23bebd.json"
+    ],
+    "uncertainties": [
+      "Task and clinical meaning require canonical-source verification",
+      "Mixed 19–21 channel counts and scalp montage unverified",
+      "Session boundaries and splits unverified",
+      "Relationship to placebo cohort unresolved",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify canonical source documentation for tasks, sessions, montage, cohort overlap, labels, splits, and license.",
+    "reason": "Multisession human EEG with few indexed channels could support transfer studies, but task and cohort structure are unresolved."
+  },
+  {
+    "repo_id": "EEGDash/ds003195",
+    "evidence_id": "EEGDash/ds003195@de7e3360cfbbb95c3a38af7b0ed8796fcb73080f",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "unknown",
+      "clinical"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 10,
+    "channel_count_claim": 19,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Two tasks and multisession title indexed; placebo labels and splits absent.",
+    "cohort_relationship": "Possible relation to EEGDash/ds003194 Neuroepo cohort; independence unresolved.",
+    "evidence_refs": [
+      "raw_cached/1c59c633a37e2d7f03e4976833cc17583e311fbf5a5645a324b97fc41e0e17d7.json"
+    ],
+    "uncertainties": [
+      "Task and placebo semantics require canonical-source verification",
+      "Montage and session boundaries unverified",
+      "Labels and splits unverified",
+      "Relationship to Neuroepo cohort unresolved",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify canonical source documentation for placebo labels, tasks, sessions, montage, cohort overlap, splits, and license.",
+    "reason": "Few-channel multisession human EEG may enable condition transfer, but placebo labeling and cohort independence need source checks."
+  },
+  {
+    "repo_id": "EEGDash/ds005028",
+    "evidence_id": "EEGDash/ds005028@f5f5fc6d4e2c1ba1d4e3025d6ccbb4eede152a26",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "p300_erp"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 11,
+    "channel_count_claim": 32,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "P300 flashing paradigms and three tasks indexed; event labels and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/ff277291eead0670bfb420b32fa031ac96a27cbd0d94a2d943f5a507ef04eb37.json"
+    ],
+    "uncertainties": [
+      "32-channel claim appears only once among 105 records",
+      "Canonical source and montage unverified",
+      "Event/typing labels and splits unverified",
+      "Sampling frequencies absent",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify canonical source events, paradigm labels, per-record montage/channel counts, sampling rate, session splits, and license.",
+    "reason": "P300 paradigms provide clear ERP task diversity with a moderate indexed channel count; source event and split checks are required."
+  },
+  {
+    "repo_id": "EEGDash/ds005383",
+    "evidence_id": "EEGDash/ds005383@b5ca48a14c0197a895beab171ad7599a60e06ec7",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "visual_language"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 30,
+    "channel_count_claim": 31,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Natural-reading semantic target identification indexed; label definitions and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/7da745909b2331dbee5c69812554717acb2b8f81630cabd0ca9b95f43a2a92c7.json"
+    ],
+    "uncertainties": [
+      "Semantic labels and event timing require source verification",
+      "Montage and session structure unverified",
+      "Cross-session/device split evidence absent",
+      "Canonical source unverified",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify source task/event labels, montage, sessions, split opportunities, and license before acquisition consideration.",
+    "reason": "Thirty-subject visual-language EEG adds task diversity and moderate channel coverage, pending semantic-label and split verification."
+  },
+  {
+    "repo_id": "EEGDash/ds006593",
+    "evidence_id": "EEGDash/ds006593@bc92fc8ec0d857db50216e4ef2f266708a679e9e",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 21,
+    "channel_count_claim": 19,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Visual-attention multimodal pointer; modality-specific labels and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/e8527168276b454afee9741b1d203376e45898bb778c64b52cae483b5f6e4679.json"
+    ],
+    "uncertainties": [
+      "Scalp EEG subset within multimodal data unverified",
+      "Task/label definitions absent",
+      "Sessions and splits unverified",
+      "Canonical source unverified",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify the canonical source's EEG subset, task labels, montage, sessions, split structure, and license.",
+    "reason": "Few-channel multimodal EEG pointer may broaden BCI task coverage, contingent on isolating human scalp EEG and usable labels/splits."
+  },
+  {
+    "repo_id": "EEGDash/ds007169",
+    "evidence_id": "EEGDash/ds007169@2309805d5af6b413f455a2d7ba96ba4fdab2adff",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "workload"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 18,
+    "channel_count_claim": 24,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Four-difficulty n-back workload task indexed; difficulty labels and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/5bba7865467f1e8727430e61fdb2fc778a0e75bc5a4fc4d14996dc79645de00d.json"
+    ],
+    "uncertainties": [
+      "Difficulty/task labels require source verification",
+      "Montage and session structure unverified",
+      "Cross-session/device splits unverified",
+      "Canonical source unverified",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify source n-back event labels, montage, sessions, split design, and license before acquisition consideration.",
+    "reason": "Four-level workload task and 24 indexed channels fit task-diverse transfer screening, pending label and session-split verification."
+  },
+  {
+    "repo_id": "EEGDash/ds007262",
+    "evidence_id": "EEGDash/ds007262@093cd75ca61acd707624639beb976ca4158f7531",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "workload"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 18,
+    "channel_count_claim": 24,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Eight-level arithmetic workload task indexed; level labels and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/111523698ba88bc807a08330f9807fb6e555e5a105215a622cc4656b03e2fd23.json"
+    ],
+    "uncertainties": [
+      "Arithmetic level labels require source verification",
+      "Montage and session structure unverified",
+      "Cross-session/device splits unverified",
+      "Canonical source unverified",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify source arithmetic-level labels, montage, sessions, split design, and license before acquisition consideration.",
+    "reason": "Eight-level workload task with 24 indexed channels offers graded task diversity, pending source labels and split verification."
+  },
+  {
+    "repo_id": "EEGDash/ds003800",
+    "evidence_id": "EEGDash/ds003800@2a98f24ff1b0152815ebaf4c2972ebfcc3fff570",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "auditory_evoked",
+      "clinical"
+    ],
+    "signal_kind": "pointer",
+    "subject_count_claim": 13,
+    "channel_count_claim": 19,
+    "license_declared": "CC0",
+    "labels_and_split_evidence": "Two-task auditory gamma entrainment pointer; stimulus/event labels and splits absent.",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "raw_cached/9f544cd9fe7cab9ede6e2a7d3bace609cf26d7c9b49f2dbf8975d16c296bf606.json"
+    ],
+    "uncertainties": [
+      "Clinical/intervention cohort and task semantics require source verification",
+      "Stimulus/event labels and splits unverified",
+      "Montage and session structure unverified",
+      "Canonical source unverified",
+      "CC0 is as-indexed and requires source verification"
+    ],
+    "next_action": "Verify source stimulus/event labels, clinical cohort structure, montage, sessions, splits, and license.",
+    "reason": "Few-channel auditory EEG adds modality and task diversity, but clinical cohort and entrainment labels need source verification."
+  }
+]

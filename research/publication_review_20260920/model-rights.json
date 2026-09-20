@@ -1,0 +1,116 @@
+{
+  "reviewed_at": "2026-09-20",
+  "scope": "Checkpoint rights only: local noncommercial evaluation and publication of aggregate metrics. BCI Arena does not distribute weights, embeddings, or learned heads. This is issue spotting, not legal advice.",
+  "records": [
+    {
+      "model": "LaBraM Base",
+      "checkpoint": "labram-base.pth",
+      "existing_site_label": "MIT",
+      "code_license": {
+        "status": "confirmed",
+        "license": "MIT",
+        "scope_note": "Root LICENSE applies to the repository's 'Software'."
+      },
+      "checkpoint_license": {
+        "status": "repository_license_reasonably_applies_no_separate_terms",
+        "separate_terms_found": false,
+        "observed_license": "MIT (root repository)",
+        "authorship": "Weibang Jiang authored the official 'Upload checkpoints' commit; the README cites Wei-Bang Jiang, Li-Ming Zhao, and Bao-Liang Lu for LaBraM.",
+        "release_or_card": "GitHub Releases API returned []; no separate checkpoint card or release terms were linked from the official README.",
+        "finding": "The official maintainer committed labram-base.pth inside the MIT-licensed repository and the README instructs users to load and fine-tune it. Reading the repository license as covering the committed checkpoint is reasonable, although there is no separate weight-specific license statement."
+      },
+      "aggregate_noncommercial_evaluation": {
+        "concrete_restriction_found": false,
+        "decision": "aggregate_evaluation_supported_with_repository_scope_disclosure",
+        "reason": "No research-only, noncommercial, field-of-use, or reporting restriction was found. Local inference and publishing independently generated aggregate metrics do not redistribute the checkpoint, embeddings, or heads. Residual risk is the unexpressed scope of the repository license, not a found prohibition."
+      },
+      "recommended_display": "Code/repository: MIT · Checkpoint: committed in that repository; no separate weight terms",
+      "checkpoint_sha256": "7c50583826afac76c4ab18f43d958df40496c8229accc09ed6a227c9bb57c37c",
+      "local_evidence": [
+        "experiments/asset_readiness/source/LaBraM/LICENSE",
+        "experiments/asset_readiness/source/LaBraM/README.md",
+        "experiments/asset_readiness/official_checkpoint_readiness.labram-base.pth.json"
+      ],
+      "evidence_urls": [
+        "https://github.com/935963004/LaBraM/blob/c431221e6cfd23dbfa9950e0180682fb322b0548/LICENSE",
+        "https://github.com/935963004/LaBraM/tree/c431221e6cfd23dbfa9950e0180682fb322b0548/checkpoints",
+        "https://github.com/935963004/LaBraM/blob/c431221e6cfd23dbfa9950e0180682fb322b0548/README.md",
+        "https://github.com/935963004/LaBraM/commit/d52cb6d1801bb038e10ea1b6b3292c0bd569a9d5",
+        "https://api.github.com/repos/935963004/LaBraM/releases"
+      ]
+    },
+    {
+      "model": "EEGPT",
+      "checkpoint": "eegpt_mcae_58chs_4s_large4E.ckpt",
+      "existing_site_label": "Apache-2.0",
+      "code_license": {
+        "status": "confirmed",
+        "license": "Apache-2.0",
+        "scope_note": "The GitHub source repository has an Apache-2.0 LICENSE."
+      },
+      "checkpoint_license": {
+        "status": "unresolved_official_metadata_inaccessible",
+        "separate_terms_found": false,
+        "article_id": null,
+        "license": null,
+        "authorship": "The official repository identifies the NeurIPS 2024 paper; the official proceedings list Guagnyu Wang, Wenchao Liu, Yuhong He, Cong Xu, Lin Ma, and Haifeng Li. Figshare item authorship was not retrievable.",
+        "metadata_attempt": "The official README exposes private-share token e37df4f8a907a866df4b. A metadata-only HEAD to the official downloader confirmed file ID 46452745 and the exact filename, but returned no article ID. The share page returned an AWS WAF challenge (HTTP 202/empty body) and the official /v2/articles/search request returned HTTP 403. Because no article ID was observed, /v2/articles/<id> could not be queried without guessing.",
+        "finding": "The repository Apache-2.0 license covers code, while the checkpoint is hosted as a separate Figshare private-share object. No affirmative checkpoint license or Figshare authorship metadata was obtained. Tokenized download access does not establish reuse rights."
+      },
+      "aggregate_noncommercial_evaluation": {
+        "concrete_restriction_found": null,
+        "decision": "exclude_from_new_public_scope_until_checkpoint_license_resolved",
+        "reason": "No express restriction was observed, but absence of an observed restriction is not a grant. Aggregate-only publication avoids redistribution but does not resolve authority to use the checkpoint."
+      },
+      "recommended_display": "Code: Apache-2.0 · Checkpoint: license unresolved; excluded from new public scope",
+      "checkpoint_sha256": "9d63ebc80bba1ad5e3277df4eecfa05d2745e6243a12ff743c4c0a93930dfac0",
+      "local_evidence": [
+        "experiments/asset_readiness/source/EEGPT/LICENSE",
+        "experiments/asset_readiness/source/EEGPT/README.md",
+        "experiments/asset_readiness/official_checkpoint_readiness.eegpt_mcae_58chs_4s_large4E.ckpt.json"
+      ],
+      "evidence_urls": [
+        "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/LICENSE",
+        "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/README.md#pretrained-models",
+        "https://figshare.com/s/e37df4f8a907a866df4b",
+        "https://ndownloader.figshare.com/files/46452745?private_link=e37df4f8a907a866df4b",
+        "https://api.figshare.com/v2/articles/search",
+        "https://papers.neurips.cc/paper_files/paper/2024/hash/4540d267eeec4e5dbd9dae9448f0b739-Abstract-Conference.html"
+      ]
+    },
+    {
+      "model": "CBraMod",
+      "checkpoint": "pretrained_weights.pth",
+      "existing_site_label": "MIT",
+      "code_license": {
+        "status": "confirmed",
+        "license": "MIT",
+        "scope_note": "The official source repository is MIT-licensed."
+      },
+      "checkpoint_license": {
+        "status": "confirmed_by_model_card_metadata",
+        "license": "Apache-2.0",
+        "separate_terms_found": true,
+        "finding": "The official source README points to the maintainer's Hugging Face checkpoint repository. Its pinned model-card metadata declares apache-2.0 and contains no additional use restriction. This is distinct from the source repository's MIT license."
+      },
+      "aggregate_noncommercial_evaluation": {
+        "concrete_restriction_found": false,
+        "decision": "aggregate_evaluation_supported",
+        "reason": "Apache-2.0 is permissive and has no noncommercial or research-only restriction. The current scope does not redistribute the checkpoint or derivatives; retain model/source citation and pinned license evidence."
+      },
+      "recommended_display": "Code: MIT · Weights: Apache-2.0 (official model card)",
+      "checkpoint_revision": "500543c7e30bda1b22bfd51a49301b238dee21fd",
+      "checkpoint_sha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+      "local_evidence": [
+        "experiments/idle_replay_v1/model_assets/license_snapshots/cbramod-source-MIT.txt",
+        "experiments/idle_replay_v1/model_assets/license_snapshots/cbramod-hf-500543c-README.md",
+        "experiments/idle_replay_v1/model_assets/license_snapshots/README.md"
+      ],
+      "evidence_urls": [
+        "https://github.com/wjq-learning/CBraMod/blob/b9e961003214326972c567eff390e75b0287e32a/LICENSE",
+        "https://github.com/wjq-learning/CBraMod/blob/b9e961003214326972c567eff390e75b0287e32a/README.md",
+        "https://huggingface.co/weighting666/CBraMod/blob/500543c7e30bda1b22bfd51a49301b238dee21fd/README.md"
+      ]
+    }
+  ]
+}

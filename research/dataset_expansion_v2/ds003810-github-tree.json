@@ -1,0 +1,1434 @@
+{
+  "sha": "c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+  "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+  "tree": [
+    {
+      "path": ".gitattributes",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4b5faabcd70025b58df65a8077562d51ee70247",
+      "size": 284,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/f4b5faabcd70025b58df65a8077562d51ee70247"
+    },
+    {
+      "path": "CHANGES",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2f7b037366ec005ecd7f25cf550bb118ffbd6e87",
+      "size": 241,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/2f7b037366ec005ecd7f25cf550bb118ffbd6e87"
+    },
+    {
+      "path": "Code",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7d214b17738b705465394aeee1e397142a445a3e",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/7d214b17738b705465394aeee1e397142a445a3e"
+    },
+    {
+      "path": "Code/Demo_datause.ipynb",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "d8689de26546bbb9031ad213ad3be1bb4269ebbb",
+      "size": 121,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d8689de26546bbb9031ad213ad3be1bb4269ebbb"
+    },
+    {
+      "path": "README",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b8bfbb0e96c2cf7b72cffa62a48253a964e814d",
+      "size": 821,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/7b8bfbb0e96c2cf7b72cffa62a48253a964e814d"
+    },
+    {
+      "path": "dataset_description.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ea9b49db3fe1e829c9cd390ffa41b0e462e1847",
+      "size": 818,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/7ea9b49db3fe1e829c9cd390ffa41b0e462e1847"
+    },
+    {
+      "path": "participants.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c8ee03c4ab866db35f2e4ee91052e31f32840b6",
+      "size": 609,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/8c8ee03c4ab866db35f2e4ee91052e31f32840b6"
+    },
+    {
+      "path": "participants.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf96ee5b0f1721c4c787221a2b2648d17ee1333f",
+      "size": 191,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/cf96ee5b0f1721c4c787221a2b2648d17ee1333f"
+    },
+    {
+      "path": "sub-02",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "07bc9b32201e9f25e807fe94640662be55b317b4",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/07bc9b32201e9f25e807fe94640662be55b317b4"
+    },
+    {
+      "path": "sub-02/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2ce470396a9c3fd5de929711faf552f3e4d49d4e",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/2ce470396a9c3fd5de929711faf552f3e4d49d4e"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "e96ff6541ea519b0dda723ee7c46d77dcf24def7",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e96ff6541ea519b0dda723ee7c46d77dcf24def7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "e30b13662176ef276b3b189ea70c8edbe750bbd2",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e30b13662176ef276b3b189ea70c8edbe750bbd2"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7b27395cd6e8fccc9e01250fea6384d8bcc21b5",
+      "size": 424,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c7b27395cd6e8fccc9e01250fea6384d8bcc21b5"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "b9d669d1182b4dde14de7329792a1cf33ffa542f",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/b9d669d1182b4dde14de7329792a1cf33ffa542f"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "21896e27b220e782d309c02e99cabdea4c0bc216",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/21896e27b220e782d309c02e99cabdea4c0bc216"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "1bacd7735361bc999772a5bcaa43f8674a705472",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bacd7735361bc999772a5bcaa43f8674a705472"
+    },
+    {
+      "path": "sub-02/eeg/sub-02_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-03",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "baa544263d54b821c91638c8642dffa6ce8f33e1",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/baa544263d54b821c91638c8642dffa6ce8f33e1"
+    },
+    {
+      "path": "sub-03/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a522fc627a387359717c6cae1e0242c3750cab45",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/a522fc627a387359717c6cae1e0242c3750cab45"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "332f38bfdd50a272cb3fa3c6656561f626d648bc",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/332f38bfdd50a272cb3fa3c6656561f626d648bc"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "3e6fa0d191efbdb3d220d5f4ef9e083bd755e110",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/3e6fa0d191efbdb3d220d5f4ef9e083bd755e110"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "9384873b02f9fe2a917941b774442ac611d4a691",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/9384873b02f9fe2a917941b774442ac611d4a691"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "71b3da1e07ba9d495d76c74e531dad1803a9c692",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/71b3da1e07ba9d495d76c74e531dad1803a9c692"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "9b1a66b2098825a7e9a007da764048d19d085a0e",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/9b1a66b2098825a7e9a007da764048d19d085a0e"
+    },
+    {
+      "path": "sub-03/eeg/sub-03_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-04",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b863b7d8c2e8842cf084891bdc27626b20a49a44",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/b863b7d8c2e8842cf084891bdc27626b20a49a44"
+    },
+    {
+      "path": "sub-04/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2c9ccb18b03c47cb35911c3ab37658e0f0f19c35",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/2c9ccb18b03c47cb35911c3ab37658e0f0f19c35"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "aa721a1e881db7960234bb9371126ea068062cb8",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/aa721a1e881db7960234bb9371126ea068062cb8"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "1a355c853cc77aa9f81ac2d128f3d5712907c651",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1a355c853cc77aa9f81ac2d128f3d5712907c651"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "2719f3ad7ea515ea318566ce9bd283c2ca16ade9",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/2719f3ad7ea515ea318566ce9bd283c2ca16ade9"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "1992fe75a7892448a8e6649b9be9c003ebdca94a",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1992fe75a7892448a8e6649b9be9c003ebdca94a"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "87a35cf14c87c6aae5a1622da575c266e1dd0532",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/87a35cf14c87c6aae5a1622da575c266e1dd0532"
+    },
+    {
+      "path": "sub-04/eeg/sub-04_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-05",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b0e82a06d1fa8811c7e362a1eb7a982c737996f3",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/b0e82a06d1fa8811c7e362a1eb7a982c737996f3"
+    },
+    {
+      "path": "sub-05/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "db207452ae3ce33d4576fc7c49ebdb383593db77",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/db207452ae3ce33d4576fc7c49ebdb383593db77"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "6ffc8e2efc40b9b65cc1f8775d9ec451c129197f",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/6ffc8e2efc40b9b65cc1f8775d9ec451c129197f"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "6cd3313c8f93821e3a4e7c304188953c3adf01b6",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/6cd3313c8f93821e3a4e7c304188953c3adf01b6"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "7ed59130722ba16c668c4ff38e83ee1175764b5f",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/7ed59130722ba16c668c4ff38e83ee1175764b5f"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "f26de1058dd4a840c5d831c756dc4cf3764b6071",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/f26de1058dd4a840c5d831c756dc4cf3764b6071"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "c910f2c7c88b50381d8d8aa8802bc289df84d349",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c910f2c7c88b50381d8d8aa8802bc289df84d349"
+    },
+    {
+      "path": "sub-05/eeg/sub-05_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-06",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "604ff44021ca92366252839ff6b3337f8949b69e",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/604ff44021ca92366252839ff6b3337f8949b69e"
+    },
+    {
+      "path": "sub-06/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d8e03d091a9f7fca75019680df307048b81dbf99",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/d8e03d091a9f7fca75019680df307048b81dbf99"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "5a6a622b149b49fea93edb13e6981d8adf3c1414",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/5a6a622b149b49fea93edb13e6981d8adf3c1414"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "2ab3bcaf3bd2054c2d5d890bf89a76595ab2c3ac",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/2ab3bcaf3bd2054c2d5d890bf89a76595ab2c3ac"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "ecf26cc655e6479bd90a6b4d4396f54738b13f43",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ecf26cc655e6479bd90a6b4d4396f54738b13f43"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "8394f8c4f062f9b38f15146b446e60c57a3be01d",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/8394f8c4f062f9b38f15146b446e60c57a3be01d"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "77bd928c30bdf1fc054ee5db5c1d1fae40a4b91b",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/77bd928c30bdf1fc054ee5db5c1d1fae40a4b91b"
+    },
+    {
+      "path": "sub-06/eeg/sub-06_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-07",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ad133c5bbb0940e43265012436e5a2ff4f78ff84",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/ad133c5bbb0940e43265012436e5a2ff4f78ff84"
+    },
+    {
+      "path": "sub-07/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6140613f28246b57f10acc053363032bdd1f7888",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/6140613f28246b57f10acc053363032bdd1f7888"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "5ad3c2a4f82086a6cd5d2d40e614b30a13afef7b",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/5ad3c2a4f82086a6cd5d2d40e614b30a13afef7b"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "d658996db8c6ae108362862c17c77b25481e3413",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d658996db8c6ae108362862c17c77b25481e3413"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "b8e5ab7f877ada3d47a58579985330a9cb2d738c",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/b8e5ab7f877ada3d47a58579985330a9cb2d738c"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "3b1218c556e800fbda52cc6be5c32fe280da7b5e",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/3b1218c556e800fbda52cc6be5c32fe280da7b5e"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "9aeef65c48091d592ed6aab47499292711d3aa32",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/9aeef65c48091d592ed6aab47499292711d3aa32"
+    },
+    {
+      "path": "sub-07/eeg/sub-07_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-08",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ebaa0e3c5d29c0270f11580d02953760c05f08b8",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/ebaa0e3c5d29c0270f11580d02953760c05f08b8"
+    },
+    {
+      "path": "sub-08/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f9456327ccac7d765539766335ebcb66b754e7ec",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/f9456327ccac7d765539766335ebcb66b754e7ec"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "2e7eb74d5a765c6eac410e67330b4898671a6989",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/2e7eb74d5a765c6eac410e67330b4898671a6989"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "9cb0f32454f018d8bb63201852a2ce4586f2b0c9",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/9cb0f32454f018d8bb63201852a2ce4586f2b0c9"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "28ea2113a70f91de9bb4e3591f3bd926484ca9ab",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/28ea2113a70f91de9bb4e3591f3bd926484ca9ab"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "d7fbc4a90e17d84580b5b62c9f268fb5db7184f4",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d7fbc4a90e17d84580b5b62c9f268fb5db7184f4"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "0b660b14eecfd0f7d397f592fbf1c2e06e70be76",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/0b660b14eecfd0f7d397f592fbf1c2e06e70be76"
+    },
+    {
+      "path": "sub-08/eeg/sub-08_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-09",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "95372514d53faef9531a7e1b3dab7c5682fac70e",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/95372514d53faef9531a7e1b3dab7c5682fac70e"
+    },
+    {
+      "path": "sub-09/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "49209a299bcc8aba953f5fbf9e2b8ebcf94b92c0",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/49209a299bcc8aba953f5fbf9e2b8ebcf94b92c0"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "93d81f4c9a009abfbafa96f3d6e5e53f4720fa4b",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93d81f4c9a009abfbafa96f3d6e5e53f4720fa4b"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "d06f5184554cfe44f74826f77f9692a84c3cc9c9",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d06f5184554cfe44f74826f77f9692a84c3cc9c9"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "d9df837ac1047db398723cfe5e9e0de547afa08c",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d9df837ac1047db398723cfe5e9e0de547afa08c"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "96a68bcb9fdbb3df5b2b3be2965180639c0d538d",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/96a68bcb9fdbb3df5b2b3be2965180639c0d538d"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "8eb8b0a05ad8449eb20021ad7bcb473f374f82c8",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/8eb8b0a05ad8449eb20021ad7bcb473f374f82c8"
+    },
+    {
+      "path": "sub-09/eeg/sub-09_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-10",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "099f1e8c8db6e4eaaa9c8a3531951308cccfa3cb",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/099f1e8c8db6e4eaaa9c8a3531951308cccfa3cb"
+    },
+    {
+      "path": "sub-10/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "65e9a5a182f18864ad55502466b67e2df9917b07",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/65e9a5a182f18864ad55502466b67e2df9917b07"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "83242d65479146c253286e0a95dafd3b9bc9c5de",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/83242d65479146c253286e0a95dafd3b9bc9c5de"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "2fcb052b76ba0db6eb872ef7b581185cba9e2c34",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/2fcb052b76ba0db6eb872ef7b581185cba9e2c34"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "c6da33cb02b2aecb5d164e21e5468faeceb1366b",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c6da33cb02b2aecb5d164e21e5468faeceb1366b"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "ec9807e10bc003b5264390ef01a26a957f9c2a74",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ec9807e10bc003b5264390ef01a26a957f9c2a74"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "146c394a932f031d3ae962f64410f23d264b3d5d",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/146c394a932f031d3ae962f64410f23d264b3d5d"
+    },
+    {
+      "path": "sub-10/eeg/sub-10_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "sub-12",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "769172dbd62ce2b852950240de1ecc86db2e089d",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/769172dbd62ce2b852950240de1ecc86db2e089d"
+    },
+    {
+      "path": "sub-12/eeg",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "acfa408de8872e4948f35736a22f409e64c604e4",
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/trees/acfa408de8872e4948f35736a22f409e64c604e4"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-0_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-0_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "a14577c4ec89b93aff9f12becd7e2ab80e41e245",
+      "size": 132,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/a14577c4ec89b93aff9f12becd7e2ab80e41e245"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-0_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff89a661b8622c624ad4685ad4b3d8d5285ca1b7",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/ff89a661b8622c624ad4685ad4b3d8d5285ca1b7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-1_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-1_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "1299d273bb4903721736a9533cdbd2ab06f5f194",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1299d273bb4903721736a9533cdbd2ab06f5f194"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-1_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e67cfbcc43f53a8b0f78a5686f6c9a7e1e8c72fb"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-2_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-2_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "bc1cbdb18eff27f81150eca898eb4ed4bfc92224",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/bc1cbdb18eff27f81150eca898eb4ed4bfc92224"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-2_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fd885268d80f0391f81ce09ec988c8c9fb101a",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e2fd885268d80f0391f81ce09ec988c8c9fb101a"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-3_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-3_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "61c5b87900f8cab2b781ee75bea615494a8fd897",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/61c5b87900f8cab2b781ee75bea615494a8fd897"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-3_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bc5d786cbb0e15170248d410c88e307ffa6249c",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/1bc5d786cbb0e15170248d410c88e307ffa6249c"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-4_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1cb0b26542ae96df8aec8722d4cd1d5b867dba7",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/c1cb0b26542ae96df8aec8722d4cd1d5b867dba7"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-4_eeg.edf",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "5cb0ef7786a885ba64cf2ec7aa42b4c816f2acc5",
+      "size": 134,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/5cb0ef7786a885ba64cf2ec7aa42b4c816f2acc5"
+    },
+    {
+      "path": "sub-12/eeg/sub-12_task-MIvsRest_run-4_eeg.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93c00e582e671b52c54bb1788dfdcf283f9ad048",
+      "size": 386,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/93c00e582e671b52c54bb1788dfdcf283f9ad048"
+    },
+    {
+      "path": "task-MIvsRest_channels.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "112754dda71e71016812035aa78d42ae633380df",
+      "size": 101,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/112754dda71e71016812035aa78d42ae633380df"
+    },
+    {
+      "path": "task-MIvsRest_channels.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e75f381c9968dd02cfaa8cf40bcdd24bdcb4863c",
+      "size": 242,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/e75f381c9968dd02cfaa8cf40bcdd24bdcb4863c"
+    },
+    {
+      "path": "task-MIvsRest_events.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4b263a18f9219a8aa192b6591f764679117ab50",
+      "size": 423,
+      "url": "https://api.github.com/repos/OpenNeuroDatasets/ds003810/git/blobs/d4b263a18f9219a8aa192b6591f764679117ab50"
+    }
+  ],
+  "truncated": false
+}

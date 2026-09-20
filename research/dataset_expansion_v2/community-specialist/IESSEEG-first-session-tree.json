@@ -1,0 +1,194 @@
+[
+  {
+    "type": "file",
+    "oid": "eaba25b9c4b70a8da9efb8fc1ceac7930fe0801c",
+    "size": 2719,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-3_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "586e520d4f10a0f279122a653609e3faa6df7089",
+    "size": 30452608,
+    "lfs": {
+      "oid": "4feb74dac2ad4149a5b317c11d9084b0d4554688248c59a1d502a2c0dbc867dd",
+      "size": 30452608,
+      "pointerSize": 133
+    },
+    "xetHash": "3f41ccef09ac8cfe88bb87759e2c92ded0be3acb238ee812b4b5c3e6e97f0512",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-3_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "ef558ee75bc706843b2d1fd111e45036cf234e0b",
+    "size": 466,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-3_eeg.json"
+  },
+  {
+    "type": "file",
+    "oid": "e7fdb6b35e42448a9f7ca270d3954ebb4f8f77f1",
+    "size": 767,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-3_events.json"
+  },
+  {
+    "type": "file",
+    "oid": "4d594f0e70cca6a09a28566dd0e034c4d70f3792",
+    "size": 1814,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-3_events.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "eaba25b9c4b70a8da9efb8fc1ceac7930fe0801c",
+    "size": 2719,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-5_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "e2cbdee9ec813cd50e0defac16cc1e604665aad8",
+    "size": 28537408,
+    "lfs": {
+      "oid": "871f5cc96a929d3bbd91d0b9d8d492d12b091cbb76ad316a13e1c93c9f41e355",
+      "size": 28537408,
+      "pointerSize": 133
+    },
+    "xetHash": "0b2e6f14ff252256973b1d3c5fb74d7d56aea91ae557a540ba95eb39fc06fd8c",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-5_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "19d3517f35a83dde1ae0a7aaae51aae30bc6ae18",
+    "size": 466,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-5_eeg.json"
+  },
+  {
+    "type": "file",
+    "oid": "e7fdb6b35e42448a9f7ca270d3954ebb4f8f77f1",
+    "size": 767,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-5_events.json"
+  },
+  {
+    "type": "file",
+    "oid": "033890fccf2f845be4b5a04b137f38e5ba35c17d",
+    "size": 773,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-awake_run-5_events.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "eaba25b9c4b70a8da9efb8fc1ceac7930fe0801c",
+    "size": 2719,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-4_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "4aeebac2bd637d533b59e696743edfbfe02a817a",
+    "size": 27983008,
+    "lfs": {
+      "oid": "3fb96b5849902bd48572cd579c93536877578936379c5f15590287e7104fabe1",
+      "size": 27983008,
+      "pointerSize": 133
+    },
+    "xetHash": "88c4835ae55a81c4c64521590da057817e9d9148fa4916fc031ea19fa125dfd5",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-4_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "9c872cc147cd4322ee735f156f4d546539aed509",
+    "size": 466,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-4_eeg.json"
+  },
+  {
+    "type": "file",
+    "oid": "e7fdb6b35e42448a9f7ca270d3954ebb4f8f77f1",
+    "size": 767,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-4_events.json"
+  },
+  {
+    "type": "file",
+    "oid": "411cf91ad50dc8cced3645ec028b975f71172b42",
+    "size": 2190,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-4_events.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "eaba25b9c4b70a8da9efb8fc1ceac7930fe0801c",
+    "size": 2719,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-6_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "81715fa56ed229e47fe11a739af20bd16c802a0b",
+    "size": 30402208,
+    "lfs": {
+      "oid": "cc7edfb9659203b2c01222d2bc788e109c863db3a0382783aca82c8274b81197",
+      "size": 30402208,
+      "pointerSize": 133
+    },
+    "xetHash": "58f0984e911f2c657f8aca6baf913d723fb205cf8db5530dbca854765b9d7de7",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-6_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "bce75fb47d04791c6d50862218d326ed357fa064",
+    "size": 466,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-6_eeg.json"
+  },
+  {
+    "type": "file",
+    "oid": "e7fdb6b35e42448a9f7ca270d3954ebb4f8f77f1",
+    "size": 767,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-6_events.json"
+  },
+  {
+    "type": "file",
+    "oid": "5d8110e7e5b8d1a836e5f11b6b5f30eee033829f",
+    "size": 2032,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-sleep_run-6_events.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "e72a6ff553e11fe7fc568bfa28ace5e11f4f2142",
+    "size": 1298,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-1_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "e7f38465ccca568badce4e0420f70e90ed9efdf7",
+    "size": 17680902,
+    "lfs": {
+      "oid": "7ea7344daa1362974835dc7d2bdc81bfb5356d1a0730e2a2f0f90a0484cd3be4",
+      "size": 17680902,
+      "pointerSize": 133
+    },
+    "xetHash": "6e994d5f8faa8f15b67d6d2dae31199e7071f96621660b9ae3dba64667e389e1",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-1_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "60f4f72dee179dfd5a4c9fb462522cdfea546594",
+    "size": 499,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-1_eeg.json"
+  },
+  {
+    "type": "file",
+    "oid": "e72a6ff553e11fe7fc568bfa28ace5e11f4f2142",
+    "size": 1298,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-2_channels.tsv"
+  },
+  {
+    "type": "file",
+    "oid": "086109d3efb6b9c568a0d7860bb8793ad72806e7",
+    "size": 16629118,
+    "lfs": {
+      "oid": "274c12201adce02c527bf197bda5106fed26ce00f64a438e4abcbb91ab2b4f9a",
+      "size": 16629118,
+      "pointerSize": 133
+    },
+    "xetHash": "033d12392c7fe360b629e95d8b095449710f74ed62ccc20e6ec071a7eacc2e36",
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-2_eeg.edf"
+  },
+  {
+    "type": "file",
+    "oid": "60f4f72dee179dfd5a4c9fb462522cdfea546594",
+    "size": 499,
+    "path": "sub-000/ses-01/eeg/sub-000_ses-01_task-unknown_run-2_eeg.json"
+  }
+]

@@ -1,0 +1,241 @@
+[
+  {
+    "repo_id": "Zachary1150/EESM19-Processed",
+    "evidence_id": "Zachary1150/EESM19-Processed@unresolved",
+    "status": "hold",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "unknown",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": null,
+    "labels_and_split_evidence": "unknown",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "https://huggingface.co/datasets/Zachary1150/EESM19-Processed/blob/main/README.md (cached documentation unavailable)"
+    ],
+    "uncertainties": [
+      "No cached card, tree, revision, or source documentation",
+      "Signal representation and human-waveform status unknown",
+      "Subject identifiers and cohort overlap unknown",
+      "Licence and redistribution terms unknown",
+      "Labels and split definitions unknown"
+    ],
+    "next_action": "Retrieve and review the versioned dataset card and canonical source metadata when source access is available.",
+    "reason": "Name-only sleep lead with no cached documentation; hold without inferring content or cohort identity."
+  },
+  {
+    "repo_id": "Zachary1150/EventAAD-Processed",
+    "evidence_id": "Zachary1150/EventAAD-Processed@unresolved",
+    "status": "hold",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "unknown",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": null,
+    "labels_and_split_evidence": "unknown",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "https://huggingface.co/datasets/Zachary1150/EventAAD-Processed/blob/main/README.md (cached documentation unavailable)"
+    ],
+    "uncertainties": [
+      "No cached card, tree, revision, or source documentation",
+      "Signal representation and human-waveform status unknown",
+      "Subject identifiers and cohort overlap unknown",
+      "Licence and redistribution terms unknown",
+      "Event labels and split definitions unknown"
+    ],
+    "next_action": "Retrieve and review the versioned dataset card and canonical source metadata when source access is available.",
+    "reason": "Name-only auditory-attention lead with no cached documentation; hold without inferring signal or labels."
+  },
+  {
+    "repo_id": "WymanYYY/Sleep-EDF-V2",
+    "evidence_id": "WymanYYY/Sleep-EDF-V2@unresolved",
+    "status": "hold",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "unknown",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": null,
+    "labels_and_split_evidence": "unknown",
+    "cohort_relationship": "unknown",
+    "evidence_refs": [
+      "https://huggingface.co/datasets/WymanYYY/Sleep-EDF-V2/blob/main/README.md (cached documentation unavailable)"
+    ],
+    "uncertainties": [
+      "No cached card, tree, revision, or source documentation",
+      "Signal representation and human-waveform status unknown",
+      "Relationship to canonical Sleep-EDF releases unknown",
+      "Licence and redistribution terms unknown",
+      "Subjects, labels, and splits unknown"
+    ],
+    "next_action": "Retrieve the versioned card and trace its records to a specific canonical Sleep-EDF accession and licence.",
+    "reason": "Name-only sleep lead; no evidence supports treating it as a licensed or distinct Sleep-EDF cohort."
+  },
+  {
+    "repo_id": "monster-monash/CrowdSourced",
+    "evidence_id": "monster-monash/CrowdSourced@18ab93f65e4151fe467ec87439b28cbeabeac77c",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "resting_state"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 13,
+    "channel_count_claim": 14,
+    "license_declared": "other",
+    "labels_and_split_evidence": "Eyes-open versus eyes-closed conditions; 2-second downsampled windows; five cross-validation folds claimed to be participant-based.",
+    "cohort_relationship": "Processed derivative of the Crowdsourced study data at OSF accession 9bvgh; 13 of 60 participants completed both conditions.",
+    "evidence_refs": [
+      "raw_cached/24d0063d33278052d40fa218b50cd04e69a2acbcafe331f2453d9f3e29c7e91e.md:8-27",
+      "raw_cached/b6b978036f9733ef9d48ec1085e46b7f65bcb454bb1e7cb62bc08cb7032d3d93.json:1 ($.siblings)"
+    ],
+    "uncertainties": [
+      "Other licence does not establish redistribution clearance",
+      "Participant-fold files and leakage prevention are unverified",
+      "Raw session structure and preprocessing fidelity are unverified",
+      "Recorded channel count is claimed; scalp-electrode interpretation unverified",
+      "Cached metadata was not live-revalidated"
+    ],
+    "next_action": "Verify OSF 9bvgh licence, participant/session manifests, and derivation of the five participant folds.",
+    "reason": "Useful low-cost 14-channel eyes-open/closed transfer cohort, but this is a processed 13-person derivative with unresolved source terms."
+  },
+  {
+    "repo_id": "monster-monash/DREAMERA",
+    "evidence_id": "monster-monash/DREAMERA@7a55408d8bbf01e8cdc437f73020a05ad6eff277",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "affect"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 23,
+    "channel_count_claim": 14,
+    "license_declared": "other",
+    "labels_and_split_evidence": "Arousal ratings are binarized below 3 versus 3 or above; cropped and filtered 2-second windows; participant-based cross-validation folds are claimed.",
+    "cohort_relationship": "Processed arousal-label derivative of the 23-participant DREAMER EEG/ECG cohort, Zenodo 546113; overlaps DREAMERV in participants and windows.",
+    "evidence_refs": [
+      "raw_cached/57c870781b38df13bd2b9a288b55911fa97def79fec08a6648eb0bf85b1b69cb.md:7-31",
+      "raw_cached/f414a253854f7f72e2e351dbb5a683145585cfbc492c9db5297293b486beaa55.json:1 ($.siblings)"
+    ],
+    "uncertainties": [
+      "Other licence does not establish redistribution clearance",
+      "DREAMERA and DREAMERV are label views of the same cohort",
+      "Participant-fold implementation and leakage prevention are unverified",
+      "Recorded channel count is claimed; scalp-electrode interpretation unverified",
+      "Cached metadata was not live-revalidated"
+    ],
+    "next_action": "Check Zenodo 546113 terms and reconcile subject, trial, window, and fold identifiers with DREAMERV.",
+    "reason": "Affordable 14-channel affect data may add device diversity, but it is a processed DREAMER view and must not count separately from DREAMERV."
+  },
+  {
+    "repo_id": "Bingchuan/BETA",
+    "evidence_id": "Bingchuan/BETA@d4290c0200db8a104e0f557349dc49f90ba79506",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "ssvep_cvep"
+    ],
+    "signal_kind": "human_waveform_claimed",
+    "subject_count_claim": 70,
+    "channel_count_claim": 64,
+    "license_declared": "cc-by-4.0",
+    "labels_and_split_evidence": "A 40-target cued-spelling SSVEP task is described; no train/test or cross-session split is documented in the cached card.",
+    "cohort_relationship": "Mirror/redistribution claiming the canonical BETA database, linked to Figshare accession 12264401.",
+    "evidence_refs": [
+      "raw_cached/ddbe0918bd6343e60b806cd367c1a007c2e9d453a400c24f14fe275955c130cc.md:1-32",
+      "raw_cached/8cea775d5e60260d7c6a9141561dbf5ed85d812ce2edf81638c651ca9524634c.json:1 ($.siblings)"
+    ],
+    "uncertainties": [
+      "Canonical-source licence and mirror authorization are unverified",
+      "MAT files were not inspected for waveform integrity or labels",
+      "Session/run structure and evaluation splits are undocumented",
+      "64 is a recorded-channel claim; scalp electrode/reference details unknown",
+      "Cached metadata was not live-revalidated"
+    ],
+    "next_action": "Compare the mirror manifest, licence, channel montage, sessions, and target coding against Figshare 12264401.",
+    "reason": "Large 70-person SSVEP cohort is valuable for task diversity, subject transfer, and channel ablation after canonical-source verification."
+  },
+  {
+    "repo_id": "alibabasglab/KUL-mix",
+    "evidence_id": "alibabasglab/KUL-mix@b8aab928e3a381e271f587440d6d14a884cee48e",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "auditory_attention"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": "cc-by-nc-sa-4.0",
+    "labels_and_split_evidence": "Used for EEG-conditioned neuro-steered speaker extraction; cached documentation does not define attention labels, trial units, or splits.",
+    "cohort_relationship": "Modified version of the KULeuven Auditory Attention Detection dataset at Zenodo 4004271; not a distinct cohort.",
+    "evidence_refs": [
+      "raw_cached/ba7f1c1a7a2551e99ea7499135a09ed7aa45d5ef63a1308ffb574c13ded1d4b3.md:1-14",
+      "raw_cached/af511351b7ea61b22cfebaeb734905711d4a13990a1adaae94c511d983c9ca36.json:1 ($.siblings)"
+    ],
+    "uncertainties": [
+      "Upstream licence and compatibility with the declared derivative licence are unverified",
+      "Modification and preprocessing steps are undocumented",
+      "Subject, channel, session, and split structure are unknown",
+      "Archive contents were not inspected",
+      "Cached metadata was not live-revalidated"
+    ],
+    "next_action": "Audit Zenodo 4004271 terms and compare the KUL_eeg.tar manifest and preprocessing against the canonical KUL cohort.",
+    "reason": "AAD adds task diversity, but this single-archive derivative lacks subject, montage, label, split, and source-licence detail."
+  },
+  {
+    "repo_id": "Alljoined/Alljoined-1.6M",
+    "evidence_id": "Alljoined/Alljoined-1.6M@2596eb5cc116a4d2254370f96549752b5ac8747b",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "visual_language"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": 20,
+    "channel_count_claim": 32,
+    "license_declared": "cc-by-nc-sa-4.0",
+    "labels_and_split_evidence": "Image-stimulus category metadata and per-subject stimulus order are exposed; per-subject files are named training/test, but split construction is not documented.",
+    "cohort_relationship": "Presented as a new 20-participant dataset within the THINGS initiative; overlap with other THINGS EEG cohorts is not stated.",
+    "evidence_refs": [
+      "raw_cached/91798e647b903166751e4bfdbf89ca77bdb5d674c3d230184eb2ab8c144195f7.md:1-74",
+      "raw_cached/ba0386796fb18ad4fe25d6c9839edfd2c507ccf65ea7f23ccfba7edc3f547acc.json:1 ($.cardData.extra_gated_prompt, $.siblings)"
+    ],
+    "uncertainties": [
+      "Additional non-commercial access terms apply beyond the licence tag",
+      "Raw versus preprocessed contents and preprocessing lineage are unverified",
+      "Repeated stimuli, sessions, and training/test leakage controls need audit",
+      "32 is a recorded-channel claim; scalp electrode/reference details unknown",
+      "Relationship to other THINGS participants and stimuli is unresolved"
+    ],
+    "next_action": "Verify access terms, participant/session manifests, montage, repeated-stimulus structure, and training/test construction at the canonical project.",
+    "reason": "Large repeated visual EEG collection may support session and affordable-device transfer, subject to restrictive terms and split/cohort verification."
+  },
+  {
+    "repo_id": "Zachary1150/ear-eeg-fm-benchmark-data",
+    "evidence_id": "Zachary1150/ear-eeg-fm-benchmark-data@39a7821a1912ef1528c3d80a10f813b14ca34130",
+    "status": "shortlist_for_source_verification",
+    "task_family": [
+      "unknown"
+    ],
+    "signal_kind": "processed_waveform_claimed",
+    "subject_count_claim": null,
+    "channel_count_claim": null,
+    "license_declared": null,
+    "labels_and_split_evidence": "HDF5 schema claims labels, subject, session, trial_id, and channel names; label meanings and evaluation splits are not documented in the cached description.",
+    "cohort_relationship": "Multi-cohort bundle naming Aarhus AAD, EESM23, motor, and SAAD variants; not a new cohort. Relationships among scalp, ear, and in-ear files are unverified.",
+    "evidence_refs": [
+      "raw_cached/cbf1a01f42a0fc216b10310d76ca2e7b72136ff2407f32f3e060bdc098e7b4d7.json:1 ($.description, $.siblings)"
+    ],
+    "uncertainties": [
+      "No licence is declared for the bundle or underlying cohorts",
+      "Matching filenames do not prove within-subject or trial-aligned ear/scalp pairing",
+      "Independent participant counts across cohorts are unknown",
+      "Channel counts and ear/scalp montage definitions are absent",
+      "Preprocessing and cross-session split construction are undocumented"
+    ],
+    "next_action": "Audit each upstream cohort licence and manifests to verify participant/trial alignment, ear/scalp montages, preprocessing, and session IDs.",
+    "reason": "Strong ear/scalp transfer lead with explicit subject/session/trial fields, but it is a multi-cohort processed bundle and pairing is not yet evidenced."
+  }
+]

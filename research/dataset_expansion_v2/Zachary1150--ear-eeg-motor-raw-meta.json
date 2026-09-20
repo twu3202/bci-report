@@ -1,0 +1,43 @@
+{
+  "_id": "6a2168d590ff474b11b56c1b",
+  "id": "Zachary1150/ear-eeg-motor-raw",
+  "author": "Zachary1150",
+  "sha": "cc1c273ff0826bc322cd4d7110fd9efc2ee63717",
+  "lastModified": "2026-09-04T17:21:19.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "region:us"
+  ],
+  "downloads": 13,
+  "likes": 0,
+  "siblings": [
+    {
+      "rfilename": ".DS_Store"
+    },
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "subject1.zip"
+    },
+    {
+      "rfilename": "subject2.zip"
+    },
+    {
+      "rfilename": "subject3.zip"
+    },
+    {
+      "rfilename": "subject4.zip"
+    },
+    {
+      "rfilename": "subject5.zip"
+    },
+    {
+      "rfilename": "subject6.zip"
+    }
+  ],
+  "createdAt": "2026-06-04T12:00:21.000Z",
+  "usedStorage": 6859132019
+}

@@ -1,0 +1,143 @@
+{
+  "models": [
+    {
+      "name": "Signal-JEPA",
+      "family": "EEG foundation model",
+      "parameters": 3460000,
+      "status": "Public, ungated weights; research candidate only; not downloaded or executed by BCI Arena.",
+      "note": "The official model card provides a 13,847,488-byte safetensors checkpoint trained on Lee2019 at 128 Hz. All 17 ds005342 channel names match its 62-channel pretraining layout, but a separate locked adaptation protocol is still required.",
+      "url": "https://huggingface.co/braindecode/signal-jepa",
+      "license": "MIT, as stated on the model card"
+    },
+    {
+      "name": "BENDR",
+      "family": "EEG foundation model",
+      "parameters": 157000000,
+      "status": "Public, ungated weights; research candidate only; not downloaded or executed in this expansion.",
+      "note": "The Braindecode checkpoint is 628,580,476 bytes and expects 20 channels at 250 Hz. A documented montage or input adapter is required for 17-channel data.",
+      "url": "https://huggingface.co/braindecode/braindecode-bendr",
+      "license": "BSD-3-Clause on the Braindecode model card; verify original release terms before redistributing weights"
+    },
+    {
+      "name": "CSBrain",
+      "family": "EEG foundation model",
+      "parameters": null,
+      "status": "Public source and an official Google Drive weight link are listed; anonymous weight download, file size, and execution remain unverified.",
+      "note": "The backbone accepts caller-supplied brain regions and channel ordering, while the published BCIC head is fixed to 22 channels. A new adapter and a checkpoint-key loading audit are required.",
+      "url": "https://github.com/yuchen2199/CSBrain",
+      "license": "Unclear: no LICENSE file was found at the reviewed official repository commit, and no separate weight license was identified"
+    },
+    {
+      "name": "Neuro-GPT",
+      "family": "EEG foundation model",
+      "parameters": null,
+      "status": "Public code and Hugging Face weights; research candidate only; not downloaded or executed by BCI Arena.",
+      "note": "The model page shows an approximately 318 MB checkpoint. The published EEGConformer input path is fixed to 22 channels, so using 17 channels requires an explicit mapping or replacement of the spatial layer.",
+      "url": "https://github.com/wenhui0206/NeuroGPT",
+      "license": "GPL-3.0 for the official repository and model card"
+    },
+    {
+      "name": "EEG-Conformer",
+      "family": "Task-specific neural baseline",
+      "parameters": null,
+      "status": "Public source; no official pretrained checkpoint was found; not executed by BCI Arena.",
+      "note": "This is a from-scratch baseline rather than a foundation-model checkpoint. The author script fixes the spatial convolution to 22 channels and must be parameterized for other montages.",
+      "url": "https://github.com/eeyhsong/EEG-Conformer",
+      "license": "GPL-3.0"
+    },
+    {
+      "name": "EEGSimpleConv",
+      "family": "Task-specific neural baseline",
+      "parameters": null,
+      "status": "Public implementation; no pretrained weights; not executed by BCI Arena.",
+      "note": "The maintained Braindecode implementation accepts the channel count and sampling rate directly, making it a practical lightweight from-scratch comparator.",
+      "url": "https://braindecode.org/stable/generated/braindecode.models.EEGSimpleConv.html",
+      "license": "BSD-3-Clause for the Braindecode implementation; the separate author repository license is unclear"
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Sleep-EDF Expanded v1.0.0",
+      "task": "Five-class sleep staging",
+      "subjects": "78 SC + 22 ST",
+      "channels": 2,
+      "size": "About 8.1 GB",
+      "status": "Public · planned",
+      "detail": "Not downloaded. PhysioNet supplies 153 SC recordings from 78 people and 44 ST recordings from 22 people. Keep each person’s nights together, predeclare stage mapping and wake trimming, and distinguish the two study cohorts.",
+      "source": "https://physionet.org/content/sleep-edfx/1.0.0/",
+      "license": "Open Data Commons Attribution License 1.0",
+      "evaluated": false
+    },
+    {
+      "name": "OpenNeuro ds007554 v1.0.0",
+      "task": "Cross-session cognitive, motor, and cognitive-motor decoding",
+      "subjects": 30,
+      "channels": 32,
+      "size": "4.21 GB",
+      "status": "Metadata reviewed · planned",
+      "detail": "The dataset has three sessions and seven tasks. Motor-imagery event files contain target beeps but no explicit idle label; one reviewed file had 19 targets while the README says 18, and its EEG sidecar contains an incorrect task description. Event semantics require an audit before benchmarking.",
+      "source": "https://doi.org/10.18112/openneuro.ds007554.v1.0.0",
+      "license": "CC0",
+      "evaluated": false
+    },
+    {
+      "name": "BCI Competition IV Dataset 1",
+      "task": "Continuous two-class motor imagery with no-control intervals",
+      "subjects": "4 real + 3 synthetic",
+      "channels": 59,
+      "size": "241 MiB",
+      "status": "Endpoint reachable · planned",
+      "detail": "Human datasets are a, b, f, and g; c, d, and e are synthetic. Evaluation uses a continuous -1/0/+1 target with variable imagery and idle intervals. LaBraM lists this corpus in its pretraining data, and licensing must be clarified before product use or redistribution.",
+      "source": "https://www.bbci.de/competition/iv/desc_1.html",
+      "license": "No standard open license located; the competition page requires attribution and citation, while redistribution and commercial-use terms remain unclear",
+      "evaluated": false
+    }
+  ],
+  "news": [
+    {
+      "title": "A new benchmark compares EEG foundation models with task-specific decoders",
+      "summary": "Researchers surveyed 55 representative models and evaluated 12 open-source foundation models with task-specific baselines across 13 datasets and nine BCI paradigms. The study reports that linear probing is often insufficient and that larger models do not automatically generalize better, reinforcing the need for fixed cross-subject and few-shot calibration protocols.",
+      "date": "2026-08-03",
+      "source": "Original arXiv paper",
+      "sourceUrl": "https://arxiv.org/abs/2601.17883v3",
+      "tag": "Benchmark",
+      "reviewed": true
+    },
+    {
+      "title": "REVE releases an EEG foundation model for varying electrode layouts",
+      "summary": "REVE reports pretraining on 92 datasets, about 60,000 hours of EEG, and 25,000 participants, with position encodings designed for different electrode arrangements. Its public code, weights, and tutorials make cross-montage transfer an auditable evaluation target. Access to the Base checkpoint is gated; it is not yet available in our local test pool.",
+      "date": "2025-10-24",
+      "source": "Original arXiv paper and NeurIPS 2025 paper page",
+      "sourceUrl": "https://arxiv.org/abs/2510.21585",
+      "tag": "Model release",
+      "reviewed": true
+    },
+    {
+      "title": "NeurIPT brings heterogeneous EEG configurations into a unified pretraining framework",
+      "summary": "NeurIPT models homogeneous and heterogeneous spatiotemporal relationships across BCI tasks and electrode layouts and appeared as a NeurIPS 2025 poster. Its official repository still says that code restoration is in progress, so it is a research update rather than a reproducible model card.",
+      "date": "2025-09-18",
+      "source": "OpenReview / NeurIPS 2025",
+      "sourceUrl": "https://openreview.net/forum?id=D4hcJPkJ3y",
+      "tag": "Research release",
+      "reviewed": true
+    },
+    {
+      "title": "CSBrain adds cross-scale spatiotemporal structure to general EEG decoding",
+      "summary": "CSBrain combines local temporal windows, brain regions, and structured sparse attention, with reported experiments spanning 16 datasets and 11 task types. The official repository provides pretraining and downstream scripts plus a public weight entry point, making it a candidate for a later unified-protocol evaluation.",
+      "date": "2025-06-29",
+      "source": "Original arXiv paper and NeurIPS 2025 paper page",
+      "sourceUrl": "https://arxiv.org/abs/2506.23075",
+      "tag": "Model release",
+      "reviewed": true
+    },
+    {
+      "title": "An eight-channel, low-preprocessing self-supervised EEG model targets real-time BCI",
+      "summary": "This study applies HuBERT-style self-supervised learning to eight-channel scalp EEG and examines motor imagery, P300, subject differences, and alpha rhythms. It motivates a separate deployment-oriented track for low channel counts, limited preprocessing, and runtime budgets.",
+      "date": "2025-06-02",
+      "source": "Original arXiv paper",
+      "sourceUrl": "https://arxiv.org/abs/2506.01867",
+      "tag": "Real-time BCI",
+      "reviewed": true
+    }
+  ]
+}

@@ -1,0 +1,1090 @@
+{
+  "dataset_id": "ds005028",
+  "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+  "status": "ready",
+  "asset_count": 108,
+  "total_bytes": 442568172,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/CHANGES",
+      "expected_bytes": 38,
+      "md5": "658c41f627063915dd4eca14d2120b39",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "323b964286f1b484312fd5505f07bc4d851ccb3c28ea0b323a0dc9e532f57b72"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/README",
+      "expected_bytes": 547,
+      "md5": "999abb846c566e276d22d5e8c5396c60",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "588b59b755228abf7a3c5e05d6a366877de08f49046f53ab47976e1382ac488e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/dataset_description.json",
+      "expected_bytes": 1187,
+      "md5": "466b9b49256a1a39e0f5e5a010ec9265",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "c7356c73d1a926fa4c175a28f1e704f53065cadcd506e173d3df1a9b59354e4a"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-test/eeg/sub-01_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-test/eeg/sub-01_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5425408,
+      "md5": "8aaba88573c257b59a06fc02a66e1c55",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "1be22e12fcc8d618ef658016e115d88c44767f989f716499cd94af6b413cac64"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-test/eeg/sub-01_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-test/eeg/sub-01_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5936896,
+      "md5": "6cc8f0e96c6d4847cfee354278840ca6",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "d06ffc24449fcbf24178b57a861097b5b7e8d8d556c819028169378610142fe7"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-test/eeg/sub-01_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-test/eeg/sub-01_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5771008,
+      "md5": "7cbb613f373e0321b5c00a6e607e2cef",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "f570e91731ffc63f3712212829321ab33cb57529bac3bc4c4e51ae83631e9cb5"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-test/eeg/sub-01_ses-test_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-test/eeg/sub-01_ses-test_run-4_eeg.edf",
+      "expected_bytes": 6812416,
+      "md5": "5d2c076cf3e46a1a8a814a3ec0c22bb4",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "aed8f13949c3dd36734c3e4a2a7baaf113314c76fc3dcf55f82d691a10d9b46d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "47dac98e9c5f86013f0d88b731f4df57",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "9480f301fb3230ce156ccc6331ef871e78ad565a3e4f42e172d344cc3b2dc3ee"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "a54da512a68d6f38f457a9715e30a847",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "11b8a9ca8c9132e4586bdd3ee8ee9c22b29ed94dfdb317a0df6ad5698780e9e7"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "ae876b20ae3cd01de78074849a5d30b2",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "94e9dd675166a1c54ca00897e7c2ada968adb05707d30b4653f3890e42fbb513"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "4fad7f82c447871ba1f657624b6d578e",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "e048d3b5f0eb8f6183dad16aca68551db984fc567282632a6ae2b0d2f6e65f55"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "242733a7557950e7b2dd6a5b206bc074",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "24a6b28a4c4b000497d833b8adaac813f945368a59c4f6c9f56a7705e01b1d6d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-01/ses-train/eeg/sub-01_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-01/ses-train/eeg/sub-01_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "7ae706f9083bdab3233a8c02103012ff",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "466f7f00589b59e99a31cc321d6a5939dd3c3cd6b7b730ec9f4a4d521595ae62"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-test/eeg/sub-02_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-test/eeg/sub-02_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5681920,
+      "md5": "a2bda3973858f49434d9a54a03004612",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "bf63400b5da5e3e7524bbddd4733f508cd938b45baee97c635d8548ffcb5b9f4"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-test/eeg/sub-02_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-test/eeg/sub-02_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5601024,
+      "md5": "676948121fddbcbda4ef5565b49d0e32",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "0ea941ee1180668f5f7de3ad44a76c25f611bb3823dc7f9b429c1fc2af6fa999"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-test/eeg/sub-02_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-test/eeg/sub-02_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5577984,
+      "md5": "b862db5882c1f58ff5e920e12a48fcbf",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "b071dfc88367b24051ff5ac7deea28b90ffbe73ae4e56d3d9970996b06c48ddd"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-cb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-cb_run-1_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "27f81b37f60b12e5a6f063d3615e886c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "33b0aceb6545f9e6a6fe77b6d1dd68a5ab9bee9cd3a4ce4bdb6fd67bd959f267"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-cb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-cb_run-4_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "b9083f3f1c5d075093e1cf5f7f7e1604",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "66e4cca205790543b83ca3bd337e69d7a3bb8cc197bb0716a15de5356660d9ea"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-comb_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-comb_run-2_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "44515f2fdfe40e7dd4427290c989a388",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "c26081f0ea10cd35067d6d79467d138af5e2d2068adeeda1787fe23cf8f97dc2"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-comb_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-comb_run-5_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "592f93dc01d356352722a31ed4596c5c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "c7a2383d16eace1795a4c1fd176c530f4f56f26dd9141e09e79b33709dc64c9c"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-rc_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-rc_run-3_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "5b85cd806eb5175e1cd982535338a550",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "fae89d8c1d9881213be6293c272e0c3888a087d9ce577ef66e5c7bcf66aee5f8"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-02/ses-train/eeg/sub-02_ses-train_task-rc_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-02/ses-train/eeg/sub-02_ses-train_task-rc_run-6_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "33a521e316523964916e88457a8afb61",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "8a61064ce257680fa691b5b249a5ab70a498d068b0226d47d864d26c1adcfe68"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-test/eeg/sub-03_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-test/eeg/sub-03_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5433088,
+      "md5": "5c1c644f0db73c944009033065661993",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "26d49c34b0feaeed6e0f78b8b4f7a5634ecf5d27379f4ee140486e7cf167dcf5"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-test/eeg/sub-03_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-test/eeg/sub-03_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5708032,
+      "md5": "da526635faaf7beb2859ba48a3a39a33",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "945cbbfca4afe589b4e21dc39eb9d23b327dc6c57249e3158fd05327606996de"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-test/eeg/sub-03_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-test/eeg/sub-03_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5729536,
+      "md5": "1d34ef6c9cf9e8a8cbf731537ff6125c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "7a6f3574443cf28fb9eee53a932f17caebfc53e19170089733e4bdd64bb60c64"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-test/eeg/sub-03_ses-test_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-test/eeg/sub-03_ses-test_run-4_eeg.edf",
+      "expected_bytes": 3178752,
+      "md5": "90cd9b3a9053ac25321e5bc26ccb8c9c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "61e350e7cc8a4d67f6078b688dfc6b4be655664cc44516e51e029f57a15c9cf2"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "442fc8a6b9dea41ec8cd33dec711b2ee",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "8f9167de52cc4115dcd00962d91a580d2fb846bce281cdeef96c868ef5815dac"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "fb3f43e64e479c9bf638482893bbb07c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "69742971ccbace5a63acae10b552066e8e2ce2f85285e3b92e4483917604d41a"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "3120f8d1f8444a40c88e1b6b6df4678b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "f1661965feb69fd2d4a2e5f5f1f36c42a43a8b2ade117b222029aea8a752d4f4"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "f725bf1fd9afca076137f2f34a84975b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "311e2a0bf590ac498ac25a23f06f6ed4744c8693faf94cd724a146a491ebad1a"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "39ac65b13c54010469bf2c7bfba4ff4c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "bfedf39ce21f0b6f7d09f150b0d21af0ce316e868ee7c78bd5619123c34439cb"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-03/ses-train/eeg/sub-03_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-03/ses-train/eeg/sub-03_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "802301c2370cd30efbe6e28366327bbf",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "9a197b2bc02ba4e826c048ce7ecf4b144cb94030caa8263890af5b3aa128b190"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-test/eeg/sub-04_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-test/eeg/sub-04_ses-test_run-1_eeg.edf",
+      "expected_bytes": 6554880,
+      "md5": "9b76cfb75738ec23495cbab01e365cdf",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "2fb86adddbade2afae257c3df6b8cfe5658aefcd2b6ea55349887b30f929e42f"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-test/eeg/sub-04_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-test/eeg/sub-04_ses-test_run-2_eeg.edf",
+      "expected_bytes": 6008576,
+      "md5": "72ea3dbe0cc388be73c21f8bfd5e4d6f",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "c5a7158bdfdf5c350ae3f603ef1497eaf89e16729014e9009483778fe7b91e5d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-test/eeg/sub-04_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-test/eeg/sub-04_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5411072,
+      "md5": "3057bd30ff839df85179501cccf8b5bd",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "3c44e18e660158e0a7975ebc1dd25578c4426e27b20eb56fddb2460091561ba3"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "d615c0ee66f77b04fbf5cfec4dcaf5a1",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "15259a43af3f572c691d8721e7480951751fc7876c48f934fd0fd0244e0347c3"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "25b8c59feb7533fbb1139132dbfb944e",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "1d8e12543aac6575470b5e0e9eddcf33f331a39774abd33e78bef49bbc020121"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "90ddc06bf31c2110f73d46d0003f3439",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "ed82925cb1378cb40632ea2fbed4ee9bad25bfc7588a7c2c6a3acb2fe266b36e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "dee21ad9014b1b303ab3decf397132c4",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6f72e475a43e31fa21193d5d5b23b0c96b99521dc64c2e25418dd814a08cc5b7"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "22fd888f2553b798f6bf23671729055f",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "b611dbfc8a0e5cc55f6c189ed36b549eb5dfad3e464621d78bc23c2f6416eedc"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-04/ses-train/eeg/sub-04_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-04/ses-train/eeg/sub-04_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "ce35c620bee9fca8a8ca35b042a9014a",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "0bf5eb27c0b125620a7f39d7b9921f9cf99e512441183bf3b0d0d887683d3ad3"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5761280,
+      "md5": "cfa9d6c8e4abbb7b2e7462b8d2e18521",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "b0576530ebe60e4189392d61472699ed69b6a3b6b56f78270c1584fc834fb097"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5359872,
+      "md5": "69a67a91a504f3e8ab1a22e27d28dcb6",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6bc6feae037e5b62b65e6f4d1998c74812e584b9c518b3a0d445856fb387fc72"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5327616,
+      "md5": "e09ff8fc008bc8f2f1da26f6ae0628a6",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "7fbb88d2216d7274c7486502d9d3496334cbc1ec26cfa02612cc71251d4e7a4c"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-4_eeg.edf",
+      "expected_bytes": 2884864,
+      "md5": "46ca250e9af10ce82b7c6b5149dca516",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "af373666f005e1e5d4279f281178cf51e968e71b6e1fe86516836729fa75db42"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-5_eeg.edf",
+      "expected_bytes": 2585856,
+      "md5": "89f2aa76862435ca4a5b569c6f6821e3",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "9df43d0eac3ce494aaeef06ef8fefc91cc697f43668b88c8c69c0fc92f313d55"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-test/eeg/sub-05_ses-test_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-test/eeg/sub-05_ses-test_run-6_eeg.edf",
+      "expected_bytes": 2982656,
+      "md5": "d67b59d3cb6a4be2fba15587208332ad",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "42385374d5079483678406223407f540c6e1dda2bd1b96861f3dc4bb7325d373"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "1124f7eb35f5245f4c8d3fec11950143",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "f8187c21a4bbb6b68bc7157a4c0dcff06dc6e10740cdab14278af423654c0ae5"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "1b56086e164e2d27d409f9a91874a18c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "f2c98f5ec0ac6312808f0a15ab5df0595a81a9adfe6c40ff8f8a10e66aa2b55a"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "43c5e635c17eb5bffb8468f77a530465",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "a929d67137148989cbfc5b0321f94019d868b86ad00b6807d9888908f9742d5f"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "9f1e4077d1fd7a1d7bfb0e67ee83751c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "f7bdc3a1c82731f66de9b599aa5b5e77911c68454674b15fbda092be225487c2"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "20e4fe378558ef15ca9cd380e9afe097",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "d36a089b6f9f73d21591edaa413971c5c7f939dd02688693c7094f8181534c32"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-05/ses-train/eeg/sub-05_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-05/ses-train/eeg/sub-05_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "171f0e12549ad86586ef136ae173f1ea",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "108e8b19367a26483f2eeb24a377dbc7a342a498c91c6e3c3b67bd667bf98302"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-test/eeg/sub-06_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-test/eeg/sub-06_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5287168,
+      "md5": "61b9e80bca905c73602deb7cd8a57999",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "2b3f778d326050754bad2397770363ec9d95cd2b3497bac87b7d17ad3432cf9d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-test/eeg/sub-06_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-test/eeg/sub-06_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5974272,
+      "md5": "ef7a3c77c479feb693d1a9ce9f3ab780",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "c593eb0650523f4bbc144bb22a561c905dd01837eaab87b1ff3ed2d5777a2d63"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-test/eeg/sub-06_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-test/eeg/sub-06_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5218560,
+      "md5": "7a0f0bb338e88ed0e256fb8f3c8805fd",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6cb90f1baf2e947d3a0998342b4542787c5ce35262ee18aca603ae9054952613"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-cb_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-cb_run-2_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "0a76683f27c0751821695d82cd3be206",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "289db2898686457ffddf497bb917dda79ad4914453caf27f64a6cfabd4839dd9"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-cb_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-cb_run-5_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "f4032e65b310daa34d71b127d5e1c81b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "4fd06524ded5044f091505f16bb7d71a2709558a138b391271b4f3342a1a2537"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "920e5052fcc7017b930e0b4123b570db",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "a68f3bbb3af0245e49105b90c6397bb3844aed69a58a37210d3fa765c2908b19"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "7bf7629eb8b8c352de02455fb4624715",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "df86e3e089386811914ad75cb86ee71443309d89f6076cf747b8cfd7c8c17bb1"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-rc_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-rc_run-3_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "66e2c813a29734adc75934ba21ea1e93",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "ed4e44cfa23ade43410c78eb16cb0a88e4f261b5cbef4381e4fdaa6d7fa64262"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-06/ses-train/eeg/sub-06_ses-train_task-rc_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-06/ses-train/eeg/sub-06_ses-train_task-rc_run-6_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "86c41e2d058e73a7d085070a0d34df6b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "dec3b88e5f0ca9b14f320744cc00a02ad6d1a95d282e01898caef6880acae622"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-test/eeg/sub-07_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-test/eeg/sub-07_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5752064,
+      "md5": "645b3e8947018edb58b1edd8a85b98cf",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "2a3eb736f817e1b843cad20ec7903c4f76858044716c2bfb6d76c88fd93ef460"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-test/eeg/sub-07_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-test/eeg/sub-07_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5637376,
+      "md5": "9049e5b8967b7bc9961f4ba264ede7bd",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "03b7ede6e49835fdb9b4f35da62bdf866ab178918891a3e6b5d6b42f5db87108"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-test/eeg/sub-07_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-test/eeg/sub-07_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5575936,
+      "md5": "bf49b94d3b7011ab09d0837dd800481d",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "b403a2f8a4fb390e34b0172639f682fec7d8b04148946d1fe9188a392d3fee90"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-test/eeg/sub-07_ses-test_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-test/eeg/sub-07_ses-test_run-4_eeg.edf",
+      "expected_bytes": 3298048,
+      "md5": "c39978ff200791ec11423b23bb33009c",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "445311e245aabb28b7797d9100a7c6e51d14f50098ecbddb13a750f672bf867e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "192ba60a90d7d8dd6aaf4fe193a871cd",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "09f0e29780dc2b60b1ecd36bd00de89388b3e9dc0f8eefbd4d4c7549750859de"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "168aec460bf127659d0481845e80986b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "7365279b043ba91da5d358a0ca8fec54e15893eaa4dda0b6eddb517879ff468e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "9c0e564a6296b55c7c236316f6ed87d1",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "50ef1926c0c2a57de6626e19ebc4e326d0b5e7424ffbf4a0e260b8dd428292fa"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "0d27cadf8b5a81aa99d1e3a92b2bde20",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "12f27639cec869c2fbca6cc878586dfdb6af19144ca6077bebbff1ded12dc7a1"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "7d5ba15297fccca3ec37d45c6aeb194a",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "ffc3e7ed9b348ab33cb5e8b23620ad2d1db32fb7c78708b638eabe1a721e9ea5"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-07/ses-train/eeg/sub-07_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-07/ses-train/eeg/sub-07_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "99914033448cc1a54d371c32701c4da2",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "2dd3d18677c7c246e6b4b68dbda0ebd2497bbc302d2c97566cdae0ef0f2fb0a5"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-test/eeg/sub-08_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-test/eeg/sub-08_ses-test_run-1_eeg.edf",
+      "expected_bytes": 6248704,
+      "md5": "99ef95d5689790b1006fe8ae7fdb5db7",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "e6d5e35830d2b1da99e5bb2cb18c355da0741d67a55e046c3b5d1439af0df763"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-test/eeg/sub-08_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-test/eeg/sub-08_ses-test_run-2_eeg.edf",
+      "expected_bytes": 6101760,
+      "md5": "a0ff3a032d4e6df568d03045aa02ca8a",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "40b55ec7a85f0668451d943705aa7098cda3eb399941180cf487dfbb997e32c3"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-test/eeg/sub-08_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-test/eeg/sub-08_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5529344,
+      "md5": "133d7b78161d8c07d1f5bf4e8ce8297d",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6951be4cdfd9ee144c2c2961df66a496999bc06abc7e5578e2424c21cbd13819"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-cb_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-cb_run-2_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "ce32a1b9d28b3d9196320a9d01bb40ff",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "499974d6991316bf5cba664b5f842f96b32ab25a97e10ded6467bc9f0e672314"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-cb_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-cb_run-5_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "e1895d20b3743faaeeda6e42963d8afa",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "e10c767f182dc5a74e8aa471da21db62334d8800e6270abde37d2e8c81ee515a"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-comb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-comb_run-3_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "797cf30358c3194d6bbcddfc4ae16fe6",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "dbd4845f82d006664548b15bbdcbebb8d756512466875a29e5344b92a41becd8"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-comb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-comb_run-6_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "3e9c730a410668e850decd27486802ed",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "bb36f2f40f29191805bcb37623da854d0e0ab2847288a96255d8e0611da8e3a9"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-rc_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-rc_run-1_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "c84596b15a7f9c3da5f9f80922265a61",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "13b37ba7e7ff7105b9def53fe5354af9b7b6c6371fa5ba3329859de91bc1544e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-08/ses-train/eeg/sub-08_ses-train_task-rc_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-08/ses-train/eeg/sub-08_ses-train_task-rc_run-4_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "51f84dc489fe805934513d6704564825",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "94b813969f7ad26fce85b234961a59f683091c85e452a6e8d74925a66a1fc659"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-test/eeg/sub-09_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-test/eeg/sub-09_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5750528,
+      "md5": "0cf01ddafbe7eb97c4d7b14af9a43ed9",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "8839e68dae06f8523240302a2f617f6fbd71d1aae265d4c45e2ee4aae1328c08"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-test/eeg/sub-09_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-test/eeg/sub-09_ses-test_run-2_eeg.edf",
+      "expected_bytes": 5352704,
+      "md5": "0ae5f7dbb1207254f45a0d6a93def7bd",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "cb4c929bc0b297b64f0af6e3717e927c7dd3c7d5b53749de88c8b8f73db4b371"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-test/eeg/sub-09_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-test/eeg/sub-09_ses-test_run-3_eeg.edf",
+      "expected_bytes": 5394688,
+      "md5": "4aa75c53cf7b59cb12e37c103f9391e8",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6d1962cfe9c2f52de30703539f42c23fc5a7525c9e12898163b7fcdeb81a375b"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-cb_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-cb_run-2_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "fd9be49d34093bba3d5e703fa6246cbc",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "a1c64dee23245b1dfe907385d4b82fdf6b7f77033c6c45aaf7bf37dddf947bdb"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-cb_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-cb_run-5_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "47be40b9b055bc0a3b6168ed3335c6ec",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6323826776f1d37982084efbc77e392dfeacb1f4dccf275ebec844a01a5ae835"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-comb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-comb_run-3_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "12d080f141f4655d015bef0a2db6b148",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "0b3ec943a9cd090cbabb2deaa089684ca59a4955836f2f80482e364c6996a901"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-comb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-comb_run-6_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "dc48d7351380fb2f2151f18250ee30ba",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "8f286379be9f81ec3534ed58846c3d71e79df3fa9229116493f996810dd542b8"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-rc_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-rc_run-1_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "1156eafdbddd60b980f12e50dfaa0b26",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "92e7413598ed6873511f6c2275491c7eb5e2be804524273c35254a00217d948d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-09/ses-train/eeg/sub-09_ses-train_task-rc_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-09/ses-train/eeg/sub-09_ses-train_task-rc_run-4_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "159997327cb4014fc42b263f1cfdc01a",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "5041c529571d471dce616a9765586913aadad58bd19da03b3ca884c278cfa476"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-test/eeg/sub-10_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-test/eeg/sub-10_ses-test_run-1_eeg.edf",
+      "expected_bytes": 5225728,
+      "md5": "e2b13e98be0cac32ea07a4ed41a764e5",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "e54aa1a4a32fb17075a84c7c5d9bda8d15fa621fa1134c55afcc065d0372e51d"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-test/eeg/sub-10_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-test/eeg/sub-10_ses-test_run-2_eeg.edf",
+      "expected_bytes": 4842752,
+      "md5": "1a33616e8b6f3057895ddc53be8564f4",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "15756088314b289c104aa6a0e0fd148425bbc595da2a1a564e3fbed8c92adb86"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-test/eeg/sub-10_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-test/eeg/sub-10_ses-test_run-3_eeg.edf",
+      "expected_bytes": 4519168,
+      "md5": "a55b3c91ec3ae11745b2078568c3791d",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "87c6583de857d95580debfe6fa163ce672a5483046b0425beb2dc5ef43239f48"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-cb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-cb_run-1_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "4e765cff66a002e29cc1a3abcb09172b",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "da67f6434235fc97fe29a0375f613e1c87cd213437f26b62cdf6a829bab201c1"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-cb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-cb_run-4_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "a1ae3fbe07f6a2bb50b7eb24bf55b1eb",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "6483ac9f4d17a688f060c2f62b9d65b581f3aca2082ffaf2d161fe04d3603df4"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-comb_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-comb_run-2_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "5b44c49bf9c6e0adbdd21639b9aed9f2",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "1dd62f830e27aac5123d6a7995e2d77e7bb777570e8bf9ad611fe2895255f339"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-comb_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-comb_run-5_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "1d20fdbe00d541905be1e451370ec955",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "507e810529ed659f79b72c0c23d6ad46fc31be9d56bc97673a311a3dee1e52a6"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-rc_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-rc_run-3_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "98d7ddbbb7074996bebad2fc8a18afe8",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "77777fa6f6d648d03aa03554640f8e6852a3073ce6b159491b08d88c3819e8bf"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-10/ses-train/eeg/sub-10_ses-train_task-rc_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-10/ses-train/eeg/sub-10_ses-train_task-rc_run-6_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "91b6aeeb588e937d9eb64be42e62f7f7",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "ce14c9732aa96a78b87bc6ee8e1800459aaea52a6df4008a535b63925f4a9bc7"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-test/eeg/sub-11_ses-test_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-test/eeg/sub-11_ses-test_run-1_eeg.edf",
+      "expected_bytes": 3503360,
+      "md5": "befd3e6836c34550c80d5869a78d7526",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "271e53bf9d42767d66202393e51e1136049b17f9a9b0f48ad25c921578277e33"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-test/eeg/sub-11_ses-test_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-test/eeg/sub-11_ses-test_run-2_eeg.edf",
+      "expected_bytes": 3529984,
+      "md5": "a665d538d14cff80af862b524ee85448",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "7633a3adb48b8477c9db455bf1fcb7ee2285989149fc532e83b679388bd24404"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-test/eeg/sub-11_ses-test_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-test/eeg/sub-11_ses-test_run-3_eeg.edf",
+      "expected_bytes": 4574464,
+      "md5": "8381b9552e8badec0f2b0df9d7a6a1c8",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "96504e0b6c6aeafaada93e982852e8b7ec61113ca346bfd8cb398f83d356f272"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-cb_run-3_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-cb_run-3_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "f50cde3181e85943da527abd688d0bc2",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "054c80626aceba5ca09deae974f7320e094911e7a455f18afbd6e0afb9158879"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-cb_run-6_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-cb_run-6_eeg.edf",
+      "expected_bytes": 4546816,
+      "md5": "5afd93bfdc8f15f6c0f81f8382ec90de",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "d07f2a2c585f55a7385d42648a64a1ea3536c702b2f6b69b72d85d1f346e39e1"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-comb_run-1_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-comb_run-1_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "d632cec093e97be471480fa4ac15c459",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "5fa8f69855963c211d42c01cbcb497730b9573b84371a2ffe5215d83ec01b29f"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-comb_run-4_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-comb_run-4_eeg.edf",
+      "expected_bytes": 3113216,
+      "md5": "e8becf41b91ed66c0d7bb87723ba37f6",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "bca700add702d93f8187786155e0b2d5e1603d327b89b35ed9bcab3853178a6c"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-rc_run-2_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-rc_run-2_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "a117064cf721ec3c73aca20c9cf4fece",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "7c389c771d40da149bf8bf0929bdfc0e64e54a5ff4cb8222f8c42e704d702f6e"
+    },
+    {
+      "dataset_id": "ds005028",
+      "relative_path": "sub-11/ses-train/eeg/sub-11_ses-train_task-rc_run-5_eeg.edf",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005028/sub-11/ses-train/eeg/sub-11_ses-train_task-rc_run-5_eeg.edf",
+      "expected_bytes": 3318016,
+      "md5": "8ce37d97d7941039f059734f90dbcfdc",
+      "source_revision": "261a51c833c62baf7cb5a906b89e74a4ee42e2fb",
+      "license_status": "verified_cc0",
+      "sha256": "a75f3415554975466065fa51a46ee8720869eebe0f96a5d37e6a5b8a34ad555b"
+    }
+  ]
+}

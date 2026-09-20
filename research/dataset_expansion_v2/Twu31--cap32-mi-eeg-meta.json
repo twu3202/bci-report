@@ -1,0 +1,136 @@
+{
+  "_id": "6a868dd4e49a15ae1bbc9155",
+  "id": "Twu31/cap32-mi-eeg",
+  "author": "Twu31",
+  "sha": "663cd808cd945f7646ad33cf165436b6c847b62e",
+  "lastModified": "2026-08-20T05:45:54.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "task_categories:time-series-forecasting",
+    "language:en",
+    "language:zh",
+    "license:cc-by-4.0",
+    "size_categories:n<1K",
+    "modality:document",
+    "library:datasets",
+    "library:mlcroissant",
+    "region:us",
+    "eeg",
+    "motor-imagery",
+    "brain-computer-interface",
+    "bci",
+    "dry-electrode",
+    "ads1299",
+    "biosignal"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tcap32 \u2014 32-channel dry-electrode motor imagery EEG\n\t\n\nOne subject, one low-cost 32-channel dry-electrode cap (TI ADS1299, 250 Hz, WiFi/UDP).\nMotor imagery and cognitive-task sessions, plus a set of calibrator recordings used to\ncharacterise the amplifier.\nCode, analysis and reports: github.com/twu3202/EEG_MI\n\nRead \u00a74 before analysing. Two of the five MI sessions have defects that change what\nyou can conclude from them, and they are not visible in the file itself.\n\n\n\n\t\n\t\t\n\t\n\t\n\t\t1.\u2026 See the full description on the dataset page: https://huggingface.co/datasets/Twu31/cap32-mi-eeg.",
+  "downloads": 64,
+  "likes": 0,
+  "cardData": {
+    "license": "cc-by-4.0",
+    "language": [
+      "en",
+      "zh"
+    ],
+    "tags": [
+      "eeg",
+      "motor-imagery",
+      "brain-computer-interface",
+      "bci",
+      "dry-electrode",
+      "ads1299",
+      "biosignal"
+    ],
+    "pretty_name": "cap32 \u2014 32-channel dry-electrode motor imagery EEG",
+    "size_categories": [
+      "n<1K"
+    ],
+    "task_categories": [
+      "time-series-forecasting"
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "data/calibrator/cal_7hz_180s.npz"
+    },
+    {
+      "rfilename": "data/calibrator/cal_7hz_fp1_1000sps_180s.npz"
+    },
+    {
+      "rfilename": "data/calibrator/cal_7hz_fp1_250sps_180s.npz"
+    },
+    {
+      "rfilename": "data/calibrator/cal_7hz_probe11s.npz"
+    },
+    {
+      "rfilename": "data/calibrator/cal_7hz_xt7hz_60s.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260721_224212.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260721_224212_raw.fif"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260722_135310.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260722_135310_raw.fif"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_135441_mi.json"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_135441_mi.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_135441_mi_raw.fif"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_143756_hands-rest.json"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_143756_hands-rest.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_143756_hands-rest_raw.fif"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_163251_hands-feet-math.json"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_163251_hands-feet-math.npz"
+    },
+    {
+      "rfilename": "data/mi/cap32_20260725_163251_hands-feet-math_raw.fif"
+    },
+    {
+      "rfilename": "docs/crosstalk_report.pdf"
+    },
+    {
+      "rfilename": "docs/crosstalk_report_zh.pdf"
+    },
+    {
+      "rfilename": "docs/hardware_acceptance.pdf"
+    },
+    {
+      "rfilename": "docs/mi_pilot_report.pdf"
+    },
+    {
+      "rfilename": "load_cap32.py"
+    },
+    {
+      "rfilename": "sessions.csv"
+    }
+  ],
+  "createdAt": "2026-08-20T05:17:08.000Z",
+  "usedStorage": 69849908
+}

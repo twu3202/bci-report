@@ -1,0 +1,1950 @@
+{
+  "dataset_id": "ds006593",
+  "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+  "status": "ready",
+  "asset_count": 194,
+  "total_bytes": 463412777,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/CHANGES",
+      "expected_bytes": 45,
+      "md5": "4ecbeb2886091456e22a93b444074823",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f60ada86ad950bcabd40e188da40e63d0f3b2284073af4fc9c171e322ae8fe20"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "README.md",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/README.md",
+      "expected_bytes": 3580,
+      "md5": "2da273082fcfdbd5818701880bf13be6",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "9bb74e5ce349d1bf0873b57d8a9e0383004a62f908338638d0ae21e8abfd9ee0"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/dataset_description.json",
+      "expected_bytes": 2107,
+      "md5": "e43ba59f4ddd76e57788ccb8d98ba045",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "afa8f5a1e9d904826b36b4aca9808820476d66dd11f4ecdb7a84588686090f9d"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "participants.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/participants.json",
+      "expected_bytes": 204,
+      "md5": "8f98853580ab1b8b29fcb48d127d362c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "daabf3060195c226a38fd1d5c75700eb274b47747d323405a611ec2aff8f44ce"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/participants.tsv",
+      "expected_bytes": 624,
+      "md5": "892accb533b101ea4a371a19be10dc71",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "e520c2384395d421a0f87a5a39bfc1b670dc47abcebcf595ac27816d341ae41b"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20982308,
+      "md5": "d6cb95da65567d180a652640f12b75ba",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "49547c6f0e225276dde9ae3bef3974967b5256e31c21305ba1137207bc9ba725"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "b5f8e471301a925c1ff0edb503f609e7",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0577815d1760b0d1ed95e45956cc6bc360c533deb18a5cd44b38fa390852cd6a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "7db20b74ec749e387db9ce914e2563fb",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "e9a04cf48367297c0116da6cff3ca1c3dfe693072528d43eb580eb0344db9e01"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62769,
+      "md5": "142f23d297e6fed714b05b1a860f88e1",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7c219d084bf75a5ce2f4fc920124624824a580a5e4b52f93a564e99e06f56fec"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S001/ses-01/eeg/sub-S001_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67659,
+      "md5": "782f5257f1036515e94c734c7e75d0af",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "3b926cad31d0b49aba115788447371d87ddb6f3d0ac3651ca84d927a85bae8d4"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 23974732,
+      "md5": "0c84e9a7ff3f94b13098f25d02d8af39",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6ffa478492d40aba7ff5e4e6286f7d0c6c624674b7cd1a13d839bc9bb6f1318e"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 518,
+      "md5": "0cc2326b2c1cc7e62687e793a6c6c7a1",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a38a6d2292f5388cb75e023aa85ac33abd1977bf0b785ad29472e75184b2632c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "e86898056f9f05b90285402c59783b5b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "eabbde228b73895987c386f323cb1c149e1c74e1efd94afe2ccb51f4d2f512f8"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62841,
+      "md5": "b0f39c9dbadb1702e0a3b098af69e571",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "785f73b1b8c1b6988ce34b12a89c31ed84aab4e48b43120eca6ae1c8c39c3cc8"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S002/ses-01/eeg/sub-S002_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67749,
+      "md5": "1c62dddeb20290c00cfa3d64dffb4857",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "337ad6cd954b694e77f044de1076122f6b854140b32a6307ab6266cb3bb18168"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 24173852,
+      "md5": "09d0674d7876a2817ccf28825f62528b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "96b9d705811a09bfcb0521e2c33bb76bafa80f5fe3006f4dec1e83a4a78803ac"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 529,
+      "md5": "510143f69520048123677f5db57dcd69",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "195b592a7ce591ec7a1db0024dfad1c0812b7f0b92116a45789f16cfa7a6d182"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "bd044c86138604eb31d147bb1c310794",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f3048f022fda922954ac357da989833a921ce572cbb7ba4791acc7d7a182d2a4"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62849,
+      "md5": "6a0be34afbc0f63589f1730c57c7bed1",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "49df57f28298d63d7cb76d44b15a8a741c3d04ff587a6d2851410e202025de74"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S003/ses-01/eeg/sub-S003_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68090,
+      "md5": "6d71d2e286e4f4a7fa18ab90a04b835f",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "15559f8f904ce3bf7a76665e10bb85bd93edfd3de22172e4fbc7efcd3f2d35aa"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20598584,
+      "md5": "98f2f9131db198358bd56db952ba5ec8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "c946ea606a79a6cd626611ecb14ea8efb60f99330f18af61197d2b058b4e9fe9"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "e6ef3bd826c4225dc72240515f012a66",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "80dae089e9e20fe9213150613b7a60053755267c61b015962211efc0b59739fd"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "e9422868593f74da72e2d6fe93413f21",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "c47ba208b65c006f798a0ad4480a93597431c737bffcd4007a5ed9de3b18ba2c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62727,
+      "md5": "5574e278331e53ffd62088c10de0d626",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "9363e42a13a664cbbe3263cf9515ccb4dd5db22a386c62f83b230102b121c760"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S005/ses-01/eeg/sub-S005_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67231,
+      "md5": "d854afc76de50f23451d27adbb1eaa16",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6defd24619715fefe93ea238ddb2323d70a49e9a9c0be1fc0f62dcebb43d9db8"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20670404,
+      "md5": "0bd08eb47e76e6f1bfd31d97deff60db",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "fa8d732c2de96a9e90961a11f95c00ed92ca9e33189640cee5b6cdae1cd6c16c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "f38628ee94b3c98f879609235c65bf24",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "cffc8c9a881d8150ef65d2e114d68e57e8b5b3faf273aceeb15914098ff091e1"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "75941afeb85cb1f8ecb53bc13582711a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "9def489b060d792b192a736d29cc0f6620817362afa576625e52d95f94e1852b"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62745,
+      "md5": "0deec4ac21c1564e17cd4b59c34bb289",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b73ebe51af5aa812fb952aaded5e01393fbb888467b412d8061c858b1d906f25"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S006/ses-01/eeg/sub-S006_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67451,
+      "md5": "e9e7bdd76529a0453c8f4712c47a3a63",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "595074c83d2a2df7ad3f56f8acf5ec930a4c715e0e45502f440dca5530596ceb"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20622524,
+      "md5": "87775c53d08e9e2d76def8bdd0af36a6",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "70240fe4ebf01d8d11bb016ee9d079107fab8ed75f34c6b1d9be33571fd256ac"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "9502a396c1af35340a4c2170c59aa380",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "fd11655789256bdd9e81ef73851a883a1de059cd7c2ec491eac0a1fdb5102134"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "ef440e36622fee491984cc1c4ccb9431",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "8fb6115c80d122b78a9cb62c68d1c39ba363854a840d3760f36b76ab541c79c7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62729,
+      "md5": "e45ff19499d44305f3bd8b02259654cf",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "cfa990464a707e530efcdf287c1b66d2e610d6fc69412ba44226dfcd43aa918c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S007/ses-01/eeg/sub-S007_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68371,
+      "md5": "c5051258d3d736458247ebb6f38737f3",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a8eb3ca8606374c829dc2ac07e535426517fd6dace268c6e612e138482389919"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20638940,
+      "md5": "c0da45916f7a98cfd41d5bd1aba88420",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "e7412f6e8ad44ccab9a16191467b9b07c5b4da33856489c53ae9c185bf85971f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "749cc237452245d80f890302d87c6005",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b436bf0b295be1d939b8abbd85326241196f4c62a28fe9804d03b7123cb71b84"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "dc604b10f7f11ff5c86b3d8d65329ac0",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "68419980d918e0f3537dcf7fdcf459a7cc3784861fb9be959320dd08760c256a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62733,
+      "md5": "fd30af9b51dc5cbb1feb118c56a1982e",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "902456ee1177bc9051a03ecae3edca3280c3d26aa0c7f440cf711e9d1fbf2de0"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S008/ses-01/eeg/sub-S008_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68311,
+      "md5": "3b0d57c0a3165dcee3232feb37639041",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "77d9e9b24e069f0c63aa71ce03efbf2f553a64011c773246eed1d82fdb8a7ae9"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20533604,
+      "md5": "d0ab2575405188a779cf202c759838fd",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "31c16b429141bc68159ef768e09cd08c95324fda0476f47bf6b387050f4f5f73"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "be227c7b516adcb7ae5bb049f4024ffe",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a03ea51f1e8b294f5264a7e9ae5a77151428308751e67901c3e1d419ee9aa0b6"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "a35287de2df82d0579d199467f795950",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "678aa9cee80c83c1a2b7a62924a8e92d00adc6bd87e7da1f76d76c7eb1c9c0bc"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62709,
+      "md5": "46be98b7b5e4184387a4b683fa84f6f8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b4e949e27751364a48c5e4d6a8087580808e6f5eebfddd4859319812e8b75fca"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S009/ses-01/eeg/sub-S009_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67848,
+      "md5": "ad0d746971d479183c72bef4b00b62cb",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "45bf9bc8d4cf2fe8bf1f281dd3b56a322fb7db6315e89aa7a599a5305a16a8b5"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 21803108,
+      "md5": "4e8c19364802b93a7e6def40bc88d9b1",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f186bc5afbd33dfc9fe92f75ae3d8323b6575fcf3a8e0851b1b1db30162519a7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "7fca6dabc3f42bac58bfb992fbc09b43",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "222c6edecc6f0a47e06fd50deec63cc31c6ee67e160020bf28041a7d7409159e"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "c692873bd7b34655f854356128ff2f43",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "cbc56910d7ea3bfcda538f4cf163244faedef15c70731f7f7ba415c1b51c9c68"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62765,
+      "md5": "7ebf5090c9bc5a81484256a93ddf4ea4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f131cd6fccbcd57c529702df29c8c60d3b2d05341173173ebc3286b6dbe2b92a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S010/ses-01/eeg/sub-S010_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67298,
+      "md5": "eb3bb580e459d9aeedb6339411f02d9a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "14d0667730575d5c8b77b49bac6564cdd224c527013aa27a5b0726973762aa64"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 26344108,
+      "md5": "fa56ec15bc2bacd16f9ccc38550e31c4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "233540bfed0c2ff8b49c3cc8e170183c3abe613dc5a2b6658c0410fa1bcbc59a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 518,
+      "md5": "7f3f584cd581010c95385982145b9086",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a47ff1907cd744311e746d35a1652ce386607261252ee212e2a92093b20c9320"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "bf808b42dc2badfa1d14cba4e593b20c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a81ad278e9762aa7bb6983a8204a3f250f6ed0af5a3134ec5b52b476524b08a0"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 63049,
+      "md5": "0a5f32ca2756c243100028eeb523ec5a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "5cf8515d54f25d90c5984aaa1be8f6bfcaa5d548806ed6938e8a6220164bd5b0"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S011/ses-01/eeg/sub-S011_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67835,
+      "md5": "e636942aea18e39fad2a177f05d64df7",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f05059673fac62bf0f01ecdd3d170764648224b1590c24f4f0deff77e498f303"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 23907092,
+      "md5": "2c478beb9c319ff5a951dc4df868434d",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "949264f589e604471ff6ad3dd42147c794112247c89ee994dea978a6c7ad51e2"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 529,
+      "md5": "9864c205933a4a66d22b47e7784b59f5",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "28666008688db616903d801372cfa225c001a4297d03f8270df48d9113908608"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "dd263ff2376916dee71d59c22275419c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "64f6eaafb15f08f198e537f26020fa831559e407eb46af3dbfe5e8a11cd51a97"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62823,
+      "md5": "d25ea5d3b363e57a20da6c86f05d7dcb",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "3989456b207728d4f2b0b88b3618c40892f0651cfc6f652d6efcd436cda1a1a4"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S012/ses-01/eeg/sub-S012_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67970,
+      "md5": "acd6835dc0ee170264fe056f1e31703d",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "bd89f4bd8df229580194e850c94e5b3869b0ce26afe458659c5fe04841758111"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 23911196,
+      "md5": "f6a62ae73cebf80f51c49062f260916a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "ce73af17425dcdf751b4caa0be5a535ed707c2f44580ef6af5131955768f0a11"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 529,
+      "md5": "b5a55b0ce16b23beac611501b0a85247",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "598fa8a8735c613dc180483c7c5cba66d10e8ce0ec1715390e38eb44364a6dd2"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "5f5e90a85ee3e65697dc3e58b85815b9",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "8cc94eb36df2f42c5d929fd1054754aba263b1a431c2e52eae451b41cf980d8d"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62827,
+      "md5": "3b0f2b1ee189387d748da4b7340988bb",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "dd0b202fa8dcdb9d5e2c3c20de09aab222bece8d0cf2ae90679c2d28a2aaf6b9"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S013/ses-01/eeg/sub-S013_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67998,
+      "md5": "ed979f7320f0045a57eeaaf37d1b2992",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "672c7bc7bf8340d865a71b6ef1da687e9ead920b9b1978a7254f45ab65ca5107"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 23906408,
+      "md5": "6aa75c271334f5a0797613ca4f77af33",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "df18c1ee572d0aa5d305af596a4666dcbf710e562b71cc923e347820f4cdf8e3"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 529,
+      "md5": "723012226d3d32b84b0ecf381c4dbed2",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "020e1a33401c7801432fd10616d538b34aec9fd593bf901ea98e962567958bb7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "00c82dc6b58e78d2fd80d921aa446884",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b2f3df43feb507cf489019c2e35cabbcf2d5be04543ce59d1d0caaf2b07c2e05"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62823,
+      "md5": "3482984804b5a57256a801f4eda4d8fb",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "9af0d872731eae3775f429d5e7d899710e07f9bff7f3054e45c9b4dfe29efda3"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S014/ses-01/eeg/sub-S014_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67735,
+      "md5": "a3ff79dd725180c01c11d6766fe7d7e3",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6b36437e05986ad870c86c722a011de4e57d20bfcd6d50c809cd5e8dba63ec55"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 24005512,
+      "md5": "12639e30fc0d72ae2b5838971a1847f4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "4274b2a8a1223d835558279d320ed0a1e87634a3dad4272e81e4ad5f1a7e2104"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 518,
+      "md5": "fa0e57127435c8331443ddcc810928ce",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b2f59a897879e832c235d050b5e9b204a9f6eb18d82912c0b4a6d97089f110a4"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "31d77196b5b5a3aa297c8d396a4b9b62",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "c08b691006f53797903e635fb4198510bf2665fed20c76235f99b44c555db4b1"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62835,
+      "md5": "f19aee1b67ee8e84bae705967ac5ee21",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "dc1788158b1d547e9b47ee09433d5a56044cc52ee23932a2475f957908338aa7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S015/ses-01/eeg/sub-S015_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68161,
+      "md5": "3cc0ad0ceedd21052a31f87baa22984b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "054a29274aa932024569450bfa39b73e1c88d884fcd01bd16c619992c1bf3f6b"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20623892,
+      "md5": "9e2210661c0332556ac7864b87f637ed",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "15507595f20800c61ee0bf5cd6a6f15eea048e82edefb01881225f8770c19ac8"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "490578bd54a628faaeabd87f5530acd7",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "19912317ffd5a4a4d8aa89fb10c351ceb8b9c09ed35dd6eaf463db83ff5df196"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "89ffb2a1ca20e095da6a56cd346a5664",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f9d16953bb925e016ad746adee94bda0939249ef09f6d2d99be1f2127a6c45e7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62737,
+      "md5": "5897dc21716ab919780984fb5f30955e",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7a0977666c50cb68a23b9b915dea7ed70d870ccb96f9247b9f759de2bd086cda"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S016/ses-01/eeg/sub-S016_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67714,
+      "md5": "36eff114e10d345cf839996a676cfc8c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "424349dc05d17a596241a5e1b4a7238db7ca5e8530b44537a30eee6fd1ca8636"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20593112,
+      "md5": "6417838147628e3a280295202054690e",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "4e460d9a89f7e568f6054c41a0d49e95d241ac559bde3767c4b99b35c79eae49"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "fd68da861c2f51c56fd6381f6b67f626",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "b07f34a7904c14f54998bd32fca54d92b7383a1e60499d412249ac8d859932b7"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "51b2b8b7ea7b77b4b20ace1e29dcc7b9",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "c1f330095b0db22d873c958fbde778a4f3c683144738724033d4330f77d13366"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62725,
+      "md5": "5060e2db6974b7c56a21b9e9497ecd24",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "2b59949cfb27ca228d148e66f5edb74c42c922a0bcce4db9e0f446c3d665c94a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S017/ses-01/eeg/sub-S017_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67990,
+      "md5": "ea182f69d926d52737af0df7d297388d",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "da308b7d67a254b3aed341c8b6a2571923ccb8a786f7b1d032b9b67f90c9c31a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20568488,
+      "md5": "4764a3d5a7f658f0299ee6e3fdd24d71",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "41dacd5ad549e4acc02628a7589a3521461af4e7568f0aacff7e0e5aff5459bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "57a451122035720fd27c4fb8a6d12826",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "3f5793da1d78857b1a75f20bbd29ee36d1a8d5025d2558429942d06274833f8c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "87a7a41b252a404632e670027697ad16",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "cab5a83a8a251038cc8fcc55a8bf42c04a5870a45c8f7b0d4620e4f9751079f6"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62721,
+      "md5": "42c00618789208e2ba034004a3c4b7c5",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "da346539c0f521ec38a53ad6f0889d9d8705903a21ece6ff93fa74db0599e6b1"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S018/ses-01/eeg/sub-S018_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68478,
+      "md5": "3a9df4fdc33eef48b7dc3584ef7acb5a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "ec14fe2ba7e6399943208f51e6322346629040f048673443bbfdb258554eb43a"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20543180,
+      "md5": "650b0fb3a711f8a2e41c8991530d2fd2",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6b9a2ab86a2e836e2f68b8a71b4aa2ef27a26274469330db4ba94f49ee5580f5"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "d5ade94625283ddce920f8ef558ef07d",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "e8d15fd0faff9fa38c66b543c57b0de80e82dd3efa928793705aa817acf32f78"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "4894a8667a4c7c3c99d97767444fc957",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f1437bdee62f93273d1a77bac0e4ec791a696aaf01cc456aa0aa582340c100b5"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62709,
+      "md5": "c929553465a7e25a0f7f6d557ddeb7a1",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "208550c9d7ee96f5dd3f9c17df2c3d9e890c9ac1c654a91b79b4944152e58381"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S019/ses-01/eeg/sub-S019_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 66558,
+      "md5": "33e898b04cb3498af245601df3ffe96e",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "79ac05e264afa8920f562934b386f3c871a2715b6f2954281c2fe8787fd876d0"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20532920,
+      "md5": "40639e4407a2dd7cbc2acc5a91ce1a0b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "f922755f3fc3837990379a08abff7d21ce640cdeba86ad368264b126404219ad"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "394fe007aabaae9e5794605ba7fcfa9c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "042b6ec4679a04e462a95170b378b8c850117458296c2bc9b186485996343553"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "d35f5460e0511677659712f6fa87e55b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "cac84f1521edc0af1c7daffd5516bd624881fc96ccc89b8d6ed2df58892d8eaa"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62709,
+      "md5": "f34d85b6f96bbf009f547719a797feb2",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0df0e3d16632e8517cb909ec35a8b280b1b9c75ba70186f836f0c3c7f47d17e8"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S020/ses-01/eeg/sub-S020_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68728,
+      "md5": "6e8434cfe603cc99db40370c78585aca",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "380fedd03ca31a14824543340551fd434825e5a5bebe366547eb475e7d128980"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 20547968,
+      "md5": "3478ede033e71004ba91a351c91c966c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "2bc8a8950fd7a6652222d027f5932a7523e57c616befc3d80a122b83f488909b"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "750ddbdf0afface4f2c12b4def3d7abd",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "d5bd17e73c31c5b0a1d4d3a2c8feb32659c23f16c987fc370add831f9de1e451"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "0d08158465d1f47817e5b731d3746412",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "23517adcef8db3e2ae617c447daf2307d79e83bcc94bd36625361ff5c0e74a58"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62713,
+      "md5": "a0fb07c516fb4d9eaf1173aa2bd20def",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "770afe49b910f87e4012a7f035f1266b3c42ee2f1d54fd6de8fdcfa6dc72befe"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S021/ses-01/eeg/sub-S021_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 67044,
+      "md5": "ac88620c76d9ea5ce050a4a45ae01d4b",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "2c9a7f1dbb6f80650d697e4309b0b5a2c68c1a40c0eedf97dd162fa758ed970c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_space-CapTrak_coordsystem.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_space-CapTrak_coordsystem.json",
+      "expected_bytes": 1056,
+      "md5": "fe7179460cc464d09447a3153af1dad8",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "0ae8b8e77d46a7279b40e7be718b468490b081be38062fdc3b551f0d5cb77501"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_space-CapTrak_electrodes.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_space-CapTrak_electrodes.tsv",
+      "expected_bytes": 1242,
+      "md5": "8516550aa5d6f7f3cef678a896784470",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "6bbe27ccf414b77d907a2bf8cd73c3e16bc9bfac69fbaa078bfd214035f5f5bf"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_channels.tsv",
+      "expected_bytes": 1146,
+      "md5": "fa9f9cefb1c384a4fe01f02aa65c56a4",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "871e893b998524f27a0c8ea8e8ed851b8a318bf814deb88bd54f6810e64c8472"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.eeg",
+      "expected_bytes": 21069176,
+      "md5": "8d3361d83d9a1e3044604dd994d22427",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "ea66b34dadf5e4dd7db6a62f84cfada911f5a0d180147d38e288292241159464"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.json",
+      "expected_bytes": 528,
+      "md5": "6199b997cc9065a4474b2cf1914d8f1c",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "d9dfeebdc106173a66061ed2307bcba6adfacfc0ed748ecf8dc65e75fe44dfd5"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.vhdr",
+      "expected_bytes": 1053,
+      "md5": "728d22ddae5006490895e94a8f9d438a",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7128915e6213b1f0acc1b6445c432d420da01816e4e4c3220abdd7b407709d1c"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_eeg.vmrk",
+      "expected_bytes": 62783,
+      "md5": "64e4e66cd5c21c8d338124fafc06525f",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "ba87e2ab4d176413f1951c0a32c55abbdd4f8ff32edfed1681ced0b3a63c4973"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_events.json",
+      "expected_bytes": 326,
+      "md5": "46514a04d5c8a8dcb00e1fa8c5d79469",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "7656e4270fedce77b29c89947a66c12d327fc41f89fd405b8530f45f207f071f"
+    },
+    {
+      "dataset_id": "ds006593",
+      "relative_path": "sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds006593/sub-S022/ses-01/eeg/sub-S022_ses-01_task-MatrixCalibration_run-01_events.tsv",
+      "expected_bytes": 68224,
+      "md5": "535904892563bbe1d3839fa781ed139d",
+      "source_revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license_status": "verified_cc0",
+      "sha256": "a8a0c986333946182f5397efb2255e6dab2a5863e6a56e032f334c2343572f35"
+    }
+  ]
+}

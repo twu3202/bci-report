@@ -1,0 +1,455 @@
+{
+  "schema": "hf_screening_seed_priorities_v1",
+  "purpose": "Metadata-first queue prioritization for broad public human scalp EEG screening; not source verification or benchmark approval.",
+  "selection_notes": [
+    "Prefer distinct cohorts, few-channel/cross-session/transfer value, and task diversity over volume.",
+    "Cards, mirrors, and catalog rows are leads only; source and license TODOs remain open.",
+    "Do not conflate recording rows with people or count a mirror as a distinct cohort."
+  ],
+  "seeds": [
+    {
+      "id": "Zachary1150/EESM19-Processed",
+      "repo_id": "Zachary1150/EESM19-Processed",
+      "sourceURL": "https://huggingface.co/datasets/Zachary1150/EESM19-Processed",
+      "reason": "Ear-EEG sleep processing lead; source cohort and preprocessing require verification.",
+      "proposed_task_family": "sleep",
+      "known_uncertainties": [
+        "Search discovery only; no source/card or signal validation yet",
+        "Original source, licence, subject identifiers and duplicate cohort relationships unresolved"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "Targeted public web search on 2026-09-12; sourceURL is the lead to verify",
+      "prioritization_confidence": "medium",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "Zachary1150/EventAAD-Processed",
+      "repo_id": "Zachary1150/EventAAD-Processed",
+      "sourceURL": "https://huggingface.co/datasets/Zachary1150/EventAAD-Processed",
+      "reason": "Event-related ear-EEG lead; verify task labels and pairing at source.",
+      "proposed_task_family": "auditory_attention",
+      "known_uncertainties": [
+        "Search discovery only; no source/card or signal validation yet",
+        "Original source, licence, subject identifiers and duplicate cohort relationships unresolved"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "Targeted public web search on 2026-09-12; sourceURL is the lead to verify",
+      "prioritization_confidence": "medium",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "WymanYYY/Sleep-EDF-V2",
+      "repo_id": "WymanYYY/Sleep-EDF-V2",
+      "sourceURL": "https://huggingface.co/datasets/WymanYYY/Sleep-EDF-V2",
+      "reason": "Sleep-EDF mirror found through targeted discovery; archive-only structure and licensing may make upstream source preferable.",
+      "proposed_task_family": "sleep",
+      "known_uncertainties": [
+        "Search discovery only; no source/card or signal validation yet",
+        "Original source, licence, subject identifiers and duplicate cohort relationships unresolved"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "Targeted public web search on 2026-09-12; sourceURL is the lead to verify",
+      "prioritization_confidence": "medium",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "monster-monash/CrowdSourced",
+      "sourceURL": "https://huggingface.co/datasets/monster-monash/CrowdSourced/tree/18ab93f65e4151fe467ec87439b28cbeabeac77c",
+      "reason": "14-channel consumer EEG with 13 people; useful device robustness and resting-state transfer lead.",
+      "proposed_task_family": "resting_state",
+      "known_uncertainties": [
+        "Other license requires upstream review",
+        "raw waveform and session structure TODO",
+        "card is not verified evidence"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "high",
+      "repo_id": "monster-monash/CrowdSourced",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "monster-monash/DREAMERA",
+      "sourceURL": "https://huggingface.co/datasets/monster-monash/DREAMERA",
+      "reason": "14-channel consumer EEG emotion elicitation expands task coverage while retaining low-cost relevance.",
+      "proposed_task_family": "affect",
+      "known_uncertainties": [
+        "Underlying cohort and DREAMERV overlap must be resolved",
+        "license/redistribution terms TODO",
+        "split and label provenance TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "monster-monash/DREAMERA",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "Bingchuan/BETA",
+      "sourceURL": "https://huggingface.co/datasets/Bingchuan/BETA/tree/d4290c0200db8a104e0f557349dc49f90ba79506",
+      "reason": "70-person, 40-target SSVEP lead adds a high-value BCI task and population scale.",
+      "proposed_task_family": "ssvep",
+      "known_uncertainties": [
+        "64-channel and 70-person figures are catalog metadata",
+        "source files and split design TODO",
+        "license must be checked at canonical source"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "high",
+      "repo_id": "Bingchuan/BETA",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "alibabasglab/KUL-mix",
+      "sourceURL": "https://huggingface.co/datasets/alibabasglab/KUL-mix/tree/b8aab928e3a381e271f587440d6d14a884cee48e",
+      "reason": "Auditory attention provides task diversity and cross-person transfer value.",
+      "proposed_task_family": "auditory_attention",
+      "known_uncertainties": [
+        "Research-only terms and upstream Zenodo license TODO",
+        "64-channel file layout/session structure TODO",
+        "not a benchmark-ready designation"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "alibabasglab/KUL-mix",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "Alljoined/Alljoined-1.6M",
+      "sourceURL": "https://huggingface.co/datasets/Alljoined/Alljoined-1.6M/tree/2596eb5cc116a4d2254370f96549752b5ac8747b",
+      "reason": "32-channel repeated-session affordable EEG is a strong future cross-session stress test.",
+      "proposed_task_family": "visual_rsvp",
+      "known_uncertainties": [
+        "Large storage footprint",
+        "NC-SA terms and dataset-specific restrictions TODO",
+        "repeated-session and subject counts need primary-source audit"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "high",
+      "repo_id": "Alljoined/Alljoined-1.6M",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ear-eeg-fm-benchmark-data",
+      "sourceURL": "https://huggingface.co/datasets/Zachary1150/ear-eeg-fm-benchmark-data",
+      "reason": "Paired ear/scalp hold is directly relevant to montage transfer and few-channel robustness.",
+      "proposed_task_family": "paired_ear_scalp_transfer",
+      "known_uncertainties": [
+        "Bundle contains multiple underlying cohorts; do not count as a new cohort",
+        "upstream license and montage pairing TODO",
+        "related ear-eeg-motor-raw may overlap"
+      ],
+      "already_downloaded": false,
+      "existing_evidence_file": "research/dataset_expansion_v2/BCI Arena Dataset Inventory.json",
+      "prioritization_confidence": "high",
+      "repo_id": "Zachary1150/ear-eeg-fm-benchmark-data",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds002181",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds002181",
+      "reason": "Large 226-person resting/baseline cohort offers population transfer value and a non-BCI task family.",
+      "proposed_task_family": "resting_state",
+      "known_uncertainties": [
+        "125-channel metadata is catalog indexed",
+        "canonical source and task labels TODO",
+        "license is as-indexed only",
+        "Indexed DOI is mockDOI; do not treat it as a valid persistent identifier."
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "high",
+      "repo_id": "EEGDash/ds002181",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds003194",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds003194",
+      "reason": "15-person multisession cohort directly supports session transfer evaluation.",
+      "proposed_task_family": "cognitive_or_clinical_multisession",
+      "known_uncertainties": [
+        "Task and channel details absent from compact catalog",
+        "canonical source, session boundaries, and license TODO",
+        "Neuroepo/placebo datasets require cohort relationship review before counting as independent populations."
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "high",
+      "repo_id": "EEGDash/ds003194",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds003195",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds003195",
+      "reason": "10-person placebo multisession cohort provides a distinct multisession/condition transfer lead.",
+      "proposed_task_family": "condition_transfer",
+      "known_uncertainties": [
+        "Task and channel details absent",
+        "canonical source, placebo labels, sessions, and license TODO",
+        "Neuroepo/placebo datasets require cohort relationship review before counting as independent populations."
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds003195",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds005028",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds005028",
+      "reason": "P300 online typing task adds ERP/communication diversity with 11 people.",
+      "proposed_task_family": "p300_erp",
+      "known_uncertainties": [
+        "Channel/session details absent",
+        "canonical source, event labels, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds005028",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds005383",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds005383",
+      "reason": "30-person natural reading semantic target task broadens language-related benchmark coverage.",
+      "proposed_task_family": "language_semantic_erp",
+      "known_uncertainties": [
+        "Channel and session details absent",
+        "canonical source, label definition, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds005383",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds006593",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds006593",
+      "reason": "21-person multimodal cBCI lead may support modality transfer and task diversity.",
+      "proposed_task_family": "multimodal_bci",
+      "known_uncertainties": [
+        "Scalp EEG subset and channel/session details TODO",
+        "multimodal labels and canonical source TODO",
+        "license as-indexed only"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds006593",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds007169",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds007169",
+      "reason": "18-person four-level n-back workload design offers graded task difficulty and transfer value.",
+      "proposed_task_family": "workload_nback",
+      "known_uncertainties": [
+        "Channel/session details absent",
+        "canonical source, labels, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds007169",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds007262",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds007262",
+      "reason": "18-person eight-level arithmetic workload task complements n-back with a distinct cognitive manipulation.",
+      "proposed_task_family": "workload_arithmetic",
+      "known_uncertainties": [
+        "Channel/session details absent",
+        "canonical source, level labels, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds007262",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds003800",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds003800",
+      "reason": "13-person auditory entrainment lead adds a controlled rhythmic sensory task.",
+      "proposed_task_family": "auditory_entrainment",
+      "known_uncertainties": [
+        "Channel/session details absent",
+        "canonical source, stimulus/event labels, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds003800",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "ds005048",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/ds005048",
+      "reason": "35-person 40 Hz auditory entrainment cohort offers scale for stimulus-response transfer.",
+      "proposed_task_family": "auditory_entrainment",
+      "known_uncertainties": [
+        "Channel/session details absent",
+        "possible overlap with other entrainment cohorts TODO",
+        "canonical source and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/ds005048",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "nm000121",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/nm000121",
+      "reason": "11-person SSVEP MAMEM lead adds an independent SSVEP cohort.",
+      "proposed_task_family": "ssvep",
+      "known_uncertainties": [
+        "Metadata details and canonical URL need verification",
+        "possible overlap with other MAMEM releases TODO",
+        "license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/nm000121",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "nm000123",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/nm000123",
+      "reason": "12-person SSVEP exoskeleton lead adds applied BCI diversity.",
+      "proposed_task_family": "ssvep_exoskeleton",
+      "known_uncertainties": [
+        "Metadata details and canonical URL need verification",
+        "task labels/session structure TODO",
+        "license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/nm000123",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "nm000163",
+      "sourceURL": "https://huggingface.co/datasets/EEGDash/nm000163",
+      "reason": "12-person c-VEP/Burst-VEP lead adds an alternative evoked BCI family.",
+      "proposed_task_family": "cvep",
+      "known_uncertainties": [
+        "May overlap with Castillos split entries; count one cohort only",
+        "canonical source, montage, and license TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/small-open-eeg-candidates.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "EEGDash/nm000163",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "perottofederico/things-eeg",
+      "sourceURL": "https://huggingface.co/datasets/perottofederico/things-eeg/tree/2850daa7ed87ac25939b2cee4df6fc8d66dde788",
+      "reason": "10-person visual-object EEG provides semantic decoding diversity and cross-task transfer value.",
+      "proposed_task_family": "visual_object_decoding",
+      "known_uncertainties": [
+        "Storage-heavy",
+        "HF has no license; upstream terms govern",
+        "63-channel/subject/session facts need primary-source verification"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "perottofederico/things-eeg",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+      "sourceURL": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset/tree/4036680b5fb0015472d55589da2f34c5a87a3c10",
+      "reason": "30-person imagined-handwriting task is a useful applied BCI diversity lead.",
+      "proposed_task_family": "imagined_handwriting",
+      "known_uncertainties": [
+        "Gated/hidden-label orientation",
+        "EEG channel count absent",
+        "NC-SA terms and upstream access TODO"
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "low",
+      "repo_id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+      "selection_role": "new_candidate"
+    },
+    {
+      "id": "monster-monash/STEW",
+      "sourceURL": "https://huggingface.co/datasets/monster-monash/STEW/tree/923edf62979de38b907b2c2ad684e3b734126bee",
+      "reason": "14-channel, 48-person workload lead; strong low-cost transfer candidate and useful task diversity.",
+      "proposed_task_family": "workload",
+      "known_uncertainties": [
+        "HF card/upstream license and labels need primary-source verification",
+        "window and subject split protocol TODO",
+        "processed release provenance TODO"
+      ],
+      "already_downloaded": true,
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "high",
+      "repo_id": "monster-monash/STEW",
+      "selection_role": "acquired_reference"
+    },
+    {
+      "id": "IESSEEG",
+      "sourceURL": "https://huggingface.co/datasets/roychowdhuryresearch/IESSEEG",
+      "reason": "Real EDF sample with conventional scalp plus ear references; useful clinical/robust ingestion lead.",
+      "proposed_task_family": "clinical_event_screening",
+      "known_uncertainties": [
+        "Only one recording sampled locally",
+        "device markers are not verified clinical labels",
+        "channel typing and subject-level splits need audit",
+        "DOI/source provenance TODO"
+      ],
+      "already_downloaded": true,
+      "existing_evidence_file": "research/dataset_expansion_v2/BCI Arena Dataset Inventory.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "roychowdhuryresearch/IESSEEG",
+      "selection_role": "acquired_reference"
+    },
+    {
+      "id": "ds003810",
+      "sourceURL": "https://openneuro.org/datasets/ds003810/versions/2.0.2",
+      "reason": "15-channel, 10-person low-cost EEG with multiple recordings is a direct few-channel and session-generalization lead.",
+      "proposed_task_family": "motor_imagery",
+      "known_uncertainties": [
+        "Full release already acquired",
+        "RUN0 is grasping; event-to-task mapping needs audit",
+        "license/source and leakage protocol TODO"
+      ],
+      "already_downloaded": true,
+      "existing_evidence_file": "research/dataset_expansion_v2/BCI Arena Dataset Inventory.json",
+      "prioritization_confidence": "high",
+      "repo_id": "EEGDash/ds003810",
+      "selection_role": "acquired_reference"
+    },
+    {
+      "id": "sajjad5221/emmt-eeg-raw-phases",
+      "sourceURL": "https://huggingface.co/datasets/sajjad5221/emmt-eeg-raw-phases/tree/9806cb29b09eb313301723075ec2dd911fabf06a",
+      "reason": "Previously inspected representation contains derived band powers and motion features; retain as a negative control for raw-signal screening, not an acquisition recommendation.",
+      "proposed_task_family": "language_phase",
+      "known_uncertainties": [
+        "A different raw-voltage source would be needed for raw EEG model evaluation."
+      ],
+      "already_downloaded": "unknown",
+      "existing_evidence_file": "research/dataset_expansion_v2/huggingface_general.json",
+      "prioritization_confidence": "medium",
+      "repo_id": "sajjad5221/emmt-eeg-raw-phases",
+      "selection_role": "negative_control_features_only"
+    }
+  ],
+  "root_review_notes": [
+    "Priority queue only; task labels are proposals, not verified task families.",
+    "Already acquired entries and EMMT features are controls; counts must not be advertised as new independent EEG datasets.",
+    "Original labels and source evidence remain to be reviewed."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "mi-rest",
+  "title": "Motor imagery & rest",
+  "short": "Transfer to a new person",
+  "dataset": "ds003810",
+  "subtitle": "Rest versus right-hand imagery",
+  "type": "accuracy",
+  "subjects": 10,
+  "observations": "1,200 epochs · 5 participant-disjoint folds",
+  "exposure": "15 channels · 2-second windows",
+  "status": "Research preview",
+  "xLabel": "Macro F1",
+  "yLabel": "Balanced accuracy",
+  "limitation": "Ten-person laboratory task with prompted rest. This is not continuous-idle monitoring or a physical low-channel headset test.",
+  "protocol": [
+    "5 participant-disjoint folds. All recordings from a person stay together. Each person contributes to the held-out predictions once.",
+    "epoching: two seconds from the class annotation onset; amplitude: converted to microvolts according to source calibration, then per-channel epoch mean removed; resampling: none; native sampling rate retained; selection: natural file/event order; when over the cap, retain 60 evenly spaced event indices per participant/class; source_units: Microv declared by BIDS channels.tsv; EDF physical dimension is absent, so MNE returns the source numeric microvolt values without SI scaling",
+    "One fixed seed (20260919); no early stopping or test-based tuning. EEGNet trains for 20 epochs per fold. Frozen encoders use training-only standardized ridge heads (alpha 100).",
+    "Labels: rest, right_hand_imagery.",
+    "Uniform-guessing reference: 50.00%. Scores weight participants equally. Intervals describe participant variation; cross-validation training sets overlap.",
+    "run 0 is real dominant-hand movement and is excluded; only imagery runs 1-4 contribute",
+    "the source reports online 0.5-45 Hz filtering",
+    "controlled cue-locked laboratory windows; this does not measure continuous false activations",
+    "foundation-model pretraining overlap is unknown",
+    "EEGNet three-seed mean 69.47%; sample SD 1.43 percentage points; range 68.17–71.00%. Main table retains the original fixed seed; this is not a confidence interval."
+  ],
+  "protocolId": "parallel-fixed-subject-folds-v1/ds003810",
+  "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+  "elapsed": 71.65976849989966,
+  "peakGb": null,
+  "auditSha": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2",
+  "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+  "backend": "Apple M5 / MPS",
+  "chanceLevel": 50.0,
+  "selection": "EEGNet three-seed mean 69.47%; sample SD 1.43 percentage points; range 68.17–71.00%. Main table retains the original fixed seed; this is not a confidence interval.",
+  "summarySha": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda",
+  "protocolSha": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+  "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced.",
+  "reviewedAt": "2026-09-20",
+  "reviewBasis": [
+    "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+  ],
+  "rightsScope": "Personal noncommercial research; aggregate results only",
+  "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim.",
+  "seedSensitivity": {
+    "model": "EEGNet",
+    "seeds": [
+      20260919,
+      20260920,
+      20260921
+    ],
+    "balancedAccuracyPercent": [
+      71.0,
+      69.25,
+      68.16666666666666
+    ],
+    "meanPercent": 69.47222222222221,
+    "sampleSdPercentagePoints": 1.4296788036064232,
+    "rangePercentagePoints": 2.833333333333343,
+    "auditSha": "17b31f77610fcb5f034eb013774b5f796b96b3f393ec763351f1c4c290e5c194",
+    "scope": "Same participants, folds, preprocessing and 20-epoch budget. Three seeds measure initialization variability, not population uncertainty. Main table retains its preselected seed; no best-seed selection."
+  }
+}

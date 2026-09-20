@@ -1,0 +1,330 @@
+{
+  "generatedAt": "2026-09-10T16:00:00+08:00",
+  "scope": "HF-hosted EEG corpus expansion; distinct canonical corpora only. Availability is not equivalent to download or benchmark readiness.",
+  "datasetCount": 15,
+  "datasets": [
+    {
+      "id": "monster-monash/STEW",
+      "canonicalCorpus": "STEW (Simultaneous Task EEG Workload)",
+      "sourceUrl": "https://huggingface.co/datasets/monster-monash/STEW/tree/923edf62979de38b907b2c2ad684e3b734126bee",
+      "upstreamUrl": "https://doi.org/10.21227/44r8-ya50",
+      "task": "Mental-workload classification from 2 s EEG windows; HF/MONSTER label is self-rating >4 versus <=4.",
+      "subjects": 48,
+      "channels": 14,
+      "samplingHz": 128,
+      "license": "CC BY 4.0 (HF card cites the upstream IEEE DataPort release)",
+      "access": "Anonymous HF download; upstream page may use its own delivery flow.",
+      "filesBytes": 1438066638,
+      "downloadStatus": "Full minimal modeling payload downloaded: X, y, subject IDs, five supplied split files, card and loader; CSV duplicate omitted.",
+      "readiness": "Strongest near-term new track after protocol review.",
+      "risks": "Windows overlap heavily (2 s length; exact stride requires confirmation from preprocessing provenance); evaluate at subject level. Supplied five participant-level holdouts overlap with each other and are not a disjoint 5-fold partition. Card label definition must not be replaced by rest-versus-task condition without upstream reconstruction.",
+      "evidence": [
+        "https://huggingface.co/datasets/monster-monash/STEW",
+        "https://ieeexplore.ieee.org/document/8478165",
+        "https://doi.org/10.21227/44r8-ya50"
+      ]
+    },
+    {
+      "id": "jalauer/Cavanagh2018b",
+      "canonicalCorpus": "Cavanagh 2018 Parkinson EEG (resting-state complement to Cavanagh2018a oddball)",
+      "sourceUrl": "https://huggingface.co/datasets/jalauer/Cavanagh2018b/tree/3859849d895520fb782eb2de70be0855231e9410",
+      "upstreamUrl": "https://predict.cs.unm.edu/downloads.php",
+      "task": "Parkinson disease versus matched control from eyes-open/eyes-closed resting EEG; paired cohort context with auditory oddball repository Cavanagh2018a.",
+      "subjects": 56,
+      "channels": 67,
+      "samplingHz": 500,
+      "license": "PDDL 1.0 in mirrored LICENSE; verify upstream rightsholder grant before redistribution.",
+      "access": "Anonymous HF files; no gate observed.",
+      "filesBytes": 2088747973,
+      "downloadStatus": "One raw subject/session file downloaded and parsed; 19,231,069 bytes of 2,088,747,973-byte repository.",
+      "readiness": "Useful clinical/cross-session candidate, sample-only readiness.",
+      "risks": "HF uploader is a mirror, not creator. PD participants can have two medication sessions while controls generally have one; splits must be by person, not file. Sample has 67 channels, including non-scalp channels; card describes 64 scalp channels.",
+      "evidence": [
+        "https://huggingface.co/datasets/jalauer/Cavanagh2018b",
+        "https://huggingface.co/datasets/jalauer/Cavanagh2018a",
+        "https://www.sciencedirect.com/science/article/pii/S1388245717308677"
+      ]
+    },
+    {
+      "id": "jalauer/Brown2020",
+      "canonicalCorpus": "Brown 2020 Parkinson reward-processing EEG",
+      "sourceUrl": "https://huggingface.co/datasets/jalauer/Brown2020/tree/b33cb61164ed883a9d299b310df513d37f1c2b6c",
+      "upstreamUrl": "https://predict.cs.unm.edu/downloads.php",
+      "task": "Reward-processing ERP / Parkinson classification; probabilistic feedback with medication ON/OFF sessions.",
+      "subjects": 56,
+      "channels": 64,
+      "samplingHz": 500,
+      "license": "PDDL 1.0 in mirrored LICENSE; upstream authority not independently reconfirmed.",
+      "access": "Anonymous HF raw/epoched MATLAB files.",
+      "filesBytes": 18305055662,
+      "downloadStatus": "Not downloaded; metadata/card audited.",
+      "readiness": "Later clinical track.",
+      "risks": "18.3 GB; participant grouping is mandatory because PD participants repeat across medication sessions. Mirrored release and bad-channel metadata require careful reconstruction.",
+      "evidence": [
+        "https://huggingface.co/datasets/jalauer/Brown2020",
+        "https://doi.org/10.1016/j.brainres.2019.146541"
+      ]
+    },
+    {
+      "id": "jalauer/Gruendler2009",
+      "canonicalCorpus": "Gruendler 2009 flanker/OCD EEG",
+      "sourceUrl": "https://huggingface.co/datasets/jalauer/Gruendler2009/tree/a2fa8aa7a39f668058b715d58b049353eea4f9e7",
+      "upstreamUrl": "https://predict.cs.unm.edu/downloads.php",
+      "task": "Flanker response-conflict/error-related negativity and high/low obsessive-compulsive symptom grouping.",
+      "subjects": 46,
+      "channels": 64,
+      "samplingHz": null,
+      "license": "PDDL 1.0 in mirrored LICENSE; upstream authority not independently reconfirmed.",
+      "access": "Anonymous HF CNT files.",
+      "filesBytes": 7385651142,
+      "downloadStatus": "Not downloaded; metadata/card audited.",
+      "readiness": "Potential ERP/cognitive-control track after event and sampling audit.",
+      "risks": "Raw and “ready” CNT variants coexist and may duplicate participants; sampling rate is file-defined and not stated in the card; psychometric thresholding and covariates need a frozen protocol.",
+      "evidence": [
+        "https://huggingface.co/datasets/jalauer/Gruendler2009",
+        "https://doi.org/10.1016/j.neuropsychologia.2009.03.010"
+      ]
+    },
+    {
+      "id": "jalauer/Albrecht2019",
+      "canonicalCorpus": "Albrecht 2019 schizophrenia Simon-task EEG",
+      "sourceUrl": "https://huggingface.co/datasets/jalauer/Albrecht2019/tree/53b7c8732740f56325687eca673ae2eed8a2c5f6",
+      "upstreamUrl": "https://predict.cs.unm.edu/downloads.php",
+      "task": "Schizophrenia/control and reinforcement learning under Simon conflict.",
+      "subjects": 78,
+      "channels": 64,
+      "samplingHz": 1000,
+      "license": "PDDL 1.0 in mirrored LICENSE; upstream authority not independently reconfirmed.",
+      "access": "Anonymous HF MATLAB/metadata files.",
+      "filesBytes": 28913818588,
+      "downloadStatus": "Not downloaded; metadata/card audited.",
+      "readiness": "Later clinical/cognitive-control track.",
+      "risks": "Large preprocessed release; one file is in Not_used and uploader states exclusion reason is uncertain. Freeze usable-participant inventory before scoring.",
+      "evidence": [
+        "https://huggingface.co/datasets/jalauer/Albrecht2019",
+        "https://doi.org/10.1016/j.neuropsychologia.2018.10.007",
+        "https://huggingface.co/datasets/jalauer/Albrecht2019/discussions/1"
+      ]
+    },
+    {
+      "id": "jalauer/Singh2021",
+      "canonicalCorpus": "Singh 2021 Parkinson interval-timing EEG",
+      "sourceUrl": "https://huggingface.co/datasets/jalauer/Singh2021/tree/85a6b39f9cd474925e354f2e0d7494ae28db613a",
+      "upstreamUrl": "https://predict.cs.unm.edu/downloads.php",
+      "task": "3 s versus 7 s interval timing and Parkinson/control cognition; subset has medication ON/OFF sessions.",
+      "subjects": 120,
+      "channels": 64,
+      "samplingHz": 500,
+      "license": "PDDL 1.0 in mirrored LICENSE; upstream authority not independently reconfirmed.",
+      "access": "Anonymous HF BrainVision files.",
+      "filesBytes": 23482883863,
+      "downloadStatus": "Not downloaded; metadata/card audited.",
+      "readiness": "Later clinical/timing track.",
+      "risks": "Card states 83 PD plus 37 controls; nine PD participants have repeated ON/OFF sessions whose pair mapping must be reconstructed. Split strictly by person.",
+      "evidence": [
+        "https://huggingface.co/datasets/jalauer/Singh2021",
+        "https://doi.org/10.1038/s41531-021-00158-x"
+      ]
+    },
+    {
+      "id": "monster-monash/CrowdSourced",
+      "canonicalCorpus": "Crowdsourced EEG experiments",
+      "sourceUrl": "https://huggingface.co/datasets/monster-monash/CrowdSourced/tree/18ab93f65e4151fe467ec87439b28cbeabeac77c",
+      "upstreamUrl": "https://osf.io/9bvgh/",
+      "task": "Eyes-open versus eyes-closed resting-state classification on consumer EEG.",
+      "subjects": 13,
+      "channels": 14,
+      "samplingHz": 128,
+      "license": "Other on HF/MONSTER card; upstream reuse terms must be checked.",
+      "access": "Anonymous HF repository; processed arrays require no account.",
+      "filesBytes": 918487034,
+      "downloadStatus": "Not downloaded; card and repository metadata audited.",
+      "readiness": "Good low-cost-device robustness candidate after license resolution.",
+      "risks": "Only 13 of 60 recruits completed both conditions; 2 s windows use a 32-sample stride and are highly overlapping. Original acquisition was 2048 Hz then downsampled; three Emotiv device variants are mixed.",
+      "evidence": [
+        "https://huggingface.co/datasets/monster-monash/CrowdSourced",
+        "https://osf.io/9bvgh/",
+        "https://doi.org/10.1016/j.heliyon.2023.e18689"
+      ]
+    },
+    {
+      "id": "monster-monash/DREAMERA + monster-monash/DREAMERV",
+      "canonicalCorpus": "DREAMER",
+      "sourceUrl": "https://huggingface.co/datasets/monster-monash/DREAMERA",
+      "upstreamUrl": "https://zenodo.org/records/546113",
+      "task": "Binary arousal and valence classification from 2 s consumer EEG windows during audiovisual emotion elicitation.",
+      "subjects": 23,
+      "channels": 14,
+      "samplingHz": 128,
+      "license": "Other on both HF/MONSTER cards; do not infer an open license from public availability.",
+      "access": "Anonymous HF repositories, 2.44 GB each.",
+      "filesBytes": 4887372048,
+      "downloadStatus": "Not downloaded; both cards audited and counted as one canonical cohort.",
+      "readiness": "Potential affect track only after license and split audit.",
+      "risks": "DREAMERA and DREAMERV are two labels/preparations of the same participants and must not count as two datasets. Strongly overlapping windows and self-report thresholding; separate repositories duplicate X.",
+      "evidence": [
+        "https://huggingface.co/datasets/monster-monash/DREAMERA",
+        "https://huggingface.co/datasets/monster-monash/DREAMERV",
+        "https://zenodo.org/records/546113",
+        "https://doi.org/10.1109/JBHI.2017.2688239"
+      ]
+    },
+    {
+      "id": "perottofederico/things-eeg",
+      "canonicalCorpus": "THINGS-EEG2",
+      "sourceUrl": "https://huggingface.co/datasets/perottofederico/things-eeg/tree/2850daa7ed87ac25939b2cee4df6fc8d66dde788",
+      "upstreamUrl": "https://osf.io/anp5v/",
+      "task": "Visual-object classification/retrieval from image-evoked EEG.",
+      "subjects": 10,
+      "channels": 63,
+      "samplingHz": 250,
+      "license": "HF mirror has no license field; upstream THINGS-EEG2 terms must govern.",
+      "access": "Anonymous HF Parquet, but repository is 54.4 GB and rows embed images/features.",
+      "filesBytes": 54414177503,
+      "downloadStatus": "Not downloaded; schema/card audited. Multiple caption variants excluded as mirrors of the same EEG corpus.",
+      "readiness": "Strong semantic-decoding candidate, storage-heavy.",
+      "risks": "HF schema reports 63x250 float32 EEG but mixes EEG, stimulus images and derived embeddings; verify whether 250 samples represent a 1 s epoch and the exact upstream preprocessing. Prevent image/text label leakage.",
+      "evidence": [
+        "https://huggingface.co/datasets/perottofederico/things-eeg",
+        "https://www.nature.com/articles/s41597-022-01844-2",
+        "https://osf.io/anp5v/"
+      ]
+    },
+    {
+      "id": "sajjad5221/emmt-eeg-raw-phases",
+      "canonicalCorpus": "EMMT",
+      "sourceUrl": "https://huggingface.co/datasets/sajjad5221/emmt-eeg-raw-phases/tree/9806cb29b09eb313301723075ec2dd911fabf06a",
+      "upstreamUrl": "https://github.com/ufal/eyetracked-multi-modal-translation",
+      "task": "Read/Translate/See/Update phase classification.",
+      "subjects": 27,
+      "channels": 4,
+      "samplingHz": 256,
+      "license": "CC BY 4.0 on HF card; verify against upstream repository files for redistribution.",
+      "access": "Anonymous HF Parquet.",
+      "filesBytes": 90829874,
+      "downloadStatus": "Repository files inspected then waveform payload not retained; card/schema audited.",
+      "readiness": "Feature-only, not suitable for raw-waveform FM benchmark.",
+      "risks": "Despite “raw” in the repo title, fields are band_power [time,20], motion [time,6], HSI and artifact flags; no voltage waveform field. HF split uses 27 participants, while the upstream paper reports 43, so this is a subset.",
+      "evidence": [
+        "https://huggingface.co/datasets/sajjad5221/emmt-eeg-raw-phases",
+        "https://github.com/ufal/eyetracked-multi-modal-translation",
+        "https://arxiv.org/abs/2204.02905"
+      ]
+    },
+    {
+      "id": "Bingchuan/BETA",
+      "canonicalCorpus": "BETA SSVEP benchmark",
+      "sourceUrl": "https://huggingface.co/datasets/Bingchuan/BETA/tree/d4290c0200db8a104e0f557349dc49f90ba79506",
+      "upstreamUrl": "https://doi.org/10.3389/fnins.2020.00627",
+      "task": "40-target SSVEP cued-spelling frequency recognition.",
+      "subjects": 70,
+      "channels": 64,
+      "samplingHz": 250,
+      "license": "CC BY 4.0 on HF card and Frontiers article.",
+      "access": "Anonymous HF files; 5.28 GB.",
+      "filesBytes": 5283064769,
+      "downloadStatus": "Not downloaded; card/repository metadata audited.",
+      "readiness": "High-value SSVEP track, too large for this bounded fetch.",
+      "risks": "Distributed data are preprocessed/downsampled tensors; first 15 subjects use shorter trial design than subjects 16–70. Protocol must respect subject and block structure.",
+      "evidence": [
+        "https://huggingface.co/datasets/Bingchuan/BETA",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ]
+    },
+    {
+      "id": "alibabasglab/KUL-mix",
+      "canonicalCorpus": "KU Leuven Auditory Attention Detection",
+      "sourceUrl": "https://huggingface.co/datasets/alibabasglab/KUL-mix/tree/b8aab928e3a381e271f587440d6d14a884cee48e",
+      "upstreamUrl": "https://zenodo.org/records/4004271",
+      "task": "EEG-conditioned attended-speaker extraction / left-right auditory attention.",
+      "subjects": 16,
+      "channels": 64,
+      "samplingHz": 128,
+      "license": "CC BY-NC-SA 4.0 on HF derivative card; upstream Zenodo terms also apply.",
+      "access": "Anonymous HF WebDataset, 7.19 GB repository / 3.09 GB current viewer payload.",
+      "filesBytes": 7187257165,
+      "downloadStatus": "Not downloaded; card/repository metadata audited.",
+      "readiness": "Research-only auditory-attention candidate.",
+      "risks": "Modified derivative mixes speech and EEG, not canonical raw release. Upstream data were recorded at 8192 Hz then filtered, artifact-cleaned and downsampled to 128 Hz. Published warning identifies strong eye-gaze shortcut bias.",
+      "evidence": [
+        "https://huggingface.co/datasets/alibabasglab/KUL-mix",
+        "https://zenodo.org/records/4004271",
+        "https://doi.org/10.1088/1741-2552/ad2214"
+      ]
+    },
+    {
+      "id": "Fudan-fMRI/CineBrain",
+      "canonicalCorpus": "CineBrain",
+      "sourceUrl": "https://huggingface.co/datasets/Fudan-fMRI/CineBrain/tree/bb3afbd08cb391445aa8cc92e6b3c72f4645945b",
+      "upstreamUrl": "https://arxiv.org/abs/2503.06940",
+      "task": "Naturalistic audiovisual narrative alignment across EEG, fMRI and video.",
+      "subjects": 6,
+      "channels": 64,
+      "samplingHz": 1000,
+      "license": "Apache-2.0 on HF card; audiovisual stimulus rights and participant-data terms need separate review.",
+      "access": "Anonymous HF repository, about 193 GB total.",
+      "filesBytes": 192715031322,
+      "downloadStatus": "Not downloaded; card/repository metadata audited.",
+      "readiness": "Specialized multimodal track, not MVP-scale.",
+      "risks": "Only six participants; EEG payload is preprocessed and segmented. Card/community discussion documents corrected upload issues; pin revision. TV episode redistribution rights may differ from EEG-data license.",
+      "evidence": [
+        "https://huggingface.co/datasets/Fudan-fMRI/CineBrain",
+        "https://arxiv.org/abs/2503.06940",
+        "https://huggingface.co/datasets/Fudan-fMRI/CineBrain/discussions/4"
+      ]
+    },
+    {
+      "id": "Alljoined/Alljoined-1.6M",
+      "canonicalCorpus": "Alljoined-1.6M",
+      "sourceUrl": "https://huggingface.co/datasets/Alljoined/Alljoined-1.6M/tree/2596eb5cc116a4d2254370f96549752b5ac8747b",
+      "upstreamUrl": "https://arxiv.org/abs/2508.18571",
+      "task": "Large-scale RSVP visual decoding on affordable consumer EEG across repeated sessions.",
+      "subjects": 20,
+      "channels": 32,
+      "samplingHz": 256,
+      "license": "CC BY-NC-SA 4.0 tag plus dataset-specific terms in card; research/noncommercial restrictions apply.",
+      "access": "Anonymous repository browsing; full release 134 GB and card includes additional terms.",
+      "filesBytes": 134131932891,
+      "downloadStatus": "Not downloaded; card/repository metadata audited.",
+      "readiness": "Excellent future low-cost/cross-session stress test, too large for MVP.",
+      "risks": "Noncommercial/share-alike and additional dataset terms; 1.6M highly structured image trials can leak stimulus identity. Four sessions per subject (one retake) require subject/session-aware splits.",
+      "evidence": [
+        "https://huggingface.co/datasets/Alljoined/Alljoined-1.6M",
+        "https://arxiv.org/abs/2508.18571",
+        "https://nemar.org/dataset/nm000134"
+      ]
+    },
+    {
+      "id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+      "canonicalCorpus": "ACM MM 2026 EEG-fNIRS Handwriting Trajectory Challenge",
+      "sourceUrl": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset/tree/4036680b5fb0015472d55589da2f34c5a87a3c10",
+      "upstreamUrl": "https://hairongchendavid.github.io/Multimodal-BCI/",
+      "task": "Four-class imagined-handwriting classification from synchronized EEG and fNIRS.",
+      "subjects": 30,
+      "channels": null,
+      "samplingHz": null,
+      "license": "CC BY-NC-SA 4.0 on HF card.",
+      "access": "HF gate is auto; 20 train subjects and 10 test subjects, 15.78 GB repository.",
+      "filesBytes": 15777442566,
+      "downloadStatus": "Not downloaded; card/repository metadata audited.",
+      "readiness": "Interesting competition track, but gated and hidden-label oriented.",
+      "risks": "Test labels are not public; BDF annotations were removed. Channel count and sampling rate are not stated in the HF card and must be read from BDF headers after access. Noncommercial terms.",
+      "evidence": [
+        "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+        "https://hairongchendavid.github.io/Multimodal-BCI/",
+        "https://openreview.net/pdf?id=u2SnYEmWIK"
+      ]
+    }
+  ],
+  "deduplicationNotes": [
+    "DREAMERA and DREAMERV are one canonical DREAMER cohort with different labels.",
+    "perottofederico THINGS-EEG caption/single-subject variants and other THINGS-EEG uploads are mirrors/derivatives of THINGS-EEG2, counted once.",
+    "EEGDash repositories are metadata pointers to OpenNeuro/NEMAR, not HF-hosted waveform copies, and are excluded from this count.",
+    "JLB seizure_eeg train/dev/eval shards and smam CHB-MIT windows are derivatives of restricted/upstream CHB-MIT/TUH-family data; uploader tags cannot replace upstream terms.",
+    "Synthetic, text-only, image-rendered, and feature-only uploads are not counted as raw-waveform benchmark-ready datasets."
+  ],
+  "localArtifacts": [
+    "experiments/dataset_expansion_v2/hf_general/fetch_and_audit.py",
+    "experiments/dataset_expansion_v2/hf_general/download-audit.json"
+  ]
+}

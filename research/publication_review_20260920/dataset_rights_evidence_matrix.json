@@ -1,0 +1,279 @@
+{
+  "reviewed_at": "2026-09-20",
+  "scope": "Personal scientific research site; free; no ads or fees; no raw EEG upload/redistribution; public output limited to cohort-level benchmark aggregates. Statuses are risk-screening recommendations, not legal conclusions.",
+  "cross_cutting": {
+    "openneuro": {
+      "terms": "OpenNeuro requires uploaders to attest that they have the necessary ethics permissions, that data contain no identifiable PHI, and that data are not subject to GDPR protections; public datasets are released under CC0.",
+      "limit": "This is repository-level uploader attestation, not proof of each consent form's scope. CC0 does not waive privacy, publicity, confidentiality, or third-party rights.",
+      "sources": [
+        "https://docs.openneuro.org/faq",
+        "https://docs.openneuro.org/user_guide.html"
+      ]
+    },
+    "physionet": {
+      "terms": "The reviewed records use ODC Attribution 1.0; attribution and record-specific citations are required.",
+      "limit": "ODC-By addresses database rights and expressly leaves rights in individual contents and privacy outside its grant. Historic PhysioNet guidance describes contributed data as fully deidentified, but dataset-specific consent scope remains controlling.",
+      "sources": [
+        "https://opendatacommons.org/licenses/by/1-0/",
+        "https://archive.physionet.org/faq.shtml"
+      ]
+    },
+    "bnci": {
+      "terms": "Licenses are record-specific: 2014-001/004 are CC BY-ND 4.0; 2014-008/009 are CC BY-NC-ND 4.0.",
+      "limit": "BNCI submission guidance requires anonymization and declarations about consent/ethics, but it is not dataset-specific proof. ND prohibits distributing adapted material; NC additionally limits use to noncommercial purposes.",
+      "sources": [
+        "https://bnci-horizon-2020.eu/database/data-sets",
+        "https://bnci-horizon-2020.eu/database/submit-new-data-set"
+      ]
+    }
+  },
+  "datasets": [
+    {
+      "id": "ds003810",
+      "source": "OpenNeuro snapshot 2.0.2",
+      "upstream_url": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+      "revision": "c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+      "license": "CC0-1.0",
+      "restrictions": "No copyright attribution condition, but cite the dataset and Peterson et al.; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; no mirror in the reviewed acquisition path.",
+      "citation_required": true,
+      "privacy_ethics": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced.",
+      "status": "candidate_eligible",
+      "status_reason": "Clear CC0 snapshot plus dataset-specific ethics and signed-consent evidence; aggregate-only publication materially limits privacy exposure.",
+      "sources": [
+        "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+      ]
+    },
+    {
+      "id": "physionet-eegmat-1.0.0",
+      "source": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0",
+      "upstream_url": "https://physionet.org/content/eegmat/1.0.0/",
+      "revision": "1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "restrictions": "Attribute the database and cite both the record and Zyma et al.; the license does not grant rights in individual contents or privacy rights.",
+      "provenance": "Direct pinned PhysioNet release.",
+      "citation_required": true,
+      "privacy_ethics": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+      "status": "candidate_eligible",
+      "status_reason": "Attribution license and study-specific approval/consent are documented; eligibility assumes aggregate-only output and exclusion of subject-info fields.",
+      "sources": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ]
+    },
+    {
+      "id": "eesm19-scalp-sleep",
+      "source": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2",
+      "upstream_url": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+      "revision": {
+        "mirror": "fb045012b58a0b755f9fedf5931dff9b64a9797f",
+        "upstream": "0857858f7a2ba1582930f23eca3ec56f90a96da9"
+      },
+      "license": "CC0-1.0 declared by upstream and mirror",
+      "restrictions": "Cite the dataset and EESM19 publication; privacy and third-party rights remain.",
+      "provenance": "Processed H5 mirror derived from OpenNeuro ds005185. The mirror card agrees on CC0, but the derived-file transformation is described by the mirror rather than independently certified by upstream.",
+      "citation_required": true,
+      "privacy_ethics": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed.",
+      "status": "candidate_eligible",
+      "status_reason": "Clear upstream CC0 and study ethics evidence; use only the pinned scalp-signal derivative and publish aggregates, with provenance disclosed.",
+      "sources": [
+        "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "https://www.nature.com/articles/s41598-019-53115-3"
+      ]
+    },
+    {
+      "id": "beta-ssvep-70",
+      "source": "Hugging Face mirror of BETA database, Figshare record 12264401 v3",
+      "upstream_url": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "revision": {
+        "mirror": "d4290c0200db8a104e0f557349dc49f90ba79506",
+        "upstream": "Figshare version 3, 2022-06-15"
+      },
+      "license": "CC BY 4.0",
+      "restrictions": "Attribution required. Participant consent described use for non-commercial scientific research, a narrower operational boundary than the copyright license; minors required parental consent.",
+      "provenance": "Processed mirror identifies the canonical Figshare record and repeats CC BY 4.0; upstream version is pinned separately.",
+      "citation_required": true,
+      "privacy_ethics": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown.",
+      "status": "candidate_eligible",
+      "status_reason": "Eligible only under the stated personal, research-led, noncommercial operation. Any ads, sponsorship, fees, or use directed toward commercial advantage requires fresh review or permission.",
+      "sources": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ]
+    },
+    {
+      "id": "BNCI2014-008",
+      "source": "BNCI Horizon 2020 catalog",
+      "upstream_url": "https://bnci-horizon-2020.eu/database/data-sets/008-2014",
+      "revision": "Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-NC-ND 4.0",
+      "restrictions": "Attribution required; noncommercial use only; adapted material may not be distributed. Cite the associated publication.",
+      "provenance": "Direct BNCI record; no separate release hash exposed.",
+      "citation_required": true,
+      "privacy_ethics": "Study paper reports Fondazione Santa Lucia ethics approval and informed consent. The eight-person ALS cohort is highly sensitive; the description links pseudonymous codes to exact age, sex, ALSFRS-R score, and onset type. Consent for public secondary benchmark publication was not located.",
+      "status": "withheld",
+      "status_reason": "Small clinical cohort and linked health attributes create disproportionate reidentification risk; aggregate-only output does not resolve the missing secondary-publication consent evidence.",
+      "sources": [
+        "https://bnci-horizon-2020.eu/database/data-sets/008-2014/description.pdf",
+        "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2013.00732/full"
+      ]
+    },
+    {
+      "id": "BNCI2014-009",
+      "source": "BNCI Horizon 2020 catalog",
+      "upstream_url": "https://bnci-horizon-2020.eu/database/data-sets/009-2014",
+      "revision": "Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-NC-ND 4.0",
+      "restrictions": "Attribution required; noncommercial use only; adapted material may not be distributed. Cite the associated publication.",
+      "provenance": "Direct BNCI record; no separate release hash exposed.",
+      "citation_required": true,
+      "privacy_ethics": "Ten healthy participants, all female; the description links exact ages to pseudonymous IDs. Dataset-specific ethics approval and consent language were not located in the record or cited GeoSpell article.",
+      "status": "needs_clarification",
+      "status_reason": "License permits only noncommercial unadapted redistribution, and the consent/ethics chain for public secondary results remains unverified.",
+      "sources": [
+        "https://bnci-horizon-2020.eu/database/data-sets/009-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ]
+    },
+    {
+      "id": "stew-processed",
+      "source": "monster-monash/STEW Hugging Face processed mirror",
+      "upstream_url": "https://ieee-dataport.org/open-access/simultaneous-task-eeg-workload-dataset",
+      "revision": "923edf62979de38b907b2c2ad684e3b734126bee",
+      "license": "Mirror declares CC BY 4.0; exact upstream DataPort license not independently verified",
+      "restrictions": "Primary paper describes availability to qualified investigators for scientific research. Do not treat the mirror's CC BY tag as expanding upstream permission.",
+      "provenance": "Mirror contains processed CSV/NPY products and subject identifiers derived from STEW; a complete upstream-to-derivative rights chain was not found.",
+      "citation_required": true,
+      "privacy_ethics": "Paper reports written consent, Declaration of Helsinki compliance, and NTU IRB-2014-04-026. The exact consent scope and DataPort reuse terms were not accessible in this review.",
+      "status": "needs_clarification",
+      "status_reason": "Ethics evidence is positive, but upstream license and the processed mirror's authority to apply CC BY remain unresolved.",
+      "sources": [
+        "https://huggingface.co/datasets/monster-monash/STEW/tree/923edf62979de38b907b2c2ad684e3b734126bee",
+        "https://personal.ntu.edu.sg/elpwang/PDF_web/08478165.pdf"
+      ]
+    },
+    {
+      "id": "ds005383",
+      "source": "OpenNeuro snapshot 1.0.0",
+      "upstream_url": "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+      "revision": "ad78f3db430e636595b1b1c08417492f3067a25e",
+      "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+      "restrictions": "Honor the stricter CC BY attribution requirement. Do not reproduce third-party Chinese stimulus text sourced from Baidu Baike, WeChat accounts, or news.",
+      "provenance": "Direct OpenNeuro snapshot; publication also points to author-hosted raw/preprocessed data. The license-label mismatch is conservatively resolved in favor of attribution.",
+      "citation_required": true,
+      "privacy_ethics": "Paper reports Tianjin University ethics approval TJUE-2024-402, written consent, deidentification, and explicit participant permission for open sharing. Local participants.tsv appears column-shifted/malformed, so it must not feed public metadata.",
+      "status": "candidate_eligible",
+      "status_reason": "Strong study-specific open-sharing evidence. Aggregate metrics avoid redistribution of stimulus text and participant metadata; credit under CC BY.",
+      "sources": [
+        "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+        "https://www.nature.com/articles/s41597-025-05036-2"
+      ]
+    },
+    {
+      "id": "ds006593",
+      "source": "OpenNeuro snapshot 1.0.0",
+      "upstream_url": "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+      "revision": "b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license": "CC0-1.0",
+      "restrictions": "No copyright attribution condition, but cite the dataset; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; NEMAR independently identifies its copy as derived from this OpenNeuro record.",
+      "citation_required": true,
+      "privacy_ethics": "Dataset metadata/README report IRB approval #10-05-2022 and written informed consent. Participant metadata contains pseudonymous IDs and study descriptors without demographic fields. Eye-tracking and raw signals remain off-site.",
+      "status": "candidate_eligible",
+      "status_reason": "Pinned CC0 release with dataset-specific IRB and consent evidence and comparatively low metadata exposure.",
+      "sources": [
+        "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "https://nemar.org/dataset/on006593"
+      ]
+    },
+    {
+      "id": "physionet-eegmmidb-1.0.0",
+      "source": "PhysioNet EEG Motor Movement/Imagery Dataset 1.0.0",
+      "upstream_url": "https://physionet.org/content/eegmmidb/1.0.0/",
+      "revision": "1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "restrictions": "Attribute the database and cite both the PhysioNet record and BCI2000 paper; contents and privacy rights are outside the database license.",
+      "provenance": "Direct pinned PhysioNet release.",
+      "citation_required": true,
+      "privacy_ethics": "PhysioNet describes hosted records as deidentified. Dataset-specific IRB approval, participant consent, and consent for public secondary use were not located on the record or in the cited methods paper.",
+      "status": "needs_clarification",
+      "status_reason": "Reuse license is clear, but the dataset-specific human-subject consent and ethics chain is not evidenced strongly enough for a new public benchmark release.",
+      "sources": [
+        "https://physionet.org/content/eegmmidb/1.0.0/",
+        "https://opendatacommons.org/licenses/by/1-0/",
+        "https://archive.physionet.org/faq.shtml"
+      ]
+    },
+    {
+      "id": "BNCI2014-001",
+      "source": "BNCI Horizon 2020 catalog",
+      "upstream_url": "https://bnci-horizon-2020.eu/database/data-sets/001-2014",
+      "revision": "Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-ND 4.0",
+      "restrictions": "Attribution required; adapted material may not be distributed. Cite the associated publication. Internal processing followed by aggregate benchmark facts reduces, but does not conclusively eliminate, ND ambiguity.",
+      "provenance": "Direct BNCI record; no release hash exposed.",
+      "citation_required": true,
+      "privacy_ethics": "Nine healthy participants. Dataset-specific ethics approval, consent wording, and public-sharing scope were not located in the description; BNCI's general submission requirements are not a substitute.",
+      "status": "needs_clarification",
+      "status_reason": "Per-dataset license is verified, but consent evidence and the application of ND to the planned publication pipeline should be clarified.",
+      "sources": [
+        "https://bnci-horizon-2020.eu/database/data-sets/001-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ]
+    },
+    {
+      "id": "BNCI2014-004",
+      "source": "BNCI Horizon 2020 catalog",
+      "upstream_url": "https://bnci-horizon-2020.eu/database/data-sets/004-2014",
+      "revision": "Unversioned catalog record, retrieved 2026-09-20",
+      "license": "CC BY-ND 4.0",
+      "restrictions": "Attribution required; adapted material may not be distributed. Cite the associated publication. Internal processing followed by aggregate benchmark facts reduces, but does not conclusively eliminate, ND ambiguity.",
+      "provenance": "Direct BNCI record; no release hash exposed.",
+      "citation_required": true,
+      "privacy_ethics": "Nine healthy participants. Dataset-specific ethics approval, consent wording, and public-sharing scope were not located in the description; BNCI's general submission requirements are not a substitute.",
+      "status": "needs_clarification",
+      "status_reason": "Per-dataset license is verified, but consent evidence and the application of ND to the planned publication pipeline should be clarified.",
+      "sources": [
+        "https://bnci-horizon-2020.eu/database/data-sets/004-2014/description.pdf",
+        "https://bnci-horizon-2020.eu/database/data-sets"
+      ]
+    },
+    {
+      "id": "ds005342",
+      "source": "OpenNeuro snapshot 1.0.3",
+      "upstream_url": "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+      "revision": "30bb3b67d76ce007b822fed801e496fafe5598a0",
+      "license": "CC0-1.0",
+      "restrictions": "No copyright attribution condition, but cite the dataset and associated paper; privacy and other non-copyright rights remain.",
+      "provenance": "Direct OpenNeuro snapshot; EEGDash/NEMAR identify the same canonical OpenNeuro DOI.",
+      "citation_required": true,
+      "privacy_ethics": "README reports voluntary signed consent and Universidad Antonio Nariño ethics approval. participants.tsv links pseudonymous IDs to exact age, sex, handedness, and academic major. The current evaluated subset has only four people.",
+      "status": "candidate_eligible",
+      "status_reason": "Eligible only as an aggregate-only case study: remove all participant IDs/results and condition breakdowns, label n=4 prominently, avoid subgroup claims, and make no claim that the cohort is anonymous.",
+      "sources": [
+        "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+        "https://eegdash.org/api/dataset/eegdash.dataset.DS005342.html",
+        "https://doi.org/10.3389/fninf.2022.961089"
+      ]
+    }
+  ],
+  "release_priority": [
+    {
+      "rank": 1,
+      "id": "ds006593",
+      "reason": "Clear CC0, direct pinned source, explicit IRB and written consent, and low participant-metadata exposure."
+    },
+    {
+      "rank": 2,
+      "id": "ds003810",
+      "reason": "Clear CC0, direct pinned source, and strong ethics/consent evidence; suppress all demographic rows."
+    },
+    {
+      "rank": 3,
+      "id": "ds005383",
+      "reason": "Explicit open-sharing consent and deidentification evidence; use CC BY attribution and exclude third-party stimulus content."
+    }
+  ]
+}

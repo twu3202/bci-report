@@ -1,0 +1,724 @@
+{
+  "assets": [
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/README.md",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/README.md?download=true",
+      "expected_bytes": 2070,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "git_blob_sha1": "deeb5df50159bd58e165dd3167b423008eddc4e1"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/Description.pdf",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/Description.pdf?download=true",
+      "expected_bytes": 76053,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "git_blob_sha1": "328c8f594092b0b9a668b1f789880fe598688fc6"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S10.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S10.mat?download=true",
+      "expected_bytes": 59701896,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "bd22587d7dd713695724c8913d597973be01870e38e4484b7bbbf3d269218774"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S7.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S7.mat?download=true",
+      "expected_bytes": 59714452,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "ed526151485be82fb8157537bdcbca32796ef628070510cbe14552f4899f2e48"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S4.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S4.mat?download=true",
+      "expected_bytes": 59719933,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "fd67c3b97c4b6b71ae307a7c17b4d90b7ab64eec975605fd83f48c62b6488b4e"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S5.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S5.mat?download=true",
+      "expected_bytes": 59720929,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "d8a317d827f707aab7e218cb0f92c5902a97a2a91c4bab0e852856e10bbeca6a"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S13.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S13.mat?download=true",
+      "expected_bytes": 59721952,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "6c1f2eb61b6a9f868a3351a852d920f6bbcba54ec69bf7f13c391abdc15510b1"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S2.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S2.mat?download=true",
+      "expected_bytes": 59741522,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "718b223c0a6524eef0023dc2df64e1685e0f0d4fd0bee53032f08f79140860d4"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S1.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S1.mat?download=true",
+      "expected_bytes": 59743079,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "285c1dae113d87e65c708a86245aa1ed87a9fa2974d39450802fb9ea962e8f46"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S11.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S11.mat?download=true",
+      "expected_bytes": 59745101,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "885538657570bbda9b95a477362b3368a00b54e9e4db9dd7bf71e3bca8e352fe"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S3.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S3.mat?download=true",
+      "expected_bytes": 59754602,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "d6948ecdafd8fadaded1a8c2766432697d378bcd772a81cfb47106de7b26c4f3"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S12.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S12.mat?download=true",
+      "expected_bytes": 59764321,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "cf917c5d2b705bfb8e48a1e923ff3a5a78c9c6747da0cab33efc309aefd5fbff"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S8.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S8.mat?download=true",
+      "expected_bytes": 59766587,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "b2591d0d070b29f5c554fb3f99b3d8a164623993ff58e3b3e29d10797a31d0ab"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S14.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S14.mat?download=true",
+      "expected_bytes": 59768197,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "98e6321ea66451b559b6b9a02de38d065cc5ec796ce5dd59b3baaaa75c5398fe"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S9.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S9.mat?download=true",
+      "expected_bytes": 59771767,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "a5c428001a1f35e169e4574d4a4b6b2b6ed9cfedd9ceb42febbc8eacb0347d46"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S15.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S15.mat?download=true",
+      "expected_bytes": 59771879,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "981451113812216b25ecd37201a7a0339d6f24d59c4e281389aab21d580d9f6a"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S6.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S6.mat?download=true",
+      "expected_bytes": 59785756,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "79a383b511012b9c83c21692d87ca921629ac03c51dfaeb65300b057ab84a02d"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S28.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S28.mat?download=true",
+      "expected_bytes": 79228906,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "6432f1bbac573481f42ee8bc592ba18e23cae9fea6a4c7ddb16fdfa6fdfb1076"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S35.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S35.mat?download=true",
+      "expected_bytes": 79471367,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "a38e8f5af12bcf71fdbdf5567fe89901e89cc0b50866b94d563506486e9d139e"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S20.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S20.mat?download=true",
+      "expected_bytes": 79503617,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "23725405f7f1633094fb2e21c6b3eeaa3a90fafa0e757b9a30e3f553be251b25"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S30.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S30.mat?download=true",
+      "expected_bytes": 79534948,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "5c5e92f42e338c9199d4d58b7b3fb844b0caeda79530e6f286ff22a8a006151b"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S24.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S24.mat?download=true",
+      "expected_bytes": 79568952,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "c1ff91a55f9ae1eb00b8c84655ba8db3dff7580e0aff7c84b0536c3df2582ccb"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S69.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S69.mat?download=true",
+      "expected_bytes": 79582031,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "ef56f2f39adf40e09452bcd54ad5c919c8059dd77289b6d3975f0575fa44bf52"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S17.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S17.mat?download=true",
+      "expected_bytes": 79584353,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "d92fdfdc46c83e307f02dbdefcebc24656f65e3ded8027bb30f2e960fbd55df4"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S60.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S60.mat?download=true",
+      "expected_bytes": 79588838,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "e4d276d2f1e59dbbd2fe68b8e58ef4c12891b5a15fee9a71d4df9633d3c89f38"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S22.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S22.mat?download=true",
+      "expected_bytes": 79593133,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "5b63c8dbf083055322bcfa8f647d5e38aff60016372a6575598cb196f49f2ba9"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S64.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S64.mat?download=true",
+      "expected_bytes": 79598283,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "2aaba847bafde663360b4f6be67d14e0150fa408a70f1ea67e4010aefb036f3d"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S29.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S29.mat?download=true",
+      "expected_bytes": 79603343,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "9d5f6105e2b656de91614843318d19a40ad275960856caff86a61ed3201e52c5"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S47.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S47.mat?download=true",
+      "expected_bytes": 79610980,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "740c6fe541b64e71220470f709f2f78a46ae52d3dffb2602b23b0945187eb0ca"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S50.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S50.mat?download=true",
+      "expected_bytes": 79617619,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "b2a0adf4e6cc85e855bbbc0157513c15e8ec13d39ff822dc117c1c4d739141c6"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S66.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S66.mat?download=true",
+      "expected_bytes": 79619006,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "55ee3dfe8cf3a0db748e2ee27ebbe70e54364aac5b50f00f049e4d520ebd64ca"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S55.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S55.mat?download=true",
+      "expected_bytes": 79620840,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "e0c0e1d896ba851af283565b1d151d0c9675164dd57587e8f5dc27563557623d"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S38.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S38.mat?download=true",
+      "expected_bytes": 79626379,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "bd1da50cded13b9786f3347819f668d5e1dd9a442bccf4dae6aff91b793bb0d8"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S70.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S70.mat?download=true",
+      "expected_bytes": 79634812,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "c02ca10db8c987f7ab4f9ca93ee4ce09459131d09b671f44af8cccd2b76d915f"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S40.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S40.mat?download=true",
+      "expected_bytes": 79643075,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "6ed44bd14df175b634c93a065cd3cf54a7e11a5613e9111f6181c0e2cd1c770c"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S27.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S27.mat?download=true",
+      "expected_bytes": 79643105,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "88b2918c19d93ec59e160e61e17da2bb134f340b8d889f2b49cecb0ae2f5f558"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S65.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S65.mat?download=true",
+      "expected_bytes": 79643143,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "625f6e6df37095df18a0c7eeb5dd007630dc466907a6103ee61af835589293dd"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S37.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S37.mat?download=true",
+      "expected_bytes": 79643643,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "b95294ec7ef57ccd125f6c81a989bab1ce732cefef63c8293b36a6ff0c08230e"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S53.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S53.mat?download=true",
+      "expected_bytes": 79650549,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "94b4c7208f0c026f12a0c5e59149a6c4132645b11e4ea024d52040840414624c"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S57.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S57.mat?download=true",
+      "expected_bytes": 79651331,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "b1f47a0dfb62bbf90b299ab572ded005cc8d9bfd554cfb288df85401f83e6fc9"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S54.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S54.mat?download=true",
+      "expected_bytes": 79652869,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "da8f7f7bcaa8270bd758a4561b2c71daa6111af8ea1afc298331ff319669ce5c"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S39.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S39.mat?download=true",
+      "expected_bytes": 79654187,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "f42951c98e441be0372018d872ade68a7723bb4f9040c3abdae51bab1b44d33f"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S43.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S43.mat?download=true",
+      "expected_bytes": 79655484,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "eaaadda0be0b7986e8c61d1665534aed09f9b8ed286b269545e87ec02c8b88cf"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S61.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S61.mat?download=true",
+      "expected_bytes": 79661020,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "c74d6e23fc1ae594434c60725311fc66c2f063cf18e9a9be9f213d361f239867"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S34.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S34.mat?download=true",
+      "expected_bytes": 79663191,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "49bb3bae9892f7c3b470f50d6227ec33c4c5becd5f53e2ff75e452fbf922920a"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S25.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S25.mat?download=true",
+      "expected_bytes": 79665349,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "335fb6d91208727a1b2db7ae8dbe4e50444e3fab43e71d5fb86776217eeafc79"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S68.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S68.mat?download=true",
+      "expected_bytes": 79665529,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "bfed0fcb2a1cd2fcb03a5edba4c011db4b0c0e4831b3085386c1676c0ca9aac1"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S58.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S58.mat?download=true",
+      "expected_bytes": 79666515,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "e3613ba92aa5523e9f902fce684a3c8153e16d35b0e2fdd771451a391d0131ce"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S36.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S36.mat?download=true",
+      "expected_bytes": 79668616,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "ffd8fd6b27e09e7268ba7c042b71139a2b0d207073c7e627a5f9963ece16f031"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S23.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S23.mat?download=true",
+      "expected_bytes": 79670781,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "e5b3400bee4e4fc980a1018ea8a459072cf540931322880d1b5a90519ef5b84e"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S48.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S48.mat?download=true",
+      "expected_bytes": 79671059,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "0c44ec5a659e4746238d86184549040fb8f444636900bf8ca7ba6c982193f2bb"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S41.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S41.mat?download=true",
+      "expected_bytes": 79671332,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "41259ffe742e5e732d6e68ed5ec6ae2d80c1659a40ca0bcdda3b514691879a2e"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S51.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S51.mat?download=true",
+      "expected_bytes": 79674642,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "db6e104754e813d45ce0b59c8812658bae070f9f1527a5494e112d9ef0e7c763"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S33.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S33.mat?download=true",
+      "expected_bytes": 79676977,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "ac7c60037f6e1fa4bbf0e34ff3bb7a20dc3f9e7d58216309cd288c5bfd750b00"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S44.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S44.mat?download=true",
+      "expected_bytes": 79678202,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "8da04517256a4208d87c743c40652896fa3eef2266bfb14efa2922b8c138546f"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S49.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S49.mat?download=true",
+      "expected_bytes": 79680664,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "3126fd120131b348438b412bfa599cceeb909d728ca53869a1306a038d87a5cc"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S31.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S31.mat?download=true",
+      "expected_bytes": 79680904,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "036fa5f9b3338bd0abc64e82dac761bd24eb5b3faa5b03a5577e5f575c963cbf"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S67.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S67.mat?download=true",
+      "expected_bytes": 79682398,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "7452695c4bef4d5317fdd4f47c53f951b2adb9cccb78ac788276dff196a798a8"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S21.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S21.mat?download=true",
+      "expected_bytes": 79683031,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "6221ccca5609a55f23439d675722a010fb9bae215c691f2d489873227d24a31d"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S56.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S56.mat?download=true",
+      "expected_bytes": 79686612,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "2bfdc7f4f2b901d1840c5b30ef07f3e71c2b2b95b12c8e4b405d78017029af75"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S18.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S18.mat?download=true",
+      "expected_bytes": 79686976,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "befef2413bcdbfbe71230852a4b59830c8ce76dba6fb6d190ed6ff9affcee364"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S45.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S45.mat?download=true",
+      "expected_bytes": 79693021,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "d48212d45071ba34dce6c00a07866340f9b7c3467a15e4cb5df6c138a244e757"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S46.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S46.mat?download=true",
+      "expected_bytes": 79693048,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "e2868e0c97f570c1675d00b49923eff18789d77b1de1df1d131e7c61a19b273b"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S26.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S26.mat?download=true",
+      "expected_bytes": 79695911,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "649c59c8e5c4bb040ae2bd088324b019abff148198055b98bbe6e31ec5ff800a"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S59.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S59.mat?download=true",
+      "expected_bytes": 79696791,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "7cf7d103d433dd46a7ddf19de4b904a90dd07e8c210d682b99c8f1c640e8faee"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S19.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S19.mat?download=true",
+      "expected_bytes": 79696929,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "df07d421d0e17858225441f4f63330581dceaa8714fdf559c5f0adaa751e966a"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S52.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S52.mat?download=true",
+      "expected_bytes": 79701269,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "2a8098e221ba3bd5dd117064fa33cf68a2d6a6e6dafc45c8329d5cacd873f072"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S42.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S42.mat?download=true",
+      "expected_bytes": 79704391,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "0fbac2a95a5f4b538253ec39250098811a2980809cce1926274e89fcdc530a2b"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S16.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S16.mat?download=true",
+      "expected_bytes": 79705153,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "41f689c3afdefb8183100d77397c3504f232f7cc80d5d08f12d7490b11d8f478"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S63.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S63.mat?download=true",
+      "expected_bytes": 79706593,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "d93f70999ad794783bffd49a728b0b2a56d22426707a5e26265b427c46be2220"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S62.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S62.mat?download=true",
+      "expected_bytes": 79710120,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "2ae6c723c32889c6e34fecf6225dd494ace9476c701806f87de1bc1b1252e6d0"
+    },
+    {
+      "dataset_id": "hf--Bingchuan--BETA",
+      "relative_path": "d4290c0200db8a104e0f557349dc49f90ba79506/S32.mat",
+      "url": "https://hf-mirror.com/datasets/Bingchuan/BETA/resolve/d4290c0200db8a104e0f557349dc49f90ba79506/S32.mat?download=true",
+      "expected_bytes": 79727079,
+      "source_revision": "d4290c0200db8a104e0f557349dc49f90ba79506",
+      "license_status": "HF and original Figshare declare CC BY 4.0; NEMAR derivative lists non-commercial, so commercial deployment needs discrepancy resolution",
+      "canonical_source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "sha256": "5ee1e936e31794a0aa94a4c1a2e8ba933852fd4da0de25225f66fb39e6d3a8df"
+    }
+  ]
+}

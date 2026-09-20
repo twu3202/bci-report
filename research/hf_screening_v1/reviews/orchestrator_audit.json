@@ -1,0 +1,42 @@
+{
+  "orchestrator": "gpt-6-astra",
+  "audit_kind": "targeted metadata review, not waveform validation",
+  "corrections": [
+    {
+      "repo_id": "Zachary1150/EESM19-Processed",
+      "correction": "Task family remains unknown without source documentation; proposed seed family stays in priority queue only.",
+      "basis": "No cached source documentation."
+    },
+    {
+      "repo_id": "Zachary1150/EventAAD-Processed",
+      "correction": "Task family remains unknown without source documentation; proposed seed family stays in priority queue only.",
+      "basis": "No cached source documentation."
+    },
+    {
+      "repo_id": "WymanYYY/Sleep-EDF-V2",
+      "correction": "Task family remains unknown without source documentation; proposed seed family stays in priority queue only.",
+      "basis": "No cached source documentation."
+    },
+    {
+      "repo_id": "Zachary1150/ear-eeg-fm-benchmark-data",
+      "correction": "Removed unsupported motor-imagery/auditory task classification from the cached partial description.",
+      "basis": "Cached description establishes HDF5 schema only; retrieve full source card to verify task coverage."
+    },
+    {
+      "repo_id": "EEGDash/ds003800",
+      "correction": "Auditory entrainment is not selective auditory-attention decoding; use auditory_evoked task family.",
+      "basis": "Cached HF description and dataset title explicitly describe gamma/40-Hz entrainment."
+    },
+    {
+      "repo_id": "EEGDash/ds005048",
+      "correction": "Auditory entrainment is not selective auditory-attention decoding; use auditory_evoked task family.",
+      "basis": "Cached HF description and dataset title explicitly describe gamma/40-Hz entrainment."
+    }
+  ],
+  "checks": [
+    "Three source descriptions checked for task-family evidence",
+    "Features-only negative control checked against documented band_power/motion schema",
+    "Already acquired references kept separate from new candidates",
+    "All evidence explicitly cached and not live-revalidated"
+  ]
+}

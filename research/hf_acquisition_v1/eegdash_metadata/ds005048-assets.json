@@ -1,0 +1,1820 @@
+{
+  "dataset_id": "ds005048",
+  "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+  "status": "ready",
+  "asset_count": 181,
+  "total_bytes": 373200390,
+  "mismatches": [],
+  "assets": [
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "CHANGES",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/CHANGES",
+      "expected_bytes": 88,
+      "md5": "19b8a8f5a4fe55f622cdec02217044dd",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "e80c098ea59e0f3d871193c9b206221c8e701026d7b66e9e8073dedd612c9a24"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "README",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/README",
+      "expected_bytes": 9113,
+      "md5": "176d9f0813b9a02ac529ce7b62d835a2",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "42ce20c4a061500a0d5123b21f090b4af6a8080607cc6513b26fbb54ec67a4ef"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "dataset_description.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/dataset_description.json",
+      "expected_bytes": 1730,
+      "md5": "e807bb0e15b944c215020a53262ef7ff",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "ab22b3f5137ec5fb26e827758ef2f5a2d03bd8b22a6cb47d7dd4b021f22294cd"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "participants.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/participants.json",
+      "expected_bytes": 391,
+      "md5": "f30592d57ba9404ababd47d117c8011b",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "793ef7bce4d1b6779cea18c5544d75178239b267ae9f95c78caa66b7c101c7d0"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "participants.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/participants.tsv",
+      "expected_bytes": 973,
+      "md5": "76ab6e1aadd0b84cb0be143f9b754a2b",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9a053180deebc4682cf0f3b10c6be2afa3825636fb51941f3c570582cd8214cb"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "110697801ed9baa2dfbb0e67e84e7c8c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f6beb74467a99d71993eb86d24015b3a06773b5c1bddbee96a03582ecfc7c97e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 429723,
+      "md5": "a95c5ccc21d25ccb87507d046af01856",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "bcd4da8ba0d2ed23652567bfcb2c982b00dc662e0a55815793569c8601b38b1e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-01/eeg/sub-01_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "44b3928ae408e416d3b5a5ba0e668ba4",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b1fe568bddf1f2655c0fe0b6477d8a28a3898279fbf7ba3b5c8ba1a8ef0777c7"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 419297,
+      "md5": "95dbb5549d91574bbc8692ea43839f97",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "c24e1381da73d347890ce5fc988bab3bf36ebb23f57a3c201de36c891bc6947e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-02/eeg/sub-02_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "2fe0ae32bf68f2bf73acdf1ac890ad0a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "6ce2c94a70e1d8c570266d960572922e0af73ceba48ca5ab1418f889a7b9ffc1"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 432113,
+      "md5": "282abfbf3dd4a23f076d21f2ff411106",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "37c832a2c740df69a89b84f5779d35104fc965bfa10ee4f7fe1b4fe8e48ce7a1"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-03/eeg/sub-03_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "82bcfe176a72b3e8146b12d004aa901d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "c2d61b552f8b12bf81bab6e3706b037efbe55868c589a2739120e64ce9e6926a"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 431449,
+      "md5": "41b2f72207e001a69cc1382108f21a39",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "0fb6436ef21075a448b3884040f96fb39c94d2c1d9ccfabb772a7bb028b6a323"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-04/eeg/sub-04_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "ae9b1648bd090428c069c7829229f590",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "4967fb64ae839cfb8df0a28f3cbe227f23c23d41e3f9acfb921d102d6cad03ed"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 434121,
+      "md5": "b91c2234de8edbc759fa76b262f69f47",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "7be1442d3dbe0fa81bf1a6cece3b78a9c43a6a457f1f7342bf1fc51ddcb6ac39"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-05/eeg/sub-05_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "0eb70e8c65f3b998e96b5f57b5180082",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b5e870a758ecd1bc200bfac06f0ce55759dba67c6c9522e04f651bbd4bf1dfbb"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 431001,
+      "md5": "2b93628d58e44352b4cc41e21e9d8e7d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9cf3d9061c449a598eb805c8d8b628a4da9e720a84c9fb286543c8203af56cfd"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-06/eeg/sub-06_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "5f933323bf7c696c13add53d10772917",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "89dfc4be1541631766c3c072220ed5c6df610ce64e31a8b30fccf81253e51a74"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 431113,
+      "md5": "b7334e2a57ec94189e34a2e12585d390",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "61bd49aa90e22a54ed8681e3c55230db7f3f734311145db8e84c82a3a12954f4"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-07/eeg/sub-07_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 6650000,
+      "md5": "079879258635d46df219104e1a7621df",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "888a47b926c9086085700c216bde1e1b94a54af344965db41b8428f3864969ac"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "001184092b05767c930084ad8da3385c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b21de65a10dbf0c3d347140d877a7868a843422bf30049909c1aefb7a4214692"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 431337,
+      "md5": "ef30872815eb2a3132e5e3539c013e13",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "22108aeff630932283671ea725fb9692c1425554397d4005ac51a8b7437ed7f9"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-08/eeg/sub-08_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 310,
+      "md5": "9b9a07433789ccfb393abb0da7591b4d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a0796af37adf562420798cec8eba48f0f1fa5ad4d17e090b36ad0413bf904436"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "5f2fc34e20fb1f2e7c5e4ee6c0336721",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "e5164c5ea2f62ec13a57fe66a499ddb2fa011df5b7882cf527b16f2c79afd11b"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 520203,
+      "md5": "40616c2444b6e7137905558128f2c3c1",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "ca2e1497310bb869a7b77a7f8d334abaf68efbf9c3a32f47d30fff9da93b735a"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-09/eeg/sub-09_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "c4c5ce6c4d025aba91ef58f47e182661",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "beb0172aab23e29c53c79677b8b8ae446752e9bfd2887495c0ed483735dc72a4"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 519219,
+      "md5": "de1b0ce93f9b55bbbdd131acb6f82782",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "e402c4ae5485f25a27c054753052cbdf49668c3fe99752e37c10837b6e7b0d4d"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-10/eeg/sub-10_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "3e7d96b8a6138572f46d6019da51e6e4",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "971e9de77bfcec427b2174f47163e1b365598c646834f4cf6d21f0689bef6ff7"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 518891,
+      "md5": "0302c043a97cc8f8a2635c05138047a1",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "a1e6243fd050924d1730a2d0252523a893e1499df81116406d418498a08f7130"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-11/eeg/sub-11_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "09a0de35ff97558da54b06985e02e06e",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "6928c67ebc59af202b90574cd6e2835424e00768a99b9af6734eb623286da467"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 519051,
+      "md5": "ea17162bcabaed28044e609be0131030",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "e30f28bfa94cfaf8080549524d057b38b6ce99239c88392adfce6d5417f21274"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-12/eeg/sub-12_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "17b65cabaae68a16e74285bea61baecc",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "c340eb2a2c064381432a899d2f1b143c415e690dcbc6247e331e8b0db0af0d52"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 518555,
+      "md5": "ac74c2f65d58eac419e2e08e615eb773",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "5524b8cd05d415a9a47e5d5afe94c8443a30c936333633125437f3bc11f3603a"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-13/eeg/sub-13_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "ad2c5fcb58f01e8ec52b2107ec6052e7",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "0500b79f3f2f5a2346139ac360dac387fd158d3c175bf3b155ccff6172421aca"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 519947,
+      "md5": "a84109b96932356c6706ce7d6f3caaa1",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "5e06ed1603ae8345f9cdcf95494174afd1465cca2f7bf5665c918b025b6f33aa"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-14/eeg/sub-14_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "89756346d41663d1f14512d32bd37e6c",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "bbb12186e83a05b7140fb441c1672e50fb4dfb5a3b9d5596cdd20109a2e779e1"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 511227,
+      "md5": "c14a9cad4b77830cb71b586eb9369013",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "500779617bb1e7874596f0a0d9da1870b3b4b8c3f2b7646c029ecffc47dd1da1"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-15/eeg/sub-15_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "4b9904e59f32d9e54a2bd3e1bd77efc1",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "4743fc8951d3b1bb285090fd8471a2beafbbcab20f80962d88e06a63f4600015"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 520179,
+      "md5": "b2c19e6794411712ee26593937fa7c7f",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "2d25f3a68cdc9ef97f8ed146be6aba75aebefbe834a977695da93efb07dad120"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-16/eeg/sub-16_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "1b188c07e89a4cf8f5900e3d05c7ac08",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "da498ae5b1e75c5e9c2ae1a6d146f0d26bb9249f2542387252392f28c02bb782"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 520851,
+      "md5": "3aa2bd2d910763c483c923ac4bc01a44",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "e9724d00528d9adbba0134a9a27e29b7baf1fe4a5b824092b29b36ab957d3803"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-17/eeg/sub-17_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "6889b120195d656ac050d87239fceed7",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "065cd39779cb1cc94807cbbe68e5624ff11b1630d069df9bf02b8a873f48d2f9"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 518443,
+      "md5": "b149bab8f14bc117d183b29d627dfcdc",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "bdf83083b590210982288dfd66176ec3d36cdd525f40bf3214b28d7a9738fd6c"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-18/eeg/sub-18_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "80bc37e7f49d7ab7d1b0564758e82f97",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b47b9e9b44682044d94dc10fa68437b512dde6967a4277ebc3b72be363566bca"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 511715,
+      "md5": "aff625de297fa7aa7cfabeb10d447abd",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "ffd52b010104c51b8450c9fce1b31e1bf04d029b558f29a5fa9c494ead332bad"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-19/eeg/sub-19_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "b0130f7f5c3ad02c98a4626f205590e7",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "ee02cbf230ba23f8ea11947ce12e3676efd5479829da04b06c718ed329a04b43"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 509627,
+      "md5": "bd36c7dcc60873cc42434331a33823a9",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "8c284f6a82c47b880337a726c6858f43d52a8ec31aef709c9be8b1bb635e7d4c"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-20/eeg/sub-20_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "e4fa2e1f0e176f637e433a81e8c7a2f8",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "1f6c0eccbb678c3315299fecfe9c59ad590ae1e854651d9ea918712838452eae"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 509715,
+      "md5": "4619c2d18cdcca8a24cb01eeae6f2388",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "94e19928557a0417c5bcc556ada818a0f2cba92184d91c6c02f36c865eb0196e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-21/eeg/sub-21_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "fee6783cfa66d80bb196bdc2bfa5076a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "2f0eb53880a493961505f92616512a1e7bfa1310cb6643f032705a21dc79d782"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 508019,
+      "md5": "21b66926673d20e00fd5c1226a0162f3",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "093a47f0db37735a88cdcf54e85039bb15c2ea9007d0f61d30170c5dd97f18fb"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-22/eeg/sub-22_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "a2ae295977c7d57b2518f005a170aafb",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "2b638037c7c653b0d76d548f7a0ee031f375a04732f7745d81c180b927c25844"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507843,
+      "md5": "95ef5f06305aad8413308ca0d3ed0679",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "c025d9dd8a4e3b9c16674d1ad7c9cb41b4310704e32183f5b22418b12f9acecc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-23/eeg/sub-23_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "6fbdd4360f74b355832cb1107fe2b6cc",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "08fcd2a17e89d1458b5bbe22411e60b7341da0b7008c61d990bc17a563e12a0a"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507995,
+      "md5": "5b4f834b4ca84b5b33d14cc9153c1e01",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "681c1abec24ded2217ca1de83021bc603cc2bb3da86ee59bdccacdfa470e8e66"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-24/eeg/sub-24_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "0d8b53b5ad636d6426f221d337570977",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9e6028ab62cc0e0ee3de3d947ca344e61cfa9e62eb2876007947d31d2846f3e9"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 508171,
+      "md5": "1e65944543e9c44fba951ce3aa33c724",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "3907722c215a2314f2d9b55b68032d1b1e99362e93851dc1a3e1d8c661e8a3e0"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-25/eeg/sub-25_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "36e7f686264e2f60ed7fd9056238a28e",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "96361b0d5592aef11caff27742a5711bcb244d4a0901e4bcb3e09ba7deae742d"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507891,
+      "md5": "f48376cfc28842eb4a54912a174cf63d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "48d138efffa4f305c34852354d7c80bb8b63227abfd23dd3fb203b714c642102"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-26/eeg/sub-26_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "6f94d67cfddece47ecfe9981d9289685",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "3ba410294deb702e8705db8849cbf28d24393b2ef98318a46e2f154cf0657be3"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507883,
+      "md5": "da65022013abc9febd235a4ecfd4f7ff",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f6c15c3faae79a6f882b54a419ac101b9ba9f9efe0075b889e9887ba4978f1b6"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-27/eeg/sub-27_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "2822c9b482274574da8e58e0392a8de8",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f29772311a886de4b23f9d444040fb95a5411effd0a5d560c407524f7b5a8ead"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507875,
+      "md5": "f8556335fecc8071ac8fd7b7bf1300fe",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "81f3bb234b3de9421cce826741037500b30e11b9d6d3f101dae0d9a91613c3fe"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-28/eeg/sub-28_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "d506c1dbaf6f1f6479b294852d91e844",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "6432fdac3a90770843416e37b195c36388d6ba96465d15b883d150e73d7c4c14"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507787,
+      "md5": "1e9c856187363ded713dcbcf8c6c49f2",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b5702743e31dc8796b392d62af4b5c400a30f9a66b22aa102b593eb5c450b12"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-29/eeg/sub-29_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "b319fdf657086243fac8608cc43bbbc6",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "47205ee16c96b45d5c6f88173de07b0e21a8fa44176973b173d663bf9fa082a1"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 508051,
+      "md5": "44f1129a77fc1768a56e74db5527fe34",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "53696e7bc14ec0fd30700e405e85a7a15809417dac9e2abd3faf9321d9698d90"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-30/eeg/sub-30_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "6a75f22ed8dcaa82affcd83dbb8ee2f7",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f90faee8b73a81f6c4778e697d7c29600248ed1ac63cd06c912556afe3a8dfa9"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 510579,
+      "md5": "d57cac6ba4307d2490b6232625a59a87",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f523b3b38865acd93806929c3469b1e27f11a04127469bf99b57d8dd26282f4f"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-31/eeg/sub-31_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "62924bd11fa8b9a948edd41c64d2330d",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "544033a55a5bdb104abdab7d72daffebc663eec9b45674c1d1248dd39117ad94"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 510139,
+      "md5": "7b6ed9dd57e12db88ad3e0047d9b4819",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "c8bc574c0511ba84122ed73d768a3942d96cbffc6b6ccaee2b61a39838db8858"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-32/eeg/sub-32_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "13393ec928377ad13334bf9ff9ceae50",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d5f4a9866acc0b69aa04eff7c906c4ffdde2f44de4725d5e5ab12c2f874153e5"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 511387,
+      "md5": "1e6f5b0d3ff105f445324d4016b398ec",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "8f9f8628c201b4c6d1a80052b24ec1ae23a8de704fb3adda84e4756cee7258f0"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-33/eeg/sub-33_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "181fd566e4c4e5f9fea05e498da44abe",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "26b2c8e0e033088e2e8117489b655a0b42aacd6d6a02803d3e15ce74075d8667"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 505931,
+      "md5": "54fb10179496fbc5142f3721fa437c49",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "ac9b6eac5b61fb0539777e90272ce48d23e0c804b9dbbf41b25d66ee55d97b80"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-34/eeg/sub-34_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_channels.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_channels.tsv",
+      "expected_bytes": 227,
+      "md5": "16009f795b31869a652432d12de4a97a",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "d1737d425edc2aef389e668425d40b4cda0b25216f31d11d3b1df42fe40347bc"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.fdt",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.fdt",
+      "expected_bytes": 11210000,
+      "md5": "17d25a44a14474f6acd9aee68688e476",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "05008bccc4c97753aba069b7c14818234b1ffda9cd693d4f17c1be593e295a3f"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.json",
+      "expected_bytes": 498,
+      "md5": "a5515851fdf9d320d49a4efb3723b148",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "9b45032a19051e1d8b151652ab7ce52324d8d61ae9e9756ff6f88b1ef1177b23"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.set",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_eeg.set",
+      "expected_bytes": 507931,
+      "md5": "85572de8305b69d10bcf4bf28ecd8fc7",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "28971fdc42d1cbc12336ea427b14ee9ed8e943c223f27457aea0d6e8dfffc0cb"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_events.tsv",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/sub-35/eeg/sub-35_task-40HzAuditoryEntrainment_events.tsv",
+      "expected_bytes": 501,
+      "md5": "f49862fbcccd975af8523e75b3acddfa",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "b82577587e0eb622dfdd0dcfb59a061c257e91408dd77f24c8ab6f8a235c0b7e"
+    },
+    {
+      "dataset_id": "ds005048",
+      "relative_path": "task-40HzAuditoryEntrainment_events.json",
+      "url": "https://s3.amazonaws.com/openneuro.org/ds005048/task-40HzAuditoryEntrainment_events.json",
+      "expected_bytes": 1454,
+      "md5": "905a34c12d74233e066d921629a70948",
+      "source_revision": "165a4d407983e5d7d42441ecc007caf6c98d3fad",
+      "license_status": "verified_cc0",
+      "sha256": "f92af5a75646d425861537e66e3a2319e31911145bd479dc108661405d045c9a"
+    }
+  ]
+}

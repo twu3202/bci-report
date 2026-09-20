@@ -1,0 +1,68 @@
+# 新闻源清单。type: rss|atom；category: company|research|policy|media|community；
+# verified: 本地 curl 验证过返回有效 feed。⚠ 初始清单，待 research/news_sources.yaml 合并。
+- name: arXiv q-bio.NC (EEG/BCI keyword)
+  url: "http://export.arxiv.org/api/query?search_query=%28abs%3AEEG+OR+abs%3A%22brain-computer+interface%22+OR+abs%3A%22brain+computer+interface%22%29+AND+%28cat%3Aq-bio.NC+OR+cat%3Aeess.SP+OR+cat%3Acs.LG+OR+cat%3Acs.HC%29&sortBy=submittedDate&sortOrder=descending&max_results=40"
+  type: atom
+  lang: en
+  category: research
+  verified: true
+- name: bioRxiv Neuroscience
+  url: "https://connect.biorxiv.org/biorxiv_xml/subject/neuroscience"
+  type: rss
+  lang: en
+  category: research
+  verified: true
+- name: Google News — brain-computer interface
+  url: "https://news.google.com/rss/search?q=%22brain-computer+interface%22+OR+%22brain+computer+interface%22+OR+Neuralink+OR+Synchron&hl=en-US&gl=US&ceid=US:en"
+  type: rss
+  lang: en
+  category: media
+  verified: true
+- name: Google News — 脑机接口
+  url: "https://news.google.com/rss/search?q=%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+  type: rss
+  lang: zh
+  category: media
+  verified: true
+- name: Hacker News — brain-computer interface
+  url: "https://hnrss.org/newest?q=%22brain-computer+interface%22+OR+Neuralink+OR+EEG&points=20"
+  type: rss
+  lang: en
+  category: community
+  verified: true
+- name: Reddit r/BCI
+  url: "https://www.reddit.com/r/BCI/new/.rss"
+  type: atom
+  lang: en
+  category: community
+  verified: true
+- name: Neuralink Blog
+  url: "https://neuralink.com/blog/rss.xml"
+  type: rss
+  lang: en
+  category: company
+  verified: false
+- name: Synchron News
+  url: "https://synchron.com/feed"
+  type: rss
+  lang: en
+  category: company
+  verified: false
+- name: IEEE Spectrum — Biomedical
+  url: "https://spectrum.ieee.org/feeds/topic/biomedical.rss"
+  type: rss
+  lang: en
+  category: media
+  verified: false
+- name: MIT Technology Review
+  url: "https://www.technologyreview.com/feed/"
+  type: rss
+  lang: en
+  category: media
+  verified: false
+- name: PubMed — brain-computer interface (last 30 days)
+  url: "https://pubmed.ncbi.nlm.nih.gov/rss/search/1Xo8NKnIYtIGwrs7hZrIkCnYpKCjq8KGEHC57pGxlgv8xzGNlQ/?limit=50&utm_campaign=pubmed-2&fc=20260906000000"
+  type: rss
+  lang: en
+  category: research
+  verified: false
