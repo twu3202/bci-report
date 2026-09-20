@@ -16,7 +16,10 @@ import csv
 import json
 from pathlib import Path
 
+import hashlib
+
 from export_snapshot import validate_public
+from export_deployment_topics import EXPORT_AUDIT
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -24,6 +27,47 @@ PUBLISHED = PROJECT/'site/public/data'
 # The eight protocol tables share one header, so they merge into a single table
 # the dataset viewer can render. `protocol_id` keeps them separable.
 MERGED = 'results.csv'
+TOPICS = 'topics.csv'
+
+
+def topic_payload():
+    """The reviewed topic export, refused unless it is byte-for-byte the approved one.
+
+    The topic rows reach Hugging Face through the same file the site downloads,
+    checked against the same audit `check_site_artifact.py` uses. Mirroring an
+    export that drifted from its review would publish numbers nobody approved.
+    """
+    raw = (PUBLISHED/'deployment-topics.json').read_bytes()
+    audit = json.loads(EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Topic export review did not pass'
+    digest = hashlib.sha256(raw).hexdigest()
+    assert digest == audit['export_sha256'], (
+        f'Topic payload {digest[:12]} is not the reviewed {audit["export_sha256"][:12]}')
+    payload = json.loads(raw)
+    validate_public(payload)
+    return payload
+
+
+def flatten(rows, interval_key=None):
+    """One CSV row per record, with a single list field split into low/high columns."""
+    keys = list(rows[0].keys())
+    header = []
+    for k in keys:
+        header.extend([k+'_low', k+'_high'] if k == interval_key else [k])
+    out = []
+    for record in rows:
+        line = []
+        for k in keys:
+            value = record.get(k)
+            if k == interval_key:
+                low, high = (value or [None, None])[:2]
+                line.extend([low, high])
+            elif isinstance(value, (list, dict)):
+                line.append(json.dumps(value, ensure_ascii=False, sort_keys=True))
+            else:
+                line.append(value)
+        out.append(line)
+    return header, out
 
 
 def load_tables():
@@ -65,8 +109,13 @@ def protocol_table(snapshot):
     return '\n'.join(lines)
 
 
-def card(snapshot, n_rows):
+def card(snapshot, n_rows, topics):
     tracks, models = len(snapshot['tracks']), len(snapshot['models'])
+    n_topic_rows = len(topics['rows'])
+    n_topics = len(topics['topics'])
+    n_contrasts = len(topics['paired_contrasts'])
+    n_seed_groups = len(topics['seed_sensitivity'])
+    topic_slugs = ', '.join(f"`{t['id']}`" for t in topics['topics'])
     return f"""---
 license: cc-by-4.0
 language:
@@ -81,30 +130,53 @@ pretty_name: 'BCI Report: aggregate EEG decoding results'
 size_categories:
   - n<1K
 configs:
-  - config_name: default
+  - config_name: results
     data_files: {MERGED}
+  - config_name: topics
+    data_files: {TOPICS}
+  - config_name: contrasts
+    data_files: contrasts.csv
+  - config_name: seed_sensitivity
+    data_files: seed-sensitivity.csv
 ---
 
 # BCI Report — aggregate EEG decoding results
 
-Cohort-level results for {tracks} public EEG decoding protocols, each reported
-with the protocol that produced it: cohort size, electrode count, evaluation
-mode, chance level, training budget and known limitations. Release
+Cohort-level results for public EEG decoding protocols, each reported with the
+protocol that produced it: cohort size, electrode count, evaluation mode, chance
+level, training budget and known limitations. Release
 `{snapshot['releaseId']}`, reviewed {snapshot['generatedAt'][:10]}.
 
 Rendered, with the charts and the method notes: **<https://bci.report>**
 Code, publication boundary and the rights review behind these numbers:
 **<https://github.com/twu3202/bci-report>**
 
+```python
+from datasets import load_dataset
+load_dataset("Twu31/bci-report", "results")   # {n_rows} protocol × model scores
+load_dataset("Twu31/bci-report", "topics")    # {n_topic_rows} deployment-condition measurements
+```
+
 ## What this contains
 
-`{MERGED}` — {n_rows} rows, one per (protocol, model) pair, {tracks} protocols,
-{models} methods. `protocols/` carries the full descriptor for each protocol
-(preprocessing, split, budget, audit hashes). `snapshot.json` is the complete
-machine-readable release the website itself reads.
+**Two separate bodies of measurement. They are not one ranking, and rows from
+one do not belong in a table with rows from the other.**
 
-Every row carries its own `license`, `license_url` and `attribution`, so a row
-lifted out of this table keeps its credit with it.
+`{MERGED}` — {n_rows} rows, one per (protocol, model) pair, {tracks} protocols,
+{models} methods, values in percent. `protocols/` carries the full descriptor for
+each protocol (preprocessing, split, budget, audit hashes). `snapshot.json` is
+the complete machine-readable release the website reads.
+
+`{TOPICS}` — {n_topic_rows} measurements across {n_topics} deployment questions
+({topic_slugs}), **values as proportions in [0,1], not percent**. Companion
+tables: `contrasts.csv` ({n_contrasts} paired contrasts, differences in
+percentage points) and `seed-sensitivity.csv` ({n_seed_groups} groups of repeated
+training runs). `deployment-topics.json` is the reviewed export these come from.
+
+Every row in `{MERGED}` carries its own `license`, `license_url` and
+`attribution`, so a row lifted out of that table keeps its credit with it;
+`{TOPICS}` cites its sources in `deployment-topics.json` under
+`dataset_citations`.
 
 ## What this does not contain
 
@@ -128,6 +200,21 @@ several are not, and this repository does not relicense any of them.
   laboratory recordings do not validate a physical four- or eight-channel device.
 - **Pretraining overlap is unknown** where checkpoint-level records are
   unavailable, so a frozen foundation encoder may have seen related data.
+
+And for `{TOPICS}` specifically:
+
+- **The unit changes.** `value` is a proportion in [0,1] here, a percent in
+  `{MERGED}`. `contrasts.csv` differences are percentage points. Concatenating
+  the two tables without rescaling silently divides one of them by 100.
+- **{n_topic_rows} measurements are not {n_topic_rows} studies.** They are
+  protocol-specific rows across {n_topics} questions; a question's rows share a
+  cohort and a protocol, so they are not independent evidence.
+- **Seed spread is not a confidence interval.** `seed-sensitivity.csv` reports
+  what repeated training runs of the same model on the same data did. It
+  describes the optimizer, not the population, and it cannot be read as an error
+  bar on a participant mean.
+- **These four questions do not extend the {tracks}-protocol matrix.** Different
+  protocols, different cohorts, separately reviewed. Keep them apart.
 
 ## A small cohort is close to its parts
 
@@ -204,11 +291,28 @@ def build(output):
         (output/'protocols'/path.name.replace('-protocol', '')).write_text(
             json.dumps(descriptor, indent=2, ensure_ascii=False)+'\n')
 
+    topics = topic_payload()
+    for name, records, interval in ((TOPICS, topics['rows'], 'confidence_interval_95'),
+                                    ('contrasts.csv', topics['paired_contrasts'],
+                                     'paired_participant_bootstrap_95'),
+                                    ('seed-sensitivity.csv', topics['seed_sensitivity'], None)):
+        head, lines = flatten(records, interval)
+        assert not any(c.lower() in {'subject', 'subject_id', 'participant_id'} for c in head), head
+        with (output/name).open('w', newline='') as fh:
+            writer = csv.writer(fh)
+            writer.writerow(head)
+            writer.writerows(lines)
+
+    (output/'deployment-topics.json').write_text(
+        json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
-    (output/'README.md').write_text(card(snapshot, len(rows)))
+    (output/'README.md').write_text(card(snapshot, len(rows), topics))
 
     return {'rows': len(rows), 'protocols': len(snapshot['tracks']),
             'models': len(snapshot['models']),
+            'topicRows': len(topics['rows']), 'topics': len(topics['topics']),
+            'contrasts': len(topics['paired_contrasts']),
+            'seedGroups': len(topics['seed_sensitivity']),
             'files': sorted(str(p.relative_to(output)) for p in output.rglob('*') if p.is_file())}
 
 

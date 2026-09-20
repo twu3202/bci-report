@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-09-20T07:50:29.036743+00:00",
+  "checked_at": "2026-09-20T09:27:50.017313+00:00",
   "status_is_snapshot": true,
-  "training_started": false,
+  "training_started": true,
   "website_modified": false,
   "datasets": [
     {
@@ -35,16 +35,16 @@
     {
       "id": "mobile-erp",
       "download_checkpoint": "<evidence-root>/acquisition/2026-09-20-deployment-v2/mobile-erp/download_state.json",
-      "updated_at": "2026-09-20T07:50:28+00:00",
+      "updated_at": "2026-09-20T07:56:09+00:00",
       "expected_files": 911,
-      "verified_files": 432,
-      "verified_bytes": 2546119894,
+      "verified_files": 911,
+      "verified_bytes": 5574808094,
       "statuses": {
-        "downloaded": 432,
-        "downloading": 3,
-        "retrying": 1
+        "downloaded": 911
       },
-      "download_complete": false
+      "download_complete": true,
+      "file_integrity": "pass",
+      "integrity_record": "<evidence-root>/benchmarks/deployment-v2/mobile-20260920/erp-acquisition-integrity.json"
     }
   ],
   "held": [

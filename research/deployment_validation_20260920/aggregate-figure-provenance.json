@@ -1,0 +1,9 @@
+{
+  "source_file": "publication-candidate-aggregate-results.json",
+  "source_sha256": "fd302e0ca8d75482b8f47e3110b9a34603345a49a1a3a6664ba2e4dd975200ac",
+  "figure_files": [
+    "BCI Report Deployment Benchmark Summary.png",
+    "BCI Report Deployment Benchmark Summary.svg"
+  ],
+  "scope": "aggregate measurements only; no participant or trial records"
+}

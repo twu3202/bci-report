@@ -1,0 +1,22 @@
+{
+  "status": "pass",
+  "release_id": "deployment-topics-20260920-v1",
+  "export_sha256": "1860229048322d0f4cd7d95f3d2095f58217a68a69df2ce16847afdeee759df9",
+  "coverage": {
+    "topics": 4,
+    "measurements": 82,
+    "paired_contrasts": 18,
+    "seed_protocols": 5,
+    "seed_runs": 15,
+    "note": "Measurements are protocol-specific rows, not independent studies or a global ranking."
+  },
+  "checks": [
+    "pinned reviewed inputs",
+    "passing independent scientific audit",
+    "explicit dataset and model approvals",
+    "metric and cohort validation",
+    "same-backend seed summaries recomputed",
+    "aggregate-only privacy scan",
+    "identical page-data and download copies"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-09-20T09:15:00Z",
+  "review_type": "bounded_checkpoint_rights_recheck",
+  "scope": "Exact EEGPT checkpoint used by the existing local benchmarks. This is technical provenance and license issue-spotting, not legal certification.",
+  "checkpoint_identity": {
+    "model": "EEGPT",
+    "official_filename": "eegpt_mcae_58chs_4s_large4E.ckpt",
+    "local_path": "experiments/asset_readiness/weights/eegpt_mcae_58chs_4s_large4E.ckpt",
+    "size_bytes": 1020602524,
+    "sha256": "9d63ebc80bba1ad5e3277df4eecfa05d2745e6243a12ff743c4c0a93930dfac0",
+    "official_file_id": 46452745,
+    "official_share_token": "e37df4f8a907a866df4b",
+    "derived_encoder_artifact": {
+      "path": "experiments/asset_readiness/weights/eegpt-target-encoder-tensors.pt",
+      "sha256": "9ce130abd9f66cd6141b15918c35760da62ffc86b90f611cdf7b4cf4cb0585df",
+      "rights_note": "A local tensor-only extraction from the identified checkpoint; conversion does not create or expand checkpoint reuse permission."
+    }
+  },
+  "repository_identity": {
+    "official_repository": "https://github.com/BINE022/EEGPT",
+    "locally_pinned_revision": "a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705",
+    "current_main_revision_at_recheck": "ea7282f698c406cd423ccbedbe9960853761144c",
+    "current_revision_change_scope": [
+      "datasets/pretrain/prepare_pretrain_dataset.py",
+      "datasets/pretrain/readme.md"
+    ],
+    "root_readme_or_license_changed_since_pin": false,
+    "evidence": "The 2026-09-19 main-branch commit changes only the two listed pretraining-dataset files; it does not alter the root README, LICENSE, or checkpoint link."
+  },
+  "sources_reviewed": [
+    {
+      "kind": "official_repository_license",
+      "url": "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/LICENSE",
+      "primary_source": true,
+      "finding": "The source repository contains Apache License 2.0. The license defines the licensed Work as a work made available under the license as indicated by an included or attached notice. The external checkpoint has no observed attached license notice."
+    },
+    {
+      "kind": "official_checkpoint_instructions",
+      "url": "https://github.com/BINE022/EEGPT/blob/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/README.md#pretrained-models",
+      "primary_source": true,
+      "evidence_quote": "You can download pretrained models here",
+      "finding": "The README names the exact checkpoint inside the linked Figshare share and instructs users to load it for downstream tasks. It does not state that Apache-2.0 covers the checkpoint and supplies no separate model-weight terms."
+    },
+    {
+      "kind": "official_weight_share",
+      "url": "https://figshare.com/s/e37df4f8a907a866df4b",
+      "primary_source": true,
+      "finding": "The share page still returned an AWS WAF challenge (HTTP 202 with an empty body) during this recheck, so no article authorship or license field could be verified."
+    },
+    {
+      "kind": "official_weight_download_endpoint",
+      "url": "https://ndownloader.figshare.com/files/46452745?private_link=e37df4f8a907a866df4b",
+      "primary_source": true,
+      "finding": "Existing acquisition provenance ties file ID 46452745 to the exact filename, size, and local SHA-256. Download capability is technical provenance and is not treated as a rights grant."
+    },
+    {
+      "kind": "current_official_repository_revision",
+      "url": "https://github.com/BINE022/EEGPT/commit/ea7282f698c406cd423ccbedbe9960853761144c",
+      "primary_source": true,
+      "finding": "The latest main revision changes pretraining-dataset preparation only; no new checkpoint license or model card was added."
+    },
+    {
+      "kind": "third_party_huggingface_conversion",
+      "url": "https://huggingface.co/braindecode/eegpt-pretrained",
+      "primary_source": false,
+      "finding": "The Braindecode card declares BSD-3-Clause for its converted 25.3M-parameter, roughly 101 MB artifacts. It is not published by BINE022, is not the exact 1,020,602,524-byte checkpoint, and does not grant rights in the official Figshare checkpoint."
+    },
+    {
+      "kind": "third_party_exact_hash_mirror",
+      "url": "https://huggingface.co/Zachary1150/ear-eeg-fm-benchmark-model/blob/main/eegpt/eegpt_mcae_58chs_4s_large4E.ckpt",
+      "primary_source": false,
+      "finding": "This mirror reports the same SHA-256 as the local official checkpoint. The uploader is not the identified official publisher, so the mirror is useful only as identity corroboration and is not accepted as license authority."
+    }
+  ],
+  "local_evidence_reviewed": [
+    "research/publication_review_20260920/model-rights.json",
+    "research/公开模型权重获取验证.md",
+    "experiments/asset_readiness/source-manifest.json",
+    "experiments/asset_readiness/source/EEGPT/LICENSE",
+    "experiments/asset_readiness/source/EEGPT/README.md",
+    "experiments/asset_readiness/official_checkpoint_readiness.eegpt_mcae_58chs_4s_large4E.ckpt.json"
+  ],
+  "explicit_weight_license_found": false,
+  "resolved_license": null,
+  "conclusion": {
+    "status": "unresolved_keep_hold",
+    "public_release_decision": "hold-unresolved-weight-license",
+    "reason": "Primary sources still identify and encourage use of the checkpoint but do not expressly license the externally hosted weight file. The repository code license, public download access, a third-party converted model card, and another person's byte-identical mirror do not supply the missing affirmative grant for this exact checkpoint.",
+    "change_from_previous_review": "none",
+    "legal_certification": false
+  }
+}

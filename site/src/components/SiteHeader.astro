@@ -1,0 +1,17 @@
+---
+import { site } from '../data/site';
+interface Props { active?: 'topics' | 'data-use' | 'home' }
+const { active } = Astro.props;
+---
+<header>
+  <a class="brand" href="/"><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{site.stage}</small></a>
+  <nav aria-label="Main navigation">
+    <a href="/#overview" aria-current={active === 'home' ? 'page' : undefined}>Results</a>
+    <a href="/#topics" aria-current={active === 'topics' ? 'page' : undefined}>Explore</a>
+    <a href="/#benchmarks">Protocols</a>
+    <a href="/#models">Models</a>
+    <a href="/#datasets">Datasets</a>
+    <a href="/data-use/" aria-current={active === 'data-use' ? 'page' : undefined}>Data use</a>
+  </nav>
+</header>
+

@@ -1,10 +1,18 @@
 {
   "status": "pass",
   "releaseId": "research-preview-20260920",
-  "files": 31,
-  "downloadFiles": 17,
+  "files": 37,
+  "downloadFiles": 18,
   "comparisons": 39,
   "protocols": 8,
+  "deploymentTopics": {
+    "topics": 4,
+    "measurements": 82,
+    "paired_contrasts": 18,
+    "seed_protocols": 5,
+    "seed_runs": 15,
+    "note": "Measurements are protocol-specific rows, not independent studies or a global ranking."
+  },
   "checks": [
     "explicit download inventory",
     "cohort-only JSON schema",
@@ -12,24 +20,27 @@
     "local links resolve",
     "source snapshot equals download snapshot",
     "no waveform or model files",
+    "topic payload reproduced from pinned reviewed inputs and matches page/download copies",
     "no symlinks in payload",
     "hashes compared against the previous audit record"
   ],
   "built_artifact_sha256": {
-    "404.html": "8077fe070112270798de6d9fbff490d7ba36432c88a63db89231dd35811d61b3",
+    "404.html": "a8ff143fd2e70120caf2c4656b78d00de4e3be2d929087116db670f2c09f1bfd",
+    "_astro/ScoreBar.DylRVmv8.css": "ccedf69fab1ea58626d949c0eb96edd9e99576b312d922754dd5ac20b59c744b",
     "_astro/directory.COTywl7T.css": "54a833e8ef168cd8bf1588cb2b12e65eaec1c3db33f87203d7664fcca96332a8",
-    "_astro/global.C2gTFmfw.css": "84b92b2baefe2afec4026a4c43d423afb6b0abd6eb88536316e315f78e99f969",
+    "_astro/global.C4nj8eZw.css": "39f5192574ffa0675d4cdb3b270d8a915db0ee973816d400fcceb224f7f9fd6c",
     "_astro/index.astro_astro_type_script_index_0_lang.B4GuhvmJ.js": "062120a8cf623cab8b993fa2b6ebab05da4c162a925e329b3d9c59e36a897290",
     "_astro/index.bjJTLyFT.css": "d7b599b78ac6383ad135b7a07350e00c73b646395a3b2f8ba177fd68bb370b03",
     "_headers": "1203669ef67ebdf21dbce3c7406bb891c81cffe916719cb5964cc8945be16d3b",
     "apple-touch-icon.png": "b37fe2b7a28fde2c8dff7437a98a6d1847ec72313d2c522b17d7a707ebf6b11f",
-    "data-use/index.html": "e3aa975799e0dcdb15dfaa882230650b672ded6fc66baa052488f1be5c932303",
+    "data-use/index.html": "19638cfb84610382d6d2eda420c06a6bad391dc78d01904749a8bdbb9f79e03e",
     "data/arithmetic-rest-protocol.json": "a2d8a9f182916b1ae611b163d65b3b7184bdbf79e4fa39ee47e778c02c301c6b",
     "data/arithmetic-rest-results.csv": "bed02323936f2980eac7bf3a8e8b2595630fa1609c1466600d33acc2f83928dc",
     "data/beta-4ch-protocol.json": "749d13951729e00935724fce9b790e8f23978e3290a9dd9df6e5a276736e69a1",
     "data/beta-4ch-results.csv": "9ffe23197b77eda5f08dca476f66197c2da77f198ce8dd35dfd0df972a24082d",
     "data/beta-8ch-protocol.json": "ac384c95a33d068d38c37cafae7788331f37f5be5a296bfa01d056daf5590426",
     "data/beta-8ch-results.csv": "01a11e0ba22ea726158c936ff66a7e60f8704641a6e8f11d5c83f25d87fd3125",
+    "data/deployment-topics.json": "1860229048322d0f4cd7d95f3d2095f58217a68a69df2ce16847afdeee759df9",
     "data/experiments.json": "641b4aabc23781b1d9f2efeaeb65baf029eaf1e01ccd3b07107b65c1509251fa",
     "data/idle-protocol.json": "f648b56dfb1d030170440884ac66106ef369c7df8d27040c3bd8d985fc1f0ee8",
     "data/idle-results.csv": "d511d329755caf81109305a78e416a2650e84ee03f0fa965c34d3e8220796d81",
@@ -43,9 +54,13 @@
     "data/sleep-scalp-results.csv": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
     "favicon.ico": "abc8e622580241ee8ec914fc1b7fbbd354709dc5bef3cbca040d7b21833aed68",
     "favicon.svg": "a51b4859e908aa6244b40dbb00570c755918a3778a089cfd1f2a9a83f8d711d4",
-    "index.html": "a856c7943dd8d73d30471a1fce610a4ebc903cd8f1d3f34b265bca8db4de02aa",
+    "index.html": "0ac3a3542002f523a39a06fedfb0c39ee052fa8f7d0261a81c01c5d166c7e58d",
     "og.png": "e424c3c122839eb83bf0cecbbe15c9d31b0a9ff154055ce3d603a18c654e0024",
     "robots.txt": "a9139481e1a64b98d6a3f4664b8a81d03dfade6a50c748514fc9002df79eba04",
-    "sitemap.xml": "fe606e8cc68c99cf63a0477acae5178dd84a8cb8aefa42f6a99206ff799c6cae"
+    "sitemap.xml": "09c57d55450175113119ed5ed82e0ffb746f953bb50a9a2c0935eefc99c3fdc3",
+    "topics/calibration-budget/index.html": "d7e36a7c8f325194ee708a889c4583852e161d83ce488822fab8b79efc99d4e8",
+    "topics/does-pretraining-help/index.html": "099ac705be12216823f216cc2eb45f66450b6a952d12b3748b8c4cf8d22b6d4d",
+    "topics/dry-vs-wet/index.html": "f05dc6b048bdacf9074acc76788b28fd1dec322486bb1cad28103d346e6d4635",
+    "topics/on-the-move/index.html": "ab701089cb8f3bedcf02f5066be973e65d56d6e9797a9ee183666c775ba5cfd6"
   }
 }

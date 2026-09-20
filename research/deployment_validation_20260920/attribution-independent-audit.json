@@ -1,0 +1,757 @@
+{
+  "status": "pass",
+  "independent_of_benchmark_metric_helpers": true,
+  "auditor_sha256": "37dbef60aca8445bb943d13d1671db3da3ee5307165f75b918a2789d47cad5a5",
+  "packages": [
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "log-covariance-ridge",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5233333333333334,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "labram-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.535,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "labram-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5666666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "labram-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5808333333333333,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "labram-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.53,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "eegpt-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5833333333333333,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5425,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5366666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5433333333333332,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "cbramod-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6291666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5616666666666668,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5558333333333333,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5783333333333334,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "labram-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5291666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "labram-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5641666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "labram-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5891666666666666,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "labram-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5408333333333333,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "eegpt-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.57,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "eegpt-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5266666666666667,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "eegpt-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5275000000000001,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "eegpt-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5383333333333333,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "cbramod-pretrained",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6275,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "cbramod-random-20260919",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5633333333333334,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "cbramod-random-20260920",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5466666666666666,
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "condition": "cbramod-random-20260921",
+      "participants": 10,
+      "trials": 1200,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5358333333333334,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "log-covariance-ridge",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6189814814814816,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "labram-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6462962962962964,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "labram-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5662037037037038,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "labram-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5736111111111112,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "labram-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5555555555555556,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "eegpt-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6569444444444443,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5842592592592593,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.600462962962963,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "eegpt-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5925925925925926,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "cbramod-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6231481481481481,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5625,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5666666666666668,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "condition": "cbramod-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 9,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.563425925925926,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "labram-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6444444444444444,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "labram-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.564351851851852,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "labram-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5731481481481482,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "labram-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5560185185185184,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "eegpt-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6597222222222221,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "eegpt-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5930555555555556,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "eegpt-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5828703703703704,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "eegpt-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.5819444444444444,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "cbramod-pretrained",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6842592592592592,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "cbramod-random-20260919",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6236111111111112,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "cbramod-random-20260920",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6273148148148148,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "condition": "cbramod-random-20260921",
+      "participants": 36,
+      "trials": 2160,
+      "hashed_files": 8,
+      "head_replay_max_error": 0.0,
+      "mean_balanced_accuracy": 0.6000000000000001,
+      "pass": true
+    }
+  ],
+  "contrasts": [
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "model": "labram",
+      "pretrained_ba": 0.535,
+      "random_mean_ba": 0.5591666666666666,
+      "delta": -0.02416666666666667,
+      "paired_participant_bootstrap_95": [
+        -0.05944444444444445,
+        0.010277777777777736
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "model": "eegpt",
+      "pretrained_ba": 0.5833333333333333,
+      "random_mean_ba": 0.5408333333333333,
+      "delta": 0.04249999999999998,
+      "paired_participant_bootstrap_95": [
+        0.007499999999999962,
+        0.07444444444444442
+      ],
+      "checkpoint_release_status": "hold-unresolved-weight-license",
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "fixed",
+      "model": "cbramod",
+      "pretrained_ba": 0.6291666666666667,
+      "random_mean_ba": 0.5652777777777778,
+      "delta": 0.0638888888888889,
+      "paired_participant_bootstrap_95": [
+        0.03055555555555558,
+        0.09499999999999997
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "model": "labram",
+      "pretrained_ba": 0.5291666666666667,
+      "random_mean_ba": 0.5647222222222221,
+      "delta": -0.03555555555555556,
+      "paired_participant_bootstrap_95": [
+        -0.07000000000000002,
+        -0.0019444444444444097
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "model": "eegpt",
+      "pretrained_ba": 0.57,
+      "random_mean_ba": 0.5308333333333334,
+      "delta": 0.03916666666666664,
+      "paired_participant_bootstrap_95": [
+        0.007222222222222197,
+        0.07083333333333332
+      ],
+      "checkpoint_release_status": "hold-unresolved-weight-license",
+      "pass": true
+    },
+    {
+      "dataset": "ds003810",
+      "mode": "selected",
+      "model": "cbramod",
+      "pretrained_ba": 0.6275,
+      "random_mean_ba": 0.548611111111111,
+      "delta": 0.07888888888888888,
+      "paired_participant_bootstrap_95": [
+        0.04527777777777778,
+        0.11111111111111109
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "model": "labram",
+      "pretrained_ba": 0.6462962962962964,
+      "random_mean_ba": 0.5651234567901234,
+      "delta": 0.08117283950617285,
+      "paired_participant_bootstrap_95": [
+        0.04969135802469138,
+        0.11404320987654322
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "model": "eegpt",
+      "pretrained_ba": 0.6569444444444443,
+      "random_mean_ba": 0.5924382716049383,
+      "delta": 0.06450617283950616,
+      "paired_participant_bootstrap_95": [
+        0.026080246913580234,
+        0.10586419753086418
+      ],
+      "checkpoint_release_status": "hold-unresolved-weight-license",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "fixed",
+      "model": "cbramod",
+      "pretrained_ba": 0.6231481481481481,
+      "random_mean_ba": 0.5641975308641974,
+      "delta": 0.05895061728395063,
+      "paired_participant_bootstrap_95": [
+        0.023148148148148175,
+        0.09567901234567901
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "model": "labram",
+      "pretrained_ba": 0.6444444444444444,
+      "random_mean_ba": 0.5645061728395062,
+      "delta": 0.07993827160493829,
+      "paired_participant_bootstrap_95": [
+        0.04737654320987656,
+        0.11419753086419754
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "model": "eegpt",
+      "pretrained_ba": 0.6597222222222221,
+      "random_mean_ba": 0.5859567901234568,
+      "delta": 0.07376543209876542,
+      "paired_participant_bootstrap_95": [
+        0.0439776234567901,
+        0.10401234567901234
+      ],
+      "checkpoint_release_status": "hold-unresolved-weight-license",
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "mode": "selected",
+      "model": "cbramod",
+      "pretrained_ba": 0.6842592592592592,
+      "random_mean_ba": 0.6169753086419753,
+      "delta": 0.06728395061728397,
+      "paired_participant_bootstrap_95": [
+        0.031168981481481495,
+        0.10432098765432099
+      ],
+      "checkpoint_release_status": "candidate-subject-to-dataset-review",
+      "pass": true
+    }
+  ],
+  "grouped_label_diagnostics": [
+    {
+      "dataset": "ds003810",
+      "repeats": 20,
+      "mean_balanced_accuracy": 0.49920833333333337,
+      "not_a_formal_p_value": true,
+      "pass": true
+    },
+    {
+      "dataset": "physionet-eegmat-1.0.0",
+      "repeats": 20,
+      "mean_balanced_accuracy": 0.4998611111111112,
+      "not_a_formal_p_value": true,
+      "pass": true
+    }
+  ],
+  "checks": [
+    "source hashes",
+    "participant-disjoint split reconstruction",
+    "artifact hashes",
+    "finite scores/features",
+    "all 250 outer heads independently refitted and replayed",
+    "all 360 inner validation fits independently recomputed",
+    "saved train-only normalization",
+    "mean participant BA/F1",
+    "architecture shapes and distinct initialization-state hashes",
+    "pretrained reproduction record and checkpoint digest",
+    "paired 10000-replicate participant bootstrap",
+    "200 grouped-label diagnostic fits replayed"
+  ]
+}

@@ -1,0 +1,411 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-20T09:26:06.802364+00:00",
+  "scope": "EEGNet seed sensitivity on five remaining published protocols; aggregate-only handoff",
+  "seeds": [
+    20260919,
+    20260920,
+    20260921
+  ],
+  "backend": "Apple MPS for every seed within every reported three-seed comparison",
+  "executionSourceManifestSha256": "ec911a3d80345318cecf800d400d35656f38e1bb636228be692c61da3bf5c43f",
+  "protocols": [
+    {
+      "protocol": "ds005383",
+      "coverage": {
+        "trialCount": 3600,
+        "participantCount": 30
+      },
+      "runs": [
+        {
+          "seed": 20260919,
+          "backend": "mps",
+          "balancedAccuracy": 0.6050000000000001,
+          "macroF1": 0.5964874548633496,
+          "runtimeSeconds": 405.81683396035805,
+          "predictionsSha256": "2e20c734627283e0118c54eef7d62afc03a3103350b22bb41da08b599dd0df43",
+          "verificationSha256": "6278583852dc324df9d616d1a866ee5fd7ee5baa8bebaf83b00598972fd2150b",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260920,
+          "backend": "mps",
+          "balancedAccuracy": 0.6041666666666666,
+          "macroF1": 0.5977190969739871,
+          "runtimeSeconds": 411.3248737072572,
+          "predictionsSha256": "846e6f385eb66c15ff16b9aae9821dfde45c5a447f81f62ed8ed6529484a05c8",
+          "verificationSha256": "5a8eeb142499087c95ac711518754cd11389b5bdab45d77965516e10a536edad",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260921,
+          "backend": "mps",
+          "balancedAccuracy": 0.6033333333333334,
+          "macroF1": 0.5963186834332743,
+          "runtimeSeconds": 281.56241641612723,
+          "predictionsSha256": "ccf08443121c32d12988e95e0adf0a12a218ccebf8076336c6b2f13688e73e4d",
+          "verificationSha256": "eef98975986b1f4d7709cc89767ed5a1489bad5cf710633c9102bfba67e87073",
+          "verificationPassed": true
+        }
+      ],
+      "balancedAccuracyPercent": {
+        "mean": 60.416666666666664,
+        "sampleSdPercentagePoints": 0.08333333333333526,
+        "min": 60.333333333333336,
+        "max": 60.50000000000001,
+        "rangePercentagePoints": 0.16666666666667052
+      },
+      "macroF1": {
+        "mean": 0.5968417450902036,
+        "sampleSd": 0.0007644806700539336,
+        "min": 0.5963186834332743,
+        "max": 0.5977190969739871
+      },
+      "allIndependentVerificationsPassed": true,
+      "auditSourceDigests": {
+        "canonicalPublishedInputsJsonSha256": "068dbbffe0cbb84eb07c3f674c6eec2647ba8178366e5cce825e904680314609",
+        "canonicalPublishedDatasetProtocolSha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+        "canonicalPublishedSplitsSha256": "9d6f45b6e48f589c31d405d7dc24d1862027e5fc95d69214aa3276924572d85c",
+        "mpsCanonicalEpochsSha256": "32c9a7dcebf5370b85166a950180743fc3025b6b487bd98e9edc113f6a05d7bf",
+        "verificationSha256BySeed": {
+          "20260919": "6278583852dc324df9d616d1a866ee5fd7ee5baa8bebaf83b00598972fd2150b",
+          "20260920": "5a8eeb142499087c95ac711518754cd11389b5bdab45d77965516e10a536edad",
+          "20260921": "eef98975986b1f4d7709cc89767ed5a1489bad5cf710633c9102bfba67e87073"
+        }
+      },
+      "elapsedSeconds": {
+        "perSeedSealedVerifiedRun": {
+          "20260919": 405.81683396035805,
+          "20260920": 411.3248737072572,
+          "20260921": 281.56241641612723
+        },
+        "sealedVerifiedRunTotal": 1098.7041240837425,
+        "discardedPreliminaryAttempt": null
+      },
+      "backendComparabilityNote": "MPS base seed 20260919 was rerun because the canonical published run used CUDA."
+    },
+    {
+      "protocol": "ds006593",
+      "coverage": {
+        "trialCount": 2520,
+        "participantCount": 21
+      },
+      "runs": [
+        {
+          "seed": 20260919,
+          "backend": "mps",
+          "balancedAccuracy": 0.557936507936508,
+          "macroF1": 0.5278391584455138,
+          "runtimeSeconds": 79.66476429020986,
+          "predictionsSha256": "56f6efc43ab28fd2d5d7ed77f92582297bff43ce2eb1c85747615bbaccba5784",
+          "verificationSha256": "5ce25508c21f8f6fa21aa2b364e86008775275f69ca1b0f634a336d6faf9a160",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260920,
+          "backend": "mps",
+          "balancedAccuracy": 0.5035714285714286,
+          "macroF1": 0.4257855014266771,
+          "runtimeSeconds": 81.88110000127926,
+          "predictionsSha256": "b7a5dddf206ff87aa232268e43c361b48f98918d3ec3e3d2bb5545d3e7424c6a",
+          "verificationSha256": "d8d829e621b1c3ce738ce76991ca9fbe7784e4f388119de39a4f43869693a87d",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260921,
+          "backend": "mps",
+          "balancedAccuracy": 0.5206349206349208,
+          "macroF1": 0.44149405919604495,
+          "runtimeSeconds": 78.286187665537,
+          "predictionsSha256": "4438b2c0c0be2b6c4154a3cf3c08906b94e14c2d5bef39f1a0e4fec5f2e7d021",
+          "verificationSha256": "a90311d26eaeb4121aa3a3658ecaf98437e4afec8a3b0006679b76d7889b4331",
+          "verificationPassed": true
+        }
+      ],
+      "balancedAccuracyPercent": {
+        "mean": 52.73809523809524,
+        "sampleSdPercentagePoints": 2.780327627873549,
+        "min": 50.357142857142854,
+        "max": 55.7936507936508,
+        "rangePercentagePoints": 5.436507936507939
+      },
+      "macroF1": {
+        "mean": 0.4650395730227453,
+        "sampleSd": 0.054950256084499646,
+        "min": 0.4257855014266771,
+        "max": 0.5278391584455138
+      },
+      "allIndependentVerificationsPassed": true,
+      "auditSourceDigests": {
+        "canonicalPublishedInputsJsonSha256": "defa7736a2767802514c86fde298b51fe038882e4f341408a966b8d16245c97c",
+        "canonicalPublishedDatasetProtocolSha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+        "canonicalPublishedSplitsSha256": "efcf6d5896e8f100f66c29358ab8c8b651e1c68a25074553377edbe7a3c580fb",
+        "mpsCanonicalEpochsSha256": "e81b9976586e4d94c3b45d3257227dccf52f6e2533ca9224e7438009b2abec86",
+        "verificationSha256BySeed": {
+          "20260919": "5ce25508c21f8f6fa21aa2b364e86008775275f69ca1b0f634a336d6faf9a160",
+          "20260920": "d8d829e621b1c3ce738ce76991ca9fbe7784e4f388119de39a4f43869693a87d",
+          "20260921": "a90311d26eaeb4121aa3a3658ecaf98437e4afec8a3b0006679b76d7889b4331"
+        }
+      },
+      "elapsedSeconds": {
+        "perSeedSealedVerifiedRun": {
+          "20260919": 79.66476429020986,
+          "20260920": 81.88110000127926,
+          "20260921": 78.286187665537
+        },
+        "sealedVerifiedRunTotal": 239.83205195702612,
+        "discardedPreliminaryAttempt": null
+      },
+      "backendComparabilityNote": "MPS base seed 20260919 was rerun because the canonical published run used CUDA."
+    },
+    {
+      "protocol": "eesm19-scalp-sleep",
+      "coverage": {
+        "trialCount": 3000,
+        "participantCount": 20
+      },
+      "runs": [
+        {
+          "seed": 20260919,
+          "backend": "mps",
+          "balancedAccuracy": 0.5733333333333334,
+          "macroF1": 0.5576066152540544,
+          "runtimeSeconds": 268.51140549918637,
+          "predictionsSha256": "b4c4df49e15e1742209549b9c15da6115bbc6851283da096be4a40567c78d4f3",
+          "verificationSha256": "70ea23dee0998d6d322c9db4d8689ebb9bf395a6987b2f5b42a8d6a96d30ed5e",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260920,
+          "backend": "mps",
+          "balancedAccuracy": 0.5443333333333333,
+          "macroF1": 0.5321136717123099,
+          "runtimeSeconds": 266.14806125080213,
+          "predictionsSha256": "24e3c69c0df209f6c314a73866920043b103bbf99b1804166b81e190af8f143d",
+          "verificationSha256": "1bbf80c5d19b98ae79983ac0be023fabba94504fbe728d65bfc429e41329055d",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260921,
+          "backend": "mps",
+          "balancedAccuracy": 0.5159999999999999,
+          "macroF1": 0.5067925373507192,
+          "runtimeSeconds": 291.478069123812,
+          "predictionsSha256": "0599583b282d36847d7c7f415b7e37f682a1492f21f4b8c21bb68ef7ff5df0b5",
+          "verificationSha256": "399439597da3870ebee0f8b10c9c4f811ccc5ae0d4986b839d66cf89a8b01274",
+          "verificationPassed": true
+        }
+      ],
+      "balancedAccuracyPercent": {
+        "mean": 54.455555555555556,
+        "sampleSdPercentagePoints": 2.866731265422028,
+        "min": 51.59999999999999,
+        "max": 57.333333333333336,
+        "rangePercentagePoints": 5.733333333333346
+      },
+      "macroF1": {
+        "mean": 0.5321709414390278,
+        "sampleSd": 0.025407087360769135,
+        "min": 0.5067925373507192,
+        "max": 0.5576066152540544
+      },
+      "allIndependentVerificationsPassed": true,
+      "auditSourceDigests": {
+        "canonicalPublishedInputsJsonSha256": "06f9cd627403cfa26cea9186506a56b7dfed88370329247adfa4c84cd33b71e0",
+        "canonicalPublishedDatasetProtocolSha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+        "canonicalPublishedSplitsSha256": "6bbec4fdd4060505e11c272aaee0a231c2c9bb62cd0f2fbcd7541556533f56d4",
+        "mpsCanonicalEpochsSha256": "6a0e99c6626fa102532b9fbd687c163bce82a6963609c662a05f4a976a1d0a9a",
+        "verificationSha256BySeed": {
+          "20260919": "70ea23dee0998d6d322c9db4d8689ebb9bf395a6987b2f5b42a8d6a96d30ed5e",
+          "20260920": "1bbf80c5d19b98ae79983ac0be023fabba94504fbe728d65bfc429e41329055d",
+          "20260921": "399439597da3870ebee0f8b10c9c4f811ccc5ae0d4986b839d66cf89a8b01274"
+        }
+      },
+      "elapsedSeconds": {
+        "perSeedSealedVerifiedRun": {
+          "20260919": 268.51140549918637,
+          "20260920": 266.14806125080213,
+          "20260921": 291.478069123812
+        },
+        "sealedVerifiedRunTotal": 826.1375358738005,
+        "discardedPreliminaryAttempt": {
+          "seed": 20260919,
+          "fold": 0,
+          "attemptCount": 1,
+          "elapsedSecondsRecorded": null,
+          "sealed": false,
+          "includedInMetricsOrElapsed": false,
+          "reason": "initial batch was interrupted during training before a fold detail or prediction checkpoint was sealed; fold retrained from scratch"
+        }
+      },
+      "backendComparabilityNote": "MPS base seed 20260919 was rerun because the canonical published run used CUDA."
+    },
+    {
+      "protocol": "BETA-posterior4",
+      "coverage": {
+        "trialCount": 11200,
+        "participantCount": 70
+      },
+      "runs": [
+        {
+          "seed": 20260919,
+          "backend": "mps",
+          "balancedAccuracy": 0.4476785714285715,
+          "macroF1": 0.4293443297910396,
+          "runtimeSeconds": 210.61817995924503,
+          "predictionsSha256": "f68022324f2246870d61c71d1f5e9cd30e47816a0f1d4c563f7031412bb6f2a4",
+          "verificationSha256": "60b0380c83a0ddfa19908d1c5bda070f9941c887dca410fa4b1c6dd8a55abfdb",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260920,
+          "backend": "mps",
+          "balancedAccuracy": 0.44419642857142855,
+          "macroF1": 0.4270581019774624,
+          "runtimeSeconds": 222.9522774578072,
+          "predictionsSha256": "72104abc9e69ec32158a58eecdf8d9b81de7b300d1132a8c4be7f78c7536f222",
+          "verificationSha256": "b483a08fedf8f1215d5400d2d24c50026f745d2d861761b40be830f7ef7d7708",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260921,
+          "backend": "mps",
+          "balancedAccuracy": 0.4502678571428571,
+          "macroF1": 0.43404827007053803,
+          "runtimeSeconds": 149.13478587567806,
+          "predictionsSha256": "f9256366aabddc890af35de57744fbd3ccb700af53483a98f36db7c1f88d0dc1",
+          "verificationSha256": "450b68ead61109a34155ec0b2086092f89e21dead8a3d33e8ee7eee85f2375c7",
+          "verificationPassed": true
+        }
+      ],
+      "balancedAccuracyPercent": {
+        "mean": 44.73809523809524,
+        "sampleSdPercentagePoints": 0.30466365138655843,
+        "min": 44.419642857142854,
+        "max": 45.02678571428571,
+        "rangePercentagePoints": 0.6071428571428561
+      },
+      "macroF1": {
+        "mean": 0.4301502339463467,
+        "sampleSd": 0.003564088049279793,
+        "min": 0.4270581019774624,
+        "max": 0.43404827007053803
+      },
+      "allIndependentVerificationsPassed": true,
+      "auditSourceDigests": {
+        "preparedEpochsSha256": "a235b215dcbc1c0e724d7ca980584738a65bc1e2ad773d3b03346ce7c6ace4f7",
+        "protocolSha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "splitsSha256": "b9ecebbd59dfc0f2ab231ba077ccfcade12bf585b4673c8435872797e6fd705f",
+        "trialsSha256": "b16e07eaab35e329a0b138015a4f6ac40beb82ae43fa0fe53fdfc263b18a973b",
+        "verificationSha256BySeed": {
+          "20260919": "60b0380c83a0ddfa19908d1c5bda070f9941c887dca410fa4b1c6dd8a55abfdb",
+          "20260920": "b483a08fedf8f1215d5400d2d24c50026f745d2d861761b40be830f7ef7d7708",
+          "20260921": "450b68ead61109a34155ec0b2086092f89e21dead8a3d33e8ee7eee85f2375c7"
+        }
+      },
+      "elapsedSeconds": {
+        "perSeedSealedVerifiedRun": {
+          "20260919": 210.61817995924503,
+          "20260920": 222.9522774578072,
+          "20260921": 149.13478587567806
+        },
+        "sealedVerifiedRunTotal": 582.7052432927303,
+        "discardedPreliminaryAttempt": {
+          "seed": 20260919,
+          "fold": 0,
+          "attemptCount": 1,
+          "elapsedSecondsRecorded": null,
+          "sealed": false,
+          "includedInMetricsOrElapsed": false,
+          "reason": "normalization sidecar unavailable before artifact hashing; prediction/checkpoint pair discarded and fold retrained from scratch"
+        }
+      },
+      "backendComparabilityNote": "All three fixed seeds use the original BETA MPS prepared input and participant folds. The earlier published seed 20260912 remains separate and is not included in this three-seed summary."
+    },
+    {
+      "protocol": "BETA-posterior8",
+      "coverage": {
+        "trialCount": 11200,
+        "participantCount": 70
+      },
+      "runs": [
+        {
+          "seed": 20260919,
+          "backend": "mps",
+          "balancedAccuracy": 0.5653571428571428,
+          "macroF1": 0.5494697144746062,
+          "runtimeSeconds": 268.7479766239412,
+          "predictionsSha256": "428756f4caac1ce187c5caed2af278f47979cc3c8c561c283248a6d9cc57203c",
+          "verificationSha256": "9292b66401c6632bd6bf9bda4a0812c89187abf785ad574d7d3e57f927f297a1",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260920,
+          "backend": "mps",
+          "balancedAccuracy": 0.5673214285714288,
+          "macroF1": 0.5529833633612936,
+          "runtimeSeconds": 268.92279470851645,
+          "predictionsSha256": "09782e3cd980da8a868f30206da594262a459e67df7e06c5d364c106f9079cd2",
+          "verificationSha256": "37638cb82c6cda09975d51c7f9153665be78aab604959e5b43fb3cbcda3bbfce",
+          "verificationPassed": true
+        },
+        {
+          "seed": 20260921,
+          "backend": "mps",
+          "balancedAccuracy": 0.5699107142857143,
+          "macroF1": 0.5558208319293293,
+          "runtimeSeconds": 267.0172495851293,
+          "predictionsSha256": "5064eddec91eca08bb73e42c35646a93ec38669dfff314bfd837f26e9a53843a",
+          "verificationSha256": "02127f4cabe463c9c03fd4f1bc264112a21a79e6fc9ac8c297608421cdb98966",
+          "verificationPassed": true
+        }
+      ],
+      "balancedAccuracyPercent": {
+        "mean": 56.75297619047619,
+        "sampleSdPercentagePoints": 0.22839232193987904,
+        "min": 56.53571428571428,
+        "max": 56.99107142857143,
+        "rangePercentagePoints": 0.455357142857149
+      },
+      "macroF1": {
+        "mean": 0.5527579699217431,
+        "sampleSd": 0.003181552275677124,
+        "min": 0.5494697144746062,
+        "max": 0.5558208319293293
+      },
+      "allIndependentVerificationsPassed": true,
+      "auditSourceDigests": {
+        "preparedEpochsSha256": "a235b215dcbc1c0e724d7ca980584738a65bc1e2ad773d3b03346ce7c6ace4f7",
+        "protocolSha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "splitsSha256": "b9ecebbd59dfc0f2ab231ba077ccfcade12bf585b4673c8435872797e6fd705f",
+        "trialsSha256": "b16e07eaab35e329a0b138015a4f6ac40beb82ae43fa0fe53fdfc263b18a973b",
+        "verificationSha256BySeed": {
+          "20260919": "9292b66401c6632bd6bf9bda4a0812c89187abf785ad574d7d3e57f927f297a1",
+          "20260920": "37638cb82c6cda09975d51c7f9153665be78aab604959e5b43fb3cbcda3bbfce",
+          "20260921": "02127f4cabe463c9c03fd4f1bc264112a21a79e6fc9ac8c297608421cdb98966"
+        }
+      },
+      "elapsedSeconds": {
+        "perSeedSealedVerifiedRun": {
+          "20260919": 268.7479766239412,
+          "20260920": 268.92279470851645,
+          "20260921": 267.0172495851293
+        },
+        "sealedVerifiedRunTotal": 804.688020917587,
+        "discardedPreliminaryAttempt": null
+      },
+      "backendComparabilityNote": "All three fixed seeds use the original BETA MPS prepared input and participant folds. The earlier published seed 20260912 remains separate and is not included in this three-seed summary."
+    }
+  ],
+  "executionNotes": [
+    "One preliminary EESM19-sleep seed-20260919 fold-0 attempt was interrupted before a fold prediction/detail was sealed. That attempt was discarded, the fold was retrained from scratch, and the preliminary attempt is excluded from all metrics and reported scientific elapsed times.",
+    "One preliminary BETA-posterior4 seed-20260919 fold-0 attempt produced an unsealed prediction/checkpoint pair but its normalization sidecar was unavailable before hashing. That attempt was discarded, the fold was retrained from scratch, and the preliminary attempt is excluded from all metrics and reported scientific elapsed times.",
+    "Runtime fields sum only the sealed, independently verified folds included in each seed condition.",
+    "The canonical CUDA point estimates for ds005383, ds006593, and EESM19 sleep are retained only as external published references; they are not included in these Apple-MPS seed means, standard deviations, or ranges."
+  ],
+  "limitations": [
+    "Three seeds describe initialization and minibatch-order sensitivity, not population uncertainty or a confidence interval.",
+    "The sleep protocol retains its canonical 10-epoch budget; the other four protocols use 20 epochs.",
+    "CUDA-origin published point estimates are not mixed into the MPS seed summaries."
+  ]
+}

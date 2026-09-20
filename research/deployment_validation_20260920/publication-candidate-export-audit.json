@@ -1,0 +1,175 @@
+{
+  "status": "pass",
+  "aggregate_sha256": "fd302e0ca8d75482b8f47e3110b9a34603345a49a1a3a6664ba2e4dd975200ac",
+  "reviewed_pre_seed_snapshot_sha256": "1082793634a73099dc0ecb9ef854277eb08d030c5d15bfb5f11716a406884b35",
+  "prior_reviewed_rows_and_contrasts_unchanged": true,
+  "aggregate_rows": 82,
+  "paired_contrasts": 18,
+  "seed_protocols": 5,
+  "seed_runs": [
+    {
+      "protocol": "ds005383",
+      "seed": 20260919,
+      "backend": "mps",
+      "participants": 30,
+      "trials": 3600,
+      "balanced_accuracy_recomputed": 0.6050000000000001,
+      "macro_f1_recomputed": 0.5964874548633496,
+      "pass": true
+    },
+    {
+      "protocol": "ds005383",
+      "seed": 20260920,
+      "backend": "mps",
+      "participants": 30,
+      "trials": 3600,
+      "balanced_accuracy_recomputed": 0.6041666666666666,
+      "macro_f1_recomputed": 0.5977190969739871,
+      "pass": true
+    },
+    {
+      "protocol": "ds005383",
+      "seed": 20260921,
+      "backend": "mps",
+      "participants": 30,
+      "trials": 3600,
+      "balanced_accuracy_recomputed": 0.6033333333333334,
+      "macro_f1_recomputed": 0.5963186834332743,
+      "pass": true
+    },
+    {
+      "protocol": "ds006593",
+      "seed": 20260919,
+      "backend": "mps",
+      "participants": 21,
+      "trials": 2520,
+      "balanced_accuracy_recomputed": 0.557936507936508,
+      "macro_f1_recomputed": 0.5278391584455138,
+      "pass": true
+    },
+    {
+      "protocol": "ds006593",
+      "seed": 20260920,
+      "backend": "mps",
+      "participants": 21,
+      "trials": 2520,
+      "balanced_accuracy_recomputed": 0.5035714285714286,
+      "macro_f1_recomputed": 0.4257855014266771,
+      "pass": true
+    },
+    {
+      "protocol": "ds006593",
+      "seed": 20260921,
+      "backend": "mps",
+      "participants": 21,
+      "trials": 2520,
+      "balanced_accuracy_recomputed": 0.5206349206349208,
+      "macro_f1_recomputed": 0.44149405919604495,
+      "pass": true
+    },
+    {
+      "protocol": "eesm19-scalp-sleep",
+      "seed": 20260919,
+      "backend": "mps",
+      "participants": 20,
+      "trials": 3000,
+      "balanced_accuracy_recomputed": 0.5733333333333334,
+      "macro_f1_recomputed": 0.5576066152540544,
+      "pass": true
+    },
+    {
+      "protocol": "eesm19-scalp-sleep",
+      "seed": 20260920,
+      "backend": "mps",
+      "participants": 20,
+      "trials": 3000,
+      "balanced_accuracy_recomputed": 0.5443333333333333,
+      "macro_f1_recomputed": 0.5321136717123099,
+      "pass": true
+    },
+    {
+      "protocol": "eesm19-scalp-sleep",
+      "seed": 20260921,
+      "backend": "mps",
+      "participants": 20,
+      "trials": 3000,
+      "balanced_accuracy_recomputed": 0.5159999999999999,
+      "macro_f1_recomputed": 0.5067925373507192,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior4",
+      "seed": 20260919,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.4476785714285715,
+      "macro_f1_recomputed": 0.4293443297910396,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior4",
+      "seed": 20260920,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.44419642857142855,
+      "macro_f1_recomputed": 0.4270581019774624,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior4",
+      "seed": 20260921,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.4502678571428571,
+      "macro_f1_recomputed": 0.43404827007053803,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior8",
+      "seed": 20260919,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.5653571428571428,
+      "macro_f1_recomputed": 0.5494697144746062,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior8",
+      "seed": 20260920,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.5673214285714288,
+      "macro_f1_recomputed": 0.5529833633612936,
+      "pass": true
+    },
+    {
+      "protocol": "BETA-posterior8",
+      "seed": 20260921,
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "balanced_accuracy_recomputed": 0.5699107142857143,
+      "macro_f1_recomputed": 0.5558208319293293,
+      "pass": true
+    }
+  ],
+  "checks": [
+    "exact equality with independently reviewed82rows18contrasts",
+    "all current evidence digests",
+    "new dataset citation joins",
+    "model-license export hold",
+    "no private paths or individual data fields",
+    "all15seed prediction digests",
+    "finite class scores and argmax",
+    "participant-disjoint folds and identical split across seeds",
+    "independent confusion-count BA/macroF1",
+    "sampleSD/min/max/range",
+    "same-backend seed separation"
+  ],
+  "auditor_sha256": "6a2a61707c1dc5eda1a34aeb446cd50fed6441917c85cd7c1aedec30d03897bd"
+}

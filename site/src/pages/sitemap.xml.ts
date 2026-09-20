@@ -3,6 +3,10 @@ import { site } from '../data/site';
 
 const PAGES = [
   { path: '/', priority: '1.0' },
+  { path: '/topics/dry-vs-wet/', priority: '0.8' },
+  { path: '/topics/on-the-move/', priority: '0.8' },
+  { path: '/topics/calibration-budget/', priority: '0.8' },
+  { path: '/topics/does-pretraining-help/', priority: '0.8' },
   { path: '/data-use/', priority: '0.5' },
 ];
 

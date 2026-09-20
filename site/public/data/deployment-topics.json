@@ -1,0 +1,2708 @@
+{
+  "schema_version": "bci-report-public-deployment-topics-v1",
+  "release_id": "deployment-topics-20260920-v1",
+  "generated_at": "2026-09-20T09:27:49.982129+00:00",
+  "status": "reviewed_aggregate_research_preview",
+  "metric_units": "proportions in [0,1]; multiply by100 for percent; differences multiply by100 for percentage points",
+  "scope": "Personal noncommercial research; aggregate results and methods only.",
+  "coverage": {
+    "topics": 4,
+    "measurements": 82,
+    "paired_contrasts": 18,
+    "seed_protocols": 5,
+    "seed_runs": 15,
+    "note": "Measurements are protocol-specific rows, not independent studies or a global ranking."
+  },
+  "topics": [
+    {
+      "id": "dry-vs-wet",
+      "tracks": [
+        "wearable-sensor-transfer"
+      ],
+      "measurements": 16
+    },
+    {
+      "id": "on-the-move",
+      "tracks": [
+        "mobile-ssvep-5s",
+        "mobile-ssvep-2s",
+        "mobile-erp"
+      ],
+      "measurements": 32
+    },
+    {
+      "id": "calibration-budget",
+      "tracks": [
+        "wearable-calibration",
+        "wearable-etrca-calibration"
+      ],
+      "measurements": 16
+    },
+    {
+      "id": "does-pretraining-help",
+      "tracks": [
+        "pretraining-attribution-fixed",
+        "pretraining-attribution-selected",
+        "fixed-classical-control"
+      ],
+      "measurements": 18
+    }
+  ],
+  "rows": [
+    {
+      "id": "wearable-sensor-transfer-001",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "random-uniform",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.08627450980392158,
+      "confidence_interval_95": [
+        0.08120915032679739,
+        0.09125816993464055
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-002",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "random-uniform",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.08063725490196078,
+      "confidence_interval_95": [
+        0.07581699346405228,
+        0.08570261437908495
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-003",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "same-frequency-power",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.39795751633986925,
+      "confidence_interval_95": [
+        0.35400326797385623,
+        0.4434681372549019
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-004",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "same-frequency-power",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.35980392156862756,
+      "confidence_interval_95": [
+        0.31781045751633985,
+        0.4024530228758171
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-005",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8156045751633987,
+      "confidence_interval_95": [
+        0.7772058823529411,
+        0.8508986928104574
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-006",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6547385620915033,
+      "confidence_interval_95": [
+        0.606125408496732,
+        0.7017156862745099
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-007",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "fbcca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8227941176470587,
+      "confidence_interval_95": [
+        0.7866013071895427,
+        0.8565359477124183
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-008",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "fbcca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6459967320261439,
+      "confidence_interval_95": [
+        0.5953410947712419,
+        0.6962438725490195
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "analytic_or_random_reference",
+      "seed_count": null,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-009",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge-gain-invariant",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.40294117647058825,
+      "confidence_interval_95": [
+        0.3645424836601306,
+        0.44256535947712417
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "wet",
+      "target_sensor": "wet",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": null,
+      "protocol_amendment": "wearable-spectral-ridge-gain-invariant-v1"
+    },
+    {
+      "id": "wearable-sensor-transfer-010",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge-gain-invariant",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.35179738562091495,
+      "confidence_interval_95": [
+        0.3180555555555556,
+        0.3875837418300653
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "wet",
+      "target_sensor": "dry",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": null,
+      "protocol_amendment": "wearable-spectral-ridge-gain-invariant-v1"
+    },
+    {
+      "id": "wearable-sensor-transfer-011",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge-gain-invariant",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3722222222222221,
+      "confidence_interval_95": [
+        0.3352124183006537,
+        0.40972222222222227
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "dry",
+      "target_sensor": "dry",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": null,
+      "protocol_amendment": "wearable-spectral-ridge-gain-invariant-v1"
+    },
+    {
+      "id": "wearable-sensor-transfer-012",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge-gain-invariant",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3967320261437909,
+      "confidence_interval_95": [
+        0.35866013071895436,
+        0.4361111111111111
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "dry",
+      "target_sensor": "wet",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": null,
+      "protocol_amendment": "wearable-spectral-ridge-gain-invariant-v1"
+    },
+    {
+      "id": "wearable-sensor-transfer-013",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-eegnet-wet-dry-transfer-2s-subject6fold-seed20260919-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "eegnet",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.750081699346405,
+      "confidence_interval_95": [
+        0.7029411764705883,
+        0.7947732843137255
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "wet",
+      "target_sensor": "wet",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": 1,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-014",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-eegnet-wet-dry-transfer-2s-subject6fold-seed20260919-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "eegnet",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.4562908496732027,
+      "confidence_interval_95": [
+        0.40514705882352936,
+        0.5080065359477124
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "wet",
+      "target_sensor": "dry",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": 1,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-015",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-eegnet-wet-dry-transfer-2s-subject6fold-seed20260919-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "eegnet",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.640359477124183,
+      "confidence_interval_95": [
+        0.5908496732026144,
+        0.6879901960784314
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "dry",
+      "target_sensor": "wet",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": 1,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-sensor-transfer-016",
+      "track": "wearable-sensor-transfer",
+      "protocol_id": "wearable-eegnet-wet-dry-transfer-2s-subject6fold-seed20260919-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "eegnet",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5677287581699347,
+      "confidence_interval_95": [
+        0.5194424019607844,
+        0.6163398692810458
+      ],
+      "participants": 102,
+      "trials": 12240,
+      "channels": 8,
+      "window_seconds": 2,
+      "source_sensor": "dry",
+      "target_sensor": "dry",
+      "training_regime": "participant_disjoint_source_training",
+      "seed_count": 1,
+      "protocol_amendment": null
+    },
+    {
+      "id": "wearable-calibration-017",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3917483660130718,
+      "confidence_interval_95": [
+        0.35362200435729846,
+        0.4301470588235293
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": "wet",
+      "target_sensor": "wet",
+      "training_regime": "source-only",
+      "labeled_target_trials": 0,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-018",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3536220043572984,
+      "confidence_interval_95": [
+        0.3199891067538126,
+        0.3897058823529411
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": "wet",
+      "target_sensor": "dry",
+      "training_regime": "source-only",
+      "labeled_target_trials": 0,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-019",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3903867102396515,
+      "confidence_interval_95": [
+        0.3518518518518519,
+        0.4293300653594771
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": "dry",
+      "target_sensor": "wet",
+      "training_regime": "source-only",
+      "labeled_target_trials": 0,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-020",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3722766884531591,
+      "confidence_interval_95": [
+        0.3360566448801742,
+        0.40890522875816987
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": "dry",
+      "target_sensor": "dry",
+      "training_regime": "source-only",
+      "labeled_target_trials": 0,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-021",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.15332244008714593,
+      "confidence_interval_95": [
+        0.13657407407407407,
+        0.17088779956427014
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "target-only",
+      "labeled_target_trials": 12,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-022",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.18218954248366015,
+      "confidence_interval_95": [
+        0.15890522875816995,
+        0.20738017429193897
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "target-only",
+      "labeled_target_trials": 24,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-023",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.21255446623093682,
+      "confidence_interval_95": [
+        0.18327886710239652,
+        0.24455337690631804
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "wet",
+      "training_regime": "target-only",
+      "labeled_target_trials": 48,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-024",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.14991830065359474,
+      "confidence_interval_95": [
+        0.13589324618736384,
+        0.1650326797385621
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "target-only",
+      "labeled_target_trials": 12,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-025",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.18341503267973852,
+      "confidence_interval_95": [
+        0.16285403050108932,
+        0.20656318082788672
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "target-only",
+      "labeled_target_trials": 24,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-calibration-026",
+      "track": "wearable-calibration",
+      "protocol_id": "wearable-target-calibration-spectral-ridge-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.2184095860566449,
+      "confidence_interval_95": [
+        0.1934912854030501,
+        0.24537037037037038
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "source_sensor": null,
+      "target_sensor": "dry",
+      "training_regime": "target-only",
+      "labeled_target_trials": 48,
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-027",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.650871459694989,
+      "confidence_interval_95": [
+        0.6002178649237473,
+        0.7003029684095863
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "dry",
+      "training_regime": "analytic_reference",
+      "labeled_target_trials": 0,
+      "calibration_blocks": [],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-028",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8114106753812638,
+      "confidence_interval_95": [
+        0.772331154684096,
+        0.8479064542483662
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "wet",
+      "training_regime": "analytic_reference",
+      "labeled_target_trials": 0,
+      "calibration_blocks": [],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-029",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "ensemble-trca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.12418300653594773,
+      "confidence_interval_95": [
+        0.10389433551198256,
+        0.14964596949891065
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "dry",
+      "training_regime": "target_only_single_band_ensemble_trca",
+      "labeled_target_trials": 24,
+      "calibration_blocks": [
+        1,
+        2
+      ],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-030",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "ensemble-trca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.397875816993464,
+      "confidence_interval_95": [
+        0.3412275326797385,
+        0.45792824074074073
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "wet",
+      "training_regime": "target_only_single_band_ensemble_trca",
+      "labeled_target_trials": 24,
+      "calibration_blocks": [
+        1,
+        2
+      ],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-031",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "ensemble-trca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.15127995642701525,
+      "confidence_interval_95": [
+        0.12649441721132895,
+        0.18164488017429195
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "dry",
+      "training_regime": "target_only_single_band_ensemble_trca",
+      "labeled_target_trials": 48,
+      "calibration_blocks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "wearable-etrca-calibration-032",
+      "track": "wearable-etrca-calibration",
+      "protocol_id": "wearable-target-only-ensemble-trca-common-testblocks-v1",
+      "dataset_id": "zhu2021-wearable102-author-snapshot-20260920",
+      "model": "ensemble-trca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6397058823529411,
+      "confidence_interval_95": [
+        0.5714869281045751,
+        0.7073835784313726
+      ],
+      "participants": 102,
+      "trials": 7344,
+      "window_seconds": 2,
+      "channels": 8,
+      "target_sensor": "wet",
+      "training_regime": "target_only_single_band_ensemble_trca",
+      "labeled_target_trials": 48,
+      "calibration_blocks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "test_blocks": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "mobile-ssvep-5s-033",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8869565217391304,
+      "confidence_interval_95": [
+        0.7999999999999999,
+        0.9587137681159418
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-034",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8289855072463768,
+      "confidence_interval_95": [
+        0.7434782608695653,
+        0.903623188405797
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-035",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8086956521739129,
+      "confidence_interval_95": [
+        0.7195652173913042,
+        0.8884057971014493
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-036",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8499999999999999,
+      "confidence_interval_95": [
+        0.7695652173913045,
+        0.9202898550724636
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-5s-037",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.7920289855072463,
+      "confidence_interval_95": [
+        0.7007246376811594,
+        0.8753623188405797
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-5s-038",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.7717391304347826,
+      "confidence_interval_95": [
+        0.6768115942028987,
+        0.8565217391304347
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-5s-039",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.531159420289855,
+      "confidence_interval_95": [
+        0.4739130434782608,
+        0.5956521739130434
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-040",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.4340579710144927,
+      "confidence_interval_95": [
+        0.39565217391304336,
+        0.478278985507246
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-041",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.391304347826087,
+      "confidence_interval_95": [
+        0.3666666666666667,
+        0.41811594202898544
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "analytic_reference"
+    },
+    {
+      "id": "mobile-ssvep-5s-042",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5195652173913043,
+      "confidence_interval_95": [
+        0.4688405797101449,
+        0.577536231884058
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-5s-043",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.4543478260869566,
+      "confidence_interval_95": [
+        0.4065217391304348,
+        0.5115942028985507
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-5s-044",
+      "track": "mobile-ssvep-5s",
+      "protocol_id": "lee2021-mobile-ssvep-standing-transfer-lopo-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.3999999999999999,
+      "confidence_interval_95": [
+        0.3644927536231884,
+        0.43695652173913047
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 5,
+      "channels": 14,
+      "modality": "ear",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "standing_other_participants_only"
+    },
+    {
+      "id": "mobile-ssvep-2s-045",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.8231884057971013,
+      "confidence_interval_95": [
+        0.746376811594203,
+        0.8942028985507244
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "analytic_reference",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-046",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.7065217391304348,
+      "confidence_interval_95": [
+        0.6231884057971013,
+        0.786231884057971
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "analytic_reference",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-047",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "author-cca",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.686231884057971,
+      "confidence_interval_95": [
+        0.6014492753623187,
+        0.7673913043478259
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "analytic_reference",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-048",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.7869565217391303,
+      "confidence_interval_95": [
+        0.7065036231884056,
+        0.8608695652173912
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-049",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6985507246376812,
+      "confidence_interval_95": [
+        0.6123188405797102,
+        0.7811594202898552
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-050",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "spectral-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6855072463768116,
+      "confidence_interval_95": [
+        0.6043478260869566,
+        0.7630434782608695
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": null,
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-051",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.594927536231884,
+      "confidence_interval_95": [
+        0.536231884057971,
+        0.6550724637681159
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-052",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5471014492753624,
+      "confidence_interval_95": [
+        0.494927536231884,
+        0.6007246376811594
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-053",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.477536231884058,
+      "confidence_interval_95": [
+        0.4333152173913043,
+        0.5231884057971014
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "declared_protocol"
+    },
+    {
+      "id": "mobile-ssvep-2s-054",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5992753623188406,
+      "confidence_interval_95": [
+        0.5427536231884058,
+        0.6543478260869564
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "exploratory_positional_channel_order"
+    },
+    {
+      "id": "mobile-ssvep-2s-055",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.4623188405797102,
+      "confidence_interval_95": [
+        0.4108695652173914,
+        0.5137681159420291
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "exploratory_positional_channel_order"
+    },
+    {
+      "id": "mobile-ssvep-2s-056",
+      "track": "mobile-ssvep-2s",
+      "protocol_id": "lee2021-mobile-ssvep-scalp-2s-lopo-frozen-foundation-v1",
+      "dataset_id": "nemar-nm000125-v1.0.2",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.46014492753623193,
+      "confidence_interval_95": [
+        0.42173913043478267,
+        0.49637681159420305
+      ],
+      "participants": 23,
+      "trials": 1380,
+      "window_seconds": 2,
+      "channels": 8,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "training_regime": "standing_other_participants_only",
+      "encoder_status": "pretrained_frozen",
+      "adapter_status": "exploratory_positional_channel_order"
+    },
+    {
+      "id": "mobile-erp-057",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.8594748551031094,
+      "confidence_interval_95": [
+        0.8200140438880279,
+        0.89706509017818
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "scalp",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "channels": 32,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-058",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.7401150173611111,
+      "confidence_interval_95": [
+        0.7029526909722222,
+        0.7774098849826389
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "scalp",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "channels": 32,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-059",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.6353712653994036,
+      "confidence_interval_95": [
+        0.6016695421006945,
+        0.6726564032583962
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "scalp",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "channels": 32,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-060",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.5860328217981667,
+      "confidence_interval_95": [
+        0.5606552270980127,
+        0.6126508502816881
+      ],
+      "participants": 17,
+      "trials": 4800,
+      "modality": "scalp",
+      "condition": "slight_running",
+      "speed_m_s": 2.0,
+      "channels": 32,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-061",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.7340052010524021,
+      "confidence_interval_95": [
+        0.694246961082197,
+        0.7739816216002741
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "ear",
+      "condition": "standing",
+      "speed_m_s": 0.0,
+      "channels": 14,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-062",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.6278002025462962,
+      "confidence_interval_95": [
+        0.5952067057291667,
+        0.6605900788483796
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "ear",
+      "condition": "slow_walking",
+      "speed_m_s": 0.8,
+      "channels": 14,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-063",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.5632950064736346,
+      "confidence_interval_95": [
+        0.5402663906789469,
+        0.5868462275752315
+      ],
+      "participants": 24,
+      "trials": 7100,
+      "modality": "ear",
+      "condition": "fast_walking",
+      "speed_m_s": 1.6,
+      "channels": 14,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "mobile-erp-064",
+      "track": "mobile-erp",
+      "protocol_id": "lee2021-mobile-erp-within-participant-standing-transfer-v1",
+      "dataset_id": "nemar-nm000201-v1.0.2",
+      "model": "temporal-feature-logistic-regression",
+      "metric": "participant_mean_roc_auc",
+      "value": 0.5170036220308587,
+      "confidence_interval_95": [
+        0.4907474695153792,
+        0.5414548853015669
+      ],
+      "participants": 17,
+      "trials": 4800,
+      "modality": "ear",
+      "condition": "slight_running",
+      "speed_m_s": 2.0,
+      "channels": 14,
+      "training_regime": "same_participant_session1_standing_only",
+      "feature_window_seconds": [
+        0.2,
+        0.45
+      ],
+      "baseline_window_seconds": [
+        -0.2,
+        0
+      ]
+    },
+    {
+      "id": "pretraining-attribution-fixed-065",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "ds003810",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.535,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-066",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "ds003810",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5591666666666666,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-067",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "ds003810",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6291666666666667,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-068",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "ds003810",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5652777777777778,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-selected-069",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "ds003810",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5291666666666667,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-070",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "ds003810",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5647222222222221,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-071",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "ds003810",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6275,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-072",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "ds003810",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.548611111111111,
+      "confidence_interval_95": null,
+      "participants": 10,
+      "trials": 1200,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-fixed-073",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6462962962962964,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-074",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5651234567901234,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-075",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6231481481481481,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-fixed-076",
+      "track": "pretraining-attribution-fixed",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5641975308641974,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "fixed alpha100"
+    },
+    {
+      "id": "pretraining-attribution-selected-077",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6444444444444444,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-078",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "labram",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5645061728395062,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-079",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6842592592592592,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "pretrained",
+      "encoder_seed_count": 1,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "pretraining-attribution-selected-080",
+      "track": "pretraining-attribution-selected",
+      "protocol_id": "frozen-head-sensitivity-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "cbramod",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6169753086419753,
+      "confidence_interval_95": null,
+      "participants": 36,
+      "trials": 2160,
+      "initialization": "constructor-random-mean",
+      "encoder_seed_count": 3,
+      "training_regime": "frozen_encoder_participant_disjoint_ridge",
+      "head_selection": "inner participant validation over alpha100/10000/1"
+    },
+    {
+      "id": "fixed-classical-control-081",
+      "track": "fixed-classical-control",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "ds003810",
+      "model": "log-covariance-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.5233333333333334,
+      "confidence_interval_95": [
+        0.485,
+        0.5641666666666666
+      ],
+      "participants": 10,
+      "trials": 1200,
+      "training_regime": "participant_disjoint_ridge",
+      "fixed_covariance_shrinkage": 0.1
+    },
+    {
+      "id": "fixed-classical-control-082",
+      "track": "fixed-classical-control",
+      "protocol_id": "pretraining-attribution-v1",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "model": "log-covariance-ridge",
+      "metric": "participant_mean_balanced_accuracy",
+      "value": 0.6189814814814816,
+      "confidence_interval_95": [
+        0.562037037037037,
+        0.6763888888888889
+      ],
+      "participants": 36,
+      "trials": 2160,
+      "training_regime": "participant_disjoint_ridge",
+      "fixed_covariance_shrinkage": 0.1
+    }
+  ],
+  "paired_contrasts": [
+    {
+      "track": "wearable-sensor-transfer",
+      "model": "eegnet",
+      "comparison": "wet-source: wet->dry minus wet->wet",
+      "participants": 102,
+      "difference": -0.2937908496732027,
+      "paired_participant_bootstrap_95": [
+        -0.3448549836601308,
+        -0.24289011437908495
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "One training seed. Sensor/session order and time-on-task are confounded; not a pure causal hardware effect."
+    },
+    {
+      "track": "wearable-sensor-transfer",
+      "model": "eegnet",
+      "comparison": "dry-source: dry->wet minus dry->dry",
+      "participants": 102,
+      "difference": 0.07263071895424837,
+      "paired_participant_bootstrap_95": [
+        0.041501225490196095,
+        0.10392361111111113
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "One training seed. Sensor/session order and time-on-task are confounded; not a pure causal hardware effect."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca24-minus-cca-dry",
+      "participants": 102,
+      "difference": -0.5266884531590413,
+      "paired_participant_bootstrap_95": [
+        -0.5755718954248367,
+        -0.47671568627450983
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca48-minus-cca-dry",
+      "participants": 102,
+      "difference": -0.49959150326797386,
+      "paired_participant_bootstrap_95": [
+        -0.5468409586056644,
+        -0.4517939814814815
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca48-minus-etrca24-dry",
+      "participants": 102,
+      "difference": 0.027096949891067538,
+      "paired_participant_bootstrap_95": [
+        0.012527233115468411,
+        0.04193899782135077
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca24-minus-cca-wet",
+      "participants": 102,
+      "difference": -0.4135348583877996,
+      "paired_participant_bootstrap_95": [
+        -0.4587418300653595,
+        -0.3679193899782135
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca48-minus-cca-wet",
+      "participants": 102,
+      "difference": -0.17170479302832248,
+      "paired_participant_bootstrap_95": [
+        -0.21868532135076257,
+        -0.12677015250544665
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "wearable-etrca-calibration",
+      "model": "ensemble-trca",
+      "comparison": "etrca48-minus-etrca24-wet",
+      "participants": 102,
+      "difference": 0.24183006535947713,
+      "paired_participant_bootstrap_95": [
+        0.19675585511982568,
+        0.28839869281045755
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Prespecified single-band adaptation; not an exact three-filter-bank author reproduction. All conditions share the same future test blocks."
+    },
+    {
+      "track": "mobile-erp",
+      "model": "temporal-feature-logistic-regression",
+      "modality": "scalp",
+      "participants": 17,
+      "comparison": "standing minus running within the same17participants",
+      "difference": 0.27565178310202465,
+      "paired_participant_bootstrap_95": [
+        0.2265743846903483,
+        0.3219639440097663
+      ],
+      "unit": "absolute ROC-AUC difference",
+      "interpretation": "Secondary descriptive paired analysis; positive difference means lower AUC while running."
+    },
+    {
+      "track": "mobile-erp",
+      "model": "temporal-feature-logistic-regression",
+      "modality": "ear",
+      "participants": 17,
+      "comparison": "standing minus running within the same17participants",
+      "difference": 0.22485304072662582,
+      "paired_participant_bootstrap_95": [
+        0.174645134376469,
+        0.27676874828148323
+      ],
+      "unit": "absolute ROC-AUC difference",
+      "interpretation": "Secondary descriptive paired analysis; positive difference means lower AUC while running."
+    },
+    {
+      "track": "pretraining-attribution-fixed",
+      "model": "labram",
+      "dataset_id": "ds003810",
+      "participants": 10,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": -0.02416666666666667,
+      "paired_participant_bootstrap_95": [
+        -0.05944444444444445,
+        0.010277777777777736
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-fixed",
+      "model": "cbramod",
+      "dataset_id": "ds003810",
+      "participants": 10,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.0638888888888889,
+      "paired_participant_bootstrap_95": [
+        0.03055555555555558,
+        0.09499999999999997
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-selected",
+      "model": "labram",
+      "dataset_id": "ds003810",
+      "participants": 10,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": -0.03555555555555556,
+      "paired_participant_bootstrap_95": [
+        -0.07000000000000002,
+        -0.0019444444444444097
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-selected",
+      "model": "cbramod",
+      "dataset_id": "ds003810",
+      "participants": 10,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.07888888888888888,
+      "paired_participant_bootstrap_95": [
+        0.04527777777777778,
+        0.11111111111111109
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-fixed",
+      "model": "labram",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "participants": 36,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.08117283950617285,
+      "paired_participant_bootstrap_95": [
+        0.04969135802469138,
+        0.11404320987654322
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-fixed",
+      "model": "cbramod",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "participants": 36,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.05895061728395063,
+      "paired_participant_bootstrap_95": [
+        0.023148148148148175,
+        0.09567901234567901
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-selected",
+      "model": "labram",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "participants": 36,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.07993827160493829,
+      "paired_participant_bootstrap_95": [
+        0.04737654320987656,
+        0.11419753086419754
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    },
+    {
+      "track": "pretraining-attribution-selected",
+      "model": "cbramod",
+      "dataset_id": "physionet-eegmat-1.0.0",
+      "participants": 36,
+      "comparison": "pretrained minus mean of three constructor-random encoders",
+      "difference": 0.06728395061728397,
+      "paired_participant_bootstrap_95": [
+        0.031168981481481495,
+        0.10432098765432099
+      ],
+      "unit": "absolute balanced-accuracy difference",
+      "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+    }
+  ],
+  "seed_sensitivity": [
+    {
+      "model": "eegnet",
+      "protocol": "ds005383",
+      "backend": "mps",
+      "participants": 30,
+      "trials": 3600,
+      "runs": [
+        {
+          "seed": 20260919,
+          "balanced_accuracy": 0.6050000000000001,
+          "macro_f1": 0.5964874548633496,
+          "prediction_sha256": "2e20c734627283e0118c54eef7d62afc03a3103350b22bb41da08b599dd0df43",
+          "verification_sha256": "6278583852dc324df9d616d1a866ee5fd7ee5baa8bebaf83b00598972fd2150b"
+        },
+        {
+          "seed": 20260920,
+          "balanced_accuracy": 0.6041666666666666,
+          "macro_f1": 0.5977190969739871,
+          "prediction_sha256": "846e6f385eb66c15ff16b9aae9821dfde45c5a447f81f62ed8ed6529484a05c8",
+          "verification_sha256": "5a8eeb142499087c95ac711518754cd11389b5bdab45d77965516e10a536edad"
+        },
+        {
+          "seed": 20260921,
+          "balanced_accuracy": 0.6033333333333334,
+          "macro_f1": 0.5963186834332743,
+          "prediction_sha256": "ccf08443121c32d12988e95e0adf0a12a218ccebf8076336c6b2f13688e73e4d",
+          "verification_sha256": "eef98975986b1f4d7709cc89767ed5a1489bad5cf710633c9102bfba67e87073"
+        }
+      ],
+      "mean_balanced_accuracy": 0.6041666666666667,
+      "sample_standard_deviation": 0.0008333333333333526,
+      "minimum": 0.6033333333333334,
+      "maximum": 0.6050000000000001,
+      "full_range": 0.0016666666666667052,
+      "uncertainty_kind": "three-seed sample spread, not a population confidence interval",
+      "comparability_note": "MPS base seed 20260919 was rerun because the canonical published run used CUDA.",
+      "input_audit_digests": {
+        "canonicalPublishedInputsJsonSha256": "068dbbffe0cbb84eb07c3f674c6eec2647ba8178366e5cce825e904680314609",
+        "canonicalPublishedDatasetProtocolSha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+        "canonicalPublishedSplitsSha256": "9d6f45b6e48f589c31d405d7dc24d1862027e5fc95d69214aa3276924572d85c",
+        "mpsCanonicalEpochsSha256": "32c9a7dcebf5370b85166a950180743fc3025b6b487bd98e9edc113f6a05d7bf",
+        "verificationSha256BySeed": {
+          "20260919": "6278583852dc324df9d616d1a866ee5fd7ee5baa8bebaf83b00598972fd2150b",
+          "20260920": "5a8eeb142499087c95ac711518754cd11389b5bdab45d77965516e10a536edad",
+          "20260921": "eef98975986b1f4d7709cc89767ed5a1489bad5cf710633c9102bfba67e87073"
+        }
+      }
+    },
+    {
+      "model": "eegnet",
+      "protocol": "ds006593",
+      "backend": "mps",
+      "participants": 21,
+      "trials": 2520,
+      "runs": [
+        {
+          "seed": 20260919,
+          "balanced_accuracy": 0.557936507936508,
+          "macro_f1": 0.5278391584455138,
+          "prediction_sha256": "56f6efc43ab28fd2d5d7ed77f92582297bff43ce2eb1c85747615bbaccba5784",
+          "verification_sha256": "5ce25508c21f8f6fa21aa2b364e86008775275f69ca1b0f634a336d6faf9a160"
+        },
+        {
+          "seed": 20260920,
+          "balanced_accuracy": 0.5035714285714286,
+          "macro_f1": 0.4257855014266771,
+          "prediction_sha256": "b7a5dddf206ff87aa232268e43c361b48f98918d3ec3e3d2bb5545d3e7424c6a",
+          "verification_sha256": "d8d829e621b1c3ce738ce76991ca9fbe7784e4f388119de39a4f43869693a87d"
+        },
+        {
+          "seed": 20260921,
+          "balanced_accuracy": 0.5206349206349208,
+          "macro_f1": 0.44149405919604495,
+          "prediction_sha256": "4438b2c0c0be2b6c4154a3cf3c08906b94e14c2d5bef39f1a0e4fec5f2e7d021",
+          "verification_sha256": "a90311d26eaeb4121aa3a3658ecaf98437e4afec8a3b0006679b76d7889b4331"
+        }
+      ],
+      "mean_balanced_accuracy": 0.5273809523809524,
+      "sample_standard_deviation": 0.027803276278735488,
+      "minimum": 0.5035714285714286,
+      "maximum": 0.557936507936508,
+      "full_range": 0.054365079365079394,
+      "uncertainty_kind": "three-seed sample spread, not a population confidence interval",
+      "comparability_note": "MPS base seed 20260919 was rerun because the canonical published run used CUDA.",
+      "input_audit_digests": {
+        "canonicalPublishedInputsJsonSha256": "defa7736a2767802514c86fde298b51fe038882e4f341408a966b8d16245c97c",
+        "canonicalPublishedDatasetProtocolSha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+        "canonicalPublishedSplitsSha256": "efcf6d5896e8f100f66c29358ab8c8b651e1c68a25074553377edbe7a3c580fb",
+        "mpsCanonicalEpochsSha256": "e81b9976586e4d94c3b45d3257227dccf52f6e2533ca9224e7438009b2abec86",
+        "verificationSha256BySeed": {
+          "20260919": "5ce25508c21f8f6fa21aa2b364e86008775275f69ca1b0f634a336d6faf9a160",
+          "20260920": "d8d829e621b1c3ce738ce76991ca9fbe7784e4f388119de39a4f43869693a87d",
+          "20260921": "a90311d26eaeb4121aa3a3658ecaf98437e4afec8a3b0006679b76d7889b4331"
+        }
+      }
+    },
+    {
+      "model": "eegnet",
+      "protocol": "eesm19-scalp-sleep",
+      "backend": "mps",
+      "participants": 20,
+      "trials": 3000,
+      "runs": [
+        {
+          "seed": 20260919,
+          "balanced_accuracy": 0.5733333333333334,
+          "macro_f1": 0.5576066152540544,
+          "prediction_sha256": "b4c4df49e15e1742209549b9c15da6115bbc6851283da096be4a40567c78d4f3",
+          "verification_sha256": "70ea23dee0998d6d322c9db4d8689ebb9bf395a6987b2f5b42a8d6a96d30ed5e"
+        },
+        {
+          "seed": 20260920,
+          "balanced_accuracy": 0.5443333333333333,
+          "macro_f1": 0.5321136717123099,
+          "prediction_sha256": "24e3c69c0df209f6c314a73866920043b103bbf99b1804166b81e190af8f143d",
+          "verification_sha256": "1bbf80c5d19b98ae79983ac0be023fabba94504fbe728d65bfc429e41329055d"
+        },
+        {
+          "seed": 20260921,
+          "balanced_accuracy": 0.5159999999999999,
+          "macro_f1": 0.5067925373507192,
+          "prediction_sha256": "0599583b282d36847d7c7f415b7e37f682a1492f21f4b8c21bb68ef7ff5df0b5",
+          "verification_sha256": "399439597da3870ebee0f8b10c9c4f811ccc5ae0d4986b839d66cf89a8b01274"
+        }
+      ],
+      "mean_balanced_accuracy": 0.5445555555555556,
+      "sample_standard_deviation": 0.028667312654220282,
+      "minimum": 0.5159999999999999,
+      "maximum": 0.5733333333333334,
+      "full_range": 0.05733333333333346,
+      "uncertainty_kind": "three-seed sample spread, not a population confidence interval",
+      "comparability_note": "MPS base seed 20260919 was rerun because the canonical published run used CUDA.",
+      "input_audit_digests": {
+        "canonicalPublishedInputsJsonSha256": "06f9cd627403cfa26cea9186506a56b7dfed88370329247adfa4c84cd33b71e0",
+        "canonicalPublishedDatasetProtocolSha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+        "canonicalPublishedSplitsSha256": "6bbec4fdd4060505e11c272aaee0a231c2c9bb62cd0f2fbcd7541556533f56d4",
+        "mpsCanonicalEpochsSha256": "6a0e99c6626fa102532b9fbd687c163bce82a6963609c662a05f4a976a1d0a9a",
+        "verificationSha256BySeed": {
+          "20260919": "70ea23dee0998d6d322c9db4d8689ebb9bf395a6987b2f5b42a8d6a96d30ed5e",
+          "20260920": "1bbf80c5d19b98ae79983ac0be023fabba94504fbe728d65bfc429e41329055d",
+          "20260921": "399439597da3870ebee0f8b10c9c4f811ccc5ae0d4986b839d66cf89a8b01274"
+        }
+      }
+    },
+    {
+      "model": "eegnet",
+      "protocol": "BETA-posterior4",
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "runs": [
+        {
+          "seed": 20260919,
+          "balanced_accuracy": 0.4476785714285715,
+          "macro_f1": 0.4293443297910396,
+          "prediction_sha256": "f68022324f2246870d61c71d1f5e9cd30e47816a0f1d4c563f7031412bb6f2a4",
+          "verification_sha256": "60b0380c83a0ddfa19908d1c5bda070f9941c887dca410fa4b1c6dd8a55abfdb"
+        },
+        {
+          "seed": 20260920,
+          "balanced_accuracy": 0.44419642857142855,
+          "macro_f1": 0.4270581019774624,
+          "prediction_sha256": "72104abc9e69ec32158a58eecdf8d9b81de7b300d1132a8c4be7f78c7536f222",
+          "verification_sha256": "b483a08fedf8f1215d5400d2d24c50026f745d2d861761b40be830f7ef7d7708"
+        },
+        {
+          "seed": 20260921,
+          "balanced_accuracy": 0.4502678571428571,
+          "macro_f1": 0.43404827007053803,
+          "prediction_sha256": "f9256366aabddc890af35de57744fbd3ccb700af53483a98f36db7c1f88d0dc1",
+          "verification_sha256": "450b68ead61109a34155ec0b2086092f89e21dead8a3d33e8ee7eee85f2375c7"
+        }
+      ],
+      "mean_balanced_accuracy": 0.4473809523809524,
+      "sample_standard_deviation": 0.0030466365138655843,
+      "minimum": 0.44419642857142855,
+      "maximum": 0.4502678571428571,
+      "full_range": 0.006071428571428561,
+      "uncertainty_kind": "three-seed sample spread, not a population confidence interval",
+      "comparability_note": "All three fixed seeds use the original BETA MPS prepared input and participant folds. The earlier published seed 20260912 remains separate and is not included in this three-seed summary.",
+      "input_audit_digests": {
+        "preparedEpochsSha256": "a235b215dcbc1c0e724d7ca980584738a65bc1e2ad773d3b03346ce7c6ace4f7",
+        "protocolSha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "splitsSha256": "b9ecebbd59dfc0f2ab231ba077ccfcade12bf585b4673c8435872797e6fd705f",
+        "trialsSha256": "b16e07eaab35e329a0b138015a4f6ac40beb82ae43fa0fe53fdfc263b18a973b",
+        "verificationSha256BySeed": {
+          "20260919": "60b0380c83a0ddfa19908d1c5bda070f9941c887dca410fa4b1c6dd8a55abfdb",
+          "20260920": "b483a08fedf8f1215d5400d2d24c50026f745d2d861761b40be830f7ef7d7708",
+          "20260921": "450b68ead61109a34155ec0b2086092f89e21dead8a3d33e8ee7eee85f2375c7"
+        }
+      }
+    },
+    {
+      "model": "eegnet",
+      "protocol": "BETA-posterior8",
+      "backend": "mps",
+      "participants": 70,
+      "trials": 11200,
+      "runs": [
+        {
+          "seed": 20260919,
+          "balanced_accuracy": 0.5653571428571428,
+          "macro_f1": 0.5494697144746062,
+          "prediction_sha256": "428756f4caac1ce187c5caed2af278f47979cc3c8c561c283248a6d9cc57203c",
+          "verification_sha256": "9292b66401c6632bd6bf9bda4a0812c89187abf785ad574d7d3e57f927f297a1"
+        },
+        {
+          "seed": 20260920,
+          "balanced_accuracy": 0.5673214285714288,
+          "macro_f1": 0.5529833633612936,
+          "prediction_sha256": "09782e3cd980da8a868f30206da594262a459e67df7e06c5d364c106f9079cd2",
+          "verification_sha256": "37638cb82c6cda09975d51c7f9153665be78aab604959e5b43fb3cbcda3bbfce"
+        },
+        {
+          "seed": 20260921,
+          "balanced_accuracy": 0.5699107142857143,
+          "macro_f1": 0.5558208319293293,
+          "prediction_sha256": "5064eddec91eca08bb73e42c35646a93ec38669dfff314bfd837f26e9a53843a",
+          "verification_sha256": "02127f4cabe463c9c03fd4f1bc264112a21a79e6fc9ac8c297608421cdb98966"
+        }
+      ],
+      "mean_balanced_accuracy": 0.5675297619047619,
+      "sample_standard_deviation": 0.0022839232193987906,
+      "minimum": 0.5653571428571428,
+      "maximum": 0.5699107142857143,
+      "full_range": 0.00455357142857149,
+      "uncertainty_kind": "three-seed sample spread, not a population confidence interval",
+      "comparability_note": "All three fixed seeds use the original BETA MPS prepared input and participant folds. The earlier published seed 20260912 remains separate and is not included in this three-seed summary.",
+      "input_audit_digests": {
+        "preparedEpochsSha256": "a235b215dcbc1c0e724d7ca980584738a65bc1e2ad773d3b03346ce7c6ace4f7",
+        "protocolSha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "splitsSha256": "b9ecebbd59dfc0f2ab231ba077ccfcade12bf585b4673c8435872797e6fd705f",
+        "trialsSha256": "b16e07eaab35e329a0b138015a4f6ac40beb82ae43fa0fe53fdfc263b18a973b",
+        "verificationSha256BySeed": {
+          "20260919": "9292b66401c6632bd6bf9bda4a0812c89187abf785ad574d7d3e57f927f297a1",
+          "20260920": "37638cb82c6cda09975d51c7f9153665be78aab604959e5b43fb3cbcda3bbfce",
+          "20260921": "02127f4cabe463c9c03fd4f1bc264112a21a79e6fc9ac8c297608421cdb98966"
+        }
+      }
+    }
+  ],
+  "dataset_citations": [
+    {
+      "id": "zhu2021-wearable102-author-snapshot-20260920",
+      "source_review_id": "tsinghua-wearable-ssvep102-author-mirror",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces",
+        "authors": [
+          "Fangkun Zhu",
+          "Lu Jiang",
+          "Guoya Dong",
+          "Xiaorong Gao",
+          "Yijun Wang"
+        ],
+        "paper_citation": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces. Sensors, 21(4), 1256. https://doi.org/10.3390/s21041256",
+        "paper_doi": "10.3390/s21041256",
+        "canonical_dataset_doi": "10.6084/m9.figshare.13560281",
+        "canonical_version": "4",
+        "canonical_version_doi": "10.6084/m9.figshare.13560281.v4",
+        "canonical_dataset_citation": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces (Version 4) [Data set]. Figshare. https://doi.org/10.6084/m9.figshare.13560281.v4",
+        "license": "CC BY 4.0",
+        "local_representation": "Official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number."
+      },
+      "primary_sources": [
+        "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+        "https://doi.org/10.3390/s21041256",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
+        "https://bci.med.tsinghua.edu.cn/download.html"
+      ],
+      "publication_conditions": [
+        "Cite the Sensors paper and the Figshare dataset/version DOI; disclose that computation used the 2026-09-20 official Tsinghua author mirror.",
+        "Publish cohort aggregates only; do not publish Subjects_Information.mat rows, individual questionnaires, impedance records, or per-participant benchmark scores.",
+        "Do not claim byte equivalence between the local author mirror and Figshare v4.",
+        "Do not infer or claim a physical EEG unit that the release does not document."
+      ]
+    },
+    {
+      "id": "nemar-nm000125-v1.0.2",
+      "source_review_id": "nemar-nm000125-v1.0.2",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "Lee2021 – SSVEP paradigm of the Mobile BCI dataset",
+        "authors": [
+          "Young-Eun Lee",
+          "Gi-Hwan Shin",
+          "Minji Lee",
+          "Seong-Whan Lee"
+        ],
+        "dataset_citation": "Lee, Y., Shin, G., Lee, M., & Lee, S. (2026). Lee2021 – SSVEP paradigm of the Mobile BCI dataset (Version v1.0.2) [Data set]. NEMAR. https://doi.org/10.82901/nemar.nm000125",
+        "dataset_doi": "10.82901/nemar.nm000125",
+        "version": "v1.0.2",
+        "version_publication_date": "2026-08-18",
+        "license": "CC BY 4.0",
+        "source_paper_citation": "Lee, Y.-E., Shin, G.-H., Lee, M., & Lee, S.-W. (2021). Mobile BCI dataset of scalp- and ear-EEGs with ERP and SSVEP paradigms while standing, walking, and running. Scientific Data, 8, 315. https://doi.org/10.1038/s41597-021-01094-4",
+        "source_paper_doi": "10.1038/s41597-021-01094-4",
+        "source_repository": "OSF https://osf.io/r7s9b/",
+        "representation": "NEMAR/MOABB-generated BIDS derivative"
+      },
+      "primary_sources": [
+        "https://nemar.org/dataset/nm000125",
+        "https://data.nemar.org/nm000125/v1.0.2/dataset_description.json",
+        "https://doi.org/10.1038/s41597-021-01094-4",
+        "https://osf.io/r7s9b/"
+      ],
+      "publication_conditions": [
+        "Cite NEMAR nm000125 v1.0.2 and DOI 10.82901/nemar.nm000125, plus the Lee et al. source paper.",
+        "Describe the analyzed object as a NEMAR/MOABB BIDS derivative rather than the original OSF layout.",
+        "Do not publish participant_id-linked age, sex, handedness, weight, height, group, species, BCI experience, or participant-level scores.",
+        "Keep any release to aggregate benchmark results and method metadata."
+      ]
+    },
+    {
+      "id": "nemar-nm000201-v1.0.2",
+      "source_review_id": "nemar-nm000201-v1.0.2",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "ERP paradigm of the Mobile BCI dataset",
+        "authors": [
+          "Young-Eun Lee",
+          "Gi-Hwan Shin",
+          "Minji Lee",
+          "Seong-Whan Lee"
+        ],
+        "dataset_citation": "Lee, Y., Shin, G., Lee, M., & Lee, S. (2026). ERP paradigm of the Mobile BCI dataset (Version v1.0.2) [Data set]. NEMAR. https://doi.org/10.82901/nemar.nm000201",
+        "dataset_doi": "10.82901/nemar.nm000201",
+        "version": "v1.0.2",
+        "version_publication_date": "2026-08-18",
+        "license": "CC BY 4.0",
+        "source_paper_citation": "Lee, Y.-E., Shin, G.-H., Lee, M., & Lee, S.-W. (2021). Mobile BCI dataset of scalp- and ear-EEGs with ERP and SSVEP paradigms while standing, walking, and running. Scientific Data, 8, 315. https://doi.org/10.1038/s41597-021-01094-4",
+        "source_paper_doi": "10.1038/s41597-021-01094-4",
+        "source_repository": "OSF https://osf.io/r7s9b/",
+        "representation": "NEMAR/MOABB-generated BIDS derivative with an embedded sourcedata provenance record"
+      },
+      "primary_sources": [
+        "https://nemar.org/dataset/nm000201",
+        "https://data.nemar.org/nm000201/v1.0.2/dataset_description.json",
+        "https://doi.org/10.1038/s41597-021-01094-4",
+        "https://osf.io/r7s9b/"
+      ],
+      "publication_conditions": [
+        "Cite NEMAR nm000201 v1.0.2 and DOI 10.82901/nemar.nm000201, plus the Lee et al. source paper.",
+        "Describe the analyzed object as a NEMAR/MOABB BIDS derivative rather than the original OSF layout.",
+        "Do not publish participant_id-linked age, sex, handedness, weight, height, group, species, BCI experience, or participant-level scores.",
+        "Keep any release to aggregate benchmark results and method metadata."
+      ]
+    },
+    {
+      "id": "BETA",
+      "source_review_id": "BETA",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "BETA",
+        "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "dataset_citation": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+        "representation": "Processed mirror identifies the canonical Figshare record and repeats CC BY 4.0; upstream version is pinned separately."
+      },
+      "primary_sources": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ],
+      "publication_conditions": [
+        "Attribution required. Participant consent described use for non-commercial scientific research, a narrower operational boundary than the copyright license; minors required parental consent.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    },
+    {
+      "id": "ds003810",
+      "source_review_id": "ds003810",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "ds003810",
+        "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+        "license": "CC0-1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "dataset_citation": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+        "representation": "Direct OpenNeuro snapshot; no mirror in the reviewed acquisition path."
+      },
+      "primary_sources": [
+        "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+      ],
+      "publication_conditions": [
+        "No copyright attribution condition, but cite the dataset and Peterson et al.; privacy and other non-copyright rights remain.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    },
+    {
+      "id": "ds005383",
+      "source_review_id": "ds005383",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "TMNRED / ds005383",
+        "version": "OpenNeuro snapshot 1.0.0 · ad78f3db430e636595b1b1c08417492f3067a25e",
+        "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "dataset_citation": "Yanru Bai, Qi Tang et al. · TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments (2025), doi:10.1038/s41597-025-05036-2. OpenNeuro ds005383 v1.0.0.",
+        "representation": "Direct OpenNeuro snapshot; publication also points to author-hosted raw/preprocessed data. The license-label mismatch is conservatively resolved in favor of attribution."
+      },
+      "primary_sources": [
+        "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+        "https://www.nature.com/articles/s41597-025-05036-2"
+      ],
+      "publication_conditions": [
+        "Honor the stricter CC BY attribution requirement. Do not reproduce third-party Chinese stimulus text sourced from Baidu Baike, WeChat accounts, or news.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    },
+    {
+      "id": "ds006593",
+      "source_review_id": "ds006593",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "ds006593",
+        "version": "OpenNeuro snapshot 1.0.0 · b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+        "license": "CC0-1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "dataset_citation": "OpenNeuro ds006593 contributors · version 1.0.0, doi:10.18112/openneuro.ds006593.v1.0.0; original author credits retained at the linked source.",
+        "representation": "Direct OpenNeuro snapshot; NEMAR independently identifies its copy as derived from this OpenNeuro record."
+      },
+      "primary_sources": [
+        "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "https://nemar.org/dataset/on006593"
+      ],
+      "publication_conditions": [
+        "No copyright attribution condition, but cite the dataset; privacy and other non-copyright rights remain.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    },
+    {
+      "id": "eesm19-scalp-sleep",
+      "source_review_id": "eesm19-scalp-sleep",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "EESM19 scalp subset",
+        "version": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2 · {\"mirror\": \"fb045012b58a0b755f9fedf5931dff9b64a9797f\", \"upstream\": \"0857858f7a2ba1582930f23eca3ec56f90a96da9\"}",
+        "license": "CC0-1.0 declared by upstream and mirror",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "dataset_citation": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+        "representation": "Processed H5 mirror derived from OpenNeuro ds005185. The mirror card agrees on CC0, but the derived-file transformation is described by the mirror rather than independently certified by upstream."
+      },
+      "primary_sources": [
+        "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "https://www.nature.com/articles/s41598-019-53115-3"
+      ],
+      "publication_conditions": [
+        "Cite the dataset and EESM19 publication; privacy and third-party rights remain.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    },
+    {
+      "id": "physionet-eegmat-1.0.0",
+      "source_review_id": "physionet-eegmat-1.0.0",
+      "decision": "aggregate_publication_only",
+      "identity": {
+        "title": "EEGMAT",
+        "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+        "license": "Open Data Commons Attribution License 1.0",
+        "license_url": "https://opendatacommons.org/licenses/by/1-0/",
+        "dataset_citation": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+        "representation": "Direct pinned PhysioNet release."
+      },
+      "primary_sources": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "publication_conditions": [
+        "Attribute the database and cite both the record and Zyma et al.; the license does not grant rights in individual contents or privacy rights.",
+        "Cohort aggregates only; no participant records, EEG signals, or individual predictions."
+      ]
+    }
+  ],
+  "method_references": [
+    {
+      "model": "ensemble-trca",
+      "repository": "https://github.com/mnakanishi/TRCA-SSVEP",
+      "commit": "35c1b8a7ebfa3774dd7266931784d04ae09f3461",
+      "adaptation": "single fixed band;24or48target-only labels; common future test blocks5–10"
+    }
+  ],
+  "interpretation_limits": {
+    "wearable": [
+      "102 participants, native8channels,12targets.",
+      "CCA/FBCCA/power are target-recording references and do not learn from source participants.",
+      "Physical amplitude unit undocumented; scale-dependent foundation-model runs held.",
+      "Uniform positive conversion applied to the complete training/test dataset is a different question from cross-sensor gain shift.",
+      "In wearable-calibration, budget0 uses source-only spectral ridge and budgets12/24/48 use target-only spectral ridge: do not join these as a continuous model-update curve. In wearable-etrca-calibration, budget0 is a separate analytic CCA reference and budgets24/48 are target-only ensemble TRCA.",
+      "Ensemble TRCA uses the same fixed6–80Hz input band, not the original three-filter-bank experiment. Its low scores do not establish the optimized method ceiling."
+    ],
+    "mobile_ssvep": [
+      "23 participants,3classes;8selected posterior scalp channels from32recorded or14ear channels, kept separate.",
+      "Five-second and two-second protocols must not share a ranking.",
+      "Five-second ear slow-walking CCA differs from paper by1.37percentage points; internal replay passed, exact author reproduction not established.",
+      "Scalp/ear amplitudes checked against original headers; mislabeled IMU/EOG channels excluded."
+    ],
+    "mobile_erp": [
+      "ROC AUC is not accuracy.",
+      "Within-participant session transfer differs from participant-disjoint SSVEP.",
+      "Running uses17participants; standing/walking24. Compare paired common-cohort contrast separately.",
+      "One participant has100Hz conversion vs500Hz forothers."
+    ],
+    "attribution": [
+      "Fixed-readout primary and train-only selected-readout sensitivity must both be visible; do not choose the better test score.",
+      "Participant bootstrap is descriptive and conditional, not independent retraining uncertainty or multiplicity-adjusted inference.",
+      "Constructor-random mean comes from3initializations, not3independent cohorts."
+    ]
+  },
+  "provenance": {
+    "reviewed_aggregate_sha256": "fd302e0ca8d75482b8f47e3110b9a34603345a49a1a3a6664ba2e4dd975200ac",
+    "independent_auditor_sha256": "6a2a61707c1dc5eda1a34aeb446cd50fed6441917c85cd7c1aedec30d03897bd",
+    "review_date": "2026-09-20",
+    "evidence_sha256": [
+      "352f7dd3ace055a534234af013c2d6f92ae696855c351ea33eb1ec614d583723",
+      "472e065d8c4294fb7ce46846503b1bc2a9ccfecdebd7ff78e53ba9f6b86e6bf3",
+      "1ab2a11ed313675672ecb091d6eaa5833ddbc48b21d5d8374b84156477aec9f8",
+      "2a0c26e79a58ad0a9afd63e4a525557cbd9d4f563e030344b201fb6b4aabcdf2",
+      "12afd213f5c0a37b9b643b17df4175bf5a1ba2fec9c1694db51a4971e8f0738e",
+      "718dff16d6037cbf936f7962b31cdd0f45e0cb2f453453dae0450e5249c5ffa8",
+      "0f73afe2ad5e2acf80794cc86b3bdc64cefcd4467990006b2651330a1d2996dd",
+      "9bc9429a0675b77cfe92ed0c372d4530d42b6bcb110b0e0c595ea97b472b84d3",
+      "70ba53c307b4b23ab88c49db1d8ba69263915c25d11cd195fcf5afcea59a8f3c",
+      "1212bcfa635390840168c5809965d0bb2f5c26d446f8bcbaa1b974ec1e9a7c22",
+      "55772d95e40cf818fedd989494de35528deddd272d974b6bd830899c00ad4502",
+      "12d2d58a18a3ae39981c3608a8faffc574a7b4a40f0803218bea8b4384fed268",
+      "4deea1fd9ba192bfdc8b1f4cb50b9b4687f7aeebaa3956f6a17fed9f90eec442",
+      "ef995e7deaf7a5a185cbf3c80ba2c3d829c92c4dd32e3a993549a9f1774877f7",
+      "e5da02b71288a4732f85735fc53b6a7650f771189d4b481ad652f1770c6ebeae",
+      "d7a51c8b50054861ef76a410e93d2e4b7ac729f6e988582c0cfcd2d72e203a03",
+      "bed13c46d3b280786be8e2a075d906a6e6a3bad1b43042535c400d7e2eaa47a3"
+    ]
+  }
+}

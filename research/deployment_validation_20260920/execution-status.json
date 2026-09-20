@@ -1,0 +1,35 @@
+{
+  "as_of": "2026-09-20T09:28:10.882105+00:00",
+  "status_is_snapshot": true,
+  "downloads_complete": true,
+  "new_downloaded_bytes": 7852847222,
+  "website_modified_or_deployed": false,
+  "public_candidate_rows": 82,
+  "public_candidate_paired_contrasts": 18,
+  "completed_and_audited": [
+    "wearable102 wet/dry classical and EEGNet",
+    "wearable spectral target-calibration",
+    "mobile SSVEP five-second scalp/ear",
+    "mobile SSVEP matched two-second scalp foundation comparison",
+    "mobile ERP and paired motion/conversion sensitivities",
+    "pretraining attribution two tasks three encoders three random seeds",
+    "readout sensitivity and grouped-label controls",
+    "captured published release39rows provenance audit",
+    "wearable target-only single-band ensemble TRCA calibration",
+    "EEGNet remaining five protocols, three MPS seeds each"
+  ],
+  "running": [],
+  "held": [
+    "EEGPT public release: checkpoint rights unresolved",
+    "wearable foundation models: undocumented physical amplitude unit",
+    "ear foundation models: no verified adapter montage"
+  ],
+  "additional_rental_cost": 0,
+  "currency": "USD",
+  "execution_status": "complete_for_selected_eligible_batch",
+  "seed_protocols": 5,
+  "seed_runs": 15,
+  "final_export_audit": "pass",
+  "final_export_sha256": "fd302e0ca8d75482b8f47e3110b9a34603345a49a1a3a6664ba2e4dd975200ac",
+  "gal4_free_gib": 893.3
+}

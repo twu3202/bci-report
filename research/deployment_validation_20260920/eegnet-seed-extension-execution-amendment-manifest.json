@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-20T09:16:30Z",
+  "purpose": "Immutable mapping from seed-extension conditions and discarded attempts to the exact executed wrapper revision.",
+  "scientificProtocolImpact": "None. Seeds, folds, inputs, normalization definitions, model hyperparameters, optimizer, epoch budgets, and saved-prediction audits were unchanged. Amendments affected dispatch selection, durable sidecar writes, shared-lock scope, and aggregate provenance fields.",
+  "revisions": [
+    {
+      "file": "executed-run_seed_extension.py",
+      "sha256": "814cedae95795d03e5d4b82176abbb2eeba5c7442a7024756b4873b7b87347ff",
+      "sealedConditions": [
+        "ds005383 seeds 20260919, 20260920, 20260921",
+        "ds006593 seeds 20260919, 20260920, 20260921"
+      ],
+      "discardedAttempts": [
+        "EESM19 sleep seed 20260919 fold 0: interrupted during training before prediction/detail sealing; elapsed not recorded and excluded"
+      ]
+    },
+    {
+      "file": "executed-run_seed_extension.beta-dispatch.py",
+      "sha256": "9e03d1baa0279283fd59e01f82524820ffc80a27c9f5c6bde4686283a6bd7553",
+      "sealedConditions": [],
+      "discardedAttempts": [
+        "BETA posterior4 seed 20260919 fold 0: prediction/checkpoint written but normalization sidecar unavailable before hashing; unsealed pair discarded, elapsed not recorded and excluded"
+      ],
+      "amendment": "Added CLI-only task selection so BETA could run before the long sleep task."
+    },
+    {
+      "file": "executed-run_seed_extension.beta-recovery.py",
+      "sha256": "2039cb378d41631a87760375b9b095238dddb912b1e89fb5fc11db18ef68a577",
+      "sealedConditions": [
+        "BETA posterior4 seeds 20260919, 20260920, 20260921",
+        "BETA posterior8 seeds 20260919, 20260920, 20260921"
+      ],
+      "discardedAttempts": [],
+      "amendment": "Made NPZ sidecar writes atomic and durable and placed torch seeding, model construction, and training inside the existing shared MPS lock. Numeric training settings were unchanged."
+    },
+    {
+      "file": "executed-run_seed_extension.sleep-and-aggregate.py",
+      "sha256": "00f62d3a7fc5f77fe0461335e1dc2af4645ca200b0aa962d71c7a274f507eb27",
+      "sealedConditions": [
+        "EESM19 sleep seeds 20260919, 20260920, 20260921"
+      ],
+      "discardedAttempts": [],
+      "amendment": "Added aggregate coverage, audit-source digest, elapsed, and retry fields. The parallel-suite scientific execution path was unchanged."
+    },
+    {
+      "file": "executed-run_seed_extension.final-summarizer.py",
+      "sha256": "14bdd899785b4672354e42f34368e438543f7b6960728cd0a53a37e8360130d8",
+      "sealedConditions": [],
+      "discardedAttempts": [],
+      "amendment": "Added this execution-source manifest digest and explicit discarded-attempt records to the aggregate-only handoff.",
+      "executionOutcome": "Aggregate-only attempt stopped before writing because it referenced protocol.json instead of the canonical dataset-protocol.json. No run artifact or metric changed."
+    },
+    {
+      "file": "executed-run_seed_extension.final-summarizer-v2.py",
+      "sha256": "39ecd92ca0653aa2d02e23dd2c654a7fcbb3aff397384bd96b6036bbf99ed028",
+      "sealedConditions": [],
+      "discardedAttempts": [],
+      "amendment": "Corrected the aggregate-only canonical protocol digest filename from protocol.json to dataset-protocol.json; no scientific execution code or value changed.",
+      "executionOutcome": "Final aggregate-only handoff source."
+    }
+  ],
+  "mappingCertainty": "Exact for all sealed conditions and both discarded attempts."
+}

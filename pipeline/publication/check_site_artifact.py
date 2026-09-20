@@ -11,6 +11,7 @@ from pathlib import Path
 import re
 
 from export_snapshot import validate_public
+from export_deployment_topics import serialized_export, EXPORT_AUDIT, OUTPUTS
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -28,6 +29,14 @@ def check(root):
     snapshot = json.loads((root/'data/experiments.json').read_text())
     expected = {'experiments.json'} | {t['id']+suffix for t in snapshot['tracks']
                                        for suffix in ('-results.csv','-protocol.json')}
+    topic_payload = serialized_export()
+    topic_snapshot = json.loads(topic_payload)
+    topic_audit = json.loads(EXPORT_AUDIT.read_text())
+    assert topic_audit['status'] == 'pass', 'Topic export review did not pass'
+    assert hashlib.sha256(topic_payload).hexdigest() == topic_audit['export_sha256'], 'Stale topic export audit'
+    assert (root/'data/deployment-topics.json').read_bytes() == topic_payload, 'Unreviewed topic download'
+    assert all(p.read_bytes() == topic_payload for p in OUTPUTS), 'Topic source/download drift'
+    expected.add('deployment-topics.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -54,8 +63,10 @@ def check(root):
         'status':'pass', 'releaseId':snapshot['releaseId'], 'files':len(files),
         'downloadFiles':len(expected), 'comparisons':snapshot['coverage']['displayedComparisons'],
         'protocols':len(snapshot['tracks']),
+        'deploymentTopics':topic_snapshot['coverage'],
         'checks':['explicit download inventory','cohort-only JSON schema','no participant IDs or local paths in built assets',
                   'local links resolve','source snapshot equals download snapshot','no waveform or model files',
+                  'topic payload reproduced from pinned reviewed inputs and matches page/download copies',
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

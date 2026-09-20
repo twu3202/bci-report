@@ -1,0 +1,63 @@
+{
+  "release_id": "deployment-topics-20260920-v1",
+  "decision": "publish_aggregate_topics",
+  "reviewed_at": "2026-09-20",
+  "scope": "Four English deployment topics, cohort aggregates only, personal noncommercial research. Raw signals, participant records, predictions, and model weights are excluded. This authorizes local website integration; hosting deployment remains a separate workflow.",
+  "inputs": {
+    "aggregate": {
+      "path": "research/deployment_validation_20260920/publication-candidate-aggregate-results.json",
+      "sha256": "fd302e0ca8d75482b8f47e3110b9a34603345a49a1a3a6664ba2e4dd975200ac"
+    },
+    "audit": {
+      "path": "research/deployment_validation_20260920/publication-candidate-export-audit.json",
+      "sha256": "a2100b67c943aef2077954f4c663674b75d0444a992ae71f56ef15d150561a14"
+    },
+    "rights": {
+      "path": "research/deployment_validation_20260920/new-dataset-publication-readiness.json",
+      "sha256": "e5da02b71288a4732f85735fc53b6a7650f771189d4b481ad652f1770c6ebeae"
+    },
+    "base_manifest": {
+      "path": "research/publication_review_20260920/release-manifest.json",
+      "sha256": "e91c957fcb90e5ecaa6e028fef490b55076f8401585dff19c89de5af12e7135c"
+    }
+  },
+  "approved_dataset_ids": [
+    "BETA",
+    "ds003810",
+    "ds005383",
+    "ds006593",
+    "eesm19-scalp-sleep",
+    "nemar-nm000125-v1.0.2",
+    "nemar-nm000201-v1.0.2",
+    "physionet-eegmat-1.0.0",
+    "zhu2021-wearable102-author-snapshot-20260920"
+  ],
+  "approved_model_ids": [
+    "author-cca",
+    "cbramod",
+    "cca",
+    "eegnet",
+    "ensemble-trca",
+    "fbcca",
+    "labram",
+    "log-covariance-ridge",
+    "random-uniform",
+    "same-frequency-power",
+    "spectral-ridge",
+    "spectral-ridge-gain-invariant",
+    "temporal-feature-logistic-regression"
+  ],
+  "counts": {
+    "measurements": 82,
+    "paired_contrasts": 18,
+    "seed_protocols": 5
+  },
+  "withheld_model_ids": [
+    "eegpt"
+  ],
+  "review_basis": [
+    "Existing independent scientific and privacy review plus exact final candidate audit.",
+    "New dataset aggregate-only rights decisions and existing reviewed source decisions must remain valid.",
+    "Do not combine different protocols or metrics in a global ranking."
+  ]
+}

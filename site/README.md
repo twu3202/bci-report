@@ -1,8 +1,9 @@
 # BCI Report — site
 
-English static EEG evaluation workbench. All numbers come from `src/data/mvp.json`,
-which the parent pipeline exports after independent review; the page never
-computes a score of its own.
+English static EEG evaluation workbench. The stable matrix reads
+`src/data/mvp.json`; four deployment-question pages read the separately reviewed
+`src/data/deployment-topics.json`. The parent pipeline exports both inputs after
+independent review, and the site never computes a score of its own.
 
 ## Page structure
 
@@ -15,6 +16,12 @@ computes a score of its own.
    with its cohort, electrode layout, training budget, source terms, limitations,
    chart and per-protocol CSV.
 3. Model directory, dataset register, field notes and method notes.
+4. **Deployment questions** (`/topics/`) — four static, question-led views over
+   82 additional aggregate measurements: dry versus wet sensor transfer, motion,
+   calibration budget and matched pretraining controls. These conditions do not
+   enter the stable 39-comparison matrix and are never collapsed into an overall
+   rank. The byte-identical public download is
+   `public/data/deployment-topics.json`.
 
 `src/data/site.ts` is the single switch for the name, origin and public contact
 address. `src/styles/` holds the palette and type scale; brand rasters are

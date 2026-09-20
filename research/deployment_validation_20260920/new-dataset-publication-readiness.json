@@ -1,0 +1,238 @@
+{
+  "schema_version": "1.0",
+  "review_title": "New EEG Dataset Publication Readiness Review",
+  "as_of": "2026-09-20",
+  "review_nature": "Bounded research and publication-readiness review; not legal advice or legal certification.",
+  "planned_publication_scope": {
+    "included": [
+      "Aggregate benchmark statistics across participants",
+      "Dataset-level descriptions, methods, limitations, and citations",
+      "Cohort-level uncertainty intervals that do not expose a participant row"
+    ],
+    "excluded": [
+      "Raw or derived EEG files",
+      "Per-participant scores, traces, identifiers, demographics, questionnaires, or impedance records",
+      "A downloadable participant-level prediction or feature table"
+    ]
+  },
+  "decision_summary": {
+    "aggregate_benchmark_publication": {
+      "candidate": [
+        "tsinghua-wearable-ssvep102-author-mirror",
+        "nemar-nm000125-v1.0.2",
+        "nemar-nm000201-v1.0.2"
+      ],
+      "hold": []
+    },
+    "raw_redistribution": {
+      "decision": "hold_out_of_scope",
+      "reason": "The planned release does not require raw redistribution. CC BY 4.0 grants broad copyright and database reuse subject to attribution, but it does not replace a privacy and consent review. The local Tsinghua author mirror also has not been proven byte-identical to Figshare v4."
+    }
+  },
+  "license_interpretation": {
+    "cc_by_4_0": "The license permits sharing and adaptation, including commercial reuse, provided appropriate credit, a license link, and an indication of changes are supplied. It expressly warns that privacy, publicity, moral, or other rights can still limit a use.",
+    "aggregate_reporting": "Research use and publication of aggregate benchmark facts are within the ordinary intended reuse of these openly published research datasets. Cite both the exact dataset record used and the associated study paper.",
+    "raw_redistribution": "Raw copying is a separate act from reporting aggregate statistics. It may be permitted by the stated CC BY 4.0 licenses, but is not approved by this review and requires an exact-source attribution and human-subject review if later proposed."
+  },
+  "datasets": [
+    {
+      "id": "tsinghua-wearable-ssvep102-author-mirror",
+      "decision": "candidate_for_aggregate_benchmark_publication",
+      "decision_reason": "The primary paper identifies the Tsinghua BCI Lab download as an official source, Figshare v4 labels the dataset CC BY 4.0, the paper reports ethics approval and informed consent, and the paper says the shared data accord with participant consent. The planned output contains only aggregate statistics.",
+      "identity": {
+        "title": "An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces",
+        "authors": [
+          "Fangkun Zhu",
+          "Lu Jiang",
+          "Guoya Dong",
+          "Xiaorong Gao",
+          "Yijun Wang"
+        ],
+        "paper_citation": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces. Sensors, 21(4), 1256. https://doi.org/10.3390/s21041256",
+        "paper_doi": "10.3390/s21041256",
+        "canonical_dataset_doi": "10.6084/m9.figshare.13560281",
+        "canonical_version": "4",
+        "canonical_version_doi": "10.6084/m9.figshare.13560281.v4",
+        "canonical_dataset_citation": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces (Version 4) [Data set]. Figshare. https://doi.org/10.6084/m9.figshare.13560281.v4",
+        "license": "CC BY 4.0",
+        "local_representation": "Official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.",
+        "local_path": "<private-evidence-root>/datasets/tsinghua--wearable-ssvep102/author-snapshot-20260920"
+      },
+      "provenance_and_integrity": {
+        "official_route": "https://bci.med.tsinghua.edu.cn/download.html",
+        "paper_route_statement": "The paper lists both Figshare DOI 10.6084/m9.figshare.13560281 and the Tsinghua BCI Lab page as open data locations.",
+        "local_integrity": "Pass: 14 downloaded objects matched recorded byte counts and local hashes; all 10 ZIP archives passed CRC; 102 unique MAT files had the expected [8, 710, 2, 10, 12] array shape.",
+        "version_limit": "No upstream cryptographic hashes were published for the author mirror, so local SHA-256 and ZIP CRC do not establish byte-for-byte identity with Figshare v4. The local mirror must not be described as a verified Figshare-v4 byte snapshot."
+      },
+      "human_subjects": {
+        "cohort": "102 healthy participants",
+        "ethics": "The paper reports Declaration of Helsinki compliance and approval by the Research Ethics Committee of Tsinghua University, protocol No. 20200020.",
+        "consent": "The paper reports informed consent from all participants and states that shared data accord with the consent provided for use of confidential data.",
+        "unresolved": "The consent form itself was not available in the reviewed materials, so its exact downstream scope was not independently verified."
+      },
+      "permissions_by_action": {
+        "local_research_and_benchmarking": "candidate",
+        "aggregate_results_and_methods_publication": "candidate_with_attribution",
+        "participant_level_results_publication": "hold",
+        "raw_author_mirror_redistribution": "hold_pending_exact-source-and-consent-review",
+        "raw_figshare_v4_redistribution": "license_appears_to_permit_with_attribution_but_not_reviewed_or_needed_here"
+      },
+      "publication_conditions": [
+        "Cite the Sensors paper and the Figshare dataset/version DOI; disclose that computation used the 2026-09-20 official Tsinghua author mirror.",
+        "Publish cohort aggregates only; do not publish Subjects_Information.mat rows, individual questionnaires, impedance records, or per-participant benchmark scores.",
+        "Do not claim byte equivalence between the local author mirror and Figshare v4.",
+        "Do not infer or claim a physical EEG unit that the release does not document."
+      ],
+      "primary_web_evidence": [
+        "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+        "https://doi.org/10.3390/s21041256",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
+        "https://bci.med.tsinghua.edu.cn/download.html"
+      ],
+      "local_evidence": [
+        "research/benchmark_expansion_v2_20260920/wearable-ssvep102-acquisition-preflight.json",
+        "<private-evidence-root>/acquisition/2026-09-20-deployment-v2/wearable-ssvep/archive-integrity.json"
+      ]
+    },
+    {
+      "id": "nemar-nm000125-v1.0.2",
+      "decision": "candidate_for_aggregate_benchmark_publication",
+      "decision_reason": "NEMAR v1.0.2 explicitly labels the BIDS derivative CC BY 4.0 and supplies a versioned recommended citation and DOI. The source study reports institutional review and written informed consent, and its data record states that the source files are available under CC BY 4.0. Aggregate-only publication avoids exposing the participant table.",
+      "identity": {
+        "title": "Lee2021 – SSVEP paradigm of the Mobile BCI dataset",
+        "authors": [
+          "Young-Eun Lee",
+          "Gi-Hwan Shin",
+          "Minji Lee",
+          "Seong-Whan Lee"
+        ],
+        "dataset_citation": "Lee, Y., Shin, G., Lee, M., & Lee, S. (2026). Lee2021 – SSVEP paradigm of the Mobile BCI dataset (Version v1.0.2) [Data set]. NEMAR. https://doi.org/10.82901/nemar.nm000125",
+        "dataset_doi": "10.82901/nemar.nm000125",
+        "version": "v1.0.2",
+        "version_publication_date": "2026-08-18",
+        "license": "CC BY 4.0",
+        "source_paper_citation": "Lee, Y.-E., Shin, G.-H., Lee, M., & Lee, S.-W. (2021). Mobile BCI dataset of scalp- and ear-EEGs with ERP and SSVEP paradigms while standing, walking, and running. Scientific Data, 8, 315. https://doi.org/10.1038/s41597-021-01094-4",
+        "source_paper_doi": "10.1038/s41597-021-01094-4",
+        "source_repository": "OSF https://osf.io/r7s9b/",
+        "representation": "NEMAR/MOABB-generated BIDS derivative",
+        "local_path": "<private-evidence-root>/datasets/nemar--nm000125/v1.0.2/ssvep-bids-derivative"
+      },
+      "human_subjects": {
+        "cohort": "23 healthy participants in the SSVEP subset",
+        "ethics": "The source paper reports approval by the Institutional Review Board of Korea University, KUIRB-2019-0194-01, and Declaration of Helsinki compliance.",
+        "consent": "The source paper reports written informed consent from all participants before the experiments.",
+        "unresolved": "The participant consent form was not reviewed, and the article does not reproduce its exact secondary-use wording."
+      },
+      "permissions_by_action": {
+        "local_research_and_benchmarking": "candidate",
+        "aggregate_results_and_methods_publication": "candidate_with_attribution",
+        "participant_level_results_publication": "hold",
+        "raw_or_bids_derivative_redistribution": "cc_by_4_0_appears_to_permit_with_attribution_but_hold_out_of_scope_pending_separate_human-subject_review"
+      },
+      "publication_conditions": [
+        "Cite NEMAR nm000125 v1.0.2 and DOI 10.82901/nemar.nm000125, plus the Lee et al. source paper.",
+        "Describe the analyzed object as a NEMAR/MOABB BIDS derivative rather than the original OSF layout.",
+        "Do not publish participant_id-linked age, sex, handedness, weight, height, group, species, BCI experience, or participant-level scores.",
+        "Keep any release to aggregate benchmark results and method metadata."
+      ],
+      "primary_web_evidence": [
+        "https://nemar.org/dataset/nm000125",
+        "https://data.nemar.org/nm000125/v1.0.2/dataset_description.json",
+        "https://doi.org/10.1038/s41597-021-01094-4",
+        "https://osf.io/r7s9b/"
+      ],
+      "local_evidence": [
+        "research/benchmark_expansion_v2_20260920/nm000125-v1.0.2-manifest.json",
+        "<private-evidence-root>/datasets/nemar--nm000125/v1.0.2/ssvep-bids-derivative/README.md",
+        "<private-evidence-root>/datasets/nemar--nm000125/v1.0.2/ssvep-bids-derivative/dataset_description.json"
+      ]
+    },
+    {
+      "id": "nemar-nm000201-v1.0.2",
+      "decision": "candidate_for_aggregate_benchmark_publication",
+      "decision_reason": "NEMAR v1.0.2 explicitly labels the BIDS derivative CC BY 4.0 and supplies a versioned recommended citation and DOI. The source study reports institutional review and written informed consent, and its data record states that the source files are available under CC BY 4.0. Aggregate-only publication avoids exposing participant metadata.",
+      "identity": {
+        "title": "ERP paradigm of the Mobile BCI dataset",
+        "authors": [
+          "Young-Eun Lee",
+          "Gi-Hwan Shin",
+          "Minji Lee",
+          "Seong-Whan Lee"
+        ],
+        "dataset_citation": "Lee, Y., Shin, G., Lee, M., & Lee, S. (2026). ERP paradigm of the Mobile BCI dataset (Version v1.0.2) [Data set]. NEMAR. https://doi.org/10.82901/nemar.nm000201",
+        "dataset_doi": "10.82901/nemar.nm000201",
+        "version": "v1.0.2",
+        "version_publication_date": "2026-08-18",
+        "license": "CC BY 4.0",
+        "source_paper_citation": "Lee, Y.-E., Shin, G.-H., Lee, M., & Lee, S.-W. (2021). Mobile BCI dataset of scalp- and ear-EEGs with ERP and SSVEP paradigms while standing, walking, and running. Scientific Data, 8, 315. https://doi.org/10.1038/s41597-021-01094-4",
+        "source_paper_doi": "10.1038/s41597-021-01094-4",
+        "source_repository": "OSF https://osf.io/r7s9b/",
+        "representation": "NEMAR/MOABB-generated BIDS derivative with an embedded sourcedata provenance record",
+        "local_path": "<private-evidence-root>/datasets/nemar--nm000201/v1.0.2/bids"
+      },
+      "human_subjects": {
+        "cohort": "24 healthy participants in the ERP subset",
+        "ethics": "The source paper reports approval by the Institutional Review Board of Korea University, KUIRB-2019-0194-01, and Declaration of Helsinki compliance.",
+        "consent": "The source paper reports written informed consent from all participants before the experiments.",
+        "unresolved": "The participant consent form was not reviewed, and the article does not reproduce its exact secondary-use wording."
+      },
+      "permissions_by_action": {
+        "local_research_and_benchmarking": "candidate",
+        "aggregate_results_and_methods_publication": "candidate_with_attribution",
+        "participant_level_results_publication": "hold",
+        "raw_or_bids_derivative_redistribution": "cc_by_4_0_appears_to_permit_with_attribution_but_hold_out_of_scope_pending_separate_human-subject_review"
+      },
+      "publication_conditions": [
+        "Cite NEMAR nm000201 v1.0.2 and DOI 10.82901/nemar.nm000201, plus the Lee et al. source paper.",
+        "Describe the analyzed object as a NEMAR/MOABB BIDS derivative rather than the original OSF layout.",
+        "Do not publish participant_id-linked age, sex, handedness, weight, height, group, species, BCI experience, or participant-level scores.",
+        "Keep any release to aggregate benchmark results and method metadata."
+      ],
+      "primary_web_evidence": [
+        "https://nemar.org/dataset/nm000201",
+        "https://data.nemar.org/nm000201/v1.0.2/dataset_description.json",
+        "https://doi.org/10.1038/s41597-021-01094-4",
+        "https://osf.io/r7s9b/"
+      ],
+      "local_evidence": [
+        "research/benchmark_expansion_v2_20260920/nm000201-v1.0.2-manifest.json",
+        "<private-evidence-root>/datasets/nemar--nm000201/v1.0.2/bids/README.md",
+        "<private-evidence-root>/datasets/nemar--nm000201/v1.0.2/bids/dataset_description.json",
+        "<private-evidence-root>/datasets/nemar--nm000201/v1.0.2/bids/sourcedata/README.md"
+      ]
+    }
+  ],
+  "wearable_gain_invariance_wording_review": {
+    "status": "wording_should_be_narrowed_in_publication_text",
+    "evidence": "The numerical check multiplies the stored inputs by uniform positive constants and recomputes fold-local normalization from source-training data. Existing protocol text also describes a common scalar unit conversion.",
+    "recommended_wording": "The reported gain-invariance check covers one positive scalar unit conversion applied uniformly to all relevant training and test samples before training-only standardization. It does not establish invariance to different wet-versus-dry hardware gains or to broader sensor-domain shifts.",
+    "not_established": [
+      "Different gain factors in the wet and dry domains",
+      "Channel-specific or frequency-dependent hardware transfer functions",
+      "Subject-specific or trial-varying gains",
+      "Additive offsets, clipping, impedance changes, noise-floor changes, or other sensor-domain shifts"
+    ],
+    "misleading_phrasing_to_avoid": [
+      "hardware-gain invariant",
+      "wet/dry gain invariant",
+      "invariant to sensor scaling",
+      "immune to hardware domain shift"
+    ]
+  },
+  "cross_dataset_release_controls": [
+    "Publish only cohort-level metrics and uncertainty intervals; ensure bootstrap or fold artifacts cannot be traced to participant IDs.",
+    "Do not ship raw data, participant metadata, trial-level predictions, features, or model outputs keyed by participant.",
+    "Name the exact dataset version and representation used, and cite both the dataset record and study paper.",
+    "Provide CC BY 4.0 attribution and a license link; identify any transformations in methods.",
+    "Reopen the review if the scope expands to raw redistribution, participant-level analysis, clinical claims, or commercial data packaging."
+  ],
+  "known_unknowns": [
+    "The underlying participant consent forms were not available for independent inspection.",
+    "The Tsinghua author mirror has no separately versioned DOI and cannot be cryptographically reconciled to Figshare v4 from published hashes.",
+    "This review does not determine jurisdiction-specific privacy, biometric-data, export, or institutional-policy obligations.",
+    "CC BY 4.0 addresses licensed copyright and related rights; it does not eliminate privacy or other third-party rights."
+  ],
+  "shared_primary_source": {
+    "cc_by_4_0_deed": "https://creativecommons.org/licenses/by/4.0/"
+  }
+}

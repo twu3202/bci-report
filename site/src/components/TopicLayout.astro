@@ -1,0 +1,64 @@
+---
+import { site } from '../data/site';
+import { topicPages } from '../data/topics';
+import SiteHeader from './SiteHeader.astro';
+import '../styles/global.css';
+import '../styles/topics.css';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  eyebrow: string;
+  dek: string;
+  activeSlug: typeof topicPages[number]['slug'];
+}
+const { title, description, path, eyebrow, dek, activeSlug } = Astro.props;
+const pageTitle = `${title} · ${site.name}`;
+const canonical = new URL(path, Astro.site ?? site.origin).href;
+const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="description" content={description}/>
+  <meta name="theme-color" content="#b3450e"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="/favicon.ico" sizes="32x32"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="canonical" href={canonical}/>
+  <title>{pageTitle}</title>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content={site.name}/>
+  <meta property="og:title" content={pageTitle}/>
+  <meta property="og:description" content={description}/>
+  <meta property="og:url" content={canonical}/>
+  <meta property="og:image" content={ogImage}/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content={pageTitle}/>
+  <meta name="twitter:description" content={description}/>
+  <meta name="twitter:image" content={ogImage}/>
+</head>
+<body>
+  <a class="skip" href="#topic-content">Skip to evidence</a>
+  <SiteHeader active="topics" />
+  <main class="topic-page" id="topic-content">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/#topics">Explore</a></li><li aria-current="page">{title}</li></ol></nav>
+    <section class="topic-hero">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{title}</h1>
+      <p class="topic-dek">{dek}</p>
+      <div class="topic-actions"><a class="button primary" href="/data/deployment-topics.json" download>Reviewed aggregate JSON ↓</a><a class="button" href="#methods-and-limits">Methods &amp; limits ↓</a></div>
+    </section>
+    <slot />
+    <nav class="topic-switcher" aria-label="Explore benchmark questions">
+      <p class="eyebrow">Keep exploring</p>
+      <div>{topicPages.map(topic => <a href={`/topics/${topic.slug}/`} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topic.kicker}</small><strong>{topic.title}</strong></a>)}</div>
+    </nav>
+  </main>
+  <footer><a class="brand" href="/">{site.name}</a><p>Aggregate results. Credited sources. Research use.</p><a href="/data/deployment-topics.json" download>Download data ↓</a><a href="/data-use/">Data use &amp; privacy</a><a href="#topic-content">Back to top ↑</a></footer>
+</body>
+</html>
+

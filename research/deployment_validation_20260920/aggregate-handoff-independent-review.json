@@ -1,0 +1,173 @@
+{
+  "schema_version": "aggregate-handoff-independent-review-v1",
+  "reviewed_at": "2026-09-20T09:09:00Z",
+  "status": "pass_all_reported_findings_resolved",
+  "publication_readiness": "pass_for_reviewed_scope",
+  "review_scope": {
+    "included": [
+      "docs/BCI Report Benchmark Expansion Results and Publication Handoff.md",
+      "research/deployment_validation_20260920/publication-candidate-aggregate-results.json",
+      "experiments/deployment_v2/build_publication_handoff.py",
+      "Audited Gal4 outputs referenced by the aggregate bundle, including completed single-band ensemble TRCA"
+    ],
+    "excluded": [
+      "The still-pending backend-matched seed-summary addition",
+      "Website implementation or deployment",
+      "Scientific or legal certification"
+    ]
+  },
+  "reviewed_input_hashes": {
+    "handoff_markdown_sha256": "3d99339c407ab1508f97e0ecfaad45172f6384d19e0e06d2d7e9004019c88166",
+    "aggregate_json_sha256": "1082793634a73099dc0ecb9ef854277eb08d030c5d15bfb5f11716a406884b35",
+    "generator_sha256": "c1ccb8eac5c7d9ace5982d6d2dea287d7b88fb2265597c650f745e8fe49ea08f"
+  },
+  "verification_summary": {
+    "aggregate_rows": 82,
+    "paired_contrasts": 18,
+    "numeric_value_mismatches": 0,
+    "confidence_interval_mismatches": 0,
+    "participant_count_mismatches": 0,
+    "trial_count_mismatches": 0,
+    "channel_count_mismatches": 0,
+    "window_or_unit_mismatches": 0,
+    "evidence_digest_mismatches": 0,
+    "participant_privacy_exposures": 0,
+    "concrete_findings": 3,
+    "resolved_findings": 3,
+    "unresolved_findings": 0
+  },
+  "findings": [
+    {
+      "id": "AHIR-001",
+      "severity": "medium",
+      "resolution_status": "resolved",
+      "artifact": "research/deployment_validation_20260920/publication-candidate-aggregate-results.json",
+      "generator_location": "experiments/deployment_v2/build_publication_handoff.py:73-76",
+      "type": "source-trained-versus-analytic-reference ambiguity",
+      "discrepancy": "The wearable interpretation limit says, without a track qualifier, that calibration budget 0 uses a source-only model and budgets 12/24/48 use target-only models. That is true only for the spectral-ridge wearable-calibration track. In wearable-etrca-calibration, budget 0 is label-free analytic CCA and budgets 24/48 are target-only ensemble TRCA; there is no 12-label TRCA condition.",
+      "evidence": {
+        "aggregate_limit": "Calibration budget0 uses a source-only model; budgets12/24/48 use target-only models. Do not draw them as one continuous model-update curve.",
+        "conflicting_aggregate_rows": [
+          {
+            "track": "wearable-etrca-calibration",
+            "model": "cca",
+            "labeled_target_trials": 0,
+            "training_regime": "analytic_reference"
+          },
+          {
+            "track": "wearable-etrca-calibration",
+            "model": "ensemble-trca",
+            "labeled_target_trials": 24,
+            "training_regime": "target_only_single_band_ensemble_trca"
+          },
+          {
+            "track": "wearable-etrca-calibration",
+            "model": "ensemble-trca",
+            "labeled_target_trials": 48,
+            "training_regime": "target_only_single_band_ensemble_trca"
+          }
+        ]
+      },
+      "publication_risk": "A publisher could incorrectly present the common-test CCA row as a source-trained zero-budget point or merge the two calibration tracks into one adaptation curve.",
+      "required_correction": "Qualify the existing sentence as applying to wearable-calibration/spectral ridge, and add a separate sentence stating that wearable-etrca-calibration uses analytic CCA at zero labels and target-only eTRCA at 24/48 labels. Preserve the warning that the two tracks are not one continuous model-update curve.",
+      "resolution_evidence": "The regenerated wearable interpretation limit now names wearable-calibration and wearable-etrca-calibration separately, identifies zero-label eTRCA-track CCA as an analytic reference, and limits the continuous-curve warning to the spectral-ridge track."
+    },
+    {
+      "id": "AHIR-002",
+      "severity": "low",
+      "resolution_status": "resolved",
+      "artifact": "research/deployment_validation_20260920/publication-candidate-aggregate-results.json",
+      "generator_location": "experiments/deployment_v2/build_publication_handoff.py:45-46",
+      "type": "inconsistent model identifier",
+      "discrepancy": "All six eTRCA aggregate rows and the method reference use model=ensemble-trca, while the six paired contrasts use model=etrca.",
+      "evidence": {
+        "row_model": "ensemble-trca",
+        "method_reference_model": "ensemble-trca",
+        "paired_contrast_model": "etrca",
+        "affected_contrasts": 6
+      },
+      "publication_risk": "A consumer joining contrasts to model metadata by exact identifier can orphan or split the eTRCA contrasts.",
+      "required_correction": "Use model=ensemble-trca for the paired contrasts, or add a canonical model identifier and an explicit display alias consistently across rows, contrasts, and method references.",
+      "resolution_evidence": "All six regenerated wearable-etrca-calibration paired contrasts now use model=ensemble-trca, matching the eTRCA rows and method reference."
+    },
+    {
+      "id": "AHIR-003",
+      "severity": "low",
+      "resolution_status": "resolved",
+      "artifact": "experiments/deployment_v2/build_publication_handoff.py",
+      "generator_location": "experiments/deployment_v2/build_publication_handoff.py:41-46",
+      "type": "missing audit-status gate",
+      "discrepancy": "The generator records the eTRCA independent-audit digest and asserts results.status=complete_audited, but it does not read independent-audit.json and assert status=PASS before exporting the rows. Other completed tracks directly check an audit status or an audited result status with an explicit audit read.",
+      "current_output_evidence": {
+        "independent_audit_status": "PASS",
+        "independent_audit_sha256": "718dff16d6037cbf936f7962b31cdd0f45e0cb2f453453dae0450e5249c5ffa8",
+        "results_sha256": "12afd213f5c0a37b9b643b17df4175bf5a1ba2fec9c1694db51a4971e8f0738e"
+      },
+      "publication_risk": "There is no error in the present bundle, but a future failed or stale eTRCA audit would not stop regeneration if results.json still claimed complete_audited.",
+      "required_correction": "Read the eTRCA independent audit and assert its status is PASS before adding rows and contrasts.",
+      "resolution_evidence": "The generator now reads wearable-trca-20260920/output/independent-audit.json and asserts status=PASS before exporting eTRCA rows. The current independent audit remains PASS with SHA-256 718dff16d6037cbf936f7962b31cdd0f45e0cb2f453453dae0450e5249c5ffa8."
+    }
+  ],
+  "resolution_recheck": {
+    "scope": "Only AHIR-001 through AHIR-003 and the regenerated-bundle identity were rechecked; the pending seed-summary section remains excluded.",
+    "result": "pass",
+    "checks": [
+      "The regenerated bundle remains at 82 rows and 18 paired contrasts.",
+      "The calibration interpretation text is now track-specific and distinguishes source-only spectral ridge from analytic CCA.",
+      "All eTRCA paired contrasts use the canonical ensemble-trca identifier.",
+      "The generator asserts eTRCA independent-audit status PASS before export.",
+      "The generator additionally asserts the wearable CPU and neural scientific-audit statuses.",
+      "Aggregate output replacement is atomic through a same-directory temporary file followed by Path.replace."
+    ]
+  },
+  "verified_correct": {
+    "numbers": [
+      "All 82 row values and their confidence intervals exactly match their allowlisted source fields.",
+      "All 18 paired differences and paired confidence intervals exactly match the audited source artifacts.",
+      "All rounded tables and contrasts in the handoff markdown agree with the aggregate JSON, including the corrected full-precision two-second Mobile SSVEP values and completed eTRCA values."
+    ],
+    "channels_and_windows": [
+      "Wearable rows use the native eight channels and two-second window.",
+      "Mobile SSVEP scalp rows use eight selected posterior channels from 32 recorded channels; ear five-second rows use 14 contacts.",
+      "Mobile SSVEP two-second rows use the same eight selected scalp channels and [0,2 s) window for CCA, spectral ridge, LaBraM, and CBraMod.",
+      "Mobile ERP rows use 32 scalp channels or 14 ear contacts and preserve the physical-time feature and baseline windows."
+    ],
+    "sample_counts": [
+      "Wearable transfer rows: 102 participants and 12,240 target-sensor trials per condition.",
+      "Wearable common-test calibration rows: 102 participants and 7,344 trials per sensor/condition.",
+      "Mobile SSVEP: 23 participants, 1,380 trials per movement condition, 4,140 unique trials across the three conditions.",
+      "Mobile ERP: 7,100 trials for each 24-participant standing/walking condition and 4,800 trials for each 17-participant running condition.",
+      "eTRCA audit: 408 fitted target-only heads and 44,064 prediction rows."
+    ],
+    "metrics_and_units": [
+      "Aggregate values are proportions; the markdown correctly renders balanced accuracy as percent and differences as percentage points.",
+      "Mobile ERP remains participant-mean ROC AUC and is not relabeled as accuracy.",
+      "Wearable physical amplitude remains undocumented; no microvolt assumption is made, and common-scalar unit conversion is kept distinct from wet/dry hardware-domain shift.",
+      "Mobile SSVEP scalp/ear microvolt evidence and the 100 Hz versus 500 Hz ERP conversion sensitivity are represented consistently with the audited protocols."
+    ],
+    "primary_and_sensitivity_handling": [
+      "Source-independent wearable CCA, FBCCA, random, and same-frequency references are deduplicated across display-only source labels and have source_sensor=null.",
+      "Mobile CCA rows are labeled analytic references; supervised ridge and frozen-encoder rows are labeled as standing-other-participants training.",
+      "Fixed alpha-100 pretraining attribution and inner-training selected-head sensitivity remain separate tracks; the handoff instructs publishers to show both and not select the better test score.",
+      "The superseded scale-sensitive wearable log1p ridge is not exported as primary.",
+      "The paired common-17 ERP contrast is identified as a secondary descriptive analysis."
+    ],
+    "privacy": [
+      "The aggregate JSON contains no participant IDs, participant-level arrays, demographics, raw signals, fitted heads, predictions, y_true/y_pred fields, or private absolute filesystem paths.",
+      "The JSON's dataset-author names and participant-metadata field names are citation and exclusion metadata, not participant records.",
+      "The markdown's Gal4 locations are explicitly marked private infrastructure and are not present in the public candidate JSON."
+    ],
+    "provenance": [
+      "All 15 evidence digests in the current aggregate JSON match the current referenced files.",
+      "The aggregate dataset/version citations and raw-redistribution exclusions agree with the separate publication-readiness review."
+    ]
+  },
+  "review_method": [
+    "Recomputed an exact source-to-export mapping for every populated track and compared values, confidence intervals, participant counts, trial counts, models, sensors/modalities, conditions, and speeds.",
+    "Compared every paired contrast to the corresponding audited source field.",
+    "Checked the markdown's displayed rounded values and reported row/contrast counts against the aggregate JSON.",
+    "Recomputed every evidence-file SHA-256 referenced by the bundle.",
+    "Recursively scanned aggregate keys and values for participant-level payloads and private filesystem paths.",
+    "Inspected frozen protocols and independent audits for channel selection, windows, physical units, split semantics, and completed eTRCA counts."
+  ]
+}

@@ -4,6 +4,7 @@ import {existsSync,readFileSync,readdirSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
 const data=JSON.parse(readFileSync(new URL('../src/data/mvp.json',import.meta.url),'utf8'));
+const topics=JSON.parse(readFileSync(new URL('../src/data/deployment-topics.json',import.meta.url),'utf8'));
 class Element {
   constructor(){this.value='';this.innerHTML='';this.textContent='';this.dataset={};this.events={};this.attributes={};this.open=false;this.scrollWidth=0;this.clientWidth=0;}
   addEventListener(name,fn){this.events[name]=fn;}
@@ -137,6 +138,8 @@ for(const tag of built.match(/<td class="cell"[^>]*>/g)||[])
   if(tag.includes('data-rank="lead"'))
     assert.ok(!tag.includes('Idle &amp; command'),'detection alone must not crown a leader on the tradeoff protocol');
 assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>across<\/strong>/,'the matrix must say bars do not compare sideways');
+assert.match(built,/82 additional aggregate measurements/,'homepage must distinguish the reviewed topic extension from the 39-comparison matrix');
+assert.match(built,/not 82 independent experiments/,'homepage must not inflate repeated conditions into independent experiments');
 // Every protocol is reachable without JavaScript and without a dropdown.
 for(const t of data.tracks){
   assert.ok(built.includes('data-jump="'+t.id+'"'),t.id+': needs a matrix column heading');
@@ -151,7 +154,36 @@ assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-
 // The CSP in public/_headers allows no inline style and no inline script. An
 // inline style attribute here does not throw — it is silently dropped by the
 // browser, which is how every matrix bar reached production empty.
-for(const page of ['../dist/index.html','../dist/data-use/index.html','../dist/404.html']){
+const topicPages=[
+  ['dry-vs-wet','Dry vs. wet electrodes'],
+  ['on-the-move','On the move'],
+  ['calibration-budget','How much calibration?'],
+  ['does-pretraining-help','Does pretraining help?'],
+];
+for(const [slug,title] of topicPages){
+  const page='../dist/topics/'+slug+'/index.html';
+  const html=readFileSync(new URL(page,import.meta.url),'utf8');
+  assert.ok(html.includes('<h1>'+title+'</h1>'),slug+': page title must render in the initial HTML');
+  assert.ok(html.includes('href="/data/deployment-topics.json"'),slug+': reviewed aggregate download must be reachable');
+  assert.ok(html.includes('aria-label="Breadcrumb"'),slug+': breadcrumb is required');
+  assert.ok(html.includes('rel="canonical"'),slug+': canonical link is required');
+}
+const sitemap=readFileSync(new URL('../dist/sitemap.xml',import.meta.url),'utf8');
+for(const [slug] of topicPages)
+  assert.ok(sitemap.includes('https://bci.report/topics/'+slug+'/'),slug+': sitemap entry is required');
+const motionPage=readFileSync(new URL('../dist/topics/on-the-move/index.html',import.meta.url),'utf8');
+assert.match(motionPage,/−0\.276 AUC/,'ERP motion change must use signed native AUC units');
+assert.match(motionPage,/−0\.322 to −0\.227 AUC/,'ERP motion interval must use native AUC units');
+assert.match(motionPage,/Bars span 0–100%; chance is 33\.3%/,'SSVEP bars must state their full scale and chance level');
+assert.match(motionPage,/10\.82901\/nemar\.nm000125/,'mobile SSVEP credit must include its dataset DOI');
+assert.match(motionPage,/10\.82901\/nemar\.nm000201/,'mobile ERP credit must include its dataset DOI');
+assert.match(motionPage,/10\.1038\/s41597-021-01094-4/,'mobile pages must credit the source study DOI');
+const sensorPage=readFileSync(new URL('../dist/topics/dry-vs-wet/index.html',import.meta.url),'utf8');
+assert.match(sensorPage,/10\.6084\/m9\.figshare\.13560281\.v4/,'wearable credit must include the versioned dataset DOI');
+assert.match(sensorPage,/10\.3390\/s21041256/,'wearable credit must include the Sensors paper DOI');
+const pretrainingPage=readFileSync(new URL('../dist/topics/does-pretraining-help/index.html',import.meta.url),'utf8');
+assert.match(pretrainingPage,/href="\/data-use\/#sources"/,'seed sensitivity table must link to its dataset citations');
+for(const page of ['../dist/index.html','../dist/data-use/index.html','../dist/404.html',...topicPages.map(([slug])=>'../dist/topics/'+slug+'/index.html')]){
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.doesNotMatch(html,/\sstyle="/,page+': the CSP forbids style attributes');
   assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
@@ -171,5 +203,29 @@ assert.equal(idle.subjects,4,'the caveat names a cohort of four; update both tog
 assert.ok(idle.rows.some(r=>r.abstain>0),'the caveat relies on abstention counts being published');
 assert.equal(count(/aria-selected="true"/g),1,'exactly one protocol tab starts selected');
 
-console.log('PASS: coverage matrix, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+// --- Reviewed deployment-topic extension ---------------------------------
+// The pages must consume the allowlisted aggregate export as-is. This check is
+// deliberately structural; publication/privacy gates separately validate that
+// the export contains no individual records or private evidence paths.
+assert.equal(topics.rows.length,82,'topic export must contain the 82 reviewed aggregate measurements');
+assert.equal(topics.paired_contrasts.length,18,'topic export must contain the 18 reviewed paired contrasts');
+assert.equal(topics.seed_sensitivity.length,5,'topic export must contain five seed-sensitivity groups');
+assert.equal(new Set(topics.rows.map(row=>row.id)).size,topics.rows.length,'topic row ids must be unique');
+assert.ok(topics.rows.every(row=>row.value>=0&&row.value<=1),'topic measurements must remain proportions in [0,1]');
+assert.ok(topics.rows.every(row=>row.model!=='eegpt'),'EEGPT results are outside the public candidate');
+assert.ok(topics.rows.some(row=>row.metric==='participant_mean_roc_auc'),'ERP ROC AUC must stay explicitly typed');
+assert.ok(topics.rows.some(row=>row.metric==='participant_mean_balanced_accuracy'),'balanced accuracy must stay explicitly typed');
+assert.ok(topics.rows.some(row=>row.track==='mobile-ssvep-2s'&&row.window_seconds===2),'two-second SSVEP protocol is required');
+assert.ok(topics.rows.some(row=>row.track==='mobile-ssvep-5s'&&row.window_seconds===5),'five-second SSVEP protocol is required');
+assert.ok(topics.rows.some(row=>row.track==='wearable-calibration'&&row.training_regime==='source-only'),'source-only calibration arm is required');
+assert.ok(topics.rows.some(row=>row.track==='wearable-calibration'&&row.training_regime==='target-only'),'target-only calibration arm is required');
+assert.ok(topics.rows.some(row=>row.track==='pretraining-attribution-fixed'&&row.head_selection==='fixed alpha100'),'fixed readout setting is required');
+assert.ok(topics.rows.some(row=>row.track==='pretraining-attribution-selected'&&row.head_selection?.startsWith('inner participant validation')),'train-selected readout setting is required');
+assert.deepEqual(
+  readFileSync(new URL('../src/data/deployment-topics.json',import.meta.url)),
+  readFileSync(new URL('../public/data/deployment-topics.json',import.meta.url)),
+  'source and downloadable topic exports must be byte-identical',
+);
+
+console.log('PASS: coverage matrix, four topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');
