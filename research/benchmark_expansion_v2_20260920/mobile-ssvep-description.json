@@ -1,0 +1,50 @@
+{
+  "Name": "Lee2021 – SSVEP paradigm of the Mobile BCI dataset",
+  "BIDSVersion": "1.9.0",
+  "HEDVersion": "8.4.0",
+  "DatasetType": "derivative",
+  "License": "CC BY 4.0",
+  "Authors": [
+    "Young-Eun Lee",
+    "Gi-Hwan Shin",
+    "Minji Lee",
+    "Seong-Whan Lee"
+  ],
+  "Funding": [
+    "IITP No. 2017-0-00451",
+    "IITP No. 2015-0-00185",
+    "IITP No. 2019-0-00079"
+  ],
+  "EthicsApprovals": [
+    "Institutional Review Board of Korea University, KUIRB-2019-0194-01"
+  ],
+  "ReferencesAndLinks": [
+    "https://osf.io/r7s9b/"
+  ],
+  "GeneratedBy": [
+    {
+      "CodeURL": "https://github.com/NeuroTechX/moabb",
+      "Name": "moabb",
+      "Description": "Mother of All BCI Benchmarks",
+      "Version": "1.4.3"
+    }
+  ],
+  "SourceDatasets": [
+    {
+      "DOI": "10.1038/s41597-021-01094-4",
+      "URL": "https://osf.io/r7s9b/"
+    }
+  ],
+  "Keywords": [
+    "SSVEP",
+    "ERP",
+    "mobile BCI",
+    "ear-EEG",
+    "locomotion"
+  ],
+  "PublicationYear": 2021,
+  "ExperimentName": "Lee2021",
+  "Description": "SSVEP paradigm of the Mobile BCI dataset.\n\n\nDataset summary:\n\n#Subj     24\n#Chan     32\n#Classes      3\n#Trials / class     20\nTrials length    5 s\nFreq 500 Hz\n#Sessions    4-5\n\nSee :class:`Lee2021Mobile` for full documentation.",
+  "DatasetDOI": "10.82901/nemar.nm000125",
+  "Version": "1.0.2"
+}

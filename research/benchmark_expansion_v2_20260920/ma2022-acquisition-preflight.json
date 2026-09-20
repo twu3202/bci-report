@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-09-20",
+  "dataset": {
+    "canonical_id": "Ma2022-SHU-MultiSessionMI",
+    "title": "SHU Dataset",
+    "paper_title": "A large EEG dataset for studying cross-session variability in motor imagery brain-computer interface",
+    "paper_doi": "10.1038/s41597-022-01647-1",
+    "paper_url": "https://www.nature.com/articles/s41597-022-01647-1",
+    "canonical_repository": "Figshare",
+    "figshare_article_id": 19228725,
+    "dataset_doi_cited_by_paper": "10.6084/m9.figshare.19228725.v1",
+    "canonical_record_url": "https://figshare.com/articles/dataset/SHU_Dataset/19228725/1",
+    "cited_record_version": 1
+  },
+  "verified_from_primary_paper": {
+    "participants": 25,
+    "sessions_per_participant": 5,
+    "session_spacing": "2-3 days",
+    "nominal_trials_per_session": 100,
+    "nominal_total_trials": 12500,
+    "task": "left-hand versus right-hand grasping motor imagery",
+    "channels": 32,
+    "sampling_hz": 250,
+    "released_trial_seconds": 4,
+    "released_samples_per_trial": 1000,
+    "preprocessing": "Bad segments/trials removed; baseline removed; 0.5-40 Hz FIR band-pass filtering applied before release; some sessions therefore contain fewer than 100 trials.",
+    "processed_representation": "Preprocessed continuous/session data in EDF with TSV event information, organized using EEG-BIDS conventions.",
+    "trial_representation": "One MAT file per subject/session; variables data [trials, 32, 1000] and labels [1=left, 2=right].",
+    "consent_ethics": "Signed experimental consent; Shanghai Second Rehabilitation Hospital Ethics Committee approval ECSHSRH 2018-0101."
+  },
+  "representation_selection": {
+    "selected": "trial_data_mat",
+    "acquire_when_unblocked": "Only the Figshare archive/file that contains the per-subject, per-session MAT trial data.",
+    "exclude_as_duplicate": [
+      "EDF/TSV processed representation of the same released signals"
+    ],
+    "exclude_as_not_required": [
+      "benchmark code archive"
+    ],
+    "rationale": "The MAT representation is already trial-aligned and labeled for chronological within-subject and cross-session MI evaluation, avoiding storage and accounting duplication with the EDF release.",
+    "selection_status": "provisional_until_official_file_manifest_is_retrieved"
+  },
+  "rights": {
+    "dataset_license": null,
+    "dataset_license_status": "unknown_hold",
+    "paper_article_license": "CC BY 4.0",
+    "paper_article_license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "caution": "The CC BY 4.0 statement on the Nature article is an article license and was not treated as the Figshare dataset license. The paper calls the dataset open access/free to download, but that wording is not a reusable-data license grant.",
+    "fit_for_current_personal_noncommercial_research": "not_cleared_until_dataset_record_license_is_verified"
+  },
+  "public_file_metadata": {
+    "manifest_verified": false,
+    "files": [],
+    "selected_representation_total_bytes": null,
+    "selected_representation_total_bytes_status": "unknown",
+    "record_total_bytes": null,
+    "record_total_bytes_status": "unknown",
+    "file_ids": null,
+    "download_urls": null,
+    "md5": null,
+    "current_latest_version": null,
+    "known_version": 1,
+    "known_version_basis": "Versioned DOI cited by the primary paper; not a current-version API response."
+  },
+  "access_attempts": [
+    {
+      "path": "Official Figshare DOI/landing-page retrieval",
+      "result": "The retrieval service could not access the DOI target or canonical Figshare record page. Search results exposed the primary paper only, not the dataset manifest."
+    },
+    {
+      "path": "Official Figshare API GET /v2/articles/19228725",
+      "result": "HTTP 403 from this host; the same read-only request from the CUDA workstation also returned HTTP 403. No file endpoint was called."
+    }
+  ],
+  "decision": {
+    "status": "hold",
+    "download_authorized_by_user": true,
+    "payload_downloaded": false,
+    "reason": "Dataset rights and exact public file metadata could not be verified through two reasonable official-source paths.",
+    "resume_condition": "Retrieve a successful official Figshare record/API response showing dataset license plus the selected MAT archive's file ID, filename, byte size, MD5, version and direct download URL.",
+    "recommended_next_action": "Do not acquire payload yet. When Figshare access works, select only the MAT trial-data archive and compute/verify its total against the official byte count before downloading."
+  },
+  "sources": [
+    {
+      "url": "https://www.nature.com/articles/s41597-022-01647-1",
+      "role": "Primary paper and canonical dataset citation; study design, preprocessing, representations, consent and ethics."
+    },
+    {
+      "url": "https://doi.org/10.6084/m9.figshare.19228725.v1",
+      "role": "Canonical versioned dataset DOI cited by the primary paper; target could not be retrieved during this preflight."
+    }
+  ]
+}

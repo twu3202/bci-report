@@ -104,7 +104,10 @@ const tradeoff=track.type==='tradeoff';
 $('#chart-title').textContent=tradeoff?'Detection meets reliability':'Accuracy by configuration';
 const chanceNote=chanceOf(track);
 $('#chart-note').textContent=tradeoff?'Upper left is better. Always abstaining also yields zero false activations, so detection must be read alongside them.':'Subject-mean balanced accuracy. Error bars show descriptive 95% intervals where available.'+(chanceNote!==null?' The dashed line marks the '+chanceNote+'% chance level for this task.':' See the protocol for chance level.');
-$('#chart-legend').innerHTML=rows.map((r,i)=>'<span><i style="background:'+colors[i%colors.length]+'"></i>'+esc(r.name)+'</span>').join('');
+// A class rather than style="background:…": the Content-Security-Policy in
+// public/_headers allows no inline style at all, and an innerHTML-injected
+// style attribute is blocked by it.
+$('#chart-legend').innerHTML=rows.map((r,i)=>'<span><i class="s'+(i%colors.length)+'"></i>'+esc(r.name)+'</span>').join('');
 if(!rows.length){$('#result-chart').innerHTML='<p class="empty">No results to display</p>';return;}
 const x0=38,y0=176,w=210,h=145;
 let svg='<svg viewBox="0 0 280 220" role="img" aria-label="'+esc(track.yLabel)+' and '+esc(track.xLabel)+' chart">';

@@ -8,4 +8,12 @@ export default defineConfig({
   // are decided in exactly one place. Trailing-slash behaviour is the host's
   // (Cloudflare static-asset html_handling), so it is left at Astro's default.
   site: site.origin,
+  build: {
+    // Never inline CSS into the HTML. Astro's default inlines small
+    // stylesheets, and a <style> block is exactly what forces
+    // `style-src 'unsafe-inline'` in the Content-Security-Policy that
+    // public/_headers ships. One extra same-origin request buys a policy with
+    // no inline escape hatch at all.
+    inlineStylesheets: 'never',
+  },
 });

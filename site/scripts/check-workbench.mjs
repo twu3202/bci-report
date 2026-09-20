@@ -1,6 +1,6 @@
 // Application-state tests with minimal DOM doubles; this is not browser or WebMCP integration QA.
 import assert from 'node:assert/strict';
-import {existsSync,readFileSync} from 'node:fs';
+import {existsSync,readFileSync,readdirSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
 const data=JSON.parse(readFileSync(new URL('../src/data/mvp.json',import.meta.url),'utf8'));
@@ -120,8 +120,12 @@ for(const t of data.tracks) for(const r of t.rows){
     'matrix is missing '+r.name+' on '+t.id);
   // The bar is normalised against this protocol's OWN chance level. A global
   // normalisation would invite exactly the cross-task reading the page denies.
-  const c=t.chanceLevel ?? 0,w=Math.max(0,Math.min(100,(r.y-c)/(100-c)*100)).toFixed(1);
-  assert.ok(built.includes('style="--w:'+w+'%"></span></span><span class="num">'+r.y.toFixed(1)+'</span>'),
+  // Round the raw value exactly as index.astro does. Rounding a value that has
+  // already been fixed to one decimal disagrees with it on .x5 boundaries —
+  // beta-4ch/cca is 56.4927, which toFixed(1) lifts to 56.5 and Math.round
+  // then takes to 57.
+  const c=t.chanceLevel ?? 0,w=Math.round(Math.max(0,Math.min(100,(r.y-c)/(100-c)*100)));
+  assert.ok(built.includes('class="bar w'+w+'"></span></span><span class="num">'+r.y.toFixed(1)+'</span>'),
     t.id+'/'+r.id+': bar length must be chance-relative and tied to its own number');
   if(t.chanceLevel!=null&&r.y<=t.chanceLevel)below++;
 }
@@ -144,6 +148,23 @@ assert.equal(count(/class="track-tab"/g),data.tracks.length);
 // count. Pinned so a copy edit cannot quietly drop it.
 const policy=readFileSync(new URL('../dist/data-use/index.html',import.meta.url),'utf8');
 assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-cohort caveat');
+// The CSP in public/_headers allows no inline style and no inline script. An
+// inline style attribute here does not throw — it is silently dropped by the
+// browser, which is how every matrix bar reached production empty.
+for(const page of ['../dist/index.html','../dist/data-use/index.html','../dist/404.html']){
+  const html=readFileSync(new URL(page,import.meta.url),'utf8');
+  assert.doesNotMatch(html,/\sstyle="/,page+': the CSP forbids style attributes');
+  assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
+  assert.doesNotMatch(html,/\son(?:click|load|error|change|submit)=/,page+': the CSP forbids inline handlers');
+}
+// The built bundle, not the source: comments are stripped there, so this tests
+// what actually ships rather than what the file happens to say about itself.
+for(const js of readdirSync(new URL('../dist/_astro/',import.meta.url)).filter(f=>f.endsWith('.js')))
+  assert.doesNotMatch(readFileSync(new URL('../dist/_astro/'+js,import.meta.url),'utf8'),
+    /style="|\.style\.|setAttribute\(['"`]style/,js+': the client script must not inject inline style either');
+const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
+assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
+assert.match(headers,/Content-Security-Policy:[^\n]*script-src 'self';/,'script-src must stay free of unsafe-inline');
 assert.match(policy,/cannot recover is which person is which/,'it must say what is and is not recoverable');
 const idle=data.tracks.find(t=>t.id==='idle');
 assert.equal(idle.subjects,4,'the caveat names a cohort of four; update both together if this changes');

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "v1.0.2",
+    "zipball_url": "https://api.github.com/repos/nemarDatasets/nm000125/zipball/refs/tags/v1.0.2",
+    "tarball_url": "https://api.github.com/repos/nemarDatasets/nm000125/tarball/refs/tags/v1.0.2",
+    "commit": {
+      "sha": "2d34f218412b562d8da57b56f0bdcac5a338bf3d",
+      "url": "https://api.github.com/repos/nemarDatasets/nm000125/commits/2d34f218412b562d8da57b56f0bdcac5a338bf3d"
+    },
+    "node_id": "REF_kwDORgYQgLByZWZzL3RhZ3MvdjEuMC4y"
+  },
+  {
+    "name": "v1.0.1",
+    "zipball_url": "https://api.github.com/repos/nemarDatasets/nm000125/zipball/refs/tags/v1.0.1",
+    "tarball_url": "https://api.github.com/repos/nemarDatasets/nm000125/tarball/refs/tags/v1.0.1",
+    "commit": {
+      "sha": "d56046c04d6a728eff683a43dadd3d6df61d9f2d",
+      "url": "https://api.github.com/repos/nemarDatasets/nm000125/commits/d56046c04d6a728eff683a43dadd3d6df61d9f2d"
+    },
+    "node_id": "REF_kwDORgYQgLByZWZzL3RhZ3MvdjEuMC4x"
+  },
+  {
+    "name": "v1.0.0",
+    "zipball_url": "https://api.github.com/repos/nemarDatasets/nm000125/zipball/refs/tags/v1.0.0",
+    "tarball_url": "https://api.github.com/repos/nemarDatasets/nm000125/tarball/refs/tags/v1.0.0",
+    "commit": {
+      "sha": "d6690eb4ced6d6abf9cf2b0ba7c6708b7d8c6343",
+      "url": "https://api.github.com/repos/nemarDatasets/nm000125/commits/d6690eb4ced6d6abf9cf2b0ba7c6708b7d8c6343"
+    },
+    "node_id": "REF_kwDORgYQgLByZWZzL3RhZ3MvdjEuMC4w"
+  }
+]

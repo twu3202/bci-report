@@ -1,0 +1,32 @@
+# Response headers for Cloudflare Workers Static Assets. Parsed by the host and
+# never served as a file itself.
+#
+# ⚠ Forcing HTTPS is NOT done here, and cannot be. Plain http:// answers 200
+# instead of redirecting, which is what makes a browser say "Not secure" on a
+# site that has had a valid certificate since the zone was created. A
+# `_redirects` rule was tried and removed: Cloudflare's redirects file matches
+# on path only, and lists domain-level redirects as explicitly unsupported. The
+# fix is the zone-level toggle SSL/TLS -> Edge Certificates -> Always Use HTTPS,
+# which needs dashboard access the deploy token's zone:read does not grant. The
+# HSTS header below only protects visitors who have already arrived over HTTPS
+# once; it cannot help a first-time visitor who types the bare hostname.
+#
+# The policy is as tight as it is because the site earns it: no third-party
+# script, style, font or beacon, no inline <script>, no inline event handler, no
+# style="" attribute, and — via build.inlineStylesheets:'never' in
+# astro.config.mjs — no inline <style> block either. So every source can be
+# 'self' and nothing needs 'unsafe-inline'. Re-check this if that ever changes.
+
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Content-hashed filenames, so the bytes behind a given URL never change.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -18,6 +18,10 @@ AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
 # Text is scanned for leaks; binary is inventoried and hashed only.
 TEXT_SUFFIXES = {'.html', '.css', '.js', '.json', '.csv', '.svg', '.txt', '.xml'}
 BINARY_SUFFIXES = {'.ico', '.png', '.jpg', '.webp', '.woff2'}
+# Host control files. They carry no extension, are parsed by Cloudflare rather
+# than served, and still go through the same text scan as everything else —
+# a header or redirect rule can leak a hostname just as easily as a page can.
+CONTROL_FILES = {'_headers', '_redirects'}
 
 
 def check(root):
@@ -29,7 +33,7 @@ def check(root):
     forbidden = ['subjectResults','<home>/','<evidence-root>/','<workstation-home>/',
                  'train_subjects','test_subjects','y_true','y_pred']
     for path in files:
-        assert path.suffix in TEXT_SUFFIXES | BINARY_SUFFIXES, path
+        assert path.suffix in TEXT_SUFFIXES | BINARY_SUFFIXES or path.name in CONTROL_FILES, path
         assert not path.is_symlink(), f'symlink in payload: {path}'
         if path.suffix in BINARY_SUFFIXES:
             continue

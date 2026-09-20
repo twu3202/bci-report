@@ -3,6 +3,7 @@ import data from '../data/mvp.json';
 import { site } from '../data/site';
 import '../styles/global.css';
 import '../styles/matrix.css';
+import '../styles/generated.css';
 import '../styles/directory.css';
 const tracks=data.tracks;
 const track=tracks[0];
@@ -84,7 +85,7 @@ const stats=[
   if(y===undefined) return <td class="cell none"><span class="num" title={`${m.name} has not been evaluated on ${t.title}`}>·</span></td>;
   const c=chanceOf(t);
   const below=c!==null&&y<=c;
-  return <td class="cell" data-rank={leader.get(t.id)===m.name?'lead':below?'sub':null} title={`${m.name} · ${t.title}: ${y.toFixed(1)}% ${t.yLabel.toLowerCase()}`}><span class="track"><span class="bar" style={`--w:${fill(t,y).toFixed(1)}%`}></span></span><span class="num">{y.toFixed(1)}</span>{below&&<span class="cmark">≤ chance</span>}</td>;
+  return <td class="cell" data-rank={leader.get(t.id)===m.name?'lead':below?'sub':null} title={`${m.name} · ${t.title}: ${y.toFixed(1)}% ${t.yLabel.toLowerCase()}`}><span class="track"><span class={`bar w${Math.round(fill(t,y))}`}></span></span><span class="num">{y.toFixed(1)}</span>{below&&<span class="cmark">≤ chance</span>}</td>;
 })}</tr>)}</tbody></table></div>
 <p class="matrix-note"><span class="key"><i class="lead"></i>Best on that protocol</span><span class="key"><i class="plain"></i>Bar = position between that protocol's chance level and 100%</span><span class="key"><i class="gap"></i>Not evaluated</span><a href="/data/experiments.json" download>All results · JSON ↓</a></p></div>
 <p class="matrix-caveat">Bars are comparable <strong>down</strong> a column and not <strong>across</strong> one: chance level is 50% for the two-class tasks, 20% for sleep staging and 2.5% for 40-class SSVEP, and every protocol uses a different cohort and electrode layout. There is no overall score. The idle column reports command detection only — read it with the false-activation rate in its protocol.</p></section>

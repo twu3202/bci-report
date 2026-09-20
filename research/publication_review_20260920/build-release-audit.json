@@ -1,7 +1,7 @@
 {
   "status": "pass",
   "releaseId": "research-preview-20260920",
-  "files": 28,
+  "files": 31,
   "downloadFiles": 17,
   "comparisons": 39,
   "protocols": 8,
@@ -16,9 +16,12 @@
     "hashes compared against the previous audit record"
   ],
   "built_artifact_sha256": {
-    "404.html": "6f711d400b32557c2dd127c9ecc84a6989b56ee1308ad85f96aa895cbeab2007",
+    "404.html": "8077fe070112270798de6d9fbff490d7ba36432c88a63db89231dd35811d61b3",
+    "_astro/directory.COTywl7T.css": "54a833e8ef168cd8bf1588cb2b12e65eaec1c3db33f87203d7664fcca96332a8",
     "_astro/global.C2gTFmfw.css": "84b92b2baefe2afec4026a4c43d423afb6b0abd6eb88536316e315f78e99f969",
-    "_astro/index.astro_astro_type_script_index_0_lang.DRHW5fTP.js": "121c6807894ea11520949b11249c78aa53167cdc08ca2e8a7acf2f7c7c90db00",
+    "_astro/index.astro_astro_type_script_index_0_lang.B4GuhvmJ.js": "062120a8cf623cab8b993fa2b6ebab05da4c162a925e329b3d9c59e36a897290",
+    "_astro/index.bjJTLyFT.css": "d7b599b78ac6383ad135b7a07350e00c73b646395a3b2f8ba177fd68bb370b03",
+    "_headers": "1203669ef67ebdf21dbce3c7406bb891c81cffe916719cb5964cc8945be16d3b",
     "apple-touch-icon.png": "b37fe2b7a28fde2c8dff7437a98a6d1847ec72313d2c522b17d7a707ebf6b11f",
     "data-use/index.html": "e3aa975799e0dcdb15dfaa882230650b672ded6fc66baa052488f1be5c932303",
     "data/arithmetic-rest-protocol.json": "a2d8a9f182916b1ae611b163d65b3b7184bdbf79e4fa39ee47e778c02c301c6b",
@@ -40,7 +43,7 @@
     "data/sleep-scalp-results.csv": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
     "favicon.ico": "abc8e622580241ee8ec914fc1b7fbbd354709dc5bef3cbca040d7b21833aed68",
     "favicon.svg": "a51b4859e908aa6244b40dbb00570c755918a3778a089cfd1f2a9a83f8d711d4",
-    "index.html": "30a46dbbe06ef9fa7e16b8d47ab1705e767c617ba04e7724582453db7b43a40b",
+    "index.html": "a856c7943dd8d73d30471a1fce610a4ebc903cd8f1d3f34b265bca8db4de02aa",
     "og.png": "e424c3c122839eb83bf0cecbbe15c9d31b0a9ff154055ce3d603a18c654e0024",
     "robots.txt": "a9139481e1a64b98d6a3f4664b8a81d03dfade6a50c748514fc9002df79eba04",
     "sitemap.xml": "fe606e8cc68c99cf63a0477acae5178dd84a8cb8aefa42f6a99206ff799c6cae"
