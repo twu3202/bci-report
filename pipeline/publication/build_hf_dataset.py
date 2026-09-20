@@ -94,7 +94,7 @@ mode, chance level, training budget and known limitations. Release
 
 Rendered, with the charts and the method notes: **<https://bci.report>**
 Code, publication boundary and the rights review behind these numbers:
-**<https://github.com/twu3202/bciarena>**
+**<https://github.com/twu3202/bci-report>**
 
 ## What this contains
 

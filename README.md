@@ -24,6 +24,19 @@ serves — no second export path, so both mirrors pass the same gate.
 > `<evidence-root>/`, `<repo>/` and `<workstation-home>/` placeholders instead of
 > naming one machine's directory layout.
 
+> ### The name `bciarena` still appears, on purpose
+>
+> The project was renamed from BCI Arena on 2026-09-20. Two places keep the old
+> string and should not be "fixed":
+>
+> - `run_by: "bciarena"` is a stable internal provenance tag written into every
+>   `verified_results.csv` row. It is never displayed; renaming it would
+>   invalidate the existing store. See the comment at `pipeline/validation.py`.
+> - `research/` holds dated records of decisions made when the project was still
+>   heading for `bciarena.ai`, including why that domain was dropped. Editing
+>   them to match a later rename would make the evidence trail say something
+>   that was not true at the time.
+
 ## Layout
 
 | Path | What it is |
