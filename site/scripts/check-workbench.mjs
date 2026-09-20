@@ -121,7 +121,7 @@ for(const t of data.tracks) for(const r of t.rows){
   // The bar is normalised against this protocol's OWN chance level. A global
   // normalisation would invite exactly the cross-task reading the page denies.
   const c=t.chanceLevel ?? 0,w=Math.max(0,Math.min(100,(r.y-c)/(100-c)*100)).toFixed(1);
-  assert.ok(built.includes('style="--w:'+w+'%"></i><span class="num">'+r.y.toFixed(1)+'</span>'),
+  assert.ok(built.includes('style="--w:'+w+'%"></span></span><span class="num">'+r.y.toFixed(1)+'</span>'),
     t.id+'/'+r.id+': bar length must be chance-relative and tied to its own number');
   if(t.chanceLevel!=null&&r.y<=t.chanceLevel)below++;
 }

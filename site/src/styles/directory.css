@@ -48,7 +48,10 @@
   margin:3px 0 0;font-family:var(--mono);font-size:.9375rem;
   font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
 }
-.dataset-status{text-align:right}
+/* Attribution strings carry bare DOIs and article URLs, which have no break
+   opportunity and pushed this fixed-width column 79px past the page, giving the
+   whole document a horizontal scrollbar at every desktop width. */
+.dataset-status{text-align:right;min-width:0;overflow-wrap:anywhere}
 .dataset-status .status{display:inline-block}
 .dataset-status small{margin-top:6px}
 .dataset-status a{color:var(--accent)}
