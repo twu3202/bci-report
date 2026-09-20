@@ -9,10 +9,19 @@ from export_snapshot import approved, build, matching_audit, read, validate_publ
 
 PROJECT = Path(__file__).resolve().parents[2]
 REVIEW = PROJECT/'research/publication_review_20260920'
-BATCH = Path('<evidence-root>/benchmarks/parallel-v1/20260919/batch-state.json')
-BETA = Path('<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2')
+
+# The run outputs live on an external volume whose mount point is one operator's
+# local detail, so it is configured rather than committed. `local_paths.json` is
+# gitignored; see its template in the README. Absent, these tests skip loudly
+# instead of silently passing on a half-built snapshot.
+LOCAL = PROJECT/'pipeline/publication/local_paths.json'
+_config = json.loads(LOCAL.read_text()) if LOCAL.exists() else {}
+BATCH = Path(_config['batchState']) if 'batchState' in _config else None
+BETA = Path(_config['betaRoot']) if 'betaRoot' in _config else None
+HAVE_RUNS = bool(BATCH and BETA and BATCH.exists() and BETA.exists())
 
 
+@unittest.skipUnless(HAVE_RUNS, f'run outputs not configured; see {LOCAL.name}')
 class ReleaseBoundary(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -23,7 +32,7 @@ class ReleaseBoundary(unittest.TestCase):
 
     def test_sensitive_fields_and_prose_are_rejected(self):
         for value in ({'subjectResults': []}, {'text': 'Participant sub-001'},
-                      {'text': '<evidence-root>/private.npy'}, {'y': float('nan')}):
+                      {'text': '/Volumes/Archive/private.npy'}, {'y': float('nan')}):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 validate_public(value)
 

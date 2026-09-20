@@ -1,0 +1,5 @@
+{
+  "_comment": "Copy to local_paths.json and point at your own run outputs. Never committed.",
+  "batchState": "<run-root>/benchmarks/parallel-v1/<date>/batch-state.json",
+  "betaRoot": "<run-root>/benchmarks/beta-ssvep-v1/<run-id>"
+}

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "snapshotSha256": "198f8c0114cdda4d6239a44104b3e33dd782307f3412c34a10e94b805d7b3d65",
+  "scope": "Aggregate-only paired participant bootstrap for priority MI and arithmetic/rest comparisons. No participant-level values are emitted.",
+  "interpretation": "Intervals resample held-out participants and preserve pairing between each foundation model and EEGNet. They describe participant variation in this fixed benchmark; overlapping cross-validation training sets and one fixed training seed remain.",
+  "comparisons": [
+    {
+      "track": "mi-rest",
+      "comparison": "cbramod_minus_eegnet",
+      "participantCount": 10,
+      "bootstrapUnit": "held-out participant",
+      "paired": true,
+      "draws": 10000,
+      "randomSeed": 20260920,
+      "metrics": [
+        {
+          "metric": "balanced_accuracy_percentage_points",
+          "meanPairedDifferenceFoundationMinusEEGNet": -8.083333333333332,
+          "participantBootstrap95Percentile": [
+            -13.58333333333333,
+            -3.166666666666666
+          ],
+          "foundationHigherParticipantCount": 2,
+          "foundationTiedParticipantCount": 0,
+          "foundationLowerParticipantCount": 8
+        },
+        {
+          "metric": "macro_f1",
+          "meanPairedDifferenceFoundationMinusEEGNet": -0.06266874648455106,
+          "participantBootstrap95Percentile": [
+            -0.14025685934293491,
+            0.011495830398696236
+          ],
+          "foundationHigherParticipantCount": 2,
+          "foundationTiedParticipantCount": 0,
+          "foundationLowerParticipantCount": 8
+        }
+      ]
+    },
+    {
+      "track": "mi-rest",
+      "comparison": "labram_minus_eegnet",
+      "participantCount": 10,
+      "bootstrapUnit": "held-out participant",
+      "paired": true,
+      "draws": 10000,
+      "randomSeed": 20260920,
+      "metrics": [
+        {
+          "metric": "balanced_accuracy_percentage_points",
+          "meanPairedDifferenceFoundationMinusEEGNet": -17.5,
+          "participantBootstrap95Percentile": [
+            -22.91666666666666,
+            -12.16666666666667
+          ],
+          "foundationHigherParticipantCount": 0,
+          "foundationTiedParticipantCount": 0,
+          "foundationLowerParticipantCount": 10
+        },
+        {
+          "metric": "macro_f1",
+          "meanPairedDifferenceFoundationMinusEEGNet": -0.17063189211848187,
+          "participantBootstrap95Percentile": [
+            -0.23889293114657156,
+            -0.09133896672952538
+          ],
+          "foundationHigherParticipantCount": 2,
+          "foundationTiedParticipantCount": 0,
+          "foundationLowerParticipantCount": 8
+        }
+      ]
+    },
+    {
+      "track": "arithmetic-rest",
+      "comparison": "cbramod_minus_eegnet",
+      "participantCount": 36,
+      "bootstrapUnit": "held-out participant",
+      "paired": true,
+      "draws": 10000,
+      "randomSeed": 20260920,
+      "metrics": [
+        {
+          "metric": "balanced_accuracy_percentage_points",
+          "meanPairedDifferenceFoundationMinusEEGNet": -5.324074074074074,
+          "participantBootstrap95Percentile": [
+            -8.935185185185183,
+            -1.5740740740740748
+          ],
+          "foundationHigherParticipantCount": 8,
+          "foundationTiedParticipantCount": 4,
+          "foundationLowerParticipantCount": 24
+        },
+        {
+          "metric": "macro_f1",
+          "meanPairedDifferenceFoundationMinusEEGNet": -0.03468720646190127,
+          "participantBootstrap95Percentile": [
+            -0.07824824895132429,
+            0.00985087310678314
+          ],
+          "foundationHigherParticipantCount": 14,
+          "foundationTiedParticipantCount": 0,
+          "foundationLowerParticipantCount": 22
+        }
+      ]
+    },
+    {
+      "track": "arithmetic-rest",
+      "comparison": "labram_minus_eegnet",
+      "participantCount": 36,
+      "bootstrapUnit": "held-out participant",
+      "paired": true,
+      "draws": 10000,
+      "randomSeed": 20260920,
+      "metrics": [
+        {
+          "metric": "balanced_accuracy_percentage_points",
+          "meanPairedDifferenceFoundationMinusEEGNet": -3.009259259259258,
+          "participantBootstrap95Percentile": [
+            -8.00925925925926,
+            1.527777777777779
+          ],
+          "foundationHigherParticipantCount": 17,
+          "foundationTiedParticipantCount": 1,
+          "foundationLowerParticipantCount": 18
+        },
+        {
+          "metric": "macro_f1",
+          "meanPairedDifferenceFoundationMinusEEGNet": -0.016954867423302048,
+          "participantBootstrap95Percentile": [
+            -0.07717808876367876,
+            0.04155884753649334
+          ],
+          "foundationHigherParticipantCount": 17,
+          "foundationTiedParticipantCount": 1,
+          "foundationLowerParticipantCount": 18
+        }
+      ]
+    }
+  ]
+}

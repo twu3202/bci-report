@@ -20,6 +20,15 @@ research/**/*.private
 # --- for the two machines. Not credentials, but not project material either.
 ops/
 
+# --- Internal planning, run records and interpretation notes. Written for the
+# --- operator and a reviewer, not for readers: the handoff says so on its own
+# --- first page. Kept local. What belongs to the public record is the site,
+# --- the publication boundary in pipeline/, and the rights review in research/.
+docs/
+
+# --- Where this machine keeps the run outputs. One operator's mount points.
+pipeline/publication/local_paths.json
+
 # --- Scratch, build output and local state.
 tmp/
 output/

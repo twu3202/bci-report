@@ -30,7 +30,11 @@ def check(root):
                                        for suffix in ('-results.csv','-protocol.json')}
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
-    forbidden = ['subjectResults','<home>/','<evidence-root>/','<workstation-home>/',
+    # Path roots, not one machine's spellings. The list used to name this
+    # operator's home directory and external volume, which made the check both
+    # narrower than it should be and a leak of the thing it exists to catch.
+    # `dist/` carries no absolute path of any kind, so the broad form has room.
+    forbidden = ['subjectResults','/Users/','/Volumes/','/home/','C:\\',
                  'train_subjects','test_subjects','y_true','y_pred']
     for path in files:
         assert path.suffix in TEXT_SUFFIXES | BINARY_SUFFIXES or path.name in CONTROL_FILES, path

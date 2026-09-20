@@ -19,7 +19,7 @@ class ValidatePublicRejects(unittest.TestCase):
     def test_identifiers_and_paths_used_as_mapping_keys(self):
         for label, payload in [
             ('participant id as key', {'perSubject': {'sub-001': {'balanced_accuracy': 0.83}}}),
-            ('local path as key', {'<evidence-root>/raw/sub-003.npy': 1}),
+            ('local path as key', {'/Volumes/Archive/raw/sub-003.npy': 1}),
             ('path as key, nested', {'runs': [{'C:\\Users\\asus\\eeg.edf': 0.5}]}),
         ]:
             self.assertRejected(payload, label)
@@ -27,7 +27,7 @@ class ValidatePublicRejects(unittest.TestCase):
     def test_path_roots_beyond_the_original_four(self):
         for note in [
             'cached under /private/var/folders/9k/T/ds005342',
-            'see /users/r/HMM/bciarena/experiments',          # macOS is case-insensitive
+            'see /users/someone/project/experiments',          # macOS is case-insensitive
             'copied from D:\\Users\\asus\\eeg.edf',            # any drive letter
             '/mnt/eeg/session3.edf',
             '/media/usb/recording.edf',
@@ -42,7 +42,7 @@ class ValidatePublicRejects(unittest.TestCase):
             self.assertRejected({'note': note}, note)
 
     def test_leak_buried_in_a_list_of_dicts(self):
-        self.assertRejected({'a': [{'b': [{'c': '<repo>/x'}]}]}, 'depth 3')
+        self.assertRejected({'a': [{'b': [{'c': '/Users/someone/project/x'}]}]}, 'depth 3')
 
     def test_forbidden_keys_still_rejected(self):
         for key in ('subjectResults', 'y_pred', 'embeddings'):

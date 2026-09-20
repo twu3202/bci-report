@@ -12,17 +12,17 @@ The same 39 results are mirrored as a Hugging Face dataset,
 `pipeline/publication/build_hf_dataset.py` from the payload the site already
 serves — no second export path, so both mirrors pass the same gate.
 
-> ### ⚠ Before making this repository public
+> ### Scope of this repository
 >
-> It is private for a reason. `docs/` and parts of `research/` contain local
-> machine paths (`/Users/…`, `<evidence-root>/…`, `<workstation-home>/…`), the two
-> workstation hostnames, and internal planning notes — including the prelaunch
-> handoff, which says on its own first page that it is internal. None of it is a
-> credential and none of it is participant data, but it is not written for
-> publication. Review `docs/` and `research/` before changing visibility.
+> Raw EEG, model weights and per-participant results are **not** here and must
+> not be added — see `.gitignore` and `/data-use/` on the site.
 >
-> Raw EEG, model weights and per-participant results are **not** in this
-> repository and must not be added — see `.gitignore` and `/data-use/` on the site.
+> `docs/` is gitignored: internal planning, run records and interpretation
+> notes, written for the operator and a reviewer rather than for readers. It
+> stays on disk and out of the public record. Absolute paths are gitignored the
+> same way (`pipeline/publication/local_paths.json`); everything committed uses
+> `<evidence-root>/`, `<repo>/` and `<workstation-home>/` placeholders instead of
+> naming one machine's directory layout.
 
 ## Layout
 
@@ -32,9 +32,9 @@ serves — no second export path, so both mirrors pass the same gate.
 | `pipeline/publication/` | The release boundary: `export_snapshot.py` builds the public snapshot from reviewed runs; `check_site_artifact.py` inspects the built payload. |
 | `pipeline/` | Literature catalogue, verified-result store, news ingestion with a manual approval gate. |
 | `data/` | Hand-maintained catalogues (models, benchmarks, verified results, curated news). |
-| `docs/` | Plans, run records and result interpretation notes. Internal. |
+| `docs/` | **Not in git.** Plans, run records and interpretation notes. Internal. |
 | `research/` | Rights and privacy review evidence, screening and acquisition records. |
-| `experiments/` | **Not in git.** Raw data, prepared arrays, weights, run outputs (7+ GB, local and on the Gal4 SSD). |
+| `experiments/` | **Not in git.** Raw data, prepared arrays, weights, run outputs (7+ GB, local and on an external volume). |
 
 ## What is published
 
@@ -60,14 +60,17 @@ and fails on drift; re-run with `--accept` after an intended change. Passing it
 is not proof of anonymity — it matches known-bad shapes and cannot reason about
 reconstruction from small denominators. See `site/VALIDATION.md`.
 
-Regenerating the published snapshot needs the Gal4 SSD mounted:
+The release tests and the export both need the run outputs, which live on an
+external volume. Copy `pipeline/publication/local_paths.example.json` to
+`local_paths.json` and point it at your own; without it the tests that read real
+runs skip rather than pass quietly. Regenerating the published snapshot:
 
 ```bash
 .venv/bin/python pipeline/publication/export_snapshot.py \
   --manifest research/publication_review_20260920/release-manifest.json \
   --legacy   research/publication_review_20260920/previous-mvp.private.json \
-  --batch    <evidence-root>/benchmarks/parallel-v1/20260919/batch-state.json \
-  --beta-root <evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2 \
+  --batch    "$(jq -r .batchState pipeline/publication/local_paths.json)" \
+  --beta-root "$(jq -r .betaRoot pipeline/publication/local_paths.json)" \
   --output   research/publication_review_20260920/release-output
 ```
 

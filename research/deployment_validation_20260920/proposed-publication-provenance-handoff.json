@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "status": "proposed publication provenance for the frozen captured snapshot",
+  "snapshotBinding": {
+    "releaseId": "research-preview-20260920",
+    "sha256": "198f8c0114cdda4d6239a44104b3e33dd782307f3412c34a10e94b805d7b3d65",
+    "sourcePath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-experiments.json",
+    "warning": "Recompute this binding if the publication source changes."
+  },
+  "coverage": {
+    "displayedComparisonRows": 39,
+    "displayedComparisonUnit": "one displayed protocol-by-method aggregate row",
+    "displayedProtocols": 8,
+    "displayedProtocolUnit": "one task/protocol card; BETA 4-channel and 8-channel subsets count separately",
+    "displayedDatasetLabels": 7,
+    "displayedDatasetLabelUnit": "unique dataset label in the captured track array; BETA subsets share one dataset label",
+    "displayedMethods": 9,
+    "displayedMethodUnit": "unique method id among displayed rows",
+    "datasetLabels": [
+      "BETA",
+      "EEGMAT",
+      "EESM19 scalp subset",
+      "TMNRED / ds005383",
+      "ds003810",
+      "ds005342",
+      "ds006593"
+    ],
+    "methodIds": [
+      "cbramod",
+      "cca",
+      "csp-lda",
+      "deep4net",
+      "eegnet",
+      "labram",
+      "shallowfbcspnet",
+      "spectral-ridge",
+      "temporal-ridge"
+    ],
+    "capturedCoverageField": {
+      "displayedComparisons": 39,
+      "displayedProtocols": 8,
+      "completedBatchComparisons": 69,
+      "completedBatchDatasets": 13
+    },
+    "countsMatchCapturedClaims": true
+  },
+  "privacy": "Aggregate results only. This handoff contains no participant identifiers or participant-level predictions/metrics.",
+  "provenance": [
+    {
+      "id": "mi-rest",
+      "dataset": "ds003810",
+      "protocolId": "parallel-fixed-subject-folds-v1/ds003810",
+      "displayedRows": 5,
+      "displayedParticipantCount": 10,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "f950f3a91c1ac6e7df196d6da073021a414ceff1e3becdae1cbf99abe03f434b",
+        "capturedResultsCsvSha256": "50f0eef66b1d36314c5ec4a01028a30c58e2ff88ebac08325ee0b6c4158a19cf",
+        "summarySha": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda",
+        "protocolSha": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+        "auditSha": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "idle",
+      "dataset": "ds005342",
+      "protocolId": "ds005342-sitting-cue-gated-pilot-v1",
+      "displayedRows": 6,
+      "displayedParticipantCount": 4,
+      "metricUnits": {
+        "x": "Idle false activation",
+        "y": "Command detection ≤3s",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "proposed_missing_links_for_next_export",
+      "assets": {
+        "capturedProtocolSidecarSha256": "e4332c659ab0234e49ea0589bf28744458b6e43b850850d7eb705204d0f9bc83",
+        "capturedResultsCsvSha256": "d511d329755caf81109305a78e416a2650e84ee03f0fa965c34d3e8220796d81",
+        "summarySha": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05",
+        "protocolSha": "a1dcb0a919e290ad71b639b5e7935650399d025782972dc0c9b31706acc8dea7",
+        "expandedSummarySha": "422ad3e9f7bcfafc4a68bbad35487cd985cd4f281f6ee7e84738ec7d55ccec82",
+        "expandedProtocolSha": "247f8f3c0eb3552917a920c525644e4a3338b26a647a42fb33e193c4c50cb041",
+        "expandedAuditSha": "14445d3423b5268654a1f73f7e1aca8bb03a2f793b076f450883fea89c7bcc83"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": false,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "beta-8ch",
+      "dataset": "BETA",
+      "protocolId": "beta-ssvep-2s-posterior4and8-subject7fold-v1/posterior8",
+      "displayedRows": 5,
+      "displayedParticipantCount": 70,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "7500a9e5345ec1255d767ae119ade7eb6f83fbcd207e0fed6ba532b9715181ae",
+        "capturedResultsCsvSha256": "01a11e0ba22ea726158c936ff66a7e60f8704641a6e8f11d5c83f25d87fd3125",
+        "summarySha": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "protocolSha": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "auditSha": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "beta-4ch",
+      "dataset": "BETA",
+      "protocolId": "beta-ssvep-2s-posterior4and8-subject7fold-v1/posterior4",
+      "displayedRows": 5,
+      "displayedParticipantCount": 70,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "a32e934b970740d00b238f828dd25c66a13d4cb498897a762ef2220b27136a0f",
+        "capturedResultsCsvSha256": "9ffe23197b77eda5f08dca476f66197c2da77f198ce8dd35dfd0df972a24082d",
+        "summarySha": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "protocolSha": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "auditSha": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "arithmetic-rest",
+      "dataset": "EEGMAT",
+      "protocolId": "parallel-fixed-subject-folds-v1/physionet-eegmat-1.0.0",
+      "displayedRows": 4,
+      "displayedParticipantCount": 36,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "64f98f34757a0bc5ea7c114f46408098b0d1cfb163c4f5ce127a40a5ad4ed3f3",
+        "capturedResultsCsvSha256": "bed02323936f2980eac7bf3a8e8b2595630fa1609c1466600d33acc2f83928dc",
+        "summarySha": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b",
+        "protocolSha": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+        "auditSha": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "p300-target",
+      "dataset": "ds006593",
+      "protocolId": "parallel-fixed-subject-folds-v1/ds006593",
+      "displayedRows": 5,
+      "displayedParticipantCount": 21,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "e70817c58a9ebc298628a81dc6762e5c993fc92b1259fc6f38286e7b8e7dbaf2",
+        "capturedResultsCsvSha256": "6cd242313b592d37be2c1e6af2fd8524f612010547a143c84948a6f03a7a852d",
+        "summarySha": "a63a7ba5bbd6dd7865ae260b707c2db896136646a910d96516fa5c862e1146c0",
+        "protocolSha": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+        "auditSha": "30762120c57bede9f47d2e96637656e8948fca458016f7f2e3a39f951a357716"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "semantic-target",
+      "dataset": "TMNRED / ds005383",
+      "protocolId": "parallel-fixed-subject-folds-v1/ds005383",
+      "displayedRows": 5,
+      "displayedParticipantCount": 30,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "b606715ce756d7288c7da495fa3930b8a1fc9e8e258f83eb1e60b594185d1603",
+        "capturedResultsCsvSha256": "b4baad3795b5512a033609512c90055894caf915b62c9c303fd77310d98caaaa",
+        "summarySha": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243",
+        "protocolSha": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+        "auditSha": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    },
+    {
+      "id": "sleep-scalp",
+      "dataset": "EESM19 scalp subset",
+      "protocolId": "parallel-fixed-subject-folds-v1/eesm19-scalp-sleep",
+      "displayedRows": 4,
+      "displayedParticipantCount": 20,
+      "metricUnits": {
+        "x": "Macro F1",
+        "y": "Balanced accuracy",
+        "interval": "percentage points on y metric where present"
+      },
+      "provenanceLinkStatus": "present_and_verified_in_captured_track",
+      "assets": {
+        "capturedProtocolSidecarSha256": "754403339edf7644f18a05dd3ca12aae9f7fcb28b48ef56c1ca581fb90f112c5",
+        "capturedResultsCsvSha256": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
+        "summarySha": "b7c784c17d6b33c16ffca5df42d3fd8f3d7bf14960675a7278089c4903886567",
+        "protocolSha": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+        "auditSha": "e6cbf1b199bf2902b9c46e4575ebfa8aff47952625df3d71a1d720b11cc27291"
+      },
+      "aggregateScoreRecomputationPassed": true,
+      "participantDisjointEvidence": true,
+      "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+    }
+  ],
+  "weightPolicy": {
+    "publicRelease": "No checkpoint or trained-state files are included in this handoff.",
+    "internalEvidence": "Each audited row links internally to prediction artifact manifests; frozen foundation rows additionally verify declared checkpoint and source hashes, and scratch models verify saved trained-state hashes.",
+    "checkpointSha256": {
+      "LaBraM": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+      "CBraMod": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178"
+    }
+  },
+  "pairedUncertainty": {
+    "path": "<repo>/research/deployment_validation_20260920/paired-participant-bootstrap-summary.json",
+    "sha256": "7fde3117c1d5890623a41f66fb11d148e2e0fe165b19afa6aaf62bcced3f2722"
+  },
+  "fullAudit": {
+    "path": "<repo>/research/deployment_validation_20260920/release-provenance-audit.json",
+    "sha256": "90c3636f3dfecdeee795f51c9fdef6ffa5187eb522c230da3ca2e66a3d277e4e"
+  }
+}

@@ -1,0 +1,1916 @@
+{
+  "schemaVersion": 1,
+  "auditScope": "frozen captured release snapshot; the website publication source may change after capture",
+  "capturedSnapshot": {
+    "path": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-experiments.json",
+    "sha256": "198f8c0114cdda4d6239a44104b3e33dd782307f3412c34a10e94b805d7b3d65",
+    "bytes": 91320,
+    "releaseId": "research-preview-20260920",
+    "generatedAt": "2026-09-20"
+  },
+  "runtimeConstraints": {
+    "cpuThreadCap": 2,
+    "trainingPerformed": false,
+    "gpuOrMpsUsed": false
+  },
+  "coverage": {
+    "displayedComparisonRows": 39,
+    "displayedComparisonUnit": "one displayed protocol-by-method aggregate row",
+    "displayedProtocols": 8,
+    "displayedProtocolUnit": "one task/protocol card; BETA 4-channel and 8-channel subsets count separately",
+    "displayedDatasetLabels": 7,
+    "displayedDatasetLabelUnit": "unique dataset label in the captured track array; BETA subsets share one dataset label",
+    "displayedMethods": 9,
+    "displayedMethodUnit": "unique method id among displayed rows",
+    "datasetLabels": [
+      "BETA",
+      "EEGMAT",
+      "EESM19 scalp subset",
+      "TMNRED / ds005383",
+      "ds003810",
+      "ds005342",
+      "ds006593"
+    ],
+    "methodIds": [
+      "cbramod",
+      "cca",
+      "csp-lda",
+      "deep4net",
+      "eegnet",
+      "labram",
+      "shallowfbcspnet",
+      "spectral-ridge",
+      "temporal-ridge"
+    ],
+    "capturedCoverageField": {
+      "displayedComparisons": 39,
+      "displayedProtocols": 8,
+      "completedBatchComparisons": 69,
+      "completedBatchDatasets": 13
+    },
+    "countsMatchCapturedClaims": true
+  },
+  "sidecarAndCsvChecks": {
+    "checks": [
+      {
+        "track": "mi-rest",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-mi-rest-protocol.json",
+        "protocolSidecarSha256": "f950f3a91c1ac6e7df196d6da073021a414ceff1e3becdae1cbf99abe03f434b",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-mi-rest-results.csv",
+        "resultsCsvSha256": "50f0eef66b1d36314c5ec4a01028a30c58e2ff88ebac08325ee0b6c4158a19cf",
+        "resultsCsvRowCount": 5,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "idle",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-idle-protocol.json",
+        "protocolSidecarSha256": "e4332c659ab0234e49ea0589bf28744458b6e43b850850d7eb705204d0f9bc83",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-idle-results.csv",
+        "resultsCsvSha256": "d511d329755caf81109305a78e416a2650e84ee03f0fa965c34d3e8220796d81",
+        "resultsCsvRowCount": 6,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "beta-8ch",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-beta-8ch-protocol.json",
+        "protocolSidecarSha256": "7500a9e5345ec1255d767ae119ade7eb6f83fbcd207e0fed6ba532b9715181ae",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-beta-8ch-results.csv",
+        "resultsCsvSha256": "01a11e0ba22ea726158c936ff66a7e60f8704641a6e8f11d5c83f25d87fd3125",
+        "resultsCsvRowCount": 5,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "beta-4ch",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-beta-4ch-protocol.json",
+        "protocolSidecarSha256": "a32e934b970740d00b238f828dd25c66a13d4cb498897a762ef2220b27136a0f",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-beta-4ch-results.csv",
+        "resultsCsvSha256": "9ffe23197b77eda5f08dca476f66197c2da77f198ce8dd35dfd0df972a24082d",
+        "resultsCsvRowCount": 5,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "arithmetic-rest",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-arithmetic-rest-protocol.json",
+        "protocolSidecarSha256": "64f98f34757a0bc5ea7c114f46408098b0d1cfb163c4f5ce127a40a5ad4ed3f3",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-arithmetic-rest-results.csv",
+        "resultsCsvSha256": "bed02323936f2980eac7bf3a8e8b2595630fa1609c1466600d33acc2f83928dc",
+        "resultsCsvRowCount": 4,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "p300-target",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-p300-target-protocol.json",
+        "protocolSidecarSha256": "e70817c58a9ebc298628a81dc6762e5c993fc92b1259fc6f38286e7b8e7dbaf2",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-p300-target-results.csv",
+        "resultsCsvSha256": "6cd242313b592d37be2c1e6af2fd8524f612010547a143c84948a6f03a7a852d",
+        "resultsCsvRowCount": 5,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "semantic-target",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-semantic-target-protocol.json",
+        "protocolSidecarSha256": "b606715ce756d7288c7da495fa3930b8a1fc9e8e258f83eb1e60b594185d1603",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-semantic-target-results.csv",
+        "resultsCsvSha256": "b4baad3795b5512a033609512c90055894caf915b62c9c303fd77310d98caaaa",
+        "resultsCsvRowCount": 5,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      },
+      {
+        "track": "sleep-scalp",
+        "protocolSidecarPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-sleep-scalp-protocol.json",
+        "protocolSidecarSha256": "754403339edf7644f18a05dd3ca12aae9f7fcb28b48ef56c1ca581fb90f112c5",
+        "protocolSidecarMatchesCapturedTrackWithoutRows": true,
+        "resultsCsvPath": "<repo>/research/benchmark_expansion_v2_20260920/live-bci-report-sleep-scalp-results.csv",
+        "resultsCsvSha256": "55be9dc880b0c620f9dfba3f97c885e50645db0984de2b7d3c10a380fc9db32d",
+        "resultsCsvRowCount": 4,
+        "resultsCsvMatchesCapturedRows": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "seedSensitivityChain": {
+    "aggregatePath": "<evidence-root>/benchmarks/seed-sensitivity-v1/20260920/aggregate.json",
+    "aggregateSha256": "fa3225717aa625c4ca024612d75e9e3553b054ef62b71cb201de9f3b6516e5d1",
+    "auditPath": "<evidence-root>/benchmarks/seed-sensitivity-v1/20260920/independent-aggregate-audit.json",
+    "auditSha256": "17b31f77610fcb5f034eb013774b5f796b96b3f393ec763351f1c4c290e5c194",
+    "auditPassed": true,
+    "checks": [
+      {
+        "track": "mi-rest",
+        "dataset": "ds003810",
+        "aggregateEntryFound": true,
+        "auditShaMatchesClaim": true
+      },
+      {
+        "track": "arithmetic-rest",
+        "dataset": "physionet-eegmat-1.0.0",
+        "aggregateEntryFound": true,
+        "auditShaMatchesClaim": true
+      }
+    ],
+    "passed": true
+  },
+  "trackAudits": [
+    {
+      "track": "mi-rest",
+      "run": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1",
+      "hashes": {
+        "summary.json": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda",
+        "dataset-protocol.json": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+        "engine-protocol.json": "2bb1ab0e34027ac01df1b9dfc18dc31ca197944e6c835626a9cab0724a58bf9c",
+        "independent-audit.json": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2",
+        "inputs.json": "fc8d0122e5e7404133276e8400d690459fa37589d59da1bd77f739c413c6f86b",
+        "splits.json": "ec4dd5f66d9f5f267d5b929819749ecd1166f6293ee24f32980105a03f6d267e",
+        "canonical.json": "47ffbd3152165209de4459844d3be440a529d73c657693c84855dfa4aa8f8803",
+        "model-source-hashes.json": "c0855df5f929132343c44c5400e70f40de110d71007f87c783754f2b9fac17f1"
+      },
+      "inputChecks": [
+        {
+          "file": "epochs.npy",
+          "expectedSha256": "133bf877f8bc57b6f6be8f583171358ddab6f8154b36fb63515728f2684033d2",
+          "actualSha256": "133bf877f8bc57b6f6be8f583171358ddab6f8154b36fb63515728f2684033d2",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "labels.npy",
+          "expectedSha256": "83bd779010409f10c0f9d839bc41823c0ed0bd0839fc7734c8945e11da1d5ba8",
+          "actualSha256": "83bd779010409f10c0f9d839bc41823c0ed0bd0839fc7734c8945e11da1d5ba8",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "subjects.npy",
+          "expectedSha256": "a0ca1f5c311afb60fe27fd784fbb77f4d0df538c696ffa8b90bae90088542344",
+          "actualSha256": "a0ca1f5c311afb60fe27fd784fbb77f4d0df538c696ffa8b90bae90088542344",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "trials.json",
+          "expectedSha256": "0718f668187bf033b6c2995c26eeb1cfb99daa1c6e81a8c4f30818ef19b881d3",
+          "actualSha256": "0718f668187bf033b6c2995c26eeb1cfb99daa1c6e81a8c4f30818ef19b881d3",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "protocol.json",
+          "expectedSha256": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+          "actualSha256": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+          "sourceRelocated": false,
+          "passed": true
+        }
+      ],
+      "splitChecks": [
+        {
+          "fold": 0,
+          "trainParticipants": 8,
+          "testParticipants": 2,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 1,
+          "trainParticipants": 8,
+          "testParticipants": 2,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 2,
+          "trainParticipants": 8,
+          "testParticipants": 2,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 3,
+          "trainParticipants": 8,
+          "testParticipants": 2,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 4,
+          "trainParticipants": 8,
+          "testParticipants": 2,
+          "participantOverlap": 0,
+          "passed": true
+        }
+      ],
+      "rowChecks": [
+        {
+          "model": "spectral-ridge",
+          "participants": 10,
+          "predictions": 1200,
+          "balancedAccuracyPercentRecomputed": 54.91666666666667,
+          "macroF1Recomputed": 0.5440653297848919,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "csp-lda",
+          "participants": 10,
+          "predictions": 1200,
+          "balancedAccuracyPercentRecomputed": 47.08333333333332,
+          "macroF1Recomputed": 0.4055403110906564,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 10,
+          "predictions": 1200,
+          "balancedAccuracyPercentRecomputed": 53.5,
+          "macroF1Recomputed": 0.5093637206233653,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 10,
+          "predictions": 1200,
+          "balancedAccuracyPercentRecomputed": 62.916666666666664,
+          "macroF1Recomputed": 0.6173268662572962,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 10,
+          "predictions": 1200,
+          "balancedAccuracyPercentRecomputed": 71.0,
+          "macroF1Recomputed": 0.6799956127418472,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "artifactIdentity": {
+        "spectral-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/spectral-ridge/predictions.npz",
+          "predictionSha256": "ce800e33dd940da87265f1197220fc3e8b9a2a33fb4dea13415dd33d94baaa8d",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/spectral-ridge/artifacts.json",
+          "artifactManifestSha256": "85d271c683260f3c7b97c4e7bbb99a62f1fa4ae66dcf10375dab18cfa44f6f1d",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "csp-lda": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/csp-lda/predictions.npz",
+          "predictionSha256": "d2a7636a66c05be220956abd6f1901f398beda290bd7e39e517b30e77e294433",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/csp-lda/artifacts.json",
+          "artifactManifestSha256": "b3a39873ce83f8fd4177961bec657e6436551b0d7fbb1a722701a032445cf208",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "labram": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/labram/predictions.npz",
+          "predictionSha256": "ca32e28a40f6aee02fb808c16046bac264e634af27a28088df256e0f9f9a590c",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/labram/artifacts.json",
+          "artifactManifestSha256": "c9eab5575760d7150efe78a7d05704a8bf68666bfeafbbcec08146e67e8e3ac4",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+          "checkpointHashVerified": true,
+          "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "cbramod": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/cbramod/predictions.npz",
+          "predictionSha256": "8efccd766182fffd2aa70487ac1d319168e327c6abe36a8e7bacb485391aa076",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/cbramod/artifacts.json",
+          "artifactManifestSha256": "a0b73da365c68897a35d39ab8dd61f35ed21d45e0e440df825b41f0f06d4f291",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+          "checkpointHashVerified": true,
+          "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "eegnet": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/eegnet/predictions.npz",
+          "predictionSha256": "f73f8cf9c94787d44895e88a3d0b5c2d7b50a0f9b6cad5c571ef7fc654ed7bc7",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds003810-mps-v1/eegnet/artifacts.json",
+          "artifactManifestSha256": "2bf4c16719c58d3ca85198508c4aa35f06cefb27c0e64a26531e8574574c9c80",
+          "stateType": "trained_from_scratch_fold_states",
+          "foldStateCount": 5,
+          "foldStateSha256": [
+            "164fc60725b6e1245b777b2e7768cf516c8a86f5383bdd66c8be01238721af04",
+            "22352f3ad551523ef5e82b230bb8883e69f5a3f51070233a13bc3c7240c377dd",
+            "68994a4453089d311d1825860b7906e2e98cd38fa26e3840484c17e93d6768cd",
+            "9616e8ae0a644529b9026af4417367cc98c8689d0a4298652e15d2ef4edd6b5d",
+            "eb68ac12cf70f9277fcfad4b06d741d022675b07b28894d31bfaa6d1b3f593ad"
+          ]
+        }
+      },
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "inputHashes": true,
+        "participantDisjointSplits": true,
+        "displayedRows": true,
+        "independentAuditPassed": true
+      },
+      "passed": true
+    },
+    {
+      "track": "arithmetic-rest",
+      "run": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1",
+      "hashes": {
+        "summary.json": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b",
+        "dataset-protocol.json": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+        "engine-protocol.json": "4dfa0e59716bb69be38c16e935ba607c77c664a459e7fea1ea0fbc9e7f861439",
+        "independent-audit.json": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292",
+        "inputs.json": "9cec52ac9c418d3d6bbb4b81182a7d11da9d8d69b4accdb7c3579a56cab227db",
+        "splits.json": "c33d35f974f9f1f6a9cb7e9f98905b49b2d571d49cf1503581883e9113b54830",
+        "canonical.json": "7935593ac322581cf9d5be5776e0d435f090c5e78794c4030074a20c65da5811",
+        "model-source-hashes.json": "c0855df5f929132343c44c5400e70f40de110d71007f87c783754f2b9fac17f1"
+      },
+      "inputChecks": [
+        {
+          "file": "epochs.npy",
+          "expectedSha256": "53d24246c3896c345e413ee8bdbcfee5d5ff895099b2d5b0fbc66800b6bce352",
+          "actualSha256": "53d24246c3896c345e413ee8bdbcfee5d5ff895099b2d5b0fbc66800b6bce352",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "labels.npy",
+          "expectedSha256": "4a88e5771fb8147fc105ed2dad212664665230ad6f9e3d3b47fc92b8a86210fb",
+          "actualSha256": "4a88e5771fb8147fc105ed2dad212664665230ad6f9e3d3b47fc92b8a86210fb",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "subjects.npy",
+          "expectedSha256": "849e985ad6fc3aae8a6384e92c578cb85f4c8bd859242071ab34e30590cca9c4",
+          "actualSha256": "849e985ad6fc3aae8a6384e92c578cb85f4c8bd859242071ab34e30590cca9c4",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "trials.json",
+          "expectedSha256": "7bc949b64d2959772f38f80ba9e641ae296e778e85a5d14398a11508d23a8c8d",
+          "actualSha256": "7bc949b64d2959772f38f80ba9e641ae296e778e85a5d14398a11508d23a8c8d",
+          "sourceRelocated": false,
+          "passed": true
+        },
+        {
+          "file": "protocol.json",
+          "expectedSha256": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+          "actualSha256": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+          "sourceRelocated": false,
+          "passed": true
+        }
+      ],
+      "splitChecks": [
+        {
+          "fold": 0,
+          "trainParticipants": 28,
+          "testParticipants": 8,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 1,
+          "trainParticipants": 29,
+          "testParticipants": 7,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 2,
+          "trainParticipants": 29,
+          "testParticipants": 7,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 3,
+          "trainParticipants": 29,
+          "testParticipants": 7,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 4,
+          "trainParticipants": 29,
+          "testParticipants": 7,
+          "participantOverlap": 0,
+          "passed": true
+        }
+      ],
+      "rowChecks": [
+        {
+          "model": "spectral-ridge",
+          "participants": 36,
+          "predictions": 2160,
+          "balancedAccuracyPercentRecomputed": 56.75925925925925,
+          "macroF1Recomputed": 0.5576696101150709,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 36,
+          "predictions": 2160,
+          "balancedAccuracyPercentRecomputed": 64.62962962962963,
+          "macroF1Recomputed": 0.6197865063617024,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 36,
+          "predictions": 2160,
+          "balancedAccuracyPercentRecomputed": 62.31481481481481,
+          "macroF1Recomputed": 0.6020541673231031,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 36,
+          "predictions": 2160,
+          "balancedAccuracyPercentRecomputed": 67.63888888888889,
+          "macroF1Recomputed": 0.6367413737850042,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "artifactIdentity": {
+        "spectral-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/spectral-ridge/predictions.npz",
+          "predictionSha256": "8aa51a6f776af4305bb7423fd522230d93573d6c447f2ee6e769b78de9f56594",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/spectral-ridge/artifacts.json",
+          "artifactManifestSha256": "b1b53edd3aec0a1b4d947c4abeaf4f4a2a76904da66329cdf2d2f39a613c2f68",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "labram": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/labram/predictions.npz",
+          "predictionSha256": "46e654983716d9a17f81ddf11afdc6c24bd21eff3364f5dd51588bd6137ccae9",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/labram/artifacts.json",
+          "artifactManifestSha256": "debd50a797c8d0e1b8bd350e990b3efebef4f8d8e267c3404607414fedebe4ca",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+          "checkpointHashVerified": true,
+          "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "cbramod": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/cbramod/predictions.npz",
+          "predictionSha256": "01ece5f0b2eb80686aa46db61db544585916b3c94af95fd67669a6af89e084b0",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/cbramod/artifacts.json",
+          "artifactManifestSha256": "fc05e913246b372f8c69ac968340438b39801f9278cf259cac0e668e852b1cf9",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+          "checkpointHashVerified": true,
+          "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "eegnet": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/eegnet/predictions.npz",
+          "predictionSha256": "76889674da5471caf7002644e8f12a6c34b26d353b8920767733644519a65897",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/physionet-eegmat-1.0.0-mps-v1/eegnet/artifacts.json",
+          "artifactManifestSha256": "3708e58a5af7d0ac0e6ca0d2ef664d09a6bff84d9af48f7499c4691b4e078027",
+          "stateType": "trained_from_scratch_fold_states",
+          "foldStateCount": 5,
+          "foldStateSha256": [
+            "69934d8718df1d162a0877359167bf1fec3efa3a508b9a06a4b12d0870c05d6f",
+            "6f6c4ddd070bcbe6b7cf90e7327bb1d314e820fa10e01d0b9f6a5c0817217249",
+            "82f1e0bb47ea0c95647d952cb468390a6b380e1affa2cfa41c4519ce5bb65b50",
+            "9209dcb9932c2a2a9481236c155a7c03f4da88d14c174ac9c397cf8d051d9533",
+            "a96c354c51f9c7bb01a4f1d60953a49ed3473635f9156829e61b17bd258015a1"
+          ]
+        }
+      },
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "inputHashes": true,
+        "participantDisjointSplits": true,
+        "displayedRows": true,
+        "independentAuditPassed": true
+      },
+      "passed": true
+    },
+    {
+      "track": "p300-target",
+      "run": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1",
+      "hashes": {
+        "summary.json": "a63a7ba5bbd6dd7865ae260b707c2db896136646a910d96516fa5c862e1146c0",
+        "dataset-protocol.json": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+        "engine-protocol.json": "e3ed256d5decfb9672b43053bbe92b0b722971913614477873da28f10911313a",
+        "independent-audit.json": "30762120c57bede9f47d2e96637656e8948fca458016f7f2e3a39f951a357716",
+        "inputs.json": "defa7736a2767802514c86fde298b51fe038882e4f341408a966b8d16245c97c",
+        "splits.json": "efcf6d5896e8f100f66c29358ab8c8b651e1c68a25074553377edbe7a3c580fb",
+        "canonical.json": "0e845a4ba0a5af6b79f18f0c0cffb61d2af88d4065f0ff989aa5f002d029b0a3",
+        "model-source-hashes.json": "1a389a88b59016ea3c19c9aa89dbc1e1f600ef9bce93e5d973009254345dd71b"
+      },
+      "inputChecks": [
+        {
+          "file": "epochs.npy",
+          "expectedSha256": "80a4ecfdbb1c14fdd00d0e5319a3d3092f7b5637a6b56d1b9d53ca760194fea2",
+          "actualSha256": "80a4ecfdbb1c14fdd00d0e5319a3d3092f7b5637a6b56d1b9d53ca760194fea2",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "labels.npy",
+          "expectedSha256": "8ee645a908a02a22a950ad54088f40c84a7eba5c206ab8c4c6d89de214f89ca9",
+          "actualSha256": "8ee645a908a02a22a950ad54088f40c84a7eba5c206ab8c4c6d89de214f89ca9",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "subjects.npy",
+          "expectedSha256": "0ace4ec8fe1622efc6fb1fa033506431ed61c22d29f415acb9265b53ba6a5aa7",
+          "actualSha256": "0ace4ec8fe1622efc6fb1fa033506431ed61c22d29f415acb9265b53ba6a5aa7",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "trials.json",
+          "expectedSha256": "145ad134d7b14a67927c84a81ee8ba14092b18822a418e752965d16ae3e5f698",
+          "actualSha256": "145ad134d7b14a67927c84a81ee8ba14092b18822a418e752965d16ae3e5f698",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "protocol.json",
+          "expectedSha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+          "actualSha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+          "sourceRelocated": true,
+          "passed": true
+        }
+      ],
+      "splitChecks": [
+        {
+          "fold": 0,
+          "trainParticipants": 16,
+          "testParticipants": 5,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 1,
+          "trainParticipants": 17,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 2,
+          "trainParticipants": 17,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 3,
+          "trainParticipants": 17,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 4,
+          "trainParticipants": 17,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        }
+      ],
+      "rowChecks": [
+        {
+          "model": "spectral-ridge",
+          "participants": 21,
+          "predictions": 2520,
+          "balancedAccuracyPercentRecomputed": 50.95238095238096,
+          "macroF1Recomputed": 0.5051245210147807,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "temporal-ridge",
+          "participants": 21,
+          "predictions": 2520,
+          "balancedAccuracyPercentRecomputed": 53.80952380952382,
+          "macroF1Recomputed": 0.5201894836660051,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 21,
+          "predictions": 2520,
+          "balancedAccuracyPercentRecomputed": 49.4047619047619,
+          "macroF1Recomputed": 0.48578804304247825,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 21,
+          "predictions": 2520,
+          "balancedAccuracyPercentRecomputed": 54.960317460317455,
+          "macroF1Recomputed": 0.5290608291102008,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 21,
+          "predictions": 2520,
+          "balancedAccuracyPercentRecomputed": 53.293650793650805,
+          "macroF1Recomputed": 0.5003107165141089,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "artifactIdentity": {
+        "spectral-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/spectral-ridge/predictions.npz",
+          "predictionSha256": "d05e0afd2c4df501532a655aa2a808cd9b3da557777bbae9511d419851b00f51",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/spectral-ridge/artifacts.json",
+          "artifactManifestSha256": "0a8aedaa5a8033637f8a695a035c68f319949dc05172f06f325d4c4f8812478a",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "temporal-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/temporal-ridge/predictions.npz",
+          "predictionSha256": "7c167c16caf0f4a6dd12b0bd18a4adf903d2b99c7ff0b7d31dfe242b9b281df1",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/temporal-ridge/artifacts.json",
+          "artifactManifestSha256": "1c0712ec34a004cf3d95a685f3c5dabf4d7c28fa1629dbe025aa7ce8222d72c1",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "labram": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/labram/predictions.npz",
+          "predictionSha256": "39e1b0086204edf855f89997edb63fc9b403e954125810a0d18f7a0cb730b9b1",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/labram/artifacts.json",
+          "artifactManifestSha256": "eb7edde5553bd417db3630f70a86ebb26fa17283ea1013e88874b553e0f43b11",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+          "checkpointHashVerified": true,
+          "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "cbramod": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/cbramod/predictions.npz",
+          "predictionSha256": "62700f6877d30587c40fc6ce6a328731c2bef2f5eb9b41e687f6828b97156c89",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/cbramod/artifacts.json",
+          "artifactManifestSha256": "e73ac00a38484db544e9c879b9a46c08edac3e76ed235010b1a294d9b514e549",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+          "checkpointHashVerified": true,
+          "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "eegnet": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/eegnet/predictions.npz",
+          "predictionSha256": "15945927d6619af4f6950e3528ab8adb053d56c585488e361425685fc60fe196",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds006593-cuda-v1/eegnet/artifacts.json",
+          "artifactManifestSha256": "961ed714a18179840478fdf671d2d29a0a9ccf1bc7b1cc822f0a88008c2a9d15",
+          "stateType": "trained_from_scratch_fold_states",
+          "foldStateCount": 5,
+          "foldStateSha256": [
+            "742d9f0bf4db032c9589e819854af5396f14ded682ef16da4f92495b1953bbd1",
+            "7447b25aef3e650fc8a63f9d99b40cef2795de3a8e2209d4e48771294b9442e3",
+            "8f07c8376dff06213abd8c17e0fa5dbd8f87926d8afac63a2a93db5a8f2343b7",
+            "da358c052f5c50791e4494b93292b3a554c97577dd08a593c529926726ac2dc5",
+            "dd149788c8dd934af8a000c630f19b9e0d46f3837f08d0cfc8eeec514c1faac3"
+          ]
+        }
+      },
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "inputHashes": true,
+        "participantDisjointSplits": true,
+        "displayedRows": true,
+        "independentAuditPassed": true
+      },
+      "passed": true
+    },
+    {
+      "track": "semantic-target",
+      "run": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1",
+      "hashes": {
+        "summary.json": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243",
+        "dataset-protocol.json": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+        "engine-protocol.json": "e3ed256d5decfb9672b43053bbe92b0b722971913614477873da28f10911313a",
+        "independent-audit.json": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4",
+        "inputs.json": "068dbbffe0cbb84eb07c3f674c6eec2647ba8178366e5cce825e904680314609",
+        "splits.json": "9d6f45b6e48f589c31d405d7dc24d1862027e5fc95d69214aa3276924572d85c",
+        "canonical.json": "7e65c4b99111f405d49b437617d497014e54730f41dede0a54ce93bed094fb13",
+        "model-source-hashes.json": "1a389a88b59016ea3c19c9aa89dbc1e1f600ef9bce93e5d973009254345dd71b"
+      },
+      "inputChecks": [
+        {
+          "file": "epochs.npy",
+          "expectedSha256": "9f075977efd25b20cf91309d7f4fdc609f31a88094603c8e2a3e88c2134038b2",
+          "actualSha256": "9f075977efd25b20cf91309d7f4fdc609f31a88094603c8e2a3e88c2134038b2",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "labels.npy",
+          "expectedSha256": "a8f1e3329758cd1e267d1229a90b83f76c1d859d650d877637dc7bc71316016f",
+          "actualSha256": "a8f1e3329758cd1e267d1229a90b83f76c1d859d650d877637dc7bc71316016f",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "subjects.npy",
+          "expectedSha256": "61c1cd02666ece4d3e9152aea907f68b35df96d66d0e5852aaf50c701283555b",
+          "actualSha256": "61c1cd02666ece4d3e9152aea907f68b35df96d66d0e5852aaf50c701283555b",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "trials.json",
+          "expectedSha256": "b989373e29caee40e998fc0aaf771c117a628fcde806c2d8d22a97ffdf149e94",
+          "actualSha256": "b989373e29caee40e998fc0aaf771c117a628fcde806c2d8d22a97ffdf149e94",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "protocol.json",
+          "expectedSha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+          "actualSha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+          "sourceRelocated": true,
+          "passed": true
+        }
+      ],
+      "splitChecks": [
+        {
+          "fold": 0,
+          "trainParticipants": 24,
+          "testParticipants": 6,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 1,
+          "trainParticipants": 24,
+          "testParticipants": 6,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 2,
+          "trainParticipants": 24,
+          "testParticipants": 6,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 3,
+          "trainParticipants": 24,
+          "testParticipants": 6,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 4,
+          "trainParticipants": 24,
+          "testParticipants": 6,
+          "participantOverlap": 0,
+          "passed": true
+        }
+      ],
+      "rowChecks": [
+        {
+          "model": "spectral-ridge",
+          "participants": 30,
+          "predictions": 3600,
+          "balancedAccuracyPercentRecomputed": 51.027777777777786,
+          "macroF1Recomputed": 0.506020854240093,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "temporal-ridge",
+          "participants": 30,
+          "predictions": 3600,
+          "balancedAccuracyPercentRecomputed": 56.33333333333332,
+          "macroF1Recomputed": 0.5585273139742724,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 30,
+          "predictions": 3600,
+          "balancedAccuracyPercentRecomputed": 53.166666666666664,
+          "macroF1Recomputed": 0.5188597352835342,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 30,
+          "predictions": 3600,
+          "balancedAccuracyPercentRecomputed": 55.80555555555555,
+          "macroF1Recomputed": 0.5536632458905991,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 30,
+          "predictions": 3600,
+          "balancedAccuracyPercentRecomputed": 61.44444444444444,
+          "macroF1Recomputed": 0.6058092006566062,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "artifactIdentity": {
+        "spectral-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/spectral-ridge/predictions.npz",
+          "predictionSha256": "9e9095b159d70e06f679a091489f63a0984db97761b1d0592c970fa0e634b55f",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/spectral-ridge/artifacts.json",
+          "artifactManifestSha256": "ea959e09685fc8e16e5d51d1b423255922a5c05bfd7e4d1f6489b16c7d8e20ea",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "temporal-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/temporal-ridge/predictions.npz",
+          "predictionSha256": "8bd6832390cdd8a181ee8476bc4abd69b0ad0b6c3b93c888782b26010b1dd246",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/temporal-ridge/artifacts.json",
+          "artifactManifestSha256": "a6fbcf0e0ffe99eaea6261299fbb7f9acea897e591fb1b057971eaa60d8f9440",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "labram": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/labram/predictions.npz",
+          "predictionSha256": "068a22f1ad4844e1824fab1a994b0727a2e4855f99e9621eb63df98a046cb88e",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/labram/artifacts.json",
+          "artifactManifestSha256": "84716b9e42283438499e8673b9acc7ae7d655cab13f695908b2b0a9a3bf90a9f",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+          "checkpointHashVerified": true,
+          "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "cbramod": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/cbramod/predictions.npz",
+          "predictionSha256": "094e7aeec7a14eba27eb4021371c3f7dcebfb3a6cd9822ebdc733fd7d3a00696",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/cbramod/artifacts.json",
+          "artifactManifestSha256": "186016ba7f3d3ba4b3a67d90d96ab3a43e47f598e0b8a6f4d239946e0b40a4bc",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+          "checkpointHashVerified": true,
+          "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "eegnet": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/eegnet/predictions.npz",
+          "predictionSha256": "7a90e018436edd9a2210ae32162021a7428bc16ed845218de62ed8a3f98f3009",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/ds005383-cuda-v1/eegnet/artifacts.json",
+          "artifactManifestSha256": "c3802507a96b9088680231411936ef5759b13d062fecee3aeaa0b64c9c876101",
+          "stateType": "trained_from_scratch_fold_states",
+          "foldStateCount": 5,
+          "foldStateSha256": [
+            "095cdcab276009b5e3338135bd8ea56108f0b9538fc8266e8d2e79b2a317d98b",
+            "4b59f2f7c3b691dfc8f9f687e2fb2302a8a2861fc2a03f80d6097b4eb0291525",
+            "8c296e718e07b6164b8652969a6829f7a346d07a56fcff2e6b24a81cbf27fe08",
+            "a55a1826efd6dadc8aecfd1688fc3ad287d1427ee83e515f058494750c09a039",
+            "f6479e28624a37b9d476d1922d4ffac412358bc1c6f885ef70c3542f3dbc3ce2"
+          ]
+        }
+      },
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "inputHashes": true,
+        "participantDisjointSplits": true,
+        "displayedRows": true,
+        "independentAuditPassed": true
+      },
+      "passed": true
+    },
+    {
+      "track": "sleep-scalp",
+      "run": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1",
+      "hashes": {
+        "summary.json": "b7c784c17d6b33c16ffca5df42d3fd8f3d7bf14960675a7278089c4903886567",
+        "dataset-protocol.json": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+        "engine-protocol.json": "87bd15e7f2aeef8c1744fd6c2c938e876e20a421147740d1cb30f4104cff300c",
+        "independent-audit.json": "e6cbf1b199bf2902b9c46e4575ebfa8aff47952625df3d71a1d720b11cc27291",
+        "inputs.json": "06f9cd627403cfa26cea9186506a56b7dfed88370329247adfa4c84cd33b71e0",
+        "splits.json": "6bbec4fdd4060505e11c272aaee0a231c2c9bb62cd0f2fbcd7541556533f56d4",
+        "canonical.json": "28e129c5440683a3f1502a321a6d3cc4c57bc866495a111c6c83e8b093175385",
+        "model-source-hashes.json": "1a389a88b59016ea3c19c9aa89dbc1e1f600ef9bce93e5d973009254345dd71b"
+      },
+      "inputChecks": [
+        {
+          "file": "epochs.npy",
+          "expectedSha256": "0cf3a87655022b15157ce8f9496c3bdf1aecebaee248040d36ca8293e6b2134a",
+          "actualSha256": "0cf3a87655022b15157ce8f9496c3bdf1aecebaee248040d36ca8293e6b2134a",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "labels.npy",
+          "expectedSha256": "fc0cf907a422800e35c5e4c206cb15f91f83dea84a193cbf6d23b730ccd87585",
+          "actualSha256": "fc0cf907a422800e35c5e4c206cb15f91f83dea84a193cbf6d23b730ccd87585",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "subjects.npy",
+          "expectedSha256": "8c9183e4d04e84db16d074dea256e46dafc564d9ea5bb48ebf7d9eb6ce11e934",
+          "actualSha256": "8c9183e4d04e84db16d074dea256e46dafc564d9ea5bb48ebf7d9eb6ce11e934",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "trials.json",
+          "expectedSha256": "00ad4e46bff34c2de00263d2a3f7754485f726b6715c4a5fea9ad02c1a14e359",
+          "actualSha256": "00ad4e46bff34c2de00263d2a3f7754485f726b6715c4a5fea9ad02c1a14e359",
+          "sourceRelocated": true,
+          "passed": true
+        },
+        {
+          "file": "protocol.json",
+          "expectedSha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+          "actualSha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+          "sourceRelocated": true,
+          "passed": true
+        }
+      ],
+      "splitChecks": [
+        {
+          "fold": 0,
+          "trainParticipants": 16,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 1,
+          "trainParticipants": 16,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 2,
+          "trainParticipants": 16,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 3,
+          "trainParticipants": 16,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        },
+        {
+          "fold": 4,
+          "trainParticipants": 16,
+          "testParticipants": 4,
+          "participantOverlap": 0,
+          "passed": true
+        }
+      ],
+      "rowChecks": [
+        {
+          "model": "spectral-ridge",
+          "participants": 20,
+          "predictions": 3000,
+          "balancedAccuracyPercentRecomputed": 72.23333333333333,
+          "macroF1Recomputed": 0.7054471302860993,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 20,
+          "predictions": 3000,
+          "balancedAccuracyPercentRecomputed": 71.1,
+          "macroF1Recomputed": 0.6974569819873635,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 20,
+          "predictions": 3000,
+          "balancedAccuracyPercentRecomputed": 71.26666666666667,
+          "macroF1Recomputed": 0.7024681739140434,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 20,
+          "predictions": 3000,
+          "balancedAccuracyPercentRecomputed": 56.53333333333334,
+          "macroF1Recomputed": 0.5452404899763517,
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "artifactIdentity": {
+        "spectral-ridge": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/spectral-ridge/predictions.npz",
+          "predictionSha256": "57e8b7af39d8ee4b0263c6f51a8f393cf4b1de35111cd1af3e0f63eb7e964289",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/spectral-ridge/artifacts.json",
+          "artifactManifestSha256": "31890899a2bfe7a5b11bf77783ea8752877ac7e6bac42e8efc46404c586a3028",
+          "stateType": "fitted_classical_fold_states",
+          "foldStateCount": 5
+        },
+        "labram": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/labram/predictions.npz",
+          "predictionSha256": "dea491e69757972ae03e44d7c8321115bb2949117f36a14d35d0c091407b8f88",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/labram/artifacts.json",
+          "artifactManifestSha256": "9c2e528897c78932a3670e9d67dc832160b0a3a9be204eb8ab3580a0f9a4728c",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+          "checkpointHashVerified": true,
+          "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "cbramod": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/cbramod/predictions.npz",
+          "predictionSha256": "4db10bd7c79869b9ac33e6d42dec66943b723c9ac8f89f4d8a58924582ede7f6",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/cbramod/artifacts.json",
+          "artifactManifestSha256": "5b136fde404da4c6436b2f4f84c35eed8e41127e468702abf177d9b7cd9adceb",
+          "stateType": "frozen_pretrained_checkpoint",
+          "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+          "checkpointHashVerified": true,
+          "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+          "sourceHashVerified": true,
+          "strictLoad": true
+        },
+        "eegnet": {
+          "predictionPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/eegnet/predictions.npz",
+          "predictionSha256": "a385e3b41f6dff2e98d836c9d96192b72579cd5ec658ff17a384f0d31ec3b7b2",
+          "artifactManifestPath": "<evidence-root>/benchmarks/parallel-v1/20260919/runs/eesm19-scalp-sleep-cuda-v1/eegnet/artifacts.json",
+          "artifactManifestSha256": "d6bf8da8367c0e6aeeb983f848afb0921050a857d3016a3952a3679649eca9c5",
+          "stateType": "trained_from_scratch_fold_states",
+          "foldStateCount": 5,
+          "foldStateSha256": [
+            "3d5f9eb641194ad1f6ba9d11c2e46a2f3f77c30c29ca5374e7d6c5253f0fdcd0",
+            "a684bc4830caba8fcdc0dcccdc0f43fedf758c8a4c939a16a829d8e0a4f72e94",
+            "a96a045ca4790edc7718896fde8089a12c61825ba17c3c02ba840b6b1a4f939c",
+            "de2a536c62fefdc429a42b25ffcc5386b374148fd464eaaae597a8d40d74953e",
+            "de97acf1cf7f16110064488ae953fc74dc789a2e5bb90459b8304bc1d1bf6364"
+          ]
+        }
+      },
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "inputHashes": true,
+        "participantDisjointSplits": true,
+        "displayedRows": true,
+        "independentAuditPassed": true
+      },
+      "passed": true
+    },
+    {
+      "track": "beta-8ch",
+      "run": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2",
+      "hashes": {
+        "summary.json": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "protocol.json": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "independent-audit.json": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+        "artifact-manifest.json": "749ea3840fffa092012d7950916030ef387eda8f25054b6abd78af9afa764019",
+        "model-source-manifest.json": "e017d3c8328002028ea273d304e520c6df6e2bf55802cd73357f21b6ec3706b9"
+      },
+      "rowChecks": [
+        {
+          "model": "cca",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 63.11607142857143,
+          "macroF1Recomputed": 0.6262284336377374,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/cca/predictions.npz",
+            "predictionSha256": "e766961d6ec85a3d9e8e5a1af9b565ed7e9bb7c2d0fdc9308658c7ef81fc62cc",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/cca/artifact-manifest.json",
+            "artifactManifestSha256": "33e6c65b74a7dc5fdfb0934f4f76d317c3be7b750b4b00e8f8f7526d0d0c7c62",
+            "stateType": "deterministic_reference",
+            "foldStateCount": 0
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "spectral-ridge",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 50.705357142857146,
+          "macroF1Recomputed": 0.49373413893529433,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/spectral-ridge/predictions.npz",
+            "predictionSha256": "5192819b4e70f5007ed155ce5f3dad1cd7f364f47a9350a7d39597ec830244e1",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/spectral-ridge/artifact-manifest.json",
+            "artifactManifestSha256": "1b56a6dbf97deaa6ec893b8e228666e035b0b63b0d5a21b5fd9f3bd3f0d017de",
+            "stateType": "fitted_classical_fold_states",
+            "foldStateCount": 7
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 10.830357142857142,
+          "macroF1Recomputed": 0.09296091863206704,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/labram/predictions.npz",
+            "predictionSha256": "9bcb89d32c91e2abf751fea16940d09553d3a6ef9fd703fc82de3f315cc8c5ff",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/labram/artifact-manifest.json",
+            "artifactManifestSha256": "08121896317fb7e90c300fd9554c434ac60409458f3478bf28fff14311d11623",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+            "checkpointHashVerified": true,
+            "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+            "sourceHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 33.66964285714286,
+          "macroF1Recomputed": 0.31778213986710313,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/cbramod/predictions.npz",
+            "predictionSha256": "42cda317f525c6552892dea895cd34fe803cdc1f1645c6993bc0db1fcf31bd25",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/cbramod/artifact-manifest.json",
+            "artifactManifestSha256": "3df0a6c44f4d6fc9969449cedfa51d2abd90883276ceec45093681688450f28c",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+            "checkpointHashVerified": true,
+            "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+            "sourceHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 55.75892857142857,
+          "macroF1Recomputed": 0.541059342838019,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/eegnet/predictions.npz",
+            "predictionSha256": "fda8e55264a43de52071306ad2e0675552b021ab1fe3b0aec253afc6d96458dc",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior8/eegnet/artifact-manifest.json",
+            "artifactManifestSha256": "af4220185c4033adc6e1ef76618c9f92263ff416cfbfc54f9312ce9b547c488a",
+            "stateType": "trained_from_scratch_fold_states",
+            "foldStateCount": 7,
+            "foldStateSha256": [
+              "256579f22bb8a07db9a93441d3fd3e411829dc968dff473bea68e06fd0d736f9",
+              "3879c9695f66005c94af8b5fcbaa514a6b47f8fd83ff7713288b312e0b2e0544",
+              "9b322e1af2ff7f3d2986f24207980c78bad967a82a7a345007f082c87fbe3714",
+              "a41ae609d7cbed14738170a6553a48013f9bf7468df3b77a3f08ddfb3078d700",
+              "d48fa35248767291207f162b1ce75c6187aa4cb5d00729aa9408885d54b0478c",
+              "e590202e9c32b78b5f85cea7d7119b92884c8504f23d88f2cda30f2a022206ec",
+              "f32799999e9412ee4cdf428fc0e6e06778c5ca1402bc77d765d9c3d6690e7b70"
+            ]
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        }
+      ],
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "independentAuditPassed": true,
+        "displayedRows": true
+      },
+      "passed": true
+    },
+    {
+      "track": "beta-4ch",
+      "run": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2",
+      "hashes": {
+        "summary.json": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "protocol.json": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "independent-audit.json": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+        "artifact-manifest.json": "749ea3840fffa092012d7950916030ef387eda8f25054b6abd78af9afa764019",
+        "model-source-manifest.json": "e017d3c8328002028ea273d304e520c6df6e2bf55802cd73357f21b6ec3706b9"
+      },
+      "rowChecks": [
+        {
+          "model": "cca",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 57.58035714285715,
+          "macroF1Recomputed": 0.5670723362358747,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/cca/predictions.npz",
+            "predictionSha256": "59ae56cb849e355e13da9090619f0df7582b0ec4225f61221efe6d8cb2c84875",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/cca/artifact-manifest.json",
+            "artifactManifestSha256": "0b689942ae1165052428fb407aea2cf4c5db964fecee52b9d1399a8e3af3c7e6",
+            "stateType": "deterministic_reference",
+            "foldStateCount": 0
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "spectral-ridge",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 48.214285714285715,
+          "macroF1Recomputed": 0.4671589176778854,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/spectral-ridge/predictions.npz",
+            "predictionSha256": "35d922da15619a21f051dba1160c7538d0ee5541b0e365872a12b74677f046fc",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/spectral-ridge/artifact-manifest.json",
+            "artifactManifestSha256": "17faae56218c6a3a9efd436654d7a21dc7cc95e56d33aff532d8a358a4a50042",
+            "stateType": "fitted_classical_fold_states",
+            "foldStateCount": 7
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 12.883928571428571,
+          "macroF1Recomputed": 0.110318056846,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/labram/predictions.npz",
+            "predictionSha256": "b0148e971e0b7ea6d874bc6dfeb8f14b7a6502db78221dce3d0ec791ca947f80",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/labram/artifact-manifest.json",
+            "artifactManifestSha256": "057ed88f84974e0361f33a121073c57cd48cb4099439c9491d288d85b5f80874",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+            "checkpointHashVerified": true,
+            "sourceSha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+            "sourceHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 27.607142857142858,
+          "macroF1Recomputed": 0.2568676299952549,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/cbramod/predictions.npz",
+            "predictionSha256": "09fc576b3b265ec01c3686aca913b5d7a0b6332865c0d97545e36581a0b3c5a7",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/cbramod/artifact-manifest.json",
+            "artifactManifestSha256": "83533e44704c13b3027d8a2692e6812ece800fae8da87e8a0e2e901fca56e243",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+            "checkpointHashVerified": true,
+            "sourceSha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+            "sourceHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 70,
+          "predictions": 11200,
+          "balancedAccuracyPercentRecomputed": 44.125,
+          "macroF1Recomputed": 0.42073851241459875,
+          "artifactIdentity": {
+            "predictionPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/eegnet/predictions.npz",
+            "predictionSha256": "22e0df66c61ce22449f256dad00df223a874062aa78b18811f46ba952eaeb3e4",
+            "artifactManifestPath": "<evidence-root>/benchmarks/beta-ssvep-v1/run-20260913-mps-v2/posterior4/eegnet/artifact-manifest.json",
+            "artifactManifestSha256": "ca3c5e754f4659ad5ae392ffdff8d4c6ff121355a899327703434407f9d99dc8",
+            "stateType": "trained_from_scratch_fold_states",
+            "foldStateCount": 7,
+            "foldStateSha256": [
+              "37a9af5a91a3934c1717ea7ab41c4841d22e098d92e98f4a4cae9dd4ddd32cad",
+              "5f58bb47f2cd9917a2c0325217eac07400e00833600099679b6e7f48769bc7bf",
+              "7c0f060aca94532d32852cbf7aa7090a986310f5f5f07abbd0db55e63b1c3b29",
+              "83c2962931dd42ef575617f750bdeb2c3b5860b5d14284a08e5ad8d48961cdbd",
+              "be84f497960600a67b6de4d9cc81c001db396da72dbe7e7f081daa33d1e2d4b1",
+              "c739d2188f841bcd086fe86919696824e8adf2a47e3ee9812b7846b676fbe74d",
+              "f8810683428f9e6ee7cfd3344f848276bc9a6184363433b9e557aa7944d46605"
+            ]
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "summaryBalancedAccuracy": true,
+            "summaryMacroF1": true,
+            "exportBalancedAccuracy": true,
+            "exportMacroF1": true,
+            "predictionArraysAlignedAcrossModels": true,
+            "foldsMatchHeldOutParticipants": true,
+            "trainTestParticipantOverlapZero": true
+          },
+          "passed": true
+        }
+      ],
+      "checks": {
+        "summarySha": true,
+        "protocolSha": true,
+        "auditSha": true,
+        "independentAuditPassed": true,
+        "displayedRows": true
+      },
+      "passed": true
+    },
+    {
+      "track": "idle",
+      "runs": [
+        "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1",
+        "<repo>/experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1"
+      ],
+      "hashes": {
+        "originalSummarySha256": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05",
+        "originalProtocolSha256": "a1dcb0a919e290ad71b639b5e7935650399d025782972dc0c9b31706acc8dea7",
+        "originalAuditSha256": "ce2474c547f5f11c256752b0a07466beb5b6928da34bb39783aaa4647973d2e4",
+        "originalVerificationSha256": "568541e4b82c7593f956e429a73134ec276fd65353ebcc3a1964ca6614727e11",
+        "expandedSummarySha256": "422ad3e9f7bcfafc4a68bbad35487cd985cd4f281f6ee7e84738ec7d55ccec82",
+        "expandedProtocolSha256": "247f8f3c0eb3552917a920c525644e4a3338b26a647a42fb33e193c4c50cb041",
+        "expandedAuditSha256": "14445d3423b5268654a1f73f7e1aca8bb03a2f793b076f450883fea89c7bcc83"
+      },
+      "missingExportHashLinks": [
+        "summarySha",
+        "protocolSha"
+      ],
+      "verifiedButNotPresentInCapturedTrack": {
+        "summarySha": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05",
+        "protocolSha": "a1dcb0a919e290ad71b639b5e7935650399d025782972dc0c9b31706acc8dea7",
+        "expandedSummarySha": "422ad3e9f7bcfafc4a68bbad35487cd985cd4f281f6ee7e84738ec7d55ccec82",
+        "expandedProtocolSha": "247f8f3c0eb3552917a920c525644e4a3338b26a647a42fb33e193c4c50cb041",
+        "expandedAuditSha": "14445d3423b5268654a1f73f7e1aca8bb03a2f793b076f450883fea89c7bcc83"
+      },
+      "rowChecks": [
+        {
+          "model": "csp-lda",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 0.0,
+          "commandDetectionPercentRecomputed": 23.333333333333332,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "219c00334532c03a6ce02086965e4b8306a276c3f9b64ebd36b44435f3d05d39",
+              "36339e74213509a11ddd820e8ca8bf52eaf0ec47192c3896057e9a87415d407e",
+              "61be11777c137689dafb1bf6ebd58af37e115f6e6ab7e565e3976b339ea8a698",
+              "b7f6512536d31582ab211859b33c1eb4e22e9d548f7008f4dfbc9b4435e5f5d7"
+            ],
+            "artifactManifestPath": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1/file-hashes.json",
+            "stateType": "fitted_classical_participant_states"
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "labram",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 3.3333333333333335,
+          "commandDetectionPercentRecomputed": 18.333333333333332,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "2160bc0cb83258c8e6e5488299c2d86f253d6fff5b3be9a0ac8fa41d7f04bd8a",
+              "54e5cf95a7e384072f2ba78e0c36db9c2f7b65fbe0305ae1b55436204be1542a",
+              "8685cb141b24a24078053f425bddea3b3822f9505b714e7b5f7667810bf49771",
+              "ebb8bf97619fc99ec1260cb4658ddd3e845755fed4b12fb1bbbcd350cd1837b3"
+            ],
+            "artifactManifestPath": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1/file-hashes.json",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+            "checkpointHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "eegnet",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 0.0,
+          "commandDetectionPercentRecomputed": 1.6666666666666667,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "2255841de9da5d9276a289e369049ce6d3126405133bde8efabcb2b0a6ed1c3b",
+              "87317e06e8c6068cde284e5bda1710ea461fe60df0ce94c6f26cea21ad4d7279",
+              "a7ee13cfc37e8d38da2193dea03fae7d69a96531b72e4a603c6e53f37197a968",
+              "ef3bc5e0bb8c2f8f45976c97e66637d8ae09b5593b90e5741ff444c5e811596b"
+            ],
+            "artifactManifestPath": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1/file-hashes.json",
+            "stateType": "trained_from_scratch_participant_states",
+            "stateCount": 4,
+            "stateSha256": [
+              "547782dce226e57160a576c1ac5d4c2e18dd52900b6220ca5fef17be4cc1cd36",
+              "5dd529c89286cdd02ea081011f32962eabb1d1bb8fbc5a161e6189c87db113ee",
+              "8a01c9c0d02c278c3ecb897156a7ec8ceb9d89b8d8c53a0d7b6a6b290e96674e",
+              "cff0b62ef2893c7491dcc72614fd3c8cf927b537f9cd4ac2a261b6e30cc7ae8c"
+            ]
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "shallowfbcspnet",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 1.6666666666666667,
+          "commandDetectionPercentRecomputed": 43.333333333333336,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "03f828a0049a097ed3ddb72569425097eb1b9cb1be179a43cd0abad6edab59b5",
+              "76234b3c76f33ff094a5af30a5a925f610b55bd68acff354257af7322a9ecf04",
+              "d4ec05ba3273f3531cd08fc1cd352467e01041187e32fddd8e537797a5b11809",
+              "f6efa42a150b1fdc9ba38d23d43d155d99f14bce624df2512ffc4c1642c10a6a"
+            ],
+            "artifactManifestPath": "<repo>/experiments/idle_replay_v1/outputs/run-20260910-mps-v1/file-hashes.json",
+            "stateType": "trained_from_scratch_participant_states",
+            "stateCount": 4,
+            "stateSha256": [
+              "30fae28ff9649f97ca62896f2c9726b0ed57989baf82459b0f1f6cdaa7d50e57",
+              "a6dce1c440d20b822b3b439d17cf0abead1b8ad86018baf42ec21d73ac2aa20a",
+              "3106da193a4b17a76a76efb5e72a3a5f26418808630c2560e71c00662e57b501",
+              "5deda009107063a3e46c45ad43a876b58ea50b0dfc285af707a0dc31492abdc0"
+            ]
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "cbramod",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 1.6666666666666667,
+          "commandDetectionPercentRecomputed": 18.333333333333332,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "3e8a8131d7356e410e52c620f4a8004ec508e0d08c3d929d4c3a4aca63180694",
+              "47d25ef79bec8bd6d10887cfdcd5faec25a6eb11087b3fce6c73262362c979a9",
+              "ca767e9f5138d6cc90096fe193b1a9c065aa64e755728a70a5ad8d5f510d9570",
+              "fdfe87b7bcbe02d04719286ad4ef50a4640b10cfa8bd75f0ea542c463d95f27f"
+            ],
+            "artifactManifestPath": "<repo>/experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1/artifact-manifest.json",
+            "stateType": "frozen_pretrained_checkpoint",
+            "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+            "checkpointHashVerified": true,
+            "strictLoad": true
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        },
+        {
+          "model": "deep4net",
+          "participants": 4,
+          "idleTrials": 60,
+          "commandTrials": 60,
+          "idleFalseActivationPercentRecomputed": 1.6666666666666667,
+          "commandDetectionPercentRecomputed": 3.3333333333333335,
+          "artifactIdentity": {
+            "predictionDirectory": "<repo>/experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1",
+            "predictionSha256": [
+              "18a676ee43013ebd9be5eb893d9586813b136f0be7d182c6f7d26c727828b413",
+              "1d57fd137706ab3bf81ff1cc4294b3b80ea91e33812ebe19532b8709ba988c25",
+              "5af07c2d1a857bf472be0bd98ba5206c25a9ec47bfda27505c3bfaf21f2b5f40",
+              "e8cf9d8e686d339a0201ba5a4cf0354c0135cdfeec3d77abb3f5702460fbaa7c"
+            ],
+            "artifactManifestPath": "<repo>/experiments/expanded_mvp_v1/outputs/run-20260910-mps-v1/artifact-manifest.json",
+            "stateType": "trained_from_scratch_participant_states",
+            "stateCount": 4,
+            "stateSha256": [
+              "dd44ce18cdd711c935d6e815ea494e2555ccacac3f506b2975ce53e8b57c6d34",
+              "c3fdfd9b561209c5deac2e708cb4f97036c31c66066331b4a2b40e9092326fed",
+              "af265feb77c3433a63f11d9f43c8e033cbb34a21efb74b01505408eb542b1581",
+              "b4b20330305b9ac82b2a38891df54e91d69492697419bc2ec795f8e9f67bec53"
+            ]
+          },
+          "checks": {
+            "predictionManifestSha": true,
+            "savedTriggerArraysReplayed": true,
+            "summaryIdleFalseTriggers": true,
+            "summaryCommandDetections": true,
+            "exportIdleFalseActivation": true,
+            "exportCommandDetection": true,
+            "exportAlwaysAbstainParticipants": true
+          },
+          "passed": true
+        }
+      ],
+      "checks": {
+        "originalAuditSha": true,
+        "expandedAuditShaDeclaredInProtocolText": true,
+        "originalIndependentAuditPassed": true,
+        "expandedIndependentAuditPassed": true,
+        "displayedRows": true
+      },
+      "passed": true
+    }
+  ],
+  "pairedUncertaintySummaryPath": "<repo>/research/deployment_validation_20260920/paired-participant-bootstrap-summary.json",
+  "missingLinks": [
+    {
+      "track": "idle",
+      "fieldsAbsentFromCapturedTrack": [
+        "summarySha",
+        "protocolSha"
+      ],
+      "finding": "The canonical idle summary/protocol and expanded extension summary/protocol/audit are locally traceable and verified, but the captured track omits summarySha/protocolSha fields. The hashes are supplied only as proposed additions and are not represented as already published links."
+    }
+  ],
+  "passed": true
+}
