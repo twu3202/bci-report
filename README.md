@@ -70,15 +70,22 @@ Then copy `mvp.json` to `site/src/data/` and `data/*` to `site/public/data/`.
 
 ## Open before launch
 
-1. **No public contact address.** One switch: `site/src/data/site.ts`. Leave it
-   `null` until a mailbox both receives and sends as the domain — Cloudflare
-   Email Routing covers inbound forwarding on the free plan; replying *as*
-   `@bci.report` needs the destination provider's own custom-domain sending or
-   Cloudflare's separate Email Sending product. Until it is set, the site renders
-   an honest "not yet published" state instead of a dead address.
-2. **Domain and host not set up.** `bci.report` is not registered yet. `site/wrangler.jsonc`
-   pins the deploy scope to `./dist` and is otherwise unapplied; confirm `name`
-   against the real account first.
+1. **The domain receives mail but does not send it.** `contact@bci.report` and
+   `privacy@bci.report` are live and were verified end to end on 2026-09-20
+   (public-resolver MX and SPF, verified destination, enabled rules, catch-all
+   left at `drop`, and a real message from an outside mailbox delivered).
+   Cloudflare Email Routing is inbound forwarding only, and sending *as* the
+   domain was declined for now on cost, so replies come from the maintainer's
+   own mailbox — `/data-use/` says so. No `_dmarc` record exists yet; a
+   non-sending domain wants a strict policy, and adding sending later means
+   revisiting SPF, DKIM and DMARC together. One switch for all of it:
+   `site/src/data/site.ts`.
+2. **Not deployed.** `bci.report` is registered and its zone is in the account.
+   `site/wrangler.jsonc` pins the deploy scope to `./dist` — a dry run resolves
+   to the same 28 files `check_site_artifact.py` accepts — but nothing has been
+   published. The OAuth token wrangler obtains carries `zone:read` only, which
+   is the whole zone scope the login flow offers, so DNS and Email Routing
+   changes need the dashboard or a scoped API token.
 3. The superseded `site/.git.superseded-20260920` holds the previous single-commit
    history, which contained per-participant rows. It is local only and is
    gitignored. Do not push it anywhere.
