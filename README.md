@@ -4,8 +4,13 @@ An English-language workbench for public EEG evaluation. Every score is reported
 with the protocol that produced it — cohort, electrode count, training budget,
 chance level and known limitations — rather than as a universal model ranking.
 
-**Status: research preview `research-preview-20260920`, not yet launched.**
+**Status: research preview `research-preview-20260920`, live at <https://bci.report>.**
 8 protocols · 7 distinct datasets · 39 displayed configurations · 9 methods.
+
+The same 39 results are mirrored as a Hugging Face dataset,
+[`Twu31/bci-report`](https://huggingface.co/datasets/Twu31/bci-report), built by
+`pipeline/publication/build_hf_dataset.py` from the payload the site already
+serves — no second export path, so both mirrors pass the same gate.
 
 > ### ⚠ Before making this repository public
 >
@@ -68,24 +73,33 @@ Regenerating the published snapshot needs the Gal4 SSD mounted:
 
 Then copy `mvp.json` to `site/src/data/` and `data/*` to `site/public/data/`.
 
-## Open before launch
+## Still open
 
-1. **The domain receives mail but does not send it.** `contact@bci.report` and
+1. **Zone settings live outside this repository.** HTTP→HTTPS is a zone switch
+   (Cloudflare → SSL/TLS → Edge Certificates → Always Use HTTPS), enabled
+   2026-09-20; `http://bci.report/` now answers `301` to the HTTPS origin. It
+   could not have been fixed from here: `_redirects` matches path only and
+   explicitly does not support scheme or domain rules — a rule was written,
+   deployed, proven ineffective and removed. The same ceiling applies to
+   everything else at the zone: the OAuth token wrangler obtains carries
+   `zone:read` only, which is the whole zone scope the login flow offers, so
+   DNS and Email Routing changes need the dashboard or a separately created API
+   token.
+2. **The domain receives mail but does not send it.** `contact@bci.report` and
    `privacy@bci.report` are live and were verified end to end on 2026-09-20
    (public-resolver MX and SPF, verified destination, enabled rules, catch-all
    left at `drop`, and a real message from an outside mailbox delivered).
    Cloudflare Email Routing is inbound forwarding only, and sending *as* the
    domain was declined for now on cost, so replies come from the maintainer's
-   own mailbox — `/data-use/` says so. No `_dmarc` record exists yet; a
-   non-sending domain wants a strict policy, and adding sending later means
-   revisiting SPF, DKIM and DMARC together. One switch for all of it:
-   `site/src/data/site.ts`.
-2. **Not deployed.** `bci.report` is registered and its zone is in the account.
-   `site/wrangler.jsonc` pins the deploy scope to `./dist` — a dry run resolves
-   to the same 28 files `check_site_artifact.py` accepts — but nothing has been
-   published. The OAuth token wrangler obtains carries `zone:read` only, which
-   is the whole zone scope the login flow offers, so DNS and Email Routing
-   changes need the dashboard or a scoped API token.
-3. The superseded `site/.git.superseded-20260920` holds the previous single-commit
+   own mailbox — `/data-use/` says so. DMARC is `p=reject`, which is what a
+   non-sending domain wants; adding sending later means revisiting SPF, DKIM and
+   DMARC together. One switch for all of it: `site/src/data/site.ts`.
+3. **The host injects an analytics beacon.** Cloudflare Web Analytics adds
+   `static.cloudflareinsights.com/beacon.min.js` to every response at the edge.
+   The site's own CSP (`script-src 'self'`) blocks it, so it does not execute,
+   and `/data-use/` remains accurate as written. If Web Analytics is ever wanted
+   for real, both have to change together — the CSP to let it load, and that
+   sentence to disclose it.
+4. The superseded `site/.git.superseded-20260920` holds the previous single-commit
    history, which contained per-participant rows. It is local only and is
    gitignored. Do not push it anywhere.

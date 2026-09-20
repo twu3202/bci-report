@@ -1,0 +1,118 @@
+{
+  "assets": [
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/Readme.pdf",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Readme.pdf",
+      "expected_bytes": 63278,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-03-31T05:05:28Z; ETag \"60640318-f72e\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/stimulation_information.pdf",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/stimulation_information.pdf",
+      "expected_bytes": 51239,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:21:10Z; ETag \"60065026-c827\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/Subjects_Information.mat",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Subjects_Information.mat",
+      "expected_bytes": 2881,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-03-31T05:05:06Z; ETag \"60640302-b41\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/Impedance.mat",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Impedance.mat",
+      "expected_bytes": 117827,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-03-31T05:04:29Z; ETag \"606402dd-1cc43\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S001-S010.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S001-S010.zip",
+      "expected_bytes": 94784242,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:42Z; ETag \"60065082-5a64af2\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S011-S020.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S011-S020.zip",
+      "expected_bytes": 94710941,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:21:41Z; ETag \"60065045-5a52c9d\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S021-S030.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S021-S030.zip",
+      "expected_bytes": 94242683,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:49Z; ETag \"60065089-59e077b\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S031-S040.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S031-S040.zip",
+      "expected_bytes": 95268631,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:21:56Z; ETag \"60065054-5adaf17\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S041-S050.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S041-S050.zip",
+      "expected_bytes": 94830071,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:03Z; ETag \"6006505b-5a6fdf7\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S051-S060.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S051-S060.zip",
+      "expected_bytes": 95804645,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:10Z; ETag \"60065062-5b5dce5\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S061-S070.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S061-S070.zip",
+      "expected_bytes": 96181931,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:21:49Z; ETag \"6006504d-5bb9eab\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S071-S080.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S071-S080.zip",
+      "expected_bytes": 94888806,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:18Z; ETag \"6006506a-5a7e366\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S081-S090.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S081-S090.zip",
+      "expected_bytes": 95406269,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:26Z; ETag \"60065072-5afc8bd\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    },
+    {
+      "dataset_id": "tsinghua--wearable-ssvep102",
+      "relative_path": "author-snapshot-20260920/S091-S102.zip",
+      "url": "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S091-S102.zip",
+      "expected_bytes": 114680320,
+      "source_revision": "official author mirror; observed 2026-09-20; last-modified 2021-01-19T03:22:35Z; ETag \"6006507b-6d5e200\"",
+      "license_status": "research acquisition approved; CC BY 4.0 Figshare record, primary paper names this official Tsinghua mirror; noncommercial research use"
+    }
+  ],
+  "preflight": "wearable-ssvep102-acquisition-preflight.json",
+  "integrity": "Source provides sizes but no cryptographic hashes. Locally hash all files and test ZIP CRC; no assertion of byte identity with Figshare v4."
+}

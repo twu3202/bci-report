@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-09-20T07:50:29.036743+00:00",
+  "status_is_snapshot": true,
+  "training_started": false,
+  "website_modified": false,
+  "datasets": [
+    {
+      "id": "wearable-ssvep",
+      "download_checkpoint": "<evidence-root>/acquisition/2026-09-20-deployment-v2/wearable-ssvep/download_state.json",
+      "updated_at": "2026-09-20T07:38:10+00:00",
+      "expected_files": 14,
+      "verified_files": 14,
+      "verified_bytes": 971033764,
+      "statuses": {
+        "downloaded": 14
+      },
+      "download_complete": true,
+      "archive_integrity": "pass",
+      "integrity_record": "<evidence-root>/acquisition/2026-09-20-deployment-v2/wearable-ssvep/archive-integrity.json"
+    },
+    {
+      "id": "mobile-ssvep",
+      "download_checkpoint": "<evidence-root>/acquisition/2026-09-20-deployment-v2/mobile-ssvep/download_state.json",
+      "updated_at": "2026-09-20T07:39:50+00:00",
+      "expected_files": 1,
+      "verified_files": 1,
+      "verified_bytes": 1307005364,
+      "statuses": {
+        "downloaded": 1
+      },
+      "download_complete": true,
+      "archive_integrity": "pass",
+      "integrity_record": "<evidence-root>/acquisition/2026-09-20-deployment-v2/mobile-ssvep/archive-integrity.json"
+    },
+    {
+      "id": "mobile-erp",
+      "download_checkpoint": "<evidence-root>/acquisition/2026-09-20-deployment-v2/mobile-erp/download_state.json",
+      "updated_at": "2026-09-20T07:50:28+00:00",
+      "expected_files": 911,
+      "verified_files": 432,
+      "verified_bytes": 2546119894,
+      "statuses": {
+        "downloaded": 432,
+        "downloading": 3,
+        "retrying": 1
+      },
+      "download_complete": false
+    }
+  ],
+  "held": [
+    "Ma2022: license/file manifest unverified",
+    "YSU: file manifest not reachable in this pass",
+    "KU Leuven: restricted EEG/access request required",
+    "Stieger: large acquisition deferred"
+  ]
+}

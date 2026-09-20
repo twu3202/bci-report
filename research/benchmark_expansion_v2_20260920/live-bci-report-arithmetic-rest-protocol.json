@@ -1,0 +1,69 @@
+{
+  "id": "arithmetic-rest",
+  "title": "Arithmetic & rest",
+  "short": "Transfer to a new person",
+  "dataset": "EEGMAT",
+  "subtitle": "Serial subtraction versus resting EEG",
+  "type": "accuracy",
+  "subjects": 36,
+  "observations": "2,160 epochs · 5 participant-disjoint folds",
+  "exposure": "19 channels · 2-second windows",
+  "status": "Research preview",
+  "xLabel": "Macro F1",
+  "yLabel": "Balanced accuracy",
+  "limitation": "Thirty nonoverlapping 2-second windows from each of two conditions per person. Published signals were already cleaned with ICA; task performance groups are not evaluated.",
+  "protocol": [
+    "5 participant-disjoint folds. All recordings from a person stay together. Each person contributes to the held-out predictions once.",
+    "First 60 s of each recording; 30 contiguous nonoverlapping 2 s windows; exclude A2-A1 ear-difference and ECG; EDF physical volts converted to microvolts; subtract each channel's window mean; no rejection, filtering, resampling, or learned preprocessing.",
+    "One fixed seed (20260919); no early stopping or test-based tuning. EEGNet trains for 20 epochs per fold. Frozen encoders use training-only standardized ridge heads (alpha 100).",
+    "Labels: pre-task-rest, mental-arithmetic.",
+    "Uniform-guessing reference: 50.00%. Scores weight participants equally. Intervals describe participant variation; cross-validation training sets overlap.",
+    "The benchmark detects condition (rest versus serial subtraction), not the good/bad count-quality participant grouping.",
+    "Only the first documented 60 seconds is retained even though EDF containers are longer.",
+    "The source README reports prior ICA artifact removal, so these are not untouched acquisition signals.",
+    "Open Data Commons Attribution License v1.0 applies; retain PhysioNet attribution.",
+    "EEGNet three-seed mean 67.52%; sample SD 0.14 percentage points; range 67.36–67.64%. Main table retains the original fixed seed; this is not a confidence interval."
+  ],
+  "protocolId": "parallel-fixed-subject-folds-v1/physionet-eegmat-1.0.0",
+  "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+  "elapsed": 126.49400083348155,
+  "peakGb": null,
+  "auditSha": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292",
+  "source": "https://physionet.org/content/eegmat/1.0.0/",
+  "backend": "Apple M5 / MPS",
+  "chanceLevel": 50.0,
+  "selection": "EEGNet three-seed mean 67.52%; sample SD 0.14 percentage points; range 67.36–67.64%. Main table retains the original fixed seed; this is not a confidence interval.",
+  "summarySha": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b",
+  "protocolSha": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+  "license": "Open Data Commons Attribution License 1.0",
+  "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+  "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+  "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+  "reviewedAt": "2026-09-20",
+  "reviewBasis": [
+    "https://physionet.org/content/eegmat/1.0.0/",
+    "https://www.mdpi.com/2306-5729/4/1/14",
+    "https://opendatacommons.org/licenses/by/1-0/"
+  ],
+  "rightsScope": "Personal noncommercial research; aggregate results only",
+  "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim.",
+  "seedSensitivity": {
+    "model": "EEGNet",
+    "seeds": [
+      20260919,
+      20260920,
+      20260921
+    ],
+    "balancedAccuracyPercent": [
+      67.63888888888889,
+      67.5462962962963,
+      67.3611111111111
+    ],
+    "meanPercent": 67.51543209876543,
+    "sampleSdPercentagePoints": 0.1414375214492599,
+    "rangePercentagePoints": 0.2777777777777857,
+    "auditSha": "17b31f77610fcb5f034eb013774b5f796b96b3f393ec763351f1c4c290e5c194",
+    "scope": "Same participants, folds, preprocessing and 20-epoch budget. Three seeds measure initialization variability, not population uncertainty. Main table retains its preselected seed; no best-seed selection."
+  }
+}
+

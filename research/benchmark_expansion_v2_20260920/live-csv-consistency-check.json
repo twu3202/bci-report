@@ -1,0 +1,62 @@
+{
+  "scope": "Production CSV row coverage, dataset identity and primary/secondary numerical equality against production release JSON; not a recomputation from private predictions.",
+  "reports": [
+    {
+      "id": "mi-rest",
+      "url": "https://bci.report/data/mi-rest-results.csv",
+      "rows": 5,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "idle",
+      "url": "https://bci.report/data/idle-results.csv",
+      "rows": 6,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "beta-8ch",
+      "url": "https://bci.report/data/beta-8ch-results.csv",
+      "rows": 5,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "beta-4ch",
+      "url": "https://bci.report/data/beta-4ch-results.csv",
+      "rows": 5,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "arithmetic-rest",
+      "url": "https://bci.report/data/arithmetic-rest-results.csv",
+      "rows": 4,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "p300-target",
+      "url": "https://bci.report/data/p300-target-results.csv",
+      "rows": 5,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "semantic-target",
+      "url": "https://bci.report/data/semantic-target-results.csv",
+      "rows": 5,
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "sleep-scalp",
+      "url": "https://bci.report/data/sleep-scalp-results.csv",
+      "rows": 4,
+      "status": "pass",
+      "errors": []
+    }
+  ],
+  "pass": true
+}

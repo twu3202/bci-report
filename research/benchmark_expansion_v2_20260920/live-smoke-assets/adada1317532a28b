@@ -1,0 +1,7 @@
+# BCI Report — a personal, noncommercial research preview.
+# Crawling the published aggregate results and methods is fine.
+User-agent: *
+Allow: /
+Disallow: /404.html
+
+Sitemap: https://bci.report/sitemap.xml

@@ -1,0 +1,47 @@
+{
+  "id": "beta-8ch",
+  "title": "SSVEP · 8 channels",
+  "short": "Transfer to a new person",
+  "dataset": "BETA",
+  "subtitle": "40 visual targets · 8 posterior electrodes",
+  "type": "accuracy",
+  "subjects": 70,
+  "observations": "11,200 trials · 7 participant-disjoint folds",
+  "exposure": "8 channels selected from a 64-channel recording · 2-second windows",
+  "status": "Research preview",
+  "xLabel": "Macro F1",
+  "yLabel": "Balanced accuracy",
+  "limitation": "Near-floor scores are not ordered reliably between the 8- and 4-electrode subsets. Electrode subsets from laboratory recordings do not validate a physical low-channel cap. Prompted SSVEP does not measure idle false activations. Single-seed results; pretraining overlap unknown.",
+  "protocol": [
+    "Seven participant-disjoint folds: train on 60 people, test on ten. All four blocks stay with their participant.",
+    "Two seconds from stimulus onset; no visual-latency shift. Source data were already zero-phase filtered. Additional 6–80 Hz filtering applies to each selected window separately.",
+    "Microvolt units are inferred from an independently documented loader, not explicitly stated in the author MAT description. Inconsistent phase metadata are unused by all methods.",
+    "Standard CCA uses known frequencies and three harmonics without training labels. Frozen encoders use training-only standardized ridge heads (alpha 100). EEGNet trains from scratch for 20 epochs with one seed (20260912).",
+    "Electrodes: PO5, PO3, POZ, PO4, PO6, O1, OZ, O2.",
+    "Uniform-guessing reference: 2.5%. Descriptive 95% intervals resample participants; training sets overlap across folds.",
+    "No cross-task overall ranking, model fine-tuning optimum or hardware benchmark is claimed."
+  ],
+  "protocolId": "beta-ssvep-2s-posterior4and8-subject7fold-v1/posterior8",
+  "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+  "elapsed": 298.7745355004445,
+  "peakGb": null,
+  "auditSha": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+  "summarySha": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+  "protocolSha": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+  "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+  "backend": "Apple M5 / MPS and CPU",
+  "chanceLevel": 2.5,
+  "selection": "One fixed seed and training budget; multi-seed sensitivity pending.",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+  "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown.",
+  "reviewedAt": "2026-09-20",
+  "reviewBasis": [
+    "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+    "https://doi.org/10.3389/fnins.2020.00627"
+  ],
+  "rightsScope": "Personal noncommercial research; aggregate results only",
+  "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+}
+

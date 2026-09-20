@@ -1,0 +1,120 @@
+{
+  "checked_at": "2026-09-20T07:44:35.767932+00:00",
+  "base_url": "https://bci.report",
+  "access": "HTTPS with public server-resolved IP; certificate verification remained enabled; no system DNS changes",
+  "browser_interactions": "not verified; initial browser navigation timed out",
+  "requests": [
+    {
+      "path": "/",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/html",
+      "bytes": 53427,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/8a5edab282632443"
+    },
+    {
+      "path": "/_astro/directory.COTywl7T.css",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/css",
+      "bytes": 4081,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/8bf15ef7e37d5e62"
+    },
+    {
+      "path": "/_astro/global.C2gTFmfw.css",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/css",
+      "bytes": 11332,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/606360b466bd8b54"
+    },
+    {
+      "path": "/_astro/index.astro_astro_type_script_index_0_lang.B4GuhvmJ.js",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/javascript",
+      "bytes": 82561,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/252c76d85aea5d28"
+    },
+    {
+      "path": "/_astro/index.bjJTLyFT.css",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/css",
+      "bytes": 6436,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/10a9b44410c50ea1"
+    },
+    {
+      "path": "/apple-touch-icon.png",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "image/png",
+      "bytes": 5963,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/43f0533a76c04f80"
+    },
+    {
+      "path": "/data-use/",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/html",
+      "bytes": 16359,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/7f9f0e6c8ed076c1"
+    },
+    {
+      "path": "/data/experiments.json",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "application/json",
+      "bytes": 91319,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/98b86cde0775f445"
+    },
+    {
+      "path": "/data/mi-rest-results.csv",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/csv",
+      "bytes": 3655,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/5d2ca3fd5c52aa0f"
+    },
+    {
+      "path": "/favicon.ico",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "image/vnd.microsoft.icon",
+      "bytes": 3172,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/b18036488649e7cc"
+    },
+    {
+      "path": "/favicon.svg",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "image/svg+xml",
+      "bytes": 262,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/641b731619561076"
+    },
+    {
+      "path": "/robots.txt",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "text/plain",
+      "bytes": 209,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/adada1317532a28b"
+    },
+    {
+      "path": "/sitemap.xml",
+      "curl_exit": 0,
+      "status": "200",
+      "content_type": "application/xml",
+      "bytes": 319,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/7efd2a819481844e"
+    },
+    {
+      "path": "/__bci-report-missing-page-check-20260920/",
+      "curl_exit": 0,
+      "status": "404",
+      "content_type": "text/html",
+      "bytes": 2309,
+      "body_file": "research/benchmark_expansion_v2_20260920/live-smoke-assets/939dbde2ed9fd476"
+    }
+  ]
+}

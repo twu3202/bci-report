@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-09-20",
+  "dataset": {
+    "canonical_id": "Zhu2021-WearableSSVEP-DryWet",
+    "title": "An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces",
+    "paper_doi": "10.3390/s21041256",
+    "dataset_doi": "10.6084/m9.figshare.13560281",
+    "figshare_article_id": 13560281,
+    "figshare_current_version": 4,
+    "figshare_version_doi": "10.6084/m9.figshare.13560281.v4",
+    "license": "CC BY 4.0"
+  },
+  "decision": {
+    "status": "ready_via_verified_author_route",
+    "recommended_source": "https://bci.med.tsinghua.edu.cn/download.html",
+    "reason": "The primary paper lists the Tsinghua BCI Lab page as an alternative official source, the page exposes the complete Wearable SSVEP file set, and every listed object returned HTTP 200 to a metadata-only HEAD request.",
+    "payload_downloaded": false
+  },
+  "selected_representation": {
+    "description": "The single released MAT representation: 102 participant MAT files packaged into ten ZIP volumes, plus experiment metadata and documentation. There is no duplicate signal representation on this route.",
+    "eeg_zip_bytes": 970798539,
+    "auxiliary_mat_bytes": 120708,
+    "documentation_bytes": 114517,
+    "total_selected_bytes": 971033764,
+    "total_selected_mib": 926.049961,
+    "contents": "Each participant MAT contains data shaped [8 channels, 710 samples, 2 electrode types, 10 blocks, 12 targets]; electrode index 1=dry and 2=wet. Subjects_Information.mat contains the wet/dry wearing order; Impedance.mat contains block-level impedance; stimulation_information.pdf maps targets to frequency and phase."
+  },
+  "files": [
+    {"name":"Readme.pdf","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Readme.pdf","bytes":63278,"etag":"\"60640318-f72e\"","last_modified":"2021-03-31T05:05:28Z","role":"documentation"},
+    {"name":"stimulation_information.pdf","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/stimulation_information.pdf","bytes":51239,"etag":"\"60065026-c827\"","last_modified":"2021-01-19T03:21:10Z","role":"target_frequency_phase_map"},
+    {"name":"Subjects_Information.mat","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Subjects_Information.mat","bytes":2881,"etag":"\"60640302-b41\"","last_modified":"2021-03-31T05:05:06Z","role":"participant_metadata_questionnaire_and_electrode_order"},
+    {"name":"Impedance.mat","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Impedance.mat","bytes":117827,"etag":"\"606402dd-1cc43\"","last_modified":"2021-03-31T05:04:29Z","role":"block_level_electrode_impedance"},
+    {"name":"S001-S010.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S001-S010.zip","bytes":94784242,"etag":"\"60065082-5a64af2\"","last_modified":"2021-01-19T03:22:42Z","role":"eeg_subjects_001_010"},
+    {"name":"S011-S020.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S011-S020.zip","bytes":94710941,"etag":"\"60065045-5a52c9d\"","last_modified":"2021-01-19T03:21:41Z","role":"eeg_subjects_011_020"},
+    {"name":"S021-S030.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S021-S030.zip","bytes":94242683,"etag":"\"60065089-59e077b\"","last_modified":"2021-01-19T03:22:49Z","role":"eeg_subjects_021_030"},
+    {"name":"S031-S040.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S031-S040.zip","bytes":95268631,"etag":"\"60065054-5adaf17\"","last_modified":"2021-01-19T03:21:56Z","role":"eeg_subjects_031_040"},
+    {"name":"S041-S050.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S041-S050.zip","bytes":94830071,"etag":"\"6006505b-5a6fdf7\"","last_modified":"2021-01-19T03:22:03Z","role":"eeg_subjects_041_050"},
+    {"name":"S051-S060.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S051-S060.zip","bytes":95804645,"etag":"\"60065062-5b5dce5\"","last_modified":"2021-01-19T03:22:10Z","role":"eeg_subjects_051_060"},
+    {"name":"S061-S070.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S061-S070.zip","bytes":96181931,"etag":"\"6006504d-5bb9eab\"","last_modified":"2021-01-19T03:21:49Z","role":"eeg_subjects_061_070"},
+    {"name":"S071-S080.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S071-S080.zip","bytes":94888806,"etag":"\"6006506a-5a7e366\"","last_modified":"2021-01-19T03:22:18Z","role":"eeg_subjects_071_080"},
+    {"name":"S081-S090.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S081-S090.zip","bytes":95406269,"etag":"\"60065072-5afc8bd\"","last_modified":"2021-01-19T03:22:26Z","role":"eeg_subjects_081_090"},
+    {"name":"S091-S102.zip","url":"https://bci.med.tsinghua.edu.cn/upload/zhufangkun/S091-S102.zip","bytes":114680320,"etag":"\"6006507b-6d5e200\"","last_modified":"2021-01-19T03:22:35Z","role":"eeg_subjects_091_102"}
+  ],
+  "integrity": {
+    "cryptographic_checksums_published": false,
+    "md5": null,
+    "sha256": null,
+    "etag_is_checksum": false,
+    "etag_note": "The server ETags encode hexadecimal modification time and byte size (for example 63278 bytes = 0xf72e), so they are recorded only as HTTP validators and must not be treated as content hashes.",
+    "recommended_after_download": "Compute SHA-256 locally, verify every Content-Length, test all ZIP central directories, and persist a local manifest. Bitwise identity with the Figshare v4 objects cannot be established without Figshare checksums."
+  },
+  "source_reconciliation": {
+    "primary_paper": "States that the data are openly available at Figshare DOI 10.6084/m9.figshare.13560281 or the Tsinghua BCI Lab download page.",
+    "figshare": "Search-indexed official record reports Version 4, 928.82 MB, and CC BY 4.0.",
+    "tsinghua": "Official lab page lists all fourteen objects above; HTTPS HEAD metadata totals 971033764 bytes. The displayed Figshare size and Tsinghua total use different packaging/accounting, so byte-for-byte equivalence is not claimed.",
+    "moabb": "The current MOABB develop dataset registry was inspected and has no Zhu2021/Wearable class.",
+    "maintained_loader": "SSVEP Analysis Toolbox commit/tree 3344bd199daf78888e364d9db00ae7d8128d2b5f includes wearabledataset.py blob fd084e0d8839a7b1ada9abaf8cb187026410739b, which uses the same Tsinghua base URL, ten ZIP names, four support filenames, 102 subjects and dry/wet indices."
+  },
+  "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
+    "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+    "https://bci.med.tsinghua.edu.cn/download.html",
+    "https://bci.med.tsinghua.edu.cn/upload/zhufangkun/Readme.pdf",
+    "https://github.com/pikipity/SSVEP-Analysis-Toolbox/blob/main/SSVEPAnalysisToolbox/datasets/wearabledataset.py",
+    "https://raw.githubusercontent.com/NeuroTechX/moabb/develop/moabb/datasets/__init__.py"
+  ]
+}

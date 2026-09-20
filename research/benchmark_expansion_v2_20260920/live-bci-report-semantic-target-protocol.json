@@ -1,0 +1,48 @@
+{
+  "id": "semantic-target",
+  "title": "Semantic target ERP",
+  "short": "Transfer to a new person",
+  "dataset": "TMNRED / ds005383",
+  "subtitle": "Reading · target versus nontarget events",
+  "type": "accuracy",
+  "subjects": 30,
+  "observations": "3,600 epochs · 5 participant-disjoint folds",
+  "exposure": "30 channels · 1-second windows",
+  "status": "Research preview",
+  "xLabel": "Macro F1",
+  "yLabel": "Balanced accuracy",
+  "limitation": "Balanced event subset with collapsed semantic categories. Natural class prevalence is not preserved. Third-party reading passages and participant metadata are excluded from this website.",
+  "protocol": [
+    "5 participant-disjoint folds. All recordings from a person stay together. Each person contributes to the held-out predictions once.",
+    "units: microvolts; epoch: [event onset, onset + 1.0 s); filtering: none added",
+    "One fixed seed (20260919); no early stopping or test-based tuning. EEGNet trains for 20 epochs per fold. Frozen encoders use training-only standardized ridge heads (alpha 100).",
+    "Labels: nontarget, target.",
+    "Uniform-guessing reference: 50.00%. Scores weight participants equally. Intervals describe participant variation; cross-validation training sets overlap.",
+    "Research subset with fixed deterministic sampling capped at 60 epochs per participant/class.",
+    "Balancing to 60 per class changes the source target/nontarget prevalence.",
+    "Events use numbered target/nontarget variants; the benchmark collapses the suffix only because the trial_type prefix explicitly names the semantic class."
+  ],
+  "protocolId": "parallel-fixed-subject-folds-v1/ds005383",
+  "version": "OpenNeuro snapshot 1.0.0 · ad78f3db430e636595b1b1c08417492f3067a25e",
+  "elapsed": 112.4083747221157,
+  "peakGb": null,
+  "auditSha": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4",
+  "source": "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+  "backend": "Local Ubuntu / CUDA",
+  "chanceLevel": 50.0,
+  "selection": "One fixed seed and training budget; multi-seed sensitivity pending.",
+  "summarySha": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243",
+  "protocolSha": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+  "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Yanru Bai, Qi Tang et al. · TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments (2025), doi:10.1038/s41597-025-05036-2. OpenNeuro ds005383 v1.0.0.",
+  "privacyReview": "Paper reports Tianjin University ethics approval TJUE-2024-402, written consent, deidentification, and explicit participant permission for open sharing. Local participants.tsv appears column-shifted/malformed, so it must not feed public metadata.",
+  "reviewedAt": "2026-09-20",
+  "reviewBasis": [
+    "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+    "https://www.nature.com/articles/s41597-025-05036-2"
+  ],
+  "rightsScope": "Personal noncommercial research; aggregate results only",
+  "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."
+}
+

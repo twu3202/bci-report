@@ -1,0 +1,20 @@
+{
+  "purpose": "User-authorized research acquisition, 2026-09-20; no automatic benchmark or website publication.",
+  "assets": [
+    {
+      "dataset_id": "nemar--nm000125",
+      "relative_path": "v1.0.2/nm000125-v1.0.2.zip",
+      "url": "https://data.nemar.org/nm000125/v1.0.2.zip",
+      "expected_bytes": 1307005364,
+      "source_revision": "v1.0.2; git 2d34f218412b562d8da57b56f0bdcac5a338bf3d",
+      "license_status": "research acquisition approved; dataset declares CC BY 4.0, Korea University IRB KUIRB-2019-0194-01; provenance to Lee2021 Mobile BCI"
+    }
+  ],
+  "archive_size_evidence": "Official one-byte GET returned HTTP206, Content-Range bytes 0-0/1307005364.",
+  "file_integrity_manifest": "research/benchmark_expansion_v2_20260920/nm000125-v1.0.2-manifest.json",
+  "limitations": [
+    "NEMAR MOABB derivative, not the original Figshare raw representation.",
+    "Channel typing, motion sensor preservation, sample rate and participant coverage must be audited before benchmarking.",
+    "Archive has no upstream whole-file hash in this preflight; verify archive members against official per-file checksums after acquisition."
+  ]
+}

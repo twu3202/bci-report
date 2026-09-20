@@ -1,9 +1,9 @@
 {
   "reviewed_at": "2026-09-20",
   "requested_url": "https://bci.report/",
-  "review_scope": "Read-only scientific-claims review; no data downloads, site edits, or deployment actions.",
+  "review_scope": "Read-only scientific-claims review; public website assets only, with no EEG/model downloads, site edits, DNS changes, or deployment actions.",
   "accessibility": {
-    "live_site_verified": false,
+    "live_site_verified": true,
     "attempts": [
       {
         "path": "public web fetch",
@@ -16,10 +16,27 @@
       {
         "path": "direct HTTP diagnostic",
         "result": "curl could not resolve host bci.report from the review environment."
+      },
+      {
+        "path": "read-only HTTP through the authorized TRX50 workstation",
+        "result": "Succeeded. Retrieved the production homepage, data-use page, /data/experiments.json, and all eight linked protocol JSON files from https://bci.report/."
       }
     ],
-    "fallback": {
-      "label": "LOCAL PUBLICATION-SOURCE FALLBACK; NOT CONFIRMED AS THE LIVE DEPLOYMENT",
+    "live_artifacts": {
+      "files": [
+        "research/benchmark_expansion_v2_20260920/live-bci-report-index.html",
+        "research/benchmark_expansion_v2_20260920/live-bci-report-data-use.html",
+        "research/benchmark_expansion_v2_20260920/live-bci-report-experiments.json",
+        "research/benchmark_expansion_v2_20260920/live-bci-report-*-protocol.json"
+      ],
+      "sha256": {
+        "homepage": "f86dd5d4150aad5cc968d89cde02d66adb66d84a4f6ff8f06d770037de4087d3",
+        "data_use": "fa49f118c5f5e0813fd94688311682fb40adb95d75f42510ca28f75ef3e5ac3a",
+        "experiments_json": "198f8c0114cdda4d6239a44104b3e33dd782307f3412c34a10e94b805d7b3d65"
+      }
+    },
+    "local_reconciliation": {
+      "label": "LIVE ASSETS RECONCILED WITH LOCAL PUBLICATION SOURCE",
       "files": [
         "site/src/pages/index.astro",
         "site/src/pages/data-use.astro",
@@ -28,41 +45,42 @@
         "site/public/data/*-protocol.json",
         "docs/BCI Arena Benchmark Interpretation Caveats.md",
         "docs/BCI Arena Dataset and Evaluation Expansion Research.md"
-      ]
+      ],
+      "result": "Production /data/experiments.json and all eight production protocol JSON files are semantically identical to the corresponding local public assets. The raw experiments JSON byte hash differs because production serialization is minified."
     }
   },
   "findings": [
     {
       "id": "release-counts",
       "url": "https://bci.report/#overview",
-      "observed_claim": "The local fallback computes and presents 7 unique displayed datasets, 8 fixed protocols, 39 displayed comparisons, and 9 methods. The same release data separately records 13 completed batch datasets and 69 completed batch comparisons; those larger numbers are not presented as the website release counts.",
-      "claim_status": "Scoped correctly in the local fallback; live production not verified.",
-      "test_needed": "Fetch production HTML plus /data/experiments.json and assert that the headline, Open Graph text, matrix dimensions, downloadable rows, and protocol tabs agree on 7 datasets, 8 protocols, 39 comparisons, and 9 methods. Add a scope test that prevents 13/69 full-batch counts from being labeled as displayed release counts.",
-      "priority": "P0",
+      "observed_claim": "The live homepage presents 7 unique displayed datasets, 8 fixed protocols, 39 displayed comparisons, and 9 methods. Production /data/experiments.json independently yields the same counts. It separately records 13 completed batch datasets and 69 completed batch comparisons; those larger numbers are not presented as website release counts.",
+      "claim_status": "Live claim verified and correctly scoped.",
+      "test_needed": "Add a release-contract test that asserts the headline, Open Graph text, matrix dimensions, downloadable rows, and protocol tabs agree on 7 datasets, 8 protocols, 39 comparisons, and 9 methods, and prevents the 13/69 full-batch counts from being labeled as displayed release counts.",
+      "priority": "P2",
       "evidence": [
-        "site/src/pages/index.astro computes datasetCount from track dataset names and renders coverage.displayedProtocols/displayedComparisons.",
-        "site/src/data/mvp.json: displayedProtocols=8, displayedComparisons=39, completedBatchDatasets=13, completedBatchComparisons=69; row count=39; unique track datasets=7; unique row methods=9."
+        "The production homepage says: 9 decoding methods, 8 fixed protocols, 7 public datasets; its stat rail says 8 protocols, 7 datasets, 39 comparisons, 9 methods.",
+        "Production /data/experiments.json: displayedProtocols=8, displayedComparisons=39, completedBatchDatasets=13, completedBatchComparisons=69; row count=39; unique track datasets=7; unique row methods=9."
       ],
-      "accessibility_limitations": "The deployed HTML and JSON could not be retrieved, so deployment drift, CDN caching, and broken production assets remain unchecked."
+      "accessibility_limitations": "The Mac-side resolver failed, so live retrieval used the authorized workstation. This review did not exercise every CDN edge or browser-rendered interaction."
     },
     {
       "id": "pretraining-value",
       "url": "https://bci.report/#models",
-      "observed_claim": "The local fallback labels frozen foundation encoders and scratch-trained compact networks separately and says the scores do not establish optimal performance. It makes no explicit claim that pretraining helped. Scratch EEGNet is a different architecture, so it is not a random-initialization control for LaBraM or CBraMod.",
+      "observed_claim": "The live data-use page labels frozen foundation encoders and scratch-trained networks separately and says the comparisons do not establish optimal performance. It makes no explicit claim that pretraining helped. Scratch EEGNet is a different architecture, so it is not a random-initialization control for LaBraM or CBraMod.",
       "claim_status": "Current wording is appropriately limited; causal pretraining benefit remains untested.",
       "test_needed": "For each foundation architecture, compare the released pretrained checkpoint with a randomly initialized version of the same architecture under identical frozen-feature extraction, channel adapter, ridge head, folds, training budget, and several fixed seeds. Report paired participant-level differences and retain strong task baselines. Keep checkpoint-corpus overlap labeled unknown unless record-level manifests become available.",
       "priority": "P1",
       "evidence": [
-        "site/src/pages/data-use.astro says frozen encoders, scratch networks, and classical references are labeled separately.",
-        "All public protocol files state that pretraining overlap is unknown and make no unseen-pretraining claim.",
+        "The production data-use page says frozen encoders, scratch networks, and classical references are labeled separately.",
+        "All eight production protocol files state that pretraining overlap is unknown and make no unseen-pretraining claim.",
         "docs/BCI Arena Dataset and Evaluation Expansion Research.md proposes same-architecture pretrained-versus-random controls."
       ],
-      "accessibility_limitations": "Model dialogs and labels could not be checked on the deployed page."
+      "accessibility_limitations": "Static production HTML and exported JSON were verified; client-side dialog behavior was outside this scientific review."
     },
     {
       "id": "splits-seeds-uncertainty",
       "url": "https://bci.report/#benchmarks",
-      "observed_claim": "The local fallback describes participant-disjoint folds and descriptive participant-resampling 95% intervals. Most comparisons use one seed; only EEGNet on motor-imagery/rest and arithmetic/rest has a three-seed sensitivity check. Those seed ranges are explicitly not confidence intervals, and fold training sets overlap.",
+      "observed_claim": "The live protocols describe participant-disjoint folds and descriptive participant-resampling 95% intervals. The live data-use page says most comparisons use one seed; only EEGNet on motor-imagery/rest and arithmetic/rest has a three-seed sensitivity check. Those seed ranges are explicitly not confidence intervals, and fold training sets overlap.",
       "claim_status": "Disclosed, but insufficient for close model-ordering claims.",
       "test_needed": "Automate leakage checks on subject/session membership and training-only preprocessing. Run multiple seeds for every stochastic trained model on prespecified priority tasks. For model comparisons, publish paired participant-level bootstrap or hierarchical intervals for score differences, alongside separate seed variability; do not infer superiority from overlapping marginal descriptive intervals.",
       "priority": "P1",
@@ -71,48 +89,48 @@
         "BETA, P300, semantic ERP, and sleep protocols say multi-seed sensitivity is pending.",
         "The expansion memo records an EEGNet range of 2.83 percentage points on MI versus 0.28 on EEGMAT."
       ],
-      "accessibility_limitations": "Production protocol downloads and chart flags were not interactively verified."
+      "accessibility_limitations": "All production protocol JSON files were verified; chart rendering and keyboard interaction were outside this scientific review."
     },
     {
       "id": "physical-low-channel-hardware",
       "url": "https://bci.report/#benchmarks",
-      "observed_claim": "The fallback reports BETA results for 4 and 8 electrodes selected from a 64-channel laboratory recording and explicitly says these subsets do not validate a physical low-channel headset. It also says prompted SSVEP does not measure idle false activations.",
-      "claim_status": "The limitation is correctly stated; no actual physical-cap performance claim was observed in the fallback.",
+      "observed_claim": "The live BETA protocols report 4 and 8 electrodes selected from a 64-channel laboratory recording and explicitly say these subsets do not validate a physical low-channel cap. The live data-use page repeats that warning, and the protocols say prompted SSVEP does not measure idle false activations.",
+      "claim_status": "The live limitation is correctly stated; no physical-cap performance claim was observed.",
       "test_needed": "Before making a hardware or dry-electrode claim, run a paired physical acquisition study with the same participants and task on wet and dry 8-channel hardware, frozen participant-disjoint splits, electrode/block-order controls, and paired confidence intervals. Report device transfer separately from channel-count ablation and from movement effects.",
       "priority": "P1",
       "evidence": [
-        "site/public/data/beta-4ch-protocol.json and beta-8ch-protocol.json contain the explicit physical-cap limitation.",
+        "Production beta-4ch-protocol.json and beta-8ch-protocol.json contain the explicit physical-cap limitation.",
         "The expansion memo prioritizes Zhu2021 paired wet/dry 8-channel SSVEP for this question."
       ],
-      "accessibility_limitations": "The live wording and whether this caveat is visible without opening a protocol could not be verified."
+      "accessibility_limitations": "The caveat is verified in production JSON and on the production data-use page; the active-tab presentation was not interactively tested."
     },
     {
       "id": "idle-false-activation",
       "url": "https://bci.report/#benchmarks",
-      "observed_claim": "The fallback idle protocol contains only 180 seconds of test idle, 60 idle and 60 command trials across 4 evaluated participants, and resets detection at each cue. It explicitly says this cannot estimate natural always-on false activations per hour and warns that always abstaining can produce zero false activations.",
+      "observed_claim": "The live idle protocol contains only 180 seconds of test idle, 60 idle and 60 command trials across 4 evaluated participants, and resets detection at each cue. It explicitly says this cannot estimate natural always-on false activations per hour; the live homepage warns that always abstaining can produce zero false activations.",
       "claim_status": "The warning is scientifically appropriate; continuous reliability is not yet tested.",
       "test_needed": "Use causal continuous recordings with no cue resets, prespecified window/merge/refractory logic, natural idle and mixed non-control states, and held-out participants. Report false command events per eligible idle hour with exposure and one-sided rate bounds per participant, plus command recall, wrong-command rate, latency, and risk-coverage curves. As a planning bound, zero errors over T idle hours still gives an approximate one-sided 95% upper rate of 3/T per hour under a homogeneous Poisson model.",
       "priority": "P0",
       "evidence": [
-        "site/public/data/idle-protocol.json: 4 participants, 180 seconds idle, cue-reset limitation.",
+        "Production idle-protocol.json: 4 participants, 180 seconds idle, cue-reset limitation.",
         "docs/BCI Arena Dataset and Evaluation Expansion Research.md specifies continuous event-level scoring and the 3/T upper-bound heuristic."
       ],
-      "accessibility_limitations": "The deployed tradeoff chart and its axis/caption pairing could not be checked."
+      "accessibility_limitations": "Static production HTML and protocol JSON were verified; visual chart layout was outside this scientific review."
     },
     {
       "id": "end-to-end-provenance",
       "url": "https://bci.report/data/experiments.json",
-      "observed_claim": "The fallback says every score carries its protocol, source, license, conditions, and limitations. Seven of eight protocol files expose audit, summary, and protocol hashes; the idle protocol exposes audit hashes but has no summarySha or protocolSha fields. All public protocols label checkpoint pretraining overlap unknown.",
-      "claim_status": "Substantial metadata is present locally, but the public release-to-frozen-artifact chain has not been verified end to end and is structurally less complete for idle.",
+      "observed_claim": "The live homepage says every score has the protocol that produced it and provides production protocol/source/download links. Seven of eight production protocol files expose audit, summary, and protocol hashes; the live idle protocol exposes audit hashes but has no summarySha or protocolSha fields. All live protocols label checkpoint pretraining overlap unknown.",
+      "claim_status": "Substantial production metadata is present, but the release-to-frozen-artifact chain has not been recomputed end to end and is structurally less complete for idle.",
       "test_needed": "For every one of the 39 displayed rows, validate a machine-readable chain from dataset DOI/version and rights review through source-file/sidecar hashes, split manifest, preprocessing and channel map, checkpoint identity/rights, predictions, aggregate summary, protocol, CSV, and release JSON. Recompute hashes from frozen artifacts, fail on missing links, add equivalent summary/protocol hashes for idle, and run production link/content-integrity checks after deployment.",
       "priority": "P0",
       "evidence": [
-        "site/src/pages/index.astro claims every score has the protocol that produced it and links source/protocol/download assets.",
-        "Seven non-idle protocol JSON files contain auditSha, summarySha, and protocolSha; idle-protocol.json contains auditSha but no summarySha/protocolSha.",
+        "The production homepage claims every score has the protocol that produced it and links source/protocol/download assets.",
+        "Seven production non-idle protocol JSON files contain auditSha, summarySha, and protocolSha; production idle-protocol.json contains auditSha but no summarySha/protocolSha.",
         "docs/BCI Arena Benchmark Interpretation Caveats.md notes that decisive unit sidecars were not hashed in one withheld dataset package, motivating sidecar hashing as a release gate."
       ],
-      "accessibility_limitations": "Production assets, redirects, source links, and hash correspondence could not be fetched; no claim is made that the live deployment currently has broken provenance."
+      "accessibility_limitations": "The production homepage, release JSON, and eight protocol JSON files were fetched. External dataset links and correspondence between published hashes and private frozen run artifacts were not recomputed; no claim is made that current provenance values are wrong."
     }
   ],
-  "overall_assessment": "No unsupported physical-hardware, continuous-idle, pretraining-unseen, or universal-ranking claim was observed in the local fallback. The highest-priority next checks are production count/asset consistency, end-to-end provenance, and a real continuous idle evaluation. Same-architecture pretrained-versus-random controls, broader seed sensitivity, paired uncertainty, and paired physical-device data are the next scientific experiments needed before stronger comparative claims."
+  "overall_assessment": "The live scientific wording matches the local publication source and avoids unsupported physical-hardware, continuous-idle, pretraining-unseen, and universal-ranking claims. Live release counts are internally consistent. The highest-priority missing validation is end-to-end provenance recomputation and a real continuous idle evaluation. Same-architecture pretrained-versus-random controls, broader seed sensitivity, paired uncertainty, and paired physical-device data are the next experiments needed before stronger comparative claims."
 }
