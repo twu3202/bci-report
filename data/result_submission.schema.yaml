@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-title: BCI Arena verified result submission
+title: BCI Report verified result submission
 type: object
 additionalProperties: false
 required: [schema_version, submission]

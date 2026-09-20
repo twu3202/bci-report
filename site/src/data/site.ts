@@ -9,8 +9,8 @@
  * the site renders an honest "not yet published" state instead of a dead address.
  */
 export const site = {
-  name: 'BCI Arena',
-  origin: 'https://bciarena.ai',
+  name: 'BCI Report',
+  origin: 'https://bci.report',
   /** Badge shown next to the wordmark. Keep in step with the release id. */
   stage: 'Research preview',
   releaseId: 'research-preview-20260920',
@@ -21,11 +21,11 @@ export const site = {
 
 /** Verified, deliverable addresses only. `null` until tested in both directions. */
 export const contact: { corrections: string | null; privacy: string | null } = {
-  corrections: null, // e.g. 'contact@bciarena.ai'
-  privacy: null, // e.g. 'privacy@bciarena.ai'
+  corrections: null, // e.g. 'contact@bci.report'
+  privacy: null, // e.g. 'privacy@bci.report'
 };
 
 export const contactReady = contact.corrections !== null;
 
-/** Subject line suggested to correspondents, per the handoff's operating process. */
-export const correctionSubject = '[BCI Arena correction]';
+/** Subject line suggested to correspondents. Derived so a rename cannot strand it. */
+export const correctionSubject = `[${site.name} correction]`;

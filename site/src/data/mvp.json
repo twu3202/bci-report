@@ -1326,7 +1326,7 @@
       "family": "foundation",
       "parameters": 3460000,
       "status": "Research candidate",
-      "note": "Public, ungated weights; research candidate only; not downloaded or executed by BCI Arena. The official model card provides a 13,847,488-byte safetensors checkpoint trained on Lee2019 at 128 Hz. All 17 ds005342 channel names match its 62-channel pretraining layout, but a separate locked adaptation protocol is still required.",
+      "note": "Public, ungated weights; research candidate only; not downloaded or executed for this release. The official model card provides a 13,847,488-byte safetensors checkpoint trained on Lee2019 at 128 Hz. All 17 ds005342 channel names match its 62-channel pretraining layout, but a separate locked adaptation protocol is still required.",
       "license": "MIT, as stated on the model card",
       "url": "https://huggingface.co/braindecode/signal-jepa"
     },
@@ -1356,7 +1356,7 @@
       "family": "foundation",
       "parameters": null,
       "status": "Research candidate",
-      "note": "Public code and Hugging Face weights; research candidate only; not downloaded or executed by BCI Arena. The model page shows an approximately 318 MB checkpoint. The published EEGConformer input path is fixed to 22 channels, so using 17 channels requires an explicit mapping or replacement of the spatial layer.",
+      "note": "Public code and Hugging Face weights; research candidate only; not downloaded or executed for this release. The model page shows an approximately 318 MB checkpoint. The published EEGConformer input path is fixed to 22 channels, so using 17 channels requires an explicit mapping or replacement of the spatial layer.",
       "license": "GPL-3.0 for the official repository and model card",
       "url": "https://github.com/wenhui0206/NeuroGPT"
     },
@@ -1366,7 +1366,7 @@
       "family": "small",
       "parameters": null,
       "status": "Research candidate",
-      "note": "Public source; no official pretrained checkpoint was found; not executed by BCI Arena. This is a from-scratch baseline rather than a foundation-model checkpoint. The author script fixes the spatial convolution to 22 channels and must be parameterized for other montages.",
+      "note": "Public source; no official pretrained checkpoint was found; not executed for this release. This is a from-scratch baseline rather than a foundation-model checkpoint. The author script fixes the spatial convolution to 22 channels and must be parameterized for other montages.",
       "license": "GPL-3.0",
       "url": "https://github.com/eeyhsong/EEG-Conformer"
     },
@@ -1376,7 +1376,7 @@
       "family": "small",
       "parameters": null,
       "status": "Research candidate",
-      "note": "Public implementation; no pretrained weights; not executed by BCI Arena. The maintained Braindecode implementation accepts the channel count and sampling rate directly, making it a practical lightweight from-scratch comparator.",
+      "note": "Public implementation; no pretrained weights; not executed for this release. The maintained Braindecode implementation accepts the channel count and sampling rate directly, making it a practical lightweight from-scratch comparator.",
       "license": "BSD-3-Clause for the Braindecode implementation; the separate author repository license is unclear",
       "url": "https://braindecode.org/stable/generated/braindecode.models.EEGSimpleConv.html"
     },

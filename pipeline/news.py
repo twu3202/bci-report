@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "data" / "news.db"
 SOURCES = ROOT / "pipeline" / "sources.yaml"
 CURATED = ROOT / "data" / "news_curated.yaml"
-UA = "bciarena-bot/0.1 (+https://bciarena.ai; news aggregator, headlines+links only)"
+UA = "bcireport-bot/0.1 (+https://bci.report; news aggregator, headlines+links only)"
 MAX_FEED_BYTES = 8 * 1024 * 1024
 
 SCHEMA = """

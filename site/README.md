@@ -1,4 +1,4 @@
-# BCI Arena MVP
+# BCI Report MVP
 
 English static EEG evaluation workbench. Data is imported from `src/data/mvp.json`, which the parent experiment pipeline exports after independent review.
 

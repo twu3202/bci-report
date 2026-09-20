@@ -1,4 +1,4 @@
-# BCI Arena validation
+# BCI Report validation
 
 ## What is checked
 

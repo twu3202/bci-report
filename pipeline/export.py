@@ -189,8 +189,8 @@ def _write_feed(path: Path, items: list[dict], run_at: str) -> None:
     parts = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss version="2.0"><channel>',
-        "<title>BCI Arena — BCI news digest</title>",
-        "<link>https://bciarena.ai/news/</link>",
+        "<title>BCI Report — BCI news digest</title>",
+        "<link>https://bci.report/news/</link>",
         "<description>Headlines and links about brain-computer interfaces, aggregated daily. "
         "Summaries are short excerpts; follow the link for the full story.</description>",
         f"<lastBuildDate>{now}</lastBuildDate>",

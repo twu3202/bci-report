@@ -1,5 +1,5 @@
 {
-  // Cloudflare Workers Static Assets config for BCI Arena.
+  // Cloudflare Workers Static Assets config for BCI Report (bci.report).
   //
   // Its main job is to pin the upload scope. `wrangler deploy` run from this
   // directory publishes exactly ./dist and nothing else — so a deploy can no
@@ -10,7 +10,7 @@
   // ⚠ Confirm `name` against the actual Cloudflare account before first deploy;
   // it decides the workers.dev subdomain. Nothing here has been applied yet.
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "bciarena",
+  "name": "bci-report",
   "compatibility_date": "2026-09-20",
   "assets": {
     "directory": "./dist",

@@ -1,7 +1,7 @@
 {
   "zh-CN": "en",
   "公开脑电模型的可复核评测：误触发、指令检出、跨人迁移与低导联适应。": "Reproducible public EEG evaluation: false activations, command detection, transfer and low-channel decoding.",
-  "BCI Arena · 公开脑电模型评测": "BCI Arena · Public EEG Model Evaluation",
+  "BCI Report · 公开脑电模型评测": "BCI Report · Public EEG Model Evaluation",
   "跳到评测": "Skip to benchmarks",
   "主导航": "Main navigation",
   "开放结果 ↗": "Open data ↗",

@@ -3,7 +3,7 @@
 
 用法:
   .venv/bin/python pipeline/run.py --validate-only
-  .venv/bin/python pipeline/run.py --skip-news --output-dir /tmp/bciarena-export
+  .venv/bin/python pipeline/run.py --skip-news --output-dir /tmp/bci-report-export
 """
 from __future__ import annotations
 

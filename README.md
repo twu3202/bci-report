@@ -1,4 +1,4 @@
-# BCI Arena
+# BCI Report
 
 An English-language workbench for public EEG evaluation. Every score is reported
 with the protocol that produced it — cohort, electrode count, training budget,
@@ -73,10 +73,10 @@ Then copy `mvp.json` to `site/src/data/` and `data/*` to `site/public/data/`.
 1. **No public contact address.** One switch: `site/src/data/site.ts`. Leave it
    `null` until a mailbox both receives and sends as the domain — Cloudflare
    Email Routing covers inbound forwarding on the free plan; replying *as*
-   `@bciarena.ai` needs the destination provider's own custom-domain sending or
+   `@bci.report` needs the destination provider's own custom-domain sending or
    Cloudflare's separate Email Sending product. Until it is set, the site renders
    an honest "not yet published" state instead of a dead address.
-2. **Domain and host not set up.** `bciarena.ai` is unregistered. `site/wrangler.jsonc`
+2. **Domain and host not set up.** `bci.report` is not registered yet. `site/wrangler.jsonc`
    pins the deploy scope to `./dist` and is otherwise unapplied; confirm `name`
    against the real account first.
 3. The superseded `site/.git.superseded-20260920` holds the previous single-commit

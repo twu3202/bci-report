@@ -134,6 +134,9 @@ def validate_verified_results(rows: list[dict[str, str]], catalogs: Catalogs) ->
             "model_slug", "benchmark_slug", "metric", "value", "value_scale",
             "tier", "run_by", *PROTOCOL_FIELDS, *EVIDENCE_FIELDS,
         ), where)
+        # `run_by` is a stable internal provenance tag, deliberately NOT the brand
+        # name: it is written into every verified_results.csv row, so renaming it
+        # would invalidate the existing store. It is never shown on the site.
         if row["tier"] != "verified" or row["run_by"] != "bciarena":
             raise ValidationError(f"{where}: ranking evidence must be verified and run_by=bciarena")
         if row["model_slug"] not in models:
