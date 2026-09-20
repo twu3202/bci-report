@@ -2,20 +2,20 @@
 import data from '../data/mvp.json';
 import { site, contact, contactReady, correctionSubject } from '../data/site';
 import '../styles/global.css';
-const description='How BCI Arena selects sources, credits datasets and shares aggregate EEG benchmark results.';
+const description=`How ${site.name} selects sources, credits datasets and shares aggregate EEG benchmark results.`;
 const canonical=new URL('/data-use/',Astro.site ?? site.origin).href;
 const ogImage=new URL('/og.png',Astro.site ?? site.origin).href;
-const title='Data use & privacy · BCI Arena';
+const title=`Data use & privacy · ${site.name}`;
 ---
 <!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#143bd1"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><title>Data use &amp; privacy · BCI Arena</title>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#143bd1"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><title>Data use &amp; privacy · {site.name}</title>
 <meta property="og:type" content="article"/><meta property="og:site_name" content={site.name}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogImage}/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={ogImage}/></head>
 <body>
-<header><a class="brand" href="/"><span class="mark">B</span>BCI Arena <small>{site.stage}</small></a><nav aria-label="Main navigation"><a href="/#benchmarks">Benchmarks</a><a href="/#models">Models</a><a href="/#datasets">Datasets</a><a href="/#news">Updates</a><a href="/data-use/" aria-current="page">Data use</a></nav></header>
+<header><a class="brand" href="/"><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{site.stage}</small></a><nav aria-label="Main navigation"><a href="/#benchmarks">Benchmarks</a><a href="/#models">Models</a><a href="/#datasets">Datasets</a><a href="/#news">Updates</a><a href="/data-use/" aria-current="page">Data use</a></nav></header>
 <main class="policy-page">
 <p class="eyebrow">SOURCES &amp; RESPONSIBLE USE</p><h1>Evidence you can inspect.<br/>Recordings we do not redistribute.</h1>
-<p>BCI Arena is a personal, noncommercial research project. This release has no advertising, paid access, EEG upload form or diagnostic service.</p>
+<p>{site.name} is a personal, noncommercial research project. This release has no advertising, paid access, EEG upload form or diagnostic service.</p>
 <div class="policy-summary"><strong>Downloads contain aggregate benchmark results and methods.</strong><p>They do not contain raw EEG, individual scores, participant identifiers, recordings, embeddings or model weights. Access original data through the credited source and follow that source’s terms.</p></div>
 <section><h2>What a source review means</h2><p>We check the original release, its stated license, attribution requirements and available consent or ethics documentation. A Hugging Face mirror is a distribution source; its metadata alone does not establish the uploader’s rights or participants’ consent. Numerical audits and permission to publish are separate checks.</p><p>“Aggregate results” means this project has selected cohort-level outputs for the stated research scope. It is not legal certification, permission to reuse raw data, a claim of verified anonymity for the source files, or endorsement by the original researchers.</p></section>
 <section><h2>Sources in this release</h2><div class="scroll" tabindex="0" role="region" aria-label="Source terms table, scrolls horizontally"><table><thead><tr><th>Dataset</th><th>Source terms</th><th>Scope</th></tr></thead><tbody>{data.datasets.map(d=><tr><td><a href={d.source} target="_blank" rel="noreferrer">{d.name} ↗</a><small>{d.attribution}</small></td><td>{d.licenseUrl?<a href={d.licenseUrl} target="_blank" rel="noreferrer">{d.license} ↗</a>:d.license}</td><td><strong>{d.status}</strong><small>{d.detail}</small></td></tr>)}</tbody></table></div></section>
@@ -32,5 +32,5 @@ const title='Data use & privacy · BCI Arena';
 <p>Advertising, sponsorship, paid access, new hosting jurisdictions, data uploads or clinical applications require a new scope review. A noncommercial source label is not a blanket authorization for those uses.</p></section>
 <section><h2>Website privacy</h2><p>The application does not run analytics, advertising trackers or EEG processing. Hosting and access-control providers may process connection and sign-in information independently. External source links lead to sites with their own privacy practices.</p><p>This preview is not a medical service and provides no diagnosis, treatment advice or participant-level assessment.</p></section>
 <section><h2>Useful references</h2><p><a href="https://huggingface.co/terms-of-service" target="_blank" rel="noreferrer">Hugging Face terms</a> · <a href="https://creativecommons.org/licenses/by/4.0/legalcode.en" target="_blank" rel="noreferrer">Creative Commons rights and attribution</a></p><p>Reviewed for this release: {data.generatedAt.slice(0,10)}.</p></section>
-</main><footer><a class="brand" href="/">BCI Arena</a><p>Personal, noncommercial research</p><a href="/#benchmarks">Return to comparisons →</a></footer>
+</main><footer><a class="brand" href="/">{site.name}</a><p>Personal, noncommercial research</p><a href="/#benchmarks">Return to comparisons →</a></footer>
 </body></html>
