@@ -20,6 +20,37 @@
  * protocol titles, metric names, statuses — are mapped for display below,
  * keyed by their English value, which leaves the data files untouched.
  */
+/*
+ * Chinese glossary. One rendering per concept, following Chinese EEG / BCI /
+ * cognitive-neuroscience usage rather than a literal gloss of the English.
+ * check-workbench.mjs fails the build if a rejected rendering reappears.
+ *
+ *   participant / subject        被试            not 参与者, 受试者
+ *   balanced accuracy            平衡准确率
+ *   chance level                 随机水平
+ *   frozen encoder               冻结编码器
+ *   readout head / head          分类头          not 读出头
+ *   constructor-random           随机初始化      not 构造器随机
+ *   abstain (reject a decision)  拒识            not 弃权
+ *   false activation             误触发          not 误激活
+ *   cue-gated                    提示同步        not 提示门控
+ *   mental workload              脑力负荷        not 心理负荷
+ *   cognitive load               认知负荷        (faithful to the English page)
+ *   full range                   极差            not 全距
+ *   block (experimental)         组块            not 区块
+ *   future blocks                后续组块        not 未来区块
+ *   labeled calibration trials   校准试次        not 有标注试次 / N 个标注,
+ *                                                which reads as N classes on a
+ *                                                12-target task
+ *   analytic reference           免训练参考      not 解析参考
+ *   pretraining exposure         是否出现在预训练数据中   not 暴露
+ *   participant-disjoint         被试不重叠
+ *   session                      会话            (跨会话 is established usage)
+ *   confounded / entangled       相互混杂
+ *   target-only                  仅用目标被试数据
+ *   method names                 stay English: spectral ridge, eTRCA, CCA …
+ *                                with a gloss at first use where helpful
+ */
 import { site } from './site';
 
 export const locales = ['en', 'zh'] as const;
@@ -157,7 +188,7 @@ export const trackTitle = zhLabel({
 export const metricLabel = zhLabel({
   'Balanced accuracy': '平衡准确率',
   'Command detection ≤3s': '指令检出率 ≤3 秒',
-  'Idle false activation': '空闲误激活率',
+  'Idle false activation': '空闲误触发率',
   'Macro F1': '宏平均 F1',
 });
 
@@ -178,8 +209,8 @@ export const datasetStatus = zhLabel({
 export const datasetTask = zhLabel({
   '40-target SSVEP': '40 目标 SSVEP',
   'Arithmetic / rest': '心算 / 静息',
-  'Cue-gated idle / command': '提示门控的空闲 / 指令',
-  'Five-stage sleep': '五阶段睡眠',
+  'Cue-gated idle / command': '提示同步的空闲 / 指令',
+  'Five-stage sleep': '五期睡眠分期',
   'Motor imagery / rest': '运动想象 / 静息',
   'P300 target ERP': 'P300 目标 ERP',
   'Research source': '研究来源',
@@ -295,6 +326,7 @@ export const home = {
       ['Start with fixed, audited local runs', 'Experiments run offline on a Mac or local GPU workstation. Timings are configuration-specific. This website performs no EEG inference or diagnosis.'],
     ] as [string, string][],
     dialogEyebrow: 'Experiment details',
+    colon: ': ',
     closeDialog: 'Close details',
     payloadNote: '',
   },
@@ -302,7 +334,7 @@ export const home = {
     title: '公开 EEG 模型评测',
     description:
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
-      'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误激活。',
+      'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发。',
     ogAlt: (c: HomeCounts) => `核心基准矩阵：${c.protocols} 个协议、${c.datasets} 个数据集、${c.comparisons} 项比较、${c.methods} 种方法。`,
     eyebrow: (date: string) => `公开 EEG 评测 · 快照 ${date}`,
     h1: '每一个 EEG 分数，都附带产生它的协议。',
@@ -317,7 +349,7 @@ export const home = {
       `另外 ${n} 项聚合测量，按它们能支持的决策来组织。` +
       `它们是同一协议内的重复条件，不是 ${n} 项独立实验，也不是总排名。`,
     readEvidence: '查看证据 →',
-    topicsDownloadNote: '全精度比例、配对对比、描述性区间、引用，以及五组三种子敏感性分析。',
+    topicsDownloadNote: '全精度比例、配对对比、描述性区间、引用，以及五组各含三个随机种子的敏感性分析。',
     topicsDownload: '下载已审核的专题数据 · JSON ↓',
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
@@ -325,7 +357,7 @@ export const home = {
     matrixRegion: '方法与协议的覆盖矩阵，可横向滚动',
     matrixCaption: '各方法在各协议上的平衡准确率。随机水平因协议而异，标注在每列表头中。',
     corner: '方法',
-    colDetection: '检出',
+    colDetection: '检出率',
     colChance: (c: number) => `随机水平 ${c}%`,
     covered: (k: number, n: number) => `${k} / ${n}`,
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
@@ -337,14 +369,14 @@ export const home = {
     matrixCaveat:
       '条形只能<strong>纵向</strong>比较，不能<strong>横向</strong>比较：二分类任务的随机水平是 50%，' +
       '睡眠分期是 20%，40 分类 SSVEP 是 2.5%，而且每个协议的队列和电极布局都不同。不存在总分。' +
-      '空闲一列只报告指令检出率——请结合该协议中的误激活率一起读。',
+      '空闲一列只报告指令检出率——请结合该协议中的误触发率一起读。',
     protocolsEyebrow: '逐个协议',
     protocolsH2: '每个分数背后的证据',
     protocolsLede: '队列、电极布局、训练预算、来源条款与已知局限，和它们所属的数字放在一起。',
     tabsLabel: '评测协议',
-    tabParticipants: (n: number) => `${n} 名参与者`,
+    tabParticipants: (n: number) => `${n} 名被试`,
     panelResults: (title: string) => `${title} 结果`,
-    subjects: '名受试者',
+    subjects: '名被试',
     viewProtocol: '查看协议 ↗',
     measuredHere: '本协议实测',
     atAGlance: '结果一览',
@@ -372,7 +404,7 @@ export const home = {
     atOrBelow: (c: number) => `不高于 ${c}% 随机水平`,
     intervalReaches: (c: number) => `区间触及 ${c}% 随机水平`,
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
-      `单一种子——${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
+      `仅单个随机种子——为 ${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
     modelsEyebrow: '模型目录',
     modelsH2: '从轻量基线到基础模型',
@@ -382,21 +414,22 @@ export const home = {
     datasetsEyebrow: '公开数据',
     datasetsH2: '公开数据，有据可查的实验',
     datasetsLede: '来源条款与数值结果分开审查。尚未厘清的数据不纳入本次发布。',
-    dtSubjects: '受试者',
+    dtSubjects: '被试',
     dtChannels: '通道',
-    newsEyebrow: '领域札记',
-    newsH2: '来自领域的动态',
+    newsEyebrow: '领域动态',
+    newsH2: '研究前沿动态',
     newsLede: '精选研究动态，均链接至原始来源。',
     methodsEyebrow: '先有证据，再谈排名',
     methodsH2: '分数只有连同条件才有用。',
     downloadAll: '下载全部结果 · JSON ↓',
     principles: [
       ['能跑通前向传播不等于基准测试', '下载、加载检查与完成评分的评测有各自的状态标签。仍待适配器的模型没有结果。'],
-      ['把失败模式摆出来', '报告漏检指令、误激活与弃权。短时间内零错误不能证明全天可靠。'],
-      ['比较同一个任务', '划分方式、通道、预处理与训练模式都随协议一起给出。冻结编码器与从头训练的基线分开标注。'],
+      ['把失败模式摆出来', '报告漏检、误触发与拒识。短时间内零错误不能证明全天可靠。'],
+      ['比较同一个任务', '数据划分、通道、预处理与训练模式都随协议一起给出。冻结编码器与从头训练的基线分开标注。'],
       ['从固定、经审计的本地运行做起', '实验在 Mac 或本地 GPU 工作站上离线运行。耗时只对该配置有效。本网站不做任何 EEG 推理或诊断。'],
     ] as [string, string][],
     dialogEyebrow: '实验详情',
+    colon: '：',
     closeDialog: '关闭详情',
     /** Shown once above the payload-driven sections, which stay in English. */
     payloadNote: '协议步骤、局限说明、模型备注与数据集署名来自发布数据本身，保持英文原文——它们随数据一起被审核，翻译会让网页与可下载文件不再一致。',
@@ -424,6 +457,7 @@ export const topicChrome = {
     methodsEyebrow: 'Methods & limits',
     interval95: '95% interval',
     to: 'to',
+    period: '.',
   },
   zh: {
     home: '首页',
@@ -443,6 +477,7 @@ export const topicChrome = {
     methodsEyebrow: '方法与局限',
     interval95: '95% 区间',
     to: '至',
+    period: '。',
   },
 } as const;
 
@@ -464,16 +499,16 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
   },
   zh: {
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
-      summary: '同一批 102 人的两种原生八通道记录之间，解码器跨过去时会发生什么变化？',
+      summary: '同一批 102 名被试、两种原生八通道记录之间，解码器迁移过去会发生什么？',
       detail: '2 秒 SSVEP · 12 个目标 · 平衡准确率' },
     'on-the-move': { kicker: '运动鲁棒性', title: '移动中的解码',
       summary: '站立、行走与跑动时的结果，头皮与耳部记录、互不兼容的时间窗分开呈现。',
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
     'calibration-budget': { kicker: '适配预算', title: '需要多少校准？',
-      summary: '12、24 或 48 个目标个体的有标注试次，对某些方法帮助更大——而且试次数不等于耗时。',
-      detail: '共同的未来区块 · 仅目标个体拟合' },
+      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。',
+      detail: '共同的后续组块 · 仅用目标被试数据拟合' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
-      summary: '在固定与训练集选定两种读出头设置下，对比匹配的预训练编码器与构造器随机编码器。',
+      summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。',
       detail: '两个任务 · 两种编码器 · 三次随机初始化' },
   },
 };

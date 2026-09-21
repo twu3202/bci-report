@@ -84,7 +84,12 @@
   display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;
   padding:11px 16px;font-size:.75rem;border-top:1px solid var(--line);background:var(--soft);
 }
+/* nowrap keeps a swatch beside its words, but the longest key is ~400px of
+   English and ran 91px off a 320px screen. On a narrow screen the swatch is
+   kept with flex-shrink:0 instead, and the words are allowed to wrap. */
 .matrix-note .key{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.matrix-note .key i{flex-shrink:0}
+@media(max-width:480px){.matrix-note .key{white-space:normal}}
 .matrix-note .key i{width:15px;height:9px;display:inline-block}
 .matrix-note .key i.lead{background:var(--accent-bright)}
 .matrix-note .key i.plain{background:#efcaa6}

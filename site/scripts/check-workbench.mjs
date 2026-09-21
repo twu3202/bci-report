@@ -274,6 +274,29 @@ for(const page of bilingual.map(p=>'../dist/zh/'+p+'index.html')){
   assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
   assert.doesNotMatch(html,/\son(?:click|load|error|change|submit)=/,page+': the CSP forbids inline handlers');
 }
+// Terminology. One rendering per concept — the glossary is at the top of
+// src/data/i18n.ts. Each entry below was on the page once: 被试 appeared as
+// three different words on the same homepage, and "12 个标注" on a 12-target
+// task read as twelve classes. English elements (lang="en") are excluded.
+const rejected={
+  '参与者':'被试','受试者':'被试','构造器':'随机初始化','读出头':'分类头','弃权':'拒识',
+  '误激活':'误触发','提示门控':'提示同步','心理负荷':'脑力负荷','全距':'极差','区块':'组块',
+  '未来组块':'后续组块','有标注':'校准试次','个标注':'个校准试次','谱岭回归':'spectral ridge',
+  '解析参考':'免训练参考','暴露':'是否出现在预训练数据中','纠缠':'相互混杂',
+  '三种子':'三个随机种子 (三种子 also parses as 三种·子, three kinds)',
+};
+const chineseOnly=html=>html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<(\w+)[^>]*\blang="en"[^>]*>[\s\S]*?<\/\1>/g,'');
+for(const path of bilingual){
+  const zh=chineseOnly(read('zh/'+path));
+  for(const [bad,good] of Object.entries(rejected))
+    assert.ok(!zh.includes(bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
+  // A Chinese sentence does not end on an ASCII full stop.
+  assert.doesNotMatch(zh,/[一-鿿\d]\.<\/p>/,'zh/'+path+': Chinese sentence ends with an ASCII period');
+}
+const workbenchSource=readFileSync(new URL('../src/scripts/workbench.ts',import.meta.url),'utf8');
+for(const [bad,good] of Object.entries(rejected))
+  assert.ok(!workbenchSource.includes(bad),`workbench.ts: "${bad}" is a rejected rendering — use "${good}"`);
+
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
   assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,

@@ -113,7 +113,7 @@ const links=alternates('/',String(origin));
   if(y===undefined) return <td class="cell none"><span class="num" title={h.notEvaluated(m.name,tt(t.title))}>·</span></td>;
   const c=chanceOf(t);
   const below=c!==null&&y<=c;
-  return <td class="cell" data-rank={leader.get(t.id)===m.name?'lead':below?'sub':null} title={`${m.name} · ${tt(t.title)}: ${y.toFixed(1)}% ${ml(t.yLabel).toLowerCase()}`}><span class="track"><span class={`bar w${Math.round(fill(t,y))}`}></span></span><span class="num">{y.toFixed(1)}</span>{below&&<span class="cmark">{h.atChance}</span>}</td>;
+  return <td class="cell" data-rank={leader.get(t.id)===m.name?'lead':below?'sub':null} title={`${m.name} · ${tt(t.title)}${h.colon}${y.toFixed(1)}% ${ml(t.yLabel).toLowerCase()}`}><span class="track"><span class={`bar w${Math.round(fill(t,y))}`}></span></span><span class="num">{y.toFixed(1)}</span>{below&&<span class="cmark">{h.atChance}</span>}</td>;
 })}</tr>)}</tbody></table></div>
 <p class="matrix-note"><span class="key"><i class="lead"></i>{h.keyLead}</span><span class="key"><i class="plain"></i>{h.keyBar}</span><span class="key"><i class="gap"></i>{h.keyGap}</span><a href="/data/experiments.json" download>{h.matrixDownload}</a></p></div>
 <p class="matrix-caveat" set:html={h.matrixCaveat}></p></section>

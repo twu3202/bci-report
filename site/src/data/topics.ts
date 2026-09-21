@@ -160,7 +160,7 @@ export const conditionLabel = (condition?: string | null, locale: Locale = 'en')
 
 export const datasetLabel = (dataset: string, locale: Locale = 'en') => ({
   en: { ds003810: 'MI / rest', 'physionet-eegmat-1.0.0': 'Mental workload' },
-  zh: { ds003810: '运动想象 / 静息', 'physionet-eegmat-1.0.0': '心理负荷' },
+  zh: { ds003810: '运动想象 / 静息', 'physionet-eegmat-1.0.0': '脑力负荷' },
 }[locale] as Record<string, string>)[dataset] ?? dataset;
 
 export const seedProtocolLabel = (protocol: string, locale: Locale = 'en') => ({

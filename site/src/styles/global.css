@@ -284,6 +284,13 @@ dialog .button{margin-top:18px}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){
+  /* Brand and language switcher share the first row; the navigation takes a
+     full-width row of its own. One row was never going to hold all three: the
+     seven English links plus the switcher need ~980px, and between 700 and
+     1000px the header ran up to 108px off the screen on every English page. */
+  header{flex-wrap:wrap;row-gap:6px}
+  .lang{order:1}
+  header nav{order:2;flex-basis:100%;flex-wrap:wrap;row-gap:4px}
   .results-panel{grid-template-columns:minmax(0,1fr) 288px}
   .toolbar{display:block}
   .controls{margin-top:14px}
@@ -292,9 +299,6 @@ td .flag{margin-top:6px}
 @media(max-width:860px){
   header{gap:18px;padding:11px 20px}
   nav{gap:15px}
-  /* The switcher keeps its own row at phone width: `margin-left:auto` on a
-     wrapped flex line would otherwise strand it alone against the right edge. */
-  .lang{margin-left:0;order:-1;width:100%;justify-content:flex-end}
   main{padding:0 20px}
   .masthead{display:block;padding:24px 0 18px}
   .masthead h1{font-size:1.7rem}
@@ -312,6 +316,17 @@ td .flag{margin-top:6px}
   .topic-entry-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){
+  /* The header is sticky. Wrapped over three rows it stood 145px tall and held
+     a fifth of a phone screen for the whole page. The links scroll sideways in
+     one row instead; the last one is cut at the edge, which says there is more. */
+  header nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+             margin-right:-20px;padding-right:20px}
+  header nav::-webkit-scrollbar{display:none}
+  header nav a{flex-shrink:0}
+  /* Only the way out is needed on a phone: the page's own language is evident
+     from the page. Dropping the current-language label lets the switcher sit
+     beside the brand instead of taking a row of its own. */
+  .lang-on{display:none}
   header{flex-wrap:wrap;padding:12px 18px;gap:11px}
   nav{width:100%;gap:9px 17px;flex-wrap:wrap;font-size:.8125rem}
   .brand{font-size:1.1rem}

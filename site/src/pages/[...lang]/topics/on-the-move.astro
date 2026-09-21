@@ -78,43 +78,43 @@ const copy = {
   zh: {
     description: '移动场景下 SSVEP 与 ERP 解码的运动鲁棒性：两秒与五秒时间窗、头皮与耳部通道、平衡准确率与 ROC AUC 分开呈现。',
     eyebrow: '运动鲁棒性 · 头皮与耳部 EEG',
-    dek: '参与者一动起来表现就会下降，但下降多少、意味着什么，取决于任务、时间窗、电极布局和指标。两个移动场景衍生数据集来自同一项原始研究，因此是相关证据，而不是相互独立的重复队列。',
+    dek: '被试一动起来表现就会下降，但下降多少、意味着什么，取决于任务、时间窗、电极布局和指标。两个移动场景衍生数据集来自同一项原始研究，因此是相关证据，而不是相互独立的重复队列。',
     s2Eyebrow: '匹配的工作点',
     s2H2: '两秒时间窗，选定八个头皮通道',
-    s2Lede: '直接的模型对比把时间窗固定在 [0, 2 秒)，选用相同的八个后部头皮通道，在三个 SSVEP 目标上评测 23 人。均匀随机水平为 33.3%。',
+    s2Lede: '直接的模型对比把时间窗固定在 [0, 2 秒)，选用相同的八个后部头皮通道，在三个 SSVEP 刺激目标上评测 23 名被试。均匀猜测的随机水平为 33.3%。',
     s2Region: '两秒移动 SSVEP 结果，可横向滚动',
-    s2Caption: '参与者平均平衡准确率；每个分数下方是参与者 bootstrap 95% 区间。',
+    s2Caption: '被试平均平衡准确率；每个分数下方是被试 bootstrap 95% 区间。',
     colMethod: '方法',
-    s2Role: { 'author-cca': '解析参考', 'spectral-ridge': '在另外 22 名站立参与者上训练' } as Record<string, string>,
-    s2RoleFm: '冻结编码器 + 岭回归，在其他参与者上训练',
+    s2Role: { 'author-cca': '免训练参考', 'spectral-ridge': '用另外 22 名被试的站立数据训练' } as Record<string, string>,
+    s2RoleFm: '冻结编码器 + 岭回归，在其他被试上训练',
     baLabel: (v: string) => `平衡准确率 ${v}`,
     scaleNote: '条形范围 0–100%；随机水平为 33.3%。',
     matchedStrong: '这里的「匹配」只在本表内部成立。',
-    matchedRest: '基础模型各行是固定的冻结编码器适配器，不是最佳微调结果。LaBraM 使用经核实的标准通道 ID；CBraMod 使用探索性的位置通道顺序。记录级的预训练暴露情况未经确认。',
+    matchedRest: '基础模型各行是固定的冻结编码器适配器，不是最佳微调结果。LaBraM 使用经核实的标准通道 ID；CBraMod 使用探索性的、按位置排列的通道顺序。尚未核实这些记录是否出现在预训练数据中。',
     s5Eyebrow: '另一个工作点',
     s5H2: '五秒时间窗的头皮与耳部对比',
     s5Lede: '更长的时间窗和不同的电极布局会改变问题本身。这些五秒经典方法结果不与上方两秒基础模型表共享排名。',
     s5Region: '五秒移动 SSVEP 头皮与耳部结果，可横向滚动',
-    s5Caption: '参与者平均平衡准确率 · 23 人 · 3 个目标。头皮从 32 个记录通道中选定 8 个；耳部使用 14 个触点。',
+    s5Caption: '被试平均平衡准确率 · 23 名被试 · 3 个目标。头皮从 32 个记录通道中选定 8 个；耳部使用 14 个触点。',
     colMethodModality: '方法 / 模态',
     s5Scalp: '选定 8 个头皮通道', s5Ear: '14 个耳部触点', s5Window: '5 秒',
     erpEyebrow: 'ERP 跨会话迁移',
     erpH2: '移动时 AUC 向随机水平回落',
-    erpLede: '对每位参与者的每种模态，分别在第一次站立会话上拟合一个时间特征 L2 逻辑回归，之后原样沿用。终点指标是 ROC AUC，不是平衡准确率。',
-    erpFindingLabel: '头皮 ROC AUC 变化：从站立到慢跑，同一批 17 人',
+    erpLede: '对每位被试的每种模态，分别在第一次站立会话上拟合一个基于时域特征的 L2 正则化逻辑回归，之后原样沿用。终点指标是 ROC AUC，不是平衡准确率。',
+    erpFindingLabel: '头皮 ROC AUC 变化：从站立到慢跑，同一批 17 名被试',
     erpFindingH3: '慢跑对比要用配对的共同队列',
-    erpFindingP: `慢跑条件有 17 名参与者，站立与行走条件有 24 名。在同一批 17 人中，从站立到慢跑的变化在头皮为 ${scalp}，在耳部为 ${ear}。对应的描述性 95% 区间分别为 ${scalpIv} 和 ${earIv}。`,
+    erpFindingP: `慢跑条件有 17 名被试，站立与行走条件有 24 名。在同一批 17 名被试中，从站立到慢跑的变化在头皮为 ${scalp}，在耳部为 ${ear}。对应的描述性 95% 区间分别为 ${scalpIv} 和 ${earIv}。`,
     erpRegion: '移动 ERP 头皮与耳部 ROC AUC 结果，可横向滚动',
-    erpCaption: '参与者平均 ROC AUC。头皮使用 32 个通道；耳部使用 14 个触点。括号内为参与者 bootstrap 95% 区间。',
+    erpCaption: '被试平均 ROC AUC。头皮使用 32 个通道；耳部使用 14 个触点。括号内为被试 bootstrap 95% 区间。',
     colModality: '模态',
     erpScalp: '头皮 · 32 通道', erpEar: '耳部 · 14 触点',
     erpFit: '站立会话拟合 · 权重不变',
     limitsH2: '让结论保持诚实的四个区分',
-    limitsLede: '运动是共同主题，但各协议回答的是不同的问题。没有任何分数被提升进跨任务排行榜。',
+    limitsLede: '运动是共同主题，但各协议回答的是不同的问题。没有任何分数被放进跨任务排行榜。',
     limits: [
       ['2 秒与 5 秒分开', '更长的分析时间窗会改变解码表现。五秒经典方法的结果是一个工作点，不是两秒冻结编码器的对照组。'],
       ['头皮 8 通道是选出来的', '移动 SSVEP 的头皮视图是从 32 个记录通道中选出八个后部通道，而不是「干电极与湿电极」页面上那种原生八通道可穿戴设备。'],
-      ['平衡准确率不同于 AUC', 'SSVEP 的终点是三分类任务的参与者平均平衡准确率；ERP 的终点是参与者平均 ROC AUC。两者的数值在实际意义上不共享尺度。'],
+      ['平衡准确率不同于 AUC', 'SSVEP 的终点是三分类任务的被试平均平衡准确率；ERP 的终点是被试平均 ROC AUC。两者的数值不在同一个尺度上，不能直接比较。'],
       ['两个衍生数据集出自同一研究', 'NEMAR nm000125 与 nm000201 是同一项原始移动 BCI 研究的 SSVEP 与 ERP 衍生数据，评估的样本数不同。'],
     ],
     derivative: 'NEMAR/MOABB 生成的 BIDS 衍生数据',
@@ -172,9 +172,9 @@ const card = topicCards[locale]['on-the-move'];
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list">
-      {ssvepCitation && <article><h3 lang="en">{ssvepCitation.identity.title}</h3><p lang="en">{ssvepCitation.identity.dataset_citation}</p><p lang="en">{ssvepCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {ssvepCitation.identity.license}.</p><p><a href={ssvepCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.ssvepLink}</a> · <a href={ssvepCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
-      {erpCitation && <article><h3 lang="en">{erpCitation.identity.title}</h3><p lang="en">{erpCitation.identity.dataset_citation}</p><p lang="en">{erpCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {erpCitation.identity.license}.</p><p><a href={erpCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.erpLink}</a> · <a href={erpCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
+      {ssvepCitation && <article><h3 lang="en">{ssvepCitation.identity.title}</h3><p lang="en">{ssvepCitation.identity.dataset_citation}</p><p lang="en">{ssvepCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {ssvepCitation.identity.license}{tc.period}</p><p><a href={ssvepCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.ssvepLink}</a> · <a href={ssvepCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
+      {erpCitation && <article><h3 lang="en">{erpCitation.identity.title}</h3><p lang="en">{erpCitation.identity.dataset_citation}</p><p lang="en">{erpCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {erpCitation.identity.license}{tc.period}</p><p><a href={erpCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.erpLink}</a> · <a href={erpCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
     </div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}.</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>
   </section>
 </TopicLayout>
