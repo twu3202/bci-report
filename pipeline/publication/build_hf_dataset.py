@@ -150,7 +150,7 @@ configs:
 
 **Every EEG decoding score, reported with the protocol that produced it.**
 
-[Website](https://bci.report) · [Code](https://github.com/twu3202/bci-report) ·
+[Website](https://bci.report) · [中文](https://bci.report/zh/) · [Code](https://github.com/twu3202/bci-report) ·
 [Data use & privacy](https://bci.report/data-use/)
 
 {n_rows + n_topic_rows} reviewed measurements from public EEG datasets, each

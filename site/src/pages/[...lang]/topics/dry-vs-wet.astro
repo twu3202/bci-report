@@ -1,0 +1,163 @@
+---
+import rawData from '../../../data/deployment-topics.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { type DeploymentData, type DeploymentRow, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
+import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+const data = rawData as unknown as DeploymentData;
+const rows = data.rows.filter(row => row.track === 'wearable-sensor-transfer');
+const contrasts = data.paired_contrasts.filter(row => row.track === 'wearable-sensor-transfer');
+const citation = data.dataset_citations.find(item => item.id === 'zhu2021-wearable102-author-snapshot-20260920');
+const find = (model: string, source: string | null, target: string) => rows.find(row => row.model === model && row.source_sensor === source && row.target_sensor === target);
+const analyticModels = ['same-frequency-power', 'cca', 'fbcca'];
+const trainedModels = ['spectral-ridge-gain-invariant', 'eegnet'];
+const renderMetric = (row?: DeploymentRow) => row ? `${pct(row.value)} · ${tc.interval95} ${intervalPct(row.confidence_interval_95)}` : '—';
+const wetDrop = contrasts.find(row => row.model === 'eegnet' && row.comparison.startsWith('wet-source'))!;
+const dryGain = contrasts.find(row => row.model === 'eegnet' && row.comparison.startsWith('dry-source'))!;
+const loss = Math.abs(wetDrop.difference * 100).toFixed(1);
+const gain = (dryGain.difference * 100).toFixed(1);
+const ipp = (i: [number, number]) => intervalPp(i, 1, locale);
+
+const copy = {
+  en: {
+    description: 'Native eight-channel dry and wet SSVEP recordings compared across analytic references and participant-disjoint source-trained models.',
+    eyebrow: 'Sensor transfer · 102 participants',
+    dek: 'Wet and dry recordings are not interchangeable inputs. The clearest mismatch appears when one EEGNet is trained on wet recordings and evaluated on dry recordings from held-out people—but sensor type is entangled with session order and time on task.',
+    findingLabel: 'Wet-trained EEGNet: dry minus wet balanced accuracy',
+    findingH3: 'The largest observed cross-sensor loss',
+    findingP: `Across the same 102 people, the paired participant bootstrap interval is ${ipp(wetDrop.paired_participant_bootstrap_95)}. This is a descriptive transfer result from one training seed, not a pure causal estimate of electrode hardware.`,
+    trainedEyebrow: 'Source-trained models',
+    trainedH2: 'Train on one sensor, test on both',
+    trainedLede: 'Six folds hold out 17 people at a time. Both sensor recordings from each held-out person stay out of source training. Every cell is participant-mean balanced accuracy on 12-target, two-second SSVEP.',
+    trainedRegion: 'Source-trained wet and dry sensor transfer results, scrolls horizontally',
+    trainedCaption: 'Native 8-channel headband · 102 participants · 12,240 trials per target sensor. Parentheses give participant bootstrap 95% intervals.',
+    colModelSource: 'Model and training source',
+    testWet: 'Test on wet', testDry: 'Test on dry',
+    trainedOn: (s: string) => `trained on ${s} · participant-disjoint`,
+    sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
+    wetTrained: 'Wet-trained EEGNet',
+    lossLabel: `${loss} percentage-point loss`,
+    lossP: `Moving the same fitted model from wet to dry recordings reduced balanced accuracy by ${loss} percentage points.`,
+    dryTrained: 'Dry-trained EEGNet',
+    gainLabel: `${gain} percentage-point gain`,
+    gainP: `Testing the dry-trained model on wet recordings increased balanced accuracy by ${gain} points; 95% interval ${ipp(dryGain.paired_participant_bootstrap_95)}.`,
+    differentRef: 'A different kind of reference',
+    fbccaLabel: (v: string) => `${v} dry FBCCA balanced accuracy`,
+    fbccaP: 'FBCCA reads each target recording analytically. It does not learn from source participants, so it is not a transfer-trained model.',
+    refEyebrow: 'Analytic references',
+    refH2: 'No source-training arrow belongs here',
+    refLede: 'CCA, FBCCA and the power reference operate on the target recording. Listing them once per source sensor would duplicate identical predictions and imply training that never happened.',
+    refRegion: 'Analytic dry and wet reference results, scrolls horizontally',
+    refCaption: 'Target-recording references on the same two-second, 12-target protocol.',
+    colReference: 'Reference', wetRecording: 'Wet recording', dryRecording: 'Dry recording',
+    analyticNote: 'analytic or fixed reference',
+    limitsH2: 'What this comparison can support',
+    limitsLede: 'These are descriptive intervals over people under a fixed protocol. They are not confidence bounds for all headsets, sessions or model retraining choices.',
+    limits: [
+      ['Native wearable evidence', 'This dataset records both sensor types with a native eight-channel headband. It is separate from mobile results that select eight posterior scalp channels from a larger recording.'],
+      ['Order remains a confound', 'Wearing order and time on task are entangled with sensor type. Both order strata show the wet-trained drop, but the design cannot isolate hardware as the sole cause.'],
+      ['Amplitude units are unresolved', 'The release does not document a physical amplitude unit. The scale-dependent foundation-model runs remain held; no unit is guessed here.'],
+      ['One EEGNet seed', 'The source-trained EEGNet cells use one training seed. The paired intervals describe participant variation conditional on that fitted protocol.'],
+    ],
+    citationNote: 'Aggregate results computed from the official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20. Local checks do not establish byte identity with Figshare v4.',
+  },
+  zh: {
+    description: '原生八通道干电极与湿电极 SSVEP 记录，在解析参考方法与参与者不重叠的源域训练模型之间进行比较。',
+    eyebrow: '传感器迁移 · 102 名参与者',
+    dek: '湿电极和干电极的记录不是可以互换的输入。最明显的失配出现在：一个 EEGNet 在湿电极记录上训练，再拿去评测留出参与者的干电极记录——但传感器类型与佩戴顺序、任务时长纠缠在一起。',
+    findingLabel: '湿电极训练的 EEGNet：干电极减湿电极的平衡准确率',
+    findingH3: '观察到的最大跨传感器损失',
+    findingP: `在同样的 102 人中，配对的参与者 bootstrap 区间为 ${ipp(wetDrop.paired_participant_bootstrap_95)}。这是来自单一训练种子的描述性迁移结果，不是对电极硬件的纯因果估计。`,
+    trainedEyebrow: '源域训练模型',
+    trainedH2: '在一种传感器上训练，在两种上测试',
+    trainedLede: '六折划分，每次留出 17 人。每位留出者的两种传感器记录都不进入源域训练。每个单元格都是 12 目标、两秒 SSVEP 上的参与者平均平衡准确率。',
+    trainedRegion: '源域训练的湿电极与干电极迁移结果，可横向滚动',
+    trainedCaption: '原生 8 通道头带 · 102 名参与者 · 每种目标传感器 12,240 个试次。括号内为参与者 bootstrap 95% 区间。',
+    colModelSource: '模型与训练来源',
+    testWet: '在湿电极上测试', testDry: '在干电极上测试',
+    trainedOn: (s: string) => `在${s}上训练 · 参与者不重叠`,
+    sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
+    wetTrained: '湿电极训练的 EEGNet',
+    lossLabel: `损失 ${loss} 个百分点`,
+    lossP: `把同一个已拟合模型从湿电极记录移到干电极记录，平衡准确率下降了 ${loss} 个百分点。`,
+    dryTrained: '干电极训练的 EEGNet',
+    gainLabel: `提升 ${gain} 个百分点`,
+    gainP: `把干电极训练的模型拿到湿电极记录上测试，平衡准确率提高了 ${gain} 个百分点；95% 区间 ${ipp(dryGain.paired_participant_bootstrap_95)}。`,
+    differentRef: '另一类参考方法',
+    fbccaLabel: (v: string) => `干电极 FBCCA 平衡准确率 ${v}`,
+    fbccaP: 'FBCCA 以解析方式读取每条目标记录，不从源域参与者学习，因此不是迁移训练得到的模型。',
+    refEyebrow: '解析参考方法',
+    refH2: '这里不该有「源域训练」的箭头',
+    refLede: 'CCA、FBCCA 和功率参考直接作用于目标记录。按源传感器各列一遍，会重复完全相同的预测，并暗示发生过从未发生的训练。',
+    refRegion: '干电极与湿电极解析参考结果，可横向滚动',
+    refCaption: '同一两秒、12 目标协议下，直接作用于目标记录的参考方法。',
+    colReference: '参考方法', wetRecording: '湿电极记录', dryRecording: '干电极记录',
+    analyticNote: '解析或固定参考',
+    limitsH2: '这项比较能支持什么',
+    limitsLede: '这些是固定协议下、跨人的描述性区间，不是对所有头戴设备、所有会话或所有模型重训选择的置信界。',
+    limits: [
+      ['原生可穿戴证据', '该数据集用原生八通道头带同时记录两种传感器。它与从更大记录中选取八个后部头皮通道的移动场景结果是两回事。'],
+      ['佩戴顺序仍是混杂因素', '佩戴顺序和任务时长与传感器类型纠缠在一起。两个顺序分层都出现了湿电极训练后的下降，但实验设计无法把硬件单独隔离为唯一原因。'],
+      ['幅值单位尚未厘清', '该发布没有说明物理幅值单位。依赖尺度的基础模型运行仍然搁置；这里不猜测单位。'],
+      ['EEGNet 只用了一个种子', '源域训练的 EEGNet 单元格只用了一个训练种子。配对区间描述的是在该已拟合协议条件下的参与者间差异。'],
+    ],
+    citationNote: '聚合结果基于 2026-09-20 获取的清华 BCI 实验室作者官方镜像快照计算。本地检查不能证明它与 Figshare v4 逐字节一致。',
+  },
+}[locale];
+const card = topicCards[locale]['dry-vs-wet'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/dry-vs-wet/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="dry-vs-wet"
+>
+  <section class="topic-section" aria-labelledby="transfer-finding">
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(wetDrop.difference, 1)}</strong><span>{copy.findingLabel}</span></div>
+      <div class="finding-copy"><h3 id="transfer-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
+    </div>
+    <div class="topic-heading"><div><p class="eyebrow">{copy.trainedEyebrow}</p><h2>{copy.trainedH2}</h2></div><p>{copy.trainedLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.trainedRegion}>
+      <table>
+        <caption>{copy.trainedCaption}</caption>
+        <thead><tr><th scope="col">{copy.colModelSource}</th><th scope="col">{copy.testWet}</th><th scope="col">{copy.testDry}</th></tr></thead>
+        <tbody>{trainedModels.flatMap(model => ['wet','dry'].map(source => {
+          const wet = find(model, source, 'wet');
+          const dry = find(model, source, 'dry');
+          return <tr><th scope="row">{modelLabel(model)}<small>{copy.trainedOn(copy.sensor[source])}</small></th><td><span class="metric">{wet ? pct(wet.value) : '—'}</span><span class="interval">{wet ? intervalPct(wet.confidence_interval_95) : '—'}</span></td><td><span class="metric">{dry ? pct(dry.value) : '—'}</span><span class="interval">{dry ? intervalPct(dry.confidence_interval_95) : '—'}</span></td></tr>;
+        }))}</tbody>
+      </table>
+    </div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.wetTrained}</p><div class="reading">{pct(find('eegnet','wet','wet')!.value)} → {pct(find('eegnet','wet','dry')!.value)}</div><ScoreBar value={Math.abs(wetDrop.difference)} max={0.4} label={copy.lossLabel} /><p>{copy.lossP}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.dryTrained}</p><div class="reading">{pct(find('eegnet','dry','dry')!.value)} → {pct(find('eegnet','dry','wet')!.value)}</div><ScoreBar value={dryGain.difference} max={0.4} tone="olive" label={copy.gainLabel} /><p>{copy.gainP}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.differentRef}</p><div class="reading">{pct(find('fbcca',null,'wet')!.value)} / {pct(find('fbcca',null,'dry')!.value)}</div><ScoreBar value={find('fbcca',null,'dry')!.value} tone="ink" label={copy.fbccaLabel(pct(find('fbcca',null,'dry')!.value))} /><p>{copy.fbccaP}</p></article>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="references-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.refEyebrow}</p><h2 id="references-heading">{copy.refH2}</h2></div><p>{copy.refLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.refRegion}>
+      <table><caption>{copy.refCaption}</caption><thead><tr><th scope="col">{copy.colReference}</th><th scope="col">{copy.wetRecording}</th><th scope="col">{copy.dryRecording}</th></tr></thead><tbody>{analyticModels.map(model => {
+        const wet = find(model, null, 'wet'); const dry = find(model, null, 'dry');
+        return <tr><th scope="row">{modelLabel(model)}<small>{copy.analyticNote}</small></th><td>{renderMetric(wet)}</td><td>{renderMetric(dry)}</td></tr>;
+      })}</tbody></table>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    {citation && <div class="citation-list"><article><h3 lang="en">{citation.identity.title}</h3><p lang="en">{citation.identity.canonical_dataset_citation}</p><p lang="en">{citation.identity.paper_citation}</p><p>{copy.citationNote}</p><p><a href={citation.primary_sources[0]} target="_blank" rel="noreferrer">{tc.datasetRecord}</a> · <a href={citation.primary_sources[1]} target="_blank" rel="noreferrer">{tc.sensorsPaper}</a> · {citation.identity.license}</p></article></div>}
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}.</p>
+  </section>
+</TopicLayout>

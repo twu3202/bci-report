@@ -3,10 +3,10 @@
  * The one header. Three pages used to carry their own copy of this markup, and
  * they had already drifted — index.astro listed an "Updates" link the shared
  * component did not have. A language switcher would have made that four copies
- * to keep in step, so the copies go first.
+ * to keep in step, so the copies went first.
  */
 import { site } from '../data/site';
-import { chrome, localeNames, locales, localizePath, swapLocale, type Locale } from '../data/i18n';
+import { chrome, hrefFor, localeNames, locales, localizePath, translatedPaths, type Locale } from '../data/i18n';
 
 interface Props {
   locale: Locale;
@@ -18,12 +18,14 @@ interface Props {
 }
 const { locale, path, active, anchorsAreLocal = false } = Astro.props;
 const t = chrome[locale];
-const home = localizePath('/', locale);
-const anchor = (id: string) => (anchorsAreLocal ? `#${id}` : `${home}#${id}`);
-const current = localizePath(path, locale);
+const anchor = (id: string) => (anchorsAreLocal ? `#${id}` : hrefFor(`/#${id}`, locale));
+// On a page with no translation the switcher still works, but it cannot offer
+// "this page in Chinese". It goes to that locale's home and says why.
+const translated = (translatedPaths as readonly string[]).includes(path);
+const switchTo = (code: Locale) => localizePath(translated ? path : '/', code);
 ---
 <header>
-  <a class="brand" href={home}><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{t.stage}</small></a>
+  <a class="brand" href={hrefFor('/', locale)}><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{t.stage}</small></a>
   <nav aria-label={t.mainNav}>
     <a href={anchor('overview')} aria-current={active === 'home' ? 'page' : undefined}>{t.nav.results}</a>
     <a href={anchor('topics')} aria-current={active === 'topics' ? 'page' : undefined}>{t.nav.explore}</a>
@@ -31,13 +33,14 @@ const current = localizePath(path, locale);
     <a href={anchor('models')}>{t.nav.models}</a>
     <a href={anchor('datasets')}>{t.nav.datasets}</a>
     <a href={anchor('news')}>{t.nav.updates}</a>
-    <a href={localizePath('/data-use/', locale)} aria-current={active === 'data-use' ? 'page' : undefined}>{t.nav.dataUse}</a>
+    <a href="/data-use/" aria-current={active === 'data-use' ? 'page' : undefined}>{t.nav.dataUse}{t.englishMark}</a>
   </nav>
   <div class="lang" role="group" aria-label={t.languageLabel}>
     {locales.map((code) => (
       code === locale
         ? <span class="lang-on" aria-current="true">{localeNames[code]}</span>
-        : <a href={swapLocale(current, code)} hreflang={code} rel="alternate">{localeNames[code]}</a>
+        : <a href={switchTo(code)} hreflang={code === 'zh' ? 'zh-Hans' : code} lang={code === 'zh' ? 'zh-Hans' : code}
+             title={translated ? undefined : chrome[code].onlyInEnglish}>{localeNames[code]}</a>
     ))}
   </div>
 </header>

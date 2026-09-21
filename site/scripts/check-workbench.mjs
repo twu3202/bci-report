@@ -227,5 +227,63 @@ assert.deepEqual(
   'source and downloadable topic exports must be byte-identical',
 );
 
+// --- Chinese pages ------------------------------------------------------------
+// The interface and the four topic pages exist in Chinese; /data-use/ does not.
+// What translation can break without anything visibly failing is pinned here.
+const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
+const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
+const zhTitles={'dry-vs-wet':'干电极与湿电极','on-the-move':'移动中的解码','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
+for(const path of bilingual){
+  const en=read(path),zh=read('zh/'+path);
+  assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
+  assert.match(zh,/<html lang="zh-Hans"/,'zh/'+path+': Chinese page must declare lang="zh-Hans"');
+  // hreflang only counts when it is reciprocal: each version names both, plus x-default.
+  for(const [html,name] of [[en,path||'/'],[zh,'zh/'+path]]){
+    assert.ok(html.includes(`hreflang="en" href="https://bci.report/${path}"`),name+': must link the English alternate');
+    assert.ok(html.includes(`hreflang="zh-Hans" href="https://bci.report/zh/${path}"`),name+': must link the Chinese alternate');
+    assert.ok(html.includes(`hreflang="x-default" href="https://bci.report/${path}"`),name+': x-default must be English');
+  }
+  assert.ok(zh.includes(`rel="canonical" href="https://bci.report/zh/${path}"`),'zh/'+path+': canonical must be self-referencing, not the English page');
+  // Translation must not touch a single figure. Every metric cell, in order.
+  // Topic pages mark figures `.metric`; the homepage uses `.num` in the matrix
+  // and <td><strong> in the results table. Matching only `.metric` compared two
+  // empty lists on the homepage and passed without checking anything.
+  const figures=html=>[...html.matchAll(/class="(?:metric|num)">([^<]+)<|<td><strong>([^<]+)<\/strong>/g)].map(m=>m[1]??m[2]);
+  assert.ok(figures(en).length>0,path+': the figure-parity check found nothing to compare');
+  assert.deepEqual(figures(zh),figures(en),'zh/'+path+': every number must equal the English page, in the same order');
+  // The data link from a Chinese page leads to an English-only page and says so.
+  assert.match(zh,/数据使用[^<]*（英文）/,'zh/'+path+': a link to /data-use/ must be marked as English');
+  assert.doesNotMatch(zh,/href="\/zh\/data-use\//,'zh/'+path+': /data-use/ has no Chinese version to link to');
+  // One Dataset entity per dataset: structured data lives on the English canonical only.
+  assert.doesNotMatch(zh,/application\/ld\+json/,'zh/'+path+': Dataset markup belongs to the English canonical only');
+}
+for(const [slug] of topicPages){
+  const zh=read('zh/topics/'+slug+'/');
+  assert.ok(zh.includes('<h1>'+zhTitles[slug]+'</h1>'),slug+': Chinese title must render in the initial HTML');
+  assert.ok(zh.includes('href="/data/deployment-topics.json"'),slug+': the same reviewed download, not a translated copy');
+}
+// Credits survive translation: every DOI on an English topic page is on its Chinese twin.
+for(const [slug] of topicPages){
+  const dois=html=>new Set([...html.matchAll(/10\.\d{4,9}\/[^\s"<)]+/g)].map(m=>m[0].replace(/[.,;]$/,'')));
+  const missing=[...dois(read('topics/'+slug+'/'))].filter(d=>!dois(read('zh/topics/'+slug+'/')).has(d));
+  assert.deepEqual(missing,[],slug+': the Chinese page dropped a credit');
+}
+for(const page of bilingual.map(p=>'../dist/zh/'+p+'index.html')){
+  const html=readFileSync(new URL(page,import.meta.url),'utf8');
+  assert.doesNotMatch(html,/\sstyle="/,page+': the CSP forbids style attributes');
+  assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
+  assert.doesNotMatch(html,/\son(?:click|load|error|change|submit)=/,page+': the CSP forbids inline handlers');
+}
+// The published payload stays English. Chinese lives in the display layer only.
+for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
+  assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,
+    'dist/data/'+file+': a download must not carry translated text');
+assert.equal(existsSync(new URL('../dist/zh/data-use/index.html',import.meta.url)),false,'/data-use/ stays English-only');
+for(const path of bilingual){
+  assert.ok(sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),'sitemap must list zh/'+path);
+  assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
+}
+
 console.log('PASS: coverage matrix, four topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

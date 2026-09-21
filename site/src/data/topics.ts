@@ -1,3 +1,5 @@
+import type { Locale } from './i18n';
+
 export type Interval = [number, number];
 
 export interface DeploymentRow {
@@ -131,8 +133,8 @@ export const pp = (value: number, digits = 1) => `${value >= 0 ? '+' : '−'}${M
 export const auc = (value: number) => value.toFixed(3);
 export const intervalPct = (interval?: Interval | null, digits = 1) =>
   interval ? `${pct(interval[0], digits)}–${pct(interval[1], digits)}` : '—';
-export const intervalPp = (interval: Interval, digits = 1) =>
-  `${interval[0] >= 0 ? '+' : '−'}${Math.abs(interval[0] * 100).toFixed(digits)} to ${interval[1] >= 0 ? '+' : '−'}${Math.abs(interval[1] * 100).toFixed(digits)} pp`;
+export const intervalPp = (interval: Interval, digits = 1, locale: Locale = 'en') =>
+  `${interval[0] >= 0 ? '+' : '−'}${Math.abs(interval[0] * 100).toFixed(digits)} ${locale === 'zh' ? '至' : 'to'} ${interval[1] >= 0 ? '+' : '−'}${Math.abs(interval[1] * 100).toFixed(digits)} pp`;
 export const modelLabel = (model: string) => ({
   'random-uniform': 'Uniform random',
   'same-frequency-power': 'Same-frequency power',
@@ -149,22 +151,21 @@ export const modelLabel = (model: string) => ({
   'cca': 'CCA',
 }[model] ?? model);
 
-export const conditionLabel = (condition?: string | null) => ({
-  standing: 'Standing',
-  slow_walking: 'Slow walk · 0.8 m/s',
-  fast_walking: 'Fast walk · 1.6 m/s',
-  slight_running: 'Running · 2.0 m/s',
-}[condition ?? ''] ?? condition ?? '—');
+export const conditionLabel = (condition?: string | null, locale: Locale = 'en') => ({
+  en: { standing: 'Standing', slow_walking: 'Slow walk · 0.8 m/s',
+        fast_walking: 'Fast walk · 1.6 m/s', slight_running: 'Running · 2.0 m/s' },
+  zh: { standing: '站立', slow_walking: '慢走 · 0.8 m/s',
+        fast_walking: '快走 · 1.6 m/s', slight_running: '慢跑 · 2.0 m/s' },
+}[locale] as Record<string, string>)[condition ?? ''] ?? condition ?? '—';
 
-export const datasetLabel = (dataset: string) => ({
-  ds003810: 'MI / rest',
-  'physionet-eegmat-1.0.0': 'Mental workload',
-}[dataset] ?? dataset);
+export const datasetLabel = (dataset: string, locale: Locale = 'en') => ({
+  en: { ds003810: 'MI / rest', 'physionet-eegmat-1.0.0': 'Mental workload' },
+  zh: { ds003810: '运动想象 / 静息', 'physionet-eegmat-1.0.0': '心理负荷' },
+}[locale] as Record<string, string>)[dataset] ?? dataset;
 
-export const seedProtocolLabel = (protocol: string) => ({
-  ds005383: 'Semantic ERP',
-  ds006593: 'P300',
-  'eesm19-scalp-sleep': 'Scalp sleep staging',
-  'BETA-posterior4': 'BETA · 4 selected channels',
-  'BETA-posterior8': 'BETA · 8 selected channels',
-}[protocol] ?? protocol);
+export const seedProtocolLabel = (protocol: string, locale: Locale = 'en') => ({
+  en: { ds005383: 'Semantic ERP', ds006593: 'P300', 'eesm19-scalp-sleep': 'Scalp sleep staging',
+        'BETA-posterior4': 'BETA · 4 selected channels', 'BETA-posterior8': 'BETA · 8 selected channels' },
+  zh: { ds005383: '语义 ERP', ds006593: 'P300', 'eesm19-scalp-sleep': '头皮睡眠分期',
+        'BETA-posterior4': 'BETA · 选定 4 通道', 'BETA-posterior8': 'BETA · 选定 8 通道' },
+}[locale] as Record<string, string>)[protocol] ?? protocol;

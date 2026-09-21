@@ -1,0 +1,169 @@
+---
+import rawData from '../../../data/deployment-topics.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { type DeploymentData, type DeploymentRow, datasetLabel, intervalPct, intervalPp, modelLabel, pct, pp, seedProtocolLabel } from '../../../data/topics';
+import { chrome, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+const data = rawData as unknown as DeploymentData;
+const fixed = data.rows.filter(row => row.track === 'pretraining-attribution-fixed');
+const selected = data.rows.filter(row => row.track === 'pretraining-attribution-selected');
+const contrasts = data.paired_contrasts.filter(row => row.track.startsWith('pretraining-attribution-'));
+const controls = data.rows.filter(row => row.track === 'fixed-classical-control');
+const models = ['labram','cbramod'];
+const datasets = ['ds003810','physionet-eegmat-1.0.0'];
+const score = (rows: DeploymentRow[], model: string, dataset: string, initialization: string) => rows.find(row => row.model === model && row.dataset_id === dataset && row.initialization === initialization)!;
+const contrast = (track: string, model: string, dataset: string) => contrasts.find(row => row.track === track && row.model === model && row.dataset_id === dataset)!;
+const control = (dataset: string) => controls.find(row => row.dataset_id === dataset)!;
+const ipp = (i: [number, number], d = 2) => intervalPp(i, d, locale);
+
+const copy = {
+  en: {
+    description: 'Matched pretrained and constructor-random LaBraM and CBraMod encoders on MI/rest and mental workload under fixed and train-selected readout settings.',
+    eyebrow: 'Representation controls · matched frozen encoders',
+    dek: 'Sometimes. CBraMod gains under both readout settings on both tasks; LaBraM gains on mental workload and does not on MI/rest. These are matched frozen-encoder results, conditional on the tasks, splits and three constructor-random initializations—not a universal model ranking.',
+    settings: { fixed: 'Fixed head · alpha 100', selected: 'Train-selected head · alpha 100 / 10,000 / 1' },
+    contrastEyebrow: 'Paired attribution contrasts',
+    contrastH2: 'Pretrained minus random, with the head held honest',
+    contrastLede: 'Each constructor-random architecture is averaged over three initialization seeds. Pretrained and random encoders share the same splits, pooling and ridge readout protocol.',
+    contrastRegion: 'Pretraining attribution contrasts, scrolls horizontally',
+    contrastCaption: 'Difference in participant-mean balanced accuracy. Intervals are paired participant bootstraps, conditional on three random initializations.',
+    colTaskModel: 'Task / model', colFixed: 'Fixed alpha 100', colSelected: 'Train-selected alpha',
+    contrastLabel: (v: string) => `${v} pretraining contrast`,
+    scoresEyebrow: 'Measured scores',
+    scoresH2: 'Both readout settings stay visible',
+    scoresLede: 'Head selection uses only inner training participants. Showing both settings prevents a test score from choosing the adaptation budget after the fact.',
+    scoresRegion: (label: string) => `${label} pretrained and random encoder scores, scrolls horizontally`,
+    scoresCaption: (label: string) => `${label} · participant-mean balanced accuracy.`,
+    colPretrained: 'Pretrained encoder', colRandom: 'Random encoder mean', colDelta: 'Paired difference',
+    threeInits: '3 initializations',
+    controlEyebrow: 'Fixed classical control',
+    baLabel: (v: string) => `${v} balanced accuracy`,
+    seedEyebrow: 'Training-seed sensitivity',
+    seedH2: 'A spread is not a confidence interval',
+    seedLede: 'Five existing EEGNet protocols were rerun with three fixed MPS seeds. The range is a small-sample training sensitivity check; it does not replace the published point estimate or describe population uncertainty.',
+    seedRegion: 'EEGNet three-seed sensitivity results, scrolls horizontally',
+    seedCaption: 'Balanced accuracy across three training seeds. Sample SD and full range are percentage points.',
+    colProtocol: 'Protocol', colRuns: 'Three runs', colMean: 'Mean', colSd: 'Sample SD', colRange: 'Full range',
+    trials: 'trials',
+    seedSources: 'Dataset authors, versions, licenses and source records for all four seed-sensitivity datasets are listed under ',
+    seedSourcesLink: 'Data use & privacy → Sources in this release',
+    limitsH2: 'What a positive contrast establishes',
+    limitsLede: 'These controls narrow one question: whether the pretrained initialization helps this frozen architecture, split and readout relative to constructor-random encoders.',
+    limits: [
+      ['Fixed versus selected heads', 'The primary head fixes ridge alpha at 100. The sensitivity setting selects among 100, 10,000 and 1 using inner training participants only. Both are reported.'],
+      ['Three seeds, one cohort', 'The random baseline averages three encoder initializations. Those are not three independent datasets, and the participant bootstrap does not include unrestricted retraining uncertainty.'],
+      ['Task-specific evidence', 'MI/rest contains 10 participants and 1,200 trials; mental workload contains 36 participants and 2,160 trials. A method can rank only within a compatible protocol.'],
+      ['Exposure is unresolved', 'The comparison does not establish that the benchmarks were unseen during pretraining. It also does not certify a universal benefit across tasks or adaptation budgets.'],
+    ],
+    miTitle: 'MI / rest · OpenNeuro ds003810 v2.0.2',
+    wlTitle: 'Mental workload · EEGMAT 1.0.0',
+    physionetRecord: 'PhysioNet record ↗',
+  },
+  zh: {
+    description: '在固定与训练集选定两种读出头设置下，于运动想象/静息与心理负荷任务上，对比匹配的预训练与构造器随机 LaBraM、CBraMod 编码器。',
+    eyebrow: '表征对照 · 匹配的冻结编码器',
+    dek: '有时有用。CBraMod 在两个任务、两种读出头设置下都有提升；LaBraM 在心理负荷上有提升，在运动想象/静息上没有。这些是匹配的冻结编码器结果，以任务、划分方式和三次构造器随机初始化为条件——不是通用的模型排名。',
+    settings: { fixed: '固定读出头 · alpha 100', selected: '训练集选定读出头 · alpha 100 / 10,000 / 1' },
+    contrastEyebrow: '配对归因对比',
+    contrastH2: '预训练减随机，读出头保持公平',
+    contrastLede: '每个构造器随机架构都对三个初始化种子取平均。预训练与随机编码器共享相同的划分、池化和岭回归读出协议。',
+    contrastRegion: '预训练归因对比，可横向滚动',
+    contrastCaption: '参与者平均平衡准确率之差。区间为配对的参与者 bootstrap，以三次随机初始化为条件。',
+    colTaskModel: '任务 / 模型', colFixed: '固定 alpha 100', colSelected: '训练集选定 alpha',
+    contrastLabel: (v: string) => `预训练对比 ${v}`,
+    scoresEyebrow: '实测分数',
+    scoresH2: '两种读出头设置都保持可见',
+    scoresLede: '读出头的选择只用内层训练参与者。两种设置都展示，可以避免事后用测试分数来挑选适配预算。',
+    scoresRegion: (label: string) => `${label}：预训练与随机编码器分数，可横向滚动`,
+    scoresCaption: (label: string) => `${label} · 参与者平均平衡准确率。`,
+    colPretrained: '预训练编码器', colRandom: '随机编码器均值', colDelta: '配对差值',
+    threeInits: '3 次初始化',
+    controlEyebrow: '固定的经典方法对照',
+    baLabel: (v: string) => `平衡准确率 ${v}`,
+    seedEyebrow: '训练种子敏感性',
+    seedH2: '离散范围不是置信区间',
+    seedLede: '五个已有的 EEGNet 协议用三个固定的 MPS 种子重新运行。这个范围是小样本的训练敏感性检查；它不取代已发布的点估计，也不描述总体不确定性。',
+    seedRegion: 'EEGNet 三种子敏感性结果，可横向滚动',
+    seedCaption: '三个训练种子下的平衡准确率。样本标准差与全距的单位为百分点。',
+    colProtocol: '协议', colRuns: '三次运行', colMean: '均值', colSd: '样本标准差', colRange: '全距',
+    trials: '个试次',
+    seedSources: '四个种子敏感性数据集的作者、版本、许可与来源记录，列于',
+    seedSourcesLink: `数据使用与隐私 → 本次发布的来源${chrome.zh.englishMark}`,
+    limitsH2: '正向对比能说明什么',
+    limitsLede: '这些对照只收窄一个问题：相对于构造器随机编码器，预训练初始化是否对这个冻结架构、这种划分和这个读出头有帮助。',
+    limits: [
+      ['固定读出头与选定读出头', '主读出头把岭回归 alpha 固定为 100。敏感性设置只用内层训练参与者，在 100、10,000 和 1 之间选择。两者都报告。'],
+      ['三个种子，一个队列', '随机基线是三次编码器初始化的平均。这不是三个独立数据集，参与者 bootstrap 也不包含不受限重训的不确定性。'],
+      ['证据是任务特定的', '运动想象/静息有 10 名参与者、1,200 个试次；心理负荷有 36 名参与者、2,160 个试次。方法只能在相容的协议内排名。'],
+      ['暴露情况尚未厘清', '这项比较不能证明这些基准在预训练时未曾见过，也不能证明在各任务或各适配预算下存在普遍收益。'],
+    ],
+    miTitle: '运动想象 / 静息 · OpenNeuro ds003810 v2.0.2',
+    wlTitle: '心理负荷 · EEGMAT 1.0.0',
+    physionetRecord: 'PhysioNet 记录 ↗',
+  },
+}[locale];
+const settings = [
+  { key: 'fixed', label: copy.settings.fixed, rows: fixed, track: 'pretraining-attribution-fixed' },
+  { key: 'selected', label: copy.settings.selected, rows: selected, track: 'pretraining-attribution-selected' },
+] as const;
+const card = topicCards[locale]['does-pretraining-help'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/does-pretraining-help/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="does-pretraining-help"
+>
+  <section class="topic-section" aria-labelledby="contrast-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.contrastEyebrow}</p><h2 id="contrast-heading">{copy.contrastH2}</h2></div><p>{copy.contrastLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.contrastRegion}>
+      <table><caption>{copy.contrastCaption}</caption><thead><tr><th scope="col">{copy.colTaskModel}</th><th scope="col">{copy.colFixed}</th><th scope="col">{copy.colSelected}</th></tr></thead><tbody>{datasets.flatMap(dataset => models.map(model => {
+        const fixedContrast = contrast('pretraining-attribution-fixed',model,dataset);
+        const selectedContrast = contrast('pretraining-attribution-selected',model,dataset);
+        return <tr><th scope="row">{modelLabel(model)}<small>{datasetLabel(dataset, locale)} · n={fixedContrast.participants}</small></th><td><span class="metric">{pp(fixedContrast.difference, 2)}</span><span class="interval">{ipp(fixedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(fixedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(fixedContrast.difference,2))} tone={fixedContrast.difference >= 0 ? 'olive' : 'ink'} /></td><td><span class="metric">{pp(selectedContrast.difference, 2)}</span><span class="interval">{ipp(selectedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(selectedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(selectedContrast.difference,2))} tone={selectedContrast.difference >= 0 ? 'olive' : 'ink'} /></td></tr>;
+      }))}</tbody></table>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="scores-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.scoresEyebrow}</p><h2 id="scores-heading">{copy.scoresH2}</h2></div><p>{copy.scoresLede}</p></div>
+    {settings.map(setting => <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={copy.scoresRegion(setting.label)}>
+      <table><caption>{copy.scoresCaption(setting.label)}</caption><thead><tr><th scope="col">{copy.colTaskModel}</th><th scope="col">{copy.colPretrained}</th><th scope="col">{copy.colRandom}</th><th scope="col">{copy.colDelta}</th></tr></thead><tbody>{datasets.flatMap(dataset => models.map(model => {
+        const pretrained = score(setting.rows,model,dataset,'pretrained');
+        const random = score(setting.rows,model,dataset,'constructor-random-mean');
+        const delta = contrast(setting.track,model,dataset);
+        return <tr><th scope="row">{modelLabel(model)}<small>{datasetLabel(dataset, locale)}</small></th><td><span class="metric">{pct(pretrained.value)}</span></td><td><span class="metric">{pct(random.value)}</span><small>{copy.threeInits}</small></td><td><span class="metric">{pp(delta.difference,2)}</span><span class="interval">{ipp(delta.paired_participant_bootstrap_95)}</span></td></tr>;
+      }))}</tbody></table>
+    </div>)}
+    <div class="evidence-grid">{datasets.map(dataset => {
+      const row = control(dataset);
+      return <article class="evidence-card"><p class="eyebrow">{copy.controlEyebrow}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} label={copy.baLabel(pct(row.value))} tone="ink"/><p>{modelLabel(row.model)} · {datasetLabel(dataset, locale)}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
+    })}</div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="seed-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.seedEyebrow}</p><h2 id="seed-heading">{copy.seedH2}</h2></div><p>{copy.seedLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.seedRegion}>
+      <table><caption>{copy.seedCaption}</caption><thead><tr><th scope="col">{copy.colProtocol}</th><th scope="col">{copy.colRuns}</th><th scope="col">{copy.colMean}</th><th scope="col">{copy.colSd}</th><th scope="col">{copy.colRange}</th></tr></thead><tbody>{data.seed_sensitivity.map(group => <tr><th scope="row">{seedProtocolLabel(group.protocol, locale)}<small>n={group.participants} · {group.trials.toLocaleString('en-US')} {copy.trials}</small></th><td>{group.runs.map(run => pct(run.balanced_accuracy,2)).join(' / ')}</td><td><span class="metric">{pct(group.mean_balanced_accuracy,2)}</span></td><td>{(group.sample_standard_deviation*100).toFixed(2)} pp</td><td>{(group.full_range*100).toFixed(2)} pp<small>{pct(group.minimum,2)}–{pct(group.maximum,2)}</small></td></tr>)}</tbody></table>
+    </div>
+    <p class="citation-note">{copy.seedSources}<a href="/data-use/#sources">{copy.seedSourcesLink}</a>{locale === 'en' ? '.' : '。'}</p>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list">
+      <article><h3>{copy.miTitle}</h3><p lang="en">Peterson et al. · CC0-1.0.</p><p><a href="https://doi.org/10.18112/openneuro.ds003810.v2.0.2" target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article>
+      <article><h3>{copy.wlTitle}</h3><p lang="en">Zyma et al. · Open Data Commons Attribution License 1.0.</p><p><a href="https://physionet.org/content/eegmat/1.0.0/" target="_blank" rel="noreferrer">{copy.physionetRecord}</a></p></article>
+    </div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}.</p>
+  </section>
+</TopicLayout>

@@ -2,26 +2,37 @@
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
 import { topicDataset } from '../data/structured';
-import { defaultLocale } from '../data/i18n';
+import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicCards, topicChrome,
+         type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
 import '../styles/global.css';
 import '../styles/topics.css';
 
 interface Props {
+  locale: Locale;
   title: string;
   description: string;
+  /** Path without a locale prefix, e.g. `/topics/on-the-move/`. */
   path: string;
   eyebrow: string;
   dek: string;
   activeSlug: typeof topicPages[number]['slug'];
 }
-const { title, description, path, eyebrow, dek, activeSlug } = Astro.props;
+const { locale, title, description, path, eyebrow, dek, activeSlug } = Astro.props;
+const t = chrome[locale];
+const c = topicChrome[locale];
 const pageTitle = `${title} · ${site.name}`;
-const canonical = new URL(path, Astro.site ?? site.origin).href;
-const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
+const origin = Astro.site ?? site.origin;
+const canonical = new URL(localizePath(path, locale), origin).href;
+const ogImage = new URL('/og.png', origin).href;
+const links = alternates(path, String(origin));
+// One Dataset entity per dataset, on the English canonical. The Chinese page is
+// the same data; a second entry would be a duplicate to Dataset Search, and
+// hreflang already tells crawlers the two pages are one resource.
+const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, title, description, path)) : null;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[locale]}>
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -31,9 +42,11 @@ const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
   <link rel="icon" href="/favicon.ico" sizes="32x32"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
   <link rel="canonical" href={canonical}/>
+  {links.map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
   <title>{pageTitle}</title>
   <meta property="og:type" content="article"/>
   <meta property="og:site_name" content={site.name}/>
+  <meta property="og:locale" content={ogLocale[locale]}/>
   <meta property="og:title" content={pageTitle}/>
   <meta property="og:description" content={description}/>
   <meta property="og:url" content={canonical}/>
@@ -42,27 +55,25 @@ const ogImage = new URL('/og.png', Astro.site ?? site.origin).href;
   <meta name="twitter:title" content={pageTitle}/>
   <meta name="twitter:description" content={description}/>
   <meta name="twitter:image" content={ogImage}/>
-  <script type="application/ld+json"
-          set:html={JSON.stringify(topicDataset(activeSlug, title, description, path))}/>
+  {structured && <script type="application/ld+json" set:html={structured}/>}
 </head>
 <body>
-  <a class="skip" href="#topic-content">Skip to evidence</a>
-  <SiteHeader locale={defaultLocale} path={path} active="topics" />
+  <a class="skip" href="#topic-content">{t.skipToEvidence}</a>
+  <SiteHeader locale={locale} path={path} active="topics" />
   <main class="topic-page" id="topic-content">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/#topics">Explore</a></li><li aria-current="page">{title}</li></ol></nav>
+    <nav class="breadcrumbs" aria-label={c.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{c.home}</a></li><li><a href={hrefFor('/#topics', locale)}>{c.explore}</a></li><li aria-current="page">{title}</li></ol></nav>
     <section class="topic-hero">
       <p class="eyebrow">{eyebrow}</p>
       <h1>{title}</h1>
       <p class="topic-dek">{dek}</p>
-      <div class="topic-actions"><a class="button primary" href="/data/deployment-topics.json" download>Reviewed aggregate JSON ↓</a><a class="button" href="#methods-and-limits">Methods &amp; limits ↓</a></div>
+      <div class="topic-actions"><a class="button primary" href="/data/deployment-topics.json" download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
     </section>
     <slot />
-    <nav class="topic-switcher" aria-label="Explore benchmark questions">
-      <p class="eyebrow">Keep exploring</p>
-      <div>{topicPages.map(topic => <a href={`/topics/${topic.slug}/`} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topic.kicker}</small><strong>{topic.title}</strong></a>)}</div>
+    <nav class="topic-switcher" aria-label={c.exploreNav}>
+      <p class="eyebrow">{c.keepExploring}</p>
+      <div>{topicPages.map(topic => <a href={hrefFor(`/topics/${topic.slug}/`, locale)} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topicCards[locale][topic.slug].kicker}</small><strong>{topicCards[locale][topic.slug].title}</strong></a>)}</div>
     </nav>
   </main>
-  <footer><a class="brand" href="/">{site.name}</a><p>Aggregate results. Credited sources. Research use.</p><a href="/data/deployment-topics.json" download>Download data ↓</a><a href="/data-use/">Data use &amp; privacy</a><a href="#topic-content">Back to top ↑</a></footer>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data/deployment-topics.json" download>{t.downloadData}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#topic-content">{t.footerTop}</a></footer>
 </body>
 </html>
-

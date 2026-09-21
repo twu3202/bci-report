@@ -341,3 +341,33 @@ td .flag{margin-top:6px}
   .topic-entry-download .button{margin-top:12px}
 }
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}}
+
+/* --- Chinese pages --------------------------------------------------------
+   The display type above is tuned for Latin: tight leading and negative
+   tracking read as confident in Iowan, and as glyphs colliding in Songti.
+   CJK carries no ascenders or descenders to hide inside tight leading, so a
+   wrapped heading at 1.02 puts one line's strokes on top of the next.
+   Numerals stay tight — the mono figures are the same in both languages. */
+:lang(zh-Hans) h1,:lang(zh-Hans) h2,:lang(zh-Hans) h3{letter-spacing:0}
+/* Chinese may break between any two characters, which split 协议 across the
+   masthead's two lines. keep-all breaks headings only at punctuation and
+   spaces; overflow-wrap is the escape hatch when a run cannot fit at all. */
+:lang(zh-Hans) :is(h1,h2,h3){word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+:lang(zh-Hans) h1{line-height:1.32}
+:lang(zh-Hans) .topic-hero h1{line-height:1.2;letter-spacing:.01em}
+:lang(zh-Hans) body,:lang(zh-Hans) p{line-height:1.75}
+/* Same cause, smaller scale: a Latin label's narrowest width is its longest
+   word, a Chinese label's is one character. The flex rail shrank 协议 to 18px
+   and set it one character per line. Two- and three-character labels always fit. */
+:lang(zh-Hans) :is(.stat-rail dt,.track-tab strong,.family,.status,.eyebrow){white-space:nowrap}
+:lang(zh-Hans) .eyebrow{letter-spacing:.12em}
+/* Release prose kept in English sits inside a Chinese page; give it back the
+   Latin rhythm rather than the CJK leading inherited from its parent. */
+:lang(zh-Hans) [lang="en"]{line-height:1.6}
+
+/* The one sentence that tells a Chinese reader why some text stayed English. */
+.payload-note{
+  margin:-6px 0 16px;padding:9px 13px;max-width:820px;
+  font-size:.8125rem;color:var(--muted);background:var(--soft);
+  border-left:3px solid var(--rule);
+}

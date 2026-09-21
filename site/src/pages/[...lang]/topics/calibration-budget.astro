@@ -1,0 +1,162 @@
+---
+import rawData from '../../../data/deployment-topics.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { type DeploymentData, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
+import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+const data = rawData as unknown as DeploymentData;
+const ridgeRows = data.rows.filter(row => row.track === 'wearable-calibration');
+const trcaRows = data.rows.filter(row => row.track === 'wearable-etrca-calibration');
+const trcaContrasts = data.paired_contrasts.filter(row => row.track === 'wearable-etrca-calibration');
+const citation = data.dataset_citations.find(item => item.id === 'zhu2021-wearable102-author-snapshot-20260920');
+const targetRidge = (sensor: string, budget: number) => ridgeRows.find(row => row.training_regime === 'target-only' && row.target_sensor === sensor && row.labeled_target_trials === budget)!;
+const sourceRidge = (source: string, target: string) => ridgeRows.find(row => row.training_regime === 'source-only' && row.source_sensor === source && row.target_sensor === target)!;
+const methodRow = (model: string, sensor: string, budget: number) => trcaRows.find(row => row.model === model && row.target_sensor === sensor && row.labeled_target_trials === budget)!;
+const budgets = [12,24,48];
+const sensors = ['wet','dry'];
+const wetImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-wet')!;
+const dryImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-dry')!;
+const ipp = (i: [number, number]) => intervalPp(i, 1, locale);
+
+const copy = {
+  en: {
+    description: 'Target-only wearable SSVEP calibration at 12, 24 and 48 labeled trials, with source-only spectral ridge and analytic CCA kept as separate reference arms.',
+    eyebrow: 'Adaptation budget · common future test blocks',
+    dek: 'More labeled trials do not have one universal value. On this 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings.',
+    sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
+    ridgeEyebrow: 'Target-only spectral ridge',
+    ridgeH2: 'Twelve, 24 and 48 labeled trials',
+    ridgeLede: "Each target-person model uses only that person's labeled calibration recordings. All conditions are evaluated on the same future blocks 5–10, across 102 people and 7,344 test trials.",
+    labels: (n: number) => `${n} labels`,
+    baLabel: (v: string) => `${v} balanced accuracy`,
+    participantMean: 'Participant-mean balanced accuracy',
+    trialsStrong: 'Trial counts are not minutes.',
+    trialsRest: ' The export records 12, 24 or 48 labeled trials per person. It does not convert those trials into a setup-time claim.',
+    zeroEyebrow: 'A separate arm',
+    zeroH2: 'Zero target labels is source-only transfer',
+    zeroLede: 'The zero-budget spectral-ridge rows use a model trained on other participants from one source sensor. They are not the starting point of an incremental target-person update curve.',
+    zeroRegion: 'Source-only spectral ridge transfer results, scrolls horizontally',
+    zeroCaption: 'Participant-mean balanced accuracy on common future test blocks 5–10 · 0 labeled target trials.',
+    colSource: 'Training source', testWet: 'Test on wet', testDry: 'Test on dry',
+    sourceRow: (s: string) => `${s} source`,
+    otherOnly: 'other participants only',
+    trcaEyebrow: 'Method matters',
+    trcaH2: 'Single-band eTRCA responds differently',
+    trcaLede: 'The target-only eTRCA arm uses 24 or 48 calibration trials and the same future test blocks. CCA at zero labels is an analytic reference, not an unfitted eTRCA point.',
+    trcaFindingLabel: 'Wet eTRCA: 48 labels minus 24 labels',
+    trcaFindingH3: 'A larger budget helped wet recordings much more',
+    trcaFindingP: `The paired participant interval is ${ipp(wetImprovement.paired_participant_bootstrap_95)}. Dry eTRCA improved by ${pp(dryImprovement.difference, 1)}, interval ${ipp(dryImprovement.paired_participant_bootstrap_95)}. Neither calibrated point exceeds the analytic CCA reference on the same test blocks.`,
+    trcaRegion: 'CCA and ensemble TRCA calibration results, scrolls horizontally',
+    trcaCaption: 'Participant-mean balanced accuracy · native 8 channels · 2 s · 12 targets.',
+    colMethodBudget: 'Method and labeled target trials', colWet: 'Wet', colDry: 'Dry',
+    ccaRow: 'CCA · 0 labels', ccaNote: 'analytic target-recording reference',
+    targetOnly: 'target-only adaptation',
+    limitsH2: 'What the budget curves do and do not mean',
+    limitsLede: 'All results are tied to a frozen protocol. They describe labeled-trial budgets for these methods, sensors and fixed test blocks.',
+    limits: [
+      ['Different zero-label mechanisms', "Spectral ridge at budget zero is source-only supervised transfer. CCA at budget zero is an analytic target-recording reference. Neither should be connected to target-only points as one model's learning curve."],
+      ['Target-only means target-only', "The 12/24/48 ridge and 24/48 eTRCA conditions fit only the target person's calibration recordings, then test on blocks 5–10."],
+      ['Prespecified single band', "eTRCA uses the fixed 6–80 Hz prepared band. It is not the reference repository's three-filter-bank experiment, so low scores do not establish an optimized TRCA ceiling."],
+      ['Descriptive intervals', 'Bootstrap intervals summarize participants under this protocol. They do not add retraining uncertainty or establish general calibration requirements for another headset.'],
+    ],
+    citationNote: (license: string) => `Official Tsinghua author mirror snapshot acquired 2026-09-20 · ${license}. Aggregate results only.`,
+  },
+  zh: {
+    description: '仅目标个体的可穿戴 SSVEP 校准，分别使用 12、24、48 个有标注试次；仅源域的谱岭回归与解析 CCA 作为独立参考组保留。',
+    eyebrow: '适配预算 · 共同的未来测试区块',
+    dek: '更多有标注试次并没有一个通用的价值。在这个 12 目标可穿戴协议上，仅目标个体的谱岭回归逐步提升但仍然偏低；单频带集成 TRCA 在湿电极记录上从 24 到 48 个标注时提升明显，在干电极记录上则只有小幅提升。',
+    sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
+    ridgeEyebrow: '仅目标个体的谱岭回归',
+    ridgeH2: '12、24 与 48 个有标注试次',
+    ridgeLede: '每个目标个体模型只使用该个体自己的有标注校准记录。所有条件都在相同的未来区块 5–10 上评测，覆盖 102 人、7,344 个测试试次。',
+    labels: (n: number) => `${n} 个标注`,
+    baLabel: (v: string) => `平衡准确率 ${v}`,
+    participantMean: '参与者平均平衡准确率',
+    trialsStrong: '试次数不等于分钟数。',
+    trialsRest: '导出数据记录的是每人 12、24 或 48 个有标注试次，并不把它们换算成设置时间。',
+    zeroEyebrow: '独立的一组',
+    zeroH2: '零个目标标注即仅源域迁移',
+    zeroLede: '预算为零的谱岭回归各行，使用的是在其他参与者、某一种源传感器上训练的模型。它们不是目标个体逐步更新曲线的起点。',
+    zeroRegion: '仅源域谱岭回归迁移结果，可横向滚动',
+    zeroCaption: '共同未来测试区块 5–10 上的参与者平均平衡准确率 · 0 个有标注目标试次。',
+    colSource: '训练来源', testWet: '在湿电极上测试', testDry: '在干电极上测试',
+    sourceRow: (s: string) => `${s}源域`,
+    otherOnly: '仅使用其他参与者',
+    trcaEyebrow: '方法很关键',
+    trcaH2: '单频带 eTRCA 的反应不同',
+    trcaLede: '仅目标个体的 eTRCA 组使用 24 或 48 个校准试次，以及相同的未来测试区块。零标注的 CCA 是解析参考方法，不是未拟合的 eTRCA 数据点。',
+    trcaFindingLabel: '湿电极 eTRCA：48 个标注减 24 个标注',
+    trcaFindingH3: '更大的预算对湿电极记录帮助大得多',
+    trcaFindingP: `配对参与者区间为 ${ipp(wetImprovement.paired_participant_bootstrap_95)}。干电极 eTRCA 提升了 ${pp(dryImprovement.difference, 1)}，区间 ${ipp(dryImprovement.paired_participant_bootstrap_95)}。两个校准后的数据点都没有超过同一测试区块上的解析 CCA 参考。`,
+    trcaRegion: 'CCA 与集成 TRCA 校准结果，可横向滚动',
+    trcaCaption: '参与者平均平衡准确率 · 原生 8 通道 · 2 秒 · 12 个目标。',
+    colMethodBudget: '方法与有标注目标试次', colWet: '湿电极', colDry: '干电极',
+    ccaRow: 'CCA · 0 个标注', ccaNote: '直接作用于目标记录的解析参考',
+    targetOnly: '仅目标个体适配',
+    limitsH2: '预算曲线意味着什么，不意味着什么',
+    limitsLede: '所有结果都绑定在一个冻结的协议上。它们描述的是这些方法、传感器和固定测试区块下的有标注试次预算。',
+    limits: [
+      ['零标注背后的机制不同', '预算为零的谱岭回归是仅源域的监督迁移；预算为零的 CCA 是直接作用于目标记录的解析参考。两者都不应和仅目标个体的数据点连成同一个模型的学习曲线。'],
+      ['仅目标个体就是仅目标个体', '12/24/48 的岭回归和 24/48 的 eTRCA 条件只拟合目标个体自己的校准记录，然后在区块 5–10 上测试。'],
+      ['预先指定的单一频带', 'eTRCA 使用固定的 6–80 Hz 预处理频带，而不是参考代码库中的三滤波器组实验，所以低分不能说明 TRCA 的优化上限。'],
+      ['描述性区间', 'bootstrap 区间概括的是本协议下的参与者分布，不包含重训的不确定性，也不能推出其他头戴设备的通用校准需求。'],
+    ],
+    citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
+  },
+}[locale];
+const card = topicCards[locale]['calibration-budget'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/calibration-budget/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="calibration-budget"
+>
+  <section class="topic-section" aria-labelledby="ridge-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.ridgeEyebrow}</p><h2 id="ridge-heading">{copy.ridgeH2}</h2></div><p>{copy.ridgeLede}</p></div>
+    <div class="evidence-grid">{sensors.flatMap(sensor => budgets.map(budget => {
+      const row = targetRidge(sensor,budget);
+      return <article class="evidence-card"><p class="eyebrow">{copy.sensor[sensor]} · {copy.labels(budget)}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} max={0.85} label={copy.baLabel(pct(row.value))} tone={sensor === 'wet' ? 'rust' : 'ink'} /><p>{copy.participantMean}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
+    }))}</div>
+    <p class="protocol-note"><strong>{copy.trialsStrong}</strong>{copy.trialsRest}</p>
+  </section>
+
+  <section class="topic-section" aria-labelledby="zero-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.zeroEyebrow}</p><h2 id="zero-heading">{copy.zeroH2}</h2></div><p>{copy.zeroLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.zeroRegion}>
+      <table><caption>{copy.zeroCaption}</caption><thead><tr><th scope="col">{copy.colSource}</th><th scope="col">{copy.testWet}</th><th scope="col">{copy.testDry}</th></tr></thead><tbody>{sensors.map(source => <tr><th scope="row">{copy.sourceRow(copy.sensor[source])}<small>{copy.otherOnly}</small></th>{sensors.map(target => {
+        const row = sourceRidge(source,target);
+        return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>;
+      })}</tr>)}</tbody></table>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="trca-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.trcaEyebrow}</p><h2 id="trca-heading">{copy.trcaH2}</h2></div><p>{copy.trcaLede}</p></div>
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(wetImprovement.difference, 1)}</strong><span>{copy.trcaFindingLabel}</span></div>
+      <div class="finding-copy"><h3>{copy.trcaFindingH3}</h3><p>{copy.trcaFindingP}</p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.trcaRegion}>
+      <table><caption>{copy.trcaCaption}</caption><thead><tr><th scope="col">{copy.colMethodBudget}</th><th scope="col">{copy.colWet}</th><th scope="col">{copy.colDry}</th></tr></thead><tbody>
+        <tr><th scope="row">{copy.ccaRow}<small>{copy.ccaNote}</small></th>{sensors.map(sensor => { const row=methodRow('cca',sensor,0); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>
+        {[24,48].map(budget => <tr><th scope="row">{modelLabel('ensemble-trca')} · {copy.labels(budget)}<small>{copy.targetOnly}</small></th>{sensors.map(sensor => { const row=methodRow('ensemble-trca',sensor,budget); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>)}
+      </tbody></table>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    {citation && <div class="citation-list"><article><h3 lang="en">{citation.identity.title}</h3><p lang="en">{citation.identity.canonical_dataset_citation}</p><p lang="en">{citation.identity.paper_citation}</p><p>{copy.citationNote(citation.identity.license ?? '')}</p><p><a href={citation.primary_sources[0]} target="_blank" rel="noreferrer">{tc.datasetRecord}</a> · <a href={citation.primary_sources[1]} target="_blank" rel="noreferrer">{tc.sensorsPaper}</a></p></article></div>}
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}.</p>
+  </section>
+</TopicLayout>

@@ -8,7 +8,7 @@
 [![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-Twu31%2Fbci--report-yellow)](https://huggingface.co/datasets/Twu31/bci-report)
 [![License](https://img.shields.io/badge/results-CC%20BY%204.0-blue)](https://creativecommons.org/licenses/by/4.0/)
 
-[Website](https://bci.report) · [Dataset](https://huggingface.co/datasets/Twu31/bci-report) · [Data use & privacy](https://bci.report/data-use/)
+[Website](https://bci.report) · [中文](https://bci.report/zh/) · [Dataset](https://huggingface.co/datasets/Twu31/bci-report) · [Data use & privacy](https://bci.report/data-use/)
 
 </div>
 
