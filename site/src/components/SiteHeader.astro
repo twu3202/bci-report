@@ -25,7 +25,7 @@ const translated = (translatedPaths as readonly string[]).includes(path);
 const switchTo = (code: Locale) => localizePath(translated ? path : '/', code);
 ---
 <header>
-  <a class="brand" href={hrefFor('/', locale)}><span class="mark">{site.name.charAt(0)}</span>{site.name} <small>{t.stage}</small></a>
+  <a class="brand" href={hrefFor('/', locale)}><img class="mark" src="/logo.svg" width="30" height="30" alt="" />{site.name} <small>{t.stage}</small></a>
   <nav aria-label={t.mainNav}>
     <a href={anchor('overview')} aria-current={active === 'home' ? 'page' : undefined}>{t.nav.results}</a>
     <a href={anchor('topics')} aria-current={active === 'topics' ? 'page' : undefined}>{t.nav.explore}</a>

@@ -14,6 +14,7 @@ mirror that other people have already cloned.
 import argparse
 import csv
 import json
+import shutil
 from pathlib import Path
 
 import hashlib
@@ -157,6 +158,8 @@ configs:
   - config_name: seed_sensitivity
     data_files: seed-sensitivity.csv
 ---
+
+<p align="center"><img src="https://huggingface.co/datasets/Twu31/bci-report/resolve/main/logo.png" alt="BCI Report logo: a head seen from above with five electrode sites" width="96"></p>
 
 # BCI Report
 
@@ -342,6 +345,9 @@ def build(output):
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
     (output/'README.md').write_text(card(snapshot, len(rows), topics))
+    # The card's logo. Not data, so it bypasses the data checks above; it is the
+    # tiled raster from site/public/, which survives the Hub's dark theme.
+    shutil.copyfile(PROJECT/'site/public/logo.png', output/'logo.png')
 
     return {'rows': len(rows), 'protocols': len(snapshot['tracks']),
             'models': len(snapshot['models']),

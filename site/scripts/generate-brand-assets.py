@@ -7,15 +7,27 @@ baked into pixels — so they are generated here instead of being hand-made once
 and then quietly going stale after a rename.
 
 Outputs: public/og.png (1200x630 share card), public/favicon.ico (16/32/48),
-public/apple-touch-icon.png (180). favicon.svg is hand-maintained; update the
-letter there too if the name's first letter changes.
+public/apple-touch-icon.png (180) and public/logo.png (512, for places that need
+a raster, such as the Hugging Face dataset card).
 
-Needs Pillow. On this Mac it is in the system interpreter, not the project venv:
+The mark itself is public/logo.svg: a top-down head with five electrode sites,
+generated in Recraft (V4.1 Vector) and cleaned by hand — metadata and background
+removed, cropped to the mark. logo-dark.svg and favicon.svg are the same paths
+with dark-background colours; change all three together.
+
+Every raster here sits on a paper-coloured tile. The mark is dark ink on
+transparent, which disappears on a dark tab bar, a dark search result or an iOS
+home screen.
+
+Needs Pillow (on this Mac it is in the system interpreter, not the project venv)
+and the site's node_modules, for sharp:
     python3 site/scripts/generate-brand-assets.py
 """
 from __future__ import annotations
 
+import io
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -65,14 +77,30 @@ def read_site_config() -> dict[str, str]:
     return found
 
 
-def mark(px: int, letter: str) -> Image.Image:
-    """The rust square with the name's initial, as in favicon.svg."""
+_LOGO: Image.Image | None = None
+
+
+def logo(px: int) -> Image.Image:
+    """public/logo.svg on transparent, rendered once at 1024 by sharp, then downscaled."""
+    global _LOGO
+    if _LOGO is None:
+        png = subprocess.run(["node", str(SITE / "scripts/render-logo.mjs"), "1024"],
+                             check=True, capture_output=True, cwd=SITE).stdout
+        _LOGO = Image.open(io.BytesIO(png)).convert("RGBA")
+    return _LOGO.resize((px, px), Image.LANCZOS)
+
+
+def mark(px: int, rounded: bool = True, scale: float = 0.8) -> Image.Image:
+    """The logo centred on a paper tile, so it survives a dark background."""
     s = px * 8  # supersample, then downscale, so small sizes stay clean
     img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 3 / 40), fill=ACCENT + (255,))
-    d.text((s / 2, s * 0.53), letter, font=font(int(s * 0.62), True, "serif"),
-           fill=PAPER + (255,), anchor="mm")
+    if rounded:
+        d.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 0.2), fill=PAPER + (255,))
+    else:
+        d.rectangle([0, 0, s - 1, s - 1], fill=PAPER + (255,))
+    inner = int(s * scale)
+    img.alpha_composite(logo(inner), ((s - inner) // 2, (s - inner) // 2))
     return img.resize((px, px), Image.LANCZOS)
 
 
@@ -81,7 +109,8 @@ def share_card(name: str, stage: str, stats: list[tuple[str, str]]) -> Image.Ima
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, 10, 630], fill=ACCENT)
     wordmark = font(38, True, "serif")
-    img.paste(mark(64, name[0]), (72, 64), mark(64, name[0]))
+    head = logo(64)
+    img.paste(head, (72, 64), head)
     d.text((152, 96), name, font=wordmark, fill=INK, anchor="lm")
 
     badge_x = 152 + d.textlength(name, font=wordmark) + 20
@@ -110,14 +139,17 @@ def share_card(name: str, stage: str, stats: list[tuple[str, str]]) -> Image.Ima
 
 def main() -> None:
     config = read_site_config()
-    name, letter = config["name"], config["name"][0]
+    name = config["name"]
     stats = [("8", "protocols"), ("7", "datasets"), ("39", "comparisons"), ("9", "methods")]
 
     share_card(name, config["stage"], stats).save(PUBLIC / "og.png", "PNG", optimize=True)
-    mark(256, letter).save(PUBLIC / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
-    mark(180, letter).save(PUBLIC / "apple-touch-icon.png", "PNG", optimize=True)
-    print(f"Regenerated og.png, favicon.ico and apple-touch-icon.png for {name!r}.")
-    print("favicon.svg is hand-maintained — check its letter if the name changed.")
+    # A 16 px icon needs the mark nearly edge to edge; the tile is only a backing.
+    mark(256, scale=0.86).save(PUBLIC / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+    # iOS masks its own rounded corners and adds no background: full-bleed paper.
+    mark(180, rounded=False, scale=0.7).save(PUBLIC / "apple-touch-icon.png", "PNG", optimize=True)
+    mark(512, scale=0.76).save(PUBLIC / "logo.png", "PNG", optimize=True)
+    print(f"Regenerated og.png, favicon.ico, apple-touch-icon.png and logo.png for {name!r}.")
+    print("logo.svg, logo-dark.svg and favicon.svg are the vector sources — keep them in step.")
 
 
 if __name__ == "__main__":

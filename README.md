@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/public/logo-dark.svg">
+  <img src="site/public/logo.svg" alt="BCI Report logo: a head seen from above with five electrode sites" width="96">
+</picture>
+
 # BCI Report
 
 **Every EEG decoding score, reported with the protocol that produced it.**
