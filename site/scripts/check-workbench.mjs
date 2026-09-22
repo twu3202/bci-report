@@ -308,16 +308,35 @@ for(const [bad,good] of Object.entries(rejected))
 const ev=JSON.parse(readFileSync(new URL('../src/data/evidence-update.json',import.meta.url),'utf8'));
 const pageOf=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
 const everyPage=['','data-use/',...topicPages.map(([s])=>'topics/'+s+'/')].flatMap(p=>p==='data-use/'?[p]:[p,'zh/'+p]);
-// A held source has no key in the export and no trace on any page.
-assert.deepEqual(Object.keys(ev.results).sort(),['eesm23','phantom'],'only sources with a recorded aggregate_preview decision');
-// Names on every page. Its two headline figures only where its card would go:
-// 79.5% is also a legitimate interval bound on the dry-vs-wet page.
-for(const p of everyPage) assert.doesNotMatch(pageOf(p),/Alpha Waves|alphawaves|Cattan|zenodo\.2605110/,p+': a held source must not appear');
-for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/'])
-  assert.doesNotMatch(pageOf(p),/79\.5%|77\.9%|−1\.6 pp/,p+': the held Alpha Waves figures must not appear');
-// No per-person value: the in-ear and scalp minima and maxima of a 10-person cohort.
-for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/'])
+// Only sources with a recorded aggregate_preview decision; L-FAME (not included) leaves no trace.
+assert.deepEqual(Object.keys(ev.results).sort(),['alphawaves','eesm23','phantom'],'only sources with a recorded aggregate_preview decision');
+for(const p of everyPage) assert.doesNotMatch(pageOf(p),/L-FAME|lfame/i,p+': an excluded source must not appear');
+// No per-person value. EESM23: the in-ear and scalp minima and maxima of a 10-person cohort.
+// Alpha Waves: its per-person minima, maxima, medians and quartiles (balanced accuracy,
+// macro F1, and the paired difference), none of which the export carries. Its all-16
+// macro-F1 lower quartile, 59.7%, is left out: it equals an EESM23 interval bound here.
+for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/']){
   assert.doesNotMatch(pageOf(p),/34\.8%|70\.9%|54\.4%|81\.6%|52\.2%|73\.3%/,p+': an individual person\'s score leaked');
+  assert.doesNotMatch(pageOf(p),/80\.0%|90\.0%|100\.0%|65\.0%|33\.3%|79\.2%|67\.0%|89\.9%|−40\.0 pp|\+30\.0 pp|\+10\.0 pp/,p+': an individual Alpha Waves score leaked');
+}
+for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
+  assert.match(html,/79\.5%/,label+': four posterior electrodes');
+  assert.match(html,/77\.9%/,label+': all sixteen electrodes');
+  assert.match(html,/−1\.6 pp/,label+': paired difference, all sixteen minus four');
+  assert.match(html,/−10\.0 (?:to|至) \+6\.8 pp/,label+': its interval, which spans zero');
+  assert.match(html,/Grégoire Cattan/,label+': dataset authors credited');
+  assert.match(html,/zenodo\.2605110/,label+': the Zenodo record is credited');
+  assert.match(html,/hal-02086581/,label+': the primary report is credited');
+  assert.match(html,/recording 07|第 07 份/,label+': the recording the author loader excludes is named');
+  // Every "fewer is better" phrase must sit inside a negation.
+  for(const m of html.matchAll(/fewer electrodes (?:are )?(?:generally )?better|电极越少(?:一般)?越好/g))
+    assert.match(html.slice(Math.max(0,m.index-60),m.index),/not|neither|不能说明/,label+': "'+m[0]+'" reads as a claim');
+}
+assert.match(pageOf('topics/fewer-electrodes/'),/not two headsets/,'software subsets are not devices');
+// Alpha Waves figures stay on their own page. 79.5% is also a legitimate interval
+// bound on dry-vs-wet, so only the difference is checked elsewhere.
+for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-use/'))
+  assert.doesNotMatch(pageOf(p),/−1\.6 pp|77\.9%/,p+': Alpha Waves figures belong on the fewer-electrodes page');
 for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
   assert.match(html,/53\.6%/,label+': in-ear balanced accuracy');
   assert.match(html,/69\.0%/,label+': scalp balanced accuracy');
@@ -360,5 +379,5 @@ for(const path of bilingual){
 
 console.log('PASS: coverage matrix, five topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
-console.log('PASS: 2026-09-22 evidence — held source absent, no per-person values, R² unclamped, roadmap stays planned.');
+console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, L-FAME absent, no per-person values, R² unclamped, roadmap stays planned.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

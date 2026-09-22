@@ -1,17 +1,14 @@
 {
   "status": "pass",
   "release_id": "evidence-update-20260922",
-  "export_sha256": "055b177e65195a0df889810d2b43a4335fbabccfc3872992ccc90933670cfa2a",
-  "manifest_sha256": "ad17474580b025c4df3aeeef34e6b0243eb90609b4202aa8844b2e1395cf3e10",
+  "export_sha256": "219b6d4633894a83f12dd7e1e1ae8820ce9718ddca6807a57f49cf13337ba51a",
+  "manifest_sha256": "acf92eb64069f0145130e500b75766b4e72a69c07fd68d77958340db828851a4",
   "included": [
     "eesm23",
-    "phantom"
+    "phantom",
+    "alphawaves"
   ],
   "held_or_excluded": [
-    {
-      "id": "alphawaves",
-      "decision": "hold"
-    },
     {
       "id": "lfame",
       "decision": "not_included"

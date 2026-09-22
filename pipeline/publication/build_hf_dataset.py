@@ -200,7 +200,9 @@ Every row in `{MERGED}` carries its own `license`, `license_url` and
 
 `evidence-update.json` — the 22 September 2026 batch, reviewed under its own
 manifest: a paired in-ear versus scalp sleep comparison (EESM23, 10 people,
-identical epochs), a physical-phantom artifact test reporting correlation and
+identical epochs), four posterior electrodes against all sixteen for eyes open
+or closed (Alpha Waves, 19 of the source's 20 recordings), a physical-phantom
+artifact test reporting correlation and
 predictive R² (dimensionless; R² is negative where the decoder fails and is
 published as measured), and the status of planned adaptation experiments, which
 have **no results yet**. Heterogeneous by design, so it ships as JSON rather

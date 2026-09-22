@@ -72,13 +72,38 @@
     },
     {
       "id": "alphawaves",
-      "decision": "hold",
-      "holdReason": "The consent statement for this cohort has been found only in a third-party catalog (EEGDash). The primary report (HAL hal-02086581) could not be retrieved: the site serves a bot-protection challenge, which this session does not bypass. The authors' Zenodo record and GitHub repository contain no consent statement. The maintainer is reading the primary report directly; the decision will be recorded here when that is done.",
+      "decision": "aggregate_preview",
+      "decisionHistory": [
+        {
+          "date": "2026-09-22",
+          "decision": "hold",
+          "reason": "The consent statement for this cohort had been found only in a third-party catalog (EEGDash). The primary report (HAL hal-02086581) could not be retrieved by this session: the site serves a bot-protection challenge, which was not bypassed. The authors' Zenodo record and GitHub repository contain no consent statement."
+        },
+        {
+          "date": "2026-09-22",
+          "decision": "aggregate_preview",
+          "reason": "The maintainer retrieved the primary report directly (6-page PDF, HAL hal-02086581v1, technical report dated 17 December 2018). Its Participants section states the consent quoted in privacyReview. The hold was on the consent source only; the numerical audit had already passed."
+        }
+      ],
       "name": "EEG Alpha Waves dataset",
+      "task": "Eyes open / eyes closed",
       "source": "https://doi.org/10.5281/zenodo.2605110",
+      "version": "Zenodo record 2605110 (version DOI 10.5281/zenodo.2605110; concept DOI 10.5281/zenodo.2348891, the one the report cites), 20 recordings; 19 used",
       "license": "CC-BY-4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-      "attribution": "Grégoire Cattan, Pedro L. C. Rodrigues and Marco Congedo · EEG Alpha Waves dataset, Zenodo, doi:10.5281/zenodo.2605110.",
+      "attribution": "Grégoire Cattan, Pedro L. C. Rodrigues and Marco Congedo · EEG Alpha Waves dataset, Zenodo, doi:10.5281/zenodo.2605110. Report: Grégoire Cattan, Pedro Luiz Coelho Rodrigues and Marco Congedo · EEG Alpha Waves Dataset, research report, GIPSA-lab, Grenoble, 2018, hal-02086581.",
+      "privacyReview": "The primary report states that all participants provided written informed consent confirming the notification of the experimental process, the data management procedures and the right to withdraw from the experiment at any moment. It names no ethics committee or approval number, and it does not say whether public release was described in the consent; the authors released the recordings openly under CC BY 4.0. The source also ships a per-person age, gender and fatigue table; this project did not download it. Only cohort aggregates are published here: no per-person scores, no per-person distribution percentiles, no per-recording values.",
+      "reviewedAt": "2026-09-22",
+      "reviewBasis": [
+        "https://hal.science/hal-02086581/document",
+        "https://doi.org/10.5281/zenodo.2605110",
+        "https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA"
+      ],
+      "verification": [
+        "Consent statement, cohort size (20 volunteers), recording hardware (16 wet electrodes, g.USBamp, EasyCap EC20) and the Zenodo concept DOI read by the maintainer from the HAL PDF on 2026-09-22; the consent sentence is restated closely in privacyReview.",
+        "Licence, authors and record version read from the pinned Zenodo record (research/hf_expansion_v4_20260921/alphawaves/zenodo-record.json): record 2605110, concept record 2348891, cc-by-4.0.",
+        "The acquired file list (header.csv, header.mat, subject_01..20.mat) contains no demographic table."
+      ],
       "summary": {
         "path": "research/hf_expansion_v4_20260921/alphawaves/baseline-summary.json",
         "sha256": "67796f6dd9491283568f15190bac35aa57574d00cc8eae1e2376322e4bbe80d3"

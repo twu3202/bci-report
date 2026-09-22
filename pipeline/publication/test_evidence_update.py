@@ -20,24 +20,28 @@ class EvidenceBoundary(unittest.TestCase):
         held = {s['id'] for s in MANIFEST['sources'] if s['decision'] != 'aggregate_preview'}
         self.assertTrue(held, 'the fixture should exercise at least one hold')
         self.assertFalse(held & set(payload['results']))
-        self.assertFalse(any(h in json.dumps(payload) for h in ('Alpha Waves', 'alphawaves', 'L-FAME')))
+        self.assertNotIn('L-FAME', json.dumps(payload))
+
+    def test_a_hold_keeps_a_source_out_even_with_a_complete_record(self):
+        manifest = copy.deepcopy(MANIFEST)
+        next(s for s in manifest['sources'] if s['id'] == 'alphawaves')['decision'] = 'hold'
+        self.assertNotIn('alphawaves', build(manifest)['results'])
 
     def test_approving_a_source_needs_the_complete_record(self):
-        manifest = copy.deepcopy(MANIFEST)
-        alpha = next(s for s in manifest['sources'] if s['id'] == 'alphawaves')
-        alpha['decision'] = 'aggregate_preview'   # no privacyReview, reviewedAt or reviewBasis yet
-        with self.assertRaises(ValueError):
-            build(manifest)
+        for missing in ('privacyReview', 'reviewedAt', 'reviewBasis', 'attribution'):
+            manifest = copy.deepcopy(MANIFEST)
+            del next(s for s in manifest['sources'] if s['id'] == 'alphawaves')[missing]
+            with self.assertRaises(ValueError, msg=missing):
+                build(manifest)
 
-    def test_a_complete_approval_publishes_aggregates_only(self):
-        manifest = copy.deepcopy(MANIFEST)
-        alpha = next(s for s in manifest['sources'] if s['id'] == 'alphawaves')
-        alpha.update(decision='aggregate_preview', task='Eyes open / closed', version='Zenodo 2605110',
-                     privacyReview='test', reviewedAt='2026-09-22', reviewBasis=['https://example.org'])
-        payload = build(manifest)
-        text = json.dumps(payload['results']['alphawaves'])
-        for key in ev.PER_PERSON_KEYS:
-            self.assertNotIn(f'"{key}"', text, key)
+    def test_an_approved_source_publishes_aggregates_only(self):
+        for sid, result in build(MANIFEST)['results'].items():
+            text = json.dumps(result)
+            for key in ev.PER_PERSON_KEYS:
+                self.assertNotIn(f'"{key}"', text, f'{sid}: {key}')
+        alpha = build(MANIFEST)['results']['alphawaves']
+        self.assertEqual((alpha['cohort']['people'], alpha['cohort']['recordings_in_source']), (19, 20),
+                         'the selected cohort must stay distinguishable from the source cohort')
 
     def test_a_changed_input_byte_is_refused(self):
         manifest = copy.deepcopy(MANIFEST)

@@ -22,9 +22,10 @@ share a scale.
 
 39 model-by-protocol scores across 8 fixed protocols and 7 public datasets;
 82 measurements across four deployment questions; and a 22 September evidence
-update — a paired in-ear versus scalp sleep comparison, a physical-phantom
-artifact test, and the status of planned adaptation experiments, which have no
-results yet. They are kept apart rather than summed, because they measure
+update — a paired in-ear versus scalp sleep comparison, four posterior
+electrodes against sixteen for eyes open or closed, a physical-phantom artifact
+test, and the status of planned adaptation experiments, which have no results
+yet. They are kept apart rather than summed, because they measure
 different things. No raw EEG, no per-participant scores, no model weights.
 
 ## Get the data

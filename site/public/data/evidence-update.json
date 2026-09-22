@@ -266,6 +266,111 @@
           "https://doi.org/10.3390/s23198214"
         ]
       }
+    },
+    "alphawaves": {
+      "id": "alphawaves",
+      "dataset": "Alpha Waves / Zenodo 2605110",
+      "protocol_id": "alphawaves-selected19-eyes-closed-open-relative-bandpower-logreg-v1",
+      "question": "eyes open versus eyes closed with four posterior versus all sixteen electrodes",
+      "classes": 2,
+      "chance_level": 0.5,
+      "metric": "person_mean_balanced_accuracy",
+      "cohort": {
+        "people": 19,
+        "recordings_in_source": 20,
+        "episodes": 190,
+        "selection": "07 per author loader fixed cohort; source overlap flag occurs in the same recording but no causal relationship is claimed"
+      },
+      "configurations": [
+        {
+          "id": "posterior4",
+          "channels": [
+            "Pz",
+            "O1",
+            "Oz",
+            "O2"
+          ],
+          "evidence_state": "selected_subset",
+          "mean_balanced_accuracy": 0.7947368421052632,
+          "balanced_accuracy_bootstrap_95": [
+            0.7263157894736842,
+            0.8578947368421053
+          ],
+          "mean_macro_f1": 0.7659862067756805
+        },
+        {
+          "id": "all16",
+          "channels": [
+            "Fp1",
+            "Fp2",
+            "Fc5",
+            "Fz",
+            "Fc6",
+            "T7",
+            "Cz",
+            "T8",
+            "P7",
+            "P3",
+            "Pz",
+            "P4",
+            "P8",
+            "O1",
+            "Oz",
+            "O2"
+          ],
+          "evidence_state": "measured_full_recorded_eeg_set",
+          "mean_balanced_accuracy": 0.7789473684210527,
+          "balanced_accuracy_bootstrap_95": [
+            0.7052631578947368,
+            0.8526315789473684
+          ],
+          "mean_macro_f1": 0.7450540687382794
+        }
+      ],
+      "paired_difference": {
+        "comparison": "all sixteen minus posterior four",
+        "mean": -0.015789473684210534,
+        "bootstrap_95": [
+          -0.10000000000000002,
+          0.06842105263157894
+        ],
+        "interval_kind": "descriptive person bootstrap; not a population guarantee",
+        "people_all16_higher": 7,
+        "people_posterior4_higher": 7,
+        "people_tied": 5
+      },
+      "method": {
+        "classifier": "train-only StandardScaler plus fixed balanced L2 logistic regression C=1",
+        "crop_seconds_from_event": [
+          2,
+          8
+        ],
+        "features": "dimensionless theta/alpha/beta power divided by total 1-30 Hz power after demeaning and Hann window",
+        "split": "19 leave-one-person-out folds",
+        "window_seconds": 6
+      },
+      "limitations": [
+        "Selected-cohort eyes-open/closed pipeline sanity baseline, not a consumer-cap comparison or attention detector.",
+        "Unknown physical voltage units do not affect the dimensionless relative-power feature definition.",
+        "The four posterior channels are a software-selected subset of the same 16-channel recording, not a different physical headset.",
+        "Cohort distributions are not individual success probabilities."
+      ],
+      "rights": {
+        "name": "EEG Alpha Waves dataset",
+        "task": "Eyes open / eyes closed",
+        "source": "https://doi.org/10.5281/zenodo.2605110",
+        "version": "Zenodo record 2605110 (version DOI 10.5281/zenodo.2605110; concept DOI 10.5281/zenodo.2348891, the one the report cites), 20 recordings; 19 used",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Grégoire Cattan, Pedro L. C. Rodrigues and Marco Congedo · EEG Alpha Waves dataset, Zenodo, doi:10.5281/zenodo.2605110. Report: Grégoire Cattan, Pedro Luiz Coelho Rodrigues and Marco Congedo · EEG Alpha Waves Dataset, research report, GIPSA-lab, Grenoble, 2018, hal-02086581.",
+        "privacyReview": "The primary report states that all participants provided written informed consent confirming the notification of the experimental process, the data management procedures and the right to withdraw from the experiment at any moment. It names no ethics committee or approval number, and it does not say whether public release was described in the consent; the authors released the recordings openly under CC BY 4.0. The source also ships a per-person age, gender and fatigue table; this project did not download it. Only cohort aggregates are published here: no per-person scores, no per-person distribution percentiles, no per-recording values.",
+        "reviewedAt": "2026-09-22",
+        "reviewBasis": [
+          "https://hal.science/hal-02086581/document",
+          "https://doi.org/10.5281/zenodo.2605110",
+          "https://github.com/plcrodrigues/py.ALPHA.EEG.2017-GIPSA"
+        ]
+      }
     }
   },
   "roadmap": {
@@ -303,10 +408,11 @@
     }
   },
   "provenance": {
-    "manifest_sha256": "ad17474580b025c4df3aeeef34e6b0243eb90609b4202aa8844b2e1395cf3e10",
+    "manifest_sha256": "acf92eb64069f0145130e500b75766b4e72a69c07fd68d77958340db828851a4",
     "included": [
       "eesm23",
-      "phantom"
+      "phantom",
+      "alphawaves"
     ]
   }
 }

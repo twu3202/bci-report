@@ -109,8 +109,8 @@ export const topicPages = [
     slug: 'fewer-electrodes',
     kicker: 'Montage',
     title: 'Fewer electrodes',
-    summary: 'A paired in-ear versus scalp sleep comparison on identical epochs — and what it does not say about any headset.',
-    detail: 'Paired ear and scalp · 5-stage sleep · 10 people',
+    summary: 'In-ear against scalp for sleep, and four posterior electrodes against sixteen for eyes open or closed — and what neither says about any headset.',
+    detail: 'Two paired comparisons · 10 and 19 people',
   },
   {
     slug: 'on-the-move',

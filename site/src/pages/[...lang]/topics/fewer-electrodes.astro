@@ -10,8 +10,8 @@ const locale = localeOf(Astro.params.lang);
 const tc = topicChrome[locale];
 
 // Only sources with a recorded `aggregate_preview` decision are in the export.
-// A held source (Alpha Waves, pending its primary consent source) has no key
-// here, so its section cannot render by accident.
+// Two separate comparisons share this page and nothing else: different people,
+// tasks, chance levels and models, and no common ranking.
 const e = evidence.results.eesm23;
 const byId = Object.fromEntries(e.configurations.map(c => [c.id, c]));
 const ear = byId.in_ear, scalp = byId.scalp;
@@ -23,11 +23,19 @@ const allHigher = d.people_scalp_higher === cov.people;
 const dropped = cov.epochs_in_source - cov.epochs_used;
 const [m1, m2] = scalp.excluded_file_slots ?? [];
 
+// Alpha Waves: four posterior electrodes against all sixteen, eyes open/closed.
+const a = evidence.results.alphawaves;
+const aById = Object.fromEntries(a.configurations.map(c => [c.id, c]));
+const post4 = aById.posterior4, all16 = aById.all16;
+const ad = a.paired_difference;
+const spansZero = ad.bootstrap_95[0] < 0 && ad.bootstrap_95[1] > 0;
+const aBasis = a.rights.reviewBasis;
+
 const copy = {
   en: {
-    description: 'In-ear and scalp sleep staging compared on the same ten people and the same epochs: four physical in-ear channels against six scalp electrodes, with one fixed spectral model.',
-    eyebrow: 'Montage · in-ear and scalp sleep EEG',
-    dek: `On the same ${cov.people} people and the same 30-second epochs, six scalp electrodes staged sleep better than four in-ear channels${allHigher ? ` — for every one of the ${cov.people}` : ''}. That is a paired, descriptive result from one simple model on one cohort. It does not rank headsets, and it does not separate the hardware from electrode position and count.`,
+    description: 'Two paired electrode comparisons, kept apart: in-ear against scalp sleep staging on the same ten people and epochs, and four posterior electrodes against all sixteen for eyes open or closed.',
+    eyebrow: 'Montage · two paired comparisons',
+    dek: `On the same ${cov.people} people and the same 30-second epochs, six scalp electrodes staged sleep better than four in-ear channels${allHigher ? ` — for every one of the ${cov.people}` : ''}. That is a paired, descriptive result from one simple model on one cohort. It does not rank headsets, and it does not separate the hardware from electrode position and count. A second, unrelated comparison — four posterior electrodes against all sixteen for telling eyes open from closed — ${spansZero ? 'found no consistent difference' : 'is reported below'} across ${a.cohort.people} people.`,
     findingLabel: `Scalp minus in-ear balanced accuracy, same ${cov.people} people`,
     findingH3: allHigher ? 'Every person scored higher on scalp' : 'Most people scored higher on scalp',
     findingP: `${d.people_scalp_higher} of ${cov.people} people scored higher with six scalp electrodes than with four in-ear channels. The descriptive person-bootstrap interval for the mean difference is ${ipp(d.bootstrap_95)}. Both configurations were scored on the identical epochs.`,
@@ -46,8 +54,25 @@ const copy = {
     covEpochs: 'Paired epochs kept', covEpochsOf: `${n(cov.epochs_used)} of ${n(cov.epochs_in_source)}`,
     covPeople: 'People', covPeopleOf: 'all retained',
     covNights: 'Nights', covNightsOf: `${cov.nights_used} of ${cov.nights_in_source}`,
-    limitsH2: 'What this comparison can and cannot support',
-    limitsLede: 'A paired comparison on one cohort with one simple model. It narrows one question and settles no device choice.',
+    alphaEyebrow: 'Second comparison · eyes open and closed',
+    alphaH2: 'Four posterior electrodes against all sixteen',
+    alphaLede: `A different task on different people: telling eyes open from eyes closed in ${a.method.window_seconds}-second windows, where chance is ${pct(a.chance_level, 0)}. Both configurations are subsets of the same 16-electrode research recordings, scored with one fixed model over ${a.cohort.people} leave-one-person-out folds.`,
+    alphaFindingLabel: `All sixteen minus four posterior, same ${a.cohort.people} people`,
+    alphaFindingH3: spansZero ? 'No consistent difference' : (ad.mean < 0 ? 'The four posterior electrodes scored higher' : 'All sixteen scored higher'),
+    alphaFindingP: `${ad.people_all16_higher} of ${a.cohort.people} people scored higher with all sixteen electrodes, ${ad.people_posterior4_higher} with the four posterior ones, and ${ad.people_tied} tied. The descriptive person-bootstrap interval for the mean difference is ${ipp(ad.bootstrap_95)}.${spansZero ? ' It spans zero: in this cohort the four posterior electrodes were neither clearly better nor clearly worse than all sixteen. That does not make fewer electrodes better.' : ''}`,
+    alphaRegion: 'Eyes open and closed results for four and sixteen electrodes, scrolls horizontally',
+    post4Label: 'Four posterior electrodes', post4Note: 'selected in software from the same recording',
+    all16Label: 'All sixteen electrodes', all16Note: 'every electrode the cap recorded',
+    limitsH2: 'What these comparisons can and cannot support',
+    limitsLede: 'Two paired comparisons on two different cohorts, each with one simple, untuned model. Each narrows one question; neither settles a device choice, and the two do not share a ranking.',
+    sleepLimitsLabel: 'Sleep · in-ear and scalp',
+    alphaLimitsLabel: 'Eyes open and closed · four and sixteen',
+    alphaLimits: [
+      ['Eyes open or closed, not attention', 'Closing the eyes produces a strong alpha rhythm over the back of the head, which is why four posterior electrodes can carry this task. It is a pipeline check, not concentration, workload or intent detection.'],
+      ['Subsets of one recording, not two headsets', 'Both configurations are channels selected in software from the same 16-electrode wet-cap recordings. Four channels picked this way do not validate a physical four-channel device.'],
+      [`${a.cohort.people} of ${a.cohort.recordings_in_source} recordings`, `The source has ${a.cohort.recordings_in_source} recordings. The authors’ own data loader leaves out recording 07, and this comparison keeps that fixed cohort. Our event audit also flagged overlapping events in that recording, but the authors’ reason for leaving it out is not established.`],
+      ['An interval, not a verdict', `The interval is a descriptive bootstrap over ${a.cohort.people} people, not a population estimate. It shows neither that fewer electrodes are generally better nor that they are generally no worse.`],
+    ],
     limits: [
       ['Six scalp electrodes, not eight', 'The scalp files also carry two mastoid slots. They were used only in the completeness screen and never entered the model.'],
       ['Position, count and hardware move together', 'The in-ear and scalp configurations differ in placement, geometry and number of electrodes. The difference is descriptive, not an estimate of what the ear hardware alone costs.'],
@@ -56,11 +81,13 @@ const copy = {
     ],
     consent: 'Consent covered the study; the data were released after the GDPR office of Region Midt judged them fully anonymized. Only cohort aggregates appear here.',
     datasetLink: 'OpenNeuro dataset ↗', paperLink: 'Scientific Data paper ↗', exportLink: 'Processed export ↗',
+    alphaConsent: 'According to the primary report, every participant gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment. The report names no ethics committee. Only cohort aggregates appear here.',
+    zenodoLink: 'Zenodo record ↗', reportLink: 'HAL report ↗', codeLink: 'Authors’ code ↗',
   },
   zh: {
-    description: '在同样 10 名被试、同样的数据帧上，比较耳道内与头皮电极的睡眠分期：4 个耳道内通道对 6 个头皮电极，使用同一个固定的频谱模型。',
-    eyebrow: '电极布局 · 耳道内与头皮睡眠 EEG',
-    dek: `在同样的 ${cov.people} 名被试、同样的 30 秒数据帧上，6 个头皮电极的睡眠分期效果好于 4 个耳道内通道${allHigher ? `——${cov.people} 人无一例外` : ''}。这是单一队列、单一简单模型的配对描述性结果。它不给头戴设备排名，也无法把硬件本身的影响与电极位置、数量分开。`,
+    description: '两项分开呈现的电极配对比较：同样 10 名被试、同样数据帧上的耳道内与头皮睡眠分期；以及区分睁眼与闭眼时，后部 4 个电极对全部 16 个电极。',
+    eyebrow: '电极布局 · 两项配对比较',
+    dek: `在同样的 ${cov.people} 名被试、同样的 30 秒数据帧上，6 个头皮电极的睡眠分期效果好于 4 个耳道内通道${allHigher ? `——${cov.people} 人无一例外` : ''}。这是单一队列、单一简单模型的配对描述性结果。它不给头戴设备排名，也无法把硬件本身的影响与电极位置、数量分开。另一项互不相关的比较——区分睁眼与闭眼时，后部 4 个电极对全部 16 个电极——${spansZero ? `在 ${a.cohort.people} 名被试上没有发现一致的差异` : `结果见下文（${a.cohort.people} 名被试）`}。`,
     findingLabel: `头皮减耳道内的平衡准确率，同一批 ${cov.people} 名被试`,
     findingH3: allHigher ? '每名被试都是头皮更高' : '多数被试头皮更高',
     findingP: `${cov.people} 名被试中有 ${d.people_scalp_higher} 名，6 个头皮电极的结果高于 4 个耳道内通道。平均差值的描述性被试 bootstrap 区间为 ${ipp(d.bootstrap_95)}。两种配置在完全相同的数据帧上评分。`,
@@ -79,8 +106,25 @@ const copy = {
     covEpochs: '保留的配对数据帧', covEpochsOf: `${n(cov.epochs_in_source)} 帧中的 ${n(cov.epochs_used)} 帧`,
     covPeople: '被试', covPeopleOf: '全部保留',
     covNights: '夜晚', covNightsOf: `${cov.nights_in_source} 晚中的 ${cov.nights_used} 晚`,
-    limitsH2: '这项比较能支持什么、不能支持什么',
-    limitsLede: '单一队列、单一简单模型上的配对比较。它只回答一个较窄的问题，不能替任何设备选型下结论。',
+    alphaEyebrow: '第二项比较 · 睁眼与闭眼',
+    alphaH2: '后部 4 个电极对全部 16 个电极',
+    alphaLede: `另一个任务、另一批被试：用 ${a.method.window_seconds} 秒窗口区分睁眼与闭眼，随机水平为 ${pct(a.chance_level, 0)}。两种配置都取自同一套 16 电极研究记录，用同一个固定模型做 ${a.cohort.people} 折留一被试交叉验证。`,
+    alphaFindingLabel: `全部 16 个减后部 4 个的平衡准确率，同一批 ${a.cohort.people} 名被试`,
+    alphaFindingH3: spansZero ? '没有一致的差异' : (ad.mean < 0 ? '后部 4 个电极更高' : '全部 16 个电极更高'),
+    alphaFindingP: `${a.cohort.people} 名被试中，${ad.people_all16_higher} 名用全部 16 个电极更高，${ad.people_posterior4_higher} 名用后部 4 个电极更高，${ad.people_tied} 名持平。平均差值的描述性被试 bootstrap 区间为 ${ipp(ad.bootstrap_95)}。${spansZero ? '区间跨过零：在这批被试上，后部 4 个电极既没有明显更好，也没有明显更差。这不能说明电极越少越好。' : ''}`,
+    alphaRegion: '4 个与 16 个电极的睁眼闭眼结果，可横向滚动',
+    post4Label: '后部 4 个电极', post4Note: '从同一记录中用软件选出',
+    all16Label: '全部 16 个电极', all16Note: '电极帽记录的全部电极',
+    limitsH2: '这两项比较能支持什么、不能支持什么',
+    limitsLede: '两个不同队列上的两项配对比较，各自只用一个简单、未调参的模型。每项只回答一个较窄的问题，都不能替设备选型下结论，两者也不共享排名。',
+    sleepLimitsLabel: '睡眠 · 耳道内与头皮',
+    alphaLimitsLabel: '睁眼与闭眼 · 4 个与 16 个电极',
+    alphaLimits: [
+      ['区分睁闭眼，不是检测注意力', '闭眼会在头部后方产生很强的 alpha 节律，所以后部 4 个电极就足以承载这个任务。它是流程检验，不是专注度、脑力负荷或意图检测。'],
+      ['同一记录的子集，不是两款设备', '两种配置都是从同一套 16 电极湿电极帽记录中用软件选出的通道。这样选出的 4 个通道不能验证一台实体的 4 通道设备。'],
+      [`${a.cohort.recordings_in_source} 份记录中用了 ${a.cohort.people} 份`, `原始数据共有 ${a.cohort.recordings_in_source} 份记录。作者自己的数据加载程序排除了第 07 份，这项比较沿用了这个固定队列。我们的事件审计也在这份记录里发现了重叠事件，但作者排除它的原因尚不清楚。`],
+      ['是区间，不是结论', `这个区间是 ${a.cohort.people} 名被试上的描述性 bootstrap，不是总体估计。它既不能说明电极越少一般越好，也不能说明电极减少一般不会变差。`],
+    ],
     limits: [
       ['是 6 个头皮电极，不是 8 个', '头皮文件里还有两个乳突位通道，只用于完整性筛选，从未进入模型。'],
       ['位置、数量与硬件一起变化', '耳道内与头皮两种配置在电极位置、几何形状和数量上都不同。这个差值是描述性的，不是耳部硬件本身带来的损失估计。'],
@@ -89,12 +133,18 @@ const copy = {
     ],
     consent: '同意书覆盖的是研究本身；数据是在 Region Midt 的 GDPR 办公室判定其已完全匿名化之后才公开的。这里只发布队列级聚合结果。',
     datasetLink: 'OpenNeuro 数据集 ↗', paperLink: 'Scientific Data 论文 ↗', exportLink: '处理后导出版本 ↗',
+    alphaConsent: '据原始报告，每名被试都签署了书面知情同意，内容涵盖实验流程、数据管理方式以及随时退出实验的权利。报告未提及伦理委员会。这里只发布队列级聚合结果。',
+    zenodoLink: 'Zenodo 记录 ↗', reportLink: 'HAL 报告 ↗', codeLink: '作者代码 ↗',
   },
 }[locale];
 const card = topicCards[locale]['fewer-electrodes'];
 const rows = [
   { cfg: ear, label: copy.earLabel, note: copy.earNote, tone: 'ink' as const },
   { cfg: scalp, label: copy.scalpLabel, note: copy.scalpNote, tone: 'rust' as const },
+];
+const alphaRows = [
+  { cfg: post4, label: copy.post4Label, note: copy.post4Note, tone: 'rust' as const },
+  { cfg: all16, label: copy.all16Label, note: copy.all16Note, tone: 'ink' as const },
 ];
 const basis = e.rights.reviewBasis;
 ---
@@ -132,10 +182,31 @@ const basis = e.rights.reviewBasis;
     </div>
   </section>
 
+  <section class="topic-section" id="posterior-subset" aria-labelledby="alpha-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.alphaEyebrow}</p><h2 id="alpha-heading">{copy.alphaH2}</h2></div><p>{copy.alphaLede}</p></div>
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(ad.mean, 1)}</strong><span>{copy.alphaFindingLabel}</span></div>
+      <div class="finding-copy"><h3>{copy.alphaFindingH3}</h3><p>{copy.alphaFindingP}</p></div>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.alphaRegion}>
+      <table>
+        <caption>{copy.caption}</caption>
+        <thead><tr><th scope="col">{copy.colConfig}</th><th scope="col">{copy.colChannels}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colF1}</th></tr></thead>
+        <tbody>{alphaRows.map(r => <tr><th scope="row">{r.label}<small>{r.note}</small></th><td><span class="channel-list">{r.cfg.channels.join(' · ')}</span></td><td><span class="metric">{pct(r.cfg.mean_balanced_accuracy)}</span><span class="interval">{intervalPct(r.cfg.balanced_accuracy_bootstrap_95 as [number, number])}</span><ScoreBar value={r.cfg.mean_balanced_accuracy} label={copy.baLabel(pct(r.cfg.mean_balanced_accuracy))} tone={r.tone} /></td><td><span class="metric">{pct(r.cfg.mean_macro_f1)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <p class="eyebrow limits-label">{copy.sleepLimitsLabel}</p>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
-    <div class="citation-list"><article><h3 lang="en">{e.rights.name}</h3><p lang="en">{e.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.exportLink}</a> · <a href={e.rights.licenseUrl} target="_blank" rel="noreferrer">{e.rights.license}</a></p></article></div>
+    <p class="eyebrow limits-label">{copy.alphaLimitsLabel}</p>
+    <div class="method-grid-wide">{copy.alphaLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list">
+      <article><h3 lang="en">{e.rights.name}</h3><p lang="en">{e.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.exportLink}</a> · <a href={e.rights.licenseUrl} target="_blank" rel="noreferrer">{e.rights.license}</a></p></article>
+      <article><h3 lang="en">{a.rights.name}</h3><p lang="en">{a.rights.attribution}</p><p>{copy.alphaConsent}</p><p><a href={aBasis[1]} target="_blank" rel="noreferrer">{copy.zenodoLink}</a> · <a href={aBasis[0]} target="_blank" rel="noreferrer">{copy.reportLink}</a> · <a href={aBasis[2]} target="_blank" rel="noreferrer">{copy.codeLink}</a> · <a href={a.rights.licenseUrl} target="_blank" rel="noreferrer">{a.rights.license}</a></p></article>
+    </div>
     <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version} · {tc.generated} {evidence.generated_at.slice(0,10)}{tc.period}</p>
   </section>
 </TopicLayout>
