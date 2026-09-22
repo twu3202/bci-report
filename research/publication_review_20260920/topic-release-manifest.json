@@ -18,7 +18,7 @@
     },
     "base_manifest": {
       "path": "research/publication_review_20260920/release-manifest.json",
-      "sha256": "e91c957fcb90e5ecaa6e028fef490b55076f8401585dff19c89de5af12e7135c"
+      "sha256": "e030bceb98a1a2220112d4f29ddb6405ff78de9adda1820529bb9944daf18691"
     }
   },
   "approved_dataset_ids": [

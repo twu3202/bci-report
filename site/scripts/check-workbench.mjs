@@ -138,8 +138,12 @@ for(const tag of built.match(/<td class="cell"[^>]*>/g)||[])
   if(tag.includes('data-rank="lead"'))
     assert.ok(!tag.includes('Idle &amp; command'),'detection alone must not crown a leader on the tradeoff protocol');
 assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>across<\/strong>/,'the matrix must say bars do not compare sideways');
-assert.match(built,/82 additional aggregate measurements/,'homepage must distinguish the reviewed topic extension from the 39-comparison matrix');
-assert.match(built,/not 82 independent experiments/,'homepage must not inflate repeated conditions into independent experiments');
+// These pinned the count "82". The topics now draw on two exports measuring
+// different things (proportions, correlation, R²), so a summed total would be
+// the inflation these checks exist to prevent. The intent is kept, not the number.
+assert.match(built,/separate from the deployment topics above/,'homepage must distinguish the topic extension from the 39-comparison matrix');
+assert.match(built,/not independent experiments, and not an overall ranking/,'homepage must not inflate repeated conditions into independent experiments');
+assert.doesNotMatch(built,/\d+ additional aggregate measurements/,'no summed measurement count across exports that measure different things');
 // Every protocol is reachable without JavaScript and without a dropdown.
 for(const t of data.tracks){
   assert.ok(built.includes('data-jump="'+t.id+'"'),t.id+': needs a matrix column heading');
@@ -156,15 +160,17 @@ assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-
 // browser, which is how every matrix bar reached production empty.
 const topicPages=[
   ['dry-vs-wet','Dry vs. wet electrodes'],
+  ['fewer-electrodes','Fewer electrodes'],
   ['on-the-move','On the move'],
   ['calibration-budget','How much calibration?'],
   ['does-pretraining-help','Does pretraining help?'],
 ];
+const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page='../dist/topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.ok(html.includes('<h1>'+title+'</h1>'),slug+': page title must render in the initial HTML');
-  assert.ok(html.includes('href="/data/deployment-topics.json"'),slug+': reviewed aggregate download must be reachable');
+  assert.ok(html.includes('href="/data/'+dataFileOf(slug)+'"'),slug+': the reviewed export holding its figures must be reachable');
   assert.ok(html.includes('aria-label="Breadcrumb"'),slug+': breadcrumb is required');
   assert.ok(html.includes('rel="canonical"'),slug+': canonical link is required');
 }
@@ -232,7 +238,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极与湿电极','on-the-move':'移动中的解码','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
+const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -260,7 +266,7 @@ for(const path of bilingual){
 for(const [slug] of topicPages){
   const zh=read('zh/topics/'+slug+'/');
   assert.ok(zh.includes('<h1>'+zhTitles[slug]+'</h1>'),slug+': Chinese title must render in the initial HTML');
-  assert.ok(zh.includes('href="/data/deployment-topics.json"'),slug+': the same reviewed download, not a translated copy');
+  assert.ok(zh.includes('href="/data/'+dataFileOf(slug)+'"'),slug+': the same reviewed download, not a translated copy');
 }
 // Credits survive translation: every DOI on an English topic page is on its Chinese twin.
 for(const [slug] of topicPages){
@@ -297,6 +303,51 @@ const workbenchSource=readFileSync(new URL('../src/scripts/workbench.ts',import.
 for(const [bad,good] of Object.entries(rejected))
   assert.ok(!workbenchSource.includes(bad),`workbench.ts: "${bad}" is a rejected rendering — use "${good}"`);
 
+// --- 2026-09-22 evidence batch --------------------------------------------------
+// The handoff's hard lines, each pinned to the concrete way it could break.
+const ev=JSON.parse(readFileSync(new URL('../src/data/evidence-update.json',import.meta.url),'utf8'));
+const pageOf=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
+const everyPage=['','data-use/',...topicPages.map(([s])=>'topics/'+s+'/')].flatMap(p=>p==='data-use/'?[p]:[p,'zh/'+p]);
+// A held source has no key in the export and no trace on any page.
+assert.deepEqual(Object.keys(ev.results).sort(),['eesm23','phantom'],'only sources with a recorded aggregate_preview decision');
+// Names on every page. Its two headline figures only where its card would go:
+// 79.5% is also a legitimate interval bound on the dry-vs-wet page.
+for(const p of everyPage) assert.doesNotMatch(pageOf(p),/Alpha Waves|alphawaves|Cattan|zenodo\.2605110/,p+': a held source must not appear');
+for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/'])
+  assert.doesNotMatch(pageOf(p),/79\.5%|77\.9%|−1\.6 pp/,p+': the held Alpha Waves figures must not appear');
+// No per-person value: the in-ear and scalp minima and maxima of a 10-person cohort.
+for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/'])
+  assert.doesNotMatch(pageOf(p),/34\.8%|70\.9%|54\.4%|81\.6%|52\.2%|73\.3%/,p+': an individual person\'s score leaked');
+for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
+  assert.match(html,/53\.6%/,label+': in-ear balanced accuracy');
+  assert.match(html,/69\.0%/,label+': scalp balanced accuracy');
+  assert.match(html,/\+15\.4 pp/,label+': paired difference in percentage points');
+  assert.match(html,/11,674/,label+': usable-data coverage travels with the scores');
+  assert.match(html,/10\.1038\/s41597-025-04579-8/,label+': the study paper is credited');
+  assert.match(html,/10\.18112\/openneuro\.ds005178/,label+': the dataset record is credited');
+  assert.match(html,/Yousef Rezaei Tabar/,label+': the dataset\'s own author list, not only the paper\'s');
+}
+assert.match(pageOf('topics/fewer-electrodes/'),/Six scalp electrodes, not eight/,'mastoid slots are not scalp sensors');
+// Phantom: R² as measured. Negative, dimensionless, never a percent.
+for(const p of ['topics/on-the-move/','zh/topics/on-the-move/']){
+  const html=pageOf(p);
+  for(const v of ['−795.772','−596.820','−142.832','0.567']) assert.ok(html.includes(v),p+': predictive R² '+v+' must appear as measured');
+  assert.doesNotMatch(html,/−?\d+\.\d{3}%/,p+': correlation and R² are dimensionless, never percent');
+}
+assert.match(pageOf('topics/on-the-move/'),/Neither column is accuracy/,'phantom metrics must be distinguished from accuracy');
+// Roadmap: planned is planned.
+assert.equal(ev.roadmap.peft.status,'planned');
+for(const p of ['topics/calibration-budget/','zh/topics/calibration-budget/']){
+  const html=pageOf(p);
+  // Its exact two-decimal figures. One decimal collides: 65.1% is a CCA value on this page.
+  assert.doesNotMatch(html,/56\.34|65\.05/,p+': the unapproved partial-fine-tuning pilot must not appear');
+  // Case-insensitive: the first version missed a sentence-initial "In progress".
+  assert.doesNotMatch(html,/\bin progress\b|\bunderway\b|\b(?:is|now) running\b|进行中|正在运行|已开始/i,p+': a planned comparison must not be described as running');
+  assert.ok(html.includes('38,400')&&html.includes('5,819,936'),p+': engineering parameter counts');
+  assert.doesNotMatch(html,/0\.87|\b1 s(econd)?\b|约 ?1 秒/,p+': the synthetic smoke-test runtime is not a training cost');
+}
+assert.match(pageOf('topics/calibration-budget/'),/Real EEG LoRA results are not yet available/,'the roadmap states its evidence level');
+
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
   assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,
@@ -307,6 +358,7 @@ for(const path of bilingual){
   assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
 }
 
-console.log('PASS: coverage matrix, four topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: coverage matrix, five topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
+console.log('PASS: 2026-09-22 evidence — held source absent, no per-person values, R² unclamped, roadmap stays planned.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

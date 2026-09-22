@@ -68,6 +68,7 @@ export const ogLocale: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' };
 export const translatedPaths = [
   '/',
   '/topics/dry-vs-wet/',
+  '/topics/fewer-electrodes/',
   '/topics/on-the-move/',
   '/topics/calibration-budget/',
   '/topics/does-pretraining-help/',
@@ -237,17 +238,20 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Four deployment topics add ${c.topicRows} measurements on sensors, movement, calibration and pretraining.`,
+      `Five deployment topics add evidence on sensors, electrode layout, movement, calibration and pretraining.`,
     statsLabel: 'Core matrix coverage',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     topicsEyebrow: 'Deployment questions',
-    topicsH2: 'Four ways to read the new evidence',
-    topicsLede: (n: number) =>
-      `${n} additional aggregate measurements, organized by the decision they can inform. ` +
-      `They are repeated conditions within protocols, not ${n} independent experiments and not an overall ranking.`,
+    topicsH2: 'Five ways to read the new evidence',
+    // No summed count: the topics now draw on two exports that measure different
+    // things (proportions, correlation, R²), and one total would add them up.
+    topicsLede: (_n: number) =>
+      'Aggregate measurements, organized by the decision they can inform. They are repeated ' +
+      'conditions within protocols, not independent experiments, and not an overall ranking.',
     readEvidence: 'Read the evidence →',
     topicsDownloadNote: 'Full-precision proportions, paired contrasts, descriptive intervals, citations and five three-seed sensitivity groups.',
     topicsDownload: 'Download reviewed topic data · JSON ↓',
+    evidenceDownload: 'Evidence update, 22 September · JSON ↓',
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
     matrixLede: 'The original eight-protocol snapshot, separate from the deployment topics above. Blank cells are protocols a method has not been run on — not failures.',
@@ -340,17 +344,17 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `四个部署专题另外补充了 ${c.topicRows} 项测量，涉及传感器、运动、校准与预训练。`,
+      `五个部署专题补充了关于传感器、电极布局、运动、校准与预训练的证据。`,
     statsLabel: '核心矩阵覆盖范围',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     topicsEyebrow: '部署问题',
-    topicsH2: '解读新证据的四个角度',
-    topicsLede: (n: number) =>
-      `另外 ${n} 项聚合测量，按它们能支持的决策来组织。` +
-      `它们是同一协议内的重复条件，不是 ${n} 项独立实验，也不是总排名。`,
+    topicsH2: '解读新证据的五个角度',
+    topicsLede: (_n: number) =>
+      '聚合测量结果，按它们能支持的决策来组织。它们是同一协议内的重复条件，不是独立实验，也不是总排名。',
     readEvidence: '查看证据 →',
     topicsDownloadNote: '全精度比例、配对对比、描述性区间、引用，以及五组各含三个随机种子的敏感性分析。',
     topicsDownload: '下载已审核的专题数据 · JSON ↓',
+    evidenceDownload: '9 月 22 日证据更新 · JSON ↓',
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
     matrixLede: '最初的八协议快照，与上方的部署专题相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
@@ -487,6 +491,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'dry-vs-wet': { kicker: 'Sensor transfer', title: 'Dry vs. wet electrodes',
       summary: 'What changes when a decoder crosses between two native eight-channel recordings from the same 102 people?',
       detail: '2 s SSVEP · 12 targets · balanced accuracy' },
+    'fewer-electrodes': { kicker: 'Montage', title: 'Fewer electrodes',
+      summary: 'A paired in-ear versus scalp sleep comparison on identical epochs — and what it does not say about any headset.',
+      detail: 'Paired ear and scalp · 5-stage sleep · 10 people' },
     'on-the-move': { kicker: 'Motion robustness', title: 'On the move',
       summary: 'Standing, walking and running results, with scalp and ear recordings and incompatible time windows kept apart.',
       detail: 'SSVEP balanced accuracy · ERP ROC AUC' },
@@ -501,6 +508,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
       summary: '同一批 102 名被试、两种原生八通道记录之间，解码器迁移过去会发生什么？',
       detail: '2 秒 SSVEP · 12 个目标 · 平衡准确率' },
+    'fewer-electrodes': { kicker: '电极布局', title: '更少的电极',
+      summary: '同一批被试、同一批数据帧上，耳道内电极与头皮电极的睡眠分期配对比较——以及它不能说明哪款设备更好。',
+      detail: '耳部与头皮配对 · 五期睡眠分期 · 10 名被试' },
     'on-the-move': { kicker: '运动鲁棒性', title: '移动中的解码',
       summary: '站立、行走与跑动时的结果，头皮与耳部记录、互不兼容的时间窗分开呈现。',
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },

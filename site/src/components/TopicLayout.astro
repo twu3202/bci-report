@@ -17,8 +17,11 @@ interface Props {
   eyebrow: string;
   dek: string;
   activeSlug: typeof topicPages[number]['slug'];
+  /** The reviewed export holding this page's figures; the first is the hero download. */
+  dataFiles?: string[];
 }
-const { locale, title, description, path, eyebrow, dek, activeSlug } = Astro.props;
+const { locale, title, description, path, eyebrow, dek, activeSlug,
+        dataFiles = ['/data/deployment-topics.json'] } = Astro.props;
 const t = chrome[locale];
 const c = topicChrome[locale];
 const pageTitle = `${title} · ${site.name}`;
@@ -66,7 +69,7 @@ const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, tit
       <p class="eyebrow">{eyebrow}</p>
       <h1>{title}</h1>
       <p class="topic-dek">{dek}</p>
-      <div class="topic-actions"><a class="button primary" href="/data/deployment-topics.json" download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
+      <div class="topic-actions"><a class="button primary" href={dataFiles[0]} download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
     </section>
     <slot />
     <nav class="topic-switcher" aria-label={c.exploreNav}>
@@ -74,6 +77,6 @@ const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, tit
       <div>{topicPages.map(topic => <a href={hrefFor(`/topics/${topic.slug}/`, locale)} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topicCards[locale][topic.slug].kicker}</small><strong>{topicCards[locale][topic.slug].title}</strong></a>)}</div>
     </nav>
   </main>
-  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data/deployment-topics.json" download>{t.downloadData}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#topic-content">{t.footerTop}</a></footer>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href={dataFiles[0]} download>{t.downloadData}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#topic-content">{t.footerTop}</a></footer>
 </body>
 </html>

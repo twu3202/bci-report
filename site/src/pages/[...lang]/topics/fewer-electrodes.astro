@@ -1,0 +1,141 @@
+---
+import evidence from '../../../data/evidence-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
+import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+// Only sources with a recorded `aggregate_preview` decision are in the export.
+// A held source (Alpha Waves, pending its primary consent source) has no key
+// here, so its section cannot render by accident.
+const e = evidence.results.eesm23;
+const byId = Object.fromEntries(e.configurations.map(c => [c.id, c]));
+const ear = byId.in_ear, scalp = byId.scalp;
+const d = e.paired_difference;
+const cov = e.cohort;
+const n = (v: number) => v.toLocaleString('en-US');
+const ipp = (i: number[]) => intervalPp(i as [number, number], 1, locale);
+const allHigher = d.people_scalp_higher === cov.people;
+const dropped = cov.epochs_in_source - cov.epochs_used;
+const [m1, m2] = scalp.excluded_file_slots ?? [];
+
+const copy = {
+  en: {
+    description: 'In-ear and scalp sleep staging compared on the same ten people and the same epochs: four physical in-ear channels against six scalp electrodes, with one fixed spectral model.',
+    eyebrow: 'Montage · in-ear and scalp sleep EEG',
+    dek: `On the same ${cov.people} people and the same 30-second epochs, six scalp electrodes staged sleep better than four in-ear channels${allHigher ? ` — for every one of the ${cov.people}` : ''}. That is a paired, descriptive result from one simple model on one cohort. It does not rank headsets, and it does not separate the hardware from electrode position and count.`,
+    findingLabel: `Scalp minus in-ear balanced accuracy, same ${cov.people} people`,
+    findingH3: allHigher ? 'Every person scored higher on scalp' : 'Most people scored higher on scalp',
+    findingP: `${d.people_scalp_higher} of ${cov.people} people scored higher with six scalp electrodes than with four in-ear channels. The descriptive person-bootstrap interval for the mean difference is ${ipp(d.bootstrap_95)}. Both configurations were scored on the identical epochs.`,
+    tableEyebrow: 'Two configurations, identical epochs',
+    tableH2: 'Four in-ear channels against six scalp electrodes',
+    tableLede: `Five-stage sleep, scored in 30-second epochs; chance is ${pct(e.chance_level, 0)}. Ten leave-one-person-out folds and one fixed model for both configurations.`,
+    tableRegion: 'In-ear and scalp sleep staging results, scrolls horizontally',
+    caption: 'Person-mean balanced accuracy and macro F1. Descriptive person-bootstrap 95% intervals below each balanced accuracy.',
+    colConfig: 'Configuration', colChannels: 'Channels', colBa: 'Balanced accuracy', colF1: 'Macro F1',
+    earLabel: 'Four in-ear channels', earNote: 'physical in-ear channels; not standard scalp positions',
+    scalpLabel: 'Six scalp electrodes', scalpNote: `mastoid slots ${m1} and ${m2} used only to screen for complete epochs`,
+    baLabel: (v: string) => `${v} balanced accuracy`,
+    covEyebrow: 'Usable data',
+    covH2: 'What the scores are conditioned on',
+    covLede: `An epoch was kept only if both configurations had complete, finite data for it; that rule dropped ${n(dropped)} epochs. The scores describe this subset, not how often either device records usable data.`,
+    covEpochs: 'Paired epochs kept', covEpochsOf: `${n(cov.epochs_used)} of ${n(cov.epochs_in_source)}`,
+    covPeople: 'People', covPeopleOf: 'all retained',
+    covNights: 'Nights', covNightsOf: `${cov.nights_used} of ${cov.nights_in_source}`,
+    limitsH2: 'What this comparison can and cannot support',
+    limitsLede: 'A paired comparison on one cohort with one simple model. It narrows one question and settles no device choice.',
+    limits: [
+      ['Six scalp electrodes, not eight', 'The scalp files also carry two mastoid slots. They were used only in the completeness screen and never entered the model.'],
+      ['Position, count and hardware move together', 'The in-ear and scalp configurations differ in placement, geometry and number of electrodes. The difference is descriptive, not an estimate of what the ear hardware alone costs.'],
+      ['One simple, untuned model', 'Five log-bandpower features per channel and an L2 logistic regression with no hyperparameter search. Not a foundation model, and not a ceiling for either configuration.'],
+      ['Not the core sleep protocol', 'The eight-protocol matrix scores the EESM19 scalp subset with a different cohort and recipe. The two sleep results do not share a ranking.'],
+    ],
+    consent: 'Consent covered the study; the data were released after the GDPR office of Region Midt judged them fully anonymized. Only cohort aggregates appear here.',
+    datasetLink: 'OpenNeuro dataset ↗', paperLink: 'Scientific Data paper ↗', exportLink: 'Processed export ↗',
+  },
+  zh: {
+    description: '在同样 10 名被试、同样的数据帧上，比较耳道内与头皮电极的睡眠分期：4 个耳道内通道对 6 个头皮电极，使用同一个固定的频谱模型。',
+    eyebrow: '电极布局 · 耳道内与头皮睡眠 EEG',
+    dek: `在同样的 ${cov.people} 名被试、同样的 30 秒数据帧上，6 个头皮电极的睡眠分期效果好于 4 个耳道内通道${allHigher ? `——${cov.people} 人无一例外` : ''}。这是单一队列、单一简单模型的配对描述性结果。它不给头戴设备排名，也无法把硬件本身的影响与电极位置、数量分开。`,
+    findingLabel: `头皮减耳道内的平衡准确率，同一批 ${cov.people} 名被试`,
+    findingH3: allHigher ? '每名被试都是头皮更高' : '多数被试头皮更高',
+    findingP: `${cov.people} 名被试中有 ${d.people_scalp_higher} 名，6 个头皮电极的结果高于 4 个耳道内通道。平均差值的描述性被试 bootstrap 区间为 ${ipp(d.bootstrap_95)}。两种配置在完全相同的数据帧上评分。`,
+    tableEyebrow: '两种配置，相同的数据帧',
+    tableH2: '4 个耳道内通道对 6 个头皮电极',
+    tableLede: `五期睡眠分期，每 30 秒一帧评分；随机水平为 ${pct(e.chance_level, 0)}。10 折留一被试交叉验证，两种配置使用同一个固定模型。`,
+    tableRegion: '耳道内与头皮睡眠分期结果，可横向滚动',
+    caption: '被试平均平衡准确率与宏平均 F1。每个平衡准确率下方为描述性被试 bootstrap 95% 区间。',
+    colConfig: '配置', colChannels: '通道', colBa: '平衡准确率', colF1: '宏平均 F1',
+    earLabel: '4 个耳道内通道', earNote: '耳道内的物理通道；不是标准头皮位置',
+    scalpLabel: '6 个头皮电极', scalpNote: `乳突位 ${m1}、${m2} 只用于筛选完整数据帧`,
+    baLabel: (v: string) => `平衡准确率 ${v}`,
+    covEyebrow: '可用数据',
+    covH2: '这些分数以什么为前提',
+    covLede: `只有两种配置都具备完整、有限值数据的帧才被保留，这条规则剔除了 ${n(dropped)} 帧。分数描述的是保留下来的这部分数据，而不是任一设备采集到可用数据的频率。`,
+    covEpochs: '保留的配对数据帧', covEpochsOf: `${n(cov.epochs_in_source)} 帧中的 ${n(cov.epochs_used)} 帧`,
+    covPeople: '被试', covPeopleOf: '全部保留',
+    covNights: '夜晚', covNightsOf: `${cov.nights_in_source} 晚中的 ${cov.nights_used} 晚`,
+    limitsH2: '这项比较能支持什么、不能支持什么',
+    limitsLede: '单一队列、单一简单模型上的配对比较。它只回答一个较窄的问题，不能替任何设备选型下结论。',
+    limits: [
+      ['是 6 个头皮电极，不是 8 个', '头皮文件里还有两个乳突位通道，只用于完整性筛选，从未进入模型。'],
+      ['位置、数量与硬件一起变化', '耳道内与头皮两种配置在电极位置、几何形状和数量上都不同。这个差值是描述性的，不是耳部硬件本身带来的损失估计。'],
+      ['一个简单、未调参的模型', '每个通道 5 个对数频带功率特征，加 L2 正则化逻辑回归，没有任何超参数搜索。这不是基础模型，也不代表任一配置的性能上限。'],
+      ['不是核心矩阵里的睡眠协议', '八协议矩阵里的睡眠分期用的是 EESM19 头皮子集，队列和方法都不同。两个睡眠结果不共享排名。'],
+    ],
+    consent: '同意书覆盖的是研究本身；数据是在 Region Midt 的 GDPR 办公室判定其已完全匿名化之后才公开的。这里只发布队列级聚合结果。',
+    datasetLink: 'OpenNeuro 数据集 ↗', paperLink: 'Scientific Data 论文 ↗', exportLink: '处理后导出版本 ↗',
+  },
+}[locale];
+const card = topicCards[locale]['fewer-electrodes'];
+const rows = [
+  { cfg: ear, label: copy.earLabel, note: copy.earNote, tone: 'ink' as const },
+  { cfg: scalp, label: copy.scalpLabel, note: copy.scalpNote, tone: 'rust' as const },
+];
+const basis = e.rights.reviewBasis;
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/fewer-electrodes/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="fewer-electrodes"
+  dataFiles={['/data/evidence-update.json']}
+>
+  <section class="topic-section" aria-labelledby="montage-finding">
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(d.mean, 1)}</strong><span>{copy.findingLabel}</span></div>
+      <div class="finding-copy"><h3 id="montage-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
+    </div>
+    <div class="topic-heading"><div><p class="eyebrow">{copy.tableEyebrow}</p><h2>{copy.tableH2}</h2></div><p>{copy.tableLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion}>
+      <table>
+        <caption>{copy.caption}</caption>
+        <thead><tr><th scope="col">{copy.colConfig}</th><th scope="col">{copy.colChannels}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colF1}</th></tr></thead>
+        <tbody>{rows.map(r => <tr><th scope="row">{r.label}<small>{r.note}</small></th><td><span class="channel-list">{r.cfg.channels.join(' · ')}</span></td><td><span class="metric">{pct(r.cfg.mean_balanced_accuracy)}</span><span class="interval">{intervalPct(r.cfg.balanced_accuracy_bootstrap_95 as [number, number])}</span><ScoreBar value={r.cfg.mean_balanced_accuracy} label={copy.baLabel(pct(r.cfg.mean_balanced_accuracy))} tone={r.tone} /></td><td><span class="metric">{pct(r.cfg.mean_macro_f1)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="coverage-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.covEyebrow}</p><h2 id="coverage-heading">{copy.covH2}</h2></div><p>{copy.covLede}</p></div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.covEpochs}</p><div class="reading">{pct(cov.coverage_fraction)}</div><ScoreBar value={cov.coverage_fraction} label={copy.covEpochsOf} tone="ink" /><p>{copy.covEpochsOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covPeople}</p><div class="reading">{cov.people}</div><p>{copy.covPeopleOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covNights}</p><div class="reading">{cov.nights_used}</div><p>{copy.covNightsOf}</p></article>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list"><article><h3 lang="en">{e.rights.name}</h3><p lang="en">{e.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.exportLink}</a> · <a href={e.rights.licenseUrl} target="_blank" rel="noreferrer">{e.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version} · {tc.generated} {evidence.generated_at.slice(0,10)}{tc.period}</p>
+  </section>
+</TopicLayout>

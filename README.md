@@ -20,9 +20,12 @@ chance level, training budget and known limitations that produced each number �
 and refuses to collapse them into one ranking, because the protocols do not
 share a scale.
 
-**121 reviewed measurements.** 39 model-by-protocol scores across 8 fixed
-protocols and 7 public datasets, plus 82 measurements across 4 deployment
-questions. No raw EEG, no per-participant scores, no model weights.
+39 model-by-protocol scores across 8 fixed protocols and 7 public datasets;
+82 measurements across four deployment questions; and a 22 September evidence
+update — a paired in-ear versus scalp sleep comparison, a physical-phantom
+artifact test, and the status of planned adaptation experiments, which have no
+results yet. They are kept apart rather than summed, because they measure
+different things. No raw EEG, no per-participant scores, no model weights.
 
 ## Get the data
 
@@ -37,7 +40,8 @@ Or straight from the site, no account:
 
 ```bash
 curl -O https://bci.report/data/experiments.json        # full release snapshot
-curl -O https://bci.report/data/deployment-topics.json  # the four topic questions
+curl -O https://bci.report/data/deployment-topics.json  # four deployment questions
+curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
 ```
 
 ## What is measured
@@ -52,8 +56,9 @@ curl -O https://bci.report/data/deployment-topics.json  # the four topic questio
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Four deployment questions sit alongside, each with its own protocol:
+Five deployment questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
+[fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
 [standing, walking, running](https://bci.report/topics/on-the-move/) ·
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/)

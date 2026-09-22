@@ -55,7 +55,7 @@
 .citation-list p{font-size:.8rem;margin-top:7px}
 .citation-list a{color:var(--accent)}
 .topic-switcher{margin-top:42px;padding-top:24px;border-top:3px double var(--rule)}
-.topic-switcher>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px}
+.topic-switcher>div{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px}
 .topic-switcher a{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
 .topic-switcher a[aria-current=page]{background:var(--wash);box-shadow:inset 0 -3px var(--accent)}
 .topic-switcher strong{display:block;font-size:.88rem;margin-top:2px}
@@ -69,6 +69,12 @@
 .chart-row:last-child{border-bottom:0}
 .chart-row .value{font-family:var(--mono);text-align:right;color:var(--ink)}
 .citation-note{font-size:.76rem;color:var(--muted);margin-top:12px}
+/* Roadmap: a status word sits where a number would, so it must not look like one. */
+.roadmap-card .status-word{font-family:var(--serif);font-size:1.35rem;letter-spacing:0;color:var(--accent-deep)}
+.roadmap-h3{font-family:var(--serif);font-size:1.12rem;margin:26px 0 9px}
+.roadmap-p{font-size:.875rem;max-width:860px;margin-top:6px}
+.roadmap-p a{color:var(--accent)}
+.channel-list{font-family:var(--mono);font-size:.78rem;color:var(--ink);letter-spacing:.01em}
 .citation-note a{color:var(--accent)}
 
 @media(max-width:860px){
@@ -77,6 +83,7 @@
   .finding-number{border-right:0;border-bottom:1px solid var(--line)}
   .evidence-grid{grid-template-columns:1fr 1fr}
   .topic-switcher>div{grid-template-columns:1fr 1fr}
+  .topic-switcher a:last-child:nth-child(odd){grid-column:1/-1}
 }
 @media(max-width:560px){
   .topic-hero{padding:28px 0}

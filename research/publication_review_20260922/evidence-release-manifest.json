@@ -1,0 +1,137 @@
+{
+  "release_id": "evidence-update-20260922",
+  "reviewed_at": "2026-09-22",
+  "reviewer": "publishing session",
+  "scope": "Source-specific editorial decisions for the 2026-09-22 evidence batch. This manifest is new; it does not amend, extend or reinterpret research/publication_review_20260920/, which never covered this batch. Numerical success is recorded separately from each decision below.",
+  "handoff": {
+    "path": "research/website_handoff_20260922/BCI Report Evidence Update Handoff.md",
+    "sha256": "7590772ef6d5a08ef76676034f70e3f47bcebb1ae27d2b0918ba9e8759658c9c"
+  },
+  "sources": [
+    {
+      "id": "eesm23",
+      "decision": "aggregate_preview",
+      "name": "EESM23 · Ear-EEG Sleep Monitoring 2023",
+      "task": "Five-stage sleep",
+      "source": "https://doi.org/10.18112/openneuro.ds005178.v1.0.0",
+      "version": "OpenNeuro ds005178 v1.0.0, via the Hugging Face processed export Zachary1150/EESM23-Processed at revision aed9526a1a56c6644b13a8ef95e03e6a6729a87f",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Dataset: Yousef Rezaei Tabar, Kaare Mikkelsen, Laura Birch, Nelly Shenton, Simon L. Kappel, Astrid R. Bertelsen, Reza Nikbakht, Hans O. Toft, Chris H. Henriksen, Martin C. Hemmsen, Mike L. Rank, Marit Otto and Preben Kidmose · Ear-EEG Sleep Monitoring 2023 (EESM23), OpenNeuro ds005178 v1.0.0, doi:10.18112/openneuro.ds005178.v1.0.0. Study: Kaare Bjarke Mikkelsen, Yousef Rezai Tabar, Laura Rævsbæk Birch, Simon Lind Kappel, Christian Bech Christensen, Lars Dalskov Mosgaard, Marit Otto, Martin Christian Hemmsen, Mike Lind Rank and Preben Kidmose · Ear-EEG sleep monitoring data sets, Scientific Data 12, 301 (2025), doi:10.1038/s41597-025-04579-8. Processed export: Zachary1150/EESM23-Processed on Hugging Face, which did not create the original cohort.",
+      "attributionNote": "The dataset record and the data-descriptor paper carry different author lists (13 and 10 people). Both are cited as their own records give them; neither is substituted for the other.",
+      "privacyReview": "All subjects gave written, informed consent. Approved by the Central Denmark Region Committees on Biomedical Research Ethics (1-10-72-13-20) and the Danish Medicines Agency (2020012619). Publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data set fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment. Only cohort aggregates are published here: no per-person scores, no per-person distribution percentiles, no per-night or per-epoch values.",
+      "reviewedAt": "2026-09-22",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005178.v1.0.0",
+        "https://doi.org/10.1038/s41597-025-04579-8",
+        "https://europepmc.org/article/PMC/PMC11840015",
+        "https://huggingface.co/datasets/Zachary1150/EESM23-Processed/tree/aed9526a1a56c6644b13a8ef95e03e6a6729a87f"
+      ],
+      "verification": [
+        "Dataset author list, licence and DOI read from the OpenNeuro dataset_description.json on 2026-09-22.",
+        "Paper title, author list, volume and article number read from Crossref for doi:10.1038/s41597-025-04579-8 on 2026-09-22.",
+        "Consent, ethics case numbers and the GDPR anonymization statement read from the open-access full text (Europe PMC PMC11840015) on 2026-09-22.",
+        "The paper's CC BY-NC-ND 4.0 licence covers the article text; the data set is CC0. This project cites the article and uses the data."
+      ],
+      "summary": {
+        "path": "research/hf_expansion_v4_20260921/eesm23/baseline-summary-v2.json",
+        "sha256": "6011ab3b8761472cb96547383bf6d13e7d4c9c4d59579843d3c4f5d2e2644bfa"
+      },
+      "numericalAudit": {
+        "path": "research/hf_expansion_v4_20260921/eesm23/independent-replay-v2.json",
+        "sha256": "97595684ca2992930e0ed6d75a75a7383cfe1014f4f416fef0e24dce54ac86b0"
+      }
+    },
+    {
+      "id": "phantom",
+      "decision": "aggregate_preview",
+      "name": "Phantom EEG with motion, muscle and eye artifacts",
+      "task": "Source recovery from a physical phantom",
+      "source": "https://doi.org/10.18112/openneuro.ds004784.v1.0.4",
+      "version": "OpenNeuro ds004784 v1.0.4, git commit 9de6a3d5fc174803686cce01d7c253b4ba02af47",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Ryan J. Downey and Daniel P. Ferris · Phantom EEG Dataset with Motion, Muscle, and Eye Artifacts and Example Scripts, OpenNeuro ds004784 v1.0.4, doi:10.18112/openneuro.ds004784.v1.0.4. Method: doi:10.3390/s23198214.",
+      "privacyReview": "One electrically conductive physical head phantom. No human participants are represented, so consent and ethics review do not apply; no population inference is made.",
+      "reviewedAt": "2026-09-22",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds004784.v1.0.4",
+        "https://doi.org/10.3390/s23198214"
+      ],
+      "verification": [
+        "Licence, authors and phantom description read from the pinned dataset_description.json and README recorded in research/hf_expansion_v4_20260921/phantom/source-review.json."
+      ],
+      "summary": {
+        "path": "research/hf_expansion_v4_20260921/phantom/phantom_analysis_results.json",
+        "sha256": "4e4368764dcb4461b014d5589de0a186d2d8178a63aa1c43a71424ad3cbf31dd"
+      },
+      "numericalAudit": {
+        "path": "research/hf_expansion_v4_20260921/phantom/phantom_orchestrator_replay.json",
+        "sha256": "7d74f9b4a50d335bc7d6518b086de7db26e30c45b0579e853a99ba71b9ca27dc"
+      }
+    },
+    {
+      "id": "alphawaves",
+      "decision": "hold",
+      "holdReason": "The consent statement for this cohort has been found only in a third-party catalog (EEGDash). The primary report (HAL hal-02086581) could not be retrieved: the site serves a bot-protection challenge, which this session does not bypass. The authors' Zenodo record and GitHub repository contain no consent statement. The maintainer is reading the primary report directly; the decision will be recorded here when that is done.",
+      "name": "EEG Alpha Waves dataset",
+      "source": "https://doi.org/10.5281/zenodo.2605110",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Grégoire Cattan, Pedro L. C. Rodrigues and Marco Congedo · EEG Alpha Waves dataset, Zenodo, doi:10.5281/zenodo.2605110.",
+      "summary": {
+        "path": "research/hf_expansion_v4_20260921/alphawaves/baseline-summary.json",
+        "sha256": "67796f6dd9491283568f15190bac35aa57574d00cc8eae1e2376322e4bbe80d3"
+      },
+      "numericalAudit": {
+        "path": "research/hf_expansion_v4_20260921/alphawaves/orchestrator-independent-replay.json",
+        "sha256": "b2cdf0ed27be6496b61d6fa8213749dad1a5d44dbc866be92f2014cf3fcc7c49"
+      }
+    },
+    {
+      "id": "lfame",
+      "decision": "not_included",
+      "reason": "Intake-only: eight files from two people with voltage units and electrode-row mapping unproven, and no model result. A catalogue entry would add a CC BY-NC 4.0 source to the register without giving a reader anything to use."
+    }
+  ],
+  "amendments": [
+    {
+      "id": "eesm19-scalp-sleep",
+      "date": "2026-09-22",
+      "manifest": "research/publication_review_20260920/release-manifest.json",
+      "change": "privacyReview and publicNote extended; the 2025 data descriptor added to reviewBasis. No score, cohort or decision changed.",
+      "reason": "The 2025 data descriptor covers EESM19 as well as EESM23 and states that publication was not mentioned in the informed consent form. The original note said only that written consent was obtained, which is true of the study and incomplete about the release.",
+      "approvedBy": "maintainer, 2026-09-22",
+      "downstream": [
+        {
+          "artifact": "research/publication_review_20260920/topic-release-manifest.json",
+          "change": "inputs.base_manifest.sha256 re-pinned from e91c957fcb90e5ecaa6e028fef490b55076f8401585dff19c89de5af12e7135c to e030bceb98a1a2220112d4f29ddb6405ff78de9adda1820529bb9944daf18691, because the amended release manifest is one of its pinned inputs."
+        },
+        {
+          "artifact": "site/public/data/deployment-topics.json",
+          "change": "sha256 1860229048322d0f4cd7d95f3d2095f58217a68a69df2ce16847afdeee759df9 -> 708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f. Verified single difference: dataset_citations[eesm19-scalp-sleep].primary_sources gained https://doi.org/10.1038/s41597-025-04579-8. No row, score, contrast or seed group changed."
+        },
+        {
+          "artifact": "site/src/data/mvp.json and site/public/data/experiments.json, sleep-scalp-protocol.json",
+          "change": "Regenerated with export_snapshot.py from pinned run outputs. Verified three differences, all EESM19: datasets[].detail, tracks[sleep-scalp].privacyReview, tracks[sleep-scalp].reviewBasis (+1)."
+        }
+      ]
+    }
+  ],
+  "roadmap": {
+    "id": "peft",
+    "status": "planned",
+    "allowedDescription": "Engineering check complete; real EEG comparison planned.",
+    "engineeringCheck": {
+      "path": "research/peft_feasibility_20260922/labram-lora-correctness.json",
+      "sha256": "d6bab56f202a712019c76ad215930d98ff28fba533359de09397f178f2e1227a"
+    },
+    "independentReview": {
+      "path": "research/peft_feasibility_20260922/independent-review.json"
+    },
+    "notPublished": [
+      "The 56.34% / 65.05% EEGMAT partial-fine-tuning pilot: never approved for publication and outside this batch.",
+      "Any BNCI2015-001 number: that source's editorial hold stands; the roadmap may name it only as a planned input."
+    ]
+  }
+}

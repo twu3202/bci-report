@@ -4,6 +4,7 @@ import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import { type DeploymentData, type DeploymentRow, auc, conditionLabel, intervalPct, modelLabel, pct } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import evidence from '../../../data/evidence-update.json';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -28,6 +29,11 @@ const scalp = signedAuc(-contrastFor('scalp').difference);
 const ear = signedAuc(-contrastFor('ear').difference);
 const scalpIv = runningChangeInterval(contrastFor('scalp').paired_participant_bootstrap_95);
 const earIv = runningChangeInterval(contrastFor('ear').paired_participant_bootstrap_95);
+// Physical-phantom engineering control (2026-09-22 export). Dimensionless r and
+// R²: never percent, never clamped. R² reaches −795 and is printed as such.
+const phantom = evidence.results.phantom;
+const signed = (v: number) => `${v < 0 ? '−' : ''}${Math.abs(v).toFixed(3)}`;
+const phBasis = phantom.rights.reviewBasis;
 
 const copy = {
   en: {
@@ -74,6 +80,19 @@ const copy = {
     ],
     derivative: 'NEMAR/MOABB-generated BIDS derivative',
     ssvepLink: 'SSVEP dataset ↗', erpLink: 'ERP dataset ↗',
+    phEyebrow: 'Engineering control · physical phantom',
+    phH2: 'Artifacts, measured without people',
+    phLede: 'A conductive head phantom broadcast ten known brain sources while artifacts were added one kind at a time. A linear decoder trained on the clean recording was tested on held-out time blocks of every condition. One phantom is one experimental unit: this ranks no people, models or denoising methods, and it does not belong in a table with the human results above.',
+    phNoteStrong: 'Neither column is accuracy.',
+    phNoteRest: ' Correlation asks whether the recovered source moves with the true one. Predictive R² also scores amplitude and has no floor: below zero, the prediction is further from the true source than a flat line would be. The negative values are reported as measured, not rounded up to zero.',
+    phRegion: 'Phantom source-recovery results by artifact condition, scrolls horizontally',
+    phCaption: 'Median across five folds of the within-fold median across ten brain sources. The same 60-second blocks are held out in every condition, with a two-second purge on each side of a training block. Trained on the brain-only recording.',
+    colCondition: 'Condition', colR: 'Signed correlation r', colR2: 'Predictive R²',
+    foldRange: (a: string, b: string) => `fold range ${a} to ${b}`,
+    phCond: { Brain: 'Brain sources only', Eyes: 'Eye artifacts', Walking: 'Walking', Neck: 'Neck muscle', Facial: 'Facial muscle', All: 'All artifacts together' } as Record<string, string>,
+    phCondNote: { Brain: 'training condition, held-out time' } as Record<string, string>,
+    phUnit: 'One electrically conductive head phantom; no human participants.',
+    phDataset: 'OpenNeuro dataset ↗', phMethod: 'Method paper ↗',
   },
   zh: {
     description: '移动场景下 SSVEP 与 ERP 解码的运动鲁棒性：两秒与五秒时间窗、头皮与耳部通道、平衡准确率与 ROC AUC 分开呈现。',
@@ -119,6 +138,19 @@ const copy = {
     ],
     derivative: 'NEMAR/MOABB 生成的 BIDS 衍生数据',
     ssvepLink: 'SSVEP 数据集 ↗', erpLink: 'ERP 数据集 ↗',
+    phEyebrow: '工程对照 · 物理头模',
+    phH2: '不用真人测量的伪迹',
+    phLede: '一个导电头模播放 10 个已知的脑源信号，同时每次加入一种伪迹。一个在无伪迹记录上训练的线性解码器，在每种条件的留出时间段上测试。一个头模就是一个实验单元：这里不给任何人、模型或去噪方法排名，也不能和上方的真人结果放进同一张表。',
+    phNoteStrong: '两列都不是准确率。',
+    phNoteRest: '相关系数衡量恢复出的源信号是否与真实源同步变化；预测 R² 还会计入幅值，而且没有下限：低于零意味着预测离真实源比一条水平线还远。负值按实测报告，没有截断为零。',
+    phRegion: '按伪迹条件的头模源信号恢复结果，可横向滚动',
+    phCaption: '先在每折内对 10 个脑源取中位数，再对 5 折取中位数。每种条件留出相同的 60 秒时间段，训练段两侧各剔除 2 秒。只在仅含脑源的记录上训练。',
+    colCondition: '条件', colR: '带符号相关系数 r', colR2: '预测 R²',
+    foldRange: (a: string, b: string) => `各折范围 ${a} 至 ${b}`,
+    phCond: { Brain: '仅脑源', Eyes: '眼动伪迹', Walking: '行走', Neck: '颈部肌电', Facial: '面部肌电', All: '全部伪迹同时出现' } as Record<string, string>,
+    phCondNote: { Brain: '训练条件，留出时间段' } as Record<string, string>,
+    phUnit: '一个导电的物理头模；不涉及任何真人被试。',
+    phDataset: 'OpenNeuro 数据集 ↗', phMethod: '方法论文 ↗',
   },
 }[locale];
 const card = topicCards[locale]['on-the-move'];
@@ -166,6 +198,16 @@ const card = topicCards[locale]['on-the-move'];
         return <td><span class="metric">{auc(row.value)}</span><span class="interval">{row.confidence_interval_95 ? `${auc(row.confidence_interval_95[0])}–${auc(row.confidence_interval_95[1])}` : '—'}</span><small>n={row.participants}</small></td>;
       })}</tr>)}</tbody></table>
     </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="phantom-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.phEyebrow}</p><h2 id="phantom-heading">{copy.phH2}</h2></div><p>{copy.phLede}</p></div>
+    <p class="protocol-note"><strong>{copy.phNoteStrong}</strong>{copy.phNoteRest}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.phRegion}>
+      <table><caption>{copy.phCaption}</caption><thead><tr><th scope="col">{copy.colCondition}</th><th scope="col">{copy.colR}</th><th scope="col">{copy.colR2}</th></tr></thead><tbody>{phantom.conditions.map(c => <tr><th scope="row">{copy.phCond[c.condition]}{copy.phCondNote[c.condition] && <small>{copy.phCondNote[c.condition]}</small>}</th><td><span class="metric">{signed(c.signed_correlation_r.value)}</span><span class="interval">{copy.foldRange(signed(c.signed_correlation_r.fold_range[0]), signed(c.signed_correlation_r.fold_range[1]))}</span></td><td><span class="metric">{signed(c.predictive_r_squared.value)}</span><span class="interval">{copy.foldRange(signed(c.predictive_r_squared.fold_range[0]), signed(c.predictive_r_squared.fold_range[1]))}</span></td></tr>)}</tbody></table>
+    </div>
+    <div class="citation-list"><article><h3 lang="en">{phantom.rights.name}</h3><p lang="en">{phantom.rights.attribution}</p><p>{copy.phUnit}</p><p><a href={phBasis[0]} target="_blank" rel="noreferrer">{copy.phDataset}</a> · <a href={phBasis[1]} target="_blank" rel="noreferrer">{copy.phMethod}</a> · <a href={phantom.rights.licenseUrl} target="_blank" rel="noreferrer">{phantom.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version} · {tc.generated} {evidence.generated_at.slice(0,10)}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">

@@ -106,6 +106,13 @@ export const topicPages = [
     detail: '2 s SSVEP · 12 targets · balanced accuracy',
   },
   {
+    slug: 'fewer-electrodes',
+    kicker: 'Montage',
+    title: 'Fewer electrodes',
+    summary: 'A paired in-ear versus scalp sleep comparison on identical epochs — and what it does not say about any headset.',
+    detail: 'Paired ear and scalp · 5-stage sleep · 10 people',
+  },
+  {
     slug: 'on-the-move',
     kicker: 'Motion robustness',
     title: 'On the move',

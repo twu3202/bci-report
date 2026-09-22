@@ -69,14 +69,15 @@
       "license": "CC0-1.0 declared by upstream and mirror",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
-      "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed.",
+      "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed. Amended 2026-09-22: the 2025 data descriptor covering EESM19 and EESM23 (Mikkelsen et al., Scientific Data 12, 301, doi:10.1038/s41597-025-04579-8) states that publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment.",
       "reviewedAt": "2026-09-20",
       "reviewBasis": [
         "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
-        "https://www.nature.com/articles/s41598-019-53115-3"
+        "https://www.nature.com/articles/s41598-019-53115-3",
+        "https://doi.org/10.1038/s41597-025-04579-8"
       ],
       "decision": "aggregate_preview",
-      "publicNote": "Clear upstream CC0 and study ethics evidence; use only the pinned scalp-signal derivative and publish aggregates, with provenance disclosed.",
+      "publicNote": "Clear upstream CC0 and study ethics evidence; use only the pinned scalp-signal derivative and publish aggregates, with provenance disclosed. Consent covered the study, not publication; the public release rests on a GDPR anonymization assessment (amended 2026-09-22).",
       "rightsRestrictions": "Cite the dataset and EESM19 publication; privacy and third-party rights remain.",
       "provenance": "Processed H5 mirror derived from OpenNeuro ds005185. The mirror card agrees on CC0, but the derived-file transformation is described by the mirror rather than independently certified by upstream.",
       "subjects": 20,

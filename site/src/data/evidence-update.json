@@ -1,0 +1,312 @@
+{
+  "schema_version": "bci-report-evidence-update-v1",
+  "release_id": "evidence-update-20260922",
+  "generated_at": "2026-09-22",
+  "status": "aggregate_preview",
+  "metric_units": "balanced accuracy and differences are proportions in [0,1] (multiply by 100 for percent or percentage points); correlation r and predictive R² are dimensionless",
+  "scope": "Separate questions on separate data. Nothing here extends the eight-protocol matrix or the four deployment topics, and no two results share a ranking.",
+  "results": {
+    "eesm23": {
+      "id": "eesm23",
+      "dataset": "EESM23 / OpenNeuro ds005178 v1.0.0",
+      "protocol_id": "eesm23-paired-ear-scalp-subject-heldout-spectral-logreg-v2",
+      "question": "paired in-ear versus scalp sleep staging on identical epochs",
+      "classes": 5,
+      "chance_level": 0.2,
+      "metric": "person_mean_balanced_accuracy",
+      "cohort": {
+        "people": 10,
+        "nights_used": 17,
+        "nights_in_source": 19,
+        "epochs_used": 11674,
+        "epochs_in_source": 15523,
+        "coverage_fraction": 0.7520453520582362,
+        "selection": "paired complete-case: both configurations use the identical epochs"
+      },
+      "configurations": [
+        {
+          "id": "in_ear",
+          "channels": [
+            "RB",
+            "RT",
+            "LB",
+            "LT"
+          ],
+          "channel_note": "four physical in-ear channels; not standard scalp positions",
+          "mean_balanced_accuracy": 0.5357755203040562,
+          "balanced_accuracy_bootstrap_95": [
+            0.47434508844406265,
+            0.5974714118995826
+          ],
+          "mean_macro_f1": 0.4763461292470277
+        },
+        {
+          "id": "scalp",
+          "channels": [
+            "F3",
+            "C3",
+            "O1",
+            "F4",
+            "C4",
+            "O2"
+          ],
+          "excluded_file_slots": [
+            "M1",
+            "M2"
+          ],
+          "channel_note": "six actual scalp electrodes; mastoid/reference positions excluded",
+          "mean_balanced_accuracy": 0.689907445348698,
+          "balanced_accuracy_bootstrap_95": [
+            0.6338561850007511,
+            0.7417403764538387
+          ],
+          "mean_macro_f1": 0.6491220950993619
+        }
+      ],
+      "paired_difference": {
+        "comparison": "scalp minus in-ear",
+        "mean": 0.15413192504464177,
+        "bootstrap_95": [
+          0.10570358790027742,
+          0.20311814360150734
+        ],
+        "interval_kind": "descriptive person bootstrap; not a population guarantee",
+        "people_scalp_higher": 10,
+        "people_in_ear_higher": 0,
+        "people_tied": 0
+      },
+      "method": {
+        "classifier": "fixed L2 multinomial logistic regression, C=1, balanced training weights, no hyperparameter search",
+        "features": "five fixed log-bandpower features per classifier channel",
+        "prediction_window_seconds": 30,
+        "split": "10 leave-one-person-out folds on the identical paired complete-case rows",
+        "standardization": "train-person rows only"
+      },
+      "limitations": [
+        "This is one paired cohort and one fixed simple model, not a full-scale comparison of all ear and scalp hardware.",
+        "The modalities differ in geometry and channel count; the comparison is descriptive, not a causal hardware effect.",
+        "The 30-second signal acquisition window and offline preprocessing preclude an online-latency claim.",
+        "Cohort distributions are not individual success probabilities.",
+        "Results are conditional on the paired complete-case subset: 3849 of 15523 epochs are excluded, and retained rows represent 17 of 19 source nights."
+      ],
+      "rights": {
+        "name": "EESM23 · Ear-EEG Sleep Monitoring 2023",
+        "task": "Five-stage sleep",
+        "source": "https://doi.org/10.18112/openneuro.ds005178.v1.0.0",
+        "version": "OpenNeuro ds005178 v1.0.0, via the Hugging Face processed export Zachary1150/EESM23-Processed at revision aed9526a1a56c6644b13a8ef95e03e6a6729a87f",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Dataset: Yousef Rezaei Tabar, Kaare Mikkelsen, Laura Birch, Nelly Shenton, Simon L. Kappel, Astrid R. Bertelsen, Reza Nikbakht, Hans O. Toft, Chris H. Henriksen, Martin C. Hemmsen, Mike L. Rank, Marit Otto and Preben Kidmose · Ear-EEG Sleep Monitoring 2023 (EESM23), OpenNeuro ds005178 v1.0.0, doi:10.18112/openneuro.ds005178.v1.0.0. Study: Kaare Bjarke Mikkelsen, Yousef Rezai Tabar, Laura Rævsbæk Birch, Simon Lind Kappel, Christian Bech Christensen, Lars Dalskov Mosgaard, Marit Otto, Martin Christian Hemmsen, Mike Lind Rank and Preben Kidmose · Ear-EEG sleep monitoring data sets, Scientific Data 12, 301 (2025), doi:10.1038/s41597-025-04579-8. Processed export: Zachary1150/EESM23-Processed on Hugging Face, which did not create the original cohort.",
+        "privacyReview": "All subjects gave written, informed consent. Approved by the Central Denmark Region Committees on Biomedical Research Ethics (1-10-72-13-20) and the Danish Medicines Agency (2020012619). Publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data set fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment. Only cohort aggregates are published here: no per-person scores, no per-person distribution percentiles, no per-night or per-epoch values.",
+        "reviewedAt": "2026-09-22",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds005178.v1.0.0",
+          "https://doi.org/10.1038/s41597-025-04579-8",
+          "https://europepmc.org/article/PMC/PMC11840015",
+          "https://huggingface.co/datasets/Zachary1150/EESM23-Processed/tree/aed9526a1a56c6644b13a8ef95e03e6a6729a87f"
+        ]
+      }
+    },
+    "phantom": {
+      "id": "phantom",
+      "dataset": "OpenNeuro ds004784 v1.0.4",
+      "scope": "fixed clean-Brain-trained linear decoder robustness on one physical phantom",
+      "unit": "one physical head phantom; no human participants",
+      "model": {
+        "alpha_in_standardized_space": 1.0,
+        "hyperparameter_tuning": "none",
+        "type": "fixed multi-output ridge regression"
+      },
+      "split": {
+        "block_samples": 30720,
+        "block_seconds": 60.0,
+        "fold_count": 5,
+        "lockstep_across_conditions": true,
+        "purge_samples_each_adjacent_side": 1024,
+        "purge_seconds_each_adjacent_side": 2.0,
+        "training_condition": "Brain only"
+      },
+      "inference": "descriptive condition aggregates only; no confidence intervals, p-values, or population inference",
+      "summary_statistic": "median across folds of the within-fold median across ten brain sources",
+      "conditions": [
+        {
+          "condition": "Brain",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.7605949243441139,
+            "fold_range": [
+              0.7553970719661505,
+              0.7718686383207694
+            ]
+          },
+          "predictive_r_squared": {
+            "value": 0.5669847667500685,
+            "fold_range": [
+              0.5492206630168213,
+              0.5943346937710414
+            ]
+          }
+        },
+        {
+          "condition": "Eyes",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.49219616867264804,
+            "fold_range": [
+              0.4324167289205344,
+              0.5692272532749114
+            ]
+          },
+          "predictive_r_squared": {
+            "value": -33.61245807745957,
+            "fold_range": [
+              -75.20495703058154,
+              -23.97113527212855
+            ]
+          }
+        },
+        {
+          "condition": "Walking",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.548667888271417,
+            "fold_range": [
+              0.5419950251043382,
+              0.5773021040965636
+            ]
+          },
+          "predictive_r_squared": {
+            "value": -795.7722259783673,
+            "fold_range": [
+              -935.0278535656745,
+              -425.2051794825986
+            ]
+          }
+        },
+        {
+          "condition": "Neck",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.30957604127763,
+            "fold_range": [
+              0.24857997647368152,
+              0.3167599710570197
+            ]
+          },
+          "predictive_r_squared": {
+            "value": -596.8200105477877,
+            "fold_range": [
+              -1106.3817678463329,
+              -281.7537468759059
+            ]
+          }
+        },
+        {
+          "condition": "Facial",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.14274616720843364,
+            "fold_range": [
+              0.12693431172163416,
+              0.15518892864889072
+            ]
+          },
+          "predictive_r_squared": {
+            "value": -164.3128695431695,
+            "fold_range": [
+              -270.00398676831423,
+              -110.19693803819766
+            ]
+          }
+        },
+        {
+          "condition": "All",
+          "folds": 5,
+          "sources_per_fold": 10,
+          "signed_correlation_r": {
+            "value": 0.11483368953160228,
+            "fold_range": [
+              0.10362546262950736,
+              0.13082142244012737
+            ]
+          },
+          "predictive_r_squared": {
+            "value": -142.83240630422517,
+            "fold_range": [
+              -172.29615392835575,
+              -100.14219883313214
+            ]
+          }
+        }
+      ],
+      "reading": "Neither column is accuracy. Predictive R² is not bounded below by zero: a negative value means the prediction is further from the true source than a constant would be.",
+      "limitations": [
+        "One physical phantom is one experimental unit; conditions, folds, channels, and sources are not independent population samples.",
+        "The clean-trained decoder assessment does not rank artifact-removal algorithms.",
+        "The same injected source time series occurs in every condition; lockstep held-out absolute-time blocks prevent exact target-window leakage.",
+        "Ground-truth physical units are undocumented, so no amplitude-unit claim is made for GT or predictions."
+      ],
+      "rights": {
+        "name": "Phantom EEG with motion, muscle and eye artifacts",
+        "task": "Source recovery from a physical phantom",
+        "source": "https://doi.org/10.18112/openneuro.ds004784.v1.0.4",
+        "version": "OpenNeuro ds004784 v1.0.4, git commit 9de6a3d5fc174803686cce01d7c253b4ba02af47",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Ryan J. Downey and Daniel P. Ferris · Phantom EEG Dataset with Motion, Muscle, and Eye Artifacts and Example Scripts, OpenNeuro ds004784 v1.0.4, doi:10.18112/openneuro.ds004784.v1.0.4. Method: doi:10.3390/s23198214.",
+        "privacyReview": "One electrically conductive physical head phantom. No human participants are represented, so consent and ethics review do not apply; no population inference is made.",
+        "reviewedAt": "2026-09-22",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds004784.v1.0.4",
+          "https://doi.org/10.3390/s23198214"
+        ]
+      }
+    }
+  },
+  "roadmap": {
+    "peft": {
+      "id": "peft",
+      "status": "planned",
+      "real_eeg_results_available": false,
+      "description": "Engineering check complete; real EEG comparison planned.",
+      "engineering_check": {
+        "signals": "synthetic",
+        "model": "LaBraM base",
+        "target": "all 12 fused QKV weights",
+        "rank": 4,
+        "alpha": 8,
+        "base_encoder_parameters": 5819936,
+        "adapter_parameters": 38400,
+        "adapter_fraction": 0.006598010699774018,
+        "adapter_float32_bytes": 153600,
+        "binary_head_parameters_if_added": 402,
+        "checks_passed": [
+          "exact adapter save and reload",
+          "exact merged-weight equivalence",
+          "finite, nonzero adapter gradients in every block",
+          "frozen encoder weights unchanged after updates",
+          "identical output at zero adapter initialization"
+        ],
+        "not_established": [
+          "QKV-only fused update; not Q-and-V-only LoRA.",
+          "Dense effective-weight parametrization, not an optimized low-rank activation kernel.",
+          "Synthetic small-batch CPU timing is not a real-data training-cost estimate.",
+          "No accuracy, domain-transfer, robustness or privacy guarantees are tested."
+        ],
+        "review": "pass_with_protocol_requirements"
+      }
+    }
+  },
+  "provenance": {
+    "manifest_sha256": "ad17474580b025c4df3aeeef34e6b0243eb90609b4202aa8844b2e1395cf3e10",
+    "included": [
+      "eesm23",
+      "phantom"
+    ]
+  }
+}

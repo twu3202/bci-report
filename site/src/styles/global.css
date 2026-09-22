@@ -152,7 +152,7 @@ main{max-width:1412px;margin:auto;padding:0 26px}
    to compatible-protocol views of the reviewed extension instead of folding
    repeated conditions into an invented cross-task leaderboard. */
 .topic-entry{padding:30px 0 38px;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}
-.topic-entry-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
+.topic-entry-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
 .topic-entry-card{position:relative;min-width:0;padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-height:245px}
 .topic-entry-card:hover{background:var(--wash);color:inherit}
 .topic-entry-card .topic-number{position:absolute;right:16px;top:12px;font-family:var(--mono);font-size:.72rem;color:var(--rule)}
@@ -284,6 +284,7 @@ dialog .button{margin-top:18px}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){
+  .topic-entry-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   /* Brand and language switcher share the first row; the navigation takes a
      full-width row of its own. One row was never going to hold all three: the
      seven English links plus the switcher need ~980px, and between 700 and
@@ -314,6 +315,8 @@ td .flag{margin-top:6px}
   .evidence>a{margin:0}
   footer p{display:none}
   .topic-entry-grid{grid-template-columns:1fr 1fr}
+  /* Five cards in two columns leave one alone; let it take the whole row. */
+  .topic-entry-card:last-child:nth-child(odd){grid-column:1/-1}
 }
 @media(max-width:560px){
   /* The header is sticky. Wrapped over three rows it stood 145px tall and held

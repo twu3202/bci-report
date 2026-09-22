@@ -49,3 +49,16 @@ data/news.db
 
 # Local Claude Code permission state (machine-specific).
 .claude/settings.local.json
+
+# --- Research handoffs from execution sessions. They hold unapproved results
+# --- (including sources under editorial hold) and private storage paths, and
+# --- they are not product content. They stay local. What is public from a
+# --- batch is its publication_review_* manifest and audit, and the export.
+# --- Four of these were committed on 2026-09-21 by mistake and then purged.
+research/cross_session_v3_20260920/
+research/finetuning_v3_20260920/
+research/model_expansion_v3_20260920/
+research/topic_workflow_v3_20260920/
+research/hf_expansion_v4_20260921/
+research/peft_feasibility_20260922/
+research/website_handoff_20260922/

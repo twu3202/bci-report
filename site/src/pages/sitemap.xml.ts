@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import data from '../data/mvp.json';
 import deployment from '../data/deployment-topics.json';
+import evidence from '../data/evidence-update.json';
 import { site } from '../data/site';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 
@@ -20,7 +21,14 @@ import { alternates, locales, localizePath, translatedPaths } from '../data/i18n
  */
 const RELEASE = data.generatedAt.slice(0, 10);
 const TOPICS = deployment.generated_at.slice(0, 10);
-const lastmodOf = (path: string) => (path.startsWith('/topics/') ? TOPICS : RELEASE);
+const EVIDENCE = evidence.generated_at.slice(0, 10);
+// Pages whose content the 2026-09-22 batch changed: the new topic, the two
+// topics that gained a section, the homepage (fifth card) and /data-use/
+// (new sources, and the EESM19 amendment). Everything else keeps its date.
+const EVIDENCE_PAGES = new Set(['/', '/topics/fewer-electrodes/', '/topics/on-the-move/',
+                                '/topics/calibration-budget/', '/data-use/']);
+const lastmodOf = (path: string) =>
+  EVIDENCE_PAGES.has(path) ? EVIDENCE : path.startsWith('/topics/') ? TOPICS : RELEASE;
 
 export const GET: APIRoute = ({ site: origin }) => {
   const base = String(origin ?? new URL(site.origin));
@@ -33,7 +41,7 @@ export const GET: APIRoute = ({ site: origin }) => {
       entries.push(`  <url><loc>${abs(localizePath(path, code))}</loc><lastmod>${lastmodOf(path)}</lastmod>${links}</url>`);
   }
   // English-only: no alternates to declare.
-  entries.push(`  <url><loc>${abs('/data-use/')}</loc><lastmod>${RELEASE}</lastmod></url>`);
+  entries.push(`  <url><loc>${abs('/data-use/')}</loc><lastmod>${lastmodOf('/data-use/')}</lastmod></url>`);
   return new Response(
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +

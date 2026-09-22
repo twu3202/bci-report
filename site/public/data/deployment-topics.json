@@ -2616,7 +2616,8 @@
       },
       "primary_sources": [
         "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
-        "https://www.nature.com/articles/s41598-019-53115-3"
+        "https://www.nature.com/articles/s41598-019-53115-3",
+        "https://doi.org/10.1038/s41597-025-04579-8"
       ],
       "publication_conditions": [
         "Cite the dataset and EESM19 publication; privacy and third-party rights remain.",

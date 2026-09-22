@@ -20,6 +20,7 @@ import hashlib
 
 from export_snapshot import validate_public
 from export_deployment_topics import EXPORT_AUDIT
+import export_evidence_update as evidence_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -46,6 +47,17 @@ def topic_payload():
     payload = json.loads(raw)
     validate_public(payload)
     return payload
+
+
+def evidence_payload():
+    """The 2026-09-22 evidence export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'evidence-update.json').read_bytes()
+    audit = json.loads(evidence_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Evidence export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Evidence payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
 
 
 def flatten(rows, interval_key=None):
@@ -186,6 +198,14 @@ Every row in `{MERGED}` carries its own `license`, `license_url` and
 `{TOPICS}` cites its sources in `deployment-topics.json` under
 `dataset_citations`.
 
+`evidence-update.json` — the 22 September 2026 batch, reviewed under its own
+manifest: a paired in-ear versus scalp sleep comparison (EESM23, 10 people,
+identical epochs), a physical-phantom artifact test reporting correlation and
+predictive R² (dimensionless; R² is negative where the decoder fails and is
+published as measured), and the status of planned adaptation experiments, which
+have **no results yet**. Heterogeneous by design, so it ships as JSON rather
+than as a table.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -314,6 +334,8 @@ def build(output):
             writer.writerow(head)
             writer.writerows(lines)
 
+    raw_evidence, _ = evidence_payload()
+    (output/'evidence-update.json').write_bytes(raw_evidence)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

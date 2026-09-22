@@ -12,6 +12,7 @@ import re
 
 from export_snapshot import validate_public
 from export_deployment_topics import serialized_export, EXPORT_AUDIT, OUTPUTS
+import export_evidence_update as evidence
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -37,6 +38,19 @@ def check(root):
     assert (root/'data/deployment-topics.json').read_bytes() == topic_payload, 'Unreviewed topic download'
     assert all(p.read_bytes() == topic_payload for p in OUTPUTS), 'Topic source/download drift'
     expected.add('deployment-topics.json')
+    # The 2026-09-22 batch has its own boundary and its own audit; it is held to
+    # the same standard as the topic export, not folded into it.
+    # Re-derived where the private research inputs exist; elsewhere (a clone)
+    # the published bytes are held to the committed audit hash alone.
+    evidence_rederived = evidence.inputs_available()
+    evidence_payload = (evidence.serialized_export() if evidence_rederived
+                        else (root/'data/evidence-update.json').read_bytes())
+    evidence_audit = json.loads(evidence.EXPORT_AUDIT.read_text())
+    assert evidence_audit['status'] == 'pass', 'Evidence export review did not pass'
+    assert hashlib.sha256(evidence_payload).hexdigest() == evidence_audit['export_sha256'], 'Stale evidence export audit'
+    assert (root/'data/evidence-update.json').read_bytes() == evidence_payload, 'Unreviewed evidence download'
+    assert all(p.read_bytes() == evidence_payload for p in evidence.OUTPUTS), 'Evidence source/download drift'
+    expected.add('evidence-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -67,6 +81,8 @@ def check(root):
         'checks':['explicit download inventory','cohort-only JSON schema','no participant IDs or local paths in built assets',
                   'local links resolve','source snapshot equals download snapshot','no waveform or model files',
                   'topic payload reproduced from pinned reviewed inputs and matches page/download copies',
+                  ('evidence-update payload reproduced from its own manifest and audit' if evidence_rederived
+                   else 'evidence-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

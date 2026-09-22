@@ -39,11 +39,12 @@
   "license": "CC0-1.0 declared by upstream and mirror",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
-  "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed.",
+  "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed. Amended 2026-09-22: the 2025 data descriptor covering EESM19 and EESM23 (Mikkelsen et al., Scientific Data 12, 301, doi:10.1038/s41597-025-04579-8) states that publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment.",
   "reviewedAt": "2026-09-20",
   "reviewBasis": [
     "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
-    "https://www.nature.com/articles/s41598-019-53115-3"
+    "https://www.nature.com/articles/s41598-019-53115-3",
+    "https://doi.org/10.1038/s41597-025-04579-8"
   ],
   "rightsScope": "Personal noncommercial research; aggregate results only",
   "pretrainingOverlap": "Unknown unless explicitly documented; no unseen-pretraining claim."

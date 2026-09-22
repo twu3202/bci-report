@@ -17,6 +17,7 @@
  */
 import data from './mvp.json';
 import deployment from './deployment-topics.json';
+import evidence from './evidence-update.json';
 import { site } from './site';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
@@ -74,10 +75,28 @@ export function homeDataset() {
   };
 }
 
+/**
+ * Topics that draw on the 2026-09-22 evidence export, and what they measure.
+ * A topic can use both exports (on-the-move) or only the newer one
+ * (fewer-electrodes); `distribution` must name whichever actually holds its
+ * numbers. calibration-budget is absent on purpose: its new section is a
+ * roadmap with no measured result, and a Dataset entity must not imply one.
+ */
+const EVIDENCE_METRICS: Record<string, string[]> = {
+  'fewer-electrodes': ['person_mean_balanced_accuracy', 'macro_f1'],
+  'on-the-move': ['signed_correlation_r', 'predictive_r_squared'],
+};
+
 export function topicDataset(id: string, name: string, description: string, path: string) {
   const topic = deployment.topics.find(t => t.id === id);
   const tracks = new Set(topic?.tracks ?? []);
   const rows = deployment.rows.filter(r => tracks.has(r.track));
+  const fromEvidence = EVIDENCE_METRICS[id] ?? [];
+  const files = [
+    ...(topic ? [download('/data/deployment-topics.json', 'application/json')] : []),
+    ...(fromEvidence.length ? [download('/data/evidence-update.json', 'application/json')] : []),
+  ];
+  const dates = [...(topic ? [deployment.generated_at] : []), ...(fromEvidence.length ? [evidence.generated_at] : [])];
   return {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -87,13 +106,13 @@ export function topicDataset(id: string, name: string, description: string, path
     license: LICENSE,
     creator,
     isAccessibleForFree: true,
-    version: deployment.release_id,
-    dateModified: deployment.generated_at.slice(0, 10),
+    version: topic ? deployment.release_id : evidence.release_id,
+    dateModified: dates.sort().at(-1)!.slice(0, 10),
     measurementTechnique: 'Electroencephalography',
     keywords: ['EEG', 'brain-computer interface', 'benchmark', id],
-    variableMeasured: [...new Set(rows.map(r => r.metric))],
+    variableMeasured: [...new Set([...rows.map(r => r.metric), ...fromEvidence])],
     isPartOf: { '@type': 'Dataset', name: `${site.name}: aggregate EEG decoding results`, url: abs('/') },
-    distribution: [download('/data/deployment-topics.json', 'application/json')],
+    distribution: files,
   };
 }
 

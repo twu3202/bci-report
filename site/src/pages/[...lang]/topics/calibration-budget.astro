@@ -4,6 +4,7 @@ import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import { type DeploymentData, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import evidence from '../../../data/evidence-update.json';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -22,6 +23,13 @@ const sensors = ['wet','dry'];
 const wetImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-wet')!;
 const dryImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-dry')!;
 const ipp = (i: [number, number]) => intervalPp(i, 1, locale);
+// Roadmap only. The export fixes status at 'planned' and refuses anything else,
+// so this section cannot start saying "running" through a copy edit.
+const plan = evidence.roadmap.peft;
+const eng = plan.engineering_check;
+const kib = Math.round(eng.adapter_float32_bytes / 1024);
+const n = (v: number) => v.toLocaleString('en-US');
+const share = `${(eng.adapter_fraction * 100).toFixed(2)}%`;
 
 const copy = {
   en: {
@@ -65,6 +73,30 @@ const copy = {
       ['Descriptive intervals', 'Bootstrap intervals summarize participants under this protocol. They do not add retraining uncertainty or establish general calibration requirements for another headset.'],
     ],
     citationNote: (license: string) => `Official Tsinghua author mirror snapshot acquired 2026-09-20 · ${license}. Aggregate results only.`,
+    rmEyebrow: 'Next · planned, no results yet',
+    rmH2: 'Adapting a foundation model: frozen, partial or LoRA?',
+    rmLede: 'We are preparing comparisons of frozen features, partial fine-tuning and LoRA to measure how much labeled calibration data is useful when recording conditions change. We will report improvements, regressions and measured computation costs. Real EEG LoRA results are not yet available.',
+    rmStatus: [
+      ['Engineering check', 'Complete', 'Synthetic signals only. It confirms the adapter is wired in correctly and says nothing about accuracy.'],
+      ['Real-EEG comparison', 'Planned', 'Not started. No accuracy, calibration gain, training time or memory figure exists yet.'],
+      ['Results in this section', 'None', 'The label budgets below are experimental designs, not outcomes.'],
+    ],
+    rmPlannedH3: 'Two planned comparisons',
+    rmPlanned: [
+      ['New people, same task', 'EEGMAT mental arithmetic with participant-disjoint folds. Three arms on the same pretrained LaBraM weights, splits and seeds: a frozen encoder with a linear head; last-block adaptation with the same head; rank-4 LoRA on all fused QKV weights with the same head.'],
+      ['Same person, the next day', 'BNCI2015-001: twelve people recorded on two days. Train on day A, calibrate on the first 0, 10, 20 or 40 trials of day B, and test every budget on the same later day-B trials. Publishing its results is subject to that source\'s own review.'],
+    ],
+    rmApartH3: 'Four questions kept apart',
+    rmApart: 'A new person, a new day, a new dataset and a new device are different questions, answered on different data. A task adapter trained on several people is not evidence that it transfers across devices.',
+    rmEngH3: 'The engineering check, in numbers',
+    rmEng: `The LaBraM base encoder has ${n(eng.base_encoder_parameters)} parameters. Rank-${eng.rank} updates to its twelve fused QKV weights add ${n(eng.adapter_parameters)} trainable parameters (${share}); a binary linear head adds ${n(eng.binary_head_parameters_if_added)}. The adapter tensors take ${kib} KiB in float32 before metadata.`,
+    rmEngNote: 'These are parameter counts — not accuracy, speed, memory-saving or privacy claims.',
+    rmChecksH: 'Checks passed:',
+    rmCheck: {} as Record<string, string>,
+    rmPriorH3: 'Not the first to ask',
+    rmPrior: ['Other groups already benchmark EEG adapters: ', 'OpenEEGBench', ' covers parameter-efficient fine-tuning of EEG foundation models; a ', 'systematic study of test-time adaptation', ' reports inconsistent gains under distribution shift; a recent ', 'preprint', ' compares self-supervised adaptation under fixed computation budgets. Our emphasis is the calibration cost, the cases that get worse, and whether recordings are compatible at all.'],
+    rmReportH3: 'What will be reported',
+    rmReport: 'Per-person balanced accuracy and macro F1, the paired change over no adaptation, how many people improved, got worse or stayed the same, seed-to-seed variation, and measured time and peak memory — counted separately under a fixed label budget and a fixed computation budget.',
   },
   zh: {
     description: '仅用目标被试数据的可穿戴 SSVEP 校准，分别使用 12、24、48 个校准试次；仅用源域数据的 spectral ridge 与免训练 CCA 作为独立的参考组保留。',
@@ -107,6 +139,36 @@ const copy = {
       ['描述性区间', 'bootstrap 区间概括的是本协议下的被试间分布，不包含重新训练带来的不确定性，也不能推出其他头戴设备的通用校准需求。'],
     ],
     citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
+    rmEyebrow: '下一步 · 计划中，尚无结果',
+    rmH2: '基础模型怎么适配：冻结、部分微调还是 LoRA？',
+    rmLede: '我们正在准备对比冻结特征、部分微调与 LoRA，测量记录条件变化时，有标签的校准数据到底有多大用处。我们会同时报告提升、退步和实测的计算成本。真实 EEG 上的 LoRA 结果目前还没有。',
+    rmStatus: [
+      ['工程验证', '已完成', '只用合成信号，确认适配器接入正确——不说明任何准确率。'],
+      ['真实 EEG 对比', '计划中', '尚未开始。目前没有任何准确率、校准收益、训练时间或内存数据。'],
+      ['本节的结果', '无', '下面的校准预算是实验设计，不是结果。'],
+    ],
+    rmPlannedH3: '两项计划中的对比',
+    rmPlanned: [
+      ['新被试，同一任务', 'EEGMAT 心算任务，按被试不重叠划分。三组使用相同的 LaBraM 预训练权重、数据划分和随机种子：冻结编码器加线性分类头；只适配最后一个 block，加同一个分类头；对全部融合 QKV 权重做秩为 4 的 LoRA，加同一个分类头。'],
+      ['同一个人，第二天', 'BNCI2015-001：12 名被试，每人记录两天。用第一天训练，用第二天最前面的 0、10、20 或 40 个试次校准，所有预算都在第二天同一批后续试次上测试。它的结果能否发布，仍要经过该数据源单独的审查。'],
+    ],
+    rmApartH3: '刻意分开的四个问题',
+    rmApart: '新被试、新的一天、新数据集、新设备是四个不同的问题，要用不同的数据回答。在多名被试上训练出的任务适配器，并不能证明它能跨设备迁移。',
+    rmEngH3: '工程验证的具体数字',
+    rmEng: `LaBraM 基础编码器有 ${n(eng.base_encoder_parameters)} 个参数。对它的 12 个融合 QKV 权重做秩为 ${eng.rank} 的更新，增加 ${n(eng.adapter_parameters)} 个可训练参数（${share}）；二分类线性分类头另加 ${n(eng.binary_head_parameters_if_added)} 个。适配器张量以 float32 存储约 ${kib} KiB（不含元数据）。`,
+    rmEngNote: '这些是参数计数，不代表准确率、速度、内存节省或隐私方面的任何结论。',
+    rmChecksH: '已通过的检查：',
+    rmCheck: {
+      'exact adapter save and reload': '适配器保存与重载后完全一致',
+      'exact merged-weight equivalence': '合并权重后输出完全等价',
+      'finite, nonzero adapter gradients in every block': '每个 block 的适配器梯度有限且非零',
+      'frozen encoder weights unchanged after updates': '更新后冻结的编码器权重保持不变',
+      'identical output at zero adapter initialization': '适配器零初始化时输出完全不变',
+    } as Record<string, string>,
+    rmPriorH3: '并非第一个提出这个问题',
+    rmPrior: ['已有其他工作在评测 EEG 适配器：', 'OpenEEGBench', ' 覆盖 EEG 基础模型的参数高效微调；一项', '关于测试时适配的系统研究', '报告了分布偏移下时好时坏的收益；一篇近期', '预印本', '比较了固定计算预算下的自监督适配。我们的侧重点是校准成本、变差的情况，以及记录条件本身是否兼容。'],
+    rmReportH3: '将会报告什么',
+    rmReport: '逐被试的平衡准确率与宏平均 F1、相对于不适配的配对变化、提升/变差/持平的人数、随机种子之间的波动，以及实测的时间与峰值内存——在固定标签预算和固定计算预算两种口径下分别统计。',
   },
 }[locale];
 const card = topicCards[locale]['calibration-budget'];
@@ -151,6 +213,23 @@ const card = topicCards[locale]['calibration-budget'];
         {[24,48].map(budget => <tr><th scope="row">{modelLabel('ensemble-trca')} · {copy.labels(budget)}<small>{copy.targetOnly}</small></th>{sensors.map(sensor => { const row=methodRow('ensemble-trca',sensor,budget); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>)}
       </tbody></table>
     </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="roadmap-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.rmEyebrow}</p><h2 id="roadmap-heading">{copy.rmH2}</h2></div><p>{copy.rmLede}</p></div>
+    <div class="evidence-grid">{copy.rmStatus.map(([label, state, note]) => <article class="evidence-card roadmap-card"><p class="eyebrow">{label}</p><div class="reading status-word">{state}</div><p>{note}</p></article>)}</div>
+    <h3 class="roadmap-h3">{copy.rmPlannedH3}</h3>
+    <div class="method-grid-wide">{copy.rmPlanned.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <h3 class="roadmap-h3">{copy.rmApartH3}</h3>
+    <p class="roadmap-p">{copy.rmApart}</p>
+    <h3 class="roadmap-h3">{copy.rmEngH3}</h3>
+    <p class="roadmap-p">{copy.rmEng}</p>
+    <p class="roadmap-p"><strong>{copy.rmChecksH}</strong> {eng.checks_passed.map(c => copy.rmCheck[c] ?? c).join(locale === 'zh' ? '；' : '; ')}{tc.period}</p>
+    <p class="protocol-note">{copy.rmEngNote}</p>
+    <h3 class="roadmap-h3">{copy.rmPriorH3}</h3>
+    <p class="roadmap-p">{copy.rmPrior[0]}<a href="https://github.com/braindecode/OpenEEGBench" target="_blank" rel="noreferrer">{copy.rmPrior[1]}</a>{copy.rmPrior[2]}<a href="https://proceedings.mlr.press/v340/lee26a.html" target="_blank" rel="noreferrer">{copy.rmPrior[3]}</a>{copy.rmPrior[4]}<a href="https://arxiv.org/abs/2608.24727v1" target="_blank" rel="noreferrer">{copy.rmPrior[5]}</a>{copy.rmPrior[6]}</p>
+    <h3 class="roadmap-h3">{copy.rmReportH3}</h3>
+    <p class="roadmap-p">{copy.rmReport}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">

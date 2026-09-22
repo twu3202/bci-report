@@ -1,0 +1,28 @@
+{
+  "status": "pass",
+  "release_id": "evidence-update-20260922",
+  "export_sha256": "055b177e65195a0df889810d2b43a4335fbabccfc3872992ccc90933670cfa2a",
+  "manifest_sha256": "ad17474580b025c4df3aeeef34e6b0243eb90609b4202aa8844b2e1395cf3e10",
+  "included": [
+    "eesm23",
+    "phantom"
+  ],
+  "held_or_excluded": [
+    {
+      "id": "alphawaves",
+      "decision": "hold"
+    },
+    {
+      "id": "lfame",
+      "decision": "not_included"
+    }
+  ],
+  "checks": [
+    "pinned summary and audit bytes",
+    "independent replay passed against the same summary",
+    "complete approval record per included source",
+    "per-person fields refused",
+    "no private paths or participant identifiers",
+    "roadmap status fixed at planned"
+  ]
+}

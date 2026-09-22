@@ -1,7 +1,7 @@
 {
   "status": "pass",
   "release_id": "deployment-topics-20260920-v1",
-  "export_sha256": "1860229048322d0f4cd7d95f3d2095f58217a68a69df2ce16847afdeee759df9",
+  "export_sha256": "708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f",
   "coverage": {
     "topics": 4,
     "measurements": 82,
