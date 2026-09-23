@@ -18,6 +18,7 @@
 import data from './mvp.json';
 import deployment from './deployment-topics.json';
 import evidence from './evidence-update.json';
+import clinical from './clinical-update.json';
 import { site } from './site';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
@@ -76,27 +77,35 @@ export function homeDataset() {
 }
 
 /**
- * Topics that draw on the 2026-09-22 evidence export, and what they measure.
- * A topic can use both exports (on-the-move) or only the newer one
- * (fewer-electrodes); `distribution` must name whichever actually holds its
- * numbers. calibration-budget is absent on purpose: its new section is a
- * roadmap with no measured result, and a Dataset entity must not imply one.
+ * Topics whose figures come from a later export than deployment-topics.json,
+ * and what they measure. A topic can use both (on-the-move), only the evidence
+ * update (fewer-electrodes), or only the clinical update (clinical-groups);
+ * `distribution` must name whichever actually holds its numbers.
+ * calibration-budget is absent on purpose: its new section is a roadmap with no
+ * measured result, and a Dataset entity must not imply one.
  */
-const EVIDENCE_METRICS: Record<string, string[]> = {
-  'fewer-electrodes': ['person_mean_balanced_accuracy', 'macro_f1'],
-  'on-the-move': ['signed_correlation_r', 'predictive_r_squared'],
+const LATER_EXPORTS: Record<string, { file: string; release: string; generated: string; metrics: string[] }> = {
+  'fewer-electrodes': { file: '/data/evidence-update.json', release: evidence.release_id,
+                        generated: evidence.generated_at,
+                        metrics: ['person_mean_balanced_accuracy', 'macro_f1'] },
+  'on-the-move': { file: '/data/evidence-update.json', release: evidence.release_id,
+                   generated: evidence.generated_at,
+                   metrics: ['signed_correlation_r', 'predictive_r_squared'] },
+  'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
+                       generated: clinical.generated_at,
+                       metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },
 };
 
 export function topicDataset(id: string, name: string, description: string, path: string) {
   const topic = deployment.topics.find(t => t.id === id);
   const tracks = new Set(topic?.tracks ?? []);
   const rows = deployment.rows.filter(r => tracks.has(r.track));
-  const fromEvidence = EVIDENCE_METRICS[id] ?? [];
+  const later = LATER_EXPORTS[id];
   const files = [
     ...(topic ? [download('/data/deployment-topics.json', 'application/json')] : []),
-    ...(fromEvidence.length ? [download('/data/evidence-update.json', 'application/json')] : []),
+    ...(later ? [download(later.file, 'application/json')] : []),
   ];
-  const dates = [...(topic ? [deployment.generated_at] : []), ...(fromEvidence.length ? [evidence.generated_at] : [])];
+  const dates = [...(topic ? [deployment.generated_at] : []), ...(later ? [later.generated] : [])];
   return {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -106,11 +115,11 @@ export function topicDataset(id: string, name: string, description: string, path
     license: LICENSE,
     creator,
     isAccessibleForFree: true,
-    version: topic ? deployment.release_id : evidence.release_id,
+    version: topic ? deployment.release_id : later!.release,
     dateModified: dates.sort().at(-1)!.slice(0, 10),
     measurementTechnique: 'Electroencephalography',
     keywords: ['EEG', 'brain-computer interface', 'benchmark', id],
-    variableMeasured: [...new Set([...rows.map(r => r.metric), ...fromEvidence])],
+    variableMeasured: [...new Set([...rows.map(r => r.metric), ...(later?.metrics ?? [])])],
     isPartOf: { '@type': 'Dataset', name: `${site.name}: aggregate EEG decoding results`, url: abs('/') },
     distribution: files,
   };

@@ -13,6 +13,7 @@ import re
 from export_snapshot import validate_public
 from export_deployment_topics import serialized_export, EXPORT_AUDIT, OUTPUTS
 import export_evidence_update as evidence
+import export_clinical_update as clinical
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -51,6 +52,18 @@ def check(root):
     assert (root/'data/evidence-update.json').read_bytes() == evidence_payload, 'Unreviewed evidence download'
     assert all(p.read_bytes() == evidence_payload for p in evidence.OUTPUTS), 'Evidence source/download drift'
     expected.add('evidence-update.json')
+
+    # Same gate for the 2026-09-23 clinical export: re-derived where the pinned
+    # research inputs exist, hash-checked against its own audit everywhere else.
+    clinical_rederived = clinical.inputs_available()
+    clinical_payload = (clinical.serialized_export() if clinical_rederived
+                        else (root/'data/clinical-update.json').read_bytes())
+    clinical_audit = json.loads(clinical.EXPORT_AUDIT.read_text())
+    assert clinical_audit['status'] == 'pass', 'Clinical export review did not pass'
+    assert hashlib.sha256(clinical_payload).hexdigest() == clinical_audit['export_sha256'], 'Stale clinical export audit'
+    assert (root/'data/clinical-update.json').read_bytes() == clinical_payload, 'Unreviewed clinical download'
+    assert all(p.read_bytes() == clinical_payload for p in clinical.OUTPUTS), 'Clinical source/download drift'
+    expected.add('clinical-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -83,6 +96,8 @@ def check(root):
                   'topic payload reproduced from pinned reviewed inputs and matches page/download copies',
                   ('evidence-update payload reproduced from its own manifest and audit' if evidence_rederived
                    else 'evidence-update payload matched to its audit hash (private inputs not present)'),
+                  ('clinical-update payload reproduced from its own manifest and audit' if clinical_rederived
+                   else 'clinical-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

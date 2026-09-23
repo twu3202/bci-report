@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import data from '../data/mvp.json';
 import deployment from '../data/deployment-topics.json';
 import evidence from '../data/evidence-update.json';
+import clinical from '../data/clinical-update.json';
 import { site } from '../data/site';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 
@@ -22,13 +23,17 @@ import { alternates, locales, localizePath, translatedPaths } from '../data/i18n
 const RELEASE = data.generatedAt.slice(0, 10);
 const TOPICS = deployment.generated_at.slice(0, 10);
 const EVIDENCE = evidence.generated_at.slice(0, 10);
+const CLINICAL = clinical.generated_at.slice(0, 10);
 // Pages whose content the 2026-09-22 batch changed: the new topic, the two
 // topics that gained a section, the homepage (fifth card) and /data-use/
 // (new sources, and the EESM19 amendment). Everything else keeps its date.
-const EVIDENCE_PAGES = new Set(['/', '/topics/fewer-electrodes/', '/topics/on-the-move/',
-                                '/topics/calibration-budget/', '/data-use/']);
+const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-move/',
+                                '/topics/calibration-budget/']);
+const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
 const lastmodOf = (path: string) =>
-  EVIDENCE_PAGES.has(path) ? EVIDENCE : path.startsWith('/topics/') ? TOPICS : RELEASE;
+  CLINICAL_PAGES.has(path) ? CLINICAL
+  : EVIDENCE_PAGES.has(path) ? EVIDENCE
+  : path.startsWith('/topics/') ? TOPICS : RELEASE;
 
 export const GET: APIRoute = ({ site: origin }) => {
   const base = String(origin ?? new URL(site.origin));

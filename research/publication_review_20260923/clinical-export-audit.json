@@ -1,0 +1,23 @@
+{
+  "status": "pass",
+  "release_id": "clinical-update-20260923",
+  "export_sha256": "082a25d15436eb52ebf1e25f981088f2fa56f21377f7ed0e7907d849a33678df",
+  "manifest_sha256": "aab3a961abc4f0f82efec911cb28b5b2e0927040545ea41f42b897da98765572",
+  "included": [
+    "ds004584"
+  ],
+  "status_only": [
+    "ds004902",
+    "lfame"
+  ],
+  "checks": [
+    "pinned result, audit, hold and integrity bytes",
+    "published metrics equal the independent replay",
+    "complete approval record for the published source",
+    "per-person fields refused",
+    "clinical demographic profile refused",
+    "withheld six-person band descriptors refused",
+    "exactly one row marked as the confound comparator",
+    "no private paths or participant identifiers"
+  ]
+}

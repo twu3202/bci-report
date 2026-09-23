@@ -161,11 +161,13 @@ assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-
 const topicPages=[
   ['dry-vs-wet','Dry vs. wet electrodes'],
   ['fewer-electrodes','Fewer electrodes'],
+  ['clinical-groups','Clinical groups'],
   ['on-the-move','On the move'],
   ['calibration-budget','How much calibration?'],
   ['does-pretraining-help','Does pretraining help?'],
 ];
-const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json':'deployment-topics.json';
+const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
+  :slug==='clinical-groups'?'clinical-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page='../dist/topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -238,7 +240,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
+const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -308,9 +310,11 @@ for(const [bad,good] of Object.entries(rejected))
 const ev=JSON.parse(readFileSync(new URL('../src/data/evidence-update.json',import.meta.url),'utf8'));
 const pageOf=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
 const everyPage=['','data-use/',...topicPages.map(([s])=>'topics/'+s+'/')].flatMap(p=>p==='data-use/'?[p]:[p,'zh/'+p]);
-// Only sources with a recorded aggregate_preview decision; L-FAME (not included) leaves no trace.
+// Only sources with a recorded aggregate_preview decision. L-FAME was excluded
+// from this batch and carries no result here; the 2026-09-23 batch publishes its
+// status, so its name may appear — with no figure, which the holds check pins.
 assert.deepEqual(Object.keys(ev.results).sort(),['alphawaves','eesm23','phantom'],'only sources with a recorded aggregate_preview decision');
-for(const p of everyPage) assert.doesNotMatch(pageOf(p),/L-FAME|lfame/i,p+': an excluded source must not appear');
+assert.ok(!JSON.stringify(ev).match(/L-FAME|lfame/i),'the evidence export carries no L-FAME result');
 // No per-person value. EESM23: the in-ear and scalp minima and maxima of a 10-person cohort.
 // Alpha Waves: its per-person minima, maxima, medians and quartiles (balanced accuracy,
 // macro F1, and the paired difference), none of which the export carries. Its all-16
@@ -367,6 +371,48 @@ for(const p of ['topics/calibration-budget/','zh/topics/calibration-budget/']){
 }
 assert.match(pageOf('topics/calibration-budget/'),/Real EEG LoRA results are not yet available/,'the roadmap states its evidence level');
 
+// --- 2026-09-23 clinical batch ---------------------------------------------
+// A clinical cohort, so the checks are about what must not be claimed and what
+// must not appear, not only about the figures being right.
+const cl=JSON.parse(readFileSync(new URL('../src/data/clinical-update.json',import.meta.url),'utf8'));
+assert.deepEqual(Object.keys(cl.results),['ds004584'],'only the reviewed clinical source carries numbers');
+assert.deepEqual(cl.status_only.map(e=>e.id).sort(),['ds004902','lfame'],'both status-only sources stay listed');
+for(const [label,html] of [['en',pageOf('topics/clinical-groups/')],['zh',pageOf('zh/topics/clinical-groups/')]]){
+  assert.match(html,/71\.7%/,label+': the EEG model score');
+  assert.match(html,/55\.0%/,label+': the confound comparator score');
+  assert.match(html,/63\.5%–79\.3%/,label+': the EEG interval');
+  assert.match(html,/46\.9%–63\.6%/,label+': the comparator interval');
+  assert.match(html,/\+16\.6 pp/,label+': the gap between them');
+  assert.match(html,/0\.76/,label+': AUROC travels with the score');
+  // The comparator is on the page, and is marked as not a model.
+  assert.match(html,label==='en'?/not an EEG model/:/不是 EEG 模型/,label+': the comparator must be marked');
+  // The claim boundary, in the page's own language.
+  assert.match(html,label==='en'?/Not a diagnosis/:/不是诊断/,label+': the claim boundary must be stated');
+  assert.doesNotMatch(html,/diagnostic accuracy(?!,| —)|screening tool(?!,)/,label+': no diagnostic claim');
+  assert.doesNotMatch(html,/可以诊断|用于诊断|诊断准确率(?!，)/,label+': no diagnostic claim in Chinese');
+  // A diagnosis-specific cohort's demographic profile is never published.
+  assert.doesNotMatch(html,/68\.5|70\.9|68\.53|70\.92/,label+': the per-group age means must not appear');
+  assert.match(html,/IRB 201707828/,label+': the ethics approval is cited');
+  assert.match(html,/10\.1136\/jnnp-2022-330154/,label+': the cohort study is credited');
+}
+// Holds: three of them, stated without numbers, on both home pages.
+for(const [label,path] of [['en',''],['zh','zh/']]){
+  const home=pageOf(path);
+  const holds=home.slice(home.indexOf('id="holds"'),home.indexOf('id="overview"'));
+  assert.ok(holds.length>400,label+': the holds section must render');
+  for(const word of label==='en'?['No score','Held','Described, not scored']:['没有分数','暂缓','只有描述，没有评分'])
+    assert.ok(holds.includes(word),label+': hold state "'+word+'" must be shown');
+  // A hold has no result. No percentage, and no decimal figure, inside the cards.
+  const cards=holds.slice(holds.indexOf('hold-grid'));
+  assert.doesNotMatch(cards,/\d+(?:\.\d+)?%|\d\.\d/,label+': a hold must not carry a figure');
+  assert.match(holds,/2,347/,label+': what was downloaded and checked is stated');
+}
+// The withheld six-person descriptors appear nowhere, in any locale.
+const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
+for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
+  for(const v of lfameMedians)
+    assert.ok(!pageOf(p).includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
   assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,
@@ -377,7 +423,8 @@ for(const path of bilingual){
   assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
 }
 
-console.log('PASS: coverage matrix, five topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: coverage matrix, six topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
-console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, L-FAME absent, no per-person values, R² unclamped, roadmap stays planned.');
+console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
+console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

@@ -30,8 +30,11 @@ share a scale.
 update — a paired in-ear versus scalp sleep comparison, four posterior
 electrodes against sixteen for eyes open or closed, a physical-phantom artifact
 test, and the status of planned adaptation experiments, which have no results
-yet. They are kept apart rather than summed, because they measure
-different things. No raw EEG, no per-participant scores, no model weights.
+yet; and a 23 September clinical update — a 149-person Parkinson's and control
+comparison published beside an age-and-sex-only confound comparator, with three
+holds that produced no score at all. They are kept apart rather than summed,
+because they measure different things. Research results, not diagnosis. No raw
+EEG, no per-participant scores, no model weights.
 
 ## Get the data
 
@@ -62,9 +65,10 @@ curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Five deployment questions sit alongside, each with its own protocol:
+Six deployment questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
+[clinical groups](https://bci.report/topics/clinical-groups/) ·
 [standing, walking, running](https://bci.report/topics/on-the-move/) ·
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/)

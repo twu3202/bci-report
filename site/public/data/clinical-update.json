@@ -1,0 +1,186 @@
+{
+  "schema_version": "bci-report-clinical-update-v1",
+  "release_id": "clinical-update-20260923",
+  "generated_at": "2026-09-23",
+  "status": "aggregate_preview",
+  "metric_units": "balanced accuracy and macro F1 are proportions in [0,1] (multiply by 100 for percent); AUROC is dimensionless",
+  "scope": "A clinical research comparison and three holds. Nothing here extends the eight-protocol matrix, the deployment topics or the 2026-09-22 evidence update, and no two results share a ranking.",
+  "medical_disclaimer": "Research results on a public data set. Not a diagnosis, not diagnostic accuracy, and not a medical device or medical advice.",
+  "results": {
+    "ds004584": {
+      "id": "ds004584",
+      "dataset": "OpenNeuro ds004584 v1.0.0",
+      "question": "can resting-state EEG separate a clinical group from controls, and how much of that is age and sex",
+      "classes": 2,
+      "chance_level": 0.5,
+      "metric": "balanced_accuracy",
+      "evaluation_unit": "participant",
+      "cohort": {
+        "people": 149,
+        "composition": "100 people with Parkinson's disease and 49 controls, one site",
+        "folds": 5,
+        "windows": 4470,
+        "selection": "five stratified participant folds; every person is held out exactly once, and all of a person's windows stay together"
+      },
+      "models": [
+        {
+          "id": "spectral_logistic",
+          "label": "Relative-spectrum logistic regression",
+          "inputs": "EEG only",
+          "excluded_from_model_comparisons": false,
+          "mean_balanced_accuracy": 0.716530612244898,
+          "balanced_accuracy_bootstrap_95": [
+            0.6353061224489795,
+            0.7925510204081632
+          ],
+          "macro_f1": 0.7106796116504854,
+          "auroc": 0.7622448979591837
+        },
+        {
+          "id": "demographics_only",
+          "label": "Age and sex only",
+          "inputs": "no EEG",
+          "excluded_from_model_comparisons": true,
+          "why_here": "A confound comparator, not an EEG model. It shows what this cohort can be separated by without any brain signal, and it never enters a model ranking.",
+          "mean_balanced_accuracy": 0.5501020408163265,
+          "balanced_accuracy_bootstrap_95": [
+            0.4688775510204082,
+            0.6361275510204081
+          ],
+          "macro_f1": 0.5397956759325255,
+          "auroc": 0.5571428571428572
+        }
+      ],
+      "method": {
+        "features": "60 named channels shared by four source layouts; first 120 seconds; 30 disjoint four-second windows; log relative power in five bands spanning 1-45 Hz",
+        "aggregation": "300 features averaged within each person, so the classifier sees one vector per person rather than 4,470 independent examples",
+        "classifier": "training-fold-only StandardScaler and a fixed balanced logistic regression (C=1)",
+        "tuning": "one split seed, no held-out tuning",
+        "interval_kind": "descriptive stratified participant bootstrap, 2,000 resamples; descriptive because the cross-validation training folds overlap"
+      },
+      "claim_boundary": "Research case/control discrimination only. Not a diagnosis, not diagnostic accuracy, not independent-cohort replication, not cross-site generalisation, and not online BCI performance. No patient-facing interpretation is supported.",
+      "independent_audit": {
+        "replayed": "149 recordings and 4470 spectral windows with a separate FFT, all classifiers refit",
+        "maximum_metric_difference": 0.0,
+        "maximum_feature_difference": 0.0
+      },
+      "rights": {
+        "name": "OpenNeuro ds004584 · Rest eyes open, Parkinson's disease and controls",
+        "task": "Case/control discrimination from resting-state EEG",
+        "source": "https://doi.org/10.18112/openneuro.ds004584.v1.0.0",
+        "version": "OpenNeuro ds004584 v1.0.0, retrieved through the NEMAR mirror on004584 v1.0.0 at signed tag 70fa6f36db91f613aaafbccc128528e45319cb0d",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Dataset: Arun Singh, Rachel Cole, Arturo Espinoza, Jim Cavanagh and Nandakumar Narayanan · Rest eyes open, OpenNeuro ds004584 v1.0.0, doi:10.18112/openneuro.ds004584.v1.0.0. Cohort study: Arun Singh, Rachel C. Cole, Arturo I. Espinoza, Jan R. Wessel, James F. Cavanagh and Nandakumar S. Narayanan · Evoked mid-frontal activity predicts cognitive dysfunction in Parkinson's disease, Journal of Neurology, Neurosurgery & Psychiatry 94, 945-953 (2023), doi:10.1136/jnnp-2022-330154. Transport mirror: NEMAR on004584, doi:10.82901/nemar.on004584.",
+        "privacyReview": "Every participant gave written informed consent, and decisional capacity was established, in accordance with the Declaration of Helsinki; all research protocols were approved by the University of Iowa Human Subjects Review Board (IRB 201707828). One site, the University of Iowa Movement Disorders Clinic. The recordings are released CC0 by the authors. This is a clinical population, so the publication boundary is tighter than elsewhere on this site: only two model-level scores with descriptive intervals are published. No participant rows, per-person predictions, clinical or cognitive scores, medication state, or per-group age and sex composition — the last of these is in the reviewed inputs and is deliberately left out, because this site does not publish demographic profiles of a diagnosis-specific group. Nothing published here is diagnostic, and no participant can be distinguished in it.",
+        "reviewedAt": "2026-09-23",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds004584.v1.0.0",
+          "https://doi.org/10.1136/jnnp-2022-330154",
+          "https://europepmc.org/article/PMC/PMC10592174",
+          "https://doi.org/10.82901/nemar.on004584"
+        ]
+      }
+    }
+  },
+  "status_only": [
+    {
+      "id": "ds004902",
+      "name": "OpenNeuro ds004902 · Paired sleep-condition recordings",
+      "status": "status_only",
+      "scores_published": false,
+      "reason": "Downloaded in full and identity-verified, but five FDT payloads in the canonical release are shorter than their own headers and sidecars declare, and all five end inside an incomplete channel frame. The frozen 71-person paired protocol cannot pass its intake gate, so there is no score of any kind. Padding, truncating to the shortest common length, or reporting a partial cohort under the frozen protocol were all refused. What is published is the status and the source-defect counts; no accuracy row exists to publish.",
+      "rights": {
+        "source": "https://openneuro.org/datasets/ds004902/versions/1.0.8",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "OpenNeuro ds004902 v1.0.8, cited as the pinned release while this hold stands."
+      },
+      "verification": [
+        "1,231 files and 8,898,600,609 bytes matched their pinned identities, immutable S3 object versions and git-annex hashes; the defect is therefore upstream, not a failed download.",
+        "Both header layouts in the release (77 flat, 141 nested) agree with an independent parser, so the mismatch is not a reader bug."
+      ],
+      "source_defect": {
+        "files_with_short_payloads": 5,
+        "affected_task_counts": {
+          "eyesopen": 3,
+          "eyesclosed": 2
+        },
+        "declared_duration_seconds": 300,
+        "complete_frame_duration_range_seconds": [
+          22.012,
+          242.0
+        ],
+        "source_identity": "PASS: all 1231 files match pinned source identities",
+        "reader_ruled_out": "Both 77 flat and 141 nested headers match independent parser",
+        "redownload_would_help": false
+      }
+    },
+    {
+      "id": "lfame",
+      "name": "L-FAME · six-person expansion",
+      "status": "status_only",
+      "scores_published": false,
+      "reason": "An audited relative-spectrum description exists for 60 recordings from 6 people, and it is not a model result. Its per-condition numbers are withheld: the descriptors are summarised over 12 recordings per condition from those 6 people, so a minimum or maximum is one person's recording, which this site does not publish. Electrode-row mapping and physical units also remain unresolved, so a spectral profile cannot be read as a biological finding. The published record is the status and the cohort size.",
+      "rights": {
+        "source": "https://huggingface.co/datasets/L-FAME-Dataset-Benchmark/L-FAME/tree/53f4a329eed86a0053b2150cc4e754406662b5a3",
+        "license": "CC-BY-NC-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+        "attribution": "L-FAME Dataset Benchmark · L-FAME, Hugging Face, at revision 53f4a329eed86a0053b2150cc4e754406662b5a3. Noncommercial scope; attribution required; the source card forbids re-identification attempts."
+      },
+      "verification": [
+        "All 60 raw files rehashed and the descriptors replayed with an independent FFT; the audit's summary hash matches the descriptive summary on this machine.",
+        "60 files and 1,170,429,120 bytes matched the pinned Git LFS identities.",
+        "The 2026-09-22 two-person descriptors used a different spectral recipe and are not concatenated with this expansion."
+      ],
+      "described": {
+        "people": 6,
+        "recordings": 60,
+        "complete_windows": 4561,
+        "endpoint": "Relative spectral descriptions only",
+        "numbers_published": false
+      }
+    }
+  ],
+  "holds": [
+    {
+      "id": "clinical-foundation-models",
+      "statement": "No foundation-model score exists for the clinical dataset in this batch.",
+      "reason": "The source does not state a physical amplitude unit. The published relative-spectrum endpoint is scale-free and unaffected; models that require a calibrated amplitude scale stay held rather than being run on an assumed unit.",
+      "scope": "Applies to this dataset only, and says nothing about those models' accuracy."
+    }
+  ],
+  "not_published": [
+    "Per-group age means and sex counts for the clinical cohort: aggregate, but a demographic profile of a diagnosis-specific group.",
+    "The L-FAME per-condition band-ratio minima, medians and maxima.",
+    "Any sleep classifier, LaBraM or CBraMod score from this batch: none exists.",
+    "Participant rows, folds, per-person predictions, fitted heads and checkpoints for every source here."
+  ],
+  "acquisition_integrity": {
+    "checked_at": "2026-09-23",
+    "scope": "Local bytes and pinned source identities only; no scientific, clinical or publication claim.",
+    "sources": [
+      {
+        "source": "L-FAME six-person expansion",
+        "files": 60,
+        "bytes": 1170429120
+      },
+      {
+        "source": "OpenNeuro ds004902",
+        "files": 1231,
+        "bytes": 8898600609
+      },
+      {
+        "source": "OpenNeuro ds004584",
+        "files": 1056,
+        "bytes": 3078225265
+      }
+    ]
+  },
+  "provenance": {
+    "manifest_sha256": "aab3a961abc4f0f82efec911cb28b5b2e0927040545ea41f42b897da98765572",
+    "included": [
+      "ds004584"
+    ]
+  }
+}

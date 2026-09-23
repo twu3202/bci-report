@@ -1,0 +1,155 @@
+---
+import clinical from '../../../data/clinical-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { intervalPct, pct, pp } from '../../../data/topics';
+import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+// Only the source with a recorded `aggregate_preview` decision has a result
+// here. The two status-only sources of this batch carry no numbers at all;
+// they are listed on the home page instead, where holds belong.
+const c = clinical.results.ds004584;
+const byId = Object.fromEntries(c.models.map(m => [m.id, m]));
+const eeg = byId.spectral_logistic, demo = byId.demographics_only;
+const gap = eeg.mean_balanced_accuracy - demo.mean_balanced_accuracy;
+// Descriptive intervals, and they very nearly touch. Say which it is.
+const overlap = eeg.balanced_accuracy_bootstrap_95[0] <= demo.balanced_accuracy_bootstrap_95[1];
+const n = (v: number) => v.toLocaleString('en-US');
+const auroc = (v: number) => v.toFixed(2);
+const basis = c.rights.reviewBasis;
+
+const copy = {
+  en: {
+    description: 'A 149-person resting-state EEG comparison between people with Parkinson\'s disease and controls, published beside an age-and-sex-only comparator, with the limits of a single-site research result stated in full.',
+    eyebrow: 'Clinical research · resting-state EEG',
+    dek: `On one clinic's resting recordings, a simple spectral model separated the two groups at ${pct(eeg.mean_balanced_accuracy)} balanced accuracy, where chance is ${pct(c.chance_level, 0)}. A model given only age and sex, and no EEG at all, reached ${pct(demo.mean_balanced_accuracy)} on the same folds. Both are research results on a public data set. Neither is a diagnosis, neither has been repeated on another cohort, and the comparator is printed here precisely because a case/control score alone does not say what produced it.`,
+    findingLabel: `EEG minus the age-and-sex comparator, same ${c.cohort.people} people`,
+    findingH3: 'The EEG model scores above a model with no EEG',
+    findingP: `${pct(eeg.mean_balanced_accuracy)} against ${pct(demo.mean_balanced_accuracy)}, on the same folds and the same people. The descriptive intervals are ${intervalPct(eeg.balanced_accuracy_bootstrap_95 as [number, number])} and ${intervalPct(demo.balanced_accuracy_bootstrap_95 as [number, number])}${overlap ? ', and they overlap' : ''}. One split seed, no tuning, one site: this is a fixed experiment, not an estimate of what such a model would do elsewhere.`,
+    tableEyebrow: 'Two rows, one of which is not a model',
+    tableH2: 'EEG against age and sex',
+    tableLede: `Two classes, chance ${pct(c.chance_level, 0)}. ${c.cohort.folds} stratified participant folds; every person is held out exactly once, and one averaged feature vector per person enters the classifier.`,
+    tableRegion: 'Clinical case and control results, scrolls horizontally',
+    caption: 'Person-level balanced accuracy with its descriptive 95% interval, macro F1 and AUROC.',
+    colModel: 'Row', colInputs: 'Inputs', colBa: 'Balanced accuracy', colF1: 'Macro F1', colAuroc: 'AUROC',
+    comparatorNote: 'not an EEG model · excluded from every comparison',
+    eegNote: 'log relative band power, 60 shared channels',
+    modelLabel: { spectral_logistic: 'Relative-spectrum logistic regression', demographics_only: 'Age and sex only' } as Record<string, string>,
+    inputLabel: { 'EEG only': 'EEG only', 'no EEG': 'no EEG' } as Record<string, string>,
+    baLabel: (v: string) => `${v} balanced accuracy`,
+    covEyebrow: 'What the scores are computed on',
+    covH2: 'One site, 149 people, two minutes each',
+    covLede: 'The 60 named channels shared by four source layouts; the first 120 seconds of each recording, cut into 30 disjoint four-second windows; log relative power in five bands spanning 1-45 Hz. Each person\'s 300 features are averaged within that person, so the classifier sees one vector per person rather than 4,470 independent examples. Scaling is fitted on training folds only, the classifier is a fixed balanced logistic regression (C=1), and there is one split seed with no held-out tuning.',
+    covPeople: 'People', covPeopleOf: c.cohort.composition,
+    covFolds: 'Participant folds', covFoldsOf: 'each person held out once',
+    covWindows: 'Four-second windows', covWindowsOf: `${n(c.cohort.windows)}, averaged within each person`,
+    limitsH2: 'What this result is not',
+    limitsLede: 'A case/control comparison on one cohort, with one simple model and one split. The list below is not boilerplate: each line is a claim this number cannot support.',
+    limits: [
+      ['Not a diagnosis', 'This is group discrimination on a fixed research split, reported as balanced accuracy. It is not diagnostic accuracy, not a screening tool, not clinical validation, and it supports no interpretation about any individual person.'],
+      ['Not replicated', 'One site, one cohort, one split seed, no held-out tuning. The intervals are descriptive bootstrap ranges, not population guarantees — the cross-validation training folds overlap, which is exactly why they are called descriptive here.'],
+      ['Age and sex are not removed', 'The comparator shows that part of this separation is available with no brain signal at all. The EEG model is not adjusted for age or sex, so its score is not a measure of disease-specific brain activity.'],
+      ['Group differences are not only in the brain', 'Anything that differs between patients and controls travels with the labels: medication, recording session, movement, alertness. A case/control score cannot separate those from the disease.'],
+      ['No foundation-model score for this data set', 'The source does not state a physical amplitude unit. A relative spectrum does not need one, so this result stands; models that need a calibrated scale were left unrun rather than run on an assumed unit.'],
+      ['Separate from the matrix', 'This release is its own review and its own file. It does not join the eight-protocol matrix or the deployment topics, and it shares no ranking with them.'],
+    ],
+    auditH3: 'Independently replayed',
+    auditP: `${c.independent_audit.replayed}. Reconstructed features and metrics differed by ${c.independent_audit.maximum_metric_difference}; intervals differed at floating-point precision.`,
+    consent: 'Every participant gave written informed consent, with decisional capacity established, in accordance with the Declaration of Helsinki; all research protocols were approved by the University of Iowa Human Subjects Review Board (IRB 201707828). Only cohort aggregates appear here: no participant rows, no clinical or cognitive scores, and no per-group age or sex composition.',
+    datasetLink: 'OpenNeuro dataset ↗', paperLink: 'Cohort study ↗', manuscriptLink: 'Open manuscript ↗', mirrorLink: 'NEMAR mirror ↗',
+  },
+  zh: {
+    description: '149 名被试的静息态 EEG 比较：帕金森病组与对照组，旁边并排发布一个只用年龄和性别的对照基线，并完整写明单中心研究结果的局限。',
+    eyebrow: '临床研究 · 静息态 EEG',
+    dek: `在一家诊所的静息态记录上，一个简单的频谱模型以 ${pct(eeg.mean_balanced_accuracy)} 的平衡准确率区分开两组，随机水平为 ${pct(c.chance_level, 0)}。而一个只用年龄和性别、完全不用 EEG 的模型，在同样的折上达到 ${pct(demo.mean_balanced_accuracy)}。两者都是公开数据集上的研究结果：都不是诊断，也都没有在另一个队列上重复过。把对照基线并排放在这里，正是因为单看一个病例对照分数，说不出这个分数从何而来。`,
+    findingLabel: `EEG 减去年龄性别基线，同一批 ${c.cohort.people} 名被试`,
+    findingH3: 'EEG 模型高于完全不用 EEG 的模型',
+    findingP: `${pct(eeg.mean_balanced_accuracy)} 对 ${pct(demo.mean_balanced_accuracy)}，用的是同一批被试、同样的折。两者的描述性区间分别是 ${intervalPct(eeg.balanced_accuracy_bootstrap_95 as [number, number])} 和 ${intervalPct(demo.balanced_accuracy_bootstrap_95 as [number, number])}${overlap ? '，而且二者有重叠' : ''}。单一随机种子、不调参、单中心：这是一次固定的实验，不是对这类模型在别处表现的估计。`,
+    tableEyebrow: '两行，其中一行不是模型',
+    tableH2: 'EEG 对年龄和性别',
+    tableLede: `二分类，随机水平 ${pct(c.chance_level, 0)}。${c.cohort.folds} 折分层被试交叉验证，每名被试恰好被留出一次；每名被试只有一个平均后的特征向量进入分类器。`,
+    tableRegion: '临床病例与对照结果，可横向滚动',
+    caption: '被试级平衡准确率及其描述性 95% 区间、宏平均 F1 与 AUROC。',
+    colModel: '行', colInputs: '输入', colBa: '平衡准确率', colF1: '宏平均 F1', colAuroc: 'AUROC',
+    comparatorNote: '不是 EEG 模型 · 不参与任何比较',
+    eegNote: '对数相对频带功率，60 个共有通道',
+    modelLabel: { spectral_logistic: '相对频谱逻辑回归', demographics_only: '只用年龄和性别' } as Record<string, string>,
+    inputLabel: { 'EEG only': '只用 EEG', 'no EEG': '不用 EEG' } as Record<string, string>,
+    baLabel: (v: string) => `平衡准确率 ${v}`,
+    covEyebrow: '这些分数算在什么之上',
+    covH2: '单中心，149 名被试，每人两分钟',
+    covLede: '四种源通道布局共有的 60 个命名通道；取前 120 秒，切成 30 个互不重叠的 4 秒窗；在 1–45 Hz 的五个频带上取对数相对功率。每名被试的 300 个特征在被试内取平均，因此分类器看到的是每人一个向量，而不是 4,470 个独立样本。标准化只用训练折拟合，分类器是固定的平衡 L2 逻辑回归（C=1）；单一划分种子，没有留出调参。',
+    covPeople: '被试', covPeopleOf: '100 名帕金森病被试与 49 名对照，单中心',
+    covFolds: '分层被试折', covFoldsOf: '每名被试留出一次',
+    covWindows: '4 秒窗', covWindowsOf: `${n(c.cohort.windows)} 个，在被试内取平均`,
+    limitsH2: '这个结果不是什么',
+    limitsLede: '单一队列上的病例对照比较，一个简单模型、一次划分。下面每一条都不是套话，而是这个数字支撑不了的一种说法。',
+    limits: [
+      ['不是诊断', '这是固定研究划分下的分组区分，用平衡准确率报告。它不是诊断准确率，不是筛查工具，没有经过临床验证，也不能用来解释任何一个具体的人。'],
+      ['没有被重复验证', '单中心、单队列、单一划分种子，没有留出调参。区间是描述性的 bootstrap 范围，不是对总体的保证——交叉验证的训练折彼此重叠，这正是这里称其为描述性的原因。'],
+      ['没有扣除年龄和性别', '对照基线说明，这种区分有一部分完全不需要脑信号就能做到。EEG 模型并没有对年龄、性别做校正，所以它的分数不能当作疾病特异的脑活动的度量。'],
+      ['组间差异不只在大脑里', '凡是患者与对照之间不同的东西，都会跟着标签一起进入模型：用药、记录场次、身体活动、清醒程度。病例对照分数无法把这些与疾病本身分开。'],
+      ['这个数据集上没有基础模型分数', '数据源没有说明物理幅值单位。相对频谱不需要这个单位，所以上面的结果成立；而需要标定幅值的模型就先不跑，而不是按假设的单位跑一遍。'],
+      ['与核心矩阵分开', '这次发布有自己的审核记录和自己的数据文件。它不加入八协议矩阵，也不加入部署专题，与它们不共享任何排名。'],
+    ],
+    auditH3: '经过独立复算',
+    auditP: `独立复算了全部 149 份原始记录与 4,470 个频谱窗，使用另一套 FFT 实现，并重新拟合了全部分类器。重建的特征与指标差异为 ${c.independent_audit.maximum_metric_difference}；区间的差异在浮点精度量级。`,
+    consent: '每名被试都签署了书面知情同意，并确认具备决策能力，符合《赫尔辛基宣言》；全部研究方案经爱荷华大学机构审查委员会批准（IRB 201707828）。这里只发布队列级聚合结果：没有逐人记录，没有临床或认知量表分数，也不发布各组的年龄与性别构成。',
+    datasetLink: 'OpenNeuro 数据集 ↗', paperLink: '队列研究论文 ↗', manuscriptLink: '公开手稿 ↗', mirrorLink: 'NEMAR 镜像 ↗',
+  },
+}[locale];
+const card = topicCards[locale]['clinical-groups'];
+const rows = [
+  { m: eeg, note: copy.eegNote, tone: 'rust' as const },
+  { m: demo, note: copy.comparatorNote, tone: 'ink' as const },
+];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/clinical-groups/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="clinical-groups"
+  dataFiles={['/data/clinical-update.json']}
+>
+  <section class="topic-section" aria-labelledby="clinical-finding">
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(gap, 1)}</strong><span>{copy.findingLabel}</span></div>
+      <div class="finding-copy"><h3 id="clinical-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
+    </div>
+    <p class="protocol-note">{clinical.medical_disclaimer}</p>
+    <div class="topic-heading"><div><p class="eyebrow">{copy.tableEyebrow}</p><h2>{copy.tableH2}</h2></div><p>{copy.tableLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion}>
+      <table>
+        <caption>{copy.caption}</caption>
+        <thead><tr><th scope="col">{copy.colModel}</th><th scope="col">{copy.colInputs}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colF1}</th><th scope="col">{copy.colAuroc}</th></tr></thead>
+        <tbody>{rows.map(r => <tr><th scope="row">{copy.modelLabel[r.m.id]}<small>{r.note}</small></th><td>{copy.inputLabel[r.m.inputs]}</td><td><span class="metric">{pct(r.m.mean_balanced_accuracy)}</span><span class="interval">{intervalPct(r.m.balanced_accuracy_bootstrap_95 as [number, number])}</span><ScoreBar value={r.m.mean_balanced_accuracy} label={copy.baLabel(pct(r.m.mean_balanced_accuracy))} tone={r.tone} /></td><td><span class="metric">{pct(r.m.macro_f1)}</span></td><td><span class="metric">{auroc(r.m.auroc)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="clinical-coverage">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.covEyebrow}</p><h2 id="clinical-coverage">{copy.covH2}</h2></div><p>{copy.covLede}</p></div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.covPeople}</p><div class="reading">{c.cohort.people}</div><p>{copy.covPeopleOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covFolds}</p><div class="reading">{c.cohort.folds}</div><p>{copy.covFoldsOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covWindows}</p><div class="reading">{n(c.cohort.windows)}</div><p>{copy.covWindowsOf}</p></article>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="clinical-limits">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="clinical-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list">
+      <article><h3>{copy.auditH3}</h3><p>{copy.auditP}</p></article>
+      <article><h3 lang="en">{c.rights.name}</h3><p lang="en">{c.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[2]} target="_blank" rel="noreferrer">{copy.manuscriptLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.mirrorLink}</a> · <a href={c.rights.licenseUrl} target="_blank" rel="noreferrer">{c.rights.license}</a></p></article>
+    </div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/clinical-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {clinical.schema_version} · {tc.generated} {clinical.generated_at.slice(0,10)}{tc.period}</p>
+  </section>
+</TopicLayout>

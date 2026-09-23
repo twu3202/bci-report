@@ -149,7 +149,7 @@ main{max-width:1412px;margin:auto;padding:0 26px}
    to compatible-protocol views of the reviewed extension instead of folding
    repeated conditions into an invented cross-task leaderboard. */
 .topic-entry{padding:30px 0 38px;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}
-.topic-entry-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
+.topic-entry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
 .topic-entry-card{position:relative;min-width:0;padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-height:245px}
 .topic-entry-card:hover{background:var(--wash);color:inherit}
 .topic-entry-card .topic-number{position:absolute;right:16px;top:12px;font-family:var(--mono);font-size:.72rem;color:var(--rule)}
@@ -158,6 +158,14 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .topic-entry-card p{font-size:.82rem;line-height:1.55}
 .topic-entry-card small{margin-top:12px}
 .topic-entry-card>strong{margin-top:auto;padding-top:17px;color:var(--accent);font-size:.78rem}
+/* Holds: what a batch could not publish. Same card grammar as the topic
+   cards, with the state word carrying the weight instead of a number. */
+.holds{padding:52px 0;border-top:1px solid var(--rule)}
+.hold-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
+.hold-card{border:1px solid var(--line);border-top:3px solid var(--accent-deep);background:var(--panel);padding:18px}
+.hold-card .state{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}
+.hold-card h3{font-family:var(--serif);font-size:1.12rem;margin:6px 0 8px}
+.hold-card p{font-size:.85rem}
 .topic-entry-download{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:14px}
 .topic-entry-download p{font-size:.78rem;max-width:700px}
 
@@ -281,7 +289,8 @@ dialog .button{margin-top:18px}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){
-  .topic-entry-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .topic-entry-grid{grid-template-columns:1fr 1fr}
+  .hold-grid{grid-template-columns:1fr}
   /* Brand and language switcher share the first row; the navigation takes a
      full-width row of its own. One row was never going to hold all three: the
      seven English links plus the switcher need ~980px, and between 700 and

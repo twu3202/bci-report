@@ -1,6 +1,7 @@
 ---
 import data from '../../data/mvp.json';
 import deployment from '../../data/deployment-topics.json';
+import clinical from '../../data/clinical-update.json';
 import { site } from '../../data/site';
 import { topicPages } from '../../data/topics';
 import { homeDataset, websiteEntity } from '../../data/structured';
@@ -48,6 +49,14 @@ const seedNote=(name:string)=>{
   const v=seed.balancedAccuracyPercent,hi=Math.max(...v),lo=Math.min(...v);
   const word=v[0]>=hi?'highest':v[0]<=lo?'lowest':'middle';
   return h.singleSeed(h.seedWord[word],v.length,lo.toFixed(2),hi.toFixed(2),seed.meanPercent.toFixed(2));
+};
+
+// The holds section states what was downloaded and checked in this batch, read
+// from the same reviewed export that carries the clinical result.
+const integrity = clinical.acquisition_integrity.sources;
+const acquired = {
+  files: integrity.reduce((n, s) => n + s.files, 0).toLocaleString('en-US'),
+  gib: (integrity.reduce((n, s) => n + s.bytes, 0) / 1e9).toFixed(1),
 };
 
 // --- Coverage matrix -------------------------------------------------------
@@ -104,7 +113,10 @@ const links=alternates('/',String(origin));
 
 <section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede(deployment.rows.length)}</p></div>
 <div class="topic-entry-grid">{topicPages.map((topic,index)=>{const card=topicCards[locale][topic.slug];return <a class="topic-entry-card" href={hrefFor(`/topics/${topic.slug}/`,locale)}><span class="topic-number">0{index+1}</span><span class="family">{card.kicker}</span><h3>{card.title}</h3><p>{card.summary}</p><small>{card.detail}</small><strong>{h.readEvidence}</strong></a>;})}</div>
-<div class="topic-entry-download"><p>{h.topicsDownloadNote}</p><a class="button" href="/data/deployment-topics.json" download>{h.topicsDownload}</a><a class="button" href="/data/evidence-update.json" download>{h.evidenceDownload}</a></div></section>
+<div class="topic-entry-download"><p>{h.topicsDownloadNote}</p><a class="button" href="/data/deployment-topics.json" download>{h.topicsDownload}</a><a class="button" href="/data/evidence-update.json" download>{h.evidenceDownload}</a><a class="button" href="/data/clinical-update.json" download>{h.clinicalDownload}</a></div></section>
+
+<section id="holds" class="holds"><div class="section-heading"><div><p class="eyebrow">{h.holdsEyebrow}</p><h2>{h.holdsH2}</h2></div><p>{h.holdsLede(acquired.files,acquired.gib)}</p></div>
+<div class="hold-grid">{h.holds.map(([title,state,body])=><article class="hold-card"><p class="state">{state}</p><h3>{title}</h3><p>{body}</p></article>)}</div></section>
 
 <section id="overview" class="overview"><div class="section-heading"><div><p class="eyebrow">{h.matrixEyebrow}</p><h2>{h.matrixH2(counts)}</h2></div><p>{h.matrixLede}</p></div>
 <div class="matrix-frame"><div class="scroll" tabindex="0" role="region" aria-label={h.matrixRegion}><table class="matrix"><caption class="visually-hidden">{h.matrixCaption}</caption><thead><tr><th class="corner" scope="col">{h.corner}</th>{tracks.map(t=><th class="colhead" scope="col"><a href="#benchmarks" data-jump={t.id}>{tt(t.title)}</a><small>n={t.subjects} · {chanceOf(t)===null?h.colDetection:h.colChance(chanceOf(t)!)}</small></th>)}</tr></thead>

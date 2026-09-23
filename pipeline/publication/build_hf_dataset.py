@@ -22,6 +22,7 @@ import hashlib
 from export_snapshot import validate_public
 from export_deployment_topics import EXPORT_AUDIT
 import export_evidence_update as evidence_export
+import export_clinical_update as clinical_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -56,6 +57,17 @@ def evidence_payload():
     audit = json.loads(evidence_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Evidence export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Evidence payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def clinical_payload():
+    """The 2026-09-23 clinical export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'clinical-update.json').read_bytes()
+    audit = json.loads(clinical_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Clinical export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Clinical payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -211,6 +223,14 @@ published as measured), and the status of planned adaptation experiments, which
 have **no results yet**. Heterogeneous by design, so it ships as JSON rather
 than as a table.
 
+`clinical-update.json` — the 23 September 2026 batch, reviewed under its own
+manifest: a 149-person case/control comparison on a Parkinson's disease data set
+(100 patients, 49 controls, one site) published beside an age-and-sex-only
+confound comparator, plus three holds that produced no score. **Research
+results, not diagnosis**: not diagnostic accuracy, not clinical validation, and
+no interpretation of any individual. No participant rows, no clinical scores and
+no per-group demographics are published.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -341,6 +361,8 @@ def build(output):
 
     raw_evidence, _ = evidence_payload()
     (output/'evidence-update.json').write_bytes(raw_evidence)
+    raw_clinical, _ = clinical_payload()
+    (output/'clinical-update.json').write_bytes(raw_clinical)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
