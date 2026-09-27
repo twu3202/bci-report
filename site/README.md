@@ -1,8 +1,8 @@
 # BCI Report — site
 
-English static EEG evaluation workbench. The stable matrix reads
-`src/data/mvp.json`; four deployment-question pages read the separately reviewed
-`src/data/deployment-topics.json`. The parent pipeline exports both inputs after
+English and Chinese static EEG evaluation workbench. The stable matrix reads
+`src/data/mvp.json`; topic pages read separately reviewed exports in
+`src/data/`. The parent pipeline exports both inputs after
 independent review, and the site never computes a score of its own.
 
 ## Page structure
@@ -21,7 +21,19 @@ independent review, and the site never computes a score of its own.
    calibration budget and matched pretraining controls. These conditions do not
    enter the stable 39-comparison matrix and are never collapsed into an overall
    rank. The byte-identical public download is
-   `public/data/deployment-topics.json`.
+   `public/data/deployment-topics.json`. Later topics read their own reviewed
+   export (`evidence-update.json`, `clinical-update.json`); each batch has its
+   own manifest in `research/publication_review_*`.
+5. **When not to act** (`/topics/when-not-to-act/`) — the idle protocol read
+   with command detection and false activation together, followed by the
+   decision-model research roadmap. The roadmap lives in
+   `src/data/decision-research.ts` with its status fixed at `proposal` /
+   `not_run`; `check-workbench.mjs` fails if a figure or completed-work wording
+   appears in it. It has no result and no download of its own.
+6. **Releases** (`/releases/`) — every reviewed batch, the pages it added, its
+   notes, and each download with the SHA-256 of the served bytes, computed at
+   build time. The holds register (`src/data/releases.ts`) is the single source
+   for the home page's open holds.
 
 `src/data/site.ts` is the single switch for the name, origin and public contact
 address. `src/styles/` holds the palette and type scale; brand rasters are

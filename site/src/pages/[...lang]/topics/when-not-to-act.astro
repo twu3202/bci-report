@@ -1,0 +1,139 @@
+---
+import data from '../../../data/mvp.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { pct } from '../../../data/topics';
+import { decisionCopy, decisionRoadmap, decisionSources } from '../../../data/decision-research';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+const plan = decisionCopy[locale];
+
+// Every figure on this page comes from the reviewed idle protocol in the core
+// snapshot. No new measurement enters here; the section below the table is a
+// plan, and renders no number.
+const idle = data.tracks.find(t => t.id === 'idle')!;
+const [, idleN, cmdN] = idle.observations.match(/(\d+) idle \/ (\d+) command/)!.map(Number);
+const people = idle.subjects;
+const count = (percent: number, of: number) => Math.round(percent / 100 * of);
+const rows = [...idle.rows].sort((a, b) => b.y - a.y).map(r => ({
+  ...r, commands: count(r.y, cmdN), falseActs: count(r.x, idleN),
+}));
+// The quietest decoder: no false activation, fewest commands detected.
+const quiet = rows.filter(r => r.falseActs === 0).sort((a, b) => a.commands - b.commands)[0];
+const noun = (n: number, one: string, many: string) => (n === 1 ? one : many);
+
+const modeLabel: Record<string, string> = locale === 'zh'
+  ? { 'Supervised fit': '监督拟合', 'Frozen encoder + linear head': '冻结编码器 + 线性分类头', 'Scratch · 20 epochs': '从头训练 · 20 轮' }
+  : {};
+
+const copy = {
+  en: {
+    description: 'A decoder that never acts never fires by mistake. The idle-and-command protocol read with both of its numbers together, and a research plan for measuring when a decoder should act, wait or ask for calibration.',
+    eyebrow: 'Abstention · idle and command',
+    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, and sets out what would have to be measured to say when a decoder should act at all.`,
+    findingLabel: `${quiet.name}: idle false activations, ${people} people`,
+    findingH3: `No false activation, and ${quiet.commands} ${noun(quiet.commands, 'command', 'commands')} in ${cmdN}`,
+    findingP: `Thresholds are chosen on calibration data only, and a threshold may reject every command. For ${quiet.abstain} of ${people} people it did. Someone who never triggers a command never triggers one by mistake either, so the number of people who always abstained is printed beside every method.`,
+    tableEyebrow: 'Both numbers, every method',
+    tableH2: 'Command detection against idle false activation',
+    tableLede: `${people} people; ${idleN} idle and ${cmdN} command test trials in total; a command counts if it is detected within 3 seconds of its cue. Sorted by command detection.`,
+    tableRegion: 'Idle and command results, scrolls horizontally',
+    caption: 'Counts over the whole test set, with the percentage beneath. “Always abstained” counts people whose calibrated threshold rejected every command.',
+    colMethod: 'Method', colMode: 'Training', colCmd: 'Commands detected ≤3 s', colFalse: 'Idle false activations', colAbstain: 'Always abstained',
+    ofPeople: `of ${people} people`,
+    cmdLabel: (v: string) => `${v} of commands detected`,
+    limitsH2: 'What these numbers cannot say',
+    limitsLede: 'A small, cue-gated protocol. It shows why both numbers are needed; it cannot say how a decoder would behave in continuous use.',
+    limits: [
+      [`${people} people`, `At this size an average stays close to its parts: a published rate can be turned back into a count, and a count narrowed to one of two people. The arithmetic is written out on the data-use page.`],
+      ['Three minutes of idle', `The test holds ${idle.exposure.replace('of test idle', '').trim()} of idle. That cannot estimate how often a decoder would fire by mistake over an hour of real, unprompted rest.`],
+      ['Cue-gated, not always-on', 'Detection restarts at every cue, so the decoder always knows a decision window has opened. A system that must notice intent on its own faces a harder problem than this protocol measures.'],
+      ['No probability quality yet', 'These are thresholded decisions. How well each method’s probabilities are calibrated — the basis for deciding when to defer — has not been measured on this protocol.'],
+    ],
+    smallCohorts: 'The four-person arithmetic, in full (English)',
+    consent: 'The source README reports voluntary signed consent and approval by the ethics committee of Universidad Antonio Nariño. Only cohort aggregates appear here.',
+    datasetLink: 'OpenNeuro dataset ↗', studyLink: 'Associated study ↗',
+    csv: 'this protocol as CSV',
+  },
+  zh: {
+    description: '从不执行的解码器，也就从不误触发。把空闲与指令协议的两个数字放在一起读，并提出一个研究计划：怎样测量解码器何时该执行、该等待、该请求校准。',
+    eyebrow: '拒识 · 空闲与指令',
+    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，并说明要测什么，才能回答解码器究竟该不该执行。`,
+    findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
+    findingH3: `没有误触发，${cmdN} 条指令只检出 ${quiet.commands} 条`,
+    findingP: `阈值只用校准数据来选，而选出的阈值可能拒绝所有指令。${people} 名被试中有 ${quiet.abstain} 名正是如此。从不触发指令的人，自然也从不误触发，所以每种方法旁边都列出了始终拒识的人数。`,
+    tableEyebrow: '两个数字，每种方法',
+    tableH2: '指令检出与空闲误触发',
+    tableLede: `${people} 名被试；测试集共 ${idleN} 个空闲试次和 ${cmdN} 个指令试次；指令在提示后 3 秒内被检出才算。按指令检出率排序。`,
+    tableRegion: '空闲与指令结果，可横向滚动',
+    caption: '整个测试集上的计数，下方为百分比。“始终拒识”指校准得到的阈值拒绝了全部指令的被试人数。',
+    colMethod: '方法', colMode: '训练方式', colCmd: '3 秒内检出的指令', colFalse: '空闲误触发', colAbstain: '始终拒识',
+    ofPeople: `共 ${people} 名被试`,
+    cmdLabel: (v: string) => `指令检出率 ${v}`,
+    limitsH2: '这些数字说明不了什么',
+    limitsLede: '一个规模小、提示同步的协议。它说明了为什么两个数字缺一不可，却说明不了解码器在连续使用中的表现。',
+    limits: [
+      [`${people} 名被试`, '在这个规模下，平均值离每个人都很近：公开的比率可以还原成计数，计数又能缩小到两个人中的一个。具体算法写在数据使用页上。'],
+      ['三分钟的空闲', '测试中只有 180 秒的空闲。它估计不了在一个小时真实、无提示的休息中，解码器会误触发多少次。'],
+      ['提示同步，不是全天候', '每次提示都会重新开始检测，所以解码器总是知道决策窗口已经打开。一个必须自己察觉意图的系统，面对的问题比这个协议测的更难。'],
+      ['还没有测概率质量', '这些都是经过阈值的决策。每种方法的概率校准得好不好——这正是判断何时该推迟决策的依据——还没有在这个协议上测过。'],
+    ],
+    smallCohorts: '四人队列的完整算法（英文）',
+    consent: '数据源 README 写明被试自愿签署了同意书，并经 Universidad Antonio Nariño 伦理委员会批准。这里只发布队列级聚合结果。',
+    datasetLink: 'OpenNeuro 数据集 ↗', studyLink: '相关研究论文 ↗',
+    csv: '本协议的 CSV',
+  },
+}[locale];
+const card = topicCards[locale]['when-not-to-act'];
+const basis = idle.reviewBasis;
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/when-not-to-act/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="when-not-to-act"
+  dataFiles={['/data/experiments.json']}
+>
+  <section class="topic-section" aria-labelledby="abstain-finding">
+    <div class="finding">
+      <div class="finding-number"><strong>{quiet.falseActs} / {idleN}</strong><span>{copy.findingLabel}</span></div>
+      <div class="finding-copy"><h3 id="abstain-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
+    </div>
+    <div class="topic-heading"><div><p class="eyebrow">{copy.tableEyebrow}</p><h2>{copy.tableH2}</h2></div><p>{copy.tableLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion}>
+      <table>
+        <caption>{copy.caption}</caption>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colMode}</th><th scope="col">{copy.colCmd}</th><th scope="col">{copy.colFalse}</th><th scope="col">{copy.colAbstain}</th></tr></thead>
+        <tbody>{rows.map(r => <tr><th scope="row">{r.name}</th><td>{modeLabel[r.mode] ?? r.mode}</td><td><span class="metric">{r.commands} / {cmdN}</span><span class="interval">{pct(r.y / 100)}</span><ScoreBar value={r.y / 100} label={copy.cmdLabel(pct(r.y / 100))} tone="rust" /></td><td><span class="metric">{r.falseActs} / {idleN}</span><span class="interval">{pct(r.x / 100)}</span></td><td><span class="metric">{r.abstain}</span><span class="interval">{copy.ofPeople}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="abstain-limits">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="abstain-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <p class="citation-note"><a href="/data-use/#small-cohorts">{copy.smallCohorts}</a></p>
+    <div class="citation-list"><article><h3 lang="en">{idle.dataset} · {idle.subtitle}</h3><p lang="en">{idle.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[2]} target="_blank" rel="noreferrer">{copy.studyLink}</a> · <a href={idle.licenseUrl} target="_blank" rel="noreferrer">{idle.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/experiments.json" download>{tc.reviewedAggregate}</a> · <a href="/data/idle-results.csv" download>{copy.csv}</a> · {data.releaseId}{tc.period}</p>
+  </section>
+
+  <section class="topic-section roadmap" id="decision-research" aria-labelledby="decision-heading" data-status={decisionRoadmap.status} data-run-status={decisionRoadmap.runStatus}>
+    <div class="topic-heading"><div><p class="eyebrow">{plan.eyebrow}</p><h2 id="decision-heading">{plan.h2}</h2></div><p>{plan.lede}</p></div>
+    <p class="protocol-note research-status">{plan.statusLine}</p>
+    <ol class="route-list">{plan.routes.map(r => <li><p class="eyebrow">{r.tag} · {plan.routeStatus}</p><h3>{r.title}</h3><p>{r.body}</p><p class="route-boundary">{r.boundary}</p></li>)}</ol>
+    <h3 class="roadmap-sub">{plan.boundaryH3}</h3>
+    <p class="roadmap-p">{plan.boundary}</p>
+    <p class="roadmap-p">{plan.inputsNote}</p>
+    <h3 class="roadmap-sub">{plan.litH3}</h3>
+    <p class="roadmap-p">{plan.litLede}</p>
+    <div class="literature-grid">{plan.literature.map(([id, shows, limit]) => <article><h4 lang="en"><a href={decisionSources[id].url} target="_blank" rel="noreferrer">{decisionSources[id].cite} ↗</a></h4><p><strong>{plan.shows}</strong> {shows}</p><p><strong>{plan.limit}</strong> {limit}</p></article>)}</div>
+    <h3 class="roadmap-sub">{plan.relatedH3}</h3>
+    <p class="roadmap-p">{plan.related.map(([href, label], i) => <>{i > 0 && ' · '}<a href={hrefFor(href, locale)}>{label}</a></>)}</p>
+  </section>
+</TopicLayout>

@@ -1,0 +1,164 @@
+---
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import data from '../../data/mvp.json';
+import deployment from '../../data/deployment-topics.json';
+import evidence from '../../data/evidence-update.json';
+import clinical from '../../data/clinical-update.json';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { site } from '../../data/site';
+import { holds, releases } from '../../data/releases';
+import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale,
+         topicCards, topicChrome } from '../../data/i18n';
+import '../../styles/global.css';
+import '../../styles/topics.css';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const t = chrome[locale];
+const tc = topicChrome[locale];
+const path = '/releases/';
+const origin = Astro.site ?? site.origin;
+const canonical = new URL(localizePath(path, locale), origin).href;
+const ogImage = new URL('/og.png', origin).href;
+
+// Hashes are computed from the bytes the site serves, at build time, so the
+// page cannot state a hash for a file it does not ship. check-workbench.mjs
+// recomputes each one from dist/data and compares.
+const served = (file: string) => readFileSync(resolve('public/data', file));
+const fileFacts = (file: string) => {
+  const bytes = served(file);
+  return { file, bytes: bytes.length, sha: createHash('sha256').update(bytes).digest('hex') };
+};
+// The review manifest each payload was built from, where the payload records it.
+const manifestOf: Record<string, string | undefined> = {
+  evidence: evidence.provenance.manifest_sha256,
+  clinical: clinical.provenance.manifest_sha256,
+  deployment: undefined, mvp: undefined,
+};
+const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id };
+for (const r of releases)
+  if (idOf[r.payload] !== r.id) throw new Error(`releases.ts: ${r.id} does not match its payload (${idOf[r.payload]})`);
+
+const date = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return locale === 'zh' ? `${y} 年 ${m} 月 ${d} 日`
+    : `${d} ${['January','February','March','April','May','June','July','August','September','October','November','December'][m - 1]} ${y}`;
+};
+const kib = (n: number) => n < 1024 ? `${n} B` : `${(n / 1024).toFixed(1)} KiB`;
+const pageTitle = (p: string) => {
+  const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
+  return slug ? topicCards[locale][slug].title : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)');
+};
+
+const copy = {
+  en: {
+    title: 'Releases',
+    description: 'Every reviewed BCI Report release: what it added, what it held back, and the SHA-256 of every file it ships.',
+    eyebrow: 'Release log',
+    dek: 'Every reviewed batch, newest first: what it added, what it held back, and the exact bytes to download. Batches are reviewed separately and never summed, because they measure different things.',
+    home: 'Home',
+    releasesH2: 'Releases',
+    added: 'Pages', notes: 'Notes', files: 'Downloads', manifest: 'Review manifest SHA-256',
+    colFile: 'File', colSize: 'Size', colSha: 'SHA-256 of the file as served',
+    filesRegion: (id: string) => `Downloads in ${id}, scrolls horizontally`,
+    holdsH2: 'Holds register',
+    holdsLede: 'Everything that was held back, with the date it was opened and, if it was, resolved. A hold is not a failed result: it is a result that could not be published honestly yet.',
+    colItem: 'Item', colOpened: 'Opened', colStatus: 'Status', colOutcome: 'Why',
+    open: 'Open', resolved: (d: string) => `Resolved ${d}`,
+    holdsRegion: 'Holds register, scrolls horizontally',
+    rights: 'Source terms, consent and privacy review for each batch are on the data-use page.',
+    rightsLink: 'Data use & privacy',
+  },
+  zh: {
+    title: '发布记录',
+    description: 'BCI Report 每一次经过审核的发布：新增了什么、暂缓了什么，以及所附每个文件的 SHA-256。',
+    eyebrow: '发布记录',
+    dek: '每一批经过审核的发布，最新的在前：新增了什么、暂缓了什么，以及可下载文件的确切字节。各批次分开审核、从不相加，因为它们测量的是不同的东西。',
+    home: '首页',
+    releasesH2: '各次发布',
+    added: '页面', notes: '说明', files: '下载', manifest: '审核清单 SHA-256',
+    colFile: '文件', colSize: '大小', colSha: '所提供文件的 SHA-256',
+    filesRegion: (id: string) => `${id} 的下载文件，可横向滚动`,
+    holdsH2: '暂缓登记册',
+    holdsLede: '所有暂缓发布的内容，附开始暂缓的日期，以及解除的日期（如已解除）。暂缓不是失败的结果，而是一个暂时还无法诚实发布的结果。',
+    colItem: '项目', colOpened: '开始暂缓', colStatus: '状态', colOutcome: '原因',
+    open: '暂缓中', resolved: (d: string) => `${d} 解除`,
+    holdsRegion: '暂缓登记册，可横向滚动',
+    rights: '每一批的来源条款、同意书与隐私审查写在数据使用页上。',
+    rightsLink: '数据使用与隐私（英文）',
+  },
+}[locale];
+const pageTitleFull = `${copy.title} · ${site.name}`;
+const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manifest: manifestOf[r.payload] }));
+---
+<!doctype html>
+<html lang={htmlLang[locale]}>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="description" content={copy.description}/>
+  <meta name="theme-color" content="#b3450e"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="/favicon.ico" sizes="32x32"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="canonical" href={canonical}/>
+  {alternates(path, String(origin)).map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
+  <title>{pageTitleFull}</title>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content={site.name}/>
+  <meta property="og:locale" content={ogLocale[locale]}/>
+  <meta property="og:title" content={pageTitleFull}/>
+  <meta property="og:description" content={copy.description}/>
+  <meta property="og:url" content={canonical}/>
+  <meta property="og:image" content={ogImage}/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content={pageTitleFull}/>
+  <meta name="twitter:description" content={copy.description}/>
+  <meta name="twitter:image" content={ogImage}/>
+</head>
+<body>
+  <a class="skip" href="#release-content">{t.skipToEvidence}</a>
+  <SiteHeader locale={locale} path={path}/>
+  <main class="topic-page" id="release-content">
+    <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{copy.home}</a></li><li aria-current="page">{copy.title}</li></ol></nav>
+    <section class="topic-hero">
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.title}</h1>
+      <p class="topic-dek">{copy.dek}</p>
+    </section>
+
+    <section class="topic-section" aria-labelledby="releases-heading">
+      <h2 id="releases-heading" class="visually-hidden">{copy.releasesH2}</h2>
+      {entries.map(r => (
+        <article class="release-entry" id={r.id}>
+          <header><time datetime={r.date}>{date(r.date)}</time><code>{r.id}</code></header>
+          <p class="release-summary">{r.summary[locale]}</p>
+          <p class="release-meta"><strong>{copy.added}</strong> {r.pages.map((p, i) => <>{i > 0 && ' · '}<a href={hrefFor(p, locale)}>{pageTitle(p)}</a></>)}</p>
+          {r.notes.map(n => <p class="release-meta"><strong>{copy.notes}</strong> {n[locale]}</p>)}
+          {r.manifest && <p class="release-meta"><strong>{copy.manifest}</strong> <code class="hash">{r.manifest}</code></p>}
+          <div class="topic-table scroll release-files" tabindex="0" role="region" aria-label={copy.filesRegion(r.id)}>
+            <table>
+              <thead><tr><th scope="col">{copy.colFile}</th><th scope="col">{copy.colSize}</th><th scope="col">{copy.colSha}</th></tr></thead>
+              <tbody>{r.facts.map(f => <tr><th scope="row"><a href={`/data/${f.file}`} download>{f.file}</a></th><td>{kib(f.bytes)}</td><td><code class="hash" data-file={f.file}>{f.sha}</code></td></tr>)}</tbody>
+            </table>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="topic-section" id="holds" aria-labelledby="holds-heading">
+      <div class="topic-heading"><div><h2 id="holds-heading">{copy.holdsH2}</h2></div><p>{copy.holdsLede}</p></div>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.holdsRegion}>
+        <table>
+          <thead><tr><th scope="col">{copy.colItem}</th><th scope="col">{copy.colOpened}</th><th scope="col">{copy.colStatus}</th><th scope="col">{copy.colOutcome}</th></tr></thead>
+          <tbody>{holds.map(h => <tr class={h.closed ? 'hold-resolved' : 'hold-open'}><th scope="row">{h.href ? <a href={hrefFor(h.href, locale)}>{h.item[locale]}</a> : h.item[locale]}</th><td><time datetime={h.opened}>{date(h.opened)}</time></td><td>{h.closed ? copy.resolved(date(h.closed)) : copy.open}</td><td>{h.outcome[locale]}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <p class="citation-note">{copy.rights} <a href="/data-use/">{copy.rightsLink}</a></p>
+    </section>
+  </main>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#release-content">{t.footerTop}</a></footer>
+</body>
+</html>

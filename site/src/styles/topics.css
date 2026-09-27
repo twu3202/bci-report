@@ -59,6 +59,7 @@
 .topic-switcher{margin-top:42px;padding-top:24px;border-top:3px double var(--rule)}
 .topic-switcher>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px}
 .topic-switcher a{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.topic-switcher a:last-child:nth-child(3n+1){grid-column:1/-1}
 .topic-switcher a[aria-current=page]{background:var(--wash);box-shadow:inset 0 -3px var(--accent)}
 .topic-switcher strong{display:block;font-size:.88rem;margin-top:2px}
 .topic-switcher small{color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.6rem}
@@ -96,3 +97,33 @@
   .evidence-grid,.method-grid-wide,.citation-list{grid-template-columns:minmax(0,1fr)}
   .chart-row{grid-template-columns:110px 1fr 55px;gap:8px}
 }
+
+/* When not to act: the roadmap is a plan, so it reads as one — no figures, a
+   status line, and routes that say "not run" on every card. */
+.research-status{margin-top:4px}
+.route-list{list-style:none;padding:0;margin:22px 0 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.route-list li{border-top:2px solid var(--rule);padding:14px 2px 4px;min-width:0}
+.route-list h3{font-family:var(--serif);font-size:1.15rem;margin:6px 0 8px}
+.route-list p{font-size:.84rem}
+.route-list .route-boundary{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted)}
+.roadmap-sub{font-family:var(--serif);font-size:1.15rem;margin:30px 0 6px}
+.literature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.literature-grid article{border:1px solid var(--line);background:var(--panel);padding:15px;min-width:0}
+.literature-grid h4{font-size:.85rem;margin:0 0 8px;overflow-wrap:anywhere}
+.literature-grid h4 a{color:var(--accent)}
+.literature-grid p{font-size:.8rem;margin-top:6px}
+
+/* Releases: a log, not a dashboard. */
+.release-entry{padding:22px 0 26px;border-bottom:1px solid var(--line)}
+.release-entry:first-of-type{padding-top:0}
+.release-entry header{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.release-entry time{font-family:var(--serif);font-size:1.25rem;font-weight:600}
+.release-entry code{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.release-summary{margin-top:8px;max-width:820px}
+.release-meta{font-size:.84rem;margin-top:6px;max-width:900px}
+.release-meta a{color:var(--accent)}
+.release-files{margin-top:14px}
+.release-files th[scope=row] a{color:var(--accent);font-family:var(--mono);font-size:.8rem}
+code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wrap:anywhere;word-break:break-all}
+.hold-resolved th,.hold-resolved td{color:var(--muted)}
+@media(max-width:860px){.route-list,.literature-grid{grid-template-columns:minmax(0,1fr)}}

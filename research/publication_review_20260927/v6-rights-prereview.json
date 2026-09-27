@@ -1,0 +1,64 @@
+{
+  "status": "prereview",
+  "reviewed_at": "2026-09-27",
+  "scope": "Rights and consent pre-review for the four v6 acquisitions, done while their analyses run. This is not an editorial decision and publishes nothing: each source still needs its own manifest entry, pinned result and audit hashes, and a decision when its audited aggregate handoff arrives. Numbers are not reviewed here because none exist yet.",
+  "sources": [
+    {
+      "id": "vr-pc-p300",
+      "name": "Dataset of an EEG-based BCI experiment in Virtual Reality and on a Personal Computer",
+      "source": "https://zenodo.org/records/2605205",
+      "license": "CC-BY-4.0",
+      "attribution": "Grégoire Cattan, Anton Andreev, Pedro L. C. Rodrigues and Marco Congedo · Zenodo record 2605205 (2019); documented by arXiv:1903.11297.",
+      "consentBasis": "The documentation reports that all 21 participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment, and that the study was approved by the Ethical Committee of the University of Grenoble Alpes (Comité d'Ethique pour la Recherche Non-Interventionnelle).",
+      "consentSource": "https://arxiv.org/abs/1903.11297",
+      "prereview": "clear to proceed to a publication decision",
+      "notes": [
+        "NEMAR nm000236 is a derivative of this cohort and must not be counted as a second data set.",
+        "PC and VR differ in display and marker timing; any result is within-person context transfer, not cross-day transfer."
+      ]
+    },
+    {
+      "id": "gait-eeg",
+      "name": "A multimodal gait dataset of brain activity, muscle activity, kinematics and ground forces in young adults",
+      "source": "https://doi.org/10.13026/r0ea-7161",
+      "license": "CC-BY-4.0",
+      "attribution": "Katmah, R., AlShehhi, A., Kosaji, D., Al-Rahmani, N., Abdullah, M., Hulleck, A. A. V. and Khalaf, K. · PhysioNet multimodal-gait-dataset v1.0.0 (2026).",
+      "consentBasis": "The PhysioNet record states that the study followed the Declaration of Helsinki, was approved by the Institutional Review Board of Khalifa University (protocol H19-038), and that all participants gave written informed consent.",
+      "consentSource": "https://physionet.org/content/multimodal-gait-dataset/1.0.0/",
+      "prereview": "clear to proceed to a publication decision",
+      "notes": [
+        "EEG from a 19-channel dry headset (DSI-24) during walking. Any speed-decoding result must be published beside a motion-nuisance comparator, as the clinical result is beside its age-and-sex comparator.",
+        "The 25 recorded fields include reference, auxiliary and trigger channels; they are not 25 electrodes."
+      ]
+    },
+    {
+      "id": "stieger-longitudinal",
+      "name": "Continuous sensorimotor rhythm based brain computer interface learning in a large population",
+      "source": "https://doi.org/10.6084/m9.figshare.13123148.v1",
+      "license": "CC-BY-4.0",
+      "attribution": "James R. Stieger, Stephen A. Engel and Bin He · Scientific Data 8, 98 (2021).",
+      "consentBasis": "The data descriptor states that all experiments were approved by the institutional review boards of the University of Minnesota and Carnegie Mellon University and that informed consent was obtained from all subjects.",
+      "consentSource": "https://europepmc.org/article/PMC/PMC8016873",
+      "prereview": "rights clear; not publishable as a score at the current scope",
+      "notes": [
+        "The v6 acquisition is one person's eleven sessions. With one person, every number is that person's, which this site does not publish. Status only until the cohort is extended."
+      ]
+    },
+    {
+      "id": "ysu-asynchronous-ssvep",
+      "name": "YSU asynchronous SSVEP-BCI dataset",
+      "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+      "license": "CC-BY-4.0",
+      "attribution": "Jing Zhao, Qian Zhang and Xinrui Wang · figshare 24906300 v3 (2024).",
+      "consentBasis": null,
+      "consentSource": null,
+      "prereview": "hold: primary consent source not found",
+      "notes": [
+        "The figshare description reads only 'Update later.' and links no paper. No data descriptor was found in Europe PMC or Crossref on 2026-09-27.",
+        "A related paper from the same Yanshan University group on idle-state detection in SSVEP BCIs exists (J Neural Eng 2023, doi:10.1088/1741-2552/ad1054) but is not open access, and it has not been established that it describes this data set.",
+        "Under the Alpha Waves precedent, a source held for its consent documentation is not named on any page until the hold is resolved; check-workbench.mjs enforces this.",
+        "Even when resolved, the acquired scope is a four-person pilot: the small-cohort inversion caveat applies, and no per-person value may be published."
+      ]
+    }
+  ]
+}

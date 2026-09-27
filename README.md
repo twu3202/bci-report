@@ -51,6 +51,7 @@ Or straight from the site, no account:
 curl -O https://bci.report/data/experiments.json        # full release snapshot
 curl -O https://bci.report/data/deployment-topics.json  # four deployment questions
 curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
+curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 ```
 
 ## What is measured

@@ -113,13 +113,6 @@ export const topicPages = [
     detail: 'Two paired comparisons · 10 and 19 people',
   },
   {
-    slug: 'clinical-groups',
-    kicker: 'Clinical research',
-    title: 'Clinical groups',
-    summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
-    detail: '149 people · one site · balanced accuracy',
-  },
-  {
     slug: 'on-the-move',
     kicker: 'Motion robustness',
     title: 'On the move',
@@ -134,11 +127,25 @@ export const topicPages = [
     detail: 'Common future blocks · target-only fitting',
   },
   {
+    slug: 'when-not-to-act',
+    kicker: 'Abstention',
+    title: 'When not to act',
+    summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a plan for measuring when to act, wait or recalibrate.',
+    detail: 'Idle and command · 4 people · research plan',
+  },
+  {
     slug: 'does-pretraining-help',
     kicker: 'Representation controls',
     title: 'Does pretraining help?',
     summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings.',
     detail: 'Two tasks · two encoders · three random initializations',
+  },
+  {
+    slug: 'clinical-groups',
+    kicker: 'Clinical research',
+    title: 'Clinical groups',
+    summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
+    detail: '149 people · one site · balanced accuracy',
   },
 ] as const;
 

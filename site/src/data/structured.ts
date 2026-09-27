@@ -91,6 +91,11 @@ const LATER_EXPORTS: Record<string, { file: string; release: string; generated: 
   'on-the-move': { file: '/data/evidence-update.json', release: evidence.release_id,
                    generated: evidence.generated_at,
                    metrics: ['signed_correlation_r', 'predictive_r_squared'] },
+  // Its measured part is the idle protocol of the core snapshot; the roadmap on
+  // the same page has no result and contributes nothing here.
+  'when-not-to-act': { file: '/data/experiments.json', release: data.releaseId,
+                       generated: data.generatedAt,
+                       metrics: ['command_detection_within_3s', 'idle_false_activation'] },
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
                        generated: clinical.generated_at,
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },

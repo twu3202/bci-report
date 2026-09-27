@@ -166,6 +166,12 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .hold-card .state{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}
 .hold-card h3{font-family:var(--serif);font-size:1.12rem;margin:6px 0 8px}
 .hold-card p{font-size:.85rem}
+.hold-card small{display:block;margin-top:10px;font-size:.72rem;color:var(--muted)}
+.holds-more{margin-top:14px;font-size:.85rem}
+.holds-more a{color:var(--accent)}
+/* Seven topics in three columns: the last one spans its row rather than
+   standing alone beside two empty cells. */
+.topic-entry-card:last-child:nth-child(3n+1){grid-column:1/-1}
 .topic-entry-download{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:14px}
 .topic-entry-download p{font-size:.78rem;max-width:700px}
 

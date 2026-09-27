@@ -4,6 +4,7 @@ import deployment from '../data/deployment-topics.json';
 import evidence from '../data/evidence-update.json';
 import clinical from '../data/clinical-update.json';
 import { site } from '../data/site';
+import { pagesUpdated } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 
 /**
@@ -30,8 +31,10 @@ const CLINICAL = clinical.generated_at.slice(0, 10);
 const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-move/',
                                 '/topics/calibration-budget/']);
 const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
+const SITE_UPDATE = new Set<string>(pagesUpdated.paths);
 const lastmodOf = (path: string) =>
-  CLINICAL_PAGES.has(path) ? CLINICAL
+  SITE_UPDATE.has(path) ? pagesUpdated.date
+  : CLINICAL_PAGES.has(path) ? CLINICAL
   : EVIDENCE_PAGES.has(path) ? EVIDENCE
   : path.startsWith('/topics/') ? TOPICS : RELEASE;
 

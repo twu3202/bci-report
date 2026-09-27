@@ -164,10 +164,12 @@ const topicPages=[
   ['clinical-groups','Clinical groups'],
   ['on-the-move','On the move'],
   ['calibration-budget','How much calibration?'],
+  ['when-not-to-act','When not to act'],
   ['does-pretraining-help','Does pretraining help?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
-  :slug==='clinical-groups'?'clinical-update.json':'deployment-topics.json';
+  :slug==='clinical-groups'?'clinical-update.json'
+  :slug==='when-not-to-act'?'experiments.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page='../dist/topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -240,7 +242,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','does-pretraining-help':'预训练有用吗？'};
+const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','when-not-to-act':'何时不该执行','does-pretraining-help':'预训练有用吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -405,13 +407,67 @@ for(const [label,path] of [['en',''],['zh','zh/']]){
   // A hold has no result. No percentage, and no decimal figure, inside the cards.
   const cards=holds.slice(holds.indexOf('hold-grid'));
   assert.doesNotMatch(cards,/\d+(?:\.\d+)?%|\d\.\d/,label+': a hold must not carry a figure');
-  assert.match(holds,/2,347/,label+': what was downloaded and checked is stated');
+  // Every open hold says since when, and the full register is one click away.
+  assert.match(holds,label==='en'?/Held since \d+ \w+ 20\d\d/:/20\d\d 年 \d+ 月 \d+ 日起暂缓/,label+': a hold must carry its date');
+  assert.ok(holds.includes(label==='en'?'href="/releases/#holds"':'href="/zh/releases/#holds"'),label+': the holds register must be linked');
 }
 // The withheld six-person descriptors appear nowhere, in any locale.
 const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
     assert.ok(!pageOf(p).includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+
+// --- 2026-09-27 site update: when not to act, and the release log ----------
+// The abstention topic: every figure from the reviewed idle protocol, and a
+// roadmap that is a plan — no figure, no borrowed number, no word that reads
+// as done.
+const idleTrack=data.tracks.find(t=>t.id==='idle');
+const [,idleN,cmdN]=idleTrack.observations.match(/(\d+) idle \/ (\d+) command/).map(Number);
+for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/when-not-to-act/']]){
+  const html=pageOf(path);
+  for(const r of idleTrack.rows){
+    assert.ok(html.includes(`${Math.round(r.y/100*cmdN)} / ${cmdN}`),label+': '+r.name+' command count');
+    assert.ok(html.includes(`${Math.round(r.x/100*idleN)} / ${idleN}`),label+': '+r.name+' false-activation count');
+    assert.ok(html.includes(r.y.toFixed(1)+'%'),label+': '+r.name+' detection percentage');
+  }
+  // Abstention travels with every row: the number of people who always abstained.
+  const abstainCells=[...html.matchAll(/class="metric">\d<\/span><span class="interval">(?:of 4 people|共 4 名被试)</g)].length;
+  assert.equal(abstainCells,idleTrack.rows.length,label+': every method shows how many people always abstained');
+  assert.ok(html.includes('href="/data-use/#small-cohorts"'),label+': the four-person arithmetic must be linked');
+  const road=html.slice(html.indexOf('id="decision-research"'),html.indexOf('class="topic-switcher"'));
+  assert.ok(road.length>2000,label+': the roadmap section must render');
+  assert.match(road,/data-status="proposal"/,label+': roadmap status is proposal');
+  assert.match(road,/data-run-status="not_run"/,label+': roadmap run status is not_run');
+  assert.match(road,label==='en'?/No experiment in this section has been run/:/本节中的实验都尚未运行/,label+': the roadmap states its status in words');
+  // A plan carries no figure: no percentage, no decimal, no speed-up, no ms.
+  // Visible text only: arXiv identifiers in link targets are not figures.
+  const roadText=road.replace(/<[^>]+>/g,' ');
+  assert.doesNotMatch(roadText,/\d+(?:\.\d+)?\s?%|\d\.\d|\d+(?:\.\d+)?\s?[×x]\b|\d+\s?ms\b/,label+': a figure appeared in the roadmap');
+  // Wording that would read as done.
+  assert.doesNotMatch(road,/calibrated policy|measured uncertainty|经过校准的策略|经过评测的不确定性|we (?:have )?(?:trained|measured|built)/i,label+': the roadmap must not read as completed work');
+  // "Jev" is named once, in its literature card, never in a heading.
+  assert.equal((html.match(/Jev/g)||[]).length,2,label+': Jev appears only in its citation and its card');
+  assert.doesNotMatch(html,/<h[123][^>]*>[^<]*Jev/,label+': Jev must not be in a heading');
+}
+// A source held for its consent documentation is not named anywhere until it
+// is resolved — the same rule Alpha Waves was held under.
+for(const p of [...everyPage,'topics/when-not-to-act/','zh/topics/when-not-to-act/','releases/','zh/releases/'])
+  assert.doesNotMatch(pageOf(p),/YSU|Yanshan|24906300/,p+': a source under consent review must not be named');
+// The release log: every download is listed, and every listed hash is the hash
+// of the byte-identical file the site serves.
+const {createHash}=await import('node:crypto');
+for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+  const html=pageOf(path);
+  const listed=[...html.matchAll(/<code class="hash" data-file="([^"]+)">([0-9a-f]{64})<\/code>/g)];
+  const served=readdirSync(new URL('../dist/data/',import.meta.url));
+  assert.deepEqual(listed.map(m=>m[1]).sort(),[...served].sort(),label+': every served download is listed exactly once');
+  for(const [,file,sha] of listed)
+    assert.equal(sha,createHash('sha256').update(readFileSync(new URL('../dist/data/'+file,import.meta.url))).digest('hex'),label+': '+file+' hash on the page is not the served file');
+  for(const id of [data.releaseId,topics.release_id,ev.release_id,cl.release_id])
+    assert.ok(html.includes(`id="${id}"`),label+': release '+id+' must be listed');
+  assert.ok(html.includes(ev.provenance.manifest_sha256)&&html.includes(cl.provenance.manifest_sha256),label+': review manifest hashes are shown');
+  assert.match(html,/class="hold-resolved"/,label+': resolved holds stay in the register');
+}
 
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
@@ -423,8 +479,9 @@ for(const path of bilingual){
   assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
 }
 
-console.log('PASS: coverage matrix, six topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: coverage matrix, seven topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
+console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
 console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

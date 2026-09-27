@@ -73,6 +73,8 @@ export const translatedPaths = [
   '/topics/on-the-move/',
   '/topics/calibration-budget/',
   '/topics/does-pretraining-help/',
+  '/topics/when-not-to-act/',
+  '/releases/',
 ] as const;
 
 const isTranslated = (path: string) => (translatedPaths as readonly string[]).includes(path);
@@ -127,6 +129,7 @@ interface Chrome {
   footerDataUse: string;
   footerBack: string;
   footerTop: string;
+  footerReleases: string;
   downloadData: string;
   /** Appended to any link that leaves a Chinese page for an English-only one. */
   englishMark: string;
@@ -147,6 +150,7 @@ export const chrome: Record<Locale, Chrome> = {
     footerDataUse: 'Data use & privacy',
     footerBack: 'Back to results ↑',
     footerTop: 'Back to top ↑',
+    footerReleases: 'Releases & downloads',
     downloadData: 'Download data ↓',
     englishMark: '',
   },
@@ -164,6 +168,7 @@ export const chrome: Record<Locale, Chrome> = {
     footerDataUse: '数据使用与隐私',
     footerBack: '返回结果 ↑',
     footerTop: '返回顶部 ↑',
+    footerReleases: '发布记录与下载',
     downloadData: '下载数据 ↓',
     englishMark: '（英文）',
   },
@@ -239,34 +244,25 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Six deployment topics add evidence on sensors, electrode layout, clinical groups, movement, calibration and pretraining.`,
+      `Separate topics add evidence on sensors, electrode layout, movement, calibration, when not to act, pretraining and clinical groups.`,
     statsLabel: 'Core matrix coverage',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
-    topicsEyebrow: 'Deployment questions',
-    topicsH2: 'Six ways to read the new evidence',
+    topicsEyebrow: 'Questions',
+    // Count-free: the number of topics grows, and a heading that states it goes stale.
+    topicsH2: 'What the evidence can answer',
     // No summed count: the topics now draw on two exports that measure different
     // things (proportions, correlation, R²), and one total would add them up.
     topicsLede: (_n: number) =>
       'Aggregate measurements, organized by the decision they can inform. They are repeated ' +
       'conditions within protocols, not independent experiments, and not an overall ranking.',
     readEvidence: 'Read the evidence →',
-    topicsDownloadNote: 'Full-precision proportions, paired contrasts, descriptive intervals, citations and five three-seed sensitivity groups.',
-    topicsDownload: 'Download reviewed topic data · JSON ↓',
-    evidenceDownload: 'Evidence update, 22 September · JSON ↓',
-    clinicalDownload: 'Clinical update, 23 September · JSON ↓',
+    releasesNote: 'Every reviewed release, each download with its SHA-256, and what each batch held back.',
+    releasesLink: 'Releases & downloads →',
     holdsEyebrow: 'Holds',
-    holdsH2: 'What this batch could not publish',
-    holdsLede: (files: string, gib: string) =>
-      `Three results are missing on purpose. ${files} files and ${gib} GB were downloaded and identity-checked ` +
-      'in this batch; that is a statement about bytes, not about usable signal or a finished evaluation.',
-    holds: [
-      ['Sleep comparison', 'No score',
-       'Every file of the paired sleep release matched its pinned identity, and then five of them turned out to be shorter than their own headers declare, ending inside an incomplete channel frame. The frozen 71-person protocol cannot run on that, so there is no accuracy row here. Padding the gap or quietly dropping people would both have produced a number.'],
-      ['Foundation models on the clinical set', 'Held',
-       'The clinical source does not state a physical amplitude unit. The result published above is a relative spectrum and does not need one; models that do need a calibrated scale stay unrun rather than run on an assumed unit.'],
-      ['L-FAME', 'Described, not scored',
-       'Sixty recordings from six people passed an independent spectral replay. That is a description of a data set, not a classifier result, and its per-condition numbers stay unpublished: summarised over twelve recordings from six people, a minimum or a maximum is one person\'s recording.'],
-    ],
+    holdsH2: 'What is held back, and since when',
+    holdsLede: 'Results that are missing on purpose. A hold is not a failed result: it is one that cannot be published honestly yet. The register, including resolved holds, is on the releases page.',
+    holdsSince: (d: string) => `Held since ${d}`,
+    holdsRegister: 'Full holds register →',
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
     matrixLede: 'The original eight-protocol snapshot, separate from the deployment topics above. Blank cells are protocols a method has not been run on — not failures.',
@@ -359,31 +355,21 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `六个部署专题补充了关于传感器、电极布局、临床分组、运动、校准与预训练的证据。`,
+      `另有若干专题，补充了关于传感器、电极布局、运动、校准、何时不该执行、预训练与临床分组的证据。`,
     statsLabel: '核心矩阵覆盖范围',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
-    topicsEyebrow: '部署问题',
-    topicsH2: '解读新证据的六个角度',
+    topicsEyebrow: '专题',
+    topicsH2: '证据能回答的问题',
     topicsLede: (_n: number) =>
       '聚合测量结果，按它们能支持的决策来组织。它们是同一协议内的重复条件，不是独立实验，也不是总排名。',
     readEvidence: '查看证据 →',
-    topicsDownloadNote: '全精度比例、配对对比、描述性区间、引用，以及五组各含三个随机种子的敏感性分析。',
-    topicsDownload: '下载已审核的专题数据 · JSON ↓',
-    evidenceDownload: '9 月 22 日证据更新 · JSON ↓',
-    clinicalDownload: '9 月 23 日临床更新 · JSON ↓',
+    releasesNote: '每一次经过审核的发布、每个下载文件及其 SHA-256，以及每一批暂缓了什么。',
+    releasesLink: '发布记录与下载 →',
     holdsEyebrow: '暂缓发布',
-    holdsH2: '这一批没能发布的内容',
-    holdsLede: (files: string, gib: string) =>
-      `有三项结果是刻意缺席的。这一批下载并核验了 ${files} 个文件、${gib} GB——这只说明字节没问题，` +
-      '不代表信号可用，也不代表评测已经完成。',
-    holds: [
-      ['睡眠比较', '没有分数',
-       '配对睡眠数据集的每个文件都与钉住的标识一致，但其中 5 个文件比它们自己的文件头声明的还要短，末尾停在一个不完整的通道帧里。冻结的 71 人协议无法在这种数据上运行，所以这里没有准确率。补齐缺失的部分，或者悄悄剔除一些被试，都能凑出一个数字。'],
-      ['临床数据上的基础模型', '暂缓',
-       '这个临床数据源没有说明物理幅值单位。上面发布的结果用的是相对频谱，不需要这个单位；而需要标定幅值的模型就先不跑，而不是按假设的单位跑一遍。'],
-      ['L-FAME', '只有描述，没有评分',
-       '6 名被试的 60 份记录通过了独立的频谱复算。这是对数据集的描述，不是分类结果；它按条件汇总的数值也不发布：12 份记录来自 6 名被试，其中的最小值或最大值就是某一个人的一份记录。'],
-    ],
+    holdsH2: '暂缓发布的内容，以及从何时开始',
+    holdsLede: '刻意缺席的结果。暂缓不是失败的结果，而是一个暂时还无法诚实发布的结果。完整登记册（含已解除的暂缓）在发布记录页上。',
+    holdsSince: (d: string) => `${d}起暂缓`,
+    holdsRegister: '完整暂缓登记册 →',
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
     matrixLede: '最初的八协议快照，与上方的部署专题相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
@@ -529,6 +515,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'calibration-budget': { kicker: 'Adaptation budget', title: 'How much calibration?',
       summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
       detail: 'Common future blocks · target-only fitting' },
+    'when-not-to-act': { kicker: 'Abstention', title: 'When not to act',
+      summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a plan for measuring when to act, wait or recalibrate.',
+      detail: 'Idle and command · 4 people · research plan' },
     'clinical-groups': { kicker: 'Clinical research', title: 'Clinical groups',
       summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
       detail: '149 people · one site · balanced accuracy' },
@@ -549,6 +538,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'calibration-budget': { kicker: '适配预算', title: '需要多少校准？',
       summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。',
       detail: '共同的后续组块 · 仅用目标被试数据拟合' },
+    'when-not-to-act': { kicker: '拒识', title: '何时不该执行',
+      summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并计划测量何时该执行、该等待、该重新校准。',
+      detail: '空闲与指令 · 4 名被试 · 研究计划' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
       summary: '149 名被试的帕金森病与对照比较，旁边并排放着一个只用年龄和性别的对照基线——以及为什么两者都不是诊断。',
       detail: '149 名被试 · 单中心 · 平衡准确率' },
