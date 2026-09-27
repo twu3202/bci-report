@@ -456,10 +456,17 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
     :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。目前还没有任何结果。/,label+': the Jev scope sentence must stand beside the name');
   assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
 }
-// A source held for its consent documentation is not named anywhere until it
-// is resolved — the same rule Alpha Waves was held under.
-for(const p of [...everyPage,'topics/when-not-to-act/','zh/topics/when-not-to-act/','releases/','zh/releases/'])
-  assert.doesNotMatch(pageOf(p),/YSU|Yanshan|24906300/,p+': a source under consent review must not be named');
+// A source on hold in any review manifest is not named on any page until the
+// hold is lifted — the rule Alpha Waves and the YSU pilot were held under. Read
+// from the manifests themselves, so a new hold is covered without a new line here.
+const manifests=['publication_review_20260922/evidence-release-manifest.json','publication_review_20260923/clinical-release-manifest.json','publication_review_20260927/context-release-manifest.json']
+  .map(f=>JSON.parse(readFileSync(new URL('../../research/'+f,import.meta.url),'utf8')));
+const held=manifests.flatMap(m=>m.sources).filter(x=>x.decision==='hold');
+const allPages=[...everyPage,...['screen-to-vr','when-not-to-act'].flatMap(s=>['topics/'+s+'/','zh/topics/'+s+'/']),'releases/','zh/releases/'];
+for(const h of held) for(const p of allPages){
+  assert.ok(!pageOf(p).includes(h.name),p+': held source '+h.id+' is named');
+  assert.ok(!pageOf(p).includes(h.source.split('/').pop()),p+': held source '+h.id+' is linked');
+}
 // The release log: every download is listed, and every listed hash is the hash
 // of the byte-identical file the site serves.
 const {createHash}=await import('node:crypto');
@@ -478,8 +485,7 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 
 // --- 2026-09-27 context batch ------------------------------------------------
 const cx=JSON.parse(readFileSync(new URL('../src/data/context-update.json',import.meta.url),'utf8'));
-assert.deepEqual(Object.keys(cx.results).sort(),['gait-eeg','vr-pc-p300'],'only sources with a recorded aggregate_preview decision');
-assert.ok(!/ysu|24906300|27706710|Yanshan/i.test(JSON.stringify(cx)),'the held pilot leaves no trace in the export');
+assert.deepEqual(Object.keys(cx.results).sort(),['gait-eeg','vr-pc-p300','ysu-async-ssvep'],'only sources with a recorded aggregate_preview decision');
 for(const [label,path] of [['en','topics/screen-to-vr/'],['zh','zh/topics/screen-to-vr/']]){
   const html=pageOf(path);
   for(const v of ['66.0%','63.6%','63.8%','57.2%','61.6%–70.2%','0.732','30,240','30,101']) assert.ok(html.includes(v),label+': PC/VR figure '+v);
@@ -496,13 +502,20 @@ for(const [label,path] of [['en','topics/on-the-move/'],['zh','zh/topics/on-the-
   assert.match(html,label==='en'?/is not evidence of decoding the brain/:/不能说明解码到了大脑活动/,label+': the gait score is not sold as neural decoding');
   assert.match(html,/H19-038/,label+': the gait ethics approval is cited');
 }
-// The held pilot's section cannot render while its source is held.
-for(const p of ['topics/when-not-to-act/','zh/topics/when-not-to-act/'])
-  assert.ok(!pageOf(p).includes('id="non-control"'),p+': a held source rendered');
-// Its figures appear nowhere while it is held. Counts, not percentages: 67.7%
-// is also a legitimate interval bound on the PC/VR page.
-for(const p of [...everyPage,'topics/screen-to-vr/','zh/topics/screen-to-vr/','releases/','zh/releases/'])
-  assert.doesNotMatch(pageOf(p),/152 \/ 192|130 \/ 192|121 \/ 192|121 \/ 130|9 \/ 48|20 \/ 48|11 \/ 96|93\.1%/,p+': a held figure appeared');
+// The non-control pilot: accuracy among accepted windows never travels alone.
+for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/when-not-to-act/']]){
+  const html=pageOf(path);
+  const sec=html.slice(html.indexOf('id="non-control"'),html.indexOf('id="methods-and-limits"'));
+  assert.ok(sec.length>1500,label+': the non-control section must render');
+  for(const v of ['152 / 192','130 / 192','121 / 192','121 / 130','9 / 48','20 / 48','11 / 96']) assert.ok(sec.includes(v),label+': non-control count '+v);
+  assert.ok(sec.includes('93.1%')&&sec.includes('67.7%')&&sec.includes('63.0%'),label+': conditional accuracy, coverage and end-to-end rate appear together');
+  assert.ok(sec.indexOf('67.7%')<sec.indexOf('93.1%')&&sec.indexOf('63.0%')<sec.indexOf('93.1%'),label+': coverage and end-to-end rate come before conditional accuracy');
+  assert.match(sec,/Qinhuangdao|秦皇岛/,label+': the ethics committee is named');
+  assert.match(sec,/10\.1080\/27706710\.2024\.2418650/,label+': the data paper is credited');
+  assert.match(sec,label==='en'?/not false activations per hour/:/不是每小时的误触发次数/,label+': window rates are not hourly rates');
+  // Per-participant range bounds of a four-person pilot.
+  assert.doesNotMatch(sec,/47\.9%|97\.9%|83\.9%|58\.3%|16\.7%|68\.8%|8\.3%/,label+': an individual rate leaked');
+}
 
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
@@ -516,7 +529,7 @@ for(const path of bilingual){
 
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
-console.log('PASS: 2026-09-27 context — PC/VR and gait figures equal the audited export, no same-display claim, gait beside its comparator, held pilot absent everywhere.');
+console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures equal the audited export; no same-display claim; comparator beside gait; coverage beside conditional accuracy; no held source named.');
 console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
 console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');

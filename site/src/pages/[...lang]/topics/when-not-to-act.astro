@@ -26,9 +26,9 @@ const rows = [...idle.rows].sort((a, b) => b.y - a.y).map(r => ({
 const quiet = rows.filter(r => r.falseActs === 0).sort((a, b) => a.commands - b.commands)[0];
 const noun = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
-// Explicit non-control conditions (2026-09-27 export). Held for its consent
-// statement: the export carries no key for it until the manifest records a
-// complete approval, so this section cannot render by accident.
+// Explicit non-control conditions (2026-09-27 export). It was held for its
+// consent statement; the export carries a key for it only because the manifest
+// now records a complete approval, and without one this section cannot render.
 const nc = (context.results as Record<string, any>)['ysu-async-ssvep'] as undefined | {
   people: number; control_windows: { tested: number; frequency_recognised: number; accepted: number; accepted_and_correct: number };
   control_vs_non_control_balanced_accuracy: number;
@@ -81,6 +81,8 @@ const copy = {
     colWindows: 'Windows', colState: 'State', colAccepted: 'Accepted by mistake',
     ncRegion: 'Control and non-control windows, scrolls horizontally',
     ncLimits: 'Four people, offline, window by window. These are rates per tested window, not false activations per hour, and the source states no physical amplitude unit.',
+    ncConsent: 'Before the experiment, every participant signed written informed consent; the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. This site uses four of the release’s twenty-four people and publishes pooled counts only.',
+    ncPaper: 'Data paper ↗', ncData: 'figshare release ↗', ncSmall: 'Why four people limit what can be published (English)',
   },
   zh: {
     documentTitle: '何时不该执行 · Jev-style 的 EEG 决策模型',
@@ -121,6 +123,8 @@ const copy = {
     colWindows: '窗口', colState: '状态', colAccepted: '被误接受',
     ncRegion: '控制与非控制窗口，可横向滚动',
     ncLimits: '四名被试、离线、逐窗口统计。这些是每个测试窗口上的比率，不是每小时的误触发次数；数据源也没有说明物理幅值单位。',
+    ncConsent: '实验前，每名被试都签署了书面知情同意；研究经秦皇岛市第一医院伦理委员会审查批准。本站只用了该数据集 24 名被试中的 4 名，并且只发布合并后的计数。',
+    ncPaper: '数据论文 ↗', ncData: 'figshare 数据 ↗', ncSmall: '为什么四名被试会限制可发布的内容（英文）',
   },
 }[locale];
 const card = topicCards[locale]['when-not-to-act'];
@@ -175,7 +179,9 @@ const basis = idle.reviewBasis;
       </table>
     </div>
     <p class="protocol-note">{copy.ncLimits}</p>
-    <div class="citation-list"><article><h3 lang="en">{nc.rights.name}</h3><p lang="en">{nc.rights.attribution}</p><p><a href={nc.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{nc.rights.reviewBasis[0]} ↗</a> · <a href={nc.rights.licenseUrl} target="_blank" rel="noreferrer">{nc.rights.license}</a></p></article></div>
+    <p class="citation-note"><a href="/data-use/#small-cohorts">{copy.ncSmall}</a></p>
+    <div class="citation-list"><article><h3 lang="en">{nc.rights.name}</h3><p lang="en">{nc.rights.attribution}</p><p>{copy.ncConsent}</p><p><a href={nc.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ncPaper}</a> · <a href={nc.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ncData}</a> · <a href={nc.rights.licenseUrl} target="_blank" rel="noreferrer">{nc.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
   </section>
   )}
 

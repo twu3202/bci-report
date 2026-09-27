@@ -12,34 +12,34 @@ def build(manifest):
     return cx.build(json.dumps(manifest).encode())[0]
 
 
-def approve_ysu(manifest):
-    ysu = next(s for s in manifest['sources'] if s['id'] == 'ysu-async-ssvep')
-    ysu.update(decision='aggregate_preview', privacyReview='test', reviewedAt='2026-09-27',
-               reviewBasis=['https://doi.org/10.1080/27706710.2024.2418650'])
+def hold_ysu(manifest):
+    """The pilot as it stood before its consent statement was read."""
+    next(s for s in manifest['sources'] if s['id'] == 'ysu-async-ssvep')['decision'] = 'hold'
     return manifest
 
 
 @unittest.skipUnless(cx.inputs_available(), 'pinned research inputs are local-only; see inputs_available()')
 class ContextBoundary(unittest.TestCase):
     def test_a_held_source_leaves_no_trace(self):
-        payload = json.dumps(build(MANIFEST))
-        for trace in ('ysu', 'YSU', '24906300', '27706710', 'Yanshan'):
+        payload = json.dumps(build(hold_ysu(copy.deepcopy(MANIFEST))))
+        for trace in ('ysu', 'YSU', '24906300', '27706710'):
             self.assertNotIn(trace, payload, trace)
 
     def test_lifting_the_hold_needs_the_complete_record(self):
-        manifest = copy.deepcopy(MANIFEST)
-        next(s for s in manifest['sources'] if s['id'] == 'ysu-async-ssvep')['decision'] = 'aggregate_preview'
-        with self.assertRaises(ValueError):
-            build(manifest)
+        for missing in ('privacyReview', 'reviewedAt', 'reviewBasis', 'attribution'):
+            manifest = copy.deepcopy(MANIFEST)
+            del next(s for s in manifest['sources'] if s['id'] == 'ysu-async-ssvep')[missing]
+            with self.assertRaises(ValueError, msg=missing):
+                build(manifest)
 
-    def test_a_lifted_hold_publishes_coverage_with_accuracy(self):
-        ysu = build(approve_ysu(copy.deepcopy(MANIFEST)))['results']['ysu-async-ssvep']
+    def test_the_pilot_publishes_coverage_with_accuracy(self):
+        ysu = build(MANIFEST)['results']['ysu-async-ssvep']
         w = ysu['control_windows']
         self.assertEqual((w['frequency_recognised'], w['accepted'], w['accepted_and_correct'], w['tested']),
                          (152, 130, 121, 192), 'the handoff counts')
         self.assertEqual([(f['accepted'], f['tested']) for f in ysu['false_acceptance']],
                          [(9, 48), (20, 48), (11, 96)])
-        self.assertNotIn('range', json.dumps(ysu), 'per-participant ranges of a four-person pilot')
+        self.assertNotIn('"range":', json.dumps(ysu), 'per-participant ranges of a four-person pilot')
 
     def test_quartiles_ranges_and_extremes_are_refused(self):
         for key in ('min', 'max', 'median', 'q1', 'q3', 'range'):

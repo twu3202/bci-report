@@ -99,9 +99,10 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                   contextExport(['balanced_accuracy', 'macro_f1'])],
   // Its measured part is the idle protocol of the core snapshot; the roadmap on
   // the same page has no result and contributes nothing here.
-  'when-not-to-act': { file: '/data/experiments.json', release: data.releaseId,
-                       generated: data.generatedAt,
-                       metrics: ['command_detection_within_3s', 'idle_false_activation'] },
+  'when-not-to-act': [{ file: '/data/experiments.json', release: data.releaseId,
+                        generated: data.generatedAt,
+                        metrics: ['command_detection_within_3s', 'idle_false_activation'] },
+                      contextExport(['control_window_acceptance', 'non_control_false_acceptance'])],
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
                        generated: clinical.generated_at,
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },

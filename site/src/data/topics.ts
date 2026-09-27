@@ -138,7 +138,7 @@ export const topicPages = [
     kicker: 'Abstention · Jev-style',
     title: 'When not to act',
     summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
-    detail: 'Idle and command · 4 people · research plan',
+    detail: 'Idle and non-control · two 4-person pilots · research plan',
   },
   {
     slug: 'does-pretraining-help',

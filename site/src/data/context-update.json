@@ -220,6 +220,64 @@
           "https://physionet.org/content/multimodal-gait-dataset/1.0.0/"
         ]
       }
+    },
+    "ysu-async-ssvep": {
+      "id": "ysu-async-ssvep",
+      "question": "does an SSVEP decoder accept a window when no command is intended",
+      "pilot": true,
+      "people": 4,
+      "method": {
+        "decoder": "fixed sinusoidal CCA on eight occipital and parietal channels",
+        "rejection": "per-person thresholds fitted on calibration trials only",
+        "window": "1.5 seconds per separately collected trial"
+      },
+      "control_windows": {
+        "tested": 192,
+        "frequency_recognised": 152,
+        "accepted": 130,
+        "accepted_and_correct": 121
+      },
+      "control_vs_non_control_balanced_accuracy": 0.7343750000000001,
+      "false_acceptance": [
+        {
+          "condition": "central image, flicker off",
+          "accepted": 9,
+          "tested": 48
+        },
+        {
+          "condition": "looking at a white wall, resting",
+          "accepted": 20,
+          "tested": 48
+        },
+        {
+          "condition": "central image while the surrounding stimuli flicker",
+          "accepted": 11,
+          "tested": 96
+        }
+      ],
+      "rate_kind": "offline window-level rates, not false activations per hour",
+      "limitations": [
+        "Four-participant pilot; no population inference.",
+        "Thresholds are participant-specific and fitted only on each participant's calibration partition.",
+        "The separately collected, pre-epoched conditions support window-level false acceptance only, not continuous-online false activations per hour.",
+        "The paper does not specify the EEG numeric unit, so no unit-dependent amplitude result is reported.",
+        "The paper's CS procedural count conflicts with the released repetition axis; splits use the released axis without assigning undocumented session/block labels."
+      ],
+      "rights": {
+        "name": "YSU asynchronous SSVEP-BCI dataset",
+        "task": "Control versus non-control rejection with fixed CCA",
+        "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+        "version": "figshare 24906300 revision 3: the S01-S04 archives only, a four-person pilot of the 24-person release",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Jing Zhao, Qian Zhang, Xinrui Wang, Xueshuo Liu, Jiaxin Li, Fengjie Fan, Zhenhu Liang and Xiaoli Li · An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces, Brain-Apparatus Communication 3(1) (2024), doi:10.1080/27706710.2024.2418650; data at doi:10.6084/m9.figshare.24906300.v3.",
+        "privacyReview": "The data descriptor (section 2.1, Subjects) reports that before the experiment all 24 subjects thoroughly understood the experimental procedures and signed written informed consent, and that the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. This project uses a four-person pilot of the release (the first four participant archives). Only pooled window counts are published. The per-participant ranges in the reviewed inputs are dropped: with four people, each bound is one person's rate.",
+        "reviewedAt": "2026-09-27",
+        "reviewBasis": [
+          "https://doi.org/10.1080/27706710.2024.2418650",
+          "https://doi.org/10.6084/m9.figshare.24906300.v3"
+        ]
+      }
     }
   },
   "status_only": [
@@ -249,13 +307,14 @@
     "The direction-specific PC-to-VR and VR-to-PC means: correct, but not independently recomputed by the audit.",
     "The gait signal-quality medians by speed: not needed for the claim, and not part of the audited result.",
     "Any Stieger score or session table.",
-    "Every number from the held asynchronous SSVEP pilot, until its consent statement is read."
+    "The asynchronous SSVEP pilot's per-participant ranges."
   ],
   "provenance": {
-    "manifest_sha256": "94760fcab4a3378016872757bd8a3d8ef3210b7bf00e891f719c6a87ccd64efa",
+    "manifest_sha256": "376ac7a308d788c7a8d71a63ee7de5926906f07d3933f4f6a89da0818a70617d",
     "included": [
       "vr-pc-p300",
-      "gait-eeg"
+      "gait-eeg",
+      "ysu-async-ssvep"
     ]
   }
 }

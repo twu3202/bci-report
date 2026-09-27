@@ -2,7 +2,7 @@
   "release_id": "context-update-20260927",
   "reviewed_at": "2026-09-27",
   "reviewer": "publishing session",
-  "scope": "Source-specific editorial decisions for the 2026-09-27 expansion batch (the execution session's v6). Its own manifest, as with every batch: it amends no earlier review, and nothing here joins the eight-protocol matrix or shares a ranking with any other result. These are fixed CPU baselines; the batch contains no foundation-model and no LoRA/PEFT result. Two sources are published as aggregates, one is held for its consent statement, and one is published as status only.",
+  "scope": "Source-specific editorial decisions for the 2026-09-27 expansion batch (the execution session's v6). Its own manifest, as with every batch: it amends no earlier review, and nothing here joins the eight-protocol matrix or shares a ranking with any other result. These are fixed CPU baselines; the batch contains no foundation-model and no LoRA/PEFT result. Three sources are published as aggregates and one as status only. One of the three was held for its consent statement until the maintainer read it the same day.",
   "handoff": {
     "path": "research/hf_expansion_v6_20260926/BCI Report Expansion v6 Website Update Handoff.md",
     "sha256": "26f2e1f4c7656559d65a8d68efac64c4c86ad4c468446be7bc5a6e9408bf13a8"
@@ -79,9 +79,20 @@
     },
     {
       "id": "ysu-async-ssvep",
-      "decision": "hold",
+      "decision": "aggregate_preview",
+      "decisionHistory": [
+        {
+          "date": "2026-09-27",
+          "decision": "hold",
+          "reason": "Scored and independently audited. The consent and ethics statement has not been read: the data descriptor (Brain-Apparatus Communication 3(1), 2024, doi:10.1080/27706710.2024.2418650, CC BY 4.0) is served only behind a bot-protection challenge, which this session does not bypass, and the figshare record carries no statement. The maintainer is reading the article directly. Under the Alpha Waves precedent the source is not named on any page while the hold stands."
+        },
+        {
+          "date": "2026-09-27",
+          "decision": "aggregate_preview",
+          "reason": "The maintainer read the data descriptor directly. Its Methods section 2.1 (Subjects) states the consent and the ethics approval quoted in privacyReview. The hold was on the consent source only; the numerical audit had already passed."
+        }
+      ],
       "caseId": "ysu-non-control-rejection",
-      "holdReason": "Scored and independently audited. The consent and ethics statement has not been read: the data descriptor (Brain-Apparatus Communication 3(1), 2024, doi:10.1080/27706710.2024.2418650, CC BY 4.0) is served only behind a bot-protection challenge, which this session does not bypass, and the figshare record carries no statement. The maintainer is reading the article directly. Under the Alpha Waves precedent the source is not named on any page while the hold stands.",
       "name": "YSU asynchronous SSVEP-BCI dataset",
       "task": "Control versus non-control rejection with fixed CCA",
       "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
@@ -96,7 +107,18 @@
       "numericalAudit": {
         "path": "research/hf_expansion_v6_20260926/ysu_independent_audit.json",
         "sha256": "a35410c7847bff2765c01a38c346b842b6af7ebf37f5d2c048135a6b9efd27ed"
-      }
+      },
+      "privacyReview": "The data descriptor (section 2.1, Subjects) reports that before the experiment all 24 subjects thoroughly understood the experimental procedures and signed written informed consent, and that the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. This project uses a four-person pilot of the release (the first four participant archives). Only pooled window counts are published. The per-participant ranges in the reviewed inputs are dropped: with four people, each bound is one person's rate.",
+      "reviewedAt": "2026-09-27",
+      "reviewBasis": [
+        "https://doi.org/10.1080/27706710.2024.2418650",
+        "https://doi.org/10.6084/m9.figshare.24906300.v3"
+      ],
+      "verification": [
+        "Consent and ethics sentences read by the maintainer from the open-access article (Brain-Apparatus Communication 3(1), 2024), section 2.1, on 2026-09-27; this session could not retrieve it because the publisher serves a bot-protection challenge.",
+        "Title, journal, volume, issue, author list and CC BY 4.0 licence read from Crossref for doi:10.1080/27706710.2024.2418650 on 2026-09-27.",
+        "The article's data availability statement names figshare doi:10.6084/m9.figshare.24906300.v3, the release acquired here."
+      ]
     },
     {
       "id": "stieger-longitudinal",
@@ -120,6 +142,6 @@
     "The direction-specific PC-to-VR and VR-to-PC means: correct, but not independently recomputed by the audit.",
     "The gait signal-quality medians by speed: not needed for the claim, and not part of the audited result.",
     "Any Stieger score or session table.",
-    "Every number from the held asynchronous SSVEP pilot, until its consent statement is read."
+    "The asynchronous SSVEP pilot's per-participant ranges."
   ]
 }

@@ -35,10 +35,10 @@ export const releases: Release[] = [
   {
     id: 'context-update-20260927', date: '2026-09-27', payload: 'context',
     files: ['context-update.json'],
-    pages: ['/topics/screen-to-vr/', '/topics/on-the-move/'],
+    pages: ['/topics/screen-to-vr/', '/topics/on-the-move/', '/topics/when-not-to-act/'],
     summary: {
-      en: 'P300 calibration carried from a PC screen to a VR headset and back for 21 people, and walking-speed scores from dry-electrode EEG printed beside a movement-nuisance comparator. Fixed CPU baselines; no foundation-model or fine-tuning result.',
-      zh: '21 名被试的 P300 校准在电脑屏幕与 VR 头显之间来回迁移；行走时干电极 EEG 的步速分数，旁边并排放着运动干扰特征的对照基线。都是固定的 CPU 基线，没有基础模型或微调结果。',
+      en: 'P300 calibration carried from a PC screen to a VR headset and back for 21 people; walking-speed scores from dry-electrode EEG printed beside a movement-nuisance comparator; and a four-person pilot of SSVEP windows accepted when no command was intended. Fixed CPU baselines; no foundation-model or fine-tuning result.',
+      zh: '21 名被试的 P300 校准在电脑屏幕与 VR 头显之间来回迁移；行走时干电极 EEG 的步速分数，旁边并排放着运动干扰特征的对照基线；以及一个四人试点：无意发出指令时，SSVEP 窗口被误接受的情况。都是固定的 CPU 基线，没有基础模型或微调结果。',
     },
     notes: [
       { en: 'Not published although correct: the direction-specific transfer means, because the independent audit did not recompute them.',
@@ -106,14 +106,12 @@ export interface Hold {
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
   {
-    // Held for its consent statement: described, not named, until that is read —
-    // the rule Alpha Waves was held under. check-workbench.mjs pins the absence.
-    item: { en: 'An asynchronous SSVEP data set · four-person pilot', zh: '一个异步 SSVEP 数据集 · 四人试点' },
-    state: { en: 'Held', zh: '暂缓' },
-    opened: '2026-09-27', closed: null,
-    outcome: { en: 'Scored and independently audited. Its consent statement has not been read yet; it is named here once it has.',
-               zh: '已评分并通过独立审计。它的同意书声明还没有读到；读到后再在这里写出名字。' },
-    href: '/topics/when-not-to-act/',
+    item: { en: 'YSU asynchronous SSVEP · consent statement', zh: 'YSU 异步 SSVEP · 同意书声明' },
+    state: { en: 'Released', zh: '已发布' },
+    opened: '2026-09-27', closed: '2026-09-27',
+    outcome: { en: 'Scored and audited, then held until the data paper’s consent and ethics statement was read; released the same day.',
+               zh: '已评分并通过审计，暂缓到读到数据论文中的同意书与伦理声明为止；当天发布。' },
+    href: '/topics/when-not-to-act/#non-control',
   },
   {
     item: { en: 'Stieger longitudinal BCI · one-person pilot', zh: 'Stieger 纵向 BCI · 单人试点' },

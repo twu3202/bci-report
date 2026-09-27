@@ -246,9 +246,11 @@ no per-group demographics are published.
 `context-update.json` — the 27 September 2026 batch: a P300 calibration carried
 from a PC screen to a VR headset and back (21 people, within-person, two fixed
 baselines, two timing schemes), and walking-speed classification from
-dry-electrode EEG printed beside a movement-nuisance comparator (58 people).
-Fixed CPU baselines; **no foundation-model or fine-tuning result**. One source
-is held for its consent statement and one published as status only.
+dry-electrode EEG printed beside a movement-nuisance comparator (58 people), and
+a four-person pilot of SSVEP windows accepted when no command was intended —
+window-level counts, always with coverage beside accuracy. Fixed CPU baselines;
+**no foundation-model or fine-tuning result**. One one-person pilot is published
+as status only.
 
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.

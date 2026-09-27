@@ -1,14 +1,14 @@
 {
   "status": "pass",
   "release_id": "context-update-20260927",
-  "export_sha256": "82ab8b26389e23991f40d075a3aad41ef08bd4ff47b7f63ee55182a1d97c0985",
-  "manifest_sha256": "94760fcab4a3378016872757bd8a3d8ef3210b7bf00e891f719c6a87ccd64efa",
+  "export_sha256": "4eb7eb4ef11ab0853ece1728cbf3708f1eb66be35ba8adbbaf840c579512fc07",
+  "manifest_sha256": "376ac7a308d788c7a8d71a63ee7de5926906f07d3933f4f6a89da0818a70617d",
   "included": [
     "vr-pc-p300",
-    "gait-eeg"
+    "gait-eeg",
+    "ysu-async-ssvep"
   ],
   "held_or_status_only": [
-    "ysu-async-ssvep",
     "stieger-longitudinal"
   ],
   "checks": [
