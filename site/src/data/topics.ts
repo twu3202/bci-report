@@ -128,9 +128,9 @@ export const topicPages = [
   },
   {
     slug: 'when-not-to-act',
-    kicker: 'Abstention',
+    kicker: 'Abstention · Jev-style',
     title: 'When not to act',
-    summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a plan for measuring when to act, wait or recalibrate.',
+    summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
     detail: 'Idle and command · 4 people · research plan',
   },
   {

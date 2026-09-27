@@ -66,13 +66,23 @@ curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Six deployment questions sit alongside, each with its own protocol:
+Seven questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
 [clinical groups](https://bci.report/topics/clinical-groups/) ·
 [standing, walking, running](https://bci.report/topics/on-the-move/) ·
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
+[when not to act](https://bci.report/topics/when-not-to-act/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/)
+
+**Jev-style decision models for EEG** — a research plan, not a result: can one
+EEG representation answer several explicit questions, and know when to abstain?
+It sits on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research),
+next to the measured idle-protocol trade-off it would build on. Not an
+integration with Jev, and no results yet.
+
+Every reviewed release, each download with its SHA-256, and a dated register of
+what was held back: [bci.report/releases](https://bci.report/releases/).
 
 ## Read this before ranking anything
 

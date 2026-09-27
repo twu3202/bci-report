@@ -445,9 +445,14 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.doesNotMatch(roadText,/\d+(?:\.\d+)?\s?%|\d\.\d|\d+(?:\.\d+)?\s?[×x]\b|\d+\s?ms\b/,label+': a figure appeared in the roadmap');
   // Wording that would read as done.
   assert.doesNotMatch(road,/calibrated policy|measured uncertainty|经过校准的策略|经过评测的不确定性|we (?:have )?(?:trained|measured|built)/i,label+': the roadmap must not read as completed work');
-  // "Jev" is named once, in its literature card, never in a heading.
-  assert.equal((html.match(/Jev/g)||[]).length,2,label+': Jev appears only in its citation and its card');
-  assert.doesNotMatch(html,/<h[123][^>]*>[^<]*Jev/,label+': Jev must not be in a heading');
+  // "Jev-style" is prominent by the maintainer's choice (heading, title, card).
+  // Wherever it is, the page says what it is not: no Jev integration, no Jev
+  // model that reads EEG, no result.
+  assert.match(road,/<h2[^>]*>Jev-style/,label+': the roadmap heading names the research track');
+  assert.match(html,label==='en'
+    ?/not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained\. There are no results here yet\./
+    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。目前还没有任何结果。/,label+': the Jev scope sentence must stand beside the name');
+  assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
 }
 // A source held for its consent documentation is not named anywhere until it
 // is resolved — the same rule Alpha Waves was held under.

@@ -19,12 +19,14 @@ interface Props {
   activeSlug: typeof topicPages[number]['slug'];
   /** The reviewed export holding this page's figures; the first is the hero download. */
   dataFiles?: string[];
+  /** A fuller <title> and share title than the h1, when the page has two parts. */
+  documentTitle?: string;
 }
 const { locale, title, description, path, eyebrow, dek, activeSlug,
-        dataFiles = ['/data/deployment-topics.json'] } = Astro.props;
+        dataFiles = ['/data/deployment-topics.json'], documentTitle } = Astro.props;
 const t = chrome[locale];
 const c = topicChrome[locale];
-const pageTitle = `${title} · ${site.name}`;
+const pageTitle = `${documentTitle ?? title} · ${site.name}`;
 const origin = Astro.site ?? site.origin;
 const canonical = new URL(localizePath(path, locale), origin).href;
 const ogImage = new URL('/og.png', origin).href;

@@ -10,9 +10,12 @@
  * read as ours.
  *
  * Origin: a research handoff of 2026-09-27 proposing a "Jev-style" EEG decision
- * model. The name refers to an interface pattern from a vision paper (last
- * card), so it appears once, there, and not in any title. Sources were checked
- * against their arXiv and PMLR records on 2026-09-27.
+ * model — an interface pattern from a vision paper (last card). The maintainer
+ * chose to put the name in the section heading and the page title, for reach.
+ * Wherever it is prominent, `scope` says what it is not: not an integration
+ * with Jev, not an EEG-capable Jev model, no result. check-workbench.mjs
+ * requires that sentence on the page. Sources were checked against their arXiv
+ * and PMLR records on 2026-09-27.
  */
 export const decisionRoadmap = {
   status: 'proposal',
@@ -37,7 +40,7 @@ type Route = { tag: string; title: string; body: string; boundary: string };
 type Finding = [SourceId, string, string];
 
 interface RoadmapCopy {
-  eyebrow: string; h2: string; lede: string; statusLine: string;
+  eyebrow: string; h2: string; scope: string; lede: string; statusLine: string;
   routes: Route[]; routeStatus: string;
   boundaryH3: string; boundary: string; inputsNote: string;
   litH3: string; litLede: string; shows: string; limit: string;
@@ -48,7 +51,8 @@ interface RoadmapCopy {
 export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   en: {
     eyebrow: 'Research proposal · not run',
-    h2: 'What we want to measure next',
+    h2: 'Jev-style decision models for EEG',
+    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained. There are no results here yet.',
     lede: 'A decoder has more choices than a class label. It can act, wait for more evidence, or ask for calibration. How well a model makes those choices can be measured, and nothing on this site measures it yet. This section is a plan: it has no results, and it borrows none.',
     statusLine: 'Status: proposal. No experiment in this section has been run.',
     routeStatus: 'Not run',
@@ -88,7 +92,8 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   },
   zh: {
     eyebrow: '研究提案 · 尚未运行',
-    h2: '接下来想测的东西',
+    h2: 'Jev-style 的 EEG 决策模型',
+    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。目前还没有任何结果。',
     lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。模型在这些选择上做得好不好，是可以测量的，而本站目前还没有测。本节是计划：没有结果，也不借用任何结果。',
     statusLine: '状态：提案。本节中的实验都尚未运行。',
     routeStatus: '尚未运行',

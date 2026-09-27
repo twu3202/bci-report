@@ -31,9 +31,10 @@ const modeLabel: Record<string, string> = locale === 'zh'
 
 const copy = {
   en: {
-    description: 'A decoder that never acts never fires by mistake. The idle-and-command protocol read with both of its numbers together, and a research plan for measuring when a decoder should act, wait or ask for calibration.',
-    eyebrow: 'Abstention · idle and command',
-    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, and sets out what would have to be measured to say when a decoder should act at all.`,
+    documentTitle: 'When not to act · Jev-style decision models for EEG',
+    description: 'A decoder that never acts never fires by mistake. The idle-and-command protocol read with both of its numbers together, and a Jev-style research plan for measuring when an EEG decoder should act, wait or ask for calibration.',
+    eyebrow: 'Abstention · Jev-style research plan',
+    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, then sets out a Jev-style research plan: what would have to be measured to say when a decoder should act at all.`,
     findingLabel: `${quiet.name}: idle false activations, ${people} people`,
     findingH3: `No false activation, and ${quiet.commands} ${noun(quiet.commands, 'command', 'commands')} in ${cmdN}`,
     findingP: `Thresholds are chosen on calibration data only, and a threshold may reject every command. For ${quiet.abstain} of ${people} people it did. Someone who never triggers a command never triggers one by mistake either, so the number of people who always abstained is printed beside every method.`,
@@ -59,9 +60,10 @@ const copy = {
     csv: 'this protocol as CSV',
   },
   zh: {
-    description: '从不执行的解码器，也就从不误触发。把空闲与指令协议的两个数字放在一起读，并提出一个研究计划：怎样测量解码器何时该执行、该等待、该请求校准。',
-    eyebrow: '拒识 · 空闲与指令',
-    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，并说明要测什么，才能回答解码器究竟该不该执行。`,
+    documentTitle: '何时不该执行 · Jev-style 的 EEG 决策模型',
+    description: '从不执行的解码器，也就从不误触发。把空闲与指令协议的两个数字放在一起读，并提出一个 Jev-style 研究计划：怎样测量 EEG 解码器何时该执行、该等待、该请求校准。',
+    eyebrow: '拒识 · Jev-style 研究计划',
+    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再给出一个 Jev-style 研究计划：要测什么，才能回答解码器究竟该不该执行。`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
     findingH3: `没有误触发，${cmdN} 条指令只检出 ${quiet.commands} 条`,
     findingP: `阈值只用校准数据来选，而选出的阈值可能拒绝所有指令。${people} 名被试中有 ${quiet.abstain} 名正是如此。从不触发指令的人，自然也从不误触发，所以每种方法旁边都列出了始终拒识的人数。`,
@@ -99,6 +101,7 @@ const basis = idle.reviewBasis;
   dek={copy.dek}
   activeSlug="when-not-to-act"
   dataFiles={['/data/experiments.json']}
+  documentTitle={copy.documentTitle}
 >
   <section class="topic-section" aria-labelledby="abstain-finding">
     <div class="finding">
@@ -126,6 +129,7 @@ const basis = idle.reviewBasis;
   <section class="topic-section roadmap" id="decision-research" aria-labelledby="decision-heading" data-status={decisionRoadmap.status} data-run-status={decisionRoadmap.runStatus}>
     <div class="topic-heading"><div><p class="eyebrow">{plan.eyebrow}</p><h2 id="decision-heading">{plan.h2}</h2></div><p>{plan.lede}</p></div>
     <p class="protocol-note research-status">{plan.statusLine}</p>
+    <p class="roadmap-p research-scope">{plan.scope}</p>
     <ol class="route-list">{plan.routes.map(r => <li><p class="eyebrow">{r.tag} · {plan.routeStatus}</p><h3>{r.title}</h3><p>{r.body}</p><p class="route-boundary">{r.boundary}</p></li>)}</ol>
     <h3 class="roadmap-sub">{plan.boundaryH3}</h3>
     <p class="roadmap-p">{plan.boundary}</p>
