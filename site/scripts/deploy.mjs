@@ -4,6 +4,7 @@
 //   npm run deploy                 deploy, verify, ping
 //   npm run deploy -- --no-ping    deploy and verify only
 //   npm run deploy -- --dry-run    show what would be pinged; deploy nothing
+//   npm run deploy -- --no-deploy  verify production and ping, for a deploy already made
 //
 // Why each step is here:
 //
@@ -35,6 +36,7 @@ const statePath = join(root, '.indexnow-state.json');
 const args = new Set(process.argv.slice(2));
 const dryRun = args.has('--dry-run');
 const noPing = args.has('--no-ping');
+const noDeploy = args.has('--no-deploy');
 
 const die = msg => { console.error(`deploy: ${msg}`); process.exit(1); };
 
@@ -71,7 +73,7 @@ if (dryRun) {
 
 // --- Deploy --------------------------------------------------------------------
 const logPath = join(root, '.deploy.log');
-await new Promise((resolve, reject) => {
+if (!noDeploy) await new Promise((resolve, reject) => {
   const log = createWriteStream(logPath);
   const child = spawn('npx', ['wrangler', 'deploy'], {
     cwd: root, env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, stdio: ['ignore', 'pipe', 'pipe'],
@@ -97,6 +99,9 @@ await new Promise((resolve, reject) => {
 
 // --- Verify production serves these bytes ------------------------------------------
 // The edge can briefly serve the previous copy, so retry before calling it a mismatch.
+// Ask for gzip or brotli: the edge otherwise answers zstd, which Node's fetch
+// hands back still compressed, and every page would look different.
+const get = u => fetch(u, { headers: { 'cache-control': 'no-cache', 'accept-encoding': 'gzip, br' } });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const mismatched = [];
 for (const u of changed.length ? changed : urls.slice(0, 3)) {
@@ -104,12 +109,12 @@ for (const u of changed.length ? changed : urls.slice(0, 3)) {
   let ok = false;
   for (let attempt = 0; attempt < 6 && !ok; attempt++) {
     if (attempt) await sleep(3000);
-    const res = await fetch(u, { headers: { 'cache-control': 'no-cache' } }).catch(() => null);
+    const res = await get(u).catch(() => null);
     ok = !!res && res.ok && Buffer.from(await res.arrayBuffer()).equals(want);
   }
   if (!ok) mismatched.push(u);
 }
-const keyRes = await fetch(`${origin}/${keyFile}`).catch(() => null);
+const keyRes = await get(`${origin}/${keyFile}`).catch(() => null);
 const keyLive = !!keyRes && keyRes.ok && (await keyRes.text()).trim() === key;
 if (mismatched.length) die(`production does not match dist/ for:\n  ${mismatched.join('\n  ')}\nNothing was submitted to IndexNow.`);
 console.log(`deploy: production matches dist/ for ${changed.length || 3} checked page(s).`);
