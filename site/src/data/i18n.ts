@@ -68,6 +68,7 @@ export const ogLocale: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' };
 export const translatedPaths = [
   '/',
   '/topics/dry-vs-wet/',
+  '/topics/screen-to-vr/',
   '/topics/fewer-electrodes/',
   '/topics/clinical-groups/',
   '/topics/on-the-move/',
@@ -244,7 +245,7 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Separate topics add evidence on sensors, electrode layout, movement, calibration, when not to act, pretraining and clinical groups.`,
+      `Separate topics add evidence on sensors, displays, electrode layout, movement, calibration, when not to act, pretraining and clinical groups.`,
     statsLabel: 'Core matrix coverage',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     topicsEyebrow: 'Questions',
@@ -355,7 +356,7 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `另有若干专题，补充了关于传感器、电极布局、运动、校准、何时不该执行、预训练与临床分组的证据。`,
+      `另有若干专题，补充了关于传感器、显示设备、电极布局、运动、校准、何时不该执行、预训练与临床分组的证据。`,
     statsLabel: '核心矩阵覆盖范围',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     topicsEyebrow: '专题',
@@ -506,6 +507,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'dry-vs-wet': { kicker: 'Sensor transfer', title: 'Dry vs. wet electrodes',
       summary: 'What changes when a decoder crosses between two native eight-channel recordings from the same 102 people?',
       detail: '2 s SSVEP · 12 targets · balanced accuracy' },
+    'screen-to-vr': { kicker: 'Context transfer', title: 'Screen to VR',
+      summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change.',
+      detail: 'P300 · 21 people · two timing schemes' },
     'fewer-electrodes': { kicker: 'Montage', title: 'Fewer electrodes',
       summary: 'In-ear against scalp for sleep, and four posterior electrodes against sixteen for eyes open or closed — and what neither says about any headset.',
       detail: 'Two paired comparisons · 10 and 19 people' },
@@ -529,6 +533,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
       summary: '同一批 102 名被试、两种原生八通道记录之间，解码器迁移过去会发生什么？',
       detail: '2 秒 SSVEP · 12 个目标 · 平衡准确率' },
+    'screen-to-vr': { kicker: '场景迁移', title: '从屏幕到 VR',
+      summary: '同样 21 名被试，在电脑屏幕上校准、在 VR 头显里测试，反之亦然——以及为什么这个结果不是换设备的代价。',
+      detail: 'P300 · 21 名被试 · 两种时间校正' },
     'fewer-electrodes': { kicker: '电极布局', title: '更少的电极',
       summary: '睡眠分期里耳道内对头皮，睁闭眼任务里后部 4 个对全部 16 个电极——以及两者都不能说明哪款设备更好。',
       detail: '两项配对比较 · 10 名与 19 名被试' },

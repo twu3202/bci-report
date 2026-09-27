@@ -52,6 +52,7 @@ curl -O https://bci.report/data/experiments.json        # full release snapshot
 curl -O https://bci.report/data/deployment-topics.json  # four deployment questions
 curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
 curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
+curl -O https://bci.report/data/context-update.json     # the 27 September batch
 ```
 
 ## What is measured
@@ -66,8 +67,9 @@ curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Seven questions sit alongside, each with its own protocol:
+Eight questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
+[screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
 [clinical groups](https://bci.report/topics/clinical-groups/) ·
 [standing, walking, running](https://bci.report/topics/on-the-move/) ·

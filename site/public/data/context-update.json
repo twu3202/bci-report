@@ -1,0 +1,261 @@
+{
+  "schema_version": "bci-report-context-update-v1",
+  "release_id": "context-update-20260927",
+  "generated_at": "2026-09-27",
+  "status": "aggregate_preview",
+  "metric_units": "balanced accuracy and macro F1 are proportions in [0,1]; AUROC is dimensionless",
+  "scope": "Fixed CPU baselines on separate questions and separate data. No foundation-model or PEFT result. Nothing here extends the eight-protocol matrix, and no two results share a ranking.",
+  "results": {
+    "vr-pc-p300": {
+      "id": "vr-pc-p300",
+      "protocol_id": "p300-pc-vr-context-transfer-v1",
+      "question": "does a P300 calibration carry over when the same person changes display",
+      "classes": 2,
+      "chance_level": 0.5,
+      "metric": "balanced_accuracy",
+      "generalization": "within-person offline display-context transfer",
+      "same_display_reference": false,
+      "cohort": {
+        "people": 21,
+        "recordings": 42,
+        "labeled_events": 30240,
+        "target_events": 5040,
+        "non_target_events": 25200,
+        "retained_epochs": {
+          "onset_corrected": 30101,
+          "recorded_tag": 30100
+        },
+        "rejected_epochs": {
+          "onset_corrected": 139,
+          "recorded_tag": 140
+        }
+      },
+      "method": {
+        "transfer": "each person is calibrated on one display and tested on the other, in both directions; the two directions are averaged within the person, then across the 21 people",
+        "timing": {
+          "onset_corrected": "primary: source-reported tag-to-visual-onset offsets, +19 samples on the PC and +60 on the VR headset at 512 Hz",
+          "recorded_tag": "prespecified sensitivity: epochs at the recorded tag, no shift"
+        },
+        "rejection": "fixed 500 microvolt peak-to-peak epoch rejection",
+        "selection": "neither timing scheme was chosen from test scores",
+        "interval_kind": "participant bootstrap; descriptive"
+      },
+      "timings": {
+        "onset_corrected": [
+          {
+            "id": "mean_window_logreg",
+            "label": "Mean-window logistic regression",
+            "balanced_accuracy": {
+              "mean": 0.6604490633289808,
+              "bootstrap_95": [
+                0.6159294543013262,
+                0.7017176708103913
+              ]
+            },
+            "auroc": {
+              "mean": 0.7317723482027245,
+              "bootstrap_95": [
+                0.6709423673246191,
+                0.7854774378785897
+              ]
+            }
+          },
+          {
+            "id": "spatiotemporal_shrinkage_lda",
+            "label": "Spatiotemporal shrinkage LDA",
+            "balanced_accuracy": {
+              "mean": 0.636444356071956,
+              "bootstrap_95": [
+                0.5955087173168062,
+                0.676902208598142
+              ]
+            },
+            "auroc": {
+              "mean": 0.712788914135057,
+              "bootstrap_95": [
+                0.6517019782765241,
+                0.7712651557368659
+              ]
+            }
+          }
+        ],
+        "recorded_tag": [
+          {
+            "id": "mean_window_logreg",
+            "label": "Mean-window logistic regression",
+            "balanced_accuracy": {
+              "mean": 0.6375705386434093,
+              "bootstrap_95": [
+                0.6104458291061279,
+                0.6653859742973081
+              ]
+            },
+            "auroc": {
+              "mean": 0.7190625625668358,
+              "bootstrap_95": [
+                0.6820830504197891,
+                0.7548753831538546
+              ]
+            }
+          },
+          {
+            "id": "spatiotemporal_shrinkage_lda",
+            "label": "Spatiotemporal shrinkage LDA",
+            "balanced_accuracy": {
+              "mean": 0.5722885268733964,
+              "bootstrap_95": [
+                0.5505709118064509,
+                0.5942143422797544
+              ]
+            },
+            "auroc": {
+              "mean": 0.6406758740174068,
+              "bootstrap_95": [
+                0.5963374580580914,
+                0.6817728472931722
+              ]
+            }
+          }
+        ]
+      },
+      "limitations": [
+        "Not cross-person or cross-day transfer",
+        "Only two fixed CPU baselines",
+        "Average onset correction does not remove trial-level jitter",
+        "No foundation-model or online claim",
+        "No same-display reference was run, so the result says how well calibration carries over, not how much the display change costs.",
+        "A mean onset correction does not remove event-to-event timing jitter."
+      ],
+      "independent_audit": {
+        "fitted_models_reproduced": 168,
+        "raw_feature_sets_rebuilt": 12
+      },
+      "rights": {
+        "name": "Cattan PC/VR P300 · a BCI experiment in virtual reality and on a personal computer",
+        "task": "P300 target detection, calibrated on one display and tested on the other",
+        "source": "https://doi.org/10.5281/zenodo.2605205",
+        "version": "Zenodo record 2605205 (2019): all 42 EEG recordings of the 21 paired participants and Header.mat",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Grégoire Cattan, Anton Andreev, Pedro L. C. Rodrigues and Marco Congedo · Dataset of an EEG-based BCI experiment in Virtual Reality and on a Personal Computer, Zenodo, doi:10.5281/zenodo.2605205; documentation arXiv:1903.11297.",
+        "privacyReview": "The documentation reports that all 21 participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment, and that the study was approved by the Ethical Committee of the University of Grenoble Alpes (Comité d'Ethique pour la Recherche Non-Interventionnelle). Only cohort aggregates are published: means and participant-bootstrap intervals. The per-person minimum, maximum, median and quartiles in the reviewed inputs are dropped, because with 21 people each of them is one person's score.",
+        "reviewedAt": "2026-09-27",
+        "reviewBasis": [
+          "https://doi.org/10.5281/zenodo.2605205",
+          "https://arxiv.org/abs/1903.11297"
+        ]
+      }
+    },
+    "gait-eeg": {
+      "id": "gait-eeg",
+      "question": "what might drive a speed score recorded while walking",
+      "classes": 3,
+      "chance_level": 0.3333333333333333,
+      "metric": "balanced_accuracy",
+      "generalization": "participant-disjoint exploratory speed-context classification",
+      "not_for_model_rankings": true,
+      "cohort": {
+        "people_acquired": 59,
+        "people_scored": 58,
+        "recordings_scored": 174,
+        "seconds_per_recording": 58,
+        "people_excluded": 1,
+        "recordings_excluded": 3,
+        "exclusion": "malformed channel labels in one source file; excluded before any scoring, no channels relabelled",
+        "scalp_channels": 19
+      },
+      "method": {
+        "reference": "the authors' linked-ear re-reference, which reconstructs 19 scalp channels",
+        "split": "five participant-disjoint folds; each whole 58-second recording is one sample",
+        "classifier": "training-only standardisation and a fixed regularised logistic regression",
+        "interval_kind": "participant bootstrap conditioned on the fitted folds; descriptive"
+      },
+      "models": [
+        {
+          "id": "spectral_logistic",
+          "label": "Relative spectral bands",
+          "inputs": "five relative frequency bands on each of 19 scalp channels",
+          "comparator": false,
+          "balanced_accuracy": 0.4540229885057472,
+          "balanced_accuracy_bootstrap_95": [
+            0.39080459770114945,
+            0.5172413793103448
+          ],
+          "macro_f1": 0.45500821018062404
+        },
+        {
+          "id": "nuisance_logistic",
+          "label": "Movement-nuisance features",
+          "inputs": "three amplitude, low-frequency and line-frequency features",
+          "comparator": true,
+          "balanced_accuracy": 0.5057471264367815,
+          "balanced_accuracy_bootstrap_95": [
+            0.44252873563218387,
+            0.5689655172413793
+          ],
+          "macro_f1": 0.48550437775281297
+        }
+      ],
+      "limitations": [
+        "Exploratory single-source benchmark, not independent replication.",
+        "Motion, electrode contact and reference contamination may drive performance.",
+        "No synchronized IMU/EMG nuisance regression; classifier accuracy does not identify neural signal.",
+        "No foundation-model or PEFT evaluation.",
+        "Bootstrap conditions on fitted folds and does not represent all training variability.",
+        "One participant excluded before scores because a source EDF had malformed channel names",
+        "Speed-order counterbalancing unverified"
+      ],
+      "rights": {
+        "name": "Multimodal gait · EEG during treadmill walking at three speeds",
+        "task": "Walking-speed classification from dry-electrode EEG, beside a movement-nuisance comparator",
+        "source": "https://doi.org/10.13026/r0ea-7161",
+        "version": "PhysioNet multimodal-gait-dataset v1.0.0: all 177 EEG EDF recordings of 59 people; 174 recordings of 58 people scored",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "R. Katmah, A. AlShehhi, D. Kosaji, N. Al-Rahmani, M. Abdullah, A. A. V. Hulleck and K. Khalaf · A multimodal gait dataset of brain activity, muscle activity, kinematics and ground forces in young adults, PhysioNet v1.0.0 (2026), doi:10.13026/r0ea-7161.",
+        "privacyReview": "The PhysioNet record states that the study followed the Declaration of Helsinki, was approved by the Institutional Review Board of Khalifa University (protocol H19-038), and that all participants gave written informed consent. Only cohort aggregates are published: two model-level scores with participant-bootstrap intervals. No per-person or per-recording value, and no participant metadata.",
+        "reviewedAt": "2026-09-27",
+        "reviewBasis": [
+          "https://doi.org/10.13026/r0ea-7161",
+          "https://physionet.org/content/multimodal-gait-dataset/1.0.0/"
+        ]
+      }
+    }
+  },
+  "status_only": [
+    {
+      "id": "stieger-longitudinal",
+      "name": "Stieger longitudinal BCI · one-person pilot",
+      "status": "status_only",
+      "scores_published": false,
+      "reason": "One person's eleven sessions were acquired, not the 62-person release. With one person, every score is that person's, which this site does not publish; the execution handoff also asks for no ranked score and no session table. What is published is that the loader and a chronological split work on this source, and how many trials meet the source's own eligibility rules.",
+      "feasibility": {
+        "people": 1,
+        "sessions": 11,
+        "trials_in_source": 4950,
+        "trials_eligible": 2381,
+        "split": "chronological: earlier sessions train, later sessions test"
+      },
+      "rights": {
+        "source": "https://doi.org/10.6084/m9.figshare.13123148.v1",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "James R. Stieger, Stephen A. Engel and Bin He · Continuous sensorimotor rhythm based brain computer interface learning in a large population, Scientific Data 8, 98 (2021); data at doi:10.6084/m9.figshare.13123148.v1."
+      }
+    }
+  ],
+  "not_published": [
+    "Per-person minimum, maximum, median and quartiles for every source.",
+    "The direction-specific PC-to-VR and VR-to-PC means: correct, but not independently recomputed by the audit.",
+    "The gait signal-quality medians by speed: not needed for the claim, and not part of the audited result.",
+    "Any Stieger score or session table.",
+    "Every number from the held asynchronous SSVEP pilot, until its consent statement is read."
+  ],
+  "provenance": {
+    "manifest_sha256": "94760fcab4a3378016872757bd8a3d8ef3210b7bf00e891f719c6a87ccd64efa",
+    "included": [
+      "vr-pc-p300",
+      "gait-eeg"
+    ]
+  }
+}

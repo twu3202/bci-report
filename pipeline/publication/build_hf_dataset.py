@@ -23,6 +23,7 @@ from export_snapshot import validate_public
 from export_deployment_topics import EXPORT_AUDIT
 import export_evidence_update as evidence_export
 import export_clinical_update as clinical_export
+import export_context_update as context_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -68,6 +69,17 @@ def clinical_payload():
     audit = json.loads(clinical_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Clinical export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Clinical payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def context_payload():
+    """The 2026-09-27 context export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'context-update.json').read_bytes()
+    audit = json.loads(context_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Context export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Context payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -231,6 +243,13 @@ results, not diagnosis**: not diagnostic accuracy, not clinical validation, and
 no interpretation of any individual. No participant rows, no clinical scores and
 no per-group demographics are published.
 
+`context-update.json` — the 27 September 2026 batch: a P300 calibration carried
+from a PC screen to a VR headset and back (21 people, within-person, two fixed
+baselines, two timing schemes), and walking-speed classification from
+dry-electrode EEG printed beside a movement-nuisance comparator (58 people).
+Fixed CPU baselines; **no foundation-model or fine-tuning result**. One source
+is held for its consent statement and one published as status only.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -363,6 +382,8 @@ def build(output):
     (output/'evidence-update.json').write_bytes(raw_evidence)
     raw_clinical, _ = clinical_payload()
     (output/'clinical-update.json').write_bytes(raw_clinical)
+    raw_context, _ = context_payload()
+    (output/'context-update.json').write_bytes(raw_context)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

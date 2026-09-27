@@ -12,7 +12,7 @@
 /** Pages changed in the current site update, for sitemap lastmod. */
 export const pagesUpdated = {
   date: '2026-09-27',
-  paths: ['/', '/topics/when-not-to-act/', '/releases/'],
+  paths: ['/', '/topics/when-not-to-act/', '/releases/', '/topics/screen-to-vr/', '/topics/on-the-move/', '/data-use/'],
 } as const;
 
 type Text = { en: string; zh: string };
@@ -21,7 +21,7 @@ export interface Release {
   id: string;
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
-  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical';
+  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context';
   files: string[];
   pages: string[];
   summary: Text;
@@ -32,6 +32,19 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
 export const releases: Release[] = [
+  {
+    id: 'context-update-20260927', date: '2026-09-27', payload: 'context',
+    files: ['context-update.json'],
+    pages: ['/topics/screen-to-vr/', '/topics/on-the-move/'],
+    summary: {
+      en: 'P300 calibration carried from a PC screen to a VR headset and back for 21 people, and walking-speed scores from dry-electrode EEG printed beside a movement-nuisance comparator. Fixed CPU baselines; no foundation-model or fine-tuning result.',
+      zh: '21 名被试的 P300 校准在电脑屏幕与 VR 头显之间来回迁移；行走时干电极 EEG 的步速分数，旁边并排放着运动干扰特征的对照基线。都是固定的 CPU 基线，没有基础模型或微调结果。',
+    },
+    notes: [
+      { en: 'Not published although correct: the direction-specific transfer means, because the independent audit did not recompute them.',
+        zh: '虽然正确也不发布：分方向的迁移均值，因为独立审计没有重新计算它们。' },
+    ],
+  },
   {
     id: 'clinical-update-20260923', date: '2026-09-23', payload: 'clinical',
     files: ['clinical-update.json'],
@@ -92,6 +105,23 @@ export interface Hold {
 
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
+  {
+    // Held for its consent statement: described, not named, until that is read —
+    // the rule Alpha Waves was held under. check-workbench.mjs pins the absence.
+    item: { en: 'An asynchronous SSVEP data set · four-person pilot', zh: '一个异步 SSVEP 数据集 · 四人试点' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: '2026-09-27', closed: null,
+    outcome: { en: 'Scored and independently audited. Its consent statement has not been read yet; it is named here once it has.',
+               zh: '已评分并通过独立审计。它的同意书声明还没有读到；读到后再在这里写出名字。' },
+    href: '/topics/when-not-to-act/',
+  },
+  {
+    item: { en: 'Stieger longitudinal BCI · one-person pilot', zh: 'Stieger 纵向 BCI · 单人试点' },
+    state: { en: 'Status only', zh: '只发状态' },
+    opened: '2026-09-27', closed: null,
+    outcome: { en: 'The pipeline works on one person’s eleven sessions. With one person every score is that person’s, so none is published.',
+               zh: '流程在一名被试的 11 次会话上跑通了。只有一个人时，任何分数都是这个人的分数，所以不发布。' },
+  },
   {
     item: { en: 'OpenNeuro ds004902 · paired sleep comparison', zh: 'OpenNeuro ds004902 · 配对睡眠比较' },
     state: { en: 'No score', zh: '没有分数' },

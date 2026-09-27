@@ -106,6 +106,13 @@ export const topicPages = [
     detail: '2 s SSVEP · 12 targets · balanced accuracy',
   },
   {
+    slug: 'screen-to-vr',
+    kicker: 'Context transfer',
+    title: 'Screen to VR',
+    summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change.',
+    detail: 'P300 · 21 people · two timing schemes',
+  },
+  {
     slug: 'fewer-electrodes',
     kicker: 'Montage',
     title: 'Fewer electrodes',

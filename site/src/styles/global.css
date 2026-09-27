@@ -149,7 +149,7 @@ main{max-width:1412px;margin:auto;padding:0 26px}
    to compatible-protocol views of the reviewed extension instead of folding
    repeated conditions into an invented cross-task leaderboard. */
 .topic-entry{padding:30px 0 38px;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}
-.topic-entry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
+.topic-entry-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
 .topic-entry-card{position:relative;min-width:0;padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-height:245px}
 .topic-entry-card:hover{background:var(--wash);color:inherit}
 .topic-entry-card .topic-number{position:absolute;right:16px;top:12px;font-family:var(--mono);font-size:.72rem;color:var(--rule)}
@@ -169,9 +169,8 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .hold-card small{display:block;margin-top:10px;font-size:.72rem;color:var(--muted)}
 .holds-more{margin-top:14px;font-size:.85rem}
 .holds-more a{color:var(--accent)}
-/* Seven topics in three columns: the last one spans its row rather than
-   standing alone beside two empty cells. */
-.topic-entry-card:last-child:nth-child(3n+1){grid-column:1/-1}
+/* Eight topics: four columns wide, two when narrow. An odd last card in two
+   columns spans its row rather than standing beside an empty cell. */
 .topic-entry-download{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:14px}
 .topic-entry-download p{font-size:.78rem;max-width:700px}
 

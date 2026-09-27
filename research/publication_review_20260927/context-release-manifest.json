@@ -1,0 +1,125 @@
+{
+  "release_id": "context-update-20260927",
+  "reviewed_at": "2026-09-27",
+  "reviewer": "publishing session",
+  "scope": "Source-specific editorial decisions for the 2026-09-27 expansion batch (the execution session's v6). Its own manifest, as with every batch: it amends no earlier review, and nothing here joins the eight-protocol matrix or shares a ranking with any other result. These are fixed CPU baselines; the batch contains no foundation-model and no LoRA/PEFT result. Two sources are published as aggregates, one is held for its consent statement, and one is published as status only.",
+  "handoff": {
+    "path": "research/hf_expansion_v6_20260926/BCI Report Expansion v6 Website Update Handoff.md",
+    "sha256": "26f2e1f4c7656559d65a8d68efac64c4c86ad4c468446be7bc5a6e9408bf13a8"
+  },
+  "aggregate": {
+    "path": "research/hf_expansion_v6_20260926/v6-website-aggregate-results.json",
+    "sha256": "ead40534bc0e5b2593525b86fa6fe79daa240dfe09b439ca2a1e2a9428f13136"
+  },
+  "sources": [
+    {
+      "id": "vr-pc-p300",
+      "decision": "aggregate_preview",
+      "caseId": "p300-display-context-transfer",
+      "name": "Cattan PC/VR P300 · a BCI experiment in virtual reality and on a personal computer",
+      "task": "P300 target detection, calibrated on one display and tested on the other",
+      "source": "https://doi.org/10.5281/zenodo.2605205",
+      "version": "Zenodo record 2605205 (2019): all 42 EEG recordings of the 21 paired participants and Header.mat",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Grégoire Cattan, Anton Andreev, Pedro L. C. Rodrigues and Marco Congedo · Dataset of an EEG-based BCI experiment in Virtual Reality and on a Personal Computer, Zenodo, doi:10.5281/zenodo.2605205; documentation arXiv:1903.11297.",
+      "privacyReview": "The documentation reports that all 21 participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment, and that the study was approved by the Ethical Committee of the University of Grenoble Alpes (Comité d'Ethique pour la Recherche Non-Interventionnelle). Only cohort aggregates are published: means and participant-bootstrap intervals. The per-person minimum, maximum, median and quartiles in the reviewed inputs are dropped, because with 21 people each of them is one person's score.",
+      "reviewedAt": "2026-09-27",
+      "reviewBasis": [
+        "https://doi.org/10.5281/zenodo.2605205",
+        "https://arxiv.org/abs/1903.11297"
+      ],
+      "verification": [
+        "Consent and ethics sentence read from the arXiv documentation (1903.11297) on 2026-09-27.",
+        "Licence, authors and record version read from the Zenodo API for record 2605205 on 2026-09-27; the record declares arXiv:1903.11297 as its documentation.",
+        "NEMAR nm000236 is a derivative of this cohort and is not counted as a second data set."
+      ],
+      "numericalAudit": {
+        "path": "research/hf_expansion_v6_20260926/p300_root_independent_audit.json",
+        "sha256": "9aa259eb64c501ec35457f599cf6ed53bcef41a5326dd87e82166b03cd27e24d"
+      },
+      "retentionRecord": {
+        "path": "research/hf_expansion_v6_20260926/p300_context_transfer_retention_clarification.json",
+        "sha256": "7c23628e7c4f23d87522b16661d2a83af86c924bafbd3dd5c1d84aa60dc37aa4"
+      }
+    },
+    {
+      "id": "gait-eeg",
+      "decision": "aggregate_preview",
+      "caseId": "gait-context-confounds",
+      "name": "Multimodal gait · EEG during treadmill walking at three speeds",
+      "task": "Walking-speed classification from dry-electrode EEG, beside a movement-nuisance comparator",
+      "source": "https://doi.org/10.13026/r0ea-7161",
+      "version": "PhysioNet multimodal-gait-dataset v1.0.0: all 177 EEG EDF recordings of 59 people; 174 recordings of 58 people scored",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "R. Katmah, A. AlShehhi, D. Kosaji, N. Al-Rahmani, M. Abdullah, A. A. V. Hulleck and K. Khalaf · A multimodal gait dataset of brain activity, muscle activity, kinematics and ground forces in young adults, PhysioNet v1.0.0 (2026), doi:10.13026/r0ea-7161.",
+      "privacyReview": "The PhysioNet record states that the study followed the Declaration of Helsinki, was approved by the Institutional Review Board of Khalifa University (protocol H19-038), and that all participants gave written informed consent. Only cohort aggregates are published: two model-level scores with participant-bootstrap intervals. No per-person or per-recording value, and no participant metadata.",
+      "reviewedAt": "2026-09-27",
+      "reviewBasis": [
+        "https://doi.org/10.13026/r0ea-7161",
+        "https://physionet.org/content/multimodal-gait-dataset/1.0.0/"
+      ],
+      "verification": [
+        "Ethics, consent, licence and citation read from the PhysioNet project page on 2026-09-27.",
+        "Author names are given with initials exactly as PhysioNet's citation string gives them."
+      ],
+      "result": {
+        "path": "research/hf_expansion_v6_20260926/gait_aggregate_results.json",
+        "sha256": "f7059d97a143787667b48e2ff4f8b31c412b0376c23d781c4a905bc1c466f599"
+      },
+      "numericalAudit": {
+        "path": "research/hf_expansion_v6_20260926/gait_independent_audit.json",
+        "sha256": "58e90c2e1b25b2a0534ea222ad0761d374e7050febbae771a6d2ae7e8d253afe"
+      },
+      "splitAudit": {
+        "path": "research/hf_expansion_v6_20260926/gait_label_split_audit.json",
+        "sha256": "f2f227ec3e7b254bc2d3a252fee48f15b9f78e1603bc8032ddfc054870c3969a"
+      }
+    },
+    {
+      "id": "ysu-async-ssvep",
+      "decision": "hold",
+      "caseId": "ysu-non-control-rejection",
+      "holdReason": "Scored and independently audited. The consent and ethics statement has not been read: the data descriptor (Brain-Apparatus Communication 3(1), 2024, doi:10.1080/27706710.2024.2418650, CC BY 4.0) is served only behind a bot-protection challenge, which this session does not bypass, and the figshare record carries no statement. The maintainer is reading the article directly. Under the Alpha Waves precedent the source is not named on any page while the hold stands.",
+      "name": "YSU asynchronous SSVEP-BCI dataset",
+      "task": "Control versus non-control rejection with fixed CCA",
+      "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+      "version": "figshare 24906300 revision 3: the S01-S04 archives only, a four-person pilot of the 24-person release",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Jing Zhao, Qian Zhang, Xinrui Wang, Xueshuo Liu, Jiaxin Li, Fengjie Fan, Zhenhu Liang and Xiaoli Li · An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces, Brain-Apparatus Communication 3(1) (2024), doi:10.1080/27706710.2024.2418650; data at doi:10.6084/m9.figshare.24906300.v3.",
+      "result": {
+        "path": "research/hf_expansion_v6_20260926/ysu_evaluation_summary.json",
+        "sha256": "92bdc36ea4115cde2262dcaa04b52a45017b361b4fdd8ba3a84e3bda287ca67b"
+      },
+      "numericalAudit": {
+        "path": "research/hf_expansion_v6_20260926/ysu_independent_audit.json",
+        "sha256": "a35410c7847bff2765c01a38c346b842b6af7ebf37f5d2c048135a6b9efd27ed"
+      }
+    },
+    {
+      "id": "stieger-longitudinal",
+      "decision": "status_only",
+      "name": "Stieger longitudinal BCI · one-person pilot",
+      "reason": "One person's eleven sessions were acquired, not the 62-person release. With one person, every score is that person's, which this site does not publish; the execution handoff also asks for no ranked score and no session table. What is published is that the loader and a chronological split work on this source, and how many trials meet the source's own eligibility rules.",
+      "source": "https://doi.org/10.6084/m9.figshare.13123148.v1",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "James R. Stieger, Stephen A. Engel and Bin He · Continuous sensorimotor rhythm based brain computer interface learning in a large population, Scientific Data 8, 98 (2021); data at doi:10.6084/m9.figshare.13123148.v1.",
+      "reviewedAt": "2026-09-27",
+      "consentBasis": "The data descriptor states that all experiments were approved by the institutional review boards of the University of Minnesota and Carnegie Mellon University and that informed consent was obtained from all subjects (Europe PMC PMC8016873).",
+      "numericalAudit": {
+        "path": "research/hf_expansion_v6_20260926/stieger_independent_audit.json",
+        "sha256": "9199037d0686974fe3bdd52010fc795b27e402733d0cd564b9de83d4a78df89b"
+      }
+    }
+  ],
+  "notPublished": [
+    "Per-person minimum, maximum, median and quartiles for every source.",
+    "The direction-specific PC-to-VR and VR-to-PC means: correct, but not independently recomputed by the audit.",
+    "The gait signal-quality medians by speed: not needed for the claim, and not part of the audited result.",
+    "Any Stieger score or session table.",
+    "Every number from the held asynchronous SSVEP pilot, until its consent statement is read."
+  ]
+}

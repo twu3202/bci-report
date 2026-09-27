@@ -2,9 +2,10 @@
 import rawData from '../../../data/deployment-topics.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
-import { type DeploymentData, type DeploymentRow, auc, conditionLabel, intervalPct, modelLabel, pct } from '../../../data/topics';
+import { type DeploymentData, type DeploymentRow, auc, conditionLabel, intervalPct, modelLabel, pct, pp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import evidence from '../../../data/evidence-update.json';
+import context from '../../../data/context-update.json';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -34,6 +35,15 @@ const earIv = runningChangeInterval(contrastFor('ear').paired_participant_bootst
 const phantom = evidence.results.phantom;
 const signed = (v: number) => `${v < 0 ? '−' : ''}${Math.abs(v).toFixed(3)}`;
 const phBasis = phantom.rights.reviewBasis;
+// Treadmill speed from dry-electrode EEG (2026-09-27 export), printed beside a
+// classifier that sees only movement-nuisance features. Not a leaderboard entry.
+const gaitData = context.results['gait-eeg'];
+const gSpec = gaitData.models.find(m => !m.comparator)!, gNuis = gaitData.models.find(m => m.comparator)!;
+const gGap = gNuis.balanced_accuracy - gSpec.balanced_accuracy;
+const gOverlap = gNuis.balanced_accuracy_bootstrap_95[0] <= gSpec.balanced_accuracy_bootstrap_95[1];
+const gIv = (m: typeof gSpec) => intervalPct(m.balanced_accuracy_bootstrap_95 as [number, number]);
+const gBasis = gaitData.rights.reviewBasis;
+const gc = gaitData.cohort;
 
 const copy = {
   en: {
@@ -93,6 +103,25 @@ const copy = {
     phCondNote: { Brain: 'training condition, held-out time' } as Record<string, string>,
     phUnit: 'One electrically conductive head phantom; no human participants.',
     phDataset: 'OpenNeuro dataset ↗', phMethod: 'Method paper ↗',
+    gEyebrow: 'Treadmill speed · dry electrodes',
+    gH2: 'What a walking-speed score may be measuring',
+    gLede: `${gc.people_scored} people walked on a treadmill at three speeds while a dry-electrode headset recorded ${gc.scalp_channels} scalp channels. A fixed classifier guessed the speed from each whole ${gc.seconds_per_recording}-second recording. A second classifier saw no spectral EEG pattern at all — only three movement-nuisance features: amplitude, low-frequency and line-frequency power. Chance is ${pct(gaitData.chance_level)}.`,
+    gFindingLabel: `Nuisance features minus spectral bands, same ${gc.people_scored} people`,
+    gFindingH3: gGap > 0 ? 'The nuisance features scored higher' : 'The spectral bands scored higher',
+    gFindingP: `${pct(gNuis.balanced_accuracy)} against ${pct(gSpec.balanced_accuracy)}. ${gOverlap ? `The intervals overlap (${gIv(gNuis)} and ${gIv(gSpec)}), so which is higher is not established. ` : ''}What is established is that a speed score from walking EEG can be reached without the spectral pattern a neural reading would rest on. A score like this, on its own, is not evidence of decoding the brain.`,
+    gRegion: 'Walking-speed classification with and without spectral EEG, scrolls horizontally',
+    gCaption: 'Participant-held-out balanced accuracy over five folds, with its descriptive participant-bootstrap 95% interval, and macro F1. Every person contributes all three speeds.',
+    colInput: 'Input', colGBa: 'Balanced accuracy', colGF1: 'Macro F1',
+    gLabel: { spectral_logistic: 'Relative spectral bands', nuisance_logistic: 'Movement-nuisance features' } as Record<string, string>,
+    gNote: { spectral_logistic: `five relative bands on each of ${gc.scalp_channels} scalp channels`, nuisance_logistic: 'comparator · three features, no spectral pattern' } as Record<string, string>,
+    gBaLabel: (v: string) => `${v} balanced accuracy`,
+    gLimits: [
+      ['Not a leaderboard entry', 'This is a context-robustness case study. Neither row joins any model comparison on this site.'],
+      ['No motion sensors in the model', 'The source also recorded inertial and muscle signals; they were not used as controls. Speed order was not verified to be counterbalanced, so fatigue, drift and electrode contact may change with it.'],
+      [`${gc.people_excluded} person excluded before scoring`, `One source file has malformed channel labels. That person's ${gc.recordings_excluded} recordings were excluded before any score existed, and no channel was relabelled.`],
+    ],
+    gConsent: 'The study followed the Declaration of Helsinki and was approved by the Institutional Review Board of Khalifa University (H19-038); all participants gave written informed consent. Only cohort aggregates appear here.',
+    gDataset: 'PhysioNet dataset ↗',
   },
   zh: {
     description: '移动场景下 SSVEP 与 ERP 解码的运动鲁棒性：两秒与五秒时间窗、头皮与耳部通道、平衡准确率与 ROC AUC 分开呈现。',
@@ -151,6 +180,25 @@ const copy = {
     phCondNote: { Brain: '训练条件，留出时间段' } as Record<string, string>,
     phUnit: '一个导电的物理头模；不涉及任何真人被试。',
     phDataset: 'OpenNeuro 数据集 ↗', phMethod: '方法论文 ↗',
+    gEyebrow: '跑步机速度 · 干电极',
+    gH2: '步行速度分数可能在测什么',
+    gLede: `${gc.people_scored} 名被试以三种速度在跑步机上行走，同时用干电极头戴设备记录 ${gc.scalp_channels} 个头皮通道。一个固定分类器根据每段完整的 ${gc.seconds_per_recording} 秒记录判断行走速度。另一个分类器完全看不到 EEG 的频谱模式，只拿到三个与运动相关的干扰特征：幅值、低频功率和工频功率。随机水平为 ${pct(gaitData.chance_level)}。`,
+    gFindingLabel: `干扰特征减频谱频带，同一批 ${gc.people_scored} 名被试`,
+    gFindingH3: gGap > 0 ? '干扰特征的分数更高' : '频谱频带的分数更高',
+    gFindingP: `${pct(gNuis.balanced_accuracy)} 对 ${pct(gSpec.balanced_accuracy)}。${gOverlap ? `两者的区间有重叠（${gIv(gNuis)} 和 ${gIv(gSpec)}），所以谁更高并没有定论。` : ''}能确定的是：从行走时的 EEG 得到一个速度分数，并不需要神经解读所依赖的那种频谱模式。单凭这样一个分数，不能说明解码到了大脑活动。`,
+    gRegion: '有无频谱 EEG 时的步行速度分类，可横向滚动',
+    gCaption: '5 折留出被试的平衡准确率，附描述性被试 bootstrap 95% 区间，以及宏平均 F1。每名被试都贡献了全部三种速度。',
+    colInput: '输入', colGBa: '平衡准确率', colGF1: '宏平均 F1',
+    gLabel: { spectral_logistic: '相对频谱频带', nuisance_logistic: '运动干扰特征' } as Record<string, string>,
+    gNote: { spectral_logistic: `${gc.scalp_channels} 个头皮通道各 5 个相对频带`, nuisance_logistic: '对照基线 · 3 个特征，没有频谱模式' } as Record<string, string>,
+    gBaLabel: (v: string) => `平衡准确率 ${v}`,
+    gLimits: [
+      ['不进入任何排名', '这是一个场景鲁棒性的案例研究。两行都不参与本站的任何模型比较。'],
+      ['模型里没有运动传感器', '数据源还记录了惯性与肌电信号，但没有用作对照。行走速度的先后顺序没有核实是否做了平衡，所以疲劳、漂移和电极接触都可能随之变化。'],
+      [`评分前排除了 ${gc.people_excluded} 名被试`, `有一个源文件的通道标签格式错误。这名被试的 ${gc.recordings_excluded} 段记录在任何分数产生之前就被排除，没有重新标注任何通道。`],
+    ],
+    gConsent: '研究遵循《赫尔辛基宣言》，经 Khalifa 大学机构审查委员会批准（H19-038）；所有被试都签署了书面知情同意。这里只发布队列级聚合结果。',
+    gDataset: 'PhysioNet 数据集 ↗',
   },
 }[locale];
 const card = topicCards[locale]['on-the-move'];
@@ -208,6 +256,20 @@ const card = topicCards[locale]['on-the-move'];
     </div>
     <div class="citation-list"><article><h3 lang="en">{phantom.rights.name}</h3><p lang="en">{phantom.rights.attribution}</p><p>{copy.phUnit}</p><p><a href={phBasis[0]} target="_blank" rel="noreferrer">{copy.phDataset}</a> · <a href={phBasis[1]} target="_blank" rel="noreferrer">{copy.phMethod}</a> · <a href={phantom.rights.licenseUrl} target="_blank" rel="noreferrer">{phantom.rights.license}</a></p></article></div>
     <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version} · {tc.generated} {evidence.generated_at.slice(0,10)}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="treadmill-speed" aria-labelledby="gait-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.gEyebrow}</p><h2 id="gait-heading">{copy.gH2}</h2></div><p>{copy.gLede}</p></div>
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(gGap, 1)}</strong><span>{copy.gFindingLabel}</span></div>
+      <div class="finding-copy"><h3>{copy.gFindingH3}</h3><p>{copy.gFindingP}</p></div>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.gRegion}>
+      <table><caption>{copy.gCaption}</caption><thead><tr><th scope="col">{copy.colInput}</th><th scope="col">{copy.colGBa}</th><th scope="col">{copy.colGF1}</th></tr></thead><tbody>{gaitData.models.map(m => <tr><th scope="row">{copy.gLabel[m.id]}<small>{copy.gNote[m.id]}</small></th><td><span class="metric">{pct(m.balanced_accuracy)}</span><span class="interval">{gIv(m)}</span><ScoreBar value={m.balanced_accuracy} label={copy.gBaLabel(pct(m.balanced_accuracy))} tone={m.comparator ? 'ink' : 'rust'} /></td><td><span class="metric">{pct(m.macro_f1)}</span></td></tr>)}</tbody></table>
+    </div>
+    <div class="method-grid-wide">{copy.gLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list"><article><h3 lang="en">{gaitData.rights.name}</h3><p lang="en">{gaitData.rights.attribution}</p><p>{copy.gConsent}</p><p><a href={gBasis[0]} target="_blank" rel="noreferrer">{copy.gDataset}</a> · <a href={gaitData.rights.licenseUrl} target="_blank" rel="noreferrer">{gaitData.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">

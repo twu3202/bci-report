@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "release_id": "context-update-20260927",
+  "export_sha256": "82ab8b26389e23991f40d075a3aad41ef08bd4ff47b7f63ee55182a1d97c0985",
+  "manifest_sha256": "94760fcab4a3378016872757bd8a3d8ef3210b7bf00e891f719c6a87ccd64efa",
+  "included": [
+    "vr-pc-p300",
+    "gait-eeg"
+  ],
+  "held_or_status_only": [
+    "ysu-async-ssvep",
+    "stieger-longitudinal"
+  ],
+  "checks": [
+    "pinned aggregate, result and audit bytes",
+    "every published mean and interval equals the independent audit",
+    "audits bound to the exact result files they checked",
+    "complete approval record per included source",
+    "per-person fields, quartiles and ranges refused",
+    "held source absent by id, name and record number",
+    "no foundation-model or PEFT result",
+    "no private paths or participant identifiers"
+  ]
+}

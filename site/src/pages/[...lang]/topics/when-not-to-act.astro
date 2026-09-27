@@ -1,5 +1,6 @@
 ---
 import data from '../../../data/mvp.json';
+import context from '../../../data/context-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import { pct } from '../../../data/topics';
@@ -24,6 +25,17 @@ const rows = [...idle.rows].sort((a, b) => b.y - a.y).map(r => ({
 // The quietest decoder: no false activation, fewest commands detected.
 const quiet = rows.filter(r => r.falseActs === 0).sort((a, b) => a.commands - b.commands)[0];
 const noun = (n: number, one: string, many: string) => (n === 1 ? one : many);
+
+// Explicit non-control conditions (2026-09-27 export). Held for its consent
+// statement: the export carries no key for it until the manifest records a
+// complete approval, so this section cannot render by accident.
+const nc = (context.results as Record<string, any>)['ysu-async-ssvep'] as undefined | {
+  people: number; control_windows: { tested: number; frequency_recognised: number; accepted: number; accepted_and_correct: number };
+  control_vs_non_control_balanced_accuracy: number;
+  false_acceptance: { condition: string; accepted: number; tested: number }[];
+  rights: { name: string; attribution: string; license: string; licenseUrl: string; reviewBasis: string[] };
+};
+const frac = (a: number, b: number) => `${a} / ${b}`;
 
 const modeLabel: Record<string, string> = locale === 'zh'
   ? { 'Supervised fit': '监督拟合', 'Frozen encoder + linear head': '冻结编码器 + 线性分类头', 'Scratch · 20 epochs': '从头训练 · 20 轮' }
@@ -58,6 +70,17 @@ const copy = {
     consent: 'The source README reports voluntary signed consent and approval by the ethics committee of Universidad Antonio Nariño. Only cohort aggregates appear here.',
     datasetLink: 'OpenNeuro dataset ↗', studyLink: 'Associated study ↗',
     csv: 'this protocol as CSV',
+    ncEyebrow: 'Explicit non-control · four-person pilot',
+    ncH2: 'Does it accept a window when nobody intends a command?',
+    ncLede: 'A second protocol records the states between commands on purpose: looking at a central image with the flicker off, resting on a white wall, and looking at the centre while the targets around it flicker. A fixed CCA decoder with per-person thresholds, fitted on calibration trials only, decides whether to accept each 1.5-second window.',
+    ncControlH3: 'When a command was intended',
+    ncControlNote: 'Accuracy among accepted windows is never shown alone: rejecting hard windows raises it while refusing commands the person meant.',
+    ncRows: ['Frequency recognised, before rejection', 'Accepted (coverage)', 'Accepted and correct (end to end)', 'Correct among accepted'],
+    ncNonH3: 'When no command was intended',
+    ncCondition: { 'central image, flicker off': 'Central image, flicker off', 'looking at a white wall, resting': 'Looking at a white wall, resting', 'central image while the surrounding stimuli flicker': 'Central image while the surrounding targets flicker' } as Record<string, string>,
+    colWindows: 'Windows', colState: 'State', colAccepted: 'Accepted by mistake',
+    ncRegion: 'Control and non-control windows, scrolls horizontally',
+    ncLimits: 'Four people, offline, window by window. These are rates per tested window, not false activations per hour, and the source states no physical amplitude unit.',
   },
   zh: {
     documentTitle: '何时不该执行 · Jev-style 的 EEG 决策模型',
@@ -87,6 +110,17 @@ const copy = {
     consent: '数据源 README 写明被试自愿签署了同意书，并经 Universidad Antonio Nariño 伦理委员会批准。这里只发布队列级聚合结果。',
     datasetLink: 'OpenNeuro 数据集 ↗', studyLink: '相关研究论文 ↗',
     csv: '本协议的 CSV',
+    ncEyebrow: '明确的非控制状态 · 四人试点',
+    ncH2: '没人想发指令时，它会不会接受这个窗口？',
+    ncLede: '另一个协议专门记录了指令之间的状态：注视中央图像但闪烁关闭、看着白墙休息、注视中央而周围目标在闪烁。一个固定的 CCA 解码器配合只用校准试次拟合的逐人阈值，决定是否接受每个 1.5 秒窗口。',
+    ncControlH3: '有意发出指令时',
+    ncControlNote: '被接受窗口中的准确率从不单独呈现：拒绝困难窗口会抬高这个数字，但代价是拒绝了被试本想发出的指令。',
+    ncRows: ['拒识前识别出正确频率', '被接受（覆盖率）', '被接受且正确（端到端）', '被接受窗口中的正确率'],
+    ncNonH3: '无意发出指令时',
+    ncCondition: { 'central image, flicker off': '注视中央图像，闪烁关闭', 'looking at a white wall, resting': '看着白墙休息', 'central image while the surrounding stimuli flicker': '注视中央，周围目标在闪烁' } as Record<string, string>,
+    colWindows: '窗口', colState: '状态', colAccepted: '被误接受',
+    ncRegion: '控制与非控制窗口，可横向滚动',
+    ncLimits: '四名被试、离线、逐窗口统计。这些是每个测试窗口上的比率，不是每小时的误触发次数；数据源也没有说明物理幅值单位。',
   },
 }[locale];
 const card = topicCards[locale]['when-not-to-act'];
@@ -117,6 +151,33 @@ const basis = idle.reviewBasis;
       </table>
     </div>
   </section>
+
+  {nc && (
+  <section class="topic-section" id="non-control" aria-labelledby="nc-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.ncEyebrow}</p><h2 id="nc-heading">{copy.ncH2}</h2></div><p>{copy.ncLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.ncRegion}>
+      <table>
+        <caption>{copy.ncControlH3} · {copy.ncControlNote}</caption>
+        <thead><tr><th scope="col">{copy.colState}</th><th scope="col">{copy.colWindows}</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">{copy.ncRows[0]}</th><td><span class="metric">{frac(nc.control_windows.frequency_recognised, nc.control_windows.tested)}</span><span class="interval">{pct(nc.control_windows.frequency_recognised / nc.control_windows.tested)}</span></td></tr>
+          <tr><th scope="row">{copy.ncRows[1]}</th><td><span class="metric">{frac(nc.control_windows.accepted, nc.control_windows.tested)}</span><span class="interval">{pct(nc.control_windows.accepted / nc.control_windows.tested)}</span></td></tr>
+          <tr><th scope="row">{copy.ncRows[2]}</th><td><span class="metric">{frac(nc.control_windows.accepted_and_correct, nc.control_windows.tested)}</span><span class="interval">{pct(nc.control_windows.accepted_and_correct / nc.control_windows.tested)}</span></td></tr>
+          <tr><th scope="row">{copy.ncRows[3]}</th><td><span class="metric">{frac(nc.control_windows.accepted_and_correct, nc.control_windows.accepted)}</span><span class="interval">{pct(nc.control_windows.accepted_and_correct / nc.control_windows.accepted)}</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.ncRegion}>
+      <table>
+        <caption>{copy.ncNonH3}</caption>
+        <thead><tr><th scope="col">{copy.colState}</th><th scope="col">{copy.colAccepted}</th></tr></thead>
+        <tbody>{nc.false_acceptance.map(f => <tr><th scope="row">{copy.ncCondition[f.condition] ?? f.condition}</th><td><span class="metric">{frac(f.accepted, f.tested)}</span><span class="interval">{pct(f.accepted / f.tested)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note">{copy.ncLimits}</p>
+    <div class="citation-list"><article><h3 lang="en">{nc.rights.name}</h3><p lang="en">{nc.rights.attribution}</p><p><a href={nc.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{nc.rights.reviewBasis[0]} ↗</a> · <a href={nc.rights.licenseUrl} target="_blank" rel="noreferrer">{nc.rights.license}</a></p></article></div>
+  </section>
+  )}
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="abstain-limits">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="abstain-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>

@@ -1,0 +1,163 @@
+---
+import context from '../../../data/context-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import ScoreBar from '../../../components/ScoreBar.astro';
+import { intervalPct, pct } from '../../../data/topics';
+import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+
+// Within-person display-context transfer (2026-09-27 export). Every mean and
+// interval here was recomputed by an independent audit before export; the
+// per-person distribution and the direction-specific means were left out.
+const r = context.results['vr-pc-p300'];
+const primary = r.timings.onset_corrected, tag = r.timings.recorded_tag;
+const lead = primary[0];                  // mean-window logistic regression
+const iv = (b: { bootstrap_95: number[] }) => intervalPct(b.bootstrap_95 as [number, number]);
+const auc = (b: { mean: number; bootstrap_95: number[] }) => `${b.mean.toFixed(3)}`;
+const aucIv = (b: { bootstrap_95: number[] }) => `${b.bootstrap_95[0].toFixed(3)}–${b.bootstrap_95[1].toFixed(3)}`;
+const n = (v: number) => v.toLocaleString('en-US');
+const c = r.cohort;
+const ratio = c.non_target_events / c.target_events;
+// The baseline whose score moves most without the onset correction.
+const timingDrop = primary.map((m, i) => ({ m, tagged: tag[i], drop: m.balanced_accuracy.mean - tag[i].balanced_accuracy.mean }))
+  .sort((a, b) => b.drop - a.drop)[0];
+const basis = r.rights.reviewBasis;
+
+const copy = {
+  en: {
+    description: 'Twenty-one people calibrated on a PC screen and tested in a VR headset, and the other way round: how well a P300 calibration carries across a display change, with two fixed baselines and two timing schemes.',
+    eyebrow: 'Context transfer · P300 on a screen and in VR',
+    dek: `${c.people} people used the same P300 interface on a PC screen and in a virtual-reality headset. Calibrated on one display and tested on the other, a simple logistic regression reached ${pct(lead.balanced_accuracy.mean)} balanced accuracy, where chance is ${pct(r.chance_level, 0)}. That is how well a calibration carries over. It is not how much the change costs: this protocol did not also test each person on the display they were calibrated on.`,
+    findingLabel: `Balanced accuracy after the display change, ${c.people} people`,
+    findingH3: 'Above chance after the change — with no same-display score to compare',
+    findingP: `Interval ${iv(lead.balanced_accuracy)}; AUROC ${auc(lead.auroc)}. Each person was calibrated on one display and tested on the other in both directions, and the two directions were averaged within the person. Without a same-display score for the same people, this number cannot say whether the display change lowered performance, or by how much.`,
+    tableEyebrow: 'Two fixed baselines',
+    tableH2: 'Calibrated on one display, tested on the other',
+    tableLede: `Target against non-target epochs, ${Math.round(ratio)} non-targets to every target, so accuracy would reward always answering “non-target”; balanced accuracy and AUROC do not. Primary timing.`,
+    tableRegion: 'Display-transfer results by baseline, scrolls horizontally',
+    caption: 'Mean over 21 people of each person’s average of the two transfer directions, with participant-bootstrap 95% intervals.',
+    colModel: 'Baseline', colBa: 'Balanced accuracy', colAuroc: 'AUROC',
+    modelLabel: { mean_window_logreg: 'Mean-window logistic regression', spatiotemporal_shrinkage_lda: 'Spatiotemporal shrinkage LDA' } as Record<string, string>,
+    baLabel: (v: string) => `${v} balanced accuracy`,
+    timingEyebrow: 'Prespecified sensitivity',
+    timingH2: 'The timing correction is part of the result',
+    timingLede: 'The headset and the screen report stimulus onset with different delays. The primary analysis shifts each epoch by the source-reported offset — 19 samples on the PC and 60 in VR, at 512 Hz. The sensitivity analysis leaves epochs at the recorded tag. Neither scheme was chosen from test scores.',
+    timingRegion: 'Balanced accuracy with and without the onset correction, scrolls horizontally',
+    timingCaption: 'Balanced accuracy under each timing scheme, with participant-bootstrap 95% intervals.',
+    colCorrected: 'Onset corrected (primary)', colTag: 'At the recorded tag',
+    timingNote: `${timingDrop.m.label} depends on timing most: ${pct(timingDrop.m.balanced_accuracy.mean)} with the correction, ${pct(timingDrop.tagged.balanced_accuracy.mean)} without. A mean offset is not the same as correct timing, but a result reported without saying which timing it used is incomplete.`,
+    covEyebrow: 'What the scores are computed on',
+    covH2: 'Twenty-one people, one recording on each display',
+    covLede: `Every label comes from the source; none was interpolated. One malformed row at the very end of one recording was discarded; it followed every possible epoch.`,
+    covPeople: 'People', covPeopleOf: 'each recorded once on each display',
+    covEvents: 'Labelled events', covEventsOf: `1 target to ${Math.round(ratio)} non-targets`,
+    covKept: 'Epochs kept, primary timing', covKeptOf: `${n(c.rejected_epochs.onset_corrected)} rejected at 500 µV peak to peak`,
+    limitsH2: 'What this comparison can and cannot support',
+    limitsLede: 'A within-person, offline transfer test with two simple baselines. It narrows one question; it does not rank displays or headsets.',
+    limits: [
+      ['No same-display reference', 'Nobody was tested on the display they were calibrated on in this protocol, so the cost of changing display is not measured here — only the level reached after the change.'],
+      ['Within one person, not across people or days', 'Each person supplies both their calibration and their test data, on the same day. Nothing here speaks to a model that works for a new person or a later session.'],
+      ['Two fixed baselines, not a ceiling', 'Two simple CPU classifiers with no tuning. No foundation model and no fine-tuned model was run in this batch.'],
+      ['A mean offset, not per-event timing', 'Correcting the average onset delay does not remove event-to-event jitter, which a headset can add.'],
+    ],
+    consent: 'All participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment; the study was approved by the ethics committee of the University of Grenoble Alpes (CERNI). Only cohort aggregates appear here.',
+    datasetLink: 'Zenodo record ↗', docLink: 'Dataset documentation ↗',
+  },
+  zh: {
+    description: '21 名被试先在电脑屏幕上校准、再在 VR 头显里测试，反之亦然：P300 的校准能在多大程度上跨显示设备沿用——两个固定基线，两种时间校正方式。',
+    eyebrow: '场景迁移 · 屏幕与 VR 中的 P300',
+    dek: `${c.people} 名被试分别在电脑屏幕和虚拟现实头显里使用同一套 P300 界面。在一种显示设备上校准、在另一种上测试，一个简单的逻辑回归达到 ${pct(lead.balanced_accuracy.mean)} 的平衡准确率，随机水平为 ${pct(r.chance_level, 0)}。这说明校准能沿用到什么程度，却说明不了换设备的代价：这个协议没有在被试校准时所用的那种设备上再测一次。`,
+    findingLabel: `更换显示设备后的平衡准确率，${c.people} 名被试`,
+    findingH3: '换设备后仍高于随机水平——但没有同设备的分数可比',
+    findingP: `区间 ${iv(lead.balanced_accuracy)}；AUROC ${auc(lead.auroc)}。每名被试在一种设备上校准、在另一种上测试，两个方向都做，再在被试内取平均。由于没有同一批被试在同一设备上的分数，这个数字说明不了更换设备是否降低了表现，也说明不了降低了多少。`,
+    tableEyebrow: '两个固定基线',
+    tableH2: '在一种设备上校准，在另一种上测试',
+    tableLede: `区分目标与非目标数据帧，每 1 个目标对应 ${Math.round(ratio)} 个非目标，所以准确率会奖励一律回答“非目标”的模型；平衡准确率和 AUROC 不会。主分析时间校正。`,
+    tableRegion: '按基线的跨设备迁移结果，可横向滚动',
+    caption: '先对每名被试的两个迁移方向取平均，再对 21 名被试取平均；附被试 bootstrap 95% 区间。',
+    colModel: '基线', colBa: '平衡准确率', colAuroc: 'AUROC',
+    modelLabel: { mean_window_logreg: '窗口均值逻辑回归', spatiotemporal_shrinkage_lda: '时空收缩 LDA' } as Record<string, string>,
+    baLabel: (v: string) => `平衡准确率 ${v}`,
+    timingEyebrow: '预先设定的敏感性分析',
+    timingH2: '时间校正本身就是结果的一部分',
+    timingLede: '头显和屏幕报告刺激出现时刻的延迟不同。主分析按数据源报告的偏移量平移每个数据帧——在 512 Hz 下，电脑为 19 个采样点，VR 为 60 个。敏感性分析则把数据帧留在记录的标记处。两种方案都不是根据测试分数挑选的。',
+    timingRegion: '有无出现时刻校正时的平衡准确率，可横向滚动',
+    timingCaption: '两种时间方案下的平衡准确率，附被试 bootstrap 95% 区间。',
+    colCorrected: '校正出现时刻（主分析）', colTag: '记录标记处',
+    timingNote: `${timingDrop.m.id === 'spatiotemporal_shrinkage_lda' ? '时空收缩 LDA' : '窗口均值逻辑回归'} 对时间最敏感：校正后 ${pct(timingDrop.m.balanced_accuracy.mean)}，不校正 ${pct(timingDrop.tagged.balanced_accuracy.mean)}。平均偏移并不等于精确的时间对齐，但一个结果如果不交代用的是哪种时间方案，就是不完整的。`,
+    covEyebrow: '这些分数算在什么之上',
+    covH2: '21 名被试，每种设备各一段记录',
+    covLede: '所有标签都来自数据源，没有插补任何一个。一段记录末尾有一行格式错误的数据被丢弃，它位于所有可用数据帧之后。',
+    covPeople: '被试', covPeopleOf: '每种显示设备各记录一次',
+    covEvents: '有标签的事件', covEventsOf: `1 个目标对 ${Math.round(ratio)} 个非目标`,
+    covKept: '保留的数据帧（主分析时间）', covKeptOf: `${n(c.rejected_epochs.onset_corrected)} 个因峰峰值超过 500 µV 被剔除`,
+    limitsH2: '这项比较能支持什么、不能支持什么',
+    limitsLede: '被试内、离线的迁移测试，两个简单基线。它只回答一个较窄的问题，不给显示设备或头显排名。',
+    limits: [
+      ['没有同设备的参照', '这个协议没有让被试在校准所用的设备上接受测试，所以这里测不出更换设备的代价，只测出了换设备之后达到的水平。'],
+      ['被试内迁移，不是跨被试或跨天', '每名被试既提供自己的校准数据，也提供自己的测试数据，而且在同一天。这里的结果说明不了模型对新被试或之后的会话是否有效。'],
+      ['两个固定基线，不是上限', '两个未调参的简单 CPU 分类器。这一批没有运行任何基础模型或微调模型。'],
+      ['平均偏移，不是逐事件对齐', '校正平均出现延迟，并不能消除事件与事件之间的时间抖动，而头显可能会引入这种抖动。'],
+    ],
+    consent: '所有被试都签署了书面知情同意，内容涵盖实验流程、数据管理方式以及随时退出实验的权利；研究经格勒诺布尔-阿尔卑斯大学伦理委员会（CERNI）批准。这里只发布队列级聚合结果。',
+    datasetLink: 'Zenodo 记录 ↗', docLink: '数据集说明文档 ↗',
+  },
+}[locale];
+const card = topicCards[locale]['screen-to-vr'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/screen-to-vr/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="screen-to-vr"
+  dataFiles={['/data/context-update.json']}
+>
+  <section class="topic-section" aria-labelledby="vr-finding">
+    <div class="finding">
+      <div class="finding-number"><strong>{pct(lead.balanced_accuracy.mean)}</strong><span>{copy.findingLabel}</span></div>
+      <div class="finding-copy"><h3 id="vr-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
+    </div>
+    <div class="topic-heading"><div><p class="eyebrow">{copy.tableEyebrow}</p><h2>{copy.tableH2}</h2></div><p>{copy.tableLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion}>
+      <table>
+        <caption>{copy.caption}</caption>
+        <thead><tr><th scope="col">{copy.colModel}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colAuroc}</th></tr></thead>
+        <tbody>{primary.map((m, i) => <tr><th scope="row">{copy.modelLabel[m.id]}</th><td><span class="metric">{pct(m.balanced_accuracy.mean)}</span><span class="interval">{iv(m.balanced_accuracy)}</span><ScoreBar value={m.balanced_accuracy.mean} label={copy.baLabel(pct(m.balanced_accuracy.mean))} tone={i === 0 ? 'rust' : 'ink'} /></td><td><span class="metric">{auc(m.auroc)}</span><span class="interval">{aucIv(m.auroc)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" aria-labelledby="timing-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.timingEyebrow}</p><h2 id="timing-heading">{copy.timingH2}</h2></div><p>{copy.timingLede}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.timingRegion}>
+      <table>
+        <caption>{copy.timingCaption}</caption>
+        <thead><tr><th scope="col">{copy.colModel}</th><th scope="col">{copy.colCorrected}</th><th scope="col">{copy.colTag}</th></tr></thead>
+        <tbody>{primary.map((m, i) => <tr><th scope="row">{copy.modelLabel[m.id]}</th><td><span class="metric">{pct(m.balanced_accuracy.mean)}</span><span class="interval">{iv(m.balanced_accuracy)}</span></td><td><span class="metric">{pct(tag[i].balanced_accuracy.mean)}</span><span class="interval">{iv(tag[i].balanced_accuracy)}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note">{copy.timingNote}</p>
+  </section>
+
+  <section class="topic-section" aria-labelledby="vr-coverage">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.covEyebrow}</p><h2 id="vr-coverage">{copy.covH2}</h2></div><p>{copy.covLede}</p></div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.covPeople}</p><div class="reading">{c.people}</div><p>{copy.covPeopleOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covEvents}</p><div class="reading">{n(c.labeled_events)}</div><p>{copy.covEventsOf}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.covKept}</p><div class="reading">{n(c.retained_epochs.onset_corrected)}</div><p>{copy.covKeptOf}</p></article>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="vr-limits">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="vr-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list"><article><h3 lang="en">{r.rights.name}</h3><p lang="en">{r.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.docLink}</a> · <a href={r.rights.licenseUrl} target="_blank" rel="noreferrer">{r.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
+  </section>
+</TopicLayout>

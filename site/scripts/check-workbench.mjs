@@ -160,6 +160,7 @@ assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-
 // browser, which is how every matrix bar reached production empty.
 const topicPages=[
   ['dry-vs-wet','Dry vs. wet electrodes'],
+  ['screen-to-vr','Screen to VR'],
   ['fewer-electrodes','Fewer electrodes'],
   ['clinical-groups','Clinical groups'],
   ['on-the-move','On the move'],
@@ -169,7 +170,8 @@ const topicPages=[
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='clinical-groups'?'clinical-update.json'
-  :slug==='when-not-to-act'?'experiments.json':'deployment-topics.json';
+  :slug==='when-not-to-act'?'experiments.json'
+  :slug==='screen-to-vr'?'context-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page='../dist/topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -242,7 +244,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','when-not-to-act':'何时不该执行','does-pretraining-help':'预训练有用吗？'};
+const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','screen-to-vr':'从屏幕到 VR','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','when-not-to-act':'何时不该执行','does-pretraining-help':'预训练有用吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -474,6 +476,34 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
   assert.match(html,/class="hold-resolved"/,label+': resolved holds stay in the register');
 }
 
+// --- 2026-09-27 context batch ------------------------------------------------
+const cx=JSON.parse(readFileSync(new URL('../src/data/context-update.json',import.meta.url),'utf8'));
+assert.deepEqual(Object.keys(cx.results).sort(),['gait-eeg','vr-pc-p300'],'only sources with a recorded aggregate_preview decision');
+assert.ok(!/ysu|24906300|27706710|Yanshan/i.test(JSON.stringify(cx)),'the held pilot leaves no trace in the export');
+for(const [label,path] of [['en','topics/screen-to-vr/'],['zh','zh/topics/screen-to-vr/']]){
+  const html=pageOf(path);
+  for(const v of ['66.0%','63.6%','63.8%','57.2%','61.6%–70.2%','0.732','30,240','30,101']) assert.ok(html.includes(v),label+': PC/VR figure '+v);
+  // The one thing this result is not: the cost of the display change.
+  assert.match(html,label==='en'?/did not also test each person on the display they were calibrated on/:/没有在被试校准时所用的那种设备上再测一次/,label+': the missing same-display reference is stated');
+  assert.match(html,/arXiv:1903\.11297/,label+': the dataset documentation is credited');
+  assert.match(html,/Grenoble|格勒诺布尔/,label+': the ethics committee is named');
+  // Per-person values of a 21-person cohort: minima, maxima, medians, quartiles.
+  assert.doesNotMatch(html,/47\.1%|82\.3%|67\.3%|61\.6%<|72\.8%|49\.6%|79\.9%|65\.0%|0\.423|0\.910|0\.776/,label+': an individual score leaked');
+}
+for(const [label,path] of [['en','topics/on-the-move/'],['zh','zh/topics/on-the-move/']]){
+  const html=pageOf(path);
+  for(const v of ['45.4%','50.6%','39.1%–51.7%','44.3%–56.9%','+5.2 pp']) assert.ok(html.includes(v),label+': gait figure '+v);
+  assert.match(html,label==='en'?/is not evidence of decoding the brain/:/不能说明解码到了大脑活动/,label+': the gait score is not sold as neural decoding');
+  assert.match(html,/H19-038/,label+': the gait ethics approval is cited');
+}
+// The held pilot's section cannot render while its source is held.
+for(const p of ['topics/when-not-to-act/','zh/topics/when-not-to-act/'])
+  assert.ok(!pageOf(p).includes('id="non-control"'),p+': a held source rendered');
+// Its figures appear nowhere while it is held. Counts, not percentages: 67.7%
+// is also a legitimate interval bound on the PC/VR page.
+for(const p of [...everyPage,'topics/screen-to-vr/','zh/topics/screen-to-vr/','releases/','zh/releases/'])
+  assert.doesNotMatch(pageOf(p),/152 \/ 192|130 \/ 192|121 \/ 192|121 \/ 130|9 \/ 48|20 \/ 48|11 \/ 96|93\.1%/,p+': a held figure appeared');
+
 // The published payload stays English. Chinese lives in the display layer only.
 for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
   assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,
@@ -484,8 +514,9 @@ for(const path of bilingual){
   assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
 }
 
-console.log('PASS: coverage matrix, seven topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
+console.log('PASS: 2026-09-27 context — PC/VR and gait figures equal the audited export, no same-display claim, gait beside its comparator, held pilot absent everywhere.');
 console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
 console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');
