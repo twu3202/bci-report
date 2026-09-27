@@ -1,0 +1,45 @@
+---
+import EntityLayout from '../../../components/EntityLayout.astro';
+import data from '../../../data/mvp.json';
+import { datasets, tr } from '../../../data/entities';
+import { entityCopy } from '../../../data/entity-copy';
+import { datasetStatus, datasetTask, hrefFor, localeOf, localeParams } from '../../../data/i18n';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const c = entityCopy[locale];
+const people = (d: typeof datasets[number]) => [...new Set(d.groups.flatMap(g => g.rows.map(r => r.people)).filter(Boolean))].sort((a, b) => a - b).join(' / ') || '—';
+const notScored = data.datasets.filter(d => d.status !== 'Aggregate results');
+const structured = {
+  '@context': 'https://schema.org', '@type': 'DataCatalog', name: `${site.name}: datasets with published results`,
+  url: new URL('/datasets/', site.origin).href, description: c.datasetsDescription,
+  dataset: datasets.map(d => ({ '@type': 'Dataset', name: `${site.name}: results on ${d.name}`, url: new URL(`/datasets/${d.slug}/`, site.origin).href })),
+};
+---
+<EntityLayout locale={locale} path="/datasets/" active="datasets"
+  documentTitle={c.datasetsH1} h1={c.datasetsH1} description={c.datasetsDescription}
+  eyebrow={c.datasetsTitle} dek={c.datasetsDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle }]}
+  structured={structured}>
+  <section class="topic-section" aria-labelledby="with-results">
+    <h2 id="with-results">{c.datasetsWithResults}</h2>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.datasetsRegion}>
+      <table>
+        <thead><tr><th scope="col">{c.colDataset}</th><th scope="col">{c.colTask}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colAppears}</th><th scope="col">{c.colLicense}</th></tr></thead>
+        <tbody>{datasets.map(d => <tr>
+          <th scope="row"><a href={hrefFor(`/datasets/${d.slug}/`, locale)} lang="en">{d.name}</a></th>
+          <td>{tr(d.task, locale)}</td>
+          <td>{people(d)}</td>
+          <td>{c.groupsCount(d.groups.length)}</td>
+          <td lang="en">{d.license}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+  <section class="topic-section" aria-labelledby="not-scored">
+    <div class="topic-heading"><div><h2 id="not-scored">{c.datasetsNotScored}</h2></div><p>{c.datasetsNotScoredLede}</p></div>
+    <ul class="entity-links">{notScored.map(d => <li><a href={d.source} target="_blank" rel="noreferrer" lang="en">{d.name} ↗</a> · {datasetTask(d.task, locale)} · {datasetStatus(d.status, locale)}</li>)}</ul>
+    <p class="citation-note"><a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
+  </section>
+</EntityLayout>

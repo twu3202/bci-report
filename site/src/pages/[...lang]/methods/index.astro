@@ -1,0 +1,47 @@
+---
+import EntityLayout from '../../../components/EntityLayout.astro';
+import data from '../../../data/mvp.json';
+import { methods, unmeasuredModels } from '../../../data/entities';
+import { entityCopy } from '../../../data/entity-copy';
+import { familyLabel, hrefFor, localeOf, localeParams, modelStatus } from '../../../data/i18n';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const c = entityCopy[locale];
+const paged = new Set(methods.map(m => m.name));
+const otherEvaluated = data.models.filter(m => m.status === 'Evaluated' && !methods.some(x => x.name === m.name || (x.slug === 'cca' && m.name === 'Standard CCA')));
+const structured = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: c.methodsH1, url: new URL('/methods/', site.origin).href,
+  description: c.methodsDescription,
+  hasPart: methods.map(m => ({ '@type': 'WebPage', name: c.methodTitle(m.name), url: new URL(`/methods/${m.slug}/`, site.origin).href })),
+};
+---
+<EntityLayout locale={locale} path="/methods/" active="models"
+  documentTitle={c.methodsH1} h1={c.methodsH1} description={c.methodsDescription}
+  eyebrow={c.methodsTitle} dek={c.methodsDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle }]}
+  structured={structured}>
+  <section class="topic-section" aria-labelledby="with-pages">
+    <h2 id="with-pages">{c.methodsWithResults}</h2>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.datasetsRegion}>
+      <table>
+        <thead><tr><th scope="col">{c.colMethod}</th><th scope="col">{c.colFamily}</th><th scope="col">{c.colMeasuredOn}</th></tr></thead>
+        <tbody>{methods.map(m => <tr>
+          <th scope="row"><a href={hrefFor(`/methods/${m.slug}/`, locale)} lang="en">{m.name}</a></th>
+          <td>{m.family ? familyLabel(m.family, locale) : '—'}</td>
+          <td lang="en">{[...new Set(m.groups.map(g => g.dataset.name))].join(' · ')}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+  <section class="topic-section" aria-labelledby="other-evaluated">
+    <div class="topic-heading"><div><h2 id="other-evaluated">{c.methodsOther}</h2></div><p>{c.methodsOtherLede}</p></div>
+    <ul class="entity-links">{otherEvaluated.map(m => <li><span lang="en">{m.name}</span> · {familyLabel(m.family, locale)}</li>)}</ul>
+  </section>
+  <section class="topic-section" aria-labelledby="unmeasured">
+    <div class="topic-heading"><div><h2 id="unmeasured">{c.methodsUnmeasured}</h2></div><p>{c.methodsUnmeasuredLede}</p></div>
+    <ul class="entity-links">{unmeasuredModels.filter(m => !paged.has(m.name)).map(m => <li>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}</li>)}</ul>
+    <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
+  </section>
+</EntityLayout>

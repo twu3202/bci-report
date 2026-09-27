@@ -1,0 +1,77 @@
+---
+/**
+ * Shell for the dataset and method pages: same head, header and footer as the
+ * topic pages, without the topic switcher.
+ */
+import { site } from '../data/site';
+import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicChrome, type Locale } from '../data/i18n';
+import SiteHeader from './SiteHeader.astro';
+import AgentLinks from './AgentLinks.astro';
+import '../styles/global.css';
+import '../styles/topics.css';
+
+interface Props {
+  locale: Locale;
+  /** Path without a locale prefix, e.g. `/datasets/beta/`. */
+  path: string;
+  documentTitle: string;
+  h1: string;
+  description: string;
+  eyebrow: string;
+  dek: string;
+  crumbs: { label: string; href?: string }[];
+  structured?: object | null;
+  active: 'models' | 'datasets';
+}
+const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active } = Astro.props;
+const t = chrome[locale];
+const tc = topicChrome[locale];
+const origin = Astro.site ?? site.origin;
+const canonical = new URL(localizePath(path, locale), origin).href;
+const ogImage = new URL('/og.png', origin).href;
+const pageTitle = `${documentTitle} · ${site.name}`;
+// Structured data on the English canonical only, as on the topic pages.
+const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
+---
+<!doctype html>
+<html lang={htmlLang[locale]}>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="description" content={description}/>
+  <meta name="theme-color" content="#b3450e"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="/favicon.ico" sizes="32x32"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="canonical" href={canonical}/>
+  {alternates(path, String(origin)).map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
+  <AgentLinks href={localizePath(path, locale)}/>
+  <title>{pageTitle}</title>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content={site.name}/>
+  <meta property="og:locale" content={ogLocale[locale]}/>
+  <meta property="og:title" content={pageTitle}/>
+  <meta property="og:description" content={description}/>
+  <meta property="og:url" content={canonical}/>
+  <meta property="og:image" content={ogImage}/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content={pageTitle}/>
+  <meta name="twitter:description" content={description}/>
+  <meta name="twitter:image" content={ogImage}/>
+  {ld && <script type="application/ld+json" set:html={ld}/>}
+</head>
+<body>
+  <a class="skip" href="#entity-content">{t.skipToEvidence}</a>
+  <SiteHeader locale={locale} path={path} active={active}/>
+  <main class="topic-page entity-page" id="entity-content">
+    <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol>{crumbs.map((c, i) => <li aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.href ? <a href={c.href}>{c.label}</a> : c.label}</li>)}</ol></nav>
+    <section class="topic-hero">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{h1}</h1>
+      <p class="topic-dek">{dek}</p>
+    </section>
+    <slot />
+  </main>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href={hrefFor('/releases/', locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#entity-content">{t.footerTop}</a></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+---
+import EntityLayout from '../../../components/EntityLayout.astro';
+import ResultGroups from '../../../components/ResultGroups.astro';
+import profiles from '../../../data/entity-profiles.json';
+import { datasets, tr, type DatasetEntity } from '../../../data/entities';
+import { entityCopy } from '../../../data/entity-copy';
+import { hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
+  params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
+})));
+const { dataset: d } = Astro.props as { dataset: DatasetEntity };
+const locale = localeOf(Astro.params.lang);
+const c = entityCopy[locale];
+const path = `/datasets/${d.slug}/`;
+const profile = (profiles.datasets as Record<string, { aliases: string[]; summary_en: string; summary_zh: string; facts_sources: string[] }>)[d.slug];
+const methodNames = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comparator).map(r => r.method)))];
+const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0, 5).join(', ')} …`;
+const pages = [...new Set(d.groups.map(g => g.path))];
+const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)'); };
+const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
+const abs = (p: string) => new URL(p, site.origin).href;
+const structured = {
+  '@context': 'https://schema.org', '@type': 'Dataset',
+  name: `${site.name}: results on ${d.name}`,
+  description: c.datasetDescription(d.name, d.task.en, listed(methodNames)),
+  url: abs(path), license: 'https://creativecommons.org/licenses/by/4.0/', isAccessibleForFree: true,
+  creator: { '@type': 'Person', name: site.name, url: site.origin },
+  isBasedOn: d.sources, citation: d.attribution, measurementTechnique: 'Electroencephalography',
+  keywords: ['EEG', 'brain-computer interface', d.name, ...(profile?.aliases ?? [])],
+  variableMeasured: [...new Set(d.groups.flatMap(g => g.rows.map(r => r.metric.en)))],
+  distribution: files.map(f => ({ '@type': 'DataDownload', encodingFormat: f.endsWith('.csv') ? 'text/csv' : 'application/json', contentUrl: abs(`/data/${f}`) })),
+};
+---
+<EntityLayout
+  locale={locale} path={path} active="datasets"
+  documentTitle={c.datasetTitle(d.name)}
+  h1={c.datasetH1(d.name)}
+  description={c.datasetDescription(d.name, tr(d.task, locale), listed(methodNames))}
+  eyebrow={tr(d.task, locale)}
+  dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.datasetsDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name }]}
+  structured={structured}
+>
+  {profile && <section class="entity-profile" aria-label={c.whatItIs}>
+    {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}
+    <p class="citation-note">{c.profileSource} {profile.facts_sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname}</a></>)}</p>
+  </section>}
+  <section class="topic-section" aria-labelledby="appears-heading">
+    <h2 id="appears-heading">{c.appearsIn}</h2>
+    <ul class="entity-links">{pages.map(p => <li><a href={hrefFor(p, locale)}>{pageLabel(p)}</a></li>)}</ul>
+  </section>
+  <section class="topic-section" aria-labelledby="results-heading">
+    <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.resultsLede}</p></div>
+    <ResultGroups locale={locale} groups={d.groups}/>
+  </section>
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="source-heading">
+    <h2 id="source-heading">{c.source}</h2>
+    <div class="citation-list"><article>
+      <h3 lang="en">{d.name}</h3>
+      <p><strong>{c.attribution}</strong> <span lang="en">{d.attribution}</span></p>
+      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang="en">{d.license} ↗</a> : <span lang="en">{d.license}</span>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
+      <p>{c.notRedistributed}</p>
+    </article></div>
+    <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
+  </section>
+</EntityLayout>

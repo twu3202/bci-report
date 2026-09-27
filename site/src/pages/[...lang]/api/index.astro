@@ -1,0 +1,103 @@
+---
+import EntityLayout from '../../../components/EntityLayout.astro';
+import { describeFile, servedFiles } from '../../../data/files';
+import { releases } from '../../../data/releases';
+import { hrefFor, localeOf, localeParams } from '../../../data/i18n';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const latest = releases[0];
+const base = `${site.origin}/data/`;
+const copy = {
+  en: {
+    title: 'Data API', h1: 'BCI Report data API: static JSON and CSV at stable URLs',
+    description: 'Every BCI Report result as static JSON and CSV files at stable URLs — no key, no account. What each file holds, how to load it with curl, Python or Hugging Face datasets, and how to cite a release.',
+    eyebrow: 'Data API', home: 'Home',
+    dek: 'There is no server to query: every published result is a static file, the same bytes the pages are built from. Fetch them directly, verify them against the SHA-256 on the releases page, and cite the release you used.',
+    howH2: 'How it works',
+    how: [
+      ['Stable URLs', `Every file lives at ${base}<file>. A file is only ever replaced by a reviewed release, and the releases page gives the SHA-256 of the bytes currently served.`],
+      ['No key, no account', 'Plain HTTPS GET. Static files behind a CDN; no rate limit is promised, so cache what you use.'],
+      ['Licence', 'The aggregate results are CC BY 4.0. The recordings they were computed from belong to their authors and keep their own terms — each dataset page names them.'],
+      ['Mirror', 'The same files are on Hugging Face as the dataset Twu31/bci-report, with the per-protocol tables merged into loadable configurations.'],
+    ],
+    filesH2: 'Files', colFile: 'File', colHolds: 'What it holds', colRelease: 'Release',
+    filesRegion: 'Downloadable files, scrolls horizontally',
+    examplesH2: 'Examples',
+    curl: 'Shell', python: 'Python', hf: 'Hugging Face datasets',
+    citeH2: 'Cite',
+    citeP: `Cite the site and the release you used (the current one is ${latest.id}), and the upstream dataset each figure was computed on.`,
+    datasetsLink: 'Upstream datasets and their credits →',
+    agentsH2: 'For agents and crawlers',
+    agents: ['/llms.txt — an index of every page with its short answer', 'Every page has a Markdown copy: add index.md to its URL (e.g. /topics/dry-vs-wet/index.md)', '/sitemap.xml — every page, both languages, with last-modified dates'],
+    releasesLink: 'Releases, with SHA-256 of every file →',
+  },
+  zh: {
+    title: '数据 API', h1: 'BCI Report 数据 API：固定地址的静态 JSON 与 CSV',
+    description: 'BCI Report 的全部结果都以静态 JSON 与 CSV 文件放在固定地址上——不需要密钥，也不需要账号。每个文件包含什么、如何用 curl、Python 或 Hugging Face datasets 读取，以及如何引用某一次发布。',
+    eyebrow: '数据 API', home: '首页',
+    dek: '这里没有可查询的服务器：每一个已发布的结果都是一个静态文件，与页面构建所用的字节完全相同。直接下载，用发布记录页上的 SHA-256 核对，并注明你用的是哪一次发布。',
+    howH2: '使用方式',
+    how: [
+      ['固定地址', `每个文件都位于 ${base}<文件名>。文件只会被经过审核的发布替换，发布记录页给出当前所提供字节的 SHA-256。`],
+      ['无需密钥或账号', '普通的 HTTPS GET 请求。静态文件经 CDN 提供；不承诺任何速率上限，请缓存你用到的文件。'],
+      ['许可', '聚合结果采用 CC BY 4.0。计算这些结果所用的原始记录属于其作者，并保留各自的条款——每个数据集页面都写明了。'],
+      ['镜像', '同样的文件也在 Hugging Face 上，数据集名为 Twu31/bci-report，各协议的表格已合并为可直接加载的配置。'],
+    ],
+    filesH2: '文件', colFile: '文件', colHolds: '内容', colRelease: '发布',
+    filesRegion: '可下载文件，可横向滚动',
+    examplesH2: '示例',
+    curl: 'Shell', python: 'Python', hf: 'Hugging Face datasets',
+    citeH2: '引用',
+    citeP: `请引用本站和你所用的发布（当前为 ${latest.id}），以及每个数字所依据的上游数据集。`,
+    datasetsLink: '上游数据集及其署名 →',
+    agentsH2: '供智能体与爬虫使用',
+    agents: ['/llms.txt——列出每个页面及其简答的索引', '每个页面都有 Markdown 版本：在网址后加 index.md（例如 /topics/dry-vs-wet/index.md）', '/sitemap.xml——两种语言的全部页面，附最后修改日期'],
+    releasesLink: '发布记录（附每个文件的 SHA-256）→',
+  },
+}[locale];
+const curl = `curl -sO ${base}experiments.json\ncurl -s ${base}context-update.json | jq '.results | keys'`;
+const python = `import pandas as pd, requests\n\nmatrix = requests.get("${base}experiments.json", timeout=30).json()\nfor track in matrix["tracks"]:\n    print(track["id"], track["chanceLevel"], len(track["rows"]))\n\nmi_rest = pd.read_csv("${base}mi-rest-results.csv")`;
+const hf = `from datasets import load_dataset\n\nresults = load_dataset("Twu31/bci-report", "results")  # also: topics, contrasts, seed_sensitivity`;
+const bibtex = `@misc{bcireport,\n  title        = {BCI Report: public EEG decoding results reported with their protocol},\n  author       = {{BCI Report}},\n  year         = {${latest.date.slice(0, 4)}},\n  howpublished = {\\url{${site.origin}}},\n  note         = {Release ${latest.id}}\n}`;
+const structured = {
+  '@context': 'https://schema.org', '@type': 'WebAPI', name: `${site.name} data API`, url: new URL('/api/', site.origin).href,
+  description: copy.description, documentation: new URL('/api/', site.origin).href, provider: { '@type': 'Person', name: site.name, url: site.origin },
+  termsOfService: new URL('/data-use/', site.origin).href,
+};
+---
+<EntityLayout locale={locale} path="/api/" active="datasets"
+  documentTitle={copy.h1} h1={copy.h1} description={copy.description} eyebrow={copy.eyebrow} dek={copy.dek}
+  crumbs={[{ label: copy.home, href: hrefFor('/', locale) }, { label: copy.title }]} structured={structured}>
+  <section class="topic-section" aria-labelledby="how-heading">
+    <h2 id="how-heading">{copy.howH2}</h2>
+    <div class="method-grid-wide">{copy.how.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+  </section>
+  <section class="topic-section" aria-labelledby="files-heading">
+    <h2 id="files-heading">{copy.filesH2}</h2>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.filesRegion}>
+      <table>
+        <thead><tr><th scope="col">{copy.colFile}</th><th scope="col">{copy.colHolds}</th><th scope="col">{copy.colRelease}</th></tr></thead>
+        <tbody>{servedFiles.map(f => <tr><th scope="row"><a href={`/data/${f.file}`} download><code>{f.file}</code></a></th><td>{describeFile(f.file)[locale]}</td><td><a href={`${hrefFor('/releases/', locale)}#${f.release}`}><code>{f.release}</code></a></td></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="citation-note"><a href={hrefFor('/releases/', locale)}>{copy.releasesLink}</a></p>
+  </section>
+  <section class="topic-section" aria-labelledby="examples-heading">
+    <h2 id="examples-heading">{copy.examplesH2}</h2>
+    <h3 class="code-label">{copy.curl}</h3><pre class="code" lang="en"><code>{curl}</code></pre>
+    <h3 class="code-label">{copy.python}</h3><pre class="code" lang="en"><code>{python}</code></pre>
+    <h3 class="code-label">{copy.hf}</h3><pre class="code" lang="en"><code>{hf}</code></pre>
+  </section>
+  <section class="topic-section" aria-labelledby="cite-heading">
+    <h2 id="cite-heading">{copy.citeH2}</h2>
+    <p class="roadmap-p">{copy.citeP}</p>
+    <pre class="code" lang="en"><code>{bibtex}</code></pre>
+    <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{copy.datasetsLink}</a></p>
+  </section>
+  <section class="topic-section" aria-labelledby="agents-heading">
+    <h2 id="agents-heading">{copy.agentsH2}</h2>
+    <ul class="entity-links">{copy.agents.map(a => <li>{a}</li>)}</ul>
+  </section>
+</EntityLayout>

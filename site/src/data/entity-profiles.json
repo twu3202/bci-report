@@ -1,0 +1,428 @@
+{
+ "datasets": {
+  "ds003810": {
+   "aliases": [
+    "ds003810",
+    "Motor Imagery vs Rest - Low-Cost EEG System",
+    "A motor imagery vs. rest dataset with low-cost consumer grade EEG hardware",
+    "Peterson et al. (2022)"
+   ],
+   "summary_en": "OpenNeuro ds003810 is an EEG dataset of kinesthetic motor imagery of dominant-hand grasping versus rest, recorded from 10 participants without previous BCI experience using a low-cost OpenBCI Cyton + Daisy board with 15 electrodes over sensorimotor areas. Released on OpenNeuro by Peterson et al. and described in Data in Brief (2022).",
+   "summary_zh": "OpenNeuro ds003810 是一个 EEG 数据集，任务为优势手抓握动作的动觉运动想象与静息两种条件，采集自 10 名此前没有 BCI 经验的被试，设备为低成本的 OpenBCI Cyton + Daisy 板，15 个电极覆盖感觉运动区。由 Peterson 等人发布于 OpenNeuro，并在 Data in Brief（2022）中描述。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds003810",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+    "https://doi.org/10.1016/j.dib.2022.108225",
+    "https://doi.org/10.1016/j.heliyon.2020.e03425"
+   ]
+  },
+  "eegmat": {
+   "aliases": [
+    "EEGMAT",
+    "EEG During Mental Arithmetic Tasks",
+    "Electroencephalograms during Mental Arithmetic Task Performance",
+    "Zyma et al. (2019)"
+   ],
+   "summary_en": "EEGMAT (EEG During Mental Arithmetic Tasks) is a PhysioNet database, version 1.0.0 published December 2018, with two 60-second artifact-free EEG recordings from each of 36 participants: one before and one during a serial-subtraction task. Contributed from Igor Sikorsky Kyiv Polytechnic Institute and described by Zyma et al. in Data (2019).",
+   "summary_zh": "EEGMAT（EEG During Mental Arithmetic Tasks）是 PhysioNet 上的一个数据库，1.0.0 版于 2018 年 12 月发布，为 36 名被试每人提供两段 60 秒无伪迹 EEG：一段在连续减法心算任务之前，一段在任务进行中。数据来自 Igor Sikorsky Kyiv Polytechnic Institute，并由 Zyma 等人在期刊 Data（2019）中描述。",
+   "facts_sources": [
+    "https://physionet.org/content/eegmat/1.0.0/",
+    "https://doi.org/10.3390/data4010014"
+   ]
+  },
+  "eesm19": {
+   "aliases": [
+    "EESM19",
+    "Ear-EEG Sleep Monitoring 2019",
+    "ds005185",
+    "Mikkelsen et al. (2019)"
+   ],
+   "summary_en": "EESM19 (Ear-EEG Sleep Monitoring 2019, OpenNeuro ds005185) is a home sleep dataset from Aarhus University: 20 participants each slept four nights with dry-contact ear-EEG plus partial polysomnography, manually sleep-scored, and 10 of them added 12 ear-EEG-only nights. First published by Mikkelsen et al. in Scientific Reports (2019).",
+   "summary_zh": "EESM19（Ear-EEG Sleep Monitoring 2019，OpenNeuro ds005185）是 Aarhus University 的居家睡眠数据集：20 名被试各在家中睡 4 晚，同时佩戴干电极耳内 EEG（ear-EEG）与经人工睡眠分期的部分多导睡眠图，其中 10 名被试另外记录了 12 晚仅有 ear-EEG 的数据。首次发表于 Mikkelsen 等人的 Scientific Reports（2019）论文。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds005185",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6856384/",
+    "https://doi.org/10.1038/s41598-019-53115-3"
+   ]
+  },
+  "beta": {
+   "aliases": [
+    "BETA",
+    "BETA database",
+    "The BETA database",
+    "BETA: A Large Benchmark Database Toward SSVEP-BCI Application",
+    "Liu et al. (2020)"
+   ],
+   "summary_en": "BETA (BEnchmark database Towards BCI Application) is a 40-target SSVEP dataset: 64-channel EEG from 70 participants performing a cued-spelling task on a keyboard-style virtual speller (8–15.8 Hz), four blocks each, recorded outside an electromagnetically shielded room. Released by Liu et al. (Tsinghua University) in Frontiers in Neuroscience (2020), with data on figshare.",
+   "summary_zh": "BETA（BEnchmark database Towards BCI Application）是一个 40 目标 SSVEP 数据集：70 名被试在键盘式虚拟拼写界面（8–15.8 Hz）上完成提示拼写任务，每人 4 个组块，记录 64 导 EEG，采集在电磁屏蔽室之外进行。由 Liu 等人（Tsinghua University）于 2020 年发表于 Frontiers in Neuroscience，数据托管于 figshare。",
+   "facts_sources": [
+    "https://figshare.com/articles/dataset/_/12264401",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7324867/",
+    "https://doi.org/10.3389/fnins.2020.00627",
+    "https://bci.med.tsinghua.edu.cn/download.html"
+   ]
+  },
+  "tmnred": {
+   "aliases": [
+    "TMNRED",
+    "ds005383",
+    "TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments",
+    "Bai et al. (2025)"
+   ],
+   "summary_en": "TMNRED is a Chinese natural-reading EEG dataset from Tianjin University: 30 native Chinese-speaking participants read news headlines or short sentences containing target or non-target semantic items across 8 blocks, recorded with a portable 32-channel system (30 effective channels). Released on OpenNeuro (ds005383) and described by Bai et al. in Scientific Data (2025).",
+   "summary_zh": "TMNRED 是 Tianjin University 发布的中文自然阅读 EEG 数据集：30 名以中文为母语的被试在 8 个组块中阅读含目标或非目标语义项的新闻标题或短句，使用便携式 32 导系统（30 个有效通道）记录。数据发布于 OpenNeuro（ds005383），并由 Bai 等人在 Scientific Data（2025）中描述。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds005383",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12032204/",
+    "https://doi.org/10.1038/s41597-025-05036-2"
+   ]
+  },
+  "ds006593": {
+   "aliases": [
+    "ds006593",
+    "cBCI Matrix Multimodal Dataset",
+    "Multimodal Sensor Fusion for EEG-Based BCI Typing Systems",
+    "on006593"
+   ],
+   "summary_en": "The cBCI Matrix Multimodal Dataset (OpenNeuro ds006593) contains EEG and eye-tracking calibration recordings from 21 control participants performing a single-character-presentation matrix speller task in BciPy, recorded at Northeastern University in 2023 with a DSI-24 dry-electrode cap. Released on OpenNeuro in 2025 by Celik et al.",
+   "summary_zh": "cBCI Matrix Multimodal Dataset（OpenNeuro ds006593）包含 21 名对照被试在 BciPy 中完成单字符呈现（single-character-presentation）矩阵拼写校准任务时的 EEG 与眼动记录，于 2023 年在 Northeastern University 采集，使用 DSI-24 干电极帽。由 Celik 等人于 2025 年发布于 OpenNeuro。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds006593",
+    "https://nemar.org/dataset/on006593"
+   ]
+  },
+  "ds005342": {
+   "aliases": [
+    "ds005342",
+    "EEG data offline and online during motor imagery for standing and sitting",
+    "Triana-Guzman et al. (2022)"
+   ],
+   "summary_en": "OpenNeuro ds005342 contains 17-channel EEG (250 Hz) from 32 healthy participants who, following on-screen cues, imagined sit-to-stand or stand-to-sit movements or stayed in an idle state, first in offline calibration runs and then in online BCI runs. Released on OpenNeuro by Triana-Guzman et al. (2024); the study appeared in Frontiers in Neuroinformatics (2022).",
+   "summary_zh": "OpenNeuro ds005342 包含 32 名健康被试的 17 导 EEG（250 Hz）：被试按屏幕提示想象从坐到站或从站到坐的动作，或保持空闲状态，先进行离线校准，再进行在线 BCI 实验。由 Triana-Guzman 等人发布于 OpenNeuro（2024），相关研究发表于 Frontiers in Neuroinformatics（2022）。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds005342",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9481272/",
+    "https://doi.org/10.3389/fninf.2022.961089"
+   ]
+  },
+  "wearable-ssvep-102": {
+   "aliases": [
+    "Wearable SSVEP BCI Dataset",
+    "An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces",
+    "figshare 13560281",
+    "Zhu et al. (2021)"
+   ],
+   "summary_en": "An open wearable SSVEP dataset: 8-channel EEG from 102 healthy participants performing a cue-guided 12-target SSVEP task (9.25–14.75 Hz), recorded with wet and with dry electrodes, 10 consecutive blocks each. Participants were recruited through the BCI Brain-Controlled Robot Contest at the 2020 World Robot Contest. Released by Zhu et al. in Sensors (2021), with data on figshare.",
+   "summary_zh": "一个开放的可穿戴 SSVEP 数据集：102 名健康被试在提示引导下完成 12 目标 SSVEP 任务（9.25–14.75 Hz），分别用湿电极和干电极各记录 10 个连续组块的 8 导 EEG。被试通过 2020 年 World Robot Contest 中的 BCI Brain-Controlled Robot Contest 招募。由 Zhu 等人于 2021 年发表于 Sensors，数据托管于 figshare。",
+   "facts_sources": [
+    "https://figshare.com/articles/dataset/_/13560281",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
+    "https://doi.org/10.3390/s21041256",
+    "https://bci.med.tsinghua.edu.cn/download.html"
+   ]
+  },
+  "mobile-bci": {
+   "aliases": [
+    "Mobile BCI dataset",
+    "Lee2021",
+    "Lee2021Mobile",
+    "NEMAR nm000201",
+    "NEMAR nm000125",
+    "OSF r7s9b"
+   ],
+   "summary_en": "Scalp- and ear-EEG dataset from Korea University (Lee et al., Scientific Data, 2021): 24 participants (23 for SSVEP) performed ERP and SSVEP BCI tasks on a treadmill while standing, walking and slightly running (0 to 2.0 m/s), recorded with 32-channel scalp-EEG, 14-channel ear-EEG, EOG and IMUs. Original release on OSF; NEMAR nm000201 (ERP) and nm000125 (SSVEP) are BIDS derivatives.",
+   "summary_zh": "Korea University 发布的头皮与耳周 EEG 数据集（Lee 等，Scientific Data，2021）：24 名被试（SSVEP 任务为 23 名）在跑步机上以站立、步行和慢跑（0 至 2.0 m/s）状态完成 ERP 与 SSVEP 脑机接口任务，同步记录 32 通道头皮 EEG、14 通道耳周 EEG、EOG 和 IMU。原始数据发布于 OSF；NEMAR nm000201（ERP）与 nm000125（SSVEP）是其 BIDS 衍生版本。",
+   "facts_sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC8688416/",
+    "https://osf.io/r7s9b/",
+    "https://nemar.org/dataset/nm000125",
+    "https://nemar.org/dataset/nm000201",
+    "https://doi.org/10.82901/nemar.nm000125",
+    "https://doi.org/10.82901/nemar.nm000201"
+   ]
+  },
+  "eesm23": {
+   "aliases": [
+    "EESM23",
+    "Ear-EEG Sleep Monitoring 2023",
+    "OpenNeuro ds005178"
+   ],
+   "summary_en": "Ear-EEG Sleep Monitoring 2023 (EESM23): at-home sleep recordings from 10 healthy participants by an Aarhus University group, each with two nights of combined ear-EEG and polysomnography followed by ten ear-EEG-only nights, using generic ear pieces with dry electrodes. Released on OpenNeuro as ds005178 (CC0) and described in Scientific Data (2025).",
+   "summary_zh": "Ear-EEG Sleep Monitoring 2023（EESM23）：Aarhus University 团队采集的居家睡眠数据，10 名健康被试每人先进行两晚耳部 EEG 与多导睡眠图（PSG）同步记录，再进行十晚仅耳部 EEG 记录，使用通用耳塞与干电极。以 ds005178 发布于 OpenNeuro（CC0），数据描述论文发表于 Scientific Data（2025）。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds005178",
+    "https://doi.org/10.18112/openneuro.ds005178.v1.0.0",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11840015/"
+   ]
+  },
+  "phantom": {
+   "aliases": [
+    "Phantom EEG Dataset with Motion, Muscle, and Eye Artifacts and Example Scripts",
+    "OpenNeuro ds004784",
+    "Phantom EEG with motion, muscle and eye artifacts"
+   ],
+   "summary_en": "128-channel EEG recorded by Downey and Ferris (University of Florida) from an electrically conductive head phantom, with no human participants, containing 10 brain sources and 10 artifact sources, under six conditions: brain only; brain plus eye, neck-muscle, facial-muscle or walking-motion artifacts; or all together. Released on OpenNeuro as ds004784 (CC0, 2023) alongside the iCanClean paper (Sensors, 2023).",
+   "summary_zh": "Downey 与 Ferris（University of Florida）在一个导电头模上记录的 128 通道 EEG，不涉及人类被试；头模内置 10 个脑源和 10 个伪迹源，共六种条件：仅脑信号；脑信号叠加眼动、颈部肌肉、面部肌肉或行走运动伪迹；或全部伪迹同时存在。以 ds004784 发布于 OpenNeuro（CC0，2023），配套 iCanClean 论文（Sensors，2023）。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds004784",
+    "https://doi.org/10.18112/openneuro.ds004784.v1.0.4",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10574843/"
+   ]
+  },
+  "alpha-waves": {
+   "aliases": [
+    "EEG Alpha Waves dataset",
+    "ALPHA.EEG.2017-GIPSA",
+    "Rodrigues2017",
+    "Zenodo 2605110",
+    "hal-02086581"
+   ],
+   "summary_en": "Resting-state eyes-open/eyes-closed EEG from 20 participants, recorded with a 16-electrode headset during a 2017 pilot experiment at GIPSA-lab, Grenoble, by Cattan, Rodrigues and Congedo. Released on Zenodo in 2018 (CC BY 4.0) with a research report (hal-02086581); dataset ID ALPHA.EEG.2017-GIPSA.",
+   "summary_zh": "静息态睁眼/闭眼 EEG 数据集：20 名被试，使用 16 电极头戴设备，2017 年由 Cattan、Rodrigues 与 Congedo 在 GIPSA-lab（Grenoble）的预实验中记录。2018 年发布于 Zenodo（CC BY 4.0），附研究报告 hal-02086581；数据集 ID 为 ALPHA.EEG.2017-GIPSA。",
+   "facts_sources": [
+    "https://zenodo.org/records/2605110",
+    "https://hal.science/hal-02086581",
+    "https://moabb.neurotechx.com/docs/generated/moabb.datasets.Rodrigues2017.html"
+   ]
+  },
+  "ds004584": {
+   "aliases": [
+    "OpenNeuro ds004584",
+    "Rest eyes open",
+    "NEMAR on004584"
+   ],
+   "summary_en": "Two minutes of eyes-open resting-state EEG (64-channel BrainVision cap) from 149 participants, 100 with Parkinson's disease and 49 controls, recruited at the University of Iowa Movement Disorders Clinic (2017 to 2021) for the cohort of Singh et al. (J Neurol Neurosurg Psychiatry, 2023). Released on OpenNeuro as ds004584 'Rest eyes open' (CC0, 2023).",
+   "summary_zh": "149 名被试（100 名帕金森病患者、49 名对照）的 2 分钟睁眼静息态 EEG（64 通道 BrainVision 电极帽），被试于 2017 至 2021 年在 University of Iowa Movement Disorders Clinic 招募，属于 Singh 等人研究（J Neurol Neurosurg Psychiatry，2023）的队列。以 ds004584「Rest eyes open」发布于 OpenNeuro（CC0，2023）。",
+   "facts_sources": [
+    "https://openneuro.org/datasets/ds004584",
+    "https://doi.org/10.18112/openneuro.ds004584.v1.0.0",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10592174/",
+    "https://doi.org/10.1101/2022.07.26.22278079",
+    "https://nemar.org/dataset/on004584"
+   ]
+  },
+  "vr-pc-p300": {
+   "aliases": [
+    "Dataset of an EEG-based BCI experiment in Virtual Reality and on a Personal Computer",
+    "VR.EEG.2018-GIPSA",
+    "Cattan2019_VR",
+    "Zenodo 2605205",
+    "arXiv:1903.11297"
+   ],
+   "summary_en": "Visual P300 BCI EEG from 21 participants who used a P300-based BCI both on a personal computer and in a passive, smartphone-based virtual-reality headset, recorded with 16 electrodes at GIPSA-lab (Grenoble) in 2018 by Cattan, Andreev, Rodrigues and Congedo. Released on Zenodo (CC BY 4.0, 2019) and documented in arXiv:1903.11297; dataset ID VR.EEG.2018-GIPSA.",
+   "summary_zh": "视觉 P300 脑机接口 EEG 数据集：21 名被试分别在个人电脑和被动式（基于智能手机的）虚拟现实头显上使用 P300 脑机接口，2018 年由 Cattan、Andreev、Rodrigues 与 Congedo 在 GIPSA-lab（Grenoble）以 16 个电极记录。2019 年发布于 Zenodo（CC BY 4.0），文档见 arXiv:1903.11297；数据集 ID 为 VR.EEG.2018-GIPSA。",
+   "facts_sources": [
+    "https://zenodo.org/records/2605205",
+    "https://arxiv.org/abs/1903.11297",
+    "https://hal.science/hal-02078533",
+    "https://moabb.neurotechx.com/docs/generated/moabb.datasets.Cattan2019_VR.html"
+   ]
+  },
+  "gait-eeg": {
+   "aliases": [
+    "A multimodal gait dataset of brain activity, muscle activity, kinematics and ground forces in young adults",
+    "PhysioNet multimodal-gait-dataset",
+    "doi:10.13026/r0ea-7161"
+   ],
+   "summary_en": "Treadmill-walking dataset from 59 healthy young adults at Khalifa University, each walking one minute at 0.5, 0.75 and 1.0 m/s, with synchronized 19-channel dry-electrode EEG (DSI-24), surface EMG from 12 lower-limb muscles, 17-sensor IMU kinematics and split-belt force plates. Released on PhysioNet as v1.0.0 (CC BY 4.0, April 2026) by Katmah et al.",
+   "summary_zh": "Khalifa University 采集的跑步机行走数据集：59 名健康青年被试分别以 0.5、0.75 和 1.0 m/s 各行走一分钟，同步记录 19 通道干电极 EEG（DSI-24）、12 块下肢肌肉的表面肌电、17 个 IMU 传感器的运动学数据以及分带跑步机测力台数据。由 Katmah 等于 2026 年 4 月在 PhysioNet 发布 v1.0.0（CC BY 4.0）。",
+   "facts_sources": [
+    "https://physionet.org/content/multimodal-gait-dataset/1.0.0/",
+    "https://doi.org/10.13026/r0ea-7161"
+   ]
+  },
+  "ysu-async-ssvep": {
+   "aliases": [
+    "YSU-an EEG dataset for studying asynchronous SSVEP-BCI",
+    "figshare 24906300",
+    "An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces"
+   ],
+   "summary_en": "EEG dataset for studying asynchronous SSVEP-based brain-computer interfaces, with 24 participants, released by Zhao et al. (Yanshan University, Qinhuangdao) on figshare (24906300, CC BY 4.0; first posted 2023, revision 3 in 2024) and described in Brain-Apparatus Communication 3(1) (2024).",
+   "summary_zh": "用于研究异步 SSVEP 脑机接口的 EEG 数据集，含 24 名被试，由 Zhao 等（Yanshan University，Qinhuangdao）发布于 figshare（24906300，CC BY 4.0；2023 年首次发布，2024 年更新为第 3 版），数据描述论文发表于 Brain-Apparatus Communication 3(1)（2024）。",
+   "facts_sources": [
+    "https://figshare.com/articles/dataset/_/24906300",
+    "https://doi.org/10.1080/27706710.2024.2418650"
+   ]
+  }
+ },
+ "methods": {
+  "eegnet": {
+   "aliases": [
+    "EEGNet",
+    "EEGNet-8,2",
+    "EEGNet-4,2",
+    "EEGNetv4",
+    "Lawhern et al. 2018"
+   ],
+   "summary_en": "EEGNet is a compact convolutional neural network for EEG-based brain–computer interfaces, proposed by Lawhern et al. (U.S. Army Research Laboratory; Journal of Neural Engineering, 2018) and tested on P300, ERN, MRCP and SMR data. It applies a temporal convolution, a depthwise spatial convolution and a separable convolution, followed by a softmax classifier.",
+   "summary_zh": "EEGNet 是面向基于 EEG 的脑机接口的紧凑型卷积神经网络，由 Lawhern 等人（美国陆军研究实验室）提出，发表于 Journal of Neural Engineering（2018），原文在 P300、ERN、MRCP 和 SMR 数据上做了测试。网络依次使用时间卷积、深度（depthwise）空间卷积和可分离（separable）卷积，最后接 softmax 分类器。",
+   "facts_sources": [
+    "https://arxiv.org/abs/1611.08024",
+    "https://doi.org/10.1088/1741-2552/aace8c",
+    "https://pubmed.ncbi.nlm.nih.gov/29932424/",
+    "https://github.com/braindecode/braindecode/blob/v1.5.1/braindecode/models/eegnet.py"
+   ],
+   "reference": "Lawhern VJ, Solon AJ, Waytowich NR, Gordon SM, Hung CP, Lance BJ. EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces. Journal of Neural Engineering 15(5):056013, 2018.",
+   "reference_url": "https://doi.org/10.1088/1741-2552/aace8c",
+   "code_url": "https://github.com/vlawhern/arl-eegmodels"
+  },
+  "labram": {
+   "aliases": [
+    "LaBraM",
+    "Large Brain Model",
+    "LaBraM-Base",
+    "Labram",
+    "Jiang et al. 2024"
+   ],
+   "summary_en": "LaBraM (Large Brain Model) is an EEG foundation model from Jiang, Zhao and Lu (Shanghai Jiao Tong University; ICLR 2024), described in Base, Large and Huge sizes. A vector-quantized tokenizer turns per-channel EEG patches into discrete codes, and a Transformer is pretrained to predict the codes of masked patches, using about 2,500 hours of EEG from around 20 datasets.",
+   "summary_zh": "LaBraM（Large Brain Model）是上海交通大学 Jiang、Zhao 和 Lu 提出的 EEG 基础模型（ICLR 2024），论文给出了 Base、Large 和 Huge 三种规模。向量量化的 tokenizer 把单通道 EEG 片段（patch）编码为离散码，Transformer 通过预测被掩码片段的离散码进行预训练，预训练数据约 2,500 小时、来自约 20 个数据集。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2405.18765",
+    "https://github.com/935963004/LaBraM",
+    "https://github.com/braindecode/braindecode/blob/v1.5.1/braindecode/models/labram.py"
+   ],
+   "reference": "Jiang W-B, Zhao L-M, Lu B-L. Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI. International Conference on Learning Representations (ICLR), 2024.",
+   "reference_url": "https://arxiv.org/abs/2405.18765",
+   "code_url": "https://github.com/935963004/LaBraM"
+  },
+  "cbramod": {
+   "aliases": [
+    "CBraMod",
+    "Criss-Cross Brain Foundation Model",
+    "weighting666/CBraMod",
+    "Wang et al. 2025"
+   ],
+   "summary_en": "CBraMod is an EEG foundation model from Wang et al. (Zhejiang University; ICLR 2025). Its criss-cross Transformer models spatial and temporal dependencies between EEG patches with two parallel attention branches, uses an asymmetric conditional positional encoding, and is pretrained by masked patch reconstruction on the TUEG clinical corpus (over 9,000 hours retained after preprocessing).",
+   "summary_zh": "CBraMod 是浙江大学 Wang 等人提出的 EEG 基础模型（ICLR 2025）。其 criss-cross Transformer 用两路并行注意力分别建模 EEG 片段之间的空间依赖和时间依赖，采用非对称条件位置编码，并在 TUEG 临床语料上以掩码片段重建方式预训练（预处理后保留超过 9,000 小时）。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2412.07236",
+    "https://github.com/wjq-learning/CBraMod",
+    "https://huggingface.co/weighting666/CBraMod"
+   ],
+   "reference": "Wang J, Zhao S, Luo Z, Zhou Y, Jiang H, Li S, Li T, Pan G. CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding. International Conference on Learning Representations (ICLR), 2025.",
+   "reference_url": "https://arxiv.org/abs/2412.07236",
+   "code_url": "https://github.com/wjq-learning/CBraMod"
+  },
+  "shallowfbcspnet": {
+   "aliases": [
+    "ShallowFBCSPNet",
+    "Shallow ConvNet",
+    "ShallowConvNet",
+    "Schirrmeister et al. 2017"
+   ],
+   "summary_en": "ShallowFBCSPNet is Braindecode's name for the shallow ConvNet of Schirrmeister et al. (Human Brain Mapping, 2017). Modeled on filter bank common spatial patterns (FBCSP), it applies a temporal convolution, a spatial convolution across electrodes, squaring, mean pooling and a logarithm, which together approximate log band-power features.",
+   "summary_zh": "ShallowFBCSPNet 是 Braindecode 对 Schirrmeister 等人（Human Brain Mapping，2017）提出的 shallow ConvNet 的命名。它仿照滤波器组共空间模式（FBCSP）设计，依次进行时间卷积、跨电极的空间卷积、平方、均值池化和取对数，合起来近似提取对数频带功率特征。",
+   "facts_sources": [
+    "https://arxiv.org/abs/1703.05051",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5655781/",
+    "https://doi.org/10.1002/hbm.23730",
+    "https://github.com/braindecode/braindecode/blob/v1.5.1/braindecode/models/shallow_fbcsp.py",
+    "https://github.com/robintibor/braindecode",
+    "https://github.com/TNTLFreiburg/braindecode"
+   ],
+   "reference": "Schirrmeister RT, Springenberg JT, Fiederer LDJ, Glasstetter M, Eggensperger K, Tangermann M, Hutter F, Burgard W, Ball T. Deep learning with convolutional neural networks for EEG decoding and visualization. Human Brain Mapping 38(11):5391–5420, 2017.",
+   "reference_url": "https://doi.org/10.1002/hbm.23730",
+   "code_url": "https://github.com/braindecode/braindecode/tree/v1.5.1"
+  },
+  "deep4net": {
+   "aliases": [
+    "Deep4Net",
+    "Deep ConvNet",
+    "DeepConvNet",
+    "Schirrmeister et al. 2017"
+   ],
+   "summary_en": "Deep4Net is Braindecode's name for the deep ConvNet of Schirrmeister et al. (Human Brain Mapping, 2017). It stacks four convolution–max-pooling blocks with ELU activations; the first block is split into a convolution over time and a spatial filter across all electrodes, and a dense softmax layer gives the class output.",
+   "summary_zh": "Deep4Net 是 Braindecode 对 Schirrmeister 等人（Human Brain Mapping，2017）提出的 deep ConvNet 的命名。它由四个卷积-最大池化模块组成，使用 ELU 激活；第一个模块拆分为沿时间的卷积和覆盖全部电极的空间滤波，最后由全连接 softmax 层输出类别。",
+   "facts_sources": [
+    "https://arxiv.org/abs/1703.05051",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5655781/",
+    "https://doi.org/10.1002/hbm.23730",
+    "https://github.com/braindecode/braindecode/blob/v1.5.1/braindecode/models/deep4.py",
+    "https://github.com/robintibor/braindecode",
+    "https://github.com/TNTLFreiburg/braindecode"
+   ],
+   "reference": "Schirrmeister RT, Springenberg JT, Fiederer LDJ, Glasstetter M, Eggensperger K, Tangermann M, Hutter F, Burgard W, Ball T. Deep learning with convolutional neural networks for EEG decoding and visualization. Human Brain Mapping 38(11):5391–5420, 2017.",
+   "reference_url": "https://doi.org/10.1002/hbm.23730",
+   "code_url": "https://github.com/braindecode/braindecode/tree/v1.5.1"
+  },
+  "csp-lda": {
+   "aliases": [
+    "CSP+LDA",
+    "Common Spatial Patterns",
+    "CSP",
+    "Ramoser et al. 2000"
+   ],
+   "summary_en": "CSP+LDA is a classical two-stage pipeline for motor-imagery EEG: common spatial patterns (CSP) learns spatial filters whose output variances differ most between two classes, and linear discriminant analysis (LDA) classifies the log-variances of the filtered signals. Ramoser, Müller-Gerking and Pfurtscheller (2000) applied CSP with log-variance features and a linear classifier to imagined left- and right-hand movement.",
+   "summary_zh": "CSP+LDA 是用于运动想象 EEG 的经典两阶段流程：共空间模式（CSP）学习使两类信号输出方差差异最大的空间滤波器，再用线性判别分析（LDA）对滤波后信号的对数方差进行分类。Ramoser、Müller-Gerking 和 Pfurtscheller（2000）将 CSP 与对数方差特征和线性分类器结合，用于左右手运动想象。",
+   "facts_sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/11204034/",
+    "https://doi.org/10.1109/86.895946",
+    "https://mne.tools/stable/generated/mne.decoding.CSP.html"
+   ],
+   "reference": "Ramoser H, Müller-Gerking J, Pfurtscheller G. Optimal spatial filtering of single trial EEG during imagined hand movement. IEEE Transactions on Rehabilitation Engineering 8(4):441–446, 2000.",
+   "reference_url": "https://doi.org/10.1109/86.895946"
+  },
+  "cca": {
+   "aliases": [
+    "CCA",
+    "Standard CCA",
+    "canonical correlation analysis",
+    "Lin et al. 2006"
+   ],
+   "summary_en": "CCA-based SSVEP detection, proposed by Lin, Zhang, Wu and Gao (Tsinghua University; IEEE Transactions on Biomedical Engineering, 2006), computes the canonical correlation between multichannel EEG and sine–cosine reference signals at each candidate stimulus frequency and its harmonics. The frequency with the largest correlation is selected; the references are generated from the stimulus frequencies, not learned from recorded trials.",
+   "summary_zh": "基于 CCA 的 SSVEP 检测由清华大学 Lin、Zhang、Wu 和 Gao 提出（IEEE Transactions on Biomedical Engineering，2006），计算多通道 EEG 与各候选刺激频率及其谐波的正弦-余弦参考信号之间的典型相关系数。相关最大的频率即为判定结果；参考信号由刺激频率生成，而不是从记录的试次中学习。",
+   "facts_sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/17152442/",
+    "https://pubmed.ncbi.nlm.nih.gov/17549911/",
+    "https://doi.org/10.1109/TBME.2006.886577",
+    "https://doi.org/10.1109/tbme.2006.889197",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5783827/",
+    "https://github.com/mnakanishi/TRCA-SSVEP/blob/master/src/test_fbcca.m",
+    "https://iopscience.iop.org/article/10.1088/1741-2560/12/4/046008"
+   ],
+   "reference": "Lin Z, Zhang C, Wu W, Gao X. Frequency recognition based on canonical correlation analysis for SSVEP-based BCIs. IEEE Transactions on Biomedical Engineering 53(12):2610–2614, 2006.",
+   "reference_url": "https://doi.org/10.1109/TBME.2006.886577"
+  },
+  "fbcca": {
+   "aliases": [
+    "FBCCA",
+    "filter bank CCA",
+    "filter bank canonical correlation analysis",
+    "Chen et al. 2015"
+   ],
+   "summary_en": "Filter bank canonical correlation analysis (FBCCA), proposed by Chen, Wang, Gao, Jung and Gao (Journal of Neural Engineering, 2015), extends CCA-based SSVEP detection: a filter bank splits the EEG into several sub-bands, CCA against sine–cosine references is computed in each, and a weighted combination of the sub-band correlations selects the target frequency. It was introduced with a 40-target SSVEP speller.",
+   "summary_zh": "滤波器组典型相关分析（FBCCA）由 Chen、Wang、Gao、Jung 和 Gao 提出（Journal of Neural Engineering，2015），是对基于 CCA 的 SSVEP 检测的扩展：先用滤波器组把 EEG 分解为多个子带，在每个子带内计算与正弦-余弦参考信号的 CCA，再按权重合并各子带的相关系数来判定目标频率。该方法最初用于一个 40 目标的 SSVEP 拼写器。",
+   "facts_sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/26035476/",
+    "https://doi.org/10.1088/1741-2560/12/4/046008",
+    "https://iopscience.iop.org/article/10.1088/1741-2560/12/4/046008",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5783827/",
+    "https://github.com/mnakanishi/TRCA-SSVEP/blob/master/src/test_fbcca.m"
+   ],
+   "reference": "Chen X, Wang Y, Gao S, Jung T-P, Gao X. Filter bank canonical correlation analysis for implementing a high-speed SSVEP-based brain–computer interface. Journal of Neural Engineering 12(4):046008, 2015.",
+   "reference_url": "https://doi.org/10.1088/1741-2560/12/4/046008"
+  },
+  "etrca": {
+   "aliases": [
+    "ensemble TRCA",
+    "ensemble task-related component analysis",
+    "TRCA",
+    "task-related component analysis",
+    "TRCA-SSVEP",
+    "Nakanishi et al. 2018"
+   ],
+   "summary_en": "Ensemble task-related component analysis (ensemble TRCA) is an SSVEP detection method proposed by Nakanishi et al. (IEEE Transactions on Biomedical Engineering, 2018). TRCA learns spatial filters that maximize the reproducibility of time-locked responses across calibration trials; the ensemble version combines the filters learned for every stimulus frequency and correlates a filtered test trial with each class's averaged calibration template.",
+   "summary_zh": "集成任务相关成分分析（ensemble TRCA）是 Nakanishi 等人提出的 SSVEP 检测方法（IEEE Transactions on Biomedical Engineering，2018）。TRCA 学习使锁时响应在各校准试次之间可重复性最大的空间滤波器；集成版本合并为每个刺激频率学到的滤波器，并把经滤波的测试试次与各类别的平均校准模板做相关。",
+   "facts_sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/28436836/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC5783827/",
+    "https://doi.org/10.1109/TBME.2017.2694818",
+    "https://github.com/mnakanishi/TRCA-SSVEP",
+    "https://github.com/mnakanishi/TRCA-SSVEP/blob/master/README.md"
+   ],
+   "reference": "Nakanishi M, Wang Y, Chen X, Wang Y-T, Gao X, Jung T-P. Enhancing detection of SSVEPs for a high-speed brain speller using task-related component analysis. IEEE Transactions on Biomedical Engineering 65(1):104–112, 2018.",
+   "reference_url": "https://doi.org/10.1109/TBME.2017.2694818",
+   "code_url": "https://github.com/mnakanishi/TRCA-SSVEP"
+  }
+ }
+}

@@ -2,6 +2,7 @@
 import rawData from '../../../data/deployment-topics.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { type DeploymentData, type DeploymentRow, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 
@@ -22,10 +23,21 @@ const dryGain = contrasts.find(row => row.model === 'eegnet' && row.comparison.s
 const loss = Math.abs(wetDrop.difference * 100).toFixed(1);
 const gain = (dryGain.difference * 100).toFixed(1);
 const ipp = (i: [number, number]) => intervalPp(i, 1, locale);
+// Figures the short answer and the key figure name. All from the reviewed export.
+const people = wetDrop.participants;
+const fbWet = find('fbcca', null, 'wet')!, fbDry = find('fbcca', null, 'dry')!;
+const [dropLo, dropHi] = wetDrop.paired_participant_bootstrap_95.map(v => pp(v, 1));
+const dropMagnitude = `${loss} pp`;
+const chance = 1 / 12;
 
 const copy = {
   en: {
-    description: 'Native eight-channel dry and wet SSVEP recordings compared across analytic references and participant-disjoint source-trained models.',
+    description: `Not in this dataset. With the same ${people} people, FBCCA scored ${pct(fbWet.value)} on wet and ${pct(fbDry.value)} on dry SSVEP recordings, and a wet-trained EEGNet fell ${dropMagnitude} on dry ones. Wearing order is a confound.`,
+    answer: `Not in this dataset. On a 12-target, two-second SSVEP task, with the same [[${people}]] people recorded on both sensor types, the training-free FBCCA reference scored [[${pct(fbWet.value)}]] on wet recordings and [[${pct(fbDry.value)}]] on dry ones. An EEGNet trained on wet recordings fell by [[${dropMagnitude}]] of balanced accuracy when tested on dry recordings (paired 95% interval [[${dropLo}]] to [[${dropHi}]]). Wearing order and time on task are entangled with sensor type, so this is not a clean estimate of what the hardware alone costs.`,
+    plotCaption: `Wet and dry recordings of the same ${people} people.`,
+    plotLegend: 'Participant-mean balanced accuracy on 12-target, two-second SSVEP. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, 1 in 12. Dark rows are wet recordings, rust rows dry.',
+    plotRows: { fbWet: 'FBCCA · wet recording', fbDry: 'FBCCA · dry recording', ww: 'EEGNet · wet → wet', wd: 'EEGNet · wet → dry', dd: 'EEGNet · dry → dry', dw: 'EEGNet · dry → wet' },
+    plotNotes: { analytic: 'training-free', trained: 'trained on the first sensor, tested on the second' },
     eyebrow: 'Sensor transfer · 102 participants',
     dek: 'Wet and dry recordings are not interchangeable inputs. The clearest mismatch appears when one EEGNet is trained on wet recordings and evaluated on dry recordings from held-out people—but sensor type is entangled with session order and time on task.',
     findingLabel: 'Wet-trained EEGNet: dry minus wet balanced accuracy',
@@ -67,7 +79,12 @@ const copy = {
     citationNote: 'Aggregate results computed from the official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20. Local checks do not establish byte identity with Figshare v4.',
   },
   zh: {
-    description: '原生八通道干电极与湿电极 SSVEP 记录，在免训练参考方法与被试不重叠的源域训练模型之间进行比较。',
+    description: `在这个数据集上，并没有。同样 ${people} 名被试，FBCCA 在湿电极 SSVEP 记录上为 ${pct(fbWet.value)}、干电极上为 ${pct(fbDry.value)}；湿电极训练的 EEGNet 换到干电极上下降 ${dropMagnitude}。佩戴顺序是混杂因素。`,
+    answer: `在这个数据集上，并没有。在 12 目标、两秒的 SSVEP 任务中，同样 [[${people}]] 名被试分别用两种传感器记录：免训练的 FBCCA 参考方法在湿电极记录上为 [[${pct(fbWet.value)}]]，在干电极记录上为 [[${pct(fbDry.value)}]]。在湿电极记录上训练的 EEGNet，拿到干电极记录上测试时，平衡准确率下降了 [[${dropMagnitude}]]（配对 95% 区间 [[${dropLo}]] 至 [[${dropHi}]]）。传感器类型与佩戴顺序、任务时长相互混杂，所以这不是对硬件本身代价的干净估计。`,
+    plotCaption: `同样 ${people} 名被试的湿电极与干电极记录。`,
+    plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。深色行为湿电极记录，锈色行为干电极记录。',
+    plotRows: { fbWet: 'FBCCA · 湿电极记录', fbDry: 'FBCCA · 干电极记录', ww: 'EEGNet · 湿 → 湿', wd: 'EEGNet · 湿 → 干', dd: 'EEGNet · 干 → 干', dw: 'EEGNet · 干 → 湿' },
+    plotNotes: { analytic: '免训练', trained: '在前一种传感器上训练，在后一种上测试' },
     eyebrow: '传感器迁移 · 102 名被试',
     dek: '湿电极和干电极的记录不是可以互换的输入。最明显的不匹配出现在：一个 EEGNet 在湿电极记录上训练，再拿去评测留出被试的干电极记录——但传感器类型与佩戴顺序、任务时长相互混杂。',
     findingLabel: '湿电极训练的 EEGNet：干电极减湿电极的平衡准确率',
@@ -119,7 +136,23 @@ const card = topicCards[locale]['dry-vs-wet'];
   eyebrow={copy.eyebrow}
   dek={copy.dek}
   activeSlug="dry-vs-wet"
+  answer={copy.answer}
 >
+  <IntervalPlot
+    caption={copy.plotCaption}
+    legend={copy.plotLegend}
+    domain={[0, 1]}
+    ticks={['0%', '25%', '50%', '75%', '100%']}
+    reference={chance}
+    rows={[
+      { row: find('fbcca', null, 'wet')!, label: copy.plotRows.fbWet, note: copy.plotNotes.analytic, tone: 'ink' as const },
+      { row: find('fbcca', null, 'dry')!, label: copy.plotRows.fbDry, note: copy.plotNotes.analytic, tone: 'rust' as const },
+      { row: find('eegnet', 'wet', 'wet')!, label: copy.plotRows.ww, note: copy.plotNotes.trained, tone: 'ink' as const },
+      { row: find('eegnet', 'wet', 'dry')!, label: copy.plotRows.wd, note: copy.plotNotes.trained, tone: 'rust' as const },
+      { row: find('eegnet', 'dry', 'dry')!, label: copy.plotRows.dd, note: copy.plotNotes.trained, tone: 'rust' as const },
+      { row: find('eegnet', 'dry', 'wet')!, label: copy.plotRows.dw, note: copy.plotNotes.trained, tone: 'ink' as const },
+    ].map(({ row, label, note, tone }) => ({ label, note, tone, value: row.value, interval: row.confidence_interval_95, text: `${pct(row.value)} (${intervalPct(row.confidence_interval_95)})` }))}
+  />
   <section class="topic-section" aria-labelledby="transfer-finding">
     <div class="finding">
       <div class="finding-number"><strong>{pp(wetDrop.difference, 1)}</strong><span>{copy.findingLabel}</span></div>

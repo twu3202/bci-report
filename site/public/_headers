@@ -30,3 +30,13 @@
 # Content-hashed filenames, so the bytes behind a given URL never change.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Markdown copies and the llms.txt files carry Chinese as well as English. The
+# host serves text/* without a charset, which leaves decoding to guesswork, so
+# declare UTF-8 explicitly.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8

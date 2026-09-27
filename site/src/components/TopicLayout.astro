@@ -1,10 +1,12 @@
 ---
 import { site } from '../data/site';
 import { topicPages } from '../data/topics';
-import { topicDataset } from '../data/structured';
+import { topicDataset, topicFaq } from '../data/structured';
+import { answerParts } from '../data/answer';
 import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicCards, topicChrome,
          type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
+import AgentLinks from './AgentLinks.astro';
 import '../styles/global.css';
 import '../styles/topics.css';
 
@@ -21,12 +23,21 @@ interface Props {
   dataFiles?: string[];
   /** A fuller <title> and share title than the h1, when the page has two parts. */
   documentTitle?: string;
+  /**
+   * The short answer to the page's question, figures marked [[…]] (see
+   * src/data/answer.ts). Two or three sentences: the figure, the cohort, the
+   * caveat that bounds it.
+   */
+  answer?: string;
 }
 const { locale, title, description, path, eyebrow, dek, activeSlug,
-        dataFiles = ['/data/deployment-topics.json'], documentTitle } = Astro.props;
+        dataFiles = ['/data/deployment-topics.json'], documentTitle, answer } = Astro.props;
 const t = chrome[locale];
 const c = topicChrome[locale];
-const pageTitle = `${documentTitle ?? title} · ${site.name}`;
+// The h1 is the question as someone would ask it; `title` stays the short label
+// the breadcrumb, the cards and the Dataset name use.
+const question = topicCards[locale][activeSlug].question;
+const pageTitle = `${documentTitle ?? question} · ${site.name}`;
 const origin = Astro.site ?? site.origin;
 const canonical = new URL(localizePath(path, locale), origin).href;
 const ogImage = new URL('/og.png', origin).href;
@@ -34,7 +45,14 @@ const links = alternates(path, String(origin));
 // One Dataset entity per dataset, on the English canonical. The Chinese page is
 // the same data; a second entry would be a duplicate to Dataset Search, and
 // hreflang already tells crawlers the two pages are one resource.
-const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, title, description, path)) : null;
+// One graph: the Dataset the page measures and the question it answers.
+const { '@context': _context, ...datasetNode } = topicDataset(activeSlug, title, description, path);
+const structured = locale === 'en'
+  ? JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+      datasetNode,
+      ...(answer ? [topicFaq(question, answer, path)] : []),
+    ] })
+  : null;
 ---
 <!doctype html>
 <html lang={htmlLang[locale]}>
@@ -47,6 +65,7 @@ const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, tit
   <link rel="icon" href="/favicon.ico" sizes="32x32"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
   <link rel="canonical" href={canonical}/>
+  <AgentLinks href={localizePath(path, locale)}/>
   {links.map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
   <title>{pageTitle}</title>
   <meta property="og:type" content="article"/>
@@ -69,10 +88,14 @@ const structured = locale === 'en' ? JSON.stringify(topicDataset(activeSlug, tit
     <nav class="breadcrumbs" aria-label={c.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{c.home}</a></li><li><a href={hrefFor('/#topics', locale)}>{c.explore}</a></li><li aria-current="page">{title}</li></ol></nav>
     <section class="topic-hero">
       <p class="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
+      <h1>{question}</h1>
       <p class="topic-dek">{dek}</p>
       <div class="topic-actions"><a class="button primary" href={dataFiles[0]} download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
     </section>
+    {answer && <section class="short-answer" aria-labelledby="short-answer-heading">
+      <h2 id="short-answer-heading">{c.shortAnswer}</h2>
+      <p>{answerParts(answer).map(p => p.fig ? <strong class="fig">{p.text}</strong> : p.text)}</p>
+    </section>}
     <slot />
     <nav class="topic-switcher" aria-label={c.exploreNav}>
       <p class="eyebrow">{c.keepExploring}</p>

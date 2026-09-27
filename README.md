@@ -55,6 +55,9 @@ curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 curl -O https://bci.report/data/context-update.json     # the 27 September batch
 ```
 
+What each file holds, loading examples and how to cite a release:
+[bci.report/api](https://bci.report/api/).
+
 ## What is measured
 
 | Protocol | Dataset | Cohort | Chance |
@@ -76,6 +79,18 @@ Eight questions sit alongside, each with its own protocol:
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
 [when not to act](https://bci.report/topics/when-not-to-act/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/)
+
+Every dataset and every method also has its own page, gathering each figure
+measured on it wherever it appears on the site:
+[datasets](https://bci.report/datasets/) (BETA, EESM19, the wearable dry/wet
+SSVEP set, the Mobile BCI set, …) ·
+[methods](https://bci.report/methods/) (EEGNet, LaBraM, CBraMod, CCA, FBCCA,
+eTRCA, …). Those pages add no number of their own; the site's checks re-read
+every figure on them from the download it came from.
+
+For assistants and agents: [llms.txt](https://bci.report/llms.txt) indexes every
+page with its short answer, and every page has a Markdown copy at
+`<page>/index.md`.
 
 **Jev-style decision models for EEG** — a research plan, not a result: can one
 EEG representation answer several explicit questions, and know when to abstain?
@@ -151,6 +166,10 @@ The aggregate result tables and protocol descriptors are
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). That covers the
 measurements this project produced — it does not and cannot relicense the
 underlying recordings, which keep their own terms.
+
+To cite a release, use [CITATION.cff](CITATION.cff) (GitHub's "Cite this
+repository"), and cite the upstream dataset each figure was computed on — every
+[dataset page](https://bci.report/datasets/) gives its credit line.
 
 > **Status: research preview.** Six of eight protocols run a single seed, the
 > smallest cohort is four people, and 9 of 18 catalogued methods have been

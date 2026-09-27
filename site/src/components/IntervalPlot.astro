@@ -1,0 +1,66 @@
+---
+/**
+ * A dot-and-interval plot, server-rendered, with no script and no style
+ * attribute (the CSP allows neither).
+ *
+ * Each row is HTML — label, strip, printed value — so the text stays readable
+ * at phone width and reaches a screen reader or a text-only agent intact. Only
+ * the strip is SVG, stretched to the column (preserveAspectRatio="none"); it
+ * draws lines only, with non-scaling strokes, so stretching distorts nothing.
+ * Every strip shares one domain, so the reference line and the quarter
+ * gridlines line up down the column and read as one axis.
+ *
+ * The printed value is the figure; the strip is its picture. Values carry the
+ * `.fig` class, so the English/Chinese figure-parity check covers them.
+ */
+type Tone = 'rust' | 'ink' | 'olive' | 'muted';
+interface Row {
+  label: string;
+  note?: string;
+  value: number;
+  interval?: [number, number] | null;
+  /** The value as printed, e.g. "64.6%" — formatted by the page, never here. */
+  text: string;
+  tone?: Tone;
+}
+interface Props {
+  rows: Row[];
+  /** Axis range, in the same unit as `value`. */
+  domain: [number, number];
+  /** Five labels, at 0, 25, 50, 75 and 100% of the domain. */
+  ticks: [string, string, string, string, string];
+  /** A dashed line: chance level, or zero for a difference. */
+  reference?: number;
+  caption: string;
+  /** Reading key: what the dot, the line and the dashed line are. */
+  legend: string;
+  id?: string;
+}
+const { rows, domain, ticks, reference, caption, legend, id } = Astro.props;
+const [lo, hi] = domain;
+const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).toFixed(2);
+---
+<figure class="interval-plot" id={id}>
+  <div class="ip-rows">
+    {rows.map(r => (
+      <div class="ip-row">
+        <div class="ip-label">{r.label}{r.note && <small>{r.note}</small>}</div>
+        <svg class={`ip-strip ${r.tone ?? 'rust'}`} viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+          <line class="ip-grid" x1="25" x2="25" y1="0" y2="12"></line>
+          <line class="ip-grid" x1="50" x2="50" y1="0" y2="12"></line>
+          <line class="ip-grid" x1="75" x2="75" y1="0" y2="12"></line>
+          {reference !== undefined && <line class="ip-ref" x1={x(reference)} x2={x(reference)} y1="0" y2="12"></line>}
+          {r.interval && <line class="ip-ci" x1={x(r.interval[0])} x2={x(r.interval[1])} y1="6" y2="6"></line>}
+          <line class="ip-pt" x1={x(r.value)} x2={x(r.value)} y1="1.5" y2="10.5"></line>
+        </svg>
+        <div class="ip-value"><span class="fig">{r.text}</span></div>
+      </div>
+    ))}
+    <div class="ip-row ip-axis" aria-hidden="true">
+      <div class="ip-label"></div>
+      <div class="ip-ticks">{ticks.map((t, i) => <span class={`t${i}`}>{t}</span>)}</div>
+      <div class="ip-value"></div>
+    </div>
+  </div>
+  <figcaption><strong>{caption}</strong> {legend}</figcaption>
+</figure>

@@ -190,7 +190,8 @@ configs:
 **Every EEG decoding score, reported with the protocol that produced it.**
 
 [Website](https://bci.report) · [中文](https://bci.report/zh/) · [Code](https://github.com/twu3202/bci-report) ·
-[Data use & privacy](https://bci.report/data-use/)
+[Data use & privacy](https://bci.report/data-use/) · [Every dataset](https://bci.report/datasets/) ·
+[Every method](https://bci.report/methods/) · [Data API](https://bci.report/api/)
 
 {n_rows + n_topic_rows} reviewed measurements from public EEG datasets, each
 carrying the cohort, electrode count, evaluation mode, chance level and training

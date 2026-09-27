@@ -8,6 +8,7 @@ import evidence from '../../data/evidence-update.json';
 import clinical from '../../data/clinical-update.json';
 import context from '../../data/context-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
+import AgentLinks from '../../components/AgentLinks.astro';
 import { site } from '../../data/site';
 import { holds, releases } from '../../data/releases';
 import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale,
@@ -106,6 +107,7 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
   <link rel="icon" href="/favicon.ico" sizes="32x32"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
   <link rel="canonical" href={canonical}/>
+  <AgentLinks href={localizePath(path, locale)}/>
   {alternates(path, String(origin)).map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
   <title>{pageTitleFull}</title>
   <meta property="og:type" content="article"/>

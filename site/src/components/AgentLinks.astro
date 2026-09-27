@@ -1,0 +1,13 @@
+---
+/**
+ * Where an agent finds this page as plain Markdown, and the site's llms.txt.
+ * llms.txt v2 (llmstxt.org) recommends both links. The Markdown copy is made
+ * from this page's own built HTML after the build (scripts/build-agent-files.mjs),
+ * so it cannot say anything the page does not.
+ */
+interface Props { href: string }
+const { href } = Astro.props;
+const md = `${href.replace(/\/$/, '/index')}.md`.replace(/\/index\/index\.md$/, '/index.md');
+---
+<link rel="alternate" type="text/markdown" href={md}/>
+<link rel="describedby" href="/llms.txt"/>

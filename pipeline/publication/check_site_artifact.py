@@ -20,7 +20,8 @@ PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
 
 # Text is scanned for leaks; binary is inventoried and hashed only.
-TEXT_SUFFIXES = {'.html', '.css', '.js', '.json', '.csv', '.svg', '.txt', '.xml'}
+# .md: the Markdown copy of every page (site/scripts/build-agent-files.mjs), scanned like the page.
+TEXT_SUFFIXES = {'.html', '.css', '.js', '.json', '.csv', '.svg', '.txt', '.xml', '.md'}
 BINARY_SUFFIXES = {'.ico', '.png', '.jpg', '.webp', '.woff2'}
 # Host control files. They carry no extension, are parsed by Cloudflare rather
 # than served, and still go through the same text scan as everything else —

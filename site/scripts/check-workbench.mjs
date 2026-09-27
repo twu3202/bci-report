@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import {existsSync,readFileSync,readdirSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+// The built site under test. SITE_DIST points the checks at another build
+// (e.g. `astro build --outDir <dir>`) without touching dist/.
+const DIST=process.env.SITE_DIST?pathToFileURL(resolve(process.env.SITE_DIST)+'/').href:new URL('../dist/',import.meta.url).href;
 const data=JSON.parse(readFileSync(new URL('../src/data/mvp.json',import.meta.url),'utf8'));
 const topics=JSON.parse(readFileSync(new URL('../src/data/deployment-topics.json',import.meta.url),'utf8'));
 class Element {
@@ -108,7 +113,7 @@ get('#close-dialog').events.click();
 // It is server-rendered, so the client script above never touches it and none
 // of the assertions so far cover it — yet it is now the first thing a visitor
 // reads. Check it against the data rather than trusting the template.
-const builtPath=new URL('../dist/index.html',import.meta.url);
+const builtPath=new URL(DIST+'index.html',import.meta.url);
 assert.ok(existsSync(builtPath),'run `npm run build` first: the coverage matrix is checked against dist/index.html');
 const built=readFileSync(builtPath,'utf8');
 const attr=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -153,49 +158,51 @@ assert.equal(count(/class="track-tab"/g),data.tracks.length);
 // The small-cohort caveat is a claim about what the published numbers allow,
 // not decoration: on the four-person idle track the mean is invertible to a
 // count. Pinned so a copy edit cannot quietly drop it.
-const policy=readFileSync(new URL('../dist/data-use/index.html',import.meta.url),'utf8');
+const policy=readFileSync(new URL(DIST+'data-use/index.html',import.meta.url),'utf8');
 assert.match(policy,/id="small-cohorts"/,'the data-use page must keep the small-cohort caveat');
 // The CSP in public/_headers allows no inline style and no inline script. An
 // inline style attribute here does not throw — it is silently dropped by the
 // browser, which is how every matrix bar reached production empty.
+// [slug, h1]. The h1 is the page's question, as a reader would ask it; the
+// short label stays in the breadcrumb and on the cards (src/data/i18n.ts).
 const topicPages=[
-  ['dry-vs-wet','Dry vs. wet electrodes'],
-  ['screen-to-vr','Screen to VR'],
-  ['fewer-electrodes','Fewer electrodes'],
-  ['clinical-groups','Clinical groups'],
-  ['on-the-move','On the move'],
-  ['calibration-budget','How much calibration?'],
-  ['when-not-to-act','When not to act'],
-  ['does-pretraining-help','Does pretraining help?'],
+  ['dry-vs-wet','Do dry EEG electrodes decode as well as wet ones?'],
+  ['screen-to-vr','Does a P300 decoder calibrated on a screen still work in VR?'],
+  ['fewer-electrodes','Can fewer electrodes, or electrodes in the ear, match a full scalp montage?'],
+  ['clinical-groups','Can resting-state EEG separate Parkinson&#39;s disease from controls?'],
+  ['on-the-move','Does EEG decoding still work while walking or running?'],
+  ['calibration-budget','How much calibration data does a wearable SSVEP decoder need?'],
+  ['when-not-to-act','How often does an EEG decoder fire when nobody is giving a command?'],
+  ['does-pretraining-help','Does pretraining help EEG foundation models like LaBraM and CBraMod?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='clinical-groups'?'clinical-update.json'
   :slug==='when-not-to-act'?'experiments.json'
   :slug==='screen-to-vr'?'context-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
-  const page='../dist/topics/'+slug+'/index.html';
+  const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.ok(html.includes('<h1>'+title+'</h1>'),slug+': page title must render in the initial HTML');
   assert.ok(html.includes('href="/data/'+dataFileOf(slug)+'"'),slug+': the reviewed export holding its figures must be reachable');
   assert.ok(html.includes('aria-label="Breadcrumb"'),slug+': breadcrumb is required');
   assert.ok(html.includes('rel="canonical"'),slug+': canonical link is required');
 }
-const sitemap=readFileSync(new URL('../dist/sitemap.xml',import.meta.url),'utf8');
+const sitemap=readFileSync(new URL(DIST+'sitemap.xml',import.meta.url),'utf8');
 for(const [slug] of topicPages)
   assert.ok(sitemap.includes('https://bci.report/topics/'+slug+'/'),slug+': sitemap entry is required');
-const motionPage=readFileSync(new URL('../dist/topics/on-the-move/index.html',import.meta.url),'utf8');
+const motionPage=readFileSync(new URL(DIST+'topics/on-the-move/index.html',import.meta.url),'utf8');
 assert.match(motionPage,/−0\.276 AUC/,'ERP motion change must use signed native AUC units');
 assert.match(motionPage,/−0\.322 to −0\.227 AUC/,'ERP motion interval must use native AUC units');
 assert.match(motionPage,/Bars span 0–100%; chance is 33\.3%/,'SSVEP bars must state their full scale and chance level');
 assert.match(motionPage,/10\.82901\/nemar\.nm000125/,'mobile SSVEP credit must include its dataset DOI');
 assert.match(motionPage,/10\.82901\/nemar\.nm000201/,'mobile ERP credit must include its dataset DOI');
 assert.match(motionPage,/10\.1038\/s41597-021-01094-4/,'mobile pages must credit the source study DOI');
-const sensorPage=readFileSync(new URL('../dist/topics/dry-vs-wet/index.html',import.meta.url),'utf8');
+const sensorPage=readFileSync(new URL(DIST+'topics/dry-vs-wet/index.html',import.meta.url),'utf8');
 assert.match(sensorPage,/10\.6084\/m9\.figshare\.13560281\.v4/,'wearable credit must include the versioned dataset DOI');
 assert.match(sensorPage,/10\.3390\/s21041256/,'wearable credit must include the Sensors paper DOI');
-const pretrainingPage=readFileSync(new URL('../dist/topics/does-pretraining-help/index.html',import.meta.url),'utf8');
+const pretrainingPage=readFileSync(new URL(DIST+'topics/does-pretraining-help/index.html',import.meta.url),'utf8');
 assert.match(pretrainingPage,/href="\/data-use\/#sources"/,'seed sensitivity table must link to its dataset citations');
-for(const page of ['../dist/index.html','../dist/data-use/index.html','../dist/404.html',...topicPages.map(([slug])=>'../dist/topics/'+slug+'/index.html')]){
+for(const page of [DIST+'index.html',DIST+'data-use/index.html',DIST+'404.html',...topicPages.map(([slug])=>DIST+'topics/'+slug+'/index.html')]){
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.doesNotMatch(html,/\sstyle="/,page+': the CSP forbids style attributes');
   assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
@@ -203,8 +210,8 @@ for(const page of ['../dist/index.html','../dist/data-use/index.html','../dist/4
 }
 // The built bundle, not the source: comments are stripped there, so this tests
 // what actually ships rather than what the file happens to say about itself.
-for(const js of readdirSync(new URL('../dist/_astro/',import.meta.url)).filter(f=>f.endsWith('.js')))
-  assert.doesNotMatch(readFileSync(new URL('../dist/_astro/'+js,import.meta.url),'utf8'),
+for(const js of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.js')))
+  assert.doesNotMatch(readFileSync(new URL(DIST+'_astro/'+js,import.meta.url),'utf8'),
     /style="|\.style\.|setAttribute\(['"`]style/,js+': the client script must not inject inline style either');
 const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
 assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
@@ -243,8 +250,8 @@ assert.deepEqual(
 // The interface and the four topic pages exist in Chinese; /data-use/ does not.
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
-const read=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极与湿电极','fewer-electrodes':'更少的电极','screen-to-vr':'从屏幕到 VR','on-the-move':'移动中的解码','clinical-groups':'临床分组','calibration-budget':'需要多少校准？','when-not-to-act':'何时不该执行','does-pretraining-help':'预训练有用吗？'};
+const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','when-not-to-act':'没有人下指令时，EEG 解码器有多常误触发？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -260,7 +267,8 @@ for(const path of bilingual){
   // Topic pages mark figures `.metric`; the homepage uses `.num` in the matrix
   // and <td><strong> in the results table. Matching only `.metric` compared two
   // empty lists on the homepage and passed without checking anything.
-  const figures=html=>[...html.matchAll(/class="(?:metric|num)">([^<]+)<|<td><strong>([^<]+)<\/strong>/g)].map(m=>m[1]??m[2]);
+  // `.fig` marks figures in short answers and plot values.
+  const figures=html=>[...html.matchAll(/class="(?:metric|num|fig)">([^<]+)<|<td><strong>([^<]+)<\/strong>/g)].map(m=>m[1]??m[2]);
   assert.ok(figures(en).length>0,path+': the figure-parity check found nothing to compare');
   assert.deepEqual(figures(zh),figures(en),'zh/'+path+': every number must equal the English page, in the same order');
   // The data link from a Chinese page leads to an English-only page and says so.
@@ -280,7 +288,7 @@ for(const [slug] of topicPages){
   const missing=[...dois(read('topics/'+slug+'/'))].filter(d=>!dois(read('zh/topics/'+slug+'/')).has(d));
   assert.deepEqual(missing,[],slug+': the Chinese page dropped a credit');
 }
-for(const page of bilingual.map(p=>'../dist/zh/'+p+'index.html')){
+for(const page of bilingual.map(p=>DIST+'zh/'+p+'index.html')){
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.doesNotMatch(html,/\sstyle="/,page+': the CSP forbids style attributes');
   assert.doesNotMatch(html,/<style[\s>]/,page+': the CSP forbids inline <style> blocks');
@@ -312,7 +320,7 @@ for(const [bad,good] of Object.entries(rejected))
 // --- 2026-09-22 evidence batch --------------------------------------------------
 // The handoff's hard lines, each pinned to the concrete way it could break.
 const ev=JSON.parse(readFileSync(new URL('../src/data/evidence-update.json',import.meta.url),'utf8'));
-const pageOf=p=>readFileSync(new URL('../dist/'+p+'index.html',import.meta.url),'utf8');
+const pageOf=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
 const everyPage=['','data-use/',...topicPages.map(([s])=>'topics/'+s+'/')].flatMap(p=>p==='data-use/'?[p]:[p,'zh/'+p]);
 // Only sources with a recorded aggregate_preview decision. L-FAME was excluded
 // from this batch and carries no result here; the 2026-09-23 batch publishes its
@@ -473,10 +481,10 @@ const {createHash}=await import('node:crypto');
 for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
   const html=pageOf(path);
   const listed=[...html.matchAll(/<code class="hash" data-file="([^"]+)">([0-9a-f]{64})<\/code>/g)];
-  const served=readdirSync(new URL('../dist/data/',import.meta.url));
+  const served=readdirSync(new URL(DIST+'data/',import.meta.url));
   assert.deepEqual(listed.map(m=>m[1]).sort(),[...served].sort(),label+': every served download is listed exactly once');
   for(const [,file,sha] of listed)
-    assert.equal(sha,createHash('sha256').update(readFileSync(new URL('../dist/data/'+file,import.meta.url))).digest('hex'),label+': '+file+' hash on the page is not the served file');
+    assert.equal(sha,createHash('sha256').update(readFileSync(new URL(DIST+'data/'+file,import.meta.url))).digest('hex'),label+': '+file+' hash on the page is not the served file');
   for(const id of [data.releaseId,topics.release_id,ev.release_id,cl.release_id])
     assert.ok(html.includes(`id="${id}"`),label+': release '+id+' must be listed');
   assert.ok(html.includes(ev.provenance.manifest_sha256)&&html.includes(cl.provenance.manifest_sha256),label+': review manifest hashes are shown');
@@ -518,15 +526,127 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 }
 
 // The published payload stays English. Chinese lives in the display layer only.
-for(const file of readdirSync(new URL('../dist/data/',import.meta.url)))
-  assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL('../dist/data/'+file,import.meta.url),'utf8')),false,
+for(const file of readdirSync(new URL(DIST+'data/',import.meta.url)))
+  assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL(DIST+'data/'+file,import.meta.url),'utf8')),false,
     'dist/data/'+file+': a download must not carry translated text');
-assert.equal(existsSync(new URL('../dist/zh/data-use/index.html',import.meta.url)),false,'/data-use/ stays English-only');
+assert.equal(existsSync(new URL(DIST+'zh/data-use/index.html',import.meta.url)),false,'/data-use/ stays English-only');
 for(const path of bilingual){
   assert.ok(sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),'sitemap must list zh/'+path);
   assert.ok(sitemap.includes('hreflang="zh-Hans" href="https://bci.report/zh/'+path+'"'),'sitemap must pair zh/'+path+' with its alternates');
 }
 
+// --- Short answers ----------------------------------------------------------
+// Each topic page opens with its question and a two- or three-sentence answer.
+// The answer summarises the page: every figure in it must also appear in the
+// evidence below, so it can never be the only place a number is stated. The
+// FAQPage markup must say exactly what the page says.
+const visible=html=>html.replace(/<head>[\s\S]*?<\/head>/,'').replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ');
+const numbers=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]);
+// CHECK_ONLY=<slug> narrows this block to one page while others are being written.
+for(const [slug,q] of topicPages.filter(([s])=>!process.env.CHECK_ONLY||s===process.env.CHECK_ONLY)) for(const [label,path,question] of [['en','topics/'+slug+'/',q],['zh','zh/topics/'+slug+'/',zhTitles[slug]]]){
+  const html=pageOf(path);
+  const start=html.indexOf('<section class="short-answer"'),end=html.indexOf('</section>',start);
+  assert.ok(start>0,label+'/'+slug+': the short answer must render');
+  const answer=html.slice(start,end);
+  const figs=[...answer.matchAll(/class="fig">([^<]+)</g)].map(m=>m[1]);
+  assert.ok(figs.length>0,label+'/'+slug+': a short answer states at least one figure');
+  const rest=visible(html.slice(0,start)+html.slice(end));
+  for(const f of figs) for(const n of numbers(f))
+    assert.ok(rest.includes(n),label+'/'+slug+': "'+f+'" in the short answer appears nowhere else on the page');
+  assert.ok(html.includes('<title>'+question),label+'/'+slug+': the <title> leads with the question');
+  const desc=html.match(/<meta name="description" content="([^"]*)"/)[1];
+  assert.ok(desc.length>40&&desc.length<=320,label+'/'+slug+': meta description must answer in one or two sentences ('+desc.length+' chars)');
+  if(label==='en'){
+    const ld=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    const faq=ld['@graph'].find(n=>n['@type']==='FAQPage');
+    assert.ok(faq,slug+': FAQPage markup is required');
+    assert.equal(faq.mainEntity[0].name.replace(/'/g,'&#39;'),question,slug+': the marked-up question is the h1');
+    const printed=answer.slice(answer.indexOf('<p>')).replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim();
+    assert.equal(faq.mainEntity[0].acceptedAnswer.text,printed,slug+': the marked-up answer is the printed answer');
+  }
+}
+
+// --- Dataset, method and API pages; agent files ------------------------------------
+// The entity pages add no number. Every figure carries data-fig="<file>|<format>|<raw>":
+// the raw value must be a leaf of that served file, and the printed text must be
+// that leaf in that format. An average, difference or rank computed for the page
+// has no leaf to match.
+const walkDist=(dir,out=[])=>{for(const f of readdirSync(new URL(dir,DIST))){const rel=dir+f;if(f==='_astro'||f==='data')continue;
+  if(existsSync(new URL(rel+'/',DIST))&&!/\.\w+$/.test(f))walkDist(rel+'/',out);else out.push(rel);}return out;};
+const distFiles=walkDist('');
+const htmlPages=distFiles.filter(f=>f.endsWith('index.html'));
+const leaves=new Map();
+const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{if(typeof v==='number')set.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(walk);};
+  walk(JSON.parse(readFileSync(new URL('data/'+file,DIST),'utf8')));leaves.set(file,set);}return leaves.get(file);};
+const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
+  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US')};
+const entityPages=htmlPages.filter(f=>/(?:^|\/)(?:datasets|methods)\//.test(f));
+assert.ok(entityPages.length>=2*(16+9+2),'dataset and method pages, both languages');
+let figsChecked=0;
+for(const f of entityPages){
+  const html=readFileSync(new URL(f,DIST),'utf8');
+  for(const [,file,format,raw,text] of html.matchAll(/data-fig="([^|"]+)\|(\w+)\|([^"]+)"[^>]*>([^<]*)</g)){
+    const v=Number(raw);
+    assert.ok(leavesOf(file).has(v),f+': '+raw+' is not a value in '+file);
+    assert.equal(text,fmt[format](v),f+': '+file+' '+raw+' printed as "'+text+'"');
+    figsChecked++;
+  }
+}
+assert.ok(figsChecked>500,'the entity pages must carry their figures ('+figsChecked+')');
+// Both languages, every figure equal, hreflang reciprocal, CSP, glossary.
+const entityBilingual=entityPages.filter(f=>!f.startsWith('zh/')).map(f=>f.replace(/index\.html$/,''));
+for(const path of [...entityBilingual,'api/']){
+  const en=read(path),zh=read('zh/'+path);
+  const figures=html=>[...html.matchAll(/class="(?:metric|num|fig)">([^<]+)</g)].map(m=>m[1]);
+  assert.deepEqual(figures(zh),figures(en),'zh/'+path+': every number must equal the English page, in the same order');
+  assert.ok(en.includes(`hreflang="zh-Hans" href="https://bci.report/zh/${path}"`)&&zh.includes(`hreflang="en" href="https://bci.report/${path}"`),path+': reciprocal hreflang');
+  assert.doesNotMatch(zh,/application\/ld\+json/,'zh/'+path+': structured data on the English canonical only');
+  for(const html of [en,zh]){
+    assert.doesNotMatch(html,/\sstyle="|<style[\s>]|\son(?:click|load|error|change|submit)=/,path+': the CSP forbids inline style and handlers');
+  }
+  const zhText=chineseOnly(zh);
+  for(const [bad,good] of Object.entries(rejected)) assert.ok(!zhText.includes(bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
+  assert.doesNotMatch(zhText,/[一-鿿\d]\.<\/p>/,'zh/'+path+': Chinese sentence ends with an ASCII period');
+  assert.ok(sitemap.includes('<loc>https://bci.report/'+path+'</loc>')&&sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),path+': sitemap entry in both languages');
+}
+// Only reviewed results reach an entity page: no status-only or held source has one.
+for(const id of [...cl.status_only,...cx.status_only].map(x=>x.id))
+  assert.ok(!entityPages.some(f=>f.includes('/'+id+'/')),id+': a status-only source must not get a dataset page');
+// The API page lists exactly the files served.
+const apiPage=read('api/');
+const apiFiles=[...apiPage.matchAll(/<a href="\/data\/([^"]+)" download><code>/g)].map(m=>m[1]).sort();
+assert.deepEqual(apiFiles,readdirSync(new URL('data/',DIST)).sort(),'the data API page lists every served file exactly once');
+// Every page has its Markdown copy, and every figure on the page survives into it.
+for(const f of htmlPages){
+  const md=f.replace(/index\.html$/,'index.md');
+  assert.ok(distFiles.includes(md),f+': Markdown copy missing');
+  const html=readFileSync(new URL(f,DIST),'utf8'),copy=readFileSync(new URL(md,DIST),'utf8');
+  assert.ok(html.includes(`rel="alternate" type="text/markdown" href="/${md}"`),f+': must link its Markdown copy');
+  for(const [,v] of html.matchAll(/class="(?:metric|num|fig)">([^<]+)</g)) assert.ok(copy.includes(v.replace(/&amp;/g,'&')),md+': figure "'+v+'" missing from the copy');
+}
+// llms.txt: every question with its short answer, every dataset and method page.
+const llms=readFileSync(new URL('llms.txt',DIST),'utf8');
+assert.match(llms,/^# BCI Report\n\n> /,'llms.txt: H1 then a blockquote summary (llmstxt.org)');
+for(const [slug] of topicPages){
+  assert.ok(llms.includes('https://bci.report/topics/'+slug+'/index.md'),'llms.txt: '+slug);
+  const ans=pageOf('topics/'+slug+'/').match(/<section class="short-answer"[\s\S]*?<p>([\s\S]*?)<\/p>/)[1].replace(/<[^>]+>/g,'').replace(/&#39;/g,"'").replace(/&amp;/g,'&').slice(0,60);
+  assert.ok(llms.replace(/\*\*/g,'').includes(ans),'llms.txt: the short answer for '+slug);
+}
+for(const p of entityBilingual) assert.ok(llms.includes('https://bci.report/'+p+'index.md'),'llms.txt: '+p);
+// CITATION.cff names the newest release on the releases page.
+const newest=pageOf('releases/').match(/<article class="release-entry" id="([^"]+)"/)[1];
+assert.match(readFileSync(new URL('../../CITATION.cff',import.meta.url),'utf8'),new RegExp('^version: "'+newest+'"$','m'),'CITATION.cff must cite the newest release, '+newest);
+// IndexNow: the key file ships and holds exactly its own name.
+const keyFile=distFiles.find(f=>/^[0-9a-f]{32}\.txt$/.test(f));
+assert.ok(keyFile&&readFileSync(new URL(keyFile,DIST),'utf8').trim()===keyFile.slice(0,-4),'IndexNow key file must ship and contain its own name');
+// A held source is named on no page, in no Markdown copy and in no agent file.
+for(const h of held) for(const f of distFiles.filter(f=>/\.(?:html|md|txt)$/.test(f))){
+  const text=readFileSync(new URL(f,DIST),'utf8');
+  assert.ok(!text.includes(h.name)&&!text.includes(h.source.split('/').pop()),f+': held source '+h.id+' appears');
+}
+
+console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
+console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
 console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures equal the audited export; no same-display claim; comparator beside gait; coverage beside conditional accuracy; no held source named.');

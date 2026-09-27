@@ -7,10 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-agent-files.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "WRANGLER_SEND_METRICS=false wrangler deploy",
+    "deploy": "node scripts/deploy.mjs",
     "cf": "WRANGLER_SEND_METRICS=false wrangler"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "ultrahtml": "1.7.0",
     "wrangler": "^4.135.0"
   }
 }

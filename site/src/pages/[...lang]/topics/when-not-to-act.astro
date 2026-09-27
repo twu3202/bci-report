@@ -37,14 +37,25 @@ const nc = (context.results as Record<string, any>)['ysu-async-ssvep'] as undefi
 };
 const frac = (a: number, b: number) => `${a} / ${b}`;
 
+// Figures the short answer names: counts already printed in the two tables
+// below, stated as "k / n" the way the page states them. The conditional
+// accuracy among accepted windows is left out — it may not travel without
+// coverage and the end-to-end rate. The non-control clause exists only when its
+// section renders.
+const ncAccepted = nc ? frac(nc.control_windows.accepted, nc.control_windows.tested) : '';
+const ncFalse = nc ? nc.false_acceptance.map(f => `[[${frac(f.accepted, f.tested)}]]`) : [];
+const series = (items: string[], sep: string, last: string) =>
+  items.length < 2 ? items.join('') : `${items.slice(0, -1).join(sep)}${last}${items[items.length - 1]}`;
+
 const modeLabel: Record<string, string> = locale === 'zh'
   ? { 'Supervised fit': '监督拟合', 'Frozen encoder + linear head': '冻结编码器 + 线性分类头', 'Scratch · 20 epochs': '从头训练 · 20 轮' }
   : {};
 
 const copy = {
   en: {
-    documentTitle: 'When not to act · Jev-style decision models for EEG',
-    description: 'A decoder that never acts never fires by mistake. The idle-and-command protocol read with both of its numbers together, and a Jev-style research plan for measuring when an EEG decoder should act, wait or ask for calibration.',
+    documentTitle: `${topicCards.en['when-not-to-act'].question} · Jev-style decision models for EEG`,
+    description: `It depends on how often the decoder acts at all. In a cue-gated idle test with ${people} people, ${quiet.name} made ${quiet.falseActs} / ${idleN} false activations but detected ${quiet.commands} / ${cmdN} commands: a decoder that never acts never fires by mistake, so both numbers are read together.`,
+    answer: `It depends on how often the decoder acts at all: one that never acts never fires by mistake, so its false activations mean something only beside the commands it caught. In a cue-gated idle test with [[${people}]] people, the quietest decoder, ${quiet.name}, made [[${quiet.falseActs} / ${idleN}]] false activations in idle trials but detected [[${quiet.commands} / ${cmdN}]] commands, and for [[${quiet.abstain}]] of those people its threshold rejected every command${nc ? `; in a separate pilot with [[${nc.people}]] other people, a CCA decoder accepted [[${ncAccepted}]] windows when a command was intended, and ${series(ncFalse, ', ', ' and ')} in the states where none was` : ''}. ${nc ? 'Both are small pilots, counted per trial or per window rather than per hour' : 'It is a small pilot, counted per trial rather than per hour'}: neither can say how often a decoder would fire by mistake over an hour of real rest.`,
     eyebrow: 'Abstention · Jev-style research plan',
     dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, then sets out a Jev-style research plan: what would have to be measured to say when a decoder should act at all.`,
     findingLabel: `${quiet.name}: idle false activations, ${people} people`,
@@ -85,8 +96,9 @@ const copy = {
     ncPaper: 'Data paper ↗', ncData: 'figshare release ↗', ncSmall: 'Why four people limit what can be published (English)',
   },
   zh: {
-    documentTitle: '何时不该执行 · Jev-style 的 EEG 决策模型',
-    description: '从不执行的解码器，也就从不误触发。把空闲与指令协议的两个数字放在一起读，并提出一个 Jev-style 研究计划：怎样测量 EEG 解码器何时该执行、该等待、该请求校准。',
+    documentTitle: `${topicCards.zh['when-not-to-act'].question} · Jev-style 的 EEG 决策模型`,
+    description: `取决于解码器有多愿意执行。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
+    answer: `取决于解码器有多愿意执行：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，最安静的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令${nc ? `；在另一组 [[${nc.people}]] 名被试的试点中，CCA 解码器在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的各状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}` : ''}。${nc ? '两者都是小规模试点，按试次或窗口计数，而不是按小时' : '这是一个小规模试点，按试次计数，而不是按小时'}，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
     eyebrow: '拒识 · Jev-style 研究计划',
     dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再给出一个 Jev-style 研究计划：要测什么，才能回答解码器究竟该不该执行。`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
@@ -140,6 +152,7 @@ const basis = idle.reviewBasis;
   activeSlug="when-not-to-act"
   dataFiles={['/data/experiments.json']}
   documentTitle={copy.documentTitle}
+  answer={copy.answer}
 >
   <section class="topic-section" aria-labelledby="abstain-finding">
     <div class="finding">

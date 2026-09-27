@@ -1,0 +1,66 @@
+---
+/**
+ * The published figures for one entity, one table per group. Every value is a
+ * `Fig` from src/data/entities.ts and carries `data-fig="<file>|<format>|<raw>"`
+ * so check-workbench.mjs can re-read the leaf from the served file and re-format
+ * it. A plot is added above a group when it has two or more balanced-accuracy
+ * rows with intervals, on one scale.
+ */
+import IntervalPlot from './IntervalPlot.astro';
+import { formatFig, isEnglishOnly, tr, type Fig, type ResultGroup, type DatasetEntity } from '../data/entities';
+import { entityCopy } from '../data/entity-copy';
+import { hrefFor, topicCards, type Locale } from '../data/i18n';
+
+interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
+const { locale, groups, showMethod = true } = Astro.props;
+const c = entityCopy[locale];
+const attr = (f: Fig) => `${f.src}|${f.fmt}|${f.raw}`;
+const pageLabel = (path: string) => {
+  const slug = path.match(/^\/topics\/([^/#]+)\//)?.[1];
+  return slug ? topicCards[locale][slug].title : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)');
+};
+const plottable = (g: ResultGroup) => {
+  const rows = g.rows.filter(r => r.metric.en === 'Balanced accuracy' && r.interval && (r.value.fmt === 'pct1' || r.value.fmt === 'pct1raw'));
+  return rows.length >= 2 && rows.length <= 16 && new Set(rows.map(r => r.value.fmt)).size === 1 ? rows : [];
+};
+const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `${g.dataset.name} · ${tr(g.title, locale)}` : tr(g.title, locale);
+---
+{groups.map(g => {
+  const plot = plottable(g);
+  // When every row shares one condition, the plot labels need only the method.
+  const oneCondition = new Set(plot.map(r => r.condition.en)).size === 1;
+  const scale = plot[0]?.value.fmt === 'pct1raw' ? 100 : 1;
+  const files = [...new Set(g.rows.flatMap(r => [r.value.src]))];
+  return (
+    <section class="entity-group" id={`g-${g.dataset ? g.dataset.slug + '-' : ''}${g.id}`}>
+      <h3>{g.dataset ? <><a href={hrefFor(`/datasets/${g.dataset.slug}/`, locale)} lang="en">{g.dataset.name}</a> · {tr(g.title, locale)}</> : tr(g.title, locale)}</h3>
+      <p class="entity-group-meta">{c.readOn} <a href={hrefFor(g.path, locale)}>{pageLabel(g.path)}</a>{g.chance && <> · {c.chance} <span data-fig={attr(g.chance)}>{formatFig(g.chance)}</span></>} · {files.map((f, i) => <>{i > 0 && ', '}<a href={`/data/${f}`} download>{f}</a></>)}</p>
+      {plot.length > 0 && <IntervalPlot
+        caption={c.plotCaption(plot.length)}
+        legend={c.plotLegend}
+        domain={[0, scale]}
+        ticks={['0%', '25%', '50%', '75%', '100%']}
+        reference={g.chance ? g.chance.raw : undefined}
+        rows={plot.map(r => ({ label: oneCondition ? r.method : `${r.method} · ${tr(r.condition, locale)}`, value: r.value.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+                               text: `${formatFig(r.value)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: r.comparator ? 'muted' as const : 'rust' as const }))}
+      />}
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.resultsRegion(heading(g))}>
+        <table>
+          <thead><tr>{showMethod && <th scope="col">{c.colMethod}</th>}<th scope="col">{c.colCondition}</th><th scope="col">{c.colMetric}</th><th scope="col">{c.colValue}</th><th scope="col">{c.colPeople}</th></tr></thead>
+          <tbody>{g.rows.map(r => (
+            <tr>
+              {showMethod && <th scope="row" lang="en">{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.method}</a> : r.method}{r.comparator && <small lang={locale === 'zh' ? 'zh-Hans' : 'en'}>{c.comparator}</small>}</th>}
+              <td lang={isEnglishOnly(r.condition, locale) ? 'en' : undefined}>{tr(r.condition, locale)}</td>
+              <td lang={isEnglishOnly(r.metric, locale) ? 'en' : undefined}>{tr(r.metric, locale)}</td>
+              <td>{r.of
+                ? <span class="metric"><span data-fig={attr(r.value)}>{formatFig(r.value)}</span> / <span data-fig={attr(r.of)}>{formatFig(r.of)}</span></span>
+                : <span data-fig={attr(r.value)} class="metric">{formatFig(r.value)}</span>}
+                {r.interval && <span class="interval"><span data-fig={attr(r.interval[0])}>{formatFig(r.interval[0])}</span>–<span data-fig={attr(r.interval[1])}>{formatFig(r.interval[1])}</span></span>}</td>
+              <td>{r.people ? r.people : c.noPeople}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </section>
+  );
+})}

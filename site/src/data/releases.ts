@@ -12,7 +12,11 @@
 /** Pages changed in the current site update, for sitemap lastmod. */
 export const pagesUpdated = {
   date: '2026-09-27',
-  paths: ['/', '/topics/when-not-to-act/', '/releases/', '/topics/screen-to-vr/', '/topics/on-the-move/', '/data-use/'],
+  // Every topic page gained its question-form title and short answer on this
+  // date; the dataset, method and API pages were first published on it.
+  paths: ['/', '/topics/when-not-to-act/', '/releases/', '/topics/screen-to-vr/', '/topics/on-the-move/', '/data-use/',
+          '/topics/dry-vs-wet/', '/topics/fewer-electrodes/', '/topics/calibration-budget/',
+          '/topics/does-pretraining-help/', '/topics/clinical-groups/', '/api/'],
 } as const;
 
 type Text = { en: string; zh: string };

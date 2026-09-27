@@ -126,3 +126,60 @@
 code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wrap:anywhere;word-break:break-all}
 .hold-resolved th,.hold-resolved td{color:var(--muted)}
 @media(max-width:860px){.route-list,.literature-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Short answer: the page's answer in two or three sentences, before the evidence. */
+.short-answer{margin:26px 0 4px;padding:20px 24px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);max-width:900px}
+.short-answer h2{font-family:var(--sans);font-size:.72rem;font-weight:650;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.short-answer p{font-family:var(--serif);font-size:1.08rem;line-height:1.6;color:var(--ink);margin-top:8px}
+.short-answer .fig{font-family:var(--mono);font-size:.94em;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
+
+/* Dot-and-interval plot. Rows are HTML; only the strip is SVG (IntervalPlot.astro). */
+.interval-plot{margin:22px 0;padding:16px 18px 12px;border:1px solid var(--line);background:var(--panel)}
+.ip-row{display:grid;grid-template-columns:minmax(150px,280px) minmax(0,1fr) 150px;gap:14px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.ip-row.ip-axis{border-bottom:0;padding:4px 0 0}
+.ip-label{font-size:.82rem;color:var(--ink);min-width:0}
+.ip-label small{font-size:.7rem}
+.ip-strip{display:block;width:100%;height:18px;overflow:visible}
+.ip-strip line{vector-effect:non-scaling-stroke}
+.ip-grid{stroke:var(--line);stroke-width:1}
+.ip-ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.ip-ci{stroke-width:2;stroke-linecap:round}
+.ip-pt{stroke-width:4}
+.ip-strip.rust .ip-ci,.ip-strip.rust .ip-pt{stroke:var(--accent)}
+.ip-strip.ink .ip-ci,.ip-strip.ink .ip-pt{stroke:#62554b}
+.ip-strip.olive .ip-ci,.ip-strip.olive .ip-pt{stroke:var(--good)}
+.ip-strip.muted .ip-ci,.ip-strip.muted .ip-pt{stroke:var(--rule)}
+.ip-value{font-family:var(--mono);font-size:.8rem;text-align:right;color:var(--ink)}
+.ip-ticks{position:relative;height:1.1rem;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.ip-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.ip-ticks .t0{left:0;transform:none}.ip-ticks .t1{left:25%}.ip-ticks .t2{left:50%}.ip-ticks .t3{left:75%}.ip-ticks .t4{left:100%;transform:translateX(-100%)}
+.interval-plot figcaption{font-size:.76rem;color:var(--muted);margin-top:10px}
+.interval-plot figcaption strong{color:var(--ink);font-weight:620}
+@media(max-width:560px){
+  .short-answer{padding:16px 16px}
+  .short-answer p{font-size:1rem}
+  .interval-plot{padding:12px 12px 10px}
+  .ip-row{grid-template-columns:minmax(0,1fr) 96px;gap:4px 10px}
+  .ip-label{grid-column:1/-1}
+  .ip-axis .ip-label{display:none}
+}
+
+/* Dataset and method pages. */
+.entity-page .topic-hero h1{font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.08}
+.entity-profile{padding:18px 0 4px}
+.entity-profile p{max-width:900px;margin-top:6px}
+.entity-aliases{font-size:.84rem}
+.entity-aliases strong{color:var(--ink);font-weight:620;margin-right:4px}
+.entity-links{margin:12px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem}
+.entity-links a{color:var(--accent)}
+.entity-group{margin-top:30px}
+.entity-group h3{font-family:var(--serif);font-size:1.15rem}
+.entity-group h3 a{color:var(--accent)}
+.entity-group-meta{font-size:.78rem;margin:4px 0 10px}
+.entity-group-meta a{color:var(--accent)}
+.entity-group .interval-plot{margin:10px 0 12px}
+.topic-table th small{display:block;font-weight:400;color:var(--muted);font-size:.7rem;margin-top:2px}
+/* Code on the data API page. */
+pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.55;color:var(--ink)}
+.code-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:14px}
+.topic-table code{font-family:var(--mono);font-size:.78rem}

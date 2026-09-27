@@ -1,0 +1,52 @@
+---
+import EntityLayout from '../../../components/EntityLayout.astro';
+import ResultGroups from '../../../components/ResultGroups.astro';
+import profiles from '../../../data/entity-profiles.json';
+import { methods, type MethodEntity } from '../../../data/entities';
+import { entityCopy } from '../../../data/entity-copy';
+import { familyLabel, hrefFor, locales, defaultLocale, localeOf, modelStatus } from '../../../data/i18n';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = () => locales.flatMap(code => methods.map(m => ({
+  params: { lang: code === defaultLocale ? undefined : code, slug: m.slug }, props: { method: m },
+})));
+const { method: m } = Astro.props as { method: MethodEntity };
+const locale = localeOf(Astro.params.lang);
+const c = entityCopy[locale];
+const path = `/methods/${m.slug}/`;
+type Profile = { aliases: string[]; summary_en: string; summary_zh: string; facts_sources: string[]; reference?: string; reference_url?: string; code_url?: string };
+const profile = (profiles.methods as Record<string, Profile>)[m.slug];
+const datasetNames = [...new Set(m.groups.map(g => g.dataset.name))];
+// The authors' repository where the profile found one; the implementation this
+// site ran (the directory's link) is shown beside it when it differs.
+const code = profile?.code_url ?? m.url;
+const used = m.url && m.url !== code ? m.url : undefined;
+const structured = {
+  '@context': 'https://schema.org', '@type': 'WebPage', url: new URL(path, site.origin).href,
+  name: c.methodTitle(m.name), description: c.methodDescription(m.name, datasetNames.join(', ')),
+  about: { '@type': 'SoftwareSourceCode', name: m.name, ...(code ? { codeRepository: code } : {}),
+           ...(profile?.reference_url ? { citation: profile.reference_url } : {}), ...(profile?.aliases?.length ? { alternateName: profile.aliases } : {}) },
+  mentions: m.groups.map(g => ({ '@type': 'Dataset', name: g.dataset.name, url: new URL(`/datasets/${g.dataset.slug}/`, site.origin).href })),
+};
+---
+<EntityLayout
+  locale={locale} path={path} active="models"
+  documentTitle={c.methodTitle(m.name)}
+  h1={c.methodH1(m.name)}
+  description={c.methodDescription(m.name, datasetNames.join(locale === 'zh' ? '、' : ', '))}
+  eyebrow={m.family ? familyLabel(m.family, locale) : c.methodsTitle}
+  dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.methodsDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle, href: hrefFor('/methods/', locale) }, { label: m.name }]}
+  structured={structured}
+>
+  {profile && <section class="entity-profile" aria-label={c.whatItIs}>
+    {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}
+    {profile.reference && <p class="entity-aliases"><strong>{c.reference}</strong> <span lang="en">{profile.reference_url ? <a href={profile.reference_url} target="_blank" rel="noreferrer">{profile.reference} ↗</a> : profile.reference}</span></p>}
+    <p class="citation-note">{m.status && <>{c.directoryStatus}{locale === 'zh' ? '：' : ': '}{modelStatus(m.status, locale)} · </>}{code && <><a href={code} target="_blank" rel="noreferrer">{profile?.code_url ? c.officialCode : c.implementationUsed}</a> · </>}{used && <><a href={used} target="_blank" rel="noreferrer">{c.implementationUsed}</a> · </>}{c.profileSource} {profile.facts_sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname}</a></>)}</p>
+  </section>}
+  <section class="topic-section" aria-labelledby="results-heading">
+    <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.methodResultsLede}</p></div>
+    <ResultGroups locale={locale} groups={m.groups} showMethod={true}/>
+    <p class="citation-note"><a href={hrefFor('/methods/', locale)}>{c.allMethods}</a> · <a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
+  </section>
+</EntityLayout>

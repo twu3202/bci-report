@@ -76,9 +76,16 @@ export const translatedPaths = [
   '/topics/does-pretraining-help/',
   '/topics/when-not-to-act/',
   '/releases/',
+  '/api/',
 ] as const;
 
-const isTranslated = (path: string) => (translatedPaths as readonly string[]).includes(path);
+/**
+ * Dataset and method pages exist in every locale too. They are generated from
+ * the payloads (src/data/entities.ts), so they are matched by shape here rather
+ * than listed; the sitemap lists them from entities.ts.
+ */
+export const isTranslated = (path: string) =>
+  (translatedPaths as readonly string[]).includes(path) || /^\/(?:datasets|methods)\/(?:[a-z0-9-]+\/)?$/.test(path);
 
 /** Prefix a path for a locale. English stays at the root. */
 export function localizePath(path: string, locale: Locale): string {
@@ -475,6 +482,7 @@ export const topicChrome = {
     sensorsPaper: 'Sensors paper ↗',
     sourceStudy: 'Source study ↗',
     methodsEyebrow: 'Methods & limits',
+    shortAnswer: 'Short answer',
     interval95: '95% interval',
     to: 'to',
     period: '.',
@@ -495,6 +503,7 @@ export const topicChrome = {
     sensorsPaper: 'Sensors 论文 ↗',
     sourceStudy: '原始研究 ↗',
     methodsEyebrow: '方法与局限',
+    shortAnswer: '简答',
     interval95: '95% 区间',
     to: '至',
     period: '。',
@@ -502,56 +511,77 @@ export const topicChrome = {
 } as const;
 
 /** Topic cards on the homepage and in the "keep exploring" strip. */
-export const topicCards: Record<Locale, Record<string, { kicker: string; title: string; summary: string; detail: string }>> = {
+/**
+ * `question` is the page's h1 and <title>: the question as a reader, or an
+ * assistant searching on a reader's behalf, would type it. `title` stays the
+ * short label used on cards, in breadcrumbs and in the topic switcher.
+ */
+export const topicCards: Record<Locale, Record<string, { kicker: string; title: string; question: string; summary: string; detail: string }>> = {
   en: {
     'dry-vs-wet': { kicker: 'Sensor transfer', title: 'Dry vs. wet electrodes',
+      question: 'Do dry EEG electrodes decode as well as wet ones?',
       summary: 'What changes when a decoder crosses between two native eight-channel recordings from the same 102 people?',
       detail: '2 s SSVEP · 12 targets · balanced accuracy' },
     'screen-to-vr': { kicker: 'Context transfer', title: 'Screen to VR',
+      question: 'Does a P300 decoder calibrated on a screen still work in VR?',
       summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change.',
       detail: 'P300 · 21 people · two timing schemes' },
     'fewer-electrodes': { kicker: 'Montage', title: 'Fewer electrodes',
+      question: 'Can fewer electrodes, or electrodes in the ear, match a full scalp montage?',
       summary: 'In-ear against scalp for sleep, and four posterior electrodes against sixteen for eyes open or closed — and what neither says about any headset.',
       detail: 'Two paired comparisons · 10 and 19 people' },
     'on-the-move': { kicker: 'Motion robustness', title: 'On the move',
+      question: 'Does EEG decoding still work while walking or running?',
       summary: 'Standing, walking and running results, with scalp and ear recordings and incompatible time windows kept apart.',
       detail: 'SSVEP balanced accuracy · ERP ROC AUC' },
     'calibration-budget': { kicker: 'Adaptation budget', title: 'How much calibration?',
+      question: 'How much calibration data does a wearable SSVEP decoder need?',
       summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
       detail: 'Common future blocks · target-only fitting' },
     'when-not-to-act': { kicker: 'Abstention · Jev-style', title: 'When not to act',
+      question: 'How often does an EEG decoder fire when nobody is giving a command?',
       summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
       detail: 'Idle and non-control · two 4-person pilots · research plan' },
     'clinical-groups': { kicker: 'Clinical research', title: 'Clinical groups',
+      question: 'Can resting-state EEG separate Parkinson\'s disease from controls?',
       summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
       detail: '149 people · one site · balanced accuracy' },
     'does-pretraining-help': { kicker: 'Representation controls', title: 'Does pretraining help?',
+      question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
       summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings.',
       detail: 'Two tasks · two encoders · three random initializations' },
   },
   zh: {
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
+      question: '干电极的解码效果能和湿电极一样好吗？',
       summary: '同一批 102 名被试、两种原生八通道记录之间，解码器迁移过去会发生什么？',
       detail: '2 秒 SSVEP · 12 个目标 · 平衡准确率' },
     'screen-to-vr': { kicker: '场景迁移', title: '从屏幕到 VR',
+      question: '在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？',
       summary: '同样 21 名被试，在电脑屏幕上校准、在 VR 头显里测试，反之亦然——以及为什么这个结果不是换设备的代价。',
       detail: 'P300 · 21 名被试 · 两种时间校正' },
     'fewer-electrodes': { kicker: '电极布局', title: '更少的电极',
+      question: '更少的电极、或耳道内电极，能比得上完整的头皮电极吗？',
       summary: '睡眠分期里耳道内对头皮，睁闭眼任务里后部 4 个对全部 16 个电极——以及两者都不能说明哪款设备更好。',
       detail: '两项配对比较 · 10 名与 19 名被试' },
     'on-the-move': { kicker: '运动鲁棒性', title: '移动中的解码',
+      question: '走路或跑步时，EEG 解码还管用吗？',
       summary: '站立、行走与跑动时的结果，头皮与耳部记录、互不兼容的时间窗分开呈现。',
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
     'calibration-budget': { kicker: '适配预算', title: '需要多少校准？',
+      question: '可穿戴 SSVEP 解码器需要多少校准数据？',
       summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。',
       detail: '共同的后续组块 · 仅用目标被试数据拟合' },
     'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
+      question: '没有人下指令时，EEG 解码器有多常误触发？',
       summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style 研究计划：何时该执行、该等待、该重新校准。',
       detail: '空闲与非控制状态 · 两个四人试点 · 研究计划' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
+      question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
       summary: '149 名被试的帕金森病与对照比较，旁边并排放着一个只用年龄和性别的对照基线——以及为什么两者都不是诊断。',
       detail: '149 名被试 · 单中心 · 平衡准确率' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
+      question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
       summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。',
       detail: '两个任务 · 两种编码器 · 三次随机初始化' },
   },

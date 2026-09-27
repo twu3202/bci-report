@@ -66,3 +66,7 @@ research/hf_expansion_v5_20260922/
 research/peft_v1_20260922/
 research/screenshot_model_review_20260922/
 research/hf_expansion_v6_20260926/
+
+# IndexNow submission state and the last deploy log (site/scripts/deploy.mjs). Local only.
+site/.indexnow-state.json
+site/.deploy.log

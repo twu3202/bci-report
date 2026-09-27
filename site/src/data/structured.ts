@@ -21,6 +21,7 @@ import evidence from './evidence-update.json';
 import clinical from './clinical-update.json';
 import context from './context-update.json';
 import { site } from './site';
+import { plainAnswer } from './answer';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
 const LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
@@ -134,6 +135,23 @@ export function topicDataset(id: string, name: string, description: string, path
     variableMeasured: [...new Set([...rows.map(r => r.metric), ...later.flatMap(l => l.metrics)])],
     isPartOf: { '@type': 'Dataset', name: `${site.name}: aggregate EEG decoding results`, url: abs('/') },
     distribution: files,
+  };
+}
+
+/**
+ * The page's question and its short answer, as the page prints them. One
+ * question per page; the text is the same string the page renders, with the
+ * figure markers removed, so the markup cannot say more than the page does.
+ */
+export function topicFaq(question: string, answer: string, path: string) {
+  return {
+    '@type': 'FAQPage',
+    url: abs(path),
+    mainEntity: [{
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: plainAnswer(answer), url: `${abs(path)}#short-answer-heading` },
+    }],
   };
 }
 

@@ -2,6 +2,7 @@
 import rawData from '../../../data/deployment-topics.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { type DeploymentData, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import evidence from '../../../data/evidence-update.json';
@@ -23,6 +24,13 @@ const sensors = ['wet','dry'];
 const wetImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-wet')!;
 const dryImprovement = trcaContrasts.find(row => row.comparison === 'etrca48-minus-etrca24-dry')!;
 const ipp = (i: [number, number]) => intervalPp(i, 1, locale);
+// Figures the short answer and the key figure name. All from the reviewed export.
+const people = wetImprovement.participants;
+const etrcaWet24 = pct(methodRow('ensemble-trca','wet',24).value), etrcaWet48 = pct(methodRow('ensemble-trca','wet',48).value);
+const etrcaDry24 = pct(methodRow('ensemble-trca','dry',24).value), etrcaDry48 = pct(methodRow('ensemble-trca','dry',48).value);
+const ridgeWet48 = pct(targetRidge('wet',48).value), ridgeDry48 = pct(targetRidge('dry',48).value);
+const ccaWet = pct(methodRow('cca','wet',0).value), ccaDry = pct(methodRow('cca','dry',0).value);
+const chance = 1 / 12;
 // Roadmap only. The export fixes status at 'planned' and refuses anything else,
 // so this section cannot start saying "running" through a copy edit.
 const plan = evidence.roadmap.peft;
@@ -33,7 +41,11 @@ const share = `${(eng.adapter_fraction * 100).toFixed(2)}%`;
 
 const copy = {
   en: {
-    description: 'Target-only wearable SSVEP calibration at 12, 24 and 48 labeled trials, with source-only spectral ridge and analytic CCA kept as separate reference arms.',
+    description: `It depends on the method. For ${people} people on a 12-target wearable SSVEP task, going from 24 to 48 labeled trials lifted single-band eTRCA from ${etrcaWet24} to ${etrcaWet48} on wet recordings but only from ${etrcaDry24} to ${etrcaDry48} on dry; training-free CCA scored higher. Trial counts are not minutes.`,
+    answer: `It depends on the method: on a 12-target wearable SSVEP task, with the same [[${people}]] people and the same future test blocks, going from 24 to 48 labeled target trials lifted single-band eTRCA from [[${etrcaWet24}]] to [[${etrcaWet48}]] balanced accuracy on wet recordings, but only from [[${etrcaDry24}]] to [[${etrcaDry48}]] on dry ones. Target-only spectral ridge reached just [[${ridgeWet48}]] (wet) and [[${ridgeDry48}]] (dry) at 48 trials, and no calibrated eTRCA point beat the training-free CCA reference, which uses no labels ([[${ccaWet}]] wet, [[${ccaDry}]] dry). Trial counts are not minutes: the export records labeled trials per person and does not convert them into a setup-time claim.`,
+    plotCaption: `Labeled-trial budgets for the same ${people} people, tested on the same future blocks.`,
+    plotLegend: 'Participant-mean balanced accuracy on 12-target, two-second SSVEP. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, 1 in 12. Rust rows are wet recordings, dark rows dry. CCA uses no labels; the source-only arm is a different mechanism and is not plotted.',
+    plotNote: (s: string, reference: boolean) => `${s} recording · ${reference ? 'training-free reference' : 'target-only'}`,
     eyebrow: 'Adaptation budget · common future test blocks',
     dek: 'More labeled trials do not have one universal value. On this 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings.',
     sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
@@ -99,7 +111,11 @@ const copy = {
     rmReport: 'Per-person balanced accuracy and macro F1, the paired change over no adaptation, how many people improved, got worse or stayed the same, seed-to-seed variation, and measured time and peak memory — counted separately under a fixed label budget and a fixed computation budget.',
   },
   zh: {
-    description: '仅用目标被试数据的可穿戴 SSVEP 校准，分别使用 12、24、48 个校准试次；仅用源域数据的 spectral ridge 与免训练 CCA 作为独立的参考组保留。',
+    description: `取决于方法。同样 ${people} 名被试的 12 目标可穿戴 SSVEP 任务上，校准试次从 24 增加到 48，单频带 eTRCA 在湿电极上从 ${etrcaWet24} 升到 ${etrcaWet48}，在干电极上只从 ${etrcaDry24} 升到 ${etrcaDry48}；免训练的 CCA 参考更高。试次数不等于分钟数。`,
+    answer: `取决于方法：在 12 目标的可穿戴 SSVEP 任务上，同样 [[${people}]] 名被试、相同的后续测试组块，目标被试校准试次从 24 增加到 48 时，单频带 eTRCA 在湿电极记录上的平衡准确率从 [[${etrcaWet24}]] 升到 [[${etrcaWet48}]]，在干电极记录上只从 [[${etrcaDry24}]] 升到 [[${etrcaDry48}]]。仅用目标被试数据的 spectral ridge 在 48 个校准试次时也只有 [[${ridgeWet48}]]（湿电极）和 [[${ridgeDry48}]]（干电极）；校准后的 eTRCA 没有一个超过不使用校准试次的免训练 CCA 参考（湿电极 [[${ccaWet}]]，干电极 [[${ccaDry}]]）。试次数不等于分钟数：导出数据记录的是每名被试的校准试次数，并不据此推算校准需要多长时间。`,
+    plotCaption: `同样 ${people} 名被试的各档校准试次，均在相同的后续组块上测试。`,
+    plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。锈色行为湿电极记录，深色行为干电极记录。CCA 不使用校准试次；仅源域迁移是另一种机制，不在图中。',
+    plotNote: (s: string, reference: boolean) => `${s}记录 · ${reference ? '免训练参考' : '仅用目标被试数据'}`,
     eyebrow: '适配预算 · 共同的后续测试组块',
     dek: '增加校准试次的价值并不是一个固定值。在这个 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。',
     sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
@@ -181,7 +197,20 @@ const card = topicCards[locale]['calibration-budget'];
   eyebrow={copy.eyebrow}
   dek={copy.dek}
   activeSlug="calibration-budget"
+  answer={copy.answer}
 >
+  <IntervalPlot
+    caption={copy.plotCaption}
+    legend={copy.plotLegend}
+    domain={[0, 1]}
+    ticks={['0%', '25%', '50%', '75%', '100%']}
+    reference={chance}
+    rows={sensors.flatMap(sensor => [
+      { row: methodRow('cca', sensor, 0), label: copy.ccaRow, reference: true },
+      ...budgets.map(budget => ({ row: targetRidge(sensor, budget), label: `${modelLabel('spectral-ridge')} · ${copy.labels(budget)}`, reference: false })),
+      ...[24, 48].map(budget => ({ row: methodRow('ensemble-trca', sensor, budget), label: `${modelLabel('ensemble-trca')} · ${copy.labels(budget)}`, reference: false })),
+    ].map(({ row, label, reference }) => ({ label, note: copy.plotNote(copy.sensor[sensor], reference), tone: sensor === 'wet' ? 'rust' as const : 'ink' as const, value: row.value, interval: row.confidence_interval_95, text: `${pct(row.value)} (${intervalPct(row.confidence_interval_95)})` })))}
+  />
   <section class="topic-section" aria-labelledby="ridge-heading">
     <div class="topic-heading"><div><p class="eyebrow">{copy.ridgeEyebrow}</p><h2 id="ridge-heading">{copy.ridgeH2}</h2></div><p>{copy.ridgeLede}</p></div>
     <div class="evidence-grid">{sensors.flatMap(sensor => budgets.map(budget => {

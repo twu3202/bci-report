@@ -6,6 +6,7 @@ import clinical from '../data/clinical-update.json';
 import { site } from '../data/site';
 import { pagesUpdated } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
+import { entityPaths } from '../data/entities';
 
 /**
  * `lastmod` only, taken from the release each page actually renders.
@@ -33,7 +34,7 @@ const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-mov
 const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
 const SITE_UPDATE = new Set<string>(pagesUpdated.paths);
 const lastmodOf = (path: string) =>
-  SITE_UPDATE.has(path) ? pagesUpdated.date
+  SITE_UPDATE.has(path) || /^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
   : CLINICAL_PAGES.has(path) ? CLINICAL
   : EVIDENCE_PAGES.has(path) ? EVIDENCE
   : path.startsWith('/topics/') ? TOPICS : RELEASE;
@@ -42,7 +43,9 @@ export const GET: APIRoute = ({ site: origin }) => {
   const base = String(origin ?? new URL(site.origin));
   const abs = (p: string) => new URL(p, base).href;
   const entries: string[] = [];
-  for (const path of translatedPaths) {
+  // Dataset, method and API pages: generated from the payloads, first published
+  // in the 2026-09-27 site update, so they carry that date (pagesUpdated).
+  for (const path of [...translatedPaths, ...entityPaths]) {
     const links = alternates(path, base)
       .map((l) => `<xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${l.href}"/>`).join('');
     for (const code of locales)
