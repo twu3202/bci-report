@@ -123,7 +123,8 @@ export function alternates(path: string, origin: string) {
 /* --- Shared chrome -------------------------------------------------------- */
 
 interface Chrome {
-  stage: string;
+  /** Before the date of the newest release, on the home page. */
+  updated: string;
   skipToResults: string;
   skipToEvidence: string;
   mainNav: string;
@@ -145,7 +146,7 @@ interface Chrome {
 
 export const chrome: Record<Locale, Chrome> = {
   en: {
-    stage: 'Research preview',
+    updated: 'Updated',
     skipToResults: 'Skip to results',
     skipToEvidence: 'Skip to evidence',
     mainNav: 'Main navigation',
@@ -163,7 +164,7 @@ export const chrome: Record<Locale, Chrome> = {
     englishMark: '',
   },
   zh: {
-    stage: '研究预览',
+    updated: '更新于',
     skipToResults: '跳至结果',
     skipToEvidence: '跳至证据',
     mainNav: '主导航',
@@ -252,7 +253,7 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Separate topics add evidence on sensors, displays, electrode layout, movement, calibration, when not to act, pretraining and clinical groups.`,
+      `Separate topics add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, pretraining and clinical groups.`,
     statsLabel: 'Core matrix coverage',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     topicsEyebrow: 'Questions',
@@ -363,7 +364,7 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `另有若干专题，补充了关于传感器、显示设备、电极布局、运动、校准、何时不该执行、预训练与临床分组的证据。`,
+      `另有若干专题，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、预训练与临床分组的证据。`,
     statsLabel: '核心矩阵覆盖范围',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     topicsEyebrow: '专题',
@@ -536,8 +537,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'SSVEP balanced accuracy · ERP ROC AUC' },
     'calibration-budget': { kicker: 'Adaptation budget', title: 'How much calibration?',
       question: 'How much calibration data does a wearable SSVEP decoder need?',
-      summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
-      detail: 'Common future blocks · target-only fitting' },
+      summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time. Plus: head only, last block or LoRA when a foundation model meets new people.',
+      detail: 'Common future blocks · target-only fitting · LaBraM adaptation, 36 people' },
     'when-not-to-act': { kicker: 'Abstention · Jev-style', title: 'When not to act',
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
       summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
@@ -570,8 +571,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
     'calibration-budget': { kicker: '适配预算', title: '需要多少校准？',
       question: '可穿戴 SSVEP 解码器需要多少校准数据？',
-      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。',
-      detail: '共同的后续组块 · 仅用目标被试数据拟合' },
+      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。另有：基础模型遇到新被试时，只训分类头、最后一个 block 还是 LoRA。',
+      detail: '共同的后续组块 · 仅用目标被试数据拟合 · LaBraM 适配，36 人' },
     'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
       question: '没有人下指令时，EEG 解码器有多常误触发？',
       summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style 研究计划：何时该执行、该等待、该重新校准。',

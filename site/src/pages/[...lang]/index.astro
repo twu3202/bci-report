@@ -1,7 +1,7 @@
 ---
 import data from '../../data/mvp.json';
 import deployment from '../../data/deployment-topics.json';
-import { holds } from '../../data/releases';
+import { holds, releases } from '../../data/releases';
 import { site } from '../../data/site';
 import { topicPages } from '../../data/topics';
 import { homeDataset, websiteEntity } from '../../data/structured';
@@ -115,7 +115,7 @@ const links=alternates('/',String(origin));
 {locale==='en'&&<script type="application/ld+json" set:html={JSON.stringify(websiteEntity())}/>}</head>
 <body><a class="skip" href="#overview">{t.skipToResults}</a>
 <SiteHeader locale={locale} path="/" active="home" anchorsAreLocal={true}/>
-<main><section class="masthead"><div><p class="eyebrow">{h.eyebrow(data.generatedAt.slice(0,10))}</p><h1>{h.h1}</h1><p class="lede">{h.lede(counts)}</p></div><dl class="stat-rail" aria-label={h.statsLabel}>{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}<span class="live"><i></i>{t.stage}</span></dl></section>
+<main><section class="masthead"><div><p class="eyebrow">{h.eyebrow(data.generatedAt.slice(0,10))}</p><h1>{h.h1}</h1><p class="lede">{h.lede(counts)}</p></div><dl class="stat-rail" aria-label={h.statsLabel}>{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}<span class="live"><i></i>{t.updated} <time datetime={releases[0].date}>{releases[0].date}</time></span></dl></section>
 
 <section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede(deployment.rows.length)}</p></div>
 <div class="topic-entry-grid">{topicPages.map((topic,index)=>{const card=topicCards[locale][topic.slug];return <a class="topic-entry-card" href={hrefFor(`/topics/${topic.slug}/`,locale)}><span class="topic-number">0{index+1}</span><span class="family">{card.kicker}</span><h3>{card.title}</h3><p>{card.summary}</p><small>{card.detail}</small><strong>{h.readEvidence}</strong></a>;})}</div>

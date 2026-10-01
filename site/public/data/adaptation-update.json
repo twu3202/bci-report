@@ -1,0 +1,390 @@
+{
+  "schema_version": "bci-report-adaptation-update-v1",
+  "release_id": "adaptation-update-20261001",
+  "generated_at": "2026-10-01",
+  "status": "aggregate_preview",
+  "metric_units": "balanced accuracy and macro F1 are proportions in [0,1]; changes are differences of proportions",
+  "scope": "One fixed five-epoch recipe, three update rules, three seeds, on new people for a task the model is adapted to. Not a cross-day, cross-device or cross-dataset result, not a tuned-method ranking, and not a row of the eight-protocol matrix.",
+  "supersedes_roadmap": {
+    "file": "evidence-update.json",
+    "roadmap_id": "peft",
+    "note": "That file still records the roadmap as planned, which was true on 2026-09-22; it is a release record and is not rewritten."
+  },
+  "results": {
+    "eegmat-labram-adaptation": {
+      "id": "eegmat-labram-adaptation",
+      "question": "which update is worth trying when a foundation model meets new people on a known task",
+      "protocol_id": "eegmat-labram-peft-v1",
+      "stage": "method-development participant-held-out pilot",
+      "classes": 2,
+      "chance_level": 0.5,
+      "metric": "balanced_accuracy",
+      "generalization": "new people, same task and recording setup: five participant-disjoint folds",
+      "model": {
+        "name": "LaBraM Base",
+        "checkpoint_sha256": "c79337f581bc7e501999d7a2213ed6e25c3a3a40964f507549dc05c45bb3b574",
+        "pooling": "mean over patch tokens of the official forward_features"
+      },
+      "cohort": {
+        "people": 36,
+        "two_second_windows": 2160,
+        "windows_per_person": 60,
+        "folds": 5,
+        "seeds": [
+          20260922,
+          20260923,
+          20260924
+        ],
+        "fits": 45
+      },
+      "method": {
+        "shared": "within each seed and fold all three arms start from the same head, see the same training batches in the same order, and train for the same five epochs",
+        "recipe": {
+          "optimizer": "AdamW",
+          "learning_rate": 0.0001,
+          "weight_decay": 0.01,
+          "training_epochs": 5,
+          "batch_size": 32,
+          "loss": "unweighted cross entropy"
+        },
+        "lora": {
+          "rank": 4,
+          "alpha": 8,
+          "dropout": 0,
+          "target": "all12 fused QKV weights"
+        },
+        "selection": "none: no hyperparameter search, validation split, early stopping or checkpoint selection; the final epoch is scored",
+        "signal": "the matrix recordings resampled to 200 Hz and divided by 100; no fitted scaler",
+        "aggregation": "Arithmetic mean across all three declared seeds within each person, then equal-person mean. Person bootstrap resamples 36 people after seed averaging; seeds are not independent participants.",
+        "interval_kind": "Descriptive 10,000-draw person bootstrap; this ignores dependence from shared cross-validation models and is not a confirmatory generalization interval.",
+        "device": "one Apple-silicon Mac, PyTorch MPS backend; times are this implementation on this device"
+      },
+      "arms": [
+        {
+          "id": "frozen",
+          "label": "Head only",
+          "updates": "a linear classification head; the whole encoder stays frozen",
+          "trainable_parameters": 402,
+          "trainable_tensor_bytes": 1608,
+          "balanced_accuracy": {
+            "mean": 0.5662037037037035,
+            "bootstrap_95": [
+              0.5422839506172838,
+              0.5896604938271605
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.5689814814814814
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.5643518518518519
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.5652777777777778
+              }
+            ]
+          },
+          "macro_f1": {
+            "mean": 0.5461544742110128,
+            "bootstrap_95": [
+              0.5189089112263814,
+              0.5730485535233452
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.5540045752442072
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.5418930403434362
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.5425658070453949
+              }
+            ]
+          },
+          "training_seconds_15_fits": 51.50041125109419,
+          "evaluation_seconds_15_fits": 2.3944330397062004
+        },
+        {
+          "id": "last-block",
+          "label": "Last block + head",
+          "updates": "the final transformer block and the same head; every earlier part stays frozen",
+          "trainable_parameters": 482882,
+          "trainable_tensor_bytes": 1931528,
+          "balanced_accuracy": {
+            "mean": 0.6570987654320988,
+            "bootstrap_95": [
+              0.6162037037037038,
+              0.6967631172839506
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.6569444444444446
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.6574074074074074
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.6569444444444444
+              }
+            ]
+          },
+          "macro_f1": {
+            "mean": 0.6233768041078372,
+            "bootstrap_95": [
+              0.5735941442581284,
+              0.6708421232649289
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.6213437308824149
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.6268920605422174
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.6218946208988799
+              }
+            ]
+          },
+          "training_seconds_15_fits": 65.3027039594017,
+          "evaluation_seconds_15_fits": 2.611651125829667
+        },
+        {
+          "id": "lora-r4",
+          "label": "LoRA rank 4 + head",
+          "updates": "rank-4 adapters on all twelve fused QKV weights and the same head; the original encoder weights stay frozen",
+          "trainable_parameters": 38802,
+          "trainable_tensor_bytes": 155208,
+          "balanced_accuracy": {
+            "mean": 0.6407407407407407,
+            "bootstrap_95": [
+              0.6016975308641975,
+              0.6779320987654321
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.6439814814814815
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.6509259259259259
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.6273148148148148
+              }
+            ]
+          },
+          "macro_f1": {
+            "mean": 0.6046852307458985,
+            "bootstrap_95": [
+              0.5556721717705044,
+              0.6516062388926249
+            ],
+            "per_seed_means": [
+              {
+                "seed": 20260922,
+                "mean": 0.6077524241789924
+              },
+              {
+                "seed": 20260923,
+                "mean": 0.6201276543317099
+              },
+              {
+                "seed": 20260924,
+                "mean": 0.5861756137269932
+              }
+            ]
+          },
+          "training_seconds_15_fits": 128.20447116577998,
+          "evaluation_seconds_15_fits": 2.4802851667627692
+        }
+      ],
+      "paired_contrasts": {
+        "balanced_accuracy": [
+          {
+            "id": "lora-r4_minus_frozen",
+            "arm": "lora-r4",
+            "minus": "frozen",
+            "mean_change": 0.07453703703703701,
+            "bootstrap_95": [
+              0.047993827160493836,
+              0.10061728395061725
+            ],
+            "helped": 30,
+            "harmed": 6,
+            "tied": 0
+          },
+          {
+            "id": "last-block_minus_frozen",
+            "arm": "last-block",
+            "minus": "frozen",
+            "mean_change": 0.09089506172839507,
+            "bootstrap_95": [
+              0.05987268518518518,
+              0.12237654320987652
+            ],
+            "helped": 30,
+            "harmed": 5,
+            "tied": 1
+          },
+          {
+            "id": "lora-r4_minus_last-block",
+            "arm": "lora-r4",
+            "minus": "last-block",
+            "mean_change": -0.01635802469135803,
+            "bootstrap_95": [
+              -0.04382716049382715,
+              0.009722222222222222
+            ],
+            "helped": 17,
+            "harmed": 19,
+            "tied": 0
+          }
+        ],
+        "macro_f1": [
+          {
+            "id": "lora-r4_minus_frozen",
+            "arm": "lora-r4",
+            "minus": "frozen",
+            "mean_change": 0.058530756534885695,
+            "bootstrap_95": [
+              0.027409097062024098,
+              0.08972756046941167
+            ],
+            "helped": 22,
+            "harmed": 14,
+            "tied": 0
+          },
+          {
+            "id": "last-block_minus_frozen",
+            "arm": "last-block",
+            "minus": "frozen",
+            "mean_change": 0.07722232989682448,
+            "bootstrap_95": [
+              0.04390877945495825,
+              0.11238050795802387
+            ],
+            "helped": 27,
+            "harmed": 9,
+            "tied": 0
+          },
+          {
+            "id": "lora-r4_minus_last-block",
+            "arm": "lora-r4",
+            "minus": "last-block",
+            "mean_change": -0.018691573361938794,
+            "bootstrap_95": [
+              -0.049760842919771106,
+              0.011278904809144613
+            ],
+            "helped": 15,
+            "harmed": 21,
+            "tied": 0
+          }
+        ]
+      },
+      "matrix_reference": {
+        "file": "experiments.json",
+        "track_id": "arithmetic-rest",
+        "model": "LaBraM",
+        "training_mode": "Frozen encoder + ridge head",
+        "same_people_and_folds": true,
+        "paired_with_these_arms": false,
+        "why": "The head-only arm here is a five-epoch gradient-trained linear head on unscaled features. The core matrix's frozen LaBraM readout on the same people and folds is a closed-form ridge head on standardised features. Printing both stops a reader from taking the head-only arm as the best a frozen encoder can do."
+      },
+      "limitations": [
+        "Known development cohort; pretraining overlap uncertified.",
+        "Fixed5epoch shared recipe does not measure best attainable method.",
+        "EEGMAT cross-person adaptation is not genuine cross-day/device/dataset transfer.",
+        "No clinical inference or global task ranking.",
+        "Three seeds characterize this fixed recipe; their average is not an ensemble prediction.",
+        "This is method development, not a domain-transfer result or a tuned-method ranking.",
+        "The head-only arm is a short gradient-trained head on unscaled features, not the strongest frozen readout.",
+        "LoRA here is an effective-weight parametrization, not an optimized low-rank kernel; its training time is this implementation, and fewer trainable weights do not by themselves mean less time or memory.",
+        "Intervals are descriptive and ignore the dependence created by shared cross-validation models."
+      ],
+      "independent_audit": {
+        "seeds_replayed": 3,
+        "fits": 45,
+        "participant_metric_cells": 216,
+        "paired_contrasts": 6
+      },
+      "rights": {
+        "name": "EEGMAT · LaBraM adaptation, three matched update rules",
+        "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds)",
+        "source": "https://physionet.org/content/eegmat/1.0.0/",
+        "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+        "license": "Open Data Commons Attribution License 1.0",
+        "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+        "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+        "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: cohort means, descriptive person-bootstrap intervals, per-seed cohort means, and counts of people helped, harmed or unchanged out of 36. No per-person or per-fold value.",
+        "reviewedAt": "2026-10-01",
+        "reviewBasis": [
+          "https://physionet.org/content/eegmat/1.0.0/",
+          "https://www.mdpi.com/2306-5729/4/1/14",
+          "https://opendatacommons.org/licenses/by/1-0/"
+        ]
+      }
+    }
+  },
+  "status_only": [
+    {
+      "id": "bnci2015-001-crossday",
+      "name": "BNCI2015-001 · same person, the next day",
+      "status": "status_only",
+      "scores_published": false,
+      "reason": "Run and independently replayed on 2026-09-22. The source's 2026-09-20 editorial hold stands: the official catalogue applies CC BY-NC-ND 4.0, and the dataset description gives written informed consent but no ethics-board approval. Status only until that review is complete; the hold is not a finding that aggregate statistics are prohibited.",
+      "design": {
+        "people": 12,
+        "recording_days": 2,
+        "calibration_labels": [
+          0,
+          10,
+          20,
+          40
+        ],
+        "update_rules": [
+          "Head only",
+          "Last block + head",
+          "LoRA rank 4 + head"
+        ],
+        "fits": 120,
+        "split": "train on day A; calibrate on the first labeled trials of day B; test every budget on the same later day-B trials"
+      },
+      "independent_replay": "pass",
+      "rights": {
+        "source": "https://bnci-horizon-2020.eu/database/data-sets",
+        "license": "CC BY-NC-ND 4.0 (as displayed by the official catalogue)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "attribution": "Institute for Knowledge Discovery, Graz University of Technology · BNCI Horizon 2020 data set 001-2015, Autocalibration and recurrent adaptation: Towards a plug and play online ERD-BCI."
+      }
+    }
+  ],
+  "not_published": [
+    "Per-person scores, per-fold scores and per-person helped/harmed identities.",
+    "Memory figures: the per-seed records hold allocator samples and a process-wide high-water mark, which are lower bounds and not per-method peaks.",
+    "Any number from the BNCI2015-001 cross-day experiment, or from the post hoc day-A-only diagnostic that followed it: that source's editorial hold stands.",
+    "The earlier single-seed EEGMAT partial-fine-tuning pilot (2026-09-20): superseded by this matched three-arm, three-seed design and never approved for publication."
+  ],
+  "provenance": {
+    "manifest_sha256": "5e53c5a4ef378a486ef94b6f7479e79c7310188c433933866e445a1a5b108068",
+    "included": [
+      "eegmat-labram-adaptation"
+    ]
+  }
+}

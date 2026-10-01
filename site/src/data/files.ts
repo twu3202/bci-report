@@ -32,6 +32,10 @@ const named: Record<string, Text> = {
     en: "Parkinson's disease vs. controls from resting-state EEG (ds004584) beside an age-and-sex-only comparator, the claim boundary, and status-only sources.",
     zh: '静息态 EEG 上的帕金森病与对照（ds004584），旁边并排放着只用年龄和性别的对照基线，附声明边界与仅列状态的来源。',
   },
+  'adaptation-update.json': {
+    en: 'LaBraM adapted to new people on EEGMAT three ways (head only, last block, rank-4 LoRA) over three seeds: scores, paired changes with people helped or harmed, trainable parameters and training time; the next-day experiment as status only.',
+    zh: 'EEGMAT 上把 LaBraM 适配到新被试的三种方式（只训分类头、最后一个 block、秩为 4 的 LoRA），3 个随机种子：分数、配对变化与提升/变差人数、可训练参数与训练时间；次日实验只列状态。',
+  },
   'context-update.json': {
     en: 'Screen-to-VR P300 transfer, treadmill walking speed beside a movement-nuisance comparator, and the asynchronous SSVEP non-control pilot, with audits.',
     zh: '从屏幕到 VR 的 P300 迁移、跑步机步速（旁边并排放着运动干扰对照），以及异步 SSVEP 非控制试点，附审计。',

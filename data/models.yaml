@@ -3,7 +3,7 @@
 - slug: labram-base
   name: LaBraM
   variant: Base
-  org: Peking University
+  org: Shanghai Jiao Tong University
   year: 2024
   venue: ICLR 2024
   paper_url: https://openreview.net/forum?id=QzTpTRVtrP
@@ -19,7 +19,7 @@
 - slug: labram-large
   name: LaBraM
   variant: Large
-  org: Peking University
+  org: Shanghai Jiao Tong University
   year: 2024
   venue: ICLR 2024
   paper_url: https://openreview.net/forum?id=QzTpTRVtrP
@@ -35,7 +35,7 @@
 - slug: labram-huge
   name: LaBraM
   variant: Huge
-  org: Peking University
+  org: Shanghai Jiao Tong University
   year: 2024
   venue: ICLR 2024
   paper_url: https://openreview.net/forum?id=QzTpTRVtrP
@@ -61,7 +61,7 @@
   params_m: 4.0
   modality: EEG
   architecture: Criss-cross（时间轴/空间轴分离注意力）Transformer + 非对称条件位置编码，掩码重建
-  pretrain_hours: 27000
+  pretrain_hours: 9000  # 论文：TUEG 原始 27,062 h；清洗后保留 1,109,545 个样本，"longer than 9000 hours"
   pretrain_datasets: [TUEG]
   reproducible: full
 - slug: biot
@@ -99,7 +99,7 @@
 - slug: neurolm-b
   name: NeuroLM
   variant: B
-  org: Peking University
+  org: Shanghai Jiao Tong University; Microsoft Research Asia
   year: 2025
   venue: ICLR 2025
   paper_url: https://openreview.net/forum?id=Io9yFt7XH7

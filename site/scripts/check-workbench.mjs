@@ -350,9 +350,18 @@ for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageO
 }
 assert.match(pageOf('topics/fewer-electrodes/'),/not two headsets/,'software subsets are not devices');
 // Alpha Waves figures stay on their own page. 79.5% is also a legitimate interval
-// bound on dry-vs-wet, so only the difference is checked elsewhere.
-for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-use/'))
-  assert.doesNotMatch(pageOf(p),/−1\.6 pp|77\.9%/,p+': Alpha Waves figures belong on the fewer-electrodes page');
+// bound on dry-vs-wet, so only the difference is checked elsewhere. Since
+// 2026-10-01 −1.6 pp is also LoRA minus last block on calibration-budget, so
+// there it may appear only inside the adaptation section.
+for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-use/')){
+  let html=pageOf(p);
+  if(p.includes('calibration-budget')){
+    const a=html.indexOf('id="adaptation"'),b=html.indexOf('id="methods-and-limits"');
+    assert.ok(a>0&&b>a,p+': the adaptation section must render before methods and limits');
+    html=html.slice(0,a)+html.slice(b);
+  }
+  assert.doesNotMatch(html,/−1\.6 pp|77\.9%/,p+': Alpha Waves figures belong on the fewer-electrodes page');
+}
 for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
   assert.match(html,/53\.6%/,label+': in-ear balanced accuracy');
   assert.match(html,/69\.0%/,label+': scalp balanced accuracy');
@@ -370,18 +379,19 @@ for(const p of ['topics/on-the-move/','zh/topics/on-the-move/']){
   assert.doesNotMatch(html,/−?\d+\.\d{3}%/,p+': correlation and R² are dimensionless, never percent');
 }
 assert.match(pageOf('topics/on-the-move/'),/Neither column is accuracy/,'phantom metrics must be distinguished from accuracy');
-// Roadmap: planned is planned.
+// The 2026-09-22 file keeps its roadmap as released: 'planned' was true then.
+// Since 2026-10-01 the page shows measured results in its place (checked in the
+// adaptation block below), and still must not borrow the old pilot's figures.
 assert.equal(ev.roadmap.peft.status,'planned');
 for(const p of ['topics/calibration-budget/','zh/topics/calibration-budget/']){
   const html=pageOf(p);
   // Its exact two-decimal figures. One decimal collides: 65.1% is a CCA value on this page.
   assert.doesNotMatch(html,/56\.34|65\.05/,p+': the unapproved partial-fine-tuning pilot must not appear');
   // Case-insensitive: the first version missed a sentence-initial "In progress".
-  assert.doesNotMatch(html,/\bin progress\b|\bunderway\b|\b(?:is|now) running\b|进行中|正在运行|已开始/i,p+': a planned comparison must not be described as running');
+  assert.doesNotMatch(html,/\bin progress\b|\bunderway\b|\b(?:is|now) running\b|进行中|正在运行|已开始/i,p+': nothing on this page is described as still running');
   assert.ok(html.includes('38,400')&&html.includes('5,819,936'),p+': engineering parameter counts');
   assert.doesNotMatch(html,/0\.87|\b1 s(econd)?\b|约 ?1 秒/,p+': the synthetic smoke-test runtime is not a training cost');
 }
-assert.match(pageOf('topics/calibration-budget/'),/Real EEG LoRA results are not yet available/,'the roadmap states its evidence level');
 
 // --- 2026-09-23 clinical batch ---------------------------------------------
 // A clinical cohort, so the checks are about what must not be claimed and what
@@ -633,6 +643,77 @@ for(const [slug] of topicPages){
   assert.ok(llms.replace(/\*\*/g,'').includes(ans),'llms.txt: the short answer for '+slug);
 }
 for(const p of entityBilingual) assert.ok(llms.includes('https://bci.report/'+p+'index.md'),'llms.txt: '+p);
+// --- 2026-10-01 adaptation batch and site update -----------------------------
+const ad=JSON.parse(readFileSync(new URL('../src/data/adaptation-update.json',import.meta.url),'utf8'));
+assert.deepEqual(Object.keys(ad.results),['eegmat-labram-adaptation'],'only the reviewed adaptation source carries numbers');
+assert.deepEqual(ad.status_only.map(e=>e.id),['bnci2015-001-crossday'],'the next-day experiment stays status only');
+const adr=ad.results['eegmat-labram-adaptation'];
+const pct1=v=>(v*100).toFixed(1)+'%', pp1=v=>(v>=0?'+':'−')+Math.abs(v*100).toFixed(1)+' pp';
+const ivp=(iv,zh)=>`${iv[0]>=0?'+':'−'}${Math.abs(iv[0]*100).toFixed(1)} ${zh?'至':'to'} ${iv[1]>=0?'+':'−'}${Math.abs(iv[1]*100).toFixed(1)} pp`;
+// The handoff's headline figures, so a changed export cannot pass by changing the page with it.
+assert.deepEqual(adr.arms.map(a=>pct1(a.balanced_accuracy.mean)),['56.6%','65.7%','64.1%'],'the audited arm means');
+const matrixLabram=data.tracks.find(t=>t.id==='arithmetic-rest').rows.find(r=>r.name==='LaBraM'&&r.mode==='Frozen encoder + ridge head');
+for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/calibration-budget/']]){
+  const html=pageOf(path);
+  const sec=html.slice(html.indexOf('id="adaptation"'),html.indexOf('id="methods-and-limits"'));
+  for(const a of adr.arms){
+    assert.ok(sec.includes('<div class="reading">'+pct1(a.balanced_accuracy.mean)+'</div>'),label+': '+a.id+' score on its card');
+    assert.ok(sec.includes(pct1(a.balanced_accuracy.bootstrap_95[0])+'–'+pct1(a.balanced_accuracy.bootstrap_95[1])),label+': '+a.id+' interval');
+    assert.ok(sec.includes(a.trainable_parameters.toLocaleString('en-US')),label+': '+a.id+' trainable parameters');
+    assert.ok(sec.includes(a.training_seconds_15_fits.toFixed(1)+' s'),label+': '+a.id+' training time');
+    for(const s of a.balanced_accuracy.per_seed_means) assert.ok(sec.includes(pct1(s.mean)),label+': '+a.id+' seed '+s.seed);
+  }
+  for(const m of ['balanced_accuracy','macro_f1']) for(const c of adr.paired_contrasts[m]){
+    assert.ok(sec.includes(pp1(c.mean_change)),label+': '+m+' '+c.id+' change');
+    assert.ok(sec.includes(ivp(c.bootstrap_95,label==='zh')),label+': '+m+' '+c.id+' interval');
+  }
+  // The matrix readout sits beside the head-only arm, said to be a different head and not paired.
+  assert.ok(sec.includes(matrixLabram.y.toFixed(1)+'%'),label+': the matrix frozen-LaBraM readout is printed for scale');
+  assert.match(sec,label==='en'?/not the best a frozen encoder can do[^.]*not a paired comparison/:/并不是冻结编码器能达到的最好结果[^。]*不是配对比较/,label+': the head-only arm is not the best frozen readout');
+  // LoRA vs. last block: an interval across zero is reported as no demonstrated difference.
+  const lb=adr.paired_contrasts.balanced_accuracy.find(c=>c.id==='lora-r4_minus_last-block');
+  assert.ok(lb.bootstrap_95[0]<0&&lb.bootstrap_95[1]>0);
+  assert.match(sec,label==='en'?/crosses zero, so neither is shown to be better/:/跨过零，所以无法说明哪一个更好/,label+': LoRA vs. last block');
+  assert.doesNotMatch(html,label==='en'?/LoRA (?:is|was) (?:better|best)|outperform/i:/LoRA 更好(?!，)|优于最后/,label+': no winner is declared');
+  // Memory was recorded only as lower bounds; none is published.
+  assert.doesNotMatch(sec,/\d\s?(?:MiB|MB|GiB|GB)\b|RSS/,label+': no memory figure');
+  // The next-day experiment: named, its design stated, no figure.
+  const next=sec.slice(sec.indexOf('id="next-day"'),sec.indexOf('</p>',sec.indexOf('id="next-day"')));
+  assert.ok(next.length>200,label+': the next-day status renders');
+  assert.doesNotMatch(next,/\d+(?:\.\d+)?\s?%|\d\.\d|pp\b/,label+': the next-day experiment carries no figure');
+  assert.match(next,label==='en'?/no figure from it is published/:/不发布它的任何数字/,label+': the next-day status says why');
+  // The eTRCA filter-bank wording, corrected.
+  assert.doesNotMatch(html,/three-filter-bank|三子带/,label+': the corrected eTRCA wording');
+  assert.match(html,/href="\/data\/adaptation-update\.json"/,label+': the reviewed export is linked');
+}
+// The entity pages carry the new rows, re-read from their file by the entity checks above.
+for(const p of ['datasets/eegmat/','zh/datasets/eegmat/','methods/labram/','zh/methods/labram/'])
+  assert.ok(pageOf(p).includes('adaptation-update.json|'),p+': adaptation figures must reach the entity page');
+// Releases: the batch, its manifest hash, and the corrections register.
+for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+  const html=pageOf(path);
+  assert.ok(html.includes(`id="${ad.release_id}"`)&&html.includes(ad.provenance.manifest_sha256),label+': the adaptation release and its manifest');
+  const corr=html.slice(html.indexOf('id="corrections"'),html.indexOf('id="holds"'));
+  assert.equal((corr.match(/<tr>/g)||[]).length-1,2,label+': two corrections listed');
+  assert.match(corr,/heliyon|Heliyon/,label+': the ds003810 citation correction');
+}
+// ds003810: the citation its OpenNeuro record asks for, on both dataset pages.
+for(const p of ['datasets/ds003810/','zh/datasets/ds003810/'])
+  assert.ok(pageOf(p).includes('https://doi.org/10.1016/j.heliyon.2020.e03425'),p+': the requested citation');
+// The API page's Python example must run: pandas' URL reader is refused by the CDN.
+for(const p of ['api/','zh/api/']){
+  const html=pageOf(p);
+  assert.doesNotMatch(html,/pd\.read_csv\(&quot;https?:|pd\.read_csv\("https?:/,p+': pandas must not open a URL itself');
+  assert.match(html,/io\.StringIO/,p+': the example fetches with requests');
+}
+// The "Research preview" badge is gone from every page and agent file (2026-10-01).
+// The core release keeps its id, research-preview-20260920, which is a label for bytes.
+{
+  const walk=d=>readdirSync(new URL(d,DIST),{withFileTypes:true}).flatMap(e=>e.isDirectory()?(e.name==='data'||e.name==='_astro'?[]:walk(d+e.name+'/')):[d+e.name]);
+  for(const f of walk('').filter(f=>/\.(html|md|txt)$/.test(f)))
+    assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Research preview|research preview|研究预览/,f+': the stage label must not return');
+}
+
 // CITATION.cff names the newest release on the releases page.
 const newest=pageOf('releases/').match(/<article class="release-entry" id="([^"]+)"/)[1];
 assert.match(readFileSync(new URL('../../CITATION.cff',import.meta.url),'utf8'),new RegExp('^version: "'+newest+'"$','m'),'CITATION.cff must cite the newest release, '+newest);
@@ -649,6 +730,7 @@ console.log('PASS: dataset, method and API pages — every figure re-read from i
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
+console.log('PASS: 2026-10-01 adaptation — arm, contrast, seed and cost figures equal the audited export; matrix readout beside the head-only arm; no winner between LoRA and last block; next-day status figure-free; corrections listed; API example runs; no stage label.');
 console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures equal the audited export; no same-display claim; comparator beside gait; coverage beside conditional accuracy; no held source named.');
 console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');

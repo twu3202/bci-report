@@ -67,11 +67,6 @@ header{
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:1.22rem;font-weight:600;white-space:nowrap}
 /* The mark is public/logo.svg. Empty alt: the name beside it is the link text. */
 .mark{display:block;width:30px;height:30px;flex:none}
-.brand small{
-  font-family:var(--sans);font-size:.6875rem;font-weight:500;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--accent);border:1px solid #e4b894;
-  border-radius:2px;padding:1px 6px;
-}
 nav{display:flex;gap:26px;font-size:.875rem}
 nav a[aria-current]{color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
 

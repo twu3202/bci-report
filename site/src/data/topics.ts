@@ -130,8 +130,8 @@ export const topicPages = [
     slug: 'calibration-budget',
     kicker: 'Adaptation budget',
     title: 'How much calibration?',
-    summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
-    detail: 'Common future blocks · target-only fitting',
+    summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time. Plus: head only, last block or LoRA when a foundation model meets new people.',
+    detail: 'Common future blocks · target-only fitting · LaBraM adaptation, 36 people',
   },
   {
     slug: 'when-not-to-act',

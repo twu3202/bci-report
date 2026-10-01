@@ -21,6 +21,7 @@ import deployment from './deployment-topics.json';
 import evidence from './evidence-update.json';
 import clinical from './clinical-update.json';
 import context from './context-update.json';
+import adaptation from './adaptation-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 
@@ -84,7 +85,7 @@ export interface DatasetEntity {
 }
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
-      CLI = 'clinical-update.json', CTX = 'context-update.json';
+      CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json';
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
 const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig] | undefined =>
   iv ? [fig(iv[0], fmt, src), fig(iv[1], fmt, src)] : undefined;
@@ -328,19 +329,41 @@ function ysuGroup(): ResultGroup {
   };
 }
 
+function adaptationGroup(): ResultGroup {
+  const r = adaptation.results['eegmat-labram-adaptation'];
+  const path = '/topics/calibration-budget/#adaptation';
+  const arm: Record<string, L> = {
+    frozen: { en: 'Head only · encoder frozen', zh: '只训分类头 · 编码器冻结' },
+    'last-block': { en: 'Last block + head', zh: '最后一个 block + 分类头' },
+    'lora-r4': { en: 'LoRA rank 4 + head', zh: '秩为 4 的 LoRA + 分类头' },
+  };
+  const people = r.cohort.people;
+  return {
+    id: 'eegmat-labram-adaptation', title: { en: 'Adaptation · LaBraM on new people, three update rules', zh: '适配 · 新被试上的 LaBraM，三种更新方式' },
+    path: '/topics/calibration-budget/', chance: fig(r.chance_level, 'pct1', ADA),
+    rows: [
+      ...r.arms.map(a => ({ path, method: 'LaBraM', methodSlug: 'labram' as MethodSlug, condition: arm[a.id], metric: BA,
+        value: fig(a.balanced_accuracy.mean, 'pct1', ADA), interval: pair(a.balanced_accuracy.bootstrap_95, 'pct1', ADA), people })),
+      ...r.paired_contrasts.balanced_accuracy.map(c => ({ path, method: 'LaBraM', methodSlug: 'labram' as MethodSlug,
+        condition: { en: `${arm[c.arm].en} minus ${arm[c.minus].en.split(' · ')[0].toLowerCase()}`, zh: `${arm[c.arm].zh}减${arm[c.minus].zh.split(' · ')[0]}` },
+        metric: DIFF, value: fig(c.mean_change, 'pp1', ADA), interval: pair(c.bootstrap_95, 'pp1', ADA), people })),
+    ],
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
 const citation = (id: string) => deployment.dataset_citations.find(c => c.id === id)!;
 const rights = (r: any) => r.rights as { name: string; task: string; source: string; license: string; licenseUrl?: string; attribution: string };
 
-function fromMvp(name: string, task: L): DatasetEntity {
+function fromMvp(name: string, task: L, later: ResultGroup[] = []): DatasetEntity {
   const d = mvpDs(name);
   const slug = MVP_SLUG[name];
   return {
     slug, name: d.name, task, license: d.license, licenseUrl: d.licenseUrl ?? undefined,
     attribution: d.attribution, sources: [d.source].filter(Boolean) as string[],
-    groups: [...mvpGroups(name), ...depGroups(slug)],
+    groups: [...mvpGroups(name), ...depGroups(slug), ...later],
   };
 }
 
@@ -355,7 +378,7 @@ const mob = [citation('nemar-nm000125-v1.0.2'), citation('nemar-nm000201-v1.0.2'
 
 export const datasets: DatasetEntity[] = [
   fromMvp('ds003810', { en: 'Motor imagery / rest', zh: '运动想象 / 静息' }),
-  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }),
+  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup()]),
   fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }),
   fromMvp('ds006593', { en: 'P300 target ERP', zh: 'P300 目标 ERP' }),
   fromMvp('TMNRED / ds005383', { en: 'Semantic target ERP', zh: '语义目标 ERP' }),

@@ -12,8 +12,8 @@ abstract: >-
   produced it — cohort, electrode count, evaluation split, chance level,
   interval and known limitations — across motor imagery, SSVEP, P300 and
   semantic ERP, cognitive load, sleep staging, idle false activation, sensor
-  and display transfer, movement, calibration budget, pretraining controls and
-  a clinical case/control comparison. No raw EEG, no per-participant scores,
+  and display transfer, movement, calibration budget, foundation-model adaptation (head only, last
+  block, LoRA), pretraining controls and a clinical case/control comparison. No raw EEG, no per-participant scores,
   no overall ranking.
 authors:
   - name: "BCI Report"
@@ -22,8 +22,8 @@ url: "https://bci.report"
 repository-code: "https://github.com/twu3202/bci-report"
 repository-artifact: "https://huggingface.co/datasets/Twu31/bci-report"
 license: CC-BY-4.0
-version: "context-update-20260927"
-date-released: "2026-09-27"
+version: "adaptation-update-20261001"
+date-released: "2026-10-01"
 keywords:
   - EEG
   - electroencephalography
@@ -35,3 +35,4 @@ keywords:
   - motor imagery
   - sleep staging
   - EEG foundation models
+  - LoRA

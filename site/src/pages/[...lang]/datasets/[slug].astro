@@ -6,6 +6,7 @@ import { datasets, tr, type DatasetEntity } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
 import { hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
 import { site } from '../../../data/site';
+import { requestedCitations } from '../../../data/releases';
 
 export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
   params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
@@ -20,6 +21,8 @@ const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0,
 const pages = [...new Set(d.groups.map(g => g.path))];
 const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)'); };
 const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
+// A citation the source asks for that the released credit line does not carry (see releases.ts).
+const requested = requestedCitations[d.slug];
 const abs = (p: string) => new URL(p, site.origin).href;
 const structured = {
   '@context': 'https://schema.org', '@type': 'Dataset',
@@ -27,7 +30,7 @@ const structured = {
   description: c.datasetDescription(d.name, d.task.en, listed(methodNames)),
   url: abs(path), license: 'https://creativecommons.org/licenses/by/4.0/', isAccessibleForFree: true,
   creator: { '@type': 'Person', name: site.name, url: site.origin },
-  isBasedOn: d.sources, citation: d.attribution, measurementTechnique: 'Electroencephalography',
+  isBasedOn: d.sources, citation: requested ? [d.attribution, requested.text] : d.attribution, measurementTechnique: 'Electroencephalography',
   keywords: ['EEG', 'brain-computer interface', d.name, ...(profile?.aliases ?? [])],
   variableMeasured: [...new Set(d.groups.flatMap(g => g.rows.map(r => r.metric.en)))],
   distribution: files.map(f => ({ '@type': 'DataDownload', encodingFormat: f.endsWith('.csv') ? 'text/csv' : 'application/json', contentUrl: abs(`/data/${f}`) })),
@@ -60,6 +63,7 @@ const structured = {
     <div class="citation-list"><article>
       <h3 lang="en">{d.name}</h3>
       <p><strong>{c.attribution}</strong> <span lang="en">{d.attribution}</span></p>
+      {requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{requested.text}</span> <a href={requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
       <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang="en">{d.license} ↗</a> : <span lang="en">{d.license}</span>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
       <p>{c.notRedistributed}</p>
     </article></div>

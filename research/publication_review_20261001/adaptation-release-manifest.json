@@ -1,0 +1,125 @@
+{
+  "release_id": "adaptation-update-20261001",
+  "reviewed_at": "2026-10-01",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the LaBraM adaptation batch (the execution session's peft_v1, completed 2026-09-22 and first reviewed for publication on 2026-10-01). Its own manifest: it amends no earlier review. The 2026-09-22 evidence export keeps its roadmap status 'planned', which was true when it was published; this batch supersedes the roadmap on the page, not that file. One source is published as aggregates. The second experiment ran on a source whose 2026-09-20 editorial hold still stands, so it is published as status only. No new dataset is introduced: EEGMAT was reviewed on 2026-09-20 and its record is reused unchanged.",
+  "handoff": {
+    "path": "research/peft_v1_20260922/EEG PEFT Results and Next Experiments.md",
+    "sha256": "1d6dc7aa058f352f751ec71462dfba13f50552a8822737353d6c730298e900bf"
+  },
+  "stageStatus": {
+    "path": "research/peft_v1_20260922/stage-status.json",
+    "sha256": "12ae45f298a5ee87324a21973373e0733d034b5d2d0ca03cb0bde6e463a0a64c"
+  },
+  "notPublished": [
+    "Per-person scores, per-fold scores and per-person helped/harmed identities.",
+    "Memory figures: the per-seed records hold allocator samples and a process-wide high-water mark, which are lower bounds and not per-method peaks.",
+    "Any number from the BNCI2015-001 cross-day experiment, or from the post hoc day-A-only diagnostic that followed it: that source's editorial hold stands.",
+    "The earlier single-seed EEGMAT partial-fine-tuning pilot (2026-09-20): superseded by this matched three-arm, three-seed design and never approved for publication."
+  ],
+  "sources": [
+    {
+      "id": "eegmat-labram-adaptation",
+      "decision": "aggregate_preview",
+      "name": "EEGMAT · LaBraM adaptation, three matched update rules",
+      "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds)",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: cohort means, descriptive person-bootstrap intervals, per-seed cohort means, and counts of people helped, harmed or unchanged out of 36. No per-person or per-fold value.",
+      "reviewedAt": "2026-10-01",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "verification": [
+        "The pinned dataset-protocol.json input of the adaptation run is byte-identical (SHA-256) to the protocol the core matrix's arithmetic & rest track records, so the people, windows and five folds are the matrix's.",
+        "Model: LaBraM Base checkpoint, MIT-licensed repository, reviewed for aggregate evaluation on 2026-09-20 (research/publication_review_20260920/model-rights.json). The checkpoint, adapters and heads are not redistributed.",
+        "All three seeds passed their own independent replay before the three-seed aggregate was computed; the aggregate's independent replay passed against the exact summary bytes pinned below."
+      ],
+      "protocol": {
+        "path": "research/peft_v1_20260922/eegmat-protocol.json",
+        "sha256": "f583880f3d79d1a928c7de4372fc1cd0fe0925c3cbbff6e21f72c71e0f0444f7"
+      },
+      "readinessReview": {
+        "path": "research/peft_v1_20260922/readiness-review.json",
+        "sha256": "9148fe0a219f263b37bdfc9dce13f0bb9b78b30bf501f6332bc6bdbe2df2ecc0"
+      },
+      "summary": {
+        "path": "research/peft_v1_20260922/eegmat-three-seed-summary.json",
+        "sha256": "7c2318a032e622b35af46d9157a96f72e1199b38cca0a9a23a453684e0ec5ea6"
+      },
+      "numericalAudit": {
+        "path": "research/peft_v1_20260922/eegmat-three-seed-independent-audit.json",
+        "sha256": "bf91d1ce1fc6168ebe3fcf6fca77d7c37109f29b2509dc46b7bbca70ce251084"
+      },
+      "seeds": [
+        {
+          "seed": 20260922,
+          "summary": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260922-summary.json",
+            "sha256": "4470d717cc0662088d7e0ae97e0e78a40536daabbe00e5c416568ea69361c034"
+          },
+          "numericalAudit": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260922-independent-audit.json",
+            "sha256": "45bfbefb7cd304ffaf3804f683597199b27f50de056a63c20b4f1d290250c231"
+          }
+        },
+        {
+          "seed": 20260923,
+          "summary": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260923-summary.json",
+            "sha256": "dc7ad568fba2bce796abde56b203b195d5bb015ef87ba4591aeec86174738c9a"
+          },
+          "numericalAudit": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260923-independent-audit.json",
+            "sha256": "e9e98a6d926be094ddf3acb8eed8107f710e671feb3e5f4807b75048c0b7bc52"
+          }
+        },
+        {
+          "seed": 20260924,
+          "summary": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260924-summary.json",
+            "sha256": "975272f5a7818893d8dcb71e03cf9f02295b97a8d387fcf6a808b5e5ad317c0d"
+          },
+          "numericalAudit": {
+            "path": "research/peft_v1_20260922/eegmat-seed-20260924-independent-audit.json",
+            "sha256": "e49010084ba2ded8ea06e38273b53183ac5dfd2e1f27aa8618564d9aaf1d0dec"
+          }
+        }
+      ],
+      "modelRights": {
+        "path": "research/publication_review_20260920/model-rights.json",
+        "sha256": "3a79dddb9c27b5ab5bf0600be0000d06d7c16a5bf17df883718a1b576f98948b"
+      },
+      "matrixReference": {
+        "file": "experiments.json",
+        "trackId": "arithmetic-rest",
+        "model": "LaBraM",
+        "mode": "Frozen encoder + ridge head",
+        "why": "The head-only arm here is a five-epoch gradient-trained linear head on unscaled features. The core matrix's frozen LaBraM readout on the same people and folds is a closed-form ridge head on standardised features. Printing both stops a reader from taking the head-only arm as the best a frozen encoder can do."
+      }
+    },
+    {
+      "id": "bnci2015-001-crossday",
+      "decision": "status_only",
+      "name": "BNCI2015-001 · same person, the next day",
+      "reason": "Run and independently replayed on 2026-09-22. The source's 2026-09-20 editorial hold stands: the official catalogue applies CC BY-NC-ND 4.0, and the dataset description gives written informed consent but no ethics-board approval. Status only until that review is complete; the hold is not a finding that aggregate statistics are prohibited.",
+      "source": "https://bnci-horizon-2020.eu/database/data-sets",
+      "license": "CC BY-NC-ND 4.0 (as displayed by the official catalogue)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "attribution": "Institute for Knowledge Discovery, Graz University of Technology · BNCI Horizon 2020 data set 001-2015, Autocalibration and recurrent adaptation: Towards a plug and play online ERD-BCI.",
+      "sourceEvidence": {
+        "path": "research/cross_session_v3_20260920/dataset-source-evidence.json",
+        "sha256": "a0e74da731ed730c6e782b002e007ef1f31ab989c5d12b8a4bdbdb4a63dfe9ef"
+      },
+      "numericalAudit": {
+        "path": "research/peft_v1_20260922/bnci2015-crossday-independent-audit.json",
+        "sha256": "c5d5156e17c4b40bd931b0e7552316fea11ac8e983226d4864cd178c286ee2ce"
+      }
+    }
+  ]
+}

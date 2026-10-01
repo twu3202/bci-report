@@ -15,6 +15,7 @@ from export_deployment_topics import serialized_export, EXPORT_AUDIT, OUTPUTS
 import export_evidence_update as evidence
 import export_clinical_update as clinical
 import export_context_update as context
+import export_adaptation_update as adaptation
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -77,6 +78,17 @@ def check(root):
     assert (root/'data/context-update.json').read_bytes() == context_payload, 'Unreviewed context download'
     assert all(p.read_bytes() == context_payload for p in context.OUTPUTS), 'Context source/download drift'
     expected.add('context-update.json')
+
+    # And the 2026-10-01 adaptation export.
+    adaptation_rederived = adaptation.inputs_available()
+    adaptation_payload = (adaptation.serialized_export() if adaptation_rederived
+                          else (root/'data/adaptation-update.json').read_bytes())
+    adaptation_audit = json.loads(adaptation.EXPORT_AUDIT.read_text())
+    assert adaptation_audit['status'] == 'pass', 'Adaptation export review did not pass'
+    assert hashlib.sha256(adaptation_payload).hexdigest() == adaptation_audit['export_sha256'], 'Stale adaptation export audit'
+    assert (root/'data/adaptation-update.json').read_bytes() == adaptation_payload, 'Unreviewed adaptation download'
+    assert all(p.read_bytes() == adaptation_payload for p in adaptation.OUTPUTS), 'Adaptation source/download drift'
+    expected.add('adaptation-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -113,6 +125,8 @@ def check(root):
                    else 'clinical-update payload matched to its audit hash (private inputs not present)'),
                   ('context-update payload reproduced from its own manifest and audit' if context_rederived
                    else 'context-update payload matched to its audit hash (private inputs not present)'),
+                  ('adaptation-update payload reproduced from its own manifest and audit' if adaptation_rederived
+                   else 'adaptation-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

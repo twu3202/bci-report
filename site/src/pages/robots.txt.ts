@@ -5,7 +5,7 @@ import { site } from '../data/site';
 export const GET: APIRoute = ({ site: origin }) => {
   const base = (origin ?? new URL(site.origin)).href.replace(/\/$/, '');
   return new Response(
-    `# ${site.name} — a personal, noncommercial research preview.\n` +
+    `# ${site.name} — personal, noncommercial research.\n` +
     `# Crawling the published aggregate results and methods is fine.\n` +
     `User-agent: *\nAllow: /\nDisallow: /404.html\n\n` +
     `Sitemap: ${base}/sitemap.xml\n`,

@@ -7,10 +7,11 @@ import deployment from '../../data/deployment-topics.json';
 import evidence from '../../data/evidence-update.json';
 import clinical from '../../data/clinical-update.json';
 import context from '../../data/context-update.json';
+import adaptation from '../../data/adaptation-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
 import { site } from '../../data/site';
-import { holds, releases } from '../../data/releases';
+import { corrections, holds, releases } from '../../data/releases';
 import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale,
          topicCards, topicChrome } from '../../data/i18n';
 import '../../styles/global.css';
@@ -38,9 +39,10 @@ const manifestOf: Record<string, string | undefined> = {
   evidence: evidence.provenance.manifest_sha256,
   clinical: clinical.provenance.manifest_sha256,
   context: context.provenance.manifest_sha256,
+  adaptation: adaptation.provenance.manifest_sha256,
   deployment: undefined, mvp: undefined,
 };
-const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id };
+const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id };
 for (const r of releases)
   if (idOf[r.payload] !== r.id) throw new Error(`releases.ts: ${r.id} does not match its payload (${idOf[r.payload]})`);
 
@@ -73,6 +75,10 @@ const copy = {
     holdsRegion: 'Holds register, scrolls horizontally',
     rights: 'Source terms, consent and privacy review for each batch are on the data-use page.',
     rightsLink: 'Data use & privacy',
+    correctionsH2: 'Corrections',
+    correctionsLede: 'Wording corrected after release. A released file is a record of fixed bytes — its hash is above and in the Hugging Face mirror — so it is corrected here and on the page that shows it, not edited in place.',
+    colDate: 'Date', colFiles: 'Files', colCorrection: 'Correction', seePage: 'See the page →',
+    correctionsRegion: 'Corrections, scrolls horizontally',
   },
   zh: {
     title: '发布记录',
@@ -91,6 +97,10 @@ const copy = {
     holdsRegion: '暂缓登记册，可横向滚动',
     rights: '每一批的来源条款、同意书与隐私审查写在数据使用页上。',
     rightsLink: '数据使用与隐私（英文）',
+    correctionsH2: '更正',
+    correctionsLede: '发布后更正的措辞。已发布的文件是固定字节的记录——它的哈希写在上方，也在 Hugging Face 镜像里——所以在这里和展示它的页面上更正，而不直接改文件。',
+    colDate: '日期', colFiles: '文件', colCorrection: '更正内容', seePage: '查看页面 →',
+    correctionsRegion: '更正，可横向滚动',
   },
 }[locale];
 const pageTitleFull = `${copy.title} · ${site.name}`;
@@ -150,6 +160,16 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
           </div>
         </article>
       ))}
+    </section>
+
+    <section class="topic-section" id="corrections" aria-labelledby="corrections-heading">
+      <div class="topic-heading"><div><h2 id="corrections-heading">{copy.correctionsH2}</h2></div><p>{copy.correctionsLede}</p></div>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.correctionsRegion}>
+        <table>
+          <thead><tr><th scope="col">{copy.colDate}</th><th scope="col">{copy.colFiles}</th><th scope="col">{copy.colCorrection}</th></tr></thead>
+          <tbody>{corrections.map(c => <tr><th scope="row"><time datetime={c.date}>{date(c.date)}</time></th><td>{c.files.map((f, i) => <>{i > 0 && ' · '}<code>{f}</code></>)}</td><td>{c.what[locale]}{c.href && <> <a href={hrefFor(c.href, locale)}>{copy.seePage}</a></>}</td></tr>)}</tbody>
+        </table>
+      </div>
     </section>
 
     <section class="topic-section" id="holds" aria-labelledby="holds-heading">

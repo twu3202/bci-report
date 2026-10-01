@@ -20,6 +20,7 @@ import deployment from './deployment-topics.json';
 import evidence from './evidence-update.json';
 import clinical from './clinical-update.json';
 import context from './context-update.json';
+import adaptation from './adaptation-update.json';
 import { site } from './site';
 import { plainAnswer } from './answer';
 
@@ -83,8 +84,9 @@ export function homeDataset() {
  * and what they measure. A topic can use both (on-the-move), only the evidence
  * update (fewer-electrodes), or only the clinical update (clinical-groups);
  * `distribution` must name whichever actually holds its numbers.
- * calibration-budget is absent on purpose: its new section is a roadmap with no
- * measured result, and a Dataset entity must not imply one.
+ * calibration-budget gained one on 2026-10-01, when its adaptation roadmap was
+ * replaced by measured results; until then it was absent on purpose, because a
+ * Dataset entity must not imply a result a roadmap does not have.
  */
 type LaterExport = { file: string; release: string; generated: string; metrics: string[] };
 const contextExport = (metrics: string[]): LaterExport =>
@@ -104,6 +106,8 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                         generated: data.generatedAt,
                         metrics: ['command_detection_within_3s', 'idle_false_activation'] },
                       contextExport(['control_window_acceptance', 'non_control_false_acceptance'])],
+  'calibration-budget': { file: '/data/adaptation-update.json', release: adaptation.release_id,
+                          generated: adaptation.generated_at, metrics: ['balanced_accuracy', 'macro_f1'] },
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
                        generated: clinical.generated_at,
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },

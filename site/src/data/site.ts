@@ -9,8 +9,12 @@
 export const site = {
   name: 'BCI Report',
   origin: 'https://bci.report',
-  /** Badge shown next to the wordmark. Keep in step with the release id. */
-  stage: 'Research preview',
+  /**
+   * Id of the core-matrix release. It keeps its 2026-09-20 name: an id is a
+   * label for fixed bytes, not a claim about the site's stage. The "Research
+   * preview" badge came off on 2026-10-01; the caveats it stood for (single
+   * seeds, four-person cohorts) stay on the pages that carry them.
+   */
   releaseId: 'research-preview-20260920',
   description:
     'Public EEG decoding results reported with their protocol: motor imagery, SSVEP with 4 and 8 electrodes, ' +

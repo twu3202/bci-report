@@ -1,0 +1,23 @@
+{
+  "status": "pass",
+  "release_id": "adaptation-update-20261001",
+  "export_sha256": "6253e1d7a7915e12afdfe926688a0bbeb52f2fef28c21d8423c406e353902bc2",
+  "manifest_sha256": "5e53c5a4ef378a486ef94b6f7479e79c7310188c433933866e445a1a5b108068",
+  "included": [
+    "eegmat-labram-adaptation"
+  ],
+  "status_only": [
+    "bnci2015-001-crossday"
+  ],
+  "checks": [
+    "pinned protocol, readiness review, summary, audit and per-seed bytes",
+    "protocol reviewed before any score existed",
+    "every arm mean equals the independent three-seed replay",
+    "every per-seed mean equals its own audited seed summary",
+    "helped + harmed + tied covers all 36 people in every contrast",
+    "matrix reference shares the dataset protocol byte for byte, and carries no number",
+    "per-person, per-fold and memory fields refused",
+    "status-only source carries no score",
+    "no private paths or participant identifiers"
+  ]
+}

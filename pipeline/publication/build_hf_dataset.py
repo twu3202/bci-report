@@ -24,6 +24,7 @@ from export_deployment_topics import EXPORT_AUDIT
 import export_evidence_update as evidence_export
 import export_clinical_update as clinical_export
 import export_context_update as context_export
+import export_adaptation_update as adaptation_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -80,6 +81,17 @@ def context_payload():
     audit = json.loads(context_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Context export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Context payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def adaptation_payload():
+    """The 2026-10-01 adaptation export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'adaptation-update.json').read_bytes()
+    audit = json.loads(adaptation_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Adaptation export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Adaptation payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -195,8 +207,8 @@ configs:
 
 {n_rows + n_topic_rows} reviewed measurements from public EEG datasets, each
 carrying the cohort, electrode count, evaluation mode, chance level and training
-budget that produced it. Release `{snapshot['releaseId']}`, reviewed
-{snapshot['generatedAt'][:10]}.
+budget that produced it. Core release `{snapshot['releaseId']}`, reviewed
+{snapshot['generatedAt'][:10]}; later batches below, each reviewed on its own.
 
 ```python
 from datasets import load_dataset
@@ -232,9 +244,9 @@ identical epochs), four posterior electrodes against all sixteen for eyes open
 or closed (Alpha Waves, 19 of the source's 20 recordings), a physical-phantom
 artifact test reporting correlation and
 predictive R² (dimensionless; R² is negative where the decoder fails and is
-published as measured), and the status of planned adaptation experiments, which
-have **no results yet**. Heterogeneous by design, so it ships as JSON rather
-than as a table.
+published as measured), and the adaptation roadmap as it stood that day
+(`planned`; the measured results are in `adaptation-update.json`, below).
+Heterogeneous by design, so it ships as JSON rather than as a table.
 
 `clinical-update.json` — the 23 September 2026 batch, reviewed under its own
 manifest: a 149-person case/control comparison on a Parkinson's disease data set
@@ -252,6 +264,17 @@ a four-person pilot of SSVEP windows accepted when no command was intended —
 window-level counts, always with coverage beside accuracy. Fixed CPU baselines;
 **no foundation-model or fine-tuning result**. One one-person pilot is published
 as status only.
+
+`adaptation-update.json` — reviewed 1 October 2026: LaBraM adapted to new people
+on EEGMAT mental arithmetic (36 people, five participant-disjoint folds) three
+ways — training only a classification head, the last block as well, or rank-4
+LoRA — with the same checkpoint, folds, starting heads, batch order and
+five-epoch recipe, over three seeds. Cohort means, paired changes with people
+helped and harmed, per-seed means, trainable parameters and training time. The
+head-only arm is a short gradient-trained head, so the file points to the core
+matrix's frozen LaBraM ridge readout on the same folds for scale. **One fixed
+recipe, not a tuned ranking**; no memory figures. A next-day experiment on a
+source under editorial hold is listed as status only, with no figure.
 
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
@@ -321,6 +344,21 @@ original authors; this repository adds only the measurements.
 
 {attribution_table(snapshot)}
 
+### Corrections to released wording
+
+Released files are fixed bytes, so wording errors are corrected here and on the
+site rather than in place (full list: <https://bci.report/releases/#corrections>).
+
+- `deployment-topics.json` calls the original ensemble-TRCA method a
+  three-filter-bank experiment. The original paper and the reference code's
+  tutorials use five sub-bands; three is only the default of the code's
+  functions. No score changes.
+- For ds003810, the OpenNeuro record asks users to cite Peterson, Galván,
+  Hernández and Spies, *A feasibility study of a complete low-cost
+  consumer-grade brain-computer interface system*, Heliyon 6(3):e03425 (2020),
+  doi:10.1016/j.heliyon.2020.e03425 — in addition to the Data in Brief
+  description linked in the rows.
+
 ## License
 
 The `cc-by-4.0` tag covers **the aggregate result tables and protocol
@@ -387,6 +425,8 @@ def build(output):
     (output/'clinical-update.json').write_bytes(raw_clinical)
     raw_context, _ = context_payload()
     (output/'context-update.json').write_bytes(raw_context)
+    raw_adaptation, _ = adaptation_payload()
+    (output/'adaptation-update.json').write_bytes(raw_adaptation)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

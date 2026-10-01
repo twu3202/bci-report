@@ -11,12 +11,13 @@
 
 /** Pages changed in the current site update, for sitemap lastmod. */
 export const pagesUpdated = {
-  date: '2026-09-27',
-  // Every topic page gained its question-form title and short answer on this
-  // date; the dataset, method and API pages were first published on it.
-  paths: ['/', '/topics/when-not-to-act/', '/releases/', '/topics/screen-to-vr/', '/topics/on-the-move/', '/data-use/',
-          '/topics/dry-vs-wet/', '/topics/fewer-electrodes/', '/topics/calibration-budget/',
-          '/topics/does-pretraining-help/', '/topics/clinical-groups/', '/api/'],
+  date: '2026-10-01',
+  // The adaptation results replaced the roadmap on calibration-budget and reached
+  // the EEGMAT and LaBraM pages; ds003810 gained its requested citation; the API
+  // page's Python example changed. Every page also lost the "Research preview"
+  // badge that day, which is chrome, not content, and is not counted here.
+  paths: ['/', '/topics/calibration-budget/', '/releases/', '/data-use/', '/api/',
+          '/datasets/eegmat/', '/methods/labram/', '/datasets/ds003810/'],
 } as const;
 
 type Text = { en: string; zh: string };
@@ -25,7 +26,7 @@ export interface Release {
   id: string;
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
-  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context';
+  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation';
   files: string[];
   pages: string[];
   summary: Text;
@@ -36,6 +37,21 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
 export const releases: Release[] = [
+  {
+    id: 'adaptation-update-20261001', date: '2026-10-01', payload: 'adaptation',
+    files: ['adaptation-update.json'],
+    pages: ['/topics/calibration-budget/'],
+    summary: {
+      en: 'LaBraM adapted to new people on mental arithmetic three ways — head only, last block, rank-4 LoRA — with the same checkpoint, folds, starting heads, batch order and five-epoch recipe, over three seeds. The next-day experiment is listed as status only.',
+      zh: '在心算任务上把 LaBraM 适配到新被试，三种方式——只训分类头、最后一个 block、秩为 4 的 LoRA——使用相同的检查点、数据划分、初始分类头、批次顺序和 5 个 epoch 的训练配方，跑了 3 个随机种子。次日实验只列状态。',
+    },
+    notes: [
+      { en: "Printed beside the core matrix's frozen LaBraM readout on the same people and folds, because this batch's head-only arm is a short gradient-trained head and not the strongest frozen readout.",
+        zh: '与核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM 分类头结果并排给出，因为本批「只训分类头」那一组是短训练的梯度分类头，并不是冻结编码器能达到的最好读出。' },
+      { en: 'Not published: memory figures (allocator samples are lower bounds, not per-method peaks) and any figure from the next-day experiment.',
+        zh: '不发布：内存数据（分配器采样只是下界，不是各方法的峰值），以及次日实验的任何数字。' },
+    ],
+  },
   {
     id: 'context-update-20260927', date: '2026-09-27', payload: 'context',
     files: ['context-update.json'],
@@ -154,4 +170,50 @@ export const holds: Hold[] = [
                zh: '当天读到原始报告中的同意书声明后发布。' },
     href: '/topics/fewer-electrodes/#posterior-subset',
   },
+  {
+    item: { en: 'BNCI2015-001 · next-day adaptation', zh: 'BNCI2015-001 · 次日适配' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: '2026-09-20', closed: null,
+    outcome: { en: 'Run and independently replayed on 22 September. The catalogue licence is CC BY-NC-ND and the description names no ethics approval, so no figure is published until that review is done.',
+               zh: '9 月 22 日已运行并通过独立复核。目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准，所以审查完成之前不发布任何数字。' },
+    href: '/topics/calibration-budget/#next-day',
+  },
 ];
+
+export interface Correction {
+  date: string;
+  /** The served files whose text the correction amends. Their bytes are not rewritten. */
+  files: string[];
+  what: Text;
+  href?: string;
+}
+
+/**
+ * Corrections to wording in files already released. A release is a record of
+ * fixed bytes (their hashes are on the releases page and in the Hugging Face
+ * mirror), so a wrong sentence in one is corrected here and on the page that
+ * shows it, not by editing the file.
+ */
+export const corrections: Correction[] = [
+  {
+    date: '2026-10-01', files: ['deployment-topics.json'],
+    what: { en: 'The ensemble-TRCA rows call the original method a three-filter-bank experiment. The original paper and the reference code’s tutorials use five sub-bands; three is only the default of the code’s functions. Our runs used one fixed band either way, and no score changes.',
+            zh: '集成 TRCA 各行把原方法称为「三子带滤波器组实验」。原论文与参考代码的教程用的是 5 个子带，3 只是代码函数的默认值。我们的运行无论如何都只用一个固定频带，没有任何分数变化。' },
+    href: '/topics/calibration-budget/#methods-and-limits',
+  },
+  {
+    date: '2026-10-01', files: ['experiments.json', 'mi-rest-results.csv', 'mi-rest-protocol.json', 'deployment-topics.json'],
+    what: { en: 'The ds003810 credit links only the 2022 Data in Brief description. The OpenNeuro record asks users to cite Peterson, Galván, Hernández and Spies, Heliyon 6(3):e03425 (2020); the dataset page now gives both.',
+            zh: 'ds003810 的署名只链接了 2022 年的 Data in Brief 数据描述。OpenNeuro 记录要求引用 Peterson、Galván、Hernández 与 Spies 发表于 Heliyon 6(3):e03425（2020）的论文；数据集页面现在两者都给出。' },
+    href: '/datasets/ds003810/#methods-and-limits',
+  },
+];
+
+/** Citations a source asks for that a released file does not carry; shown on its dataset page. */
+export const requestedCitations: Record<string, { text: string; url: string; basis: string }> = {
+  ds003810: {
+    text: 'Peterson V, Galván C, Hernández H, Spies R. A feasibility study of a complete low-cost consumer-grade brain-computer interface system. Heliyon 6(3):e03425 (2020).',
+    url: 'https://doi.org/10.1016/j.heliyon.2020.e03425',
+    basis: 'https://openneuro.org/datasets/ds003810',
+  },
+};

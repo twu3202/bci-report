@@ -25,16 +25,18 @@ chance level, training budget and known limitations that produced each number �
 and refuses to collapse them into one ranking, because the protocols do not
 share a scale.
 
-39 model-by-protocol scores across 8 fixed protocols and 7 public datasets;
-82 measurements across four deployment questions; and a 22 September evidence
-update — a paired in-ear versus scalp sleep comparison, four posterior
-electrodes against sixteen for eyes open or closed, a physical-phantom artifact
-test, and the status of planned adaptation experiments, which have no results
-yet; and a 23 September clinical update — a 149-person Parkinson's and control
-comparison published beside an age-and-sex-only confound comparator, with three
-holds that produced no score at all. They are kept apart rather than summed,
-because they measure different things. Research results, not diagnosis. No raw
-EEG, no per-participant scores, no model weights.
+39 model-by-protocol scores across 8 fixed protocols and 7 public datasets, and
+82 measurements across four deployment questions. Later batches are reviewed and
+released on their own: in-ear versus scalp sleep staging, four electrodes against
+sixteen, and a physical-phantom artifact test (22 September); a 149-person
+Parkinson's and control comparison printed beside an age-and-sex-only confound
+comparator (23 September); screen-to-VR P300 transfer, treadmill walking speed
+beside a movement-nuisance comparator, and an asynchronous SSVEP non-control
+pilot (27 September); and LaBraM adapted to new people three ways — head only,
+last block, rank-4 LoRA — with one matched recipe and three seeds (1 October).
+They are kept apart rather than summed, because they measure different things.
+Research results, not diagnosis. No raw EEG, no per-participant scores, no model
+weights.
 
 ## Get the data
 
@@ -53,6 +55,7 @@ curl -O https://bci.report/data/deployment-topics.json  # four deployment questi
 curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
 curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 curl -O https://bci.report/data/context-update.json     # the 27 September batch
+curl -O https://bci.report/data/adaptation-update.json  # the 1 October batch
 ```
 
 What each file holds, loading examples and how to cite a release:
@@ -171,6 +174,6 @@ To cite a release, use [CITATION.cff](CITATION.cff) (GitHub's "Cite this
 repository"), and cite the upstream dataset each figure was computed on — every
 [dataset page](https://bci.report/datasets/) gives its credit line.
 
-> **Status: research preview.** Six of eight protocols run a single seed, the
-> smallest cohort is four people, and 9 of 18 catalogued methods have been
-> scored. The label comes off when that changes, not before.
+> **Known limits.** Six of eight core protocols run a single seed, the smallest
+> cohort is four people, and 9 of 18 catalogued methods have been scored. Each
+> page states its own limits next to its numbers.
