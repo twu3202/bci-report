@@ -62,6 +62,19 @@ buttons or `#` links must survive into the Markdown tables; and `LICENSE`,
 by `scripts/write-zenodo-metadata.mjs`; re-run it after the build when a dataset
 page is added).
 
+Also since 2026-10-02: the LaBraM adaptation result and the next-day statuses are
+their own topic, `/topics/model-adaptation/`, and every check that pinned them on
+`/topics/calibration-budget/` moved with them (arm, contrast, seed and cost
+figures; the matrix readout beside the head-only arm; no winner between LoRA and
+the last block; the Alpha Waves −1.6 pp exclusion slice; a figure-free next-day
+section, now with the cross-session status). The page, its card, its snippets and
+the EEGMAT and LaBraM groups must call the evidence "new people, same task, zero
+labels from the test person"; calibration-budget keeps figure-free notes at
+`#adaptation` and `#next-day`; every holds-register link must land on an anchor.
+A topic that prints a figure from another file marks it with `data-fig`, which is
+re-read from that file, and its cite block must name that file's release — so a
+topic that prints the core matrix's frozen LaBraM readout names the core release.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

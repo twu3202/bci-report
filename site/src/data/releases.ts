@@ -20,9 +20,12 @@ export const siteUpdates = [
     // The YSU extension became the main non-control evidence on when-not-to-act
     // and reached its dataset page; LTRSVP joined screen-to-vr as a second
     // presentation change and got a dataset page; the home cards, the dataset
-    // index, the API page and the release log name both.
+    // index, the API page and the release log name both. The LaBraM adaptation
+    // and the next-day statuses moved from calibration-budget to their own
+    // topic, model-adaptation; the EEGMAT and LaBraM pages now send readers there.
     paths: ['/', '/topics/when-not-to-act/', '/topics/screen-to-vr/', '/releases/', '/data-use/', '/api/',
-            '/datasets/', '/datasets/ysu-async-ssvep/', '/datasets/ltrsvp/'],
+            '/datasets/', '/datasets/ysu-async-ssvep/', '/datasets/ltrsvp/',
+            '/topics/model-adaptation/', '/topics/calibration-budget/', '/datasets/eegmat/', '/methods/labram/'],
   },
   {
     date: '2026-10-01',
@@ -81,10 +84,11 @@ export const releases: Release[] = [
   {
     id: 'adaptation-update-20261001', date: '2026-10-01', payload: 'adaptation',
     files: ['adaptation-update.json'],
-    pages: ['/topics/calibration-budget/'],
+    // Published on calibration-budget; its own topic since 2026-10-02.
+    pages: ['/topics/model-adaptation/'],
     summary: {
-      en: 'LaBraM adapted to new people on mental arithmetic three ways — head only, last block, rank-4 LoRA — with the same checkpoint, folds, starting heads, batch order and five-epoch recipe, over three seeds. The next-day experiment is listed as status only.',
-      zh: '在心算任务上把 LaBraM 适配到新被试，三种方式——只训分类头、最后一个 Transformer 块、秩为 4 的 LoRA——使用相同的检查点、数据划分、初始分类头、批次顺序和训练 5 轮的配方，跑了 3 个随机种子。次日实验只列状态。',
+      en: 'New people, same task, zero labels from the test person: LaBraM adapted on mental arithmetic three ways — head only, last block, rank-4 LoRA — with the same checkpoint, folds, starting heads, batch order and five-epoch recipe, over three seeds. The next-day experiment is listed as status only.',
+      zh: '新被试、同一任务、不使用测试被试的任何标签：在心算任务上用三种方式适配 LaBraM——只训分类头、最后一个 Transformer 块、秩为 4 的 LoRA——使用相同的检查点、数据划分、初始分类头、批次顺序和训练 5 轮的配方，跑了 3 个随机种子。次日实验只列状态。',
     },
     notes: [
       { en: "Printed beside the core matrix's frozen LaBraM readout on the same people and folds, because this batch's head-only arm is a short gradient-trained head and not the strongest frozen readout.",
@@ -122,7 +126,9 @@ export const releases: Release[] = [
   {
     id: 'evidence-update-20260922', date: '2026-09-22', payload: 'evidence',
     files: ['evidence-update.json'],
-    pages: ['/topics/fewer-electrodes/', '/topics/on-the-move/', '/topics/calibration-budget/'],
+    // The adaptation roadmap it carried was on calibration-budget; what is left of
+    // it, the engineering check, has been on model-adaptation since 2026-10-02.
+    pages: ['/topics/fewer-electrodes/', '/topics/on-the-move/', '/topics/model-adaptation/'],
     summary: {
       en: 'In-ear against scalp sleep staging, four posterior electrodes against sixteen, a physical-phantom motion test, and the status of planned adaptation experiments.',
       zh: '耳道内与头皮的睡眠分期比较、后部 4 个电极对全部 16 个电极、物理头模的运动测试，以及计划中的适配实验的状态。',
@@ -204,6 +210,7 @@ export const holds: Hold[] = [
     opened: '2026-09-27', closed: null,
     outcome: { en: 'The pipeline works on one person’s eleven sessions. With one person every score is that person’s, so none is published.',
                zh: '流程在一名被试的 11 次会话上跑通了。只有一个人时，任何分数都是这个人的分数，所以不发布。' },
+    href: '/topics/model-adaptation/#cross-session',
   },
   {
     item: { en: 'OpenNeuro ds004902 · paired sleep comparison', zh: 'OpenNeuro ds004902 · 配对睡眠比较' },
@@ -241,7 +248,7 @@ export const holds: Hold[] = [
     opened: '2026-09-20', closed: null,
     outcome: { en: 'Run and independently replayed on 22 September. The catalogue licence is CC BY-NC-ND and the description names no ethics approval, so no figure is published until that review is done.',
                zh: '9 月 22 日已运行并通过独立复核。目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准，所以审查完成之前不发布任何数字。' },
-    href: '/topics/calibration-budget/#next-day',
+    href: '/topics/model-adaptation/#next-day',
   },
 ];
 

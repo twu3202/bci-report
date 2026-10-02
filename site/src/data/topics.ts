@@ -128,10 +128,17 @@ export const topicPages = [
   },
   {
     slug: 'calibration-budget',
-    kicker: 'Adaptation budget',
+    kicker: 'Calibration budget',
     title: 'How much calibration?',
-    summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time. Plus: head only, last block or LoRA when a foundation model meets new people.',
-    detail: 'Common future blocks · target-only fitting · LaBraM adaptation, 36 people',
+    summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
+    detail: 'Common future blocks · target-only fitting · 102 people',
+  },
+  {
+    slug: 'model-adaptation',
+    kicker: 'Model adaptation',
+    title: 'Which part to update?',
+    summary: 'LaBraM on new people, same task, zero labels from the test person: head only, last block or LoRA, printed beside the core matrix’s frozen readout. Plus: the next-day experiment, run and held.',
+    detail: 'EEGMAT, 36 people · three update rules · next day: held',
   },
   {
     slug: 'when-not-to-act',

@@ -191,7 +191,7 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .hold-card small{display:block;margin-top:10px;font-size:.72rem;color:var(--muted)}
 .holds-more{margin-top:14px;font-size:.85rem}
 .holds-more a{color:var(--accent)}
-/* Eight topics: four columns wide, two when narrow. An odd last card in two
+/* Topic cards: four columns wide, two when narrow. An odd last card in two
    columns spans its row rather than standing beside an empty cell. */
 .topic-entry-download{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:14px}
 .topic-entry-download p{font-size:.78rem;max-width:700px}

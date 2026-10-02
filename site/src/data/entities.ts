@@ -444,9 +444,11 @@ function ltrsvpGroup(): ResultGroup {
   };
 }
 
+// New people, same task, zero labels from the test person. Its page moved from
+// calibration-budget to model-adaptation on 2026-10-02.
 function adaptationGroup(): ResultGroup {
   const r = adaptation.results['eegmat-labram-adaptation'];
-  const path = '/topics/calibration-budget/#adaptation';
+  const path = '/topics/model-adaptation/#adaptation';
   const arm: Record<string, L> = {
     frozen: { en: 'Head only · encoder frozen', zh: '只训分类头 · 编码器冻结' },
     'last-block': { en: 'Last block + head', zh: '最后一个 Transformer 块 + 分类头' },
@@ -454,8 +456,8 @@ function adaptationGroup(): ResultGroup {
   };
   const people = r.cohort.people;
   return {
-    id: 'eegmat-labram-adaptation', title: { en: 'Adaptation · LaBraM on new people, three update rules', zh: '适配 · 新被试上的 LaBraM，三种更新方式' },
-    path: '/topics/calibration-budget/', chance: fig(r.chance_level, 'pct1', ADA),
+    id: 'eegmat-labram-adaptation', title: { en: 'Model adaptation · LaBraM on new people, same task, zero labels from the test person', zh: '模型适配 · LaBraM：新被试、同一任务、不使用测试被试的任何标签' },
+    path: '/topics/model-adaptation/', chance: fig(r.chance_level, 'pct1', ADA),
     rows: [
       ...r.arms.map(a => ({ path, method: 'LaBraM', methodSlug: 'labram' as MethodSlug, condition: arm[a.id], metric: BA,
         value: fig(a.balanced_accuracy.mean, 'pct1', ADA), interval: pair(a.balanced_accuracy.bootstrap_95, 'pct1', ADA), people })),

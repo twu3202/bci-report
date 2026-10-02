@@ -216,10 +216,13 @@ const topicPages=[
   ['clinical-groups','Can resting-state EEG separate Parkinson&#39;s disease from controls?'],
   ['on-the-move','Does EEG decoding still work while walking or running?'],
   ['calibration-budget','How much calibration data does a wearable SSVEP decoder need?'],
+  // Split from calibration-budget on 2026-10-02 (owner approved): new people and the next day.
+  ['model-adaptation','New people, next day: which part of a pretrained model should you update?'],
   ['when-not-to-act','How often does an EEG decoder fire when nobody is giving a command?'],
   ['does-pretraining-help','Does pretraining help EEG foundation models like LaBraM and CBraMod?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
+  :slug==='model-adaptation'?'adaptation-update.json'
   :slug==='clinical-groups'?'clinical-update.json'
   :slug==='when-not-to-act'?'experiments.json'
   :slug==='screen-to-vr'?'context-update.json':'deployment-topics.json';
@@ -301,7 +304,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -416,11 +419,13 @@ for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageO
 assert.match(pageOf('topics/fewer-electrodes/'),/not two headsets/,'software subsets are not devices');
 // Alpha Waves figures stay on their own page. 79.5% is also a legitimate interval
 // bound on dry-vs-wet, so only the difference is checked elsewhere. Since
-// 2026-10-01 −1.6 pp is also LoRA minus last block on calibration-budget, so
-// there it may appear only inside the adaptation section.
+// 2026-10-01 −1.6 pp is also LoRA minus last block, so on the page that carries
+// the adaptation section — calibration-budget until 2026-10-02, model-adaptation
+// since — it may appear only inside that section. calibration-budget now has no
+// exemption at all.
 for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-use/')){
   let html=pageOf(p);
-  if(p.includes('calibration-budget')){
+  if(p.includes('model-adaptation')){
     const a=html.indexOf('id="adaptation"'),b=html.indexOf('id="methods-and-limits"');
     assert.ok(a>0&&b>a,p+': the adaptation section must render before methods and limits');
     html=html.slice(0,a)+html.slice(b);
@@ -460,14 +465,16 @@ assert.match(pageOf('topics/on-the-move/'),/Neither column is accuracy/,'phantom
 // The 2026-09-22 file keeps its roadmap as released: 'planned' was true then.
 // Since 2026-10-01 the page shows measured results in its place (checked in the
 // adaptation block below), and still must not borrow the old pilot's figures.
+// Since 2026-10-02 that page is model-adaptation; calibration-budget, which held
+// it until then, stays under the same exclusions.
 assert.equal(ev.roadmap.peft.status,'planned');
-for(const p of ['topics/calibration-budget/','zh/topics/calibration-budget/']){
+for(const p of ['topics/calibration-budget/','zh/topics/calibration-budget/','topics/model-adaptation/','zh/topics/model-adaptation/']){
   const html=pageOf(p);
-  // Its exact two-decimal figures. One decimal collides: 65.1% is a CCA value on this page.
+  // Its exact two-decimal figures. One decimal collides: 65.1% is a CCA value on calibration-budget.
   assert.doesNotMatch(html,/56\.34|65\.05/,p+': the unapproved partial-fine-tuning pilot must not appear');
   // Case-insensitive: the first version missed a sentence-initial "In progress".
   assert.doesNotMatch(html,/\bin progress\b|\bunderway\b|\b(?:is|now) running\b|进行中|正在运行|已开始/i,p+': nothing on this page is described as still running');
-  assert.ok(html.includes('38,400')&&html.includes('5,819,936'),p+': engineering parameter counts');
+  if(p.includes('model-adaptation')) assert.ok(html.includes('38,400')&&html.includes('5,819,936'),p+': engineering parameter counts');
   assert.doesNotMatch(html,/0\.87|\b1 s(econd)?\b|约 ?1 秒/,p+': the synthetic smoke-test runtime is not a training cost');
 }
 
@@ -754,9 +761,22 @@ const ivp=(iv,zh)=>`${iv[0]>=0?'+':'−'}${Math.abs(iv[0]*100).toFixed(1)} ${zh?
 // The handoff's headline figures, so a changed export cannot pass by changing the page with it.
 assert.deepEqual(adr.arms.map(a=>pct1(a.balanced_accuracy.mean)),['56.6%','65.7%','64.1%'],'the audited arm means');
 const matrixLabram=data.tracks.find(t=>t.id==='arithmetic-rest').rows.find(r=>r.name==='LaBraM'&&r.mode==='Frozen encoder + ridge head');
-for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/calibration-budget/']]){
-  const html=pageOf(path);
+// Since 2026-10-02 the adaptation result and the next-day statuses are their own
+// topic, model-adaptation (owner approved); every check below moved with them.
+// calibration-budget keeps its SSVEP question and two figure-free notes, at the
+// old anchors, that send readers there.
+const cxs=JSON.parse(readFileSync(new URL('../src/data/context-update.json',import.meta.url),'utf8')).status_only.find(e=>e.id==='stieger-longitudinal');
+assert.equal(cxs.feasibility.people,1,'the cross-session slot says "one person"; update both together if this changes');
+assert.equal(cxs.scores_published,false,'the cross-session source stays status only');
+const armPct=id=>pct1(adr.arms.find(a=>a.id===id).balanced_accuracy.mean);
+const unent=s=>s.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+// What a reader is told this evidence is, wherever it is summarised (card, snippet, short answer, entity group).
+const adLabel={en:/new people, same task, zero labels from the test person/i,zh:/新被试、同一任务、不使用测试被试的任何标签/};
+const nextLabel={en:/next[- ]day/i,zh:/次日|第二天/};
+for(const [label,path] of [['en','topics/model-adaptation/'],['zh','zh/topics/model-adaptation/']]){
+  const html=pageOf(path),zh=label==='zh',prefix=zh?'/zh':'';
   const sec=html.slice(html.indexOf('id="adaptation"'),html.indexOf('id="methods-and-limits"'));
+  assert.ok(html.indexOf('id="adaptation"')>0&&sec.length>4000,label+': the adaptation section renders before methods and limits');
   for(const a of adr.arms){
     assert.ok(sec.includes('<div class="reading">'+pct1(a.balanced_accuracy.mean)+'</div>'),label+': '+a.id+' score on its card');
     assert.ok(sec.includes(pct1(a.balanced_accuracy.bootstrap_95[0])+'–'+pct1(a.balanced_accuracy.bootstrap_95[1])),label+': '+a.id+' interval');
@@ -766,26 +786,89 @@ for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/
   }
   for(const m of ['balanced_accuracy','macro_f1']) for(const c of adr.paired_contrasts[m]){
     assert.ok(sec.includes(pp1(c.mean_change)),label+': '+m+' '+c.id+' change');
-    assert.ok(sec.includes(ivp(c.bootstrap_95,label==='zh')),label+': '+m+' '+c.id+' interval');
+    assert.ok(sec.includes(ivp(c.bootstrap_95,zh)),label+': '+m+' '+c.id+' interval');
   }
   // The matrix readout sits beside the head-only arm, said to be a different head and not paired.
   assert.ok(sec.includes(matrixLabram.y.toFixed(1)+'%'),label+': the matrix frozen-LaBraM readout is printed for scale');
-  assert.match(sec,label==='en'?/not the best a frozen encoder can do[^.]*not a paired comparison/:/并不是冻结编码器能达到的最好结果[^。]*不是配对比较/,label+': the head-only arm is not the best frozen readout');
+  assert.match(sec,!zh?/not the best a frozen encoder can do[^.]*not a paired comparison/:/并不是冻结编码器能达到的最好结果[^。]*不是配对比较/,label+': the head-only arm is not the best frozen readout');
   // LoRA vs. last block: an interval across zero is reported as no demonstrated difference.
   const lb=adr.paired_contrasts.balanced_accuracy.find(c=>c.id==='lora-r4_minus_last-block');
   assert.ok(lb.bootstrap_95[0]<0&&lb.bootstrap_95[1]>0);
-  assert.match(sec,label==='en'?/crosses zero, so neither is shown to be better/:/跨过零，所以无法说明哪一个更好/,label+': LoRA vs. last block');
-  assert.doesNotMatch(html,label==='en'?/LoRA (?:is|was) (?:better|best)|outperform/i:/LoRA 更好(?!，)|优于最后/,label+': no winner is declared');
-  // Memory was recorded only as lower bounds; none is published.
-  assert.doesNotMatch(sec,/\d\s?(?:MiB|MB|GiB|GB)\b|RSS/,label+': no memory figure');
-  // The next-day experiment: named, its design stated, no figure.
-  const next=sec.slice(sec.indexOf('id="next-day"'),sec.indexOf('</p>',sec.indexOf('id="next-day"')));
-  assert.ok(next.length>200,label+': the next-day status renders');
-  assert.doesNotMatch(next,/\d+(?:\.\d+)?\s?%|\d\.\d|pp\b/,label+': the next-day experiment carries no figure');
-  assert.match(next,label==='en'?/no figure from it is published/:/不发布它的任何数字/,label+': the next-day status says why');
-  // The eTRCA filter-bank wording, corrected.
-  assert.doesNotMatch(html,/three-filter-bank|三子带/,label+': the corrected eTRCA wording');
+  assert.match(sec,!zh?/crosses zero, so neither is shown to be better/:/跨过零，所以无法说明哪一个更好/,label+': LoRA vs. last block');
+  // Memory was recorded only as lower bounds; none is published. Checked on the
+  // whole page now: the adapter's size moved into methods and limits.
+  assert.doesNotMatch(visible(html),/\d\s?(?:MiB|MB|GiB|GB)\b|\bRSS\b/,label+': no memory figure');
+  // The next day: its own section since 2026-10-02, after the adaptation result. No
+  // figure anywhere in it — not in the BNCI2015-001 status, not in the cross-session slot.
+  const nd=html.slice(html.indexOf('id="next-day"'),html.indexOf('id="methods-and-limits"'));
+  assert.ok(html.indexOf('id="next-day"')>html.indexOf('id="adaptation"')&&nd.length>800,label+': the next-day section renders between the adaptation result and methods and limits');
+  assert.doesNotMatch(nd,/\d+(?:\.\d+)?\s?%|\d\.\d|pp\b/,label+': the next-day section carries no figure');
+  // The two-day experiment: named, its design stated, no figure.
+  const next=nd.slice(nd.indexOf('id="two-days"'),nd.indexOf('</p>',nd.indexOf('id="two-days"')));
+  assert.ok(nd.indexOf('id="two-days"')>0&&next.length>200,label+': the next-day status renders');
+  assert.ok(next.includes(ad.status_only[0].name.split(' · ')[0]),label+': the next-day source is named');
+  assert.match(next,!zh?/no figure from it is published/:/不发布它的任何数字/,label+': the next-day status says why');
+  // The cross-session slot: the released status-only entry, named, and why it has no score.
+  const cs=nd.slice(nd.indexOf('id="cross-session"'),nd.indexOf('</p>',nd.indexOf('id="cross-session"')));
+  assert.ok(nd.indexOf('id="cross-session"')>0&&cs.includes(!zh?cxs.name.split(' · ')[0]:'Stieger 纵向 BCI'),label+': the cross-session source is named');
+  assert.match(unent(cs),!zh?/every score would be that person's, so none is published/:/任何分数都是这个人的分数，所以不发布/,label+': the cross-session slot says why it has no score');
+  assert.ok(cs.includes(`href="${prefix}/releases/#context-update-20260927"`),label+': the cross-session slot links the release that lists it');
+  // No winner, anywhere on the page.
+  assert.doesNotMatch(html,!zh?/LoRA (?:is|was) (?:better|best)|outperform/i:/LoRA 更好(?!，)|优于最后/,label+': no winner is declared');
   assert.match(html,/href="\/data\/adaptation-update\.json"/,label+': the reviewed export is linked');
+  // The label, wherever the page summarises itself: short answer, meta and share descriptions.
+  const ans=unent(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))).replace(/<[^>]+>/g,''));
+  const meta=k=>unent(html.match(new RegExp(`<meta (?:name|property)="${k}" content="([^"]*)"`))[1]);
+  for(const [what,text] of [['short answer',ans],['description',meta('description')],['og:description',meta('og:description')]]){
+    assert.match(text,adLabel[label],label+': the '+what+' must say "new people, same task, zero labels from the test person"');
+    assert.match(text,nextLabel[label],label+': the '+what+' must call the hold the next day');
+  }
+  // The short answer gives the three arms and the matrix readout.
+  for(const f of [armPct('last-block'),armPct('lora-r4'),armPct('frozen'),matrixLabram.y.toFixed(1)+'%']) assert.ok(ans.includes(f),label+': the short answer gives '+f);
+  // The home card.
+  const home=pageOf(zh?'zh/':''),at=home.indexOf(`<a class="topic-entry-card" href="${prefix}/topics/model-adaptation/"`);
+  const card=home.slice(at,home.indexOf('</a>',at));
+  assert.ok(at>0,label+': the home page carries the new card');
+  assert.match(card,adLabel[label],label+': the home card names the evidence');
+  assert.match(card,nextLabel[label],label+': the home card names the next-day hold');
+  // The EEGMAT and LaBraM pages: the group is labelled and sends readers here.
+  for(const p of ['datasets/eegmat/','methods/labram/']){
+    const e=pageOf((zh?'zh/':'')+p),g0=e.search(/id="g-(?:eegmat-)?eegmat-labram-adaptation"/),g=e.slice(g0,e.indexOf('</p>',g0));
+    assert.ok(g0>0&&adLabel[label].test(g),label+'/'+p+': the adaptation group carries the label');
+    assert.ok(g.includes(`href="${prefix}/topics/model-adaptation/"`),label+'/'+p+': the adaptation group links its new page');
+    assert.ok(!e.includes(`${prefix}/topics/calibration-budget/#adaptation`),label+'/'+p+': nothing still points at the old section');
+  }
+}
+// calibration-budget keeps its question, and the two old anchors as figure-free notes pointing to the new page.
+for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/calibration-budget/']]){
+  const html=pageOf(path),zh=label==='zh',prefix=zh?'/zh':'';
+  for(const id of ['adaptation','next-day']){
+    const at=html.indexOf(`id="${id}"`),note=html.slice(at,html.indexOf('</section>',at));
+    assert.ok(at>0,label+': #'+id+' must stay, so old links keep working');
+    assert.ok(note.includes(`href="${prefix}/topics/model-adaptation/#${id}"`),label+': #'+id+' sends readers to the new page');
+    assert.doesNotMatch(note.replace(/<[^>]+>/g,' '),/\d/,label+': the #'+id+' note carries no figure');
+    assert.ok(note.length<1200,label+': #'+id+' is a note, not the moved section');
+  }
+  assert.match(html.slice(html.indexOf('id="adaptation"')),adLabel[label],label+': the note says what the moved evidence is');
+  // None of the moved figures, and not its export, remain.
+  for(const a of adr.arms) assert.ok(!html.includes(pct1(a.balanced_accuracy.mean)),label+': '+a.id+' moved off this page');
+  for(const c of adr.paired_contrasts.balanced_accuracy) assert.ok(!html.includes(pp1(c.mean_change)),label+': '+c.id+' moved off this page');
+  assert.doesNotMatch(html,/href="\/data\/adaptation-update\.json"/,label+': the adaptation export is cited where its figures are');
+  assert.doesNotMatch(html,!zh?/LoRA (?:is|was) (?:better|best)|outperform/i:/LoRA 更好(?!，)|优于最后/,label+': no winner is declared');
+  // The eTRCA filter-bank wording, corrected; and the short answer says the eTRCA is single-band (content audit #5).
+  assert.doesNotMatch(html,/three-filter-bank|三子带/,label+': the corrected eTRCA wording');
+  const ans=unent(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+  assert.match(ans,!zh?/one fixed band, not the original method's filter bank/:/只用一个固定频带，而不是原方法的滤波器组/,label+': the single-band eTRCA caveat travels with the short answer');
+}
+// The holds register sends the next-day hold to the new page's section, and every hold link lands on an anchor that exists.
+for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+  const html=pageOf(path),reg=html.slice(html.indexOf('id="holds"'),html.indexOf('</table>',html.indexOf('id="holds"')));
+  const prefix=label==='zh'?'/zh':'';
+  assert.match(reg,new RegExp(`href="${prefix}/topics/model-adaptation/#next-day">[^<]*${label==='zh'?'次日':'next-day'}`),label+': the next-day hold links its section');
+  for(const [,href,page,id] of reg.matchAll(/href="((\/[^"#]*)#([^"]+))"/g)){
+    if(page==='/'+(label==='zh'?'zh/':'')+'releases/') continue;
+    assert.ok(pageOf(page.slice(1)).includes(`id="${id}"`),label+': hold link '+href+' lands on no anchor');
+  }
 }
 // The entity pages carry the new rows, re-read from their file by the entity checks above.
 for(const p of ['datasets/eegmat/','zh/datasets/eegmat/','methods/labram/','zh/methods/labram/'])
@@ -1381,18 +1464,20 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
 
 // "Cite this page" on every topic, dataset and method page, in both languages and
 // in each Markdown copy: the page, its address, and exactly the releases whose
-// files hold its figures (topic pages: the downloads they link; entity pages: the
-// files their data-fig figures are leaves of). citation_* tags carry the same.
+// files hold its figures (topic pages: the downloads they link, and since
+// 2026-10-02 the files of any data-fig figure they print; entity pages: the files
+// their data-fig figures are leaves of). citation_* tags carry the same.
 {
   const citePages=[...topicPages.map(([s])=>'topics/'+s+'/'),...entityBilingual.filter(p=>/^(?:datasets|methods)\/[^/]+\/$/.test(p))];
-  assert.ok(citePages.length>=8+16+9,'cite blocks on every topic, dataset and method page');
+  assert.ok(citePages.length>=9+16+9,'cite blocks on every topic, dataset and method page');
   for(const p of citePages) for(const path of [p,'zh/'+p]){
     const html=pageOf(path),zh=path.startsWith('zh/');
     const start=html.indexOf('<section class="cite-page"');
     assert.ok(start>0,path+': the cite block must render');
     const sec=html.slice(start,html.indexOf('</section>',start));
     const named=sec.match(/data-releases="([^"]+)"/)[1].split(' ');
-    const files=p.startsWith('topics/')?[...html.matchAll(/href="\/data\/([^"]+)"/g)].map(m=>m[1]):[...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]);
+    const figFiles=[...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]);
+    const files=p.startsWith('topics/')?[...[...html.matchAll(/href="\/data\/([^"]+)"/g)].map(m=>m[1]),...figFiles]:figFiles;
     const expected=releaseEntries.filter(r=>files.some(f=>releaseOf.get(f)===r)).map(r=>r.id);
     assert.deepEqual(named,expected,path+': the cite block must name exactly the releases its figures come from, newest first');
     for(const id of named) assert.ok(sec.includes(`href="${zh?'/zh':''}/releases/#${id}"><code>${id}</code></a>`),path+': '+id+' must link to its release');
@@ -1412,6 +1497,35 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
     assert.ok(md.includes(zh?'## 引用本页':'## Cite this page')&&named.every(id=>md.includes('`'+id+'`'))&&md.includes(canonical),path+': the cite block must survive into the Markdown copy');
   }
+}
+
+// A topic page that prints a figure from a file other than its own exports marks
+// it as the entity pages do (data-fig, Fig.astro). Re-read every such figure from
+// the served file; the cite block above already has to name its release.
+// The core matrix's frozen LaBraM readout is the case that prompted this: printed
+// for scale on model-adaptation (calibration-budget until 2026-10-02) without
+// experiments.json among the page's links, so the cite block named no core release.
+{
+  const matrixMark=`data-fig="experiments.json|pct1raw|${matrixLabram.y}">${matrixLabram.y.toFixed(1)}%<`;
+  const matrixSentence=/core matrix's frozen LaBraM|核心矩阵中[^。]*冻结 LaBraM/;
+  let topicFigs=0,printedMatrix=0;
+  for(const [slug] of topicPages) for(const path of ['topics/'+slug+'/','zh/topics/'+slug+'/']){
+    const html=pageOf(path);
+    for(const [,file,format,raw,text] of html.matchAll(/data-fig="([^|"]+)\|(\w+)\|([^"]+)"[^>]*>([^<]*)</g)){
+      assert.ok(leavesOf(file).has(Number(raw)),path+': '+raw+' is not a value in '+file);
+      assert.equal(text,fmt[format](Number(raw)),path+': '+file+' '+raw+' printed as "'+text+'"');
+      topicFigs++;
+    }
+    // Any topic that prints the matrix LaBraM readout prints it marked, and names the core release.
+    if(matrixSentence.test(visible(html))||html.includes('data-fig="experiments.json|')){
+      printedMatrix++;
+      assert.ok(html.includes(matrixMark),path+': the matrix LaBraM readout must be printed from experiments.json, marked');
+      const cite=html.slice(html.indexOf('<section class="cite-page"'));
+      assert.ok(cite.match(/data-releases="([^"]+)"/)[1].split(' ').includes(data.releaseId),path+': prints the matrix LaBraM readout, so its cite block must name '+data.releaseId);
+    }
+  }
+  assert.ok(topicFigs>=2*5,'model-adaptation marks the matrix readout and the adapter counts ('+topicFigs+')');
+  assert.ok(pageOf('topics/model-adaptation/').includes(matrixMark)&&pageOf('zh/topics/model-adaptation/').includes(matrixMark)&&printedMatrix>=2,'model-adaptation prints the matrix readout in both languages');
 }
 
 // Markdown copies keep the names that live in table controls: the home matrix heads
@@ -1491,9 +1605,9 @@ console.log('PASS: Chinese register — licence and rights-review notes with the
 console.log('PASS: 2026-10-02 discoverability — share card is the recorded badge-free bitmap with alt/size on every page; home Dataset cites the newest release with every file and topic part; Atom feed matches the release log; only /data/* is cross-origin; cite blocks name exactly their releases, in both languages and Markdown; table names survive into Markdown; footers, llms.txt, licences and .zenodo.json agree.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
-console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
+console.log('PASS: coverage matrix, '+topicPages.length+' topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
-console.log('PASS: 2026-10-01 adaptation — arm, contrast, seed and cost figures equal the audited export; matrix readout beside the head-only arm; no winner between LoRA and last block; next-day status figure-free; corrections listed; API example runs; no stage label.');
+console.log('PASS: 2026-10-01 adaptation, on its own topic since 2026-10-02 — arm, contrast, seed and cost figures equal the audited export; matrix readout beside the head-only arm, marked and its release cited; no winner between LoRA and last block; next-day section figure-free with the BNCI2015-001 and cross-session statuses; labelled on card, snippets, answer and entity groups; calibration-budget keeps figure-free notes at the old anchors; corrections listed; API example runs; no stage label.');
 console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures equal the audited export; no same-display claim; comparator beside gait; coverage beside conditional accuracy; no held source named.');
 console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');

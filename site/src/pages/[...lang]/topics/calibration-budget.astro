@@ -4,10 +4,7 @@ import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { type DeploymentData, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
-import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
-import evidence from '../../../data/evidence-update.json';
-import adaptation from '../../../data/adaptation-update.json';
-import mvp from '../../../data/mvp.json';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -33,42 +30,21 @@ const etrcaDry24 = pct(methodRow('ensemble-trca','dry',24).value), etrcaDry48 = 
 const ridgeWet48 = pct(targetRidge('wet',48).value), ridgeDry48 = pct(targetRidge('dry',48).value);
 const ccaWet = pct(methodRow('cca','wet',0).value), ccaDry = pct(methodRow('cca','dry',0).value);
 const chance = 1 / 12;
-// Adaptation results, reviewed 2026-10-01. They replace the roadmap that stood
-// here from 2026-09-22; evidence-update.json still records that roadmap as
-// 'planned', which was true when it was released, so only its engineering
-// check is read from it now.
-const eng = evidence.roadmap.peft.engineering_check;
-const ad = adaptation.results['eegmat-labram-adaptation'];
-const adPeople = ad.cohort.people;
-type Metric = 'balanced_accuracy' | 'macro_f1';
-const contrast = (metric: Metric, id: string) => ad.paired_contrasts[metric].find(c => c.id === id)!;
-const loraHead = contrast('balanced_accuracy', 'lora-r4_minus_frozen');
-const blockHead = contrast('balanced_accuracy', 'last-block_minus_frozen');
-const loraBlock = contrast('balanced_accuracy', 'lora-r4_minus_last-block');
-const loraArm = ad.arms.find(a => a.id === 'lora-r4')!;
-// Printed for scale beside the head-only arm: the matrix's frozen LaBraM readout
-// on the same people and folds. A different head, so not a paired comparison;
-// the export proves the shared folds and carries no number, so the figure is
-// read from the snapshot that published it.
-const matrixTrack = mvp.tracks.find(t => t.id === ad.matrix_reference.track_id)!;
-const matrixRow = matrixTrack.rows.find(r => r.name === ad.matrix_reference.model && r.mode === ad.matrix_reference.training_mode)!;
-const matrixBa = `${matrixRow.y.toFixed(1)}%`;
-const nextDay = adaptation.status_only[0];
-const nextDaySource = nextDay.name.split(' · ')[0];
-const secs = (v: number) => `${v.toFixed(1)} s`;
-const seedMeans = (a: typeof loraArm) => a.balanced_accuracy.per_seed_means.map(x => pct(x.mean)).join(' · ');
-const kib = Math.round(eng.adapter_float32_bytes / 1024);
-const n = (v: number) => v.toLocaleString('en-US');
-const share = `${(eng.adapter_fraction * 100).toFixed(2)}%`;
+// The LaBraM adaptation results (reviewed 2026-10-01) and the next-day status
+// sat here until 2026-10-02. They are not calibration — the model adapts on
+// other people and uses no label from the test person — so they have their own
+// topic now, model-adaptation. The two anchors stay, as short notes pointing
+// there, so links to #adaptation and #next-day keep working.
+const moved = topicCards[locale]['model-adaptation'].question;
 
 const copy = {
   en: {
     description: `It depends on the method. For ${people} people on a 12-target wearable SSVEP task, going from 24 to 48 labeled trials lifted single-band eTRCA from ${etrcaWet24} to ${etrcaWet48} on wet recordings but only from ${etrcaDry24} to ${etrcaDry48} on dry; training-free CCA scored higher. Trial counts are not minutes.`,
-    answer: `It depends on the method: on a 12-target wearable SSVEP task, with the same [[${people}]] people and the same future test blocks, going from 24 to 48 labeled target trials lifted single-band eTRCA from [[${etrcaWet24}]] to [[${etrcaWet48}]] balanced accuracy on wet recordings, but only from [[${etrcaDry24}]] to [[${etrcaDry48}]] on dry ones. Target-only spectral ridge reached just [[${ridgeWet48}]] (wet) and [[${ridgeDry48}]] (dry) at 48 trials, and no calibrated eTRCA point beat the training-free CCA reference, which uses no labels ([[${ccaWet}]] wet, [[${ccaDry}]] dry). Trial counts are not minutes: the export records labeled trials per person and does not convert them into a setup-time claim.`,
+    answer: `It depends on the method: on a 12-target wearable SSVEP task, with the same [[${people}]] people and the same future test blocks, going from 24 to 48 labeled target trials lifted single-band eTRCA from [[${etrcaWet24}]] to [[${etrcaWet48}]] balanced accuracy on wet recordings, but only from [[${etrcaDry24}]] to [[${etrcaDry48}]] on dry ones. Target-only spectral ridge reached just [[${ridgeWet48}]] (wet) and [[${ridgeDry48}]] (dry) at 48 trials, and no calibrated eTRCA point beat the training-free CCA reference, which uses no labels ([[${ccaWet}]] wet, [[${ccaDry}]] dry); that eTRCA uses one fixed band, not the original method's filter bank, so it is not TRCA at its best. Trial counts are not minutes: the export records labeled trials per person and does not convert them into a setup-time claim.`,
     plotCaption: `Labeled-trial budgets for the same ${people} people, tested on the same future blocks.`,
     plotLegend: 'Participant-mean balanced accuracy on 12-target, two-second SSVEP. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, 1 in 12. Rust rows are wet recordings, dark rows dry. CCA uses no labels; the source-only arm is a different mechanism and is not plotted.',
     plotNote: (s: string, reference: boolean) => `${s} recording · ${reference ? 'training-free reference' : 'target-only'}`,
-    eyebrow: 'Adaptation budget · common future test blocks',
+    eyebrow: 'Calibration budget · common future test blocks',
     dek: 'More labeled trials do not have one universal value. On this 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings.',
     sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
     ridgeEyebrow: 'Target-only spectral ridge',
@@ -107,54 +83,18 @@ const copy = {
       ['Descriptive intervals', 'Bootstrap intervals summarize participants under this protocol. They do not add retraining uncertainty or establish general calibration requirements for another headset.'],
     ],
     citationNote: (license: string) => `Official Tsinghua author mirror snapshot acquired 2026-09-20 · ${license}. Aggregate results only.`,
-    rmEyebrow: 'New people, same task · reviewed 1 October 2026',
-    rmH2: 'Adapting a foundation model: head only, last block or LoRA?',
-    rmLede: `LaBraM Base on EEGMAT, mental arithmetic versus rest: ${adPeople} people in five participant-disjoint folds, so every score is on people the model was not adapted on. The three update rules start from the same head, see the same batches in the same order and train for the same five epochs. Three seeds are averaged within each person before the cohort mean.`,
-    armLabel: { frozen: 'Head only · encoder frozen', 'last-block': 'Last block + head', 'lora-r4': 'LoRA rank 4 + head' } as Record<string, string>,
-    armNote: (f1: string, params: string) => `Macro F1 ${f1} · ${params} trainable parameters`,
-    rmScale: (m: string) => `For scale: the core matrix's frozen LaBraM, on the same people and folds but read out by a closed-form ridge head on standardized features, scored ${m}. The head-only arm here is a short five-epoch head on unscaled features — not the best a frozen encoder can do — and the two are not a paired comparison.`,
-    findingLabel: 'LoRA minus head only, same people',
-    findingH3: 'LoRA beat the short head-only fit; it did not beat the last block',
-    findingP: `${loraHead.helped} of ${adPeople} people improved and ${loraHead.harmed} got worse; paired interval ${ipp(loraHead.bootstrap_95)}. Updating the last block instead gained ${pp(blockHead.mean_change, 1)} (${ipp(blockHead.bootstrap_95)}). LoRA minus last block was ${pp(loraBlock.mean_change, 1)}, interval ${ipp(loraBlock.bootstrap_95)}: it crosses zero, so neither is shown to be better. ${loraBlock.helped} people did better with LoRA, ${loraBlock.harmed} with the last block.`,
-    contrastRegion: 'Paired changes between update rules, scrolls horizontally',
-    contrastCaption: `Change in participant-mean score for the same ${adPeople} people under both rules · descriptive person-bootstrap 95% interval · people helped, harmed and unchanged.`,
-    colContrast: 'Comparison', colBa: 'Balanced accuracy', colF1: 'Macro F1',
-    contrastRow: { 'lora-r4_minus_frozen': 'LoRA − head only', 'last-block_minus_frozen': 'Last block − head only', 'lora-r4_minus_last-block': 'LoRA − last block' } as Record<string, string>,
-    counts: (h: number, hm: number, t: number) => `${h} helped · ${hm} harmed · ${t} unchanged`,
-    f1Note: 'On macro F1 the gains are smaller, and LoRA helps fewer people over head only than it does on balanced accuracy: the metric matters.',
-    costH3: 'What each rule costs',
-    costRegion: 'Trainable parameters and training time by update rule, scrolls horizontally',
-    costCaption: 'Training time is the sum over 15 fits (5 folds × 3 seeds) on one Apple-silicon Mac, PyTorch MPS backend, excluding loading and evaluation.',
-    colRule: 'Update rule', colParams: 'Trainable parameters', colTime: 'Training time, 15 fits', colSeeds: 'Balanced accuracy, seed by seed',
-    costNote: 'LoRA trains far fewer weights than the last block but took longer here: its adapters sit in all twelve blocks, so gradients flow back through most of the encoder, and this implementation is an effective-weight parametrization, not an optimized low-rank kernel. Fewer trainable weights do not by themselves mean less time or memory.',
-    notDelivered: 'Promised on the roadmap and not delivered by this batch: peak memory (only lower-bound samples were recorded, so none is published) and a comparison at a fixed computation budget (every rule trained for the same five epochs, not the same compute).',
-    adLimitsH3: 'What this result is not',
-    adLimits: [
-      ['One recipe, not a tuned ranking', 'Five epochs, AdamW at learning rate 1e-4, batch 32, with no search, validation split, early stopping or checkpoint selection. Another learning rate or training budget could reorder the rules.'],
-      ['New people, not a new day or device', 'The folds hold out people on a task the model is adapted to. Nothing here measures a new recording day, a new headset or a new dataset.'],
-      ['A known dataset', "EEGMAT is public, and whether it was in LaBraM's pretraining data is not certified."],
-      ['Descriptive intervals', 'Person bootstrap after averaging the three seeds within each person. It ignores the dependence that shared cross-validation models create.'],
-    ],
-    nextH3: 'Same person, the next day: run, not published',
-    nextP: `${nextDaySource}: ${nextDay.design.people} people recorded on two days. Each person's model is trained on day A, calibrated with the first 0, 10, 20 or 40 labeled trials of day B under the same three update rules, and tested on the same later day-B trials. It ran on 22 September and passed an independent replay. The source's editorial hold stands — its catalogue licence is CC BY-NC-ND and its description names no ethics approval — so no figure from it is published.`,
-    rmApartH3: 'Four questions kept apart',
-    rmApart: 'A new person, a new day, a new dataset and a new device are different questions, answered on different data. A task adapter trained on several people is not evidence that it transfers across devices.',
-    rmEngH3: 'Adapter size',
-    rmEng: `The LaBraM base encoder has ${n(eng.base_encoder_parameters)} parameters. Rank-${eng.rank} updates to its twelve fused QKV weights add ${n(eng.adapter_parameters)} trainable parameters (${share}); with the ${n(eng.binary_head_parameters_if_added)}-parameter head that is the ${n(loraArm.trainable_parameters)} above. The adapter tensors take ${kib} KiB in float32 before metadata.`,
-    rmEngNote: 'These are parameter counts — not accuracy, speed, memory-saving or privacy claims.',
-    rmChecksH: 'Engineering checks passed before any real-EEG run:',
-    rmCheck: {} as Record<string, string>,
-    rmPriorH3: 'Not the first to ask',
-    rmPrior: ['Other groups already benchmark EEG adapters: ', 'OpenEEGBench', ' covers parameter-efficient fine-tuning of EEG foundation models; a ', 'systematic study of test-time adaptation', ' reports inconsistent gains under distribution shift; a recent ', 'preprint', ' compares self-supervised adaptation under fixed computation budgets. Our emphasis is the calibration cost, the cases that get worse, and whether recordings are compatible at all.'],
-    creditNote: (license: string) => `${license} · aggregate results only; the adaptation reuses the 2026-09-20 review of these recordings.`,
+    movedAdH2: 'LaBraM adaptation has its own page',
+    movedAd: ['The LaBraM results on new people, same task, zero labels from the test person — head only, last block or LoRA — moved to their own page: ', ' They are not calibration: the model adapts on other people and uses no label from the person it is tested on.'],
+    movedNextH2: 'So did the next-day experiment',
+    movedNext: ['The next-day status — run, independently replayed and held, with no figure published — is on the same page: ', ''],
   },
   zh: {
     description: `取决于方法。同样 ${people} 名被试的 12 目标可穿戴 SSVEP 任务上，校准试次从 24 增加到 48，单频带 eTRCA 在湿电极上从 ${etrcaWet24} 升到 ${etrcaWet48}，在干电极上只从 ${etrcaDry24} 升到 ${etrcaDry48}；免训练的 CCA 参考更高。试次数不等于分钟数。`,
-    answer: `取决于方法：在 12 目标的可穿戴 SSVEP 任务上，同样 [[${people}]] 名被试、相同的后续测试组块，目标被试校准试次从 24 增加到 48 时，单频带 eTRCA 在湿电极记录上的平衡准确率从 [[${etrcaWet24}]] 升到 [[${etrcaWet48}]]，在干电极记录上只从 [[${etrcaDry24}]] 升到 [[${etrcaDry48}]]。仅用目标被试数据的 spectral ridge 在 48 个校准试次时也只有 [[${ridgeWet48}]]（湿电极）和 [[${ridgeDry48}]]（干电极）；校准后的 eTRCA 没有一个超过不使用校准试次的免训练 CCA 参考（湿电极 [[${ccaWet}]]，干电极 [[${ccaDry}]]）。试次数不等于分钟数：导出数据记录的是每名被试的校准试次数，并不据此推算校准需要多长时间。`,
+    answer: `取决于方法：在 12 目标的可穿戴 SSVEP 任务上，同样 [[${people}]] 名被试、相同的后续测试组块，目标被试校准试次从 24 增加到 48 时，单频带 eTRCA 在湿电极记录上的平衡准确率从 [[${etrcaWet24}]] 升到 [[${etrcaWet48}]]，在干电极记录上只从 [[${etrcaDry24}]] 升到 [[${etrcaDry48}]]。仅用目标被试数据的 spectral ridge 在 48 个校准试次时也只有 [[${ridgeWet48}]]（湿电极）和 [[${ridgeDry48}]]（干电极）；校准后的 eTRCA 没有一个超过不使用校准试次的免训练 CCA 参考（湿电极 [[${ccaWet}]]，干电极 [[${ccaDry}]]）；这里的 eTRCA 只用一个固定频带，而不是原方法的滤波器组，所以并不代表 TRCA 的最好水平。试次数不等于分钟数：导出数据记录的是每名被试的校准试次数，并不据此推算校准需要多长时间。`,
     plotCaption: `同样 ${people} 名被试的各档校准试次，均在相同的后续组块上测试。`,
     plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。锈色行为湿电极记录，深色行为干电极记录。CCA 不使用校准试次；仅源域迁移是另一种机制，不在图中。',
     plotNote: (s: string, reference: boolean) => `${s}记录 · ${reference ? '免训练参考' : '仅用目标被试数据'}`,
-    eyebrow: '适配预算 · 共同的后续测试组块',
+    eyebrow: '校准预算 · 共同的后续测试组块',
     dek: '增加校准试次的价值并不是一个固定值。在这个 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。',
     sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
     ridgeEyebrow: '仅用目标被试数据的 spectral ridge',
@@ -193,52 +133,10 @@ const copy = {
       ['描述性区间', 'bootstrap 区间概括的是本协议下的被试间分布，不包含重新训练带来的不确定性，也不能推出其他头戴设备的通用校准需求。'],
     ],
     citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
-    rmEyebrow: '新被试，同一任务 · 2026 年 10 月 1 日审核',
-    rmH2: '基础模型怎么适配：只训分类头、最后一个 Transformer 块（block）还是 LoRA？',
-    rmLede: `LaBraM Base 在 EEGMAT 上区分心算与静息：${adPeople} 名被试，按被试不重叠分成 5 折，所以每个分数都来自模型适配时没见过的人。三种更新方式从同一个分类头出发，以相同顺序看到相同的批次，都训练 5 轮（epoch）。3 个随机种子先在每名被试内平均，再求队列均值。`,
-    armLabel: { frozen: '只训分类头 · 编码器冻结', 'last-block': '最后一个 Transformer 块 + 分类头', 'lora-r4': '秩为 4 的 LoRA + 分类头' } as Record<string, string>,
-    armNote: (f1: string, params: string) => `宏平均 F1 ${f1} · 可训练参数 ${params} 个`,
-    rmScale: (m: string) => `作为参照：核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM，配上在标准化特征上闭式求解的岭回归分类头，平衡准确率为 ${m}。这里「只训分类头」那一组是在未缩放特征上只训 5 轮的短训练分类头——并不是冻结编码器能达到的最好结果——两者也不是配对比较。`,
-    findingLabel: 'LoRA 减只训分类头，同一批被试',
-    findingH3: 'LoRA 胜过短训练的分类头，但没有胜过最后一个 Transformer 块',
-    findingP: `${adPeople} 名被试中 ${loraHead.helped} 人提升、${loraHead.harmed} 人变差；配对区间 ${ipp(loraHead.bootstrap_95)}。改为更新最后一个 Transformer 块，提升 ${pp(blockHead.mean_change, 1)}（${ipp(blockHead.bootstrap_95)}）。LoRA 减最后一个 Transformer 块为 ${pp(loraBlock.mean_change, 1)}，区间 ${ipp(loraBlock.bootstrap_95)}：跨过零，所以无法说明哪一个更好。${loraBlock.helped} 人用 LoRA 更好，${loraBlock.harmed} 人用最后一个 Transformer 块更好。`,
-    contrastRegion: '各更新方式之间的配对变化，可横向滚动',
-    contrastCaption: `同样 ${adPeople} 名被试在两种方式下的被试平均分数之差 · 描述性被试 bootstrap 95% 区间 · 提升、变差与不变的人数。`,
-    colContrast: '比较', colBa: '平衡准确率', colF1: '宏平均 F1',
-    contrastRow: { 'lora-r4_minus_frozen': 'LoRA − 只训分类头', 'last-block_minus_frozen': '最后一个 Transformer 块 − 只训分类头', 'lora-r4_minus_last-block': 'LoRA − 最后一个 Transformer 块' } as Record<string, string>,
-    counts: (h: number, hm: number, t: number) => `${h} 人提升 · ${hm} 人变差 · ${t} 人不变`,
-    f1Note: '在宏平均 F1 上提升更小，LoRA 相对只训分类头帮到的人也比平衡准确率上少：指标的选择会影响结论。',
-    costH3: '每种方式的代价',
-    costRegion: '各更新方式的可训练参数与训练时间，可横向滚动',
-    costCaption: '训练时间为 15 次拟合（5 折 × 3 个随机种子）之和，在一台 Apple 芯片 Mac 上用 PyTorch MPS 后端测得，不含加载与评测。',
-    colRule: '更新方式', colParams: '可训练参数', colTime: '训练时间，15 次拟合', colSeeds: '平衡准确率，逐个随机种子',
-    costNote: 'LoRA 可训练的权重比最后一个 Transformer 块少得多，但这里训练反而更久：它的适配器分布在全部 12 个 Transformer 块中，梯度要反传经过编码器的大部分；而且这里的实现是等效权重参数化，不是优化过的低秩算子。可训练权重少，本身并不意味着更省时间或内存。',
-    notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 轮，而不是相同的计算量）。',
-    adLimitsH3: '这个结果不是什么',
-    adLimits: [
-      ['一个配方，不是调参后的排名', '5 轮，AdamW，学习率 1e-4，批大小 32；没有超参搜索、验证集、早停或检查点挑选。换一个学习率或训练预算，各方式的先后可能改变。'],
-      ['新被试，不是新的一天或新设备', '数据划分留出的是被试，任务是模型已经适配过的任务。这里没有测量新的记录日、新的头戴设备或新的数据集。'],
-      ['已公开的数据集', 'EEGMAT 是公开数据，它是否在 LaBraM 的预训练数据中，无法证实。'],
-      ['描述性区间', '先在每名被试内平均 3 个随机种子，再做被试 bootstrap。它没有计入共享交叉验证模型带来的相关性。'],
-    ],
-    nextH3: '同一个人，第二天：已运行，不发布',
-    nextP: `${nextDaySource}：${nextDay.design.people} 名被试，每人记录两天。每名被试的模型用第一天训练，用第二天最前面的 0、10、20 或 40 个有标签试次、以同样三种更新方式校准，再在第二天同一批后续试次上测试。它已于 9 月 22 日运行，并通过了独立复核。该数据源的编辑暂缓仍然有效——目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准——所以不发布它的任何数字。`,
-    rmApartH3: '刻意分开的四个问题',
-    rmApart: '新被试、新的一天、新数据集、新设备是四个不同的问题，要用不同的数据回答。在多名被试上训练出的任务适配器，并不能证明它能跨设备迁移。',
-    rmEngH3: '适配器的大小',
-    rmEng: `LaBraM 基础编码器有 ${n(eng.base_encoder_parameters)} 个参数。对它的 12 个融合 QKV 权重做秩为 ${eng.rank} 的更新，增加 ${n(eng.adapter_parameters)} 个可训练参数（${share}）；加上 ${n(eng.binary_head_parameters_if_added)} 个参数的分类头，就是上面的 ${n(loraArm.trainable_parameters)} 个。适配器张量以 float32 存储约 ${kib} KiB（不含元数据）。`,
-    rmEngNote: '这些是参数计数，不代表准确率、速度、内存节省或隐私方面的任何结论。',
-    rmChecksH: '在任何真实 EEG 运行之前通过的工程检查：',
-    rmCheck: {
-      'exact adapter save and reload': '适配器保存与重载后完全一致',
-      'exact merged-weight equivalence': '合并权重后输出完全等价',
-      'finite, nonzero adapter gradients in every block': '每个 Transformer 块的适配器梯度有限且非零',
-      'frozen encoder weights unchanged after updates': '更新后冻结编码器的权重保持不变',
-      'identical output at zero adapter initialization': '适配器零初始化时输出完全不变',
-    } as Record<string, string>,
-    rmPriorH3: '这个问题已有前人研究',
-    rmPrior: ['已有其他工作在评测 EEG 适配器：', 'OpenEEGBench', ' 覆盖 EEG 基础模型的参数高效微调；一项', '关于测试时适配的系统研究', '报告了分布偏移下时好时坏的收益；一篇近期', '预印本', '比较了固定计算预算下的自监督适配。我们的侧重点是校准成本、变差的情况，以及记录条件本身是否兼容。'],
-    creditNote: (license: string) => `${license} · 仅发布聚合结果；本次适配沿用 2026-09-20 对这些记录的审查。`,
+    movedAdH2: 'LaBraM 适配已有单独的页面',
+    movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。它们不是校准：模型在其他被试上适配，不使用被测试者本人的任何标签。'],
+    movedNextH2: '次日实验也一并移过去了',
+    movedNext: ['次日实验的状态——已运行、通过独立复核、暂缓发布、不公布任何数字——也在同一页面「', '」。'],
   },
 }[locale];
 const card = topicCards[locale]['calibration-budget'];
@@ -298,44 +196,20 @@ const card = topicCards[locale]['calibration-budget'];
     </div>
   </section>
 
-  <section class="topic-section" id="adaptation" aria-labelledby="adaptation-heading">
-    <div class="topic-heading"><div><p class="eyebrow">{copy.rmEyebrow}</p><h2 id="adaptation-heading">{copy.rmH2}</h2></div><p>{copy.rmLede}</p></div>
-    <div class="evidence-grid">{ad.arms.map(a => <article class="evidence-card"><p class="eyebrow">{copy.armLabel[a.id]}</p><div class="reading">{pct(a.balanced_accuracy.mean)}</div><ScoreBar value={a.balanced_accuracy.mean} max={1} label={copy.baLabel(pct(a.balanced_accuracy.mean))} tone={a.id === 'frozen' ? 'ink' : 'rust'} /><p>{copy.armNote(pct(a.macro_f1.mean), n(a.trainable_parameters))}</p><small>{tc.interval95} {intervalPct(a.balanced_accuracy.bootstrap_95)}</small></article>)}</div>
-    <p class="protocol-note">{copy.rmScale(matrixBa)}</p>
-    <div class="finding">
-      <div class="finding-number"><strong>{pp(loraHead.mean_change, 1)}</strong><span>{copy.findingLabel}</span></div>
-      <div class="finding-copy"><h3>{copy.findingH3}</h3><p>{copy.findingP}</p></div>
-    </div>
-    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.contrastRegion}>
-      <table><caption>{copy.contrastCaption}</caption><thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colF1}</th></tr></thead><tbody>{ad.paired_contrasts.balanced_accuracy.map(c => { const f = contrast('macro_f1', c.id); return <tr><th scope="row">{copy.contrastRow[c.id]}</th>{[c, f].map(x => <td><span class="metric">{pp(x.mean_change, 1)}</span><span class="interval">{ipp(x.bootstrap_95)}</span><span class="interval">{copy.counts(x.helped, x.harmed, x.tied)}</span></td>)}</tr>; })}</tbody></table>
-    </div>
-    <p class="protocol-note">{copy.f1Note}</p>
-    <h3 class="roadmap-h3">{copy.costH3}</h3>
-    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.costRegion}>
-      <table><caption>{copy.costCaption}</caption><thead><tr><th scope="col">{copy.colRule}</th><th scope="col">{copy.colParams}</th><th scope="col">{copy.colTime}</th><th scope="col">{copy.colSeeds}</th></tr></thead><tbody>{ad.arms.map(a => <tr><th scope="row">{copy.armLabel[a.id]}</th><td><span class="metric">{n(a.trainable_parameters)}</span></td><td><span class="metric">{secs(a.training_seconds_15_fits)}</span></td><td><span class="interval">{seedMeans(a)}</span></td></tr>)}</tbody></table>
-    </div>
-    <p class="roadmap-p">{copy.costNote}</p>
-    <p class="protocol-note">{copy.notDelivered}</p>
-    <h3 class="roadmap-h3">{copy.adLimitsH3}</h3>
-    <div class="method-grid-wide">{copy.adLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
-    <h3 class="roadmap-h3" id="next-day">{copy.nextH3}</h3>
-    <p class="roadmap-p">{copy.nextP}</p>
-    <h3 class="roadmap-h3">{copy.rmApartH3}</h3>
-    <p class="roadmap-p">{copy.rmApart}</p>
-    <h3 class="roadmap-h3">{copy.rmEngH3}</h3>
-    <p class="roadmap-p">{copy.rmEng}</p>
-    <p class="roadmap-p"><strong>{copy.rmChecksH}</strong> {eng.checks_passed.map(c => copy.rmCheck[c] ?? c).join(locale === 'zh' ? '；' : '; ')}{tc.period}</p>
-    <p class="protocol-note">{copy.rmEngNote}</p>
-    <h3 class="roadmap-h3">{copy.rmPriorH3}</h3>
-    <p class="roadmap-p">{copy.rmPrior[0]}<a href="https://github.com/braindecode/OpenEEGBench" target="_blank" rel="noreferrer">{copy.rmPrior[1]}</a>{copy.rmPrior[2]}<a href="https://proceedings.mlr.press/v340/lee26a.html" target="_blank" rel="noreferrer">{copy.rmPrior[3]}</a>{copy.rmPrior[4]}<a href="https://arxiv.org/abs/2608.24727v1" target="_blank" rel="noreferrer">{copy.rmPrior[5]}</a>{copy.rmPrior[6]}</p>
+  <section class="topic-section topic-moved" id="adaptation" aria-labelledby="adaptation-heading">
+    <h2 id="adaptation-heading">{copy.movedAdH2}</h2>
+    <p class="roadmap-p">{copy.movedAd[0]}<a href={hrefFor('/topics/model-adaptation/#adaptation', locale)}>{moved}</a>{locale === 'zh' ? '' : ' '}{copy.movedAd[1]}</p>
+  </section>
+
+  <section class="topic-section topic-moved" id="next-day" aria-labelledby="next-day-heading">
+    <h2 id="next-day-heading">{copy.movedNextH2}</h2>
+    <p class="roadmap-p">{copy.movedNext[0]}<a href={hrefFor('/topics/model-adaptation/#next-day', locale)}>{moved}</a>{copy.movedNext[1]}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     {citation && <div class="citation-list"><article><h3 lang="en">{citation.identity.title}</h3><p lang="en">{citation.identity.canonical_dataset_citation}</p><p lang="en">{citation.identity.paper_citation}</p><p>{copy.citationNote(citation.identity.license ?? '')}</p><p><a href={citation.primary_sources[0]} target="_blank" rel="noreferrer">{tc.datasetRecord}</a> · <a href={citation.primary_sources[1]} target="_blank" rel="noreferrer">{tc.sensorsPaper}</a></p></article></div>}
-    <div class="citation-list"><article><h3 lang="en">{ad.rights.name}</h3><p lang="en">{ad.rights.attribution}</p><p>{copy.creditNote(ad.rights.license)}</p><p><a href={ad.rights.source} target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article></div>
     <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>
-    <p class="citation-note">{tc.dataSource} <a href="/data/adaptation-update.json" download>adaptation-update.json</a> · {tc.schema} {adaptation.schema_version} · {tc.generated} {adaptation.generated_at}{tc.period}</p>
   </section>
 </TopicLayout>

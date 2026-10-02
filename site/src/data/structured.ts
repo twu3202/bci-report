@@ -120,7 +120,12 @@ export function homeDataset() {
  * `distribution` must name whichever actually holds its numbers.
  * calibration-budget gained one on 2026-10-01, when its adaptation roadmap was
  * replaced by measured results; until then it was absent on purpose, because a
- * Dataset entity must not imply a result a roadmap does not have.
+ * Dataset entity must not imply a result a roadmap does not have. On 2026-10-02
+ * those results moved to model-adaptation, and calibration-budget went back to
+ * deployment-topics.json alone. model-adaptation also prints, for scale, the
+ * core matrix's frozen LaBraM readout (experiments.json) and the adapter's
+ * parameter counts from the 2026-09-22 engineering check (evidence-update.json),
+ * so their releases are named too. Its next-day statuses carry no figure.
  */
 type LaterExport = { file: string; release: string; generated: string; metrics: string[] };
 const contextExport = (metrics: string[]): LaterExport =>
@@ -145,8 +150,12 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                       contextExport(['control_window_acceptance', 'non_control_false_acceptance']),
                       extensionExport(['detection_balanced_accuracy', 'control_window_acceptance',
                                        'correct_and_accepted_rate', 'non_control_false_acceptance'])],
-  'calibration-budget': { file: '/data/adaptation-update.json', release: adaptation.release_id,
-                          generated: adaptation.generated_at, metrics: ['balanced_accuracy', 'macro_f1'] },
+  'model-adaptation': [{ file: '/data/adaptation-update.json', release: adaptation.release_id,
+                         generated: adaptation.generated_at, metrics: ['balanced_accuracy', 'macro_f1'] },
+                       { file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt,
+                         metrics: ['balanced_accuracy'] },
+                       { file: '/data/evidence-update.json', release: evidence.release_id, generated: evidence.generated_at,
+                         metrics: ['adapter_parameters'] }],
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
                        generated: clinical.generated_at,
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },
