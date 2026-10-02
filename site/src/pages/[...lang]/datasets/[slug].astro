@@ -54,7 +54,7 @@ const structured = {
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.datasetsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name, en: true }]}
   structured={structured}
-  cite={{ files: figFiles, upstream: 'page' }}
+  cite={{ files: figFiles, upstream: 'dataset' }}
 >
   {profile && <section class="entity-profile" aria-label={c.whatItIs}>
     {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}

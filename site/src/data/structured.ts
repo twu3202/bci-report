@@ -126,6 +126,10 @@ export function homeDataset() {
  * core matrix's frozen LaBraM readout (experiments.json) and the adapter's
  * parameter counts from the 2026-09-22 engineering check (evidence-update.json),
  * so their releases are named too. Its next-day statuses carry no figure.
+ * `metrics` feeds variableMeasured, which names what the page measures: a
+ * parameter count is a property of the adapter, not a measurement, so the
+ * engineering check has none (2026-10-02 review). It stays in `distribution`
+ * and in the cite block, which name the files the printed figures come from.
  */
 type LaterExport = { file: string; release: string; generated: string; metrics: string[] };
 const contextExport = (metrics: string[]): LaterExport =>
@@ -155,7 +159,7 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                        { file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt,
                          metrics: ['balanced_accuracy'] },
                        { file: '/data/evidence-update.json', release: evidence.release_id, generated: evidence.generated_at,
-                         metrics: ['adapter_parameters'] }],
+                         metrics: [] }],
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
                        generated: clinical.generated_at,
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },

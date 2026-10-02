@@ -6,8 +6,12 @@
  * release. The date is that of the newest release whose files hold the page's
  * figures — the same release the "Cite this page" block names.
  *
- * No citation_author: Zotero parses every author as a person, so "BCI Report"
- * became "Report, B.". The project is the publisher, which is what it is.
+ * citation_author is omitted on purpose, not forgotten (decided 2026-10-02).
+ * Zotero parses every citation_author as a personal name, so "BCI Report"
+ * became "Report, B."; and these pages are not scholarly articles to be indexed
+ * by Google Scholar, for which an author tag would be the signal. The project
+ * is the publisher, which is what it is: citation_publisher stays.
+ * check-workbench.mjs asserts both.
  */
 import { site } from '../data/site';
 import { releasesFor } from '../data/releases';

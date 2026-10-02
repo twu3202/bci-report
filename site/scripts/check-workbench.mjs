@@ -294,6 +294,11 @@ for(const js of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f
 for(const css of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.css')))
   assert.doesNotMatch(readFileSync(new URL(DIST+'_astro/'+css,import.meta.url),'utf8'),/(?:^|[{},])\s*(?:header|nav)\s*\{/,
     css+': a bare header or nav rule styles every <header> and <nav>, not only the masthead');
+// The English under a translated licence note in the register's status column, right-aligned on
+// wide screens: the margin rule that marks it elsewhere stood away from its text there (2026-10-02).
+assert.ok(readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.css')).some(css=>
+  /\.dataset-status \.note-original\{border-left:0;padding-left:0\}/.test(readFileSync(new URL(DIST+'_astro/'+css,import.meta.url),'utf8'))),
+  'the status column drops the original-text margin rule');
 const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
 assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
 assert.match(headers,/Content-Security-Policy:[^\n]*script-src 'self';/,'script-src must stay free of unsafe-inline');
@@ -825,7 +830,10 @@ for(const [label,path] of [['en','topics/model-adaptation/'],['zh','zh/topics/mo
   assert.match(sec,!zh?/crosses zero, so neither is shown to be better/:/跨过零，所以无法说明哪一个更好/,label+': LoRA vs. last block');
   // Memory was recorded only as lower bounds; none is published. Checked on the
   // whole page now: the adapter's size moved into methods and limits.
-  assert.doesNotMatch(visible(html),/\d\s?(?:MiB|MB|GiB|GB)\b|\bRSS\b/,label+': no memory figure');
+  // "RSS" unanchored and in any case (peak RSS, maxrss, max rss): no word on the page contains
+  // those letters otherwise, so no exclusion is needed (checked 2026-10-02).
+  assert.doesNotMatch(visible(html),/\d\s?(?:MiB|MB|GiB|GB)\b/,label+': no memory figure');
+  assert.doesNotMatch(visible(html),/RSS|max ?rss/i,label+': no resident-memory figure or label');
   // The next day: its own section since 2026-10-02, after the adaptation result. No
   // figure anywhere in it — not in the BNCI2015-001 status, not in the cross-session slot.
   const nd=html.slice(html.indexOf('id="next-day"'),html.indexOf('id="methods-and-limits"'));
@@ -1499,6 +1507,14 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     const node=ldOf(pageOf(part.url.replace('https://bci.report/','')))[0]['@graph'].find(n=>n['@type']==='Dataset');
     assert.equal(part.name,node.name,part.url+': hasPart must name the topic Dataset as the topic page does');
   }
+  // model-adaptation prints the adapter's parameter counts from the 2026-09-22 engineering check, so
+  // that file is in its distribution (and its cite block); a parameter count measures nothing, so
+  // variableMeasured names the adaptation metrics only (2026-10-02 review).
+  {
+    const node=ldOf(pageOf('topics/model-adaptation/'))[0]['@graph'].find(n=>n['@type']==='Dataset');
+    assert.ok(node.distribution.some(d=>d.contentUrl==='https://bci.report/data/evidence-update.json'),'model-adaptation: the engineering check\'s file stays in distribution');
+    assert.deepEqual(node.variableMeasured,['balanced_accuracy','macro_f1'],'model-adaptation: variableMeasured names what was measured, not the adapter\'s size');
+  }
   assert.deepEqual([...umbrella.sameAs].sort(),[mirror,repository].sort(),'home Dataset sameAs: the mirror and the repository');
   // The topic batches inform those questions; they do not settle them.
   assert.ok(umbrella.description.includes(`Separately reviewed batches bear on ${topicPages.length} deployment questions`),'home Dataset: the batches bear on the deployment questions');
@@ -1579,7 +1595,12 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     const h1=html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,''),canonical='https://bci.report/'+path;
     assert.ok(sec.includes(`<cite>${h1}</cite>`)&&sec.includes(`<span class="cite-url">${canonical}</span>`),path+': the cite block names the page and its address');
     assert.match(sec,zh?/也请同时引用上游数据集/:/Cite the upstream datasets? as well/,path+': the cite block sends the reader to the upstream credit');
-    if(!zh&&!p.startsWith('methods/')) assert.ok(sec.includes('Cite the upstream datasets as well: their credits are on this page.'),path+': the upstream credit sentence');
+    // Plural on topic pages, which draw on several datasets; singular on a dataset's own page
+    // (2026-10-02 review); method pages send the reader to the dataset pages.
+    const upstream=p.startsWith('methods/')?(zh?'也请同时引用上游数据集：每个数据集页面都写明了署名。':'Cite the upstream datasets as well: each dataset’s page gives its credit.')
+      :p.startsWith('datasets/')?(zh?'也请同时引用上游数据集：其署名就在本页。':'Cite the upstream dataset as well: its credit is on this page.')
+      :(zh?'也请同时引用上游数据集：署名就在本页。':'Cite the upstream datasets as well: their credits are on this page.');
+    assert.ok(sec.includes(upstream),path+': the upstream credit sentence: '+upstream);
     const newest=releaseEntries.find(r=>r.id===named[0]);
     const meta=k=>decodeHtml(html.match(new RegExp(`<meta name="citation_${k}" content="([^"]*)">`))?.[1]??'');
     assert.equal(meta('title'),decodeHtml(h1),path+': citation_title is the h1');

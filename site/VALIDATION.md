@@ -26,9 +26,15 @@ matrix's column headings link to it. Each table row must equal the same row of
 the protocol's results CSV, column by column and in order. Two payload fields are
 deliberately not verbatim: the privacy review (reviewer notes; the page prints one
 site-written sentence and links the protocol JSON that holds it) and a JSON
-fragment in the release version (printed as "mirror … · upstream …"). A protocol
-without a chance level (idle) must not promise one in its description, dek or
-markup.
+fragment in the release version (printed as "mirror … · upstream …"). Beside the
+privacy sentence the page must print the dataset's reviewed rights note from the
+public-data register (verbatim on `/`, the Chinese with the English beside it on
+`/zh/`), and the sleep protocol its consent caveat, each claim of which must be in
+the released review note; no other protocol carries one. The home page's protocol
+dialog must apply the same treatment, and its privacy sentence must equal the
+protocol page's. A protocol without a chance level (idle) must not promise one in
+its description, dek or markup, and its dek must name the idle false-activation
+rate.
 
 The independent review of the 2026-10-02 merge added: "later recording" (and
 之后的记录 / 之后一段) may appear only in a sentence about one rate, on every page,
@@ -40,6 +46,18 @@ the YSU short answer qualifies the personal threshold; each scrolling table in t
 non-control section has its own name; the Chinese register prints the English
 original beside each licence and rights-review note; and the chart colours in
 `workbench.ts` must equal the legend swatches in `generated.css`.
+
+Its follow-up review added: the LTRSVP matrix note must say that the diagonal is
+the same-rate run b after a long break; the YSU extension's non-control table ends
+with a pooled row for both rules, read from the export, which must be the sum of
+the states above it (the short answer's "fewer overall" reads it); a dataset page's
+cite block names one upstream dataset, a topic page's several; the model-adaptation
+hero eyebrow names both halves of the page without the "zero labels" label, which
+stays on `#adaptation`, and `#next-day` must say that design uses the test
+person's own day-B labels; the calibration-budget `#next-day` note has a heading
+that stands on its own; any "RSS" on the model-adaptation page, in any case, fails
+the memory check; and that page's Dataset markup names the engineering check's
+file in `distribution` but nothing from it in `variableMeasured`.
 
 ```sh
 node scripts/check-workbench.mjs        # from site/

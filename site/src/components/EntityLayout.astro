@@ -38,7 +38,7 @@ interface Props {
    * block and citation_* tags naming the releases those figures come from.
    * `files` are the served files the figures are leaves of.
    */
-  cite?: { files: string[]; upstream: 'page' | 'datasets' };
+  cite?: { files: string[]; upstream: 'page' | 'dataset' | 'datasets' };
 }
 const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active, name, cite } = Astro.props;
 const nameLang = locale === 'zh' ? 'en' : undefined;

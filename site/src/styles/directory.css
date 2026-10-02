@@ -55,6 +55,11 @@
 .dataset-status .status{display:inline-block}
 .dataset-status small{margin-top:6px}
 .dataset-status a{color:var(--accent)}
+/* The released English under a translated licence note (.note-original). Its
+   left rule reads as a margin mark beside left-aligned text; in this column,
+   right-aligned on wide screens, it stood at the far side of the block, away
+   from the text it marks. Size and colour already make it secondary. */
+.dataset-status .note-original{border-left:0;padding-left:0}
 
 /* --- Field notes ---------------------------------------------------------- */
 .news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}

@@ -15,15 +15,18 @@ interface Props {
   title: string;
   canonical: string;
   files: string[];
-  /** Where the upstream credit is: on this page (topics, datasets) or on the dataset pages (methods). */
-  upstream: 'page' | 'datasets';
+  /**
+   * Where the upstream credit is: on this page, for several datasets (topics) or
+   * for the one the page is about (datasets), or on the dataset pages (methods).
+   */
+  upstream: 'page' | 'dataset' | 'datasets';
 }
 const { locale, title, canonical, files, upstream } = Astro.props;
 const c = citeCopy[locale];
 const t = chrome[locale];
 const cited = releasesFor(files);
 const newest = cited[0];
-const upstreamText = upstream === 'page' ? c.upstreamPage : c.upstreamDatasets;
+const upstreamText = upstream === 'page' ? c.upstreamPage : upstream === 'dataset' ? c.upstreamDataset : c.upstreamDatasets;
 const zh = locale === 'zh';
 // A question already ends the title; a name ("LaBraM: results on …") needs its full stop.
 const titleEnd = /[.?!？。]$/.test(title) ? '' : '.';
