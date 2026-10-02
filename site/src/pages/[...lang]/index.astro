@@ -9,6 +9,8 @@ import { alternates, chrome, datasetStatus, datasetTask, directoryText, familyLa
          localeParams, localizePath, metricLabel, modelStatus, ogLocale, topicCards, trackTitle } from '../../data/i18n';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
+import ShareImage from '../../components/ShareImage.astro';
+import FooterElsewhere from '../../components/FooterElsewhere.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
 import '../../styles/global.css';
 import '../../styles/matrix.css';
@@ -35,7 +37,6 @@ const canonical=new URL(localizePath('/',locale),origin).href;
 // The model cards and dataset rows link to their own pages where one exists.
 const methodPage=(name:string)=>{const m=methodEntities.find(x=>x.name===name||(x.slug==='cca'&&name==='Standard CCA'));return m?hrefFor(`/methods/${m.slug}/`,locale):null;};
 const datasetPage=(name:string)=>{const d=datasetEntities.find(x=>x.name===name);return d?hrefFor(`/datasets/${d.slug}/`,locale):null;};
-const ogImage=new URL('/og.png',origin).href;
 const title=`${site.name} · ${h.title}`;
 const description=locale==='en'?site.description:h.description;
 const chanceOf=(t:typeof tracks[number])=>(t as {chanceLevel?:number|null}).chanceLevel ?? null;
@@ -111,8 +112,8 @@ const links=alternates('/',String(origin));
 ---
 <!doctype html>
 <html lang={htmlLang[locale]}><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#b3450e"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><AgentLinks href={localizePath('/', locale)}/>{links.map(l=><link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}<title>{title}</title>
-<meta property="og:type" content="website"/><meta property="og:site_name" content={site.name}/><meta property="og:locale" content={ogLocale[locale]}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogImage}/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content={`${site.name} — ${h.ogAlt(counts)}`}/>
-<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={ogImage}/>
+<meta property="og:type" content="website"/><meta property="og:site_name" content={site.name}/><meta property="og:locale" content={ogLocale[locale]}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><ShareImage locale={locale}/>
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/>
 {locale==='en'&&<script type="application/ld+json" set:html={JSON.stringify(homeDataset())}/>}
 {locale==='en'&&<script type="application/ld+json" set:html={JSON.stringify(websiteEntity())}/>}</head>
 <body><a class="skip" href="#overview">{t.skipToResults}</a>
@@ -151,7 +152,7 @@ const links=alternates('/',String(origin));
 <section id="datasets" class="section"><div class="section-heading"><div><p class="eyebrow">{h.datasetsEyebrow}</p><h2>{h.datasetsH2}</h2></div><p>{h.datasetsLede}</p></div><div class="dataset-list">{data.datasets.map(d=><article class="dataset-row"><div><span class="family">{datasetTask(d.task,locale)}</span><h3>{datasetPage(d.name)?<a href={datasetPage(d.name)!}>{d.name}</a>:<a href={d.source} target="_blank" rel="noreferrer">{d.name} ↗</a>}</h3><p lang={dir(d.detail).lang}>{dir(d.detail).text}</p></div><dl><div><dt>{h.dtSubjects}</dt><dd>{d.subjects}</dd></div><div><dt>{h.dtChannels}</dt><dd>{d.channels}</dd></div></dl><div class="dataset-status"><span class="status">{datasetStatus(d.status,locale)}</span><small lang={dir(d.license).lang}>{d.licenseUrl?<a href={d.licenseUrl} target="_blank" rel="noreferrer">{dir(d.license).text} ↗</a>:dir(d.license).text}</small><small lang={payloadLang}>{d.attribution}</small></div></article>)}</div></section>
 <section id="news" class="section"><div class="section-heading"><div><p class="eyebrow">{h.newsEyebrow}</p><h2>{h.newsH2}</h2></div><p>{h.newsLede}</p></div><div class="news-grid">{data.news.map(n=><article class="news-card" lang={payloadLang}><div class="card-top"><span class="family">{n.tag}</span><time datetime={n.date}>{n.date}</time></div><h3><a href={n.sourceUrl} target="_blank" rel="noreferrer">{n.title} ↗</a></h3><p>{n.summary}</p><span class="source">{n.source}</span></article>)}</div></section>
 <section id="methods" class="section methods"><div><p class="eyebrow">{h.methodsEyebrow}</p><h2>{h.methodsH2}</h2><p lang={payloadLang}>{data.evidencePolicy}</p><a class="button" href="/data/experiments.json" download>{h.downloadAll}</a></div><div class="method-grid">{h.principles.map(([title,body],i)=><article><span>0{i+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div></section>
-</main><footer><a class="brand" href={hrefFor('/',locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/#corrections">{t.footerReport}{t.englishMark}</a><a href={hrefFor('/releases/',locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#overview">{t.footerBack}</a></footer>
+</main><footer><a class="brand" href={hrefFor('/',locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/#corrections">{t.footerReport}{t.englishMark}</a><a href={hrefFor('/releases/',locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#overview">{t.footerBack}</a><FooterElsewhere locale={locale}/></footer>
 <dialog id="detail-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><p class="eyebrow">{h.dialogEyebrow}</p><button id="close-dialog" aria-label={h.closeDialog}>×</button></div><h2 id="dialog-title"></h2><div id="dialog-body"></div></dialog>
 <script>import '../../scripts/workbench';</script>
 </body></html>

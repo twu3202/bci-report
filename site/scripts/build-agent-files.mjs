@@ -29,7 +29,16 @@ const kids = n => (n.children ?? []);
 const SKIP = new Set(['script', 'style', 'svg', 'button', 'select', 'option', 'dialog', 'template', 'form', 'input', 'label', 'noscript', 'head']);
 const BLOCK = new Set(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'table', 'figure', 'figcaption', 'section', 'article',
   'div', 'header', 'footer', 'nav', 'main', 'dl', 'dt', 'dd', 'blockquote', 'pre', 'aside', 'details', 'summary', 'caption']);
-const skipped = n => n.type === ELEMENT_NODE && (SKIP.has(n.name) || n.attributes?.['aria-hidden'] === 'true'
+// Inside a table cell, a button or an in-page '#' link is not navigation: it is
+// the row's or the column's name. The home matrix heads each protocol column
+// with a '#benchmarks' link, and the results table names each model in a button
+// that opens its card; skipping them as controls left the copy's matrix with
+// unlabelled columns and its results table with no model names (until
+// 2026-10-02). In a cell they keep their text and lose the control.
+let inTable = 0;
+const tableLabel = n => inTable > 0 && n.type === ELEMENT_NODE
+  && (n.name === 'button' || (n.name === 'a' && (n.attributes?.href ?? '').startsWith('#')));
+const skipped = n => n.type === ELEMENT_NODE && !tableLabel(n) && (SKIP.has(n.name) || n.attributes?.['aria-hidden'] === 'true'
   || has(n, 'breadcrumbs') || has(n, 'skip') || has(n, 'lang') || has(n, 'visually-hidden'));
 
 let origin = 'https://bci.report';
@@ -40,16 +49,19 @@ function inline(nodes) {
   for (const n of nodes) {
     if (n.type === TEXT_NODE) { out += decode(n.value).replace(/\s+/g, ' '); prevElement = false; continue; }
     if (n.type !== ELEMENT_NODE || skipped(n)) continue;
-    // In-page jump links ("Methods & limits ↓") are navigation, not content.
-    if (n.name === 'a' && (n.attributes?.href ?? '').startsWith('#')) continue;
+    // In-page jump links ("Methods & limits ↓") are navigation, not content —
+    // outside a table (see tableLabel).
+    if (n.name === 'a' && (n.attributes?.href ?? '').startsWith('#') && !tableLabel(n)) continue;
     // Two elements side by side (a figure and its label, two links) are two
     // words, even when CSS alone puts the space between them.
     if (prevElement && out && !/\s$/.test(out)) out += ' ';
     prevElement = true;
     const inner = inline(kids(n));
+    // A name, without the control's "opens something" arrow.
+    if (tableLabel(n)) { out += inner.replace(/\s*↗\s*$/, ''); continue; }
     switch (n.name) {
       case 'strong': case 'b': out += inner.trim() ? `**${inner.trim()}**` : ''; break;
-      case 'em': case 'i': out += inner.trim() ? `*${inner.trim()}*` : ''; break;
+      case 'em': case 'i': case 'cite': out += inner.trim() ? `*${inner.trim()}*` : ''; break;
       case 'code': out += `\`${inner.trim()}\``; break;
       case 'a': {
         const href = n.attributes?.href ?? '';
@@ -73,7 +85,7 @@ function inline(nodes) {
   return out;
 }
 const clean = s => s.replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').replace(/\(\s+/g, '(').trim();
-const cell = n => clean(inline(kids(n))).replace(/\|/g, '\\|');
+const cell = n => { inTable++; try { return clean(inline(kids(n))).replace(/\|/g, '\\|'); } finally { inTable--; } };
 
 function table(n) {
   const rows = [];
@@ -211,6 +223,19 @@ const api = en.find(p => p.path === '/api/');
 const apiFiles = [...api.md.matchAll(/^\| \[`([^`]+)`\]\(([^)]+)\) \| ([^|]+) \|/gm)].map(m => `- [${m[1]}](${m[2]}): ${m[3].trim()}`);
 const one = path => en.find(p => p.path === path);
 
+// Citation and mirrors, read from what the pages publish: the release and the
+// other homes from the home page's Dataset markup (release log, site.ts), the
+// citation file from /api/. So llms.txt cannot cite a release the site does not.
+const homeLd = [...readFileSync(join(dist, 'index.html'), 'utf8').matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+  .map(m => JSON.parse(m[1]));
+const umbrella = homeLd.find(x => x['@type'] === 'Dataset');
+const sameAs = host => umbrella?.sameAs?.find(u => new URL(u).hostname === host);
+const repository = sameAs('github.com'), mirror = sameAs('huggingface.co');
+const bibKey = api.md.match(/```\n@misc\{([^,]+),/)?.[1];
+const citationFile = api.md.match(/\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/CITATION\.cff)\)/)?.[1];
+if (!umbrella?.version || !umbrella?.dateModified || !repository || !mirror || !bibKey || !citationFile)
+  throw new Error('build-agent-files: the home Dataset markup or /api/ no longer carries the release, mirrors or citation');
+
 const llms = `# BCI Report
 
 > Public EEG decoding results, each reported with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and known limits. A personal, noncommercial research project; aggregate results only, never raw EEG or per-person scores.
@@ -238,8 +263,20 @@ ${[protocolsIndex, ...protocolPages].map(p => line(p, p.description)).join('\n')
 ${line(api, api.description)}
 ${apiFiles.join('\n')}
 
+## Cite
+
+- [How to cite](${mdUrl(api)}): cite BCI Report and the release you used — the current one is \`${umbrella.version}\` (${umbrella.dateModified}); BibTeX key \`${bibKey}\` — and the upstream dataset each figure was computed on: every dataset page gives its credit. Every topic, dataset and method page ends with a "Cite this page" block naming the releases its figures come from.
+- [CITATION.cff](${citationFile}): the same citation, machine-readable (GitHub's "Cite this repository"). Aggregate results CC BY 4.0; the recordings keep their own licences.
+
+## Mirrors
+
+- [Code on GitHub](${repository}): the site, the publication boundary and the review evidence. Code MIT.
+- [Dataset mirror on Hugging Face](${mirror}): the same files, with the per-protocol tables merged into loadable configurations.
+- [Release feed](${origin}/releases.xml): Atom, one entry per reviewed release, with every file's SHA-256.
+
 ## Optional
 
+- [Full text](${origin}/llms-full.txt): every English page listed here, as Markdown in one file.
 ${line(home, home.description)}
 ${line(one('/releases/'), one('/releases/').description)}
 ${line(one('/data-use/'), one('/data-use/').description)}

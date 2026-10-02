@@ -11,6 +11,8 @@ import adaptation from '../../data/adaptation-update.json';
 import extension from '../../data/extension-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
+import ShareImage from '../../components/ShareImage.astro';
+import FooterElsewhere from '../../components/FooterElsewhere.astro';
 import { site } from '../../data/site';
 import { corrections, holds, releases } from '../../data/releases';
 import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale,
@@ -25,7 +27,6 @@ const tc = topicChrome[locale];
 const path = '/releases/';
 const origin = Astro.site ?? site.origin;
 const canonical = new URL(localizePath(path, locale), origin).href;
-const ogImage = new URL('/og.png', origin).href;
 
 // Hashes are computed from the bytes the site serves, at build time, so the
 // page cannot state a hash for a file it does not ship. check-workbench.mjs
@@ -128,11 +129,10 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
   <meta property="og:title" content={pageTitleFull}/>
   <meta property="og:description" content={copy.description}/>
   <meta property="og:url" content={canonical}/>
-  <meta property="og:image" content={ogImage}/>
+  <ShareImage locale={locale}/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content={pageTitleFull}/>
   <meta name="twitter:description" content={copy.description}/>
-  <meta name="twitter:image" content={ogImage}/>
 </head>
 <body>
   <a class="skip" href="#release-content">{t.skipToEvidence}</a>
@@ -185,6 +185,6 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
       <p class="citation-note">{copy.rights} <a href="/data-use/">{copy.rightsLink}</a></p>
     </section>
   </main>
-  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#release-content">{t.footerTop}</a></footer>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#release-content">{t.footerTop}</a><FooterElsewhere locale={locale}/></footer>
 </body>
 </html>

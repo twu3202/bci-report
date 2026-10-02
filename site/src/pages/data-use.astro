@@ -10,17 +10,18 @@ import { site, contact, contactReady, correctionSubject } from '../data/site';
 import { defaultLocale } from '../data/i18n';
 import SiteHeader from '../components/SiteHeader.astro';
 import AgentLinks from '../components/AgentLinks.astro';
+import ShareImage from '../components/ShareImage.astro';
+import FooterElsewhere from '../components/FooterElsewhere.astro';
 import '../styles/global.css';
 const description=`How ${site.name} selects sources, credits datasets and shares aggregate EEG benchmark results.`;
 const locale=defaultLocale;
 const canonical=new URL('/data-use/',Astro.site ?? site.origin).href;
-const ogImage=new URL('/og.png',Astro.site ?? site.origin).href;
 const title=`Data use & privacy · ${site.name}`;
 ---
 <!doctype html>
 <html lang="en">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#b3450e"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><AgentLinks href="/data-use/"/><title>Data use &amp; privacy · {site.name}</title>
-<meta property="og:type" content="article"/><meta property="og:site_name" content={site.name}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogImage}/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={ogImage}/></head>
+<meta property="og:type" content="article"/><meta property="og:site_name" content={site.name}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><ShareImage locale={locale}/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/></head>
 <body>
 <SiteHeader locale={locale} path="/data-use/" active="data-use"/>
 <main class="policy-page">
@@ -54,5 +55,5 @@ const title=`Data use & privacy · ${site.name}`;
 <p>Advertising, sponsorship, paid access, new hosting jurisdictions, data uploads or clinical applications require a new scope review. A noncommercial source label is not a blanket authorization for those uses.</p></section>
 <section><h2>Website privacy</h2><p>The application does not run analytics, advertising trackers or EEG processing. Hosting and access-control providers may process connection and sign-in information independently. External source links lead to sites with their own privacy practices.</p><p>This site is not a medical service and provides no diagnosis, treatment advice or participant-level assessment.</p></section>
 <section><h2>Useful references</h2><p><a href="https://huggingface.co/terms-of-service" target="_blank" rel="noreferrer">Hugging Face terms</a> · <a href="https://creativecommons.org/licenses/by/4.0/legalcode.en" target="_blank" rel="noreferrer">Creative Commons rights and attribution</a></p><p>Reviewed for this release: {data.generatedAt.slice(0,10)}.</p></section>
-</main><footer><a class="brand" href="/">{site.name}</a><p>Personal, noncommercial research</p><a href="/releases/">Releases &amp; downloads</a><a href="/#benchmarks">Return to comparisons →</a></footer>
+</main><footer><a class="brand" href="/">{site.name}</a><p>Personal, noncommercial research</p><a href="/releases/">Releases &amp; downloads</a><a href="/#benchmarks">Return to comparisons →</a><FooterElsewhere locale={locale}/></footer>
 </body></html>

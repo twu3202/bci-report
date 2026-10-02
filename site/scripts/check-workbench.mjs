@@ -1087,6 +1087,215 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   assert.ok(directory.length>2000,'zh: the model directory and data register must render');
   assert.doesNotMatch(directory,/<p lang="en">/,'zh: model notes and rights-review notes are printed in Chinese');
 }
+
+// --- 2026-10-02 discoverability and citation ---------------------------------------------
+const decodeHtml=s=>s.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const sha256=u=>createHash('sha256').update(readFileSync(u)).digest('hex');
+const siteTs=readFileSync(new URL('../src/data/site.ts',import.meta.url),'utf8');
+const siteField=k=>siteTs.match(new RegExp('^\\s*'+k+":\\s*'([^']+)'",'m'))[1];
+const [repository,mirror,citationFile]=['repository','mirror','citationFile'].map(siteField);
+const ldOf=html=>[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
+const releasesPage=pageOf('releases/');
+const releaseEntries=[...releasesPage.matchAll(/<article class="release-entry" id="([^"]+)">\s*<header><time datetime="([^"]+)">([\s\S]*?)<\/article>/g)]
+  .map(m=>({id:m[1],date:m[2],files:[...m[3].matchAll(/data-file="([^"]+)"/g)].map(f=>f[1])}));
+assert.ok(releaseEntries.length>=6,'the releases page must list every release');
+const releaseOf=new Map(releaseEntries.flatMap(r=>r.files.map(f=>[f,r])));
+const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
+
+// The share card. A text check cannot see inside a bitmap, which is how og.png kept
+// the "Research preview" badge after the pages dropped it; the generator records
+// the hash, size, text and counts of what it drew, and the served file must be that.
+{
+  const brand=JSON.parse(readFileSync(new URL('./brand-assets.json',import.meta.url),'utf8'));
+  const card=brand['og.png'];
+  for(const [file,{sha256:want}] of Object.entries(brand)){
+    assert.equal(sha256(new URL('../public/'+file,import.meta.url)),want,'public/'+file+' is not the file generate-brand-assets.py recorded');
+    assert.equal(sha256(new URL(file,DIST)),want,'dist/'+file+' is not the recorded file');
+  }
+  assert.notEqual(card.sha256,'cffe4021be4c624f63afcec7ee8222b004d9b4a89f020241121d2bf5bff149d5','the share card with the "Research preview" badge is back');
+  assert.ok(card.text.every(s=>!/preview|研究预览/i.test(s)),'the share card must not carry a stage label');
+  const png=readFileSync(new URL('og.png',DIST));
+  assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[card.width,card.height],'og.png must be the size the pages declare');
+  const core={protocols:data.coverage.displayedProtocols,datasets:new Set(data.tracks.map(t=>t.dataset)).size,
+    comparisons:data.coverage.displayedComparisons,methods:new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name))).size};
+  assert.deepEqual(card.counts,core,'the share card prints counts that are not the core matrix\'s: regenerate og.png');
+  for(const f of [...htmlPages,'404.html'].filter(f=>readFileSync(new URL(f,DIST),'utf8').includes('property="og:image"'))){
+    const html=readFileSync(new URL(f,DIST),'utf8');
+    for(const tag of ['og:image:type" content="image/png"','og:image:width" content="'+card.width+'"','og:image:height" content="'+card.height+'"'])
+      assert.ok(html.includes('<meta property="'+tag+'>'),f+': '+tag.split('"')[0]+' is required beside og:image');
+    const alt=decodeHtml(html.match(/<meta property="og:image:alt" content="([^"]+)"/)?.[1]??'');
+    assert.ok(alt.includes(String(core.comparisons))&&alt.includes(String(core.protocols)),f+': og:image:alt must describe the card');
+    if(/<html lang="en"/.test(html)) assert.ok(alt.includes(card.text[1]+' '+card.text[2]),f+': the English alt text quotes the card');
+    assert.ok(html.includes('<meta name="twitter:image:alt" content="'),f+': twitter:image:alt is required');
+  }
+}
+
+// The umbrella Dataset on the home page cites what CITATION.cff and /api/ cite: the
+// newest release, with every file any release ships, and the topic datasets as parts.
+{
+  const ld=ldOf(built);
+  const umbrella=ld.find(x=>x['@type']==='Dataset'),website=ld.find(x=>x['@type']==='WebSite');
+  assert.equal(umbrella.version,newestRelease.id,'home Dataset version must be the newest release');
+  assert.equal(umbrella.dateModified,newestRelease.date,'home Dataset dateModified must be the newest release date');
+  assert.equal(umbrella.datePublished,oldestRelease.date,'home Dataset datePublished must be the first release date');
+  assert.deepEqual(umbrella.distribution.map(d=>d.contentUrl.replace('https://bci.report/data/','')).sort(),
+    readdirSync(new URL('data/',DIST)).sort(),'home Dataset distribution must name every served file');
+  assert.deepEqual(umbrella.hasPart.map(p=>p.url).sort(),topicPages.map(([s])=>'https://bci.report/topics/'+s+'/').sort(),'home Dataset hasPart must name every topic Dataset');
+  for(const part of umbrella.hasPart){
+    const node=ldOf(pageOf(part.url.replace('https://bci.report/','')))[0]['@graph'].find(n=>n['@type']==='Dataset');
+    assert.equal(part.name,node.name,part.url+': hasPart must name the topic Dataset as the topic page does');
+  }
+  assert.deepEqual([...umbrella.sameAs].sort(),[mirror,repository].sort(),'home Dataset sameAs: the mirror and the repository');
+  assert.deepEqual([...website.sameAs].sort(),[mirror,repository].sort(),'WebSite sameAs: the repository and the mirror');
+  for(const f of htmlPages) for(const node of ldOf(readFileSync(new URL(f,DIST),'utf8')))
+    assert.ok(!JSON.stringify(node).includes('"@type":"Person"'),f+': BCI Report is a project byline, an Organization, not a Person');
+}
+
+// The release feed: one entry per release in the releases page's order, every file
+// with its served size and SHA-256, linked from every page's head and from /api/.
+{
+  const feed=readFileSync(new URL('releases.xml',DIST),'utf8');
+  assert.match(feed,/^<\?xml version="1\.0" encoding="utf-8"\?>\n<feed xmlns="http:\/\/www\.w3\.org\/2005\/Atom" xml:lang="en">/,'releases.xml is an Atom feed');
+  assert.equal((feed.match(/<entry>/g)||[]).length,(feed.match(/<\/entry>/g)||[]).length);
+  assert.deepEqual([...feed.matchAll(/<entry>\n {4}<title>[^<]*<\/title>\n {4}<id>https:\/\/bci\.report\/releases\/#([^<]+)<\/id>/g)].map(m=>m[1]),
+    releaseEntries.map(r=>r.id),'releases.xml: one entry per release, newest first');
+  assert.ok(feed.includes('<updated>'+newestRelease.date+'T00:00:00Z</updated>\n  <author>'),'releases.xml: the feed is as new as the newest release');
+  for(const r of releaseEntries) for(const file of r.files){
+    const bytes=readFileSync(new URL('data/'+file,DIST));
+    assert.ok(feed.includes(`length="${bytes.length}" href="https://bci.report/data/${file}"`),'releases.xml: '+file+' enclosure must carry its served size');
+    assert.ok(feed.includes(`SHA-256 &lt;code&gt;${createHash('sha256').update(bytes).digest('hex')}&lt;/code&gt;`),'releases.xml: '+file+' must carry the SHA-256 of the served bytes');
+  }
+  for(const f of htmlPages){
+    const html=readFileSync(new URL(f,DIST),'utf8');
+    assert.ok(html.includes('<link rel="alternate" type="application/atom+xml" title="BCI Report releases" href="/releases.xml">'),f+': the release feed must be linked in <head>');
+  }
+  for(const p of ['api/','zh/api/']){
+    const html=pageOf(p);
+    for(const href of ['/releases.xml','/llms-full.txt','/llms.txt','/sitemap.xml']) assert.ok(html.includes(`href="${href}"`),p+': '+href+' must be linked for agents');
+    for(const href of [repository,mirror,citationFile]) assert.ok(html.includes(`href="${href}"`),p+': '+href+' must be linked');
+    // The CDN still refuses urllib: the edge setting has not changed, so the caveat stays.
+    assert.match(html,p==='api/'?/The CDN refuses Python’s built-in urllib/:/CDN 会拒绝 Python 自带的 urllib/,p+': the urllib caveat must stay until the edge stops refusing it');
+  }
+}
+
+// _headers: the downloads may be read from any origin; the pages may not.
+{
+  const blocks={};let current=null;
+  for(const line of headers.split('\n')){
+    if(!line.trim()||/^\s*#/.test(line)) continue;
+    if(/^\S/.test(line)){current=line.trim();blocks[current]=[];} else blocks[current].push(line.trim());
+  }
+  assert.deepEqual(blocks['/data/*'],['! Cross-Origin-Resource-Policy','Cross-Origin-Resource-Policy: cross-origin','Access-Control-Allow-Origin: *'],
+    '/data/* must detach the same-origin policy, then allow cross-origin reads');
+  assert.ok(blocks['/*'].includes('Cross-Origin-Resource-Policy: same-origin'),'pages keep Cross-Origin-Resource-Policy: same-origin');
+  for(const [path,lines] of Object.entries(blocks)) if(path!=='/data/*')
+    assert.ok(!lines.some(l=>/^Access-Control-Allow-Origin|^Cross-Origin-Resource-Policy: cross-origin/.test(l)),path+': only /data/* is readable cross-origin');
+  assert.deepEqual(blocks['/releases.xml'],['Content-Type: application/atom+xml; charset=utf-8'],'the feed is served as Atom');
+  assert.equal(readFileSync(new URL('_headers',DIST),'utf8'),headers,'dist/_headers must be public/_headers');
+}
+
+// "Cite this page" on every topic, dataset and method page, in both languages and
+// in each Markdown copy: the page, its address, and exactly the releases whose
+// files hold its figures (topic pages: the downloads they link; entity pages: the
+// files their data-fig figures are leaves of). citation_* tags carry the same.
+{
+  const citePages=[...topicPages.map(([s])=>'topics/'+s+'/'),...entityBilingual.filter(p=>/^(?:datasets|methods)\/[^/]+\/$/.test(p))];
+  assert.ok(citePages.length>=8+16+9,'cite blocks on every topic, dataset and method page');
+  for(const p of citePages) for(const path of [p,'zh/'+p]){
+    const html=pageOf(path),zh=path.startsWith('zh/');
+    const start=html.indexOf('<section class="cite-page"');
+    assert.ok(start>0,path+': the cite block must render');
+    const sec=html.slice(start,html.indexOf('</section>',start));
+    const named=sec.match(/data-releases="([^"]+)"/)[1].split(' ');
+    const files=p.startsWith('topics/')?[...html.matchAll(/href="\/data\/([^"]+)"/g)].map(m=>m[1]):[...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]);
+    const expected=releaseEntries.filter(r=>files.some(f=>releaseOf.get(f)===r)).map(r=>r.id);
+    assert.deepEqual(named,expected,path+': the cite block must name exactly the releases its figures come from, newest first');
+    for(const id of named) assert.ok(sec.includes(`href="${zh?'/zh':''}/releases/#${id}"><code>${id}</code></a>`),path+': '+id+' must link to its release');
+    const h1=html.match(/<h1>([^<]+)<\/h1>/)[1],canonical='https://bci.report/'+path;
+    assert.ok(sec.includes(`<cite>${h1}</cite>`)&&sec.includes(`<span class="cite-url">${canonical}</span>`),path+': the cite block names the page and its address');
+    assert.match(sec,zh?/也请同时引用上游数据集/:/Cite the upstream datasets? as well/,path+': the cite block sends the reader to the upstream credit');
+    const newest=releaseEntries.find(r=>r.id===named[0]);
+    const meta=k=>decodeHtml(html.match(new RegExp(`<meta name="citation_${k}" content="([^"]*)">`))?.[1]??'');
+    assert.equal(meta('title'),decodeHtml(h1),path+': citation_title is the h1');
+    assert.equal(meta('author'),'BCI Report',path+': citation_author');
+    assert.equal(meta('publication_date'),newest.date.replaceAll('-','/'),path+': citation_publication_date is the newest cited release');
+    assert.equal(meta('public_url'),canonical,path+': citation_public_url is the canonical');
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    assert.ok(md.includes(zh?'## 引用本页':'## Cite this page')&&named.every(id=>md.includes('`'+id+'`'))&&md.includes(canonical),path+': the cite block must survive into the Markdown copy');
+  }
+}
+
+// Markdown copies keep the names that live in table controls: the home matrix heads
+// its columns with '#' links and names each model in a button. Skipping them as
+// navigation left the copy's tables with no labels (fixed 2026-10-02).
+for(const f of htmlPages){
+  const html=readFileSync(new URL(f,DIST),'utf8'),copy=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8');
+  const rows=copy.split('\n').filter(l=>l.startsWith('| '));
+  for(const [table] of html.matchAll(/<table[\s\S]*?<\/table>/g))
+    for(const [,label] of table.matchAll(/<(?:button|a href="#[^"]*")[^>]*>([^<]+)</g)){
+      const text=decodeHtml(label).replace(/\s*↗\s*$/,'').trim();
+      if(text) assert.ok(rows.some(l=>l.includes(text)),f+': "'+text+'" names a table row or column and must be in the Markdown table');
+    }
+}
+for(const [path,names] of [['index.md',data.tracks.map(t=>t.title)],['zh/index.md',null]]){
+  const head=readFileSync(new URL(path,DIST),'utf8').split('\n').find(l=>/^\| (?:Method|方法) \|/.test(l));
+  assert.ok(head&&head.split('|').slice(2,-1).every(c=>/\S+ — n=/.test(c)),path+': every matrix column must keep its protocol name');
+  if(names) for(const n of names) assert.ok(head.includes(n),path+': matrix column '+n);
+}
+
+// Titles say the site's name once.
+for(const f of htmlPages){
+  const title=readFileSync(new URL(f,DIST),'utf8').match(/<title>([^<]*)<\/title>/)[1];
+  assert.ok(title.split('BCI Report').length<=2,f+': "'+title+'" repeats the site name');
+}
+
+// The project's other homes: every footer links back to them, the agent files list them.
+for(const f of htmlPages){
+  const html=readFileSync(new URL(f,DIST),'utf8');
+  const footer=html.slice(html.lastIndexOf('<footer'));
+  for(const href of [repository,mirror,citationFile]) assert.ok(footer.includes(`href="${href}"`),f+': the footer must link '+href);
+}
+assert.match(llms,/\n## Cite\n\n[\s\S]*\n## Mirrors\n\n[\s\S]*\n## Optional\n/,'llms.txt: Cite and Mirrors sections, before Optional');
+assert.ok(llms.includes('`'+newestRelease.id+'`'),'llms.txt must cite the newest release');
+for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xml','https://bci.report/llms-full.txt'])
+  assert.ok(llms.includes(`](${url})`),'llms.txt must link '+url);
+// Unmeasured models can be linked by name; their entries carry no number.
+{
+  const methodsPage=pageOf('methods/');
+  const list=methodsPage.slice(methodsPage.indexOf('id="unmeasured"'),methodsPage.indexOf('</ul>',methodsPage.indexOf('id="unmeasured"')));
+  const items=[...list.matchAll(/<li( id="[a-z0-9-]+")?>/g)];
+  assert.ok(items.length>0&&items.every(m=>m[1]),'methods: every unmeasured model has an anchor');
+  assert.doesNotMatch(list.replace(/<[^>]+>/g,' '),/\d+(?:\.\d+)?\s?%/,'methods: an unmeasured model carries no figure');
+}
+
+// Licences and archive metadata: code MIT, the aggregate results CC BY 4.0, and the
+// Zenodo record derived from CITATION.cff and the built dataset pages.
+{
+  const repoFile=f=>readFileSync(new URL('../../'+f,import.meta.url),'utf8');
+  assert.match(repoFile('LICENSE'),/^MIT License\n\nCopyright \(c\) \d{4} /,'LICENSE: the code is MIT');
+  const dataLicence=repoFile('LICENSE-DATA');
+  assert.ok(dataLicence.includes('https://creativecommons.org/licenses/by/4.0/')&&dataLicence.includes('site/public/data/'),'LICENSE-DATA: CC BY 4.0, scoped to the published aggregate files');
+  assert.match(dataLicence,/does not cover[\s\S]*EEG recordings/,'LICENSE-DATA: the recordings keep their own terms');
+  const cff=repoFile('CITATION.cff');
+  assert.match(cff,/^license: CC-BY-4\.0$/m,'CITATION.cff: the dataset licence');
+  assert.match(cff,/MIT License \(LICENSE\)/,'CITATION.cff: the code licence is stated');
+  const readme=repoFile('README.md');
+  assert.ok(readme.includes('[LICENSE-DATA](LICENSE-DATA)')&&readme.includes('[MIT](LICENSE)'),'README: both licences are linked');
+  const zenodo=JSON.parse(repoFile('.zenodo.json'));
+  const {zenodoMetadata}=await import('./write-zenodo-metadata.mjs');
+  assert.deepEqual(zenodo,zenodoMetadata(DIST),'.zenodo.json is stale: run `node scripts/write-zenodo-metadata.mjs` after the build');
+  assert.equal(zenodo.upload_type,'dataset');
+  assert.equal(zenodo.license,'cc-by-4.0');
+  assert.deepEqual(zenodo.creators,[{name:'BCI Report'}]);
+  for(const h of held) assert.ok(!JSON.stringify(zenodo).includes(h.name)&&!JSON.stringify(zenodo).includes(h.source.split('/').pop()),'.zenodo.json: held source '+h.id+' appears');
+  // The /api/ BibTeX is the citation CITATION.cff gives.
+  const bib=decodeHtml(apiPage.match(/<pre class="code" lang="en"><code>(@misc[\s\S]*?)<\/code><\/pre>/)[1]);
+  const cffField=k=>cff.match(new RegExp('^'+k+': "?([^"\\n]+)"?$','m'))[1];
+  assert.ok(bib.includes(`title        = {${cffField('title')}}`)&&bib.includes(`note         = {Release ${cffField('version')}}`)&&bib.includes(`year         = {${cffField('date-released').slice(0,4)}}`),
+    'the /api/ BibTeX must be the citation CITATION.cff gives');
+}
+
+console.log('PASS: 2026-10-02 discoverability — share card is the recorded badge-free bitmap with alt/size on every page; home Dataset cites the newest release with every file and topic part; Atom feed matches the release log; only /data/* is cross-origin; cite blocks name exactly their releases, in both languages and Markdown; table names survive into Markdown; footers, llms.txt, licences and .zenodo.json agree.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');

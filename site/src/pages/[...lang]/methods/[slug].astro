@@ -21,6 +21,9 @@ const datasetNames = [...new Set(m.groups.map(g => g.dataset.name))];
 // site ran (the directory's link) is shown beside it when it differs.
 const code = profile?.code_url ?? m.url;
 const used = m.url && m.url !== code ? m.url : undefined;
+// The served files this page's figures are leaves of; the cite block names their releases.
+const files = [...new Set(m.groups.flatMap(g => [...(g.chance ? [g.chance] : []),
+  ...g.rows.flatMap(r => [r.value, ...(r.interval ?? []), ...(r.of ? [r.of] : [])])].map(f => f.src)))];
 const structured = {
   '@context': 'https://schema.org', '@type': 'WebPage', url: new URL(path, site.origin).href,
   name: c.methodTitle(m.name), description: c.methodDescription(m.name, datasetNames.join(', ')),
@@ -38,6 +41,7 @@ const structured = {
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.methodsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle, href: hrefFor('/methods/', locale) }, { label: m.name, en: true }]}
   structured={structured}
+  cite={{ files, upstream: 'datasets' }}
 >
   {profile && <section class="entity-profile" aria-label={c.whatItIs}>
     {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}

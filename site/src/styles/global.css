@@ -248,10 +248,15 @@ aside>p:last-child{font-size:.8125rem;margin-top:13px}
 
 footer{
   border-top:3px double var(--rule);max-width:1360px;margin:64px auto 0;
-  padding:22px 0 36px;display:flex;justify-content:space-between;gap:24px;
-  align-items:center;font-size:.8125rem;
+  padding:22px 0 36px;display:flex;justify-content:space-between;gap:12px 24px;
+  align-items:center;font-size:.8125rem;flex-wrap:wrap;
 }
 footer .brand{font-size:1rem}
+/* The project's other homes, on a row of their own under the site links. A div,
+   not a p: narrow screens hide the footer's tagline paragraph. */
+.footer-elsewhere{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--muted);font-size:.78rem}
+.footer-elsewhere a{color:var(--muted);border-bottom:1px solid var(--line)}
+.footer-elsewhere a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
 /* --- Dialogs -------------------------------------------------------------- */
 dialog{

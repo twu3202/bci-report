@@ -17,7 +17,7 @@
 // Bing, Yandex, Seznam, Naver, Yep and others; Bing's index is what ChatGPT
 // search and Copilot read from. The protocol asks for URLs that were added,
 // updated or deleted — not the whole site on every deploy — so the script keeps
-// a fingerprint of each sitemap page as it was last submitted
+// a fingerprint of each sitemap page (and of /releases.xml) as it was last submitted
 // (.indexnow-state.json, local and git-ignored) and submits only the
 // difference. Fingerprints ignore the hashed /_astro/ asset names, so a CSS-only
 // change does not resubmit every page. The first run submits everything.
@@ -49,8 +49,11 @@ if (readFileSync(join(root, 'public', keyFile), 'utf8').trim() !== key) die(`${k
 if (!existsSync(join(dist, keyFile))) die(`${keyFile} is missing from dist/ — rebuild.`);
 
 const sitemap = readFileSync(join(dist, 'sitemap.xml'), 'utf8');
-const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-const origin = new URL(urls[0]).origin;
+const pageUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+const origin = new URL(pageUrls[0]).origin;
+// The release feed is not a page, so the sitemap does not list it, but it
+// changes exactly when a release does and should be recrawled then.
+const urls = [...pageUrls, ...(existsSync(join(dist, 'releases.xml')) ? [`${origin}/releases.xml`] : [])];
 const fileOf = url => {
   const path = decodeURIComponent(new URL(url).pathname);
   return join(dist, path.endsWith('/') ? `${path}index.html` : path);
@@ -65,7 +68,7 @@ const changed = urls.filter(u => previous[u] !== current[u]);
 const removed = Object.keys(previous).filter(u => !(u in current));
 const toSubmit = [...changed, ...removed];
 
-console.log(`deploy: ${urls.length} pages in the sitemap; ${changed.length} new or changed, ${removed.length} removed since the last submission.`);
+console.log(`deploy: ${pageUrls.length} pages in the sitemap and ${urls.length - pageUrls.length} feed; ${changed.length} new or changed, ${removed.length} removed since the last submission.`);
 if (dryRun) {
   for (const u of toSubmit) console.log(`  would submit ${u}`);
   process.exit(0);

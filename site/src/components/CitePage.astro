@@ -1,0 +1,38 @@
+---
+/**
+ * "Cite this page": the page, its address and the release its figures come
+ * from, plus a reminder to credit the upstream dataset. Rendered inside <main>,
+ * so the page's Markdown copy carries it too (scripts/build-agent-files.mjs).
+ * check-workbench.mjs checks that the releases named here are exactly the ones
+ * whose files the page's figures and downloads come from.
+ */
+import { site } from '../data/site';
+import { releasesFor } from '../data/releases';
+import { chrome, citeCopy, hrefFor, type Locale } from '../data/i18n';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  canonical: string;
+  files: string[];
+  /** Where the upstream credit is: on this page (topics, datasets) or on the dataset pages (methods). */
+  upstream: 'page' | 'datasets';
+}
+const { locale, title, canonical, files, upstream } = Astro.props;
+const c = citeCopy[locale];
+const t = chrome[locale];
+const cited = releasesFor(files);
+const newest = cited[0];
+const upstreamText = upstream === 'page' ? c.upstreamPage : c.upstreamDatasets;
+const zh = locale === 'zh';
+// A question already ends the title; a name ("LaBraM: results on …") needs its full stop.
+const titleEnd = /[.?!？。]$/.test(title) ? '' : '.';
+---
+<section class="cite-page" id="cite" aria-labelledby="cite-heading" data-releases={cited.map(r => r.id).join(' ')}>
+  <h2 id="cite-heading">{c.heading}</h2>
+  {zh
+    ? <p class="cite-text">{site.name}. <cite>{title}</cite>[EB/OL]. ({newest.date}). <span class="cite-url">{canonical}</span></p>
+    : <p class="cite-text">{site.name} ({newest.date.slice(0, 4)}). <cite>{title}</cite>{titleEnd} <span class="cite-url">{canonical}</span></p>}
+  <p>{c.figuresFrom(cited.length)} {cited.map((r, i) => <>{i > 0 && (zh ? '、' : ', ')}<a href={hrefFor(`/releases/#${r.id}`, locale)}><code>{r.id}</code></a>{zh ? `（${r.date}）` : ` (${r.date})`}</>)}{zh ? '。' : '. '}{upstreamText}</p>
+  <p class="citation-note"><a href={hrefFor('/api/#cite-heading', locale)}>{c.bibtex}</a> · <a href={site.citationFile} target="_blank" rel="noreferrer">CITATION.cff ↗</a>{t.englishMark}</p>
+</section>

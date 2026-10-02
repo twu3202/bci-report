@@ -164,7 +164,20 @@ interface Chrome {
   downloadData: string;
   /** Appended to any link that leaves a Chinese page for an English-only one. */
   englishMark: string;
+  /**
+   * The share card (public/og.png) in words: its own text and the core-matrix
+   * counts it prints. The card is English; the Chinese alt describes it in Chinese.
+   */
+  shareAlt: (c: ShareCounts) => string;
+  /** Footer links to the project's other public homes (site.ts). All three are English. */
+  footerCode: string;
+  footerMirror: string;
+  footerCite: string;
+  footerElsewhere: string;
 }
+
+/** The core-matrix counts printed on the share card (src/data/share-card.ts). */
+export interface ShareCounts { protocols: number; datasets: number; comparisons: number; methods: number }
 
 export const chrome: Record<Locale, Chrome> = {
   en: {
@@ -184,6 +197,12 @@ export const chrome: Record<Locale, Chrome> = {
     footerReleases: 'Releases & downloads',
     downloadData: 'Download data ↓',
     englishMark: '',
+    shareAlt: c => `${site.name}: Every EEG score, with the protocol that produced it. Core benchmark matrix: ` +
+      `${c.protocols} protocols, ${c.datasets} datasets, ${c.comparisons} comparisons, ${c.methods} methods.`,
+    footerCode: 'Code on GitHub',
+    footerMirror: 'Data mirror on Hugging Face',
+    footerCite: 'Cite: CITATION.cff',
+    footerElsewhere: 'Elsewhere',
   },
   zh: {
     updated: '更新于',
@@ -202,8 +221,41 @@ export const chrome: Record<Locale, Chrome> = {
     footerReleases: '发布记录与下载',
     downloadData: '下载数据 ↓',
     englishMark: '（英文）',
+    shareAlt: c => `${site.name}：每一个 EEG 分数，都附带产生它的协议。核心基准矩阵：` +
+      `${c.protocols} 个协议、${c.datasets} 个数据集、${c.comparisons} 项比较、${c.methods} 种方法。`,
+    footerCode: 'GitHub 上的代码',
+    footerMirror: 'Hugging Face 数据镜像',
+    footerCite: '引用文件 CITATION.cff',
+    footerElsewhere: '站外',
   },
 };
+
+/* --- "Cite this page" (topic, dataset and method pages) ------------------- */
+
+/**
+ * The block at the foot of every topic, dataset and method page, and its
+ * Markdown copy. English gives an author-date line; Chinese follows GB/T 7714
+ * for an online resource ([EB/OL], the date in brackets). Either way it names
+ * the release whose files hold the page's figures, and sends the reader on to
+ * the upstream dataset's own credit — the measurements are ours, the
+ * recordings are not.
+ */
+export const citeCopy = {
+  en: {
+    heading: 'Cite this page',
+    figuresFrom: (n: number) => (n === 1 ? 'Figures from release' : 'Figures from releases'),
+    upstreamPage: 'Cite the upstream dataset as well: its credit is on this page.',
+    upstreamDatasets: 'Cite the upstream datasets as well: each dataset’s page gives its credit.',
+    bibtex: 'BibTeX for the site and its releases →',
+  },
+  zh: {
+    heading: '引用本页',
+    figuresFrom: (_n: number) => '数字来自发布',
+    upstreamPage: '也请同时引用上游数据集：署名就在本页。',
+    upstreamDatasets: '也请同时引用上游数据集：每个数据集页面都写明了署名。',
+    bibtex: '本站及各次发布的 BibTeX →',
+  },
+} satisfies Record<Locale, unknown>;
 
 /* --- Display labels for short payload strings ----------------------------- */
 
@@ -288,7 +340,6 @@ export const home = {
     title: 'Public EEG Model Evaluation',
     /** One source: the English description is the site's own. */
     description: site.description,
-    ogAlt: (c: HomeCounts) => `core benchmark matrix: ${c.protocols} protocols, ${c.datasets} datasets, ${c.comparisons} comparisons, ${c.methods} methods.`,
     eyebrow: (date: string) => `Open EEG evaluation · Snapshot ${date}`,
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
@@ -398,7 +449,6 @@ export const home = {
     description:
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
       'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发。',
-    ogAlt: (c: HomeCounts) => `核心基准矩阵：${c.protocols} 个协议、${c.datasets} 个数据集、${c.comparisons} 项比较、${c.methods} 种方法。`,
     eyebrow: (date: string) => `公开 EEG 评测 · 快照 ${date}`,
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>

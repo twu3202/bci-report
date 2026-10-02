@@ -31,6 +31,20 @@ cd .. && .venv/bin/python -m unittest discover -s pipeline/publication -p 'test_
 cd .. && .venv/bin/python pipeline/publication/check_site_artifact.py
 ```
 
+Since 2026-10-02 it also holds the discoverability and citation layer to its
+sources: the served `og.png` must be the bitmap `generate-brand-assets.py`
+recorded in `scripts/brand-assets.json` (a text check cannot see the badge that
+outlived the site's), with its size and alt text on every page; the home Dataset
+markup must carry the newest release, every served file and every topic Dataset;
+`/releases.xml` must list every release with each file's served size and SHA-256;
+only `/data/*` may be read cross-origin; every topic, dataset and method page must
+end with a "Cite this page" block naming exactly the releases its figures come
+from, in both languages and in its Markdown copy; names that live in table
+buttons or `#` links must survive into the Markdown tables; and `LICENSE`,
+`LICENSE-DATA`, `CITATION.cff` and `.zenodo.json` must agree (the last is written
+by `scripts/write-zenodo-metadata.mjs`; re-run it after the build when a dataset
+page is added).
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

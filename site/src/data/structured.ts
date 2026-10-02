@@ -14,6 +14,13 @@
  * `citation` credits the upstream datasets by DOI. The recordings are not
  * redistributed here, so this is the only place the machine-readable record can
  * point a reader back to the people who collected them.
+ *
+ * The home Dataset is the umbrella record: its version and dates come from the
+ * release log (releases.ts), the same newest release CITATION.cff and /api/
+ * cite, and its `distribution` is every file the releases ship. Until
+ * 2026-10-02 it carried the core snapshot's 2026-09-20 version and only the
+ * core files, so the record Dataset Search would show disagreed with the
+ * citation the project asks for.
  */
 import data from './mvp.json';
 import deployment from './deployment-topics.json';
@@ -24,26 +31,40 @@ import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import { site } from './site';
 import { plainAnswer } from './answer';
+import { latestRelease, releases } from './releases';
+import { servedFiles } from './files';
+import { topicPages } from './topics';
+import { topicCards } from './i18n';
+import { datasets as datasetEntities } from './entities';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
 const LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
 
 const abs = (path: string) => new URL(path, site.origin).href;
 
-const creator = {
-  '@type': 'Person',
-  name: 'BCI Report',
+/** A project byline, not a person: schema.org's Organization, which Google accepts for `creator`. */
+export const creator = {
+  '@type': 'Organization',
+  name: site.name,
   url: site.origin,
 } as const;
+
+/** The same project elsewhere: the code repository and the Hugging Face mirror of the data. */
+const sameAs = [site.mirror, site.repository];
 
 /** DOIs and source URLs of the datasets that actually contributed a number. */
 function sourceCitations(): string[] {
   const used = new Set(data.tracks.map(t => t.dataset));
-  return data.datasets
+  const core = data.datasets
     .filter(d => used.has(d.name))
     .map(d => d.source)
     .filter((s): s is string => Boolean(s));
+  // Every dataset with a page has a published result in some release; its
+  // sources are the credit the later batches carry.
+  return [...new Set([...core, ...datasetEntities.flatMap(d => d.sources)])];
 }
+
+const formatOf = (file: string) => (file.endsWith('.csv') ? 'text/csv' : 'application/json');
 
 function download(path: string, format: string) {
   return { '@type': 'DataDownload', encodingFormat: format, contentUrl: abs(path) };
@@ -52,6 +73,7 @@ function download(path: string, format: string) {
 export function homeDataset() {
   const protocols = data.tracks.length;
   const comparisons = data.tracks.reduce((n, t) => n + t.rows.length, 0);
+  const questions = topicPages.map(t => topicCards.en[t.slug].title.replace(/\?$/, ''));
   return {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -61,22 +83,33 @@ export function homeDataset() {
       `${comparisons} model-by-protocol comparisons covering motor imagery, SSVEP at four ` +
       'and eight electrodes, P300 and semantic ERP, cognitive load, sleep staging and idle ' +
       'false activations. Every score is reported with the protocol that produced it: cohort ' +
-      'size, electrode count, evaluation mode, chance level and training budget. No raw EEG, ' +
-      'no per-participant scores.',
+      'size, electrode count, evaluation mode, chance level and training budget. ' +
+      `Separately reviewed batches answer ${topicPages.length} deployment questions (${questions.join('; ')}), ` +
+      'each in its own file and never summed with the matrix. No raw EEG, no per-participant scores.',
     url: abs('/'),
+    sameAs,
     license: LICENSE,
     creator,
     isAccessibleForFree: true,
-    version: data.releaseId,
-    dateModified: data.generatedAt.slice(0, 10),
+    version: latestRelease.id,
+    datePublished: releases.at(-1)!.date,
+    dateModified: latestRelease.date,
     measurementTechnique: 'Electroencephalography',
     keywords: ['EEG', 'brain-computer interface', 'benchmark', 'motor imagery', 'SSVEP',
-               'P300', 'sleep staging', 'electroencephalography'],
+               'P300', 'sleep staging', 'electroencephalography', 'EEG foundation models',
+               'dry electrodes', 'calibration'],
     citation: sourceCitations(),
-    distribution: [
-      download('/data/experiments.json', 'application/json'),
-      ...data.tracks.map(t => download(`/data/${t.id}-results.csv`, 'text/csv')),
-    ],
+    // Every file any release ships, newest release first: the later batches are
+    // part of this record, not only of the topic pages that print them.
+    distribution: [...new Set(servedFiles.map(f => f.file))].map(f => download(`/data/${f}`, formatOf(f))),
+    hasPart: topicPages.map(t => ({
+      '@type': 'Dataset',
+      name: `${site.name}: ${topicCards.en[t.slug].title}`,
+      description: `${topicCards.en[t.slug].question} ${topicCards.en[t.slug].summary}`,
+      url: abs(`/topics/${t.slug}/`),
+      license: LICENSE,
+      creator,
+    })),
   };
 }
 
@@ -119,15 +152,23 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },
 };
 
+/**
+ * The reviewed exports a topic's figures come from, as served paths. The topic
+ * Dataset's `distribution` and the page's "cite this page" block both read this,
+ * so the release a reader is asked to cite is the one whose file the markup names.
+ */
+export function topicFiles(id: string): string[] {
+  const topic = deployment.topics.find(t => t.id === id);
+  const later = [LATER_EXPORTS[id] ?? []].flat();
+  return [...new Set([...(topic ? ['/data/deployment-topics.json'] : []), ...later.map(l => l.file)])];
+}
+
 export function topicDataset(id: string, name: string, description: string, path: string) {
   const topic = deployment.topics.find(t => t.id === id);
   const tracks = new Set(topic?.tracks ?? []);
   const rows = deployment.rows.filter(r => tracks.has(r.track));
   const later = [LATER_EXPORTS[id] ?? []].flat();
-  const files = [
-    ...(topic ? [download('/data/deployment-topics.json', 'application/json')] : []),
-    ...later.map(l => download(l.file, 'application/json')),
-  ];
+  const files = topicFiles(id).map(f => download(f, 'application/json'));
   const dates = [...(topic ? [deployment.generated_at] : []), ...later.map(l => l.generated)];
   return {
     '@context': 'https://schema.org',
@@ -222,6 +263,7 @@ export function websiteEntity() {
     url: site.origin,
     description: site.description,
     inLanguage: 'en',
+    sameAs: [site.repository, site.mirror],
     creator,
   };
 }

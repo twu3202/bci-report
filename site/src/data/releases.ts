@@ -154,6 +154,30 @@ export const releases: Release[] = [
   },
 ];
 
+// Newest first is load-bearing: the home page's "Updated" date, the /api/
+// citation, the home Dataset markup and CITATION.cff all take the first entry.
+for (let i = 1; i < releases.length; i++)
+  if (releases[i].date > releases[i - 1].date)
+    throw new Error(`releases.ts: ${releases[i].id} is newer than ${releases[i - 1].id}; keep the list newest first`);
+
+/** The newest release: the one the site, CITATION.cff and the home Dataset markup cite. */
+export const latestRelease = releases[0];
+
+/**
+ * The releases that ship the given served files ('deployment-topics.json' or
+ * '/data/deployment-topics.json'), newest first, each once. A page's "cite this
+ * page" block names these, so it can only cite a release whose bytes the page's
+ * figures come from.
+ */
+export function releasesFor(files: string[]): Release[] {
+  const names = new Set(files.map(f => f.replace(/^\/data\//, '')));
+  const found = releases.filter(r => r.files.some(f => names.has(f)));
+  const shipped = new Set(found.flatMap(r => r.files));
+  const unknown = [...names].filter(f => !shipped.has(f));
+  if (unknown.length) throw new Error(`releases.ts: no release ships ${unknown.join(', ')}`);
+  return found;
+}
+
 export interface Hold {
   item: Text;
   /** Short state word for the home-page card. */

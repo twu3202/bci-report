@@ -1,0 +1,22 @@
+---
+/**
+ * The share card and what it shows, for every page's <head>: image, type, size
+ * and alt text, for Open Graph and for X/Twitter. One component so that no page
+ * can carry the image without its description (src/data/share-card.ts).
+ */
+import { site } from '../data/site';
+import { shareCard } from '../data/share-card';
+import type { Locale } from '../data/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const src = new URL(shareCard.path, Astro.site ?? site.origin).href;
+const alt = shareCard.alt(locale);
+---
+<meta property="og:image" content={src}/>
+<meta property="og:image:type" content={shareCard.type}/>
+<meta property="og:image:width" content={String(shareCard.width)}/>
+<meta property="og:image:height" content={String(shareCard.height)}/>
+<meta property="og:image:alt" content={alt}/>
+<meta name="twitter:image" content={src}/>
+<meta name="twitter:image:alt" content={alt}/>

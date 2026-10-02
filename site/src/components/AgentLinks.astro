@@ -4,10 +4,16 @@
  * llms.txt v2 (llmstxt.org) recommends both links. The Markdown copy is made
  * from this page's own built HTML after the build (scripts/build-agent-files.mjs),
  * so it cannot say anything the page does not.
+ *
+ * Also the release feed (/releases.xml, Atom), so a feed reader pointed at any
+ * page finds the change log.
  */
+import { site } from '../data/site';
+
 interface Props { href: string }
 const { href } = Astro.props;
 const md = `${href.replace(/\/$/, '/index')}.md`.replace(/\/index\/index\.md$/, '/index.md');
 ---
 <link rel="alternate" type="text/markdown" href={md}/>
 <link rel="describedby" href="/llms.txt"/>
+<link rel="alternate" type="application/atom+xml" title={`${site.name} releases`} href="/releases.xml"/>

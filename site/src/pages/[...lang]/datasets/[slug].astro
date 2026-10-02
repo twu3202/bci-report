@@ -8,6 +8,7 @@ import { directoryText, hrefFor, locales, defaultLocale, localeOf, topicCards } 
 import { site } from '../../../data/site';
 import { requestedCitations } from '../../../data/releases';
 import { protocolLinkLabel } from '../../../data/protocols';
+import { creator } from '../../../data/structured';
 
 export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
   params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
@@ -24,6 +25,9 @@ const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0,
 const pages = [...new Set(d.groups.map(g => g.path))];
 const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (protocolLinkLabel(p, locale) ?? (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)')); };
 const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
+// Every file a printed figure is a leaf of, chance levels included; the cite block names their releases.
+const figFiles = [...new Set(d.groups.flatMap(g => [...(g.chance ? [g.chance] : []),
+  ...g.rows.flatMap(r => [r.value, ...(r.interval ?? []), ...(r.of ? [r.of] : [])])].map(f => f.src)))];
 // A citation the source asks for that the released credit line does not carry (see releases.ts).
 const requested = requestedCitations[d.slug];
 // The licence note as the home page's register prints it (directory-zh.json).
@@ -34,7 +38,7 @@ const structured = {
   name: `${site.name}: results on ${d.name}`,
   description: c.datasetDescription(d.name, d.task.en, listed(methodNames)),
   url: abs(path), license: 'https://creativecommons.org/licenses/by/4.0/', isAccessibleForFree: true,
-  creator: { '@type': 'Person', name: site.name, url: site.origin },
+  creator,
   isBasedOn: d.sources, citation: requested ? [d.attribution, requested.text] : d.attribution, measurementTechnique: 'Electroencephalography',
   keywords: ['EEG', 'brain-computer interface', d.name, ...(profile?.aliases ?? [])],
   variableMeasured: [...new Set(d.groups.flatMap(g => g.rows.map(r => r.metric.en)))],
@@ -50,6 +54,7 @@ const structured = {
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.datasetsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name, en: true }]}
   structured={structured}
+  cite={{ files: figFiles, upstream: 'page' }}
 >
   {profile && <section class="entity-profile" aria-label={c.whatItIs}>
     {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}

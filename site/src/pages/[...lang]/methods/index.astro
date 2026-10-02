@@ -11,6 +11,11 @@ const locale = localeOf(Astro.params.lang);
 const c = entityCopy[locale];
 const paged = new Set(methods.map(m => m.name));
 const otherEvaluated = data.models.filter(m => m.status === 'Evaluated' && !methods.some(x => x.name === m.name || (x.slug === 'cca' && m.name === 'Standard CCA')));
+// An anchor per unmeasured model, so /methods/#eegpt can be linked. It carries
+// a name and a status, never a number.
+const unmeasured = unmeasuredModels.filter(m => !paged.has(m.name))
+  .map(m => ({ ...m, anchor: m.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') }));
+if (new Set(unmeasured.map(m => m.anchor)).size !== unmeasured.length) throw new Error('methods: two unmeasured models share an anchor');
 const structured = {
   '@context': 'https://schema.org', '@type': 'CollectionPage', name: c.methodsH1, url: new URL('/methods/', site.origin).href,
   description: c.methodsDescription,
@@ -41,7 +46,7 @@ const structured = {
   </section>
   <section class="topic-section" aria-labelledby="unmeasured">
     <div class="topic-heading"><div><h2 id="unmeasured">{c.methodsUnmeasured}</h2></div><p>{c.methodsUnmeasuredLede}</p></div>
-    <ul class="entity-links">{unmeasuredModels.filter(m => !paged.has(m.name)).map(m => <li>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}</li>)}</ul>
+    <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}</li>)}</ul>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
 </EntityLayout>

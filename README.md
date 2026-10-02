@@ -11,7 +11,8 @@
 
 [![Website](https://img.shields.io/badge/site-bci.report-b3450e)](https://bci.report)
 [![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-Twu31%2Fbci--report-yellow)](https://huggingface.co/datasets/Twu31/bci-report)
-[![License](https://img.shields.io/badge/results-CC%20BY%204.0-blue)](https://creativecommons.org/licenses/by/4.0/)
+[![Results licence](https://img.shields.io/badge/results-CC%20BY%204.0-blue)](LICENSE-DATA)
+[![Code licence](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 
 [Website](https://bci.report) · [中文](https://bci.report/zh/) · [Dataset](https://huggingface.co/datasets/Twu31/bci-report) · [Data use & privacy](https://bci.report/data-use/)
 
@@ -98,7 +99,8 @@ Those pages add no number of their own; the site's checks re-read every figure
 on them from the download it came from.
 
 For assistants and agents: [llms.txt](https://bci.report/llms.txt) indexes every
-page with its short answer, and every page has a Markdown copy at
+page with its short answer, [llms-full.txt](https://bci.report/llms-full.txt)
+holds every English page in one file, and every page has a Markdown copy at
 `<page>/index.md`.
 
 **Jev-style decision models for EEG** — a research plan, not a result: can one
@@ -171,14 +173,25 @@ Results were computed from public datasets released by other researchers. Credit
 belongs to them; this project adds only the measurements. Every published row
 carries its own source, licence and attribution.
 
-The aggregate result tables and protocol descriptors are
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). That covers the
-measurements this project produced — it does not and cannot relicense the
-underlying recordings, which keep their own terms.
+| What | Licence |
+|---|---|
+| Aggregate results: the result tables and protocol descriptors in `site/public/data/`, served under `bci.report/data/` (see the [data API](https://bci.report/api/)) and mirrored on Hugging Face | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — see [LICENSE-DATA](LICENSE-DATA) |
+| Code: the site, the publication pipeline and their scripts | [MIT](LICENSE) |
+| The EEG recordings the results were computed from | Their authors' own terms. Not in this repository; each [dataset page](https://bci.report/datasets/) names the source and its licence |
+
+CC BY 4.0 covers the measurements this project produced — it does not and
+cannot relicense the underlying recordings, which keep their own terms.
 
 To cite a release, use [CITATION.cff](CITATION.cff) (GitHub's "Cite this
 repository"), and cite the upstream dataset each figure was computed on — every
-[dataset page](https://bci.report/datasets/) gives its credit line.
+[dataset page](https://bci.report/datasets/) gives its credit line. Every topic,
+dataset and method page also ends with a "Cite this page" block naming the
+releases its figures come from. New releases appear in the
+[Atom feed](https://bci.report/releases.xml).
+
+`.zenodo.json` describes the repository for a Zenodo archive of each GitHub
+release; it is written by `site/scripts/write-zenodo-metadata.mjs` from
+`CITATION.cff` and the built dataset pages, and the site checks hold it to them.
 
 > **Known limits.** Six of eight core protocols run a single seed, the smallest
 > cohort is four people, and 9 of 18 catalogued methods have been scored. Each

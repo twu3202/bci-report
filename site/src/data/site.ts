@@ -19,6 +19,15 @@ export const site = {
   description:
     'Public EEG decoding results reported with their protocol: motor imagery, SSVEP with 4 and 8 electrodes, ' +
     'P300 and semantic ERP, cognitive load, sleep staging, and idle false activations.',
+  /**
+   * The project's other public homes. They link to the site; these let the site
+   * link back — JSON-LD `sameAs`, the footers, /api/ and llms.txt all read them.
+   * The citation file is the raw one, so a reference manager or an agent gets
+   * the YAML rather than GitHub's page around it.
+   */
+  repository: 'https://github.com/twu3202/bci-report',
+  mirror: 'https://huggingface.co/datasets/Twu31/bci-report',
+  citationFile: 'https://raw.githubusercontent.com/twu3202/bci-report/main/CITATION.cff',
 } as const;
 
 /**

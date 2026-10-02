@@ -1,15 +1,13 @@
 # Response headers for Cloudflare Workers Static Assets. Parsed by the host and
 # never served as a file itself.
 #
-# ⚠ Forcing HTTPS is NOT done here, and cannot be. Plain http:// answers 200
-# instead of redirecting, which is what makes a browser say "Not secure" on a
-# site that has had a valid certificate since the zone was created. A
-# `_redirects` rule was tried and removed: Cloudflare's redirects file matches
-# on path only, and lists domain-level redirects as explicitly unsupported. The
-# fix is the zone-level toggle SSL/TLS -> Edge Certificates -> Always Use HTTPS,
-# which needs dashboard access the deploy token's zone:read does not grant. The
-# HSTS header below only protects visitors who have already arrived over HTTPS
-# once; it cannot help a first-time visitor who types the bare hostname.
+# Forcing HTTPS is NOT done here, and cannot be: Cloudflare's redirects file
+# matches on path only, and lists domain-level redirects as unsupported (a
+# `_redirects` rule was tried and removed). It is a zone setting (SSL/TLS ->
+# Edge Certificates -> Always Use HTTPS), outside this file and the deploy
+# token. Plain http:// used to answer 200; on 2026-10-02 it answers 301 to
+# https://. The HSTS header below only protects visitors who have already
+# arrived over HTTPS once.
 #
 # The policy is as tight as it is because the site earns it: no third-party
 # script, style, font or beacon, no inline <script>, no inline event handler, no
@@ -40,3 +38,18 @@
   Content-Type: text/plain; charset=utf-8
 /llms-full.txt
   Content-Type: text/plain; charset=utf-8
+/releases.xml
+  Content-Type: application/atom+xml; charset=utf-8
+
+# The data API (/api/) promises "no key, no account", which a browser notebook
+# (Observable, JupyterLite, a page on another site) could not use while every
+# response said Cross-Origin-Resource-Policy: same-origin and none sent
+# Access-Control-Allow-Origin. The downloads are public, cookie-free static
+# files, so any origin may read them. Only /data/*: the pages keep the
+# same-origin policy above. `! Header` detaches the broader rule's value first
+# (headers from several matching rules are otherwise joined into one, and
+# "same-origin, cross-origin" is no policy at all).
+/data/*
+  ! Cross-Origin-Resource-Policy
+  Cross-Origin-Resource-Policy: cross-origin
+  Access-Control-Allow-Origin: *

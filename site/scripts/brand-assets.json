@@ -1,0 +1,34 @@
+{
+  "apple-touch-icon.png": {
+    "sha256": "0040b34ab85d2bb0b4e65cee070bb455ab7e0b25d1998773612615dabf807b59"
+  },
+  "favicon.ico": {
+    "sha256": "42f3c222a989a1206c9ea9970c6b5eb190bd09d6d39f05197d489522efbb96f6"
+  },
+  "logo.png": {
+    "sha256": "c8e39b13b3da909761d1008d15600b7cb3457da7c5605dab9c40b07e0cb80513"
+  },
+  "og.png": {
+    "sha256": "0db84ed6f5c32547b07977263d797b0398e65670aec9354106a1da675d252527",
+    "width": 1200,
+    "height": 630,
+    "text": [
+      "BCI Report",
+      "Every EEG score, with the",
+      "protocol that produced it.",
+      "Cohort, electrode count, training budget and chance",
+      "level travel with every number.",
+      "8 protocols",
+      "7 datasets",
+      "39 comparisons",
+      "9 methods",
+      "bci.report"
+    ],
+    "counts": {
+      "protocols": 8,
+      "datasets": 7,
+      "comparisons": 39,
+      "methods": 9
+    }
+  }
+}

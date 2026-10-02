@@ -7,6 +7,10 @@ import { site } from '../data/site';
 import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicChrome, type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
 import AgentLinks from './AgentLinks.astro';
+import ShareImage from './ShareImage.astro';
+import CiteMeta from './CiteMeta.astro';
+import CitePage from './CitePage.astro';
+import FooterElsewhere from './FooterElsewhere.astro';
 import '../styles/global.css';
 import '../styles/topics.css';
 
@@ -29,16 +33,22 @@ interface Props {
   name?: string;
   structured?: object | null;
   active: 'models' | 'datasets' | 'protocols';
+  /**
+   * Pages that print figures (one dataset, one method) get a "Cite this page"
+   * block and citation_* tags naming the releases those figures come from.
+   * `files` are the served files the figures are leaves of.
+   */
+  cite?: { files: string[]; upstream: 'page' | 'datasets' };
 }
-const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active, name } = Astro.props;
+const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active, name, cite } = Astro.props;
 const nameLang = locale === 'zh' ? 'en' : undefined;
 const at = name && nameLang ? h1.indexOf(name) : -1;
 const t = chrome[locale];
 const tc = topicChrome[locale];
 const origin = Astro.site ?? site.origin;
 const canonical = new URL(localizePath(path, locale), origin).href;
-const ogImage = new URL('/og.png', origin).href;
-const pageTitle = `${documentTitle} · ${site.name}`;
+// "EEG datasets with results on BCI Report · BCI Report" said the name twice.
+const pageTitle = documentTitle.includes(site.name) ? documentTitle : `${documentTitle} · ${site.name}`;
 // Structured data on the English canonical only, as on the topic pages.
 const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
 ---
@@ -62,11 +72,11 @@ const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
   <meta property="og:title" content={pageTitle}/>
   <meta property="og:description" content={description}/>
   <meta property="og:url" content={canonical}/>
-  <meta property="og:image" content={ogImage}/>
+  <ShareImage locale={locale}/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content={pageTitle}/>
   <meta name="twitter:description" content={description}/>
-  <meta name="twitter:image" content={ogImage}/>
+  {cite && <CiteMeta locale={locale} title={h1} canonical={canonical} files={cite.files}/>}
   {ld && <script type="application/ld+json" set:html={ld}/>}
 </head>
 <body>
@@ -80,7 +90,8 @@ const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
       <p class="topic-dek">{dek}</p>
     </section>
     <slot />
+    {cite && <CitePage locale={locale} title={h1} canonical={canonical} files={cite.files} upstream={cite.upstream}/>}
   </main>
-  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href={hrefFor('/releases/', locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#entity-content">{t.footerTop}</a></footer>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href={hrefFor('/releases/', locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#entity-content">{t.footerTop}</a><FooterElsewhere locale={locale}/></footer>
 </body>
 </html>
