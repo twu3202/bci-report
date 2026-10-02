@@ -7,8 +7,9 @@
  * as released (src/data/protocols.ts): figures carry data-fig and are re-read
  * from this protocol's own results CSV and protocol JSON by check-workbench.mjs;
  * prose is the payload's English text, verbatim — except the privacy review,
- * which the page summarises in one sentence and links (see protocols.ts), and a
- * JSON fragment in the version text, printed as its fields.
+ * which the page summarises in one sentence, beside the register's reviewed
+ * rights note and any consent caveat, and links (see protocols.ts), and a JSON
+ * fragment in the version text, printed as its fields.
  */
 import EntityLayout from '../../../components/EntityLayout.astro';
 import Fig from '../../../components/Fig.astro';
@@ -45,6 +46,9 @@ const colon = locale === 'zh' ? '：' : ': ';
 // The licence note as the register on the home page prints it (directory-zh.json),
 // with the released English beside the Chinese.
 const licence = directoryText(p.license, locale);
+// The dataset's reviewed rights note, as the register prints it (Chinese with the English beside it).
+const register = p.registerNote ? directoryText(p.registerNote, locale) : undefined;
+const consentCaveat = c.consentCaveat[p.id];
 ---
 <EntityLayout
   locale={locale} path={path} active="protocols"
@@ -132,8 +136,9 @@ const licence = directoryText(p.license, locale);
       </article>
       <article>
         <p><strong>{c.scope}</strong> <span lang="en">{p.rightsScope}</span></p>
-        {/* The released privacy review reads as reviewer notes; the page states what is published and links the file that holds the full note. */}
-        <p class="protocol-privacy"><strong>{c.privacy}</strong> {c.privacyNote} <a href={`/data/${p.files.protocol}`} download>{c.privacyLink}</a></p>
+        {/* The released privacy review reads as reviewer notes; the page states what is published, any consent caveat, and links the file that holds the full note. */}
+        <p class="protocol-privacy"><strong>{c.privacy}</strong> {c.privacyNote}{consentCaveat && <> <span class="consent-caveat">{consentCaveat}</span></>} <a href={`/data/${p.files.protocol}`} download>{c.privacyLink}</a></p>
+        {register && <p class="protocol-register"><strong>{c.register}</strong> <span lang={register.lang}>{register.text}</span>{register.original && <span class="note-original" lang="en">{register.original}</span>}</p>}
         <p><strong>{c.reviewed}</strong> <time datetime={p.reviewedAt}>{p.reviewedAt}</time> · {c.reviewBasis} {p.reviewBasis.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname} ↗</a></>)}</p>
       </article>
     </div>

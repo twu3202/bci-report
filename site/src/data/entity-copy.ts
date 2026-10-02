@@ -155,7 +155,7 @@ export const protocolCopy = {
     protocolDescription: (_title: string, dataset: string, subtitle: string, methods: string, hasChance: boolean) =>
       `${subtitle} on ${dataset}, under one fixed protocol: results for ${methods}, with cohort, split, electrodes, window, training mode, ${hasChance ? 'chance level' : 'false-activation rate'} and limitations.`,
     protocolEyebrow: (short: string) => `Core-matrix protocol · ${short}`,
-    protocolDek: (hasChance: boolean) => `Everything that produced the scores below — cohort, split, electrodes, window, what each method was allowed to learn, and ${hasChance ? 'what guessing would score' : 'the false activations detection is read with'} — as the released protocol file states it. Compare scores within this protocol only.`,
+    protocolDek: (hasChance: boolean) => `Everything that produced the scores below — cohort, split, electrodes, window, what each method was allowed to learn, and ${hasChance ? 'what guessing would score' : 'the idle false-activation rate that command detection must be read with'} — as the released protocol file states it. Compare scores within this protocol only.`,
     atAGlance: 'The protocol at a glance',
     dtTask: 'Task', dtEvaluation: 'Evaluation', dtDataset: 'Dataset', dtPeople: 'People', dtData: 'Data',
     dtInput: 'Input', dtChance: 'Chance level', dtMetrics: 'Metrics',
@@ -192,6 +192,12 @@ export const protocolCopy = {
     credit: 'Credit', scope: 'Permitted scope', licence: 'Licence', privacy: 'Privacy',
     privacyNote: 'Only cohort aggregates are published here: no recording, no participant identifier, no per-person score.',
     privacyLink: 'The full review note is in the protocol JSON ↓',
+    // Where the rights review was amended for consent, the page says so in its own words.
+    // Each claim is in the released privacyReview, which check-workbench.mjs asserts.
+    consentCaveat: {
+      'sleep-scalp': 'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
+    } as Record<string, string>,
+    register: 'Rights review',
     reviewed: 'Rights reviewed',
     reviewBasis: 'against',
     original: 'Dataset record ↗',
@@ -231,7 +237,7 @@ export const protocolCopy = {
     protocolDescription: (title: string, dataset: string, _subtitle: string, methods: string, hasChance: boolean) =>
       `${dataset} 上的「${title}」：同一个固定协议下 ${methods} 的结果，附队列、数据划分、电极、时间窗、训练方式、${hasChance ? '随机水平' : '误触发率'}与局限。`,
     protocolEyebrow: (short: string) => `核心矩阵协议 · ${short}`,
-    protocolDek: (hasChance: boolean) => `下面这些分数是怎么来的——队列、数据划分、电极、时间窗、每种方法允许学什么、${hasChance ? '随机猜测能得多少分' : '检出率要和哪些误触发一起读'}——都按已发布的协议文件给出。只在本协议内部比较分数。`,
+    protocolDek: (hasChance: boolean) => `下面这些分数是怎么来的——队列、数据划分、电极、时间窗、每种方法允许学什么${hasChance ? '、随机猜测能得多少分' : '，以及读指令检出率时必须一起看的空闲误触发率'}——都按已发布的协议文件给出。只在本协议内部比较分数。`,
     atAGlance: '协议概览',
     dtTask: '任务', dtEvaluation: '评测方式', dtDataset: '数据集', dtPeople: '被试', dtData: '数据量',
     dtInput: '输入', dtChance: '随机水平', dtMetrics: '指标',
@@ -268,6 +274,10 @@ export const protocolCopy = {
     credit: '署名', scope: '许可范围', licence: '许可', privacy: '隐私',
     privacyNote: '这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。',
     privacyLink: '完整的审查说明在协议 JSON 中 ↓',
+    consentCaveat: {
+      'sleep-scalp': '知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。',
+    } as Record<string, string>,
+    register: '权利审查',
     reviewed: '权利审查于',
     reviewBasis: '依据',
     original: '数据集记录 ↗',

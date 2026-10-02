@@ -46,6 +46,9 @@ const S={
       dlProtocol:'Download protocol · JSON ↓',original:'Original dataset ↗',participants:' participants',
       abstainNote:(n:number,a:number)=>'Of '+n+' participants, '+a+' selected an always-abstain threshold on calibration data. Their test trials remain in the denominator.',
       cohortOnly:'Only cohort aggregates are shared. Individual scores, recordings and predictions remain local.',
+      privacy:'Privacy',privacyNote:'Only cohort aggregates are published here: no recording, no participant identifier, no per-person score.',
+      privacyLink:'The full review note is in the protocol JSON ↓',register:'Rights review',
+      consentCaveat:{'sleep-scalp':'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.'} as Record<string,string>,
       metric:{} as Record<string,string>},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
       empty:'该协议下没有这一类别的已评测模型。请换一个类别。',noResults:'无可显示的结果',
@@ -67,6 +70,9 @@ const S={
       dlProtocol:'下载协议 · JSON ↓',original:'原始数据集 ↗',participants:' 名被试',
       abstainNote:(n:number,a:number)=>n+' 名被试中，有 '+a+' 名在校准数据上选择了始终拒识的阈值。他们的测试试次仍计入分母。',
       cohortOnly:'只公开队列级聚合结果。个体分数、记录与预测均保留在本地。',
+      privacy:'隐私',privacyNote:'这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。',
+      privacyLink:'完整的审查说明在协议 JSON 中 ↓',register:'权利审查',
+      consentCaveat:{'sleep-scalp':'知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'} as Record<string,string>,
       metric:{'Balanced accuracy':'平衡准确率','Command detection ≤3s':'指令检出率 ≤3 秒','Idle false activation':'空闲误触发率','Macro F1':'宏平均 F1'} as Record<string,string>},
 }[LANG];
 const metric=(label:string)=>S.metric[label]??label;
@@ -114,6 +120,21 @@ function seedScopeNote(){
   if(!ss)return '';
   const {word}=seedRank(ss);
   return '<p class="detail-note"><span'+EN+'>'+esc(ss.scope??'')+'</span>'+S.scopeTail(word)+'</p>';
+}
+
+/* The released privacy review reads as the reviewer's working notes, so the
+   dialog treats it as the protocol pages (/protocols/<id>/) do: one site-written
+   sentence, any consent caveat, the public-data register's reviewed rights note
+   for the dataset, and a link to the protocol JSON, which holds the full note.
+   The strings are the pages' own (protocolCopy in src/data/entity-copy.ts);
+   check-workbench.mjs compares the two. The register note prints in English on
+   both pages, marked lang="en" on the Chinese one: its Chinese is in
+   src/data/directory-zh.json, which this script does not read. */
+function privacyNote(){
+  const note=data.datasets.find(d=>d.name===track.dataset)?.detail;
+  const caveat=S.consentCaveat[track.id];
+  return '<p class="protocol-privacy"><strong>'+S.privacy+'</strong> '+S.privacyNote+(caveat?' <span class="consent-caveat">'+caveat+'</span>':'')+' <a href="/data/'+track.id+'-protocol.json" download>'+S.privacyLink+'</a></p>'+
+    (note?'<p class="protocol-register"><strong>'+S.register+'</strong> <span'+EN+'>'+esc(note)+'</span></p>':'');
 }
 
 const chanceOf=(t:Track)=>(t as Partial<{chanceLevel:number|null}>).chanceLevel ?? null;
@@ -216,7 +237,7 @@ $('#open-protocol').addEventListener('click',()=>show(titleOf(track)+S.protocol,
 '<p'+EN+'>'+esc(track.subtitle)+'</p><ol'+EN+'>'+track.protocol.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+
 '<div class="detail-metrics"><div><small>'+S.stageSum+'</small><strong>'+track.elapsed.toFixed(1)+S.seconds+'</strong><small><span'+EN+'>'+esc(track.backend)+'</span>'+S.accel+'</small></div><div><small>'+S.stability+'</small><p lang="en">'+esc(track.selection)+'</p>'+seedScopeNote()+'</div></div>'+
 '<p>'+S.release+'<span'+EN+'>'+esc(versionText(track.version))+'</span></p><p>'+S.protocolId+'<code>'+esc(track.protocolId)+'</code></p><p>'+S.audit+'<code>'+esc(track.auditSha)+'</code></p>'+
-'<h3 class="detail-note">'+S.scope+'</h3><p>'+S.licence+'<span'+EN+'>'+esc(track.license)+'</span></p><div lang="en"><p>'+esc(track.attribution)+'</p><p>'+esc(track.rightsScope)+'</p><p>'+esc(track.privacyReview)+'</p><p>'+esc(track.pretrainingOverlap)+'</p></div>'+
+'<h3 class="detail-note">'+S.scope+'</h3><p>'+S.licence+'<span'+EN+'>'+esc(track.license)+'</span></p><div lang="en"><p>'+esc(track.attribution)+'</p><p>'+esc(track.rightsScope)+'</p></div>'+privacyNote()+'<p lang="en">'+esc(track.pretrainingOverlap)+'</p>'+
 '<a class="button" href="/data/'+track.id+'-protocol.json" download>'+S.dlProtocol+'</a> <a class="button" href="'+esc(track.source)+'" target="_blank" rel="noreferrer">'+S.original+'</a> <a class="button" href="'+esc(track.licenseUrl)+'" target="_blank" rel="noreferrer">'+S.licenceLink+'</a>'));
 $('#result-rows').addEventListener('click',e=>{const button=(e.target as HTMLElement).closest<HTMLElement>('[data-model]');if(!button)return;const r=track.rows.find(r=>r.id===button.dataset.model)!;show(r.name+' · '+titleOf(track),
 '<p><span'+EN+'>'+esc(r.mode)+'</span> · '+r.channels+' ch · '+r.subjects+S.participants+'</p><div class="detail-metrics"><div><small>'+esc(metric(track.yLabel))+'</small><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small></div><div><small>'+esc(metric(track.xLabel))+'</small><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small></div></div><p lang="en">'+esc(r.note)+'</p>'+

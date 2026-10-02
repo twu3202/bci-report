@@ -130,6 +130,24 @@ for(const t of data.tracks.filter(t=>/\{[^{}]*\}/.test(t.version))){
   assert.doesNotMatch(get('#dialog-body').innerHTML,/\{&quot;/,t.id+': no JSON fragment printed raw in the dialog');
   get('#close-dialog').events.click();
 }
+// The privacy review reads as the reviewer's working notes. Since the 2026-10-02 review the
+// dialog treats it as the protocol pages do: the site sentence, any consent caveat, the public-data
+// register's reviewed rights note for the dataset, and a link to the protocol JSON that holds the
+// full note. That the sentence and caveat are the pages' own is checked with the protocol pages.
+const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+for(const t of data.tracks){
+  tool.execute({trackId:t.id,family:'all'});get('#open-protocol').events.click();
+  const body=get('#dialog-body').innerHTML;
+  assert.ok(!body.includes(escHtml(t.privacyReview))&&!body.includes(escHtml(t.privacyReview.slice(0,80))),t.id+': the dialog no longer prints the privacy review verbatim');
+  const pv=body.indexOf('<p class="protocol-privacy">'),privacy=pv<0?'':body.slice(pv,body.indexOf('</p>',pv));
+  assert.ok(privacy.startsWith('<p class="protocol-privacy"><strong>Privacy</strong> Only cohort aggregates are published here: no recording, no participant identifier, no per-person score.'),t.id+': the dialog\'s privacy sentence');
+  assert.ok(privacy.endsWith(` <a href="/data/${t.id}-protocol.json" download>The full review note is in the protocol JSON ↓</a>`),t.id+': the privacy sentence links the protocol JSON');
+  assert.equal(/Region Midt/.test(privacy),t.id==='sleep-scalp',t.id+': the consent caveat is the sleep protocol\'s');
+  const detail=data.datasets.find(d=>d.name===t.dataset)?.detail;
+  assert.ok(detail&&body.includes('<p class="protocol-register"><strong>Rights review</strong> <span>'+escHtml(detail)+'</span></p>'),t.id+': the register\'s reviewed rights note for '+t.dataset);
+  assert.ok(body.indexOf('class="protocol-register"')>pv,t.id+': the register note follows the privacy sentence');
+  get('#close-dialog').events.click();
+}
 // The same script on the Chinese page. render() replaces the server markup, and
 // it used to drop every lang="en" the server had set, so a screen reader read
 // the English payload in a Chinese voice after the first paint.
@@ -147,6 +165,16 @@ for(const t of data.tracks.filter(t=>/\{[^{}]*\}/.test(t.version))){
   assert.match(proto,/^<p lang="en">[^<]+<\/p><ol lang="en">/,'zh: the protocol subtitle and steps are marked English');
   assert.match(proto,/<p>许可：<span lang="en">/,'zh: the licence is printed, marked English');
   assert.match(proto,/>许可 ↗<\/a>$/,'zh: the licence button has a short Chinese label');
+  // The privacy treatment, in Chinese; the register note stays English, marked so (the script does not read directory-zh.json).
+  for(const t of data.tracks){
+    zget('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});zget('#open-protocol').events.click();
+    const body=zget('#dialog-body').innerHTML,pv=body.indexOf('<p class="protocol-privacy">'),privacy=pv<0?'':body.slice(pv,body.indexOf('</p>',pv));
+    assert.ok(privacy.startsWith('<p class="protocol-privacy"><strong>隐私</strong> 这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。'),'zh/'+t.id+': the dialog\'s privacy sentence');
+    assert.ok(privacy.endsWith(` <a href="/data/${t.id}-protocol.json" download>完整的审查说明在协议 JSON 中 ↓</a>`),'zh/'+t.id+': the privacy sentence links the protocol JSON');
+    assert.equal(/Region Midt/.test(privacy),t.id==='sleep-scalp','zh/'+t.id+': the consent caveat is the sleep protocol\'s');
+    assert.ok(!body.includes(escHtml(t.privacyReview.slice(0,80))),'zh/'+t.id+': no privacy review verbatim');
+    assert.ok(body.includes('<p class="protocol-register"><strong>权利审查</strong> <span lang="en">'+escHtml(data.datasets.find(d=>d.name===t.dataset).detail)+'</span></p>'),'zh/'+t.id+': the register note, marked English');
+  }
   zget('#result-rows').events.click({target:{closest:()=>({dataset:{model:t0.rows[0].id}})}});
   assert.match(zget('#dialog-body').innerHTML,/^<p><span lang="en">[^<]+<\/span> · \d+ ch · /,'zh: the model dialog marks the training mode English');
   assert.equal((zget('#dialog-body').innerHTML.match(/<small lang="en">/g)||[]).length,2,'zh: both metric details in the model dialog are marked English');
@@ -1119,6 +1147,19 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   const figsOf=html=>[...html.matchAll(/data-fig="([^"]+)"[^>]*>([^<]*)</g)].map(m=>m[1]+' → '+m[2]);
   const allNames=[...new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name)))];
+  // The home page's protocol dialog in each language, run as above, for comparison with these pages.
+  const dialogIn=lang=>{
+    const els=new Map(),g=s=>{if(!els.has(s))els.set(s,new Element());return els.get(s);};
+    g('#family-filter').value='all';g('#sort-results').value='name';
+    vm.runInNewContext(stripTypeScriptTypes(source),{data,document:{querySelector:g,querySelectorAll:()=>[],documentElement:{lang}},window:{addEventListener(){}},AbortController,Promise,console});
+    return id=>{g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:id}})}});g('#open-protocol').events.click();return g('#dialog-body').innerHTML;};
+  };
+  const dialogs={en:dialogIn('en'),zh:dialogIn('zh-Hans')};
+  const textOf=s=>s.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  // The sleep protocol's consent caveat, as each language states it.
+  const consentCaveat={
+    en:'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
+    zh:'知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'};
   const resolves=href=>{const p=href.slice(1).split('?')[0];
     if(p===''||p.endsWith('/'))return existsSync(new URL(p+'index.html',DIST));
     return existsSync(new URL(p,DIST))||existsSync(new URL(p+'.html',DIST))||existsSync(new URL(p+'/index.html',DIST));};
@@ -1222,6 +1263,27 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       assert.match(privacy,label==='en'?/Only cohort aggregates are published here: no recording, no participant identifier, no per-person score\./:/这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。/,where+': the site-written privacy sentence');
       assert.ok(privacy.includes(`href="/data/${pj}" download`),where+': the privacy sentence links the protocol JSON');
       assert.equal(JSON.parse(readFileSync(new URL('data/'+pj,DIST),'utf8')).privacyReview,t.privacyReview,where+': the linked protocol JSON holds the full review note');
+      // Beside it, the dataset's reviewed rights note from the public-data register, as the home
+      // register prints it: verbatim on /, the Chinese with the released English beside it on /zh/
+      // (2026-10-02 review).
+      const detail=data.datasets.find(d=>d.name===t.dataset)?.detail;
+      assert.ok(detail,where+': the register has a rights note for '+t.dataset);
+      const rg=html.indexOf('class="protocol-register"'),register=rg<0?'':html.slice(rg,html.indexOf('</p>',rg));
+      assert.ok(rg>pv,where+': the register note follows the privacy sentence');
+      if(label==='en') assert.ok(register.includes('<strong>Rights review</strong> <span>'+esc(detail)+'</span>'),where+': the register note, verbatim');
+      else assert.ok(dirZhText[detail]&&register.includes('<strong>权利审查</strong> <span>'+esc(dirZhText[detail])+'</span><span class="note-original" lang="en">'+esc(detail)+'</span>'),where+': the register note in Chinese, its English beside it');
+      // The sleep protocol's review was amended for consent on 2026-09-22. The page states the caveat in
+      // its own words, and every claim in them is one the released review note makes.
+      if(t.id==='sleep-scalp'){
+        assert.ok(privacy.includes('<span class="consent-caveat">'+consentCaveat[label]+'</span>'),where+': the consent caveat');
+        for(const claim of ['publication was not mentioned in the informed consent form','the GDPR office of Region Midt judged the data fully anonymized',
+                            'Consent therefore covered the study, and the public release rests on that anonymization judgment'])
+          assert.ok(t.privacyReview.includes(claim),where+': the caveat rests on the released review note: '+claim);
+      } else assert.doesNotMatch(privacy,/consent-caveat|Region Midt/,where+': a consent caveat without an amended review');
+      // The home page's dialog says the same about privacy (its strings are a copy: the script cannot import i18n).
+      const dlg=dialogs[label](t.id),dpv=dlg.indexOf('class="protocol-privacy"');
+      assert.ok(dpv>0&&textOf(dlg.slice(dpv,dlg.indexOf('</p>',dpv)))===textOf(privacy),where+': the home dialog\'s privacy sentence must equal this page\'s');
+      if(label==='en'){const drg=dlg.indexOf('class="protocol-register"');assert.equal(textOf(dlg.slice(drg,dlg.indexOf('</p>',drg))),textOf(register),where+': the home dialog\'s register note must equal this page\'s');}
       const fragment=t.version.match(/\{[^{}]*\}/);
       const version=fragment?t.version.replace(fragment[0],Object.entries(JSON.parse(fragment[0])).map(([k,v])=>k+' '+v).join(' · ')):t.version;
       if(fragment) assert.match(version,/ · mirror [0-9a-f]{40} · upstream \S/,where+': the fragment\'s fields, mirror then upstream');
@@ -1238,6 +1300,8 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       const metas=[...html.matchAll(/<meta (?:name|property)="(?:description|og:description|twitter:description)" content="([^"]*)"/g)].map(m=>unesc(m[1]));
       const dek=(html.match(/<p class="topic-dek">([\s\S]*?)<\/p>/)||[])[1]??'';
       assert.ok(metas.length>=2&&dek.length>0,where+': description and dek render');
+      if(t.chanceLevel==null) assert.ok(dek.includes(label==='en'?'and the idle false-activation rate that command detection must be read with — as the released protocol file states it.'
+        :'，以及读指令检出率时必须一起看的空闲误触发率——都按已发布的协议文件给出。'),where+': the dek names the idle false-activation rate');
       for(const text of [...metas,dek]){
         if(t.chanceLevel==null){
           assert.doesNotMatch(text,label==='en'?/chance level|what guessing would score/:/随机水平|随机猜测/,where+': a protocol with no chance level promises one: '+text.slice(0,80));
@@ -1279,7 +1343,7 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Core matrix \(home page\)|核心矩阵（首页）/,f+': a core-matrix group still points at the home page');
 }
 
-console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, each row equal to its CSV row, payload text verbatim except the linked privacy review and the version fields, no chance level promised where there is none, Dataset markup, links resolve; entity groups and matrix headings lead here.');
+console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, each row equal to its CSV row, payload text verbatim except the linked privacy review and the version fields, the register\'s rights note beside the privacy sentence (and the sleep consent caveat, anchored to the review note), the home dialog saying the same, no chance level promised where there is none, Dataset markup, links resolve; entity groups and matrix headings lead here.');
 
 // --- Model directory and data register, in Chinese -----------------------------
 // mvp.json stays English (it is a released file). Its directory notes, licence

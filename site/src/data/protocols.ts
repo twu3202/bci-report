@@ -20,8 +20,13 @@
  * released bytes; that badge came off on 2026-10-01 (src/data/site.ts). Nor its
  * `privacyReview`, which reads as the reviewer's working notes: the page states
  * in one site-written sentence what is published and links the protocol JSON,
- * which holds the full note (decided 2026-10-02). And a JSON fragment inside the
- * `version` text is printed as its fields (`versionText`).
+ * which holds the full note (decided 2026-10-02). Beside that sentence it prints
+ * the dataset's reviewed rights note from the public-data register
+ * (mvp.json `datasets[].detail`, `registerNote` below), as the home page's
+ * register prints it — in Chinese with the English beside it on /zh/ — and,
+ * where the review was amended for consent, a site-written consent caveat
+ * (entity-copy.ts `consentCaveat`; review fix-up, 2026-10-02). And a JSON
+ * fragment inside the `version` text is printed as its fields (`versionText`).
  */
 import data from './mvp.json';
 import { corrections, requestedCitations, type Correction } from './releases';
@@ -87,6 +92,8 @@ export interface Protocol {
   licenseUrl: string;
   attribution: string;
   privacyReview: string;
+  /** The dataset's reviewed rights note in the public-data register (mvp.json `datasets[].detail`). */
+  registerNote?: string;
   rightsScope: string;
   reviewedAt: string;
   reviewBasis: string[];
@@ -149,6 +156,7 @@ function build(t: Track): Protocol {
     summarySha: (t as { summarySha?: string }).summarySha || undefined,
     protocolSha: (t as { protocolSha?: string }).protocolSha || undefined,
     license: t.license, licenseUrl: t.licenseUrl, attribution: t.attribution, privacyReview: t.privacyReview,
+    registerNote: data.datasets.find(d => d.name === t.dataset)?.detail,
     rightsScope: t.rightsScope, reviewedAt: t.reviewedAt, reviewBasis: t.reviewBasis, source: t.source,
     rows, notRun: matrixMethods.filter(m => !names.has(m.name)),
     files: { results, protocol },
