@@ -5,6 +5,9 @@
  * "Save to Zotero" on a topic page gave a bare web page with no date and no
  * release. The date is that of the newest release whose files hold the page's
  * figures — the same release the "Cite this page" block names.
+ *
+ * No citation_author: Zotero parses every author as a person, so "BCI Report"
+ * became "Report, B.". The project is the publisher, which is what it is.
  */
 import { site } from '../data/site';
 import { releasesFor } from '../data/releases';
@@ -22,7 +25,7 @@ const { locale, title, canonical, files } = Astro.props;
 const date = releasesFor(files)[0].date.replaceAll('-', '/');
 ---
 <meta name="citation_title" content={title}/>
-<meta name="citation_author" content={site.name}/>
+<meta name="citation_publisher" content={site.name}/>
 <meta name="citation_publication_date" content={date}/>
 <meta name="citation_online_date" content={date}/>
 <meta name="citation_public_url" content={canonical}/>

@@ -1323,6 +1323,9 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     assert.equal(part.name,node.name,part.url+': hasPart must name the topic Dataset as the topic page does');
   }
   assert.deepEqual([...umbrella.sameAs].sort(),[mirror,repository].sort(),'home Dataset sameAs: the mirror and the repository');
+  // The topic batches inform those questions; they do not settle them.
+  assert.ok(umbrella.description.includes(`Separately reviewed batches bear on ${topicPages.length} deployment questions`),'home Dataset: the batches bear on the deployment questions');
+  assert.doesNotMatch(umbrella.description,/\banswer \d+ deployment questions/,'home Dataset: the batches do not answer the questions');
   assert.deepEqual([...website.sameAs].sort(),[mirror,repository].sort(),'WebSite sameAs: the repository and the mirror');
   for(const f of htmlPages) for(const node of ldOf(readFileSync(new URL(f,DIST),'utf8')))
     assert.ok(!JSON.stringify(node).includes('"@type":"Person"'),f+': BCI Report is a project byline, an Organization, not a Person');
@@ -1340,7 +1343,8 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
   for(const r of releaseEntries) for(const file of r.files){
     const bytes=readFileSync(new URL('data/'+file,DIST));
     assert.ok(feed.includes(`length="${bytes.length}" href="https://bci.report/data/${file}"`),'releases.xml: '+file+' enclosure must carry its served size');
-    assert.ok(feed.includes(`SHA-256 &lt;code&gt;${createHash('sha256').update(bytes).digest('hex')}&lt;/code&gt;`),'releases.xml: '+file+' must carry the SHA-256 of the served bytes');
+    // Named as the releases page names it: the hash of the file as served.
+    assert.ok(feed.includes(`SHA-256 of the file as served &lt;code&gt;${createHash('sha256').update(bytes).digest('hex')}&lt;/code&gt;`),'releases.xml: '+file+' must carry the SHA-256 of the served bytes');
   }
   for(const f of htmlPages){
     const html=readFileSync(new URL(f,DIST),'utf8');
@@ -1349,6 +1353,10 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
   for(const p of ['api/','zh/api/']){
     const html=pageOf(p);
     for(const href of ['/releases.xml','/llms-full.txt','/llms.txt','/sitemap.xml']) assert.ok(html.includes(`href="${href}"`),p+': '+href+' must be linked for agents');
+    // From the Chinese page, a link to an English-only file says so (the sitemap lists both languages).
+    if(p==='zh/api/') for(const href of ['/llms.txt','/llms-full.txt','/releases.xml'])
+      assert.ok(html.includes(`<a href="${href}"><code>${href}</code></a>（英文）——`),p+': '+href+' is English only and must say so');
+    if(p==='zh/api/') assert.ok(html.includes('<a href="/sitemap.xml"><code>/sitemap.xml</code></a>——'),p+': the sitemap lists both languages and carries no English mark');
     for(const href of [repository,mirror,citationFile]) assert.ok(html.includes(`href="${href}"`),p+': '+href+' must be linked');
     // The CDN still refuses urllib: the edge setting has not changed, so the caveat stays.
     assert.match(html,p==='api/'?/The CDN refuses Python’s built-in urllib/:/CDN 会拒绝 Python 自带的 urllib/,p+': the urllib caveat must stay until the edge stops refusing it');
@@ -1392,10 +1400,13 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     const h1=html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,''),canonical='https://bci.report/'+path;
     assert.ok(sec.includes(`<cite>${h1}</cite>`)&&sec.includes(`<span class="cite-url">${canonical}</span>`),path+': the cite block names the page and its address');
     assert.match(sec,zh?/也请同时引用上游数据集/:/Cite the upstream datasets? as well/,path+': the cite block sends the reader to the upstream credit');
+    if(!zh&&!p.startsWith('methods/')) assert.ok(sec.includes('Cite the upstream datasets as well: their credits are on this page.'),path+': the upstream credit sentence');
     const newest=releaseEntries.find(r=>r.id===named[0]);
     const meta=k=>decodeHtml(html.match(new RegExp(`<meta name="citation_${k}" content="([^"]*)">`))?.[1]??'');
     assert.equal(meta('title'),decodeHtml(h1),path+': citation_title is the h1');
-    assert.equal(meta('author'),'BCI Report',path+': citation_author');
+    // No citation_author: Zotero parses "BCI Report" as a person, "Report, B.". The project is the publisher.
+    assert.doesNotMatch(html,/<meta name="citation_author"/,path+': no citation_author');
+    assert.equal(meta('publisher'),'BCI Report',path+': citation_publisher');
     assert.equal(meta('publication_date'),newest.date.replaceAll('-','/'),path+': citation_publication_date is the newest cited release');
     assert.equal(meta('public_url'),canonical,path+': citation_public_url is the canonical');
     const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
@@ -1432,6 +1443,9 @@ for(const f of htmlPages){
   const html=readFileSync(new URL(f,DIST),'utf8');
   const footer=html.slice(html.lastIndexOf('<footer'));
   for(const href of [repository,mirror,citationFile]) assert.ok(footer.includes(`href="${href}"`),f+': the footer must link '+href);
+  // They open in a new tab, and say so with the ↗ every other such link carries.
+  for(const [,attrs,label] of footer.slice(footer.indexOf('footer-elsewhere')).matchAll(/<a ([^>]*)>([^<]*)<\/a>/g))
+    if(/target="_blank"/.test(attrs)) assert.match(label,/ ↗(?:（英文）)?$/,f+': footer link "'+label+'" opens a new tab without the ↗ cue');
 }
 assert.match(llms,/\n## Cite\n\n[\s\S]*\n## Mirrors\n\n[\s\S]*\n## Optional\n/,'llms.txt: Cite and Mirrors sections, before Optional');
 assert.ok(llms.includes('`'+newestRelease.id+'`'),'llms.txt must cite the newest release');

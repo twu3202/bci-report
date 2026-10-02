@@ -40,7 +40,7 @@ export const GET: APIRoute = ({ site: origin }) => {
       `<p>${esc(r.summary.en)}</p>` +
       r.notes.map(n => `<p>${esc(n.en)}</p>`).join('') +
       `<p>Pages: ${r.pages.map(p => `<a href="${abs(p)}">${esc(pageName(p))}</a>`).join(' · ')}</p>` +
-      `<ul>${files.map(f => `<li><a href="${abs(`/data/${f.file}`)}">${f.file}</a> — ${f.length} bytes, SHA-256 <code>${f.sha}</code></li>`).join('')}</ul>`;
+      `<ul>${files.map(f => `<li><a href="${abs(`/data/${f.file}`)}">${f.file}</a> — ${f.length} bytes, SHA-256 of the file as served <code>${f.sha}</code></li>`).join('')}</ul>`;
     return [
       '  <entry>',
       `    <title>${esc(`${r.id} (${r.date})`)}</title>`,
@@ -59,7 +59,7 @@ export const GET: APIRoute = ({ site: origin }) => {
     '<?xml version="1.0" encoding="utf-8"?>',
     '<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">',
     `  <title>${esc(site.name)} releases</title>`,
-    `  <subtitle>Every reviewed ${esc(site.name)} release: what it added, what it held back, and the SHA-256 of every file it ships.</subtitle>`,
+    `  <subtitle>Every reviewed ${esc(site.name)} release: what it added, what it held back, and the SHA-256 of every file it ships, as served.</subtitle>`,
     `  <id>${abs('/releases/')}</id>`,
     `  <link rel="self" type="application/atom+xml" href="${abs('/releases.xml')}"/>`,
     `  <link rel="alternate" type="text/html" hreflang="en" href="${abs('/releases/')}"/>`,

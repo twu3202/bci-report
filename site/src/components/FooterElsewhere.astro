@@ -1,7 +1,8 @@
 ---
 /**
  * The project's other public homes, in every footer. GitHub and Hugging Face
- * link to the site; until 2026-10-02 nothing on the site linked back.
+ * link to the site; until 2026-10-02 nothing on the site linked back. They open
+ * in a new tab, so each carries the ↗ the site uses for that everywhere else.
  */
 import { site } from '../data/site';
 import { chrome, type Locale } from '../data/i18n';
@@ -10,7 +11,7 @@ interface Props { locale: Locale }
 const t = chrome[Astro.props.locale];
 ---
 <div class="footer-elsewhere" role="group" aria-label={t.footerElsewhere}>
-  <a href={site.repository} target="_blank" rel="noreferrer">{t.footerCode}{t.englishMark}</a>
-  <a href={site.mirror} target="_blank" rel="noreferrer">{t.footerMirror}{t.englishMark}</a>
-  <a href={site.citationFile} target="_blank" rel="noreferrer">{t.footerCite}{t.englishMark}</a>
+  <a href={site.repository} target="_blank" rel="noreferrer">{t.footerCode} ↗{t.englishMark}</a>
+  <a href={site.mirror} target="_blank" rel="noreferrer">{t.footerMirror} ↗{t.englishMark}</a>
+  <a href={site.citationFile} target="_blank" rel="noreferrer">{t.footerCite} ↗{t.englishMark}</a>
 </div>

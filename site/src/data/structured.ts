@@ -84,7 +84,7 @@ export function homeDataset() {
       'and eight electrodes, P300 and semantic ERP, cognitive load, sleep staging and idle ' +
       'false activations. Every score is reported with the protocol that produced it: cohort ' +
       'size, electrode count, evaluation mode, chance level and training budget. ' +
-      `Separately reviewed batches answer ${topicPages.length} deployment questions (${questions.join('; ')}), ` +
+      `Separately reviewed batches bear on ${topicPages.length} deployment questions (${questions.join('; ')}), ` +
       'each in its own file and never summed with the matrix. No raw EEG, no per-participant scores.',
     url: abs('/'),
     sameAs,

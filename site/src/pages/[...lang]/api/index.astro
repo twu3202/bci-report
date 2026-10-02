@@ -34,13 +34,14 @@ const copy = {
     code: 'Code on GitHub (MIT) ↗',
     mirror: 'Mirror on Hugging Face ↗',
     agentsH2: 'For agents and crawlers',
+    // [href, what it is, English only]. The Chinese page marks the English-only files.
     agents: [
-      ['/llms.txt', 'an index of every page with its short answer'],
-      ['/llms-full.txt', 'every English page as Markdown, in one file'],
-      [null, 'Every page has a Markdown copy: add index.md to its URL (e.g. /topics/dry-vs-wet/index.md)'],
-      ['/sitemap.xml', 'every page, both languages, with last-modified dates'],
-      ['/releases.xml', 'an Atom feed with one entry per reviewed release'],
-    ],
+      ['/llms.txt', 'an index of every page with its short answer', true],
+      ['/llms-full.txt', 'every English page as Markdown, in one file', true],
+      [null, 'Every page has a Markdown copy: add index.md to its URL (e.g. /topics/dry-vs-wet/index.md)', false],
+      ['/sitemap.xml', 'every page, both languages, with last-modified dates', false],
+      ['/releases.xml', 'an Atom feed with one entry per reviewed release', true],
+    ] as [string | null, string, boolean][],
     releasesLink: 'Releases, with SHA-256 of every file →',
   },
   zh: {
@@ -67,12 +68,12 @@ const copy = {
     mirror: 'Hugging Face 镜像 ↗',
     agentsH2: '供智能体与爬虫使用',
     agents: [
-      ['/llms.txt', '列出每个页面及其简答的索引'],
-      ['/llms-full.txt', '全部英文页面的 Markdown，合为一个文件'],
-      [null, '每个页面都有 Markdown 版本：在网址后加 index.md（例如 /topics/dry-vs-wet/index.md）'],
-      ['/sitemap.xml', '两种语言的全部页面，附最后修改日期'],
-      ['/releases.xml', 'Atom 订阅源，每次经过审核的发布一条'],
-    ],
+      ['/llms.txt', '列出每个页面及其简答的索引', true],
+      ['/llms-full.txt', '全部英文页面的 Markdown，合为一个文件', true],
+      [null, '每个页面都有 Markdown 版本：在网址后加 index.md（例如 /topics/dry-vs-wet/index.md）', false],
+      ['/sitemap.xml', '两种语言的全部页面，附最后修改日期', false],
+      ['/releases.xml', 'Atom 订阅源，每次经过审核的发布一条', true],
+    ] as [string | null, string, boolean][],
     releasesLink: '发布记录（附每个文件的 SHA-256）→',
   },
 }[locale];
@@ -121,6 +122,6 @@ const structured = {
   </section>
   <section class="topic-section" aria-labelledby="agents-heading">
     <h2 id="agents-heading">{copy.agentsH2}</h2>
-    <ul class="entity-links">{copy.agents.map(([href, text]) => <li>{href ? <><a href={href}><code>{href}</code></a>{locale === 'zh' ? '——' : ' — '}{text}</> : text}</li>)}</ul>
+    <ul class="entity-links">{copy.agents.map(([href, text, englishOnly]) => <li>{href ? <><a href={href}><code>{href}</code></a>{englishOnly && chrome[locale].englishMark}{locale === 'zh' ? '——' : ' — '}{text}</> : text}</li>)}</ul>
   </section>
 </EntityLayout>

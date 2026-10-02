@@ -247,7 +247,7 @@ export const citeCopy = {
   en: {
     heading: 'Cite this page',
     figuresFrom: (n: number) => (n === 1 ? 'Figures from release' : 'Figures from releases'),
-    upstreamPage: 'Cite the upstream dataset as well: its credit is on this page.',
+    upstreamPage: 'Cite the upstream datasets as well: their credits are on this page.',
     upstreamDatasets: 'Cite the upstream datasets as well: each dataset’s page gives its credit.',
     bibtex: 'BibTeX for the site and its releases →',
   },
