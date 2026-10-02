@@ -1,0 +1,501 @@
+{
+  "schema_version": "bci-report-extension-update-v1",
+  "release_id": "extension-update-20261002",
+  "generated_at": "2026-10-02",
+  "status": "aggregate_preview",
+  "metric_units": "balanced accuracy, coverage and acceptance are proportions in [0,1]; AUROC is dimensionless; differences are differences of proportions; window counts are whole numbers",
+  "scope": "Two fixed classical baselines on two separate questions and data sets: an SSVEP rejection rule on twenty further people of one release, and P300 image-rate and recording transfer on nine people. No foundation-model or fine-tuning result. Nothing here extends the eight-protocol matrix, and the two results share no ranking.",
+  "results": {
+    "ysu-async-ssvep-extension": {
+      "id": "ysu-async-ssvep-extension",
+      "question": "does a rejection threshold fitted on each new person separate intended commands from non-control better than one fixed on other people, and at what cost",
+      "protocol_id": "ysu-v7-fixed-cca-personal-global-subject-extension-v1",
+      "generalization": "twenty further people of the same release, scored under rules fixed before scoring; an extension within one dataset, not an external validation",
+      "development_pilot": {
+        "file": "context-update.json",
+        "result_id": "ysu-async-ssvep",
+        "people": 4,
+        "role": "development set: the global rule is fitted on its people only, and none of them is among the people scored here"
+      },
+      "cohort": {
+        "people": 20,
+        "people_missing": 0,
+        "test_windows_each_person": {
+          "control": 48,
+          "NS1": 12,
+          "NS2": 12,
+          "NS3": 24
+        },
+        "calibration_windows_each_person": 96,
+        "global_rule_calibration_windows": 384
+      },
+      "method": {
+        "decoder": "fixed sinusoidal CCA on eight occipital and parietal channels (PO7, PO3, POz, PO4, PO8, O1, Oz, O2), three harmonics; the frequency with the largest correlation is the command",
+        "window": "1.5 seconds scored per separately collected trial",
+        "acceptance": "a window is accepted as a command when its largest CCA correlation clears the rule; each rule is chosen to maximise detection balanced accuracy on its calibration windows",
+        "same_test_windows": "both rules score the same 96 held-out windows of each person, disjoint from the calibration windows",
+        "detection_balanced_accuracy": "the mean of control-window acceptance and non-control rejection, the three non-control states pooled 1:1:2 as collected; it measures whether a command is detected, not whether the accepted frequency is right",
+        "weighting": "every person contributes the same windows, so the participant means of acceptance and false acceptance equal the pooled window rates; accepted-window accuracy is the mean of each person's rate and is shown only beside coverage and the end-to-end rate",
+        "interval_kind": "descriptive whole-person bootstrap, 20,000 draws, conditional on the four pilot people and on each realised calibration partition"
+      },
+      "rules": [
+        {
+          "id": "global",
+          "label": "Global threshold",
+          "fitted_on": "the calibration windows of the four pilot people only; no label from the new person",
+          "target_person_labels": 0,
+          "detection_balanced_accuracy": {
+            "mean": 0.7598958333333334,
+            "bootstrap_95": [
+              0.715625,
+              0.8020833333333334
+            ]
+          },
+          "control_windows": {
+            "tested": 960,
+            "frequency_recognised": 769,
+            "accepted": 748,
+            "accepted_and_correct": 654
+          },
+          "accepted_window_accuracy_mean_over_people": 0.8584759467778976,
+          "false_acceptance": [
+            {
+              "state": "NS1",
+              "condition": "looking at a central image, flicker off",
+              "accepted": 49,
+              "tested": 240
+            },
+            {
+              "state": "NS2",
+              "condition": "looking at a white wall, resting",
+              "accepted": 93,
+              "tested": 240
+            },
+            {
+              "state": "NS3",
+              "condition": "looking at a central image while the surrounding targets flicker",
+              "accepted": 107,
+              "tested": 480
+            }
+          ],
+          "non_control_pooled": {
+            "accepted": 249,
+            "tested": 960
+          },
+          "equal_state_detection_balanced_accuracy": 0.7538194444444446
+        },
+        {
+          "id": "personal",
+          "label": "Personal threshold",
+          "fitted_on": "the new person's own calibration windows: 48 with a command intended and 48 without, the non-control states pooled 1:1:2",
+          "target_person_labels": 96,
+          "detection_balanced_accuracy": {
+            "mean": 0.7895833333333333,
+            "bootstrap_95": [
+              0.7416666666666668,
+              0.8380208333333332
+            ]
+          },
+          "control_windows": {
+            "tested": 960,
+            "frequency_recognised": 769,
+            "accepted": 746,
+            "accepted_and_correct": 649
+          },
+          "accepted_window_accuracy_mean_over_people": 0.8511193005472316,
+          "false_acceptance": [
+            {
+              "state": "NS1",
+              "condition": "looking at a central image, flicker off",
+              "accepted": 32,
+              "tested": 240
+            },
+            {
+              "state": "NS2",
+              "condition": "looking at a white wall, resting",
+              "accepted": 79,
+              "tested": 240
+            },
+            {
+              "state": "NS3",
+              "condition": "looking at a central image while the surrounding targets flicker",
+              "accepted": 79,
+              "tested": 480
+            }
+          ],
+          "non_control_pooled": {
+            "accepted": 190,
+            "tested": 960
+          },
+          "equal_state_detection_balanced_accuracy": 0.7840277777777778
+        }
+      ],
+      "paired_difference": {
+        "comparison": "personal minus global threshold, same people and windows",
+        "metric": "detection_balanced_accuracy",
+        "mean": 0.0296875,
+        "exact_fraction": "19/640",
+        "bootstrap_95": [
+          0.00519531250000001,
+          0.056770833333333326
+        ],
+        "helped": 10,
+        "harmed": 8,
+        "tied": 2
+      },
+      "reading": "Detection balanced accuracy rose and false acceptance fell in every non-control state, while the share of control windows both accepted and correct did not rise: a better detector here is not better command accuracy.",
+      "rate_kind": "offline window-level rates, not false activations per hour",
+      "limitations": [
+        "An extension within one dataset: the twenty people share the pilot's source, lab and protocol. It is not validation on an independent cohort.",
+        "The personal rule uses 96 labelled windows from the person; the comparison cannot separate fitting to the person from simply having those labels.",
+        "Calibration and test windows are fixed index partitions; the source does not establish their order in time, so this is not a calibrate-earlier, use-later experiment.",
+        "Separately collected, pre-epoched windows in a fixed mixture of states: window rates only, not false activations per hour, latency, information transfer rate or how often commands occur in real use.",
+        "The source states no physical amplitude unit, so nothing here depends on one.",
+        "No clinical or population claim; fixed CCA has no pretraining, so no pretraining claim applies."
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "mode": "deep",
+        "people": 20,
+        "scored_windows_checked": 3840
+      },
+      "rights": {
+        "name": "YSU asynchronous SSVEP-BCI dataset",
+        "task": "Control versus non-control rejection with fixed CCA: a threshold fixed on the four-person pilot against a personal threshold, on twenty further people",
+        "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+        "version": "figshare 24906300 revision 3: the twenty participant archives the 2026-09-27 pilot did not use, so that the release's 24 people are now all used, four as the development pilot and twenty as this extension",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Jing Zhao, Qian Zhang, Xinrui Wang, Xueshuo Liu, Jiaxin Li, Fengjie Fan, Zhenhu Liang and Xiaoli Li · An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces, Brain-Apparatus Communication 3(1) (2024), doi:10.1080/27706710.2024.2418650; data at doi:10.6084/m9.figshare.24906300.v3.",
+        "privacyReview": "Same release, same consent record: the data descriptor (Brain-Apparatus Communication 3(1), 2024, section 2.1, Subjects), read by the maintainer for the 2026-09-27 release, reports that all 24 subjects understood the procedures and signed written informed consent, and that the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. Reused by reference from the 2026-09-27 manifest, not re-read. Published here: cohort means with participant-bootstrap intervals, pooled window counts, and the number of people helped, harmed or tied out of twenty. The per-participant ranges in the aggregate are dropped: each bound is one person's rate.",
+        "reviewedAt": "2026-10-02",
+        "reviewBasis": [
+          "https://doi.org/10.1080/27706710.2024.2418650",
+          "https://doi.org/10.6084/m9.figshare.24906300.v3"
+        ]
+      }
+    },
+    "ltrsvp-rate-transfer": {
+      "id": "ltrsvp-rate-transfer",
+      "question": "does a P300 target decoder trained at one image rate carry over to a later recording at another",
+      "protocol_id": "ltrsvp-v7-fixed-within-person-rate-run-transfer-v1",
+      "classes": 2,
+      "chance_level": 0.5,
+      "metric": "balanced_accuracy",
+      "generalization": "same person, another recording: train on run a, test on run b. Within each rate run a came first and a long break followed; the order across rates is not established",
+      "not_causal": true,
+      "cohort": {
+        "people": 9,
+        "people_in_release": 11,
+        "people_excluded": 2,
+        "exclusion": "missing both recordings at one rate in the release; excluded from file metadata before any scoring",
+        "recordings": 54,
+        "source_fits": 27,
+        "evaluation_cells": 81,
+        "unique_test_events": 8626
+      },
+      "method": {
+        "stimuli": "aerial images of London shown one after another at 5, 6 or 10 per second; targets contain an airplane",
+        "signal": "eight posterior channels (PO8, PO7, PO3, PO4, P7, P8, O1, O2) as released, 0.15-28 Hz by the producer, 2048 Hz; no added filtering, re-reference or artifact rejection",
+        "inputs": "six 100-ms channel means from 0.1 to 0.7 s after each image, minus that image's -0.2 to 0 s mean: 48 per image",
+        "classifier": "standardisation fitted on the training recording, then class-balanced logistic regression (C = 1); target when its probability is at least 0.5",
+        "selection": "none: no hyperparameter, threshold, artifact rule or seed chosen from any score",
+        "interval_kind": "descriptive whole-person bootstrap, 20,000 draws; images and cells add no people"
+      },
+      "primary": {
+        "test": "the same 10-Hz run-b images in both arms",
+        "target_events": 223,
+        "non_target_events": 2036,
+        "arms": [
+          {
+            "id": "trained-5hz",
+            "train_rate_hz": 5,
+            "test_rate_hz": 10,
+            "balanced_accuracy": {
+              "mean": 0.6083184434926725,
+              "bootstrap_95": [
+                0.5651098399511062,
+                0.6582536802829091
+              ]
+            },
+            "auroc": {
+              "mean": 0.6728092710209634,
+              "bootstrap_95": [
+                0.6170933321894536,
+                0.7319826040769997
+              ]
+            }
+          },
+          {
+            "id": "trained-10hz",
+            "train_rate_hz": 10,
+            "test_rate_hz": 10,
+            "balanced_accuracy": {
+              "mean": 0.6298671220988663,
+              "bootstrap_95": [
+                0.5773485853456931,
+                0.6798058036525937
+              ]
+            },
+            "auroc": {
+              "mean": 0.6945171966446226,
+              "bootstrap_95": [
+                0.6301686021136277,
+                0.7531828699936153
+              ]
+            }
+          }
+        ]
+      },
+      "paired_difference": {
+        "comparison": "trained at 5 Hz minus trained at 10 Hz, both tested on the same 10-Hz run-b images",
+        "metric": "balanced_accuracy",
+        "mean": -0.021548678606193736,
+        "exact_fraction": "-860364424438931681/39926551421655949050",
+        "bootstrap_95": [
+          -0.06767943451615772,
+          0.027973636377539315
+        ],
+        "interval_crosses_zero": true,
+        "people_lower": 7,
+        "people_higher": 2,
+        "people_tied": 0
+      },
+      "secondary_auroc_difference": {
+        "mean": -0.021707925623659197,
+        "bootstrap_95": [
+          -0.06044252295132324,
+          0.014313772456151416
+        ],
+        "interval_crosses_zero": true
+      },
+      "reading": "Lower on average after training at the slower rate, but the interval crosses zero: no change is established, and rate and recording are confounded, so none could be attributed to rate.",
+      "matrix": [
+        {
+          "train_rate_hz": 5,
+          "test_rate_hz": 5,
+          "balanced_accuracy": {
+            "mean": 0.7357669114358418,
+            "bootstrap_95": [
+              0.657975517971621,
+              0.8084648480047402
+            ]
+          },
+          "auroc": {
+            "mean": 0.7821558119958145,
+            "bootstrap_95": [
+              0.6871466441256278,
+              0.8711179310569342
+            ]
+          },
+          "target_events": 338,
+          "non_target_events": 3069
+        },
+        {
+          "train_rate_hz": 5,
+          "test_rate_hz": 6,
+          "balanced_accuracy": {
+            "mean": 0.7069548371138868,
+            "bootstrap_95": [
+              0.6451716513451103,
+              0.7669886202467755
+            ]
+          },
+          "auroc": {
+            "mean": 0.7772809000202079,
+            "bootstrap_95": [
+              0.6857688195890551,
+              0.8602084639173229
+            ]
+          },
+          "target_events": 296,
+          "non_target_events": 2664
+        },
+        {
+          "train_rate_hz": 5,
+          "test_rate_hz": 10,
+          "balanced_accuracy": {
+            "mean": 0.6083184434926725,
+            "bootstrap_95": [
+              0.5651098399511062,
+              0.6582536802829091
+            ]
+          },
+          "auroc": {
+            "mean": 0.6728092710209634,
+            "bootstrap_95": [
+              0.6170933321894536,
+              0.7319826040769997
+            ]
+          },
+          "target_events": 223,
+          "non_target_events": 2036
+        },
+        {
+          "train_rate_hz": 6,
+          "test_rate_hz": 5,
+          "balanced_accuracy": {
+            "mean": 0.7485850510144252,
+            "bootstrap_95": [
+              0.6850394353704138,
+              0.8094235542863645
+            ]
+          },
+          "auroc": {
+            "mean": 0.803405751806371,
+            "bootstrap_95": [
+              0.7280308733794709,
+              0.8750410021576083
+            ]
+          },
+          "target_events": 338,
+          "non_target_events": 3069
+        },
+        {
+          "train_rate_hz": 6,
+          "test_rate_hz": 6,
+          "balanced_accuracy": {
+            "mean": 0.7137360844408813,
+            "bootstrap_95": [
+              0.6427361219027886,
+              0.7810116381440949
+            ]
+          },
+          "auroc": {
+            "mean": 0.791328164301622,
+            "bootstrap_95": [
+              0.7102541311129567,
+              0.8661671555840413
+            ]
+          },
+          "target_events": 296,
+          "non_target_events": 2664
+        },
+        {
+          "train_rate_hz": 6,
+          "test_rate_hz": 10,
+          "balanced_accuracy": {
+            "mean": 0.606178173394171,
+            "bootstrap_95": [
+              0.573647665373486,
+              0.642537516844866
+            ]
+          },
+          "auroc": {
+            "mean": 0.6728110571521954,
+            "bootstrap_95": [
+              0.6161098165261004,
+              0.7319989506974199
+            ]
+          },
+          "target_events": 223,
+          "non_target_events": 2036
+        },
+        {
+          "train_rate_hz": 10,
+          "test_rate_hz": 5,
+          "balanced_accuracy": {
+            "mean": 0.6754536175651152,
+            "bootstrap_95": [
+              0.5987580381192086,
+              0.7520373106174058
+            ]
+          },
+          "auroc": {
+            "mean": 0.7199611447953465,
+            "bootstrap_95": [
+              0.6303271185540898,
+              0.8070661361737457
+            ]
+          },
+          "target_events": 338,
+          "non_target_events": 3069
+        },
+        {
+          "train_rate_hz": 10,
+          "test_rate_hz": 6,
+          "balanced_accuracy": {
+            "mean": 0.6982552251304496,
+            "bootstrap_95": [
+              0.6189501102808836,
+              0.7716758425207003
+            ]
+          },
+          "auroc": {
+            "mean": 0.7568809499410498,
+            "bootstrap_95": [
+              0.6597614053638355,
+              0.8457954313576422
+            ]
+          },
+          "target_events": 296,
+          "non_target_events": 2664
+        },
+        {
+          "train_rate_hz": 10,
+          "test_rate_hz": 10,
+          "balanced_accuracy": {
+            "mean": 0.6298671220988663,
+            "bootstrap_95": [
+              0.5773485853456931,
+              0.6798058036525937
+            ]
+          },
+          "auroc": {
+            "mean": 0.6945171966446226,
+            "bootstrap_95": [
+              0.6301686021136277,
+              0.7531828699936153
+            ]
+          },
+          "target_events": 223,
+          "non_target_events": 2036
+        }
+      ],
+      "limitations": [
+        "Rate and recording change together: training at another rate also means another recording, another number of images and another class balance. Not a causal effect of image rate.",
+        "Nine people. The 81 cells and the thousands of test images add no people; intervals summarise the nine.",
+        "At these rates the baseline and response windows of one image contain its neighbours, so nothing here isolates a target response.",
+        "Offline and fixed: no online latency, information transfer rate, false activations per hour, new-person transfer, clinical claim, foundation-model or fine-tuning result."
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "recordings_rehashed_and_reextracted": 54,
+        "models_refitted": 27,
+        "evaluation_cells": 81
+      },
+      "rights": {
+        "name": "LTRSVP · EEG Signals from an RSVP Task",
+        "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a later recording",
+        "source": "https://physionet.org/content/ltrsvp/1.0.0/",
+        "version": "PhysioNet ltrsvp 1.0.0: the complete release (64 files); the nine of its eleven people with both recordings at all three rates are scored",
+        "license": "Open Data Commons Attribution License 1.0",
+        "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+        "attribution": "Ana Matran (University of Essex) · EEG Signals from an RSVP Task 1.0.0, PhysioNet (2017), doi:10.13026/C2KX0P. Original publication: Ana Matran-Fernandez and Riccardo Poli, Towards the automated localisation of targets in rapid image-sifting by collaborative brain-computer interfaces, PLoS ONE 12(5): e0178498 (2017), doi:10.1371/journal.pone.0178498. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+        "privacyReview": "The original publication (Materials and methods, Participants and setup) states that the study received approval from the Ethics Committee of the University of Essex and that consent was obtained from all participants in written form before the experiment began; its data availability statement names this PhysioNet record. The PhysioNet record itself carries no consent statement. Published here: participant-mean balanced accuracy and AUROC for each of the nine training-rate and test-rate cells with participant-bootstrap intervals, one paired difference, and how many of the nine people were lower, higher or tied. No per-person, per-recording or per-image value, and none of the ages, sexes or handedness the paper reports.",
+        "reviewedAt": "2026-10-02",
+        "reviewBasis": [
+          "https://physionet.org/content/ltrsvp/1.0.0/",
+          "https://doi.org/10.1371/journal.pone.0178498",
+          "https://opendatacommons.org/licenses/by/1-0/"
+        ]
+      }
+    }
+  },
+  "status_only": [],
+  "not_published": [
+    "Per-person values of any kind: the per-participant ranges in the YSU aggregate are dropped, and so is which people were helped or harmed. Only how many.",
+    "Thresholds, CCA scores, predictions, features, models and the calibration partitions themselves.",
+    "The compact and full independent audits: they are pinned by SHA-256 in this manifest and their PASS is checked by the export, but they carry private storage paths and are not copied.",
+    "Any per-hour false-activation rate, latency, information transfer rate or clinical claim: neither design measures one.",
+    "The LTRSVP participants' ages, sexes and handedness, which the original publication reports.",
+    "The LTRSVP numerical-sensitivity diagnostic (alternate refits on independently re-extracted features): an audit diagnostic, not a result."
+  ],
+  "provenance": {
+    "manifest_sha256": "1e6bb977f6033bc99942725696c59db29a3d49968eeb6d7901941d3fce66f595",
+    "included": [
+      "ysu-async-ssvep-extension",
+      "ltrsvp-rate-transfer"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "release_id": "extension-update-20261002",
+  "export_sha256": "6b152464f7c2a1081a7c2ed61477db6148526a77268b0e16b24b7e2ab5c42f8e",
+  "manifest_sha256": "1e6bb977f6033bc99942725696c59db29a3d49968eeb6d7901941d3fce66f595",
+  "included": [
+    "ysu-async-ssvep-extension",
+    "ltrsvp-rate-transfer"
+  ],
+  "status_only": [],
+  "checks": [
+    "pinned handoffs, aggregates, protocols and independent audits",
+    "each audit passed and names the exact aggregate bytes, protocol and runner",
+    "YSU consent reused from the pinned 2026-09-27 record: same source, licence and attribution",
+    "YSU development pilot is the reviewed published file and the global rule's only donors",
+    "every published acceptance rate is a whole count of windows; equal windows per person checked",
+    "detection balanced accuracy and the paired difference follow exactly from the counts",
+    "helped + harmed + tied = 20 (YSU); lower + higher + tied = 9 (LTRSVP)",
+    "LTRSVP: every training rate is tested on identical images; paired means equal the cell means",
+    "the trade-off and interval-crosses-zero readings are re-derived from the numbers",
+    "per-person ranges, thresholds, predictions and features refused by key; global threshold by value",
+    "no private paths, source archive names or participant identifiers"
+  ]
+}

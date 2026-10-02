@@ -1,0 +1,110 @@
+{
+  "release_id": "extension-update-20261002",
+  "reviewed_at": "2026-10-02",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the execution session's v7 batch (completed and independently audited 2026-10-01). Its own manifest: it amends no earlier review, and nothing here joins the eight-protocol matrix or shares a ranking with any other result. Two sources, both published as aggregates. The YSU extension scores twenty further people of a release whose consent statement was read for the 2026-09-27 pilot; that record is reused by reference, not re-reviewed. LTRSVP is a new source; its consent and ethics statement was read from the original publication on 2026-10-02. Both are fixed classical baselines: no foundation-model and no fine-tuning result. The website inputs are the two sanitized aggregates; the compact audits are pinned by hash and never copied, because they carry private storage paths.",
+  "handoff": {
+    "path": "research/expansion_v7_20261001/handoff/BCI Report Expansion v7 Website Update Handoff.md",
+    "sha256": "f218dea969d78516e5900e7729414fbb4decb23110386c0c7fbd2ebab6ae5229"
+  },
+  "sourceHandoffs": [
+    {
+      "path": "research/expansion_v7_20261001/handoff/YSU Expanded Cohort Website Update Handoff.md",
+      "sha256": "0e313fe5dc8fb5e9182a5d05869ee20a36f20c7469dae87b7ddc95d2409c541a"
+    },
+    {
+      "path": "research/expansion_v7_20261001/handoff/LTRSVP Rate Transfer Website Update Handoff.md",
+      "sha256": "7cdb224d74c9690d31d9867f833901c31b6447e77de34f8bead42c3d027df377"
+    }
+  ],
+  "notPublished": [
+    "Per-person values of any kind: the per-participant ranges in the YSU aggregate are dropped, and so is which people were helped or harmed. Only how many.",
+    "Thresholds, CCA scores, predictions, features, models and the calibration partitions themselves.",
+    "The compact and full independent audits: they are pinned by SHA-256 in this manifest and their PASS is checked by the export, but they carry private storage paths and are not copied.",
+    "Any per-hour false-activation rate, latency, information transfer rate or clinical claim: neither design measures one.",
+    "The LTRSVP participants' ages, sexes and handedness, which the original publication reports.",
+    "The LTRSVP numerical-sensitivity diagnostic (alternate refits on independently re-extracted features): an audit diagnostic, not a result."
+  ],
+  "sources": [
+    {
+      "id": "ysu-async-ssvep-extension",
+      "decision": "aggregate_preview",
+      "name": "YSU asynchronous SSVEP-BCI dataset",
+      "task": "Control versus non-control rejection with fixed CCA: a threshold fixed on the four-person pilot against a personal threshold, on twenty further people",
+      "source": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+      "version": "figshare 24906300 revision 3: the twenty participant archives the 2026-09-27 pilot did not use, so that the release's 24 people are now all used, four as the development pilot and twenty as this extension",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Jing Zhao, Qian Zhang, Xinrui Wang, Xueshuo Liu, Jiaxin Li, Fengjie Fan, Zhenhu Liang and Xiaoli Li · An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces, Brain-Apparatus Communication 3(1) (2024), doi:10.1080/27706710.2024.2418650; data at doi:10.6084/m9.figshare.24906300.v3.",
+      "consentRecord": {
+        "path": "research/publication_review_20260927/context-release-manifest.json",
+        "sha256": "376ac7a308d788c7a8d71a63ee7de5926906f07d3933f4f6a89da0818a70617d",
+        "sourceId": "ysu-async-ssvep"
+      },
+      "privacyReview": "Same release, same consent record: the data descriptor (Brain-Apparatus Communication 3(1), 2024, section 2.1, Subjects), read by the maintainer for the 2026-09-27 release, reports that all 24 subjects understood the procedures and signed written informed consent, and that the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. Reused by reference from the 2026-09-27 manifest, not re-read. Published here: cohort means with participant-bootstrap intervals, pooled window counts, and the number of people helped, harmed or tied out of twenty. The per-participant ranges in the aggregate are dropped: each bound is one person's rate.",
+      "reviewedAt": "2026-10-02",
+      "reviewBasis": [
+        "https://doi.org/10.1080/27706710.2024.2418650",
+        "https://doi.org/10.6084/m9.figshare.24906300.v3"
+      ],
+      "verification": [
+        "Consent and ethics: the 2026-09-27 review of this release, pinned above by the SHA-256 of its manifest; the export checks that record names the same source, licence and attribution and carries a complete approval.",
+        "The global threshold is fitted only on the calibration windows of the four pilot people, which the pilot's published export describes; none of them is among the twenty scored here.",
+        "The aggregate's SHA-256 equals the one the independent post-score audit (deep mode, status PASS) records as the summary it checked, with the same protocol and runner hashes."
+      ],
+      "summary": {
+        "path": "research/expansion_v7_20261001/aggregate/ysu-summary.json",
+        "sha256": "e104f50c3ad5e8e4c7a98f1840ff044ebfa69f754392cdeaa00bf2a5bd9baf4c"
+      },
+      "protocol": {
+        "path": "research/expansion_v7_20261001/protocols/ysu-v7-protocol.json",
+        "sha256": "1a75c74e19bcd625c3ac17a231aaeb7abcc712945d7de415df74ea8a8d53a89d"
+      },
+      "numericalAudit": {
+        "path": "research/expansion_v7_20261001/review/ysu-v7-postscore-audit-v2-20261001T213536Z.json",
+        "sha256": "f7eff1cc1938cf3a6576de5fc1917a5049f03c9b1a0998532755ba8d59ecc28a"
+      },
+      "developmentPilot": {
+        "file": "context-update.json",
+        "resultId": "ysu-async-ssvep",
+        "exportAudit": "research/publication_review_20260927/context-export-audit.json"
+      }
+    },
+    {
+      "id": "ltrsvp-rate-transfer",
+      "decision": "aggregate_preview",
+      "name": "LTRSVP · EEG Signals from an RSVP Task",
+      "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a later recording",
+      "source": "https://physionet.org/content/ltrsvp/1.0.0/",
+      "version": "PhysioNet ltrsvp 1.0.0: the complete release (64 files); the nine of its eleven people with both recordings at all three rates are scored",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Ana Matran (University of Essex) · EEG Signals from an RSVP Task 1.0.0, PhysioNet (2017), doi:10.13026/C2KX0P. Original publication: Ana Matran-Fernandez and Riccardo Poli, Towards the automated localisation of targets in rapid image-sifting by collaborative brain-computer interfaces, PLoS ONE 12(5): e0178498 (2017), doi:10.1371/journal.pone.0178498. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "The original publication (Materials and methods, Participants and setup) states that the study received approval from the Ethics Committee of the University of Essex and that consent was obtained from all participants in written form before the experiment began; its data availability statement names this PhysioNet record. The PhysioNet record itself carries no consent statement. Published here: participant-mean balanced accuracy and AUROC for each of the nine training-rate and test-rate cells with participant-bootstrap intervals, one paired difference, and how many of the nine people were lower, higher or tied. No per-person, per-recording or per-image value, and none of the ages, sexes or handedness the paper reports.",
+      "reviewedAt": "2026-10-02",
+      "reviewBasis": [
+        "https://physionet.org/content/ltrsvp/1.0.0/",
+        "https://doi.org/10.1371/journal.pone.0178498",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "verification": [
+        "Consent and ethics sentence read from the PLoS ONE article (journals.plos.org, doi:10.1371/journal.pone.0178498) on 2026-10-02. Its data availability statement points to PhysioNet ltrsvp.",
+        "Licence, DOI, version, channel list, microvolt units and the citation request read from the PhysioNet project page on 2026-10-02. The page's citation box spells the second author 'Polo R'; the article's own record gives Riccardo Poli, which is used here.",
+        "The paper and the release both describe eleven healthy volunteers. Two of them lack both recordings at one rate in the release, so the protocol excluded them from file metadata before any scoring.",
+        "The aggregate's SHA-256 equals the one the independent post-score recovery audit (status PASS) records as the summary it checked, with the same protocol and runner hashes. An earlier audit failed on a floating-point re-implementation difference; the passing audit changed no protocol, model, prediction or result."
+      ],
+      "summary": {
+        "path": "research/expansion_v7_20261001/aggregate/ltrsvp-summary.json",
+        "sha256": "f6f873f3f00f91bf18411f6777b3909952ae775da6273984596832e712f01cc5"
+      },
+      "protocol": {
+        "path": "research/expansion_v7_20261001/protocols/ltrsvp-analysis-protocol.json",
+        "sha256": "080f3aa43cb5cabfde078f638652669b0a519825a0c2b45625039ae3193fdf82"
+      },
+      "numericalAudit": {
+        "path": "research/expansion_v7_20261001/review/ltrsvp-postscore-recovery-audit-v2.json",
+        "sha256": "4fcf1497deb346385345d5607fa4117e93f04ea518d3fb77be7559ec36adb6f2"
+      }
+    }
+  ]
+}

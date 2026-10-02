@@ -25,6 +25,7 @@ import export_evidence_update as evidence_export
 import export_clinical_update as clinical_export
 import export_context_update as context_export
 import export_adaptation_update as adaptation_export
+import export_extension_update as extension_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -92,6 +93,17 @@ def adaptation_payload():
     audit = json.loads(adaptation_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Adaptation export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Adaptation payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def extension_payload():
+    """The 2026-10-02 extension export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'extension-update.json').read_bytes()
+    audit = json.loads(extension_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Extension export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Extension payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -276,6 +288,21 @@ matrix's frozen LaBraM ridge readout on the same folds for scale. **One fixed
 recipe, not a tuned ranking**; no memory figures. A next-day experiment on a
 source under editorial hold is listed as status only, with no figure.
 
+`extension-update.json` — reviewed 2 October 2026, two fixed classical
+baselines. The asynchronous SSVEP non-control test extended to the twenty other
+people of the same release, scored under two rejection rules fixed before
+scoring: a threshold fitted on the four-person pilot and a personal threshold
+fitted on 96 of each person's own windows. Detection balanced accuracy, coverage,
+correct-and-accepted output and false acceptance per non-control state for both,
+with people helped, harmed and tied. **A better detector here is not better
+command accuracy**, and these are window rates, not false activations per hour.
+And LTRSVP (PhysioNet, doi:10.13026/C2KX0P; Matran-Fernandez and Poli, PLoS ONE
+2017, doi:10.1371/journal.pone.0178498; ODC-By 1.0): a P300 target decoder
+trained on a 5-Hz or 10-Hz recording and tested on the same person's later 10-Hz
+recording, nine people, with the full 3×3 rate matrix. The paired interval
+crosses zero, and rate and recording change together: **not a causal effect of
+image rate**.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -427,6 +454,8 @@ def build(output):
     (output/'context-update.json').write_bytes(raw_context)
     raw_adaptation, _ = adaptation_payload()
     (output/'adaptation-update.json').write_bytes(raw_adaptation)
+    raw_extension, _ = extension_payload()
+    (output/'extension-update.json').write_bytes(raw_extension)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
