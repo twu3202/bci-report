@@ -418,6 +418,8 @@ for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-us
     const a=html.indexOf('id="non-control"'),b=html.indexOf('id="methods-and-limits"');
     assert.ok(a>0&&b>a,p+': the non-control section must render before methods and limits');
     const sec=html.slice(a,b);
+    // −1.6 pp has no reading in this section at all.
+    assert.doesNotMatch(sec,/−1\.6 pp/,p+': −1.6 pp (Alpha Waves) inside the non-control section');
     for(const m of sec.matchAll(/77\.9%/g))
       assert.match(sec.slice(Math.max(0,m.index-60),m.index),/>748 \/ 960<\/span><span class="interval">$/,p+': 77.9% in the non-control section may only be the coverage 748 / 960');
     html=html.slice(0,a)+html.slice(b);
@@ -890,6 +892,32 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   const ans=html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"')));
   assert.ok(ans.includes('>'+frac(gR.control_windows.accepted,gR.control_windows.tested)+'<'),label+': the short answer cites the extension');
   assert.ok(!ans.includes('130 / 192'),label+': the short answer no longer leads with the pilot');
+  // The personal-threshold sentence is qualified: 96 of the person's own labelled windows, fewer
+  // false acceptances overall and in each state, no more correct output, and personalisation not
+  // separable from having the labels. Its figure is in the evidence (the short-answer check).
+  assert.ok(ans.includes('class="fig">'+pR.target_person_labels+'<'),label+': the short answer names the '+pR.target_person_labels+' labelled windows');
+  assert.ok(visible(ans).includes(zh?'被误接受的非控制窗口总体减少，每种状态下也都减少了，但被接受且正确的指令占比并没有提高；这项对比无法区分“按人拟合阈值”和“仅仅多了这些标签”各自的作用。'
+                               :'accepted fewer non-control windows overall, and fewer in each state, but did not raise the share of commands both accepted and correct; the contrast cannot separate fitting the threshold to the person from simply having those labels.'),label+': the personal-threshold sentence is qualified');
+  assert.doesNotMatch(ans,/fitting the threshold to each person cut those mistakes|改为按每名被试拟合阈值后，这类误接受减少了/,label+': the unqualified sentence');
+  // ...and held to the numbers it summarises.
+  assert.ok(pR.non_control_pooled.accepted<gR.non_control_pooled.accepted&&pR.false_acceptance.every((s,i)=>s.accepted<gR.false_acceptance[i].accepted),'the answer says fewer overall and in each state');
+  assert.ok(pR.control_windows.accepted_and_correct<=gR.control_windows.accepted_and_correct,'the answer says correct output did not rise');
+  // The eyebrow: the rules were fixed before scoring; only the global threshold came from the pilot.
+  assert.ok(sec.includes(zh?`规则在评分前固定；全局阈值来自 ${yx.development_pilot.people} 人试点`:`rules fixed before scoring; global threshold from a ${yx.development_pilot.people}-person pilot`),label+': the eyebrow');
+  assert.doesNotMatch(sec,/rules fixed on a \d+-person pilot|规则在 \d+ 人试点上固定/,label+': the personal rule was not fixed on the pilot');
+  // The held-out windows the lede counts are the test partition. Calibration and test are both
+  // 96 windows a person here, so the page cannot tell the fields apart; the source can.
+  const wntaSource=readFileSync(new URL('../src/pages/[...lang]/topics/when-not-to-act.astro',import.meta.url),'utf8');
+  for(const lede of wntaSource.match(/^ {4}ncLede: .*$/gm)??[])
+    assert.ok(lede.includes('${testWindowsEach}')&&!lede.includes('calibration_windows_each_person'),'when-not-to-act.astro: the lede counts held-out windows from test_windows_each_person');
+  assert.equal((wntaSource.match(/^ {4}ncLede: .*$/gm)??[]).length,2,'when-not-to-act.astro: one lede per language');
+  const testEach=Object.values(yx.cohort.test_windows_each_person).reduce((a,b)=>a+b,0);
+  assert.ok(sec.includes(zh?`两种规则在每名被试相同的 ${testEach} 个留出窗口上评分`:`Both rules score the same ${testEach} held-out windows of each person`),label+': the held-out count');
+  // Four scrolling tables, each named for what it holds (a screen reader lists regions by name).
+  const regions=[...sec.matchAll(/role="region" aria-label="([^"]+)"/g)].map(m=>m[1]);
+  assert.equal(regions.length,4,label+': four table regions in the non-control section');
+  assert.equal(new Set(regions).size,4,label+': each table region has its own name');
+  regions.forEach((name,i)=>assert.match(name,(zh?[/^扩展：.*指令窗口/,/^扩展：.*非控制状态/,/^试点：指令窗口/,/^试点：非控制状态/]:[/^Extension, command windows/,/^Extension, non-control states/,/^Pilot, command windows/,/^Pilot, non-control states/])[i],label+': region '+i+' is "'+name+'"'));
   // The roadmap names its inputs without a figure (the figure check above covers it); it calls the pilot a development set.
   const road=html.slice(html.indexOf('id="decision-research"'),html.indexOf('class="topic-switcher"'));
   const note=road.slice(road.indexOf(zh?'第一个带有明确非控制状态的输入':'The first input with explicit non-control states'));
@@ -983,7 +1011,7 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
   assert.ok(html.includes(`id="${xt.release_id}"`)&&html.includes(xt.provenance.manifest_sha256),label+': the extension release and its manifest');
 }
 assert.ok(llms.includes('https://bci.report/datasets/ltrsvp/index.md'),'llms.txt: the LTRSVP dataset page');
-console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; credits; dataset pages.');
+console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; presentation order stated and "later recording" only within a rate; YSU answer qualified, eyebrow, test-window count and four named table regions; credits; dataset pages with the people behind each paired mean.');
 
 // --- Protocol pages (2026-10-02) -------------------------------------------------
 // Each core-matrix protocol has its own address in both languages, built from the
