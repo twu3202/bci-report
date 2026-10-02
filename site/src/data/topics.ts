@@ -109,8 +109,8 @@ export const topicPages = [
     slug: 'screen-to-vr',
     kicker: 'Context transfer',
     title: 'Screen to VR',
-    summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change.',
-    detail: 'P300 · 21 people · two timing schemes',
+    summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change. Plus: a P300 decoder trained at one image rate and tested at another.',
+    detail: 'P300 · 21 people in VR · 9 people across image rates',
   },
   {
     slug: 'fewer-electrodes',
@@ -138,7 +138,7 @@ export const topicPages = [
     kicker: 'Abstention · Jev-style',
     title: 'When not to act',
     summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
-    detail: 'Idle and non-control · two 4-person pilots · research plan',
+    detail: 'Idle, 4-person pilot · non-control, 20 people · research plan',
   },
   {
     slug: 'does-pretraining-help',

@@ -360,6 +360,17 @@ for(const p of everyPage.filter(p=>!p.includes('fewer-electrodes')&&p!=='data-us
     assert.ok(a>0&&b>a,p+': the adaptation section must render before methods and limits');
     html=html.slice(0,a)+html.slice(b);
   }
+  // Since 2026-10-02 77.9% is also the YSU extension's coverage under the global
+  // rule (748 / 960) on when-not-to-act. There it may appear only inside the
+  // non-control section, and only as the percentage printed under that count.
+  if(p.includes('when-not-to-act')){
+    const a=html.indexOf('id="non-control"'),b=html.indexOf('id="methods-and-limits"');
+    assert.ok(a>0&&b>a,p+': the non-control section must render before methods and limits');
+    const sec=html.slice(a,b);
+    for(const m of sec.matchAll(/77\.9%/g))
+      assert.match(sec.slice(Math.max(0,m.index-60),m.index),/>748 \/ 960<\/span><span class="interval">$/,p+': 77.9% in the non-control section may only be the coverage 748 / 960');
+    html=html.slice(0,a)+html.slice(b);
+  }
   assert.doesNotMatch(html,/−1\.6 pp|77\.9%/,p+': Alpha Waves figures belong on the fewer-electrodes page');
 }
 for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
@@ -477,7 +488,8 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 // A source on hold in any review manifest is not named on any page until the
 // hold is lifted — the rule Alpha Waves and the YSU pilot were held under. Read
 // from the manifests themselves, so a new hold is covered without a new line here.
-const manifests=['publication_review_20260922/evidence-release-manifest.json','publication_review_20260923/clinical-release-manifest.json','publication_review_20260927/context-release-manifest.json']
+const manifests=['publication_review_20260922/evidence-release-manifest.json','publication_review_20260923/clinical-release-manifest.json','publication_review_20260927/context-release-manifest.json',
+  'publication_review_20261001/adaptation-release-manifest.json','publication_review_20261002/extension-release-manifest.json']
   .map(f=>JSON.parse(readFileSync(new URL('../../research/'+f,import.meta.url),'utf8')));
 const held=manifests.flatMap(m=>m.sources).filter(x=>x.decision==='hold');
 const allPages=[...everyPage,...['screen-to-vr','when-not-to-act'].flatMap(s=>['topics/'+s+'/','zh/topics/'+s+'/']),'releases/','zh/releases/'];
@@ -726,6 +738,137 @@ for(const h of held) for(const f of distFiles.filter(f=>/\.(?:html|md|txt)$/.tes
   assert.ok(!text.includes(h.name)&&!text.includes(h.source.split('/').pop()),f+': held source '+h.id+' appears');
 }
 
+// --- 2026-10-02 extension batch: YSU twenty-person extension, LTRSVP -----------
+const xt=JSON.parse(readFileSync(new URL('../src/data/extension-update.json',import.meta.url),'utf8'));
+assert.deepEqual(Object.keys(xt.results).sort(),['ltrsvp-rate-transfer','ysu-async-ssvep-extension'],'only the two reviewed v7 sources carry numbers');
+assert.deepEqual(xt.status_only,[],'this batch has no status-only source');
+assert.deepEqual(
+  readFileSync(new URL('../src/data/extension-update.json',import.meta.url)),
+  readFileSync(new URL('../public/data/extension-update.json',import.meta.url)),
+  'source and downloadable extension exports must be byte-identical',
+);
+const yx=xt.results['ysu-async-ssvep-extension'], lx=xt.results['ltrsvp-rate-transfer'];
+const [gR,pR]=yx.rules, yd=yx.paired_difference, ld=lx.paired_difference;
+const frac=(k,n)=>`${k} / ${n}`, ratio=(k,n)=>pct1(k/n);
+const signed3=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(3);
+const tcInterval={en:'95% interval',zh:'95% 区间'};
+// The handoffs' headline figures, so a changed export cannot pass by changing the page with it.
+assert.deepEqual([gR.id,pR.id],['global','personal']);
+assert.deepEqual(yx.rules.map(r=>pct1(r.detection_balanced_accuracy.mean)),['76.0%','79.0%'],'detection balanced accuracy, both rules');
+assert.deepEqual([pp1(yd.mean),ivp(yd.bootstrap_95,false)],['+3.0 pp','+0.5 to +5.7 pp'],'the paired YSU difference');
+assert.deepEqual([yd.helped,yd.harmed,yd.tied],[10,8,2],'people helped, harmed and tied');
+assert.equal(yd.helped+yd.harmed+yd.tied,yx.cohort.people,'helped + harmed + tied is the cohort');
+assert.ok(pR.control_windows.accepted_and_correct<=gR.control_windows.accepted_and_correct,'the trade-off wording needs end-to-end output not to rise');
+assert.deepEqual(lx.primary.arms.map(a=>pct1(a.balanced_accuracy.mean)),['60.8%','63.0%'],'the two LTRSVP primary arms');
+assert.deepEqual([pp1(ld.mean),ivp(ld.bootstrap_95,false)],['−2.2 pp','−6.8 to +2.8 pp'],'the paired LTRSVP difference');
+assert.ok(ld.bootstrap_95[0]<0&&ld.bootstrap_95[1]>0&&ld.interval_crosses_zero===true,'the rate interval crosses zero');
+assert.deepEqual([ld.people_lower,ld.people_higher,ld.people_tied],[7,2,0]);
+assert.equal(ld.people_lower+ld.people_higher+ld.people_tied,lx.cohort.people,'lower + higher + tied is the cohort');
+assert.equal(lx.not_causal,true);
+// Wording that would overclaim: a negation must stand within the preceding 40 characters.
+const negated=(html,re,label,neg=/\bnot\b|\bno\b|n’t|没有|并非|不是|不能|不等于/)=>{
+  for(const m of html.matchAll(re)) assert.match(html.slice(Math.max(0,m.index-40),m.index),neg,label+': "'+m[0]+'" reads as a claim');
+};
+const perHour=/\d+(?:\.\d+)?\s*%?\s*(?:false (?:activations?|acceptances?)\s*)?(?:per hour|an hour|\/\s*h(?:our)?\b)|每小时\s*\d|\d+(?:\.\d+)?\s*次\s*\/\s*小时/;
+for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/when-not-to-act/']]){
+  const zh=label==='zh', html=pageOf(path);
+  const sec=html.slice(html.indexOf('id="non-control"'),html.indexOf('id="methods-and-limits"'));
+  const pilotAt=sec.indexOf('id="non-control-pilot"');
+  assert.ok(pilotAt>3000,label+': the twenty-person extension leads the section and the pilot follows it');
+  const ext=sec.slice(0,pilotAt);
+  // Both rules, every measure: detection with its interval, coverage, end to end, conditional accuracy.
+  // Table cells, matched as cells: the same counts also appear in the prose around the table.
+  const cell=(k,n)=>'<span class="metric">'+frac(k,n)+'</span><span class="interval">'+ratio(k,n)+'<';
+  for(const r of yx.rules){
+    const w=r.control_windows, ba=r.detection_balanced_accuracy;
+    for(const v of ['<span class="metric">'+pct1(ba.mean)+'</span><span class="interval">'+tcInterval[label]+' '+pct1(ba.bootstrap_95[0])+'–'+pct1(ba.bootstrap_95[1])+'<',
+                    cell(w.accepted,w.tested),cell(w.accepted_and_correct,w.tested),
+                    '<span class="metric">'+pct1(r.accepted_window_accuracy_mean_over_people)+'</span>'])
+      assert.ok(ext.includes(v),label+': '+r.id+' rule figure '+v);
+    // Conditional accuracy never before coverage and the end-to-end rate.
+    const acc=ext.indexOf('<span class="metric">'+pct1(r.accepted_window_accuracy_mean_over_people)+'</span>');
+    const cov=ext.indexOf(cell(w.accepted,w.tested)), e2e=ext.indexOf(cell(w.accepted_and_correct,w.tested));
+    assert.ok(cov>0&&e2e>0&&acc>cov&&acc>e2e,label+': '+r.id+' coverage and end-to-end rate come before conditional accuracy');
+    // Per-state false acceptance, as counts and rates.
+    for(const f of r.false_acceptance)
+      assert.ok(ext.includes(cell(f.accepted,f.tested)),label+': '+r.id+' '+f.state+' false acceptance');
+  }
+  // The three states are named and described, not only coded.
+  for(const [st,en,cn] of [['NS1','Central image, flicker off','注视中央图像，闪烁关闭'],['NS2','Looking at a white wall, resting','看着白墙休息'],['NS3','Central image while the surrounding targets flicker','注视中央，周围目标在闪烁']])
+    assert.ok(ext.includes('>'+st+'<')&&ext.includes(zh?cn:en),label+': state '+st+' is described');
+  // The paired difference with its interval, and the people behind the mean.
+  assert.ok(ext.includes('<strong>'+pp1(yd.mean)+'</strong>')&&ext.includes(ivp(yd.bootstrap_95,zh)),label+': the paired difference and its interval');
+  assert.ok(ext.includes(zh?`${yx.cohort.people} 名被试中 ${yd.helped} 人提升、${yd.harmed} 人变差、${yd.tied} 人不变`
+                           :`${yd.helped} of ${yx.cohort.people} people improved, ${yd.harmed} got worse and ${yd.tied} were unchanged`),label+': helped, harmed and tied are visible');
+  // The trade-off, in words: detection up, correct-and-accepted not up.
+  assert.match(ext,zh?/检测上升了，正确的指令并没有增加。/:/Detection went up; correct commands did not\./,label+': the trade-off is stated');
+  negated(html,zh?/更高的指令准确率|指令准确率更高|更多正确的指令|提高了指令准确率/g:/better command accuracy|more correct commands|improv\w* command accuracy|higher command accuracy/gi,label);
+  // The limits of the extension.
+  const lim=ext.slice(ext.indexOf('id="non-control-limits"'));
+  for(const re of zh?[/同一份数据、同一实验室、同一协议/,/不是来自独立队列的证据/,new RegExp(pR.target_person_labels+' 个带标签的窗口'),/不是连续使用中每小时的误触发次数/,/没有说明 EEG 数值的物理单位/,/本身无单位/]
+                    :[/same release, lab and protocol as the pilot/,/not evidence from an independent cohort/,new RegExp(pR.target_person_labels+' labelled windows'),/not false activations per hour/,/no physical unit/,/unit-free/])
+    assert.match(lim,re,label+': extension limit '+re);
+  assert.doesNotMatch(visible(html),perHour,label+': no per-hour rate is claimed');
+  // Credits, and the extension's own download.
+  assert.match(ext+sec.slice(pilotAt),/10\.1080\/27706710\.2024\.2418650/,label+': the data paper is credited');
+  assert.match(sec,/10\.6084\/m9\.figshare\.24906300\.v3/,label+': the versioned release is credited');
+  assert.match(sec,/href="\/data\/extension-update\.json"/,label+': the reviewed extension export is linked');
+  // The short answer cites the extension under the rule fixed on the pilot, not the pilot itself.
+  const ans=html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"')));
+  assert.ok(ans.includes('>'+frac(gR.control_windows.accepted,gR.control_windows.tested)+'<'),label+': the short answer cites the extension');
+  assert.ok(!ans.includes('130 / 192'),label+': the short answer no longer leads with the pilot');
+  // The roadmap names its inputs without a figure (the figure check above covers it); it calls the pilot a development set.
+  const road=html.slice(html.indexOf('id="decision-research"'),html.indexOf('class="topic-switcher"'));
+  const note=road.slice(road.indexOf(zh?'第一个带有明确非控制状态的输入':'The first input with explicit non-control states'));
+  assert.ok(note.length>40,label+': the roadmap inputs note renders');
+  assert.match(note.slice(0,note.indexOf('</p>')),zh?/开发集/:/development set/,label+': the roadmap describes the pilot as the development set');
+  assert.doesNotMatch(note.slice(0,note.indexOf('</p>')),/\d/,label+': the roadmap inputs note names its inputs without a single figure');
+}
+for(const [label,path] of [['en','topics/screen-to-vr/'],['zh','zh/topics/screen-to-vr/']]){
+  const zh=label==='zh', html=pageOf(path);
+  const sec=html.slice(html.indexOf('id="image-rate"'),html.indexOf('id="methods-and-limits"'));
+  assert.ok(sec.length>3000,label+': the image-rate section renders before methods and limits');
+  for(const a of lx.primary.arms){
+    assert.ok(sec.includes('<div class="reading">'+pct1(a.balanced_accuracy.mean)+'</div>'),label+': '+a.id+' score on its card');
+    assert.ok(sec.includes(pct1(a.balanced_accuracy.bootstrap_95[0])+'–'+pct1(a.balanced_accuracy.bootstrap_95[1])),label+': '+a.id+' interval');
+    assert.ok(sec.includes(a.auroc.mean.toFixed(3)),label+': '+a.id+' AUROC');
+  }
+  assert.ok(sec.includes('<strong>'+pp1(ld.mean)+'</strong>')&&sec.includes(ivp(ld.bootstrap_95,zh)),label+': the paired difference and its interval');
+  assert.match(sec,zh?/跨过零，所以不能认定有变化/:/it crosses zero, so no change is established/,label+': the interval-crosses-zero wording');
+  assert.ok(sec.includes(zh?`${lx.cohort.people} 名被试中 ${ld.people_lower} 人的点估计更低、${ld.people_higher} 人更高`
+                           :`${ld.people_lower} of ${lx.cohort.people} people had a lower point estimate and ${ld.people_higher} a higher one`),label+': lower and higher counts are visible');
+  assert.ok(sec.includes(signed3(lx.secondary_auroc_difference.mean)),label+': the AUROC contrast travels with it');
+  // The full 3×3 matrix, every cell with its interval, nothing else in that table.
+  const table=sec.slice(sec.indexOf('<table>'),sec.indexOf('</table>'));
+  assert.equal((table.match(/class="metric"/g)||[]).length,9,label+': the matrix has nine cells');
+  for(const m of lx.matrix)
+    assert.ok(table.includes('>'+pct1(m.balanced_accuracy.mean)+'</span><span class="interval">'+pct1(m.balanced_accuracy.bootstrap_95[0])+'–'+pct1(m.balanced_accuracy.bootstrap_95[1])+'<'),label+': matrix cell '+m.train_rate_hz+'→'+m.test_rate_hz);
+  // Rate and recording are confounded; nothing is called causal unless negated.
+  const lim=sec.slice(sec.indexOf('id="image-rate-limits"'));
+  assert.match(lim,zh?/速率与记录相互混杂/:/Rate and recording are confounded/,label+': the confound is a stated limit');
+  assert.match(lim,zh?/不是图像速率的因果效应/:/not a causal effect of image rate/,label+': not causal');
+  negated(html,zh?/因果/g:/causal|causes|caused by (?:the )?(?:image )?rate/gi,label);
+  assert.doesNotMatch(visible(html),/(?:image|presentation|faster|slower) rate (?:reduces|lowers|degrades|harms|improves|raises)|速率(?:导致|造成|降低了|提高了)/i,label+': no rate effect is claimed');
+  assert.doesNotMatch(visible(html),perHour,label+': no per-hour rate is claimed');
+  // Credits: the PhysioNet record, the original publication, the licence, the ethics committee.
+  for(const re of [/10\.13026\/C2KX0P/,/10\.1371\/journal\.pone\.0178498/,/Riccardo Poli/,/opendatacommons\.org\/licenses\/by\/1-0/,
+                   zh?/埃塞克斯大学（University of Essex）伦理委员会批准/:/approved by the Ethics Committee of the University of Essex/])
+    assert.match(sec,re,label+': LTRSVP credit '+re);
+  assert.match(sec,/href="\/data\/extension-update\.json"/,label+': the reviewed extension export is linked');
+}
+// Dataset pages: the YSU page gains the extension group; LTRSVP has its own page. Their figures
+// are re-read from the served file by the entity checks above.
+for(const p of ['datasets/ysu-async-ssvep/','zh/datasets/ysu-async-ssvep/','datasets/ltrsvp/','zh/datasets/ltrsvp/'])
+  assert.ok(pageOf(p).includes('data-fig="extension-update.json|'),p+': extension figures must reach the dataset page');
+assert.ok(pageOf('datasets/ltrsvp/').includes('10.1371/journal.pone.0178498')&&pageOf('datasets/ltrsvp/').includes('Open Data Commons Attribution License 1.0'),'LTRSVP dataset page: credit and licence');
+assert.equal((pageOf('datasets/ltrsvp/').match(/data-fig="extension-update\.json\|pct1\|/g)||[]).length,9*3+1,'LTRSVP dataset page: nine cells with intervals, and the chance level');
+// Releases: the batch and its manifest hash.
+for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+  const html=pageOf(path);
+  assert.ok(html.includes(`id="${xt.release_id}"`)&&html.includes(xt.provenance.manifest_sha256),label+': the extension release and its manifest');
+}
+assert.ok(llms.includes('https://bci.report/datasets/ltrsvp/index.md'),'llms.txt: the LTRSVP dataset page');
+console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; credits; dataset pages.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');

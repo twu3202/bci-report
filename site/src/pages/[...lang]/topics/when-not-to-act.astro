@@ -1,9 +1,10 @@
 ---
 import data from '../../../data/mvp.json';
 import context from '../../../data/context-update.json';
+import extension from '../../../data/extension-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
-import { pct } from '../../../data/topics';
+import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
 import { decisionCopy, decisionRoadmap, decisionSources } from '../../../data/decision-research';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 
@@ -37,13 +38,30 @@ const nc = (context.results as Record<string, any>)['ysu-async-ssvep'] as undefi
 };
 const frac = (a: number, b: number) => `${a} / ${b}`;
 
-// Figures the short answer names: counts already printed in the two tables
-// below, stated as "k / n" the way the page states them. The conditional
-// accuracy among accepted windows is left out — it may not travel without
-// coverage and the end-to-end rate. The non-control clause exists only when its
-// section renders.
-const ncAccepted = nc ? frac(nc.control_windows.accepted, nc.control_windows.tested) : '';
-const ncFalse = nc ? nc.false_acceptance.map(f => `[[${frac(f.accepted, f.tested)}]]`) : [];
+// The same source, twenty further people (2026-10-02 export): the main
+// non-control evidence since that date. Two rejection rules fixed before
+// scoring — one threshold fitted on the four pilot people above, one fitted on
+// each new person's own calibration windows — score the same held-out windows.
+// Every rate below is a whole count over its windows; the export checks that,
+// and that detection balanced accuracy and the paired difference follow from
+// the counts. Conditional accuracy never appears without coverage and the
+// end-to-end rate beside it.
+const ext = extension.results['ysu-async-ssvep-extension'];
+const [gRule, pRule] = ext.rules;
+const extRules = [gRule, pRule];
+const extPeople = ext.cohort.people;
+const diff = ext.paired_difference;
+const ipp = (i: number[]) => intervalPp(i as [number, number], 1, locale);
+const rate = (k: number, n: number) => pct(k / n);
+const cw = (r: typeof gRule) => r.control_windows;
+
+// Figures the short answer names: counts printed in the tables below, stated as
+// "k / n" the way the page states them. The conditional accuracy among accepted
+// windows is left out — it may not travel without coverage and the end-to-end
+// rate. Since 2026-10-02 the non-control clause cites the twenty-person
+// extension under the rule fixed on the pilot, not the pilot itself.
+const ncAccepted = frac(cw(gRule).accepted, cw(gRule).tested);
+const ncFalse = gRule.false_acceptance.map(f => `[[${frac(f.accepted, f.tested)}]]`);
 const series = (items: string[], sep: string, last: string) =>
   items.length < 2 ? items.join('') : `${items.slice(0, -1).join(sep)}${last}${items[items.length - 1]}`;
 
@@ -55,7 +73,7 @@ const copy = {
   en: {
     documentTitle: `${topicCards.en['when-not-to-act'].question} · Jev-style decision models for EEG`,
     description: `It depends on how often the decoder acts at all. In a cue-gated idle test with ${people} people, ${quiet.name} made ${quiet.falseActs} / ${idleN} false activations but detected ${quiet.commands} / ${cmdN} commands: a decoder that never acts never fires by mistake, so both numbers are read together.`,
-    answer: `It depends on how often the decoder acts at all: one that never acts never fires by mistake, so its false activations mean something only beside the commands it caught. In a cue-gated idle test with [[${people}]] people, the quietest decoder, ${quiet.name}, made [[${quiet.falseActs} / ${idleN}]] false activations in idle trials but detected [[${quiet.commands} / ${cmdN}]] commands, and for [[${quiet.abstain}]] of those people its threshold rejected every command${nc ? `; in a separate pilot with [[${nc.people}]] other people, a CCA decoder accepted [[${ncAccepted}]] windows when a command was intended, and ${series(ncFalse, ', ', ' and ')} in the states where none was` : ''}. ${nc ? 'Both are small pilots, counted per trial or per window rather than per hour' : 'It is a small pilot, counted per trial rather than per hour'}: neither can say how often a decoder would fire by mistake over an hour of real rest.`,
+    answer: `It depends on how often the decoder acts at all: one that never acts never fires by mistake, so its false activations mean something only beside the commands it caught. In a cue-gated idle test with [[${people}]] people, the quietest decoder, ${quiet.name}, made [[${quiet.falseActs} / ${idleN}]] false activations in idle trials but detected [[${quiet.commands} / ${cmdN}]] commands, and for [[${quiet.abstain}]] of those people its threshold rejected every command. In a separate test with [[${extPeople}]] other people, a CCA decoder with a threshold fixed on an earlier pilot accepted [[${ncAccepted}]] windows when a command was intended, and ${series(ncFalse, ', ', ' and ')} in three states where none was; fitting the threshold to each person cut those mistakes but did not raise the share of commands both accepted and correct. Both tests count per trial or per window rather than per hour: neither can say how often a decoder would fire by mistake over an hour of real rest.`,
     eyebrow: 'Abstention · Jev-style research plan',
     dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, then sets out a Jev-style research plan: what would have to be measured to say when a decoder should act at all.`,
     findingLabel: `${quiet.name}: idle false activations, ${people} people`,
@@ -81,9 +99,31 @@ const copy = {
     consent: 'The source README reports voluntary signed consent and approval by the ethics committee of Universidad Antonio Nariño. Only cohort aggregates appear here.',
     datasetLink: 'OpenNeuro dataset ↗', studyLink: 'Associated study ↗',
     csv: 'this protocol as CSV',
-    ncEyebrow: 'Explicit non-control · four-person pilot',
+    ncEyebrow: `Explicit non-control · ${extPeople} people · rules fixed on a ${ext.development_pilot.people}-person pilot`,
     ncH2: 'Does it accept a window when nobody intends a command?',
-    ncLede: 'A second protocol records the states between commands on purpose: looking at a central image with the flicker off, resting on a white wall, and looking at the centre while the targets around it flicker. A fixed CCA decoder with per-person thresholds, fitted on calibration trials only, decides whether to accept each 1.5-second window.',
+    ncLede: `A second data set records the states between commands on purpose: looking at a central image with the flicker off, resting with the eyes on a white wall, and looking at the centre while the targets around it flicker. A fixed CCA decoder decides whether to accept each 1.5-second window as a command. Two rules for that decision were fixed before any of these ${extPeople} people was scored: a global threshold fitted only on the calibration windows of the ${ext.development_pilot.people} pilot people further down, with no label from the new person, and a personal threshold fitted on ${pRule.target_person_labels} labelled windows from each new person. Both rules score the same ${ext.cohort.calibration_windows_each_person} held-out windows of each person.`,
+    extFindingLabel: `Detection balanced accuracy, personal minus global threshold, same ${extPeople} people`,
+    extFindingH3: 'A personal threshold detected intent a little better — and produced no more correct commands',
+    extFindingP: `Paired interval ${ipp(diff.bootstrap_95)}. ${diff.helped} of ${extPeople} people improved, ${diff.harmed} got worse and ${diff.tied} were unchanged. The gain came from fewer false acceptances: coverage of intended commands barely moved, and the share of command windows both accepted and correct went from ${rate(cw(gRule).accepted_and_correct, cw(gRule).tested)} to ${rate(cw(pRule).accepted_and_correct, cw(pRule).tested)}. Detecting that a command is meant is not the same as getting the command right.`,
+    extControlCaption: `When a command was intended: ${cw(gRule).tested} windows under each rule, ${ext.cohort.test_windows_each_person.control} from each person. Accuracy among accepted windows sits below coverage and the end-to-end rate, never alone.`,
+    colMeasure: 'Measure',
+    ruleHead: { global: 'Global threshold · fixed on the pilot', personal: 'Personal threshold · own windows' } as Record<string, string>,
+    extRows: ['Detection balanced accuracy, command against no command', 'Command windows accepted (coverage)', 'Accepted and correct (end to end)', 'Correct among accepted'],
+    meanOverPeople: 'mean of each person’s rate',
+    extTradeoff: `Read the rows together. The personal rule lowered false acceptance in every state below, so detection balanced accuracy rose; it accepted about as many intended commands (${frac(cw(pRule).accepted, cw(pRule).tested)} against ${frac(cw(gRule).accepted, cw(gRule).tested)}), and slightly fewer of them were both accepted and correct. Before any rejection the frequency was recognised in ${frac(cw(gRule).frequency_recognised, cw(gRule).tested)} command windows under both rules, because the decoder itself did not change. Detection went up; correct commands did not.`,
+    extNonCaption: 'When no command was intended: windows accepted by mistake in each state, under each rule.',
+    extState: { NS1: 'Central image, flicker off', NS2: 'Looking at a white wall, resting', NS3: 'Central image while the surrounding targets flicker' } as Record<string, string>,
+    extStatesNote: `The detection score pools the three states as they were collected, ${ext.cohort.test_windows_each_person.NS1}, ${ext.cohort.test_windows_each_person.NS2} and ${ext.cohort.test_windows_each_person.NS3} windows a person, so the flickering-centre state counts twice. Each state is shown on its own because one pooled figure would hide which kind of rest the decoder mistakes for a command.`,
+    extLimitsH3: 'What the extension can and cannot say',
+    extLimits: [
+      ['Same dataset, not external validation', `The ${extPeople} people come from the same release, lab and protocol as the pilot. Rules fixed in advance make this a fair extension; it is not evidence from an independent cohort.`],
+      [`${pRule.target_person_labels} labels, not just “personal”`, `The personal rule uses ${pRule.target_person_labels} labelled windows from each person, half with a command and half without. The comparison cannot separate fitting the threshold to the person from simply having those labels, and the source does not say when those windows were recorded relative to the test windows, so this is not a calibrate-earlier, use-later experiment.`],
+      ['Per window, not per hour', 'Separately collected 1.5-second windows in a fixed mix of states. They give window rates, not false activations per hour of continuous use, latency, or how often people actually issue commands.'],
+      ['No amplitude unit', 'The source states no physical unit for its EEG values. Nothing here depends on one: the decoder uses correlations, which are unit-free.'],
+      ['Descriptive intervals', `Whole-person bootstrap over the ${extPeople}, conditional on the ${ext.development_pilot.people} pilot people and on each realised calibration split. Not a population guarantee.`],
+    ],
+    pilotH3: `Development set: the ${ext.development_pilot.people}-person pilot (27 September)`,
+    pilotLede: `Published on 27 September, scored with per-person thresholds fitted on each person’s own calibration trials. Its ${ext.development_pilot.people} people supplied the global threshold above and are not among the ${extPeople}. Pooled window counts.`,
     ncControlH3: 'When a command was intended',
     ncControlNote: 'Accuracy among accepted windows is never shown alone: rejecting hard windows raises it while refusing commands the person meant.',
     ncRows: ['Frequency recognised, before rejection', 'Accepted (coverage)', 'Accepted and correct (end to end)', 'Correct among accepted'],
@@ -92,13 +132,13 @@ const copy = {
     colWindows: 'Windows', colState: 'State', colAccepted: 'Accepted by mistake',
     ncRegion: 'Control and non-control windows, scrolls horizontally',
     ncLimits: 'Four people, offline, window by window. These are rates per tested window, not false activations per hour, and the source states no physical amplitude unit.',
-    ncConsent: 'Before the experiment, every participant signed written informed consent; the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. This site uses four of the release’s twenty-four people and publishes pooled counts only.',
+    ncConsent: 'Before the experiment, every participant signed written informed consent; the study was reviewed and approved by the ethics committee of Qinhuangdao First Hospital. This site now uses all twenty-four people of the release, four as the development pilot and twenty as the extension, and publishes cohort means, pooled window counts and how many people were helped or harmed — never one person’s value.',
     ncPaper: 'Data paper ↗', ncData: 'figshare release ↗', ncSmall: 'Why four people limit what can be published (English)',
   },
   zh: {
     documentTitle: `${topicCards.zh['when-not-to-act'].question} · Jev-style 的 EEG 决策模型`,
     description: `取决于解码器有多愿意执行。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
-    answer: `取决于解码器有多愿意执行：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，最安静的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令${nc ? `；在另一组 [[${nc.people}]] 名被试的试点中，CCA 解码器在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的各状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}` : ''}。${nc ? '两者都是小规模试点，按试次或窗口计数，而不是按小时' : '这是一个小规模试点，按试次计数，而不是按小时'}，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
+    answer: `取决于解码器有多愿意执行：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，最安静的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令。在另一组 [[${extPeople}]] 名被试的测试中，CCA 解码器使用在更早一个试点上固定的阈值，在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的三种状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}；改为按每名被试拟合阈值后，这类误接受减少了，但被接受且正确的指令占比并没有提高。两项测试都按试次或窗口计数，而不是按小时，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
     eyebrow: '拒识 · Jev-style 研究计划',
     dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再给出一个 Jev-style 研究计划：要测什么，才能回答解码器究竟该不该执行。`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
@@ -124,9 +164,31 @@ const copy = {
     consent: '数据源 README 写明被试自愿签署了同意书，并经 Universidad Antonio Nariño 伦理委员会批准。这里只发布队列级聚合结果。',
     datasetLink: 'OpenNeuro 数据集 ↗', studyLink: '相关研究论文 ↗',
     csv: '本协议的 CSV',
-    ncEyebrow: '明确的非控制状态 · 四人试点',
+    ncEyebrow: `明确的非控制状态 · ${extPeople} 名被试 · 规则在 ${ext.development_pilot.people} 人试点上固定`,
     ncH2: '没人想发指令时，它会不会接受这个窗口？',
-    ncLede: '另一个协议专门记录了指令之间的状态：注视中央图像但闪烁关闭、看着白墙休息、注视中央而周围目标在闪烁。一个固定的 CCA 解码器配合只用校准试次拟合的逐人阈值，决定是否接受每个 1.5 秒窗口。',
+    ncLede: `另一个数据集专门记录了指令之间的状态：注视中央图像但闪烁关闭、看着白墙休息、注视中央而周围目标在闪烁。一个固定的 CCA 解码器决定是否把每个 1.5 秒窗口当作指令接受。在这 ${extPeople} 名被试中的任何一人被评分之前，两种判定规则就已固定：一种是全局阈值，只用下文 ${ext.development_pilot.people} 名试点被试的校准窗口拟合，不用新被试的任何标签；另一种是逐人阈值，用每名新被试自己 ${pRule.target_person_labels} 个带标签的校准窗口拟合。两种规则在每名被试相同的 ${ext.cohort.calibration_windows_each_person} 个留出窗口上评分。`,
+    extFindingLabel: `检测平衡准确率，逐人阈值减全局阈值，同样 ${extPeople} 名被试`,
+    extFindingH3: '逐人阈值把“有没有意图”判断得稍好一些——却没有带来更多正确的指令',
+    extFindingP: `配对区间 ${ipp(diff.bootstrap_95)}。${extPeople} 名被试中 ${diff.helped} 人提升、${diff.harmed} 人变差、${diff.tied} 人不变。提升来自更少的误接受：有意指令的覆盖率几乎没变，而既被接受又正确的指令窗口占比从 ${rate(cw(gRule).accepted_and_correct, cw(gRule).tested)} 变为 ${rate(cw(pRule).accepted_and_correct, cw(pRule).tested)}。判断出“想发指令”，不等于把指令判对。`,
+    extControlCaption: `有意发出指令时：每种规则 ${cw(gRule).tested} 个窗口，每名被试 ${ext.cohort.test_windows_each_person.control} 个。被接受窗口中的准确率放在覆盖率和端到端比率之后，从不单独呈现。`,
+    colMeasure: '指标',
+    ruleHead: { global: '全局阈值 · 在试点上固定', personal: '逐人阈值 · 用自己的窗口' } as Record<string, string>,
+    extRows: ['检测平衡准确率，有指令对无指令', '被接受的指令窗口（覆盖率）', '被接受且正确（端到端）', '被接受窗口中的正确率'],
+    meanOverPeople: '各被试比率的均值',
+    extTradeoff: `几行要放在一起读。逐人规则在下表每种状态下都降低了误接受，所以检测平衡准确率上升；它接受的有意指令数量与全局规则相当（${frac(cw(pRule).accepted, cw(pRule).tested)} 对 ${frac(cw(gRule).accepted, cw(gRule).tested)}），其中既被接受又正确的略少一些。在任何拒识之前，两种规则下识别出正确频率的指令窗口都是 ${frac(cw(gRule).frequency_recognised, cw(gRule).tested)}，因为解码器本身没有变。检测上升了，正确的指令并没有增加。`,
+    extNonCaption: '无意发出指令时：每种状态下被误接受的窗口，两种规则分列。',
+    extState: { NS1: '注视中央图像，闪烁关闭', NS2: '看着白墙休息', NS3: '注视中央，周围目标在闪烁' } as Record<string, string>,
+    extStatesNote: `检测分数按采集时的比例合并三种状态，每名被试分别为 ${ext.cohort.test_windows_each_person.NS1}、${ext.cohort.test_windows_each_person.NS2} 和 ${ext.cohort.test_windows_each_person.NS3} 个窗口，所以“周围在闪烁”这一状态的权重是另两种的两倍。三种状态分开列出，因为一个合并数字会掩盖解码器把哪一种静息误当成了指令。`,
+    extLimitsH3: '这次扩展能说明什么、不能说明什么',
+    extLimits: [
+      ['同一数据集，不是外部验证', `这 ${extPeople} 名被试与试点来自同一份数据、同一实验室、同一协议。规则事先固定，使这次扩展是公平的；但它不是来自独立队列的证据。`],
+      [`${pRule.target_person_labels} 个标签，而不只是“逐人”`, `逐人规则用了每名被试 ${pRule.target_person_labels} 个带标签的窗口，一半有指令、一半没有。这项比较无法区分“按人拟合阈值”和“仅仅多了这些标签”各自的作用；数据源也没有说明这些窗口与测试窗口的先后，所以这不是“先校准、后使用”的实验。`],
+      ['按窗口，不是按小时', '分别采集的 1.5 秒窗口，状态比例固定。它们给出的是窗口比率，不是连续使用中每小时的误触发次数，也不是延迟，更不是人们实际发出指令的频率。'],
+      ['没有幅值单位', '数据源没有说明 EEG 数值的物理单位。这里没有任何结果依赖单位：解码器用的是相关系数，本身无单位。'],
+      ['描述性区间', `对 ${extPeople} 名被试做整人 bootstrap，以 ${ext.development_pilot.people} 名试点被试和每次实际的校准划分为条件。不是对总体的保证。`],
+    ],
+    pilotH3: `开发集：${ext.development_pilot.people} 人试点（9 月 27 日）`,
+    pilotLede: `9 月 27 日发布，用每名被试自己的校准试次拟合逐人阈值。这 ${ext.development_pilot.people} 名被试提供了上文的全局阈值，不在那 ${extPeople} 人之中。下表为合并后的窗口计数。`,
     ncControlH3: '有意发出指令时',
     ncControlNote: '被接受窗口中的准确率从不单独呈现：拒绝困难窗口会抬高这个数字，但代价是拒绝了被试本想发出的指令。',
     ncRows: ['拒识前识别出正确频率', '被接受（覆盖率）', '被接受且正确（端到端）', '被接受窗口中的正确率'],
@@ -135,7 +197,7 @@ const copy = {
     colWindows: '窗口', colState: '状态', colAccepted: '被误接受',
     ncRegion: '控制与非控制窗口，可横向滚动',
     ncLimits: '四名被试、离线、逐窗口统计。这些是每个测试窗口上的比率，不是每小时的误触发次数；数据源也没有说明物理幅值单位。',
-    ncConsent: '实验前，每名被试都签署了书面知情同意；研究经秦皇岛市第一医院伦理委员会审查批准。本站只用了该数据集 24 名被试中的 4 名，并且只发布合并后的计数。',
+    ncConsent: '实验前，每名被试都签署了书面知情同意；研究经秦皇岛市第一医院伦理委员会审查批准。本站现在用到了该数据集全部 24 名被试：4 名作为开发试点，20 名作为扩展；只发布队列均值、合并后的窗口计数，以及提升或变差的人数——从不发布任何一个人的数值。',
     ncPaper: '数据论文 ↗', ncData: 'figshare 数据 ↗', ncSmall: '为什么四名被试会限制可发布的内容（英文）',
   },
 }[locale];
@@ -169,9 +231,39 @@ const basis = idle.reviewBasis;
     </div>
   </section>
 
-  {nc && (
   <section class="topic-section" id="non-control" aria-labelledby="nc-heading">
     <div class="topic-heading"><div><p class="eyebrow">{copy.ncEyebrow}</p><h2 id="nc-heading">{copy.ncH2}</h2></div><p>{copy.ncLede}</p></div>
+    <div class="finding" id="non-control-extension">
+      <div class="finding-number"><strong>{pp(diff.mean, 1)}</strong><span>{copy.extFindingLabel}</span></div>
+      <div class="finding-copy"><h3>{copy.extFindingH3}</h3><p>{copy.extFindingP}</p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.ncRegion}>
+      <table>
+        <caption>{copy.extControlCaption}</caption>
+        <thead><tr><th scope="col">{copy.colMeasure}</th>{extRules.map(r => <th scope="col">{copy.ruleHead[r.id]}</th>)}</tr></thead>
+        <tbody>
+          <tr><th scope="row">{copy.extRows[0]}</th>{extRules.map(r => <td><span class="metric">{pct(r.detection_balanced_accuracy.mean)}</span><span class="interval">{tc.interval95} {intervalPct(r.detection_balanced_accuracy.bootstrap_95 as [number, number])}</span></td>)}</tr>
+          <tr><th scope="row">{copy.extRows[1]}</th>{extRules.map(r => <td><span class="metric">{frac(cw(r).accepted, cw(r).tested)}</span><span class="interval">{rate(cw(r).accepted, cw(r).tested)}</span></td>)}</tr>
+          <tr><th scope="row">{copy.extRows[2]}</th>{extRules.map(r => <td><span class="metric">{frac(cw(r).accepted_and_correct, cw(r).tested)}</span><span class="interval">{rate(cw(r).accepted_and_correct, cw(r).tested)}</span></td>)}</tr>
+          <tr><th scope="row">{copy.extRows[3]}</th>{extRules.map(r => <td><span class="metric">{pct(r.accepted_window_accuracy_mean_over_people)}</span><span class="interval">{copy.meanOverPeople}</span></td>)}</tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="protocol-note" id="non-control-tradeoff">{copy.extTradeoff}</p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.ncRegion}>
+      <table>
+        <caption>{copy.extNonCaption}</caption>
+        <thead><tr><th scope="col">{copy.colState}</th>{extRules.map(r => <th scope="col">{copy.ruleHead[r.id]}</th>)}</tr></thead>
+        <tbody>{gRule.false_acceptance.map((f, i) => <tr><th scope="row">{copy.extState[f.state]}<small lang="en">{f.state}</small></th>{extRules.map(r => { const s = r.false_acceptance[i]; return <td><span class="metric">{frac(s.accepted, s.tested)}</span><span class="interval">{rate(s.accepted, s.tested)}</span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note">{copy.extStatesNote}</p>
+    <h3 class="roadmap-h3">{copy.extLimitsH3}</h3>
+    <div class="method-grid-wide" id="non-control-limits">{copy.extLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+
+    {nc && <>
+    <h3 class="roadmap-h3" id="non-control-pilot">{copy.pilotH3}</h3>
+    <p class="roadmap-p">{copy.pilotLede}</p>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.ncRegion}>
       <table>
         <caption>{copy.ncControlH3} · {copy.ncControlNote}</caption>
@@ -193,10 +285,11 @@ const basis = idle.reviewBasis;
     </div>
     <p class="protocol-note">{copy.ncLimits}</p>
     <p class="citation-note"><a href="/data-use/#small-cohorts">{copy.ncSmall}</a></p>
-    <div class="citation-list"><article><h3 lang="en">{nc.rights.name}</h3><p lang="en">{nc.rights.attribution}</p><p>{copy.ncConsent}</p><p><a href={nc.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ncPaper}</a> · <a href={nc.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ncData}</a> · <a href={nc.rights.licenseUrl} target="_blank" rel="noreferrer">{nc.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
+    </>}
+    <div class="citation-list"><article><h3 lang="en">{ext.rights.name}</h3><p lang="en">{ext.rights.attribution}</p><p>{copy.ncConsent}</p><p><a href={ext.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ncPaper}</a> · <a href={ext.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ncData}</a> · <a href={ext.rights.licenseUrl} target="_blank" rel="noreferrer">{ext.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version} · {tc.generated} {extension.generated_at}{tc.period}</p>
+    {nc && <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>}
   </section>
-  )}
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="abstain-limits">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="abstain-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>

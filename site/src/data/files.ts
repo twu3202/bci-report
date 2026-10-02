@@ -36,6 +36,10 @@ const named: Record<string, Text> = {
     en: 'LaBraM adapted to new people on EEGMAT three ways (head only, last block, rank-4 LoRA) over three seeds: scores, paired changes with people helped or harmed, trainable parameters and training time; the next-day experiment as status only.',
     zh: 'EEGMAT 上把 LaBraM 适配到新被试的三种方式（只训分类头、最后一个 block、秩为 4 的 LoRA），3 个随机种子：分数、配对变化与提升/变差人数、可训练参数与训练时间；次日实验只列状态。',
   },
+  'extension-update.json': {
+    en: 'Twenty further people of the asynchronous SSVEP release under a pilot-fixed and a personal rejection threshold (detection, coverage, correct-and-accepted, false acceptance per state, people helped and harmed), and LTRSVP image-rate and recording transfer (two primary arms, paired difference, 3×3 matrix), with rights records.',
+    zh: '异步 SSVEP 数据集中另外 20 名被试在试点固定阈值与逐人阈值下的结果（检测、覆盖率、被接受且正确、各状态误接受、提升与变差人数），以及 LTRSVP 的图像速率与记录迁移（两个主分析组、配对差值、3×3 矩阵），附权利记录。',
+  },
   'context-update.json': {
     en: 'Screen-to-VR P300 transfer, treadmill walking speed beside a movement-nuisance comparator, and the asynchronous SSVEP non-control pilot, with audits.',
     zh: '从屏幕到 VR 的 P300 迁移、跑步机步速（旁边并排放着运动干扰对照），以及异步 SSVEP 非控制试点，附审计。',

@@ -9,16 +9,42 @@
  * every download on the page against its file in dist/data.
  */
 
-/** Pages changed in the current site update, for sitemap lastmod. */
-export const pagesUpdated = {
-  date: '2026-10-01',
-  // The adaptation results replaced the roadmap on calibration-budget and reached
-  // the EEGMAT and LaBraM pages; ds003810 gained its requested citation; the API
-  // page's Python example changed. Every page also lost the "Research preview"
-  // badge that day, which is chrome, not content, and is not counted here.
-  paths: ['/', '/topics/calibration-budget/', '/releases/', '/data-use/', '/api/',
-          '/datasets/eegmat/', '/methods/labram/', '/datasets/ds003810/'],
-} as const;
+/**
+ * Pages changed in each site update, newest first, for sitemap lastmod. A page
+ * carries the date of the newest update that changed it; keeping the history
+ * stops a later update from rolling an earlier page's date back.
+ */
+export const siteUpdates = [
+  {
+    date: '2026-10-02',
+    // The YSU extension became the main non-control evidence on when-not-to-act
+    // and reached its dataset page; LTRSVP joined screen-to-vr as a second
+    // presentation change and got a dataset page; the home cards, the dataset
+    // index, the API page and the release log name both.
+    paths: ['/', '/topics/when-not-to-act/', '/topics/screen-to-vr/', '/releases/', '/data-use/', '/api/',
+            '/datasets/', '/datasets/ysu-async-ssvep/', '/datasets/ltrsvp/'],
+  },
+  {
+    date: '2026-10-01',
+    // The adaptation results replaced the roadmap on calibration-budget and reached
+    // the EEGMAT and LaBraM pages; ds003810 gained its requested citation; the API
+    // page's Python example changed. Every page also lost the "Research preview"
+    // badge that day, which is chrome, not content, and is not counted here.
+    paths: ['/', '/topics/calibration-budget/', '/releases/', '/data-use/', '/api/',
+            '/datasets/eegmat/', '/methods/labram/', '/datasets/ds003810/'],
+  },
+  {
+    date: '2026-09-27',
+    // Every topic page gained its question-form title and short answer on this
+    // date; the dataset, method and API pages were first published on it.
+    paths: ['/', '/topics/when-not-to-act/', '/releases/', '/topics/screen-to-vr/', '/topics/on-the-move/', '/data-use/',
+            '/topics/dry-vs-wet/', '/topics/fewer-electrodes/', '/topics/calibration-budget/',
+            '/topics/does-pretraining-help/', '/topics/clinical-groups/', '/api/'],
+  },
+] as const;
+
+/** The current site update. */
+export const pagesUpdated = siteUpdates[0];
 
 type Text = { en: string; zh: string };
 
@@ -26,7 +52,7 @@ export interface Release {
   id: string;
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
-  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation';
+  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension';
   files: string[];
   pages: string[];
   summary: Text;
@@ -37,6 +63,21 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
 export const releases: Release[] = [
+  {
+    id: 'extension-update-20261002', date: '2026-10-02', payload: 'extension',
+    files: ['extension-update.json'],
+    pages: ['/topics/when-not-to-act/', '/topics/screen-to-vr/'],
+    summary: {
+      en: 'Twenty further people of the asynchronous SSVEP release, scored with a rejection threshold fixed on the four-person pilot and with a personal one: detection, coverage, correct-and-accepted output and false acceptance per non-control state, side by side. And a new source, LTRSVP: a P300 decoder trained at 5 or 10 images a second and tested on a later 10-Hz recording, with the full rate-by-rate matrix. Fixed classical baselines; no foundation-model or fine-tuning result.',
+      zh: '异步 SSVEP 数据集中另外 20 名被试，分别用在四人试点上固定的拒识阈值和逐人阈值评分：检测、覆盖率、被接受且正确的输出，以及每种非控制状态下的误接受，并排给出。另有一个新来源 LTRSVP：P300 解码器在每秒 5 张或 10 张图像的记录上训练，在之后一段 10 Hz 记录上测试，附完整的速率对速率矩阵。都是固定的经典基线，没有基础模型或微调结果。',
+    },
+    notes: [
+      { en: 'The personal threshold raised detection balanced accuracy for 10 of 20 people and lowered it for 8, and did not raise the share of commands both accepted and correct. The image-rate difference has an interval that crosses zero, and rate and recording change together, so no rate effect is claimed.',
+        zh: '逐人阈值使 20 名被试中 10 人的检测平衡准确率上升、8 人下降，被接受且正确的指令占比并没有提高。图像速率差值的区间跨过零，而且速率与记录一起变化，所以不声称存在速率效应。' },
+      { en: 'Not published: per-person values, thresholds, predictions, and the independent audits themselves, which are pinned by hash in the review manifest because they carry private storage paths.',
+        zh: '不发布：逐人数值、阈值、预测结果，以及独立审计文件本身——它们含有私有存储路径，因此只在审核清单中以哈希固定。' },
+    ],
+  },
   {
     id: 'adaptation-update-20261001', date: '2026-10-01', payload: 'adaptation',
     files: ['adaptation-update.json'],

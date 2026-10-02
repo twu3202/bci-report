@@ -32,11 +32,13 @@ sixteen, and a physical-phantom artifact test (22 September); a 149-person
 Parkinson's and control comparison printed beside an age-and-sex-only confound
 comparator (23 September); screen-to-VR P300 transfer, treadmill walking speed
 beside a movement-nuisance comparator, and an asynchronous SSVEP non-control
-pilot (27 September); and LaBraM adapted to new people three ways — head only,
-last block, rank-4 LoRA — with one matched recipe and three seeds (1 October).
-They are kept apart rather than summed, because they measure different things.
-Research results, not diagnosis. No raw EEG, no per-participant scores, no model
-weights.
+pilot (27 September); LaBraM adapted to new people three ways — head only,
+last block, rank-4 LoRA — with one matched recipe and three seeds (1 October);
+and that SSVEP non-control test extended to twenty further people under a
+pilot-fixed and a personal rejection threshold, plus a P300 decoder trained at
+one image rate and tested at another (2 October). They are kept apart rather
+than summed, because they measure different things. Research results, not
+diagnosis. No raw EEG, no per-participant scores, no model weights.
 
 ## Get the data
 
@@ -56,6 +58,7 @@ curl -O https://bci.report/data/evidence-update.json    # the 22 September batch
 curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 curl -O https://bci.report/data/context-update.json     # the 27 September batch
 curl -O https://bci.report/data/adaptation-update.json  # the 1 October batch
+curl -O https://bci.report/data/extension-update.json   # the 2 October batch
 ```
 
 What each file holds, loading examples and how to cite a release:

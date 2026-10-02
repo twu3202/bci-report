@@ -243,6 +243,20 @@
     "https://figshare.com/articles/dataset/_/24906300",
     "https://doi.org/10.1080/27706710.2024.2418650"
    ]
+  },
+  "ltrsvp": {
+   "aliases": [
+    "LTRSVP",
+    "EEG Signals from an RSVP Task",
+    "PhysioNet ltrsvp",
+    "Matran-Fernandez & Poli (2017)"
+   ],
+   "summary_en": "EEG Signals from an RSVP Task (PhysioNet ltrsvp, version 1.0.0, May 2017) holds EEG from 11 healthy participants who watched aerial images of London in rapid serial visual presentation at 5, 6 and 10 images per second; target images had an airplane superimposed. Eight posterior channels (PO8, PO7, PO3, PO4, P7, P8, O1, O2) at 2048 Hz, filtered 0.15–28 Hz, two recordings per rate separated by a long break. Contributed from the University of Essex and described by Matran-Fernandez and Poli in PLoS ONE (2017).",
+   "summary_zh": "EEG Signals from an RSVP Task（PhysioNet ltrsvp，1.0.0 版，2017 年 5 月）收录了 11 名健康被试的 EEG：他们观看以每秒 5、6、10 张的速度快速序列呈现的伦敦航拍图像，目标图像中叠加了一架飞机。8 个后部通道（PO8、PO7、PO3、PO4、P7、P8、O1、O2），采样率 2048 Hz，滤波范围 0.15–28 Hz，每种速率记录两次，中间有较长的休息。数据来自 University of Essex，并由 Matran-Fernandez 与 Poli 在 PLoS ONE（2017）中描述。",
+   "facts_sources": [
+    "https://physionet.org/content/ltrsvp/1.0.0/",
+    "https://doi.org/10.1371/journal.pone.0178498"
+   ]
   }
  },
  "methods": {

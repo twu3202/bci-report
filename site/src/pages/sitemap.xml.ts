@@ -4,7 +4,7 @@ import deployment from '../data/deployment-topics.json';
 import evidence from '../data/evidence-update.json';
 import clinical from '../data/clinical-update.json';
 import { site } from '../data/site';
-import { pagesUpdated } from '../data/releases';
+import { pagesUpdated, siteUpdates } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 import { entityPaths } from '../data/entities';
 
@@ -32,12 +32,13 @@ const CLINICAL = clinical.generated_at.slice(0, 10);
 const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-move/',
                                 '/topics/calibration-budget/']);
 const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
-const SITE_UPDATE = new Set<string>(pagesUpdated.paths);
+// The newest site update that changed the page, if any (releases.ts keeps the history).
+const updatedOn = (path: string) => siteUpdates.find(u => (u.paths as readonly string[]).includes(path))?.date;
 const lastmodOf = (path: string) =>
-  SITE_UPDATE.has(path) || /^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
+  updatedOn(path) ?? (/^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
   : CLINICAL_PAGES.has(path) ? CLINICAL
   : EVIDENCE_PAGES.has(path) ? EVIDENCE
-  : path.startsWith('/topics/') ? TOPICS : RELEASE;
+  : path.startsWith('/topics/') ? TOPICS : RELEASE);
 
 export const GET: APIRoute = ({ site: origin }) => {
   const base = String(origin ?? new URL(site.origin));

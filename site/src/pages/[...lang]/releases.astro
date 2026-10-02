@@ -8,6 +8,7 @@ import evidence from '../../data/evidence-update.json';
 import clinical from '../../data/clinical-update.json';
 import context from '../../data/context-update.json';
 import adaptation from '../../data/adaptation-update.json';
+import extension from '../../data/extension-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
 import { site } from '../../data/site';
@@ -40,9 +41,10 @@ const manifestOf: Record<string, string | undefined> = {
   clinical: clinical.provenance.manifest_sha256,
   context: context.provenance.manifest_sha256,
   adaptation: adaptation.provenance.manifest_sha256,
+  extension: extension.provenance.manifest_sha256,
   deployment: undefined, mvp: undefined,
 };
-const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id };
+const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id, extension: extension.release_id };
 for (const r of releases)
   if (idOf[r.payload] !== r.id) throw new Error(`releases.ts: ${r.id} does not match its payload (${idOf[r.payload]})`);
 

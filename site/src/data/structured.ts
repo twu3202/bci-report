@@ -21,6 +21,7 @@ import evidence from './evidence-update.json';
 import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
+import extension from './extension-update.json';
 import { site } from './site';
 import { plainAnswer } from './answer';
 
@@ -91,8 +92,11 @@ export function homeDataset() {
 type LaterExport = { file: string; release: string; generated: string; metrics: string[] };
 const contextExport = (metrics: string[]): LaterExport =>
   ({ file: '/data/context-update.json', release: context.release_id, generated: context.generated_at, metrics });
+// The 2026-10-02 batch: the YSU extension on when-not-to-act, LTRSVP on screen-to-vr.
+const extensionExport = (metrics: string[]): LaterExport =>
+  ({ file: '/data/extension-update.json', release: extension.release_id, generated: extension.generated_at, metrics });
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
-  'screen-to-vr': contextExport(['balanced_accuracy', 'auroc']),
+  'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],
   'fewer-electrodes': { file: '/data/evidence-update.json', release: evidence.release_id,
                         generated: evidence.generated_at,
                         metrics: ['person_mean_balanced_accuracy', 'macro_f1'] },
@@ -105,7 +109,9 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
   'when-not-to-act': [{ file: '/data/experiments.json', release: data.releaseId,
                         generated: data.generatedAt,
                         metrics: ['command_detection_within_3s', 'idle_false_activation'] },
-                      contextExport(['control_window_acceptance', 'non_control_false_acceptance'])],
+                      contextExport(['control_window_acceptance', 'non_control_false_acceptance']),
+                      extensionExport(['detection_balanced_accuracy', 'control_window_acceptance',
+                                       'correct_and_accepted_rate', 'non_control_false_acceptance'])],
   'calibration-budget': { file: '/data/adaptation-update.json', release: adaptation.release_id,
                           generated: adaptation.generated_at, metrics: ['balanced_accuracy', 'macro_f1'] },
   'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,

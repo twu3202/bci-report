@@ -1,9 +1,10 @@
 ---
 import context from '../../../data/context-update.json';
+import extension from '../../../data/extension-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
-import { intervalPct, pct } from '../../../data/topics';
+import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 
 export const getStaticPaths = localeParams;
@@ -29,6 +30,23 @@ const basis = r.rights.reviewBasis;
 // Figures the short answer and the key figure name. All from the audited export.
 const leadBa = pct(lead.balanced_accuracy.mean), leadIv = iv(lead.balanced_accuracy);
 const chance = pct(r.chance_level, 0);
+
+// A second presentation change (2026-10-02 export): LTRSVP image rate. Its own
+// data set, cohort and decoder, so nothing here is compared with the VR scores
+// above. Both primary arms are tested on the identical 10-Hz run-b images; the
+// export checks that, and that the paired mean equals the two cell means. The
+// interval crosses zero and rate is confounded with recording, so the page
+// claims no rate effect — the export refuses to build if the first stops being
+// true.
+const lt = extension.results['ltrsvp-rate-transfer'];
+const ltPeople = lt.cohort.people;
+const [ltCross, ltSame] = lt.primary.arms;
+const ltDiff = lt.paired_difference, ltAuc = lt.secondary_auroc_difference;
+const ltRates = [5, 6, 10];
+const ltCell = (train: number, test: number) => lt.matrix.find(m => m.train_rate_hz === train && m.test_rate_hz === test)!;
+const ipp = (i: number[]) => intervalPp(i as [number, number], 1, locale);
+const signed3 = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(3)}`;
+const ltIv = (b: { bootstrap_95: number[] }) => intervalPct(b.bootstrap_95 as [number, number]);
 
 const copy = {
   en: {
@@ -72,6 +90,28 @@ const copy = {
     ],
     consent: 'All participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment; the study was approved by the ethics committee of the University of Grenoble Alpes (CERNI). Only cohort aggregates appear here.',
     datasetLink: 'Zenodo record ↗', docLink: 'Dataset documentation ↗',
+    rateEyebrow: 'Another presentation change · image rate · reviewed 2 October 2026',
+    rateH2: 'Trained at 5 images a second, tested at 10: does a P300 decoder carry over?',
+    rateLede: `A different data set and a different decoder, so nothing here compares with the VR scores above. In LTRSVP, ${ltPeople} people watched aerial images flash past at 5, 6 and 10 a second and looked for the ones with an airplane, recording twice at each rate with a long break between. A fixed logistic regression is trained on one recording (run a) and tested on the same person's later recording (run b). Both arms below are tested on the same 10-Hz images: ${n(lt.primary.target_events)} targets and ${n(lt.primary.non_target_events)} non-targets across the ${ltPeople} people.`,
+    ltArm: (train: number, test: number) => `Trained at ${train} Hz, run a → tested at ${test} Hz, run b`,
+    ltAuroc: (v: string) => `AUROC ${v}`,
+    ltFindingLabel: `Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images, ${ltPeople} people`,
+    ltFindingH3: 'Slightly lower on average — and the interval crosses zero',
+    ltFindingP: `Paired interval ${ipp(ltDiff.bootstrap_95)}: it crosses zero, so no change is established. ${ltDiff.people_lower} of ${ltPeople} people had a lower point estimate and ${ltDiff.people_higher} a higher one. AUROC moved by ${signed3(ltAuc.mean)} (interval ${signed3(ltAuc.bootstrap_95[0])} to ${signed3(ltAuc.bootstrap_95[1])}), which also crosses zero. Even a clear difference could not be put down to image rate, because the training recording changed with it.`,
+    ltMatrixCaption: `Participant-mean balanced accuracy for each training rate (rows, run a) and test rate (columns, run b), ${ltPeople} people, with participant-bootstrap 95% intervals. Chance is ${pct(lt.chance_level, 0)}.`,
+    ltMatrixRegion: 'Balanced accuracy by training and test image rate, scrolls horizontally',
+    ltCorner: 'Training recording', ltTrain: (hz: number) => `Trained at ${hz} Hz`, ltTest: (hz: number) => `Tested at ${hz} Hz`,
+    ltEvents: (t: string, nt: string) => `${t} targets / ${nt} non-targets`,
+    ltMatrixNote: 'Every cell in a column is tested on the same images, whatever the training rate; the diagonal changes only the recording. The nine cells reuse the same people and the same three training recordings of each, so they are not nine independent results.',
+    ltLimitsH3: 'What the image-rate comparison cannot say',
+    ltLimits: [
+      ['Rate and recording are confounded', 'Training at another rate also means training on another recording, with another number of images and another target balance. A difference here is not a causal effect of image rate.'],
+      ['Order across rates unknown', 'Within each rate the test recording came after the training one, following a long break. The order between rates is not established, so this is not a verified later-session test.'],
+      [`${ltPeople} people`, `The ${n(lt.cohort.unique_test_events)} test images and ${lt.cohort.evaluation_cells} person-by-cell evaluations add no people; intervals summarise those ${ltPeople} people. ${lt.cohort.people_excluded} of the release's ${lt.cohort.people_in_release} people lack both recordings at one rate and were excluded from file metadata before scoring.`],
+      ['Overlapping responses, offline', 'At these rates one image’s baseline and response windows contain its neighbours, so nothing here isolates a target response. Offline and fixed: no online latency, information transfer rate, new-person transfer, foundation-model or fine-tuning result.'],
+    ],
+    ltConsent: 'The original publication states that the study was approved by the Ethics Committee of the University of Essex and that every participant gave written consent before the experiment. Only cohort aggregates appear here, not the ages, sexes or handedness the paper reports.',
+    ltRecord: 'PhysioNet record ↗', ltPaper: 'Original publication ↗',
   },
   zh: {
     description: `换设备后高于随机水平，但测不出换设备的代价：${c.people} 名被试在电脑屏幕上校准、在 VR 里测试，也反过来做一遍，逻辑回归的平衡准确率为 ${leadBa}（${leadIv}；随机水平 ${chance}）。没有被试在校准所用的设备上接受测试。`,
@@ -114,6 +154,28 @@ const copy = {
     ],
     consent: '所有被试都签署了书面知情同意，内容涵盖实验流程、数据管理方式以及随时退出实验的权利；研究经格勒诺布尔-阿尔卑斯大学伦理委员会（CERNI）批准。这里只发布队列级聚合结果。',
     datasetLink: 'Zenodo 记录 ↗', docLink: '数据集说明文档 ↗',
+    rateEyebrow: '另一种呈现变化 · 图像速率 · 2026 年 10 月 2 日审核',
+    rateH2: '在每秒 5 张图像上训练、在每秒 10 张上测试：P300 解码器还管用吗？',
+    rateLede: `另一个数据集、另一个解码器，所以这里的结果不能和上面的 VR 分数比较。在 LTRSVP 中，${ltPeople} 名被试观看以每秒 5、6、10 张的速度快速闪过的航拍图像，找出其中有飞机的那些；每种速率各记录两次，中间有较长的休息。一个固定的逻辑回归在一段记录（a 段）上训练，在同一被试之后的记录（b 段）上测试。下面两组都在同样的 10 Hz 图像上测试：${ltPeople} 名被试合计 ${n(lt.primary.target_events)} 个目标、${n(lt.primary.non_target_events)} 个非目标。`,
+    ltArm: (train: number, test: number) => `${train} Hz a 段训练 → ${test} Hz b 段测试`,
+    ltAuroc: (v: string) => `AUROC ${v}`,
+    ltFindingLabel: `5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像，${ltPeople} 名被试`,
+    ltFindingH3: '平均略低——但区间跨过零',
+    ltFindingP: `配对区间 ${ipp(ltDiff.bootstrap_95)}：跨过零，所以不能认定有变化。${ltPeople} 名被试中 ${ltDiff.people_lower} 人的点估计更低、${ltDiff.people_higher} 人更高。AUROC 变化 ${signed3(ltAuc.mean)}（区间 ${signed3(ltAuc.bootstrap_95[0])} 至 ${signed3(ltAuc.bootstrap_95[1])}），同样跨过零。即使差异明显，也不能归因于图像速率，因为训练所用的记录也跟着变了。`,
+    ltMatrixCaption: `每种训练速率（行，a 段）与测试速率（列，b 段）下的被试平均平衡准确率，${ltPeople} 名被试，附被试 bootstrap 95% 区间。随机水平为 ${pct(lt.chance_level, 0)}。`,
+    ltMatrixRegion: '按训练与测试图像速率的平衡准确率，可横向滚动',
+    ltCorner: '训练记录', ltTrain: (hz: number) => `${hz} Hz 训练`, ltTest: (hz: number) => `${hz} Hz 测试`,
+    ltEvents: (t: string, nt: string) => `${t} 个目标 / ${nt} 个非目标`,
+    ltMatrixNote: '同一列中，无论训练速率如何，测试的都是同样的图像；对角线上只换了记录。这九个格子复用同一批被试、每人同样的三段训练记录，所以不是九个独立的结果。',
+    ltLimitsH3: '图像速率比较说明不了什么',
+    ltLimits: [
+      ['速率与记录相互混杂', '换一种速率训练，也就换了一段训练记录，图像数量和目标比例也随之不同。这里的差异不是图像速率的因果效应。'],
+      ['速率之间的先后未知', '在同一速率内，测试记录在训练记录之后，中间有较长的休息。不同速率之间的先后没有确定，所以这不是经过核实的“之后的会话”测试。'],
+      [`${ltPeople} 名被试`, `${n(lt.cohort.unique_test_events)} 张测试图像和 ${lt.cohort.evaluation_cells} 次“被试 × 格子”评估并不增加被试人数；区间概括的是这 ${ltPeople} 人。该数据集 ${lt.cohort.people_in_release} 名被试中有 ${lt.cohort.people_excluded} 人缺少某一速率下的两段记录，在评分前已按文件元数据排除。`],
+      ['反应相互重叠、离线', '在这些速率下，一张图像的基线窗口和反应窗口里都含有相邻图像，所以这里没有分离出单独的目标反应。离线、固定：没有在线延迟、信息传输率、新被试迁移、基础模型或微调结果。'],
+    ],
+    ltConsent: '原始论文写明，研究经埃塞克斯大学（University of Essex）伦理委员会批准，每名被试在实验开始前都签署了书面同意。这里只发布队列级聚合结果，不发布论文中的年龄、性别与利手信息。',
+    ltRecord: 'PhysioNet 记录 ↗', ltPaper: '原始论文 ↗',
   },
 }[locale];
 const card = topicCards[locale]['screen-to-vr'];
@@ -171,6 +233,27 @@ const card = topicCards[locale]['screen-to-vr'];
       <article class="evidence-card"><p class="eyebrow">{copy.covEvents}</p><div class="reading">{n(c.labeled_events)}</div><p>{copy.covEventsOf}</p></article>
       <article class="evidence-card"><p class="eyebrow">{copy.covKept}</p><div class="reading">{n(c.retained_epochs.onset_corrected)}</div><p>{copy.covKeptOf}</p></article>
     </div>
+  </section>
+
+  <section class="topic-section" id="image-rate" aria-labelledby="rate-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.rateEyebrow}</p><h2 id="rate-heading">{copy.rateH2}</h2></div><p>{copy.rateLede}</p></div>
+    <div class="evidence-grid">{[ltCross, ltSame].map((a, i) => <article class="evidence-card"><p class="eyebrow">{copy.ltArm(a.train_rate_hz, a.test_rate_hz)}</p><div class="reading">{pct(a.balanced_accuracy.mean)}</div><ScoreBar value={a.balanced_accuracy.mean} max={1} label={copy.baLabel(pct(a.balanced_accuracy.mean))} tone={i === 0 ? 'rust' : 'ink'} /><p>{copy.ltAuroc(`${auc(a.auroc)} (${aucIv(a.auroc)})`)}</p><small>{tc.interval95} {ltIv(a.balanced_accuracy)}</small></article>)}</div>
+    <div class="finding">
+      <div class="finding-number"><strong>{pp(ltDiff.mean, 1)}</strong><span>{copy.ltFindingLabel}</span></div>
+      <div class="finding-copy"><h3>{copy.ltFindingH3}</h3><p>{copy.ltFindingP}</p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.ltMatrixRegion}>
+      <table>
+        <caption>{copy.ltMatrixCaption}</caption>
+        <thead><tr><th scope="col">{copy.ltCorner}</th>{ltRates.map(t => <th scope="col">{copy.ltTest(t)}<small>{copy.ltEvents(n(ltCell(5, t).target_events), n(ltCell(5, t).non_target_events))}</small></th>)}</tr></thead>
+        <tbody>{ltRates.map(s => <tr><th scope="row">{copy.ltTrain(s)}</th>{ltRates.map(t => { const m = ltCell(s, t); return <td><span class="metric">{pct(m.balanced_accuracy.mean)}</span><span class="interval">{ltIv(m.balanced_accuracy)}</span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note">{copy.ltMatrixNote}</p>
+    <h3 class="roadmap-h3">{copy.ltLimitsH3}</h3>
+    <div class="method-grid-wide" id="image-rate-limits">{copy.ltLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list"><article><h3 lang="en">{lt.rights.name}</h3><p lang="en">{lt.rights.attribution}</p><p>{copy.ltConsent}</p><p><a href={lt.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ltRecord}</a> · <a href={lt.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ltPaper}</a> · <a href={lt.rights.licenseUrl} target="_blank" rel="noreferrer">{lt.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version} · {tc.generated} {extension.generated_at}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="vr-limits">

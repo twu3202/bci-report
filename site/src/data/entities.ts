@@ -22,6 +22,7 @@ import evidence from './evidence-update.json';
 import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
+import extension from './extension-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 
@@ -85,7 +86,8 @@ export interface DatasetEntity {
 }
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
-      CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json';
+      CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json',
+      EXT = 'extension-update.json';
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
 const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig] | undefined =>
   iv ? [fig(iv[0], fmt, src), fig(iv[1], fmt, src)] : undefined;
@@ -314,17 +316,75 @@ function gaitGroup(): ResultGroup {
 
 function ysuGroup(): ResultGroup {
   const r = cx['ysu-async-ssvep'];
-  const path = '/topics/when-not-to-act/#non-control';
+  const path = '/topics/when-not-to-act/#non-control-pilot';
   const w = r.control_windows, method = 'Fixed CCA with rejection', people = r.people;
   const intended = { en: 'Command intended', zh: '有意发出指令' };
   return {
-    id: 'ysu-async-ssvep', title: { en: 'When not to act · control and non-control windows', zh: '何时不该执行 · 控制与非控制窗口' }, path: '/topics/when-not-to-act/',
+    id: 'ysu-async-ssvep', title: { en: 'When not to act · four-person development pilot', zh: '何时不该执行 · 四人开发试点' }, path: '/topics/when-not-to-act/',
     rows: [
       { path, method, condition: intended, metric: { en: 'Frequency recognised', zh: '频率识别正确' }, value: fig(w.frequency_recognised, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
       { path, method, condition: intended, metric: { en: 'Accepted (coverage)', zh: '被接受（覆盖率）' }, value: fig(w.accepted, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
       { path, method, condition: intended, metric: { en: 'Accepted and correct', zh: '被接受且正确' }, value: fig(w.accepted_and_correct, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
       ...r.false_acceptance.map((f: any) => ({ path, method, condition: { en: `No command · ${f.condition}` },
         metric: { en: 'Accepted by mistake (per window)', zh: '误接受（按窗口）' }, value: fig(f.accepted, 'count', CTX), of: fig(f.tested, 'count', CTX), people })),
+    ],
+  };
+}
+
+/** The same source, twenty further people, two rejection rules fixed before scoring (2026-10-02). */
+function ysuExtensionGroup(): ResultGroup {
+  const r = extension.results['ysu-async-ssvep-extension'];
+  const path = '/topics/when-not-to-act/#non-control';
+  const method = 'Fixed CCA with rejection', people = r.cohort.people;
+  const rule: Record<string, L> = {
+    global: { en: 'Global threshold, fixed on the pilot', zh: '全局阈值，在试点上固定' },
+    personal: { en: `Personal threshold, ${r.rules[1].target_person_labels} own windows`, zh: `逐人阈值，用自己的 ${r.rules[1].target_person_labels} 个窗口` },
+  };
+  const state: Record<string, L> = {
+    NS1: { en: 'central image, flicker off', zh: '注视中央图像，闪烁关闭' },
+    NS2: { en: 'white wall, resting', zh: '看着白墙休息' },
+    NS3: { en: 'central image, surround flickering', zh: '注视中央，周围在闪烁' },
+  };
+  const d = r.paired_difference;
+  return {
+    id: 'ysu-async-ssvep-extension', title: { en: `When not to act · ${people} further people, two rejection rules`, zh: `何时不该执行 · 另外 ${people} 名被试，两种拒识规则` },
+    path: '/topics/when-not-to-act/',
+    rows: [
+      ...r.rules.flatMap(x => {
+        const w = x.control_windows, c = rule[x.id];
+        const base = { path, method, people, condition: c };
+        return [
+          { ...base, metric: { en: 'Detection balanced accuracy', zh: '检测平衡准确率' },
+            value: fig(x.detection_balanced_accuracy.mean, 'pct1', EXT), interval: pair(x.detection_balanced_accuracy.bootstrap_95, 'pct1', EXT) },
+          { ...base, metric: { en: 'Command windows accepted (coverage)', zh: '被接受的指令窗口（覆盖率）' }, value: fig(w.accepted, 'count', EXT), of: fig(w.tested, 'count', EXT) },
+          { ...base, metric: { en: 'Accepted and correct', zh: '被接受且正确' }, value: fig(w.accepted_and_correct, 'count', EXT), of: fig(w.tested, 'count', EXT) },
+          { ...base, metric: { en: 'Correct among accepted, mean over people', zh: '被接受窗口中的正确率，各被试均值' }, value: fig(x.accepted_window_accuracy_mean_over_people, 'pct1', EXT) },
+          ...x.false_acceptance.map(f => ({ ...base, condition: { en: `${c.en} · no command · ${state[f.state].en}`, zh: `${c.zh} · 无指令 · ${state[f.state].zh}` },
+            metric: { en: 'Accepted by mistake (per window)', zh: '误接受（按窗口）' }, value: fig(f.accepted, 'count', EXT), of: fig(f.tested, 'count', EXT) })),
+        ];
+      }),
+      { path, method, people, condition: { en: 'Personal minus global, same people and windows', zh: '逐人减全局，相同被试与窗口' },
+        metric: { en: 'Paired difference, detection balanced accuracy', zh: '配对差值，检测平衡准确率' },
+        value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
+    ],
+  };
+}
+
+/** LTRSVP: train on one recording at one image rate, test on a later one (2026-10-02). */
+function ltrsvpGroup(): ResultGroup {
+  const r = extension.results['ltrsvp-rate-transfer'];
+  const path = '/topics/screen-to-vr/#image-rate';
+  const method = 'Logistic regression on 100-ms means', people = r.cohort.people;
+  const d = r.paired_difference;
+  return {
+    id: 'ltrsvp-rate-transfer', title: { en: 'Image rate · trained at one rate, tested on a later recording', zh: '图像速率 · 在一种速率下训练、在之后的记录上测试' },
+    path: '/topics/screen-to-vr/', chance: fig(r.chance_level, 'pct1', EXT),
+    rows: [
+      ...r.matrix.map(m => ({ path, method, people,
+        condition: { en: `Trained at ${m.train_rate_hz} Hz (run a), tested at ${m.test_rate_hz} Hz (run b)`, zh: `${m.train_rate_hz} Hz a 段训练，${m.test_rate_hz} Hz b 段测试` },
+        metric: BA, value: fig(m.balanced_accuracy.mean, 'pct1', EXT), interval: pair(m.balanced_accuracy.bootstrap_95, 'pct1', EXT) })),
+      { path, method, people, condition: { en: 'Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images', zh: '5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像' },
+        metric: DIFF, value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
     ],
   };
 }
@@ -401,7 +461,8 @@ export const datasets: DatasetEntity[] = [
   fromRights('ds004584', cl.ds004584, [clinicalGroup()], { en: "Resting-state EEG, Parkinson's disease and controls", zh: '静息态 EEG，帕金森病与对照' }, "OpenNeuro ds004584 · Parkinson's disease, rest eyes open"),
   fromRights('vr-pc-p300', cx['vr-pc-p300'], [vrGroup()], { en: 'P300 on a PC screen and in a VR headset', zh: '电脑屏幕与 VR 头显上的 P300' }, 'Cattan PC/VR P300 dataset'),
   fromRights('gait-eeg', cx['gait-eeg'], [gaitGroup()], { en: 'Treadmill walking at three speeds', zh: '跑步机上三种速度的行走' }, 'Multimodal gait dataset · treadmill walking'),
-  fromRights('ysu-async-ssvep', cx['ysu-async-ssvep'], [ysuGroup()], { en: 'Asynchronous SSVEP, control and non-control states', zh: '异步 SSVEP，控制与非控制状态' }),
+  fromRights('ysu-async-ssvep', cx['ysu-async-ssvep'], [ysuExtensionGroup(), ysuGroup()], { en: 'Asynchronous SSVEP, control and non-control states', zh: '异步 SSVEP，控制与非控制状态' }),
+  fromRights('ltrsvp', extension.results['ltrsvp-rate-transfer'], [ltrsvpGroup()], { en: 'P300 target images in rapid serial visual presentation at three rates', zh: '三种速率下快速序列视觉呈现中的 P300 目标图像' }, 'LTRSVP · EEG Signals from an RSVP Task'),
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));
