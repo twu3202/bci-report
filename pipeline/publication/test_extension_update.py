@@ -218,6 +218,15 @@ class ExtensionBoundary(unittest.TestCase):
                 if re.search(r'\blater\b[^.;]*\brecording|\bfollowed run a\b', sentence):
                     self.assertRegex(sentence, r'[Ww]ithin (?:a|each|one) rate', f'{where}: "{sentence}"')
 
+    def test_the_task_names_same_rate_transfer_too(self):
+        # The matrix diagonal is a same-rate transfer (run a to run b at one rate). The task
+        # said "at another" rate only until the 2026-10-02 review; the generalization says both.
+        lt = build(MANIFEST)['results'][LTR]
+        self.assertIn('tested on a different recording at the same or another rate', lt['rights']['task'])
+        self.assertIn('at the same or another rate', lt['generalization'])
+        self.assertNotRegex(lt['rights']['task'], r'different recording at another\b')
+        self.assertEqual(lt['rights']['task'], source(MANIFEST, LTR)['task'], 'the task is the manifest\'s, unchanged')
+
     def test_the_paired_rate_difference_must_equal_the_cells(self):
         def drift(s):
             s['primary_paired_BA_5a_to_10b_minus_10a_to_10b']['mean'] += 0.001

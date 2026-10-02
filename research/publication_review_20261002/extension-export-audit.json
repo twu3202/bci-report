@@ -1,8 +1,8 @@
 {
   "status": "pass",
   "release_id": "extension-update-20261002",
-  "export_sha256": "7d16f529c1dcf4368679cab64306ef96aa5d5a85e68bad81df0d9df2153883de",
-  "manifest_sha256": "a32918e827f85b23bfc5e7260dbfa5b29258581db1381e34eef81e2021880ce9",
+  "export_sha256": "c3ad6cc43bd1ca91b52bff466bc74f4392220d2852c6c16aa451e1f7b64b8b46",
+  "manifest_sha256": "30088856246e8045fc109753c4cb1fa77d4c2c5f4ef1b9cdd7f3edeb533b57c7",
   "included": [
     "ysu-async-ssvep-extension",
     "ltrsvp-rate-transfer"
