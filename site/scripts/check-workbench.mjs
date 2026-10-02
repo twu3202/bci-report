@@ -122,6 +122,14 @@ get('#open-protocol').events.click();
 assert.match(get('#dialog-body').innerHTML,/no best-seed selection/,'protocol dialog must render seedSensitivity.scope');
 assert.match(get('#dialog-body').innerHTML,/retained seed is also the highest/,'protocol dialog must state where the retained seed sits');
 get('#close-dialog').events.click();
+// A JSON fragment in the release text ('… · {"mirror": …, "upstream": …}') prints as its fields, as on the protocol pages.
+for(const t of data.tracks.filter(t=>/\{[^{}]*\}/.test(t.version))){
+  tool.execute({trackId:t.id,family:'all'});get('#open-protocol').events.click();
+  const frag=t.version.match(/\{[^{}]*\}/)[0],printed=t.version.replace(frag,Object.entries(JSON.parse(frag)).map(([k,v])=>k+' '+v).join(' · '));
+  assert.ok(get('#dialog-body').innerHTML.includes('<span>'+printed+'</span>'),t.id+': the dialog prints the release version\'s fields');
+  assert.doesNotMatch(get('#dialog-body').innerHTML,/\{&quot;/,t.id+': no JSON fragment printed raw in the dialog');
+  get('#close-dialog').events.click();
+}
 // The same script on the Chinese page. render() replaces the server markup, and
 // it used to drop every lang="en" the server had set, so a screen reader read
 // the English payload in a Chinese voice after the first paint.
@@ -1047,9 +1055,14 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     for(const t of data.tracks)
       assert.ok(homePage.includes(`href="/${prefix}protocols/${t.id}/" data-jump="${t.id}"`),label+': matrix heading '+t.id+' must link its protocol page');
   }
+  const unesc=s=>s.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  const dirZhText=JSON.parse(readFileSync(new URL('../src/data/directory-zh.json',import.meta.url),'utf8')).text;
   for(const t of data.tracks){
     const path='protocols/'+t.id+'/', csv=t.id+'-results.csv', pj=t.id+'-protocol.json';
     for(const p of [path,'zh/'+path]) assert.ok(existsSync(new URL(p+'index.html',DIST)),p+': protocol page missing');
+    // The released results file, row by row: header names, then one record per method.
+    const [csvHead,...csvBody]=csvRows(readFileSync(new URL('data/'+csv,DIST),'utf8')).filter(r=>r.length>1);
+    const csvRecords=csvBody.map(r=>Object.fromEntries(csvHead.map((k,i)=>[k,r[i]])));
     const en=pageOf(path),zh=pageOf('zh/'+path);
     assert.ok(en.includes('<h1>'+esc(t.title+' on '+t.dataset)+'</h1>'),path+': the h1 names the protocol and its dataset');
     assert.ok(zh.includes('（'+esc(t.dataset)+'）</h1>'),'zh/'+path+': the h1 names the dataset');
@@ -1081,6 +1094,20 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
           else {assert.doesNotMatch(row,below,where+'/'+r.id+': flagged without cause');assert.doesNotMatch(row,reaches,where+'/'+r.id+': flagged without cause');}
         }
         if(t.seedSensitivity?.model===r.name) assert.match(row,/class="flag seed"/,where+'/'+r.id+': the single-seed flag');
+        // The row is the same row of the released CSV: model and training mode, then every figure
+        // in column order (primary, interval, secondary, always-abstain of participants, channels,
+        // participants, scoring time). Checked against the file, not against mvp.json, and in order,
+        // so two figures swapped between columns cannot pass.
+        const name=unesc(row.match(/<th scope="row">([\s\S]*?)<small>/)[1].replace(/<[^>]+>/g,''));
+        const mode=unesc(row.match(/<\/th><td[^>]*>([^<]*)<\/td>/)[1]);
+        const rec=csvRecords.filter(x=>x.model===name&&x.evaluation_mode===mode);
+        assert.equal(rec.length,1,where+'/'+r.id+': exactly one row of '+csv+' is '+name+' · '+mode);
+        const c=rec[0],num=k=>Number(c[k]);
+        const expected=[num('primary_percent'),...(c.descriptive_interval_low_percent!==''?[num('descriptive_interval_low_percent'),num('descriptive_interval_high_percent')]:[]),
+          num('secondary_value'),...(c.always_abstain_participants!==''?[num('always_abstain_participants'),num('participants')]:[]),
+          num('channels'),num('participants'),num('scoring_seconds')];
+        const printed=[...row.matchAll(/data-fig="([^|"]+)\|\w+\|([^"]+)"/g)].map(m=>{assert.equal(m[1],csv,where+'/'+r.id+': a row figure from another file');return Number(m[2]);});
+        assert.deepEqual(printed,expected,where+'/'+r.id+': the page row must equal the '+name+' row of '+csv+', column by column');
         if(t.type==='tradeoff'&&r.abstain>0) assert.match(row,/class="flag"><span data-fig/,where+'/'+r.id+': people who always abstained are flagged');
       }
       // Chance level from the protocol file, or the reason there is none.
@@ -1102,8 +1129,38 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       }
       // The protocol as released, verbatim: task, cohort, input, steps, limits, exposure, credit.
       for(const text of [t.subtitle,t.observations,t.exposure,t.limitation,t.selection,t.pretrainingOverlap,
-                         t.attribution,t.rightsScope,t.privacyReview,t.protocolId,t.version,t.license,...t.protocol,...(t.seedSensitivity?[t.seedSensitivity.scope]:[])])
+                         t.attribution,t.rightsScope,t.protocolId,t.license,...t.protocol,...(t.seedSensitivity?[t.seedSensitivity.scope]:[])])
         assert.ok(html.includes(esc(text)),where+': payload text missing: '+String(text).slice(0,60));
+      // Two exceptions, decided 2026-10-02. The privacy review reads as the reviewer's working
+      // notes: the page states in one sentence what is published and links the protocol JSON,
+      // which holds the full note. And a JSON fragment in the version text is printed as its fields.
+      assert.ok(!html.includes(esc(t.privacyReview))&&!html.includes(esc(t.privacyReview.slice(0,80))),where+': the privacy review note is not printed verbatim');
+      const pv=html.indexOf('class="protocol-privacy"'),privacy=pv<0?'':html.slice(pv,html.indexOf('</p>',pv));
+      assert.match(privacy,label==='en'?/Only cohort aggregates are published here: no recording, no participant identifier, no per-person score\./:/这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。/,where+': the site-written privacy sentence');
+      assert.ok(privacy.includes(`href="/data/${pj}" download`),where+': the privacy sentence links the protocol JSON');
+      assert.equal(JSON.parse(readFileSync(new URL('data/'+pj,DIST),'utf8')).privacyReview,t.privacyReview,where+': the linked protocol JSON holds the full review note');
+      const fragment=t.version.match(/\{[^{}]*\}/);
+      const version=fragment?t.version.replace(fragment[0],Object.entries(JSON.parse(fragment[0])).map(([k,v])=>k+' '+v).join(' · ')):t.version;
+      if(fragment) assert.match(version,/ · mirror [0-9a-f]{40} · upstream \S/,where+': the fragment\'s fields, mirror then upstream');
+      assert.ok(html.includes(esc(version)),where+': the dataset release, with any JSON fragment printed as its fields');
+      assert.doesNotMatch(visible(html),/\{"/,where+': no JSON fragment printed raw');
+      // Licence: as written; on the Chinese page, the register's Chinese with the English beside it.
+      if(label==='zh'&&dirZhText[t.license]) assert.ok(html.includes('>'+esc(dirZhText[t.license])+' ↗</a><span class="note-original" lang="en">'+esc(t.license)+'</span>'),where+': the licence note in Chinese, its English beside it');
+      // Compare down this table only; the lede may not claim every other protocol differs in
+      // everything (beta-8ch and beta-4ch share a cohort and a chance level).
+      assert.ok(html.includes(label==='en'?'other protocols differ in cohort, electrodes, window or chance level.':'其他协议在队列、电极、时间窗或随机水平上有所不同。'),where+': the results lede');
+      assert.doesNotMatch(html,/other protocols have a different cohort|其他协议的队列、电极布局和随机水平都不同/,where+': the old results lede');
+      // A protocol without a chance level does not promise one: not in its description,
+      // social description or dek. It names the false-activation rate it is read with.
+      const metas=[...html.matchAll(/<meta (?:name|property)="(?:description|og:description|twitter:description)" content="([^"]*)"/g)].map(m=>unesc(m[1]));
+      const dek=(html.match(/<p class="topic-dek">([\s\S]*?)<\/p>/)||[])[1]??'';
+      assert.ok(metas.length>=2&&dek.length>0,where+': description and dek render');
+      for(const text of [...metas,dek]){
+        if(t.chanceLevel==null){
+          assert.doesNotMatch(text,label==='en'?/chance level|what guessing would score/:/随机水平|随机猜测/,where+': a protocol with no chance level promises one: '+text.slice(0,80));
+          if(text!==dek) assert.match(text,label==='en'?/false-activation rate/:/误触发率/,where+': the description names the false-activation rate');
+        } else if(text!==dek) assert.match(text,label==='en'?/chance level/:/随机水平/,where+': the description names the chance level');
+      }
       if(t.seedSensitivity) for(const v of [...t.seedSensitivity.balancedAccuracyPercent,t.seedSensitivity.meanPercent])
         assert.ok(html.includes(`data-fig="${pj}|pct2raw|${v}"`),where+': seed result '+v);
       assert.ok(html.includes(`href="/data/${csv}"`)&&html.includes(`href="/data/${pj}"`),where+': both protocol downloads are linked');
@@ -1117,6 +1174,8 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     assert.equal(ld.url,'https://bci.report/'+path,path+': markup url');
     assert.equal(ld.isPartOf.url,'https://bci.report/',path+': part of the core-matrix Dataset');
     assert.ok(ld.variableMeasured.includes(t.yLabel)&&ld.variableMeasured.includes(t.xLabel),path+': both metrics');
+    assert.match(ld.description,t.chanceLevel==null?/false-activation rate/:/chance level/,path+': the markup describes what the protocol has');
+    if(t.chanceLevel==null) assert.doesNotMatch(ld.description,/chance level/,path+': the markup promises no chance level');
     assert.ok(sitemap.includes('<loc>https://bci.report/'+path+'</loc>')&&sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),path+': sitemap');
     assert.ok(llms.includes('https://bci.report/'+path+'index.md'),path+': llms.txt');
     // The dataset page's group for this protocol, and every method page with a row in it, link here.
@@ -1137,7 +1196,7 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Core matrix \(home page\)|核心矩阵（首页）/,f+': a core-matrix group still points at the home page');
 }
 
-console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, payload text verbatim, Dataset markup, links resolve; entity groups and matrix headings lead here.');
+console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, each row equal to its CSV row, payload text verbatim except the linked privacy review and the version fields, no chance level promised where there is none, Dataset markup, links resolve; entity groups and matrix headings lead here.');
 
 // --- Model directory and data register, in Chinese -----------------------------
 // mvp.json stays English (it is a released file). Its directory notes, licence

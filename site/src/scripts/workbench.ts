@@ -70,6 +70,10 @@ const S={
       metric:{'Balanced accuracy':'平衡准确率','Command detection ≤3s':'指令检出率 ≤3 秒','Idle false activation':'空闲误触发率','Macro F1':'宏平均 F1'} as Record<string,string>},
 }[LANG];
 const metric=(label:string)=>S.metric[label]??label;
+/* Two tracks carry a JSON fragment in their release text ('… v3 · {"mirror": …,
+   "upstream": …}'). Printed as its fields, "mirror … · upstream …", as the
+   protocol pages print it (versionText in src/data/protocols.ts). */
+const versionText=(v:string)=>v.replace(/\{[^{}]*\}/g,f=>{try{return Object.entries(JSON.parse(f) as Record<string,unknown>).map(([k,x])=>k+' '+String(x)).join(' · ');}catch{return f;}});
 const xValue=(r:Row)=>track.type==='tradeoff'?pct(r.x):r.x.toFixed(3);
 
 /** Seed-sensitivity record, present on the two tracks that were re-run. */
@@ -211,7 +215,7 @@ $('#family-filter').addEventListener('change',render);$('#sort-results').addEven
 $('#open-protocol').addEventListener('click',()=>show(titleOf(track)+S.protocol,
 '<p'+EN+'>'+esc(track.subtitle)+'</p><ol'+EN+'>'+track.protocol.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+
 '<div class="detail-metrics"><div><small>'+S.stageSum+'</small><strong>'+track.elapsed.toFixed(1)+S.seconds+'</strong><small><span'+EN+'>'+esc(track.backend)+'</span>'+S.accel+'</small></div><div><small>'+S.stability+'</small><p lang="en">'+esc(track.selection)+'</p>'+seedScopeNote()+'</div></div>'+
-'<p>'+S.release+esc(track.version)+'</p><p>'+S.protocolId+'<code>'+esc(track.protocolId)+'</code></p><p>'+S.audit+'<code>'+esc(track.auditSha)+'</code></p>'+
+'<p>'+S.release+'<span'+EN+'>'+esc(versionText(track.version))+'</span></p><p>'+S.protocolId+'<code>'+esc(track.protocolId)+'</code></p><p>'+S.audit+'<code>'+esc(track.auditSha)+'</code></p>'+
 '<h3 class="detail-note">'+S.scope+'</h3><p>'+S.licence+'<span'+EN+'>'+esc(track.license)+'</span></p><div lang="en"><p>'+esc(track.attribution)+'</p><p>'+esc(track.rightsScope)+'</p><p>'+esc(track.privacyReview)+'</p><p>'+esc(track.pretrainingOverlap)+'</p></div>'+
 '<a class="button" href="/data/'+track.id+'-protocol.json" download>'+S.dlProtocol+'</a> <a class="button" href="'+esc(track.source)+'" target="_blank" rel="noreferrer">'+S.original+'</a> <a class="button" href="'+esc(track.licenseUrl)+'" target="_blank" rel="noreferrer">'+S.licenceLink+'</a>'));
 $('#result-rows').addEventListener('click',e=>{const button=(e.target as HTMLElement).closest<HTMLElement>('[data-model]');if(!button)return;const r=track.rows.find(r=>r.id===button.dataset.model)!;show(r.name+' · '+titleOf(track),

@@ -17,7 +17,11 @@
  * Chinese pages, as on the home page.
  *
  * Never printed: the track's `status`. It still says "Research preview" in the
- * released bytes; that badge came off on 2026-10-01 (src/data/site.ts).
+ * released bytes; that badge came off on 2026-10-01 (src/data/site.ts). Nor its
+ * `privacyReview`, which reads as the reviewer's working notes: the page states
+ * in one site-written sentence what is published and links the protocol JSON,
+ * which holds the full note (decided 2026-10-02). And a JSON fragment inside the
+ * `version` text is printed as its fields (`versionText`).
  */
 import data from './mvp.json';
 import { corrections, requestedCitations, type Correction } from './releases';
@@ -152,6 +156,23 @@ function build(t: Track): Protocol {
     // A correction that amends this protocol's own downloads (releases.ts).
     corrections: corrections.filter(c => c.files.includes(results) || c.files.includes(protocol)),
   };
+}
+
+/**
+ * A dataset release version as a reader should see it. Two tracks carry a JSON
+ * fragment in the released text ('… v3 · {"mirror": "d429…", "upstream": "…"}');
+ * printed raw it showed braces and quotes. Each fragment becomes its fields,
+ * "mirror d429… · upstream …"; text without one is returned unchanged.
+ */
+export function versionText(version: string): string {
+  return version.replace(/\{[^{}]*\}/g, fragment => {
+    try {
+      const fields = JSON.parse(fragment) as Record<string, unknown>;
+      return Object.entries(fields).map(([k, v]) => `${k} ${String(v)}`).join(' · ');
+    } catch {
+      return fragment;
+    }
+  });
 }
 
 export const protocols: Protocol[] = data.tracks.map(build);
