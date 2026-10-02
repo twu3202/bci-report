@@ -551,6 +551,18 @@ export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as
 export const unmeasuredModels = data.models.filter(m => m.status !== 'Evaluated')
   .map(m => ({ name: m.name, family: m.family, status: m.status, url: m.url ?? undefined }));
 
+/**
+ * The dataset and method pages a topic draws on: every entity with a result
+ * group that points at the topic's page. A reverse index of the groups above,
+ * so a topic names exactly the pages that send readers to it, and a group added
+ * here reaches the topic's "Measured on" line without a list to keep in step.
+ * check-workbench.mjs checks the same thing from the built pages.
+ */
+export function topicEntities(path: string): { datasets: DatasetEntity[]; methods: MethodEntity[] } {
+  const here = (g: ResultGroup) => g.path.split('#')[0] === path;
+  return { datasets: datasets.filter(d => d.groups.some(here)), methods: methods.filter(m => m.groups.some(here)) };
+}
+
 export const entityPaths = [
   '/datasets/', ...datasets.map(d => `/datasets/${d.slug}/`),
   '/methods/', ...methods.map(m => `/methods/${m.slug}/`),

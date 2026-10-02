@@ -74,6 +74,9 @@ labels from the test person"; calibration-budget keeps figure-free notes at
 A topic that prints a figure from another file marks it with `data-fig`, which is
 re-read from that file, and its cite block must name that file's release — so a
 topic that prints the core matrix's frozen LaBraM readout names the core release.
+And every topic page carries a "Measured on … · Methods …" line under its hero
+that links exactly the dataset and method pages whose result groups point at it,
+in both languages and in its Markdown copy.
 
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before

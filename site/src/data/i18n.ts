@@ -585,6 +585,11 @@ export const topicChrome = {
     interval95: '95% interval',
     to: 'to',
     period: '.',
+    // The line under the hero naming the dataset and method pages the topic draws on.
+    measuredOn: 'Measured on:',
+    methodsUsed: 'Methods:',
+    // Not a comma: dataset names carry their own ("…with motion, muscle and eye artifacts").
+    listSep: '; ',
   },
   zh: {
     home: '首页',
@@ -606,6 +611,9 @@ export const topicChrome = {
     interval95: '95% 区间',
     to: '至',
     period: '。',
+    measuredOn: '测量所用数据集：',
+    methodsUsed: '方法：',
+    listSep: '、',
   },
 } as const;
 

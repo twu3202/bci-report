@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import { topicPages } from '../data/topics';
 import { topicDataset, topicFaq, topicFiles } from '../data/structured';
 import { answerParts } from '../data/answer';
+import { topicEntities } from '../data/entities';
 import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, questionPhrases, topicCards, topicChrome,
          type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
@@ -49,6 +50,11 @@ const canonical = new URL(localizePath(path, locale), origin).href;
 const links = alternates(path, String(origin));
 // Every reviewed export the page's figures come from; the cite block names their releases.
 const citeFiles = topicFiles(activeSlug);
+// The dataset and method pages whose result groups point here (entities.ts).
+// Until 2026-10-02 no topic linked to any of them, so the links ran one way.
+const drawsOn = topicEntities(`/topics/${activeSlug}/`);
+const nameLang = locale === 'zh' ? 'en' : undefined;
+const labelGap = locale === 'zh' ? '' : ' ';
 // One Dataset entity per dataset, on the English canonical. The Chinese page is
 // the same data; a second entry would be a duplicate to Dataset Search, and
 // hreflang already tells crawlers the two pages are one resource.
@@ -99,6 +105,11 @@ const structured = locale === 'en'
       <p class="topic-dek">{dek}</p>
       <div class="topic-actions"><a class="button primary" href={dataFiles[0]} download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
     </section>
+    {(drawsOn.datasets.length > 0 || drawsOn.methods.length > 0) && <p class="topic-entities">
+      {drawsOn.datasets.length > 0 && <><span class="topic-entities-label">{c.measuredOn}</span>{labelGap}{drawsOn.datasets.map((d, i) => <>{i > 0 && c.listSep}<a href={hrefFor(`/datasets/${d.slug}/`, locale)} lang={nameLang}>{d.name}</a></>)}</>}
+      {drawsOn.datasets.length > 0 && drawsOn.methods.length > 0 && ' · '}
+      {drawsOn.methods.length > 0 && <><span class="topic-entities-label">{c.methodsUsed}</span>{labelGap}{drawsOn.methods.map((m, i) => <>{i > 0 && c.listSep}<a href={hrefFor(`/methods/${m.slug}/`, locale)} lang={nameLang}>{m.name}</a></>)}</>}
+    </p>}
     {answer && <section class="short-answer" aria-labelledby="short-answer-heading">
       <h2 id="short-answer-heading">{c.shortAnswer}</h2>
       <p>{answerParts(answer).map(p => p.fig ? <strong class="fig">{p.text}</strong> : p.text)}</p>

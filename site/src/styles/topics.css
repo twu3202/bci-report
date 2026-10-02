@@ -146,6 +146,11 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
 .short-answer p{font-family:var(--serif);font-size:1.08rem;line-height:1.6;color:var(--ink);margin-top:8px}
 .short-answer .fig{font-family:var(--mono);font-size:.94em;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
 
+/* "Measured on: … · Methods: …" under the hero: the dataset and method pages a topic draws on. */
+.topic-entities{margin-top:16px;max-width:900px;font-size:.84rem;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+.topic-entities a{color:var(--accent)}
+.topic-entities-label{font-weight:620;color:var(--ink)}
+
 /* Dot-and-interval plot. Rows are HTML; only the strip is SVG (IntervalPlot.astro). */
 .interval-plot{margin:22px 0;padding:16px 18px 12px;border:1px solid var(--line);background:var(--panel)}
 .ip-row{display:grid;grid-template-columns:minmax(150px,280px) minmax(0,1fr) 150px;gap:14px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}

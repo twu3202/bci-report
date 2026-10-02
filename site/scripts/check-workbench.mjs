@@ -1528,6 +1528,38 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
   assert.ok(pageOf('topics/model-adaptation/').includes(matrixMark)&&pageOf('zh/topics/model-adaptation/').includes(matrixMark)&&printedMatrix>=2,'model-adaptation prints the matrix readout in both languages');
 }
 
+// Topic → entity links (2026-10-02). Entity pages linked back to topics; no topic
+// linked to a dataset or method page, so seven datasets had one real inbound link.
+// Every topic now carries a "Measured on … · Methods …" line under its hero, derived
+// from the entity groups (entities.ts, topicEntities). Checked here from the built
+// pages: the line links exactly the dataset and method pages whose result groups
+// point at that topic — none missing, none extra — in both languages and the
+// Markdown copy.
+{
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const pointing=new Map(topicPages.map(([s])=>[s,new Set()]));
+    for(const f of entityPages.filter(f=>(label==='zh')===f.startsWith('zh/')&&/(?:^|\/)(?:datasets|methods)\/[^/]+\/index\.html$/.test(f))){
+      const self='/'+f.replace(/index\.html$/,'');
+      for(const [,slug] of readFileSync(new URL(f,DIST),'utf8').matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?topics\/([^/"#]+)\//g)){
+        assert.ok(pointing.has(slug),f+': a result group points at '+slug+', which is not a topic page');
+        pointing.get(slug).add(self);
+      }
+    }
+    for(const [slug,pages] of pointing){
+      const path=prefix+'topics/'+slug+'/',html=pageOf(path);
+      const at=html.indexOf('<p class="topic-entities">');
+      assert.ok(pages.size>0,path+': no dataset or method page points here');
+      assert.ok(at>html.indexOf('class="topic-hero"')&&at<html.indexOf('class="short-answer"'),path+': the Measured on line sits under the hero, before the short answer');
+      const line=html.slice(at,html.indexOf('</p>',at));
+      const linked=[...line.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
+      assert.deepEqual([...linked].sort(),[...pages].sort(),path+': the Measured on line must link exactly the dataset and method pages whose groups point here');
+      assert.match(line,label==='zh'?/测量所用数据集：/:/Measured on:/,path+': the line says what it lists');
+      const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+      for(const p of pages) assert.ok(md.includes('](https://bci.report'+p+')'),path+'index.md: the Measured on line must survive into the Markdown copy ('+p+')');
+    }
+  }
+}
+
 // Markdown copies keep the names that live in table controls: the home matrix heads
 // its columns with '#' links and names each model in a button. Skipping them as
 // navigation left the copy's tables with no labels (fixed 2026-10-02).
