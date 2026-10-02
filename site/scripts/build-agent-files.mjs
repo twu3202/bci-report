@@ -203,6 +203,10 @@ const line = (p, note) => `- [${p.h1}](${mdUrl(p)}): ${note}`;
 const home = en.find(p => p.path === '/');
 const topicOrder = [...home.md.matchAll(/\]\(https?:\/\/[^/]+(\/topics\/[^/]+\/)\)/g)].map(m => m[1]);
 const topics = by('/topics/').sort((a, b) => topicOrder.indexOf(a.path) - topicOrder.indexOf(b.path));
+// Protocols in the order their index lists them, which is the matrix order.
+const protocolsIndex = en.find(p => p.path === '/protocols/');
+const protocolOrder = [...protocolsIndex.md.matchAll(/\]\(https?:\/\/[^/]+(\/protocols\/[^/]+\/)\)/g)].map(m => m[1]);
+const protocolPages = by('/protocols/').sort((a, b) => protocolOrder.indexOf(a.path) - protocolOrder.indexOf(b.path));
 const api = en.find(p => p.path === '/api/');
 const apiFiles = [...api.md.matchAll(/^\| \[`([^`]+)`\]\(([^)]+)\) \| ([^|]+) \|/gm)].map(m => `- [${m[1]}](${m[2]}): ${m[3].trim()}`);
 const one = path => en.find(p => p.path === path);
@@ -225,6 +229,10 @@ ${[one('/datasets/'), ...by('/datasets/')].map(p => line(p, p.description)).join
 
 ${[one('/methods/'), ...by('/methods/')].map(p => line(p, p.description)).join('\n')}
 
+## Protocols
+
+${[protocolsIndex, ...protocolPages].map(p => line(p, p.description)).join('\n')}
+
 ## Data
 
 ${line(api, api.description)}
@@ -239,7 +247,7 @@ ${line(one('/data-use/'), one('/data-use/').description)}
 writeFileSync(join(dist, 'llms.txt'), llms);
 
 // --- llms-full.txt: every English page in one file ------------------------------------------
-const full = [home, ...topics, one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), api, one('/releases/'), one('/data-use/')]
+const full = [home, ...topics, one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), protocolsIndex, ...protocolPages, api, one('/releases/'), one('/data-use/')]
   .map(p => p.md.trim()).join('\n\n');
 writeFileSync(join(dist, 'llms-full.txt'), `# BCI Report — full text\n\n> Every English page of ${origin} as Markdown, in the order of ${origin}/llms.txt.\n\n${full}\n`);
 

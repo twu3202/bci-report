@@ -1,0 +1,12 @@
+---
+/**
+ * One published figure, printed from its leaf. `data-fig="<file>|<format>|<raw>"`
+ * is what check-workbench.mjs re-reads: the raw value must be a leaf of that
+ * served file, and the text must be that leaf in that format. `cls` is the
+ * class the figure-parity and Markdown-copy checks look for (metric, fig).
+ */
+import { formatFig, type Fig } from '../data/entities';
+interface Props { f: Fig; cls?: string }
+const { f, cls } = Astro.props;
+---
+<span data-fig={`${f.src}|${f.fmt}|${f.raw}`} class={cls}>{formatFig(f)}</span>

@@ -13,6 +13,17 @@ pages, their canonical/breadcrumb/download metadata, the 82-row/18-contrast/5-se
 extension shape, byte identity between source and downloadable JSON, and the
 protocol distinctions that must remain separate.
 
+The protocol pages (`/protocols/` and `/protocols/<id>/`, both languages, since
+2026-10-02) are held to the dataset and method page checks — every figure carries
+`data-fig` and is re-read from the protocol's own results CSV or protocol JSON —
+and, on top of that: every method with a score has a row with all of its figures,
+the chance flags and single-seed flag travel with the number, the chance level (or
+why there is none) is printed, each matrix method not run is named beside the
+"not a failure" caveat, the payload's protocol text is printed verbatim, the
+English page carries Dataset markup whose distribution is the protocol's CSV and
+JSON, every local link resolves, and the dataset and method pages and the home
+matrix's column headings link to it.
+
 ```sh
 node scripts/check-workbench.mjs        # from site/
 npm run build

@@ -91,8 +91,11 @@ measured on it wherever it appears on the site:
 [datasets](https://bci.report/datasets/) (BETA, EESM19, the wearable dry/wet
 SSVEP set, the Mobile BCI set, …) ·
 [methods](https://bci.report/methods/) (EEGNet, LaBraM, CBraMod, CCA, FBCCA,
-eTRCA, …). Those pages add no number of their own; the site's checks re-read
-every figure on them from the download it came from.
+eTRCA, …). So does each core-matrix protocol:
+[protocols](https://bci.report/protocols/) gives each one its cohort, split,
+electrodes, window, training mode, chance level and every method's score.
+Those pages add no number of their own; the site's checks re-read every figure
+on them from the download it came from.
 
 For assistants and agents: [llms.txt](https://bci.report/llms.txt) indexes every
 page with its short answer, and every page has a Markdown copy at

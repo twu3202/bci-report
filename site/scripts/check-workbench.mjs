@@ -149,9 +149,11 @@ assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>a
 assert.match(built,/separate from the deployment topics above/,'homepage must distinguish the topic extension from the 39-comparison matrix');
 assert.match(built,/not independent experiments, and not an overall ranking/,'homepage must not inflate repeated conditions into independent experiments');
 assert.doesNotMatch(built,/\d+ additional aggregate measurements/,'no summed measurement count across exports that measure different things');
-// Every protocol is reachable without JavaScript and without a dropdown.
+// Every protocol is reachable without JavaScript and without a dropdown. Since
+// 2026-10-02 the column heading is a real link to the protocol's own page.
 for(const t of data.tracks){
   assert.ok(built.includes('data-jump="'+t.id+'"'),t.id+': needs a matrix column heading');
+  assert.ok(built.includes('href="/protocols/'+t.id+'/" data-jump="'+t.id+'"'),t.id+': the matrix column heading must link to its protocol page');
   assert.ok(built.includes('data-track="'+t.id+'"'),t.id+': needs a protocol tab');
 }
 assert.equal(count(/class="track-tab"/g),data.tracks.length);
@@ -598,12 +600,27 @@ const walkDist=(dir,out=[])=>{for(const f of readdirSync(new URL(dir,DIST))){con
 const distFiles=walkDist('');
 const htmlPages=distFiles.filter(f=>f.endsWith('index.html'));
 const leaves=new Map();
+// A CSV's leaves are its numeric cells below the header row. RFC 4180 quoting:
+// the results files quote attribution strings that carry commas.
+const csvRows=text=>{const rows=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(quoted){if(ch==='"'&&text[i+1]==='"'){cell+='"';i++;}else if(ch==='"')quoted=false;else cell+=ch;}
+    else if(ch==='"')quoted=true;else if(ch===','){row.push(cell);cell='';}
+    else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(cell);rows.push(row);row=[];cell='';}
+    else cell+=ch;}
+  if(cell!==''||row.length){row.push(cell);rows.push(row);}return rows;};
 const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{if(typeof v==='number')set.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(walk);};
-  walk(JSON.parse(readFileSync(new URL('data/'+file,DIST),'utf8')));leaves.set(file,set);}return leaves.get(file);};
-const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
-  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US')};
-const entityPages=htmlPages.filter(f=>/(?:^|\/)(?:datasets|methods)\//.test(f));
-assert.ok(entityPages.length>=2*(16+9+2),'dataset and method pages, both languages');
+  const text=readFileSync(new URL('data/'+file,DIST),'utf8');
+  if(file.endsWith('.csv')){for(const row of csvRows(text).slice(1))for(const c of row)if(c.trim()!==''&&Number.isFinite(Number(c)))set.add(Number(c));}
+  else walk(JSON.parse(text));
+  leaves.set(file,set);}return leaves.get(file);};
+const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=>r.toFixed(2)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
+  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s'};
+// Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
+// check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
+// sitemap and llms.txt. Their own checks follow in the protocol block.
+const entityPages=htmlPages.filter(f=>/(?:^|\/)(?:datasets|methods|protocols)\//.test(f));
+assert.ok(entityPages.length>=2*(16+9+2+1+data.tracks.length),'dataset, method and protocol pages, both languages');
 let figsChecked=0;
 for(const f of entityPages){
   const html=readFileSync(new URL(f,DIST),'utf8');
@@ -869,6 +886,126 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 }
 assert.ok(llms.includes('https://bci.report/datasets/ltrsvp/index.md'),'llms.txt: the LTRSVP dataset page');
 console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; credits; dataset pages.');
+
+// --- Protocol pages (2026-10-02) -------------------------------------------------
+// Each core-matrix protocol has its own address in both languages, built from the
+// released track. Seven of the eight were reachable only through JavaScript. Their
+// figures are re-read above from the protocol's own results CSV and protocol JSON;
+// what is checked here is that nothing is missing and that the caveats travel.
+{
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const figsOf=html=>[...html.matchAll(/data-fig="([^"]+)"[^>]*>([^<]*)</g)].map(m=>m[1]+' → '+m[2]);
+  const allNames=[...new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name)))];
+  const resolves=href=>{const p=href.slice(1).split('?')[0];
+    if(p===''||p.endsWith('/'))return existsSync(new URL(p+'index.html',DIST));
+    return existsSync(new URL(p,DIST))||existsSync(new URL(p+'.html',DIST))||existsSync(new URL(p+'/index.html',DIST));};
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    assert.ok(existsSync(new URL(prefix+'protocols/index.html',DIST)),label+': the protocols index must exist');
+    const index=pageOf(prefix+'protocols/');
+    assert.equal((index.match(/<tr data-protocol=/g)||[]).length,data.tracks.length,label+': the index lists every protocol once');
+    for(const t of data.tracks){
+      assert.ok(index.includes(`href="/${prefix}protocols/${t.id}/"`),label+': the index links '+t.id);
+      assert.ok(index.includes(`data-fig="${t.id}-protocol.json|count|${t.subjects}"`),label+': the index prints the '+t.id+' cohort from its file');
+      if(t.chanceLevel!=null) assert.ok(index.includes(`data-fig="${t.id}-protocol.json|pct1raw|${t.chanceLevel}"`),label+': the index prints the '+t.id+' chance level');
+    }
+    assert.match(index,label==='en'?/not a failure/:/不是失败/,label+': the index keeps the blank-cell caveat');
+    for(const [,href] of index.matchAll(/href="(\/[^"#]*)/g)) assert.ok(resolves(href),label+': protocols index link '+href+' does not resolve');
+    // The home matrix's column headings lead here, in the reader's language.
+    const homePage=pageOf(prefix);
+    for(const t of data.tracks)
+      assert.ok(homePage.includes(`href="/${prefix}protocols/${t.id}/" data-jump="${t.id}"`),label+': matrix heading '+t.id+' must link its protocol page');
+  }
+  for(const t of data.tracks){
+    const path='protocols/'+t.id+'/', csv=t.id+'-results.csv', pj=t.id+'-protocol.json';
+    for(const p of [path,'zh/'+path]) assert.ok(existsSync(new URL(p+'index.html',DIST)),p+': protocol page missing');
+    const en=pageOf(path),zh=pageOf('zh/'+path);
+    assert.ok(en.includes('<h1>'+esc(t.title+' on '+t.dataset)+'</h1>'),path+': the h1 names the protocol and its dataset');
+    assert.ok(zh.includes('（'+esc(t.dataset)+'）</h1>'),'zh/'+path+': the h1 names the dataset');
+    assert.ok(en.includes('<title>'+esc(t.title+' on '+t.dataset)+' — EEG decoding results with their protocol'),path+': a self-describing title');
+    assert.ok(en.includes(esc(t.short)),path+': what the split generalises to');
+    // Every figure, in order, identical in both languages — all of them, not only the classed ones.
+    assert.ok(figsOf(en).length>t.rows.length*5,path+': the figures must carry data-fig');
+    assert.deepEqual(figsOf(zh),figsOf(en),'zh/'+path+': every figure must equal the English page, in the same order');
+    for(const [label,html] of [['en',en],['zh',zh]]){
+      const where=(label==='zh'?'zh/':'')+path;
+      // Only this protocol's own downloads back its figures.
+      assert.deepEqual([...new Set([...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]))].sort(),[csv,pj].sort(),where+': figures must cite this protocol\'s CSV and JSON');
+      // Every method with a score, with every figure of its row.
+      const t0=html.indexOf('class="protocol-results"'),body=html.slice(t0,html.indexOf('</tbody>',t0));
+      assert.ok(t0>0,where+': the results table must render');
+      assert.equal((body.match(/<tr data-row=/g)||[]).length,t.rows.length,where+': one table row per method with a score');
+      for(const r of t.rows){
+        const a=body.indexOf(`<tr data-row="${r.id}"`),row=body.slice(a,body.indexOf('</tr>',a));
+        assert.ok(a>0&&row.includes('>'+esc(r.name)+'<'),where+': '+r.name+' must appear');
+        assert.ok(row.includes('>'+esc(r.mode)+'<'),where+'/'+r.id+': training mode');
+        for(const [f,v] of [['pct1raw',r.y],[t.type==='tradeoff'?'pct1raw':'num3',r.x],['s1',r.seconds],['count',r.channels],['count',r.subjects],
+                            ...(r.interval?[['pct1raw',r.interval[0]],['pct1raw',r.interval[1]]]:[]),...(t.type==='tradeoff'&&r.abstain!=null?[['count',r.abstain]]:[])])
+          assert.ok(row.includes(`data-fig="${csv}|${f}|${v}"`),where+'/'+r.id+': '+f+' '+v+' missing from its row');
+        // The chance flags travel with the number, as on the home page.
+        if(t.chanceLevel!=null&&t.type!=='tradeoff'){
+          const below=label==='en'?/At or below chance level/:/不高于随机水平/, reaches=label==='en'?/Interval reaches chance level/:/区间触及随机水平/;
+          if(r.y<=t.chanceLevel) assert.match(row,below,where+'/'+r.id+': at-or-below-chance must be flagged');
+          else if(r.interval&&r.interval[0]<=t.chanceLevel) assert.match(row,reaches,where+'/'+r.id+': chance-touching interval must be flagged');
+          else {assert.doesNotMatch(row,below,where+'/'+r.id+': flagged without cause');assert.doesNotMatch(row,reaches,where+'/'+r.id+': flagged without cause');}
+        }
+        if(t.seedSensitivity?.model===r.name) assert.match(row,/class="flag seed"/,where+'/'+r.id+': the single-seed flag');
+        if(t.type==='tradeoff'&&r.abstain>0) assert.match(row,/class="flag"><span data-fig/,where+'/'+r.id+': people who always abstained are flagged');
+      }
+      // Chance level from the protocol file, or the reason there is none.
+      if(t.chanceLevel!=null){
+        assert.ok(html.includes(`data-fig="${pj}|pct1raw|${t.chanceLevel}"`),where+': chance level');
+        assert.match(html,/class="ip-ref"/,where+': the plot needs a chance reference line');
+      } else assert.match(html,label==='en'?/always abstaining scores zero false activations/:/始终拒识也能得到零误触发/,where+': why detection has no chance level');
+      // Plot values are the table's figures, not new ones.
+      const printed=new Set([...html.matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)].map(m=>m[1]));
+      for(const [,v] of html.matchAll(/class="ip-value"><span class="fig">([^<]+)</g))
+        for(const n of v.match(/\d+(?:\.\d+)?%/g)) assert.ok(printed.has(n),where+': plot value '+n+' is not a printed figure');
+      // A blank matrix cell is not a failure: every matrix method without a result here is named, with that caveat.
+      const n0=html.indexOf('class="protocol-note not-run"'),nr=n0<0?'':html.slice(n0,html.indexOf('</p>',n0));
+      const notRun=allNames.filter(n=>!t.rows.some(r=>r.name===n));
+      if(notRun.length){
+        assert.ok(nr.length>0,where+': the methods not run must be listed');
+        for(const n of notRun) assert.ok(nr.includes(esc(n)),where+': '+n+' must be listed as not run');
+        assert.match(nr,label==='en'?/that is not a failure/:/不是失败/,where+': the blank-cell caveat');
+      }
+      // The protocol as released, verbatim: task, cohort, input, steps, limits, exposure, credit.
+      for(const text of [t.subtitle,t.observations,t.exposure,t.limitation,t.selection,t.pretrainingOverlap,
+                         t.attribution,t.rightsScope,t.privacyReview,t.protocolId,t.version,t.license,...t.protocol,...(t.seedSensitivity?[t.seedSensitivity.scope]:[])])
+        assert.ok(html.includes(esc(text)),where+': payload text missing: '+String(text).slice(0,60));
+      if(t.seedSensitivity) for(const v of [...t.seedSensitivity.balancedAccuracyPercent,t.seedSensitivity.meanPercent])
+        assert.ok(html.includes(`data-fig="${pj}|pct2raw|${v}"`),where+': seed result '+v);
+      assert.ok(html.includes(`href="/data/${csv}"`)&&html.includes(`href="/data/${pj}"`),where+': both protocol downloads are linked');
+      for(const [,href] of html.matchAll(/href="(\/[^"#]*)/g)) assert.ok(resolves(href),where+': link '+href+' does not resolve');
+      // The released status field still reads "Research preview"; the site-wide check above keeps it off the page.
+    }
+    // Dataset markup, on the English page only: this protocol's CSV and JSON, part of the core matrix.
+    const ld=JSON.parse(en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    assert.equal(ld['@type'],'Dataset',path+': Dataset markup');
+    assert.deepEqual(ld.distribution.map(d=>d.contentUrl).sort(),[`https://bci.report/data/${csv}`,`https://bci.report/data/${pj}`].sort(),path+': distribution is the protocol\'s CSV and JSON');
+    assert.equal(ld.url,'https://bci.report/'+path,path+': markup url');
+    assert.equal(ld.isPartOf.url,'https://bci.report/',path+': part of the core-matrix Dataset');
+    assert.ok(ld.variableMeasured.includes(t.yLabel)&&ld.variableMeasured.includes(t.xLabel),path+': both metrics');
+    assert.ok(sitemap.includes('<loc>https://bci.report/'+path+'</loc>')&&sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),path+': sitemap');
+    assert.ok(llms.includes('https://bci.report/'+path+'index.md'),path+': llms.txt');
+    // The dataset page's group for this protocol, and every method page with a row in it, link here.
+    for(const [label,prefix] of [['en',''],['zh','zh/']]){
+      const inLocale=f=>label==='zh'?f.startsWith('zh/'):!f.startsWith('zh/');
+      const groups=entityPages.filter(f=>inLocale(f)&&f.startsWith(prefix+'datasets/')).map(f=>readFileSync(new URL(f,DIST),'utf8')).filter(h=>h.includes(`id="g-${t.id}"`));
+      assert.equal(groups.length,1,label+': exactly one dataset page carries the '+t.id+' group');
+      const g=groups[0].slice(groups[0].indexOf(`id="g-${t.id}"`)),meta=g.slice(0,g.indexOf('</p>'));
+      assert.ok(meta.includes(`href="/${prefix}protocols/${t.id}/"`),label+': the '+t.id+' group must link its protocol page');
+      const methodGroups=entityPages.filter(f=>inLocale(f)&&f.startsWith(prefix+'methods/')).map(f=>readFileSync(new URL(f,DIST),'utf8'))
+        .flatMap(h=>[...h.matchAll(new RegExp(`id="g-[a-z0-9-]+-${t.id}"[\\s\\S]*?</p>`,'g'))].map(m=>m[0]));
+      assert.ok(methodGroups.length>0,label+': method pages carry '+t.id);
+      for(const m of methodGroups) assert.ok(m.includes(`href="/${prefix}protocols/${t.id}/"`),label+': a method-page '+t.id+' group must link its protocol page');
+    }
+  }
+  // No dataset or method page sends a core-matrix group to the home page any more.
+  for(const f of entityPages.filter(f=>/(?:^|\/)(?:datasets|methods)\//.test(f)))
+    assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Core matrix \(home page\)|核心矩阵（首页）/,f+': a core-matrix group still points at the home page');
+}
+
+console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, payload text verbatim, Dataset markup, links resolve; entity groups and matrix headings lead here.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');

@@ -10,6 +10,7 @@ import IntervalPlot from './IntervalPlot.astro';
 import { formatFig, isEnglishOnly, tr, type Fig, type ResultGroup, type DatasetEntity } from '../data/entities';
 import { entityCopy } from '../data/entity-copy';
 import { hrefFor, topicCards, type Locale } from '../data/i18n';
+import { protocolLinkLabel } from '../data/protocols';
 
 interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
 const { locale, groups, showMethod = true } = Astro.props;
@@ -17,7 +18,7 @@ const c = entityCopy[locale];
 const attr = (f: Fig) => `${f.src}|${f.fmt}|${f.raw}`;
 const pageLabel = (path: string) => {
   const slug = path.match(/^\/topics\/([^/#]+)\//)?.[1];
-  return slug ? topicCards[locale][slug].title : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)');
+  return slug ? topicCards[locale][slug].title : (protocolLinkLabel(path, locale) ?? (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)'));
 };
 const plottable = (g: ResultGroup) => {
   const rows = g.rows.filter(r => r.metric.en === 'Balanced accuracy' && r.interval && (r.value.fmt === 'pct1' || r.value.fmt === 'pct1raw'));

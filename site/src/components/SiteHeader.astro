@@ -12,7 +12,7 @@ interface Props {
   locale: Locale;
   /** Current path without a locale prefix, e.g. `/` or `/topics/on-the-move/`. */
   path: string;
-  active?: 'home' | 'topics' | 'data-use' | 'models' | 'datasets';
+  active?: 'home' | 'topics' | 'data-use' | 'models' | 'datasets' | 'protocols';
   /** The homepage anchors work in place; other pages have to travel home first. */
   anchorsAreLocal?: boolean;
 }
@@ -29,7 +29,7 @@ const switchTo = (code: Locale) => localizePath(translated ? path : '/', code);
   <nav aria-label={t.mainNav}>
     <a href={anchor('overview')} aria-current={active === 'home' ? 'page' : undefined}>{t.nav.results}</a>
     <a href={anchor('topics')} aria-current={active === 'topics' ? 'page' : undefined}>{t.nav.explore}</a>
-    <a href={anchor('benchmarks')}>{t.nav.protocols}</a>
+    <a href={hrefFor('/protocols/', locale)} aria-current={active === 'protocols' ? 'page' : undefined}>{t.nav.protocols}</a>
     <a href={hrefFor('/methods/', locale)} aria-current={active === 'models' ? 'page' : undefined}>{t.nav.models}</a>
     <a href={hrefFor('/datasets/', locale)} aria-current={active === 'datasets' ? 'page' : undefined}>{t.nav.datasets}</a>
     <a href={anchor('news')}>{t.nav.updates}</a>

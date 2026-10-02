@@ -192,8 +192,10 @@ $('#track-tabs').addEventListener('keydown',e=>{
   if(!target?.dataset.track)return;
   selectTrack(target.dataset.track);target.focus();
 });
-/* A column heading in the coverage matrix opens that protocol below. The href
-   still works without JavaScript; it just lands on the default protocol. */
+/* A column heading in the coverage matrix links to that protocol's own page
+   (/protocols/<id>/), with or without JavaScript. The handler also switches the
+   panel below to it, so a Back navigation restored from the page cache shows the
+   protocol last opened. */
 $('#overview').addEventListener('click',e=>{const a=(e.target as HTMLElement).closest<HTMLElement>('[data-jump]');if(a?.dataset.jump)selectTrack(a.dataset.jump);});
 $('#family-filter').addEventListener('change',render);$('#sort-results').addEventListener('change',render);
 $('#open-protocol').addEventListener('click',()=>show(titleOf(track)+S.protocol,

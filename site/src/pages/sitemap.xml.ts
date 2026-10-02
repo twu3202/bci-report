@@ -7,6 +7,7 @@ import { site } from '../data/site';
 import { pagesUpdated, siteUpdates } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 import { entityPaths } from '../data/entities';
+import { protocolPagesDate, protocolPaths } from '../data/protocols';
 
 /**
  * `lastmod` only, taken from the release each page actually renders.
@@ -35,7 +36,8 @@ const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
 // The newest site update that changed the page, if any (releases.ts keeps the history).
 const updatedOn = (path: string) => siteUpdates.find(u => (u.paths as readonly string[]).includes(path))?.date;
 const lastmodOf = (path: string) =>
-  updatedOn(path) ?? (/^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
+  updatedOn(path) ?? (path.startsWith('/protocols/') ? protocolPagesDate
+  : /^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
   : CLINICAL_PAGES.has(path) ? CLINICAL
   : EVIDENCE_PAGES.has(path) ? EVIDENCE
   : path.startsWith('/topics/') ? TOPICS : RELEASE);
@@ -46,7 +48,9 @@ export const GET: APIRoute = ({ site: origin }) => {
   const entries: string[] = [];
   // Dataset, method and API pages: generated from the payloads, first published
   // in the 2026-09-27 site update, so they carry that date (pagesUpdated).
-  for (const path of [...translatedPaths, ...entityPaths]) {
+  // Protocol pages (src/data/protocols.ts): one per core-matrix protocol, plus
+  // their index, first published in the 2026-10-02 site update (protocolPagesDate).
+  for (const path of [...translatedPaths, ...entityPaths, ...protocolPaths]) {
     const links = alternates(path, base)
       .map((l) => `<xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${l.href}"/>`).join('');
     for (const code of locales)

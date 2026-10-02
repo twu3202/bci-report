@@ -179,6 +179,23 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
 .entity-group-meta a{color:var(--accent)}
 .entity-group .interval-plot{margin:10px 0 12px}
 .topic-table th small{display:block;font-weight:400;color:var(--muted);font-size:.7rem;margin-top:2px}
+/* Protocol pages: the protocol's terms as a fact list, then its steps. */
+.protocol-payload-note{margin:22px 0 0}
+.protocol-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin:14px 0 0;border-top:1px solid var(--line)}
+.protocol-facts>div{display:grid;grid-template-columns:minmax(120px,170px) minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid var(--line);min-width:0}
+.protocol-facts dt{font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.protocol-facts dd{margin:0;font-size:.875rem;color:var(--ink);overflow-wrap:anywhere;min-width:0}
+.protocol-facts dd a{color:var(--accent)}
+.protocol-facts .fig{font-family:var(--mono);font-weight:650}
+.protocol-facts code{font-family:var(--mono);font-size:.78rem}
+.protocol-results th[scope=row] a,.protocol-index a{color:var(--accent)}
+.protocol-limitation{font-family:var(--serif);font-size:1.05rem;line-height:1.6;max-width:860px;margin-top:10px;color:var(--warn-ink)}
+.protocol-steps{margin:8px 0 0;padding-left:22px;max-width:900px;display:grid;gap:7px;font-size:.86rem;overflow-wrap:anywhere}
+.protocol-prose li{font-size:.84rem;overflow-wrap:anywhere}
+.not-run a{color:var(--accent)}
+.roadmap-p .fig{font-family:var(--mono);font-weight:650}
+@media(max-width:860px){.protocol-facts{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.protocol-facts>div{grid-template-columns:minmax(0,1fr);gap:3px}}
 /* Code on the data API page. */
 pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.55;color:var(--ink)}
 .code-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:14px}

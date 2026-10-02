@@ -149,6 +149,55 @@ export function topicDataset(id: string, name: string, description: string, path
 }
 
 /**
+ * One core-matrix protocol as a Dataset: its results CSV and protocol JSON are
+ * the distribution, and it is part of the home page's core-matrix Dataset.
+ * Name, description and every field come from the released track.
+ */
+export function protocolDataset(t: typeof data.tracks[number], description: string, requestedCitation?: string) {
+  const path = `/protocols/${t.id}/`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `${site.name}: ${t.title} on ${t.dataset} — protocol and results`,
+    description,
+    url: abs(path),
+    license: LICENSE,
+    creator,
+    isAccessibleForFree: true,
+    version: data.releaseId,
+    dateModified: data.generatedAt.slice(0, 10),
+    measurementTechnique: 'Electroencephalography',
+    keywords: ['EEG', 'brain-computer interface', 'benchmark', t.title, t.dataset, ...t.rows.map(r => r.name)],
+    variableMeasured: [t.yLabel, t.xLabel],
+    isBasedOn: t.source,
+    // A citation the source asks for that the released credit line lacks (releases.ts).
+    citation: requestedCitation ? [t.attribution, requestedCitation] : t.attribution,
+    isPartOf: { '@type': 'Dataset', name: `${site.name}: aggregate EEG decoding results`, url: abs('/') },
+    distribution: [
+      download(`/data/${t.id}-results.csv`, 'text/csv'),
+      download(`/data/${t.id}-protocol.json`, 'application/json'),
+    ],
+  };
+}
+
+/** The protocols index: a catalogue of the protocol Datasets. */
+export function protocolCatalog(name: string, description: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DataCatalog',
+    name,
+    description,
+    url: abs('/protocols/'),
+    creator,
+    dataset: data.tracks.map(t => ({
+      '@type': 'Dataset',
+      name: `${site.name}: ${t.title} on ${t.dataset} — protocol and results`,
+      url: abs(`/protocols/${t.id}/`),
+    })),
+  };
+}
+
+/**
  * The page's question and its short answer, as the page prints them. One
  * question per page; the text is the same string the page renders, with the
  * figure markers removed, so the markup cannot say more than the page does.

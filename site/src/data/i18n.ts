@@ -80,12 +80,13 @@ export const translatedPaths = [
 ] as const;
 
 /**
- * Dataset and method pages exist in every locale too. They are generated from
- * the payloads (src/data/entities.ts), so they are matched by shape here rather
- * than listed; the sitemap lists them from entities.ts.
+ * Dataset, method and protocol pages exist in every locale too. They are
+ * generated from the payloads (src/data/entities.ts, src/data/protocols.ts), so
+ * they are matched by shape here rather than listed; the sitemap lists them
+ * from those modules.
  */
 export const isTranslated = (path: string) =>
-  (translatedPaths as readonly string[]).includes(path) || /^\/(?:datasets|methods)\/(?:[a-z0-9-]+\/)?$/.test(path);
+  (translatedPaths as readonly string[]).includes(path) || /^\/(?:datasets|methods|protocols)\/(?:[a-z0-9-]+\/)?$/.test(path);
 
 /** Prefix a path for a locale. English stays at the root. */
 export function localizePath(path: string, locale: Locale): string {
@@ -199,6 +200,12 @@ export const trackTitle = zhLabel({
   'P300 target ERP': 'P300 目标 ERP',
   'Semantic target ERP': '语义目标 ERP',
   'Sleep staging': '睡眠分期',
+});
+
+/** What a protocol's split generalises to, keyed by the payload's `short`. */
+export const trackShort = zhLabel({
+  'Transfer to a new person': '迁移到新被试',
+  'False activation × detection': '误触发 × 检出率',
 });
 
 export const metricLabel = zhLabel({

@@ -7,6 +7,7 @@ import { entityCopy } from '../../../data/entity-copy';
 import { hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
 import { site } from '../../../data/site';
 import { requestedCitations } from '../../../data/releases';
+import { protocolLinkLabel } from '../../../data/protocols';
 
 export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
   params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
@@ -19,7 +20,7 @@ const profile = (profiles.datasets as Record<string, { aliases: string[]; summar
 const methodNames = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comparator).map(r => r.method)))];
 const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0, 5).join(', ')} …`;
 const pages = [...new Set(d.groups.map(g => g.path))];
-const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)'); };
+const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (protocolLinkLabel(p, locale) ?? (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)')); };
 const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
 // A citation the source asks for that the released credit line does not carry (see releases.ts).
 const requested = requestedCitations[d.slug];

@@ -31,7 +31,7 @@ export type L = { en: string; zh?: string };
 export const tr = (l: L, locale: Locale) => (locale === 'zh' && l.zh) || l.en;
 export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
 
-export type Fmt = 'pct1' | 'pct1raw' | 'pp1' | 'auc3' | 'auc2' | 'num3' | 'count';
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 
@@ -41,11 +41,13 @@ export function formatFig(f: Fig): string {
   switch (f.fmt) {
     case 'pct1': return `${(f.raw * 100).toFixed(1)}%`;
     case 'pct1raw': return `${f.raw.toFixed(1)}%`;
+    case 'pct2raw': return `${f.raw.toFixed(2)}%`;
     case 'pp1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)} pp`;
     case 'auc3': return f.raw.toFixed(3);
     case 'auc2': return f.raw.toFixed(2);
     case 'num3': return minus(f.raw.toFixed(3));
     case 'count': return f.raw.toLocaleString('en-US');
+    case 's1': return `${f.raw.toFixed(1)} s`;
   }
 }
 
@@ -103,6 +105,8 @@ const METHOD_OF: Record<string, MethodSlug> = {
   deep4net: 'deep4net', 'csp-lda': 'csp-lda', cca: 'cca', 'author-cca': 'cca', fbcca: 'fbcca',
   'ensemble-trca': 'etrca',
 };
+/** The method page a payload model id belongs to, if it has one. */
+export const methodSlugOf = (id: string): MethodSlug | undefined => METHOD_OF[id];
 export const methodNames: Record<MethodSlug, string> = {
   eegnet: 'EEGNet', labram: 'LaBraM', cbramod: 'CBraMod', shallowfbcspnet: 'ShallowFBCSPNet',
   deep4net: 'Deep4Net', 'csp-lda': 'CSP+LDA', cca: 'CCA', fbcca: 'FBCCA', etrca: 'eTRCA',
@@ -123,6 +127,8 @@ const MVP_SLUG: Record<string, string> = {
   ds003810: 'ds003810', EEGMAT: 'eegmat', 'EESM19 scalp subset': 'eesm19', BETA: 'beta',
   'TMNRED / ds005383': 'tmnred', ds006593: 'ds006593', ds005342: 'ds005342',
 };
+/** The dataset page of a core-matrix dataset, by the name the payload gives it. */
+export const datasetSlugOf = (name: string): string | undefined => MVP_SLUG[name];
 const trackTitles: Record<string, L> = {
   'mi-rest': { en: 'Core matrix · motor imagery & rest', zh: '核心矩阵 · 运动想象与静息' },
   idle: { en: 'Core matrix · idle & command', zh: '核心矩阵 · 空闲与指令' },
@@ -134,11 +140,16 @@ const trackTitles: Record<string, L> = {
   'sleep-scalp': { en: 'Core matrix · sleep staging', zh: '核心矩阵 · 睡眠分期' },
 };
 
+// Each core-matrix group links to its protocol's own page (/protocols/<id>/),
+// where the split, electrodes, window and training mode behind these figures
+// are printed. It used to link to the home page's matrix, which always opened
+// on the first protocol.
 function mvpGroups(datasetName: string): ResultGroup[] {
   return data.tracks.filter(t => t.dataset === datasetName).map(t => {
     const rows: ResultRow[] = [];
+    const path = `/protocols/${t.id}/`;
     for (const r of t.rows) {
-      const base = { path: '/#overview', method: r.name, methodSlug: METHOD_OF[r.id],
+      const base = { path, method: r.name, methodSlug: METHOD_OF[r.id],
                      condition: { en: t.subtitle }, people: r.subjects ?? t.subjects };
       if (t.type === 'tradeoff') {
         rows.push({ ...base, metric: { en: 'Command detection ≤3 s', zh: '指令检出率 ≤3 秒' }, value: fig(r.y, 'pct1raw', MVP) });
@@ -147,7 +158,7 @@ function mvpGroups(datasetName: string): ResultGroup[] {
         rows.push({ ...base, metric: BA, value: fig(r.y, 'pct1raw', MVP), interval: pair(r.interval, 'pct1raw', MVP) });
       }
     }
-    return { id: t.id, title: trackTitles[t.id] ?? { en: t.title }, path: '/#overview', rows,
+    return { id: t.id, title: trackTitles[t.id] ?? { en: t.title }, path, rows,
              chance: t.chanceLevel != null ? fig(t.chanceLevel, 'pct1raw', MVP) : undefined };
   });
 }

@@ -1,7 +1,7 @@
 ---
 /**
- * Shell for the dataset and method pages: same head, header and footer as the
- * topic pages, without the topic switcher.
+ * Shell for the dataset, method and protocol pages: same head, header and
+ * footer as the topic pages, without the topic switcher.
  */
 import { site } from '../data/site';
 import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicChrome, type Locale } from '../data/i18n';
@@ -21,7 +21,7 @@ interface Props {
   dek: string;
   crumbs: { label: string; href?: string }[];
   structured?: object | null;
-  active: 'models' | 'datasets';
+  active: 'models' | 'datasets' | 'protocols';
 }
 const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active } = Astro.props;
 const t = chrome[locale];

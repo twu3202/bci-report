@@ -1,0 +1,48 @@
+---
+/**
+ * /protocols/: the core-matrix protocols, one row each, linking to the page that
+ * prints the whole protocol with every method's result. Built from the released
+ * tracks (src/data/protocols.ts); each figure carries data-fig.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import { protocols } from '../../../data/protocols';
+import { protocolCopy } from '../../../data/entity-copy';
+import { hrefFor, localeOf, localeParams, trackShort, trackTitle } from '../../../data/i18n';
+import { protocolCatalog } from '../../../data/structured';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const c = protocolCopy[locale];
+// Payload prose stays English on the Chinese page, marked so.
+const payloadLang = locale === 'en' ? undefined : 'en';
+const description = c.protocolsDescription(protocols.map(p => trackTitle(p.title, locale)).join(locale === 'zh' ? '、' : ', '));
+const structured = protocolCatalog(protocolCopy.en.protocolsDocTitle,
+  protocolCopy.en.protocolsDescription(protocols.map(p => p.title).join(', ')));
+---
+<EntityLayout locale={locale} path="/protocols/" active="protocols"
+  documentTitle={c.protocolsDocTitle} h1={c.protocolsH1} description={description}
+  eyebrow={c.protocolsTitle} dek={c.protocolsDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.protocolsTitle }]}
+  structured={structured}>
+  {c.payloadNote && <p class="payload-note protocol-payload-note">{c.payloadNote}</p>}
+  <section class="topic-section" aria-labelledby="protocols-heading">
+    <h2 id="protocols-heading">{c.protocolsH2}</h2>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.protocolsRegion}>
+      <table class="protocol-index">
+        <thead><tr><th scope="col">{c.colProtocol}</th><th scope="col">{c.colDataset}</th><th scope="col">{c.colTask}</th><th scope="col">{c.colEvaluation}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colChance}</th><th scope="col">{c.colMethods}</th></tr></thead>
+        <tbody>{protocols.map(p => <tr data-protocol={p.id}>
+          <th scope="row"><a href={hrefFor(`/protocols/${p.id}/`, locale)}>{trackTitle(p.title, locale)}</a></th>
+          <td>{p.datasetSlug ? <a href={hrefFor(`/datasets/${p.datasetSlug}/`, locale)} lang="en">{p.dataset}</a> : <span lang="en">{p.dataset}</span>}</td>
+          <td lang={payloadLang}>{p.subtitle}</td>
+          <td>{trackShort(p.short, locale)}</td>
+          <td><Fig f={p.subjects} cls="metric"/></td>
+          <td>{p.chance ? <Fig f={p.chance} cls="metric"/> : c.noChance}</td>
+          <td lang="en">{p.rows.map((r, i) => <>{i > 0 && ', '}{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.name}</a> : r.name}</>)}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note">{c.indexCaveat}</p>
+    <p class="citation-note"><a href={hrefFor('/#overview', locale)}>{c.matrixLink}</a> · <a href="/data/experiments.json" download>{c.dlAll}</a> · <a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
+  </section>
+</EntityLayout>

@@ -1,0 +1,154 @@
+---
+/**
+ * /protocols/<id>/: one core-matrix protocol, whole, with every method's result.
+ *
+ * The home page shows the same protocol in a tab whose content JavaScript swaps
+ * in; this page is the address for it. Everything printed comes from the track
+ * as released (src/data/protocols.ts): figures carry data-fig and are re-read
+ * from this protocol's own results CSV and protocol JSON by check-workbench.mjs;
+ * prose is the payload's English text, verbatim.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
+import data from '../../../data/mvp.json';
+import { protocols, type Protocol } from '../../../data/protocols';
+import { formatFig } from '../../../data/entities';
+import { protocolCopy } from '../../../data/entity-copy';
+import { defaultLocale, familyLabel, hrefFor, localeOf, locales, metricLabel, trackShort, trackTitle } from '../../../data/i18n';
+import { protocolDataset } from '../../../data/structured';
+
+export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
+  params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
+})));
+const { protocol: p } = Astro.props as { protocol: Protocol };
+const locale = localeOf(Astro.params.lang);
+const c = protocolCopy[locale];
+const path = `/protocols/${p.id}/`;
+// Payload prose stays English on the Chinese page, marked so.
+const payloadLang = locale === 'en' ? undefined : 'en';
+const title = trackTitle(p.title, locale);
+const sep = locale === 'zh' ? '、' : ', ';
+const description = c.protocolDescription(title, p.dataset, p.subtitle, p.rows.map(r => r.name).join(sep));
+const track = data.tracks.find(t => t.id === p.id)!;
+const structured = protocolDataset(track,
+  protocolCopy.en.protocolDescription(p.title, p.dataset, p.subtitle, p.rows.map(r => r.name).join(', ')),
+  p.requested?.text);
+const plot = p.type === 'accuracy' ? p.rows.filter(r => r.interval) : [];
+const notes = [...new Set(p.rows.map(r => r.note))];
+const others = protocols.filter(x => x.id !== p.id);
+const colon = locale === 'zh' ? '：' : ': ';
+---
+<EntityLayout
+  locale={locale} path={path} active="protocols"
+  documentTitle={c.protocolDocTitle(title, p.dataset)}
+  h1={c.protocolH1(title, p.dataset)}
+  description={description}
+  eyebrow={c.protocolEyebrow(trackShort(p.short, locale))}
+  dek={c.protocolDek}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.protocolsTitle, href: hrefFor('/protocols/', locale) }, { label: title }]}
+  structured={structured}
+>
+  {c.payloadNote && <p class="payload-note protocol-payload-note">{c.payloadNote}</p>}
+  <section class="topic-section" aria-labelledby="glance-heading">
+    <h2 id="glance-heading">{c.atAGlance}</h2>
+    <dl class="protocol-facts">
+      <div><dt>{c.dtTask}</dt><dd lang={payloadLang}>{p.subtitle}</dd></div>
+      <div><dt>{c.dtEvaluation}</dt><dd>{trackShort(p.short, locale)}</dd></div>
+      <div><dt>{c.dtDataset}</dt><dd>{p.datasetSlug ? <a href={hrefFor(`/datasets/${p.datasetSlug}/`, locale)} lang="en">{p.dataset}</a> : <span lang="en">{p.dataset}</span>}</dd></div>
+      <div><dt>{c.dtPeople}</dt><dd><Fig f={p.subjects} cls="fig"/></dd></div>
+      <div><dt>{c.dtData}</dt><dd lang={payloadLang}>{p.observations}</dd></div>
+      <div><dt>{c.dtInput}</dt><dd lang={payloadLang}>{p.exposure}</dd></div>
+      <div><dt>{c.dtChance}</dt><dd>{p.chance ? <Fig f={p.chance} cls="fig"/> : c.chanceNone}</dd></div>
+      <div><dt>{c.dtMetrics}</dt><dd>{c.metricPair(metricLabel(p.yLabel, locale), metricLabel(p.xLabel, locale))}</dd></div>
+    </dl>
+  </section>
+
+  <section class="topic-section" id="results" aria-labelledby="results-heading">
+    <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.resultsLede}</p></div>
+    {plot.length > 0 && <IntervalPlot
+      caption={c.plotCaption}
+      legend={c.plotLegend}
+      domain={[0, 100]}
+      ticks={['0%', '25%', '50%', '75%', '100%']}
+      reference={p.chance?.raw}
+      rows={plot.map(r => ({ label: r.name, value: r.primary.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+                             text: `${formatFig(r.primary)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})` }))}
+    />}
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.resultsRegion}>
+      <table class="protocol-results">
+        <thead><tr><th scope="col">{c.colMethod}</th><th scope="col">{c.colTraining}</th><th scope="col">{metricLabel(p.yLabel, locale)}</th><th scope="col">{metricLabel(p.xLabel, locale)}</th><th scope="col">{c.colChannels}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colCompute}</th></tr></thead>
+        <tbody>{p.rows.map(r => <tr data-row={r.id}>
+          <th scope="row"><span lang="en">{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.name}</a> : r.name}</span><small>{familyLabel(r.family, locale)}</small></th>
+          <td lang={payloadLang}>{r.mode}</td>
+          <td><Fig f={r.primary} cls="metric"/>{r.interval && <span class="interval"><Fig f={r.interval[0]}/>–<Fig f={r.interval[1]}/></span>}{p.type === 'tradeoff' && <small lang={payloadLang}>{r.primaryDetail}</small>}{r.chanceFlag && <span class="flag">{r.chanceFlag === 'at-or-below' ? c.atOrBelow : c.intervalReaches}</span>}{r.seedRank && <span class="flag seed">{c.seedFlag(c.seedWord[r.seedRank])}</span>}</td>
+          <td><Fig f={r.secondary} cls="metric"/><small lang={payloadLang}>{r.secondaryDetail}</small>{r.abstain && (r.abstain.raw > 0
+            ? <span class="flag"><Fig f={r.abstain}/>{c.abstainedOf}<Fig f={r.people}/>{c.abstainedTail}</span>
+            : <small><Fig f={r.abstain}/>{c.abstainedOf}<Fig f={r.people}/>{c.abstainedTail}</small>)}</td>
+          <td><Fig f={r.channels}/></td>
+          <td><Fig f={r.people}/></td>
+          <td><Fig f={r.seconds}/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="citation-note">{c.computeNote}</p>
+    {p.notRun.length > 0 && <p class="protocol-note not-run"><strong>{c.notRun}</strong> <span lang="en">{p.notRun.map((m, i) => <>{i > 0 && ', '}{m.methodSlug ? <a href={hrefFor(`/methods/${m.methodSlug}/`, locale)}>{m.name}</a> : m.name}</>)}</span>{locale === 'zh' ? '。' : '. '}{c.notRunCaveat}</p>}
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <h2 id="limits-heading">{c.limits}</h2>
+    <p class="protocol-limitation" lang={payloadLang}>{p.limitation}</p>
+    <h3 class="roadmap-h3" id="steps">{c.steps}</h3>
+    <ol class="protocol-steps" lang={payloadLang}>{p.steps.map(s => <li>{s}</li>)}</ol>
+    <h3 class="roadmap-h3" id="stability">{c.stability}</h3>
+    <p class="roadmap-p" lang={payloadLang}>{p.selection}</p>
+    {p.seed && <p class="roadmap-p">{c.seedLine(p.seed.model)} {p.seed.values.map((v, i) => <>{i > 0 && ' · '}<Fig f={v} cls="fig"/></>)}{locale === 'zh' ? '；' : '; '}{c.mean} <Fig f={p.seed.mean} cls="fig"/></p>}
+    {p.seed && <p class="roadmap-p" lang={payloadLang}>{p.seed.scope}</p>}
+    <h3 class="roadmap-h3" id="pretraining-exposure">{c.exposure}</h3>
+    <p class="roadmap-p" lang={payloadLang}>{p.pretrainingOverlap}</p>
+    <h3 class="roadmap-h3">{c.methodNotes}</h3>
+    <ul class="entity-links protocol-prose" lang={payloadLang}>{notes.map(n => <li>{n}</li>)}</ul>
+    <h3 class="roadmap-h3">{c.modelTerms}</h3>
+    <ul class="entity-links protocol-prose">{p.rows.map(r => <li><strong lang="en">{r.name}</strong>{colon}<span lang={payloadLang}>{r.modelRights}</span></li>)}</ul>
+  </section>
+
+  <section class="topic-section" id="source" aria-labelledby="source-heading">
+    <h2 id="source-heading">{c.source}</h2>
+    <div class="citation-list">
+      <article>
+        <h3 lang="en">{p.dataset}</h3>
+        <p><strong>{c.credit}</strong> <span lang="en">{p.attribution}</span></p>
+        {p.requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{p.requested.text}</span> <a href={p.requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={p.requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
+        <p><a href={p.licenseUrl} target="_blank" rel="noreferrer" lang="en">{p.license} ↗</a> · <a href={p.source} target="_blank" rel="noreferrer">{c.original}</a>{p.datasetSlug && <> · <a href={hrefFor(`/datasets/${p.datasetSlug}/`, locale)}>{c.datasetPage}</a></>}</p>
+        <p>{c.notRedistributed}</p>
+      </article>
+      <article>
+        <p><strong>{c.scope}</strong> <span lang="en">{p.rightsScope}</span></p>
+        <p><strong>{c.privacy}</strong> <span lang="en">{p.privacyReview}</span></p>
+        <p><strong>{c.reviewed}</strong> <time datetime={p.reviewedAt}>{p.reviewedAt}</time> · {c.reviewBasis} {p.reviewBasis.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname} ↗</a></>)}</p>
+      </article>
+    </div>
+    {p.corrections.map(x => <p class="protocol-note"><strong>{c.correction} · <time datetime={x.date}>{x.date}</time></strong>{colon}{x.what[locale]} <a href={hrefFor('/releases/#corrections', locale)}>{c.correctionLink}</a></p>)}
+  </section>
+
+  <section class="topic-section" id="record" aria-labelledby="record-heading">
+    <h2 id="record-heading">{c.record}</h2>
+    <dl class="protocol-facts">
+      <div><dt>{c.dtProtocolId}</dt><dd><code>{p.protocolId}</code></dd></div>
+      <div><dt>{c.dtVersion}</dt><dd lang={payloadLang}>{p.version}</dd></div>
+      <div><dt>{c.dtBackend}</dt><dd lang={payloadLang}>{p.backend}</dd></div>
+      <div><dt>{c.dtElapsed}</dt><dd><Fig f={p.elapsed} cls="fig"/> · {c.elapsedNote}</dd></div>
+      <div><dt>{c.dtAudit}</dt><dd><code class="hash">{p.auditSha}</code></dd></div>
+      {p.summarySha && <div><dt>{c.dtSummary}</dt><dd><code class="hash">{p.summarySha}</code></dd></div>}
+      {p.protocolSha && <div><dt>{c.dtProtocolSha}</dt><dd><code class="hash">{p.protocolSha}</code></dd></div>}
+    </dl>
+  </section>
+
+  <section class="topic-section" id="downloads" aria-labelledby="downloads-heading">
+    <h2 id="downloads-heading">{c.downloads}</h2>
+    <div class="topic-actions"><a class="button primary" href={`/data/${p.files.results}`} download>{c.dlResults}</a><a class="button" href={`/data/${p.files.protocol}`} download>{c.dlProtocol}</a><a class="button" href="/data/experiments.json" download>{c.dlAll}</a></div>
+    <h3 class="roadmap-h3">{c.otherProtocols}</h3>
+    <ul class="entity-links">{others.map(o => <li><a href={hrefFor(`/protocols/${o.id}/`, locale)}>{c.protocolH1(trackTitle(o.title, locale), o.dataset)}</a></li>)}</ul>
+    <p class="citation-note"><a href={hrefFor('/protocols/', locale)}>{c.allProtocols}</a> · <a href={hrefFor('/#overview', locale)}>{c.matrixLink}</a> · <a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
+  </section>
+</EntityLayout>
