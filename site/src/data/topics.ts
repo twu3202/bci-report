@@ -163,21 +163,32 @@ export const intervalPct = (interval?: Interval | null, digits = 1) =>
   interval ? `${pct(interval[0], digits)}–${pct(interval[1], digits)}` : '—';
 export const intervalPp = (interval: Interval, digits = 1, locale: Locale = 'en') =>
   `${interval[0] >= 0 ? '+' : '−'}${Math.abs(interval[0] * 100).toFixed(digits)} ${locale === 'zh' ? '至' : 'to'} ${interval[1] >= 0 ? '+' : '−'}${Math.abs(interval[1] * 100).toFixed(digits)} pp`;
-export const modelLabel = (model: string) => ({
-  'random-uniform': 'Uniform random',
-  'same-frequency-power': 'Same-frequency power',
-  'spectral-ridge-gain-invariant': 'Spectral ridge',
-  'spectral-ridge': 'Spectral ridge',
-  'author-cca': 'Author-style CCA',
-  'ensemble-trca': 'Single-band eTRCA',
-  'temporal-feature-logistic-regression': 'Temporal-feature L2 logistic regression',
-  'log-covariance-ridge': 'Log-covariance ridge',
-  'labram': 'LaBraM',
-  'cbramod': 'CBraMod',
-  'eegnet': 'EEGNet',
-  'fbcca': 'FBCCA',
-  'cca': 'CCA',
-}[model] ?? model);
+/**
+ * Display names for the payload's model ids. Names of published methods stay
+ * English in both languages (glossary, i18n.ts); descriptive labels — what a
+ * baseline does rather than what it is called — are translated, so the plot
+ * and table rows say what the prose beside them says ("单频带 eTRCA").
+ * `locale` is required so no caller can quietly print the English on a Chinese page.
+ */
+const MODEL_LABELS: Record<string, { en: string; zh?: string }> = {
+  'random-uniform': { en: 'Uniform random', zh: '均匀随机' },
+  'same-frequency-power': { en: 'Same-frequency power', zh: '同频功率' },
+  'spectral-ridge-gain-invariant': { en: 'Spectral ridge' },
+  'spectral-ridge': { en: 'Spectral ridge' },
+  'author-cca': { en: 'Author-style CCA', zh: 'CCA（按原作者设置）' },
+  'ensemble-trca': { en: 'Single-band eTRCA', zh: '单频带 eTRCA' },
+  'temporal-feature-logistic-regression': { en: 'Temporal-feature L2 logistic regression', zh: '时域特征 L2 逻辑回归' },
+  'log-covariance-ridge': { en: 'Log-covariance ridge', zh: '对数协方差岭回归' },
+  'labram': { en: 'LaBraM' },
+  'cbramod': { en: 'CBraMod' },
+  'eegnet': { en: 'EEGNet' },
+  'fbcca': { en: 'FBCCA' },
+  'cca': { en: 'CCA' },
+};
+export const modelLabel = (model: string, locale: Locale) => {
+  const label = MODEL_LABELS[model];
+  return label ? (locale === 'zh' && label.zh) || label.en : model;
+};
 
 export const conditionLabel = (condition?: string | null, locale: Locale = 'en') => ({
   en: { standing: 'Standing', slow_walking: 'Slow walk · 0.8 m/s',

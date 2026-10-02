@@ -54,7 +54,7 @@
     "Liu et al. (2020)"
    ],
    "summary_en": "BETA (BEnchmark database Towards BCI Application) is a 40-target SSVEP dataset: 64-channel EEG from 70 participants performing a cued-spelling task on a keyboard-style virtual speller (8–15.8 Hz), four blocks each, recorded outside an electromagnetically shielded room. Released by Liu et al. (Tsinghua University) in Frontiers in Neuroscience (2020), with data on figshare.",
-   "summary_zh": "BETA（BEnchmark database Towards BCI Application）是一个 40 目标 SSVEP 数据集：70 名被试在键盘式虚拟拼写界面（8–15.8 Hz）上完成提示拼写任务，每人 4 个组块，记录 64 导 EEG，采集在电磁屏蔽室之外进行。由 Liu 等人（Tsinghua University）于 2020 年发表于 Frontiers in Neuroscience，数据托管于 figshare。",
+   "summary_zh": "BETA（BEnchmark database Towards BCI Application）是一个 40 目标 SSVEP 数据集：70 名被试在键盘式虚拟拼写界面（8–15.8 Hz）上完成提示拼写任务，每人 4 个组块，记录 64 通道 EEG，采集在电磁屏蔽室之外进行。由清华大学 Liu 等人于 2020 年发表于 Frontiers in Neuroscience，数据托管于 figshare。",
    "facts_sources": [
     "https://figshare.com/articles/dataset/_/12264401",
     "https://pmc.ncbi.nlm.nih.gov/articles/PMC7324867/",
@@ -70,7 +70,7 @@
     "Bai et al. (2025)"
    ],
    "summary_en": "TMNRED is a Chinese natural-reading EEG dataset from Tianjin University: 30 native Chinese-speaking participants read news headlines or short sentences containing target or non-target semantic items across 8 blocks, recorded with a portable 32-channel system (30 effective channels). Released on OpenNeuro (ds005383) and described by Bai et al. in Scientific Data (2025).",
-   "summary_zh": "TMNRED 是 Tianjin University 发布的中文自然阅读 EEG 数据集：30 名以中文为母语的被试在 8 个组块中阅读含目标或非目标语义项的新闻标题或短句，使用便携式 32 导系统（30 个有效通道）记录。数据发布于 OpenNeuro（ds005383），并由 Bai 等人在 Scientific Data（2025）中描述。",
+   "summary_zh": "TMNRED 是天津大学发布的中文自然阅读 EEG 数据集：30 名以中文为母语的被试在 8 个组块中阅读含目标或非目标语义项的新闻标题或短句，使用便携式 32 通道系统（30 个有效通道）记录。数据发布于 OpenNeuro（ds005383），并由 Bai 等人在 Scientific Data（2025）中描述。",
    "facts_sources": [
     "https://openneuro.org/datasets/ds005383",
     "https://pmc.ncbi.nlm.nih.gov/articles/PMC12032204/",
@@ -98,7 +98,7 @@
     "Triana-Guzman et al. (2022)"
    ],
    "summary_en": "OpenNeuro ds005342 contains 17-channel EEG (250 Hz) from 32 healthy participants who, following on-screen cues, imagined sit-to-stand or stand-to-sit movements or stayed in an idle state, first in offline calibration runs and then in online BCI runs. Released on OpenNeuro by Triana-Guzman et al. (2024); the study appeared in Frontiers in Neuroinformatics (2022).",
-   "summary_zh": "OpenNeuro ds005342 包含 32 名健康被试的 17 导 EEG（250 Hz）：被试按屏幕提示想象从坐到站或从站到坐的动作，或保持空闲状态，先进行离线校准，再进行在线 BCI 实验。由 Triana-Guzman 等人发布于 OpenNeuro（2024），相关研究发表于 Frontiers in Neuroinformatics（2022）。",
+   "summary_zh": "OpenNeuro ds005342 包含 32 名健康被试的 17 通道 EEG（250 Hz）：被试按屏幕提示想象从坐到站或从站到坐的动作，或保持空闲状态，先进行离线校准，再进行在线 BCI 实验。由 Triana-Guzman 等人发布于 OpenNeuro（2024），相关研究发表于 Frontiers in Neuroinformatics（2022）。",
    "facts_sources": [
     "https://openneuro.org/datasets/ds005342",
     "https://pmc.ncbi.nlm.nih.gov/articles/PMC9481272/",
@@ -113,7 +113,7 @@
     "Zhu et al. (2021)"
    ],
    "summary_en": "An open wearable SSVEP dataset: 8-channel EEG from 102 healthy participants performing a cue-guided 12-target SSVEP task (9.25–14.75 Hz), recorded with wet and with dry electrodes, 10 consecutive blocks each. Participants were recruited through the BCI Brain-Controlled Robot Contest at the 2020 World Robot Contest. Released by Zhu et al. in Sensors (2021), with data on figshare.",
-   "summary_zh": "一个开放的可穿戴 SSVEP 数据集：102 名健康被试在提示引导下完成 12 目标 SSVEP 任务（9.25–14.75 Hz），分别用湿电极和干电极各记录 10 个连续组块的 8 导 EEG。被试通过 2020 年 World Robot Contest 中的 BCI Brain-Controlled Robot Contest 招募。由 Zhu 等人于 2021 年发表于 Sensors，数据托管于 figshare。",
+   "summary_zh": "一个开放的可穿戴 SSVEP 数据集：102 名健康被试在提示引导下完成 12 目标 SSVEP 任务（9.25–14.75 Hz），分别用湿电极和干电极各记录 10 个连续组块的 8 通道 EEG。被试通过 2020 年世界机器人大赛中的 BCI 脑控机器人大赛招募。由 Zhu 等人于 2021 年发表于 Sensors，数据托管于 figshare。",
    "facts_sources": [
     "https://figshare.com/articles/dataset/_/13560281",
     "https://pmc.ncbi.nlm.nih.gov/articles/PMC7916479/",
@@ -238,7 +238,7 @@
     "An EEG dataset for studying asynchronous steady-state visual evoked potential (SSVEP) based brain computer interfaces"
    ],
    "summary_en": "EEG dataset for studying asynchronous SSVEP-based brain-computer interfaces, with 24 participants, released by Zhao et al. (Yanshan University, Qinhuangdao) on figshare (24906300, CC BY 4.0; first posted 2023, revision 3 in 2024) and described in Brain-Apparatus Communication 3(1) (2024).",
-   "summary_zh": "用于研究异步 SSVEP 脑机接口的 EEG 数据集，含 24 名被试，由 Zhao 等（Yanshan University，Qinhuangdao）发布于 figshare（24906300，CC BY 4.0；2023 年首次发布，2024 年更新为第 3 版），数据描述论文发表于 Brain-Apparatus Communication 3(1)（2024）。",
+   "summary_zh": "用于研究异步 SSVEP 脑机接口的 EEG 数据集，含 24 名被试，由燕山大学（秦皇岛）Zhao 等发布于 figshare（24906300，CC BY 4.0；2023 年首次发布，2024 年更新为第 3 版），数据描述论文发表于 Brain-Apparatus Communication 3(1)（2024）。",
    "facts_sources": [
     "https://figshare.com/articles/dataset/_/24906300",
     "https://doi.org/10.1080/27706710.2024.2418650"

@@ -5,8 +5,12 @@ const $=<T extends HTMLElement=HTMLElement>(s:string)=>document.querySelector<T>
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 let track:Track=data.tracks[0];
 /* Warm series, deliberately with no blue in it: slate blue is reserved for the
-   chance reference line, which must never read as one more model. */
-const colors=['#b3450e','#1f6f63','#8a6d1f','#7a4a8c','#a8382f','#5c7a2e','#93552a','#6b3f5e'];
+   chance reference line, which must never read as one more model. Neighbours
+   differ in lightness as well as hue (the fifth was a second rust, the sixth an
+   olive that a deuteranope sees as the teal), and the legend is numbered, so
+   the colour is never the only link between a mark and its name. Kept in step
+   with the .legend i.sN swatches in generated.css. */
+const colors=['#b3450e','#1f6f63','#8a6d1f','#7a4a8c','#3b3029','#b5487a','#5c7a2e','#6b3f5e'];
 const CHANCE_LINE='#2f5f74';
 const pct=(v:number)=>v.toFixed(1)+'%';
 
@@ -17,9 +21,14 @@ const pct=(v:number)=>v.toFixed(1)+'%';
    The page's <html lang> picks the table; anything else (including the test's
    DOM double, which has no documentElement) falls back to English. */
 const LANG=((document as Document & {documentElement?:{lang?:string}}).documentElement?.lang??'').startsWith('zh')?'zh':'en';
+/* Release prose stays English on the Chinese page. The server marks it
+   lang="en"; render() replaces that markup, so it has to mark it again, or a
+   screen reader reads English in a Chinese voice after the first paint. */
+const EN=LANG==='zh'?' lang="en"':'';
 const S={
   en:{subjects:' subjects',rights:'Aggregate research results',secondaryUp:'Secondary metric ↑',secondaryDown:'Secondary metric ↓',
       empty:'No evaluated models from this family in this track. Try another family.',noResults:'No results to display',
+      licence:'Licence: ',licenceLink:'Licence ↗',
       tradeoffTitle:'Detection meets reliability',accuracyTitle:'Accuracy by configuration',
       tradeoffNote:'Upper left is better. Always abstaining also yields zero false activations, so detection must be read alongside them.',
       accuracyNote:'Subject-mean balanced accuracy. Error bars show descriptive 95% intervals where available.',
@@ -27,7 +36,6 @@ const S={
       chartLabel:(y:string,x:string)=>y+' and '+x+' chart',tip:(n:string,v:string)=>n+': '+v,
       tipTradeoff:(n:string,d:string,f:string)=>n+': detection '+d+', false activation '+f,
       axisFa:'Idle false activation rate →',axisDetect:'Command detection % ↑',axisBa:'Balanced accuracy % ↑',axisOrder:'Configurations follow legend order',
-      results:' results',
       atOrBelow:(c:number)=>'At or below the '+c+'% chance level',reaches:(c:number)=>'Interval reaches the '+c+'% chance level',
       seed:(w:string,n:number,lo:string,hi:string,m:string)=>'Single seed — the '+w+' of '+n+' run ('+lo+'–'+hi+'%, mean '+m+'%)',
       seedWord:{highest:'highest',lowest:'lowest',middle:'middle'} as Record<string,string>,
@@ -41,6 +49,7 @@ const S={
       metric:{} as Record<string,string>},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
       empty:'该协议下没有这一类别的已评测模型。请换一个类别。',noResults:'无可显示的结果',
+      licence:'许可：',licenceLink:'许可 ↗',
       tradeoffTitle:'检出率与可靠性',accuracyTitle:'各配置的准确率',
       tradeoffNote:'越靠左上越好。始终拒识也能得到零误触发，所以检出率必须和误触发率一起读。',
       accuracyNote:'被试平均平衡准确率。误差线在有数据时表示描述性 95% 区间。',
@@ -48,7 +57,6 @@ const S={
       chartLabel:(y:string,x:string)=>y+'与'+x+'图',tip:(n:string,v:string)=>n+'：'+v,
       tipTradeoff:(n:string,d:string,f:string)=>n+'：检出率 '+d+'，误触发率 '+f,
       axisFa:'空闲误触发率 →',axisDetect:'指令检出率 % ↑',axisBa:'平衡准确率 % ↑',axisOrder:'配置按图例顺序排列',
-      results:' 结果',
       atOrBelow:(c:number)=>'不高于 '+c+'% 随机水平',reaches:(c:number)=>'区间触及 '+c+'% 随机水平',
       seed:(w:string,n:number,lo:string,hi:string,m:string)=>'仅单个随机种子——为 '+n+' 次运行中'+w+'（'+lo+'–'+hi+'%，均值 '+m+'%）',
       seedWord:{highest:'最高的一次',lowest:'最低的一次',middle:'居中的一次'} as Record<string,string>,
@@ -101,7 +109,7 @@ function seedScopeNote(){
   const ss=seedInfo(track) as (SeedSensitivity&{scope?:string})|undefined;
   if(!ss)return '';
   const {word}=seedRank(ss);
-  return '<p class="detail-note">'+esc(ss.scope??'')+S.scopeTail(word)+'</p>';
+  return '<p class="detail-note"><span'+EN+'>'+esc(ss.scope??'')+'</span>'+S.scopeTail(word)+'</p>';
 }
 
 const chanceOf=(t:Track)=>(t as Partial<{chanceLevel:number|null}>).chanceLevel ?? null;
@@ -135,15 +143,15 @@ function visibleRows(){const f=$<HTMLSelectElement>('#family-filter').value,s=$<
 function render(){
 const rows=visibleRows();
 $('#track-title').textContent=track.subtitle;
-$('#track-meta').textContent=track.dataset+' · '+track.subjects+S.subjects+' · '+track.observations+' · '+track.exposure;
+$('#track-meta').innerHTML=esc(track.dataset)+' · '+track.subjects+S.subjects+' · <span'+EN+'>'+esc(track.observations)+' · '+esc(track.exposure)+'</span>';
 $('#track-limitation').textContent=track.limitation;
-$('#track-rights').textContent=track.license+' · '+S.rights;
+$('#track-rights').innerHTML='<span'+EN+'>'+esc(track.license)+'</span> · '+S.rights;
 $<HTMLAnchorElement>('#track-source').href=track.source;
 syncTabs();
 $('#secondary-sort').textContent=track.type==='tradeoff'?S.secondaryUp:S.secondaryDown;
 $('#metric-y-heading').textContent=metric(track.yLabel);$('#metric-x-heading').textContent=metric(track.xLabel);
 $<HTMLAnchorElement>('#download-results').href='/data/'+track.id+'-results.csv';
-$('#result-rows').innerHTML=rows.length?rows.map(r=>'<tr><td><button class="model-name" data-model="'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small>'+esc(r.mode)+' · '+r.channels+' ch</small></td><td><strong>'+pct(r.y)+'</strong><small>'+esc(r.yDetail)+'</small>'+chanceFlag(r)+seedFlag(r)+'</td><td><strong>'+xValue(r)+'</strong><small>'+esc(r.xDetail)+'</small>'+abstainFlag(r)+'</td><td>'+r.seconds.toFixed(1)+'s</td></tr>').join(''):'<tr><td colspan="4" class="empty">'+S.empty+'</td></tr>';
+$('#result-rows').innerHTML=rows.length?rows.map(r=>'<tr><td><button class="model-name" data-model="'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small></td><td><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small>'+chanceFlag(r)+seedFlag(r)+'</td><td><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small>'+abstainFlag(r)+'</td><td>'+r.seconds.toFixed(1)+'s</td></tr>').join(''):'<tr><td colspan="4" class="empty">'+S.empty+'</td></tr>';
 draw(rows);
 hint();
 }
@@ -161,14 +169,14 @@ $('#chart-note').textContent=tradeoff?S.tradeoffNote:S.accuracyNote+(chanceNote!
 // A class rather than style="background:…": the Content-Security-Policy in
 // public/_headers allows no inline style at all, and an innerHTML-injected
 // style attribute is blocked by it.
-$('#chart-legend').innerHTML=rows.map((r,i)=>'<span><i class="s'+(i%colors.length)+'"></i>'+esc(r.name)+'</span>').join('');
+$('#chart-legend').innerHTML=rows.map((r,i)=>'<li><i class="s'+(i%colors.length)+'"></i><span class="n">'+(i+1)+'</span> '+esc(r.name)+'</li>').join('');
 if(!rows.length){$('#result-chart').innerHTML='<p class="empty">'+S.noResults+'</p>';return;}
 const x0=38,y0=176,w=210,h=145;
 let svg='<svg viewBox="0 0 280 220" role="img" aria-label="'+esc(S.chartLabel(metric(track.yLabel),metric(track.xLabel)))+'">';
 [0,25,50,75,100].forEach(v=>{const y=y0-h*v/100;svg+='<line x1="'+x0+'" x2="'+(x0+w)+'" y1="'+y+'" y2="'+y+'" stroke="#e7dccd"/><text x="29" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';});
 if(tradeoff){const maxX=Math.max(5,...rows.map(r=>r.x))*1.2;
 [0,maxX/2,maxX].forEach(v=>{const x=x0+w*v/maxX;svg+='<text x="'+x+'" y="195" text-anchor="middle">'+v.toFixed(1)+'%</text>';});
-rows.forEach((r,i)=>{const x=x0+w*r.x/maxX,y=y0-h*r.y/100;svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+colors[i%colors.length]+'" stroke="#fffdfa" stroke-width="1.5"><title>'+esc(S.tipTradeoff(r.name,pct(r.y),pct(r.x)))+'</title></circle>';});
+rows.forEach((r,i)=>{const x=x0+w*r.x/maxX,y=y0-h*r.y/100;svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+colors[i%colors.length]+'" stroke="#fffdfa" stroke-width="1.5"><title>'+esc(S.tipTradeoff(r.name,pct(r.y),pct(r.x)))+'</title></circle><text x="'+(x+8)+'" y="'+(y+4)+'">'+(i+1)+'</text>';});
 svg+='<text x="145" y="216" text-anchor="middle">'+S.axisFa+'</text><text x="38" y="16">'+S.axisDetect+'</text>';
 }else{const gap=w/rows.length,chance=chanceOf(track);
 // Without this line a 10.8% on a 40-class task and a 49.4% on a 2-class task
@@ -181,7 +189,9 @@ rows.forEach((r,i)=>{const x=x0+gap*(i+.5),height=h*r.y/100;svg+='<rect x="'+(x-
 svg+='<text x="38" y="16">'+S.axisBa+'</text><text x="145" y="216" text-anchor="middle">'+S.axisOrder+'</text>';
 }$('#result-chart').innerHTML=svg+'</svg>';
 }
-function selectTrack(id:string){const found=data.tracks.find(t=>t.id===id);if(!found)throw new Error('Unknown track');track=found;$('#track-panel').setAttribute('aria-label',titleOf(track)+S.results);render();}
+// The panel is named by its tab (aria-labelledby, set in syncTabs); an
+// aria-label beside it was ignored by every reader and only drifted.
+function selectTrack(id:string){const found=data.tracks.find(t=>t.id===id);if(!found)throw new Error('Unknown track');track=found;render();}
 $('#track-tabs').addEventListener('click',e=>{const b=(e.target as HTMLElement).closest<HTMLElement>('.track-tab');if(b?.dataset.track)selectTrack(b.dataset.track);});
 $('#track-tabs').addEventListener('keydown',e=>{
   const key=(e as KeyboardEvent).key,at=tabs.findIndex(b=>b.dataset.track===track.id);
@@ -199,13 +209,13 @@ $('#track-tabs').addEventListener('keydown',e=>{
 $('#overview').addEventListener('click',e=>{const a=(e.target as HTMLElement).closest<HTMLElement>('[data-jump]');if(a?.dataset.jump)selectTrack(a.dataset.jump);});
 $('#family-filter').addEventListener('change',render);$('#sort-results').addEventListener('change',render);
 $('#open-protocol').addEventListener('click',()=>show(titleOf(track)+S.protocol,
-'<p>'+esc(track.subtitle)+'</p><ol>'+track.protocol.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+
-'<div class="detail-metrics"><div><small>'+S.stageSum+'</small><strong>'+track.elapsed.toFixed(1)+S.seconds+'</strong><small>'+esc(track.backend)+S.accel+'</small></div><div><small>'+S.stability+'</small><p lang="en">'+esc(track.selection)+'</p>'+seedScopeNote()+'</div></div>'+
+'<p'+EN+'>'+esc(track.subtitle)+'</p><ol'+EN+'>'+track.protocol.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+
+'<div class="detail-metrics"><div><small>'+S.stageSum+'</small><strong>'+track.elapsed.toFixed(1)+S.seconds+'</strong><small><span'+EN+'>'+esc(track.backend)+'</span>'+S.accel+'</small></div><div><small>'+S.stability+'</small><p lang="en">'+esc(track.selection)+'</p>'+seedScopeNote()+'</div></div>'+
 '<p>'+S.release+esc(track.version)+'</p><p>'+S.protocolId+'<code>'+esc(track.protocolId)+'</code></p><p>'+S.audit+'<code>'+esc(track.auditSha)+'</code></p>'+
-'<h3 class="detail-note">'+S.scope+'</h3><div lang="en"><p>'+esc(track.attribution)+'</p><p>'+esc(track.rightsScope)+'</p><p>'+esc(track.privacyReview)+'</p><p>'+esc(track.pretrainingOverlap)+'</p></div>'+
-'<a class="button" href="/data/'+track.id+'-protocol.json" download>'+S.dlProtocol+'</a> <a class="button" href="'+esc(track.source)+'" target="_blank" rel="noreferrer">'+S.original+'</a> <a class="button" href="'+esc(track.licenseUrl)+'" target="_blank" rel="noreferrer">'+esc(track.license)+' ↗</a>'));
+'<h3 class="detail-note">'+S.scope+'</h3><p>'+S.licence+'<span'+EN+'>'+esc(track.license)+'</span></p><div lang="en"><p>'+esc(track.attribution)+'</p><p>'+esc(track.rightsScope)+'</p><p>'+esc(track.privacyReview)+'</p><p>'+esc(track.pretrainingOverlap)+'</p></div>'+
+'<a class="button" href="/data/'+track.id+'-protocol.json" download>'+S.dlProtocol+'</a> <a class="button" href="'+esc(track.source)+'" target="_blank" rel="noreferrer">'+S.original+'</a> <a class="button" href="'+esc(track.licenseUrl)+'" target="_blank" rel="noreferrer">'+S.licenceLink+'</a>'));
 $('#result-rows').addEventListener('click',e=>{const button=(e.target as HTMLElement).closest<HTMLElement>('[data-model]');if(!button)return;const r=track.rows.find(r=>r.id===button.dataset.model)!;show(r.name+' · '+titleOf(track),
-'<p>'+esc(r.mode)+' · '+r.channels+' ch · '+r.subjects+S.participants+'</p><div class="detail-metrics"><div><small>'+esc(metric(track.yLabel))+'</small><strong>'+pct(r.y)+'</strong><small>'+esc(r.yDetail)+'</small></div><div><small>'+esc(metric(track.xLabel))+'</small><strong>'+xValue(r)+'</strong><small>'+esc(r.xDetail)+'</small></div></div><p lang="en">'+esc(r.note)+'</p>'+
+'<p><span'+EN+'>'+esc(r.mode)+'</span> · '+r.channels+' ch · '+r.subjects+S.participants+'</p><div class="detail-metrics"><div><small>'+esc(metric(track.yLabel))+'</small><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small></div><div><small>'+esc(metric(track.xLabel))+'</small><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small></div></div><p lang="en">'+esc(r.note)+'</p>'+
 (r.abstain!==null?'<p class="detail-note">'+S.abstainNote(r.subjects,r.abstain)+'</p>':'')+
 '<p class="detail-note" lang="en">'+esc(r.modelRights)+'</p><p class="detail-note" lang="en">'+esc(track.limitation)+'</p><p class="detail-note">'+S.cohortOnly+'</p>');});
 $('#close-dialog').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});

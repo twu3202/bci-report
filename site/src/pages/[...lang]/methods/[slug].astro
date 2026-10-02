@@ -32,11 +32,11 @@ const structured = {
 <EntityLayout
   locale={locale} path={path} active="models"
   documentTitle={c.methodTitle(m.name)}
-  h1={c.methodH1(m.name)}
+  h1={c.methodH1(m.name)} name={m.name}
   description={c.methodDescription(m.name, datasetNames.join(locale === 'zh' ? '、' : ', '))}
   eyebrow={m.family ? familyLabel(m.family, locale) : c.methodsTitle}
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.methodsDek}
-  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle, href: hrefFor('/methods/', locale) }, { label: m.name }]}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle, href: hrefFor('/methods/', locale) }, { label: m.name, en: true }]}
   structured={structured}
 >
   {profile && <section class="entity-profile" aria-label={c.whatItIs}>

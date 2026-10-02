@@ -34,7 +34,7 @@ const named: Record<string, Text> = {
   },
   'adaptation-update.json': {
     en: 'LaBraM adapted to new people on EEGMAT three ways (head only, last block, rank-4 LoRA) over three seeds: scores, paired changes with people helped or harmed, trainable parameters and training time; the next-day experiment as status only.',
-    zh: 'EEGMAT 上把 LaBraM 适配到新被试的三种方式（只训分类头、最后一个 block、秩为 4 的 LoRA），3 个随机种子：分数、配对变化与提升/变差人数、可训练参数与训练时间；次日实验只列状态。',
+    zh: 'EEGMAT 上把 LaBraM 适配到新被试的三种方式（只训分类头、最后一个 Transformer 块、秩为 4 的 LoRA），3 个随机种子：分数、配对变化与提升/变差人数、可训练参数与训练时间；次日实验只列状态。',
   },
   'extension-update.json': {
     en: 'Twenty further people of the asynchronous SSVEP release under a pilot-fixed and a personal rejection threshold (detection, coverage, correct-and-accepted, false acceptance per state, people helped and harmed), and LTRSVP image-rate and recording transfer (two primary arms, paired difference, 3×3 matrix), with rights records.',

@@ -103,12 +103,46 @@ for(const t of data.tracks){
   }
 }
 
+// The licence is a sentence on some tracks (semantic-target: 75 characters). In
+// a no-wrap button it ran ~180px past a phone-width dialog; the button now says
+// "Licence" and the sentence is printed as text.
+tool.execute({trackId:'semantic-target',family:'all'});
+get('#open-protocol').events.click();
+{
+  const t=data.tracks.find(t=>t.id==='semantic-target');
+  assert.ok(get('#dialog-body').innerHTML.includes('<span>'+t.license+'</span>'),'protocol dialog prints the licence as text');
+  for(const [,label] of get('#dialog-body').innerHTML.matchAll(/<a class="button"[^>]*>([^<]*)<\/a>/g))
+    assert.ok(label.length<=30,'a dialog button label must stay short enough for a phone: "'+label+'"');
+  assert.match(get('#chart-legend').innerHTML,/^<li><i class="s0"><\/i><span class="n">1<\/span>/,'the chart legend is numbered, matching the 1..n axis');
+}
+get('#close-dialog').events.click();
 // The seed-sensitivity scope sentence exists in the data; it must be rendered.
 tool.execute({trackId:'mi-rest',family:'all'});
 get('#open-protocol').events.click();
 assert.match(get('#dialog-body').innerHTML,/no best-seed selection/,'protocol dialog must render seedSensitivity.scope');
 assert.match(get('#dialog-body').innerHTML,/retained seed is also the highest/,'protocol dialog must state where the retained seed sits');
 get('#close-dialog').events.click();
+// The same script on the Chinese page. render() replaces the server markup, and
+// it used to drop every lang="en" the server had set, so a screen reader read
+// the English payload in a Chinese voice after the first paint.
+{
+  const els=new Map(),zget=s=>{if(!els.has(s))els.set(s,new Element());return els.get(s);};
+  zget('#family-filter').value='all';zget('#sort-results').value='name';
+  const zdoc={querySelector:zget,querySelectorAll:()=>[],documentElement:{lang:'zh-Hans'}};
+  vm.runInNewContext(stripTypeScriptTypes(source),{data,document:zdoc,window:{addEventListener(){}},AbortController,Promise,console});
+  const t0=data.tracks[0];
+  assert.equal((zget('#result-rows').innerHTML.match(/<small lang="en">/g)||[]).length,t0.rows.length*3,'zh: mode, primary and secondary details keep lang="en" after the client re-render');
+  assert.match(zget('#track-meta').innerHTML,/<span lang="en">[^<]+<\/span>$/,'zh: observations and exposure keep lang="en"');
+  assert.match(zget('#track-rights').innerHTML,/^<span lang="en">[^<]+<\/span> · 聚合研究结果$/,'zh: the licence keeps lang="en"');
+  zget('#open-protocol').events.click();
+  const proto=zget('#dialog-body').innerHTML;
+  assert.match(proto,/^<p lang="en">[^<]+<\/p><ol lang="en">/,'zh: the protocol subtitle and steps are marked English');
+  assert.match(proto,/<p>许可：<span lang="en">/,'zh: the licence is printed, marked English');
+  assert.match(proto,/>许可 ↗<\/a>$/,'zh: the licence button has a short Chinese label');
+  zget('#result-rows').events.click({target:{closest:()=>({dataset:{model:t0.rows[0].id}})}});
+  assert.match(zget('#dialog-body').innerHTML,/^<p><span lang="en">[^<]+<\/span> · \d+ ch · /,'zh: the model dialog marks the training mode English');
+  assert.equal((zget('#dialog-body').innerHTML.match(/<small lang="en">/g)||[]).length,2,'zh: both metric details in the model dialog are marked English');
+}
 // --- Coverage matrix -------------------------------------------------------
 // It is server-rendered, so the client script above never touches it and none
 // of the assertions so far cover it — yet it is now the first thing a visitor
@@ -215,6 +249,12 @@ for(const page of [DIST+'index.html',DIST+'data-use/index.html',DIST+'404.html',
 for(const js of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.js')))
   assert.doesNotMatch(readFileSync(new URL(DIST+'_astro/'+js,import.meta.url),'utf8'),
     /style="|\.style\.|setAttribute\(['"`]style/,js+': the client script must not inject inline style either');
+// The masthead is styled through .site-header. A bare `header{` rule made the
+// date row of every release entry a second sticky bar painted over the site
+// navigation; a bare `nav{` laid the topic switcher out sideways.
+for(const css of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.css')))
+  assert.doesNotMatch(readFileSync(new URL(DIST+'_astro/'+css,import.meta.url),'utf8'),/(?:^|[{},])\s*(?:header|nav)\s*\{/,
+    css+': a bare header or nav rule styles every <header> and <nav>, not only the masthead');
 const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
 assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
 assert.match(headers,/Content-Security-Policy:[^\n]*script-src 'self';/,'script-src must stay free of unsafe-inline');
@@ -249,11 +289,11 @@ assert.deepEqual(
 );
 
 // --- Chinese pages ------------------------------------------------------------
-// The interface and the four topic pages exist in Chinese; /data-use/ does not.
+// The interface and the topic pages exist in Chinese; /data-use/ does not.
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','when-not-to-act':'没有人下指令时，EEG 解码器有多常误触发？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -281,7 +321,11 @@ for(const path of bilingual){
 }
 for(const [slug] of topicPages){
   const zh=read('zh/topics/'+slug+'/');
-  assert.ok(zh.includes('<h1>'+zhTitles[slug]+'</h1>'),slug+': Chinese title must render in the initial HTML');
+  // The h1 carries <wbr> phrase breaks (topicQuestionPhrases in i18n.ts); the
+  // words must still be exactly the question.
+  const h1=(zh.match(/<h1>([\s\S]*?)<\/h1>/)||[])[1]??'';
+  assert.equal(h1.replace(/<wbr>/g,''),zhTitles[slug],slug+': Chinese title must render in the initial HTML');
+  assert.ok(h1.includes('<wbr>'),slug+': a Chinese h1 needs phrase breaks, or keep-all lets a phone cut it mid-word');
   assert.ok(zh.includes('href="/data/'+dataFileOf(slug)+'"'),slug+': the same reviewed download, not a translated copy');
 }
 // Credits survive translation: every DOI on an English topic page is on its Chinese twin.
@@ -306,9 +350,14 @@ const rejected={
   '未来组块':'后续组块','有标注':'校准试次','个标注':'个校准试次','谱岭回归':'spectral ridge',
   '解析参考':'免训练参考','暴露':'是否出现在预训练数据中','纠缠':'相互混杂',
   '三种子':'三个随机种子 (三种子 also parses as 三种·子, three kinds)',
+  '导 EEG':'通道 EEG (多导睡眠图 stays)','个百分点':'pp, with 百分点 named once on the page','个 epoch':'轮 (训练 5 轮)',
+  '冻结的编码器':'冻结编码器','最后一个 block':'最后一个 Transformer 块',
+  // Descriptive method labels: modelLabel(model, locale) prints the Chinese.
+  'Author-style CCA':'CCA（按原作者设置）','Single-band eTRCA':'单频带 eTRCA','Uniform random':'均匀随机',
 };
 const chineseOnly=html=>html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<(\w+)[^>]*\blang="en"[^>]*>[\s\S]*?<\/\1>/g,'');
-for(const path of bilingual){
+// The release log is checked here too; the API page is checked with the entity pages below.
+for(const path of [...bilingual,'releases/']){
   const zh=chineseOnly(read('zh/'+path));
   for(const [bad,good] of Object.entries(rejected))
     assert.ok(!zh.includes(bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
@@ -429,6 +478,13 @@ for(const [label,html] of [['en',pageOf('topics/clinical-groups/')],['zh',pageOf
   assert.doesNotMatch(html,/68\.5|70\.9|68\.53|70\.92/,label+': the per-group age means must not appear');
   assert.match(html,/IRB 201707828/,label+': the ethics approval is cited');
   assert.match(html,/10\.1136\/jnnp-2022-330154/,label+': the cohort study is credited');
+}
+// The released medical disclaimer, the most safety-relevant sentence on the
+// page, is in Chinese on the Chinese page, with the released English beside it.
+{
+  const zh=pageOf('zh/topics/clinical-groups/');
+  assert.ok(zh.includes('<p class="protocol-note">公开数据集上的研究结果：不是诊断，不是诊断准确率，也不是医疗器械或医疗建议。'),'zh: the medical disclaimer must be in Chinese');
+  assert.ok(zh.includes('<span lang="en">'+cl.medical_disclaimer+'</span>'),'zh: the released English disclaimer stays beside it, marked English');
 }
 // Holds: three of them, stated without numbers, on both home pages.
 for(const [label,path] of [['en',''],['zh','zh/']]){
@@ -1006,6 +1062,31 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
 }
 
 console.log('PASS: protocol pages — both languages, every method with a score, every figure re-read from the protocol\'s own CSV and JSON, chance levels and the blank-cell caveat, payload text verbatim, Dataset markup, links resolve; entity groups and matrix headings lead here.');
+
+// --- Model directory and data register, in Chinese -----------------------------
+// mvp.json stays English (it is a released file). Its directory notes, licence
+// notes and rights-review notes are translated for display only, keyed by their
+// exact English text in src/data/directory-zh.json. A translation must carry
+// exactly the numbers of its English (no figure typed by hand that no check
+// reads), every note must have one, and no key may outlive its text.
+{
+  const dirZh=JSON.parse(readFileSync(new URL('../src/data/directory-zh.json',import.meta.url),'utf8')).text;
+  const digits=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]).sort();
+  for(const [en,zh] of Object.entries(dirZh)){
+    assert.deepEqual(digits(zh),digits(en),'directory-zh.json: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
+    assert.ok(/\p{Script=Han}/u.test(zh),'directory-zh.json: "'+en.slice(0,50)+'" has no Chinese');
+    for(const [bad,good] of Object.entries(rejected)) assert.ok(!zh.includes(bad),`directory-zh.json: "${bad}" is a rejected rendering — use "${good}"`);
+  }
+  // Licence names are names: one spelling in every language.
+  const licenceName=/^(?:MIT|GPL-3\.0|CC0-1\.0|CC BY 4\.0|CC BY-ND 4\.0|CC BY-NC-ND 4\.0|Open Data Commons Attribution License 1\.0)$/;
+  const texts=[...data.models.flatMap(m=>[m.note,m.license]),...data.datasets.flatMap(d=>[d.detail,d.license])];
+  for(const text of texts) assert.ok(dirZh[text]||licenceName.test(text),'directory-zh.json: no Chinese for "'+text.slice(0,60)+'"');
+  for(const key of Object.keys(dirZh)) assert.ok(texts.includes(key),'directory-zh.json: "'+key.slice(0,50)+'" matches no text in mvp.json');
+  const zhHome=read('zh/');
+  const directory=zhHome.slice(zhHome.indexOf('id="models"'),zhHome.indexOf('id="news"'));
+  assert.ok(directory.length>2000,'zh: the model directory and data register must render');
+  assert.doesNotMatch(directory,/<p lang="en">/,'zh: model notes and rights-review notes are printed in Chinese');
+}
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');
 console.log('PASS: coverage matrix, eight topic pages, track changes, family filtering, sorting, empty state, dialogs, invalid inputs, export counts and English-only data.');

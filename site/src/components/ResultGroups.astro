@@ -7,7 +7,7 @@
  * rows with intervals, on one scale.
  */
 import IntervalPlot from './IntervalPlot.astro';
-import { formatFig, isEnglishOnly, tr, type Fig, type ResultGroup, type DatasetEntity } from '../data/entities';
+import { formatFig, isEnglishOnly, methodLabel, methodLabelIsEnglish, tr, type Fig, type ResultGroup, type DatasetEntity } from '../data/entities';
 import { entityCopy } from '../data/entity-copy';
 import { hrefFor, topicCards, type Locale } from '../data/i18n';
 import { protocolLinkLabel } from '../data/protocols';
@@ -42,7 +42,9 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
         domain={[0, scale]}
         ticks={['0%', '25%', '50%', '75%', '100%']}
         reference={g.chance ? g.chance.raw : undefined}
-        rows={plot.map(r => ({ label: oneCondition ? r.method : `${r.method} · ${tr(r.condition, locale)}`, value: r.value.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+        rows={plot.map(r => ({ label: oneCondition ? methodLabel(r, locale) : `${methodLabel(r, locale)} · ${tr(r.condition, locale)}`,
+                               labelLang: methodLabelIsEnglish(r, locale) && (oneCondition || isEnglishOnly(r.condition, locale)) ? 'en' : undefined,
+                               value: r.value.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
                                text: `${formatFig(r.value)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: r.comparator ? 'muted' as const : 'rust' as const }))}
       />}
       <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.resultsRegion(heading(g))}>
@@ -50,7 +52,7 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
           <thead><tr>{showMethod && <th scope="col">{c.colMethod}</th>}<th scope="col">{c.colCondition}</th><th scope="col">{c.colMetric}</th><th scope="col">{c.colValue}</th><th scope="col">{c.colPeople}</th></tr></thead>
           <tbody>{g.rows.map(r => (
             <tr>
-              {showMethod && <th scope="row" lang="en">{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.method}</a> : r.method}{r.comparator && <small lang={locale === 'zh' ? 'zh-Hans' : 'en'}>{c.comparator}</small>}</th>}
+              {showMethod && <th scope="row" lang={methodLabelIsEnglish(r, locale) ? 'en' : undefined}>{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{methodLabel(r, locale)}</a> : methodLabel(r, locale)}{r.comparator && <small lang={locale === 'zh' ? 'zh-Hans' : 'en'}>{c.comparator}</small>}</th>}
               <td lang={isEnglishOnly(r.condition, locale) ? 'en' : undefined}>{tr(r.condition, locale)}</td>
               <td lang={isEnglishOnly(r.metric, locale) ? 'en' : undefined}>{tr(r.metric, locale)}</td>
               <td>{r.of

@@ -24,7 +24,7 @@ const anchor = (id: string) => (anchorsAreLocal ? `#${id}` : hrefFor(`/#${id}`, 
 const translated = isTranslated(path);
 const switchTo = (code: Locale) => localizePath(translated ? path : '/', code);
 ---
-<header>
+<header class="site-header">
   <a class="brand" href={hrefFor('/', locale)}><img class="mark" src="/logo.svg" width="30" height="30" alt="" />{site.name}</a>
   <nav aria-label={t.mainNav}>
     <a href={anchor('overview')} aria-current={active === 'home' ? 'page' : undefined}>{t.nav.results}</a>

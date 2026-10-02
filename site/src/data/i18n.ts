@@ -1,7 +1,8 @@
 /**
  * Interface copy in English and Chinese.
  *
- * Scope, as decided: the interface and the four topic pages are translated.
+ * Scope, as decided: the interface, the topic pages, the dataset and method
+ * pages, the release log and the data API page are translated.
  * /data-use/ and 404 stay English-only — a policy text in two parallel versions
  * invites the question of which one binds, and the answer is not worth having to
  * give. Every link from a Chinese page to /data-use/ says it leads to English.
@@ -11,14 +12,17 @@
  * "CC BY 4.0" has one spelling, a credit belongs to the person who earned it,
  * and a translated DOI is a broken link.
  *
- * Nor is the release payload. Protocol steps, limitations, model notes and
- * dataset details render in English on the Chinese pages too, marked
+ * Nor is the release payload. Protocol steps, limitations, table details and
+ * attributions render in English on the Chinese pages too, marked
  * `lang="en"`. That is a hard constraint as well as a choice: check-workbench.mjs
  * asserts the page-data and downloadable copies of the topic export are
  * byte-identical, and check_site_artifact.py pins its SHA-256 against the
  * review audit. Short interface labels that happen to come from the payload —
  * protocol titles, metric names, statuses — are mapped for display below,
- * keyed by their English value, which leaves the data files untouched.
+ * keyed by their English value, which leaves the data files untouched. So are
+ * the home page's model-directory notes and licence and rights-review notes
+ * (directory-zh.json, `directoryText`), which a Chinese reader needs in order
+ * to use the directory at all; licence identifiers stay as written.
  */
 /*
  * Chinese glossary. One rendering per concept, following Chinese EEG / BCI /
@@ -49,9 +53,26 @@
  *   confounded / entangled       相互混杂
  *   target-only                  仅用目标被试数据
  *   method names                 stay English: spectral ridge, eTRCA, CCA …
- *                                with a gloss at first use where helpful
+ *                                with a gloss at first use where helpful;
+ *                                descriptive labels are translated:
+ *                                单频带 eTRCA, CCA（按原作者设置）, 均匀随机,
+ *                                同频功率 (modelLabel in topics.ts)
+ *   channel                      通道            not 导 ("64 导 EEG"); 多导睡眠图
+ *                                                is the established word for
+ *                                                polysomnography and stays
+ *   percentage points            pp              glossed 百分点 at its first use
+ *                                                on a page; not 个百分点
+ *   training epoch               轮              "训练 5 轮", not "5 个 epoch"
+ *   epoch (ERP, a time window)   分段
+ *   epoch (sleep, 30 s scoring)  帧 / 数据帧
+ *   network block                Transformer 块（block）  the experimental block
+ *                                                is 组块; the two meet on one page
+ *   institutions                 Chinese institutions by their standard Chinese
+ *                                names (清华大学, 天津大学, 燕山大学); others as
+ *                                they name themselves
  */
 import { site } from './site';
+import directoryZh from './directory-zh.json';
 
 export const locales = ['en', 'zh'] as const;
 export type Locale = (typeof locales)[number];
@@ -240,6 +261,18 @@ export const datasetTask = zhLabel({
   'Semantic target ERP': '语义目标 ERP',
 });
 
+/**
+ * A model-directory or data-register note (mvp.json `note`, `license`,
+ * `detail`) as the page prints it. Chinese from directory-zh.json where the
+ * exact English text has a translation; otherwise the English, with
+ * `lang: 'en'` so the element can say so. The payload itself is never touched.
+ */
+export function directoryText(text: string, locale: Locale): { text: string; lang?: 'en' } {
+  if (locale === 'en') return { text };
+  const zh = (directoryZh.text as Record<string, string>)[text];
+  return zh ? { text: zh } : { text, lang: 'en' };
+}
+
 export const familyLabel = (family: string, locale: Locale) => ({
   en: { foundation: 'Foundation model', small: 'Compact model', classical: 'Classical method' },
   zh: { foundation: '基础模型', small: '轻量模型', classical: '经典方法' },
@@ -303,7 +336,6 @@ export const home = {
     protocolsLede: 'Cohort, electrode layout, training budget, source terms and known limitations, alongside the numbers they belong to.',
     tabsLabel: 'Evaluation protocol',
     tabParticipants: (n: number) => `${n} participants`,
-    panelResults: (title: string) => `${title} results`,
     subjects: 'subjects',
     viewProtocol: 'View protocol ↗',
     measuredHere: 'Measured here',
@@ -383,7 +415,7 @@ export const home = {
     releasesLink: '发布记录与下载 →',
     holdsEyebrow: '暂缓发布',
     holdsH2: '暂缓发布的内容，以及从何时开始',
-    holdsLede: '刻意缺席的结果。暂缓不是失败的结果，而是一个暂时还无法诚实发布的结果。完整登记册（含已解除的暂缓）在发布记录页上。',
+    holdsLede: '有意暂不发布的结果。暂缓不代表结果失败，只是目前还不能如实发布。完整登记册（含已解除的暂缓）在发布记录页上。',
     holdsSince: (d: string) => `${d}起暂缓`,
     holdsRegister: '完整暂缓登记册 →',
     matrixEyebrow: '核心基准矩阵',
@@ -410,7 +442,6 @@ export const home = {
     protocolsLede: '队列、电极布局、训练预算、来源条款与已知局限，和它们所属的数字放在一起。',
     tabsLabel: '评测协议',
     tabParticipants: (n: number) => `${n} 名被试`,
-    panelResults: (title: string) => `${title} 结果`,
     subjects: '名被试',
     viewProtocol: '查看协议 ↗',
     measuredHere: '本协议实测',
@@ -455,7 +486,7 @@ export const home = {
     newsH2: '研究前沿动态',
     newsLede: '精选研究动态，均链接至原始来源。',
     methodsEyebrow: '先有证据，再谈排名',
-    methodsH2: '分数只有连同条件才有用。',
+    methodsH2: '离开测量条件，分数就没有意义。',
     downloadAll: '下载全部结果 · JSON ↓',
     principles: [
       ['能跑通前向传播不等于基准测试', '下载、加载检查与完成评分的评测有各自的状态标签。仍待适配器的模型没有结果。'],
@@ -467,7 +498,7 @@ export const home = {
     colon: '：',
     closeDialog: '关闭详情',
     /** Shown once above the payload-driven sections, which stay in English. */
-    payloadNote: '协议步骤、局限说明、模型备注与数据集署名来自发布数据本身，保持英文原文——它们随数据一起被审核，翻译会让网页与可下载文件不再一致。',
+    payloadNote: '协议步骤、局限说明、结果表中的配置说明与数据集署名来自发布数据本身，保持英文原文——它们随数据一起被审核，翻译会让网页与可下载文件不再一致。模型目录与公开数据两节中的备注和许可说明译成了中文，许可名称保持原文；下载文件仍为英文。',
   },
 } as const;
 
@@ -578,11 +609,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
     'calibration-budget': { kicker: '适配预算', title: '需要多少校准？',
       question: '可穿戴 SSVEP 解码器需要多少校准数据？',
-      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。另有：基础模型遇到新被试时，只训分类头、最后一个 block 还是 LoRA。',
+      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。另有：基础模型遇到新被试时，只训分类头、最后一个 Transformer 块还是 LoRA。',
       detail: '共同的后续组块 · 仅用目标被试数据拟合 · LaBraM 适配，36 人' },
     'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
-      question: '没有人下指令时，EEG 解码器有多常误触发？',
-      summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style 研究计划：何时该执行、该等待、该重新校准。',
+      question: '没有人下指令时，EEG 解码器误触发有多频繁？',
+      summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style（一次编码、回答多个问题）研究计划：何时该执行、该等待、该重新校准。',
       detail: '空闲，四人试点 · 非控制状态，20 名被试 · 研究计划' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
       question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
@@ -594,3 +625,35 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '两个任务 · 两种编码器 · 三次随机初始化' },
   },
 };
+
+/**
+ * Where a Chinese topic question may break across lines. Headings use
+ * `word-break: keep-all` (global.css) so 协议 never splits between two lines,
+ * which also makes a run of Chinese with no punctuation one unbreakable word;
+ * on a phone that run is wider than the line, and `overflow-wrap` then cut it
+ * wherever the space ran out — "有多常误触|发". Each "|" marks a phrase
+ * boundary and renders as <wbr>. The marks are checked against `question` at
+ * build time, so the heading and the <title> can never say different things.
+ * Keep each phrase at eight characters or fewer: that is what fits a 320px
+ * screen at the phone size (topics.css).
+ */
+export const topicQuestionPhrases: Record<string, string> = {
+  'dry-vs-wet': '干电极的|解码效果|能和湿电极|一样好吗？',
+  'screen-to-vr': '在屏幕上|校准的 P300 解码器，换到 VR 里|还管用吗？',
+  'fewer-electrodes': '更少的电极、|或耳道内电极，|能比得上|完整的|头皮电极吗？',
+  'on-the-move': '走路或跑步时，EEG 解码|还管用吗？',
+  'calibration-budget': '可穿戴 SSVEP 解码器|需要多少|校准数据？',
+  'when-not-to-act': '没有人下指令时，EEG 解码器|误触发|有多频繁？',
+  'clinical-groups': '静息态 EEG 能把|帕金森病患者|和对照组|区分开吗？',
+  'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
+};
+
+/** The h1 of a topic page as phrases, to be joined with <wbr>. */
+export function questionPhrases(slug: string, locale: Locale): string[] {
+  const question = topicCards[locale][slug].question;
+  const marked = locale === 'zh' ? topicQuestionPhrases[slug] : undefined;
+  if (!marked) return [question];
+  if (marked.replace(/\|/g, '') !== question)
+    throw new Error(`i18n.ts: topicQuestionPhrases['${slug}'] no longer matches its question`);
+  return marked.split('|');
+}

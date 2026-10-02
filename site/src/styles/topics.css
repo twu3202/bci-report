@@ -43,6 +43,7 @@
 .topic-table .subhead th{background:#efe3d4;color:var(--accent-deep);font-size:.7rem}
 .topic-table-spaced{margin-top:14px}
 .protocol-note{padding:15px 18px;background:var(--wash);border-left:3px solid var(--accent);font-size:.82rem;color:var(--warn-ink);margin:18px 0}
+.protocol-note-original{display:block;margin-top:5px;font-size:.8125rem}
 .limits-label{margin:26px 0 10px}
 .topic-heading+.limits-label{margin-top:4px}
 .method-grid-wide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -56,7 +57,7 @@
 .citation-list article{padding:16px;border:1px solid var(--line);background:var(--panel);min-width:0;overflow-wrap:anywhere}
 .citation-list p{font-size:.8rem;margin-top:7px}
 .citation-list a{color:var(--accent)}
-.topic-switcher{margin-top:42px;padding-top:24px;border-top:3px double var(--rule)}
+.topic-switcher{display:block;margin-top:42px;padding-top:24px;border-top:3px double var(--rule)}
 .topic-switcher>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px}
 .topic-switcher a{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
 .topic-switcher a[aria-current=page]{background:var(--wash);box-shadow:inset 0 -3px var(--accent)}
@@ -90,6 +91,10 @@
 @media(max-width:560px){
   .topic-hero{padding:28px 0}
   .topic-hero h1{font-size:2.25rem}
+  /* Chinese questions break only at the phrase points written into them
+     (<wbr>, see topicQuestionPhrases in i18n.ts). At 2rem the longest phrase,
+     eight characters, still fits a 320px screen. */
+  :lang(zh-Hans) .topic-hero h1{font-size:2rem}
   .topic-dek{font-size:1rem}
   .topic-section{padding:32px 0}
   .topic-heading h2{font-size:1.45rem}
@@ -148,7 +153,9 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
 .ip-strip.rust .ip-ci,.ip-strip.rust .ip-pt{stroke:var(--accent)}
 .ip-strip.ink .ip-ci,.ip-strip.ink .ip-pt{stroke:#62554b}
 .ip-strip.olive .ip-ci,.ip-strip.olive .ip-pt{stroke:var(--good)}
-.ip-strip.muted .ip-ci,.ip-strip.muted .ip-pt{stroke:var(--rule)}
+/* A comparator reads as secondary, but still has to be seen: --rule was 1.67:1
+   on the panel. This is 3.3:1, the minimum for a graphical mark. */
+.ip-strip.muted .ip-ci,.ip-strip.muted .ip-pt{stroke:#9c8a76}
 .ip-value{font-family:var(--mono);font-size:.8rem;text-align:right;color:var(--ink)}
 .ip-ticks{position:relative;height:1.1rem;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
 .ip-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}

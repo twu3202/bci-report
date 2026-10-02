@@ -137,8 +137,8 @@ const copy = {
   },
   zh: {
     documentTitle: `${topicCards.zh['when-not-to-act'].question} · Jev-style 的 EEG 决策模型`,
-    description: `取决于解码器有多愿意执行。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
-    answer: `取决于解码器有多愿意执行：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，最安静的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令。在另一组 [[${extPeople}]] 名被试的测试中，CCA 解码器使用在更早一个试点上固定的阈值，在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的三种状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}；改为按每名被试拟合阈值后，这类误接受减少了，但被接受且正确的指令占比并没有提高。两项测试都按试次或窗口计数，而不是按小时，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
+    description: `取决于解码器执行得有多频繁。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
+    answer: `取决于解码器执行得有多频繁：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，触发最少的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令。在另一组 [[${extPeople}]] 名被试的测试中，CCA 解码器使用在更早一个试点上固定的阈值，在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的三种状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}；改为按每名被试拟合阈值后，这类误接受减少了，但被接受且正确的指令占比并没有提高。两项测试都按试次或窗口计数，而不是按小时，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
     eyebrow: '拒识 · Jev-style 研究计划',
     dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再给出一个 Jev-style 研究计划：要测什么，才能回答解码器究竟该不该执行。`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,

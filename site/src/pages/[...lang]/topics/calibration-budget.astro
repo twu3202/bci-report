@@ -176,7 +176,7 @@ const copy = {
     trcaEyebrow: '方法很关键',
     trcaH2: '单频带 eTRCA 的反应不同',
     trcaLede: '仅用目标被试数据的 eTRCA 组使用 24 或 48 个校准试次，并在相同的后续测试组块上评测。零校准试次的 CCA 是免训练参考方法，不是未经拟合的 eTRCA。',
-    trcaFindingLabel: '湿电极 eTRCA：48 减 24 个校准试次',
+    trcaFindingLabel: '湿电极 eTRCA：48 减 24 个校准试次（pp 为百分点）',
     trcaFindingH3: '增加校准预算对湿电极帮助大得多',
     trcaFindingP: `被试配对区间为 ${ipp(wetImprovement.paired_participant_bootstrap_95)}。干电极 eTRCA 提升了 ${pp(dryImprovement.difference, 1)}，区间 ${ipp(dryImprovement.paired_participant_bootstrap_95)}。两个校准后的结果都没有超过同一测试组块上的免训练 CCA 参考。`,
     trcaRegion: 'CCA 与集成 TRCA 校准结果，可横向滚动',
@@ -194,29 +194,29 @@ const copy = {
     ],
     citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
     rmEyebrow: '新被试，同一任务 · 2026 年 10 月 1 日审核',
-    rmH2: '基础模型怎么适配：只训分类头、最后一个 block 还是 LoRA？',
-    rmLede: `LaBraM Base 在 EEGMAT 上区分心算与静息：${adPeople} 名被试，按被试不重叠分成 5 折，所以每个分数都来自模型适配时没见过的人。三种更新方式从同一个分类头出发，以相同顺序看到相同的批次，都训练 5 个 epoch。3 个随机种子先在每名被试内平均，再求队列均值。`,
-    armLabel: { frozen: '只训分类头 · 编码器冻结', 'last-block': '最后一个 block + 分类头', 'lora-r4': '秩为 4 的 LoRA + 分类头' } as Record<string, string>,
+    rmH2: '基础模型怎么适配：只训分类头、最后一个 Transformer 块（block）还是 LoRA？',
+    rmLede: `LaBraM Base 在 EEGMAT 上区分心算与静息：${adPeople} 名被试，按被试不重叠分成 5 折，所以每个分数都来自模型适配时没见过的人。三种更新方式从同一个分类头出发，以相同顺序看到相同的批次，都训练 5 轮（epoch）。3 个随机种子先在每名被试内平均，再求队列均值。`,
+    armLabel: { frozen: '只训分类头 · 编码器冻结', 'last-block': '最后一个 Transformer 块 + 分类头', 'lora-r4': '秩为 4 的 LoRA + 分类头' } as Record<string, string>,
     armNote: (f1: string, params: string) => `宏平均 F1 ${f1} · 可训练参数 ${params} 个`,
-    rmScale: (m: string) => `作为参照：核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM，用在标准化特征上闭式求解的岭回归分类头读出，平衡准确率为 ${m}。这里「只训分类头」那一组是在未缩放特征上只训 5 个 epoch 的短训练分类头——并不是冻结编码器能达到的最好结果——两者也不是配对比较。`,
+    rmScale: (m: string) => `作为参照：核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM，配上在标准化特征上闭式求解的岭回归分类头，平衡准确率为 ${m}。这里「只训分类头」那一组是在未缩放特征上只训 5 轮的短训练分类头——并不是冻结编码器能达到的最好结果——两者也不是配对比较。`,
     findingLabel: 'LoRA 减只训分类头，同一批被试',
-    findingH3: 'LoRA 胜过短训练的分类头，但没有胜过最后一个 block',
-    findingP: `${adPeople} 名被试中 ${loraHead.helped} 人提升、${loraHead.harmed} 人变差；配对区间 ${ipp(loraHead.bootstrap_95)}。改为更新最后一个 block，提升 ${pp(blockHead.mean_change, 1)}（${ipp(blockHead.bootstrap_95)}）。LoRA 减最后一个 block 为 ${pp(loraBlock.mean_change, 1)}，区间 ${ipp(loraBlock.bootstrap_95)}：跨过零，所以无法说明哪一个更好。${loraBlock.helped} 人用 LoRA 更好，${loraBlock.harmed} 人用最后一个 block 更好。`,
+    findingH3: 'LoRA 胜过短训练的分类头，但没有胜过最后一个 Transformer 块',
+    findingP: `${adPeople} 名被试中 ${loraHead.helped} 人提升、${loraHead.harmed} 人变差；配对区间 ${ipp(loraHead.bootstrap_95)}。改为更新最后一个 Transformer 块，提升 ${pp(blockHead.mean_change, 1)}（${ipp(blockHead.bootstrap_95)}）。LoRA 减最后一个 Transformer 块为 ${pp(loraBlock.mean_change, 1)}，区间 ${ipp(loraBlock.bootstrap_95)}：跨过零，所以无法说明哪一个更好。${loraBlock.helped} 人用 LoRA 更好，${loraBlock.harmed} 人用最后一个 Transformer 块更好。`,
     contrastRegion: '各更新方式之间的配对变化，可横向滚动',
     contrastCaption: `同样 ${adPeople} 名被试在两种方式下的被试平均分数之差 · 描述性被试 bootstrap 95% 区间 · 提升、变差与不变的人数。`,
     colContrast: '比较', colBa: '平衡准确率', colF1: '宏平均 F1',
-    contrastRow: { 'lora-r4_minus_frozen': 'LoRA − 只训分类头', 'last-block_minus_frozen': '最后一个 block − 只训分类头', 'lora-r4_minus_last-block': 'LoRA − 最后一个 block' } as Record<string, string>,
+    contrastRow: { 'lora-r4_minus_frozen': 'LoRA − 只训分类头', 'last-block_minus_frozen': '最后一个 Transformer 块 − 只训分类头', 'lora-r4_minus_last-block': 'LoRA − 最后一个 Transformer 块' } as Record<string, string>,
     counts: (h: number, hm: number, t: number) => `${h} 人提升 · ${hm} 人变差 · ${t} 人不变`,
     f1Note: '在宏平均 F1 上提升更小，LoRA 相对只训分类头帮到的人也比平衡准确率上少：指标的选择会影响结论。',
     costH3: '每种方式的代价',
     costRegion: '各更新方式的可训练参数与训练时间，可横向滚动',
     costCaption: '训练时间为 15 次拟合（5 折 × 3 个随机种子）之和，在一台 Apple 芯片 Mac 上用 PyTorch MPS 后端测得，不含加载与评测。',
     colRule: '更新方式', colParams: '可训练参数', colTime: '训练时间，15 次拟合', colSeeds: '平衡准确率，逐个随机种子',
-    costNote: 'LoRA 可训练的权重比最后一个 block 少得多，但这里训练反而更久：它的适配器分布在全部 12 个 block 中，梯度要反传经过编码器的大部分；而且这里的实现是等效权重参数化，不是优化过的低秩算子。可训练权重少，本身并不意味着更省时间或内存。',
-    notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 个 epoch，而不是相同的计算量）。',
+    costNote: 'LoRA 可训练的权重比最后一个 Transformer 块少得多，但这里训练反而更久：它的适配器分布在全部 12 个 Transformer 块中，梯度要反传经过编码器的大部分；而且这里的实现是等效权重参数化，不是优化过的低秩算子。可训练权重少，本身并不意味着更省时间或内存。',
+    notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 轮，而不是相同的计算量）。',
     adLimitsH3: '这个结果不是什么',
     adLimits: [
-      ['一个配方，不是调参后的排名', '5 个 epoch，AdamW，学习率 1e-4，批大小 32；没有超参搜索、验证集、早停或检查点挑选。换一个学习率或训练预算，各方式的先后可能改变。'],
+      ['一个配方，不是调参后的排名', '5 轮，AdamW，学习率 1e-4，批大小 32；没有超参搜索、验证集、早停或检查点挑选。换一个学习率或训练预算，各方式的先后可能改变。'],
       ['新被试，不是新的一天或新设备', '数据划分留出的是被试，任务是模型已经适配过的任务。这里没有测量新的记录日、新的头戴设备或新的数据集。'],
       ['已公开的数据集', 'EEGMAT 是公开数据，它是否在 LaBraM 的预训练数据中，无法证实。'],
       ['描述性区间', '先在每名被试内平均 3 个随机种子，再做被试 bootstrap。它没有计入共享交叉验证模型带来的相关性。'],
@@ -232,11 +232,11 @@ const copy = {
     rmCheck: {
       'exact adapter save and reload': '适配器保存与重载后完全一致',
       'exact merged-weight equivalence': '合并权重后输出完全等价',
-      'finite, nonzero adapter gradients in every block': '每个 block 的适配器梯度有限且非零',
-      'frozen encoder weights unchanged after updates': '更新后冻结的编码器权重保持不变',
+      'finite, nonzero adapter gradients in every block': '每个 Transformer 块的适配器梯度有限且非零',
+      'frozen encoder weights unchanged after updates': '更新后冻结编码器的权重保持不变',
       'identical output at zero adapter initialization': '适配器零初始化时输出完全不变',
     } as Record<string, string>,
-    rmPriorH3: '并非第一个提出这个问题',
+    rmPriorH3: '这个问题已有前人研究',
     rmPrior: ['已有其他工作在评测 EEG 适配器：', 'OpenEEGBench', ' 覆盖 EEG 基础模型的参数高效微调；一项', '关于测试时适配的系统研究', '报告了分布偏移下时好时坏的收益；一篇近期', '预印本', '比较了固定计算预算下的自监督适配。我们的侧重点是校准成本、变差的情况，以及记录条件本身是否兼容。'],
     creditNote: (license: string) => `${license} · 仅发布聚合结果；本次适配沿用 2026-09-20 对这些记录的审查。`,
   },
@@ -261,8 +261,8 @@ const card = topicCards[locale]['calibration-budget'];
     reference={chance}
     rows={sensors.flatMap(sensor => [
       { row: methodRow('cca', sensor, 0), label: copy.ccaRow, reference: true },
-      ...budgets.map(budget => ({ row: targetRidge(sensor, budget), label: `${modelLabel('spectral-ridge')} · ${copy.labels(budget)}`, reference: false })),
-      ...[24, 48].map(budget => ({ row: methodRow('ensemble-trca', sensor, budget), label: `${modelLabel('ensemble-trca')} · ${copy.labels(budget)}`, reference: false })),
+      ...budgets.map(budget => ({ row: targetRidge(sensor, budget), label: `${modelLabel('spectral-ridge', locale)} · ${copy.labels(budget)}`, reference: false })),
+      ...[24, 48].map(budget => ({ row: methodRow('ensemble-trca', sensor, budget), label: `${modelLabel('ensemble-trca', locale)} · ${copy.labels(budget)}`, reference: false })),
     ].map(({ row, label, reference }) => ({ label, note: copy.plotNote(copy.sensor[sensor], reference), tone: sensor === 'wet' ? 'rust' as const : 'ink' as const, value: row.value, interval: row.confidence_interval_95, text: `${pct(row.value)} (${intervalPct(row.confidence_interval_95)})` })))}
   />
   <section class="topic-section" aria-labelledby="ridge-heading">
@@ -293,7 +293,7 @@ const card = topicCards[locale]['calibration-budget'];
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.trcaRegion}>
       <table><caption>{copy.trcaCaption}</caption><thead><tr><th scope="col">{copy.colMethodBudget}</th><th scope="col">{copy.colWet}</th><th scope="col">{copy.colDry}</th></tr></thead><tbody>
         <tr><th scope="row">{copy.ccaRow}<small>{copy.ccaNote}</small></th>{sensors.map(sensor => { const row=methodRow('cca',sensor,0); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>
-        {[24,48].map(budget => <tr><th scope="row">{modelLabel('ensemble-trca')} · {copy.labels(budget)}<small>{copy.targetOnly}</small></th>{sensors.map(sensor => { const row=methodRow('ensemble-trca',sensor,budget); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>)}
+        {[24,48].map(budget => <tr><th scope="row">{modelLabel('ensemble-trca', locale)} · {copy.labels(budget)}<small>{copy.targetOnly}</small></th>{sensors.map(sensor => { const row=methodRow('ensemble-trca',sensor,budget); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>)}
       </tbody></table>
     </div>
   </section>

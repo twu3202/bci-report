@@ -19,11 +19,20 @@ interface Props {
   description: string;
   eyebrow: string;
   dek: string;
-  crumbs: { label: string; href?: string }[];
+  /** `en`: the label is the entity's English name, marked lang="en" on a Chinese page. */
+  crumbs: { label: string; href?: string; en?: boolean }[];
+  /**
+   * The entity's own name, which stays English on every locale. Where it sits
+   * inside `h1` it is wrapped and marked lang="en" on a Chinese page, so a
+   * screen reader switches voice for "Wearable SSVEP BCI dataset …" and back.
+   */
+  name?: string;
   structured?: object | null;
   active: 'models' | 'datasets' | 'protocols';
 }
-const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active } = Astro.props;
+const { locale, path, documentTitle, h1, description, eyebrow, dek, crumbs, structured, active, name } = Astro.props;
+const nameLang = locale === 'zh' ? 'en' : undefined;
+const at = name && nameLang ? h1.indexOf(name) : -1;
 const t = chrome[locale];
 const tc = topicChrome[locale];
 const origin = Astro.site ?? site.origin;
@@ -64,10 +73,10 @@ const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
   <a class="skip" href="#entity-content">{t.skipToEvidence}</a>
   <SiteHeader locale={locale} path={path} active={active}/>
   <main class="topic-page entity-page" id="entity-content">
-    <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol>{crumbs.map((c, i) => <li aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.href ? <a href={c.href}>{c.label}</a> : c.label}</li>)}</ol></nav>
+    <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol>{crumbs.map((c, i) => <li aria-current={i === crumbs.length - 1 ? 'page' : undefined} lang={c.en ? nameLang : undefined}>{c.href ? <a href={c.href}>{c.label}</a> : c.label}</li>)}</ol></nav>
     <section class="topic-hero">
       <p class="eyebrow">{eyebrow}</p>
-      <h1>{h1}</h1>
+      <h1>{at < 0 ? h1 : <>{h1.slice(0, at)}<span lang={nameLang}>{name}</span>{h1.slice(at + name!.length)}</>}</h1>
       <p class="topic-dek">{dek}</p>
     </section>
     <slot />

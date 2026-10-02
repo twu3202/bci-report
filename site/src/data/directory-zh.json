@@ -1,0 +1,43 @@
+{
+  "about": "Chinese display text for the home page's model directory and public-data register: model notes, licence notes and rights-review notes. Keyed by the exact English text in mvp.json, which stays English (it is a released file). A key that no longer matches falls back to the English, marked lang=\"en\". check-workbench.mjs requires every key to carry exactly the numbers of its English text, and every directory note to have a translation. Licence identifiers (MIT, CC BY 4.0, BSD-3-Clause ...) are names and are not translated.",
+  "text": {
+    "A fixed configuration has been evaluated. See each task for channels and training mode.": "已评测一个固定配置。通道与训练方式见各任务。",
+    "Evaluated locally, but no score is published in this release: the checkpoint license is unresolved. Results are withheld pending that review, not because the model failed to run.": "已在本地评测，但本次发布不公开任何分数：检查点的许可尚未厘清。结果在审查完成前暂不发布，并不是因为模型没能运行。",
+    "Pretrained bipolar tokens do not directly match the unipolar recordings. A separately validated adapter is required.": "预训练所用的双极通道 token 与这里的单极记录不能直接对应，需要一个单独验证过的适配器。",
+    "Code and electrode positions are accessible. Base weights require accepting the official access agreement; they have not been downloaded.": "代码与电极位置可以获取。Base 权重需要先接受官方访问协议，本站尚未下载。",
+    "Public, ungated weights; research candidate only; not downloaded or executed for this release. The official model card provides a 13,847,488-byte safetensors checkpoint trained on Lee2019 at 128 Hz. All 17 ds005342 channel names match its 62-channel pretraining layout, but a separate locked adaptation protocol is still required.": "权重公开、无访问门槛；仅为研究候选，本次发布既未下载也未运行。官方模型卡提供一个 13,847,488 字节的 safetensors 检查点，在 Lee2019 上以 128 Hz 训练。ds005342 的全部 17 个通道名都能在它的 62 通道预训练布局中找到，但仍需要一个单独锁定的适配协议。",
+    "Public, ungated weights; research candidate only; not downloaded or executed in this expansion. The Braindecode checkpoint is 628,580,476 bytes and expects 20 channels at 250 Hz. A documented montage or input adapter is required for 17-channel data.": "权重公开、无访问门槛；仅为研究候选，本次扩展既未下载也未运行。Braindecode 检查点为 628,580,476 字节，要求 20 个通道、250 Hz。用于 17 通道数据时，需要一份有文档的电极映射或输入适配器。",
+    "Public source and an official Google Drive weight link are listed; anonymous weight download, file size, and execution remain unverified. The backbone accepts caller-supplied brain regions and channel ordering, while the published BCIC head is fixed to 22 channels. A new adapter and a checkpoint-key loading audit are required.": "列出了公开源码和官方 Google Drive 权重链接；能否匿名下载权重、文件大小以及能否运行都尚未核实。主干网络接受调用方提供的脑区划分与通道顺序，而已发布的 BCIC 分类头固定为 22 个通道。需要新的适配器，并审计检查点各个键的加载情况。",
+    "Public code and Hugging Face weights; research candidate only; not downloaded or executed for this release. The model page shows an approximately 318 MB checkpoint. The published EEGConformer input path is fixed to 22 channels, so using 17 channels requires an explicit mapping or replacement of the spatial layer.": "代码与 Hugging Face 权重公开；仅为研究候选，本次发布既未下载也未运行。模型页面显示检查点约 318 MB。已发布的 EEGConformer 输入路径固定为 22 个通道，因此使用 17 个通道需要显式的通道映射，或替换空间层。",
+    "Public source; no official pretrained checkpoint was found; not executed for this release. This is a from-scratch baseline rather than a foundation-model checkpoint. The author script fixes the spatial convolution to 22 channels and must be parameterized for other montages.": "源码公开；没有找到官方预训练检查点；本次发布未运行。它是从头训练的基线，而不是基础模型检查点。作者脚本把空间卷积固定为 22 个通道，用于其他电极布局时必须改为可配置。",
+    "Public implementation; no pretrained weights; not executed for this release. The maintained Braindecode implementation accepts the channel count and sampling rate directly, making it a practical lightweight from-scratch comparator.": "实现公开；没有预训练权重；本次发布未运行。持续维护的 Braindecode 实现可以直接设定通道数与采样率，因此适合作为轻量的从头训练对照。",
+    "Fixed reference method; inspect each task for input features and fit protocol.": "固定的参考方法；输入特征与拟合协议见各任务。",
+
+    "Code/repository: MIT · Checkpoint: committed in that repository; no separate weight terms": "代码 / 仓库：MIT · 检查点：随该仓库一同提交，没有单独的权重条款",
+    "Code: Apache-2.0 · Checkpoint: license unresolved; excluded from new public scope": "代码：Apache-2.0 · 检查点：许可未厘清，不纳入新的公开范围",
+    "Code: MIT · Weights: Apache-2.0 (official model card)": "代码：MIT · 权重：Apache-2.0（官方模型卡）",
+    "Trained from scratch / deterministic reference; no third-party pretrained weights. Braindecode BSD-3-Clause; MNE/scikit-learn BSD where used.": "从头训练 / 确定性参考方法，不含第三方预训练权重。Braindecode 为 BSD-3-Clause；用到 MNE / scikit-learn 之处为 BSD。",
+    "MIT, as stated on the model card": "MIT（以模型卡所述为准）",
+    "BSD-3-Clause on the Braindecode model card; verify original release terms before redistributing weights": "Braindecode 模型卡标注为 BSD-3-Clause；再分发权重前，请核实原始发布条款",
+    "Unclear: no LICENSE file was found at the reviewed official repository commit, and no separate weight license was identified": "不明确：审查的官方仓库提交中没有找到 LICENSE 文件，也没有找到单独的权重许可",
+    "GPL-3.0 for the official repository and model card": "官方仓库与模型卡均为 GPL-3.0",
+    "BSD-3-Clause for the Braindecode implementation; the separate author repository license is unclear": "Braindecode 实现为 BSD-3-Clause；作者另外的仓库许可不明确",
+
+    "Clear CC0 snapshot plus dataset-specific ethics and signed-consent evidence; aggregate-only publication materially limits privacy exposure.": "CC0 快照明确，另有该数据集专属的伦理批准与签署同意书证据；只发布聚合结果，大大降低了隐私风险。",
+    "Attribution license and study-specific approval/consent are documented; eligibility assumes aggregate-only output and exclusion of subject-info fields.": "署名许可与该研究专属的伦理批准、同意书都有记录；可以使用的前提是只输出聚合结果，并排除被试信息字段。",
+    "Clear upstream CC0 and study ethics evidence; use only the pinned scalp-signal derivative and publish aggregates, with provenance disclosed. Consent covered the study, not publication; the public release rests on a GDPR anonymization assessment (amended 2026-09-22).": "上游 CC0 明确，研究伦理证据清楚；只使用锁定版本的头皮信号衍生数据，只发布聚合结果，并说明来源。同意书覆盖的是研究本身而不是公开发布；数据的公开依据是一项 GDPR 匿名化评估（2026-09-22 修订）。",
+    "Eligible only under the stated personal, research-led, noncommercial operation. Any ads, sponsorship, fees, or use directed toward commercial advantage requires fresh review or permission.": "仅在本站声明的个人、以研究为主、非商业的运营方式下可以使用。任何广告、赞助、收费或以商业利益为目的的使用，都需要重新审查或取得许可。",
+    "Small clinical cohort and linked health attributes create disproportionate reidentification risk; aggregate-only output does not resolve the missing secondary-publication consent evidence.": "临床队列规模小，又关联健康属性，被重新识别的风险过高；只输出聚合结果，也补不上缺失的二次发布同意证据。",
+    "License permits only noncommercial unadapted redistribution, and the consent/ethics chain for public secondary results remains unverified.": "许可只允许非商业、不加改编的再分发，而公开二次结果所需的同意与伦理链条仍未核实。",
+    "Ethics evidence is positive, but upstream license and the processed mirror's authority to apply CC BY remain unresolved.": "伦理证据没有问题，但上游许可、以及处理后的镜像是否有权采用 CC BY，仍未厘清。",
+    "Strong study-specific open-sharing evidence. Aggregate metrics avoid redistribution of stimulus text and participant metadata; credit under CC BY.": "有充分的、该研究专属的公开共享证据。聚合指标不会再分发刺激文本与被试元数据；按 CC BY 署名。",
+    "Pinned CC0 release with dataset-specific IRB and consent evidence and comparatively low metadata exposure.": "锁定的 CC0 版本，有该数据集专属的 IRB 批准与同意书证据，元数据泄露的风险相对较低。",
+    "Reuse license is clear, but the dataset-specific human-subject consent and ethics chain is not evidenced strongly enough for a new public benchmark release.": "再利用许可明确，但该数据集专属的人类被试同意与伦理链条，证据不足以支持一次新的公开基准发布。",
+    "Per-dataset license is verified, but consent evidence and the application of ND to the planned publication pipeline should be clarified.": "各数据集的许可已核实，但同意书证据、以及 ND（禁止演绎）条款对计划中发布流程的适用范围，仍需澄清。",
+    "Eligible only as an aggregate-only case study: remove all participant IDs/results and condition breakdowns, label n=4 prominently, avoid subgroup claims, and make no claim that the cohort is anonymous.": "只能作为仅含聚合结果的案例研究使用：移除全部被试编号、逐人结果与按条件的拆分，醒目标注 n=4，不做亚组结论，也不声称该队列是匿名的。",
+
+    "CC0-1.0 declared by upstream and mirror": "CC0-1.0（上游与镜像均如此声明）",
+    "Mirror declares CC BY 4.0; exact upstream DataPort license not independently verified": "镜像声明为 CC BY 4.0；上游 DataPort 的确切许可未经独立核实",
+    "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0": "OpenNeuro 元数据为 CC0；配套论文与 GitHub 为 CC BY 4.0"
+  }
+}

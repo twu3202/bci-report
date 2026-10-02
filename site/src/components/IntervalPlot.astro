@@ -16,6 +16,8 @@
 type Tone = 'rust' | 'ink' | 'olive' | 'muted';
 interface Row {
   label: string;
+  /** "en" when the label is English on a Chinese page. */
+  labelLang?: string;
   note?: string;
   value: number;
   interval?: [number, number] | null;
@@ -44,7 +46,7 @@ const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).
   <div class="ip-rows">
     {rows.map(r => (
       <div class="ip-row">
-        <div class="ip-label">{r.label}{r.note && <small>{r.note}</small>}</div>
+        <div class="ip-label" lang={r.labelLang}>{r.label}{r.note && <small>{r.note}</small>}</div>
         <svg class={`ip-strip ${r.tone ?? 'rust'}`} viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
           <line class="ip-grid" x1="25" x2="25" y1="0" y2="12"></line>
           <line class="ip-grid" x1="50" x2="50" y1="0" y2="12"></line>

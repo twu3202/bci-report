@@ -84,11 +84,11 @@ export const releases: Release[] = [
     pages: ['/topics/calibration-budget/'],
     summary: {
       en: 'LaBraM adapted to new people on mental arithmetic three ways — head only, last block, rank-4 LoRA — with the same checkpoint, folds, starting heads, batch order and five-epoch recipe, over three seeds. The next-day experiment is listed as status only.',
-      zh: '在心算任务上把 LaBraM 适配到新被试，三种方式——只训分类头、最后一个 block、秩为 4 的 LoRA——使用相同的检查点、数据划分、初始分类头、批次顺序和 5 个 epoch 的训练配方，跑了 3 个随机种子。次日实验只列状态。',
+      zh: '在心算任务上把 LaBraM 适配到新被试，三种方式——只训分类头、最后一个 Transformer 块、秩为 4 的 LoRA——使用相同的检查点、数据划分、初始分类头、批次顺序和训练 5 轮的配方，跑了 3 个随机种子。次日实验只列状态。',
     },
     notes: [
       { en: "Printed beside the core matrix's frozen LaBraM readout on the same people and folds, because this batch's head-only arm is a short gradient-trained head and not the strongest frozen readout.",
-        zh: '与核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM 分类头结果并排给出，因为本批「只训分类头」那一组是短训练的梯度分类头，并不是冻结编码器能达到的最好读出。' },
+        zh: '与核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM 分类头结果并排给出，因为本批「只训分类头」那一组是短训练的梯度分类头，并不是冻结编码器能达到的最好结果。' },
       { en: 'Not published: memory figures (allocator samples are lower bounds, not per-method peaks) and any figure from the next-day experiment.',
         zh: '不发布：内存数据（分配器采样只是下界，不是各方法的峰值），以及次日实验的任何数字。' },
     ],

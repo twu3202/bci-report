@@ -2,9 +2,9 @@
 import EntityLayout from '../../../components/EntityLayout.astro';
 import ResultGroups from '../../../components/ResultGroups.astro';
 import profiles from '../../../data/entity-profiles.json';
-import { datasets, tr, type DatasetEntity } from '../../../data/entities';
+import { datasets, methodLabel, tr, type DatasetEntity } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
-import { hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
+import { directoryText, hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
 import { site } from '../../../data/site';
 import { requestedCitations } from '../../../data/releases';
 import { protocolLinkLabel } from '../../../data/protocols';
@@ -18,12 +18,16 @@ const c = entityCopy[locale];
 const path = `/datasets/${d.slug}/`;
 const profile = (profiles.datasets as Record<string, { aliases: string[]; summary_en: string; summary_zh: string; facts_sources: string[] }>)[d.slug];
 const methodNames = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comparator).map(r => r.method)))];
+// The page's own description names the methods as the page prints them.
+const methodLabels = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comparator).map(r => methodLabel(r, locale))))];
 const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0, 5).join(', ')} …`;
 const pages = [...new Set(d.groups.map(g => g.path))];
 const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (protocolLinkLabel(p, locale) ?? (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)')); };
 const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
 // A citation the source asks for that the released credit line does not carry (see releases.ts).
 const requested = requestedCitations[d.slug];
+// The licence note as the home page's register prints it (directory-zh.json).
+const licence = directoryText(d.license, locale);
 const abs = (p: string) => new URL(p, site.origin).href;
 const structured = {
   '@context': 'https://schema.org', '@type': 'Dataset',
@@ -40,11 +44,11 @@ const structured = {
 <EntityLayout
   locale={locale} path={path} active="datasets"
   documentTitle={c.datasetTitle(d.name)}
-  h1={c.datasetH1(d.name)}
-  description={c.datasetDescription(d.name, tr(d.task, locale), listed(methodNames))}
+  h1={c.datasetH1(d.name)} name={d.name}
+  description={c.datasetDescription(d.name, tr(d.task, locale), listed(methodLabels))}
   eyebrow={tr(d.task, locale)}
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.datasetsDek}
-  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name }]}
+  crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name, en: true }]}
   structured={structured}
 >
   {profile && <section class="entity-profile" aria-label={c.whatItIs}>
@@ -65,7 +69,7 @@ const structured = {
       <h3 lang="en">{d.name}</h3>
       <p><strong>{c.attribution}</strong> <span lang="en">{d.attribution}</span></p>
       {requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{requested.text}</span> <a href={requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
-      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang="en">{d.license} ↗</a> : <span lang="en">{d.license}</span>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
+      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
       <p>{c.notRedistributed}</p>
     </article></div>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>

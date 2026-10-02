@@ -54,7 +54,10 @@ export function formatFig(f: Fig): string {
 export interface ResultRow {
   /** Locale-free page path, with an anchor where the figure's section has one. */
   path: string;
+  /** The method's English name: its identity in structured data and links. */
   method: string;
+  /** What the page prints for it, where a descriptive name has a Chinese one. */
+  label?: L;
   methodSlug?: MethodSlug;
   /** A reference or comparator, not a decoding model; printed as such. */
   comparator?: boolean;
@@ -117,9 +120,15 @@ export const methodNames: Record<MethodSlug, string> = {
 const BA: L = { en: 'Balanced accuracy', zh: '平衡准确率' };
 const AUROC: L = { en: 'AUROC' };
 const ROC_AUC: L = { en: 'ROC AUC' };
-const DIFF: L = { en: 'Paired difference', zh: '配对差值' };
+// The Chinese names the unit once, beside the first "pp" a reader meets on the page.
+const DIFF: L = { en: 'Paired difference', zh: '配对差值（百分点）' };
 const sensor = { wet: { en: 'wet', zh: '湿电极' }, dry: { en: 'dry', zh: '干电极' } } as Record<string, { en: string; zh: string }>;
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+/** A display label: the Chinese only where it differs from the English name. */
+const lbl = (en: string, zh?: string): L => (zh && zh !== en ? { en, zh } : { en });
+/** The label a row prints, in the page's language. */
+export const methodLabel = (r: ResultRow, locale: Locale) => tr(r.label ?? { en: r.method }, locale);
+export const methodLabelIsEnglish = (r: ResultRow, locale: Locale) => isEnglishOnly(r.label ?? { en: r.method }, locale);
 
 /* --- Core matrix (mvp.json) ------------------------------------------------------ */
 
@@ -216,7 +225,8 @@ function depCondition(r: DepRow): L {
 function depRow(r: DepRow): ResultRow {
   const auc = r.metric === 'participant_mean_roc_auc';
   return {
-    path: DEP_TRACK[r.track].path, method: modelLabel(r.model), methodSlug: METHOD_OF[r.model],
+    path: DEP_TRACK[r.track].path, method: modelLabel(r.model, 'en'), label: lbl(modelLabel(r.model, 'en'), modelLabel(r.model, 'zh')),
+    methodSlug: METHOD_OF[r.model],
     comparator: r.model === 'random-uniform' || r.model === 'same-frequency-power',
     condition: depCondition(r), metric: auc ? ROC_AUC : BA,
     value: fig(r.value, auc ? 'auc3' : 'pct1', DEP),
@@ -241,20 +251,20 @@ function evidenceGroup(id: 'eesm23' | 'alphawaves'): ResultGroup {
   const r = ev[id] as any;
   const fewer = id === 'eesm23'
     ? { title: { en: 'Fewer electrodes · in-ear vs. scalp sleep staging', zh: '更少的电极 · 耳道内与头皮睡眠分期' }, path: '/topics/fewer-electrodes/#montage-finding',
-        method: 'Log-bandpower logistic regression',
+        method: 'Log-bandpower logistic regression', label: lbl('Log-bandpower logistic regression', '对数频带功率逻辑回归'),
         labels: { in_ear: { en: 'Four in-ear channels', zh: '4 个耳道内通道' }, scalp: { en: 'Six scalp electrodes', zh: '6 个头皮电极' } } as Record<string, L>,
         diff: { en: 'Scalp minus in-ear, same epochs', zh: '头皮减耳道内，相同数据帧' } }
     : { title: { en: 'Fewer electrodes · four posterior vs. all sixteen', zh: '更少的电极 · 后部 4 个与全部 16 个' }, path: '/topics/fewer-electrodes/#posterior-subset',
-        method: 'Relative band-power logistic regression',
+        method: 'Relative band-power logistic regression', label: lbl('Relative band-power logistic regression', '相对频带功率逻辑回归'),
         labels: { posterior4: { en: 'Four posterior electrodes', zh: '后部 4 个电极' }, all16: { en: 'All sixteen electrodes', zh: '全部 16 个电极' } } as Record<string, L>,
         diff: { en: 'All sixteen minus four posterior', zh: '全部 16 个减后部 4 个' } };
   const people = r.cohort.people;
   return {
     id, title: fewer.title, path: fewer.path.split('#')[0], chance: fig(r.chance_level, 'pct1', EVI),
     rows: [
-      ...r.configurations.map((c: any) => ({ path: fewer.path, method: fewer.method, condition: fewer.labels[c.id], metric: BA,
+      ...r.configurations.map((c: any) => ({ path: fewer.path, method: fewer.method, label: fewer.label, condition: fewer.labels[c.id], metric: BA,
         value: fig(c.mean_balanced_accuracy, 'pct1', EVI), interval: pair(c.balanced_accuracy_bootstrap_95, 'pct1', EVI), people })),
-      { path: fewer.path, method: fewer.method, condition: fewer.diff, metric: DIFF,
+      { path: fewer.path, method: fewer.method, label: fewer.label, condition: fewer.diff, metric: DIFF,
         value: fig(r.paired_difference.mean, 'pp1', EVI), interval: pair(r.paired_difference.bootstrap_95, 'pp1', EVI), people },
     ],
   };
@@ -263,12 +273,13 @@ function evidenceGroup(id: 'eesm23' | 'alphawaves'): ResultGroup {
 function phantomGroup(): ResultGroup {
   const r = ev.phantom as any;
   const path = '/topics/on-the-move/#phantom-heading';
+  const method = 'Fixed multi-output ridge regression', label = lbl(method, '固定的多输出岭回归');
   return {
     id: 'phantom', title: { en: 'Movement · physical head phantom (engineering check)', zh: '运动 · 物理头模（工程对照）' }, path: '/topics/on-the-move/',
     rows: r.conditions.flatMap((c: any) => [
-      { path, method: 'Fixed multi-output ridge regression', condition: { en: c.condition }, metric: { en: 'Signed correlation r', zh: '有符号相关 r' },
+      { path, method, label, condition: { en: c.condition }, metric: { en: 'Signed correlation r', zh: '有符号相关 r' },
         value: fig(c.signed_correlation_r.value, 'num3', EVI), people: 0 },
-      { path, method: 'Fixed multi-output ridge regression', condition: { en: c.condition }, metric: { en: 'Predictive R²', zh: '预测 R²' },
+      { path, method, label, condition: { en: c.condition }, metric: { en: 'Predictive R²', zh: '预测 R²' },
         value: fig(c.predictive_r_squared.value, 'num3', EVI), people: 0 },
     ]),
   };
@@ -282,7 +293,7 @@ function clinicalGroup(): ResultGroup {
     chance: fig(r.chance_level, 'pct1', CLI),
     rows: r.models.flatMap((m: any) => {
       const comparator = m.id === 'demographics_only';
-      const base = { path, method: m.label, comparator, condition: comparator ? { en: 'Age and sex only · no EEG', zh: '只用年龄与性别 · 不用 EEG' } : { en: 'Resting-state EEG, eyes open', zh: '睁眼静息态 EEG' }, people: r.cohort.people };
+      const base = { path, method: m.label, label: lbl(m.label, ({ spectral_logistic: '相对频谱逻辑回归', demographics_only: '只用年龄和性别' } as Record<string, string>)[m.id]), comparator, condition: comparator ? { en: 'Age and sex only · no EEG', zh: '只用年龄与性别 · 不用 EEG' } : { en: 'Resting-state EEG, eyes open', zh: '睁眼静息态 EEG' }, people: r.cohort.people };
       return [
         { ...base, metric: BA, value: fig(m.mean_balanced_accuracy, 'pct1', CLI), interval: pair(m.balanced_accuracy_bootstrap_95, 'pct1', CLI) },
         { ...base, metric: AUROC, value: fig(m.auroc, 'auc2', CLI) },
@@ -290,6 +301,9 @@ function clinicalGroup(): ResultGroup {
     }),
   };
 }
+
+const vrLabel = (m: { id: string; label: string }) =>
+  lbl(m.label, ({ mean_window_logreg: '窗口均值逻辑回归', spatiotemporal_shrinkage_lda: '时空收缩 LDA' } as Record<string, string>)[m.id]);
 
 function vrGroup(): ResultGroup {
   const r = cx['vr-pc-p300'];
@@ -302,9 +316,9 @@ function vrGroup(): ResultGroup {
     id: 'vr-pc-p300', title: { en: 'Screen to VR · P300 across displays', zh: '从屏幕到 VR · 跨设备 P300' }, path,
     chance: fig(r.chance_level, 'pct1', CTX),
     rows: Object.entries(r.timings as Record<string, any[]>).flatMap(([t, models]) => models.flatMap(m => [
-      { path, method: m.label, condition: timing[t], metric: BA, value: fig(m.balanced_accuracy.mean, 'pct1', CTX),
+      { path, method: m.label, label: vrLabel(m), condition: timing[t], metric: BA, value: fig(m.balanced_accuracy.mean, 'pct1', CTX),
         interval: pair(m.balanced_accuracy.bootstrap_95, 'pct1', CTX), people: r.cohort.people },
-      { path, method: m.label, condition: timing[t], metric: AUROC, value: fig(m.auroc.mean, 'auc3', CTX),
+      { path, method: m.label, label: vrLabel(m), condition: timing[t], metric: AUROC, value: fig(m.auroc.mean, 'auc3', CTX),
         interval: pair(m.auroc.bootstrap_95, 'auc3', CTX), people: r.cohort.people },
     ])),
   };
@@ -317,7 +331,7 @@ function gaitGroup(): ResultGroup {
     id: 'gait-eeg', title: { en: 'Movement · treadmill walking speed (a confound case)', zh: '运动 · 跑步机步速（混杂案例）' }, path: '/topics/on-the-move/',
     chance: fig(r.chance_level, 'pct1', CTX),
     rows: r.models.map((m: any) => ({
-      path, method: m.label, comparator: m.id === 'nuisance_logistic',
+      path, method: m.label, label: lbl(m.label, ({ spectral_logistic: '相对频谱频带', nuisance_logistic: '运动干扰特征' } as Record<string, string>)[m.id]), comparator: m.id === 'nuisance_logistic',
       condition: m.id === 'nuisance_logistic' ? { en: 'Movement-nuisance features, not brain signal', zh: '运动干扰特征，不是脑信号' } : { en: 'Relative spectral bands, 19 scalp channels', zh: '相对频带功率，19 个头皮通道' },
       metric: BA, value: fig(m.balanced_accuracy, 'pct1', CTX), interval: pair(m.balanced_accuracy_bootstrap_95, 'pct1', CTX),
       people: r.cohort.people_scored,
@@ -328,15 +342,18 @@ function gaitGroup(): ResultGroup {
 function ysuGroup(): ResultGroup {
   const r = cx['ysu-async-ssvep'];
   const path = '/topics/when-not-to-act/#non-control-pilot';
-  const w = r.control_windows, method = 'Fixed CCA with rejection', people = r.people;
+  const w = r.control_windows, method = 'Fixed CCA with rejection', label = lbl(method, '带拒识的固定 CCA'), people = r.people;
   const intended = { en: 'Command intended', zh: '有意发出指令' };
+  // The same renderings as the topic page (when-not-to-act.astro, ncCondition).
+  const noCommand: Record<string, string> = { 'central image, flicker off': '注视中央图像，闪烁关闭',
+    'looking at a white wall, resting': '看着白墙休息', 'central image while the surrounding stimuli flicker': '注视中央，周围目标在闪烁' };
   return {
     id: 'ysu-async-ssvep', title: { en: 'When not to act · four-person development pilot', zh: '何时不该执行 · 四人开发试点' }, path: '/topics/when-not-to-act/',
     rows: [
-      { path, method, condition: intended, metric: { en: 'Frequency recognised', zh: '频率识别正确' }, value: fig(w.frequency_recognised, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
-      { path, method, condition: intended, metric: { en: 'Accepted (coverage)', zh: '被接受（覆盖率）' }, value: fig(w.accepted, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
-      { path, method, condition: intended, metric: { en: 'Accepted and correct', zh: '被接受且正确' }, value: fig(w.accepted_and_correct, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
-      ...r.false_acceptance.map((f: any) => ({ path, method, condition: { en: `No command · ${f.condition}` },
+      { path, method, label, condition: intended, metric: { en: 'Frequency recognised', zh: '频率识别正确' }, value: fig(w.frequency_recognised, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
+      { path, method, label, condition: intended, metric: { en: 'Accepted (coverage)', zh: '被接受（覆盖率）' }, value: fig(w.accepted, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
+      { path, method, label, condition: intended, metric: { en: 'Accepted and correct', zh: '被接受且正确' }, value: fig(w.accepted_and_correct, 'count', CTX), of: fig(w.tested, 'count', CTX), people },
+      ...r.false_acceptance.map((f: any) => ({ path, method, label, condition: { en: `No command · ${f.condition}`, zh: noCommand[f.condition] && `无意发出指令 · ${noCommand[f.condition]}` },
         metric: { en: 'Accepted by mistake (per window)', zh: '误接受（按窗口）' }, value: fig(f.accepted, 'count', CTX), of: fig(f.tested, 'count', CTX), people })),
     ],
   };
@@ -346,7 +363,7 @@ function ysuGroup(): ResultGroup {
 function ysuExtensionGroup(): ResultGroup {
   const r = extension.results['ysu-async-ssvep-extension'];
   const path = '/topics/when-not-to-act/#non-control';
-  const method = 'Fixed CCA with rejection', people = r.cohort.people;
+  const method = 'Fixed CCA with rejection', label = lbl(method, '带拒识的固定 CCA'), people = r.cohort.people;
   const rule: Record<string, L> = {
     global: { en: 'Global threshold, fixed on the pilot', zh: '全局阈值，在试点上固定' },
     personal: { en: `Personal threshold, ${r.rules[1].target_person_labels} own windows`, zh: `逐人阈值，用自己的 ${r.rules[1].target_person_labels} 个窗口` },
@@ -363,7 +380,7 @@ function ysuExtensionGroup(): ResultGroup {
     rows: [
       ...r.rules.flatMap(x => {
         const w = x.control_windows, c = rule[x.id];
-        const base = { path, method, people, condition: c };
+        const base = { path, method, label, people, condition: c };
         return [
           { ...base, metric: { en: 'Detection balanced accuracy', zh: '检测平衡准确率' },
             value: fig(x.detection_balanced_accuracy.mean, 'pct1', EXT), interval: pair(x.detection_balanced_accuracy.bootstrap_95, 'pct1', EXT) },
@@ -374,7 +391,7 @@ function ysuExtensionGroup(): ResultGroup {
             metric: { en: 'Accepted by mistake (per window)', zh: '误接受（按窗口）' }, value: fig(f.accepted, 'count', EXT), of: fig(f.tested, 'count', EXT) })),
         ];
       }),
-      { path, method, people, condition: { en: 'Personal minus global, same people and windows', zh: '逐人减全局，相同被试与窗口' },
+      { path, method, label, people, condition: { en: 'Personal minus global, same people and windows', zh: '逐人减全局，相同被试与窗口' },
         metric: { en: 'Paired difference, detection balanced accuracy', zh: '配对差值，检测平衡准确率' },
         value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
     ],
@@ -385,16 +402,16 @@ function ysuExtensionGroup(): ResultGroup {
 function ltrsvpGroup(): ResultGroup {
   const r = extension.results['ltrsvp-rate-transfer'];
   const path = '/topics/screen-to-vr/#image-rate';
-  const method = 'Logistic regression on 100-ms means', people = r.cohort.people;
+  const method = 'Logistic regression on 100-ms means', label = lbl(method, '100 毫秒均值逻辑回归'), people = r.cohort.people;
   const d = r.paired_difference;
   return {
     id: 'ltrsvp-rate-transfer', title: { en: 'Image rate · trained at one rate, tested on a later recording', zh: '图像速率 · 在一种速率下训练、在之后的记录上测试' },
     path: '/topics/screen-to-vr/', chance: fig(r.chance_level, 'pct1', EXT),
     rows: [
-      ...r.matrix.map(m => ({ path, method, people,
+      ...r.matrix.map(m => ({ path, method, label, people,
         condition: { en: `Trained at ${m.train_rate_hz} Hz (run a), tested at ${m.test_rate_hz} Hz (run b)`, zh: `${m.train_rate_hz} Hz a 段训练，${m.test_rate_hz} Hz b 段测试` },
         metric: BA, value: fig(m.balanced_accuracy.mean, 'pct1', EXT), interval: pair(m.balanced_accuracy.bootstrap_95, 'pct1', EXT) })),
-      { path, method, people, condition: { en: 'Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images', zh: '5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像' },
+      { path, method, label, people, condition: { en: 'Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images', zh: '5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像' },
         metric: DIFF, value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
     ],
   };
@@ -405,7 +422,7 @@ function adaptationGroup(): ResultGroup {
   const path = '/topics/calibration-budget/#adaptation';
   const arm: Record<string, L> = {
     frozen: { en: 'Head only · encoder frozen', zh: '只训分类头 · 编码器冻结' },
-    'last-block': { en: 'Last block + head', zh: '最后一个 block + 分类头' },
+    'last-block': { en: 'Last block + head', zh: '最后一个 Transformer 块 + 分类头' },
     'lora-r4': { en: 'LoRA rank 4 + head', zh: '秩为 4 的 LoRA + 分类头' },
   };
   const people = r.cohort.people;

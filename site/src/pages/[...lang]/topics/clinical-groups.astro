@@ -72,6 +72,7 @@ const copy = {
     auditP: `${c.independent_audit.replayed}. Reconstructed features and metrics differed by ${c.independent_audit.maximum_metric_difference}; intervals differed at floating-point precision.`,
     consent: 'Every participant gave written informed consent, with decisional capacity established, in accordance with the Declaration of Helsinki; all research protocols were approved by the University of Iowa Human Subjects Review Board (IRB 201707828). Only cohort aggregates appear here: no participant rows, no clinical or cognitive scores, and no per-group age or sex composition.',
     datasetLink: 'OpenNeuro dataset ↗', paperLink: 'Cohort study ↗', manuscriptLink: 'Open manuscript ↗', mirrorLink: 'NEMAR mirror ↗',
+    disclaimer: null as string | null, disclaimerOriginal: '',
   },
   zh: {
     description: `在组的层面、单中心的数据上，高于随机水平：${people} 名被试的静息态频谱模型区分帕金森病与对照的平衡准确率为 ${pct(eeg.mean_balanced_accuracy)}；完全不用 EEG 的年龄性别对照基线为 ${pct(demo.mean_balanced_accuracy)}。这不是诊断。`,
@@ -82,7 +83,7 @@ const copy = {
     plotNotes: { eeg: 'EEG 模型 · 静息态频谱', demo: '对照基线，不是 EEG 模型 · 不用 EEG' },
     eyebrow: '临床研究 · 静息态 EEG',
     dek: `在一家诊所的静息态记录上，一个简单的频谱模型以 ${pct(eeg.mean_balanced_accuracy)} 的平衡准确率区分开两组，随机水平为 ${pct(c.chance_level, 0)}。而一个只用年龄和性别、完全不用 EEG 的模型，在同样的折上达到 ${pct(demo.mean_balanced_accuracy)}。两者都是公开数据集上的研究结果：都不是诊断，也都没有在另一个队列上重复过。把对照基线并排放在这里，正是因为单看一个病例对照分数，说不出这个分数从何而来。`,
-    findingLabel: `EEG 减去年龄性别基线，同一批 ${c.cohort.people} 名被试`,
+    findingLabel: `EEG 减去年龄性别基线，同一批 ${c.cohort.people} 名被试（pp 为百分点）`,
     findingH3: 'EEG 模型高于完全不用 EEG 的模型',
     findingP: `${pct(eeg.mean_balanced_accuracy)} 对 ${pct(demo.mean_balanced_accuracy)}，用的是同一批被试、同样的折。两者的描述性区间分别是 ${intervalPct(eeg.balanced_accuracy_bootstrap_95 as [number, number])} 和 ${intervalPct(demo.balanced_accuracy_bootstrap_95 as [number, number])}${overlap ? '，而且二者有重叠' : ''}。单一随机种子、不调参、单中心：这是一次固定的实验，不是对这类模型在别处表现的估计。`,
     tableEyebrow: '两行，其中一行不是模型',
@@ -116,6 +117,9 @@ const copy = {
     auditP: `独立复算了全部 149 份原始记录与 4,470 个频谱窗，使用另一套 FFT 实现，并重新拟合了全部分类器。重建的特征与指标差异为 ${c.independent_audit.maximum_metric_difference}；区间的差异在浮点精度量级。`,
     consent: '每名被试都签署了书面知情同意，并确认具备决策能力，符合《赫尔辛基宣言》；全部研究方案经爱荷华大学机构审查委员会批准（IRB 201707828）。这里只发布队列级聚合结果：没有逐人记录，没有临床或认知量表分数，也不发布各组的年龄与性别构成。',
     datasetLink: 'OpenNeuro 数据集 ↗', paperLink: '队列研究论文 ↗', manuscriptLink: '公开手稿 ↗', mirrorLink: 'NEMAR 镜像 ↗',
+    // The released file's medical_disclaimer, in Chinese. The most safety-relevant
+    // sentence on the page was the one left in English; the original stays beside it.
+    disclaimer: '公开数据集上的研究结果：不是诊断，不是诊断准确率，也不是医疗器械或医疗建议。' as string | null, disclaimerOriginal: '英文原文：',
   },
 }[locale];
 const card = topicCards[locale]['clinical-groups'];
@@ -151,7 +155,7 @@ const rows = [
       <div class="finding-number"><strong>{pp(gap, 1)}</strong><span>{copy.findingLabel}</span></div>
       <div class="finding-copy"><h3 id="clinical-finding">{copy.findingH3}</h3><p>{copy.findingP}</p></div>
     </div>
-    <p class="protocol-note">{clinical.medical_disclaimer}</p>
+    <p class="protocol-note">{copy.disclaimer ? <>{copy.disclaimer}<span class="protocol-note-original">{copy.disclaimerOriginal}<span lang="en">{clinical.medical_disclaimer}</span></span></> : clinical.medical_disclaimer}</p>
     <div class="topic-heading"><div><p class="eyebrow">{copy.tableEyebrow}</p><h2>{copy.tableH2}</h2></div><p>{copy.tableLede}</p></div>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion}>
       <table>

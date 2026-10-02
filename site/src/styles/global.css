@@ -44,6 +44,15 @@ a:hover{color:var(--accent)}
 button,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none}
 button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* Links inside running text. Accent on muted prose is 1.02:1, so a link in a
+   sentence differed from the words around it by hue alone — WCAG 1.4.1, and
+   invisible to red-green colour blindness. Standalone links (buttons, cards,
+   navigation, headings, table cells) carry no underline; they are not inside
+   a sentence. The matrix note draws its own rule under its one link. */
+:where(main p:not(.matrix-note)) a:not(.button),:where(.citation-list,.entity-links,.source-strip) a{
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;text-decoration-color:#e4c3a5;
+}
+:where(main p:not(.matrix-note)) a:not(.button):hover,:where(.citation-list,.entity-links,.source-strip) a:hover{text-decoration-color:currentColor}
 
 h1,h2,h3,p{margin:0}
 h1,h2{font-family:var(--serif);font-weight:600;letter-spacing:-.005em}
@@ -52,12 +61,19 @@ h2{font-size:1.5rem;line-height:1.3}
 h3{font-size:1.02rem;font-weight:640}
 p{color:var(--muted)}
 small{display:block;color:var(--muted);font-size:.75rem}
-section[id]{scroll-margin-top:88px}
+/* Anchor targets clear the sticky masthead. On the scroll container rather than
+   on section[id]: release entries are <article id> and table groups are
+   <section id>, and every one of them used to land under the header. */
+:root{scroll-padding-top:96px}
 
 /* --- Masthead bar ---------------------------------------------------------
    Solid, not translucent: a blurred sticky bar is the single strongest
-   "AI product" signal and it also muddies the paper ground underneath. */
-header{
+   "AI product" signal and it also muddies the paper ground underneath.
+   Scoped to .site-header, never to bare `header` or `nav`: those also match the
+   date row of every release entry (which became a second sticky bar painted
+   over the navigation) and the topic switcher. check-workbench.mjs fails the
+   build if a bare `header{` or `nav{` rule returns. */
+.site-header{
   min-height:64px;display:flex;align-items:center;gap:40px;
   padding:11px max(26px,calc((100vw - 1360px)/2));
   background:var(--paper);
@@ -67,8 +83,8 @@ header{
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:1.22rem;font-weight:600;white-space:nowrap}
 /* The mark is public/logo.svg. Empty alt: the name beside it is the link text. */
 .mark{display:block;width:30px;height:30px;flex:none}
-nav{display:flex;gap:26px;font-size:.875rem}
-nav a[aria-current]{color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
+.site-header nav{display:flex;gap:26px;font-size:.875rem}
+.site-header nav a[aria-current]{color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
 
 /* Language switcher. Pushed to the trailing edge with `margin-left:auto` rather
    than a fixed width, so it stays put whichever locale's nav is longer — the
@@ -102,7 +118,13 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .stat-rail>div{padding:2px 20px;border-right:1px solid var(--rule)}
 .stat-rail dt{font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .stat-rail dd{margin:1px 0 0;font-family:var(--mono);font-size:1.5rem;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-.stat-rail .live{white-space:nowrap;font-size:.75rem;color:var(--muted);align-self:center}
+/* The update date is a term and its value like the counts, so it is a dt/dd
+   pair inside the list (a bare <span> is not allowed as a child of <dl>), set
+   as one quiet line rather than as a fifth count. */
+.stat-rail>.live{display:flex;align-items:baseline;flex:0 0 auto;padding:0 0 0 20px;border-right:0;
+  white-space:nowrap;font-size:.75rem;color:var(--muted);align-self:center}
+.stat-rail .live dt,.stat-rail .live dd{font:inherit;letter-spacing:0;text-transform:none;color:inherit;margin:0}
+.stat-rail .live dd{margin-left:.35em}
 .stat-rail .live i{display:inline-block;width:6px;height:6px;background:var(--good);border-radius:50%;margin-right:7px}
 
 /* --- Protocol selector ----------------------------------------------------
@@ -202,10 +224,16 @@ aside{border-left:1px solid var(--line);padding:18px;background:var(--soft)}
 aside h3{font-size:.98rem}
 .chart{min-height:210px;display:flex;align-items:center}
 .chart svg{width:100%;height:auto;overflow:visible}
-.chart text{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+/* User units. The aside is 288px wide between 861 and 1180px, which drew
+   10.5-unit text at about 9.5px; 12.5 keeps it near 11px at that width. */
+.chart text{font-family:var(--mono);font-size:12.5px;fill:var(--muted)}
 aside>p:last-child{font-size:.8125rem;margin-top:13px}
-.legend{display:flex;flex-wrap:wrap;gap:7px 13px;font-size:.75rem;color:var(--muted);margin-top:4px}
-.legend span{display:inline-flex;align-items:center;gap:5px}
+/* Numbered, because the bars are: the x axis prints 1..n and the palette has
+   neighbours a colour-blind reader cannot tell apart. The number, not the
+   swatch, is what ties a bar or a point to its name. */
+.legend{display:flex;flex-wrap:wrap;gap:7px 13px;font-size:.75rem;color:var(--muted);margin:4px 0 0;padding:0;list-style:none}
+.legend li{display:inline-flex;align-items:center;gap:5px}
+.legend .n{font-family:var(--mono);font-weight:650;color:var(--ink)}
 .legend i{width:8px;height:8px;display:inline-block}
 
 .source-strip{display:flex;flex-wrap:wrap;gap:7px 20px;font-size:.8125rem;padding:12px 2px;color:var(--muted)}
@@ -243,7 +271,7 @@ dialog ol{padding-left:22px}
 .detail-metrics>div{background:var(--soft);padding:14px;border-left:2px solid var(--rule)}
 .detail-metrics strong{display:block;font-family:var(--mono);font-size:1.4rem;letter-spacing:-.03em}
 dialog code{font-family:var(--mono);font-size:.75rem;overflow-wrap:anywhere;white-space:normal}
-dialog .button{margin-top:18px}
+dialog .button{margin-top:18px;max-width:100%}
 
 .skip{position:absolute;top:-100px;background:var(--accent);color:var(--paper);padding:12px;z-index:100}
 .skip:focus{top:0}
@@ -295,17 +323,17 @@ td .flag{margin-top:6px}
      full-width row of its own. One row was never going to hold all three: the
      seven English links plus the switcher need ~980px, and between 700 and
      1000px the header ran up to 108px off the screen on every English page. */
-  header{flex-wrap:wrap;row-gap:6px}
+  .site-header{flex-wrap:wrap;row-gap:6px}
   .lang{order:1}
-  header nav{order:2;flex-basis:100%;flex-wrap:wrap;row-gap:4px}
+  .site-header nav{order:2;flex-basis:100%;flex-wrap:wrap;row-gap:4px}
   .results-panel{grid-template-columns:minmax(0,1fr) 288px}
   .toolbar{display:block}
   .controls{margin-top:14px}
   footer{margin:60px 26px 0}
 }
 @media(max-width:860px){
-  header{gap:18px;padding:11px 20px}
-  nav{gap:15px}
+  .site-header{gap:18px;padding:11px 20px}
+  .site-header nav{column-gap:15px}
   main{padding:0 20px}
   .masthead{display:block;padding:24px 0 18px}
   .masthead h1{font-size:1.7rem}
@@ -328,16 +356,19 @@ td .flag{margin-top:6px}
   /* The header is sticky. Wrapped over three rows it stood 145px tall and held
      a fifth of a phone screen for the whole page. The links scroll sideways in
      one row instead; the last one is cut at the edge, which says there is more. */
-  header nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  .site-header nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
              margin-right:-20px;padding-right:20px}
-  header nav::-webkit-scrollbar{display:none}
-  header nav a{flex-shrink:0}
+  .site-header nav::-webkit-scrollbar{display:none}
+  .site-header nav a{flex-shrink:0}
+  /* The scrolling row clips anything drawn outside it, which took the top and
+     bottom of a 3px-offset focus ring with it. Draw the ring inside the link. */
+  .site-header nav a:focus-visible{outline-offset:-2px}
   /* Only the way out is needed on a phone: the page's own language is evident
      from the page. Dropping the current-language label lets the switcher sit
      beside the brand instead of taking a row of its own. */
   .lang-on{display:none}
-  header{flex-wrap:wrap;padding:12px 18px;gap:11px}
-  nav{width:100%;gap:9px 17px;flex-wrap:wrap;font-size:.8125rem}
+  .site-header{flex-wrap:wrap;padding:12px 18px;gap:11px}
+  .site-header nav{width:100%;column-gap:17px;font-size:.8125rem}
   .brand{font-size:1.1rem}
   .masthead h1{font-size:1.45rem}
   .lede{font-size:.875rem}
@@ -384,7 +415,36 @@ td .flag{margin-top:6px}
    word, a Chinese label's is one character. The flex rail shrank 协议 to 18px
    and set it one character per line. Two- and three-character labels always fit. */
 :lang(zh-Hans) :is(.stat-rail dt,.track-tab strong,.family,.status,.eyebrow){white-space:nowrap}
-:lang(zh-Hans) .eyebrow{letter-spacing:.12em}
+/* Size floors for Chinese. A Latin label stays legible at 9-11px because its
+   letters are simple; a Chinese character that small loses strokes. Labels go
+   to 12px and small running text to 14px. Tracking and uppercase only widened
+   Chinese labels (and capitalised embedded Latin, "JEV-STYLE"), so they go.
+   One selector per element rather than :is(), which would lend every element
+   in the list the specificity of the most specific one. */
+:lang(zh-Hans) .eyebrow,:lang(zh-Hans) .family,:lang(zh-Hans) .status,:lang(zh-Hans) .source,
+:lang(zh-Hans) .flag,:lang(zh-Hans) th,:lang(zh-Hans) .controls label,:lang(zh-Hans) .stat-rail dt,
+:lang(zh-Hans) .dataset-row dt,:lang(zh-Hans) .parameter span,:lang(zh-Hans) .card-footer,
+:lang(zh-Hans) .hold-card .state,:lang(zh-Hans) .short-answer h2,:lang(zh-Hans) .topic-switcher small,
+:lang(zh-Hans) .topic-table .subhead th,:lang(zh-Hans) .topic-table th small,:lang(zh-Hans) .topic-table .interval,
+:lang(zh-Hans) .ip-label small,:lang(zh-Hans) .matrix .colhead small,:lang(zh-Hans) .inline-key{
+  font-size:.75rem;letter-spacing:0;text-transform:none;
+}
+:lang(zh-Hans) .code-label{letter-spacing:0;text-transform:none}
+:lang(zh-Hans) .matrix .cmark{font-size:.6875rem}
+:lang(zh-Hans) .citation-list p,:lang(zh-Hans) .literature-grid p,:lang(zh-Hans) .citation-note,
+:lang(zh-Hans) .interval-plot figcaption,:lang(zh-Hans) .entity-group-meta,:lang(zh-Hans) .topic-entry-download p,
+:lang(zh-Hans) .topic-entry-card p,:lang(zh-Hans) .chart-row,:lang(zh-Hans) .ip-label,:lang(zh-Hans) .protocol-note{font-size:.875rem}
+/* Measure. These widths were set for Latin and gave 49-67 Chinese characters
+   a line; about 38 is comfortable. em, so it follows each element's size. */
+:lang(zh-Hans) :is(.roadmap-p,.release-meta,.release-summary,.short-answer p,.entity-profile p,.matrix-caveat,.payload-note){max-width:38em}
+/* No face in the Latin serif list has Chinese glyphs, so on Windows the
+   headings fell back to SimSun, which has no bold and was bolded synthetically.
+   The CSP allows only self-hosted fonts, so the list names what systems ship.
+   Long Chinese passages read better in the sans than in a fallback serif. */
+:lang(zh-Hans){--serif:"Iowan Old Style",Charter,Georgia,"Source Serif 4","Songti SC","Noto Serif CJK SC","Source Han Serif SC","Microsoft YaHei",serif}
+:lang(zh-Hans) .topic-dek,:lang(zh-Hans) .short-answer p{font-family:var(--sans)}
+/* Underlines clear CJK glyphs, which sit lower in the em box than Latin. */
+:lang(zh-Hans) :where(main p:not(.matrix-note)) a:not(.button),:lang(zh-Hans) :where(.citation-list,.entity-links,.source-strip) a{text-underline-offset:.3em}
 /* Release prose kept in English sits inside a Chinese page; give it back the
    Latin rhythm rather than the CJK leading inherited from its parent. */
 :lang(zh-Hans) [lang="en"]{line-height:1.6}

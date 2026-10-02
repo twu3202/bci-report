@@ -3,7 +3,7 @@ import { site } from '../data/site';
 import { topicPages } from '../data/topics';
 import { topicDataset, topicFaq } from '../data/structured';
 import { answerParts } from '../data/answer';
-import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicCards, topicChrome,
+import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, questionPhrases, topicCards, topicChrome,
          type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
 import AgentLinks from './AgentLinks.astro';
@@ -37,6 +37,8 @@ const c = topicChrome[locale];
 // The h1 is the question as someone would ask it; `title` stays the short label
 // the breadcrumb, the cards and the Dataset name use.
 const question = topicCards[locale][activeSlug].question;
+// The same question, with the phrase breaks a Chinese heading needs on a phone.
+const phrases = questionPhrases(activeSlug, locale);
 const pageTitle = `${documentTitle ?? question} · ${site.name}`;
 const origin = Astro.site ?? site.origin;
 const canonical = new URL(localizePath(path, locale), origin).href;
@@ -88,7 +90,7 @@ const structured = locale === 'en'
     <nav class="breadcrumbs" aria-label={c.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{c.home}</a></li><li><a href={hrefFor('/#topics', locale)}>{c.explore}</a></li><li aria-current="page">{title}</li></ol></nav>
     <section class="topic-hero">
       <p class="eyebrow">{eyebrow}</p>
-      <h1>{question}</h1>
+      <h1>{phrases.map((p, i) => <>{i > 0 && <wbr/>}{p}</>)}</h1>
       <p class="topic-dek">{dek}</p>
       <div class="topic-actions"><a class="button primary" href={dataFiles[0]} download>{c.reviewedJson}</a><a class="button" href="#methods-and-limits">{c.methodsLimits}</a></div>
     </section>

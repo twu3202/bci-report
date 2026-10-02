@@ -80,7 +80,7 @@ const copy = {
   },
   zh: {
     description: `在这个数据集上，并没有。同样 ${people} 名被试，FBCCA 在湿电极 SSVEP 记录上为 ${pct(fbWet.value)}、干电极上为 ${pct(fbDry.value)}；湿电极训练的 EEGNet 换到干电极上下降 ${dropMagnitude}。佩戴顺序是混杂因素。`,
-    answer: `在这个数据集上，并没有。在 12 目标、两秒的 SSVEP 任务中，同样 [[${people}]] 名被试分别用两种传感器记录：免训练的 FBCCA 参考方法在湿电极记录上为 [[${pct(fbWet.value)}]]，在干电极记录上为 [[${pct(fbDry.value)}]]。在湿电极记录上训练的 EEGNet，拿到干电极记录上测试时，平衡准确率下降了 [[${dropMagnitude}]]（配对 95% 区间 [[${dropLo}]] 至 [[${dropHi}]]）。传感器类型与佩戴顺序、任务时长相互混杂，所以这不是对硬件本身代价的干净估计。`,
+    answer: `在这个数据集上，并没有。在 12 目标、两秒的 SSVEP 任务中，同样 [[${people}]] 名被试分别用两种传感器记录：免训练的 FBCCA 参考方法在湿电极记录上为 [[${pct(fbWet.value)}]]，在干电极记录上为 [[${pct(fbDry.value)}]]。在湿电极记录上训练的 EEGNet，拿到干电极记录上测试时，平衡准确率下降了 [[${dropMagnitude}]]（百分点；配对 95% 区间 [[${dropLo}]] 至 [[${dropHi}]]）。传感器类型与佩戴顺序、任务时长相互混杂，所以这不是对硬件本身代价的干净估计。`,
     plotCaption: `同样 ${people} 名被试的湿电极与干电极记录。`,
     plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。深色行为湿电极记录，锈色行为干电极记录。',
     plotRows: { fbWet: 'FBCCA · 湿电极记录', fbDry: 'FBCCA · 干电极记录', ww: 'EEGNet · 湿 → 湿', wd: 'EEGNet · 湿 → 干', dd: 'EEGNet · 干 → 干', dw: 'EEGNet · 干 → 湿' },
@@ -100,11 +100,11 @@ const copy = {
     trainedOn: (s: string) => `在${s}上训练 · 被试不重叠`,
     sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
     wetTrained: '湿电极训练的 EEGNet',
-    lossLabel: `损失 ${loss} 个百分点`,
-    lossP: `把同一个已拟合模型从湿电极记录移到干电极记录，平衡准确率下降了 ${loss} 个百分点。`,
+    lossLabel: `下降 ${loss} pp`,
+    lossP: `把同一个已拟合模型从湿电极记录移到干电极记录，平衡准确率下降了 ${loss} pp。`,
     dryTrained: '干电极训练的 EEGNet',
-    gainLabel: `提升 ${gain} 个百分点`,
-    gainP: `把干电极训练的模型拿到湿电极记录上测试，平衡准确率提高了 ${gain} 个百分点；95% 区间 ${ipp(dryGain.paired_participant_bootstrap_95)}。`,
+    gainLabel: `提升 ${gain} pp`,
+    gainP: `把干电极训练的模型拿到湿电极记录上测试，平衡准确率提高了 ${gain} pp；95% 区间 ${ipp(dryGain.paired_participant_bootstrap_95)}。`,
     differentRef: '另一类参考方法',
     fbccaLabel: (v: string) => `干电极 FBCCA 平衡准确率 ${v}`,
     fbccaP: 'FBCCA 直接对每条目标记录计算、无需训练，也不从源域被试学习，因此不是迁移训练得到的模型。',
@@ -166,7 +166,7 @@ const card = topicCards[locale]['dry-vs-wet'];
         <tbody>{trainedModels.flatMap(model => ['wet','dry'].map(source => {
           const wet = find(model, source, 'wet');
           const dry = find(model, source, 'dry');
-          return <tr><th scope="row">{modelLabel(model)}<small>{copy.trainedOn(copy.sensor[source])}</small></th><td><span class="metric">{wet ? pct(wet.value) : '—'}</span><span class="interval">{wet ? intervalPct(wet.confidence_interval_95) : '—'}</span></td><td><span class="metric">{dry ? pct(dry.value) : '—'}</span><span class="interval">{dry ? intervalPct(dry.confidence_interval_95) : '—'}</span></td></tr>;
+          return <tr><th scope="row">{modelLabel(model, locale)}<small>{copy.trainedOn(copy.sensor[source])}</small></th><td><span class="metric">{wet ? pct(wet.value) : '—'}</span><span class="interval">{wet ? intervalPct(wet.confidence_interval_95) : '—'}</span></td><td><span class="metric">{dry ? pct(dry.value) : '—'}</span><span class="interval">{dry ? intervalPct(dry.confidence_interval_95) : '—'}</span></td></tr>;
         }))}</tbody>
       </table>
     </div>
@@ -182,7 +182,7 @@ const card = topicCards[locale]['dry-vs-wet'];
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.refRegion}>
       <table><caption>{copy.refCaption}</caption><thead><tr><th scope="col">{copy.colReference}</th><th scope="col">{copy.wetRecording}</th><th scope="col">{copy.dryRecording}</th></tr></thead><tbody>{analyticModels.map(model => {
         const wet = find(model, null, 'wet'); const dry = find(model, null, 'dry');
-        return <tr><th scope="row">{modelLabel(model)}<small>{copy.analyticNote}</small></th><td>{renderMetric(wet)}</td><td>{renderMetric(dry)}</td></tr>;
+        return <tr><th scope="row">{modelLabel(model, locale)}<small>{copy.analyticNote}</small></th><td>{renderMetric(wet)}</td><td>{renderMetric(dry)}</td></tr>;
       })}</tbody></table>
     </div>
   </section>

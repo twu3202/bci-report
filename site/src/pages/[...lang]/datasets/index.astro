@@ -3,7 +3,7 @@ import EntityLayout from '../../../components/EntityLayout.astro';
 import data from '../../../data/mvp.json';
 import { datasets, tr } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
-import { datasetStatus, datasetTask, hrefFor, localeOf, localeParams } from '../../../data/i18n';
+import { datasetStatus, datasetTask, directoryText, hrefFor, localeOf, localeParams } from '../../../data/i18n';
 import { site } from '../../../data/site';
 
 export const getStaticPaths = localeParams;
@@ -32,7 +32,7 @@ const structured = {
           <td>{tr(d.task, locale)}</td>
           <td>{people(d)}</td>
           <td>{c.groupsCount(d.groups.length)}</td>
-          <td lang="en">{d.license}</td>
+          <td lang={directoryText(d.license, locale).lang}>{directoryText(d.license, locale).text}</td>
         </tr>)}</tbody>
       </table>
     </div>

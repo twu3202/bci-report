@@ -139,8 +139,8 @@ const copy = {
   },
   zh: {
     description: `会变差。同样 ${ssPeople} 名被试做两秒 SSVEP 任务，免训练的 CCA 参考方法站立时为 ${pct(ssStand.value)}、快走时为 ${pct(ssFast.value)}（随机水平 ${pct(ssvepChance)}）；ERP 解码器从站立到慢跑的头皮 ROC AUC 变化为 ${scalp}（同一批 ${erpPeople} 名被试）。两者来自同一项研究。`,
-    answer: `会变差。同样 [[${ssPeople}]] 名被试做三目标、两秒时间窗的 SSVEP 任务（选定八个头皮通道；随机水平为 [[${pct(ssvepChance)}]]），免训练的 Author-style CCA 参考方法在站立时的平衡准确率为 [[${pct(ssStand.value)}]]，慢走时为 [[${pct(ssSlow.value)}]]，快走时为 [[${pct(ssFast.value)}]]。在 ERP 任务中，同一批 [[${erpPeople}]] 名被试在两种条件下都有数据：在每人第一次站立会话上拟合、之后原样沿用的解码器，从站立到慢跑的头皮 ROC AUC 变化为 [[${scalp}]]（配对 95% 区间 [[${scalpIvLo}]] 至 [[${scalpIvHi}]]）。这两个任务是同一项原始移动研究的衍生数据，因此是相关证据，而不是相互独立的重复。`,
-    plotCaption: `Author-style CCA：同样 ${ssPeople} 名被试站立与行走时的结果。`,
+    answer: `会变差。同样 [[${ssPeople}]] 名被试做三目标、两秒时间窗的 SSVEP 任务（选定八个头皮通道；随机水平为 [[${pct(ssvepChance)}]]），免训练、按原作者设置的 CCA 参考方法在站立时的平衡准确率为 [[${pct(ssStand.value)}]]，慢走时为 [[${pct(ssSlow.value)}]]，快走时为 [[${pct(ssFast.value)}]]。在 ERP 任务中，同一批 [[${erpPeople}]] 名被试在两种条件下都有数据：在每人第一次站立会话上拟合、之后原样沿用的解码器，从站立到慢跑的头皮 ROC AUC 变化为 [[${scalp}]]（配对 95% 区间 [[${scalpIvLo}]] 至 [[${scalpIvHi}]]）。这两个任务是同一项原始移动研究的衍生数据，因此是相关证据，而不是相互独立的重复。`,
+    plotCaption: `CCA（按原作者设置）：同样 ${ssPeople} 名被试站立与行走时的结果。`,
     plotLegend: `三目标、两秒、选定八个头皮通道的 SSVEP 上，免训练参考方法的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（${pct(ssvepChance)}）。`,
     eyebrow: '运动鲁棒性 · 头皮与耳部 EEG',
     dek: '被试一动起来表现就会下降，但下降多少、意味着什么，取决于任务、时间窗、电极布局和指标。两个移动场景衍生数据集来自同一项原始研究，因此是相关证据，而不是相互独立的重复队列。',
@@ -200,7 +200,7 @@ const copy = {
     gEyebrow: '跑步机速度 · 干电极',
     gH2: '步行速度分数可能在测什么',
     gLede: `${gc.people_scored} 名被试以三种速度在跑步机上行走，同时用干电极头戴设备记录 ${gc.scalp_channels} 个头皮通道。一个固定分类器根据每段完整的 ${gc.seconds_per_recording} 秒记录判断行走速度。另一个分类器完全看不到 EEG 的频谱模式，只拿到三个与运动相关的干扰特征：幅值、低频功率和工频功率。随机水平为 ${pct(gaitData.chance_level)}。`,
-    gFindingLabel: `干扰特征减频谱频带，同一批 ${gc.people_scored} 名被试`,
+    gFindingLabel: `干扰特征减频谱频带，同一批 ${gc.people_scored} 名被试（pp 为百分点）`,
     gFindingH3: gGap > 0 ? '干扰特征的分数更高' : '频谱频带的分数更高',
     gFindingP: `${pct(gNuis.balanced_accuracy)} 对 ${pct(gSpec.balanced_accuracy)}。${gOverlap ? `两者的区间有重叠（${gIv(gNuis)} 和 ${gIv(gSpec)}），所以谁更高并没有定论。` : ''}能确定的是：从行走时的 EEG 得到一个速度分数，并不需要神经解读所依赖的那种频谱模式。单凭这样一个分数，不能说明解码到了大脑活动。`,
     gRegion: '有无频谱 EEG 时的步行速度分类，可横向滚动',
@@ -241,7 +241,7 @@ const card = topicCards[locale]['on-the-move'];
   <section class="topic-section" aria-labelledby="ssvep2-heading">
     <div class="topic-heading"><div><p class="eyebrow">{copy.s2Eyebrow}</p><h2 id="ssvep2-heading">{copy.s2H2}</h2></div><p>{copy.s2Lede}</p></div>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.s2Region}>
-      <table><caption>{copy.s2Caption}</caption><thead><tr><th scope="col">{copy.colMethod}</th>{conditions3.map(condition => <th scope="col">{conditionLabel(condition, locale)}</th>)}</tr></thead><tbody>{ssvep2Models.map(model => <tr><th scope="row">{modelLabel(model)}<small>{copy.s2Role[model] ?? copy.s2RoleFm}</small></th>{conditions3.map(condition => {
+      <table><caption>{copy.s2Caption}</caption><thead><tr><th scope="col">{copy.colMethod}</th>{conditions3.map(condition => <th scope="col">{conditionLabel(condition, locale)}</th>)}</tr></thead><tbody>{ssvep2Models.map(model => <tr><th scope="row">{modelLabel(model, locale)}<small>{copy.s2Role[model] ?? copy.s2RoleFm}</small></th>{conditions3.map(condition => {
         const row = rowFor(ssvep2, model, condition)!;
         return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span><ScoreBar value={row.value} label={copy.baLabel(pct(row.value))} tone={model === 'author-cca' ? 'rust' : model === 'spectral-ridge' ? 'olive' : 'ink'} /></td>;
       })}</tr>)}</tbody></table>
@@ -253,7 +253,7 @@ const card = topicCards[locale]['on-the-move'];
   <section class="topic-section" aria-labelledby="five-heading">
     <div class="topic-heading"><div><p class="eyebrow">{copy.s5Eyebrow}</p><h2 id="five-heading">{copy.s5H2}</h2></div><p>{copy.s5Lede}</p></div>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.s5Region}>
-      <table><caption>{copy.s5Caption}</caption><thead><tr><th scope="col">{copy.colMethodModality}</th>{conditions3.map(condition => <th scope="col">{conditionLabel(condition, locale)}</th>)}</tr></thead><tbody>{['scalp','ear'].flatMap(modality => ssvep5Models.map(model => <tr><th scope="row">{modelLabel(model)}<small>{modality === 'scalp' ? copy.s5Scalp : copy.s5Ear} · {copy.s5Window}</small></th>{conditions3.map(condition => {
+      <table><caption>{copy.s5Caption}</caption><thead><tr><th scope="col">{copy.colMethodModality}</th>{conditions3.map(condition => <th scope="col">{conditionLabel(condition, locale)}</th>)}</tr></thead><tbody>{['scalp','ear'].flatMap(modality => ssvep5Models.map(model => <tr><th scope="row">{modelLabel(model, locale)}<small>{modality === 'scalp' ? copy.s5Scalp : copy.s5Ear} · {copy.s5Window}</small></th>{conditions3.map(condition => {
         const row = rowFor(ssvep5, model, condition, modality)!;
         return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>;
       })}</tr>))}</tbody></table>

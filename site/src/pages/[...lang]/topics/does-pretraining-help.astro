@@ -88,7 +88,7 @@ const copy = {
   },
   zh: {
     description: `有时有用。在冻结编码器、固定分类头的设置下，预训练 CBraMod 在运动想象/静息（${d2(cbMi)}）和脑力负荷（${d2(cbWl)}）上都优于随机初始化均值；LaBraM 在脑力负荷上提升 ${d2(lbWl)}，在运动想象/静息上没有（${d2(lbMi)}）。尚不能确定这些基准数据是否出现在预训练数据中。`,
-    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这三项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这项比较不能证明这些基准数据在预训练时未曾出现，也不能证明预训练在其他任务或其他适配预算下同样有益。`,
+    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（百分点；运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这三项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这项比较不能证明这些基准数据在预训练时未曾出现，也不能证明预训练在其他任务或其他适配预算下同样有益。`,
     plotCaption: `预训练减随机初始化：运动想象/静息 ${nMi} 名被试，脑力负荷 ${nWl} 名被试。`,
     plotLegend: '被试平均平衡准确率之差，单位为百分点（pp）：预训练编码器减三次随机初始化的均值，架构冻结、数据划分相同。点为差值，横线为被试配对 bootstrap 95% 区间（数值见各行标签下方），虚线为零（没有差别）。深色行为固定分类头，锈色行为训练集内选定分类头。',
     readout: { fixed: '固定分类头', selected: '训练集内选定分类头' },
@@ -157,7 +157,7 @@ const card = topicCards[locale]['does-pretraining-help'];
     reference={0}
     rows={datasets.flatMap(dataset => models.flatMap(model => settings.map(setting => {
       const row = contrast(setting.track, model, dataset);
-      return { label: `${modelLabel(model)} · ${datasetLabel(dataset, locale)}`, note: `${copy.readout[setting.key]} · ${ipp(row.paired_participant_bootstrap_95)}`,
+      return { label: `${modelLabel(model, locale)} · ${datasetLabel(dataset, locale)}`, note: `${copy.readout[setting.key]} · ${ipp(row.paired_participant_bootstrap_95)}`,
         tone: setting.key === 'fixed' ? 'ink' as const : 'rust' as const, value: row.difference, interval: row.paired_participant_bootstrap_95, text: d2(row) };
     })))}
   />
@@ -167,7 +167,7 @@ const card = topicCards[locale]['does-pretraining-help'];
       <table><caption>{copy.contrastCaption}</caption><thead><tr><th scope="col">{copy.colTaskModel}</th><th scope="col">{copy.colFixed}</th><th scope="col">{copy.colSelected}</th></tr></thead><tbody>{datasets.flatMap(dataset => models.map(model => {
         const fixedContrast = contrast('pretraining-attribution-fixed',model,dataset);
         const selectedContrast = contrast('pretraining-attribution-selected',model,dataset);
-        return <tr><th scope="row">{modelLabel(model)}<small>{datasetLabel(dataset, locale)} · n={fixedContrast.participants}</small></th><td><span class="metric">{pp(fixedContrast.difference, 2)}</span><span class="interval">{ipp(fixedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(fixedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(fixedContrast.difference,2))} tone={fixedContrast.difference >= 0 ? 'olive' : 'ink'} /></td><td><span class="metric">{pp(selectedContrast.difference, 2)}</span><span class="interval">{ipp(selectedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(selectedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(selectedContrast.difference,2))} tone={selectedContrast.difference >= 0 ? 'olive' : 'ink'} /></td></tr>;
+        return <tr><th scope="row">{modelLabel(model, locale)}<small>{datasetLabel(dataset, locale)} · n={fixedContrast.participants}</small></th><td><span class="metric">{pp(fixedContrast.difference, 2)}</span><span class="interval">{ipp(fixedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(fixedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(fixedContrast.difference,2))} tone={fixedContrast.difference >= 0 ? 'olive' : 'ink'} /></td><td><span class="metric">{pp(selectedContrast.difference, 2)}</span><span class="interval">{ipp(selectedContrast.paired_participant_bootstrap_95)}</span><ScoreBar value={Math.abs(selectedContrast.difference)} max={0.12} label={copy.contrastLabel(pp(selectedContrast.difference,2))} tone={selectedContrast.difference >= 0 ? 'olive' : 'ink'} /></td></tr>;
       }))}</tbody></table>
     </div>
   </section>
@@ -179,12 +179,12 @@ const card = topicCards[locale]['does-pretraining-help'];
         const pretrained = score(setting.rows,model,dataset,'pretrained');
         const random = score(setting.rows,model,dataset,'constructor-random-mean');
         const delta = contrast(setting.track,model,dataset);
-        return <tr><th scope="row">{modelLabel(model)}<small>{datasetLabel(dataset, locale)}</small></th><td><span class="metric">{pct(pretrained.value)}</span></td><td><span class="metric">{pct(random.value)}</span><small>{copy.threeInits}</small></td><td><span class="metric">{pp(delta.difference,2)}</span><span class="interval">{ipp(delta.paired_participant_bootstrap_95)}</span></td></tr>;
+        return <tr><th scope="row">{modelLabel(model, locale)}<small>{datasetLabel(dataset, locale)}</small></th><td><span class="metric">{pct(pretrained.value)}</span></td><td><span class="metric">{pct(random.value)}</span><small>{copy.threeInits}</small></td><td><span class="metric">{pp(delta.difference,2)}</span><span class="interval">{ipp(delta.paired_participant_bootstrap_95)}</span></td></tr>;
       }))}</tbody></table>
     </div>)}
     <div class="evidence-grid">{datasets.map(dataset => {
       const row = control(dataset);
-      return <article class="evidence-card"><p class="eyebrow">{copy.controlEyebrow}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} label={copy.baLabel(pct(row.value))} tone="ink"/><p>{modelLabel(row.model)} · {datasetLabel(dataset, locale)}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
+      return <article class="evidence-card"><p class="eyebrow">{copy.controlEyebrow}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} label={copy.baLabel(pct(row.value))} tone="ink"/><p>{modelLabel(row.model, locale)} · {datasetLabel(dataset, locale)}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
     })}</div>
   </section>
 
