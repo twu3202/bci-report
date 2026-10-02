@@ -32,7 +32,7 @@ const structured = {
           <td>{tr(d.task, locale)}</td>
           <td>{people(d)}</td>
           <td>{c.groupsCount(d.groups.length)}</td>
-          <td lang={directoryText(d.license, locale).lang}>{directoryText(d.license, locale).text}</td>
+          <td lang={directoryText(d.license, locale).lang}>{directoryText(d.license, locale).text}{directoryText(d.license, locale).original && <span class="note-original" lang="en">{directoryText(d.license, locale).original}</span>}</td>
         </tr>)}</tbody>
       </table>
     </div>

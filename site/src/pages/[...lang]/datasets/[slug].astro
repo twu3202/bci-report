@@ -74,7 +74,7 @@ const structured = {
       <h3 lang="en">{d.name}</h3>
       <p><strong>{c.attribution}</strong> <span lang="en">{d.attribution}</span></p>
       {requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{requested.text}</span> <a href={requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
-      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
+      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>}{licence.original && <> <span class="note-original-inline" lang="en">({licence.original})</span></>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
       <p>{c.notRedistributed}</p>
     </article></div>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>

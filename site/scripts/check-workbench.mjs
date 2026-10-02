@@ -356,17 +356,23 @@ const rejected={
   'Author-style CCA':'CCA（按原作者设置）','Single-band eTRCA':'单频带 eTRCA','Uniform random':'均匀随机',
 };
 const chineseOnly=html=>html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<(\w+)[^>]*\blang="en"[^>]*>[\s\S]*?<\/\1>/g,'');
+// 暴露 is rejected for pretraining exposure. Two rights-review notes in the data
+// register say 隐私暴露 and 元数据暴露 (privacy and metadata exposure, decided
+// 2026-10-02), a different concept the glossary names; those two words, and
+// nothing else with 暴露 in it, pass.
+const allowedWith={'暴露':/(?:隐私|元数据)暴露/g};
+const hasRejected=(text,bad)=>(allowedWith[bad]?text.replace(allowedWith[bad],''):text).includes(bad);
 // The release log is checked here too; the API page is checked with the entity pages below.
 for(const path of [...bilingual,'releases/']){
   const zh=chineseOnly(read('zh/'+path));
   for(const [bad,good] of Object.entries(rejected))
-    assert.ok(!zh.includes(bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
+    assert.ok(!hasRejected(zh,bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
   // A Chinese sentence does not end on an ASCII full stop.
   assert.doesNotMatch(zh,/[一-鿿\d]\.<\/p>/,'zh/'+path+': Chinese sentence ends with an ASCII period');
 }
 const workbenchSource=readFileSync(new URL('../src/scripts/workbench.ts',import.meta.url),'utf8');
 for(const [bad,good] of Object.entries(rejected))
-  assert.ok(!workbenchSource.includes(bad),`workbench.ts: "${bad}" is a rejected rendering — use "${good}"`);
+  assert.ok(!hasRejected(workbenchSource,bad),`workbench.ts: "${bad}" is a rejected rendering — use "${good}"`);
 
 // --- 2026-09-22 evidence batch --------------------------------------------------
 // The handoff's hard lines, each pinned to the concrete way it could break.
@@ -702,7 +708,7 @@ for(const path of [...entityBilingual,'api/']){
     assert.doesNotMatch(html,/\sstyle="|<style[\s>]|\son(?:click|load|error|change|submit)=/,path+': the CSP forbids inline style and handlers');
   }
   const zhText=chineseOnly(zh);
-  for(const [bad,good] of Object.entries(rejected)) assert.ok(!zhText.includes(bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
+  for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zhText,bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
   assert.doesNotMatch(zhText,/[一-鿿\d]\.<\/p>/,'zh/'+path+': Chinese sentence ends with an ASCII period');
   assert.ok(sitemap.includes('<loc>https://bci.report/'+path+'</loc>')&&sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),path+': sitemap entry in both languages');
 }
@@ -1145,7 +1151,7 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   for(const [en,zh] of Object.entries(dirZh)){
     assert.deepEqual(digits(zh),digits(en),'directory-zh.json: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
     assert.ok(/\p{Script=Han}/u.test(zh),'directory-zh.json: "'+en.slice(0,50)+'" has no Chinese');
-    for(const [bad,good] of Object.entries(rejected)) assert.ok(!zh.includes(bad),`directory-zh.json: "${bad}" is a rejected rendering — use "${good}"`);
+    for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zh,bad),`directory-zh.json: "${bad}" is a rejected rendering — use "${good}"`);
   }
   // Licence names are names: one spelling in every language.
   const licenceName=/^(?:MIT|GPL-3\.0|CC0-1\.0|CC BY 4\.0|CC BY-ND 4\.0|CC BY-NC-ND 4\.0|Open Data Commons Attribution License 1\.0)$/;
@@ -1155,7 +1161,49 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   const zhHome=read('zh/');
   const directory=zhHome.slice(zhHome.indexOf('id="models"'),zhHome.indexOf('id="news"'));
   assert.ok(directory.length>2000,'zh: the model directory and data register must render');
-  assert.doesNotMatch(directory,/<p lang="en">/,'zh: model notes and rights-review notes are printed in Chinese');
+  assert.doesNotMatch(directory,/<p lang="en">/,'zh: every directory note has its Chinese (no untranslated fallback)');
+  // Model notes print the Chinese alone. Rights-review and licence notes print the released
+  // English beside the Chinese, marked lang="en" and quieter (decided 2026-10-02), on the home
+  // register, the datasets index and each dataset page.
+  const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const original=en=>'<span class="note-original" lang="en">'+e(en)+'</span>';
+  for(const m of data.models){
+    assert.ok(directory.includes('<p>'+e(dirZh[m.note])+'</p>')&&!directory.includes(e(m.note)),'zh: model note in Chinese alone: '+m.note.slice(0,40));
+    if(dirZh[m.license]) assert.ok(directory.includes(e(dirZh[m.license])+original(m.license)),'zh: model licence note with its English: '+m.license.slice(0,40));
+  }
+  let originals=0;
+  for(const d of data.datasets){
+    assert.ok(directory.includes('<p>'+e(dirZh[d.detail])+'</p><p class="note-original" lang="en">'+e(d.detail)+'</p>'),'zh: rights-review note in Chinese with its English: '+d.detail.slice(0,40));
+    originals++;
+    if(dirZh[d.license]){originals++;
+      assert.ok(directory.includes(e(dirZh[d.license])+(d.licenseUrl?' ↗</a>':'')+original(d.license)),'zh: dataset licence note with its English: '+d.license);}
+  }
+  assert.ok(originals>data.datasets.length,'zh: the register prints English originals');
+  const zhIndex=read('zh/datasets/');
+  // Each dataset page and its licence, as the English index lists them.
+  const unq=s=>s.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  const datasetsWithPages=[...read('datasets/').matchAll(/<th scope="row"><a href="\/datasets\/([a-z0-9-]+)\/" lang="en">[^<]*<\/a><\/th>(?:<td>[^<]*<\/td>){3}<td>([^<]*)<\/td>/g)].map(m=>({slug:m[1],license:unq(m[2])}));
+  assert.ok(datasetsWithPages.length>=16&&datasetsWithPages.some(d=>dirZh[d.license]),'datasets/: every dataset page with its licence, some of them translated');
+  for(const d of datasetsWithPages) if(dirZh[d.license]){
+    assert.ok(zhIndex.includes(e(dirZh[d.license])+original(d.license)),'zh/datasets/: licence note with its English: '+d.license);
+    assert.ok(read('zh/datasets/'+d.slug+'/').includes(' ↗</a> <span class="note-original-inline" lang="en">('+e(d.license)+')</span>'),'zh/datasets/'+d.slug+'/: licence note with its English');
+  }
+  // The tightened wordings (2026-10-02).
+  assert.equal(dirZh['MIT, as stated on the model card'],'MIT（据模型卡）');
+  for(const [key,zh] of [['Ethics evidence is positive','伦理方面的证据是支持性的'],['materially limits privacy exposure','明显限制了隐私暴露'],['comparatively low metadata exposure','元数据暴露相对较少']]){
+    const k=Object.keys(dirZh).find(x=>x.includes(key));
+    assert.ok(k&&dirZh[k].includes(zh),'directory-zh.json: "'+key+'" is rendered '+zh);
+  }
+}
+// The chart colours and the legend swatches are one list in two files (workbench.ts, generated.css).
+{
+  const colours=[...workbenchSource.match(/const colors=\[([^\]]+)\]/)[1].matchAll(/'(#[0-9a-fA-F]{6})'/g)].map(m=>m[1].toLowerCase());
+  const swatches=[...readFileSync(new URL('../src/styles/generated.css',import.meta.url),'utf8').matchAll(/\.legend i\.s(\d+)\{background:(#[0-9a-fA-F]{6})\}/g)];
+  assert.ok(colours.length>=8,'workbench.ts: the chart colours');
+  assert.deepEqual(swatches.map(m=>Number(m[1])),colours.map((_,i)=>i),'generated.css: one .legend i.sN swatch per chart colour, numbered from 0');
+  assert.deepEqual(swatches.map(m=>m[2].toLowerCase()),colours,'generated.css: the legend swatches must be the chart colours, in order');
+  const narrow=readFileSync(new URL('../src/styles/global.css',import.meta.url),'utf8').split('@media(max-width:860px){')[1].split('\n}')[0];
+  assert.match(narrow,/\.stat-rail>\.live\{padding-left:0\}/,'global.css: the update date is not indented when the stat rail wraps');
 }
 
 // --- 2026-10-02 discoverability and citation ---------------------------------------------
@@ -1366,6 +1414,7 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'the /api/ BibTeX must be the citation CITATION.cff gives');
 }
 
+console.log('PASS: Chinese register — licence and rights-review notes with their English beside them, model notes in Chinese; chart colours equal the legend swatches.');
 console.log('PASS: 2026-10-02 discoverability — share card is the recorded badge-free bitmap with alt/size on every page; home Dataset cites the newest release with every file and topic part; Atom feed matches the release log; only /data/* is cross-origin; cite blocks name exactly their releases, in both languages and Markdown; table names survive into Markdown; footers, llms.txt, licences and .zenodo.json agree.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
 console.log('PASS: short answers — question as h1 and title, every answer figure shown in the evidence below it, FAQPage equal to the printed answer.');

@@ -48,6 +48,9 @@
  *                                                12-target task
  *   analytic reference           免训练参考      not 解析参考
  *   pretraining exposure         是否出现在预训练数据中   not 暴露
+ *   privacy / metadata exposure  隐私暴露 / 元数据暴露   the only two places 暴露
+ *                                                stands (rights-review notes);
+ *                                                the lint allows nothing else
  *   participant-disjoint         被试不重叠
  *   session                      会话            (跨会话 is established usage)
  *   confounded / entangled       相互混杂
@@ -318,11 +321,17 @@ export const datasetTask = zhLabel({
  * `detail`) as the page prints it. Chinese from directory-zh.json where the
  * exact English text has a translation; otherwise the English, with
  * `lang: 'en'` so the element can say so. The payload itself is never touched.
+ *
+ * `original` is the released English behind a translation. Rights-review and
+ * licence notes print it beside the Chinese, marked lang="en" and visually
+ * secondary (class "note-original"), because those notes are what a reader
+ * relies on and the English is the reviewed text (decided 2026-10-02). Model
+ * notes print the Chinese alone.
  */
-export function directoryText(text: string, locale: Locale): { text: string; lang?: 'en' } {
+export function directoryText(text: string, locale: Locale): { text: string; lang?: 'en'; original?: string } {
   if (locale === 'en') return { text };
   const zh = (directoryZh.text as Record<string, string>)[text];
-  return zh ? { text: zh } : { text, lang: 'en' };
+  return zh ? { text: zh, original: text } : { text, lang: 'en' };
 }
 
 export const familyLabel = (family: string, locale: Locale) => ({
