@@ -339,10 +339,14 @@ with people helped, harmed and tied. **A better detector here is not better
 command accuracy**, and these are window rates, not false activations per hour.
 And LTRSVP (PhysioNet, doi:10.13026/C2KX0P; Matran-Fernandez and Poli, PLoS ONE
 2017, doi:10.1371/journal.pone.0178498; ODC-By 1.0): a P300 target decoder
-trained on a 5-Hz or 10-Hz recording and tested on the same person's later 10-Hz
-recording, nine people, with the full 3×3 rate matrix. The paired interval
-crosses zero, and rate and recording change together: **not a causal effect of
-image rate**.
+trained on one recording at 5 or 10 Hz and tested on a different recording of
+the same person at 10 Hz, nine people, with the full 3×3 rate matrix. Within a
+rate, run b followed run a after a long break; across rates the original study
+presented the rates from the lowest to the highest, not randomised, and how the
+released files map onto that sequence is not documented, so a cross-rate cell
+also differs in elapsed time, fatigue and practice. The paired interval crosses
+zero, and rate and recording change together: **not a causal effect of image
+rate**.
 
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.

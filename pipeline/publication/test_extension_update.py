@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -167,6 +168,55 @@ class ExtensionBoundary(unittest.TestCase):
             next(c for c in s['matrix'] if (c['source_rate_hz'], c['target_rate_hz']) == (5, 10))['target_n'] = 224
         with self.assertRaisesRegex(ValueError, 'differ between training rates'):
             build(self.forged(LTR, other_images))
+
+    def test_identical_test_events_must_be_asserted_by_the_aggregate_and_the_audit(self):
+        # The export checks counts only; that the events are the same is the aggregate's and the audit's claim.
+        def no_identity(s):
+            s['primary_estimand'] = s['primary_estimand'].replace('event identities', 'events')
+        with self.assertRaisesRegex(ValueError, 'identical 10-Hz run-b test events'):
+            build(self.forged(LTR, no_identity))
+
+        def no_pairing(a):
+            a['verified'] = [v for v in a['verified'] if not v.startswith('same-target paired primary contrast')]
+        with self.assertRaisesRegex(ValueError, 'same-target pairing'):
+            build(self.forged(LTR, change_audit=no_pairing))
+
+    def test_the_presentation_order_needs_its_recorded_source(self):
+        # Ascending, not randomised: stated only while the manifest holds the quotes it rests on.
+        for drop in ('lowest to the highest', 'not randomised', 'which one was taken first'):
+            manifest = copy.deepcopy(MANIFEST)
+            for h in source(manifest, LTR)['decisionHistory']:
+                h['quotes'] = [q for q in h.get('quotes', []) if drop not in q['text']]
+            with self.assertRaisesRegex(ValueError, 'source', msg=drop):
+                build(manifest)
+        manifest = copy.deepcopy(MANIFEST)
+        del source(manifest, LTR)['decisionHistory']
+        with self.assertRaises(ValueError):
+            build(manifest)
+
+    def test_the_order_wording(self):
+        lt = build(MANIFEST)['results'][LTR]
+        order = lt['presentation_order']
+        self.assertIn('from the lowest to the highest', order['known'])
+        self.assertIn('not randomised', order['known'])
+        self.assertIn('how the two released files of each rate map onto', order['not_documented'])
+        self.assertIn('elapsed time, fatigue and practice', order['consequence'])
+        self.assertIn('https://doi.org/10.1371/journal.pone.0178498', order['sources'])
+        text = json.dumps(lt)
+        self.assertNotIn('not established', text, 'the order across rates is partly known; say what is')
+        self.assertNotIn('order across rates', text)
+        self.assertIn('not_causal', lt)
+
+    def test_later_recording_only_within_a_rate(self):
+        # Run b is later than run a only within a rate; across rates the mapping is undocumented.
+        payload = build(MANIFEST)
+        lt = payload['results'][LTR]
+        for where, text in [('question', lt['question']), ('generalization', lt['generalization']),
+                            ('rights.task', lt['rights']['task']), ('reading', lt['reading']),
+                            *[(f'limitations[{i}]', t) for i, t in enumerate(lt['limitations'])]]:
+            for sentence in re.split(r'(?<=[.;])\s+', text):
+                if re.search(r'\blater\b[^.;]*\brecording|\bfollowed run a\b', sentence):
+                    self.assertRegex(sentence, r'[Ww]ithin (?:a|each|one) rate', f'{where}: "{sentence}"')
 
     def test_the_paired_rate_difference_must_equal_the_cells(self):
         def drift(s):

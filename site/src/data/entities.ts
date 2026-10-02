@@ -51,6 +51,13 @@ export function formatFig(f: Fig): string {
   }
 }
 
+/**
+ * A short reading printed under a row's figure, in each language: text, and
+ * figures as `Fig`s so the counts in it are re-read from the served file like any
+ * other. Figures come in the same order in both languages (figure parity).
+ */
+export type RowNote = Record<Locale, (string | Fig)[]>;
+
 export interface ResultRow {
   /** Locale-free page path, with an anchor where the figure's section has one. */
   path: string;
@@ -68,6 +75,8 @@ export interface ResultRow {
   /** For counts: `value` out of `of`. */
   of?: Fig;
   people: number;
+  /** What the figure may and may not be read as, printed beside it. */
+  note?: RowNote;
 }
 
 export interface ResultGroup {
@@ -393,26 +402,44 @@ function ysuExtensionGroup(): ResultGroup {
       }),
       { path, method, label, people, condition: { en: 'Personal minus global, same people and windows', zh: '逐人减全局，相同被试与窗口' },
         metric: { en: 'Paired difference, detection balanced accuracy', zh: '配对差值，检测平衡准确率' },
-        value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
+        value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT),
+        // The people behind the mean, as the topic page prints them: how many, never which.
+        note: { en: [fig(d.helped, 'count', EXT), ' people improved, ', fig(d.harmed, 'count', EXT), ' got worse, ', fig(d.tied, 'count', EXT), ' unchanged'],
+                zh: [fig(d.helped, 'count', EXT), ' 人提升、', fig(d.harmed, 'count', EXT), ' 人变差、', fig(d.tied, 'count', EXT), ' 人不变'] } },
     ],
   };
 }
 
-/** LTRSVP: train on one recording at one image rate, test on a later one (2026-10-02). */
+/**
+ * LTRSVP: train on one recording at one image rate, test on a different recording
+ * (2026-10-02). Run b is the later recording only within a rate: across rates the
+ * study's order was ascending and how the released files map onto it is not
+ * documented, so the title does not call the test recording later.
+ */
 function ltrsvpGroup(): ResultGroup {
   const r = extension.results['ltrsvp-rate-transfer'];
   const path = '/topics/screen-to-vr/#image-rate';
   const method = 'Logistic regression on 100-ms means', label = lbl(method, '100 毫秒均值逻辑回归'), people = r.cohort.people;
   const d = r.paired_difference;
   return {
-    id: 'ltrsvp-rate-transfer', title: { en: 'Image rate · trained at one rate, tested on a later recording', zh: '图像速率 · 在一种速率下训练、在之后的记录上测试' },
+    id: 'ltrsvp-rate-transfer', title: { en: 'Image rate · trained on one recording at one rate, tested on a different recording', zh: '图像速率 · 在一种速率的一段记录上训练、在另一段记录上测试' },
     path: '/topics/screen-to-vr/', chance: fig(r.chance_level, 'pct1', EXT),
     rows: [
       ...r.matrix.map(m => ({ path, method, label, people,
         condition: { en: `Trained at ${m.train_rate_hz} Hz (run a), tested at ${m.test_rate_hz} Hz (run b)`, zh: `${m.train_rate_hz} Hz a 段训练，${m.test_rate_hz} Hz b 段测试` },
         metric: BA, value: fig(m.balanced_accuracy.mean, 'pct1', EXT), interval: pair(m.balanced_accuracy.bootstrap_95, 'pct1', EXT) })),
       { path, method, label, people, condition: { en: 'Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images', zh: '5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像' },
-        metric: DIFF, value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT) },
+        metric: DIFF, value: fig(d.mean, 'pp1', EXT), interval: pair(d.bootstrap_95, 'pp1', EXT),
+        // The reading the topic page gives, beside the number it qualifies. Both
+        // clauses are flags in the export, which refuses to build if the first stops being true.
+        note: {
+          en: [fig(d.people_lower, 'count', EXT), ' people lower, ', fig(d.people_higher, 'count', EXT), ' higher',
+               ...(d.interval_crosses_zero ? ['. The interval crosses zero: no change is established'] : []),
+               ...(r.not_causal ? ['. Rate and recording change together: not a causal effect of image rate.'] : ['.'])],
+          zh: [fig(d.people_lower, 'count', EXT), ' 人更低、', fig(d.people_higher, 'count', EXT), ' 人更高',
+               ...(d.interval_crosses_zero ? ['。区间跨过零，不能认定有变化'] : []),
+               ...(r.not_causal ? ['。速率与记录一起变化：不是图像速率的因果效应。'] : ['。'])],
+        } },
     ],
   };
 }

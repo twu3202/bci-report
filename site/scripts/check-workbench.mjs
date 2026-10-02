@@ -928,7 +928,49 @@ for(const [label,path] of [['en','topics/screen-to-vr/'],['zh','zh/topics/screen
                    zh?/埃塞克斯大学（University of Essex）伦理委员会批准/:/approved by the Ethics Committee of the University of Essex/])
     assert.match(sec,re,label+': LTRSVP credit '+re);
   assert.match(sec,/href="\/data\/extension-update\.json"/,label+': the reviewed extension export is linked');
+  // Presentation order: what the original publication reports, what PhysioNet does not
+  // document, and what follows for a cross-rate cell (2026-10-02 review; quotes in the manifest).
+  assert.match(lim,zh?/各速率按从低到高的顺序呈现，而且这一顺序没有在被试之间随机化/:/presented from the lowest to the highest, in an order not randomised across participants/,label+': the known order');
+  assert.match(lim,zh?/PhysioNet 没有说明/:/not documented on PhysioNet/,label+': what is not documented');
+  assert.match(lim,zh?/经过的时间、疲劳和练习程度也不同/:/also differs in elapsed time, fatigue and practice/,label+': what the order adds to a cross-rate cell');
+  assert.doesNotMatch(sec,/Order across rates unknown|order between rates is not established|速率之间的先后未知|先后没有确定/,label+': the order is partly known; say what is');
 }
+assert.ok(/lowest to the highest/.test(lx.presentation_order.known)&&/not randomised/.test(lx.presentation_order.known)&&lx.presentation_order.sources.includes('https://doi.org/10.1371/journal.pone.0178498'),'the export records the known order and its source');
+// "Later recording" (之后的记录, 之后一段) only where it is true: within a rate, run b followed
+// run a after a long break. Across rates the study's order was ascending and how the released
+// files map onto it is not documented, so a cross-rate test recording is a different one, not
+// a later one. Every page, Markdown copy, agent file, the feed and the export.
+{
+  const laterRe=/\blater\b[^.;:。；]{0,40}\brecording|之后的记录|之后一段/g, withinRate=/[Ww]ithin (?:a|each|one) rate|同一速率内/;
+  const ends=['. ','; ','。','；'];
+  const sentenceAt=(text,i)=>{const b=Math.max(...ends.map(s=>{const k=text.lastIndexOf(s,i);return k<0?-1:k+s.length;}),0);
+    const e=Math.min(...ends.map(s=>{const k=text.indexOf(s,i);return k<0?text.length:k;}));return text.slice(b,e);};
+  const laterOnlyWithinRate=(text,where)=>{for(const m of text.matchAll(laterRe))
+    assert.match(sentenceAt(text,m.index),withinRate,where+': "'+m[0]+'" outside a within-rate sentence: '+sentenceAt(text,m.index).slice(0,160));};
+  let seen=0;
+  for(const f of [...distFiles.filter(f=>/\.(?:html|md|txt|xml)$/.test(f))]){
+    const raw=readFileSync(new URL(f,DIST),'utf8'),text=f.endsWith('.html')?visible(raw):raw.replace(/\s+/g,' ');
+    laterOnlyWithinRate(text,f);seen+=(text.match(laterRe)||[]).length;
+  }
+  laterOnlyWithinRate(JSON.stringify(xt).replace(/\\"/g,'"'),'extension-update.json');
+  assert.ok(seen>=4,'the within-rate sentence itself renders (screen-to-vr, both languages, and their Markdown copies)');
+}
+// The dataset pages print the reading beside each paired row, as the topic pages do: how many
+// people moved which way (counts re-read from the export), and for LTRSVP that the interval
+// crosses zero and that rate and recording are confounded.
+for(const [label,p,d,counts,reading] of [
+  ['en','datasets/ltrsvp/',ld,[ld.people_lower,ld.people_higher],/people lower, <span[^>]*>2<\/span> higher\. The interval crosses zero: no change is established\. Rate and recording change together: not a causal effect of image rate\./],
+  ['zh','zh/datasets/ltrsvp/',ld,[ld.people_lower,ld.people_higher],/人更低、<span[^>]*>2<\/span> 人更高。区间跨过零，不能认定有变化。速率与记录一起变化：不是图像速率的因果效应。/],
+  ['en','datasets/ysu-async-ssvep/',yd,[yd.helped,yd.harmed,yd.tied],/people improved, <span[^>]*>8<\/span> got worse, <span[^>]*>2<\/span> unchanged/],
+  ['zh','zh/datasets/ysu-async-ssvep/',yd,[yd.helped,yd.harmed,yd.tied],/人提升、<span[^>]*>8<\/span> 人变差、<span[^>]*>2<\/span> 人不变/]]){
+  const html=pageOf(p),at=html.indexOf(`data-fig="extension-update.json|pp1|${d.mean}"`),end=html.indexOf('</tr>',at);
+  const n0=html.indexOf('class="row-note"',at),note=n0>0&&n0<end?html.slice(n0,end):'';
+  assert.ok(at>0&&note,p+': the paired row carries its reading');
+  assert.deepEqual([...note.matchAll(/data-fig="extension-update\.json\|count\|(\d+)"/g)].map(m=>Number(m[1])),counts,p+': the people behind the paired mean, in order');
+  assert.match(note,reading,p+': the reading beside the paired row');
+}
+for(const [p,title] of [['datasets/ltrsvp/','Image rate · trained on one recording at one rate, tested on a different recording'],['zh/datasets/ltrsvp/','图像速率 · 在一种速率的一段记录上训练、在另一段记录上测试']])
+  assert.ok(pageOf(p).includes(title),p+': the group title calls the test recording different, not later');
 // Dataset pages: the YSU page gains the extension group; LTRSVP has its own page. Their figures
 // are re-read from the served file by the entity checks above.
 for(const p of ['datasets/ysu-async-ssvep/','zh/datasets/ysu-async-ssvep/','datasets/ltrsvp/','zh/datasets/ltrsvp/'])

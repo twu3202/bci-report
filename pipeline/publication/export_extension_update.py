@@ -8,8 +8,11 @@ Two questions, two fixed classical baselines, nothing shared between them:
   pilot published on 2026-09-27 is this design's development set; none of its
   people is scored here.
 - LTRSVP, nine people. Does a P300 target decoder trained on a 5-Hz recording
-  carry over to a 10-Hz one as well as a decoder trained at 10 Hz? Rate and
-  recording change together, so no answer here is about image rate alone.
+  carry over to a different, 10-Hz recording as well as a decoder trained on the
+  other 10-Hz recording? Rate and recording change together, and so does the
+  time between them: the original study presented the rates from the lowest to
+  the highest, not randomised, and how the released files map onto that sequence
+  is not documented. No answer here is about image rate alone.
 
 Its own publication boundary, as with every batch. The website inputs are the
 two sanitized aggregates. The independent audits are pinned by hash and checked
@@ -66,6 +69,11 @@ RULES = {
                  'target_person_labels': 96},
 }
 RATES = (5, 6, 10)
+# What the LTRSVP pages say about presentation order rests on these sentences,
+# read from the original publication and recorded, with their URL, in the
+# manifest's decisionHistory. The export refuses to state the order without them.
+ORDER_QUOTES = ('presented from the lowest to the highest presentation rate',
+                'order of the conditions across subjects was not randomised')
 
 
 def bound_audit(record, summary, summary_sha, protocol_sha, label):
@@ -271,6 +279,33 @@ def ysu_extension(record):
     }
 
 
+def presentation_order(record):
+    """What is known and unknown about the order of the recordings, as the manifest recorded it.
+
+    Known, from the original publication: the rates were presented from the
+    lowest to the highest, in an order not randomised across participants. Not
+    known: how the two released files of each rate map onto that sequence;
+    PhysioNet says only that, within a rate, file a came first and a long break
+    followed. The reading must be on record, quoted and with its source, before
+    the export states it.
+    """
+    quotes = [q for h in record.get('decisionHistory', []) for q in h.get('quotes', [])]
+    for phrase in ORDER_QUOTES:
+        require(any(phrase in q['text'] and q['source'] == 'https://doi.org/10.1371/journal.pone.0178498' for q in quotes),
+                f'ltrsvp: the presentation order is stated without its recorded source ("{phrase}")')
+    require(any('which one was taken first' in q['text'] and q['source'] == record['source'] for q in quotes),
+            'ltrsvp: the within-rate order is stated without its recorded source')
+    return {
+        'known': 'the original publication reports that the three rates were presented from the lowest to the '
+                 'highest, an order not randomised across participants; PhysioNet reports that, within a rate, run a '
+                 'was recorded first and a long break followed',
+        'not_documented': 'how the two released files of each rate map onto the ascending sequence',
+        'consequence': 'a cross-rate cell also differs in elapsed time, fatigue and practice, not only in rate and '
+                       'recording',
+        'sources': sorted({q['source'] for q in quotes}),
+    }
+
+
 def ltrsvp(record):
     summary, summary_sha = pinned(record['summary'], 'ltrsvp aggregate')
     protocol, protocol_sha = pinned(record['protocol'], 'ltrsvp protocol')
@@ -296,12 +331,23 @@ def ltrsvp(record):
             and all(v == 0 for v in s['raw_feature_fixed_model_aggregate_differences'].values()),
             'ltrsvp: the independent replay did not reproduce every decision and aggregate')
 
+    order = presentation_order(record)
+
     cells = {(m['source_rate_hz'], m['target_rate_hz']): m for m in summary['matrix']}
     require(sorted(cells) == [(a, b) for a in RATES for b in RATES], 'ltrsvp: the matrix is not complete')
+    # Same run-b test events whatever the training rate. This export checks the
+    # counts; that they are the same events is asserted by the aggregate (its
+    # estimand) and by the audit (same-target paired contrast, prediction
+    # identities). Both assertions are required here, not assumed.
+    require('identical10hz-beventidentities' in summary['primary_estimand'].replace(' ', '').lower(),
+            'ltrsvp: the aggregate no longer asserts identical 10-Hz run-b test events')
+    require(any(v.startswith('same-target paired primary contrast') for v in audit['verified'])
+            and any(v.startswith('all prediction identities') for v in audit['verified']),
+            'ltrsvp: the audit no longer records the same-target pairing it checked')
     events = {}
-    for t in RATES:  # every training rate is tested on the identical run-b images
+    for t in RATES:
         counts = {(cells[(s_, t)]['target_n'], cells[(s_, t)]['non_target_n']) for s_ in RATES}
-        require(len(counts) == 1, f'ltrsvp: test images at {t} Hz differ between training rates')
+        require(len(counts) == 1, f'ltrsvp: test-event counts at {t} Hz differ between training rates')
         events[t] = counts.pop()
     matrix = []
     for (src, tgt), m in sorted(cells.items()):
@@ -336,11 +382,15 @@ def ltrsvp(record):
 
     return {
         'id': 'ltrsvp-rate-transfer',
-        'question': 'does a P300 target decoder trained at one image rate carry over to a later recording at another',
+        'question': 'does a P300 target decoder trained on one recording at one image rate carry over to a different '
+                    'recording at another rate',
         'protocol_id': summary['analysis_id'],
         'classes': 2, 'chance_level': 0.5, 'metric': 'balanced_accuracy',
-        'generalization': 'same person, another recording: train on run a, test on run b. Within each rate run a '
-                          'came first and a long break followed; the order across rates is not established',
+        'generalization': 'same person, another recording: train on run a at one rate, test on run b at the same '
+                          'or another rate. Within a rate, run b followed run a after a long break. Across rates the '
+                          'original study presented the rates from the lowest to the highest, not randomised across '
+                          'participants, and how the released files map onto that sequence is not documented',
+        'presentation_order': order,
         'not_causal': True,
         'cohort': {'people': people, 'people_in_release': people + excluded, 'people_excluded': excluded,
                    'exclusion': 'missing both recordings at one rate in the release; excluded from file metadata '
@@ -361,7 +411,8 @@ def ltrsvp(record):
             'interval_kind': 'descriptive whole-person bootstrap, 20,000 draws; images and cells add no people',
         },
         'primary': {
-            'test': 'the same 10-Hz run-b images in both arms',
+            'test': 'the same 10-Hz run-b test events in both arms: equal counts checked here, identity asserted by '
+                    'the aggregate and its audit',
             'target_events': events[10][0], 'non_target_events': events[10][1],
             'arms': [arm(cross, 'trained-5hz'), arm(same, 'trained-10hz')],
         },
@@ -375,11 +426,15 @@ def ltrsvp(record):
         'secondary_auroc_difference': {'mean': a['mean'], 'bootstrap_95': [alo, ahi],
                                        'interval_crosses_zero': alo < 0 < ahi},
         'reading': 'Lower on average after training at the slower rate, but the interval crosses zero: no change '
-                   'is established, and rate and recording are confounded, so none could be attributed to rate.',
+                   'is established, and rate, recording and time in the session are confounded, so none could be '
+                   'attributed to rate.',
         'matrix': matrix,
         'limitations': [
             'Rate and recording change together: training at another rate also means another recording, another '
             'number of images and another class balance. Not a causal effect of image rate.',
+            'Order: the original study presented the rates from the lowest to the highest, not randomised across '
+            'participants, and how the two released files of each rate map onto that sequence is not documented. A '
+            'cross-rate cell therefore also differs in elapsed time, fatigue and practice.',
             'Nine people. The 81 cells and the thousands of test images add no people; intervals summarise the nine.',
             'At these rates the baseline and response windows of one image contain its neighbours, so nothing '
             'here isolates a target response.',
@@ -485,7 +540,9 @@ def export():
                    'every published acceptance rate is a whole count of windows; equal windows per person checked',
                    'detection balanced accuracy and the paired difference follow exactly from the counts',
                    'helped + harmed + tied = 20 (YSU); lower + higher + tied = 9 (LTRSVP)',
-                   'LTRSVP: every training rate is tested on identical images; paired means equal the cell means',
+                   'LTRSVP: identical test-event counts per test rate (identity asserted by the aggregate and its '
+                   'audit); paired means equal the cell means',
+                   'LTRSVP: the presentation order is stated only with its quoted sources recorded in the manifest',
                    'the trade-off and interval-crosses-zero readings are re-derived from the numbers',
                    'per-person ranges, thresholds, predictions and features refused by key; global threshold by value',
                    'no private paths, source archive names or participant identifiers'],

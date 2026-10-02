@@ -58,7 +58,8 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
               <td>{r.of
                 ? <span class="metric"><span data-fig={attr(r.value)}>{formatFig(r.value)}</span> / <span data-fig={attr(r.of)}>{formatFig(r.of)}</span></span>
                 : <span data-fig={attr(r.value)} class="metric">{formatFig(r.value)}</span>}
-                {r.interval && <span class="interval"><span data-fig={attr(r.interval[0])}>{formatFig(r.interval[0])}</span>–<span data-fig={attr(r.interval[1])}>{formatFig(r.interval[1])}</span></span>}</td>
+                {r.interval && <span class="interval"><span data-fig={attr(r.interval[0])}>{formatFig(r.interval[0])}</span>–<span data-fig={attr(r.interval[1])}>{formatFig(r.interval[1])}</span></span>}
+                {r.note && <small class="row-note">{r.note[locale].map(p => typeof p === 'string' ? p : <span data-fig={attr(p)} class="fig">{formatFig(p)}</span>)}</small>}</td>
               <td>{r.people ? r.people : c.noPeople}</td>
             </tr>
           ))}</tbody>

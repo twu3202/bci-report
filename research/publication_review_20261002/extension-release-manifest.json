@@ -74,7 +74,7 @@
       "id": "ltrsvp-rate-transfer",
       "decision": "aggregate_preview",
       "name": "LTRSVP · EEG Signals from an RSVP Task",
-      "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a later recording",
+      "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a different recording at another; within a rate, run b followed run a after a long break",
       "source": "https://physionet.org/content/ltrsvp/1.0.0/",
       "version": "PhysioNet ltrsvp 1.0.0: the complete release (64 files); the nine of its eleven people with both recordings at all three rates are scored",
       "license": "Open Data Commons Attribution License 1.0",
@@ -92,6 +92,40 @@
         "Licence, DOI, version, channel list, microvolt units and the citation request read from the PhysioNet project page on 2026-10-02. The page's citation box spells the second author 'Polo R'; the article's own record gives Riccardo Poli, which is used here.",
         "The paper and the release both describe eleven healthy volunteers. Two of them lack both recordings at one rate in the release, so the protocol excluded them from file metadata before any scoring.",
         "The aggregate's SHA-256 equals the one the independent post-score recovery audit (status PASS) records as the summary it checked, with the same protocol and runner hashes. An earlier audit failed on a floating-point re-implementation difference; the passing audit changed no protocol, model, prediction or result."
+      ],
+      "decisionHistory": [
+        {
+          "date": "2026-10-02",
+          "decision": "aggregate_preview",
+          "reason": "Released as an aggregate after the consent and ethics statement was read from the original publication and the independent post-score recovery audit passed (see verification)."
+        },
+        {
+          "date": "2026-10-02",
+          "decision": "aggregate_preview",
+          "reason": "Decision unchanged; wording corrected before deployment after an independent review of the merged pages, with no figure changed. The pages had said the order across rates was not established. What is known: the original publication presented the three rates from the lowest to the highest and did not randomise that order across participants (quoted below). What is not: how the two released files of each rate map onto that sequence. PhysioNet states only that, within a rate, file a was taken first and a long break followed. So a cross-rate cell also differs in elapsed time, fatigue and practice, not only in rate and recording, and the release claims no rate effect.",
+          "basis": [
+            "https://doi.org/10.1371/journal.pone.0178498",
+            "https://physionet.org/content/ltrsvp/1.0.0/"
+          ],
+          "quotes": [
+            {
+              "source": "https://doi.org/10.1371/journal.pone.0178498",
+              "section": "Materials and methods, Experimental design",
+              "text": "The 24 bursts of each difficulty level were presented from the lowest to the highest presentation rate."
+            },
+            {
+              "source": "https://doi.org/10.1371/journal.pone.0178498",
+              "section": "Discussion, Experimental paradigm",
+              "text": "This is a possibility as the order of the conditions across subjects was not randomised."
+            },
+            {
+              "source": "https://physionet.org/content/ltrsvp/1.0.0/",
+              "section": "Data Files",
+              "text": "The last field (either \"a\" or \"b\") just indicates which one was taken first. Participants took a long break between both files."
+            }
+          ],
+          "readAt": "2026-10-02"
+        }
       ],
       "summary": {
         "path": "research/expansion_v7_20261001/aggregate/ltrsvp-summary.json",

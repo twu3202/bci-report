@@ -177,12 +177,21 @@
     },
     "ltrsvp-rate-transfer": {
       "id": "ltrsvp-rate-transfer",
-      "question": "does a P300 target decoder trained at one image rate carry over to a later recording at another",
+      "question": "does a P300 target decoder trained on one recording at one image rate carry over to a different recording at another rate",
       "protocol_id": "ltrsvp-v7-fixed-within-person-rate-run-transfer-v1",
       "classes": 2,
       "chance_level": 0.5,
       "metric": "balanced_accuracy",
-      "generalization": "same person, another recording: train on run a, test on run b. Within each rate run a came first and a long break followed; the order across rates is not established",
+      "generalization": "same person, another recording: train on run a at one rate, test on run b at the same or another rate. Within a rate, run b followed run a after a long break. Across rates the original study presented the rates from the lowest to the highest, not randomised across participants, and how the released files map onto that sequence is not documented",
+      "presentation_order": {
+        "known": "the original publication reports that the three rates were presented from the lowest to the highest, an order not randomised across participants; PhysioNet reports that, within a rate, run a was recorded first and a long break followed",
+        "not_documented": "how the two released files of each rate map onto the ascending sequence",
+        "consequence": "a cross-rate cell also differs in elapsed time, fatigue and practice, not only in rate and recording",
+        "sources": [
+          "https://doi.org/10.1371/journal.pone.0178498",
+          "https://physionet.org/content/ltrsvp/1.0.0/"
+        ]
+      },
       "not_causal": true,
       "cohort": {
         "people": 9,
@@ -203,7 +212,7 @@
         "interval_kind": "descriptive whole-person bootstrap, 20,000 draws; images and cells add no people"
       },
       "primary": {
-        "test": "the same 10-Hz run-b images in both arms",
+        "test": "the same 10-Hz run-b test events in both arms: equal counts checked here, identity asserted by the aggregate and its audit",
         "target_events": 223,
         "non_target_events": 2036,
         "arms": [
@@ -269,7 +278,7 @@
         ],
         "interval_crosses_zero": true
       },
-      "reading": "Lower on average after training at the slower rate, but the interval crosses zero: no change is established, and rate and recording are confounded, so none could be attributed to rate.",
+      "reading": "Lower on average after training at the slower rate, but the interval crosses zero: no change is established, and rate, recording and time in the session are confounded, so none could be attributed to rate.",
       "matrix": [
         {
           "train_rate_hz": 5,
@@ -454,6 +463,7 @@
       ],
       "limitations": [
         "Rate and recording change together: training at another rate also means another recording, another number of images and another class balance. Not a causal effect of image rate.",
+        "Order: the original study presented the rates from the lowest to the highest, not randomised across participants, and how the two released files of each rate map onto that sequence is not documented. A cross-rate cell therefore also differs in elapsed time, fatigue and practice.",
         "Nine people. The 81 cells and the thousands of test images add no people; intervals summarise the nine.",
         "At these rates the baseline and response windows of one image contain its neighbours, so nothing here isolates a target response.",
         "Offline and fixed: no online latency, information transfer rate, false activations per hour, new-person transfer, clinical claim, foundation-model or fine-tuning result."
@@ -466,7 +476,7 @@
       },
       "rights": {
         "name": "LTRSVP · EEG Signals from an RSVP Task",
-        "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a later recording",
+        "task": "Target versus non-target images in rapid serial visual presentation, trained on one recording at one image rate and tested on a different recording at another; within a rate, run b followed run a after a long break",
         "source": "https://physionet.org/content/ltrsvp/1.0.0/",
         "version": "PhysioNet ltrsvp 1.0.0: the complete release (64 files); the nine of its eleven people with both recordings at all three rates are scored",
         "license": "Open Data Commons Attribution License 1.0",
@@ -492,7 +502,7 @@
     "The LTRSVP numerical-sensitivity diagnostic (alternate refits on independently re-extracted features): an audit diagnostic, not a result."
   ],
   "provenance": {
-    "manifest_sha256": "1e6bb977f6033bc99942725696c59db29a3d49968eeb6d7901941d3fce66f595",
+    "manifest_sha256": "a32918e827f85b23bfc5e7260dbfa5b29258581db1381e34eef81e2021880ce9",
     "included": [
       "ysu-async-ssvep-extension",
       "ltrsvp-rate-transfer"
