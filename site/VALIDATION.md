@@ -22,7 +22,24 @@ why there is none) is printed, each matrix method not run is named beside the
 "not a failure" caveat, the payload's protocol text is printed verbatim, the
 English page carries Dataset markup whose distribution is the protocol's CSV and
 JSON, every local link resolves, and the dataset and method pages and the home
-matrix's column headings link to it.
+matrix's column headings link to it. Each table row must equal the same row of
+the protocol's results CSV, column by column and in order. Two payload fields are
+deliberately not verbatim: the privacy review (reviewer notes; the page prints one
+site-written sentence and links the protocol JSON that holds it) and a JSON
+fragment in the release version (printed as "mirror … · upstream …"). A protocol
+without a chance level (idle) must not promise one in its description, dek or
+markup.
+
+The independent review of the 2026-10-02 merge added: "later recording" (and
+之后的记录 / 之后一段) may appear only in a sentence about one rate, on every page,
+Markdown copy, agent file, the feed and the extension export, because LTRSVP run b
+is later than run a only within a rate; the image-rate section states the
+presentation order the original publication reports and what PhysioNet does not
+document; the dataset pages print the people behind each paired mean beside it;
+the YSU short answer qualifies the personal threshold; each scrolling table in the
+non-control section has its own name; the Chinese register prints the English
+original beside each licence and rights-review note; and the chart colours in
+`workbench.ts` must equal the legend swatches in `generated.css`.
 
 ```sh
 node scripts/check-workbench.mjs        # from site/
