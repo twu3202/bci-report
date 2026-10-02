@@ -1,0 +1,33 @@
+BCI Report aggregate results: Creative Commons Attribution 4.0 International
+
+The aggregate measurements this project produced are licensed under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+What it covers
+
+  The result and protocol files published in site/public/data/ — served at
+  https://bci.report/data/ and listed with the SHA-256 of each file at
+  https://bci.report/releases/ — the copies of the same exports the pages are
+  built from in site/src/data/ (mvp.json is experiments.json), and the same
+  tables on the Hugging Face mirror
+  https://huggingface.co/datasets/Twu31/bci-report. These are cohort-level
+  measurements computed by BCI Report: scores, intervals, cohort sizes and the
+  protocol descriptors that produced them.
+
+What it does not cover
+
+  The EEG recordings the measurements were computed from. They are not in this
+  repository, they belong to the people who collected them, and they keep their
+  own licences and terms. Every result row and every dataset page names its
+  source and that source's licence: https://bci.report/datasets/
+
+  The code. It is under the MIT License (see LICENSE).
+
+How to give credit
+
+  Name "BCI Report", the release you used (its id is on
+  https://bci.report/releases/) and https://bci.report, and cite the upstream
+  dataset each figure was computed on. CITATION.cff holds the same citation in
+  machine-readable form.

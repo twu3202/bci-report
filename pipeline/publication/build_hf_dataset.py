@@ -14,6 +14,7 @@ mirror that other people have already cloned.
 import argparse
 import csv
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -158,6 +159,46 @@ def attribution_table(snapshot):
                         if entry.get('licenseUrl') else entry['license'])
         lines.append(f"| [{entry['name']}]({entry['source']}) | {license_cell} | {entry['attribution']} |")
     return '\n'.join(lines)
+
+
+def citation_section():
+    """The card's Citation section, read from CITATION.cff so the two cannot disagree.
+
+    The BibTeX is the one the site's /api/ page prints: same key, title, author,
+    year and release note. CITATION.cff names the newest release (the site's
+    checks pin that), so the card cites the release its files belong to.
+    """
+    cff = (PROJECT/'CITATION.cff').read_text()
+
+    def field(key):
+        value = re.search(rf'^{key}: "?([^"\n]+)"?$', cff, re.MULTILINE)
+        assert value, f'CITATION.cff has no {key}'
+        return value.group(1)
+
+    title, version, released, url = field('title'), field('version'), field('date-released'), field('url')
+    bibtex = '\n'.join([
+        '@misc{bcireport,',
+        f'  title        = {{{title}}},',
+        '  author       = {{BCI Report}},',
+        f'  year         = {{{released[:4]}}},',
+        f'  howpublished = {{\\url{{{url}}}}},',
+        f'  note         = {{Release {version}}}',
+        '}',
+    ])
+    return f"""## Citation
+
+Cite BCI Report and the release you used — this card was built at release
+`{version}` ({released}) — and the upstream dataset each figure was computed on:
+the attribution table above, and every dataset page at
+<{url}/datasets/>, gives its credit. The same citation is in
+[CITATION.cff](https://github.com/twu3202/bci-report/blob/main/CITATION.cff),
+which GitHub's "Cite this repository" reads, and every topic, dataset and method
+page on the site ends with a "Cite this page" block naming the releases its
+figures come from.
+
+```bibtex
+{bibtex}
+```"""
 
 
 def protocol_table(snapshot):
@@ -386,12 +427,15 @@ site rather than in place (full list: <https://bci.report/releases/#corrections>
   doi:10.1016/j.heliyon.2020.e03425 — in addition to the Data in Brief
   description linked in the rows.
 
+{citation_section()}
+
 ## License
 
 The `cc-by-4.0` tag covers **the aggregate result tables and protocol
 descriptors in this repository** — measurements this project produced. It does
 not and cannot relicense the underlying recordings, whose terms are listed per
-row and per dataset above.
+row and per dataset above. The code that produced them, on
+[GitHub](https://github.com/twu3202/bci-report), is under the MIT License.
 
 ## Corrections
 
