@@ -52,6 +52,9 @@ const loraParams: FigValue = { raw: loraArm.trainable_parameters, fmt: 'count', 
 // and the Stieger pilot is one person, whose every score would be theirs.
 const nextDay = adaptation.status_only[0];
 const nextDaySource = nextDay.name.split(' · ')[0];
+// Its calibration budgets, as the export states them: day-B labels from the test person.
+const budgets = nextDay.design.calibration_labels;
+const series = (xs: number[], sep: string, last: string) => `${xs.slice(0, -1).join(sep)}${last}${xs[xs.length - 1]}`;
 const stieger = context.status_only.find(e => e.id === 'stieger-longitudinal')!;
 const stiegerSessions = stieger.feasibility.sessions;
 const secs = (v: number) => `${v.toFixed(1)} s`;
@@ -65,7 +68,10 @@ const copy = {
   en: {
     description: `New people, same task, zero labels from the test person: updating LaBraM's last block reached ${blockBa} balanced accuracy and LoRA ${loraBa}, against ${headBa} for a short head-only fit, with no demonstrated difference between the two; the core matrix's frozen readout scored ${matrixBa}. The next-day experiment is held.`,
     answer: `On new people, same task, zero labels from the test person — LaBraM Base on mental arithmetic versus rest, [[${adPeople}]] people in five participant-disjoint folds — updating the last block with the head reached [[${blockBa}]] balanced accuracy and rank-4 LoRA [[${loraBa}]], against [[${headBa}]] for a short head-only fit; LoRA minus last block crosses zero, so neither is shown to be better. That head-only fit is not the best a frozen encoder can do: the core matrix's frozen LaBraM with a ridge head scored [[${matrixBa}]] on the same people and folds, a different head and not a paired comparison. The next day is not answered here: that experiment ran, but its source is held, so no figure from it is published.`,
-    eyebrow: 'Model adaptation · new people, same task, zero labels from the test person',
+    // The page covers both halves of its title. Only the adaptation result uses zero labels from
+    // the test person — the next-day design calibrates on the person's own day-B labels — so the
+    // label stays on #adaptation, the cards and the snippets, and the hero says what is on the page.
+    eyebrow: 'Model adaptation · new people; next day held',
     dek: 'Which part of a pretrained encoder to update when it meets people it has not seen, on a task it is adapted to: the head only, the last block, or a low-rank adapter — with the same checkpoint, folds, starting heads, batches and five-epoch recipe for all three. The next-day version of the question has run too; its source is held, so it is listed without a figure.',
     baLabel: (v: string) => `${v} balanced accuracy`,
     rmEyebrow: 'New people, same task, zero labels from the test person · reviewed 1 October 2026',
@@ -91,9 +97,9 @@ const copy = {
     notDelivered: 'Promised on the roadmap and not delivered by this batch: peak memory (only lower-bound samples were recorded, so none is published) and a comparison at a fixed computation budget (every rule trained for the same five epochs, not the same compute).',
     nextEyebrow: 'Next day · status only',
     nextH2: 'Same person, the next day: run, not published',
-    nextLede: 'Whether a model fitted on one day still works on a later one, and which part to update when it does not, has no published figure here. Two sources reached the question; for different reasons, neither can be scored in public.',
+    nextLede: 'Whether a model fitted on one day still works on a later one, and which part to update when it does not, has no published figure here. Two sources were prepared for it; for different reasons, neither can be scored in public.',
     nextH3: 'Two recording days: run and replayed, held',
-    nextP: `${nextDaySource}: ${nextDay.design.people} people recorded on two days. Each person's model is trained on day A, calibrated with the first 0, 10, 20 or 40 labeled trials of day B under the same three update rules, and tested on the same later day-B trials. It ran on 22 September and passed an independent replay. The source's editorial hold stands — its catalogue licence is CC BY-NC-ND and its description names no ethics approval — so no figure from it is published.`,
+    nextP: `${nextDaySource}: ${nextDay.design.people} people recorded on two days. Each person's model is trained on day A, calibrated with the first ${series(budgets, ', ', ' or ')} labeled trials of day B under the same three update rules, and tested on the same later day-B trials. Unlike the result above, this design uses the test person's own labels: their day-B calibration trials. It ran on 22 September and passed an independent replay. The source's editorial hold stands — its catalogue licence is CC BY-NC-ND and its description names no ethics approval — so no figure from it is published.`,
     crossH3: 'Same person, later sessions: status only',
     crossP: [`${stieger.name.split(' · ')[0]}: one person's ${stiegerSessions} sessions were acquired, not the full release. What is published is that the loader and a chronological split work on it — earlier sessions train, later sessions test. With one person, every score would be that person's, so none is published; the source is listed as status only in the `, 'release of 27 September', '.'],
     rmApartH3: 'Four questions kept apart',
@@ -120,7 +126,7 @@ const copy = {
   zh: {
     description: `新被试、同一任务、不使用测试被试的任何标签：更新 LaBraM 最后一个 Transformer 块达到 ${blockBa} 的平衡准确率，LoRA 为 ${loraBa}，只做短训练的分类头为 ${headBa}，前两者之间没有可证实的差别；核心矩阵中冻结编码器的结果为 ${matrixBa}。次日实验暂缓发布。`,
     answer: `新被试、同一任务、不使用测试被试的任何标签：LaBraM Base 区分心算与静息，[[${adPeople}]] 名被试按被试不重叠分成 5 折；连同分类头更新最后一个 Transformer 块，平衡准确率达到 [[${blockBa}]]，秩为 4 的 LoRA 为 [[${loraBa}]]，只做短训练的分类头为 [[${headBa}]]；LoRA 减最后一个 Transformer 块的区间跨过零，所以无法说明哪一个更好。只训分类头的结果并不是冻结编码器能达到的最好结果：核心矩阵中同一批被试、同一数据划分上的冻结 LaBraM 配岭回归分类头，得分 [[${matrixBa}]]，但分类头不同，也不是配对比较。第二天的问题这里没有回答：该实验已运行，但数据源处于暂缓状态，所以不发布它的任何数字。`,
-    eyebrow: '模型适配 · 新被试、同一任务、不使用测试被试的任何标签',
+    eyebrow: '模型适配 · 新被试；次日实验暂缓发布',
     dek: '预训练编码器遇到没见过的被试、而任务是它已适配过的任务时，该更新哪一部分：只训分类头、最后一个 Transformer 块，还是低秩适配器（LoRA）——三种方式的检查点、数据划分、初始分类头、批次和训练 5 轮的配方都相同。同一问题的次日版本也已运行；它的数据源处于暂缓状态，所以只列出、不给数字。',
     baLabel: (v: string) => `平衡准确率 ${v}`,
     rmEyebrow: '新被试、同一任务、不使用测试被试的任何标签 · 2026 年 10 月 1 日审核',
@@ -146,9 +152,9 @@ const copy = {
     notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 轮，而不是相同的计算量）。',
     nextEyebrow: '次日 · 只发状态',
     nextH2: '同一个人，第二天：已运行，不发布',
-    nextLede: '在某一天拟合的模型，换一天还管不管用、不管用时该更新哪一部分——这里还没有公开的数字。有两个数据源涉及这个问题，出于不同的原因，两者都不能公开评分。',
+    nextLede: '在某一天拟合的模型，换一天还管不管用、不管用时该更新哪一部分——这里还没有公开的数字。为它准备了两个数据源；出于不同的原因，两者都不能公开评分。',
     nextH3: '两个记录日：已运行并通过复核，暂缓发布',
-    nextP: `${nextDaySource}：${nextDay.design.people} 名被试，每人记录两天。每名被试的模型用第一天训练，用第二天最前面的 0、10、20 或 40 个有标签试次、以同样三种更新方式校准，再在第二天同一批后续试次上测试。它已于 9 月 22 日运行，并通过了独立复核。该数据源的编辑暂缓仍然有效——目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准——所以不发布它的任何数字。`,
+    nextP: `${nextDaySource}：${nextDay.design.people} 名被试，每人记录两天。每名被试的模型用第一天训练，用第二天最前面的 ${series(budgets, '、', ' 或 ')} 个校准试次、以同样三种更新方式校准，再在第二天同一批后续试次上测试。与上面的结果不同，这个设计要用到测试被试本人的标签：其第二天的校准试次。它已于 9 月 22 日运行，并通过了独立复核。该数据源的编辑暂缓仍然有效——目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准——所以不发布它的任何数字。`,
     crossH3: '同一个人，之后的会话：只发状态',
     crossP: [`Stieger 纵向 BCI：获取的是一名被试的 ${stiegerSessions} 次会话，而不是完整的数据集。公开的只有一点：加载程序和按时间顺序的划分（较早的会话训练、较晚的会话测试）在它上面可以运行。只有一个人时，任何分数都是这个人的分数，所以不发布；该数据源在`, '9 月 27 日的发布', '中只列状态。'],
     rmApartH3: '刻意分开的四个问题',

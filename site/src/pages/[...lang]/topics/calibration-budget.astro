@@ -85,7 +85,8 @@ const copy = {
     citationNote: (license: string) => `Official Tsinghua author mirror snapshot acquired 2026-09-20 · ${license}. Aggregate results only.`,
     movedAdH2: 'LaBraM adaptation has its own page',
     movedAd: ['The LaBraM results on new people, same task, zero labels from the test person — head only, last block or LoRA — moved to their own page: ', ' They are not calibration: the model adapts on other people and uses no label from the person it is tested on.'],
-    movedNextH2: 'So did the next-day experiment',
+    // Self-contained: a link to #next-day lands on this heading, not on the one above it.
+    movedNextH2: 'The next-day experiment has moved too',
     movedNext: ['The next-day status — run, independently replayed and held, with no figure published — is on the same page: ', ''],
   },
   zh: {
@@ -135,7 +136,7 @@ const copy = {
     citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
     movedAdH2: 'LaBraM 适配已有单独的页面',
     movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。它们不是校准：模型在其他被试上适配，不使用被测试者本人的任何标签。'],
-    movedNextH2: '次日实验也一并移过去了',
+    movedNextH2: '次日实验已移到新页面',
     movedNext: ['次日实验的状态——已运行、通过独立复核、暂缓发布、不公布任何数字——也在同一页面「', '」。'],
   },
 }[locale];

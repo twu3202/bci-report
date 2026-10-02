@@ -836,6 +836,19 @@ for(const [label,path] of [['en','topics/model-adaptation/'],['zh','zh/topics/mo
   assert.ok(nd.indexOf('id="two-days"')>0&&next.length>200,label+': the next-day status renders');
   assert.ok(next.includes(ad.status_only[0].name.split(' · ')[0]),label+': the next-day source is named');
   assert.match(next,!zh?/no figure from it is published/:/不发布它的任何数字/,label+': the next-day status says why');
+  // Unlike the adaptation result, the next-day design calibrates on the test person's own labels;
+  // the section says so, with the budgets the export states (2026-10-02 review).
+  assert.ok(unent(next).includes(zh?'与上面的结果不同，这个设计要用到测试被试本人的标签：其第二天的校准试次。'
+                                  :"Unlike the result above, this design uses the test person's own labels: their day-B calibration trials."),label+': the next-day design uses the test person\'s own day-B labels');
+  const budgets=ad.status_only[0].design.calibration_labels;
+  assert.ok(next.includes(budgets.slice(0,-1).join(zh?'、':', ')+(zh?' 或 ':' or ')+budgets.at(-1)),label+': the day-B budgets are the export\'s');
+  assert.ok(nd.includes(zh?'为它准备了两个数据源；出于不同的原因，两者都不能公开评分。':'Two sources were prepared for it; for different reasons, neither can be scored in public.'),label+': the next-day lede');
+  // The hero covers both halves of the page, so it does not carry the adaptation's "zero labels"
+  // label over the next-day half; #adaptation, the cards and the snippets keep it.
+  const heroEyebrow=(html.match(/<p class="eyebrow">([^<]*)<\/p>\s*<h1>/)||[])[1];
+  assert.equal(heroEyebrow,zh?'模型适配 · 新被试；次日实验暂缓发布':'Model adaptation · new people; next day held',label+': the hero eyebrow names both halves of the page');
+  assert.doesNotMatch(heroEyebrow,adLabel[label],label+': the hero eyebrow does not put the adaptation label over the next-day half');
+  assert.match(sec.match(/<p class="eyebrow">([^<]*)<\/p>/)[1],adLabel[label],label+': the #adaptation eyebrow keeps the label');
   // The cross-session slot: the released status-only entry, named, and why it has no score.
   const cs=nd.slice(nd.indexOf('id="cross-session"'),nd.indexOf('</p>',nd.indexOf('id="cross-session"')));
   assert.ok(nd.indexOf('id="cross-session"')>0&&cs.includes(!zh?cxs.name.split(' · ')[0]:'Stieger 纵向 BCI'),label+': the cross-session source is named');
@@ -877,6 +890,9 @@ for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/
     assert.doesNotMatch(note.replace(/<[^>]+>/g,' '),/\d/,label+': the #'+id+' note carries no figure');
     assert.ok(note.length<1200,label+': #'+id+' is a note, not the moved section');
   }
+  // A link to #next-day lands on its own heading, so the heading cannot lean on the one above it.
+  const ndH2=(html.match(/id="next-day"[^>]*>\s*<h2[^>]*>([^<]*)<\/h2>/)||[])[1];
+  assert.equal(ndH2,zh?'次日实验已移到新页面':'The next-day experiment has moved too',label+': the #next-day heading stands on its own');
   assert.match(html.slice(html.indexOf('id="adaptation"')),adLabel[label],label+': the note says what the moved evidence is');
   // None of the moved figures, and not its export, remain.
   for(const a of adr.arms) assert.ok(!html.includes(pct1(a.balanced_accuracy.mean)),label+': '+a.id+' moved off this page');
@@ -955,6 +971,7 @@ const tcInterval={en:'95% interval',zh:'95% 区间'};
 // The handoffs' headline figures, so a changed export cannot pass by changing the page with it.
 assert.deepEqual([gR.id,pR.id],['global','personal']);
 assert.deepEqual(yx.rules.map(r=>pct1(r.detection_balanced_accuracy.mean)),['76.0%','79.0%'],'detection balanced accuracy, both rules');
+assert.deepEqual(yx.rules.map(r=>frac(r.non_control_pooled.accepted,r.non_control_pooled.tested)),['249 / 960','190 / 960'],'pooled non-control false acceptance, both rules');
 assert.deepEqual([pp1(yd.mean),ivp(yd.bootstrap_95,false)],['+3.0 pp','+0.5 to +5.7 pp'],'the paired YSU difference');
 assert.deepEqual([yd.helped,yd.harmed,yd.tied],[10,8,2],'people helped, harmed and tied');
 assert.equal(yd.helped+yd.harmed+yd.tied,yx.cohort.people,'helped + harmed + tied is the cohort');
@@ -992,6 +1009,14 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
     // Per-state false acceptance, as counts and rates.
     for(const f of r.false_acceptance)
       assert.ok(ext.includes(cell(f.accepted,f.tested)),label+': '+r.id+' '+f.state+' false acceptance');
+    // The pooled row (2026-10-02 review): the overall count the short answer's "fewer non-control
+    // windows overall" reads, from the export, after the states it sums.
+    const pooled=r.non_control_pooled;
+    assert.equal(pooled.accepted,r.false_acceptance.reduce((a,f)=>a+f.accepted,0),r.id+': the pooled count is the sum of the states');
+    assert.equal(pooled.tested,r.false_acceptance.reduce((a,f)=>a+f.tested,0),r.id+': the pooled windows are the sum of the states');
+    const pr=ext.indexOf('<tr class="pooled-row">'),pooledRow=pr<0?'':ext.slice(pr,ext.indexOf('</tr>',pr));
+    assert.ok(pooledRow.includes(zh?'三种状态合并':'All three states, pooled')&&pooledRow.includes(cell(pooled.accepted,pooled.tested)),label+': '+r.id+' pooled non-control row');
+    for(const f of r.false_acceptance) assert.ok(ext.indexOf(cell(f.accepted,f.tested))<pr,label+': '+r.id+' '+f.state+' comes before the pooled row');
   }
   // The three states are named and described, not only coded.
   for(const [st,en,cn] of [['NS1','Central image, flicker off','注视中央图像，闪烁关闭'],['NS2','Looking at a white wall, resting','看着白墙休息'],['NS3','Central image while the surrounding targets flicker','注视中央，周围目标在闪烁']])
@@ -1060,6 +1085,11 @@ for(const [label,path] of [['en','topics/screen-to-vr/'],['zh','zh/topics/screen
     assert.ok(sec.includes(a.auroc.mean.toFixed(3)),label+': '+a.id+' AUROC');
   }
   assert.ok(sec.includes('<strong>'+pp1(ld.mean)+'</strong>')&&sec.includes(ivp(ld.bootstrap_95,zh)),label+': the paired difference and its interval');
+  // The matrix note says what the diagonal is: run b at the same rate, after a long break — not
+  // "only the recording changes" (2026-10-02 review).
+  assert.ok(sec.includes(zh?'对角线上，测试记录是同一速率的 b 段，隔了较长的休息才记录；对角线以外，速率也变了，两段记录在实验中相隔多远也随之不同。'
+                           :'On the diagonal the test recording is the same-rate run b, after a long break; off it, the rate also changes, and so does how far apart in the session the two recordings were.'),label+': the matrix note on the diagonal');
+  assert.doesNotMatch(sec,/On the diagonal only the recording changes|对角线上只换了记录/,label+': the old diagonal wording');
   assert.match(sec,zh?/跨过零，所以不能认定有变化/:/it crosses zero, so no change is established/,label+': the interval-crosses-zero wording');
   assert.ok(sec.includes(zh?`${lx.cohort.people} 名被试中 ${ld.people_lower} 人的点估计更低、${ld.people_higher} 人更高`
                            :`${ld.people_lower} of ${lx.cohort.people} people had a lower point estimate and ${ld.people_higher} a higher one`),label+': lower and higher counts are visible');

@@ -102,7 +102,7 @@ const copy = {
     ltMatrixRegion: 'Balanced accuracy by training and test image rate, scrolls horizontally',
     ltCorner: 'Training recording', ltTrain: (hz: number) => `Trained at ${hz} Hz`, ltTest: (hz: number) => `Tested at ${hz} Hz`,
     ltEvents: (t: string, nt: string) => `${t} targets / ${nt} non-targets`,
-    ltMatrixNote: 'Every cell in a column is tested on the same images, whatever the training rate. On the diagonal only the recording changes; off it, the rate, the recording and the time in the session all change. The nine cells reuse the same people and the same three training recordings of each, so they are not nine independent results.',
+    ltMatrixNote: 'Every cell in a column is tested on the same images, whatever the training rate. On the diagonal the test recording is the same-rate run b, after a long break; off it, the rate also changes, and so does how far apart in the session the two recordings were. The nine cells reuse the same people and the same three training recordings of each, so they are not nine independent results.',
     ltLimitsH3: 'What the image-rate comparison cannot say',
     ltLimits: [
       ['Rate and recording are confounded', 'Training at another rate also means training on another recording, with another number of images and another target balance. A difference here is not a causal effect of image rate.'],
@@ -166,7 +166,7 @@ const copy = {
     ltMatrixRegion: '按训练与测试图像速率的平衡准确率，可横向滚动',
     ltCorner: '训练记录', ltTrain: (hz: number) => `${hz} Hz 训练`, ltTest: (hz: number) => `${hz} Hz 测试`,
     ltEvents: (t: string, nt: string) => `${t} 个目标 / ${nt} 个非目标`,
-    ltMatrixNote: '同一列中，无论训练速率如何，测试的都是同样的图像。对角线上只换了记录；对角线以外，速率、记录和在实验中的时间位置都变了。这九个格子复用同一批被试、每人同样的三段训练记录，所以不是九个独立的结果。',
+    ltMatrixNote: '同一列中，无论训练速率如何，测试的都是同样的图像。对角线上，测试记录是同一速率的 b 段，隔了较长的休息才记录；对角线以外，速率也变了，两段记录在实验中相隔多远也随之不同。这九个格子复用同一批被试、每人同样的三段训练记录，所以不是九个独立的结果。',
     ltLimitsH3: '图像速率比较说明不了什么',
     ltLimits: [
       ['速率与记录相互混杂', '换一种速率训练，也就换了一段训练记录，图像数量和目标比例也随之不同。这里的差异不是图像速率的因果效应。'],

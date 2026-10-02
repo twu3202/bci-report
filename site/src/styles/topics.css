@@ -42,6 +42,8 @@
 .topic-table .interval{display:block;font-size:.7rem;color:var(--muted);margin-top:3px}
 .topic-table .subhead th{background:#efe3d4;color:var(--accent-deep);font-size:.7rem}
 .topic-table-spaced{margin-top:14px}
+/* A pooled row under per-group rows: set apart as a total, not one more group. */
+.topic-table tr.pooled-row>*{border-top:2px solid var(--rule)}
 .protocol-note{padding:15px 18px;background:var(--wash);border-left:3px solid var(--accent);font-size:.82rem;color:var(--warn-ink);margin:18px 0}
 .protocol-note-original{display:block;margin-top:5px;font-size:.8125rem}
 .limits-label{margin:26px 0 10px}

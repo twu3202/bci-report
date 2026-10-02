@@ -116,7 +116,8 @@ const copy = {
     extTradeoff: `Read the rows together. The personal rule lowered false acceptance in every state below, so detection balanced accuracy rose; it accepted about as many intended commands (${frac(cw(pRule).accepted, cw(pRule).tested)} against ${frac(cw(gRule).accepted, cw(gRule).tested)}), and slightly fewer of them were both accepted and correct. Before any rejection the frequency was recognised in ${frac(cw(gRule).frequency_recognised, cw(gRule).tested)} command windows under both rules, because the decoder itself did not change. Detection went up; correct commands did not.`,
     extNonCaption: 'When no command was intended: windows accepted by mistake in each state, under each rule.',
     extState: { NS1: 'Central image, flicker off', NS2: 'Looking at a white wall, resting', NS3: 'Central image while the surrounding targets flicker' } as Record<string, string>,
-    extStatesNote: `The detection score pools the three states as they were collected, ${ext.cohort.test_windows_each_person.NS1}, ${ext.cohort.test_windows_each_person.NS2} and ${ext.cohort.test_windows_each_person.NS3} windows a person, so the flickering-centre state counts twice. Each state is shown on its own because one pooled figure would hide which kind of rest the decoder mistakes for a command.`,
+    extStatesNote: `The detection score pools the three states as they were collected, ${ext.cohort.test_windows_each_person.NS1}, ${ext.cohort.test_windows_each_person.NS2} and ${ext.cohort.test_windows_each_person.NS3} windows a person, so the flickering-centre state counts twice; the last row is that pool, the overall count the short answer reads. Each state is shown on its own as well, because the pooled figure alone would hide which kind of rest the decoder mistakes for a command.`,
+    extPooled: 'All three states, pooled', extPooledNote: 'every non-control window',
     extLimitsH3: 'What the extension can and cannot say',
     extLimits: [
       ['Same dataset, not external validation', `The ${extPeople} people come from the same release, lab and protocol as the pilot. Rules fixed in advance make this a fair extension; it is not evidence from an independent cohort.`],
@@ -184,7 +185,8 @@ const copy = {
     extTradeoff: `几行要放在一起读。逐人规则在下表每种状态下都降低了误接受，所以检测平衡准确率上升；它接受的有意指令数量与全局规则相当（${frac(cw(pRule).accepted, cw(pRule).tested)} 对 ${frac(cw(gRule).accepted, cw(gRule).tested)}），其中既被接受又正确的略少一些。在任何拒识之前，两种规则下识别出正确频率的指令窗口都是 ${frac(cw(gRule).frequency_recognised, cw(gRule).tested)}，因为解码器本身没有变。检测上升了，正确的指令并没有增加。`,
     extNonCaption: '无意发出指令时：每种状态下被误接受的窗口，两种规则分列。',
     extState: { NS1: '注视中央图像，闪烁关闭', NS2: '看着白墙休息', NS3: '注视中央，周围目标在闪烁' } as Record<string, string>,
-    extStatesNote: `检测分数按采集时的比例合并三种状态，每名被试分别为 ${ext.cohort.test_windows_each_person.NS1}、${ext.cohort.test_windows_each_person.NS2} 和 ${ext.cohort.test_windows_each_person.NS3} 个窗口，所以“周围在闪烁”这一状态的权重是另两种的两倍。三种状态分开列出，因为一个合并数字会掩盖解码器把哪一种静息误当成了指令。`,
+    extStatesNote: `检测分数按采集时的比例合并三种状态，每名被试分别为 ${ext.cohort.test_windows_each_person.NS1}、${ext.cohort.test_windows_each_person.NS2} 和 ${ext.cohort.test_windows_each_person.NS3} 个窗口，所以“周围在闪烁”这一状态的权重是另两种的两倍；最后一行就是合并后的计数，即简答所说的总体情况。三种状态也分开列出，因为只看合并数字会掩盖解码器把哪一种静息误当成了指令。`,
+    extPooled: '三种状态合并', extPooledNote: '全部非控制窗口',
     extLimitsH3: '这次扩展能说明什么、不能说明什么',
     extLimits: [
       ['同一数据集，不是外部验证', `这 ${extPeople} 名被试与试点来自同一份数据、同一实验室、同一协议。规则事先固定，使这次扩展是公平的；但它不是来自独立队列的证据。`],
@@ -263,7 +265,9 @@ const basis = idle.reviewBasis;
       <table>
         <caption>{copy.extNonCaption}</caption>
         <thead><tr><th scope="col">{copy.colState}</th>{extRules.map(r => <th scope="col">{copy.ruleHead[r.id]}</th>)}</tr></thead>
-        <tbody>{gRule.false_acceptance.map((f, i) => <tr><th scope="row">{copy.extState[f.state]}<small lang="en">{f.state}</small></th>{extRules.map(r => { const s = r.false_acceptance[i]; return <td><span class="metric">{frac(s.accepted, s.tested)}</span><span class="interval">{rate(s.accepted, s.tested)}</span></td>; })}</tr>)}</tbody>
+        <tbody>{gRule.false_acceptance.map((f, i) => <tr><th scope="row">{copy.extState[f.state]}<small lang="en">{f.state}</small></th>{extRules.map(r => { const s = r.false_acceptance[i]; return <td><span class="metric">{frac(s.accepted, s.tested)}</span><span class="interval">{rate(s.accepted, s.tested)}</span></td>; })}</tr>)}
+          {/* The pool the short answer's "fewer non-control windows overall" reads, from the export's own counts. */}
+          <tr class="pooled-row"><th scope="row">{copy.extPooled}<small>{copy.extPooledNote}</small></th>{extRules.map(r => <td><span class="metric">{frac(r.non_control_pooled.accepted, r.non_control_pooled.tested)}</span><span class="interval">{rate(r.non_control_pooled.accepted, r.non_control_pooled.tested)}</span></td>)}</tr></tbody>
       </table>
     </div>
     <p class="protocol-note">{copy.extStatesNote}</p>
