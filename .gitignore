@@ -34,6 +34,9 @@ tmp/
 output/
 site/dist/
 site/node_modules/
+# Without the slash as well: in a git worktree site/node_modules is a symlink to
+# the main checkout's, and a pattern ending in "/" matches directories only.
+site/node_modules
 site/.astro/
 site/.wrangler/
 site/.git.superseded-*/
@@ -67,6 +70,8 @@ research/peft_v1_20260922/
 research/screenshot_model_review_20260922/
 research/hf_expansion_v6_20260926/
 research/expansion_v7_20261001/
+research/expansion_v8_20261001/
+research/large_source_expansion_20261002/
 
 # IndexNow submission state and the last deploy log (site/scripts/deploy.mjs). Local only.
 site/.indexnow-state.json
