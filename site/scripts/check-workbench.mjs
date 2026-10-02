@@ -1211,7 +1211,8 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     const expected=releaseEntries.filter(r=>files.some(f=>releaseOf.get(f)===r)).map(r=>r.id);
     assert.deepEqual(named,expected,path+': the cite block must name exactly the releases its figures come from, newest first');
     for(const id of named) assert.ok(sec.includes(`href="${zh?'/zh':''}/releases/#${id}"><code>${id}</code></a>`),path+': '+id+' must link to its release');
-    const h1=html.match(/<h1>([^<]+)<\/h1>/)[1],canonical='https://bci.report/'+path;
+    // The h1 may carry markup (an English name in <span lang="en">, <wbr> phrase breaks); the cite block names its text.
+    const h1=html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,''),canonical='https://bci.report/'+path;
     assert.ok(sec.includes(`<cite>${h1}</cite>`)&&sec.includes(`<span class="cite-url">${canonical}</span>`),path+': the cite block names the page and its address');
     assert.match(sec,zh?/也请同时引用上游数据集/:/Cite the upstream datasets? as well/,path+': the cite block sends the reader to the upstream credit');
     const newest=releaseEntries.find(r=>r.id===named[0]);

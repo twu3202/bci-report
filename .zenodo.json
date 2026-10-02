@@ -109,6 +109,10 @@
     {
       "identifier": "https://physionet.org/content/eegmat/1.0.0/",
       "relation": "isDerivedFrom"
+    },
+    {
+      "identifier": "https://physionet.org/content/ltrsvp/1.0.0/",
+      "relation": "isDerivedFrom"
     }
   ]
 }
