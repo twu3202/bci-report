@@ -1,0 +1,46 @@
+---
+/**
+ * The transfer-coverage map (src/data/transfer-map.ts). Compact on the home page:
+ * each entry's label, link and cohort size. Full on /topics/#transfer: the row's
+ * gloss and a one-line note per entry as well.
+ *
+ * A table, so a screen reader and the Markdown copy get rows and columns; below
+ * 900px it is restacked by CSS into one block per row, each entry under its
+ * state word (data-label), and empty states are dropped, so no part of it
+ * scrolls sideways. Cohort sizes are Figs (data-fig, class "num"): re-read from
+ * their file by check-workbench.mjs and equal in both languages.
+ */
+import Fig from './Fig.astro';
+import { tr } from '../data/entities';
+import { hrefFor, transferMapCopy, type Locale } from '../data/i18n';
+import { mapRows, mapStates } from '../data/transfer-map';
+
+interface Props { locale: Locale; full?: boolean }
+const { locale, full = false } = Astro.props;
+const c = transferMapCopy[locale];
+---
+<div class:list={['tmap-frame', { 'tmap-full': full }]}>
+  <table class="tmap">
+    <caption>{c.caption}</caption>
+    <thead><tr><th scope="col">{c.axis}</th>{mapStates.map(s => <th scope="col" data-state={s}>{c.states[s]}</th>)}</tr></thead>
+    <tbody>{mapRows.map(row => (
+      <tr data-axis={row.id}>
+        <th scope="row"><span class="tmap-axis">{tr(row.axis, locale)}</span>{full && <small>{tr(row.gloss, locale)}</small>}</th>
+        {mapStates.map(state => {
+          const entries = row.cells[state];
+          return <td data-state={state} data-label={c.states[state]} class:list={[{ 'tmap-empty': entries.length === 0 }]}>
+            {entries.length === 0
+              ? <span class="tmap-none">—<span class="visually-hidden">{c.none}</span></span>
+              : <ul>{entries.map(e => <li data-map={e.key}>
+                  {e.href ? <a href={hrefFor(e.href, locale)}>{tr(e.label, locale)}</a> : <span class="tmap-label">{tr(e.label, locale)}</span>}
+                  {e.n && <span class="tmap-n">n={e.n.map((f, i) => <>{i > 0 && ' / '}<Fig f={f} cls="num"/></>)}</span>}
+                  {e.comparison && <span class="tmap-tag">{c.comparison}</span>}
+                  {full && e.note && <small>{tr(e.note, locale)}</small>}
+                </li>)}</ul>}
+          </td>;
+        })}
+      </tr>
+    ))}</tbody>
+  </table>
+  <p class="tmap-legend">{c.legend}</p>
+</div>

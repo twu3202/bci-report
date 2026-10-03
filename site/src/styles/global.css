@@ -118,19 +118,20 @@ main{max-width:1412px;margin:auto;padding:0 26px}
   text-transform:uppercase;color:var(--accent);margin-bottom:7px;
 }
 
-/* The four counts, set as a rule-separated rail — an almanac header, not cards. */
+/* The four counts, set as a rule-separated rail — an almanac header, not cards.
+   They are the core matrix's, and a visible caption says so; the whole site's
+   counts sit on one quiet line beneath. The newest release date is in the
+   eyebrow (the rail's own "Updated" entry went on 2026-10-02: one date, once). */
+.stat-block{flex:0 1 auto;min-width:0}
+.stat-caption{font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;font-weight:650;color:var(--ink);
+  margin:0 0 6px;padding-left:20px}
 .stat-rail{display:flex;gap:0;margin:0;border-left:1px solid var(--rule)}
 .stat-rail>div{padding:2px 20px;border-right:1px solid var(--rule)}
 .stat-rail dt{font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .stat-rail dd{margin:1px 0 0;font-family:var(--mono);font-size:1.5rem;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-/* The update date is a term and its value like the counts, so it is a dt/dd
-   pair inside the list (a bare <span> is not allowed as a child of <dl>), set
-   as one quiet line rather than as a fifth count. */
-.stat-rail>.live{display:flex;align-items:baseline;flex:0 0 auto;padding:0 0 0 20px;border-right:0;
-  white-space:nowrap;font-size:.75rem;color:var(--muted);align-self:center}
-.stat-rail .live dt,.stat-rail .live dd{font:inherit;letter-spacing:0;text-transform:none;color:inherit;margin:0}
-.stat-rail .live dd{margin-left:.35em}
-.stat-rail .live i{display:inline-block;width:6px;height:6px;background:var(--good);border-radius:50%;margin-right:7px}
+.site-counts{margin-top:9px;padding-left:20px;font-size:.78rem}
+.site-counts span{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.masthead .eyebrow time{font-variant-numeric:tabular-nums}
 
 /* --- Protocol selector ----------------------------------------------------
    A dropdown hid seven of the eight protocols behind a click. auto-fit wraps
@@ -171,30 +172,85 @@ main{max-width:1412px;margin:auto;padding:0 26px}
    to compatible-protocol views of the reviewed extension instead of folding
    repeated conditions into an invented cross-task leaderboard. */
 .topic-entry{padding:30px 0 38px;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}
+/* The questions in three groups (TopicGroups.astro). Each group's grid has as
+   many columns as it has cards, up to four (cols-N), so no card stands alone in
+   a desktop row; two columns when narrow, where an odd last card spans its row
+   rather than standing beside an empty cell; one on a phone. */
+.topic-group+.topic-group{margin-top:26px}
+.topic-group-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 16px;margin-bottom:10px}
+.topic-group-head :is(h2,h3){font-family:var(--serif);font-size:1.18rem;font-weight:600}
+.topic-group-head p{font-size:.82rem;max-width:720px}
 .topic-entry-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px;background:var(--panel)}
-.topic-entry-card{position:relative;min-width:0;padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-height:245px}
+.topic-entry-grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.topic-entry-grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.topic-entry-grid.cols-1{grid-template-columns:minmax(0,1fr)}
+.topic-entry-card{position:relative;min-width:0;padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-height:230px}
 .topic-entry-card:hover{background:var(--wash);color:inherit}
 .topic-entry-card .topic-number{position:absolute;right:16px;top:12px;font-family:var(--mono);font-size:.72rem;color:var(--rule)}
-.topic-entry-card .family{align-self:flex-start}
-.topic-entry-card h3{font-family:var(--serif);font-size:1.25rem;margin:14px 0 7px}
+.topic-entry-card .family{align-self:flex-start;padding-right:28px}
+.topic-entry-card :is(h3,h4){font-family:var(--serif);font-size:1.25rem;font-weight:600;margin:14px 0 7px}
 .topic-entry-card p{font-size:.82rem;line-height:1.55}
 .topic-entry-card small{margin-top:12px}
 .topic-entry-card>strong{margin-top:auto;padding-top:17px;color:var(--accent);font-size:.78rem}
+/* The compact transfer-coverage map under the cards; the full one is on /topics/. */
+.topic-map{margin-top:30px}
+.topic-map-more{margin-top:10px;font-size:.82rem}
+.topic-map-more a{color:var(--accent)}
 /* Holds: what a batch could not publish. Same card grammar as the topic
-   cards, with the state word carrying the weight instead of a number. */
-.holds{padding:52px 0;border-top:1px solid var(--rule)}
-.hold-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
-.hold-card{border:1px solid var(--line);border-top:3px solid var(--accent-deep);background:var(--panel);padding:18px}
+   cards, with the state word carrying the weight instead of a number. Each
+   card is a link: to the page that explains the hold, or to its register row. */
+.holds{padding:46px 0;border-top:1px solid var(--rule)}
+.hold-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px}
+.hold-card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);border-top:3px solid var(--accent-deep);background:var(--panel);padding:14px 15px}
+.hold-card:hover{background:var(--wash);color:inherit}
 .hold-card .state{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}
-.hold-card h3{font-family:var(--serif);font-size:1.12rem;margin:6px 0 8px}
-.hold-card p{font-size:.85rem}
-.hold-card small{display:block;margin-top:10px;font-size:.72rem;color:var(--muted)}
-.holds-more{margin-top:14px;font-size:.85rem}
+.hold-card h3{font-family:var(--serif);font-size:1.02rem;line-height:1.35;margin:5px 0 6px}
+.hold-card p{font-size:.78rem;line-height:1.5}
+.hold-card small{display:block;margin-top:auto;padding-top:9px;font-size:.72rem;color:var(--muted)}
+.holds-more{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:14px;font-size:.85rem}
 .holds-more a{color:var(--accent)}
-/* Topic cards: four columns wide, two when narrow. An odd last card in two
-   columns spans its row rather than standing beside an empty cell. */
-.topic-entry-download{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:14px}
-.topic-entry-download p{font-size:.78rem;max-width:700px}
+
+/* --- Transfer-coverage map (TransferMap.astro) ------------------------------
+   Rows are what changes between training and test, columns the state of the
+   evidence. Cohort sizes and links only: no colour scale, because a state says
+   whether evidence exists, not whether transfer works. Below 900px the table
+   is restacked, one block per row, each entry under its state word, so no part
+   of it scrolls sideways. */
+.tmap-frame{border:1px solid var(--line);background:var(--panel)}
+.tmap{width:100%;border-collapse:collapse;white-space:normal;font-size:.82rem;table-layout:fixed}
+.tmap caption{text-align:left;padding:11px 16px;color:var(--muted);font-size:.75rem;border-bottom:1px solid var(--line)}
+.tmap th,.tmap td{min-width:0;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+.tmap th:first-child,.tmap td:first-child{min-width:0;padding-left:16px}
+.tmap thead th{width:auto}
+.tmap thead th:first-child{width:17%}
+.tmap tbody th{background:var(--soft);text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--ink);border-top:0}
+.tmap tbody th small{font-weight:400;margin-top:3px;line-height:1.45}
+.tmap tbody tr:last-child :is(th,td){border-bottom:0}
+.tmap td+td,.tmap th+td{border-left:1px solid #f1e8db}
+.tmap ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.tmap li{line-height:1.45;overflow-wrap:anywhere}
+.tmap li a{color:var(--accent)}
+.tmap-label{color:var(--ink)}
+.tmap-n{margin-left:6px;font-family:var(--mono);font-size:.76rem;color:var(--muted);white-space:nowrap}
+.tmap-n .num{color:var(--ink)}
+.tmap-tag{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.tmap li small{margin-top:2px;font-size:.72rem;line-height:1.45}
+.tmap-none{color:var(--rule)}
+.tmap-legend{padding:10px 16px;font-size:.74rem;border-top:1px solid var(--line);background:var(--soft)}
+:lang(zh-Hans) .tmap-tag,:lang(zh-Hans) .tmap li small,:lang(zh-Hans) .tmap caption,:lang(zh-Hans) .tmap-legend{font-size:.75rem}
+:lang(zh-Hans) .tmap td::before{font-size:.75rem;letter-spacing:0;text-transform:none}
+@media(max-width:900px){
+  .tmap,.tmap tbody,.tmap tr,.tmap th,.tmap td{display:block;width:auto}
+  .tmap thead{display:none}
+  .tmap caption{display:block}
+  .tmap tbody tr{border-bottom:1px solid var(--rule)}
+  .tmap tbody tr:last-child{border-bottom:0}
+  .tmap tbody th{padding:9px 14px;border-bottom:1px solid var(--line)}
+  .tmap td,.tmap td:first-child{padding:8px 14px;border:0}
+  .tmap td+td,.tmap th+td{border-left:0}
+  .tmap td::before{content:attr(data-label);display:block;margin-bottom:4px;font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;font-weight:650;color:var(--muted)}
+  .tmap td.tmap-empty{display:none}
+}
 
 /* --- Per-protocol panel --------------------------------------------------- */
 .results-panel{display:grid;grid-template-columns:minmax(0,1fr) 330px;border:1px solid var(--line);background:var(--panel)}
@@ -252,7 +308,7 @@ aside>p:last-child{font-size:.8125rem;margin-top:13px}
 .evidence>a{white-space:nowrap;margin-left:auto;color:var(--accent)}
 
 footer{
-  border-top:3px double var(--rule);max-width:1360px;margin:64px auto 0;
+  border-top:3px double var(--rule);width:calc(100% - 52px);max-width:1360px;margin:64px auto 0;
   padding:22px 0 36px;display:flex;justify-content:space-between;gap:12px 24px;
   align-items:center;font-size:.8125rem;flex-wrap:wrap;
 }
@@ -327,11 +383,12 @@ dialog .button{margin-top:18px;max-width:100%}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){
-  .topic-entry-grid{grid-template-columns:1fr 1fr}
-  .hold-grid{grid-template-columns:1fr}
+  .topic-entry-grid,.topic-entry-grid:is(.cols-3,.cols-4){grid-template-columns:1fr 1fr}
+  /* An odd last card in two columns takes the whole row rather than standing alone. */
+  .topic-entry-grid:not(.cols-1) .topic-entry-card:last-child:nth-child(odd){grid-column:1/-1}
   /* Brand and language switcher share the first row; the navigation takes a
      full-width row of its own. One row was never going to hold all three: the
-     seven English links plus the switcher need ~980px, and between 700 and
+     eight English links plus the switcher need ~1000px, and between 700 and
      1000px the header ran up to 108px off the screen on every English page. */
   .site-header{flex-wrap:wrap;row-gap:6px}
   .lang{order:1}
@@ -339,7 +396,7 @@ td .flag{margin-top:6px}
   .results-panel{grid-template-columns:minmax(0,1fr) 288px}
   .toolbar{display:block}
   .controls{margin-top:14px}
-  footer{margin:60px 26px 0}
+  footer{margin:60px 26px 0;width:auto}
 }
 @media(max-width:860px){
   .site-header{gap:18px;padding:11px 20px}
@@ -347,11 +404,12 @@ td .flag{margin-top:6px}
   main{padding:0 20px}
   .masthead{display:block;padding:24px 0 18px}
   .masthead h1{font-size:1.7rem}
-  .stat-rail{margin-top:20px;flex-wrap:wrap;border-left:0;border-top:1px solid var(--rule)}
+  /* The caption and the site line sit flush with the counts once the rail
+     wraps under the heading, as the old update date had to be told to. */
+  .stat-caption{margin-top:20px;padding-left:0}
+  .stat-rail{flex-wrap:wrap;border-left:0;border-top:1px solid var(--rule)}
   .stat-rail>div{padding:8px 18px 8px 0;border-right:0;flex:1 0 auto}
-  /* .stat-rail>.live outranks the rule above and kept its 20px desktop indent,
-     so the date sat indented when the rail wrapped. */
-  .stat-rail>.live{padding-left:0}
+  .site-counts{padding-left:0}
   .results-panel{grid-template-columns:1fr}
   aside{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;column-gap:24px}
   aside .eyebrow,aside h3{grid-column:1}
@@ -361,37 +419,31 @@ td .flag{margin-top:6px}
   .evidence p{flex-basis:100%}
   .evidence>a{margin:0}
   footer p{display:none}
-  .topic-entry-grid{grid-template-columns:1fr 1fr}
-  /* Five cards in two columns leave one alone; let it take the whole row. */
-  .topic-entry-card:last-child:nth-child(odd){grid-column:1/-1}
 }
 @media(max-width:560px){
-  /* The header is sticky. Wrapped over three rows it stood 145px tall and held
-     a fifth of a phone screen for the whole page. The links scroll sideways in
-     one row instead; the last one is cut at the edge, which says there is more. */
-  .site-header nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
-             margin-right:-20px;padding-right:20px}
-  .site-header nav::-webkit-scrollbar{display:none}
-  .site-header nav a{flex-shrink:0}
-  /* The scrolling row clips anything drawn outside it, which took the top and
-     bottom of a 3px-offset focus ring with it. Draw the ring inside the link. */
-  .site-header nav a:focus-visible{outline-offset:-2px}
+  /* Eight links do not fit one row on a phone. They used to scroll sideways
+     in a single row, which hid the last ones behind the edge; since 2026-10-02
+     they wrap, two rows at 375px (Questions … Datasets / Releases, API, Data
+     use; 问题 … API / 数据使用 in Chinese). Brand, language switcher and two
+     link rows stand about 110px tall, too much to hold on screen for a whole
+     page, so on a phone the header scrolls away with the page instead of
+     sticking, and anchor targets no longer leave room for it. */
+  :root{scroll-padding-top:12px}
+  .site-header{position:static;flex-wrap:wrap;padding:12px 16px;gap:10px}
+  .site-header nav{width:100%;flex-wrap:wrap;column-gap:14px;row-gap:3px;font-size:.8125rem}
   /* Only the way out is needed on a phone: the page's own language is evident
      from the page. Dropping the current-language label lets the switcher sit
      beside the brand instead of taking a row of its own. */
   .lang-on{display:none}
-  .site-header{flex-wrap:wrap;padding:12px 18px;gap:11px}
-  .site-header nav{width:100%;column-gap:17px;font-size:.8125rem}
   .brand{font-size:1.1rem}
+  main{padding:0 16px}
   .masthead h1{font-size:1.45rem}
   .lede{font-size:.875rem}
-  /* One tight row of counts. The stage badge is already in the wordmark, so the
-     duplicate indicator goes rather than pushing the matrix further down. */
-  .stat-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:16px}
+  /* One tight row of counts. */
+  .stat-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
   .stat-rail>div{padding:6px 6px 4px 0}
   .stat-rail dt{font-size:.5625rem;letter-spacing:.04em}
   .stat-rail dd{font-size:1.2rem}
-  .stat-rail .live{display:none}
   .context{display:block}
   .context .button{margin-top:11px}
   .controls label{flex:1}
@@ -401,12 +453,10 @@ td .flag{margin-top:6px}
   .toolbar{padding:15px}
   td,th{padding:11px}
   .detail-metrics{grid-template-columns:1fr}
-  footer{margin:48px 20px 0;flex-wrap:wrap}
+  footer{margin:48px 16px 0;flex-wrap:wrap}
   .policy-page{padding-top:24px}
-  .topic-entry-grid{grid-template-columns:1fr}
+  .topic-entry-grid,.topic-entry-grid:is(.cols-2,.cols-3,.cols-4){grid-template-columns:minmax(0,1fr)}
   .topic-entry-card{min-height:0}
-  .topic-entry-download{display:block}
-  .topic-entry-download .button{margin-top:12px}
 }
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}}
 
@@ -428,6 +478,9 @@ td .flag{margin-top:6px}
    word, a Chinese label's is one character. The flex rail shrank 协议 to 18px
    and set it one character per line. Two- and three-character labels always fit. */
 :lang(zh-Hans) :is(.stat-rail dt,.track-tab strong,.family,.status,.eyebrow){white-space:nowrap}
+/* Section eyebrows can run long in Chinese ("明确的非控制状态 · 20 名被试 · …") and pushed
+   two topic pages 40-60px past a 375px viewport. On phones they wrap; short labels stay whole. */
+@media(max-width:560px){:lang(zh-Hans) main p.eyebrow{white-space:normal}}   /* (0,2,2): outranks the :is() rule above */
 /* Size floors for Chinese. A Latin label stays legible at 9-11px because its
    letters are simple; a Chinese character that small loses strokes. Labels go
    to 12px and small running text to 14px. Tracking and uppercase only widened
@@ -443,6 +496,10 @@ td .flag{margin-top:6px}
   font-size:.75rem;letter-spacing:0;text-transform:none;
 }
 :lang(zh-Hans) .code-label{letter-spacing:0;text-transform:none}
+/* The 2026-10-02 home sections and the Questions hub, held to the same floors. */
+:lang(zh-Hans) .stat-caption,:lang(zh-Hans) .switcher-group>p{font-size:.75rem;letter-spacing:0;text-transform:none}
+:lang(zh-Hans) .site-counts,:lang(zh-Hans) .hold-card p,:lang(zh-Hans) .topic-group-head p,:lang(zh-Hans) .topic-map-more,
+:lang(zh-Hans) .directory-card p,:lang(zh-Hans) .tmap{font-size:.875rem}
 :lang(zh-Hans) .matrix .cmark{font-size:.6875rem}
 :lang(zh-Hans) .citation-list p,:lang(zh-Hans) .literature-grid p,:lang(zh-Hans) .citation-note,
 :lang(zh-Hans) .interval-plot figcaption,:lang(zh-Hans) .entity-group-meta,:lang(zh-Hans) .topic-entry-download p,

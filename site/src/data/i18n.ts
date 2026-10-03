@@ -91,6 +91,8 @@ export const ogLocale: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' };
 /** Pages that exist in every locale. Anything else is English-only. */
 export const translatedPaths = [
   '/',
+  // The Questions hub (2026-10-02): every topic, grouped, and the transfer-coverage map.
+  '/topics/',
   '/topics/dry-vs-wet/',
   '/topics/screen-to-vr/',
   '/topics/fewer-electrodes/',
@@ -148,14 +150,17 @@ export function alternates(path: string, origin: string) {
 
 /* --- Shared chrome -------------------------------------------------------- */
 
+/** The header link a page marks as current (SiteHeader.astro). */
+export type NavKey = 'home' | 'topics' | 'protocols' | 'methods' | 'datasets' | 'releases' | 'api' | 'data-use';
+
 interface Chrome {
   /** Before the date of the newest release, on the home page. */
   updated: string;
   skipToResults: string;
   skipToEvidence: string;
   mainNav: string;
-  nav: { results: string; explore: string; protocols: string; models: string;
-         datasets: string; updates: string; dataUse: string };
+  nav: { questions: string; results: string; protocols: string; methods: string;
+         datasets: string; releases: string; api: string; dataUse: string };
   languageLabel: string;
   /** Title on the switcher link when the current page has no translation. */
   onlyInEnglish: string;
@@ -189,8 +194,9 @@ export const chrome: Record<Locale, Chrome> = {
     skipToResults: 'Skip to results',
     skipToEvidence: 'Skip to evidence',
     mainNav: 'Main navigation',
-    nav: { results: 'Results', explore: 'Explore', protocols: 'Protocols', models: 'Models',
-           datasets: 'Datasets', updates: 'Updates', dataUse: 'Data use' },
+    // One name for the topic section everywhere: nav, breadcrumb, hub and home eyebrow.
+    nav: { questions: 'Questions', results: 'Results', protocols: 'Protocols', methods: 'Methods',
+           datasets: 'Datasets', releases: 'Releases', api: 'API', dataUse: 'Data use' },
     languageLabel: 'Language',
     onlyInEnglish: 'This page is available in English only',
     footerTagline: 'Aggregate results. Credited sources. Research use.',
@@ -213,8 +219,8 @@ export const chrome: Record<Locale, Chrome> = {
     skipToResults: '跳至结果',
     skipToEvidence: '跳至证据',
     mainNav: '主导航',
-    nav: { results: '结果', explore: '专题', protocols: '协议', models: '模型',
-           datasets: '数据集', updates: '动态', dataUse: '数据使用' },
+    nav: { questions: '问题', results: '结果', protocols: '协议', methods: '方法',
+           datasets: '数据集', releases: '发布记录', api: 'API', dataUse: '数据使用' },
     languageLabel: '语言',
     onlyInEnglish: '本页仅提供英文版',
     footerTagline: '聚合结果，标注来源，研究用途。',
@@ -299,6 +305,8 @@ export const modelStatus = zhLabel({
   'Evaluated': '已评测',
   'Adapter needed': '需要适配器',
   'Access gated': '访问受限',
+  // Display-only status (directory-status.ts): REVE Base since 2026-10-02.
+  'Licence review pending': '许可审查中',
   'Access unverified': '访问未核实',
   'Research candidate': '研究候选',
   'Rights review pending': '权利审查中',
@@ -345,39 +353,44 @@ export const familyLabel = (family: string, locale: Locale) => ({
 
 /* --- Homepage ------------------------------------------------------------- */
 
-interface HomeCounts { methods: number; protocols: number; datasets: number;
-                       comparisons: number; topicRows: number }
+interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number }
 
 export const home = {
   en: {
     title: 'Public EEG Model Evaluation',
     /** One source: the English description is the site's own. */
     description: site.description,
-    eyebrow: (date: string) => `Open EEG evaluation · Snapshot ${date}`,
+    // Followed by the newest release's date (releases.ts). The core matrix's own
+    // snapshot date is in the matrix heading, so the masthead states one date.
+    eyebrow: 'Open EEG evaluation · updated',
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
       `Separate topics add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, pretraining and clinical groups.`,
-    statsLabel: 'Core matrix coverage',
+    // A visible caption: the four counts are the core matrix's, not the site's.
+    statsCaption: 'Core matrix',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
+    // The whole site, counted from the pages it builds. No summed comparison count.
+    siteCountsLead: 'Across the site:',
+    siteCounts: { questions: 'questions', datasets: 'datasets with results', methods: 'methods with result pages' },
     topicsEyebrow: 'Questions',
     // Count-free: the number of topics grows, and a heading that states it goes stale.
     topicsH2: 'What the evidence can answer',
     // No summed count: the topics now draw on two exports that measure different
     // things (proportions, correlation, R²), and one total would add them up.
-    topicsLede: (_n: number) =>
+    topicsLede:
       'Aggregate measurements, organized by the decision they can inform. They are repeated ' +
       'conditions within protocols, not independent experiments, and not an overall ranking.',
     readEvidence: 'Read the evidence →',
-    releasesNote: 'Every reviewed release, each download with its SHA-256, and what each batch held back.',
-    releasesLink: 'Releases & downloads →',
     holdsEyebrow: 'Holds',
     holdsH2: 'What is held back, and since when',
     holdsLede: 'Results that are missing on purpose. A hold is not a failed result: it is one that cannot be published honestly yet. The register, including resolved holds, is on the releases page.',
     holdsSince: (d: string) => `Held since ${d}`,
     holdsRegister: 'Full holds register →',
+    correctionsLink: (n: number) => `Corrections (${n}) →`,
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
+    snapshot: 'snapshot',
     matrixLede: 'The original eight-protocol snapshot, separate from the deployment topics above. Blank cells are protocols a method has not been run on — not failures.',
     matrixRegion: 'Coverage matrix of methods against protocols, scrolls horizontally',
     matrixCaption: 'Balanced accuracy of each method on each protocol. Chance level differs by protocol and is given in each column heading.',
@@ -430,19 +443,21 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `Single seed — the ${word} of ${n} run (${lo}–${hi}%, mean ${mean}%)`,
     seedWord: { highest: 'highest', lowest: 'lowest', middle: 'middle' } as Record<string, string>,
-    modelsEyebrow: 'Model directory',
-    modelsH2: 'From compact baselines to foundation models',
-    modelsLede: 'Availability and measured performance are separate. Parameter counts depend on the backbone and task configuration.',
-    parameters: 'parameters',
-    officialSource: 'Official source ↗',
-    datasetsEyebrow: 'Public data',
-    datasetsH2: 'Public data, documented experiments',
-    datasetsLede: 'Source terms are checked separately from numerical results. Unresolved data remain outside this release.',
-    dtSubjects: 'Subjects',
-    dtChannels: 'Channels',
-    newsEyebrow: 'Field notes',
-    newsH2: 'Notes from the field',
-    newsLede: 'Curated research updates, linked to original sources.',
+    // The directory band: one card per hub, each with a count read from the
+    // module that builds it (entities.ts, releases.ts, files.ts).
+    directoryEyebrow: 'Directory',
+    directoryH2: 'Everything else, by what it is',
+    directoryLede: 'The model directory, the public-data register and the field notes now live with the methods and datasets they describe.',
+    directory: {
+      methods: { title: 'Methods', count: 'methods with result pages',
+        body: 'Every published figure for each method; the model directory, with why a catalogued model has no score; external field notes.' },
+      datasets: { title: 'Datasets', count: 'datasets with results',
+        body: 'Every figure measured on each dataset; the public-data register, with source terms, credit and what no release includes.' },
+      releases: { title: 'Releases', count: 'reviewed releases',
+        body: 'What each batch added and held back, the SHA-256 of every file, corrections and the holds register.' },
+      api: { title: 'Data & API', count: 'downloadable files',
+        body: 'Every JSON and CSV file with what it holds, code examples, the release feed and how to cite.' },
+    },
     methodsEyebrow: 'Evidence before ranking',
     methodsH2: 'A score is only useful with its conditions.',
     downloadAll: 'Download all results · JSON ↓',
@@ -462,27 +477,29 @@ export const home = {
     description:
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
       'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发。',
-    eyebrow: (date: string) => `公开 EEG 评测 · 快照 ${date}`,
+    eyebrow: '公开 EEG 评测 · 更新于',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
       `另有若干专题，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、预训练与临床分组的证据。`,
-    statsLabel: '核心矩阵覆盖范围',
+    statsCaption: '核心矩阵',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
-    topicsEyebrow: '专题',
+    siteCountsLead: '全站：',
+    siteCounts: { questions: '个问题', datasets: '个有结果的数据集', methods: '种方法有结果页' },
+    topicsEyebrow: '问题',
     topicsH2: '证据能回答的问题',
-    topicsLede: (_n: number) =>
+    topicsLede:
       '聚合测量结果，按它们能支持的决策来组织。它们是同一协议内的重复条件，不是独立实验，也不是总排名。',
     readEvidence: '查看证据 →',
-    releasesNote: '每一次经过审核的发布、每个下载文件及其 SHA-256，以及每一批暂缓了什么。',
-    releasesLink: '发布记录与下载 →',
     holdsEyebrow: '暂缓发布',
     holdsH2: '暂缓发布的内容，以及从何时开始',
     holdsLede: '有意暂不发布的结果。暂缓不代表结果失败，只是目前还不能如实发布。完整登记册（含已解除的暂缓）在发布记录页上。',
     holdsSince: (d: string) => `${d}起暂缓`,
     holdsRegister: '完整暂缓登记册 →',
+    correctionsLink: (n: number) => `更正（${n}）→`,
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
+    snapshot: '快照',
     matrixLede: '最初的八协议快照，与上方的部署专题相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
     matrixRegion: '方法与协议的覆盖矩阵，可横向滚动',
     matrixCaption: '各方法在各协议上的平衡准确率。随机水平因协议而异，标注在每列表头中。',
@@ -535,19 +552,19 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `仅单个随机种子——为 ${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
-    modelsEyebrow: '模型目录',
-    modelsH2: '从轻量基线到基础模型',
-    modelsLede: '可获得性与实测表现是两回事。参数量取决于主干网络与任务配置。',
-    parameters: '参数',
-    officialSource: '官方来源 ↗',
-    datasetsEyebrow: '公开数据',
-    datasetsH2: '公开数据，有据可查的实验',
-    datasetsLede: '来源条款与数值结果分开审查。尚未厘清的数据不纳入本次发布。',
-    dtSubjects: '被试',
-    dtChannels: '通道',
-    newsEyebrow: '领域动态',
-    newsH2: '研究前沿动态',
-    newsLede: '精选研究动态，均链接至原始来源。',
+    directoryEyebrow: '目录',
+    directoryH2: '其余内容，按类别查找',
+    directoryLede: '模型目录、公开数据登记与领域动态，现在和它们所描述的方法与数据集放在一起。',
+    directory: {
+      methods: { title: '方法', count: '种方法有结果页',
+        body: '每种方法的全部已发布数字；模型目录，说明目录中的模型为什么没有分数；站外的领域动态。' },
+      datasets: { title: '数据集', count: '个有结果的数据集',
+        body: '在每个数据集上测得的全部数字；公开数据登记，附来源条款、署名，以及哪些数据没有纳入任何发布。' },
+      releases: { title: '发布记录', count: '次经过审核的发布',
+        body: '每一批新增了什么、暂缓了什么，每个文件的 SHA-256，更正与暂缓登记册。' },
+      api: { title: '数据与 API', count: '个可下载文件',
+        body: '每个 JSON 与 CSV 文件及其内容说明、代码示例、发布订阅源与引用方式。' },
+    },
     methodsEyebrow: '先有证据，再谈排名',
     methodsH2: '离开测量条件，分数就没有意义。',
     downloadAll: '下载全部结果 · JSON ↓',
@@ -561,7 +578,7 @@ export const home = {
     colon: '：',
     closeDialog: '关闭详情',
     /** Shown once above the payload-driven sections, which stay in English. */
-    payloadNote: '协议步骤、局限说明、结果表中的配置说明与数据集署名来自发布数据本身，保持英文原文——它们随数据一起被审核，翻译会让网页与可下载文件不再一致。模型目录与公开数据两节中的备注和许可说明译成了中文，许可名称保持原文；下载文件仍为英文。',
+    payloadNote: '协议步骤、局限说明、结果表中的配置说明与数据集署名来自发布数据本身，保持英文原文——它们随数据一起被审核，翻译会让网页与可下载文件不再一致。下载文件仍为英文。',
   },
 } as const;
 
@@ -570,12 +587,15 @@ export const home = {
 export const topicChrome = {
   en: {
     home: 'Home',
-    explore: 'Explore',
+    // The section's one name, as in the navigation (chrome.nav.questions), the
+    // hub's h1 and the home eyebrow. It used to be "Explore" here.
+    questions: 'Questions',
     breadcrumb: 'Breadcrumb',
     reviewedJson: 'Reviewed aggregate JSON ↓',
     methodsLimits: 'Methods & limits ↓',
     keepExploring: 'Keep exploring',
-    exploreNav: 'Explore benchmark questions',
+    exploreNav: 'Other questions',
+    allQuestions: 'All questions, and the map of which kinds of transfer have been measured →',
     dataSource: 'Data source:',
     reviewedAggregate: 'reviewed aggregate JSON',
     schema: 'schema',
@@ -596,12 +616,13 @@ export const topicChrome = {
   },
   zh: {
     home: '首页',
-    explore: '专题',
+    questions: '问题',
     breadcrumb: '面包屑导航',
     reviewedJson: '已审核的聚合 JSON ↓',
     methodsLimits: '方法与局限 ↓',
     keepExploring: '继续探索',
-    exploreNav: '浏览基准问题',
+    exploreNav: '其他问题',
+    allQuestions: '全部问题，以及哪些迁移已经测量过的地图 →',
     dataSource: '数据来源：',
     reviewedAggregate: '已审核的聚合 JSON',
     schema: 'schema',
@@ -620,11 +641,89 @@ export const topicChrome = {
   },
 } as const;
 
-/** Topic cards on the homepage and in the "keep exploring" strip. */
+/**
+ * The transfer-coverage map (src/data/transfer-map.ts, TransferMap.astro): its
+ * column words are the site's state words, the ones the holds register uses.
+ * No figure here; every cohort size in the map is a Fig from a payload.
+ */
+export const transferMapCopy = {
+  en: {
+    caption: 'What changes between training and test, and whether this site has evidence on it. Cohort sizes and links only, never scores.',
+    axis: 'What changes',
+    states: { measured: 'Measured', status: 'Status only', held: 'Held', absent: 'Not measured' } as Record<string, string>,
+    comparison: 'comparison',
+    none: 'None',
+    legend: 'A state says whether evidence exists, not whether transfer works. n is the number of people behind an entry; “comparison” marks two electrode sets scored on the same data rather than a transfer from one to the other. A held entry is described in the holds register, not here.',
+    fullMap: 'The full map, with what each entry measures →',
+  },
+  zh: {
+    caption: '训练与测试之间改变了什么，以及本站对此有没有证据。只列被试数与链接，从不列分数。',
+    axis: '改变的是',
+    states: { measured: '已测量', status: '只发状态', held: '暂缓', absent: '未测量' } as Record<string, string>,
+    comparison: '配对比较',
+    none: '无',
+    legend: '状态只说明有没有证据，不说明迁移效果好不好。n 是每一项背后的被试数；“配对比较”指两组电极在同一批数据上评分，而不是从一组迁移到另一组。暂缓的条目在暂缓登记册里说明，这里不展开。',
+    fullMap: '完整的地图，附每一项测量的内容 →',
+  },
+} satisfies Record<Locale, unknown>;
+
+/** The Questions hub, /topics/. */
+export const topicsHubCopy = {
+  en: {
+    docTitle: 'Questions: what EEG decoding evidence can answer',
+    h1: 'What the evidence can answer',
+    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation and pretraining; when not to act; clinical groups. With a map of which kinds of transfer have been measured.',
+    dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits. Below them, a map of which kinds of transfer have been measured, which are held, and which have not been tried.',
+    mapEyebrow: 'Transfer coverage',
+    mapH2: 'Which kinds of transfer have been measured',
+    mapLede: 'Rows are what changes between training and test; columns are the state of the evidence. Each entry links the page that holds it.',
+    sources: 'Cohort sizes are read from the reviewed downloads:',
+  },
+  zh: {
+    docTitle: '问题：EEG 解码证据能回答什么',
+    h1: '证据能回答的问题',
+    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配与预训练；何时不该执行；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。下面是一张地图：哪些迁移已经测量、哪些暂缓、哪些还没有做过。',
+    mapEyebrow: '迁移覆盖',
+    mapH2: '哪些迁移已经测量过',
+    mapLede: '行是训练与测试之间改变的东西，列是证据的状态。每一项都链接到收录它的页面。',
+    sources: '被试数取自已审核的下载文件：',
+  },
+} satisfies Record<Locale, unknown>;
+
+/**
+ * The three groups the questions are listed under (topics.ts `topicGroups`), on
+ * the home page, the Questions hub and each topic's switcher. No figure here.
+ */
+export const topicGroupLabels: Record<Locale, Record<string, { title: string; lede: string }>> = {
+  en: {
+    transfer: { title: 'Transfer',
+      lede: 'Does a decoder still work when the sensor, the display, the electrode layout or the body’s movement changes?' },
+    adapting: { title: 'Adapting models',
+      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, and whether pretraining helps at all.' },
+    reliability: { title: 'Reliability & clinical',
+      lede: 'When a decoder should not act, and what resting-state EEG can and cannot say about a clinical group.' },
+  },
+  zh: {
+    transfer: { title: '迁移',
+      lede: '换了传感器、显示设备、电极布局，或者人在运动时，解码器还管用吗？' },
+    adapting: { title: '调整模型',
+      lede: '解码器需要多少校准、预训练模型该更新哪一部分，以及预训练到底有没有帮助。' },
+    reliability: { title: '可靠性与临床',
+      lede: '解码器什么时候不该执行，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
+  },
+};
+
+/** Topic cards on the homepage, the Questions hub and the "keep exploring" strip. */
 /**
  * `question` is the page's h1 and <title>: the question as a reader, or an
  * assistant searching on a reader's behalf, would type it. `title` stays the
  * short label used on cards, in breadcrumbs and in the topic switcher.
+ *
+ * Every count in a `summary` or `detail` ("102 people", "EEGMAT, 36 people",
+ * "Twelve, 24 or 48") is checked against the payloads by check-workbench.mjs
+ * ("topic card counts"), in both languages: change the data and the card fails
+ * the build until its words follow.
  */
 export const topicCards: Record<Locale, Record<string, { kicker: string; title: string; question: string; summary: string; detail: string }>> = {
   en: {
@@ -696,7 +795,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
       question: '没有人下指令时，EEG 解码器误触发有多频繁？',
       summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style（一次编码、回答多个问题）研究计划：何时该执行、该等待、该重新校准。',
-      detail: '空闲，四人试点 · 非控制状态，20 名被试 · 研究计划' },
+      detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 研究计划' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
       question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
       summary: '149 名被试的帕金森病与对照比较，旁边并排放着一个只用年龄和性别的对照基线——以及为什么两者都不是诊断。',

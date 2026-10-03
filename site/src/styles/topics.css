@@ -68,9 +68,14 @@
 .cite-page .cite-url{font-family:var(--mono);font-size:.8rem}
 .cite-page code{font-family:var(--mono);font-size:.78rem}
 .cite-page a{color:var(--accent)}
-.topic-switcher>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-width:1px 0 0 1px}
-.topic-switcher a{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
-.topic-switcher a[aria-current=page]{background:var(--wash);box-shadow:inset 0 -3px var(--accent)}
+/* Grouped as on the home page and the hub: one column per group, its topics stacked. */
+.topic-switcher>.switcher-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.switcher-group{min-width:0}
+.switcher-group>p{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:650;color:var(--muted);margin-bottom:6px}
+.switcher-group>div{display:grid;grid-template-columns:minmax(0,1fr);border:1px solid var(--line);border-width:1px 0 0 1px}
+.topic-switcher .citation-note{margin-top:14px}
+.switcher-group a{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.switcher-group a[aria-current=page]{background:var(--wash);box-shadow:inset 0 -3px var(--accent)}
 .topic-switcher strong{display:block;font-size:.88rem;margin-top:2px}
 .topic-switcher small{color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.6rem}
 .inline-key{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;color:var(--muted);font-size:.73rem}
@@ -95,8 +100,9 @@
   .finding{grid-template-columns:1fr}
   .finding-number{border-right:0;border-bottom:1px solid var(--line)}
   .evidence-grid{grid-template-columns:1fr 1fr}
-  .topic-switcher>div{grid-template-columns:1fr 1fr}
-  .topic-switcher a:last-child:nth-child(odd){grid-column:1/-1}
+  .topic-switcher>.switcher-groups{grid-template-columns:minmax(0,1fr)}
+  .switcher-group>div{grid-template-columns:1fr 1fr}
+  .switcher-group>div>a:last-child:nth-child(odd){grid-column:1/-1}
 }
 @media(max-width:560px){
   .topic-hero{padding:28px 0}

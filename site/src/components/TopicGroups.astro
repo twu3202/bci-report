@@ -1,0 +1,31 @@
+---
+/**
+ * The questions as cards, under their three groups (topics.ts `topicGroups`):
+ * on the home page (group headings h3) and on the Questions hub (h2). Each
+ * group's grid has as many columns as it has cards, up to four, so no card
+ * stands alone in a desktop row; global.css narrows it to two and then one.
+ * Numbering runs across the groups and is zero-padded to two digits.
+ */
+import { hrefFor, topicCards, topicGroupLabels, type Locale } from '../data/i18n';
+import { topicGroups, topicsIn } from '../data/topics';
+
+interface Props { locale: Locale; level: 2 | 3; readLabel: string }
+const { locale, level, readLabel } = Astro.props;
+const GroupHeading = level === 2 ? 'h2' : 'h3';
+const CardHeading = level === 2 ? 'h3' : 'h4';
+// Four across at most; past four, the count that leaves no card alone in its row.
+const columns = (n: number) => (n <= 4 ? n : [4, 3].find(c => n % c === 0) ?? (n % 4 === 1 ? 3 : 4));
+---
+{topicGroups.map(group => {
+  const topics = topicsIn(group);
+  const label = topicGroupLabels[locale][group];
+  return (
+    <div class="topic-group" id={`group-${group}`}>
+      <div class="topic-group-head"><GroupHeading>{label.title}</GroupHeading><p>{label.lede}</p></div>
+      <div class={`topic-entry-grid cols-${columns(topics.length)}`}>{topics.map(topic => {
+        const card = topicCards[locale][topic.slug];
+        return <a class="topic-entry-card" href={hrefFor(`/topics/${topic.slug}/`, locale)}><span class="topic-number" aria-hidden="true">{String(topic.index + 1).padStart(2, '0')}</span><span class="family">{card.kicker}</span><CardHeading>{card.title}</CardHeading><p>{card.summary}</p><small>{card.detail}</small><strong>{readLabel}</strong></a>;
+      })}</div>
+    </div>
+  );
+})}

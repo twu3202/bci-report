@@ -195,9 +195,9 @@ export const protocolCopy = {
     // Where the rights review was amended for consent, the page says so in its own words.
     // Each claim is in the released privacyReview, which check-workbench.mjs asserts.
     consentCaveat: {
-      'sleep-scalp': 'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
+      'sleep-scalp': 'According to the 2025 data descriptor, the informed consent form did not mention publication, and before release the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
     } as Record<string, string>,
-    register: 'Rights review',
+    register: 'Public-data register note',
     reviewed: 'Rights reviewed',
     reviewBasis: 'against',
     original: 'Dataset record ↗',
@@ -275,9 +275,9 @@ export const protocolCopy = {
     privacyNote: '这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。',
     privacyLink: '完整的审查说明在协议 JSON 中 ↓',
     consentCaveat: {
-      'sleep-scalp': '知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。',
+      'sleep-scalp': '据 2025 年的数据描述论文，知情同意书没有提到公开发布；发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。',
     } as Record<string, string>,
-    register: '权利审查',
+    register: '公开数据登记说明',
     reviewed: '权利审查于',
     reviewBasis: '依据',
     original: '数据集记录 ↗',

@@ -1,10 +1,13 @@
 ---
 /**
- * Shell for the dataset, method and protocol pages: same head, header and
- * footer as the topic pages, without the topic switcher.
+ * Shell for the dataset, method and protocol pages, their indexes, the
+ * Questions hub (/topics/) and the data API page: same head, header and footer
+ * as the topic pages, without the topic switcher. The visible breadcrumb is also
+ * emitted as BreadcrumbList markup on the English canonical (structured.ts).
  */
 import { site } from '../data/site';
-import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicChrome, type Locale } from '../data/i18n';
+import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, topicChrome, type Locale, type NavKey } from '../data/i18n';
+import { breadcrumbList } from '../data/structured';
 import SiteHeader from './SiteHeader.astro';
 import AgentLinks from './AgentLinks.astro';
 import ShareImage from './ShareImage.astro';
@@ -32,7 +35,7 @@ interface Props {
    */
   name?: string;
   structured?: object | null;
-  active: 'models' | 'datasets' | 'protocols';
+  active: Extract<NavKey, 'methods' | 'datasets' | 'protocols' | 'topics' | 'api'>;
   /**
    * Pages that print figures (one dataset, one method) get a "Cite this page"
    * block and citation_* tags naming the releases those figures come from.
@@ -51,6 +54,10 @@ const canonical = new URL(localizePath(path, locale), origin).href;
 const pageTitle = documentTitle.includes(site.name) ? documentTitle : `${documentTitle} · ${site.name}`;
 // Structured data on the English canonical only, as on the topic pages.
 const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
+// The breadcrumb as markup, from the same crumbs the page prints; the last is the page itself.
+const crumbLd = locale === 'en'
+  ? JSON.stringify(breadcrumbList(crumbs.map((c, i) => ({ name: c.label, path: i === crumbs.length - 1 ? path : c.href! }))))
+  : null;
 ---
 <!doctype html>
 <html lang={htmlLang[locale]}>
@@ -78,6 +85,7 @@ const ld = locale === 'en' && structured ? JSON.stringify(structured) : null;
   <meta name="twitter:description" content={description}/>
   {cite && <CiteMeta locale={locale} title={h1} canonical={canonical} files={cite.files}/>}
   {ld && <script type="application/ld+json" set:html={ld}/>}
+  {crumbLd && <script type="application/ld+json" set:html={crumbLd}/>}
 </head>
 <body>
   <a class="skip" href="#entity-content">{t.skipToEvidence}</a>

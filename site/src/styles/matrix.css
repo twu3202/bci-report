@@ -41,6 +41,11 @@
 }
 .matrix tbody tr:last-child th,.matrix tbody tr:last-child td{border-bottom:0}
 .matrix .mname{display:block;font-size:.9375rem;font-weight:640;color:var(--ink);letter-spacing:-.005em}
+/* A row head links to the method's page where it has one (2026-10-02). */
+.matrix a.mname{color:var(--accent-deep)}
+.matrix a.mname:hover{color:var(--accent);text-decoration:underline;text-underline-offset:.2em}
+/* The core matrix is a dated snapshot; the date sits in its heading. */
+.overview h2 .snapshot{font-family:var(--sans);font-size:.62em;font-weight:500;color:var(--muted);letter-spacing:0;white-space:nowrap}
 .matrix .rowhead small{margin-top:1px}
 
 /* Family is carried by a colour on the sticky edge rather than another chip. */

@@ -1,0 +1,37 @@
+---
+/**
+ * The public-data register, moved from the home page to /datasets/ on
+ * 2026-10-02: every dataset in experiments.json with its task, cohort,
+ * channels, rights status, licence, attribution and when it was reviewed.
+ * Chinese pages print the translated rights note with the released English
+ * beside it (directory-zh.json).
+ */
+import data from '../data/mvp.json';
+import { datasets } from '../data/entities';
+import { datasetStatus, datasetTask, directoryText, hrefFor, type Locale } from '../data/i18n';
+import { directoryCopy } from '../data/directory-copy';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = directoryCopy[locale];
+const dir = (text: string) => directoryText(text, locale);
+const payloadLang = locale === 'en' ? undefined : 'en';
+const datasetPage = (name: string) => {
+  const x = datasets.find(e => e.name === name);
+  return x ? hrefFor(`/datasets/${x.slug}/`, locale) : null;
+};
+---
+<section id="register" class="section" aria-labelledby="register-heading">
+  <div class="section-heading"><div><p class="eyebrow">{d.datasetsEyebrow}</p><h2 id="register-heading">{d.datasetsH2}</h2></div><p>{d.datasetsLede}</p></div>
+  <div class="dataset-list">{data.datasets.map(x => <article class="dataset-row" data-dataset={x.name}>
+    <div>
+      <span class="family">{datasetTask(x.task, locale)}</span>
+      <h3 lang="en">{datasetPage(x.name) ? <a href={datasetPage(x.name)!}>{x.name}</a> : <a href={x.source} target="_blank" rel="noreferrer">{x.name} ↗</a>}</h3>
+      <p lang={dir(x.detail).lang}>{dir(x.detail).text}</p>
+      {dir(x.detail).original && <p class="note-original" lang="en">{dir(x.detail).original}</p>}
+      <p class="status-checked"><time datetime={x.reviewedAt}>{d.statusChecked(x.reviewedAt)}</time></p>
+    </div>
+    <dl><div><dt>{d.dtSubjects}</dt><dd>{x.subjects}</dd></div><div><dt>{d.dtChannels}</dt><dd>{x.channels}</dd></div></dl>
+    <div class="dataset-status"><span class="status">{datasetStatus(x.status, locale)}</span><small lang={dir(x.license).lang}>{x.licenseUrl ? <a href={x.licenseUrl} target="_blank" rel="noreferrer">{dir(x.license).text} ↗</a> : dir(x.license).text}{dir(x.license).original && <span class="note-original" lang="en">{dir(x.license).original}</span>}</small><small lang={payloadLang}>{x.attribution}</small></div>
+  </article>)}</div>
+</section>

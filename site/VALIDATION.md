@@ -94,7 +94,24 @@ re-read from that file, and its cite block must name that file's release — so 
 topic that prints the core matrix's frozen LaBraM readout names the core release.
 And every topic page carries a "Measured on … · Methods …" line under its hero
 that links exactly the dataset and method pages whose result groups point at it,
-in both languages and in its Markdown copy.
+plus the core-matrix rows it prints through a protocol page (the idle table on
+when-not-to-act, the frozen LaBraM readout on model-adaptation), in both languages
+and in its Markdown copy.
+
+Also since 2026-10-02, the home page and its hubs: one main navigation on every
+page (Questions, Results, Protocols, Methods, Datasets, Releases, API, Data use),
+with the current page marked; the Questions hub `/topics/` as every topic page's
+middle breadcrumb, and BreadcrumbList on English topic and entity pages; every
+topic card exactly once under its group, and every number a card prints is a
+cohort size pinned to its payload or a value of that payload; the transfer-coverage
+map (home and hub) prints cohort sizes only — each `data-fig` re-read and the key
+entries pinned to their payload field, no score, held entries figure-free and
+linking only the holds register, not-measured entries with no link; hold cards are
+links that land; the corrections link counts the register; the directory band
+counts what it links to; the old home anchors `#models`, `#datasets`, `#news` still
+land; and the moved sections are complete — every model card on `/methods/` with
+when its status was checked (REVE Base with its display-layer override, source and
+released status), every field note, every register row on `/datasets/`.
 
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before

@@ -1,0 +1,24 @@
+---
+/**
+ * External field notes, moved from the home page (#news) to the foot of
+ * /methods/ on 2026-10-02. Other people's results, dated and linked to their
+ * sources; the payload text stays English (lang="en" on Chinese pages).
+ */
+import data from '../data/mvp.json';
+import type { Locale } from '../data/i18n';
+import { directoryCopy } from '../data/directory-copy';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = directoryCopy[locale];
+const payloadLang = locale === 'en' ? undefined : 'en';
+---
+<section id="news" class="section" aria-labelledby="news-heading">
+  <div class="section-heading"><div><p class="eyebrow">{d.newsEyebrow}</p><h2 id="news-heading">{d.newsH2}</h2></div><p>{d.newsLede}</p></div>
+  <div class="news-grid">{data.news.map(n => <article class="news-card" lang={payloadLang}>
+    <div class="card-top"><span class="family">{n.tag}</span><time datetime={n.date}>{n.date}</time></div>
+    <h3><a href={n.sourceUrl} target="_blank" rel="noreferrer">{n.title} ↗</a></h3>
+    <p>{n.summary}</p>
+    <span class="source">{n.source}</span>
+  </article>)}</div>
+</section>

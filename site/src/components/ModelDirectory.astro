@@ -1,0 +1,40 @@
+---
+/**
+ * The model directory, moved from the home page to /methods/ on 2026-10-02.
+ * Every model in experiments.json, with its released note and licence (Chinese
+ * pages: the translation with the released English beside it), its status as
+ * last checked, and where a status changed after the release, the display-layer
+ * override from directory-status.ts beside the released one.
+ */
+import data from '../data/mvp.json';
+import { methods } from '../data/entities';
+import { directoryText, familyLabel, hrefFor, modelStatus, type Locale } from '../data/i18n';
+import { directoryCopy } from '../data/directory-copy';
+import { modelDirectoryStatus } from '../data/directory-status';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = directoryCopy[locale];
+const dir = (text: string) => directoryText(text, locale);
+const methodPage = (name: string) => {
+  const m = methods.find(x => x.name === name || (x.slug === 'cca' && name === 'Standard CCA'));
+  return m ? hrefFor(`/methods/${m.slug}/`, locale) : null;
+};
+const params = (n: number | null | undefined) =>
+  n ? (n / 1e6 >= 1 ? (n / 1e6).toFixed(2) + 'M' : (n / 1e3).toFixed(1) + 'K') : '—';
+---
+<section id="models" class="section" aria-labelledby="models-heading">
+  <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}</p></div>
+  <div class="model-grid">{data.models.map(m => {
+    const s = modelDirectoryStatus(m);
+    return <article class="model-card" data-model={m.name}>
+      <div class="card-top"><span class="family">{familyLabel(m.family, locale)}</span><span class:list={['status', { ready: s.status === 'Evaluated' }]}>{modelStatus(s.status, locale)}</span></div>
+      <h3 lang="en">{methodPage(m.name) ? <a href={methodPage(m.name)!}>{m.name}</a> : m.name}</h3>
+      <p class="parameter">{params(m.parameters)} <span>{d.parameters}</span></p>
+      <p lang={dir(m.note).lang}>{dir(m.note).text}</p>
+      {s.override && <p class="status-override"><span>{d.releasedStatus}: {modelStatus(s.override.released, locale)}.</span> {s.override.note[locale] ?? s.override.note.en} <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></p>}
+      <p class="status-checked"><time datetime={s.checked}>{d.statusChecked(s.checked)}</time></p>
+      <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
+    </article>;
+  })}</div>
+</section>

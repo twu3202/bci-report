@@ -5,6 +5,9 @@ import { methods, unmeasuredModels } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
 import { familyLabel, hrefFor, localeOf, localeParams, modelStatus } from '../../../data/i18n';
 import { site } from '../../../data/site';
+import ModelDirectory from '../../../components/ModelDirectory.astro';
+import FieldNotes from '../../../components/FieldNotes.astro';
+import '../../../styles/directory.css';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -22,7 +25,7 @@ const structured = {
   hasPart: methods.map(m => ({ '@type': 'WebPage', name: c.methodTitle(m.name), url: new URL(`/methods/${m.slug}/`, site.origin).href })),
 };
 ---
-<EntityLayout locale={locale} path="/methods/" active="models"
+<EntityLayout locale={locale} path="/methods/" active="methods"
   documentTitle={c.methodsH1} h1={c.methodsH1} description={c.methodsDescription}
   eyebrow={c.methodsTitle} dek={c.methodsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle }]}
@@ -49,4 +52,6 @@ const structured = {
     <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}</li>)}</ul>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
+  <ModelDirectory locale={locale} />
+  <FieldNotes locale={locale} />
 </EntityLayout>

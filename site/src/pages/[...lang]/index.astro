@@ -1,16 +1,28 @@
 ---
+/**
+ * The home page, in reading order since 2026-10-02 (owner-approved restructure):
+ * masthead → Questions (the topics in three groups, and a compact map of which
+ * kinds of transfer have been measured) → holds → the core matrix → the
+ * per-protocol panel → a directory band (methods, datasets, releases, data and
+ * API) → principles. The model directory, the public-data register and the
+ * external field notes moved to /methods/ and /datasets/, where the rest of
+ * their content already was: they were more than half the page's words, and
+ * their membership had drifted from the directories they duplicated.
+ */
 import data from '../../data/mvp.json';
-import deployment from '../../data/deployment-topics.json';
-import { holds, releases } from '../../data/releases';
+import { corrections, holds, latestRelease, releases } from '../../data/releases';
 import { site } from '../../data/site';
 import { topicPages } from '../../data/topics';
+import { servedFiles } from '../../data/files';
 import { homeDataset, websiteEntity } from '../../data/structured';
-import { alternates, chrome, datasetStatus, datasetTask, directoryText, familyLabel, home, hrefFor, htmlLang, localeOf,
-         localeParams, localizePath, metricLabel, modelStatus, ogLocale, topicCards, trackTitle } from '../../data/i18n';
+import { alternates, chrome, familyLabel, home, hrefFor, htmlLang, localeOf, localeParams, localizePath, metricLabel, ogLocale,
+         topicsHubCopy, trackTitle, transferMapCopy } from '../../data/i18n';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
 import ShareImage from '../../components/ShareImage.astro';
 import FooterElsewhere from '../../components/FooterElsewhere.astro';
+import TopicGroups from '../../components/TopicGroups.astro';
+import TransferMap from '../../components/TransferMap.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
 import '../../styles/global.css';
 import '../../styles/matrix.css';
@@ -26,19 +38,14 @@ const h=home[locale];
 // which is what switches a screen reader's voice and a browser's hyphenation.
 const payloadLang=locale==='en'?undefined:'en';
 const tt=(title:string)=>trackTitle(title,locale);
-// Directory and register notes: translated for display where directory-zh.json has the text.
-// Licence and rights-review notes carry the released English beside the Chinese
-// (`original`, lang="en", visually secondary); model notes print the Chinese alone.
-const dir=(text:string)=>directoryText(text,locale);
 const ml=(label:string)=>metricLabel(label,locale);
 
 const tracks=data.tracks;
 const track=tracks[0];
 const origin=Astro.site ?? site.origin;
 const canonical=new URL(localizePath('/',locale),origin).href;
-// The model cards and dataset rows link to their own pages where one exists.
+// A matrix row head links to its method's page where one exists.
 const methodPage=(name:string)=>{const m=methodEntities.find(x=>x.name===name||(x.slug==='cca'&&name==='Standard CCA'));return m?hrefFor(`/methods/${m.slug}/`,locale):null;};
-const datasetPage=(name:string)=>{const d=datasetEntities.find(x=>x.name===name);return d?hrefFor(`/datasets/${d.slug}/`,locale):null;};
 const title=`${site.name} · ${h.title}`;
 const description=locale==='en'?site.description:h.description;
 const chanceOf=(t:typeof tracks[number])=>(t as {chanceLevel?:number|null}).chanceLevel ?? null;
@@ -63,7 +70,10 @@ const seedNote=(name:string)=>{
 
 // Open holds, from the same register the releases page prints in full. The
 // cards used to be written out here by hand; a second copy is a copy to drift.
+// Each card is a link: to the page that explains the hold where there is one,
+// otherwise to its row in the register.
 const openHolds = holds.filter(x => !x.closed);
+const holdHref = (x: typeof holds[number]) => hrefFor(x.href ?? `/releases/#hold-${x.id}`, locale);
 const holdDate = (iso: string) => {
   const [y, m, d] = iso.split('-').map(Number);
   return locale === 'zh' ? `${y} 年 ${m} 月 ${d} 日`
@@ -71,9 +81,8 @@ const holdDate = (iso: string) => {
 };
 
 // --- Coverage matrix -------------------------------------------------------
-// Built here rather than in the client script: it is the page's opening screen,
-// so it must exist in the served HTML with no JavaScript, and it never changes
-// in response to a control.
+// Built here rather than in the client script: it must exist in the served HTML
+// with no JavaScript, and it never changes in response to a control.
 const methods=new Map<string,{family:string;scores:Map<string,number>}>();
 for(const t of tracks) for(const r of t.rows){
   const entry=methods.get(r.name) ?? {family:r.family,scores:new Map<string,number>()};
@@ -103,14 +112,28 @@ const fill=(t:typeof tracks[number],y:number)=>{
 };
 const datasetCount=new Set(tracks.map(t=>t.dataset)).size;
 const counts={methods:matrixRows.length,protocols:data.coverage.displayedProtocols,datasets:datasetCount,
-              comparisons:data.coverage.displayedComparisons,topicRows:deployment.rows.length};
+              comparisons:data.coverage.displayedComparisons};
 const stats=[
   [h.stats.protocols,counts.protocols],
   [h.stats.datasets,counts.datasets],
   [h.stats.comparisons,counts.comparisons],
   [h.stats.methods,counts.methods],
 ] as const;
+// The core matrix is one snapshot; its date moved from the eyebrow to its own heading.
+const snapshot=data.generatedAt.slice(0,10);
+
+// Whole-site counts, each from the module that builds those pages, never summed:
+// check-workbench.mjs counts the built pages and files and compares.
+const siteCounts={questions:topicPages.length,datasets:datasetEntities.length,methods:methodEntities.length,
+                  releases:releases.length,files:new Set(servedFiles.map(f=>f.file)).size};
+const directory=[
+  {key:'methods',href:hrefFor('/methods/',locale),n:siteCounts.methods,...h.directory.methods},
+  {key:'datasets',href:hrefFor('/datasets/',locale),n:siteCounts.datasets,...h.directory.datasets},
+  {key:'releases',href:hrefFor('/releases/',locale),n:siteCounts.releases,...h.directory.releases},
+  {key:'files',href:hrefFor('/api/',locale),n:siteCounts.files,...h.directory.api},
+];
 const links=alternates('/',String(origin));
+const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'datasets'};
 ---
 <!doctype html>
 <html lang={htmlLang[locale]}><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#b3450e"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="icon" href="/favicon.ico" sizes="32x32"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonical}/><AgentLinks href={localizePath('/', locale)}/>{links.map(l=><link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}<title>{title}</title>
@@ -120,19 +143,23 @@ const links=alternates('/',String(origin));
 {locale==='en'&&<script type="application/ld+json" set:html={JSON.stringify(websiteEntity())}/>}</head>
 <body><a class="skip" href="#overview">{t.skipToResults}</a>
 <SiteHeader locale={locale} path="/" active="home" anchorsAreLocal={true}/>
-<main><section class="masthead"><div><p class="eyebrow">{h.eyebrow(data.generatedAt.slice(0,10))}</p><h1>{h.h1}</h1><p class="lede">{h.lede(counts)}</p></div><dl class="stat-rail" aria-label={h.statsLabel}>{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}<div class="live"><dt><i></i>{t.updated}</dt><dd><time datetime={releases[0].date}>{releases[0].date}</time></dd></div></dl></section>
+<main><section class="masthead"><div><p class="eyebrow">{h.eyebrow} <time datetime={latestRelease.date}>{latestRelease.date}</time></p><h1>{h.h1}</h1><p class="lede">{h.lede(counts)}</p></div>
+<div class="stat-block"><p class="stat-caption" id="stat-caption">{h.statsCaption}</p><dl class="stat-rail" aria-labelledby="stat-caption">{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+<p class="site-counts">{h.siteCountsLead} <a href={hrefFor('/topics/',locale)}><span data-count="questions">{siteCounts.questions}</span> {h.siteCounts.questions}</a> · <a href={hrefFor('/datasets/',locale)}><span data-count="datasets">{siteCounts.datasets}</span> {h.siteCounts.datasets}</a> · <a href={hrefFor('/methods/',locale)}><span data-count="methods">{siteCounts.methods}</span> {h.siteCounts.methods}</a></p></div></section>
 
-<section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede(deployment.rows.length)}</p></div>
-<div class="topic-entry-grid">{topicPages.map((topic,index)=>{const card=topicCards[locale][topic.slug];return <a class="topic-entry-card" href={hrefFor(`/topics/${topic.slug}/`,locale)}><span class="topic-number" aria-hidden="true">{String(index+1).padStart(2,'0')}</span><span class="family">{card.kicker}</span><h3>{card.title}</h3><p>{card.summary}</p><small>{card.detail}</small><strong>{h.readEvidence}</strong></a>;})}</div>
-<div class="topic-entry-download"><p>{h.releasesNote}</p><a class="button" href={hrefFor('/releases/',locale)}>{h.releasesLink}</a></div></section>
+<section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede}</p></div>
+<TopicGroups locale={locale} level={3} readLabel={h.readEvidence}/>
+<div class="topic-map" id="transfer-map"><div class="topic-group-head"><h3>{topicsHubCopy[locale].mapH2}</h3><p>{topicsHubCopy[locale].mapLede}</p></div>
+<TransferMap locale={locale}/>
+<p class="topic-map-more"><a href={hrefFor('/topics/#transfer',locale)}>{transferMapCopy[locale].fullMap}</a></p></div></section>
 
 <section id="holds" class="holds"><div class="section-heading"><div><p class="eyebrow">{h.holdsEyebrow}</p><h2>{h.holdsH2}</h2></div><p>{h.holdsLede}</p></div>
-<div class="hold-grid">{openHolds.map(x=><article class="hold-card"><p class="state">{x.state[locale]}</p><h3>{x.item[locale]}</h3><p>{x.outcome[locale]}</p><small><time datetime={x.opened}>{h.holdsSince(holdDate(x.opened))}</time></small></article>)}</div>
-<p class="holds-more"><a href={hrefFor('/releases/#holds',locale)}>{h.holdsRegister}</a></p></section>
+<div class="hold-grid">{openHolds.map(x=><a class="hold-card" href={holdHref(x)}><p class="state">{x.state[locale]}</p><h3>{x.item[locale]}</h3><p>{x.outcome[locale]}</p><small><time datetime={x.opened}>{h.holdsSince(holdDate(x.opened))}</time></small></a>)}</div>
+<p class="holds-more"><a href={hrefFor('/releases/#holds',locale)}>{h.holdsRegister}</a><a href={hrefFor('/releases/#corrections',locale)}>{h.correctionsLink(corrections.length)}</a></p></section>
 
-<section id="overview" class="overview"><div class="section-heading"><div><p class="eyebrow">{h.matrixEyebrow}</p><h2>{h.matrixH2(counts)}</h2></div><p>{h.matrixLede}</p></div>
+<section id="overview" class="overview"><div class="section-heading"><div><p class="eyebrow">{h.matrixEyebrow}</p><h2>{h.matrixH2(counts)}<span class="snapshot"> · {h.snapshot} <time datetime={snapshot}>{snapshot}</time></span></h2></div><p>{h.matrixLede}</p></div>
 <div class="matrix-frame"><div class="scroll" tabindex="0" role="region" aria-label={h.matrixRegion}><table class="matrix"><caption class="visually-hidden">{h.matrixCaption}</caption><thead><tr><th class="corner" scope="col">{h.corner}</th>{tracks.map(t=><th class="colhead" scope="col"><a href={hrefFor(`/protocols/${t.id}/`,locale)} data-jump={t.id}>{tt(t.title)}</a><small>n={t.subjects} · {chanceOf(t)===null?h.colDetection:h.colChance(chanceOf(t)!)}</small></th>)}</tr></thead>
-<tbody>{matrixRows.map(m=><tr data-family={m.family}><th class="rowhead" scope="row"><span class="mname">{m.name}</span><small>{familyLabel(m.family,locale)} · {h.covered(m.covered,tracks.length)}</small></th>{tracks.map(t=>{
+<tbody>{matrixRows.map(m=><tr data-family={m.family}><th class="rowhead" scope="row">{methodPage(m.name)?<a class="mname" href={methodPage(m.name)!}>{m.name}</a>:<span class="mname">{m.name}</span>}<small>{familyLabel(m.family,locale)} · {h.covered(m.covered,tracks.length)}</small></th>{tracks.map(t=>{
   const y=m.scores.get(t.id);
   if(y===undefined) return <td class="cell none"><span class="num" title={h.notEvaluated(m.name,tt(t.title))}>·</span><span class="visually-hidden">{h.keyGap}</span></td>;
   const c=chanceOf(t);
@@ -150,9 +177,11 @@ const links=alternates('/',String(origin));
 <div class="scroll" tabindex="0" role="region" aria-label={h.tableRegion}><table><thead><tr><th>{h.colModel}</th><th id="metric-y-heading">{ml(track.yLabel)}</th><th id="metric-x-heading">{ml(track.xLabel)}</th><th>{h.colCompute}</th></tr></thead><tbody id="result-rows">{track.rows.map(r=><tr><td><button class="model-name" data-model={r.id}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small></td><td><strong>{r.y.toFixed(1)}%</strong><small lang={payloadLang}>{r.yDetail}</small>{chanceNote(r)&&<span class="flag">{chanceNote(r)}</span>}{seedNote(r.name)&&<span class="flag seed">{seedNote(r.name)}</span>}</td><td><strong>{track.type==='tradeoff'?r.x.toFixed(1)+'%':r.x.toFixed(3)}</strong><small lang={payloadLang}>{r.xDetail}</small></td><td>{r.seconds.toFixed(1)}s</td></tr>)}</tbody></table></div><p class="scroll-hint" id="scroll-hint">{h.scrollHint}</p><p class="caption">{h.tableCaption}</p></div>
 <aside><p class="eyebrow">{h.visualEyebrow}</p><h3 id="chart-title">{h.chartTitle}</h3><div id="result-chart" class="chart"></div><ol id="chart-legend" class="legend"></ol><p id="chart-note">{h.chartNote}</p></aside></div>
 <div class="source-strip"><span id="track-rights"><span lang={payloadLang}>{track.license}</span> · {h.rights}</span><a id="track-source" href={track.source} target="_blank" rel="noreferrer">{h.originalDataset}</a><a href="/data-use/">{h.usePrivacy}</a><a href="/data-use/#corrections">{h.reportResult}</a></div><div class="evidence"><strong>{h.readWithCare}</strong><p id="track-limitation" lang={payloadLang}>{track.limitation}</p><a href="#methods">{h.methodsLink}</a></div></div></section>
-<section id="models" class="section"><div class="section-heading"><div><p class="eyebrow">{h.modelsEyebrow}</p><h2>{h.modelsH2}</h2></div><p>{h.modelsLede}</p></div><div class="model-grid">{data.models.map(m=><article class="model-card"><div class="card-top"><span class="family">{familyLabel(m.family,locale)}</span><span class:list={['status',{'ready':m.status==='Evaluated'}]}>{modelStatus(m.status,locale)}</span></div><h3>{methodPage(m.name)?<a href={methodPage(m.name)!}>{m.name}</a>:m.name}</h3><p class="parameter">{m.parameters ? (m.parameters/1e6>=1?(m.parameters/1e6).toFixed(2)+'M':(m.parameters/1e3).toFixed(1)+'K'):'—'} <span>{h.parameters}</span></p><p lang={dir(m.note).lang}>{dir(m.note).text}</p><div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{dir(m.license).original&&<span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{h.officialSource}</a></div></article>)}</div></section>
-<section id="datasets" class="section"><div class="section-heading"><div><p class="eyebrow">{h.datasetsEyebrow}</p><h2>{h.datasetsH2}</h2></div><p>{h.datasetsLede}</p></div><div class="dataset-list">{data.datasets.map(d=><article class="dataset-row"><div><span class="family">{datasetTask(d.task,locale)}</span><h3>{datasetPage(d.name)?<a href={datasetPage(d.name)!}>{d.name}</a>:<a href={d.source} target="_blank" rel="noreferrer">{d.name} ↗</a>}</h3><p lang={dir(d.detail).lang}>{dir(d.detail).text}</p>{dir(d.detail).original&&<p class="note-original" lang="en">{dir(d.detail).original}</p>}</div><dl><div><dt>{h.dtSubjects}</dt><dd>{d.subjects}</dd></div><div><dt>{h.dtChannels}</dt><dd>{d.channels}</dd></div></dl><div class="dataset-status"><span class="status">{datasetStatus(d.status,locale)}</span><small lang={dir(d.license).lang}>{d.licenseUrl?<a href={d.licenseUrl} target="_blank" rel="noreferrer">{dir(d.license).text} ↗</a>:dir(d.license).text}{dir(d.license).original&&<span class="note-original" lang="en">{dir(d.license).original}</span>}</small><small lang={payloadLang}>{d.attribution}</small></div></article>)}</div></section>
-<section id="news" class="section"><div class="section-heading"><div><p class="eyebrow">{h.newsEyebrow}</p><h2>{h.newsH2}</h2></div><p>{h.newsLede}</p></div><div class="news-grid">{data.news.map(n=><article class="news-card" lang={payloadLang}><div class="card-top"><span class="family">{n.tag}</span><time datetime={n.date}>{n.date}</time></div><h3><a href={n.sourceUrl} target="_blank" rel="noreferrer">{n.title} ↗</a></h3><p>{n.summary}</p><span class="source">{n.source}</span></article>)}</div></section>
+
+<section id="directory" class="section directory-band"><div class="section-heading"><div><p class="eyebrow">{h.directoryEyebrow}</p><h2>{h.directoryH2}</h2></div><p>{h.directoryLede}</p></div>
+{/* The old home anchors (#models, #datasets, #news) land on the card that now leads to that content. */}
+<div class="directory-grid">{directory.map(d=><a class="directory-card" id={oldAnchor[d.key]} href={d.href}>{d.key==='methods'&&<span id="news"></span>}<span class="family">{d.title}</span><strong class="directory-count"><span data-count={d.key}>{d.n}</span> {d.count}</strong><p>{d.body}</p></a>)}</div></section>
+
 <section id="methods" class="section methods"><div><p class="eyebrow">{h.methodsEyebrow}</p><h2>{h.methodsH2}</h2><p lang={payloadLang}>{data.evidencePolicy}</p><a class="button" href="/data/experiments.json" download>{h.downloadAll}</a></div><div class="method-grid">{h.principles.map(([title,body],i)=><article><span>0{i+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div></section>
 </main><footer><a class="brand" href={hrefFor('/',locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/#corrections">{t.footerReport}{t.englishMark}</a><a href={hrefFor('/releases/',locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#overview">{t.footerBack}</a><FooterElsewhere locale={locale}/></footer>
 <dialog id="detail-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><p class="eyebrow">{h.dialogEyebrow}</p><button id="close-dialog" aria-label={h.closeDialog}>×</button></div><h2 id="dialog-title"></h2><div id="dialog-body"></div></dialog>

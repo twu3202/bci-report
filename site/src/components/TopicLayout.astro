@@ -1,11 +1,11 @@
 ---
 import { site } from '../data/site';
-import { topicPages } from '../data/topics';
-import { topicDataset, topicFaq, topicFiles } from '../data/structured';
+import { topicGroups, topicPages, topicsIn } from '../data/topics';
+import { breadcrumbList, topicDataset, topicFaq, topicFiles } from '../data/structured';
 import { answerParts } from '../data/answer';
 import { topicEntities } from '../data/entities';
 import { alternates, chrome, hrefFor, htmlLang, localizePath, ogLocale, questionPhrases, topicCards, topicChrome,
-         type Locale } from '../data/i18n';
+         topicGroupLabels, type Locale } from '../data/i18n';
 import SiteHeader from './SiteHeader.astro';
 import AgentLinks from './AgentLinks.astro';
 import ShareImage from './ShareImage.astro';
@@ -50,20 +50,27 @@ const canonical = new URL(localizePath(path, locale), origin).href;
 const links = alternates(path, String(origin));
 // Every reviewed export the page's figures come from; the cite block names their releases.
 const citeFiles = topicFiles(activeSlug);
-// The dataset and method pages whose result groups point here (entities.ts).
-// Until 2026-10-02 no topic linked to any of them, so the links ran one way.
-const drawsOn = topicEntities(`/topics/${activeSlug}/`);
+// The dataset and method pages whose figures this page prints (entities.ts):
+// derived from the same served files the cite block names, including core-matrix
+// rows reached through a protocol (the idle table on when-not-to-act). Until
+// 2026-10-02 no topic linked to any of them, so the links ran one way.
+const drawsOn = topicEntities(activeSlug, citeFiles);
 const nameLang = locale === 'zh' ? 'en' : undefined;
 const labelGap = locale === 'zh' ? '' : ' ';
 // One Dataset entity per dataset, on the English canonical. The Chinese page is
 // the same data; a second entry would be a duplicate to Dataset Search, and
 // hreflang already tells crawlers the two pages are one resource.
-// One graph: the Dataset the page measures and the question it answers.
+// One graph: the Dataset the page measures, the question it answers, and the
+// breadcrumb the page prints (Home / Questions / this topic).
 const { '@context': _context, ...datasetNode } = topicDataset(activeSlug, title, description, path);
+const { '@context': _crumbContext, ...crumbNode } = breadcrumbList([
+  { name: topicChrome.en.home, path: '/' }, { name: topicChrome.en.questions, path: '/topics/' }, { name: title, path },
+]);
 const structured = locale === 'en'
   ? JSON.stringify({ '@context': 'https://schema.org', '@graph': [
       datasetNode,
       ...(answer ? [topicFaq(question, answer, path)] : []),
+      crumbNode,
     ] })
   : null;
 ---
@@ -98,7 +105,7 @@ const structured = locale === 'en'
   <a class="skip" href="#topic-content">{t.skipToEvidence}</a>
   <SiteHeader locale={locale} path={path} active="topics" />
   <main class="topic-page" id="topic-content">
-    <nav class="breadcrumbs" aria-label={c.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{c.home}</a></li><li><a href={hrefFor('/#topics', locale)}>{c.explore}</a></li><li aria-current="page">{title}</li></ol></nav>
+    <nav class="breadcrumbs" aria-label={c.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{c.home}</a></li><li><a href={hrefFor('/topics/', locale)}>{c.questions}</a></li><li aria-current="page">{title}</li></ol></nav>
     <section class="topic-hero">
       <p class="eyebrow">{eyebrow}</p>
       <h1>{phrases.map((p, i) => <>{i > 0 && <wbr/>}{p}</>)}</h1>
@@ -117,7 +124,8 @@ const structured = locale === 'en'
     <slot />
     <nav class="topic-switcher" aria-label={c.exploreNav}>
       <p class="eyebrow">{c.keepExploring}</p>
-      <div>{topicPages.map(topic => <a href={hrefFor(`/topics/${topic.slug}/`, locale)} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topicCards[locale][topic.slug].kicker}</small><strong>{topicCards[locale][topic.slug].title}</strong></a>)}</div>
+      <div class="switcher-groups">{topicGroups.map(group => <div class="switcher-group"><p>{topicGroupLabels[locale][group].title}</p><div>{topicsIn(group).map(topic => <a href={hrefFor(`/topics/${topic.slug}/`, locale)} aria-current={topic.slug === activeSlug ? 'page' : undefined}><small>{topicCards[locale][topic.slug].kicker}</small><strong>{topicCards[locale][topic.slug].title}</strong></a>)}</div></div>)}</div>
+      <p class="citation-note"><a href={hrefFor('/topics/', locale)}>{c.allQuestions}</a></p>
     </nav>
     <CitePage locale={locale} title={question} canonical={canonical} files={citeFiles} upstream="page"/>
   </main>

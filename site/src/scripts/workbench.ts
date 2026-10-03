@@ -47,8 +47,8 @@ const S={
       abstainNote:(n:number,a:number)=>'Of '+n+' participants, '+a+' selected an always-abstain threshold on calibration data. Their test trials remain in the denominator.',
       cohortOnly:'Only cohort aggregates are shared. Individual scores, recordings and predictions remain local.',
       privacy:'Privacy',privacyNote:'Only cohort aggregates are published here: no recording, no participant identifier, no per-person score.',
-      privacyLink:'The full review note is in the protocol JSON ↓',register:'Rights review',
-      consentCaveat:{'sleep-scalp':'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.'} as Record<string,string>,
+      privacyLink:'The full review note is in the protocol JSON ↓',register:'Public-data register note',
+      consentCaveat:{'sleep-scalp':'According to the 2025 data descriptor, the informed consent form did not mention publication, and before release the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.'} as Record<string,string>,
       metric:{} as Record<string,string>},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
       empty:'该协议下没有这一类别的已评测模型。请换一个类别。',noResults:'无可显示的结果',
@@ -71,8 +71,8 @@ const S={
       abstainNote:(n:number,a:number)=>n+' 名被试中，有 '+a+' 名在校准数据上选择了始终拒识的阈值。他们的测试试次仍计入分母。',
       cohortOnly:'只公开队列级聚合结果。个体分数、记录与预测均保留在本地。',
       privacy:'隐私',privacyNote:'这里只发布队列级聚合结果：不发布任何记录、被试编号或逐人分数。',
-      privacyLink:'完整的审查说明在协议 JSON 中 ↓',register:'权利审查',
-      consentCaveat:{'sleep-scalp':'知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'} as Record<string,string>,
+      privacyLink:'完整的审查说明在协议 JSON 中 ↓',register:'公开数据登记说明',
+      consentCaveat:{'sleep-scalp':'据 2025 年的数据描述论文，知情同意书没有提到公开发布；发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'} as Record<string,string>,
       metric:{'Balanced accuracy':'平衡准确率','Command detection ≤3s':'指令检出率 ≤3 秒','Idle false activation':'空闲误触发率','Macro F1':'宏平均 F1'} as Record<string,string>},
 }[LANG];
 const metric=(label:string)=>S.metric[label]??label;

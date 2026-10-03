@@ -268,6 +268,20 @@ export function topicFaq(question: string, answer: string, path: string) {
   };
 }
 
+/**
+ * A page's breadcrumb as schema.org BreadcrumbList: the crumbs the page prints,
+ * in order, each with its English canonical address (the markup lives on the
+ * English canonical only, as every other node here does). The last crumb is the
+ * page itself.
+ */
+export function breadcrumbList(crumbs: { name: string; path: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: abs(c.path) })),
+  };
+}
+
 export function websiteEntity() {
   return {
     '@context': 'https://schema.org',

@@ -25,6 +25,7 @@ import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
+import { modelDirectoryStatus } from './directory-status';
 
 /** English is required; a missing `zh` renders the English text marked lang="en". */
 export type L = { en: string; zh?: string };
@@ -542,25 +543,62 @@ export const methods: MethodEntity[] = methodSlugs.map(slug => {
   const groups = datasets.flatMap(d => d.groups
     .map(g => ({ ...g, rows: g.rows.filter(r => r.methodSlug === slug), dataset: d }))
     .filter(g => g.rows.length));
-  return { slug, name: methodNames[slug], family: model?.family, status: model?.status, url: model?.url ?? undefined, groups };
+  return { slug, name: methodNames[slug], family: model?.family, status: model && modelDirectoryStatus(model).status,
+           url: model?.url ?? undefined, groups };
 });
 
 export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as Record<MethodSlug, MethodEntity>;
 
-/** Models listed in the directory that have no published result here, and why. */
+/** Models listed in the directory that have no published result here, and why (status as shown, directory-status.ts). */
 export const unmeasuredModels = data.models.filter(m => m.status !== 'Evaluated')
-  .map(m => ({ name: m.name, family: m.family, status: m.status, url: m.url ?? undefined }));
+  .map(m => ({ name: m.name, family: m.family, status: modelDirectoryStatus(m).status, url: m.url ?? undefined }));
 
 /**
- * The dataset and method pages a topic draws on: every entity with a result
- * group that points at the topic's page. A reverse index of the groups above,
- * so a topic names exactly the pages that send readers to it, and a group added
- * here reaches the topic's "Measured on" line without a list to keep in step.
- * check-workbench.mjs checks the same thing from the built pages.
+ * Core-matrix rows a topic prints from experiments.json, beyond the groups that
+ * point at it. Those rows' groups point at their protocol page
+ * (/protocols/<id>/), so a reverse index of group paths alone missed them: until
+ * 2026-10-02 when-not-to-act named the YSU dataset and no method, though its
+ * short answer leads with the idle protocol on ds005342. `method` narrows a
+ * protocol to the one row printed. The model-adaptation row is the one its
+ * export names as the matrix reference, so it follows the export.
  */
-export function topicEntities(path: string): { datasets: DatasetEntity[]; methods: MethodEntity[] } {
-  const here = (g: ResultGroup) => g.path.split('#')[0] === path;
-  return { datasets: datasets.filter(d => d.groups.some(here)), methods: methods.filter(m => m.groups.some(here)) };
+const matrixReference = adaptation.results['eegmat-labram-adaptation'].matrix_reference;
+const PROTOCOL_ROWS_PRINTED: Record<string, { track: string; method?: string }[]> = {
+  // The whole idle table: every method's detection and false activation.
+  'when-not-to-act': [{ track: 'idle' }],
+  // The frozen readout printed for scale beside the head-only arm.
+  'model-adaptation': [{ track: matrixReference.track_id, method: matrixReference.model }],
+};
+
+/**
+ * The dataset and method pages a topic draws on: every entity whose figures the
+ * topic prints. Derived from the served files the topic's cite block names
+ * (structured.ts `topicFiles`): an entity row counts when its figure is a leaf
+ * of one of those files and either its group points at the topic, or it is a
+ * core-matrix row the topic prints, reached through its protocol page
+ * (PROTOCOL_ROWS_PRINTED). A group pointing at the topic from a file the cite
+ * block does not name fails the build: the line and the citation must agree.
+ * check-workbench.mjs re-derives the line from the built pages, including the
+ * figures the page marks with data-fig.
+ */
+export function topicEntities(slug: string, files: string[]): { datasets: DatasetEntity[]; methods: MethodEntity[] } {
+  const path = `/topics/${slug}/`;
+  const cited = new Set(files.map(f => f.replace(/^\/data\//, '')));
+  const reads = PROTOCOL_ROWS_PRINTED[slug] ?? [];
+  for (const r of reads) if (!data.tracks.some(t => t.id === r.track && (!r.method || t.rows.some(x => x.name === r.method))))
+    throw new Error(`entities.ts: ${slug} prints ${r.track}${r.method ? ` / ${r.method}` : ''}, which the core matrix does not have`);
+  const pointsHere = (g: ResultGroup) => g.path.split('#')[0] === path;
+  const viaProtocol = (g: ResultGroup, row: ResultRow) =>
+    reads.some(r => g.path === `/protocols/${r.track}/` && (!r.method || row.method === r.method));
+  const prints = (g: ResultGroup, row: ResultRow) => {
+    if (!cited.has(row.value.src)) {
+      if (pointsHere(g)) throw new Error(`entities.ts: ${slug} prints ${g.id} from ${row.value.src}, which its cite block does not name`);
+      return false;
+    }
+    return pointsHere(g) || viaProtocol(g, row);
+  };
+  const uses = (groups: ResultGroup[]) => groups.some(g => g.rows.some(row => prints(g, row)));
+  return { datasets: datasets.filter(d => uses(d.groups)), methods: methods.filter(m => uses(m.groups)) };
 }
 
 export const entityPaths = [

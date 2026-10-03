@@ -97,71 +97,40 @@ export interface DeploymentData {
   method_references?: Array<Record<string, unknown>>;
 }
 
+/**
+ * The groups the questions are listed under, in order: on the home page, on the
+ * Questions hub (/topics/) and in each topic page's switcher. Labels are in
+ * i18n.ts (topicGroupLabels).
+ */
+export const topicGroups = ['transfer', 'adapting', 'reliability'] as const;
+export type TopicGroup = typeof topicGroups[number];
+
+/**
+ * Every topic page, in reading order, with its group. The copy (kicker, title,
+ * question, summary, detail) lives in i18n.ts `topicCards`, in both languages;
+ * this list used to carry a second, English-only copy that nothing rendered.
+ * Groups run contiguously, so the order here is the order within each group.
+ */
 export const topicPages = [
-  {
-    slug: 'dry-vs-wet',
-    kicker: 'Sensor transfer',
-    title: 'Dry vs. wet electrodes',
-    summary: 'What changes when a decoder crosses between two native eight-channel recordings from the same 102 people?',
-    detail: '2 s SSVEP · 12 targets · balanced accuracy',
-  },
-  {
-    slug: 'screen-to-vr',
-    kicker: 'Context transfer',
-    title: 'Screen to VR',
-    summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change. Plus: a P300 decoder trained at one image rate and tested at another.',
-    detail: 'P300 · 21 people in VR · 9 people across image rates',
-  },
-  {
-    slug: 'fewer-electrodes',
-    kicker: 'Montage',
-    title: 'Fewer electrodes',
-    summary: 'In-ear against scalp for sleep, and four posterior electrodes against sixteen for eyes open or closed — and what neither says about any headset.',
-    detail: 'Two paired comparisons · 10 and 19 people',
-  },
-  {
-    slug: 'on-the-move',
-    kicker: 'Motion robustness',
-    title: 'On the move',
-    summary: 'Standing, walking and running results, with scalp and ear recordings and incompatible time windows kept apart.',
-    detail: 'SSVEP balanced accuracy · ERP ROC AUC',
-  },
-  {
-    slug: 'calibration-budget',
-    kicker: 'Calibration budget',
-    title: 'How much calibration?',
-    summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
-    detail: 'Common future blocks · target-only fitting · 102 people',
-  },
-  {
-    slug: 'model-adaptation',
-    kicker: 'Model adaptation',
-    title: 'Which part to update?',
-    summary: 'LaBraM on new people, same task, zero labels from the test person: head only, last block or LoRA, printed beside the core matrix’s frozen readout. Plus: the next-day experiment, run and held.',
-    detail: 'EEGMAT, 36 people · three update rules · next day: held',
-  },
-  {
-    slug: 'when-not-to-act',
-    kicker: 'Abstention · Jev-style',
-    title: 'When not to act',
-    summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
-    detail: 'Idle, 4-person pilot · non-control, 20 people · research plan',
-  },
-  {
-    slug: 'does-pretraining-help',
-    kicker: 'Representation controls',
-    title: 'Does pretraining help?',
-    summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings.',
-    detail: 'Two tasks · two encoders · three random initializations',
-  },
-  {
-    slug: 'clinical-groups',
-    kicker: 'Clinical research',
-    title: 'Clinical groups',
-    summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
-    detail: '149 people · one site · balanced accuracy',
-  },
-] as const;
+  { slug: 'dry-vs-wet', group: 'transfer' },
+  { slug: 'screen-to-vr', group: 'transfer' },
+  { slug: 'fewer-electrodes', group: 'transfer' },
+  { slug: 'on-the-move', group: 'transfer' },
+  { slug: 'calibration-budget', group: 'adapting' },
+  { slug: 'model-adaptation', group: 'adapting' },
+  { slug: 'does-pretraining-help', group: 'adapting' },
+  { slug: 'when-not-to-act', group: 'reliability' },
+  { slug: 'clinical-groups', group: 'reliability' },
+] as const satisfies readonly { slug: string; group: TopicGroup }[];
+
+/** The topics in one group, in order, each with its position in the whole list. */
+export const topicsIn = (group: TopicGroup) =>
+  topicPages.map((t, index) => ({ ...t, index })).filter(t => t.group === group);
+
+{
+  const seen = topicPages.map(t => t.group).filter((g, i, all) => i === 0 || all[i - 1] !== g);
+  if (seen.join() !== topicGroups.join()) throw new Error('topics.ts: topicPages must run group by group, in topicGroups order');
+}
 
 export const pct = (value: number, digits = 1) => `${(value * 100).toFixed(digits)}%`;
 export const pp = (value: number, digits = 1) => `${value >= 0 ? '+' : '−'}${Math.abs(value * 100).toFixed(digits)} pp`;

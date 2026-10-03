@@ -144,7 +144,7 @@ for(const t of data.tracks){
   assert.ok(privacy.endsWith(` <a href="/data/${t.id}-protocol.json" download>The full review note is in the protocol JSON ↓</a>`),t.id+': the privacy sentence links the protocol JSON');
   assert.equal(/Region Midt/.test(privacy),t.id==='sleep-scalp',t.id+': the consent caveat is the sleep protocol\'s');
   const detail=data.datasets.find(d=>d.name===t.dataset)?.detail;
-  assert.ok(detail&&body.includes('<p class="protocol-register"><strong>Rights review</strong> <span>'+escHtml(detail)+'</span></p>'),t.id+': the register\'s reviewed rights note for '+t.dataset);
+  assert.ok(detail&&body.includes('<p class="protocol-register"><strong>Public-data register note</strong> <span>'+escHtml(detail)+'</span></p>'),t.id+': the register\'s reviewed rights note for '+t.dataset);
   assert.ok(body.indexOf('class="protocol-register"')>pv,t.id+': the register note follows the privacy sentence');
   get('#close-dialog').events.click();
 }
@@ -173,7 +173,7 @@ for(const t of data.tracks){
     assert.ok(privacy.endsWith(` <a href="/data/${t.id}-protocol.json" download>完整的审查说明在协议 JSON 中 ↓</a>`),'zh/'+t.id+': the privacy sentence links the protocol JSON');
     assert.equal(/Region Midt/.test(privacy),t.id==='sleep-scalp','zh/'+t.id+': the consent caveat is the sleep protocol\'s');
     assert.ok(!body.includes(escHtml(t.privacyReview.slice(0,80))),'zh/'+t.id+': no privacy review verbatim');
-    assert.ok(body.includes('<p class="protocol-register"><strong>权利审查</strong> <span lang="en">'+escHtml(data.datasets.find(d=>d.name===t.dataset).detail)+'</span></p>'),'zh/'+t.id+': the register note, marked English');
+    assert.ok(body.includes('<p class="protocol-register"><strong>公开数据登记说明</strong> <span lang="en">'+escHtml(data.datasets.find(d=>d.name===t.dataset).detail)+'</span></p>'),'zh/'+t.id+': the register note, marked English');
   }
   zget('#result-rows').events.click({target:{closest:()=>({dataset:{model:t0.rows[0].id}})}});
   assert.match(zget('#dialog-body').innerHTML,/^<p><span lang="en">[^<]+<\/span> · \d+ ch · /,'zh: the model dialog marks the training mode English');
@@ -846,8 +846,8 @@ for(const [label,path] of [['en','topics/model-adaptation/'],['zh','zh/topics/mo
   assert.match(next,!zh?/no figure from it is published/:/不发布它的任何数字/,label+': the next-day status says why');
   // Unlike the adaptation result, the next-day design calibrates on the test person's own labels;
   // the section says so, with the budgets the export states (2026-10-02 review).
-  assert.ok(unent(next).includes(zh?'与上面的结果不同，这个设计要用到测试被试本人的标签：其第二天的校准试次。'
-                                  :"Unlike the result above, this design uses the test person's own labels: their day-B calibration trials."),label+': the next-day design uses the test person\'s own day-B labels');
+  assert.ok(unent(next).includes(zh?'与上面的结果不同，这个设计要用到测试被试本人的标签：用其第一天的试次训练，并且（零预算时除外）用其第二天最前面的试次校准。'
+                                  :"Unlike the result above, this design uses the test person's own labels: their day-A trials to train and, except at the zero budget, their first day-B trials to calibrate."),label+': the next-day design uses the test person\'s own day-B labels');
   const budgets=ad.status_only[0].design.calibration_labels;
   assert.ok(next.includes(budgets.slice(0,-1).join(zh?'、':', ')+(zh?' 或 ':' or ')+budgets.at(-1)),label+': the day-B budgets are the export\'s');
   assert.ok(nd.includes(zh?'为它准备了两个数据源；出于不同的原因，两者都不能公开评分。':'Two sources were prepared for it; for different reasons, neither can be scored in public.'),label+': the next-day lede');
@@ -900,7 +900,7 @@ for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/
   }
   // A link to #next-day lands on its own heading, so the heading cannot lean on the one above it.
   const ndH2=(html.match(/id="next-day"[^>]*>\s*<h2[^>]*>([^<]*)<\/h2>/)||[])[1];
-  assert.equal(ndH2,zh?'次日实验已移到新页面':'The next-day experiment has moved too',label+': the #next-day heading stands on its own');
+  assert.equal(ndH2,zh?'次日实验已移到模型适配页面':'The next-day experiment has moved to the model-adaptation page',label+': the #next-day heading stands on its own');
   assert.match(html.slice(html.indexOf('id="adaptation"')),adLabel[label],label+': the note says what the moved evidence is');
   // None of the moved figures, and not its export, remain.
   for(const a of adr.arms) assert.ok(!html.includes(pct1(a.balanced_accuracy.mean)),label+': '+a.id+' moved off this page');
@@ -1196,8 +1196,8 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
   const textOf=s=>s.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
   // The sleep protocol's consent caveat, as each language states it.
   const consentCaveat={
-    en:'The informed consent form did not mention publication. Before release, the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
-    zh:'知情同意书没有提到公开发布。发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'};
+    en:'According to the 2025 data descriptor, the informed consent form did not mention publication, and before release the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.',
+    zh:'据 2025 年的数据描述论文，知情同意书没有提到公开发布；发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'};
   const resolves=href=>{const p=href.slice(1).split('?')[0];
     if(p===''||p.endsWith('/'))return existsSync(new URL(p+'index.html',DIST));
     return existsSync(new URL(p,DIST))||existsSync(new URL(p+'.html',DIST))||existsSync(new URL(p+'/index.html',DIST));};
@@ -1308,8 +1308,8 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       assert.ok(detail,where+': the register has a rights note for '+t.dataset);
       const rg=html.indexOf('class="protocol-register"'),register=rg<0?'':html.slice(rg,html.indexOf('</p>',rg));
       assert.ok(rg>pv,where+': the register note follows the privacy sentence');
-      if(label==='en') assert.ok(register.includes('<strong>Rights review</strong> <span>'+esc(detail)+'</span>'),where+': the register note, verbatim');
-      else assert.ok(dirZhText[detail]&&register.includes('<strong>权利审查</strong> <span>'+esc(dirZhText[detail])+'</span><span class="note-original" lang="en">'+esc(detail)+'</span>'),where+': the register note in Chinese, its English beside it');
+      if(label==='en') assert.ok(register.includes('<strong>Public-data register note</strong> <span>'+esc(detail)+'</span>'),where+': the register note, verbatim');
+      else assert.ok(dirZhText[detail]&&register.includes('<strong>公开数据登记说明</strong> <span>'+esc(dirZhText[detail])+'</span><span class="note-original" lang="en">'+esc(detail)+'</span>'),where+': the register note in Chinese, its English beside it');
       // The sleep protocol's review was amended for consent on 2026-09-22. The page states the caveat in
       // its own words, and every claim in them is one the released review note makes.
       if(t.id==='sleep-scalp'){
@@ -1402,8 +1402,9 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   const texts=[...data.models.flatMap(m=>[m.note,m.license]),...data.datasets.flatMap(d=>[d.detail,d.license])];
   for(const text of texts) assert.ok(dirZh[text]||licenceName.test(text),'directory-zh.json: no Chinese for "'+text.slice(0,60)+'"');
   for(const key of Object.keys(dirZh)) assert.ok(texts.includes(key),'directory-zh.json: "'+key.slice(0,50)+'" matches no text in mvp.json');
-  const zhHome=read('zh/');
-  const directory=zhHome.slice(zhHome.indexOf('id="models"'),zhHome.indexOf('id="news"'));
+  // Since 2026-10-02 the model directory is on /methods/ and the register on /datasets/.
+  const sectionOf=(html,id)=>{const a=html.indexOf(`<section id="${id}"`);assert.ok(a>0,'zh: section #'+id+' must render');return html.slice(a,html.indexOf('</section>',a));};
+  const directory=sectionOf(read('zh/methods/'),'models')+sectionOf(read('zh/datasets/'),'register');
   assert.ok(directory.length>2000,'zh: the model directory and data register must render');
   assert.doesNotMatch(directory,/<p lang="en">/,'zh: every directory note has its Chinese (no untranslated fallback)');
   // Model notes print the Chinese alone. Rights-review and licence notes print the released
@@ -1446,8 +1447,14 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   assert.ok(colours.length>=8,'workbench.ts: the chart colours');
   assert.deepEqual(swatches.map(m=>Number(m[1])),colours.map((_,i)=>i),'generated.css: one .legend i.sN swatch per chart colour, numbered from 0');
   assert.deepEqual(swatches.map(m=>m[2].toLowerCase()),colours,'generated.css: the legend swatches must be the chart colours, in order');
-  const narrow=readFileSync(new URL('../src/styles/global.css',import.meta.url),'utf8').split('@media(max-width:860px){')[1].split('\n}')[0];
-  assert.match(narrow,/\.stat-rail>\.live\{padding-left:0\}/,'global.css: the update date is not indented when the stat rail wraps');
+  // Since 2026-10-02 the masthead states one date, the newest release's, in its eyebrow; the
+  // stat rail carries only the core matrix's counts, under a visible caption.
+  const newest=[...read('releases/').matchAll(/<article class="release-entry" id="[^"]+">\s*<header><time datetime="([^"]+)"/g)].map(m=>m[1]).sort().at(-1);
+  for(const [path,word] of [['','updated'],['zh/','更新于']]){
+    const html=read(path), mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
+    assert.ok(newest&&mast.includes(`${word} <time datetime="${newest}">${newest}</time></p>`),(path||'/')+': the masthead eyebrow carries the newest release date');
+    assert.ok(!/class="live"/.test(mast)&&/<p class="stat-caption" id="stat-caption">[^<]+<\/p><dl class="stat-rail" aria-labelledby="stat-caption">/.test(mast),(path||'/')+': the stat rail has a visible caption and no second date');
+  }
 }
 
 // --- 2026-10-02 discoverability and citation ---------------------------------------------
@@ -1653,13 +1660,24 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
 {
   for(const [label,prefix] of [['en',''],['zh','zh/']]){
     const pointing=new Map(topicPages.map(([s])=>[s,new Set()]));
+    // Core-matrix rows a topic prints reach it through their protocol page, not a group link
+    // (2026-10-02): when-not-to-act prints the whole idle table, model-adaptation the frozen
+    // LaBraM readout on arithmetic-rest. Kept here independently of entities.ts, and each is
+    // confirmed against the topic page itself below.
+    const protocolRead={'when-not-to-act':{track:'idle'},'model-adaptation':{track:'arithmetic-rest',method:'labram'}};
     for(const f of entityPages.filter(f=>(label==='zh')===f.startsWith('zh/')&&/(?:^|\/)(?:datasets|methods)\/[^/]+\/index\.html$/.test(f))){
-      const self='/'+f.replace(/index\.html$/,'');
-      for(const [,slug] of readFileSync(new URL(f,DIST),'utf8').matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?topics\/([^/"#]+)\//g)){
+      const self='/'+f.replace(/index\.html$/,''),text=readFileSync(new URL(f,DIST),'utf8');
+      for(const [,slug] of text.matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?topics\/([^/"#]+)\//g)){
         assert.ok(pointing.has(slug),f+': a result group points at '+slug+', which is not a topic page');
         pointing.get(slug).add(self);
       }
+      for(const [,track] of text.matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?protocols\/([^/"#]+)\//g))
+        for(const [slug,r] of Object.entries(protocolRead))
+          if(r.track===track&&(!r.method||!/(?:^|\/)methods\//.test(f)||self.endsWith('/methods/'+r.method+'/'))) pointing.get(slug).add(self);
     }
+    // The protocol rows really are printed: every idle method on when-not-to-act, the marked readout on model-adaptation.
+    for(const m of data.tracks.find(t=>t.id==='idle').rows) assert.ok(visible(pageOf(prefix+'topics/when-not-to-act/')).includes(m.name),prefix+'topics/when-not-to-act/: prints the idle row of '+m.name);
+    assert.ok(pageOf(prefix+'topics/model-adaptation/').includes('data-fig="experiments.json|'),prefix+'topics/model-adaptation/: prints the matrix readout');
     for(const [slug,pages] of pointing){
       const path=prefix+'topics/'+slug+'/',html=pageOf(path);
       const at=html.indexOf('<p class="topic-entities">');
@@ -1667,7 +1685,7 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
       assert.ok(at>html.indexOf('class="topic-hero"')&&at<html.indexOf('class="short-answer"'),path+': the Measured on line sits under the hero, before the short answer');
       const line=html.slice(at,html.indexOf('</p>',at));
       const linked=[...line.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
-      assert.deepEqual([...linked].sort(),[...pages].sort(),path+': the Measured on line must link exactly the dataset and method pages whose groups point here');
+      assert.deepEqual([...linked].sort(),[...pages].sort(),path+': the Measured on line must link exactly the dataset and method pages whose groups point here, plus the protocol rows it prints');
       assert.match(line,label==='zh'?/测量所用数据集：/:/Measured on:/,path+': the line says what it lists');
       const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
       for(const p of pages) assert.ok(md.includes('](https://bci.report'+p+')'),path+'index.md: the Measured on line must survive into the Markdown copy ('+p+')');
@@ -1747,6 +1765,132 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   assert.ok(bib.includes(`title        = {${cffField('title')}}`)&&bib.includes(`note         = {Release ${cffField('version')}}`)&&bib.includes(`year         = {${cffField('date-released').slice(0,4)}}`),
     'the /api/ BibTeX must be the citation CITATION.cff gives');
 }
+
+// --- 2026-10-02 home, navigation and the Questions hub -------------------------------------
+// The home page was restructured: questions grouped, a compact transfer-coverage map, holds that
+// link, the core matrix with its snapshot date, a directory band. The model directory and field
+// notes moved to /methods/, the public-data register to /datasets/. /topics/ is the Questions hub.
+{
+  // Navigation: the same eight entries, in order, on every page of a language; the current one marked.
+  const navOf=html=>{const m=html.match(/<nav aria-label="(?:Main navigation|主导航)">([\s\S]*?)<\/nav>/);assert.ok(m,'the main navigation must render');return [...m[1].matchAll(/<a href="([^"]+)"(?: aria-current="page")?>([^<]+)<\/a>/g)].map(x=>[x[1],x[2]]);};
+  const navWant={en:[['/topics/','Questions'],['/#overview','Results'],['/protocols/','Protocols'],['/methods/','Methods'],['/datasets/','Datasets'],['/releases/','Releases'],['/api/','API'],['/data-use/','Data use']],
+                 zh:[['/zh/topics/','问题'],['/zh/#overview','结果'],['/zh/protocols/','协议'],['/zh/methods/','方法'],['/zh/datasets/','数据集'],['/zh/releases/','发布记录'],['/zh/api/','API'],['/data-use/','数据使用（英文）']]};
+  for(const f of htmlPages.filter(f=>f!=='404.html'&&!/^data-use\//.test(f))){
+    const html=readFileSync(new URL(f,DIST),'utf8');
+    const home=f==='index.html'||f==='zh/index.html';   // on the home page itself Results is an in-page link
+    assert.deepEqual(navOf(html),navWant[f.startsWith('zh/')?'zh':'en'].map(([h,l])=>[home&&/#overview$/.test(h)?'#overview':h,l]),f+': the main navigation');
+  }
+  for(const [page,href] of [['api/','/api/'],['zh/api/','/zh/api/'],['topics/','/topics/'],['zh/topics/','/zh/topics/'],['methods/','/methods/'],['zh/datasets/','/zh/datasets/']])
+    assert.ok(pageOf(page).includes(`<a href="${href}" aria-current="page">`),page+': its own entry is marked current');
+  // Breadcrumbs: Questions is the middle crumb of every topic page, and topic and entity pages emit BreadcrumbList.
+  for(const [s] of topicPages) for(const [p,hub] of [['topics/'+s+'/','/topics/'],['zh/topics/'+s+'/','/zh/topics/']]){
+    const html=pageOf(p);
+    assert.ok(html.includes(`<nav class="breadcrumbs"`)&&html.includes(`<li><a href="${hub}">`),p+': the breadcrumb passes through the Questions hub');
+    // Structured data sits on the English canonical only (one entity per resource; hreflang joins the two).
+    if(!p.startsWith('zh/')) assert.ok(html.includes('"@type":"BreadcrumbList"')&&html.includes('"item":"https://bci.report'+hub+'"'),p+': BreadcrumbList names the hub');
+  }
+  for(const f of entityPages.filter(f=>!f.startsWith('zh/'))) assert.ok(readFileSync(new URL(f,DIST),'utf8').includes('"@type":"BreadcrumbList"'),f+': BreadcrumbList');
+  // The Questions hub and the home page list every topic once, under the three groups, in both languages.
+  for(const page of ['','topics/','zh/','zh/topics/']){
+    const html=pageOf(page);
+    for(const g of ['transfer','adapting','reliability']) assert.ok(html.includes(`id="group-${g}"`),(page||'/')+': group '+g);
+    const cards=[...html.matchAll(/<a class="topic-entry-card" href="(?:\/zh)?\/topics\/([^/]+)\/"/g)].map(m=>m[1]);
+    assert.deepEqual([...cards].sort(),topicPages.map(([s])=>s).sort(),(page||'/')+': every topic card exactly once');
+  }
+  // Topic-card counts: every number a card prints is a cohort size or design figure from its own payload.
+  const ysuX=xt.results['ysu-async-ssvep-extension'],ltr=xt.results['ltrsvp-rate-transfer'];
+  const peopleOf=track=>[...new Set(topics.rows.filter(r=>r.track===track).map(r=>r.participants))];
+  const cardPins={
+    'dry-vs-wet':{files:['deployment-topics.json'],pins:peopleOf('wearable-sensor-transfer')},
+    'screen-to-vr':{files:['context-update.json','extension-update.json'],pins:[cx.results['vr-pc-p300'].cohort.people,ltr.cohort.people]},
+    'fewer-electrodes':{files:['evidence-update.json'],pins:[ev.results.eesm23.cohort.people,ev.results.alphawaves.cohort.people],
+      allow:ev.results.alphawaves.configurations.map(c=>c.channels.length)},   // the zh card writes the electrode counts as digits
+    'on-the-move':{files:['deployment-topics.json'],pins:[]},
+    'calibration-budget':{files:['deployment-topics.json'],pins:[...peopleOf('wearable-calibration'),...new Set(topics.rows.filter(r=>r.track==='wearable-calibration').map(r=>r.labeled_target_trials).filter(n=>n>12))]},
+    'model-adaptation':{files:['adaptation-update.json'],pins:[ad.results['eegmat-labram-adaptation'].cohort.people]},
+    'when-not-to-act':{files:['experiments.json','extension-update.json'],pins:[...new Set(data.tracks.find(t=>t.id==='idle').rows.map(r=>r.subjects)),ysuX.cohort.people]},
+    'does-pretraining-help':{files:['deployment-topics.json'],pins:[]},
+    'clinical-groups':{files:['clinical-update.json'],pins:[cl.results.ds004584.cohort.people]},
+  };
+  assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
+  for(const page of ['','zh/']){
+    const html=pageOf(page);
+    for(const [slug,{files,pins,allow=[]}] of Object.entries(cardPins)){
+      const at=html.search(new RegExp(`<a class="topic-entry-card" href="(?:/zh)?/topics/${slug}/"`));
+      const card=visible(html.slice(at,html.indexOf('</a>',at)).replace(/<span class="topic-number"[^>]*>\d+<\/span>/,'')).replace(/[A-Za-z]+\d+/g,' ');
+      const numbers=[...card.matchAll(/\d[\d,]*/g)].map(m=>Number(m[0].replace(/,/g,''))).filter(n=>n>1);
+      for(const n of numbers) assert.ok(pins.includes(n)||allow.includes(n)||files.some(f=>leavesOf(f).has(n)),(page||'/')+' '+slug+' card: '+n+' is in none of its payloads');
+      for(const n of pins) assert.ok(numbers.includes(n),(page||'/')+' '+slug+' card: must print '+n);
+    }
+  }
+  // The transfer-coverage map, compact on the home page, full on the hub: cohort sizes and links only.
+  const mapPins={'person:dry-vs-wet':peopleOf('wearable-sensor-transfer'),'person:model-adaptation':[ad.results['eegmat-labram-adaptation'].cohort.people],
+    'person:clinical':[cl.results.ds004584.cohort.people],'sensor:in-ear':[ev.results.eesm23.cohort.people],'sensor:posterior-subset':[ev.results.alphawaves.cohort.people],
+    'context:screen-to-vr':[cx.results['vr-pc-p300'].cohort.people],'context:image-rate':[ltr.cohort.people],'context:mobile-ssvep':peopleOf('mobile-ssvep-2s')};
+  for(const page of ['','zh/','topics/','zh/topics/']){
+    const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap">'),html.indexOf('</table>',html.indexOf('<table class="tmap">')));
+    assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');
+    assert.doesNotMatch(visible(table),/%|\bpp\b|个百分点|\d\.\d/,(page||'/')+': the map prints no score');
+    for(const [, state, cell] of table.matchAll(/<td data-state="([a-z]+)"[^>]*>([\s\S]*?)<\/td>/g)){
+      if(state==='held') assert.ok(!cell.includes('data-fig')&&!/\d/.test(visible(cell)),(page||'/')+': a held map entry prints no figure');
+      if(state==='held') for(const [,href] of cell.matchAll(/href="([^"]+)"/g)) assert.match(href,/^(?:\/zh)?\/releases\/#holds$/,(page||'/')+': a held map entry links only the holds register');
+      if(state==='absent') assert.ok(!cell.includes('data-fig')&&!cell.includes('<a '),(page||'/')+': a not-measured entry has no link or cohort');
+    }
+    for(const [, key, body] of table.matchAll(/<li data-map="([^"]+)">([\s\S]*?)<\/li>/g)){
+      const figs=[...body.matchAll(/<span data-fig="([^|"]+)\|count\|([^"]+)" class="num">([^<]+)<\/span>/g)];
+      for(const [, file, raw, text] of figs){
+        assert.ok(leavesOf(file).has(Number(raw)),(page||'/')+' '+key+': '+raw+' is not a value in '+file);
+        assert.equal(text,fmt.count(Number(raw)),(page||'/')+' '+key+': printed as '+text);
+      }
+      if(mapPins[key]) assert.deepEqual(figs.map(f=>Number(f[2])),mapPins[key],(page||'/')+' '+key+': the cohort sizes it must equal');
+    }
+  }
+  // Holds on the home page are links: to their own page where the register gives one, else to their register row.
+  const releasesHtml=pageOf('releases/');
+  for(const [page,prefix] of [['',''],['zh/','/zh']]){
+    const html=pageOf(page),grid=html.slice(html.indexOf('<div class="hold-grid">'),html.indexOf('</div>',html.indexOf('<div class="hold-grid">')));
+    const hrefs=[...grid.matchAll(/<a class="hold-card" href="([^"]+)"/g)].map(m=>m[1]);
+    assert.ok(hrefs.length>=4&&!/<article class="hold-card"/.test(grid),(page||'/')+': every hold card is a link');
+    for(const href of hrefs){
+      const m=href.match(/^(?:\/zh)?\/releases\/#(hold-[a-z0-9-]+)$/);
+      if(m) assert.ok(releasesHtml.includes(`<tr id="${m[1]}"`),(page||'/')+': '+href+' names no register row');
+      else assert.ok(existsSync(new URL(href.replace(/#.*$/,'').replace(/^\//,'')+'index.html',DIST)),(page||'/')+': hold link '+href+' leads nowhere');
+    }
+    const corr=releasesHtml.slice(releasesHtml.indexOf('id="corrections"'),releasesHtml.indexOf('</table>',releasesHtml.indexOf('id="corrections"')));
+    const nCorrections=(corr.match(/<tr><th scope="row"><time /g)||[]).length;
+    assert.ok(nCorrections>=2,'releases: the corrections register has its rows');
+    assert.ok(html.includes(`<a href="${prefix}/releases/#corrections">`)&&visible(html).includes(page?`更正（${nCorrections}）`:`Corrections (${nCorrections})`),(page||'/')+': the corrections link counts the register ('+nCorrections+')');
+  }
+  // Directory band counts are the counts of what they link to; the old home anchors still land.
+  for(const page of ['','zh/']){
+    const html=pageOf(page),count=k=>Number(html.match(new RegExp(`<span data-count="${k}">(\\d+)</span>`))?.[1]);
+    assert.equal(count('methods'),entityPages.filter(f=>!f.startsWith('zh/')&&/^methods\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': methods with result pages');
+    assert.equal(count('datasets'),entityPages.filter(f=>!f.startsWith('zh/')&&/^datasets\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': datasets with results');
+    assert.equal(count('questions'),topicPages.length,(page||'/')+': questions');
+    for(const id of ['models','datasets','news']) assert.ok(html.includes(`id="${id}"`),(page||'/')+': the old #'+id+' anchor still lands');
+    assert.ok(!html.includes('class="model-grid"')&&!html.includes('class="dataset-list"')&&!html.includes('class="news-grid"'),(page||'/')+': the directory, register and field notes left the home page');
+  }
+  // The moved sections: every model card, every register row, every field note, with the status-checked date.
+  for(const page of ['methods/','zh/methods/']){
+    const html=pageOf(page);
+    for(const m of data.models) assert.ok(html.includes(`<article class="model-card" data-model="${m.name.replace(/&/g,'&amp;')}">`),page+': model card for '+m.name);
+    assert.equal((html.match(/<p class="status-checked">/g)||[]).length,data.models.length,page+': every model card says when its status was checked');
+    for(const n of data.news) assert.ok(html.includes(n.sourceUrl.replace(/&/g,'&amp;')),page+': field note '+n.title.slice(0,30));
+    // REVE Base: the display-layer status with its source and checked date, the released status beside it.
+    const reve=html.slice(html.indexOf('data-model="REVE Base"'),html.indexOf('</article>',html.indexOf('data-model="REVE Base"')));
+    assert.ok(reve.includes('class="status-override"')&&reve.includes('https://huggingface.co/brain-bzh/reve-base')&&reve.includes('2026-10-02'),page+': REVE Base override, source and date');
+    assert.match(reve,page.startsWith('zh')?/许可审查中/:/Licence review pending/,page+': REVE Base shows the checked status');
+    assert.match(reve,page.startsWith('zh')?/访问受限/:/Access gated/,page+': REVE Base keeps the released status beside it');
+  }
+  for(const page of ['datasets/','zh/datasets/']){
+    const html=pageOf(page);
+    for(const d of data.datasets) assert.ok(html.includes(`<article class="dataset-row" data-dataset="${d.name.replace(/&/g,'&amp;')}">`),page+': register row for '+d.name);
+  }
+  // 404 points at the hubs.
+  const nf=readFileSync(new URL('404.html',DIST),'utf8');
+  for(const href of ['/topics/','/methods/','/datasets/','/releases/#holds']) assert.ok(nf.includes(`href="${href}"`),'404: links '+href);
+}
+console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with the current page marked; Questions hub and breadcrumbs; every topic card once, grouped, with its counts from its payloads; transfer map with cohort sizes only, pinned, held entries figure-free; hold cards link; corrections counted; directory band counts; directory, register and field notes moved with their status dates and the REVE override; 404 hubs.');
 
 console.log('PASS: Chinese register — licence and rights-review notes with their English beside them, model notes in Chinese; chart colours equal the legend swatches.');
 console.log('PASS: 2026-10-02 discoverability — share card is the recorded badge-free bitmap with alt/size on every page; home Dataset cites the newest release with every file and topic part; Atom feed matches the release log; only /data/* is cross-origin; cite blocks name exactly their releases, in both languages and Markdown; table names survive into Markdown; footers, llms.txt, licences and .zenodo.json agree.');

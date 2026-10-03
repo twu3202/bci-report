@@ -5,6 +5,8 @@ import { datasets, tr } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
 import { datasetStatus, datasetTask, directoryText, hrefFor, localeOf, localeParams } from '../../../data/i18n';
 import { site } from '../../../data/site';
+import DataRegister from '../../../components/DataRegister.astro';
+import '../../../styles/directory.css';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -42,4 +44,5 @@ const structured = {
     <ul class="entity-links">{notScored.map(d => <li><a href={d.source} target="_blank" rel="noreferrer" lang="en">{d.name} ↗</a> · {datasetTask(d.task, locale)} · {datasetStatus(d.status, locale)}</li>)}</ul>
     <p class="citation-note"><a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
   </section>
+  <DataRegister locale={locale} />
 </EntityLayout>

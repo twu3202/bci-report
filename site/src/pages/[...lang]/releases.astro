@@ -136,7 +136,7 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
 </head>
 <body>
   <a class="skip" href="#release-content">{t.skipToEvidence}</a>
-  <SiteHeader locale={locale} path={path}/>
+  <SiteHeader locale={locale} path={path} active="releases"/>
   <main class="topic-page" id="release-content">
     <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{copy.home}</a></li><li aria-current="page">{copy.title}</li></ol></nav>
     <section class="topic-hero">
@@ -179,7 +179,7 @@ const entries = releases.map(r => ({ ...r, facts: r.files.map(fileFacts), manife
       <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.holdsRegion}>
         <table>
           <thead><tr><th scope="col">{copy.colItem}</th><th scope="col">{copy.colOpened}</th><th scope="col">{copy.colStatus}</th><th scope="col">{copy.colOutcome}</th></tr></thead>
-          <tbody>{holds.map(h => <tr class={h.closed ? 'hold-resolved' : 'hold-open'}><th scope="row">{h.href ? <a href={hrefFor(h.href, locale)}>{h.item[locale]}</a> : h.item[locale]}</th><td><time datetime={h.opened}>{date(h.opened)}</time></td><td>{h.closed ? copy.resolved(date(h.closed)) : copy.open}</td><td>{h.outcome[locale]}</td></tr>)}</tbody>
+          <tbody>{holds.map(h => <tr id={`hold-${h.id}`} class={h.closed ? 'hold-resolved' : 'hold-open'}><th scope="row">{h.href ? <a href={hrefFor(h.href, locale)}>{h.item[locale]}</a> : h.item[locale]}</th><td><time datetime={h.opened}>{date(h.opened)}</time></td><td>{h.closed ? copy.resolved(date(h.closed)) : copy.open}</td><td>{h.outcome[locale]}</td></tr>)}</tbody>
         </table>
       </div>
       <p class="citation-note">{copy.rights} <a href="/data-use/">{copy.rightsLink}</a></p>

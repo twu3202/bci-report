@@ -1,0 +1,45 @@
+---
+/**
+ * /topics/: the Questions hub (2026-10-02). Until then /topics/ was a 404 and the
+ * section went by four names; the breadcrumb of every topic page now leads here.
+ *
+ * Two parts: every question, grouped as on the home page, and the full
+ * transfer-coverage map (src/data/transfer-map.ts) — which kinds of transfer
+ * have been measured, which are status only or held, and which have not been
+ * tried. The map holds cohort sizes and links, never a score.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import TopicGroups from '../../../components/TopicGroups.astro';
+import TransferMap from '../../../components/TransferMap.astro';
+import { home, hrefFor, localeOf, localeParams, topicCards, topicChrome, topicsHubCopy } from '../../../data/i18n';
+import { topicPages } from '../../../data/topics';
+import { mapRows, mapStates } from '../../../data/transfer-map';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const c = topicsHubCopy[locale];
+const tc = topicChrome[locale];
+// The served files the map's cohort sizes come from, in the order the map first uses them.
+const mapFiles = [...new Set(mapRows.flatMap(r => mapStates.flatMap(s => r.cells[s].flatMap(e => (e.n ?? []).map(f => f.src)))))];
+const structured = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: topicsHubCopy.en.docTitle,
+  url: new URL('/topics/', site.origin).href, description: topicsHubCopy.en.description,
+  hasPart: topicPages.map(t => ({ '@type': 'WebPage', name: topicCards.en[t.slug].question, url: new URL(`/topics/${t.slug}/`, site.origin).href })),
+};
+---
+<EntityLayout locale={locale} path="/topics/" active="topics"
+  documentTitle={c.docTitle} h1={c.h1} description={c.description}
+  eyebrow={tc.questions} dek={c.dek}
+  crumbs={[{ label: tc.home, href: hrefFor('/', locale) }, { label: tc.questions }]}
+  structured={structured}>
+  <section class="topic-section topic-hub" aria-label={tc.questions}>
+    <p class="protocol-note">{home[locale].topicsLede}</p>
+    <TopicGroups locale={locale} level={2} readLabel={home[locale].readEvidence}/>
+  </section>
+  <section class="topic-section" id="transfer" aria-labelledby="transfer-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{c.mapEyebrow}</p><h2 id="transfer-heading">{c.mapH2}</h2></div><p>{c.mapLede}</p></div>
+    <TransferMap locale={locale} full={true}/>
+    <p class="citation-note">{c.sources} {mapFiles.map((f, i) => <>{i > 0 && ' · '}<a href={`/data/${f}`} download>{f}</a></>)} · <a href={hrefFor('/releases/#holds', locale)}>{home[locale].holdsRegister}</a></p>
+  </section>
+</EntityLayout>

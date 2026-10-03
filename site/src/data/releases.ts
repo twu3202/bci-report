@@ -23,9 +23,13 @@ export const siteUpdates = [
     // index, the API page and the release log name both. The LaBraM adaptation
     // and the next-day statuses moved from calibration-budget to their own
     // topic, model-adaptation; the EEGMAT and LaBraM pages now send readers there.
+    // The home restructure (same day) moved the model directory and field notes
+    // to /methods/ and the public-data register to /datasets/, and opened the
+    // Questions hub at /topics/.
     paths: ['/', '/topics/when-not-to-act/', '/topics/screen-to-vr/', '/releases/', '/data-use/', '/api/',
             '/datasets/', '/datasets/ysu-async-ssvep/', '/datasets/ltrsvp/',
-            '/topics/model-adaptation/', '/topics/calibration-budget/', '/datasets/eegmat/', '/methods/labram/'],
+            '/topics/model-adaptation/', '/topics/calibration-budget/', '/datasets/eegmat/', '/methods/labram/',
+            '/topics/', '/methods/'],
   },
   {
     date: '2026-10-01',
@@ -185,6 +189,11 @@ export function releasesFor(files: string[]): Release[] {
 }
 
 export interface Hold {
+  /**
+   * Stable slug: the register row on /releases/ is `#hold-<id>`, and a home card
+   * without a page of its own links there. The payload's own id where it has one.
+   */
+  id: string;
   item: Text;
   /** Short state word for the home-page card. */
   state: Text;
@@ -197,6 +206,7 @@ export interface Hold {
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
   {
+    id: 'ysu-async-ssvep-consent',
     item: { en: 'YSU asynchronous SSVEP · consent statement', zh: 'YSU 异步 SSVEP · 同意书声明' },
     state: { en: 'Released', zh: '已发布' },
     opened: '2026-09-27', closed: '2026-09-27',
@@ -205,6 +215,7 @@ export const holds: Hold[] = [
     href: '/topics/when-not-to-act/#non-control',
   },
   {
+    id: 'stieger-longitudinal',
     item: { en: 'Stieger longitudinal BCI · one-person pilot', zh: 'Stieger 纵向 BCI · 单人试点' },
     state: { en: 'Status only', zh: '只发状态' },
     opened: '2026-09-27', closed: null,
@@ -213,6 +224,7 @@ export const holds: Hold[] = [
     href: '/topics/model-adaptation/#cross-session',
   },
   {
+    id: 'ds004902',
     item: { en: 'OpenNeuro ds004902 · paired sleep comparison', zh: 'OpenNeuro ds004902 · 配对睡眠比较' },
     state: { en: 'No score', zh: '没有分数' },
     opened: '2026-09-23', closed: null,
@@ -220,6 +232,7 @@ export const holds: Hold[] = [
                zh: '5 个源文件比自己的文件头声明的还短。没有任何分数。' },
   },
   {
+    id: 'clinical-foundation-models',
     item: { en: 'Foundation models on the clinical set', zh: '临床数据上的基础模型' },
     state: { en: 'Held', zh: '暂缓' },
     opened: '2026-09-23', closed: null,
@@ -228,6 +241,7 @@ export const holds: Hold[] = [
     href: '/topics/clinical-groups/',
   },
   {
+    id: 'lfame',
     item: { en: 'L-FAME', zh: 'L-FAME' },
     state: { en: 'Described, not scored', zh: '只有描述，没有评分' },
     opened: '2026-09-22', closed: null,
@@ -235,6 +249,7 @@ export const holds: Hold[] = [
                zh: '9 月 22 日未纳入（只完成了数据接收）。9 月 23 日起：只有描述、没有评分，按条件汇总的数值不发布。' },
   },
   {
+    id: 'alphawaves-consent',
     item: { en: 'Alpha Waves · primary consent source', zh: 'Alpha Waves · 一手同意书来源' },
     state: { en: 'Released', zh: '已发布' },
     opened: '2026-09-22', closed: '2026-09-22',
@@ -243,6 +258,7 @@ export const holds: Hold[] = [
     href: '/topics/fewer-electrodes/#posterior-subset',
   },
   {
+    id: 'bnci2015-001-crossday',
     item: { en: 'BNCI2015-001 · next-day adaptation', zh: 'BNCI2015-001 · 次日适配' },
     state: { en: 'Held', zh: '暂缓' },
     opened: '2026-09-20', closed: null,
@@ -251,6 +267,7 @@ export const holds: Hold[] = [
     href: '/topics/model-adaptation/#next-day',
   },
 ];
+if (new Set(holds.map(h => h.id)).size !== holds.length) throw new Error('releases.ts: two holds share an id');
 
 export interface Correction {
   date: string;
