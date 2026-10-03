@@ -1,0 +1,211 @@
+{
+  "release_id": "large-source-update-20261003",
+  "reviewed_at": "2026-10-03",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for two results of the execution session's large-source batch (handoffs dated 2026-10-03). Its own manifest: it amends no earlier review, nothing here joins the eight-protocol matrix, and the two results share no ranking. Dreem: a new source, two fixed CPU sleep-staging baselines in two cohorts kept as separate experiments. OpenBMI: a new source on this site, two fixed CPU motor-imagery baselines across two sessions of the same people, at four calibration budgets. No foundation-model and no fine-tuning result. The website inputs are the two release JSONs only; the independent audits, the supplementary audit, the source aggregate and the release decisions are pinned by SHA-256 and checked by the export, never copied, because they carry private storage paths. The rest of the batch (WBCIC-SHU, RSVP, Forenzo) is unfinished and not reviewed here.",
+  "notPublished": [
+    "Per-person and per-night values of any kind. From the OpenBMI release: the worst observed paired change, the medians and the 10th percentiles of every contrast. Only how many people declined is published. From Dreem: no per-night value exists in the release, and none is published.",
+    "Record, file and participant identifiers, cohort and fold assignments, predictions, scores, probabilities, features, fitted models and truth arrays.",
+    "Dreem Brier score and uncalibrated negative log-likelihood, for both arms, both cohorts and their paired differences. The probabilities are uncalibrated and the pages make no probability claim.",
+    "The Dreem combined DOD-H plus DOD-O summary. The release labels it descriptive only, and printing it beside the cohort rows would invite the cross-cohort comparison the design does not support.",
+    "Dreem epoch-micro summaries and stage confusion matrices. They are secondary point estimates without intervals.",
+    "Dreem paired differences other than balanced accuracy (accuracy, macro F1, Cohen's kappa). Each arm's own value is published with its interval.",
+    "The training prior's per-stage recall, precision and F1. It predicts N2 for every epoch, so these values follow from its design.",
+    "OpenBMI Brier score and 10-bin expected calibration error, cells and contrasts, and the accuracy and macro-F1 contrasts. Accuracy and macro F1 are published per cell.",
+    "The earlier 40-person OpenBMI snapshot. It was prepared but never published on this site. Its 40 people are all in the 51 published here, with their results unchanged, so it is not a separate result.",
+    "The independent audits, the Dreem supplementary audit, the OpenBMI source aggregate and both release decisions. Each is pinned by SHA-256 in this manifest and its pass or its binding is checked by the export. They carry private storage paths and are not copied.",
+    "Runtime, cost, storage and download-progress figures from the handoffs, and the status of the other sources in the batch.",
+    "Demographic tables reported by the original publications."
+  ],
+  "holds": [
+    {
+      "id": "dreem-amplitude-sensitive-models",
+      "statement": "No neural-network or foundation-model score exists for the Dreem cohorts in this batch.",
+      "reason": "The stored signal metadata says millivolts, while the publisher's own converter treats the same arrays as microvolts. Until that disagreement is resolved, models that depend on absolute amplitude stay held rather than run on a guessed unit. The two published baselines divide each epoch and channel by a positive gain before their relative spectral features, so they do not depend on that unit.",
+      "scope": "Applies to the Dreem cohorts only. It says nothing about those models' accuracy."
+    }
+  ],
+  "sources": [
+    {
+      "id": "dreem-sleep-baselines",
+      "decision": "aggregate_preview",
+      "name": "Dreem Open Datasets (DOD-H and DOD-O)",
+      "task": "Five-stage sleep staging (Wake, N1, N2, N3, REM) of 30-second epochs against the publisher's stored consensus hypnogram, within each cohort separately",
+      "source": "https://zenodo.org/records/15900394",
+      "version": "Zenodo record 15900394 (doi:10.5281/zenodo.15900394, published 2025-07-15), as archived from the publisher API on 2026-10-03: 81 archive records, of which the 80 with consensus scoring are evaluated (DOD-H 25, DOD-O 55)",
+      "license": "MIT",
+      "licenseUrl": "https://opensource.org/licenses/MIT",
+      "licenseScope": "The licence the deposit declares in its archived publisher metadata. It is recorded as the deposit's declaration, not as a statement about every future use. This release redistributes no upstream code or data; the upstream code licence could not be fetched (the request timed out).",
+      "attribution": "Antoine Guillot, Fabien Sauvet, Emmanuel H. During and Valentin Thorey · Dreem Open Datasets: Multi-Scored Sleep Datasets to Compare Human and Automated Sleep Staging, IEEE Transactions on Neural Systems and Rehabilitation Engineering (2020), doi:10.1109/TNSRE.2020.3011181; preprint arXiv:1911.03221. Data: Dreem Open Datasets, Zenodo, doi:10.5281/zenodo.15900394. Official repository: github.com/Dreem-Organization/dreem-learning-open, revision 8b332d6827f5ae6a22f4bb97b4deef4273238ec3.",
+      "privacyReview": "The two cohorts carry different statements, and each is published as it stands. DOD-H, 25 healthy volunteers recorded at the French Armed Forces Biomedical Research Institute (IRBA): the paper states that the study was approved by the Committees of Protection of Persons (CPP), declared to the French National Agency for Medicines and Health Products Safety, and carried out in compliance with the French Data Protection Act, ICH standards and the Declaration of Helsinki; its DOD-H description has no informed-consent sentence. DOD-O, 55 people with obstructive sleep apnoea recorded at the Stanford Sleep Medicine Center (clinical trial NCT03657329): the paper states that all trial participants gave informed written consent before taking part; no ethics committee or review board is named for DOD-O. The authors present both as publicly available datasets, and the deposit declares open access. Published here: cohort-level participant-equal means with whole-night bootstrap intervals, cohort-level stage support counts, and paired differences. No per-night value, record name, fold assignment or demographic.",
+      "reviewedAt": "2026-10-03",
+      "reviewBasis": [
+        "https://arxiv.org/pdf/1911.03221",
+        "https://doi.org/10.1109/TNSRE.2020.3011181",
+        "https://zenodo.org/records/15900394"
+      ],
+      "consentEthics": {
+        "source": "https://arxiv.org/pdf/1911.03221",
+        "version": "arXiv:1911.03221v4 (27 April 2020)",
+        "readAt": "2026-10-03",
+        "section": "II. Materials and Methods, A. Datasets",
+        "cohorts": {
+          "DOD-H": {
+            "population": "healthy adult volunteers",
+            "recordedAt": "French Armed Forces Biomedical Research Institute (IRBA), Fatigue and Vigilance Unit, Brétigny-sur-Orge, France",
+            "ethics": "Approved by the Committees of Protection of Persons (CPP); declared to the French National Agency for Medicines and Health Products Safety; carried out in compliance with the French Data Protection Act, International Conference on Harmonization (ICH) standards and the Declaration of Helsinki (1964, as revised in 2013).",
+            "consent": null,
+            "consentMissing": "The paper's DOD-H description contains no informed-consent sentence."
+          },
+          "DOD-O": {
+            "population": "people with obstructive sleep apnoea (OSA)",
+            "recordedAt": "Stanford Sleep Medicine Center, United States (clinical trial NCT03657329)",
+            "ethics": null,
+            "ethicsMissing": "No ethics committee or institutional review board is named for DOD-O in the paper.",
+            "consent": "All trial participants gave informed written consent before taking part."
+          }
+        }
+      },
+      "unitStatus": {
+        "storedMetadataUnit": "mV",
+        "upstreamConverterUnit": "µV",
+        "status": "unresolved",
+        "evidence": {
+          "path": "research/large_source_expansion_20261002/review/dreem-physical-unit-discrepancy.json",
+          "sha256": "ed84b714590dd5c1a6d3144cac3fff71262a50b71e26f396e0aa7e2185e26eec"
+        }
+      },
+      "verification": [
+        "Consent and ethics read by this session from the arXiv PDF (version 4, 27 April 2020) on 2026-10-03; the short quotes are recorded in decisionHistory. The DOD-H paragraph names the CPP approval, the medicines-agency declaration, the Data Protection Act, ICH and Helsinki, and says only that participants received financial compensation; no consent sentence. The DOD-O paragraph has the consent sentence and the clinical-trial number; no ethics body. Neither 'consent' nor an ethics body appears elsewhere in the paper.",
+        "Licence, access right, DOI and record identity checked against the archived publisher API record pinned here (license id mit-license, access_right open). The release names the same metadata hash.",
+        "The release decision names the exact release bytes, both audits, the handoff and the source-scope review by SHA-256. The independent audit's paired values for every metric equal the release's, and both audits bind the same scoring run.",
+        "Physical units: the pinned discrepancy record shows stored metadata in mV against an upstream converter declaring µV, unresolved. Amplitude-sensitive models are held; the export publishes the hold without figures."
+      ],
+      "decisionHistory": [
+        {
+          "date": "2026-10-03",
+          "decision": "aggregate_preview",
+          "reason": "Owner decision: publish aggregate results, and state on the record exactly which statement each cohort has and which is missing. DOD-H has an ethics approval and no consent sentence in the paper; DOD-O has written informed consent and no named ethics body. Precedent: the Alpha Waves release (research/publication_review_20260922), published with a consent statement and no named ethics committee. Also recorded: the physical-unit disagreement remains unresolved, and amplitude-sensitive models are held without figures.",
+          "basis": [
+            "https://arxiv.org/pdf/1911.03221"
+          ],
+          "quotes": [
+            {
+              "source": "https://arxiv.org/pdf/1911.03221",
+              "cohort": "DOD-H",
+              "statement": "ethics",
+              "section": "II.A.1 Dataset 1: healthy patients",
+              "text": "The study was approved by the Committees of Protection of Persons (CPP)"
+            },
+            {
+              "source": "https://arxiv.org/pdf/1911.03221",
+              "cohort": "DOD-O",
+              "statement": "consent",
+              "section": "II.A.2 Dataset 2: patients with OSA",
+              "text": "All trial participants gave their informed written consent prior to participation."
+            },
+            {
+              "source": "https://arxiv.org/pdf/1911.03221",
+              "cohort": "both",
+              "statement": "public_availability",
+              "section": "Abstract",
+              "text": "two publicly-available datasets"
+            }
+          ],
+          "readAt": "2026-10-03"
+        }
+      ],
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/Dreem Sleep Baselines Website Handoff.md",
+        "sha256": "dc7784c973f4013eba3e0459d47e96c64b5e8a350c474b608c131ba86895c186"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/dreem-consensus-cpu-v2-website-release.json",
+        "sha256": "3822bea84840faac17ef07f0fc4e905d78ec152eb78611be28e00634cb70a8a0"
+      },
+      "protocol": {
+        "path": "research/large_source_expansion_20261002/analysis-plans/dreem-consensus-cpu-protocol-proposal-v2.json",
+        "sha256": "96ce991fc24a2458e812bbb79daf9f4cd7e9e737b3114554447316e8f0336eb9"
+      },
+      "numericalAudit": {
+        "path": "research/large_source_expansion_20261002/review/dreem-protected-evaluation-independent-result-audit.json",
+        "sha256": "852fb1374b6aef009126c0166d2ec041288d2afa53b966f3b505dfe8a6bd843c"
+      },
+      "supplementaryAudit": {
+        "path": "research/large_source_expansion_20261002/review/dreem-evaluation-result-audit-supplement.json",
+        "sha256": "5d7f71d80ecac1ed3f9a894aad3d7d265fdee4c23c397b6584e4496e3ba06e06"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/dreem-aggregate-release-decision.json",
+        "sha256": "db428a0f7d386e2f14839bc9967bafa88ef341fe404fe74f7316e1c3e48d5785"
+      },
+      "scopeReview": {
+        "path": "research/large_source_expansion_20261002/review/dreem-source-attribution-and-release-scope.json",
+        "sha256": "710ff760376c56607c2ff98f25e42c8e2ee21c253cd253656b8b69133c7d6afd"
+      },
+      "depositMetadata": {
+        "path": "research/large_source_expansion_20261002/metadata/dreem-zenodo-release-metadata-20261003.json",
+        "sha256": "36f376277cc99ac23a2ce648f414d356889222825c137b7aa7a9ea2461535bf6"
+      }
+    },
+    {
+      "id": "openbmi-cross-session-calibration",
+      "decision": "aggregate_preview",
+      "name": "OpenBMI motor imagery (Lee et al. 2019)",
+      "task": "Left- versus right-hand motor imagery, same person across sessions: trained on session 1, tested on the final 60 trials of session 2 after 0, 10, 20 or 40 labelled session-2 trials",
+      "source": "https://doi.org/10.5524/100542",
+      "version": "GigaDB dataset 100542, 54 people with two sessions each; only the motor-imagery training runs (EEG_MI_train) of both sessions are used: 62 channels at 1,000 Hz",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Min-Ho Lee, O-Yeon Kwon, Yong-Jeong Kim, Hong-Kyung Kim, Young-Eun Lee, John Williamson, Siamac Fazli and Seong-Whan Lee · EEG dataset and OpenBMI toolbox for three BCI paradigms: an investigation into BCI illiteracy, GigaScience (2019), giz002, doi:10.1093/gigascience/giz002. Data: Supporting data, GigaScience Database, doi:10.5524/100542.",
+      "privacyReview": "The paper's Ethical Approval section states that the study was approved by the Korea University Institutional Review Board (1040548-KUIRB-16-159-A-2) and that written informed consent was obtained from all participants before the experiments. Published here: participant-equal means with whole-participant bootstrap intervals for each arm and calibration budget, paired contrasts, and how many of the 51 people declined. The release's per-person summaries (worst observed change, medians, 10th percentiles) are dropped, and no participant, session file or trial identifier is published.",
+      "reviewedAt": "2026-10-03",
+      "reviewBasis": [
+        "https://doi.org/10.1093/gigascience/giz002",
+        "https://doi.org/10.5524/100542",
+        "https://api.datacite.org/dois/10.5524/100542"
+      ],
+      "verification": [
+        "Licence: the DataCite record registered by GigaDB (pinned here) lists Creative Commons Zero v1.0 Universal (cc0-1.0), and GigaDB's repository policy places datasets under CC0. The GPL-3.0 seen in third-party catalogues is the paper's licence for the OpenBMI source code, not the data.",
+        "Ethics and consent: from the paper's Ethical Approval section, as gathered on 2026-10-02 in the pinned evidence record (research/expansion_v8_20261001), with the IRB number.",
+        "The release decision names the exact release bytes, the source aggregate, the independent audit and the handoff by SHA-256. The audit names the aggregate it recomputed, and every metric block in the release equals that aggregate's value for value.",
+        "The source aggregate keeps its pre-audit flags (release not authorised, awaiting the independent result audit). That is expected: the audit and the release decision that follow it are separate records."
+      ],
+      "decisionHistory": [
+        {
+          "date": "2026-10-03",
+          "decision": "aggregate_preview",
+          "reason": "CC0 1.0 per the DataCite record and GigaDB policy; IRB approval and written informed consent stated in the paper. Only the motor-imagery training runs, session 1 to session 2 of the same person. The 51-person cohort under the same fixed method is published; the earlier 40-person snapshot, never published here, is history and not a separate result."
+        }
+      ],
+      "licenseRecord": {
+        "path": "research/large_source_expansion_20261002/metadata/openbmi-datacite.json",
+        "sha256": "9f32be26232ee9bcaa685e7e142419a325f431dfb5380b19d7b892884f0cb702"
+      },
+      "consentRecord": {
+        "path": "research/expansion_v8_20261001/datasets/verify-gigadb-100542.json",
+        "sha256": "a55b6e4be3542f61af2294ff032aa37305d049425c1b6078147c5895c1810da1"
+      },
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/OpenBMI Expanded Calibration Benchmark Website Handoff.md",
+        "sha256": "8b05f8ac887fef78a21ef74fa5a4f758f09b3ecfabbbc33271a91a113b2bc3f5"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/openbmi-calibration-expanded-v1-website-release.json",
+        "sha256": "ddfd4ef4ca7794add89c4dd8ae6bdcaab7a4040a711ffae11cae4f46ff4b21b6"
+      },
+      "sourceAggregate": {
+        "path": "research/large_source_expansion_20261002/results/openbmi-calibration-expanded-v1-aggregate.json",
+        "sha256": "82af65908cbd712ce17f36585303fe853fdeae78e7732124845051fc4a528e9a"
+      },
+      "numericalAudit": {
+        "path": "research/large_source_expansion_20261002/review/openbmi-extension-final-metrics-audit.json",
+        "sha256": "20f1a890a3c86e350f6a63d9bf7dd9c03d2467ebae3a2d30f23ec92e2c31a3cd"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/openbmi-expanded-release-decision.json",
+        "sha256": "17911314f069f97b90f9bc282360e2c7e0327ce9b142e87ea3292b3258489081"
+      }
+    }
+  ]
+}

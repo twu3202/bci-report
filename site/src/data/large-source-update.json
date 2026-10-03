@@ -1,0 +1,1149 @@
+{
+  "schema_version": "bci-report-large-source-update-v1",
+  "release_id": "large-source-update-20261003",
+  "generated_at": "2026-10-03",
+  "status": "aggregate_preview",
+  "metric_units": "accuracy, balanced accuracy, macro F1, recall, precision and F1 are proportions in [0,1]; Cohen's kappa is in [-1,1]; differences are differences of proportions; counts of people, nights, epochs and trials are whole numbers; null means undefined, never zero",
+  "scope": "Two separate questions, each with two fixed classical CPU baselines: sleep staging in two Dreem cohorts kept as separate experiments, and cross-session motor-imagery calibration in 51 OpenBMI people. No foundation-model or fine-tuning result. Nothing here extends the eight-protocol matrix, and the results share no ranking.",
+  "results": {
+    "dreem-sleep-baselines": {
+      "id": "dreem-sleep-baselines",
+      "title": "Sleep staging: simple CPU baselines",
+      "question": "how far two fixed classical baselines get at five-stage sleep staging against the publisher's consensus, in healthy sleepers and in people with obstructive sleep apnoea, as two separate experiments",
+      "source_release_id": "dreem-consensus-cpu-v2-20261003",
+      "model_family": "classical",
+      "foundation_model": false,
+      "fine_tuning": false,
+      "stages": [
+        "Wake",
+        "N1",
+        "N2",
+        "N3",
+        "REM"
+      ],
+      "epoch_seconds": 30,
+      "metric": "balanced_accuracy",
+      "weighting": "participant-equal: each night counts once, however long; accuracy, balanced accuracy and macro F1 use the same nights",
+      "prior_balanced_accuracy_note": "The training prior always predicts N2. Its balanced accuracy is one over the number of stages a night contains, so it sits slightly above one fifth when a night lacks a stage. It is the floor this baseline sets, not a chance level.",
+      "separate_experiments": "DOD-H and DOD-O have separate models, folds and intervals. They were recorded at different centres with different equipment; nothing here compares them.",
+      "cohorts": {
+        "DOD-H": {
+          "population": "healthy adult volunteers",
+          "recorded_at": "French Armed Forces Biomedical Research Institute (IRBA), Fatigue and Vigilance Unit, Brétigny-sur-Orge, France",
+          "people": 25,
+          "nights": 25,
+          "eligible_epochs": 24662,
+          "folds": 5,
+          "nights_tested_per_fold": 5,
+          "nights_trained_per_fold": 20,
+          "stage_support_epochs": {
+            "Wake": 3037,
+            "N1": 1505,
+            "N2": 11879,
+            "N3": 3514,
+            "REM": 4727
+          },
+          "arms": {
+            "training_prior": {
+              "label": "Training prior",
+              "description": "the training folds' stage frequencies, the same for every epoch; its prediction is their most frequent stage, N2, for every epoch. A floor to beat, not a chance level",
+              "accuracy": {
+                "mean": 0.4796919644715474,
+                "interval_95": [
+                  0.44563605460596845,
+                  0.513981651436973
+                ],
+                "nights_defined": 25
+              },
+              "balanced_accuracy": {
+                "mean": 0.20200000000000004,
+                "interval_95": [
+                  0.20000000000000004,
+                  0.20600000000000002
+                ],
+                "nights_defined": 25
+              },
+              "macro_f1": {
+                "mean": 0.13010265235719182,
+                "interval_95": [
+                  0.12276118513943532,
+                  0.13759462742906844
+                ],
+                "nights_defined": 25
+              },
+              "cohen_kappa": {
+                "mean": 0.0,
+                "interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "nights_defined": 25
+              }
+            },
+            "spectral_ridge": {
+              "label": "Spectral ridge",
+              "description": "standardised one-hot ridge regression (alpha 1) on 25 log-relative spectral values per epoch: five bands from each of five EEG derivations",
+              "accuracy": {
+                "mean": 0.7227492066106045,
+                "interval_95": [
+                  0.6777779126201103,
+                  0.7628009435570785
+                ],
+                "nights_defined": 25
+              },
+              "balanced_accuracy": {
+                "mean": 0.5666575862376557,
+                "interval_95": [
+                  0.5306176546425121,
+                  0.6001149051497127
+                ],
+                "nights_defined": 25
+              },
+              "macro_f1": {
+                "mean": 0.532589135674459,
+                "interval_95": [
+                  0.48980170452188276,
+                  0.5734354366631049
+                ],
+                "nights_defined": 25
+              },
+              "cohen_kappa": {
+                "mean": 0.5838518076960925,
+                "interval_95": [
+                  0.5261026919284301,
+                  0.6363575862539125
+                ],
+                "nights_defined": 25
+              },
+              "per_stage": [
+                {
+                  "stage": "Wake",
+                  "support_epochs": 3037,
+                  "recall": {
+                    "mean": 0.6475669515084725,
+                    "interval_95": [
+                      0.5491022520939921,
+                      0.7386435855159589
+                    ],
+                    "nights_defined": 25
+                  },
+                  "precision": {
+                    "mean": 0.7644654667083931,
+                    "interval_95": [
+                      0.7005834449791206,
+                      0.8227101042446175
+                    ],
+                    "nights_defined": 25
+                  },
+                  "f1": {
+                    "mean": 0.6650768756059826,
+                    "interval_95": [
+                      0.5851659782795231,
+                      0.7375957808531634
+                    ],
+                    "nights_defined": 25
+                  }
+                },
+                {
+                  "stage": "N1",
+                  "support_epochs": 1505,
+                  "recall": {
+                    "mean": 0.0,
+                    "interval_95": [
+                      0.0,
+                      0.0
+                    ],
+                    "nights_defined": 25
+                  },
+                  "precision": {
+                    "mean": null,
+                    "interval_95": null,
+                    "nights_defined": 0,
+                    "nights_undefined": {
+                      "stage_never_predicted": 25
+                    }
+                  },
+                  "f1": {
+                    "mean": 0.0,
+                    "interval_95": [
+                      0.0,
+                      0.0
+                    ],
+                    "nights_defined": 25
+                  }
+                },
+                {
+                  "stage": "N2",
+                  "support_epochs": 11879,
+                  "recall": {
+                    "mean": 0.8535910810031875,
+                    "interval_95": [
+                      0.773913055301101,
+                      0.9179778348069929
+                    ],
+                    "nights_defined": 25
+                  },
+                  "precision": {
+                    "mean": 0.7731511270605402,
+                    "interval_95": [
+                      0.7277289869466741,
+                      0.8182810929433332
+                    ],
+                    "nights_defined": 25
+                  },
+                  "f1": {
+                    "mean": 0.7893873779561398,
+                    "interval_95": [
+                      0.739762284936994,
+                      0.8311674455818489
+                    ],
+                    "nights_defined": 25
+                  }
+                },
+                {
+                  "stage": "N3",
+                  "support_epochs": 3514,
+                  "recall": {
+                    "mean": 0.5937966713015486,
+                    "interval_95": [
+                      0.4676965605329486,
+                      0.7124029075833276
+                    ],
+                    "nights_defined": 24,
+                    "nights_undefined": {
+                      "stage_absent": 1
+                    }
+                  },
+                  "precision": {
+                    "mean": 0.6973616623311653,
+                    "interval_95": [
+                      0.5572619979430509,
+                      0.8192557516956374
+                    ],
+                    "nights_defined": 24,
+                    "nights_undefined": {
+                      "stage_never_predicted": 1
+                    }
+                  },
+                  "f1": {
+                    "mean": 0.5622685438903963,
+                    "interval_95": [
+                      0.43648382140244874,
+                      0.6772127961418721
+                    ],
+                    "nights_defined": 25
+                  }
+                },
+                {
+                  "stage": "REM",
+                  "support_epochs": 4727,
+                  "recall": {
+                    "mean": 0.7356841604160347,
+                    "interval_95": [
+                      0.6383314808472872,
+                      0.8262435443189096
+                    ],
+                    "nights_defined": 25
+                  },
+                  "precision": {
+                    "mean": 0.637566149268791,
+                    "interval_95": [
+                      0.5535895970701479,
+                      0.715306433107973
+                    ],
+                    "nights_defined": 25
+                  },
+                  "f1": {
+                    "mean": 0.6462128809197761,
+                    "interval_95": [
+                      0.5614332724796282,
+                      0.7218582029395353
+                    ],
+                    "nights_defined": 25
+                  }
+                }
+              ],
+              "stages_never_predicted": [
+                "N1"
+              ]
+            }
+          },
+          "paired_balanced_accuracy": {
+            "comparison": "spectral ridge minus training prior, the same nights",
+            "mean": 0.36465758623765565,
+            "interval_95": [
+              0.329353902770171,
+              0.3977916309921719
+            ],
+            "nights": 25,
+            "interval_excludes_zero": true
+          },
+          "consent_and_ethics": {
+            "ethics_approval": {
+              "stated": true,
+              "statement": "Approved by the Committees of Protection of Persons (CPP); declared to the French National Agency for Medicines and Health Products Safety; carried out in compliance with the French Data Protection Act, International Conference on Harmonization (ICH) standards and the Declaration of Helsinki (1964, as revised in 2013).",
+              "quote": "The study was approved by the Committees of Protection of Persons (CPP)"
+            },
+            "informed_consent": {
+              "stated": false,
+              "note": "The paper's DOD-H description contains no informed-consent sentence."
+            },
+            "read_from": "arXiv:1911.03221v4 (27 April 2020), II. Materials and Methods, A. Datasets, read 2026-10-03"
+          }
+        },
+        "DOD-O": {
+          "population": "people with obstructive sleep apnoea (OSA)",
+          "recorded_at": "Stanford Sleep Medicine Center, United States (clinical trial NCT03657329)",
+          "people": 55,
+          "nights": 55,
+          "eligible_epochs": 53161,
+          "folds": 5,
+          "nights_tested_per_fold": 11,
+          "nights_trained_per_fold": 44,
+          "stage_support_epochs": {
+            "Wake": 10427,
+            "N1": 2860,
+            "N2": 26271,
+            "N3": 5500,
+            "REM": 8103
+          },
+          "arms": {
+            "training_prior": {
+              "label": "Training prior",
+              "description": "the training folds' stage frequencies, the same for every epoch; its prediction is their most frequent stage, N2, for every epoch. A floor to beat, not a chance level",
+              "accuracy": {
+                "mean": 0.49233306367340024,
+                "interval_95": [
+                  0.4625695193518933,
+                  0.5220512606549267
+                ],
+                "nights_defined": 55
+              },
+              "balanced_accuracy": {
+                "mean": 0.20515151515151506,
+                "interval_95": [
+                  0.2009090909090908,
+                  0.21151515151515143
+                ],
+                "nights_defined": 55
+              },
+              "macro_f1": {
+                "mean": 0.1333028698571214,
+                "interval_95": [
+                  0.12750104746229768,
+                  0.13919868268806404
+                ],
+                "nights_defined": 55
+              },
+              "cohen_kappa": {
+                "mean": 0.0,
+                "interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "nights_defined": 55
+              }
+            },
+            "spectral_ridge": {
+              "label": "Spectral ridge",
+              "description": "standardised one-hot ridge regression (alpha 1) on 25 log-relative spectral values per epoch: five bands from each of five EEG derivations",
+              "accuracy": {
+                "mean": 0.724804785976619,
+                "interval_95": [
+                  0.6970001901173744,
+                  0.7502908074905734
+                ],
+                "nights_defined": 55
+              },
+              "balanced_accuracy": {
+                "mean": 0.4927609582337354,
+                "interval_95": [
+                  0.4730686291654157,
+                  0.5122696905087243
+                ],
+                "nights_defined": 55
+              },
+              "macro_f1": {
+                "mean": 0.4736966731016292,
+                "interval_95": [
+                  0.4493934309600461,
+                  0.49712182388235954
+                ],
+                "nights_defined": 55
+              },
+              "cohen_kappa": {
+                "mean": 0.5417920344861786,
+                "interval_95": [
+                  0.5040475559632676,
+                  0.5776832178560135
+                ],
+                "nights_defined": 55
+              },
+              "per_stage": [
+                {
+                  "stage": "Wake",
+                  "support_epochs": 10427,
+                  "recall": {
+                    "mean": 0.8042724429318096,
+                    "interval_95": [
+                      0.7551810654489364,
+                      0.850952405136598
+                    ],
+                    "nights_defined": 55
+                  },
+                  "precision": {
+                    "mean": 0.7651710695040471,
+                    "interval_95": [
+                      0.720448396621804,
+                      0.8073597728161572
+                    ],
+                    "nights_defined": 55
+                  },
+                  "f1": {
+                    "mean": 0.7564240850446476,
+                    "interval_95": [
+                      0.7171733203879957,
+                      0.7931898850019687
+                    ],
+                    "nights_defined": 55
+                  }
+                },
+                {
+                  "stage": "N1",
+                  "support_epochs": 2860,
+                  "recall": {
+                    "mean": 0.0,
+                    "interval_95": [
+                      0.0,
+                      0.0
+                    ],
+                    "nights_defined": 55
+                  },
+                  "precision": {
+                    "mean": null,
+                    "interval_95": null,
+                    "nights_defined": 0,
+                    "nights_undefined": {
+                      "stage_never_predicted": 55
+                    }
+                  },
+                  "f1": {
+                    "mean": 0.0,
+                    "interval_95": [
+                      0.0,
+                      0.0
+                    ],
+                    "nights_defined": 55
+                  }
+                },
+                {
+                  "stage": "N2",
+                  "support_epochs": 26271,
+                  "recall": {
+                    "mean": 0.9280340041123174,
+                    "interval_95": [
+                      0.9052774627922241,
+                      0.9474712002349464
+                    ],
+                    "nights_defined": 55
+                  },
+                  "precision": {
+                    "mean": 0.7099778209451469,
+                    "interval_95": [
+                      0.6785014615536158,
+                      0.740021823720103
+                    ],
+                    "nights_defined": 55
+                  },
+                  "f1": {
+                    "mean": 0.7977568802364454,
+                    "interval_95": [
+                      0.7731297496366563,
+                      0.8202390317299312
+                    ],
+                    "nights_defined": 55
+                  }
+                },
+                {
+                  "stage": "N3",
+                  "support_epochs": 5500,
+                  "recall": {
+                    "mean": 0.22080655908189747,
+                    "interval_95": [
+                      0.1543384732489562,
+                      0.29217154482371854
+                    ],
+                    "nights_defined": 52,
+                    "nights_undefined": {
+                      "stage_absent": 3
+                    }
+                  },
+                  "precision": {
+                    "mean": 0.6338967329543896,
+                    "interval_95": [
+                      0.5239069349805594,
+                      0.7385676344456727
+                    ],
+                    "nights_defined": 49,
+                    "nights_undefined": {
+                      "stage_never_predicted": 6
+                    }
+                  },
+                  "f1": {
+                    "mean": 0.27860127783553856,
+                    "interval_95": [
+                      0.20260750183918888,
+                      0.3581058233028112
+                    ],
+                    "nights_defined": 53,
+                    "nights_undefined": {
+                      "stage_absent_and_never_predicted": 2
+                    }
+                  }
+                },
+                {
+                  "stage": "REM",
+                  "support_epochs": 8103,
+                  "recall": {
+                    "mean": 0.495199095978811,
+                    "interval_95": [
+                      0.4314736809875706,
+                      0.5589486668874626
+                    ],
+                    "nights_defined": 53,
+                    "nights_undefined": {
+                      "stage_absent": 2
+                    }
+                  },
+                  "precision": {
+                    "mean": 0.6819473515327729,
+                    "interval_95": [
+                      0.6085424973161754,
+                      0.7485305855095371
+                    ],
+                    "nights_defined": 54,
+                    "nights_undefined": {
+                      "stage_never_predicted": 1
+                    }
+                  },
+                  "f1": {
+                    "mean": 0.5245127698047519,
+                    "interval_95": [
+                      0.46005700053480025,
+                      0.5869297463027597
+                    ],
+                    "nights_defined": 54,
+                    "nights_undefined": {
+                      "stage_absent_and_never_predicted": 1
+                    }
+                  }
+                }
+              ],
+              "stages_never_predicted": [
+                "N1"
+              ]
+            }
+          },
+          "paired_balanced_accuracy": {
+            "comparison": "spectral ridge minus training prior, the same nights",
+            "mean": 0.28760944308222025,
+            "interval_95": [
+              0.2673153910254166,
+              0.3071886749269601
+            ],
+            "nights": 55,
+            "interval_excludes_zero": true
+          },
+          "consent_and_ethics": {
+            "ethics_approval": {
+              "stated": false,
+              "note": "No ethics committee or institutional review board is named for DOD-O in the paper."
+            },
+            "informed_consent": {
+              "stated": true,
+              "statement": "All trial participants gave informed written consent before taking part.",
+              "quote": "All trial participants gave their informed written consent prior to participation."
+            },
+            "read_from": "arXiv:1911.03221v4 (27 April 2020), II. Materials and Methods, A. Datasets, read 2026-10-03"
+          }
+        }
+      },
+      "record_accounting": {
+        "archive_records": 81,
+        "excluded_before_scoring": 1,
+        "exclusion_reason": "the publisher declares the record has no consensus scoring",
+        "evaluated": 80
+      },
+      "epoch_accounting": {
+        "total": 77901,
+        "unscored": 3,
+        "zero_or_invalid_channel_scale": 75,
+        "eligible": 77823
+      },
+      "jobs": {
+        "trained": 20,
+        "composition": "2 cohorts × 5 folds × 2 arms",
+        "failed": 0
+      },
+      "method": {
+        "target": "the publisher's stored consensus hypnogram; individual scorers' votes were not reconstructed",
+        "signal": "five EEG derivations (C3-M2, F3-F4, F3-M2, F3-O1, F4-O2) at 250 Hz, 30-second epochs",
+        "spectra": "each epoch and channel divided by its own largest absolute value, then Welch spectra; band power in delta, theta, alpha, sigma and beta as a log share of 0.5–30 Hz power: 25 values per epoch",
+        "arms": {
+          "training_prior": "the training folds' stage frequencies, the same for every epoch; its prediction is their most frequent stage, N2, for every epoch. A floor to beat, not a chance level",
+          "spectral_ridge": "standardised one-hot ridge regression (alpha 1) on 25 log-relative spectral values per epoch: five bands from each of five EEG derivations"
+        },
+        "folds": "five folds within each cohort, assigned by a hash of each record before any outcome was seen; every night is tested once per arm by a model fitted on the other four folds of its own cohort",
+        "selection": "none: no tuning, held-out calibration, oversampling, class balancing or outcome-selected retry; natural stage prevalence kept",
+        "balanced_accuracy": "per night, the mean recall over the stages that night contains; then the mean over nights",
+        "macro_f1": "per night, the mean F1 over the stages that night contains or the model predicts; then the mean over nights"
+      },
+      "uncertainty": {
+        "kind": "pointwise 95% whole-night bootstrap within each cohort",
+        "draws": 10000,
+        "generator": "PCG64",
+        "seed": 20261003,
+        "finite_draws_required": 9500,
+        "paired": "the same draws for both arms and every metric",
+        "conditional_on": "the fixed cross-validation predictions: refitting and fold-assignment uncertainty are not included, and there is no multiple-comparison adjustment"
+      },
+      "units": {
+        "stored_metadata": "mV",
+        "upstream_converter": "µV",
+        "status": "unresolved",
+        "consequence": "the two baselines divide out a positive gain per epoch and channel, so they do not depend on the unit; models that need absolute amplitude are held (see holds)"
+      },
+      "reading": "In both cohorts the spectral ridge's balanced accuracy is well above the training prior's, with a paired interval that excludes zero. Its ordinary accuracy runs well above its balanced accuracy because the stages are imbalanced, and it never predicts N1 in either cohort.",
+      "limitations": [
+        "Two fixed classical baselines on CPU. No neural network, foundation model or fine-tuning (LoRA/PEFT) was run, and nothing here ranks such models.",
+        "DOD-H and DOD-O are separate experiments with separate models, recorded at different centres with different equipment. They are not a controlled comparison of health status, and nothing here measures transfer between them.",
+        "The target is the publisher's stored consensus; individual scorers' votes were not reconstructed. No human-expert equivalence, diagnostic or clinical claim.",
+        "Physical units are unresolved: the stored metadata says millivolts while the upstream converter treats the arrays as microvolts. The gain-normalised relative spectra do not depend on a positive gain, but nothing establishes calibration, reference, clipping or filter equivalence.",
+        "Probabilities are uncalibrated: no calibration, confidence or abstention claim.",
+        "Intervals are pointwise, conditional on the fixed cross-validation predictions, and not adjusted for multiple comparisons.",
+        "Balanced accuracy and macro F1 average only the stages present (or predicted) in a night, so the prior's balanced accuracy can sit slightly above one fifth; it is not a chance level.",
+        "Natural stage prevalence; no class balancing or tuning. Not comparable with papers that use other channels, cohorts, preprocessing or splits."
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "nights": 80,
+        "jobs": 20,
+        "checked": "every prediction packet and truth record; every night's metrics and every bootstrap summary recomputed and matched within a relative tolerance of 2e-14",
+        "supplement": "pass: the truth ledger and the complete projection into the release"
+      },
+      "credits": {
+        "paper": "https://doi.org/10.1109/TNSRE.2020.3011181",
+        "preprint": "https://arxiv.org/abs/1911.03221",
+        "deposit": "https://zenodo.org/records/15900394",
+        "deposit_doi": "10.5281/zenodo.15900394",
+        "repository": "https://github.com/Dreem-Organization/dreem-learning-open",
+        "repository_revision": "8b332d6827f5ae6a22f4bb97b4deef4273238ec3"
+      },
+      "rights": {
+        "name": "Dreem Open Datasets (DOD-H and DOD-O)",
+        "task": "Five-stage sleep staging (Wake, N1, N2, N3, REM) of 30-second epochs against the publisher's stored consensus hypnogram, within each cohort separately",
+        "source": "https://zenodo.org/records/15900394",
+        "version": "Zenodo record 15900394 (doi:10.5281/zenodo.15900394, published 2025-07-15), as archived from the publisher API on 2026-10-03: 81 archive records, of which the 80 with consensus scoring are evaluated (DOD-H 25, DOD-O 55)",
+        "license": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT",
+        "attribution": "Antoine Guillot, Fabien Sauvet, Emmanuel H. During and Valentin Thorey · Dreem Open Datasets: Multi-Scored Sleep Datasets to Compare Human and Automated Sleep Staging, IEEE Transactions on Neural Systems and Rehabilitation Engineering (2020), doi:10.1109/TNSRE.2020.3011181; preprint arXiv:1911.03221. Data: Dreem Open Datasets, Zenodo, doi:10.5281/zenodo.15900394. Official repository: github.com/Dreem-Organization/dreem-learning-open, revision 8b332d6827f5ae6a22f4bb97b4deef4273238ec3.",
+        "privacyReview": "The two cohorts carry different statements, and each is published as it stands. DOD-H, 25 healthy volunteers recorded at the French Armed Forces Biomedical Research Institute (IRBA): the paper states that the study was approved by the Committees of Protection of Persons (CPP), declared to the French National Agency for Medicines and Health Products Safety, and carried out in compliance with the French Data Protection Act, ICH standards and the Declaration of Helsinki; its DOD-H description has no informed-consent sentence. DOD-O, 55 people with obstructive sleep apnoea recorded at the Stanford Sleep Medicine Center (clinical trial NCT03657329): the paper states that all trial participants gave informed written consent before taking part; no ethics committee or review board is named for DOD-O. The authors present both as publicly available datasets, and the deposit declares open access. Published here: cohort-level participant-equal means with whole-night bootstrap intervals, cohort-level stage support counts, and paired differences. No per-night value, record name, fold assignment or demographic.",
+        "reviewedAt": "2026-10-03",
+        "reviewBasis": [
+          "https://arxiv.org/pdf/1911.03221",
+          "https://doi.org/10.1109/TNSRE.2020.3011181",
+          "https://zenodo.org/records/15900394"
+        ],
+        "licenseScope": "The licence the deposit declares in its archived publisher metadata. It is recorded as the deposit's declaration, not as a statement about every future use. This release redistributes no upstream code or data; the upstream code licence could not be fetched (the request timed out)."
+      }
+    },
+    "openbmi-cross-session-calibration": {
+      "id": "openbmi-cross-session-calibration",
+      "title": "How much does calibration help across EEG sessions?",
+      "question": "how much do labelled trials from a person's second session help a decoder trained on their first, and for how many people did they not",
+      "cohort_version": "expanded51-v1",
+      "model_family": "classical",
+      "foundation_model": false,
+      "fine_tuning": false,
+      "classes": 2,
+      "class_names": [
+        "left hand",
+        "right hand"
+      ],
+      "chance_level": 0.5,
+      "metric": "balanced_accuracy",
+      "generalization": "the same person, a later session: trained on session 1, tested on session 2. Not generalisation to an unseen person",
+      "cohort": {
+        "acquisition_identities": 54,
+        "engineering_exclusion": 1,
+        "input_quality_holds": 2,
+        "evaluated": 51,
+        "benchmark_candidates_adjudicated": 53,
+        "original_people": 40,
+        "added_people": 11,
+        "independent_replication": false,
+        "relationship": "the original 40 people, with their results unchanged, plus all 11 later-eligible people under the same fixed method: an expanded cohort, not an independent replication",
+        "test_trials_each_person": 60,
+        "unique_test_trials": 3060,
+        "jobs": {
+          "trained": 408,
+          "failed": 0,
+          "preserved_from_the_original_cohort": 320,
+          "added": 88
+        }
+      },
+      "protocol": {
+        "data": "the motor-imagery training runs (EEG_MI_train) of both sessions: 62 channels at 1,000 Hz, left- versus right-hand imagery",
+        "session_1": "the first 80 trials fit the classifier; the last 20 calibrate its probabilities",
+        "session_2_budgets": [
+          0,
+          10,
+          20,
+          40
+        ],
+        "session_2_calibration": "the first 0, 10, 20 or 40 trials of session 2, labelled, added for calibration",
+        "session_2_test": "the final 60 trials of session 2, the same in every condition; the four budgets add no people and no test trials",
+        "preprocessing": "fixed per-trial 8–30 Hz filtering; dimensionless inputs only",
+        "selection": "no parameter search, score-driven retry, trial dropping, class-balancing search or target-balance selection; the cohort was fixed before its test labels were read",
+        "interval_kind": "pointwise 95% whole-participant bootstrap, 10,000 draws, the same draws for every arm and budget; descriptive, no multiple-comparison adjustment"
+      },
+      "arms": [
+        {
+          "id": "log-covariance-lda",
+          "label": "Log-covariance + shrinkage LDA",
+          "description": "each trial's channel covariance, regularised and divided by its trace, mapped by the matrix logarithm; linear discriminant analysis with shrinkage",
+          "by_budget": [
+            {
+              "target_trials": 0,
+              "balanced_accuracy": {
+                "mean": 0.6787793448658022,
+                "interval_95": [
+                  0.6358347494676106,
+                  0.7237724014159497
+                ]
+              },
+              "accuracy": {
+                "mean": 0.6790849673202615,
+                "interval_95": [
+                  0.6366013071895426,
+                  0.7245098039215685
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.6564211553501171,
+                "interval_95": [
+                  0.6071491840562991,
+                  0.707680023507414
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 10,
+              "balanced_accuracy": {
+                "mean": 0.6911005856472666,
+                "interval_95": [
+                  0.6483431133401618,
+                  0.7352026759988192
+                ]
+              },
+              "accuracy": {
+                "mean": 0.6866013071895425,
+                "interval_95": [
+                  0.6434640522875817,
+                  0.731045751633987
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.6763759934986362,
+                "interval_95": [
+                  0.6304570678030668,
+                  0.7235074692148565
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 20,
+              "balanced_accuracy": {
+                "mean": 0.6923703020172748,
+                "interval_95": [
+                  0.6527872723401487,
+                  0.7335569656598526
+                ]
+              },
+              "accuracy": {
+                "mean": 0.6862745098039216,
+                "interval_95": [
+                  0.6454248366013071,
+                  0.7284313725490197
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.674949581151781,
+                "interval_95": [
+                  0.6302864509117236,
+                  0.7201013435891002
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 40,
+              "balanced_accuracy": {
+                "mean": 0.7244413080088261,
+                "interval_95": [
+                  0.6886726213896026,
+                  0.7616503200633977
+                ]
+              },
+              "accuracy": {
+                "mean": 0.719934640522876,
+                "interval_95": [
+                  0.6833333333333333,
+                  0.7581699346405228
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.7157050257165299,
+                "interval_95": [
+                  0.6786316769846786,
+                  0.7547041370249463
+                ]
+              },
+              "people": 51
+            }
+          ],
+          "calibration_gain": [
+            {
+              "target_trials": 10,
+              "comparison": "10 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.012321240781464423,
+                "interval_95": [
+                  -0.005873175604108023,
+                  0.03339431370673963
+                ]
+              },
+              "interval_excludes_zero": false,
+              "people": 51,
+              "people_with_any_decline": 21,
+              "people_with_decline_of_5_points_or_more": 8
+            },
+            {
+              "target_trials": 20,
+              "comparison": "20 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.013590957151472453,
+                "interval_95": [
+                  -0.0034195548705735945,
+                  0.03222631970817199
+                ]
+              },
+              "interval_excludes_zero": false,
+              "people": 51,
+              "people_with_any_decline": 24,
+              "people_with_decline_of_5_points_or_more": 6
+            },
+            {
+              "target_trials": 40,
+              "comparison": "40 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.04566196314302388,
+                "interval_95": [
+                  0.023354322932498853,
+                  0.06877009843388827
+                ]
+              },
+              "interval_excludes_zero": true,
+              "people": 51,
+              "people_with_any_decline": 13,
+              "people_with_decline_of_5_points_or_more": 6
+            }
+          ]
+        },
+        {
+          "id": "relative-psd-ridge",
+          "label": "Relative PSD + standardized ridge",
+          "description": "each channel's band power as a share of its 8–30 Hz power, on a log scale; standardised, then a ridge classifier",
+          "by_budget": [
+            {
+              "target_trials": 0,
+              "balanced_accuracy": {
+                "mean": 0.5729681740158066,
+                "interval_95": [
+                  0.5435354016633939,
+                  0.605038743779102
+                ]
+              },
+              "accuracy": {
+                "mean": 0.5722222222222223,
+                "interval_95": [
+                  0.542156862745098,
+                  0.6052287581699346
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.5541698054691294,
+                "interval_95": [
+                  0.5216964803264474,
+                  0.5890192135058772
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 10,
+              "balanced_accuracy": {
+                "mean": 0.5736752667140687,
+                "interval_95": [
+                  0.5448966342496561,
+                  0.6051170742404316
+                ]
+              },
+              "accuracy": {
+                "mean": 0.5712418300653596,
+                "interval_95": [
+                  0.5418218954248366,
+                  0.6029411764705883
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.558922337891791,
+                "interval_95": [
+                  0.5281412778822574,
+                  0.5925126642272164
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 20,
+              "balanced_accuracy": {
+                "mean": 0.5792760890635122,
+                "interval_95": [
+                  0.552486344376635,
+                  0.6083881725543366
+                ]
+              },
+              "accuracy": {
+                "mean": 0.576797385620915,
+                "interval_95": [
+                  0.5496732026143791,
+                  0.6062173202614378
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.5659148066820368,
+                "interval_95": [
+                  0.5373150952768588,
+                  0.5969150486284757
+                ]
+              },
+              "people": 51
+            },
+            {
+              "target_trials": 40,
+              "balanced_accuracy": {
+                "mean": 0.5897607866232615,
+                "interval_95": [
+                  0.5603079012925332,
+                  0.6211277438340046
+                ]
+              },
+              "accuracy": {
+                "mean": 0.5859477124183007,
+                "interval_95": [
+                  0.5562009803921568,
+                  0.6176470588235294
+                ]
+              },
+              "macro_f1": {
+                "mean": 0.5773576671648428,
+                "interval_95": [
+                  0.5462540462501928,
+                  0.6102335629351044
+                ]
+              },
+              "people": 51
+            }
+          ],
+          "calibration_gain": [
+            {
+              "target_trials": 10,
+              "comparison": "10 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.000707092698262086,
+                "interval_95": [
+                  -0.010637227129765808,
+                  0.011987627982260173
+                ]
+              },
+              "interval_excludes_zero": false,
+              "people": 51,
+              "people_with_any_decline": 25,
+              "people_with_decline_of_5_points_or_more": 6
+            },
+            {
+              "target_trials": 20,
+              "comparison": "20 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.0063079150477057,
+                "interval_95": [
+                  -0.008503352131433578,
+                  0.020446013068805436
+                ]
+              },
+              "interval_excludes_zero": false,
+              "people": 51,
+              "people_with_any_decline": 19,
+              "people_with_decline_of_5_points_or_more": 10
+            },
+            {
+              "target_trials": 40,
+              "comparison": "40 minus 0 labelled session-2 trials, the same people and test trials",
+              "balanced_accuracy_change": {
+                "mean": 0.016792612607454935,
+                "interval_95": [
+                  -0.0012029506422105052,
+                  0.035434669261248775
+                ]
+              },
+              "interval_excludes_zero": false,
+              "people": 51,
+              "people_with_any_decline": 16,
+              "people_with_decline_of_5_points_or_more": 6
+            }
+          ]
+        }
+      ],
+      "between_arms": [
+        {
+          "target_trials": 0,
+          "comparison": "relative PSD minus log-covariance, the same people and test trials",
+          "balanced_accuracy_difference": {
+            "mean": -0.10581117084999554,
+            "interval_95": [
+              -0.14054074018123455,
+              -0.07217219033070918
+            ]
+          },
+          "interval_excludes_zero": true,
+          "people": 51,
+          "people_lower_with_relative_psd": 41,
+          "people_lower_by_5_points_or_more": 32
+        },
+        {
+          "target_trials": 10,
+          "comparison": "relative PSD minus log-covariance, the same people and test trials",
+          "balanced_accuracy_difference": {
+            "mean": -0.11742531893319785,
+            "interval_95": [
+              -0.15588387170598564,
+              -0.07986438504050349
+            ]
+          },
+          "interval_excludes_zero": true,
+          "people": 51,
+          "people_lower_with_relative_psd": 39,
+          "people_lower_by_5_points_or_more": 33
+        },
+        {
+          "target_trials": 20,
+          "comparison": "relative PSD minus log-covariance, the same people and test trials",
+          "balanced_accuracy_difference": {
+            "mean": -0.11309421295376229,
+            "interval_95": [
+              -0.1465724722527068,
+              -0.08041357081623779
+            ]
+          },
+          "interval_excludes_zero": true,
+          "people": 51,
+          "people_lower_with_relative_psd": 43,
+          "people_lower_by_5_points_or_more": 36
+        },
+        {
+          "target_trials": 40,
+          "comparison": "relative PSD minus log-covariance, the same people and test trials",
+          "balanced_accuracy_difference": {
+            "mean": -0.1346805213855645,
+            "interval_95": [
+              -0.1644746096893804,
+              -0.10646793584278567
+            ]
+          },
+          "interval_excludes_zero": true,
+          "people": 51,
+          "people_lower_with_relative_psd": 47,
+          "people_lower_by_5_points_or_more": 42
+        }
+      ],
+      "reading": "With 40 labelled session-2 trials the log-covariance baseline improves on average, with a paired interval above zero, yet some people still declined. The relative-PSD baseline's interval includes zero: its average gain is not established.",
+      "history": "An earlier 40-person snapshot of this experiment was prepared but never published here. Its people and results are all included, unchanged, in the 51 above; it is not a separate result.",
+      "limitations": [
+        "One dataset, the same people, offline: trained on session 1, tested on session 2. Not unseen-person generalisation, online closed-loop control, clinical efficacy, consumer headsets or reduced montages.",
+        "Two fixed CPU baselines; no foundation model or fine-tuning (LoRA/PEFT).",
+        "An expanded cohort (the original 40 plus 11 later-eligible people), not an independent replication.",
+        "Each person's estimate rests on 60 test trials and is noisy; the four budgets reuse those trials.",
+        "Physical amplitude units are unresolved; only the dimensionless baselines are run.",
+        "Intervals are pointwise and descriptive, not adjusted for multiple comparisons. Not comparable with published scores under other protocols."
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "people": 51,
+        "conditions_recomputed": 408,
+        "checked": "every person, arm and budget recomputed, with the original 40-person aggregate, the expanded means, paired contrasts and bootstrap intervals; no model refitted or loaded"
+      },
+      "rights": {
+        "name": "OpenBMI motor imagery (Lee et al. 2019)",
+        "task": "Left- versus right-hand motor imagery, same person across sessions: trained on session 1, tested on the final 60 trials of session 2 after 0, 10, 20 or 40 labelled session-2 trials",
+        "source": "https://doi.org/10.5524/100542",
+        "version": "GigaDB dataset 100542, 54 people with two sessions each; only the motor-imagery training runs (EEG_MI_train) of both sessions are used: 62 channels at 1,000 Hz",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Min-Ho Lee, O-Yeon Kwon, Yong-Jeong Kim, Hong-Kyung Kim, Young-Eun Lee, John Williamson, Siamac Fazli and Seong-Whan Lee · EEG dataset and OpenBMI toolbox for three BCI paradigms: an investigation into BCI illiteracy, GigaScience (2019), giz002, doi:10.1093/gigascience/giz002. Data: Supporting data, GigaScience Database, doi:10.5524/100542.",
+        "privacyReview": "The paper's Ethical Approval section states that the study was approved by the Korea University Institutional Review Board (1040548-KUIRB-16-159-A-2) and that written informed consent was obtained from all participants before the experiments. Published here: participant-equal means with whole-participant bootstrap intervals for each arm and calibration budget, paired contrasts, and how many of the 51 people declined. The release's per-person summaries (worst observed change, medians, 10th percentiles) are dropped, and no participant, session file or trial identifier is published.",
+        "reviewedAt": "2026-10-03",
+        "reviewBasis": [
+          "https://doi.org/10.1093/gigascience/giz002",
+          "https://doi.org/10.5524/100542",
+          "https://api.datacite.org/dois/10.5524/100542"
+        ]
+      }
+    }
+  },
+  "status_only": [],
+  "holds": [
+    {
+      "id": "dreem-amplitude-sensitive-models",
+      "statement": "No neural-network or foundation-model score exists for the Dreem cohorts in this batch.",
+      "reason": "The stored signal metadata says millivolts, while the publisher's own converter treats the same arrays as microvolts. Until that disagreement is resolved, models that depend on absolute amplitude stay held rather than run on a guessed unit. The two published baselines divide each epoch and channel by a positive gain before their relative spectral features, so they do not depend on that unit.",
+      "scope": "Applies to the Dreem cohorts only. It says nothing about those models' accuracy."
+    }
+  ],
+  "not_published": [
+    "Per-person and per-night values of any kind. From the OpenBMI release: the worst observed paired change, the medians and the 10th percentiles of every contrast. Only how many people declined is published. From Dreem: no per-night value exists in the release, and none is published.",
+    "Record, file and participant identifiers, cohort and fold assignments, predictions, scores, probabilities, features, fitted models and truth arrays.",
+    "Dreem Brier score and uncalibrated negative log-likelihood, for both arms, both cohorts and their paired differences. The probabilities are uncalibrated and the pages make no probability claim.",
+    "The Dreem combined DOD-H plus DOD-O summary. The release labels it descriptive only, and printing it beside the cohort rows would invite the cross-cohort comparison the design does not support.",
+    "Dreem epoch-micro summaries and stage confusion matrices. They are secondary point estimates without intervals.",
+    "Dreem paired differences other than balanced accuracy (accuracy, macro F1, Cohen's kappa). Each arm's own value is published with its interval.",
+    "The training prior's per-stage recall, precision and F1. It predicts N2 for every epoch, so these values follow from its design.",
+    "OpenBMI Brier score and 10-bin expected calibration error, cells and contrasts, and the accuracy and macro-F1 contrasts. Accuracy and macro F1 are published per cell.",
+    "The earlier 40-person OpenBMI snapshot. It was prepared but never published on this site. Its 40 people are all in the 51 published here, with their results unchanged, so it is not a separate result.",
+    "The independent audits, the Dreem supplementary audit, the OpenBMI source aggregate and both release decisions. Each is pinned by SHA-256 in this manifest and its pass or its binding is checked by the export. They carry private storage paths and are not copied.",
+    "Runtime, cost, storage and download-progress figures from the handoffs, and the status of the other sources in the batch.",
+    "Demographic tables reported by the original publications."
+  ],
+  "provenance": {
+    "manifest_sha256": "3126ca1b52f5711c7ae8227c7abab6e4e5cdd917944675cd00e414e62eb08c1e",
+    "included": [
+      "dreem-sleep-baselines",
+      "openbmi-cross-session-calibration"
+    ],
+    "holds": [
+      "dreem-amplitude-sensitive-models"
+    ]
+  }
+}

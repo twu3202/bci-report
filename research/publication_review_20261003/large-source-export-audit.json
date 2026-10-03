@@ -1,0 +1,55 @@
+{
+  "status": "pass",
+  "release_id": "large-source-update-20261003",
+  "export_sha256": "834411fc728d2596d4e48be533f2409921e307e5ebbb248300c9fb4cf722cbcd",
+  "manifest_sha256": "3126ca1b52f5711c7ae8227c7abab6e4e5cdd917944675cd00e414e62eb08c1e",
+  "included": [
+    "dreem-sleep-baselines",
+    "openbmi-cross-session-calibration"
+  ],
+  "status_only": [],
+  "holds": [
+    "dreem-amplitude-sensitive-models"
+  ],
+  "checks": [
+    "pinned handoffs, release JSONs, protocol, audits, supplementary audit, source aggregate, release decisions, licence and consent evidence and the unit-discrepancy record",
+    "each release decision names the exact release bytes, its audits and its handoff",
+    "Dreem: both audits passed every check and bind the same scoring run; every paired value in the release equals the independent audit's exactly; the release names both audit hashes and the protocol the audit names",
+    "OpenBMI: the audit passed and names the source aggregate; every metric block in the release equals that aggregate value for value; its stale pre-audit flags are the expected sealed state",
+    "Dreem: DOD-H 25 and DOD-O 55 nights, 80 evaluated of 81 archive records, 20 jobs, 5 folds per cohort; 77,901 - 3 - 75 = 77,823 eligible epochs; stage support sums to each cohort's eligible epochs",
+    "Dreem: null stays null (no night defines it), every interval holds its mean, the paired mean equals the difference of the arm means, and the paired balanced-accuracy interval excludes zero",
+    "Dreem: the training prior is the constant-N2 floor and is labelled nowhere as a chance level; no cross-cohort field",
+    "Dreem: each cohort's consent and ethics statement rests on a recorded quote, and each missing statement is stated as missing",
+    "OpenBMI: 54 = 1 + 2 + 51; 3,060 = 51 x 60 test trials; 408 = 51 x 2 x 4 jobs; budgets exactly 0/10/20/40",
+    "OpenBMI: decline counts are whole people over 51; paired means equal the cell differences; accuracy is a whole count of 3,060 trials; every interval holds its mean",
+    "OpenBMI: the log-covariance 40-versus-0 interval excludes zero and the relative-PSD one includes it",
+    "the printed figures are the ones the pinned handoffs state",
+    "per-person summaries refused by key, fragment and value; holds carry no figure",
+    "no private paths or hosts, record, file or participant identifiers"
+  ],
+  "audit_bindings": {
+    "dreem-sleep-baselines": {
+      "bound": [
+        "release bytes: by the release decision (release_sha256), which also names both audits, the handoff and the source-scope review",
+        "all six paired metrics per cohort (point and interval): equal, exactly, to the independent audit's audited values",
+        "protocol and numeric conventions: the same hashes in release and independent audit; protocol pinned here",
+        "coverage: 20 jobs, 80 nights, DOD-H 25 / DOD-O 55, 5 folds, both arms, in both audits and the release",
+        "the supplement names the independent audit's hash and the same activation and completion hashes"
+      ],
+      "not_bound": [
+        "neither audit names the release JSON hash or the private aggregate-candidate hash it projects; per-arm levels (accuracy, balanced accuracy, macro F1, kappa, per-stage values) are bound only through the release decision, the supplement's projection assertion, the audited paired differences (ridge minus prior) and the handoff's printed figures"
+      ]
+    },
+    "openbmi-cross-session-calibration": {
+      "bound": [
+        "release bytes: by the release decision (website_release.sha256), which also names the aggregate, the audit and the handoff",
+        "source aggregate bytes: by the audit (expanded_aggregate_sha256)",
+        "every metric block of the release: equal, value for value, to the audited aggregate",
+        "scoring activation, aggregation plan, bootstrap, cohort and job counts: equal across release, aggregate and audit"
+      ],
+      "not_bound": [
+        "the audit does not name the release JSON hash; the release is tied to it through the release decision and through value-for-value equality with the audited aggregate"
+      ]
+    }
+  }
+}

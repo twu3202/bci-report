@@ -17,6 +17,7 @@ import export_clinical_update as clinical
 import export_context_update as context
 import export_adaptation_update as adaptation
 import export_extension_update as extension
+import export_large_source_update as large_source
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -101,6 +102,17 @@ def check(root):
     assert (root/'data/extension-update.json').read_bytes() == extension_payload, 'Unreviewed extension download'
     assert all(p.read_bytes() == extension_payload for p in extension.OUTPUTS), 'Extension source/download drift'
     expected.add('extension-update.json')
+
+    # And the 2026-10-03 large-source export (Dreem sleep baselines, OpenBMI calibration).
+    large_source_rederived = large_source.inputs_available()
+    large_source_payload = (large_source.serialized_export() if large_source_rederived
+                            else (root/'data/large-source-update.json').read_bytes())
+    large_source_audit = json.loads(large_source.EXPORT_AUDIT.read_text())
+    assert large_source_audit['status'] == 'pass', 'Large-source export review did not pass'
+    assert hashlib.sha256(large_source_payload).hexdigest() == large_source_audit['export_sha256'], 'Stale large-source export audit'
+    assert (root/'data/large-source-update.json').read_bytes() == large_source_payload, 'Unreviewed large-source download'
+    assert all(p.read_bytes() == large_source_payload for p in large_source.OUTPUTS), 'Large-source source/download drift'
+    expected.add('large-source-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -141,6 +153,8 @@ def check(root):
                    else 'adaptation-update payload matched to its audit hash (private inputs not present)'),
                   ('extension-update payload reproduced from its own manifest and audit' if extension_rederived
                    else 'extension-update payload matched to its audit hash (private inputs not present)'),
+                  ('large-source-update payload reproduced from its own manifest and audit' if large_source_rederived
+                   else 'large-source-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }
