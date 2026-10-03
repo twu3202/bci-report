@@ -502,7 +502,7 @@
     "The LTRSVP numerical-sensitivity diagnostic (alternate refits on independently re-extracted features): an audit diagnostic, not a result."
   ],
   "provenance": {
-    "manifest_sha256": "30088856246e8045fc109753c4cb1fa77d4c2c5f4ef1b9cdd7f3edeb533b57c7",
+    "manifest_sha256": "2dacb0131128304a9ece7bb8e8591819d36c85cd97ec7c5a3c5a0f077cfa2653",
     "included": [
       "ysu-async-ssvep-extension",
       "ltrsvp-rate-transfer"

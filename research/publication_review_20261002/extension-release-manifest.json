@@ -125,6 +125,11 @@
             }
           ],
           "readAt": "2026-10-02"
+        },
+        {
+          "date": "2026-10-02",
+          "decision": "aggregate_preview",
+          "reason": "Decision unchanged; task wording now names same-rate transfer ('tested on a different recording at the same or another rate'), matching the generalization field and the 3x3 matrix, whose diagonal and primary 10-to-10 arm are same-rate cells. No figure changed."
         }
       ],
       "summary": {
