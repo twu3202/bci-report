@@ -25,11 +25,15 @@ export const siteUpdates = [
     // topic, model-adaptation; the EEGMAT and LaBraM pages now send readers there.
     // The home restructure (same day) moved the model directory and field notes
     // to /methods/ and the public-data register to /datasets/, and opened the
-    // Questions hub at /topics/.
+    // Questions hub at /topics/. Every other topic page and every dataset and
+    // method page gained visible content the same day — a "Cite this page" block
+    // and, on topics, the "Measured on" line — so they carry this date too.
     paths: ['/', '/topics/when-not-to-act/', '/topics/screen-to-vr/', '/releases/', '/data-use/', '/api/',
             '/datasets/', '/datasets/ysu-async-ssvep/', '/datasets/ltrsvp/',
             '/topics/model-adaptation/', '/topics/calibration-budget/', '/datasets/eegmat/', '/methods/labram/',
-            '/topics/', '/methods/'],
+            '/topics/', '/methods/',
+            '/topics/dry-vs-wet/', '/topics/fewer-electrodes/', '/topics/on-the-move/', '/topics/does-pretraining-help/',
+            '/topics/clinical-groups/', '/datasets/ds003810/'],
   },
   {
     date: '2026-10-01',
