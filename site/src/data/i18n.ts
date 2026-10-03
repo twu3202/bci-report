@@ -70,6 +70,12 @@
  *   epoch (sleep, 30 s scoring)  帧 / 数据帧
  *   network block                Transformer 块（block）  the experimental block
  *                                                is 组块; the two meet on one page
+ *   cross-validation fold        交叉验证折      "5 折"; not 数据折
+ *   training prior (baseline)    训练集先验
+ *   recall / precision           召回率 / 精确率
+ *   consensus (sleep scoring)    共识分期
+ *   derivation (EEG)             导联            a referenced or bipolar pair
+ *                                                (C3-M2); a single channel is 通道
  *   institutions                 Chinese institutions by their standard Chinese
  *                                names (清华大学, 天津大学, 燕山大学); others as
  *                                they name themselves
@@ -102,6 +108,8 @@ export const translatedPaths = [
   '/topics/model-adaptation/',
   '/topics/does-pretraining-help/',
   '/topics/when-not-to-act/',
+  // Since 2026-10-03: Dreem sleep staging.
+  '/topics/sleep-staging/',
   '/releases/',
   '/api/',
 ] as const;
@@ -368,7 +376,7 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, pretraining and clinical groups.`,
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
@@ -483,7 +491,7 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、预训练与临床分组的证据。`,
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练与临床分组的证据。`,
     statsCaption: '核心矩阵',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     siteCountsLead: '全站：',
@@ -676,7 +684,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation and pretraining; when not to act; clinical groups. With a map of which kinds of transfer have been measured.',
+    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation and pretraining; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
     dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits. Below them, a map of which kinds of transfer have been measured, which are held, and which have not been tried.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -686,7 +694,7 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配与预训练；何时不该执行；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配与预训练；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
     dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。下面是一张地图：哪些迁移已经测量、哪些暂缓、哪些还没有做过。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
@@ -706,7 +714,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     adapting: { title: 'Adapting models',
       lede: 'How much calibration a decoder needs, which part of a pretrained model to update, and whether pretraining helps at all.' },
     reliability: { title: 'Reliability & clinical',
-      lede: 'When a decoder should not act, and what resting-state EEG can and cannot say about a clinical group.' },
+      lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG can and cannot say about a clinical group.' },
   },
   zh: {
     transfer: { title: '迁移',
@@ -714,7 +722,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     adapting: { title: '调整模型',
       lede: '解码器需要多少校准、预训练模型该更新哪一部分，以及预训练到底有没有帮助。' },
     reliability: { title: '可靠性与临床',
-      lede: '解码器什么时候不该执行，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
+      lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
   },
 };
 
@@ -749,10 +757,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Does EEG decoding still work while walking or running?',
       summary: 'Standing, walking and running results, with scalp and ear recordings and incompatible time windows kept apart.',
       detail: 'SSVEP balanced accuracy · ERP ROC AUC' },
+    // Broadened on 2026-10-03 (owner decision): the OpenBMI next-session result
+    // sits beside the wearable SSVEP one, which keeps every figure it had.
     'calibration-budget': { kicker: 'Calibration budget', title: 'How much calibration?',
-      question: 'How much calibration data does a wearable SSVEP decoder need?',
-      summary: 'Twelve, 24 or 48 labeled target trials help some methods more than others—and trial count is not elapsed time.',
-      detail: 'Common future blocks · target-only fitting · 102 people' },
+      question: 'How much calibration data does an EEG decoder need?',
+      summary: 'Twelve, 24 or 48 labeled trials on a wearable SSVEP task, and up to 40 from a person’s next motor-imagery session, help some methods more than others and not every person—and trial count is not elapsed time.',
+      detail: 'SSVEP · 102 people · motor imagery, next session · 51 people' },
     // Split from calibration-budget on 2026-10-02: the LaBraM result adapts on
     // other people and uses no label from the test person, so it is not
     // calibration, and the next-day hold is a different question again.
@@ -764,6 +774,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
       summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
       detail: 'Idle, 4-person pilot · non-control, 20 people · research plan' },
+    // Since 2026-10-03 (owner decision): Dreem, two cohorts kept apart.
+    'sleep-staging': { kicker: 'Sleep staging · simple baselines', title: 'Sleep-stage balance',
+      question: 'Why can a sleep stager be right most of the time and still miss whole stages?',
+      summary: 'Two simple baselines in 25 healthy sleepers and 55 people with sleep apnoea, as two separate experiments: accuracy beside balanced accuracy, and the stage the stager never predicts.',
+      detail: 'Dreem DOD-H and DOD-O · 25 and 55 nights · balanced accuracy' },
     'clinical-groups': { kicker: 'Clinical research', title: 'Clinical groups',
       question: 'Can resting-state EEG separate Parkinson\'s disease from controls?',
       summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
@@ -791,9 +806,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       summary: '站立、行走与跑动时的结果，头皮与耳部记录、互不兼容的时间窗分开呈现。',
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
     'calibration-budget': { kicker: '校准预算', title: '需要多少校准？',
-      question: '可穿戴 SSVEP 解码器需要多少校准数据？',
-      summary: '12、24 或 48 个目标被试校准试次，对某些方法帮助更大——而且试次数不等于耗时。',
-      detail: '共同的后续组块 · 仅用目标被试数据拟合 · 102 名被试' },
+      question: 'EEG 解码器需要多少校准数据？',
+      summary: '可穿戴 SSVEP 任务上的 12、24 或 48 个校准试次，以及同一被试下一次运动想象会话中最多 40 个校准试次：对某些方法帮助更大，也不是对每个人都有帮助——而且试次数不等于耗时。',
+      detail: 'SSVEP · 102 名被试 · 运动想象，下一次会话 · 51 名被试' },
     'model-adaptation': { kicker: '模型适配', title: '该更新哪一部分？',
       question: '新被试、第二天：预训练模型该更新哪一部分？',
       summary: '新被试、同一任务、不使用测试被试的任何标签：LaBraM 只训分类头、最后一个 Transformer 块还是 LoRA，与核心矩阵中冻结编码器的结果并排给出。另有：次日实验，已运行，暂缓发布。',
@@ -802,6 +817,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '没有人下指令时，EEG 解码器误触发有多频繁？',
       summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style（一次编码、回答多个问题）研究计划：何时该执行、该等待、该重新校准。',
       detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 研究计划' },
+    'sleep-staging': { kicker: '睡眠分期 · 简单基线', title: '睡眠分期的失衡',
+      question: '为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？',
+      summary: '25 名健康被试与 55 名睡眠呼吸暂停患者，两个简单基线，作为两项独立实验：准确率与平衡准确率并排，以及分期器从未预测过的那一期。',
+      detail: 'Dreem DOD-H 与 DOD-O · 25 晚与 55 晚 · 平衡准确率' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
       question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
       summary: '149 名被试的帕金森病与对照比较，旁边并排放着一个只用年龄和性别的对照基线——以及为什么两者都不是诊断。',
@@ -829,9 +848,10 @@ export const topicQuestionPhrases: Record<string, string> = {
   'screen-to-vr': '在屏幕上|校准的 P300 解码器，换到 VR 里|还管用吗？',
   'fewer-electrodes': '更少的电极、|或耳道内电极，|能比得上|完整的|头皮电极吗？',
   'on-the-move': '走路或跑步时，EEG 解码|还管用吗？',
-  'calibration-budget': '可穿戴 SSVEP 解码器|需要多少|校准数据？',
+  'calibration-budget': 'EEG 解码器|需要多少|校准数据？',
   'model-adaptation': '新被试、|第二天：|预训练模型|该更新|哪一部分？',
   'when-not-to-act': '没有人下指令时，EEG 解码器|误触发|有多频繁？',
+  'sleep-staging': '为什么睡眠分期器|大多数时候判对，|却仍会漏掉|整类睡眠阶段？',
   'clinical-groups': '静息态 EEG 能把|帕金森病患者|和对照组|区分开吗？',
   'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
 };

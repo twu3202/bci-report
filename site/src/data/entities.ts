@@ -23,6 +23,7 @@ import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
+import large from './large-source-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
@@ -32,7 +33,12 @@ export type L = { en: string; zh?: string };
 export const tr = (l: L, locale: Locale) => (locale === 'zh' && l.zh) || l.en;
 export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
 
-export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
+/**
+ * `sgn1` is a difference of proportions without its unit, for the lower bound of a
+ * percentage-point interval ("+2.3 to +6.9 pp"): the unit is printed once, after
+ * the upper bound, as intervalPp prints it (since 2026-10-03).
+ */
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 
@@ -44,6 +50,7 @@ export function formatFig(f: Fig): string {
     case 'pct1raw': return `${f.raw.toFixed(1)}%`;
     case 'pct2raw': return `${f.raw.toFixed(2)}%`;
     case 'pp1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)} pp`;
+    case 'sgn1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)}`;
     case 'auc3': return f.raw.toFixed(3);
     case 'auc2': return f.raw.toFixed(2);
     case 'num3': return minus(f.raw.toFixed(3));
@@ -85,6 +92,8 @@ export interface ResultGroup {
   title: L;
   /** Chance level where the payload records one. */
   chance?: Fig;
+  /** The plot's reading key, where the shared one would mislead (Dreem: no chance line, by design). */
+  plotLegend?: L;
   path: string;
   rows: ResultRow[];
 }
@@ -102,7 +111,7 @@ export interface DatasetEntity {
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
       CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json',
-      EXT = 'extension-update.json';
+      EXT = 'extension-update.json', LSU = 'large-source-update.json';
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
 const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig] | undefined =>
   iv ? [fig(iv[0], fmt, src), fig(iv[1], fmt, src)] : undefined;
@@ -469,6 +478,121 @@ function adaptationGroup(): ResultGroup {
   };
 }
 
+/* --- 2026-10-03: Dreem sleep staging, OpenBMI next session ------------------------- */
+
+const ACC: L = { en: 'Accuracy', zh: '准确率' };
+const MF1: L = { en: 'Macro F1', zh: '宏平均 F1' };
+const KAPPA: L = { en: 'Cohen’s kappa', zh: 'Cohen kappa 系数' };
+const STAGE_METRIC: Record<'recall' | 'precision' | 'f1', L> = {
+  recall: { en: 'Recall', zh: '召回率' }, precision: { en: 'Precision', zh: '精确率' }, f1: { en: 'F1' },
+};
+const dreem = large.results['dreem-sleep-baselines'];
+type DreemCohort = keyof typeof dreem.cohorts;
+type Summary = { mean: number | null; interval_95: number[] | null; nights_defined: number };
+export const dreemArmLabel: Record<'training_prior' | 'spectral_ridge', L> = {
+  training_prior: { en: 'Training prior', zh: '训练集先验' },
+  spectral_ridge: { en: 'Spectral ridge' },
+};
+export const dreemCohortLabel: Record<DreemCohort, L> = {
+  'DOD-H': { en: 'DOD-H · healthy sleepers', zh: 'DOD-H · 健康被试' },
+  'DOD-O': { en: 'DOD-O · people with obstructive sleep apnoea', zh: 'DOD-O · 阻塞性睡眠呼吸暂停患者' },
+};
+
+/**
+ * Dreem: one group per cohort, never one for both. DOD-H and DOD-O are separate
+ * experiments — their own models, folds and intervals, recorded at different
+ * centres — so the page keeps them apart, and no group pools or compares them.
+ * The training prior is a reference, not a decoding model, and has no chance
+ * level here: it is the floor the baseline sets. Balanced accuracy comes first,
+ * accuracy in the next row, so accuracy is never read alone. A null (precision of
+ * a stage never predicted) has no row: it is not a zero, and its recall row says why.
+ */
+function dreemGroup(id: DreemCohort): ResultGroup {
+  const c = dreem.cohorts[id];
+  const path = `/topics/sleep-staging/#${id.toLowerCase()}`;
+  const people = c.nights;
+  const cohort = dreemCohortLabel[id];
+  const rows: ResultRow[] = [];
+  for (const arm of ['training_prior', 'spectral_ridge'] as const) {
+    const a = c.arms[arm] as unknown as Record<string, Summary>;
+    const base = { path, method: dreemArmLabel[arm].en, label: dreemArmLabel[arm], comparator: arm === 'training_prior',
+                   condition: { en: `${cohort.en}, every night held out once`, zh: `${cohort.zh}，每晚各留出一次` }, people };
+    for (const [key, metric, fmt] of [['balanced_accuracy', BA, 'pct1'], ['accuracy', ACC, 'pct1'], ['macro_f1', MF1, 'pct1'],
+                                       ['cohen_kappa', KAPPA, 'num3']] as [string, L, Fmt][])
+      rows.push({ ...base, metric, value: fig(a[key].mean!, fmt, LSU), interval: pair(a[key].interval_95, fmt, LSU) });
+  }
+  const d = c.paired_balanced_accuracy;
+  rows.push({ path, method: dreemArmLabel.spectral_ridge.en, label: dreemArmLabel.spectral_ridge, people,
+    condition: { en: 'Spectral ridge minus training prior, the same nights', zh: 'spectral ridge 减训练集先验，相同的夜晚' },
+    metric: { en: 'Paired difference, balanced accuracy', zh: '配对差值（百分点），平衡准确率' },
+    value: fig(d.mean, 'pp1', LSU), interval: pair(d.interval_95, 'pp1', LSU),
+    note: { en: [fig(d.nights, 'count', LSU), ' nights under both baselines', ...(d.interval_excludes_zero ? ['; the interval excludes zero.'] : ['.'])],
+            zh: [fig(d.nights, 'count', LSU), ' 晚，两个基线相同', ...(d.interval_excludes_zero ? ['；区间不含零。'] : ['。'])] } });
+  const never = new Set(c.arms.spectral_ridge.stages_never_predicted);
+  for (const st of c.arms.spectral_ridge.per_stage) {
+    for (const key of ['recall', 'precision', 'f1'] as const) {
+      const m = st[key] as unknown as Summary;
+      if (m.mean === null) continue;   // not defined on any night: printed nowhere as a number
+      // The reading beside the figure: the stage's support (on its recall row), why a stage the
+      // ridge never predicts has no precision row, and on how many nights a mean is defined.
+      const en: (string | Fig)[] = [], zh: (string | Fig)[] = [];
+      if (key === 'recall') {
+        en.push(fig(st.support_epochs, 'count', LSU), ` ${st.stage} epochs in the consensus`);
+        zh.push(fig(st.support_epochs, 'count', LSU), ` 个 ${st.stage} 数据帧（共识分期）`);
+        if (never.has(st.stage)) {
+          en.push(`; never predicted on any night, so every one is missed and ${st.stage} precision is not defined (not zero)`);
+          zh.push(`；没有一晚预测过 ${st.stage}，所以全部漏掉，${st.stage} 的精确率没有定义（不是零）`);
+        }
+      }
+      if (m.nights_defined < people) {
+        en.push(...(en.length ? ['; '] : []), 'defined on ', fig(m.nights_defined, 'count', LSU), ' of ', fig(people, 'count', LSU), ' nights');
+        zh.push(...(zh.length ? ['；'] : []), fig(m.nights_defined, 'count', LSU), ' 晚有定义（共 ', fig(people, 'count', LSU), ' 晚）');
+      }
+      rows.push({ path, method: dreemArmLabel.spectral_ridge.en, label: dreemArmLabel.spectral_ridge,
+        condition: { en: `${cohort.en} · stage ${st.stage}`, zh: `${cohort.zh} · ${st.stage} 期` },
+        metric: STAGE_METRIC[key], value: fig(m.mean, 'pct1', LSU), interval: pair(m.interval_95, 'pct1', LSU), people,
+        note: en.length ? { en: [...en, '.'], zh: [...zh, '。'] } : undefined });
+    }
+  }
+  return {
+    id: `dreem-${id.toLowerCase()}`,
+    title: { en: `Sleep staging · ${cohort.en} (a separate experiment)`, zh: `睡眠分期 · ${cohort.zh}（独立实验）` },
+    path: '/topics/sleep-staging/', rows,
+    plotLegend: { en: 'Dot: the mean over nights; line: 95% interval. No dashed line: the training prior is a floor this baseline sets, not a chance level.',
+                  zh: '点为各晚均值，横线为 95% 区间。没有虚线：训练集先验是这个基线设定的下限，不是随机水平。' },
+  };
+}
+
+/** OpenBMI: same person, session 1 to session 2, four calibration budgets (2026-10-03). */
+export const openbmiArmLabel: Record<string, L> = {
+  'log-covariance-lda': { en: 'Log-covariance + shrinkage LDA', zh: '对数协方差 + 收缩 LDA' },
+  'relative-psd-ridge': { en: 'Relative PSD + standardized ridge', zh: '相对 PSD + 标准化岭回归' },
+};
+function openbmiGroup(): ResultGroup {
+  const r = large.results['openbmi-cross-session-calibration'];
+  const path = '/topics/calibration-budget/#next-session';
+  const people = r.cohort.evaluated;
+  const rows: ResultRow[] = [];
+  for (const a of r.arms) {
+    const base = { path, method: a.label, label: openbmiArmLabel[a.id], people };
+    for (const b of a.by_budget)
+      rows.push({ ...base, condition: { en: `Session 1 → session 2 · ${b.target_trials} labeled session-2 trials`, zh: `第一次会话 → 第二次会话 · ${b.target_trials} 个第二次会话校准试次` },
+        metric: BA, value: fig(b.balanced_accuracy.mean, 'pct1', LSU), interval: pair(b.balanced_accuracy.interval_95, 'pct1', LSU) });
+    for (const g of a.calibration_gain)
+      rows.push({ ...base, condition: { en: `${g.target_trials} minus 0 labeled session-2 trials, the same people and test trials`, zh: `${g.target_trials} 个减 0 个第二次会话校准试次，相同被试与测试试次` },
+        metric: DIFF, value: fig(g.balanced_accuracy_change.mean, 'pp1', LSU), interval: pair(g.balanced_accuracy_change.interval_95, 'pp1', LSU),
+        // The people behind the mean, beside it: how many declined, never which.
+        note: { en: [fig(g.people_with_any_decline, 'count', LSU), ' of ', fig(g.people, 'count', LSU), ' people declined, ', fig(g.people_with_decline_of_5_points_or_more, 'count', LSU), ' by 5 points or more',
+                     ...(g.interval_excludes_zero ? ['.'] : ['. The interval includes zero: the gain is not established.'])],
+                zh: [fig(g.people_with_any_decline, 'count', LSU), ' 人下降（共 ', fig(g.people, 'count', LSU), ' 人），其中 ', fig(g.people_with_decline_of_5_points_or_more, 'count', LSU), ' 人下降 5 pp 及以上',
+                     ...(g.interval_excludes_zero ? ['。'] : ['。区间包含零：这一提升不能认定。'])] } });
+  }
+  return {
+    id: r.id, title: { en: 'Calibration budget · same person, next session, motor imagery', zh: '校准预算 · 同一被试、下一次会话、运动想象' },
+    path: '/topics/calibration-budget/', chance: fig(r.chance_level, 'pct1', LSU), rows,
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
@@ -521,6 +645,8 @@ export const datasets: DatasetEntity[] = [
   fromRights('gait-eeg', cx['gait-eeg'], [gaitGroup()], { en: 'Treadmill walking at three speeds', zh: '跑步机上三种速度的行走' }, 'Multimodal gait dataset · treadmill walking'),
   fromRights('ysu-async-ssvep', cx['ysu-async-ssvep'], [ysuExtensionGroup(), ysuGroup()], { en: 'Asynchronous SSVEP, control and non-control states', zh: '异步 SSVEP，控制与非控制状态' }),
   fromRights('ltrsvp', extension.results['ltrsvp-rate-transfer'], [ltrsvpGroup()], { en: 'P300 target images in rapid serial visual presentation at three rates', zh: '三种速率下快速序列视觉呈现中的 P300 目标图像' }, 'LTRSVP · EEG Signals from an RSVP Task'),
+  fromRights('dreem-dod', dreem, [dreemGroup('DOD-H'), dreemGroup('DOD-O')], { en: 'Five-stage sleep staging, healthy sleepers and people with obstructive sleep apnoea, kept apart', zh: '五期睡眠分期，健康被试与阻塞性睡眠呼吸暂停患者，分开分析' }),
+  fromRights('openbmi', large.results['openbmi-cross-session-calibration'], [openbmiGroup()], { en: 'Left- vs. right-hand motor imagery across two sessions', zh: '跨两次会话的左右手运动想象' }),
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));

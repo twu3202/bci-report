@@ -29,6 +29,7 @@ import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
+import large from './large-source-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -124,7 +125,9 @@ export function homeDataset() {
  * replaced by measured results; until then it was absent on purpose, because a
  * Dataset entity must not imply a result a roadmap does not have. On 2026-10-02
  * those results moved to model-adaptation, and calibration-budget went back to
- * deployment-topics.json alone. model-adaptation also prints, for scale, the
+ * deployment-topics.json alone, until 2026-10-03 added the OpenBMI next-session
+ * result (large-source-update.json) beside it. sleep-staging (2026-10-03) reads
+ * that file only. model-adaptation also prints, for scale, the
  * core matrix's frozen LaBraM readout (experiments.json) and the adapter's
  * parameter counts from the 2026-09-22 engineering check (evidence-update.json),
  * so their releases are named too. Its next-day statuses carry no figure.
@@ -139,7 +142,12 @@ const contextExport = (metrics: string[]): LaterExport =>
 // The 2026-10-02 batch: the YSU extension on when-not-to-act, LTRSVP on screen-to-vr.
 const extensionExport = (metrics: string[]): LaterExport =>
   ({ file: '/data/extension-update.json', release: extension.release_id, generated: extension.generated_at, metrics });
+// The 2026-10-03 batch: Dreem on sleep-staging, OpenBMI on calibration-budget.
+const largeSourceExport = (metrics: string[]): LaterExport =>
+  ({ file: '/data/large-source-update.json', release: large.release_id, generated: large.generated_at, metrics });
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
+  'sleep-staging': largeSourceExport(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa', 'recall', 'precision', 'f1']),
+  'calibration-budget': largeSourceExport(['balanced_accuracy']),
   'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],
   'fewer-electrodes': { file: '/data/evidence-update.json', release: evidence.release_id,
                         generated: evidence.generated_at,

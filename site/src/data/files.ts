@@ -40,6 +40,10 @@ const named: Record<string, Text> = {
     en: 'Twenty further people of the asynchronous SSVEP release under a pilot-fixed and a personal rejection threshold (detection, coverage, correct-and-accepted, false acceptance per state, people helped and harmed), and LTRSVP image-rate and recording transfer (two primary arms, paired difference, 3×3 matrix), with rights records.',
     zh: '异步 SSVEP 数据集中另外 20 名被试在试点固定阈值与逐人阈值下的结果（检测、覆盖率、被接受且正确、各状态误接受、提升与变差人数），以及 LTRSVP 的图像速率与记录迁移（两个主分析组、配对差值、3×3 矩阵），附权利记录。',
   },
+  'large-source-update.json': {
+    en: 'Dreem sleep staging in two separate cohorts, DOD-H (healthy) and DOD-O (obstructive sleep apnoea): a training prior and a spectral ridge with accuracy, balanced accuracy, macro F1 and Cohen’s kappa, the paired balanced-accuracy gain and the ridge’s per-stage recall, precision and F1 (nulls kept null); and OpenBMI cross-session motor-imagery calibration, 51 people at 0, 10, 20 and 40 labelled session-2 trials, with paired changes and how many people declined. Rights records and one figure-free hold.',
+    zh: '两个独立队列上的 Dreem 睡眠分期——DOD-H（健康被试）与 DOD-O（阻塞性睡眠呼吸暂停）：训练集先验与 spectral ridge 的准确率、平衡准确率、宏平均 F1 与 Cohen kappa 系数，配对的平衡准确率提升，以及 spectral ridge 的逐期召回率、精确率与 F1（空值保持为空）；以及 OpenBMI 跨会话运动想象校准，51 名被试，第二次会话 0、10、20、40 个校准试次，附配对变化与下降人数。附权利记录与一项不含数字的暂缓。',
+  },
   'context-update.json': {
     en: 'Screen-to-VR P300 transfer, treadmill walking speed beside a movement-nuisance comparator, and the asynchronous SSVEP non-control pilot, with audits.',
     zh: '从屏幕到 VR 的 P300 迁移、跑步机步速（旁边并排放着运动干扰对照），以及异步 SSVEP 非控制试点，附审计。',

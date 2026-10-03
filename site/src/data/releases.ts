@@ -16,6 +16,23 @@
  */
 export const siteUpdates = [
   {
+    date: '2026-10-03',
+    // The large-source batch: Dreem sleep staging got its own question,
+    // sleep-staging, and dataset page; OpenBMI broadened calibration-budget to the
+    // next session (new question, short answer and #next-session) and got a
+    // dataset page. The home page and the Questions hub gained the sleep card and
+    // the two transfer-map entries, the holds register a hold, and the dataset
+    // index, data-use, API and release pages the batch. The Wearable SSVEP page
+    // prints calibration-budget's question under "Where it appears", so its text
+    // changed with it; model-adaptation's next-day section now points to the
+    // next-session result. The topic switcher on every other topic page lists the
+    // new question too; that is navigation, as the "Research preview" badge was
+    // chrome, and is not counted here.
+    paths: ['/', '/topics/', '/topics/sleep-staging/', '/topics/calibration-budget/', '/topics/model-adaptation/',
+            '/datasets/', '/datasets/dreem-dod/', '/datasets/openbmi/', '/datasets/wearable-ssvep-102/',
+            '/releases/', '/data-use/', '/api/'],
+  },
+  {
     date: '2026-10-02',
     // The YSU extension became the main non-control evidence on when-not-to-act
     // and reached its dataset page; LTRSVP joined screen-to-vr as a second
@@ -64,7 +81,7 @@ export interface Release {
   id: string;
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
-  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension';
+  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource';
   files: string[];
   pages: string[];
   summary: Text;
@@ -75,6 +92,23 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
 export const releases: Release[] = [
+  {
+    id: 'large-source-update-20261003', date: '2026-10-03', payload: 'largeSource',
+    files: ['large-source-update.json'],
+    pages: ['/topics/sleep-staging/', '/topics/calibration-budget/'],
+    summary: {
+      en: 'Two new sources, two separate questions, each with two fixed classical CPU baselines and no shared ranking. Dreem: five-stage sleep staging against the publisher’s consensus in 25 healthy sleepers (DOD-H) and 55 people with obstructive sleep apnoea (DOD-O), kept as separate experiments — a training prior and a spectral ridge, accuracy beside balanced accuracy, macro F1, Cohen’s kappa and the ridge’s stage-by-stage results. And OpenBMI: a motor-imagery decoder trained on a person’s first session and tested on their second after 0, 10, 20 or 40 labelled trials from it, in 51 people, with how many people declined beside every mean change. No foundation-model or fine-tuning result.',
+      zh: '两个新来源、两个各自独立的问题，各有两个固定的经典 CPU 基线，彼此不排名。Dreem：以发布者的共识分期为标准的五期睡眠分期，25 名健康被试（DOD-H）与 55 名阻塞性睡眠呼吸暂停患者（DOD-O）作为两项独立实验——训练集先验与 spectral ridge，准确率与平衡准确率并排，另有宏平均 F1、Cohen kappa 系数，以及 spectral ridge 的逐期结果。另有 OpenBMI：运动想象解码器在被试的第一次会话上训练，加入第二次会话的 0、10、20 或 40 个校准试次后在第二次会话上测试，51 名被试，每个平均变化旁都给出有多少人下降。没有基础模型或微调结果。',
+    },
+    notes: [
+      { en: 'The spectral ridge never predicts N1 in either cohort, so its N1 precision is not defined: it is published as null, never as zero. The training prior’s balanced accuracy sits slightly above one fifth because a night’s mean covers only the stages that night contains; it is a floor, not a chance level. Neural-network and foundation models on the Dreem cohorts are held, because the source’s physical units disagree.',
+        zh: 'spectral ridge 在两个队列中都从未预测过 N1，所以它的 N1 精确率没有定义：发布为空值，而不是零。训练集先验的平衡准确率略高于五分之一，因为每晚的均值只涵盖该晚出现过的分期；它是一个下限，不是随机水平。Dreem 队列上的神经网络与基础模型暂缓，因为数据源的物理单位说法不一致。' },
+      { en: 'OpenBMI is an expanded cohort under the same fixed method — the original 40 people with their results unchanged, plus 11 later-eligible people — not an independent replication; an earlier 40-person snapshot was prepared but never published here and is not a separate result. The relative-PSD change at 40 trials has an interval that includes zero and is not established.',
+        zh: 'OpenBMI 是同一固定方法下扩大的队列——原有 40 名被试、结果不变，加上之后符合条件的 11 名被试——不是独立的重复验证；更早的 40 人快照已准备好、但从未在本站发布，它不是一个单独的结果。相对 PSD 基线在 40 个试次时的变化，区间包含零，不能认定。' },
+      { en: 'Not published: per-person and per-night values (including the worst observed change, medians and 10th percentiles), Brier scores, log-likelihoods and calibration errors, the combined DOD-H plus DOD-O summary, and the independent audits themselves, which are pinned by hash in the review manifest because they carry private storage paths.',
+        zh: '不发布：逐人与逐晚的数值（包括观察到的最差变化、中位数与第 10 百分位数）、Brier 分数、对数似然与校准误差、DOD-H 与 DOD-O 合并后的汇总，以及独立审计文件本身——它们含有私有存储路径，因此只在审核清单中以哈希固定。' },
+    ],
+  },
   {
     id: 'extension-update-20261002', date: '2026-10-02', payload: 'extension',
     files: ['extension-update.json'],
@@ -210,6 +244,15 @@ export interface Hold {
 
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
+  {
+    id: 'dreem-amplitude-sensitive-models',
+    item: { en: 'Dreem sleep cohorts · neural-network and foundation models', zh: 'Dreem 睡眠队列 · 神经网络与基础模型' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: '2026-10-03', closed: null,
+    outcome: { en: 'The stored signal metadata says millivolts; the publisher’s own converter treats the same arrays as microvolts. Models that need absolute amplitude are not run on a guessed unit, so no such score exists. The published baselines do not depend on the unit.',
+               zh: '存储的信号元数据写的是毫伏，发布者自己的转换程序却把同样的数组当作微伏。需要绝对幅值的模型不在猜测的单位上运行，所以没有这类分数。已发布的基线不依赖这个单位。' },
+    href: '/topics/sleep-staging/#held',
+  },
   {
     id: 'ysu-async-ssvep-consent',
     item: { en: 'YSU asynchronous SSVEP · consent statement', zh: 'YSU 异步 SSVEP · 同意书声明' },

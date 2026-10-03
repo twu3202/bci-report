@@ -38,8 +38,11 @@ pilot (27 September); LaBraM adapted to new people three ways — head only,
 last block, rank-4 LoRA — with one matched recipe and three seeds (1 October);
 and that SSVEP non-control test extended to twenty further people under a
 pilot-fixed and a personal rejection threshold, plus a P300 decoder trained at
-one image rate and tested at another (2 October). They are kept apart rather
-than summed, because they measure different things. Research results, not
+one image rate and tested at another (2 October); and two simple sleep-staging
+baselines on healthy and sleep-apnoea cohorts kept as separate experiments,
+with accuracy beside balanced accuracy, plus a motor-imagery decoder carried to
+each person's next session with 0 to 40 labelled trials from it (3 October).
+They are kept apart rather than summed, because they measure different things. Research results, not
 diagnosis. No raw EEG, no per-participant scores, no model weights.
 
 ## Get the data
@@ -61,6 +64,7 @@ curl -O https://bci.report/data/clinical-update.json    # the 23 September batch
 curl -O https://bci.report/data/context-update.json     # the 27 September batch
 curl -O https://bci.report/data/adaptation-update.json  # the 1 October batch
 curl -O https://bci.report/data/extension-update.json   # the 2 October batch
+curl -O https://bci.report/data/large-source-update.json  # the 3 October batch
 ```
 
 What each file holds, loading examples and how to cite a release:

@@ -1,10 +1,13 @@
 ---
 import rawData from '../../../data/deployment-topics.json';
+import large from '../../../data/large-source-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
+import Fig from '../../../components/Fig.astro';
 import { type DeploymentData, intervalPct, modelLabel, pct, pp, intervalPp } from '../../../data/topics';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { openbmiArmLabel, tr, type Fig as FigValue, type Fmt } from '../../../data/entities';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -37,15 +40,43 @@ const chance = 1 / 12;
 // there, so links to #adaptation and #next-day keep working.
 const moved = topicCards[locale]['model-adaptation'].question;
 
+// The next session (2026-10-03, owner decision: the question broadens from a
+// wearable SSVEP decoder to "an EEG decoder"). OpenBMI motor imagery: the same
+// person, trained on session 1 and tested on the final 60 trials of session 2
+// after 0, 10, 20 or 40 labeled trials of session 2. A different data set, task
+// and test, so nothing in that section is compared with the SSVEP figures above.
+// Every figure there is a leaf of large-source-update.json printed with data-fig
+// (Fig.astro), re-read by check-workbench.mjs. Every mean change travels with how
+// many people declined; a change whose interval includes zero is "not
+// established"; the earlier 40-person snapshot is history, with no figure.
+const ob = large.results['openbmi-cross-session-calibration'];
+const LSU = 'large-source-update.json';
+const lf = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: LSU });
+const [logcov, psd] = ob.arms;
+const gainAt = (a: typeof logcov, t: number) => a.calibration_gain.find(g => g.target_trials === t)!;
+const lc40 = gainAt(logcov, 40), psd40 = gainAt(psd, 40);
+// What the copy says, held to the export: the page refuses to build without it.
+if (logcov.id !== 'log-covariance-lda' || psd.id !== 'relative-psd-ridge') throw new Error('calibration-budget: the arms are not in the order the copy reads them');
+if (!lc40.interval_excludes_zero || psd40.interval_excludes_zero) throw new Error('calibration-budget: the copy says the log-covariance gain at 40 is above zero and the relative-PSD one is not established');
+if (ob.cohort.independent_replication !== false) throw new Error('calibration-budget: the copy says the cohort is not an independent replication');
+if (ob.cohort.acquisition_identities !== ob.cohort.engineering_exclusion + ob.cohort.input_quality_holds + ob.cohort.evaluated) throw new Error('calibration-budget: the cohort accounting no longer adds up');
+const obPeople = ob.cohort.evaluated;
+const obPaper = ob.rights.reviewBasis.find(u => u.includes('giz002'));
+if (!obPaper) throw new Error('calibration-budget: the OpenBMI rights record no longer names the GigaScience paper');
+const ppt = (v: number) => pp(v, 1);
+// The interval's figures each on their own, so the English and Chinese answers print the same figures.
+const sgn = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(1)}`;
+type Part = string | FigValue;
+
 const copy = {
   en: {
-    description: `It depends on the method. For ${people} people on a 12-target wearable SSVEP task, going from 24 to 48 labeled trials lifted single-band eTRCA from ${etrcaWet24} to ${etrcaWet48} on wet recordings but only from ${etrcaDry24} to ${etrcaDry48} on dry; training-free CCA scored higher. Trial counts are not minutes.`,
-    answer: `It depends on the method: on a 12-target wearable SSVEP task, with the same [[${people}]] people and the same future test blocks, going from 24 to 48 labeled target trials lifted single-band eTRCA from [[${etrcaWet24}]] to [[${etrcaWet48}]] balanced accuracy on wet recordings, but only from [[${etrcaDry24}]] to [[${etrcaDry48}]] on dry ones. Target-only spectral ridge reached just [[${ridgeWet48}]] (wet) and [[${ridgeDry48}]] (dry) at 48 trials, and no calibrated eTRCA point beat the training-free CCA reference, which uses no labels ([[${ccaWet}]] wet, [[${ccaDry}]] dry); that eTRCA uses one fixed band, not the original method's filter bank, so it is not TRCA at its best. Trial counts are not minutes: the export records labeled trials per person and does not convert them into a setup-time claim.`,
+    description: `It depends on the method and on the gap. On wearable SSVEP, 24 to 48 labeled trials lifted single-band eTRCA from ${etrcaWet24} to ${etrcaWet48} (wet) but only ${etrcaDry24} to ${etrcaDry48} (dry). Across OpenBMI sessions, ${lc40.target_trials} labeled trials raised a log-covariance decoder by ${ppt(lc40.balanced_accuracy_change.mean)} for ${obPeople} people, yet ${lc40.people_with_any_decline} declined. Trial counts are not minutes.`,
+    answer: `It depends on the method, and on how far the test lies from the calibration. Within one day — a 12-target wearable SSVEP task, the same [[${people}]] people tested on the same future blocks — going from 24 to 48 labeled target trials lifted single-band eTRCA from [[${etrcaWet24}]] to [[${etrcaWet48}]] balanced accuracy on wet recordings but only from [[${etrcaDry24}]] to [[${etrcaDry48}]] on dry ones, and no calibrated eTRCA point beat the training-free CCA reference, which uses no labels ([[${ccaWet}]] wet, [[${ccaDry}]] dry); that eTRCA uses one fixed band, not the original method's filter bank, so it is not TRCA at its best. Across sessions — OpenBMI motor imagery, trained on each person's first session and tested on their second — [[${lc40.target_trials}]] labeled second-session trials raised a log-covariance decoder by [[${ppt(lc40.balanced_accuracy_change.mean)}]] on average across [[${obPeople}]] people (interval [[${sgn(lc40.balanced_accuracy_change.interval_95[0])}]] to [[${ppt(lc40.balanced_accuracy_change.interval_95[1])}]]), yet [[${lc40.people_with_any_decline}]] of them still declined; a relative-PSD decoder gained [[${ppt(psd40.balanced_accuracy_change.mean)}]], but its interval includes zero, so that gain is not established, and [[${psd40.people_with_any_decline}]] people declined. Trial counts are not minutes.`,
     plotCaption: `Labeled-trial budgets for the same ${people} people, tested on the same future blocks.`,
     plotLegend: 'Participant-mean balanced accuracy on 12-target, two-second SSVEP. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, 1 in 12. Rust rows are wet recordings, dark rows dry. CCA uses no labels; the source-only arm is a different mechanism and is not plotted.',
     plotNote: (s: string, reference: boolean) => `${s} recording · ${reference ? 'training-free reference' : 'target-only'}`,
-    eyebrow: 'Calibration budget · common future test blocks',
-    dek: 'More labeled trials do not have one universal value. On this 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings.',
+    eyebrow: 'Calibration budget · the same day and the next session',
+    dek: 'More labeled trials do not have one universal value. On a 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings. Across two sessions of the same people, a few labeled trials from the new session help one motor-imagery baseline on average — not everyone — and another not demonstrably.',
     sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
     ridgeEyebrow: 'Target-only spectral ridge',
     ridgeH2: 'Twelve, 24 and 48 labeled trials',
@@ -88,15 +119,47 @@ const copy = {
     // Self-contained: a link to #next-day lands on this heading, not on the one above it.
     movedNextH2: 'The next-day experiment has moved to the model-adaptation page',
     movedNext: ['The next-day status — run, independently replayed and held, with no figure published — is on the same page: ', ''],
+    nsEyebrow: 'Next session · OpenBMI motor imagery · reviewed 3 October 2026',
+    nsH2: 'The next session: how much do a few labeled trials help?',
+    nsLede: (): Part[] => ['A different data set, task and test from the SSVEP results above, so nothing here is compared with them. In OpenBMI, people imagined moving the left or the right hand in two sessions. Each person’s decoder is trained on their session 1 — the first 80 trials fit it, the last 20 calibrate its probabilities — then given the first 0, 10, 20 or 40 labeled trials of their session 2, and tested on the final ', lf(ob.cohort.test_trials_each_person, 'count'), ' trials of session 2. Every budget is tested on those same trials, so the budgets add no people and no test trials.'],
+    cardPeople: 'People evaluated', cardPeopleP: (): Part[] => [lf(ob.cohort.acquisition_identities, 'count'), ' acquired, minus ', lf(ob.cohort.engineering_exclusion, 'count'), ' engineering exclusion and ', lf(ob.cohort.input_quality_holds, 'count'), ' held for input quality.'],
+    cardTrials: 'Held-out trials', cardTrialsP: (): Part[] => [lf(ob.cohort.test_trials_each_person, 'count'), ' per person: the same final trials of session 2 at every budget.'],
+    cardJobs: 'Prediction jobs', cardJobsP: (): Part[] => ['Every person × two baselines × four budgets; ', ...(ob.cohort.jobs.failed === 0 ? ['none failed.'] : [lf(ob.cohort.jobs.failed, 'count'), ' failed.'])],
+    budgetCaption: (): Part[] => ['Participant-mean balanced accuracy on the same final trials of session 2, ', lf(obPeople, 'count'), ' people, with whole-participant bootstrap 95% intervals. Chance is ', lf(ob.chance_level), '. Accuracy and macro F1 for every cell are in the download.'],
+    budgetRegion: 'Next session: balanced accuracy by labeled session-2 trials, scrolls horizontally',
+    colBudget: 'Labeled session-2 trials',
+    budgetRow: (t: number) => t === 0 ? 'None · session 1 only' : `${t} trials`,
+    findingLabel: (): Part[] => ['Log-covariance LDA: ', String(lc40.target_trials), ' labeled session-2 trials minus none, the same ', lf(obPeople, 'count'), ' people'],
+    findingH3: 'Better on average — and still worse for some people',
+    findingP: (): Part[] => ['Paired interval ', lf(lc40.balanced_accuracy_change.interval_95[0], 'sgn1'), ' to ', lf(lc40.balanced_accuracy_change.interval_95[1], 'pp1'), ', above zero. Yet ', lf(lc40.people_with_any_decline, 'count'), ' of ', lf(lc40.people, 'count'), ' people scored lower with the trials than without them, ', lf(lc40.people_with_decline_of_5_points_or_more, 'count'), ' of them by 5 points or more. For the relative-PSD baseline the mean change was ', lf(psd40.balanced_accuracy_change.mean, 'pp1'), ' (', lf(psd40.balanced_accuracy_change.interval_95[0], 'sgn1'), ' to ', lf(psd40.balanced_accuracy_change.interval_95[1], 'pp1'), '): the interval includes zero, so that gain is not established; ', lf(psd40.people_with_any_decline, 'count'), ' of ', lf(psd40.people, 'count'), ' people declined, ', lf(psd40.people_with_decline_of_5_points_or_more, 'count'), ' by 5 points or more.'],
+    gainCaption: 'Change in participant-mean balanced accuracy against no session-2 trials, the same people and test trials, with paired whole-participant bootstrap 95% intervals — and, beside each mean, how many people declined.',
+    gainRegion: 'Next session: change against no session-2 trials, with the people who declined, scrolls horizontally',
+    colComparison: 'Comparison',
+    gainRow: (t: number) => `${t} trials minus none`,
+    to: ' to ',
+    declined: (k: FigValue, n: FigValue, k5: FigValue): Part[] => [k, ' of ', n, ' declined · ', k5, ' by 5 points or more'],
+    notEstablished: 'The interval includes zero: not established.',
+    expanded: (): Part[] => ['An expanded cohort under the same fixed method, not an independent replication: the original ', lf(ob.cohort.original_people, 'count'), ' people, their results unchanged, plus all ', lf(ob.cohort.added_people, 'count'), ' people who became eligible later. An earlier snapshot of the original people was prepared but never published here; they are all among the ', lf(obPeople, 'count'), ', so it is not a separate result.'],
+    nsLimitsH3: 'What the next-session result cannot say',
+    nsLimits: [
+      ['One dataset, offline', 'Trained on session 1 and tested on session 2 of the same people, offline. Not online closed-loop control, clinical efficacy, consumer headsets or reduced montages.'],
+      ['Not a new person', 'Every model is fitted to the person it is tested on. Nothing here measures how a decoder does on someone it has never seen.'],
+      ['Two fixed CPU baselines', 'No parameter search, score-driven retry or trial dropping, and no foundation model or fine-tuning (LoRA/PEFT). They are a reference, not a ceiling.'],
+      ['Noisy per person', 'Each person’s change rests on 60 test trials, which the four budgets reuse, so one person’s decline can be noise. The counts say how often a decline was observed, not who is harmed.'],
+      ['Units unresolved', 'The recordings’ physical amplitude unit is not resolved, so only dimensionless inputs are used: each trial filtered 8–30 Hz, covariances divided by their trace, band powers as shares.'],
+      ['Descriptive intervals', 'Pointwise whole-participant bootstrap, 10,000 draws shared by every baseline and budget, not adjusted for multiple comparisons. Not comparable with published scores under other protocols.'],
+    ],
+    nsConsent: 'The paper’s Ethical Approval section states approval by the Korea University Institutional Review Board (1040548-KUIRB-16-159-A-2) and written informed consent from all participants before the experiments. Only cohort means, paired changes and how many people declined appear here — never who.',
+    nsRecord: 'GigaDB dataset record ↗', nsPaper: 'GigaScience paper ↗',
   },
   zh: {
-    description: `取决于方法。同样 ${people} 名被试的 12 目标可穿戴 SSVEP 任务上，校准试次从 24 增加到 48，单频带 eTRCA 在湿电极上从 ${etrcaWet24} 升到 ${etrcaWet48}，在干电极上只从 ${etrcaDry24} 升到 ${etrcaDry48}；免训练的 CCA 参考更高。试次数不等于分钟数。`,
-    answer: `取决于方法：在 12 目标的可穿戴 SSVEP 任务上，同样 [[${people}]] 名被试、相同的后续测试组块，目标被试校准试次从 24 增加到 48 时，单频带 eTRCA 在湿电极记录上的平衡准确率从 [[${etrcaWet24}]] 升到 [[${etrcaWet48}]]，在干电极记录上只从 [[${etrcaDry24}]] 升到 [[${etrcaDry48}]]。仅用目标被试数据的 spectral ridge 在 48 个校准试次时也只有 [[${ridgeWet48}]]（湿电极）和 [[${ridgeDry48}]]（干电极）；校准后的 eTRCA 没有一个超过不使用校准试次的免训练 CCA 参考（湿电极 [[${ccaWet}]]，干电极 [[${ccaDry}]]）；这里的 eTRCA 只用一个固定频带，而不是原方法的滤波器组，所以并不代表 TRCA 的最好水平。试次数不等于分钟数：导出数据记录的是每名被试的校准试次数，并不据此推算校准需要多长时间。`,
+    description: `取决于方法，也取决于测试离校准多远。可穿戴 SSVEP 上，校准试次从 24 增加到 48，单频带 eTRCA 在湿电极上从 ${etrcaWet24} 升到 ${etrcaWet48}，在干电极上只从 ${etrcaDry24} 升到 ${etrcaDry48}。OpenBMI 跨会话时，${lc40.target_trials} 个校准试次使对数协方差解码器平均提升 ${ppt(lc40.balanced_accuracy_change.mean)}（${obPeople} 名被试），但有 ${lc40.people_with_any_decline} 人下降。试次数不等于分钟数。`,
+    answer: `取决于方法，也取决于测试离校准有多远。在同一天内——12 目标的可穿戴 SSVEP 任务，同样 [[${people}]] 名被试、相同的后续测试组块——目标被试校准试次从 24 增加到 48 时，单频带 eTRCA 在湿电极记录上的平衡准确率从 [[${etrcaWet24}]] 升到 [[${etrcaWet48}]]，在干电极记录上只从 [[${etrcaDry24}]] 升到 [[${etrcaDry48}]]；校准后的 eTRCA 没有一个超过不使用校准试次的免训练 CCA 参考（湿电极 [[${ccaWet}]]，干电极 [[${ccaDry}]]）；这里的 eTRCA 只用一个固定频带，而不是原方法的滤波器组，所以并不代表 TRCA 的最好水平。跨会话时——OpenBMI 运动想象，用每名被试的第一次会话训练、在第二次会话上测试——加入第二次会话的 [[${lc40.target_trials}]] 个校准试次后，对数协方差解码器的平衡准确率平均提升 [[${ppt(lc40.balanced_accuracy_change.mean)}]]（pp 即百分点；[[${obPeople}]] 名被试，区间 [[${sgn(lc40.balanced_accuracy_change.interval_95[0])}]] 至 [[${ppt(lc40.balanced_accuracy_change.interval_95[1])}]]），但仍有 [[${lc40.people_with_any_decline}]] 人下降；相对 PSD 解码器提升 [[${ppt(psd40.balanced_accuracy_change.mean)}]]，区间包含零，所以这一提升不能认定，且有 [[${psd40.people_with_any_decline}]] 人下降。试次数不等于分钟数。`,
     plotCaption: `同样 ${people} 名被试的各档校准试次，均在相同的后续组块上测试。`,
     plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。锈色行为湿电极记录，深色行为干电极记录。CCA 不使用校准试次；仅源域迁移是另一种机制，不在图中。',
     plotNote: (s: string, reference: boolean) => `${s}记录 · ${reference ? '免训练参考' : '仅用目标被试数据'}`,
-    eyebrow: '校准预算 · 共同的后续测试组块',
-    dek: '增加校准试次的价值并不是一个固定值。在这个 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。',
+    eyebrow: '校准预算 · 同一天与下一次会话',
+    dek: '增加校准试次的价值并不是一个固定值。在 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。在同一批被试的两次会话之间，新会话的少量校准试次平均上帮助了一个运动想象基线——但不是对每个人都有帮助——对另一个基线的帮助则没有得到证实。',
     sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
     ridgeEyebrow: '仅用目标被试数据的 spectral ridge',
     ridgeH2: '12、24 与 48 个校准试次',
@@ -138,6 +201,38 @@ const copy = {
     movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。它们不是校准：模型在其他被试上适配，不使用被测试者本人的任何标签。'],
     movedNextH2: '次日实验已移到模型适配页面',
     movedNext: ['次日实验的状态——已运行、通过独立复核、暂缓发布、不公布任何数字——也在同一页面「', '」。'],
+    nsEyebrow: '下一次会话 · OpenBMI 运动想象 · 2026 年 10 月 3 日审核',
+    nsH2: '下一次会话：少量校准试次能帮多少？',
+    nsLede: (): Part[] => ['与上面的 SSVEP 结果是不同的数据集、任务和测试，所以这里不与它们比较。在 OpenBMI 中，被试在两次会话中都做左手与右手的运动想象。每名被试的解码器用其第一次会话训练——前 80 个试次拟合分类器，后 20 个用于概率校准——再加入其第二次会话最前面的 0、10、20 或 40 个校准试次，并在第二次会话最后的 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个试次上测试。每档预算都在这些相同的试次上测试，所以各档预算不增加被试，也不增加测试试次。'],
+    cardPeople: '评测的被试', cardPeopleP: (): Part[] => ['采集 ', lf(ob.cohort.acquisition_identities, 'count'), ' 人，减去 ', lf(ob.cohort.engineering_exclusion, 'count'), ' 人工程排除、', lf(ob.cohort.input_quality_holds, 'count'), ' 人因输入质量暂缓。'],
+    cardTrials: '留出的测试试次', cardTrialsP: (): Part[] => ['每人 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个：每档预算都是第二次会话最后的同一批试次。'],
+    cardJobs: '预测任务', cardJobsP: (): Part[] => ['每名被试 × 两个基线 × 四档预算；', ...(ob.cohort.jobs.failed === 0 ? ['没有一个失败。'] : [lf(ob.cohort.jobs.failed, 'count'), ' 个失败。'])],
+    budgetCaption: (): Part[] => ['第二次会话最后同一批试次上的被试平均平衡准确率，', lf(obPeople, 'count'), ' 名被试，附以被试为单位的 bootstrap 95% 区间。随机水平为 ', lf(ob.chance_level), '。每个格子的准确率与宏平均 F1 在下载文件中。'],
+    budgetRegion: '下一次会话：按第二次会话校准试次数的平衡准确率，可横向滚动',
+    colBudget: '第二次会话校准试次',
+    budgetRow: (t: number) => t === 0 ? '无 · 只用第一次会话' : `${t} 个试次`,
+    findingLabel: (): Part[] => ['对数协方差 LDA：', String(lc40.target_trials), ' 个第二次会话校准试次减不加，相同的 ', lf(obPeople, 'count'), ' 名被试'],
+    findingH3: '平均更好——但对一些人仍然更差',
+    findingP: (): Part[] => ['配对区间 ', lf(lc40.balanced_accuracy_change.interval_95[0], 'sgn1'), ' 至 ', lf(lc40.balanced_accuracy_change.interval_95[1], 'pp1'), '，高于零。然而 ', lf(lc40.people, 'count'), ' 名被试中仍有 ', lf(lc40.people_with_any_decline, 'count'), ' 人加入这些试次后得分更低，其中 ', lf(lc40.people_with_decline_of_5_points_or_more, 'count'), ' 人下降 5 pp 及以上。相对 PSD 基线的平均变化为 ', lf(psd40.balanced_accuracy_change.mean, 'pp1'), '（', lf(psd40.balanced_accuracy_change.interval_95[0], 'sgn1'), ' 至 ', lf(psd40.balanced_accuracy_change.interval_95[1], 'pp1'), '）：区间包含零，所以这一提升不能认定；', lf(psd40.people, 'count'), ' 名被试中有 ', lf(psd40.people_with_any_decline, 'count'), ' 人下降，其中 ', lf(psd40.people_with_decline_of_5_points_or_more, 'count'), ' 人下降 5 pp 及以上。'],
+    gainCaption: '与不加第二次会话试次相比，被试平均平衡准确率的变化；相同被试与测试试次，附配对的以被试为单位的 bootstrap 95% 区间——每个均值旁都给出有多少人下降。',
+    gainRegion: '下一次会话：与不加第二次会话试次相比的变化及下降人数，可横向滚动',
+    colComparison: '比较',
+    gainRow: (t: number) => `${t} 个试次减不加`,
+    to: ' 至 ',
+    declined: (k: FigValue, n: FigValue, k5: FigValue): Part[] => [n, ' 人中 ', k, ' 人下降 · ', k5, ' 人下降 5 pp 及以上'],
+    notEstablished: '区间包含零：不能认定。',
+    expanded: (): Part[] => ['同一固定方法下扩大的队列，不是独立的重复验证：原有的 ', lf(ob.cohort.original_people, 'count'), ' 名被试、结果不变，加上之后符合条件的全部 ', lf(ob.cohort.added_people, 'count'), ' 名被试。原有被试的一个更早快照已准备好，但从未在本站发布；那些被试都在这 ', lf(obPeople, 'count'), ' 人之中，所以它不是一个单独的结果。'],
+    nsLimitsH3: '下一次会话的结果说明不了什么',
+    nsLimits: [
+      ['一个数据集，离线', '同一批被试在第一次会话上训练、在第二次会话上测试，离线进行。不涉及在线闭环控制、临床疗效、消费级头戴设备或精简的电极布局。'],
+      ['不是新被试', '每个模型都针对被测试的那个人拟合。这里没有测量解码器在从未见过的人身上表现如何。'],
+      ['两个固定的 CPU 基线', '没有超参搜索、没有根据分数重跑、没有剔除试次，也没有基础模型或微调（LoRA/PEFT）。它们是参照，不是上限。'],
+      ['逐人估计噪声大', '每个人的变化只基于 60 个测试试次，而四档预算复用这些试次，所以某个人的下降可能只是噪声。这些计数说明观察到下降的频率，而不是谁受到了损害。'],
+      ['物理单位尚未确定', '记录的物理幅值单位尚未确定，所以只用无量纲的输入：每个试次滤波到 8–30 Hz，协方差除以其迹，频带功率取占比。'],
+      ['描述性区间', '逐点的以被试为单位的 bootstrap，10,000 次抽样，所有基线与预算共用，没有做多重比较校正。不能与其他协议下发表的分数比较。'],
+    ],
+    nsConsent: '论文的伦理批准部分写明：研究经高丽大学（Korea University）机构审查委员会批准（1040548-KUIRB-16-159-A-2），所有被试在实验前都签署了书面知情同意。这里只发布队列均值、配对变化，以及有多少人下降——从不发布是谁。',
+    nsRecord: 'GigaDB 数据集记录 ↗', nsPaper: 'GigaScience 论文 ↗',
   },
 }[locale];
 const card = topicCards[locale]['calibration-budget'];
@@ -195,6 +290,36 @@ const card = topicCards[locale]['calibration-budget'];
         {[24,48].map(budget => <tr><th scope="row">{modelLabel('ensemble-trca', locale)} · {copy.labels(budget)}<small>{copy.targetOnly}</small></th>{sensors.map(sensor => { const row=methodRow('ensemble-trca',sensor,budget); return <td><span class="metric">{pct(row.value)}</span><span class="interval">{intervalPct(row.confidence_interval_95)}</span></td>; })}</tr>)}
       </tbody></table>
     </div>
+  </section>
+
+  <section class="topic-section" id="next-session" aria-labelledby="next-session-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.nsEyebrow}</p><h2 id="next-session-heading">{copy.nsH2}</h2></div><p>{copy.nsLede().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.cardPeople}</p><div class="reading"><Fig f={lf(obPeople, 'count')}/></div><p>{copy.cardPeopleP().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.cardTrials}</p><div class="reading"><Fig f={lf(ob.cohort.unique_test_trials, 'count')}/></div><p>{copy.cardTrialsP().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.cardJobs}</p><div class="reading"><Fig f={lf(ob.cohort.jobs.trained, 'count')}/></div><p>{copy.cardJobsP().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></article>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.budgetRegion}>
+      <table><caption>{copy.budgetCaption().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</caption>
+        <thead><tr><th scope="col">{copy.colBudget}</th>{ob.arms.map(a => <th scope="col" lang={locale === 'zh' && !openbmiArmLabel[a.id].zh ? 'en' : undefined}>{tr(openbmiArmLabel[a.id], locale)}</th>)}</tr></thead>
+        <tbody>{logcov.by_budget.map((b, i) => <tr data-budget={b.target_trials}><th scope="row">{copy.budgetRow(b.target_trials)}</th>{ob.arms.map(a => { const c = a.by_budget[i]; return <td data-cell={`${a.id}|${c.target_trials}`}><Fig f={lf(c.balanced_accuracy.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={lf(c.balanced_accuracy.interval_95[0])}/>–<Fig f={lf(c.balanced_accuracy.interval_95[1])}/></span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="log-covariance-lda|40">
+      <div class="finding-number"><strong><Fig f={lf(lc40.balanced_accuracy_change.mean, 'pp1')}/></strong><span>{copy.findingLabel().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></div>
+      <div class="finding-copy"><h3>{copy.findingH3}</h3><p>{copy.findingP().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.gainRegion}>
+      <table><caption>{copy.gainCaption}</caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th>{ob.arms.map(a => <th scope="col">{tr(openbmiArmLabel[a.id], locale)}</th>)}</tr></thead>
+        <tbody>{logcov.calibration_gain.map((g0, i) => <tr data-gain-row={g0.target_trials}><th scope="row">{copy.gainRow(g0.target_trials)}</th>{ob.arms.map(a => { const g = a.calibration_gain[i], ch = g.balanced_accuracy_change; return <td data-gain={`${a.id}|${g.target_trials}`}><Fig f={lf(ch.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={lf(ch.interval_95[0], 'sgn1')}/>{copy.to}<Fig f={lf(ch.interval_95[1], 'pp1')}/></span><span class="interval" data-declined>{copy.declined(lf(g.people_with_any_decline, 'count'), lf(g.people, 'count'), lf(g.people_with_decline_of_5_points_or_more, 'count')).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span>{!g.interval_excludes_zero && <span class="interval" data-not-established>{copy.notEstablished}</span>}</td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" id="next-session-cohort">{copy.expanded().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+    <h3 class="roadmap-h3">{copy.nsLimitsH3}</h3>
+    <div class="method-grid-wide" id="next-session-limits">{copy.nsLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list"><article><h3 lang="en">{ob.rights.name}</h3><p lang="en">{ob.rights.attribution}</p><p>{copy.nsConsent}</p><p><a href={ob.rights.source} target="_blank" rel="noreferrer">{copy.nsRecord}</a> · <a href={obPaper} target="_blank" rel="noreferrer">{copy.nsPaper}</a> · <a href={ob.rights.licenseUrl} target="_blank" rel="noreferrer">{ob.rights.license}</a></p></article></div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/large-source-update.json" download>large-source-update.json</a> · {tc.schema} {large.schema_version} · {tc.generated} {large.generated_at}{tc.period}</p>
   </section>
 
   <section class="topic-section topic-moved" id="adaptation" aria-labelledby="adaptation-heading">

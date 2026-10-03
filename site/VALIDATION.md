@@ -113,6 +113,34 @@ land; and the moved sections are complete — every model card on `/methods/` wi
 when its status was checked (REVE Base with its display-layer override, source and
 released status), every field note, every register row on `/datasets/`.
 
+Since 2026-10-03, the large-source batch (`large-source-update.json`): Dreem sleep
+staging has its own question, `/topics/sleep-staging/`, and OpenBMI broadened
+`/topics/calibration-budget/` (`#next-session`); each source has a dataset page.
+Every figure on the new sections carries `data-fig` and is re-read from the
+export, the same figures appear in both languages, and every figure-like token
+there (one-decimal percentages, pp, kappas, grouped counts) must be a value of the
+export formatted as the site formats it, or a number in the export's own text — a
+typed figure, or one from the unpublished 40-person OpenBMI snapshot, has nothing
+to match. Dreem: DOD-H and DOD-O each in its own section and dataset group, never
+pooled; an arm's accuracy is never printed without the same arm's balanced
+accuracy within 220 characters (page, description, dataset page), and shares its
+table row or sits in the adjacent dataset row; a null (the N1 precision of a stage
+never predicted) is a dash with its reason, never a number, one dash per null;
+every "chance" (随机水平) on those pages is a denial, and no Dreem plot or group
+carries a chance line; no cross-cohort comparison and no clinical or diagnostic
+claim; the record and epoch accounting add up and are printed; the hold is
+figure-free on the page, in the register, on the home card and on the map; the
+credits (paper, deposit DOI, pinned repository revision, MIT as the deposit
+declares it) and each cohort's statements — as the paper gives them, and which one
+is missing — are printed. OpenBMI: 54 = 1 + 2 + 51, 3,060 held-out trials, 408
+jobs; the protocol; both baselines at every budget with intervals; every mean
+change carries how many people declined, in its own cell and within reach wherever
+its pp is printed (short answer and descriptions included); a change whose interval
+includes zero says it is not established, exactly then; the cohort is expanded,
+not a replication, and the earlier snapshot is history. These checks were
+mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 23 injected violations
+was caught by the assertion written for it.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

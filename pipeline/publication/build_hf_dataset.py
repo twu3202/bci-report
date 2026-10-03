@@ -27,6 +27,7 @@ import export_clinical_update as clinical_export
 import export_context_update as context_export
 import export_adaptation_update as adaptation_export
 import export_extension_update as extension_export
+import export_large_source_update as large_source_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -105,6 +106,17 @@ def extension_payload():
     audit = json.loads(extension_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Extension export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Extension payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def large_source_payload():
+    """The 2026-10-03 large-source export, refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'large-source-update.json').read_bytes()
+    audit = json.loads(large_source_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Large-source export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Large-source payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -351,6 +363,29 @@ also differs in elapsed time, fatigue and practice. The paired interval crosses
 zero, and rate and recording change together: **not a causal effect of image
 rate**.
 
+`large-source-update.json` — reviewed 3 October 2026, two new sources and two
+separate questions, each with two fixed classical CPU baselines and no shared
+ranking. Dreem Open Datasets (Guillot et al., IEEE TNSRE 2020,
+doi:10.1109/TNSRE.2020.3011181; deposit doi:10.5281/zenodo.15900394, MIT as the
+deposit declares it): five-stage sleep staging against the publisher's
+consensus in 25 healthy sleepers (DOD-H) and 55 people with obstructive sleep
+apnoea (DOD-O), **two separate experiments, never compared with each other**. A
+training prior that always predicts N2 and a spectral ridge, with accuracy,
+balanced accuracy, macro F1 and Cohen's kappa, the paired balanced-accuracy
+gain, and the ridge's per-stage recall, precision and F1. **Read accuracy beside
+balanced accuracy**: the ridge reaches about 72% accuracy but 49–57% balanced
+accuracy and never predicts N1, so its N1 precision is null — not defined, not
+zero. The prior's balanced accuracy sits slightly above one fifth: a floor, not
+a chance level. Not clinical, not diagnosis; the recordings' physical units are
+unresolved, so amplitude-sensitive models are held with no figure. And OpenBMI
+(Lee et al., GigaScience 2019, doi:10.1093/gigascience/giz002; data
+doi:10.5524/100542, CC0 1.0): a motor-imagery decoder trained on each person's
+first session and tested on the final 60 trials of their second, after 0, 10,
+20 or 40 labelled trials from it, 51 people. Every mean change carries how many
+people declined; the relative-PSD gain at 40 trials has an interval that
+includes zero and is **not established**. An expanded cohort under the same
+method, not an independent replication.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -507,6 +542,8 @@ def build(output):
     (output/'adaptation-update.json').write_bytes(raw_adaptation)
     raw_extension, _ = extension_payload()
     (output/'extension-update.json').write_bytes(raw_extension)
+    raw_large_source, _ = large_source_payload()
+    (output/'large-source-update.json').write_bytes(raw_large_source)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

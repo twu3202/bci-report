@@ -257,6 +257,41 @@
     "https://physionet.org/content/ltrsvp/1.0.0/",
     "https://doi.org/10.1371/journal.pone.0178498"
    ]
+  },
+  "dreem-dod": {
+   "aliases": [
+    "Dreem Open Datasets",
+    "DOD-H",
+    "DOD-O",
+    "DOD",
+    "Zenodo 15900394",
+    "Guillot et al. (2020)"
+   ],
+   "summary_en": "The Dreem Open Datasets are two overnight polysomnography cohorts released to compare human and automated sleep staging: DOD-H, 25 healthy volunteers recorded at the French Armed Forces Biomedical Research Institute (IRBA), and DOD-O, 55 patients with obstructive sleep apnoea recorded at the Stanford Sleep Medicine Center. Both were scored by five sleep technologists from different sleep centres. Described by Guillot, Sauvet, During and Thorey in IEEE Transactions on Neural Systems and Rehabilitation Engineering (2020), with the official dreem-learning-open code; archived on Zenodo (record 15900394, published July 2025).",
+   "summary_zh": "Dreem Open Datasets 是为比较人工与自动睡眠分期而发布的两个整夜多导睡眠图队列：DOD-H 为 25 名健康志愿者，记录于 French Armed Forces Biomedical Research Institute（IRBA）；DOD-O 为 55 名阻塞性睡眠呼吸暂停患者，记录于 Stanford Sleep Medicine Center。两个队列都由来自不同睡眠中心的 5 名睡眠技师评分。由 Guillot、Sauvet、During 与 Thorey 发表于 IEEE Transactions on Neural Systems and Rehabilitation Engineering（2020），附官方代码 dreem-learning-open；数据存档于 Zenodo（记录 15900394，2025 年 7 月发布）。",
+   "facts_sources": [
+    "https://arxiv.org/abs/1911.03221",
+    "https://doi.org/10.1109/TNSRE.2020.3011181",
+    "https://zenodo.org/records/15900394",
+    "https://github.com/Dreem-Organization/dreem-learning-open"
+   ]
+  },
+  "openbmi": {
+   "aliases": [
+    "OpenBMI",
+    "Lee2019",
+    "Lee2019_MI",
+    "GigaDB 100542",
+    "EEG Dataset and OpenBMI Toolbox for Three BCI Paradigms",
+    "Lee et al. (2019)"
+   ],
+   "summary_en": "The OpenBMI dataset (GigaScience Database 100542) holds EEG from 54 healthy participants, each recorded in two sessions on different days in three BCI paradigms — motor imagery, event-related potentials and SSVEP — with 62 electrodes at 1,000 Hz, plus questionnaires, resting-state and artifact recordings. Released by Lee et al. (Korea University) with the OpenBMI toolbox and described in GigaScience (2019). Only the motor-imagery training runs are used here.",
+   "summary_zh": "OpenBMI 数据集（GigaScience Database 100542）收录 54 名健康被试的 EEG：每人在不同的两天各记录一次会话，覆盖三种 BCI 范式——运动想象、事件相关电位与 SSVEP——62 个电极、采样率 1,000 Hz，另有问卷、静息态与伪迹记录。由高丽大学（Korea University）的 Lee 等人随 OpenBMI 工具箱发布，并在 GigaScience（2019）中描述。这里只用到运动想象的训练段。",
+   "facts_sources": [
+    "https://doi.org/10.5524/100542",
+    "https://doi.org/10.1093/gigascience/giz002",
+    "https://api.datacite.org/dois/10.5524/100542"
+   ]
   }
  },
  "methods": {

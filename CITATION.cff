@@ -12,9 +12,11 @@ abstract: >-
   Cohort-level EEG decoding results, each published with the protocol that
   produced it — cohort, electrode count, evaluation split, chance level,
   interval and known limitations — across motor imagery, SSVEP, P300 and
-  semantic ERP, cognitive load, sleep staging, idle false activation and
-  non-control rejection, sensor and display transfer, image-rate transfer,
-  movement, calibration budget, foundation-model adaptation (head only, last
+  semantic ERP, cognitive load, sleep staging (including simple baselines on
+  healthy and sleep-apnoea cohorts, kept apart, with accuracy beside balanced
+  accuracy), idle false activation and non-control rejection, sensor and
+  display transfer, image-rate transfer, movement, calibration budget within a
+  recording and across sessions, foundation-model adaptation (head only, last
   block, LoRA), pretraining controls and a clinical case/control comparison. No
   raw EEG, no per-participant scores, no overall ranking.
 authors:
@@ -32,8 +34,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "extension-update-20261002"
-date-released: "2026-10-02"
+version: "large-source-update-20261003"
+date-released: "2026-10-03"
 keywords:
   - EEG
   - electroencephalography

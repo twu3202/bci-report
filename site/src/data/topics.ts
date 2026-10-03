@@ -120,6 +120,8 @@ export const topicPages = [
   { slug: 'model-adaptation', group: 'adapting' },
   { slug: 'does-pretraining-help', group: 'adapting' },
   { slug: 'when-not-to-act', group: 'reliability' },
+  // Since 2026-10-03 (owner decision): Dreem sleep staging, two simple baselines.
+  { slug: 'sleep-staging', group: 'reliability' },
   { slug: 'clinical-groups', group: 'reliability' },
 ] as const satisfies readonly { slug: string; group: TopicGroup }[];
 

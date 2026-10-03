@@ -243,17 +243,21 @@ const topicPages=[
   ['fewer-electrodes','Can fewer electrodes, or electrodes in the ear, match a full scalp montage?'],
   ['clinical-groups','Can resting-state EEG separate Parkinson&#39;s disease from controls?'],
   ['on-the-move','Does EEG decoding still work while walking or running?'],
-  ['calibration-budget','How much calibration data does a wearable SSVEP decoder need?'],
+  // Broadened on 2026-10-03 (owner decision): the OpenBMI next session sits beside the wearable SSVEP result.
+  ['calibration-budget','How much calibration data does an EEG decoder need?'],
   // Split from calibration-budget on 2026-10-02 (owner approved): new people and the next day.
   ['model-adaptation','New people, next day: which part of a pretrained model should you update?'],
   ['when-not-to-act','How often does an EEG decoder fire when nobody is giving a command?'],
+  // Since 2026-10-03 (owner decision): Dreem sleep staging, two cohorts kept apart.
+  ['sleep-staging','Why can a sleep stager be right most of the time and still miss whole stages?'],
   ['does-pretraining-help','Does pretraining help EEG foundation models like LaBraM and CBraMod?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
   :slug==='clinical-groups'?'clinical-update.json'
   :slug==='when-not-to-act'?'experiments.json'
-  :slug==='screen-to-vr'?'context-update.json':'deployment-topics.json';
+  :slug==='screen-to-vr'?'context-update.json'
+  :slug==='sleep-staging'?'large-source-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -337,7 +341,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'可穿戴 SSVEP 解码器需要多少校准数据？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -603,7 +607,8 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 // hold is lifted — the rule Alpha Waves and the YSU pilot were held under. Read
 // from the manifests themselves, so a new hold is covered without a new line here.
 const manifests=['publication_review_20260922/evidence-release-manifest.json','publication_review_20260923/clinical-release-manifest.json','publication_review_20260927/context-release-manifest.json',
-  'publication_review_20261001/adaptation-release-manifest.json','publication_review_20261002/extension-release-manifest.json']
+  'publication_review_20261001/adaptation-release-manifest.json','publication_review_20261002/extension-release-manifest.json',
+  'publication_review_20261003/large-source-release-manifest.json']
   .map(f=>JSON.parse(readFileSync(new URL('../../research/'+f,import.meta.url),'utf8')));
 const held=manifests.flatMap(m=>m.sources).filter(x=>x.decision==='hold');
 const allPages=[...everyPage,...['screen-to-vr','when-not-to-act'].flatMap(s=>['topics/'+s+'/','zh/topics/'+s+'/']),'releases/','zh/releases/'];
@@ -727,6 +732,7 @@ const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{i
   else walk(JSON.parse(text));
   leaves.set(file,set);}return leaves.get(file);};
 const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=>r.toFixed(2)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
+  sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s'};
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
@@ -1175,6 +1181,337 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 }
 assert.ok(llms.includes('https://bci.report/datasets/ltrsvp/index.md'),'llms.txt: the LTRSVP dataset page');
 console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; presentation order stated and "later recording" only within a rate; YSU answer qualified, eyebrow, test-window count and four named table regions; credits; dataset pages with the people behind each paired mean.');
+
+// --- 2026-10-03 large-source batch: Dreem sleep staging, OpenBMI next session -----------
+// Two questions, each with two fixed classical baselines and nothing shared between them.
+// Dreem has its own topic (sleep-staging, owner decision); OpenBMI broadened calibration-budget
+// (#next-session). Every figure on the new sections is printed with data-fig and re-read from
+// large-source-update.json above (the topic data-fig loop); what is pinned here is what must
+// travel with those figures and what must never be said.
+{
+  const ls=JSON.parse(readFileSync(new URL('../src/data/large-source-update.json',import.meta.url),'utf8'));
+  assert.deepEqual(Object.keys(ls.results).sort(),['dreem-sleep-baselines','openbmi-cross-session-calibration'],'only the two reviewed sources carry numbers');
+  assert.deepEqual(ls.status_only,[],'this batch has no status-only source');
+  assert.deepEqual(ls.holds.map(h=>h.id),['dreem-amplitude-sensitive-models'],'one hold, figure-free');
+  assert.deepEqual(readFileSync(new URL('../src/data/large-source-update.json',import.meta.url)),readFileSync(new URL('../public/data/large-source-update.json',import.meta.url)),
+    'source and downloadable large-source exports must be byte-identical');
+  const dr=ls.results['dreem-sleep-baselines'],ob=ls.results['openbmi-cross-session-calibration'];
+  const coh=['DOD-H','DOD-O'],C=Object.fromEntries(coh.map(c=>[c,dr.cohorts[c]]));
+  const arms=['training_prior','spectral_ridge'];
+  // The handoffs' headline figures, so a changed export cannot pass by changing the page with it.
+  assert.deepEqual(coh.map(c=>{const k=C[c],a=k.arms;return [k.nights,pct1(a.spectral_ridge.accuracy.mean),pct1(a.spectral_ridge.balanced_accuracy.mean),
+    pct1(a.training_prior.accuracy.mean),pct1(a.training_prior.balanced_accuracy.mean),pp1(k.paired_balanced_accuracy.mean),ivp(k.paired_balanced_accuracy.interval_95,false)];}),
+    [[25,'72.3%','56.7%','48.0%','20.2%','+36.5 pp','+32.9 to +39.8 pp'],[55,'72.5%','49.3%','49.2%','20.5%','+28.8 pp','+26.7 to +30.7 pp']],'the Dreem handoff figures');
+  const ra=dr.record_accounting,ea=dr.epoch_accounting;
+  assert.equal(ra.archive_records-ra.excluded_before_scoring,ra.evaluated,'81 - 1 = 80 records');
+  assert.equal(ra.evaluated,C['DOD-H'].nights+C['DOD-O'].nights,'80 = 25 + 55');
+  assert.equal(ea.total-ea.unscored-ea.zero_or_invalid_channel_scale,ea.eligible,'77,901 - 3 - 75 = 77,823 epochs');
+  assert.equal(ea.eligible,C['DOD-H'].eligible_epochs+C['DOD-O'].eligible_epochs,'the eligible epochs are the two cohorts\' own');
+  const gain=(a,t)=>a.calibration_gain.find(g=>g.target_trials===t);
+  const [lc,psd]=ob.arms,lc40=gain(lc,40),psd40=gain(psd,40);
+  assert.equal(ob.cohort.acquisition_identities,ob.cohort.engineering_exclusion+ob.cohort.input_quality_holds+ob.cohort.evaluated,'54 = 1 + 2 + 51');
+  assert.equal(ob.cohort.unique_test_trials,ob.cohort.evaluated*ob.cohort.test_trials_each_person,'3,060 = 51 x 60');
+  assert.equal(ob.cohort.jobs.trained,ob.cohort.evaluated*ob.arms.length*ob.protocol.session_2_budgets.length,'408 = 51 x 2 x 4');
+  assert.deepEqual(ob.protocol.session_2_budgets,[0,10,20,40]);
+  assert.deepEqual([pp1(lc40.balanced_accuracy_change.mean),ivp(lc40.balanced_accuracy_change.interval_95,false),lc40.people_with_any_decline,lc40.people_with_decline_of_5_points_or_more,lc40.interval_excludes_zero],
+    ['+4.6 pp','+2.3 to +6.9 pp',13,6,true],'the log-covariance 40-versus-0 figures');
+  assert.deepEqual([pp1(psd40.balanced_accuracy_change.mean),ivp(psd40.balanced_accuracy_change.interval_95,false),psd40.people_with_any_decline,psd40.people_with_decline_of_5_points_or_more,psd40.interval_excludes_zero],
+    ['+1.7 pp','−0.1 to +3.5 pp',16,6,false],'the relative-PSD 40-versus-0 figures');
+
+  // Every figure-like token a section prints — one-decimal percentages, pp, kappas, grouped
+  // counts — is a value of its source, formatted as the site formats it, or a number written in
+  // the source's own text (a DOI, "0.5–30 Hz"). A typed figure, or one from the unpublished
+  // 40-person OpenBMI snapshot, has nothing to match.
+  const tokensOf=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of Object.values(fmt))for(const n of numbers(g(v)))out.add(n);}
+    else if(typeof v==='string'){for(const n of numbers(v))out.add(n);}else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(obj);return out;};
+  const figureLike=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
+  const drTokens=tokensOf(dr),obTokens=tokensOf(ob);
+  const ldIn=html=>[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
+  const metaOf=(html,k)=>unent(html.match(new RegExp(`<meta (?:name|property)="${k}" content="([^"]*)"`))[1]);
+  // Within 40 characters before, a negation; for the Chinese, within 12.
+  const negatedEn=(text,re,where)=>{for(const m of text.matchAll(re)) assert.match(text.slice(Math.max(0,m.index-40),m.index),/\bnot\b|\bno\b|n’t|n't/,where+': "'+m[0]+'" reads as a claim: '+text.slice(Math.max(0,m.index-60),m.index+40));};
+  const negatedZh=(text,re,where)=>{for(const m of text.matchAll(re)) assert.match(text.slice(Math.max(0,m.index-12),m.index),/不是|并非|不要|没有|不能/,where+': "'+m[0]+'" reads as a claim: '+text.slice(Math.max(0,m.index-30),m.index+20));};
+  const fmtFig=(v,f='pct1')=>fmt[f](v);
+  // A figure printed from its leaf, with or without the class the parity check reads.
+  const hasFig=(h,f,x)=>[`">`,`" class="metric">`,`" class="num">`,`" class="fig">`].some(m=>h.includes(`data-fig="large-source-update.json|${f}|${x}${m}${fmt[f](x)}<`));
+  // Accuracy never alone: every place an arm's accuracy is printed, that arm's balanced accuracy
+  // is printed within 220 characters, before or after it.
+  const accBesideBa=(text,where)=>{for(const c of coh) for(const a of arms){
+    const acc=fmtFig(C[c].arms[a].accuracy.mean),ba=fmtFig(C[c].arms[a].balanced_accuracy.mean);
+    let i=-1,seen=0;
+    while((i=text.indexOf(acc,i+1))>=0){seen++;
+      assert.ok(text.slice(Math.max(0,i-220),i+220).includes(ba),where+': '+c+' '+a+' accuracy '+acc+' printed without its balanced accuracy '+ba+' beside it');}
+  }};
+  const DSEC=(html,c)=>{const a=html.indexOf(`<section class="topic-section" id="${c.toLowerCase()}"`);assert.ok(a>0,'the '+c+' section must render');return html.slice(a,html.indexOf('</section>',a));};
+  for(const [label,path] of [['en','topics/sleep-staging/'],['zh','zh/topics/sleep-staging/']]){
+    const zh=label==='zh',html=pageOf(path),where=label+'/sleep-staging';
+    const main=html.slice(html.indexOf('<section class="topic-hero">'),html.indexOf('<nav class="topic-switcher"'));
+    const text=visible(main),desc=metaOf(html,'description');
+    // Every figure-like token on the page, and in its description, comes from the Dreem result.
+    for(const t of [...figureLike(text),...figureLike(desc)]) assert.ok(drTokens.has(t),where+': "'+t+'" is not a value of the Dreem export');
+    // Both cohorts, each in its own section, in that order, and nothing pooled.
+    assert.ok(main.indexOf('id="dod-h"')>0&&main.indexOf('id="dod-o"')>main.indexOf('id="dod-h"'),where+': DOD-H then DOD-O, each its own section');
+    for(const c of coh){
+      const sec=DSEC(html,c),k=C[c];
+      for(const a of arms) for(const m of ['accuracy','balanced_accuracy','macro_f1','cohen_kappa']){
+        const v=k.arms[a][m],f=m==='cohen_kappa'?'num3':'pct1';
+        const at=sec.indexOf(`data-cell="${c}|${a}|${m}"`),cell=sec.slice(at,sec.indexOf('</td>',at));
+        assert.ok(at>0,where+': '+c+' '+a+' '+m+' cell');
+        for(const x of [v.mean,...v.interval_95]) assert.ok(hasFig(cell,f,x),where+': '+c+' '+a+' '+m+' '+x);
+      }
+      // Accuracy and balanced accuracy in the same row of the table.
+      for(const a of arms){const at=sec.indexOf(`<tr data-arm="${c}|${a}">`),row=sec.slice(at,sec.indexOf('</tr>',at));
+        assert.ok(row.includes(`data-cell="${c}|${a}|accuracy"`)&&row.includes(`data-cell="${c}|${a}|balanced_accuracy"`),where+': '+c+' '+a+' accuracy and balanced accuracy share a row');}
+      // The paired gain with its interval, and what it is.
+      const d=k.paired_balanced_accuracy,fd=sec.slice(sec.indexOf(`data-paired="${c}"`));
+      assert.ok(hasFig(fd,'pp1',d.mean)&&fd.includes(`|sgn1|${d.interval_95[0]}"`)&&fd.includes(`|pp1|${d.interval_95[1]}"`),where+': '+c+' paired gain and interval');
+      assert.match(visible(fd).slice(0,600),zh?/区间不含零/:/it excludes zero/,where+': '+c+' the paired interval excludes zero, said so');
+      // Per stage: every value with its support, a null as a dash with its reason — never a zero.
+      for(const st of k.arms.spectral_ridge.per_stage){
+        const tr0=sec.indexOf(`<tr data-stage="${c}|${st.stage}">`);
+        assert.ok(tr0>0&&sec.slice(tr0,sec.indexOf('</th>',tr0)).includes(`data-fig="large-source-update.json|count|${st.support_epochs}"`),where+': '+c+' '+st.stage+' support epochs');
+        for(const key of ['recall','precision','f1']){
+          const m=st[key],at=sec.indexOf(`data-cell="${c}|${st.stage}|${key}"`),cell=sec.slice(at,sec.indexOf('</td>',at));
+          assert.ok(at>0,where+': '+c+' '+st.stage+' '+key+' cell');
+          if(m.mean===null){
+            assert.ok(cell.includes('data-null="true"')&&cell.includes('<span class="metric">—</span>'),where+': '+c+' '+st.stage+' '+key+' is null: a dash');
+            assert.doesNotMatch(visible(cell),/\d+\.\d%|\b0\b(?! nights| 晚)/,where+': '+c+' '+st.stage+' '+key+' is null: never printed as a number');
+            assert.match(visible(cell),zh?/没有定义：.*没有一晚预测过/:/not defined: .* was never predicted on any of the/,where+': '+c+' '+st.stage+' '+key+' says why it is not defined');
+          } else {
+            assert.ok(!cell.includes('data-null')&&hasFig(cell,'pct1',m.mean),where+': '+c+' '+st.stage+' '+key+' value');
+            if(m.nights_defined<k.nights) assert.ok(cell.includes(`|count|${m.nights_defined}"`),where+': '+c+' '+st.stage+' '+key+' says on how many nights it is defined');
+          }
+        }
+      }
+      assert.equal((sec.match(/data-null="true"/g)||[]).length,k.arms.spectral_ridge.per_stage.reduce((n,st)=>n+['recall','precision','f1'].filter(x=>st[x].mean===null).length,0),where+': '+c+' one dash per null, no more');
+      // The stage it never predicts, named in words.
+      const nv=sec.slice(sec.indexOf(`data-never="${c}"`));
+      for(const s0 of k.arms.spectral_ridge.stages_never_predicted) assert.match(visible(nv).slice(0,400),new RegExp(zh?`没有一晚预测过 ${s0}`:`predicted ${s0} on none of the`),where+': '+c+' never predicts '+s0);
+      // Cohort accounting in the lede: nights, eligible epochs, folds, tested and trained per fold.
+      const lede=sec.slice(0,sec.indexOf('class="interval-plot"'));
+      for(const v of [k.nights,k.eligible_epochs,k.folds,k.nights_tested_per_fold,k.nights_trained_per_fold]) assert.ok(lede.includes(`|count|${v}"`),where+': '+c+' lede count '+v);
+      // No chance line on the plot: the prior is a floor.
+      assert.doesNotMatch(sec,/class="ip-ref"/,where+': '+c+' plot draws no chance line');
+    }
+    // The short answer: the ridge's accuracy beside its balanced accuracy, the prior's too, N1 never predicted.
+    const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+    for(const c of coh) for(const a of arms) for(const m of ['accuracy','balanced_accuracy']) assert.ok(ans.includes(pct1(C[c].arms[a][m].mean)),where+': the short answer gives '+c+' '+a+' '+m);
+    assert.match(ans,zh?/从未预测过 N1/:/never predicted N1 in either/,where+': the short answer says N1 is never predicted');
+    // Accuracy never without balanced accuracy beside it: page text and description.
+    accBesideBa(text,where);accBesideBa(desc,where+' description');
+    // No chance label on the prior's balanced accuracy: every mention of chance is a denial.
+    if(zh) negatedZh(chineseOnly(main).replace(/<[^>]+>/g,' '),/随机水平/g,where); else negatedEn(text+' '+desc,/chance/gi,where);
+    // No cross-cohort comparison wording.
+    assert.doesNotMatch(text,zh?/(?:比(?!较)|低于|高于|不如|优于|好于|差于)[^。；]{0,20}(?:DOD-[HO]|健康被试|呼吸暂停)|(?:DOD-[HO]|健康被试|呼吸暂停患者)[^。；]{0,30}(?:低于|高于|不如|优于|好于|差于|更低|更高)/
+      :/\b(?:DOD-[HO]|healthy|apn(?:o)?ea|OSA)\b[^.;:]{0,60}\b(?:lower|higher|worse|better|less|more|drops?|fell|falls)\b[^.;:]{0,30}\bthan\b|\b(?:than|versus|vs\.?|compared (?:with|to))\b[^.;:]{0,40}\b(?:DOD-[HO]|healthy|apn(?:o)?ea|OSA)\b/i,where+': no cross-cohort comparison');
+    assert.match(text,zh?/本页不对两者做任何比较/:/nothing on this page compares them/,where+': the page says it compares the cohorts nowhere');
+    assert.match(text,zh?/不是对健康状况的受控比较/:/not a controlled comparison of health status/,where+': not a disease effect');
+    assert.match(text,zh?/没有测量从一个队列到另一个队列的迁移/:/nothing here measures transfer from one cohort to the other/,where+': not transfer');
+    // No clinical or diagnostic claim; the claim boundary stated.
+    assert.doesNotMatch(text,zh?/可以诊断|用于诊断|诊断准确率|达到(?:人类)?专家水平|临床级/:/diagnostic accuracy|can diagnose|clinical[- ]grade|expert[- ]level|human[- ]level|as good as (?:a )?(?:human|expert)/i,where+': no diagnostic or clinical claim');
+    assert.match(text,zh?/不是临床，也不是诊断/:/Not clinical, not a diagnosis/,where+': the claim boundary');
+    // The required limits.
+    for(const re of zh?[/毫伏[^。]*微伏/,/不能说明校准、参考、削波或滤波是否等价/,/不是经过校准的概率/,/略高于五分之一/,/不要把这些数字与使用其他通道、队列、预处理或数据划分的论文相比/]
+                     :[/millivolts[^.]*microvolts/,/does not establish that calibration, reference, clipping or filtering are equivalent/,/not calibrated probabilities/,/slightly above one fifth/,/Do not compare these figures with papers that use other channels, cohorts, preprocessing or splits/])
+      assert.match(text,re,where+': limit '+re);
+    // Cohort and design: the accounting, the folds, the features and the bootstrap.
+    const design=html.slice(html.indexOf('id="design"'),html.indexOf('id="held"'));
+    for(const v of [ra.archive_records,ra.excluded_before_scoring,ra.evaluated,ea.total,ea.unscored,ea.zero_or_invalid_channel_scale,ea.eligible,dr.jobs.trained])
+      assert.ok(hasFig(design,'count',v),where+': design count '+v);
+    for(const re of zh?[/5 个 EEG 导联（C3-M2、F3-F4、F3-M2、F3-O1、F4-O2）/,/每帧 25 个数值/,/alpha 为 1/,/每个队列内部分为 5 折/,/10,000 次抽样/,/整晚 bootstrap/]
+                     :[/Five EEG derivations \(C3-M2, F3-F4, F3-M2, F3-O1, F4-O2\)/,/25 values per epoch/,/alpha 1/,/Five folds within each cohort/,/10,000 draws/,/whole-night bootstrap/])
+      assert.match(visible(design),re,where+': design '+re);
+    // The hold: figure-free, on the page and linked to its register row.
+    const held=html.slice(html.indexOf('id="held"'),html.indexOf('id="methods-and-limits"'));
+    assert.ok(held.length>400&&!/\d/.test(visible(held)),where+': the hold note renders, figure-free');
+    assert.match(visible(held),zh?/基础模型和其他对幅值敏感的编码器暂缓/:/Foundation models and other amplitude-sensitive encoders are held because the source’s physical units disagree/,where+': the hold says why');
+    assert.ok(held.includes(`href="${zh?'/zh':''}/releases/#hold-dreem-amplitude-sensitive-models"`),where+': the hold links its register row');
+    // Credits and rights: paper, deposit, pinned revision, licence as the deposit declares it, and
+    // per cohort exactly what the paper states and what is missing.
+    for(const s0 of ['10.1109/TNSRE.2020.3011181','10.5281/zenodo.15900394','arxiv.org/abs/1911.03221',dr.credits.repository_revision,`${dr.credits.repository}/tree/${dr.credits.repository_revision}`,'Guillot','https://opensource.org/licenses/MIT'])
+      assert.ok(html.includes(s0),where+': credit '+s0);
+    assert.match(text,zh?/存档许可：MIT，依据 Zenodo 记录上的声明/:/Deposit licence: MIT, as declared on the Zenodo record/,where+': the deposit licence, as declared');
+    const consent=html.slice(html.indexOf('data-consent="cohorts"'),html.indexOf('</article>',html.indexOf('data-consent="cohorts"')));
+    for(const c of coh){
+      const ce=C[c].consent_and_ethics,p0=consent.slice(consent.indexOf(`data-consent-cohort="${c}"`),consent.indexOf('</p>',consent.indexOf(`data-consent-cohort="${c}"`)));
+      for(const x of [ce.ethics_approval,ce.informed_consent]) assert.ok(unent(p0).includes(x.stated?x.statement:x.note),where+': '+c+' the paper\'s statement as recorded: '+(x.statement??x.note).slice(0,50));
+      const missing=!ce.ethics_approval.stated?(zh?'伦理批准：未说明。':'Ethics approval: not stated.'):(zh?'知情同意：未说明。':'Informed consent: not stated.');
+      assert.ok(visible(p0).includes(missing),where+': '+c+' says which statement is missing');
+    }
+    assert.equal(C['DOD-H'].consent_and_ethics.ethics_approval.stated&&!C['DOD-H'].consent_and_ethics.informed_consent.stated&&C['DOD-O'].consent_and_ethics.informed_consent.stated&&!C['DOD-O'].consent_and_ethics.ethics_approval.stated,true,'the export states DOD-H ethics without consent, DOD-O consent without a committee');
+    assert.ok(html.includes('href="/data/large-source-update.json"'),where+': the reviewed export is linked');
+  }
+  // Same figures in both languages: every data-fig on each new section, as a multiset.
+  const figSet=html=>[...html.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]).sort();
+  assert.deepEqual(figSet(pageOf('zh/topics/sleep-staging/')),figSet(pageOf('topics/sleep-staging/')),'sleep-staging: the same figures in both languages');
+  const nsOf=html=>{const a=html.indexOf('<section class="topic-section" id="next-session"');assert.ok(a>0,'calibration-budget: the next-session section must render');return html.slice(a,html.indexOf('</section>',a));};
+  assert.deepEqual(figSet(nsOf(pageOf('zh/topics/calibration-budget/'))),figSet(nsOf(pageOf('topics/calibration-budget/'))),'calibration-budget #next-session: the same figures in both languages');
+
+  // OpenBMI on calibration-budget, #next-session.
+  for(const [label,path] of [['en','topics/calibration-budget/'],['zh','zh/topics/calibration-budget/']]){
+    const zh=label==='zh',html=pageOf(path),where=label+'/calibration-budget';
+    const sec=nsOf(html),stext=visible(sec);
+    assert.ok(html.indexOf('id="next-session"')<html.indexOf('id="methods-and-limits"')&&html.indexOf('id="next-session"')>html.indexOf('id="trca-heading"'),where+': #next-session sits after the SSVEP evidence, before methods and limits');
+    for(const t of figureLike(stext)) assert.ok(obTokens.has(t),where+': "'+t+'" in #next-session is not a value of the OpenBMI export');
+    assert.match(stext,zh?/所以这里不与它们比较/:/so nothing here is compared with them/,where+': not compared with the SSVEP figures');
+    // Cohort accounting: 54 = 1 + 2 + 51, 3,060 held-out trials, 408 jobs, 60 per person.
+    for(const v of [ob.cohort.acquisition_identities,ob.cohort.engineering_exclusion,ob.cohort.input_quality_holds,ob.cohort.evaluated,ob.cohort.unique_test_trials,ob.cohort.jobs.trained,ob.cohort.test_trials_each_person])
+      assert.ok(hasFig(sec,'count',v),where+': cohort count '+v);
+    // The protocol: session 1 fits and calibrates, the first 0/10/20/40 of session 2 calibrate, the same final 60 test.
+    for(const re of zh?[/前 80 个试次拟合分类器，后 20 个用于概率校准/,/第二次会话最前面的 0、10、20 或 40 个校准试次/,/每档预算都在这些相同的试次上测试/]
+                     :[/the first 80 trials fit it, the last 20 calibrate its probabilities/,/the first 0, 10, 20 or 40 labeled trials of their session 2/,/Every budget is tested on those same trials/])
+      assert.match(stext,re,where+': protocol '+re);
+    assert.ok(hasFig(sec,'pct1',ob.chance_level),where+': chance level');
+    // The budget table: both arms, every budget, balanced accuracy with its interval.
+    for(const a of ob.arms) for(const b of a.by_budget){
+      const at=sec.indexOf(`data-cell="${a.id}|${b.target_trials}"`),cell=sec.slice(at,sec.indexOf('</td>',at));
+      for(const x of [b.balanced_accuracy.mean,...b.balanced_accuracy.interval_95]) assert.ok(at>0&&hasFig(cell,'pct1',x),where+': '+a.id+' at '+b.target_trials+': '+x);
+    }
+    // Every mean change has how many people declined beside it, and a change whose interval
+    // includes zero says it is not established — in the table, the finding, the short answer and
+    // the description.
+    for(const a of ob.arms) for(const g of a.calibration_gain){
+      const at=sec.indexOf(`data-gain="${a.id}|${g.target_trials}"`),cell=sec.slice(at,sec.indexOf('</td>',at)),ch=g.balanced_accuracy_change;
+      assert.ok(at>0,where+': gain cell '+a.id+' '+g.target_trials);
+      for(const [f,x] of [['pp1',ch.mean],['sgn1',ch.interval_95[0]],['pp1',ch.interval_95[1]],['count',g.people_with_any_decline],['count',g.people],['count',g.people_with_decline_of_5_points_or_more]])
+        assert.ok(hasFig(cell,f,x),where+': gain '+a.id+' '+g.target_trials+' prints '+f+' '+x);
+      assert.equal(cell.includes('data-not-established'),!g.interval_excludes_zero,where+': gain '+a.id+' '+g.target_trials+' "not established" exactly when its interval includes zero');
+      if(!g.interval_excludes_zero) assert.match(visible(cell),zh?/区间包含零：不能认定/:/The interval includes zero: not established/,where+': gain '+a.id+' '+g.target_trials+' not established, in words');
+    }
+    const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+    const declineRe=(k,n)=>zh?new RegExp(`(?<![\\d.,])${k} 人`):new RegExp(`(?<![\\d.,])${k} (?:of ${n}\\b|of them|people|declined)`);
+    for(const [where2,t] of [['page',visible(html)],['description',metaOf(html,'description')],['og:description',metaOf(html,'og:description')]])
+      for(const a of ob.arms) for(const g of a.calibration_gain){
+        const s0=pp1(g.balanced_accuracy_change.mean);let i=-1;
+        while((i=t.indexOf(s0,i+1))>=0){
+          // Only the OpenBMI changes: the SSVEP section prints no pp of these values (checked by the token rule above for #next-session).
+          assert.match(t.slice(Math.max(0,i-120),i+320),declineRe(g.people_with_any_decline,g.people),where+' '+where2+': '+a.id+' '+g.target_trials+' mean change '+s0+' printed without how many people declined');
+          if(!g.interval_excludes_zero) assert.match(t.slice(i,i+260),zh?/不能认定/:/not established/,where+' '+where2+': '+s0+' is not established, and must say so');
+        }
+      }
+    for(const s0 of [pp1(lc40.balanced_accuracy_change.mean),pp1(psd40.balanced_accuracy_change.mean),String(lc40.people_with_any_decline),String(psd40.people_with_any_decline),String(ob.cohort.evaluated)])
+      assert.ok(ans.includes(s0),where+': the short answer gives '+s0);
+    assert.match(ans,zh?/只用一个固定频带，而不是原方法的滤波器组/:/one fixed band, not the original method's filter bank/,where+': the SSVEP caveat stays in the short answer');
+    // An expanded cohort, not a replication; the earlier snapshot is history, with no figure.
+    const coh0=visible(sec.slice(sec.indexOf('id="next-session-cohort"'),sec.indexOf('</p>',sec.indexOf('id="next-session-cohort"'))));
+    assert.match(coh0,zh?/不是独立的重复验证/:/not an independent replication/,where+': expanded cohort, not a replication');
+    assert.match(coh0,zh?/从未在本站发布/:/never published here/,where+': the earlier snapshot is history');
+    for(const v of [ob.cohort.original_people,ob.cohort.added_people,ob.cohort.evaluated]) assert.ok(sec.includes(`|count|${v}"`),where+': cohort history count '+v);
+    // The required limits.
+    const lim=visible(sec.slice(sec.indexOf('id="next-session-limits"')));
+    for(const re of zh?[/一个数据集，离线/,/不是新被试/,/两个固定的 CPU 基线/,/只基于 60 个测试试次/,/物理幅值单位尚未确定/]
+                     :[/One dataset, offline/,/Not a new person/,/Two fixed CPU baselines/,/rests on 60 test trials/,/physical amplitude unit is not resolved/])
+      assert.match(lim,re,where+': next-session limit '+re);
+    // Credits and rights: the paper, the data DOI, CC0 1.0, the IRB and written consent.
+    for(const s0 of ['10.1093/gigascience/giz002','https://doi.org/10.5524/100542','CC0-1.0','https://creativecommons.org/publicdomain/zero/1.0/']) assert.ok(sec.includes(s0),where+': OpenBMI credit '+s0);
+    assert.match(stext,zh?/高丽大学（Korea University）机构审查委员会批准（1040548-KUIRB-16-159-A-2），所有被试在实验前都签署了书面知情同意/:/approval by the Korea University Institutional Review Board \(1040548-KUIRB-16-159-A-2\) and written informed consent from all participants/,where+': IRB and written consent');
+    assert.ok(sec.includes('href="/data/large-source-update.json"'),where+': the reviewed export is linked');
+  }
+  // The SSVEP pins on calibration-budget stay as they were (the checks above it), and the
+  // question is the broadened one in the title, the card and the markup.
+  {
+    const ld=ldIn(pageOf('topics/calibration-budget/'))[0]['@graph'];
+    const node=ld.find(n=>n['@type']==='Dataset');
+    assert.deepEqual(node.distribution.map(d=>d.contentUrl).sort(),['https://bci.report/data/deployment-topics.json','https://bci.report/data/large-source-update.json'],'calibration-budget: distribution names both exports');
+    assert.equal(ld.find(n=>n['@type']==='FAQPage').mainEntity[0].name,'How much calibration data does an EEG decoder need?','calibration-budget: the FAQ question is the broadened one');
+    const sl=ldIn(pageOf('topics/sleep-staging/'))[0]['@graph'].find(n=>n['@type']==='Dataset');
+    assert.deepEqual(sl.distribution.map(d=>d.contentUrl),['https://bci.report/data/large-source-update.json'],'sleep-staging: distribution');
+    assert.equal(sl.version,ls.release_id,'sleep-staging: the Dataset version is the batch');
+  }
+  // model-adaptation's next-day section now points to the next-session result, figure-free.
+  for(const p of ['topics/model-adaptation/','zh/topics/model-adaptation/']){
+    const html=pageOf(p),at=html.indexOf('id="next-session-pointer"'),ptr=html.slice(at,html.indexOf('</p>',at));
+    assert.ok(at>html.indexOf('id="next-day"')&&ptr.includes(`href="${p.startsWith('zh')?'/zh':''}/topics/calibration-budget/#next-session"`)&&!/\d/.test(visible(ptr)),p+': the next-day section points to #next-session, figure-free');
+  }
+
+  // Dataset pages: Dreem has one group per cohort and none for both; accuracy rows sit next to the
+  // same arm's balanced-accuracy rows; no chance level; no row for a null.
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',dd=pageOf(pfx+'datasets/dreem-dod/'),where=label+'/datasets/dreem-dod';
+    const groups=[...dd.matchAll(/<section class="entity-group" id="g-([^"]+)"/g)].map(m=>m[1]);
+    assert.deepEqual(groups,['dreem-dod-h','dreem-dod-o'],where+': one group per cohort, nothing pooled');
+    for(const c of coh){
+      const g0=dd.indexOf(`id="g-dreem-${c.toLowerCase()}"`),g=dd.slice(g0,dd.indexOf('</section>',g0));
+      const meta=g.slice(0,g.indexOf('</p>'));
+      assert.doesNotMatch(meta,/Chance level|随机水平/,where+': '+c+' no chance level for the prior to be read against');
+      assert.doesNotMatch(g,/class="ip-ref"/,where+': '+c+' no chance line');
+      const rows=[...g.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map(m=>m[1]);
+      for(const a of arms){
+        const ar=C[c].arms[a],acc=`|pct1|${ar.accuracy.mean}"`,ba=`|pct1|${ar.balanced_accuracy.mean}"`;
+        const i=rows.findIndex(r=>r.includes(acc));
+        assert.ok(i>0&&(rows[i-1].includes(ba)||rows[i+1]?.includes(ba)),where+': '+c+' '+a+' accuracy row sits beside its balanced-accuracy row');
+      }
+      const nulls=C[c].arms.spectral_ridge.per_stage.filter(st=>st.precision.mean===null).map(st=>st.stage);
+      for(const s0 of nulls){
+        assert.ok(!rows.some(r=>r.includes(zh?`${s0} 期`:`stage ${s0}`)&&/>(?:Precision|精确率)</.test(r)),where+': '+c+' '+s0+' precision is null: no row');
+        assert.ok(rows.some(r=>r.includes(zh?`${s0} 期`:`stage ${s0}`)&&(zh?/精确率没有定义（不是零）/:/precision is not defined \(not zero\)/).test(unent(r))),where+': '+c+' '+s0+' the recall row says its precision is not defined, not zero');
+      }
+      accBesideBa(visible(g),where+' '+c);
+    }
+    if(zh) negatedZh(chineseOnly(dd).replace(/<[^>]+>/g,' '),/随机水平/g,where); else negatedEn(visible(dd),/chance/gi,where);
+    assert.ok(dd.includes('10.1109/TNSRE.2020.3011181')&&dd.includes('10.5281/zenodo.15900394')&&dd.includes('https://opensource.org/licenses/MIT'),where+': credit and licence');
+    // OpenBMI: every mean change with the people who declined, in order, and "not established" where due.
+    const op=pageOf(pfx+'datasets/openbmi/'),wo=label+'/datasets/openbmi';
+    assert.ok(op.includes('id="g-openbmi-cross-session-calibration"'),wo+': the group');
+    for(const a of ob.arms) for(const g of a.calibration_gain){
+      const at=op.indexOf(`data-fig="large-source-update.json|pp1|${g.balanced_accuracy_change.mean}"`),end=op.indexOf('</tr>',at);
+      const n0=op.indexOf('class="row-note"',at),note=n0>0&&n0<end?op.slice(n0,end):'';
+      assert.ok(at>0&&note,wo+': '+a.id+' '+g.target_trials+' the change carries its reading');
+      assert.deepEqual([...note.matchAll(/data-fig="large-source-update\.json\|count\|(\d+)"/g)].map(m=>Number(m[1])),[g.people_with_any_decline,g.people,g.people_with_decline_of_5_points_or_more],wo+': '+a.id+' '+g.target_trials+' the people behind the mean, in order');
+      assert.equal((zh?/这一提升不能认定/:/not established/).test(note),!g.interval_excludes_zero,wo+': '+a.id+' '+g.target_trials+' "not established" exactly when due');
+    }
+    assert.ok(op.includes('10.1093/gigascience/giz002')&&op.includes('CC0-1.0'),wo+': credit and licence');
+    assert.ok(op.includes(`data-fig="large-source-update.json|pct1|${ob.chance_level}"`),wo+': chance level, a real one here');
+    // The index: both, with their people.
+    const idx=pageOf(pfx+'datasets/');
+    for(const [slug,people] of [['dreem-dod','25 / 55'],['openbmi','51']]){
+      const at=idx.indexOf(`href="/${pfx}datasets/${slug}/"`),row=idx.slice(at,idx.indexOf('</tr>',at));
+      assert.ok(at>0&&row.includes(`<td>${people}</td>`),label+'/datasets/: '+slug+' listed with '+people+' people');
+    }
+  }
+  // Releases: the batch, its manifest hash, the hold (open, figure-free, linking its section).
+  for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+    const html=pageOf(path);
+    assert.ok(html.includes(`id="${ls.release_id}"`)&&html.includes(ls.provenance.manifest_sha256),label+': the large-source release and its manifest');
+    const at=html.indexOf('<tr id="hold-dreem-amplitude-sensitive-models" class="hold-open">'),row=html.slice(at,html.indexOf('</tr>',at));
+    assert.ok(at>0,label+': the Dreem hold is in the register, open');
+    assert.ok(!/\d/.test(visible(row.slice(row.lastIndexOf('<td>')))),label+': the hold\'s reason carries no figure');
+    assert.ok(row.includes(`href="${label==='zh'?'/zh':''}/topics/sleep-staging/#held"`),label+': the hold links its section');
+  }
+  // Home: the hold card, figure-free; the transfer map's held entry; the card counts are pinned above.
+  for(const [label,path] of [['en',''],['zh','zh/']]){
+    const html=pageOf(path),at=html.indexOf(`<a class="hold-card" href="${label==='zh'?'/zh':''}/topics/sleep-staging/#held"`),card=html.slice(at,html.indexOf('</a>',at));
+    assert.ok(at>0&&!/\d/.test(visible(card.replace(/<small>[\s\S]*<\/small>/,''))),label+': the home hold card, figure-free');
+    for(const page of [path,path+'topics/']){
+      const t=pageOf(page),li=t.slice(t.indexOf('<li data-map="person:dreem-amplitude-sensitive-models">'),t.indexOf('</li>',t.indexOf('<li data-map="person:dreem-amplitude-sensitive-models">')));
+      assert.ok(li.length>20&&li.includes(`href="${label==='zh'?'/zh':''}/releases/#hold-dreem-amplitude-sensitive-models"`)&&!/\d/.test(visible(li)),(page||'/')+': the held map entry, figure-free');
+    }
+  }
+  // Data use (English only): the batch's sources, licences and the per-cohort statements.
+  {
+    const du=pageOf('data-use/'),sec=du.slice(du.indexOf('id="sources-2026-10-03"'),du.indexOf('</section>',du.indexOf('id="sources-2026-10-03"')));
+    assert.ok(sec.length>1000,'data-use: the 3 October section');
+    for(const s0 of [dr.rights.name,ob.rights.name,'MIT','CC0-1.0',dr.cohorts['DOD-H'].consent_and_ethics.informed_consent.note,dr.cohorts['DOD-O'].consent_and_ethics.ethics_approval.note])
+      assert.ok(unent(sec).includes(s0),'data-use: '+s0.slice(0,60));
+  }
+  assert.ok(llms.includes('https://bci.report/datasets/dreem-dod/index.md')&&llms.includes('https://bci.report/datasets/openbmi/index.md'),'llms.txt: the two new dataset pages');
+  // The new and broadened topics name the new dataset pages on their Measured-on line, and their
+  // cite blocks the batch's release; the dataset pages cite that release alone.
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    for(const [slug,ds] of [['sleep-staging','dreem-dod'],['calibration-budget','openbmi']]){
+      const html=pageOf(pfx+'topics/'+slug+'/'),at=html.indexOf('<p class="topic-entities">'),line=html.slice(at,html.indexOf('</p>',at));
+      assert.ok(at>0&&line.includes(`href="/${pfx}datasets/${ds}/"`),label+'/'+slug+': the Measured on line links /datasets/'+ds+'/');
+      const cite=html.slice(html.indexOf('<section class="cite-page"'));
+      assert.ok(cite.match(/data-releases="([^"]+)"/)[1].split(' ').includes(ls.release_id),label+'/'+slug+': the cite block names '+ls.release_id);
+    }
+    for(const ds of ['dreem-dod','openbmi']){
+      const html=pageOf(pfx+'datasets/'+ds+'/'),cite=html.slice(html.indexOf('<section class="cite-page"'));
+      assert.equal(cite.match(/data-releases="([^"]+)"/)[1],ls.release_id,label+'/datasets/'+ds+': the cite block names the batch\'s release alone');
+      assert.ok(html.includes('class="entity-profile"'),label+'/datasets/'+ds+': the sourced profile renders');
+    }
+  }
+}
+console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H and DOD-O apart, accuracy never without balanced accuracy, nulls as dashes with their reason, the prior a floor and never a chance level, no cross-cohort or clinical claim, accounting, design, figure-free hold, credits and per-cohort consent and ethics; OpenBMI on calibration-budget: accounting, protocol, budget table, every mean change with how many people declined, "not established" where the interval includes zero, expanded cohort not replication; every figure from the export, the same in both languages; dataset pages, register, home, map and data use.');
 
 // --- Protocol pages (2026-10-02) -------------------------------------------------
 // Each core-matrix protocol has its own address in both languages, built from the
@@ -1814,6 +2151,7 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   }
   // Topic-card counts: every number a card prints is a cohort size or design figure from its own payload.
   const ysuX=xt.results['ysu-async-ssvep-extension'],ltr=xt.results['ltrsvp-rate-transfer'];
+  const lsx=JSON.parse(readFileSync(new URL('../src/data/large-source-update.json',import.meta.url),'utf8'));
   const peopleOf=track=>[...new Set(topics.rows.filter(r=>r.track===track).map(r=>r.participants))];
   const cardPins={
     'dry-vs-wet':{files:['deployment-topics.json'],pins:peopleOf('wearable-sensor-transfer')},
@@ -1821,11 +2159,13 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'fewer-electrodes':{files:['evidence-update.json'],pins:[ev.results.eesm23.cohort.people,ev.results.alphawaves.cohort.people],
       allow:ev.results.alphawaves.configurations.map(c=>c.channels.length)},   // the zh card writes the electrode counts as digits
     'on-the-move':{files:['deployment-topics.json'],pins:[]},
-    'calibration-budget':{files:['deployment-topics.json'],pins:[...peopleOf('wearable-calibration'),...new Set(topics.rows.filter(r=>r.track==='wearable-calibration').map(r=>r.labeled_target_trials).filter(n=>n>12))]},
+    'calibration-budget':{files:['deployment-topics.json','large-source-update.json'],pins:[...peopleOf('wearable-calibration'),...new Set(topics.rows.filter(r=>r.track==='wearable-calibration').map(r=>r.labeled_target_trials).filter(n=>n>12)),
+      lsx.results['openbmi-cross-session-calibration'].cohort.evaluated]},
     'model-adaptation':{files:['adaptation-update.json'],pins:[ad.results['eegmat-labram-adaptation'].cohort.people]},
     'when-not-to-act':{files:['experiments.json','extension-update.json'],pins:[...new Set(data.tracks.find(t=>t.id==='idle').rows.map(r=>r.subjects)),ysuX.cohort.people]},
     'does-pretraining-help':{files:['deployment-topics.json'],pins:[]},
     'clinical-groups':{files:['clinical-update.json'],pins:[cl.results.ds004584.cohort.people]},
+    'sleep-staging':{files:['large-source-update.json'],pins:Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights)},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -1846,7 +2186,10 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'session:cross-session':[cxs.feasibility.people],
     'sensor:dry-vs-wet':peopleOf('wearable-sensor-transfer'),
     'person:clinical':[cl.results.ds004584.cohort.people],'sensor:in-ear':[ev.results.eesm23.cohort.people],'sensor:posterior-subset':[ev.results.alphawaves.cohort.people],
-    'context:screen-to-vr':[cx.results['vr-pc-p300'].cohort.people],'context:image-rate':[ltr.cohort.people],'context:mobile-ssvep':peopleOf('mobile-ssvep-2s')};
+    'context:screen-to-vr':[cx.results['vr-pc-p300'].cohort.people],'context:image-rate':[ltr.cohort.people],'context:mobile-ssvep':peopleOf('mobile-ssvep-2s'),
+    // 2026-10-03: both Dreem cohorts behind one new-person entry, largest first; OpenBMI's evaluated people, next session.
+    'person:sleep-staging':Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights).sort((a,b)=>b-a),
+    'session:openbmi':[lsx.results['openbmi-cross-session-calibration'].cohort.evaluated]};
   for(const page of ['','zh/','topics/','zh/topics/']){
     const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap"'),html.indexOf('</table>',html.indexOf('<table class="tmap"')));
     assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');

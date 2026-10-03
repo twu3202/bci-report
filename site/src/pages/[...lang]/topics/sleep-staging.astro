@@ -1,0 +1,321 @@
+---
+import large from '../../../data/large-source-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
+import Fig from '../../../components/Fig.astro';
+import { pct } from '../../../data/topics';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { dreemArmLabel, formatFig, tr, type Fig as FigValue, type Fmt } from '../../../data/entities';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const tc = topicChrome[locale];
+const zh = locale === 'zh';
+
+// Dreem sleep staging, reviewed 2026-10-03; its own question by owner decision.
+// Two cohorts, DOD-H (healthy) and DOD-O (obstructive sleep apnoea), are two
+// separate experiments: separate models, folds and intervals, recorded at
+// different centres. This page prints each on its own and compares nothing
+// between them. Every figure is a leaf of large-source-update.json, printed with
+// data-fig (Fig.astro) so check-workbench.mjs re-reads it from the served file.
+// Accuracy is never printed without the same arm's balanced accuracy beside it;
+// a null (a stage never predicted, so its precision is undefined) prints as a
+// dash with the reason, never as a zero; the prior's balanced accuracy is a floor
+// and nowhere a chance level.
+const r = large.results['dreem-sleep-baselines'];
+const LSU = 'large-source-update.json';
+const f = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: LSU });
+const cohortIds = ['DOD-H', 'DOD-O'] as const;
+type Cohort = typeof cohortIds[number];
+const arms = ['training_prior', 'spectral_ridge'] as const;
+type Arm = typeof arms[number];
+type Summary = { mean: number | null; interval_95: number[] | null; nights_defined: number; nights_undefined?: Record<string, number> };
+const summary = (c: Cohort, arm: Arm, key: string) => (r.cohorts[c].arms[arm] as unknown as Record<string, Summary>)[key];
+const mean = (c: Cohort, arm: Arm, key: string) => summary(c, arm, key).mean!;
+type Part = string | FigValue | { en: string };
+
+// The sentences below rest on these facts of the export; the page refuses to build without them.
+const never = cohortIds.map(c => r.cohorts[c].arms.spectral_ridge.stages_never_predicted);
+if (!never.every(s => s.length === 1 && s[0] === 'N1')) throw new Error('sleep-staging: the copy says the ridge never predicts N1, and only N1, in either cohort');
+if (!/N2, for every epoch/.test(r.cohorts['DOD-H'].arms.training_prior.description)) throw new Error('sleep-staging: the copy says the prior predicts N2 for every epoch');
+if (!cohortIds.every(c => r.cohorts[c].paired_balanced_accuracy.interval_excludes_zero)) throw new Error('sleep-staging: the copy says each paired interval excludes zero');
+if (!/not a chance level/.test(r.prior_balanced_accuracy_note)) throw new Error('sleep-staging: the export no longer calls the prior a floor');
+
+const H = r.cohorts['DOD-H'], O = r.cohorts['DOD-O'];
+const fp = (v: number) => pct(v);
+const hAcc = fp(mean('DOD-H', 'spectral_ridge', 'accuracy')), hBa = fp(mean('DOD-H', 'spectral_ridge', 'balanced_accuracy'));
+const oAcc = fp(mean('DOD-O', 'spectral_ridge', 'accuracy')), oBa = fp(mean('DOD-O', 'spectral_ridge', 'balanced_accuracy'));
+const hPAcc = fp(mean('DOD-H', 'training_prior', 'accuracy')), hPBa = fp(mean('DOD-H', 'training_prior', 'balanced_accuracy'));
+const oPAcc = fp(mean('DOD-O', 'training_prior', 'accuracy')), oPBa = fp(mean('DOD-O', 'training_prior', 'balanced_accuracy'));
+const ra = r.record_accounting, ea = r.epoch_accounting, jobs = r.jobs, u = r.uncertainty;
+const stageNames: Record<string, string> = zh ? { Wake: '清醒（Wake）', N1: 'N1', N2: 'N2', N3: 'N3', REM: 'REM' } : { Wake: 'Wake', N1: 'N1', N2: 'N2', N3: 'N3', REM: 'REM' };
+const credits = r.credits, rights = r.rights;
+const repoAtRevision = `${credits.repository}/tree/${credits.repository_revision}`;
+
+const copy = {
+  en: {
+    description: `Accuracy counts epochs, so a stager can miss whole stages and still look good. In two Dreem cohorts analysed separately, a spectral ridge scored ${hAcc} and ${oAcc} accuracy but ${hBa} and ${oBa} balanced accuracy, never predicting N1; an always-N2 prior got ${hPAcc} and ${oPAcc} accuracy at ${hPBa} and ${oPBa} balanced accuracy.`,
+    answer: `Because accuracy counts epochs, and sleep stages are far from equal in size: a stager can miss a whole stage and lose little accuracy. Against the publisher's consensus in two Dreem cohorts, analysed as separate experiments — [[${H.nights}]] healthy sleepers and [[${O.nights}]] people with obstructive sleep apnoea — a simple spectral ridge scored [[${hAcc}]] accuracy but [[${hBa}]] balanced accuracy in the first and [[${oAcc}]] accuracy but [[${oBa}]] balanced accuracy in the second, and never predicted N1 in either. A prior that always answers N2, the most frequent stage, already reaches [[${hPAcc}]] and [[${oPAcc}]] accuracy, yet only [[${hPBa}]] and [[${oPBa}]] balanced accuracy: a floor, not a chance level.`,
+    eyebrow: 'Sleep staging · two simple baselines · two separate cohorts',
+    dek: 'Five-stage sleep staging of 30-second epochs against the consensus hypnogram the publisher stores, in two Dreem cohorts recorded at different centres with different equipment. Each cohort is its own experiment, with its own models, folds and intervals; nothing on this page compares them. Two deliberately simple CPU baselines show what ordinary accuracy hides.',
+    expEyebrow: (i: number, c: string) => `Experiment ${i} of 2 · ${c}`,
+    h2: { 'DOD-H': 'DOD-H: healthy sleepers', 'DOD-O': 'DOD-O: people with obstructive sleep apnoea' } as Record<Cohort, string>,
+    lede: (c: Cohort): Part[] => { const k = r.cohorts[c]; return ['Recorded at ', { en: k.recorded_at }, '. ', f(k.nights, 'count'), ' nights, one per person, with ', f(k.eligible_epochs, 'count'), ' eligible 30-second epochs. ', f(k.folds, 'count'), ' folds within the cohort, assigned before any outcome was seen: each tests ', f(k.nights_tested_per_fold, 'count'), ' nights with models fitted on the other ', f(k.nights_trained_per_fold, 'count'), ', so every night is held out once.']; },
+    plotCaption: (n: number) => `Mean over ${n} nights, each counting once.`,
+    plotLegend: 'Accuracy and balanced accuracy for both baselines. Dot: the mean; line: whole-night bootstrap 95% interval. There is no dashed line: the training prior is a floor this baseline sets, not a chance level.',
+    metric: { accuracy: 'Accuracy', balanced_accuracy: 'Balanced accuracy', macro_f1: 'Macro F1', cohen_kappa: 'Cohen’s kappa' } as Record<string, string>,
+    armNote: { training_prior: 'predicts N2 for every epoch · a floor, not a chance level', spectral_ridge: 'standardised one-hot ridge, alpha 1, on 25 relative spectral values' } as Record<Arm, string>,
+    tableRegion: (c: string) => `${c}, both baselines, scrolls horizontally`,
+    tableCaption: (n: number) => `Both baselines on the same ${n} nights: mean over nights, with whole-night bootstrap 95% intervals. Accuracy is printed beside balanced accuracy on purpose.`,
+    colBaseline: 'Baseline',
+    findingLabel: (n: number, first: boolean) => `Spectral ridge minus training prior, balanced accuracy, the same ${n} nights`,
+    findingH3: 'Well above the floor the prior sets',
+    findingP: (lo: FigValue, hi: FigValue, excludes: boolean): Part[] => ['Paired interval ', lo, ' to ', hi, `, computed on the same nights for both baselines: ${excludes ? 'it excludes zero' : 'it includes zero, so no gain is established'}. Paired differences in accuracy, macro F1 and kappa are not published; each baseline’s own value is in the table above.`],
+    stageRegion: (c: string) => `${c}, spectral ridge stage by stage, scrolls horizontally`,
+    stageCaption: 'Spectral ridge, stage by stage: mean over the nights on which each value is defined, with whole-night bootstrap 95% intervals. Epochs: that stage’s count in the consensus. A dash means not defined — never zero.',
+    colStage: 'Stage', colRecall: 'Recall', colPrecision: 'Precision', colF1: 'F1',
+    epochs: (n: FigValue): Part[] => [n, ' epochs'],
+    undefinedAll: (stage: string, n: FigValue): Part[] => ['not defined: ', stage, ' was never predicted on any of the ', n, ' nights'],
+    missedAll: (stage: string): Part[] => [`never predicted, so every ${stage} epoch is missed`],
+    definedOn: (d: FigValue, n: FigValue, reasons: Part[][]): Part[] => ['on ', d, ' of ', n, ' nights; ', ...reasons.flatMap((x, i) => [...(i ? ['; '] : []), ...x])],
+    reason: { stage_absent: (k: FigValue, s: string): Part[] => [k, ` without ${s} in the consensus`],
+              stage_never_predicted: (k: FigValue, s: string): Part[] => [k, ` where ${s} was never predicted`],
+              stage_absent_and_never_predicted: (k: FigValue, s: string): Part[] => [k, ` with ${s} neither in the consensus nor predicted`] } as Record<string, (k: FigValue, s: string) => Part[]>,
+    neverNote: (n: FigValue, stage: string): Part[] => ['The ridge predicted ', stage, ' on none of the ', n, ` nights. Its ${stage} recall and F1 are a measured zero; its ${stage} precision has no value, because precision divides by the epochs predicted as ${stage} and there are none.`],
+    designEyebrow: 'Cohorts and design',
+    designH2: 'What was evaluated, and how',
+    designLede: 'Two cohorts of the Dreem Open Datasets, each split into its own folds. Every count below is from the reviewed export.',
+    cardNights: 'Nights evaluated',
+    cardNightsP: (): Part[] => [f(ra.archive_records, 'count'), ' archive records, minus ', f(ra.excluded_before_scoring, 'count'), ' the publisher declares has no consensus scoring: DOD-H ', f(H.nights, 'count'), ', DOD-O ', f(O.nights, 'count'), '.'],
+    cardEpochs: 'Eligible 30-second epochs',
+    cardEpochsP: (): Part[] => [f(ea.total, 'count'), ' in all, minus ', f(ea.unscored, 'count'), ' unscored and ', f(ea.zero_or_invalid_channel_scale, 'count'), ' with a zero or invalid channel scale.'],
+    cardJobs: 'Models fitted',
+    cardJobsP: (): Part[] => ['Two cohorts × ', f(H.folds, 'count'), ' folds × two baselines; ', ...(jobs.failed === 0 ? ['none failed.'] : [f(jobs.failed, 'count'), ' failed.'])],
+    method: [
+      ['Target', 'The consensus hypnogram as the publisher stores it, in five stages — Wake, N1, N2, N3, REM — for 30-second epochs. The individual scorers’ votes were not reconstructed.'],
+      ['Signal and features', 'Five EEG derivations (C3-M2, F3-F4, F3-M2, F3-O1, F4-O2) at 250 Hz. Each epoch and channel is divided by its own largest absolute value; Welch spectra then give delta, theta, alpha, sigma and beta power as a log share of 0.5–30 Hz power: 25 values per epoch.'],
+      ['Two baselines', 'The training prior uses the training folds’ stage frequencies, the same for every epoch, so it predicts N2 everywhere. The spectral ridge is a standardised one-hot ridge regression with alpha 1 on the 25 values. Nothing was tuned, calibrated on held-out data, oversampled or class-balanced, and no run was retried on its outcome; stages keep their natural prevalence.'],
+      ['Folds', 'Five folds within each cohort, assigned by a hash of each record before any outcome was seen. Every night is tested once per baseline, by a model fitted on the other four folds of its own cohort.'],
+      ['Metrics', 'Computed per night, then averaged so each night counts once, however long. Balanced accuracy is the mean recall over the stages a night contains; macro F1 the mean F1 over the stages it contains or the model predicts. Cohen’s kappa is zero by construction for a prior that gives every epoch the same answer.'],
+      ['Uncertainty', `Pointwise 95% whole-night bootstrap within each cohort: ${u.draws.toLocaleString('en-US')} draws (${u.generator}, seed ${u.seed}), the same draws for both baselines and every metric. Conditional on the fixed cross-validation predictions — refitting and fold assignment are not included — and not adjusted for multiple comparisons.`],
+    ],
+    heldEyebrow: 'Held · no score',
+    heldH2: 'Neural-network and foundation models: held',
+    heldP: 'No neural-network or foundation-model score exists for the Dreem cohorts. The stored signal metadata says millivolts, while the publisher’s own converter treats the same arrays as microvolts. Foundation models and other amplitude-sensitive encoders are held because the source’s physical units disagree: they are not run on a guessed unit. The two baselines above divide each epoch and channel by a positive gain before computing relative spectra, so they do not depend on that unit. The hold says nothing about how accurate those models would be.',
+    heldLink: 'Its row in the holds register →',
+    limitsH2: 'What these baselines can and cannot say',
+    limitsLede: 'Two fixed classical baselines on CPU, in two separate experiments. They set a floor and show what accuracy hides; they are not a ranking, a clinical tool or a model of expert scoring.',
+    limits: [
+      ['Two separate experiments, not a comparison', 'DOD-H and DOD-O have separate models, folds and intervals, and were recorded at different centres with different equipment. Their figures are not a controlled comparison of health status, and nothing here measures transfer from one cohort to the other.'],
+      ['Not clinical, not a diagnosis', 'The target is the consensus the publisher stores, not a reconstruction of each scorer’s vote. Nothing here is a diagnosis, a clinical tool or evidence of equivalence with human experts.'],
+      ['Physical units unresolved', 'The stored metadata says millivolts; the upstream converter treats the arrays as microvolts. Dividing each epoch and channel by a positive gain makes the relative spectra independent of that scale, but it does not establish that calibration, reference, clipping or filtering are equivalent.'],
+      ['Uncalibrated probabilities', 'The ridge’s scores are not calibrated probabilities: no calibration, confidence or abstention claim is made, and no probability score is published.'],
+      ['A floor, not a chance level', 'Balanced accuracy averages only the stages a night contains. The prior predicts N2 everywhere, so on a night that lacks one of the five stages its balanced accuracy is one quarter rather than one fifth; that is why it sits slightly above one fifth. Do not read it as a chance line.'],
+      ['Not comparable with other papers', 'Natural stage prevalence, no class balancing or tuning, five particular derivations and these folds. Do not compare these figures with papers that use other channels, cohorts, preprocessing or splits.'],
+    ],
+    licence: (l: string) => `Deposit licence: ${l}, as declared on the Zenodo record. It is recorded as the deposit’s declaration, not as a statement about every future use; BCI Report redistributes no upstream code or data.`,
+    paperLink: 'Paper ↗', preprintLink: 'Preprint ↗', depositLink: 'Zenodo deposit ↗', repoLink: 'Official repository at the pinned revision ↗',
+    consentH3: 'Consent and ethics, cohort by cohort',
+    ethics: 'Ethics approval:', consent: 'Informed consent:', notStated: 'not stated.',
+    readFrom: 'Source of these statements:',
+    asItStands: 'Each cohort is published as it stands: one has an ethics approval and no consent sentence, the other written consent and no named committee.',
+  },
+  zh: {
+    description: `准确率按数据帧计数，所以分期器整类漏掉某一期也能显得不错。在分别分析的两个 Dreem 队列上，spectral ridge 的准确率为 ${hAcc} 和 ${oAcc}，平衡准确率却只有 ${hBa} 和 ${oBa}，且从未预测过 N1；总是回答 N2 的先验准确率为 ${hPAcc} 和 ${oPAcc}，平衡准确率为 ${hPBa} 和 ${oPBa}。`,
+    answer: `因为准确率按数据帧计数，而各睡眠分期的数据帧数相差悬殊：分期器整类漏掉某一期，准确率也降不了多少。以发布者的共识分期为标准，在两个作为独立实验分别分析的 Dreem 队列上——[[${H.nights}]] 名健康被试和 [[${O.nights}]] 名阻塞性睡眠呼吸暂停患者——一个简单的 spectral ridge 在前者的准确率为 [[${hAcc}]]，平衡准确率却只有 [[${hBa}]]；在后者准确率为 [[${oAcc}]]，平衡准确率只有 [[${oBa}]]；它在两个队列中都从未预测过 N1。一个总是回答最常见一期 N2 的先验，准确率已有 [[${hPAcc}]] 和 [[${oPAcc}]]，平衡准确率却只有 [[${hPBa}]] 和 [[${oPBa}]]：这是一个下限，不是随机水平。`,
+    eyebrow: '睡眠分期 · 两个简单基线 · 两个独立队列',
+    dek: '以发布者存储的共识睡眠图为标准，对 30 秒数据帧做五期睡眠分期；两个 Dreem 队列在不同中心、用不同设备记录。每个队列是一项独立实验，有自己的模型、交叉验证折和区间；本页不对两者做任何比较。两个刻意简单的 CPU 基线，说明普通准确率掩盖了什么。',
+    expEyebrow: (i: number, c: string) => `第 ${i} 项实验（共 2 项）· ${c}`,
+    h2: { 'DOD-H': 'DOD-H：健康被试', 'DOD-O': 'DOD-O：阻塞性睡眠呼吸暂停患者' } as Record<Cohort, string>,
+    lede: (c: Cohort): Part[] => { const k = r.cohorts[c]; return ['记录于 ', { en: k.recorded_at }, '。共 ', f(k.nights, 'count'), ' 晚，每人一晚，', f(k.eligible_epochs, 'count'), ' 个可用的 30 秒数据帧。队列内分为 ', f(k.folds, 'count'), ' 折，在看到任何结果之前分配：每一折用其余 ', f(k.nights_trained_per_fold, 'count'), ' 晚拟合的模型测试 ', f(k.nights_tested_per_fold, 'count'), ' 晚，所以每一晚都恰好留出一次。']; },
+    plotCaption: (n: number) => `${n} 晚的均值，每晚权重相同。`,
+    plotLegend: '两个基线的准确率与平衡准确率。点为均值，横线为整晚 bootstrap 95% 区间。图中没有虚线：训练集先验是这个基线设定的下限，不是随机水平。',
+    metric: { accuracy: '准确率', balanced_accuracy: '平衡准确率', macro_f1: '宏平均 F1', cohen_kappa: 'Cohen kappa 系数' } as Record<string, string>,
+    armNote: { training_prior: '对每个数据帧都预测 N2 · 是下限，不是随机水平', spectral_ridge: '标准化独热编码岭回归，alpha 为 1，基于 25 个相对频谱值' } as Record<Arm, string>,
+    tableRegion: (c: string) => `${c}，两个基线，可横向滚动`,
+    tableCaption: (n: number) => `两个基线在相同的 ${n} 晚上：各晚均值，附整晚 bootstrap 95% 区间。准确率特意与平衡准确率并排给出。`,
+    colBaseline: '基线',
+    findingLabel: (n: number, first: boolean) => `spectral ridge 减训练集先验，平衡准确率，相同的 ${n} 晚${first ? '（pp 为百分点）' : ''}`,
+    findingH3: '明显高于先验设定的下限',
+    findingP: (lo: FigValue, hi: FigValue, excludes: boolean): Part[] => ['配对区间 ', lo, ' 至 ', hi, `，两个基线在相同的夜晚上计算：${excludes ? '区间不含零' : '区间包含零，所以不能认定有提升'}。准确率、宏平均 F1 与 kappa 的配对差值不发布；每个基线自身的数值见上表。`],
+    stageRegion: (c: string) => `${c}，spectral ridge 逐期结果，可横向滚动`,
+    stageCaption: 'spectral ridge 的逐期结果：在该数值有定义的夜晚上取均值，附整晚 bootstrap 95% 区间。数据帧数：共识分期中该期的数量。短横线表示没有定义，绝不是零。',
+    colStage: '分期', colRecall: '召回率', colPrecision: '精确率', colF1: 'F1',
+    epochs: (n: FigValue): Part[] => [n, ' 个数据帧'],
+    undefinedAll: (stage: string, n: FigValue): Part[] => ['没有定义：', n, ' 晚中没有一晚预测过 ', stage],
+    missedAll: (stage: string): Part[] => [`从未预测，所以每个 ${stage} 数据帧都被漏掉`],
+    definedOn: (d: FigValue, n: FigValue, reasons: Part[][]): Part[] => ['在 ', n, ' 晚中的 ', d, ' 晚有定义；', ...reasons.flatMap((x, i) => [...(i ? ['；'] : []), ...x])],
+    reason: { stage_absent: (k: FigValue, s: string): Part[] => [k, ` 晚的共识分期中没有 ${s}`],
+              stage_never_predicted: (k: FigValue, s: string): Part[] => [k, ` 晚从未预测 ${s}`],
+              stage_absent_and_never_predicted: (k: FigValue, s: string): Part[] => [k, ` 晚的共识分期和预测中都没有 ${s}`] } as Record<string, (k: FigValue, s: string) => Part[]>,
+    neverNote: (n: FigValue, stage: string): Part[] => ['spectral ridge 在 ', n, ` 晚中没有一晚预测过 ${stage}。它的 ${stage} 召回率和 F1 是实测的零；${stage} 精确率没有数值，因为精确率要除以被预测为 ${stage} 的数据帧数，而这样的数据帧一个也没有。`],
+    designEyebrow: '队列与设计',
+    designH2: '评测了什么，怎么评测',
+    designLede: '两个 Dreem Open Datasets 队列，各自划分交叉验证折。下面每个计数都来自已审核的导出文件。',
+    cardNights: '评测的夜晚',
+    cardNightsP: (): Part[] => [f(ra.archive_records, 'count'), ' 份存档记录，减去发布者声明没有共识分期的 ', f(ra.excluded_before_scoring, 'count'), ' 份：DOD-H ', f(H.nights, 'count'), ' 份，DOD-O ', f(O.nights, 'count'), ' 份。'],
+    cardEpochs: '可用的 30 秒数据帧',
+    cardEpochsP: (): Part[] => ['共 ', f(ea.total, 'count'), ' 帧，减去 ', f(ea.unscored, 'count'), ' 帧未评分、', f(ea.zero_or_invalid_channel_scale, 'count'), ' 帧通道幅值尺度为零或无效。'],
+    cardJobs: '拟合的模型',
+    cardJobsP: (): Part[] => ['两个队列 × ', f(H.folds, 'count'), ' 折 × 两个基线；', ...(jobs.failed === 0 ? ['没有一个失败。'] : [f(jobs.failed, 'count'), ' 个失败。'])],
+    method: [
+      ['标准', '以发布者存储的共识睡眠图为标准，分为五期——清醒（Wake）、N1、N2、N3、REM——每帧 30 秒。没有还原各评分者的单独判读。'],
+      ['信号与特征', '5 个 EEG 导联（C3-M2、F3-F4、F3-M2、F3-O1、F4-O2），采样率 250 Hz。每个数据帧、每个通道先除以自身的最大绝对值，再用 Welch 法估计频谱，得到 delta、theta、alpha、sigma 与 beta 频带功率在 0.5–30 Hz 总功率中所占份额的对数：每帧 25 个数值。'],
+      ['两个基线', '训练集先验使用训练折中各期的频率，对每个数据帧都一样，所以处处预测 N2。spectral ridge 是在这 25 个数值上做的标准化独热编码岭回归，alpha 为 1。没有调参、没有用留出数据校准、没有过采样或类别平衡，也没有根据结果重跑；各期保持其自然比例。'],
+      ['交叉验证折', '每个队列内部分为 5 折，在看到任何结果之前按每份记录的哈希分配。每一晚在每个基线下都测试一次，所用模型由同一队列其余 4 折拟合。'],
+      ['指标', '先逐晚计算，再取均值，每晚权重相同，无论长短。平衡准确率是该晚出现过的各期召回率的均值；宏平均 F1 是该晚出现过或被模型预测过的各期 F1 的均值。对每个数据帧都给出同一个答案的先验，Cohen kappa 系数按定义为零。'],
+      ['不确定性', `每个队列内部做逐点的整晚 bootstrap 95% 区间：${u.draws.toLocaleString('en-US')} 次抽样（${u.generator}，种子 ${u.seed}），两个基线和所有指标共用同一组抽样。区间以固定的交叉验证预测为条件——不包括重新拟合和折分配带来的不确定性——也没有做多重比较校正。`],
+    ],
+    heldEyebrow: '暂缓 · 没有分数',
+    heldH2: '神经网络与基础模型：暂缓',
+    heldP: 'Dreem 队列上没有任何神经网络或基础模型的分数。存储的信号元数据写的是毫伏，发布者自己的转换程序却把同样的数组当作微伏。由于数据源的物理单位说法不一致，基础模型和其他对幅值敏感的编码器暂缓——不在猜测的单位上运行。上面两个基线在计算相对频谱之前，先把每个数据帧、每个通道除以一个正的增益，所以不依赖这个单位。这项暂缓并不说明那些模型会有多准确。',
+    heldLink: '它在暂缓登记册中的一行 →',
+    limitsH2: '这两个基线能说明什么、不能说明什么',
+    limitsLede: '两个固定的经典 CPU 基线，两项独立实验。它们设定一个下限，并说明准确率掩盖了什么；它们不是排名，不是临床工具，也不是专家评分的模型。',
+    limits: [
+      ['两项独立实验，不是比较', 'DOD-H 与 DOD-O 各有自己的模型、交叉验证折和区间，而且在不同中心、用不同设备记录。它们的数字不是对健康状况的受控比较，这里也没有测量从一个队列到另一个队列的迁移。'],
+      ['不是临床，也不是诊断', '标准是发布者存储的共识分期，而不是还原的各评分者判读。这里没有任何内容是诊断或临床工具，也不能证明与人类专家相当。'],
+      ['物理单位尚未确定', '存储的元数据写的是毫伏，上游转换程序却把数组当作微伏。把每个数据帧、每个通道除以一个正的增益，能让相对频谱不受这个尺度影响，但不能说明校准、参考、削波或滤波是否等价。'],
+      ['概率未经校准', 'spectral ridge 的输出不是经过校准的概率：这里不做校准、置信度或拒识方面的任何声明，也不发布任何概率评分。'],
+      ['是下限，不是随机水平', '平衡准确率只对一晚中出现过的分期取平均。先验处处预测 N2，所以在缺少五期中某一期的夜晚，它的平衡准确率是四分之一而不是五分之一；这就是它略高于五分之一的原因。不要把它当作随机水平线。'],
+      ['不能与其他论文比较', '自然的分期比例，没有类别平衡或调参，特定的 5 个导联和这些交叉验证折。不要把这些数字与使用其他通道、队列、预处理或数据划分的论文相比。'],
+    ],
+    licence: (l: string) => `存档许可：${l}，依据 Zenodo 记录上的声明。这里记录的是存档自身的声明，不是对今后一切用途的表态；BCI Report 不转发任何上游代码或数据。`,
+    paperLink: '论文 ↗', preprintLink: '预印本 ↗', depositLink: 'Zenodo 存档 ↗', repoLink: '官方代码仓库（固定版本）↗',
+    consentH3: '同意书与伦理，逐个队列',
+    ethics: '伦理批准：', consent: '知情同意：', notStated: '未说明。',
+    readFrom: '这些声明的出处：',
+    asItStands: '两个队列各按其现有声明发布：一个有伦理批准、没有同意书的句子，另一个有书面同意、没有写明伦理委员会。',
+  },
+}[locale];
+
+// The paper's statements, cohort by cohort, as the export records them. The
+// Chinese page prints its own rendering with the recorded English beside it.
+const zhStatement: Record<string, string> = {
+  [H.consent_and_ethics.ethics_approval.statement ?? '']: '经人身保护委员会（Committees of Protection of Persons，CPP）批准；已向法国国家药品与健康产品安全局申报；遵循法国《数据保护法》、ICH 标准与《赫尔辛基宣言》（1964 年，2013 年修订）进行。',
+  [H.consent_and_ethics.informed_consent.note ?? '']: '论文对 DOD-H 的描述中没有知情同意的句子。',
+  [O.consent_and_ethics.ethics_approval.note ?? '']: '论文没有为 DOD-O 写明任何伦理委员会或机构审查委员会。',
+  [O.consent_and_ethics.informed_consent.statement ?? '']: '所有试验被试在参加前都给出了书面知情同意。',
+};
+const statements = cohortIds.map(c => {
+  const ce = r.cohorts[c].consent_and_ethics;
+  const line = (x: { stated: boolean; statement?: string; note?: string }) => ({ stated: x.stated, text: (x.stated ? x.statement : x.note)! });
+  return { cohort: c, ethics: line(ce.ethics_approval), consent: line(ce.informed_consent), readFrom: ce.read_from };
+});
+for (const s of statements) for (const x of [s.ethics, s.consent]) if (!zhStatement[x.text]) throw new Error(`sleep-staging: no Chinese for "${x.text}"`);
+const say = (x: { stated: boolean; text: string }) => zh ? zhStatement[x.text] : x.text;
+
+// The per-stage cell: a figure with its interval, or a dash with the reason.
+const stageCell = (c: Cohort, stage: string, key: 'recall' | 'precision' | 'f1') => {
+  const st = r.cohorts[c].arms.spectral_ridge.per_stage.find(s => s.stage === stage)!;
+  const m = st[key] as unknown as Summary;
+  return { m, n: r.cohorts[c].nights, support: st.support_epochs };
+};
+if (new Set(statements.map(s => s.readFrom)).size !== 1) throw new Error('sleep-staging: the cohorts\' statements were read from different sources; print each');
+const gap = zh ? '' : ' ';
+const card = topicCards[locale]['sleep-staging'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/sleep-staging/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="sleep-staging"
+  dataFiles={['/data/large-source-update.json']}
+  answer={copy.answer}
+>
+  {cohortIds.map((c, i) => {
+    const k = r.cohorts[c];
+    const d = k.paired_balanced_accuracy;
+    const n = k.nights;
+    const stageName = (s: string) => stageNames[s] ?? s;
+    return (
+      <section class="topic-section" id={c.toLowerCase()} data-cohort={c} aria-labelledby={`${c.toLowerCase()}-heading`}>
+        <div class="topic-heading"><div><p class="eyebrow">{copy.expEyebrow(i + 1, c)}</p><h2 id={`${c.toLowerCase()}-heading`}>{copy.h2[c]}</h2></div><p>{copy.lede(c).map(p => typeof p === 'string' ? p : 'raw' in p ? <Fig f={p}/> : <span lang={zh ? 'en' : undefined}>{p.en}</span>)}</p></div>
+        <IntervalPlot
+          caption={copy.plotCaption(n)}
+          legend={copy.plotLegend}
+          domain={[0, 1]}
+          ticks={['0%', '25%', '50%', '75%', '100%']}
+          rows={arms.flatMap(arm => (['accuracy', 'balanced_accuracy'] as const).map(key => {
+            const m = summary(c, arm, key);
+            return { label: `${tr(dreemArmLabel[arm], locale)} · ${copy.metric[key]}`, tone: arm === 'training_prior' ? 'muted' as const : 'rust' as const,
+                     value: m.mean!, interval: m.interval_95 as [number, number], text: `${pct(m.mean!)} (${pct(m.interval_95![0])}–${pct(m.interval_95![1])})` };
+          }))}
+        />
+        <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.tableRegion(c)}>
+          <table>
+            <caption>{copy.tableCaption(n)}</caption>
+            <thead><tr><th scope="col">{copy.colBaseline}</th>{(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa'] as const).map(key => <th scope="col">{copy.metric[key]}</th>)}</tr></thead>
+            <tbody>{arms.map(arm => <tr data-arm={`${c}|${arm}`}>
+              <th scope="row" lang={zh && arm === 'spectral_ridge' ? 'en' : undefined}>{tr(dreemArmLabel[arm], locale)}<small lang={zh ? 'zh-Hans' : undefined}>{copy.armNote[arm]}</small></th>
+              {(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa'] as const).map(key => {
+                const m = summary(c, arm, key), fmt: Fmt = key === 'cohen_kappa' ? 'num3' : 'pct1';
+                return <td data-cell={`${c}|${arm}|${key}`}><Fig f={f(m.mean!, fmt)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(m.interval_95![0], fmt)}/>–<Fig f={f(m.interval_95![1], fmt)}/></span></td>;
+              })}
+            </tr>)}</tbody>
+          </table>
+        </div>
+        <div class="finding" data-paired={c}>
+          <div class="finding-number"><strong><Fig f={f(d.mean, 'pp1')}/></strong><span>{copy.findingLabel(n, i === 0)}</span></div>
+          <div class="finding-copy"><h3>{copy.findingH3}</h3><p>{copy.findingP(f(d.interval_95[0], 'sgn1'), f(d.interval_95[1], 'pp1'), d.interval_excludes_zero).map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</p></div>
+        </div>
+        <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.stageRegion(c)}>
+          <table>
+            <caption>{copy.stageCaption}</caption>
+            <thead><tr><th scope="col">{copy.colStage}</th><th scope="col">{copy.colRecall}</th><th scope="col">{copy.colPrecision}</th><th scope="col">{copy.colF1}</th></tr></thead>
+            <tbody>{k.arms.spectral_ridge.per_stage.map(st => <tr data-stage={`${c}|${st.stage}`}>
+              <th scope="row">{stageName(st.stage)}<small>{copy.epochs(f(st.support_epochs, 'count')).map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</small></th>
+              {(['recall', 'precision', 'f1'] as const).map(key => {
+                const { m } = stageCell(c, st.stage, key);
+                if (m.mean === null) return <td data-cell={`${c}|${st.stage}|${key}`} data-null="true"><span class="metric">—</span><span class="interval">{copy.undefinedAll(st.stage, f(n, 'count')).map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</span></td>;
+                const reasons = Object.entries(m.nights_undefined ?? {}).map(([why, kk]) => copy.reason[why](f(kk, 'count'), st.stage));
+                const missed = key === 'recall' && m.mean === 0 && k.arms.spectral_ridge.stages_never_predicted.includes(st.stage);
+                return <td data-cell={`${c}|${st.stage}|${key}`}><Fig f={f(m.mean, 'pct1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(m.interval_95![0], 'pct1')}/>–<Fig f={f(m.interval_95![1], 'pct1')}/></span>
+                  {reasons.length > 0 && <span class="interval">{copy.definedOn(f(m.nights_defined, 'count'), f(n, 'count'), reasons).map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</span>}
+                  {missed && <span class="interval">{copy.missedAll(st.stage)}</span>}</td>;
+              })}
+            </tr>)}</tbody>
+          </table>
+        </div>
+        <p class="protocol-note" data-never={c}>{k.arms.spectral_ridge.stages_never_predicted.map(s => copy.neverNote(f(n, 'count'), s).map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>))}</p>
+      </section>
+    );
+  })}
+
+  <section class="topic-section" id="design" aria-labelledby="design-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.designEyebrow}</p><h2 id="design-heading">{copy.designH2}</h2></div><p>{copy.designLede}</p></div>
+    <div class="evidence-grid">
+      <article class="evidence-card"><p class="eyebrow">{copy.cardNights}</p><div class="reading"><Fig f={f(ra.evaluated, 'count')}/></div><p>{copy.cardNightsP().map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.cardEpochs}</p><div class="reading"><Fig f={f(ea.eligible, 'count')}/></div><p>{copy.cardEpochsP().map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</p></article>
+      <article class="evidence-card"><p class="eyebrow">{copy.cardJobs}</p><div class="reading"><Fig f={f(jobs.trained, 'count')}/></div><p>{copy.cardJobsP().map(p => typeof p === 'string' ? p : <Fig f={p as FigValue}/>)}</p></article>
+    </div>
+    <div class="method-grid-wide">{copy.method.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+  </section>
+
+  <section class="topic-section" id="held" aria-labelledby="held-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.heldEyebrow}</p><h2 id="held-heading">{copy.heldH2}</h2></div><p>{copy.heldP}</p></div>
+    <p class="citation-note"><a href={hrefFor(`/releases/#hold-${large.holds[0].id}`, locale)}>{copy.heldLink}</a></p>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list" id="rights">
+      <article>
+        <h3 lang="en">{rights.name}</h3>
+        <p lang="en">{rights.attribution}</p>
+        <p>{copy.licence(rights.license)}</p>
+        <p><a href={credits.paper} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={credits.preprint} target="_blank" rel="noreferrer">{copy.preprintLink}</a> · <a href={credits.deposit} target="_blank" rel="noreferrer">{copy.depositLink}</a> · <a href={repoAtRevision} target="_blank" rel="noreferrer">{copy.repoLink}</a> · <a href={rights.licenseUrl} target="_blank" rel="noreferrer">{rights.license}</a></p>
+      </article>
+      <article data-consent="cohorts">
+        <h3>{copy.consentH3}</h3>
+        {statements.map(s => <p data-consent-cohort={s.cohort}><strong>{s.cohort}</strong> · {copy.ethics}{gap}{s.ethics.stated ? '' : copy.notStated + gap}{say(s.ethics)}{zh && <span class="note-original" lang="en">{s.ethics.text}</span>} {copy.consent}{gap}{s.consent.stated ? '' : copy.notStated + gap}{say(s.consent)}{zh && <span class="note-original" lang="en">{s.consent.text}</span>}</p>)}
+        <p>{copy.asItStands}{gap}{copy.readFrom}{gap}<span lang={zh ? 'en' : undefined}>{statements[0].readFrom}</span>{tc.period}</p>
+      </article>
+    </div>
+    <p class="citation-note">{tc.dataSource} <a href="/data/large-source-update.json" download>large-source-update.json</a> · {tc.schema} {large.schema_version} · {tc.generated} {large.generated_at}{tc.period}</p>
+  </section>
+</TopicLayout>

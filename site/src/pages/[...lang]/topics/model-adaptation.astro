@@ -104,6 +104,8 @@ const copy = {
     crossP: [`${stieger.name.split(' · ')[0]}: one person's ${stiegerSessions} sessions were acquired, not the full release. What is published is that the loader and a chronological split work on it — earlier sessions train, later sessions test. With one person, every score would be that person's, so none is published; the source is listed as status only in the `, 'release of 27 September', '.'],
     rmApartH3: 'Four questions kept apart',
     rmApart: 'A new person, a new day, a new dataset and a new device are different questions, answered on different data. A task adapter trained on several people is not evidence that it transfers across devices.',
+    // Since 2026-10-03: the next-session question has a measured answer elsewhere, for classical baselines only.
+    nextSession: ['A related question now has a measured answer, for two classical baselines on other data: the same person’s next session, with and without a few labeled trials from it. It is on ', '.'],
     adLimitsH2: 'What this result is not',
     adLimitsLede: 'One fixed recipe, three update rules and three seeds, on new people for a task the model is adapted to. It describes that recipe on these people; it is not a ranking of update rules.',
     adLimits: [
@@ -159,6 +161,7 @@ const copy = {
     crossP: [`Stieger 纵向 BCI：获取的是一名被试的 ${stiegerSessions} 次会话，而不是完整的数据集。公开的只有一点：加载程序和按时间顺序的划分（较早的会话训练、较晚的会话测试）在它上面可以运行。只有一个人时，任何分数都是这个人的分数，所以不发布；该数据源在`, '9 月 27 日的发布', '中只列状态。'],
     rmApartH3: '刻意分开的四个问题',
     rmApart: '新被试、新的一天、新数据集、新设备是四个不同的问题，要用不同的数据回答。在多名被试上训练出的任务适配器，并不能证明它能跨设备迁移。',
+    nextSession: ['一个相关的问题如今在另一份数据上有了两个经典基线的实测答案：同一个人的下一次会话，加入或不加入少量该会话的校准试次。见「', '」。'],
     adLimitsH2: '这个结果不是什么',
     adLimitsLede: '一个固定的配方、三种更新方式、3 个随机种子，用在模型已适配过的任务的新被试上。它描述的是这个配方在这些被试上的表现，不是各更新方式的排名。',
     adLimits: [
@@ -226,6 +229,7 @@ const card = topicCards[locale]['model-adaptation'];
     <p class="roadmap-p">{copy.crossP[0]}<a href={hrefFor(`/releases/#${context.release_id}`, locale)}>{copy.crossP[1]}</a>{copy.crossP[2]}</p>
     <h3 class="roadmap-h3">{copy.rmApartH3}</h3>
     <p class="roadmap-p">{copy.rmApart}</p>
+    <p class="roadmap-p" id="next-session-pointer">{copy.nextSession[0]}<a href={hrefFor('/topics/calibration-budget/#next-session', locale)}>{topicCards[locale]['calibration-budget'].question}</a>{copy.nextSession[1]}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">

@@ -38,7 +38,7 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
       <p class="entity-group-meta">{c.readOn} <a href={hrefFor(g.path, locale)}>{pageLabel(g.path)}</a>{g.chance && <> · {c.chance} <span data-fig={attr(g.chance)}>{formatFig(g.chance)}</span></>} · {files.map((f, i) => <>{i > 0 && ', '}<a href={`/data/${f}`} download>{f}</a></>)}</p>
       {plot.length > 0 && <IntervalPlot
         caption={c.plotCaption(plot.length)}
-        legend={c.plotLegend}
+        legend={g.plotLegend ? tr(g.plotLegend, locale) : c.plotLegend}
         domain={[0, scale]}
         ticks={['0%', '25%', '50%', '75%', '100%']}
         reference={g.chance ? g.chance.raw : undefined}

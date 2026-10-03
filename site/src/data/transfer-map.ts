@@ -32,6 +32,7 @@ import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
+import large from './large-source-update.json';
 import { holds } from './releases';
 import type { Fig, L } from './entities';
 
@@ -64,7 +65,8 @@ export interface MapRow {
 }
 
 const DEP = 'deployment-topics.json', EVI = 'evidence-update.json', CLI = 'clinical-update.json',
-      CTX = 'context-update.json', ADA = 'adaptation-update.json', EXT = 'extension-update.json';
+      CTX = 'context-update.json', ADA = 'adaptation-update.json', EXT = 'extension-update.json',
+      LSU = 'large-source-update.json';
 const count = (raw: number, src: string): Fig => ({ raw, fmt: 'count', src });
 
 /** The cohort sizes behind a deployment track (one regime, if given), largest first. */
@@ -85,6 +87,13 @@ const crossSession = statusOnly(context.status_only, 'stieger-longitudinal');
 const clinicalCohort = clinical.results.ds004584.cohort.people;
 const vr = (context.results as Record<string, any>)['vr-pc-p300'];
 const ltrsvp = extension.results['ltrsvp-rate-transfer'];
+// 2026-10-03. Dreem: each night is one person's and is held out once, scored by a
+// model fitted on other people's nights of the same cohort, so it is new-person
+// evidence — two cohorts, two experiments, one entry with both sizes. OpenBMI: the
+// same person and task, trained on session 1 and tested on session 2; nothing else
+// changes in that contrast, so it carries no `with` tag.
+const dreemCohorts = Object.values(large.results['dreem-sleep-baselines'].cohorts).map(c => c.nights).sort((a, b) => b - a);
+const openbmi = large.results['openbmi-cross-session-calibration'];
 
 // The core matrix's new-person protocols are the ones its payload labels so.
 if (!data.tracks.some(t => t.short === 'Transfer to a new person'))
@@ -116,9 +125,15 @@ export const mapRows: MapRow[] = [
         { key: 'person:clinical', label: { en: 'Parkinson’s disease vs. controls', zh: '帕金森病与对照' }, href: '/topics/clinical-groups/',
           n: [count(clinicalCohort, CLI)],
           note: { en: 'Every person held out once; one site, and not a diagnosis.', zh: '每名被试各留出一次；单中心，也不是诊断。' } },
+        { key: 'person:sleep-staging', label: { en: 'Sleep staging · Dreem, two cohorts', zh: '睡眠分期 · Dreem，两个队列' }, href: '/topics/sleep-staging/',
+          n: dreemCohorts.map(n => count(n, LSU)),
+          note: { en: 'Each night held out once and scored by a model fitted on other people’s nights of the same cohort; the two cohorts are separate experiments.', zh: '每一晚各留出一次，由同一队列中其他人的夜晚拟合的模型评分；两个队列是两项独立实验。' } },
       ],
       status: [],
       held: [
+        { key: 'person:dreem-amplitude-sensitive-models', hold: 'dreem-amplitude-sensitive-models', href: '/releases/#hold-dreem-amplitude-sensitive-models',
+          label: { en: 'Neural and foundation models on the Dreem cohorts', zh: 'Dreem 队列上的神经网络与基础模型' },
+          note: { en: 'Not run: the source’s physical units disagree.', zh: '未运行：数据源的物理单位说法不一致。' } },
         { key: 'person:clinical-foundation-models', hold: 'clinical-foundation-models', href: '/releases/#hold-clinical-foundation-models',
           label: { en: 'Foundation models on the clinical cohort', zh: '临床队列上的基础模型' },
           note: { en: 'Not run: the source states no physical amplitude unit.', zh: '未运行：数据源没有说明物理幅值单位。' } },
@@ -135,6 +150,9 @@ export const mapRows: MapRow[] = [
         { key: 'session:mobile-erp', label: { en: 'Mobile ERP · first session to the others', zh: '移动 ERP · 第一次会话到其余会话' },
           href: '/topics/on-the-move/#erp-heading', n: mobileErp, with: { en: 'movement', zh: '运动' },
           note: { en: 'Fitted on the person’s first session, standing; the session and the movement change together.', zh: '在该被试第一次会话（站立）上拟合；会话与运动一起变化，相互混杂。' } },
+        { key: 'session:openbmi', label: { en: 'OpenBMI motor imagery · first session to the second', zh: 'OpenBMI 运动想象 · 第一次会话到第二次' },
+          href: '/topics/calibration-budget/#next-session', n: [count(openbmi.cohort.evaluated, LSU)],
+          note: { en: 'The same person and task: trained on the first session, tested on the second, with and without a few of its labelled trials.', zh: '同一被试、同一任务：在第一次会话上训练、在第二次会话上测试，加入或不加入该会话的少量校准试次。' } },
       ],
       status: [
         { key: 'session:cross-session', label: { en: 'Cross-session pilot', zh: '跨会话试点' }, href: '/topics/model-adaptation/#cross-session', hold: 'stieger-longitudinal',
