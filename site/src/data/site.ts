@@ -55,6 +55,19 @@ export const contact: { corrections: string | null; privacy: string | null } = {
   privacy: 'privacy@bci.report',
 };
 
+/**
+ * The Zenodo archive (connected 2026-10-03). Every GitHub release is archived
+ * as its own version with its own DOI; the concept DOI below always resolves to
+ * the newest version, so it is the one to cite and the one CITATION.cff,
+ * the /api/ BibTeX, the home Dataset and llms.txt carry (check-workbench.mjs
+ * keeps them equal). The first archived version was extension-update-20261002,
+ * DOI 10.5281/zenodo.23123297.
+ */
+export const archive = {
+  conceptDoi: '10.5281/zenodo.23123296',
+  conceptUrl: 'https://doi.org/10.5281/zenodo.23123296',
+} as const;
+
 export const contactReady = contact.corrections !== null;
 
 /** Subject line suggested to correspondents. Derived so a rename cannot strand it. */

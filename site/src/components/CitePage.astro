@@ -6,7 +6,7 @@
  * check-workbench.mjs checks that the releases named here are exactly the ones
  * whose files the page's figures and downloads come from.
  */
-import { site } from '../data/site';
+import { archive, site } from '../data/site';
 import { releasesFor } from '../data/releases';
 import { chrome, citeCopy, hrefFor, type Locale } from '../data/i18n';
 
@@ -37,5 +37,5 @@ const titleEnd = /[.?!？。]$/.test(title) ? '' : '.';
     ? <p class="cite-text">{site.name}. <cite>{title}</cite>[EB/OL]. ({newest.date}). <span class="cite-url">{canonical}</span></p>
     : <p class="cite-text">{site.name} ({newest.date.slice(0, 4)}). <cite>{title}</cite>{titleEnd} <span class="cite-url">{canonical}</span></p>}
   <p>{c.figuresFrom(cited.length)} {cited.map((r, i) => <>{i > 0 && (zh ? '、' : ', ')}<a href={hrefFor(`/releases/#${r.id}`, locale)}><code>{r.id}</code></a>{zh ? `（${r.date}）` : ` (${r.date})`}</>)}{zh ? '。' : '. '}{upstreamText}</p>
-  <p class="citation-note"><a href={hrefFor('/api/#cite-heading', locale)}>{c.bibtex}</a> · <a href={site.citationFile} target="_blank" rel="noreferrer">CITATION.cff ↗</a>{t.englishMark}</p>
+  <p class="citation-note">{c.archived}{zh ? '' : ' '}<a href={archive.conceptUrl}>doi:{archive.conceptDoi}</a>{zh ? '。' : '.'} <a href={hrefFor('/api/#cite-heading', locale)}>{c.bibtex}</a> · <a href={site.citationFile} target="_blank" rel="noreferrer">CITATION.cff ↗</a>{t.englishMark}</p>
 </section>

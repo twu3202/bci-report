@@ -13,6 +13,7 @@
 [![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20dataset-Twu31%2Fbci--report-yellow)](https://huggingface.co/datasets/Twu31/bci-report)
 [![Results licence](https://img.shields.io/badge/results-CC%20BY%204.0-blue)](LICENSE-DATA)
 [![Code licence](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23123296.svg)](https://doi.org/10.5281/zenodo.23123296)
 
 [Website](https://bci.report) · [中文](https://bci.report/zh/) · [Dataset](https://huggingface.co/datasets/Twu31/bci-report) · [Data use & privacy](https://bci.report/data-use/)
 
@@ -190,9 +191,12 @@ dataset and method page also ends with a "Cite this page" block naming the
 releases its figures come from. New releases appear in the
 [Atom feed](https://bci.report/releases.xml).
 
-`.zenodo.json` describes the repository for a Zenodo archive of each GitHub
-release; it is written by `site/scripts/write-zenodo-metadata.mjs` from
-`CITATION.cff` and the built dataset pages, and the site checks hold it to them.
+Every GitHub release is archived on Zenodo with its own version DOI; the
+concept DOI [10.5281/zenodo.23123296](https://doi.org/10.5281/zenodo.23123296)
+always resolves to the newest one, and is the one to cite. `.zenodo.json`
+describes the repository for that archive; it is written by
+`site/scripts/write-zenodo-metadata.mjs` from `CITATION.cff` and the built
+dataset pages, and the site checks hold it to them.
 
 > **Known limits.** Six of eight core protocols run a single seed, the smallest
 > cohort is four people, and 9 of 18 catalogued methods have been scored. Each

@@ -35,6 +35,7 @@ class CardCitation(unittest.TestCase):
         self.assertIn('author       = {{BCI Report}}', bibtex)
         self.assertIn(f"year         = {{{self.cff('date-released')[:4]}}}", bibtex)
         self.assertIn(f"howpublished = {{\\url{{{self.cff('url')}}}}}", bibtex)
+        self.assertIn(f"doi          = {{{self.cff('doi')}}}", bibtex)
         self.assertEqual(bibtex.count('{'), bibtex.count('}'), 'unbalanced braces')
 
     def test_sends_readers_to_the_upstream_credit(self):

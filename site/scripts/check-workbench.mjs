@@ -1766,6 +1766,18 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   const cffField=k=>cff.match(new RegExp('^'+k+': "?([^"\\n]+)"?$','m'))[1];
   assert.ok(bib.includes(`title        = {${cffField('title')}}`)&&bib.includes(`note         = {Release ${cffField('version')}}`)&&bib.includes(`year         = {${cffField('date-released').slice(0,4)}}`),
     'the /api/ BibTeX must be the citation CITATION.cff gives');
+  // The Zenodo concept DOI (site.ts `archive`) is the one CITATION.cff, the BibTeX, the home Dataset,
+  // llms.txt and every cite block carry (archive connected 2026-10-03).
+  const conceptDoi=readFileSync(new URL('../src/data/site.ts',import.meta.url),'utf8').match(/conceptDoi: '(10\.5281\/zenodo\.\d+)'/)[1];
+  assert.equal(cffField('doi'),conceptDoi,'CITATION.cff: doi is the Zenodo concept DOI');
+  assert.ok(bib.includes(`doi          = {${conceptDoi}}`),'the /api/ BibTeX carries the concept DOI');
+  assert.equal(ldOf(built).find(x=>x['@type']==='Dataset').identifier,'https://doi.org/'+conceptDoi,'home Dataset identifier is the concept DOI');
+  assert.ok(readFileSync(new URL('llms.txt',DIST),'utf8').includes('DOI '+conceptDoi),'llms.txt names the concept DOI');
+  assert.ok(repoFile('README.md').includes('https://doi.org/'+conceptDoi),'README: the DOI badge');
+  for(const p of ['topics/dry-vs-wet/','zh/datasets/ltrsvp/','methods/labram/']){
+    const html=pageOf(p),cite=html.slice(html.indexOf('<section class="cite-page"'));
+    assert.ok(cite.includes(`<a href="https://doi.org/${conceptDoi}">doi:${conceptDoi}</a>`),p+': the cite block links the archive DOI');
+  }
 }
 
 // --- 2026-10-02 home, navigation and the Questions hub -------------------------------------

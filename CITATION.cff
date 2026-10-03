@@ -23,7 +23,11 @@ authors:
 url: "https://bci.report"
 repository-code: "https://github.com/twu3202/bci-report"
 repository-artifact: "https://huggingface.co/datasets/Twu31/bci-report"
+doi: "10.5281/zenodo.23123296"
 identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23123296"
+    description: "Zenodo concept DOI: resolves to the newest archived release"
   - type: url
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"

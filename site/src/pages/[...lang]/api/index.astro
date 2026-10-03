@@ -3,7 +3,7 @@ import EntityLayout from '../../../components/EntityLayout.astro';
 import { describeFile, servedFiles } from '../../../data/files';
 import { releases } from '../../../data/releases';
 import { chrome, hrefFor, localeOf, localeParams } from '../../../data/i18n';
-import { site } from '../../../data/site';
+import { archive, site } from '../../../data/site';
 import { creator } from '../../../data/structured';
 
 export const getStaticPaths = localeParams;
@@ -83,7 +83,7 @@ const curl = `curl -sO ${base}experiments.json\ncurl -s ${base}context-update.js
 // example printed here until then did not run. Fetch with requests instead.
 const python = `import io\nimport pandas as pd, requests\n\nmatrix = requests.get("${base}experiments.json", timeout=30).json()\nfor track in matrix["tracks"]:\n    print(track["id"], track["chanceLevel"], len(track["rows"]))\n\n# Fetch with requests, then hand pandas the text (see the note above).\ncsv = requests.get("${base}mi-rest-results.csv", timeout=30).text\nmi_rest = pd.read_csv(io.StringIO(csv))`;
 const hf = `from datasets import load_dataset\n\nresults = load_dataset("Twu31/bci-report", "results")  # also: topics, contrasts, seed_sensitivity`;
-const bibtex = `@misc{bcireport,\n  title        = {BCI Report: public EEG decoding results reported with their protocol},\n  author       = {{BCI Report}},\n  year         = {${latest.date.slice(0, 4)}},\n  howpublished = {\\url{${site.origin}}},\n  note         = {Release ${latest.id}}\n}`;
+const bibtex = `@misc{bcireport,\n  title        = {BCI Report: public EEG decoding results reported with their protocol},\n  author       = {{BCI Report}},\n  year         = {${latest.date.slice(0, 4)}},\n  howpublished = {\\url{${site.origin}}},\n  doi          = {${archive.conceptDoi}},\n  note         = {Release ${latest.id}}\n}`;
 const structured = {
   '@context': 'https://schema.org', '@type': 'WebAPI', name: `${site.name} data API`, url: new URL('/api/', site.origin).href,
   description: copy.description, documentation: new URL('/api/', site.origin).href, provider: creator,

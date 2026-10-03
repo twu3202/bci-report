@@ -176,12 +176,14 @@ def citation_section():
         return value.group(1)
 
     title, version, released, url = field('title'), field('version'), field('date-released'), field('url')
+    doi = field('doi')
     bibtex = '\n'.join([
         '@misc{bcireport,',
         f'  title        = {{{title}}},',
         '  author       = {{BCI Report}},',
         f'  year         = {{{released[:4]}}},',
         f'  howpublished = {{\\url{{{url}}}}},',
+        f'  doi          = {{{doi}}},',
         f'  note         = {{Release {version}}}',
         '}',
     ])
@@ -194,7 +196,8 @@ the attribution table above, and every dataset page at
 [CITATION.cff](https://github.com/twu3202/bci-report/blob/main/CITATION.cff),
 which GitHub's "Cite this repository" reads, and every topic, dataset and method
 page on the site ends with a "Cite this page" block naming the releases its
-figures come from.
+figures come from. Every release is archived on Zenodo; the concept DOI
+[{doi}](https://doi.org/{doi}) resolves to the newest one.
 
 ```bibtex
 {bibtex}

@@ -248,7 +248,7 @@ const sameAs = host => umbrella?.sameAs?.find(u => new URL(u).hostname === host)
 const repository = sameAs('github.com'), mirror = sameAs('huggingface.co');
 const bibKey = api.md.match(/```\n@misc\{([^,]+),/)?.[1];
 const citationFile = api.md.match(/\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/CITATION\.cff)\)/)?.[1];
-if (!umbrella?.version || !umbrella?.dateModified || !repository || !mirror || !bibKey || !citationFile)
+if (!umbrella?.version || !umbrella?.dateModified || !umbrella?.identifier || !repository || !mirror || !bibKey || !citationFile)
   throw new Error('build-agent-files: the home Dataset markup or /api/ no longer carries the release, mirrors or citation');
 
 const llms = `# BCI Report
@@ -281,7 +281,7 @@ ${apiFiles.join('\n')}
 
 ## Cite
 
-- [How to cite](${mdUrl(api)}): cite BCI Report and the release you used — the current one is \`${umbrella.version}\` (${umbrella.dateModified}); BibTeX key \`${bibKey}\` — and the upstream dataset each figure was computed on: every dataset page gives its credit. Every topic, dataset and method page ends with a "Cite this page" block naming the releases its figures come from.
+- [How to cite](${mdUrl(api)}): cite BCI Report and the release you used — the current one is \`${umbrella.version}\` (${umbrella.dateModified}); archived on Zenodo, DOI ${umbrella.identifier.replace('https://doi.org/', '')} (${umbrella.identifier}); BibTeX key \`${bibKey}\` — and the upstream dataset each figure was computed on: every dataset page gives its credit. Every topic, dataset and method page ends with a "Cite this page" block naming the releases its figures come from.
 - [CITATION.cff](${citationFile}): the same citation, machine-readable (GitHub's "Cite this repository"). Aggregate results CC BY 4.0; the recordings keep their own licences.
 
 ## Mirrors

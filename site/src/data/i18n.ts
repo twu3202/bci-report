@@ -258,6 +258,7 @@ export const citeCopy = {
     upstreamPage: 'Cite the upstream datasets as well: their credits are on this page.',
     upstreamDataset: 'Cite the upstream dataset as well: its credit is on this page.',
     upstreamDatasets: 'Cite the upstream datasets as well: each dataset’s page gives its credit.',
+    archived: 'Every release is archived on Zenodo:',
     bibtex: 'BibTeX for the site and its releases →',
   },
   zh: {
@@ -266,6 +267,7 @@ export const citeCopy = {
     upstreamPage: '也请同时引用上游数据集：署名就在本页。',
     upstreamDataset: '也请同时引用上游数据集：其署名就在本页。',
     upstreamDatasets: '也请同时引用上游数据集：每个数据集页面都写明了署名。',
+    archived: '每个发布版本都在 Zenodo 存档：',
     bibtex: '本站及各次发布的 BibTeX →',
   },
 } satisfies Record<Locale, unknown>;

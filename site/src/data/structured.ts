@@ -29,7 +29,7 @@ import clinical from './clinical-update.json';
 import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
-import { site } from './site';
+import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
 import { servedFiles } from './files';
@@ -92,6 +92,8 @@ export function homeDataset() {
     creator,
     isAccessibleForFree: true,
     version: latestRelease.id,
+    // The Zenodo concept DOI: it resolves to the newest archived release.
+    identifier: archive.conceptUrl,
     datePublished: releases.at(-1)!.date,
     dateModified: latestRelease.date,
     measurementTechnique: 'Electroencephalography',
