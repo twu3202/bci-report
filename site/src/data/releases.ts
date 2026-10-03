@@ -33,7 +33,8 @@ export const siteUpdates = [
             '/topics/model-adaptation/', '/topics/calibration-budget/', '/datasets/eegmat/', '/methods/labram/',
             '/topics/', '/methods/',
             '/topics/dry-vs-wet/', '/topics/fewer-electrodes/', '/topics/on-the-move/', '/topics/does-pretraining-help/',
-            '/topics/clinical-groups/', '/datasets/ds003810/'],
+            '/topics/clinical-groups/'],
+    entityPages: true,
   },
   {
     date: '2026-10-01',

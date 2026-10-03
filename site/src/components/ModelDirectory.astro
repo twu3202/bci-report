@@ -24,7 +24,7 @@ const params = (n: number | null | undefined) =>
   n ? (n / 1e6 >= 1 ? (n / 1e6).toFixed(2) + 'M' : (n / 1e3).toFixed(1) + 'K') : '—';
 ---
 <section id="models" class="section" aria-labelledby="models-heading">
-  <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}</p></div>
+  <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}{d.translated && <> {d.translated}</>}</p></div>
   <div class="model-grid">{data.models.map(m => {
     const s = modelDirectoryStatus(m);
     return <article class="model-card" data-model={m.name}>
@@ -32,9 +32,9 @@ const params = (n: number | null | undefined) =>
       <h3 lang="en">{methodPage(m.name) ? <a href={methodPage(m.name)!}>{m.name}</a> : m.name}</h3>
       <p class="parameter">{params(m.parameters)} <span>{d.parameters}</span></p>
       <p lang={dir(m.note).lang}>{dir(m.note).text}</p>
-      {s.override && <p class="status-override"><span>{d.releasedStatus}: {modelStatus(s.override.released, locale)}.</span> {s.override.note[locale] ?? s.override.note.en} <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></p>}
-      <p class="status-checked"><time datetime={s.checked}>{d.statusChecked(s.checked)}</time></p>
-      <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
+      {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span> {s.override.note[locale] ?? s.override.note.en} <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></p>}
+      <p class="status-checked"><time datetime={s.checked}>{s.override ? d.statusChecked(s.checked) : d.statusAsReleased(s.checked)}</time></p>
+      <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{s.override && d.codeAsReleased}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
     </article>;
   })}</div>
 </section>

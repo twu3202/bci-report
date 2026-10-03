@@ -44,7 +44,7 @@ export const modelStatusOverrides: Record<string, StatusOverride> = {
     facts: reve,
     note: {
       en: `Checked 2026-10-02: Hugging Face reports the base weights as no longer gated (repository last modified ${reve.sourceModified}), under the ${reve.licence}. That licence has not been reviewed for this site, so the model stays unscored. The note above is the released one.`,
-      zh: `2026-10-02 核查：Hugging Face 显示基础权重已不再受访问限制（仓库最后修改于 ${reve.sourceModified}），许可为 ${reve.licence}。本站尚未审查这份许可，所以该模型仍没有分数。上面的备注是发布时的原文。`,
+      zh: `2026-10-02 核查：Hugging Face 显示基础权重已不再受访问限制（仓库最后修改于 ${reve.sourceModified}），许可为 ${reve.licence}。本站尚未审查这份许可，所以该模型仍没有分数。上面的备注译自发布时的原文。`,
     },
   },
 };

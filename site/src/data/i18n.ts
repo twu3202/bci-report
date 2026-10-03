@@ -366,7 +366,7 @@ export const home = {
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
       `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
-      `Separate topics add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, pretraining and clinical groups.`,
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, pretraining and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
@@ -391,7 +391,7 @@ export const home = {
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
     snapshot: 'snapshot',
-    matrixLede: 'The original eight-protocol snapshot, separate from the deployment topics above. Blank cells are protocols a method has not been run on — not failures.',
+    matrixLede: 'The original eight-protocol snapshot, separate from the questions above. Blank cells are protocols a method has not been run on — not failures.',
     matrixRegion: 'Coverage matrix of methods against protocols, scrolls horizontally',
     matrixCaption: 'Balanced accuracy of each method on each protocol. Chance level differs by protocol and is given in each column heading.',
     corner: 'Method',
@@ -447,7 +447,7 @@ export const home = {
     // module that builds it (entities.ts, releases.ts, files.ts).
     directoryEyebrow: 'Directory',
     directoryH2: 'Everything else, by what it is',
-    directoryLede: 'The model directory, the public-data register and the field notes now live with the methods and datasets they describe.',
+    directoryLede: 'The model directory and the external field notes are on the Methods page; the public-data register is on the Datasets page.',
     directory: {
       methods: { title: 'Methods', count: 'methods with result pages',
         body: 'Every published figure for each method; the model directory, with why a catalogued model has no score; external field notes.' },
@@ -481,7 +481,7 @@ export const home = {
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
-      `另有若干专题，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、预训练与临床分组的证据。`,
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、预训练与临床分组的证据。`,
     statsCaption: '核心矩阵',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     siteCountsLead: '全站：',
@@ -500,7 +500,7 @@ export const home = {
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
     snapshot: '快照',
-    matrixLede: '最初的八协议快照，与上方的部署专题相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
+    matrixLede: '最初的八协议快照，与上方的问题页相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
     matrixRegion: '方法与协议的覆盖矩阵，可横向滚动',
     matrixCaption: '各方法在各协议上的平衡准确率。随机水平因协议而异，标注在每列表头中。',
     corner: '方法',
@@ -554,7 +554,7 @@ export const home = {
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
     directoryEyebrow: '目录',
     directoryH2: '其余内容，按类别查找',
-    directoryLede: '模型目录、公开数据登记与领域动态，现在和它们所描述的方法与数据集放在一起。',
+    directoryLede: '模型目录与外部领域动态在“方法”页，公开数据登记在“数据集”页。',
     directory: {
       methods: { title: '方法', count: '种方法有结果页',
         body: '每种方法的全部已发布数字；模型目录，说明目录中的模型为什么没有分数；站外的领域动态。' },
@@ -652,8 +652,9 @@ export const transferMapCopy = {
     axis: 'What changes',
     states: { measured: 'Measured', status: 'Status only', held: 'Held', absent: 'Not measured' } as Record<string, string>,
     comparison: 'comparison',
+    alsoChanges: 'also changes: ',
     none: 'None',
-    legend: 'A state says whether evidence exists, not whether transfer works. n is the number of people behind an entry; “comparison” marks two electrode sets scored on the same data rather than a transfer from one to the other. A held entry is described in the holds register, not here.',
+    legend: 'A state says whether evidence exists, not whether transfer works. n is the number of people behind an entry; two sizes (n=24 / 17) are two analyses or cohorts behind the same entry, largest first. “comparison” marks two electrode sets scored on the same data rather than a transfer from one to the other; “also changes” names what else changed in the same contrast. A held entry is described in the holds register, not here.',
     fullMap: 'The full map, with what each entry measures →',
   },
   zh: {
@@ -661,8 +662,9 @@ export const transferMapCopy = {
     axis: '改变的是',
     states: { measured: '已测量', status: '只发状态', held: '暂缓', absent: '未测量' } as Record<string, string>,
     comparison: '配对比较',
+    alsoChanges: '同时变化：',
     none: '无',
-    legend: '状态只说明有没有证据，不说明迁移效果好不好。n 是每一项背后的被试数；“配对比较”指两组电极在同一批数据上评分，而不是从一组迁移到另一组。暂缓的条目在暂缓登记册里说明，这里不展开。',
+    legend: '状态只说明有没有证据，不说明迁移效果好不好。n 是每一项背后的被试数；两个数（n=24 / 17）表示同一项背后的两项分析或两个队列，大的在前。“配对比较”指两组电极在同一批数据上评分，而不是从一组迁移到另一组；“同时变化”指同一对比中还有什么一起变了。暂缓的条目在暂缓登记册里说明，这里不展开。',
     fullMap: '完整的地图，附每一项测量的内容 →',
   },
 } satisfies Record<Locale, unknown>;
@@ -720,10 +722,12 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
  * assistant searching on a reader's behalf, would type it. `title` stays the
  * short label used on cards, in breadcrumbs and in the topic switcher.
  *
- * Every count in a `summary` or `detail` ("102 people", "EEGMAT, 36 people",
- * "Twelve, 24 or 48") is checked against the payloads by check-workbench.mjs
- * ("topic card counts"), in both languages: change the data and the card fails
- * the build until its words follow.
+ * Every number written in digits in a `summary` or `detail` ("102 people",
+ * "EEGMAT, 36 people", "24 or 48") is checked by check-workbench.mjs in both
+ * languages: cohort sizes are pinned to their payload field and must appear;
+ * any other digit must be a value of the topic's payload. Numbers written as
+ * words ("Twelve", "three update rules") are not checked — prefer digits for
+ * anything that comes from the data.
  */
 export const topicCards: Record<Locale, Record<string, { kicker: string; title: string; question: string; summary: string; detail: string }>> = {
   en: {

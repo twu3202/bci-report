@@ -22,14 +22,14 @@ const datasetPage = (name: string) => {
 };
 ---
 <section id="register" class="section" aria-labelledby="register-heading">
-  <div class="section-heading"><div><p class="eyebrow">{d.datasetsEyebrow}</p><h2 id="register-heading">{d.datasetsH2}</h2></div><p>{d.datasetsLede}</p></div>
+  <div class="section-heading"><div><p class="eyebrow">{d.datasetsEyebrow}</p><h2 id="register-heading">{d.datasetsH2}</h2></div><p>{d.datasetsLede}{d.translated && <> {d.translated}</>}</p></div>
   <div class="dataset-list">{data.datasets.map(x => <article class="dataset-row" data-dataset={x.name}>
     <div>
       <span class="family">{datasetTask(x.task, locale)}</span>
       <h3 lang="en">{datasetPage(x.name) ? <a href={datasetPage(x.name)!}>{x.name}</a> : <a href={x.source} target="_blank" rel="noreferrer">{x.name} ↗</a>}</h3>
       <p lang={dir(x.detail).lang}>{dir(x.detail).text}</p>
       {dir(x.detail).original && <p class="note-original" lang="en">{dir(x.detail).original}</p>}
-      <p class="status-checked"><time datetime={x.reviewedAt}>{d.statusChecked(x.reviewedAt)}</time></p>
+      <p class="status-checked"><time datetime={x.reviewedAt}>{d.reviewed(x.reviewedAt)}</time></p>
     </div>
     <dl><div><dt>{d.dtSubjects}</dt><dd>{x.subjects}</dd></div><div><dt>{d.dtChannels}</dt><dd>{x.channels}</dd></div></dl>
     <div class="dataset-status"><span class="status">{datasetStatus(x.status, locale)}</span><small lang={dir(x.license).lang}>{x.licenseUrl ? <a href={x.licenseUrl} target="_blank" rel="noreferrer">{dir(x.license).text} ↗</a> : dir(x.license).text}{dir(x.license).original && <span class="note-original" lang="en">{dir(x.license).original}</span>}</small><small lang={payloadLang}>{x.attribution}</small></div>

@@ -13,10 +13,14 @@
  * the payload field it must equal. Labels and notes carry no digit of their own
  * (names such as P300 aside); this module refuses to build if one does.
  *
- * A held entry links the holds register (/releases/#holds) and never names its
- * source; it must point at an open hold in releases.ts. A paired comparison of
- * two sensor sets scored on the same data is marked `comparison`: it is not a
- * train-on-one, test-on-the-other transfer.
+ * A held entry links its own row of the holds register (/releases/#hold-<id>)
+ * and prints no figure; it must stand for an open hold in releases.ts, as must a
+ * status-only entry that names one, so a closed hold fails the build until the
+ * map moves its entry. A paired comparison of two sensor sets scored on the same
+ * data is marked `comparison`: it is not a train-on-one, test-on-the-other
+ * transfer. `with` names what else changes in the same contrast (movement and
+ * session together, a new person and a new sensor together); it is shown in both
+ * modes, so the compact map cannot read as a clean single change.
  *
  * Shown compact on the home page (labels and n) and in full on /topics/#transfer
  * (with the row's gloss and a one-line note per entry). Since 2026-10-02.
@@ -38,13 +42,15 @@ export interface MapEntry {
   /** `<row>:<entry>`, stable; printed as data-map so check-workbench can pin each n. */
   key: string;
   label: L;
-  /** Locale-free. Held entries link the holds register, not a page that names the source. */
+  /** Locale-free. Held entries link their row of the holds register. */
   href?: string;
   /** Cohort sizes, largest first: each a leaf of its served file. */
   n?: Fig[];
   /** Two sensor sets scored on the same data: a paired comparison, not a transfer. */
   comparison?: boolean;
-  /** Held entries: the open hold in releases.ts they stand for. */
+  /** What else changes at the same time, shown as a tag in both modes: the entry cannot isolate its row's change. */
+  with?: L;
+  /** Held and status-only entries: the open hold in releases.ts they stand for. */
   hold?: string;
   /** One line, on the full map only. */
   note?: L;
@@ -94,13 +100,16 @@ export const mapRows: MapRow[] = [
     gloss: { en: 'New people: trained on others, tested on someone the model never saw', zh: '新被试：用其他人训练，在训练中没见过的人身上测试' },
     cells: {
       measured: [
-        { key: 'person:core-matrix', label: { en: 'Core matrix', zh: '核心矩阵' }, href: '/#overview',
+        { key: 'person:core-matrix', label: { en: 'Core matrix · new-person protocols', zh: '核心矩阵 · 新被试协议' }, href: '/#overview',
           note: { en: 'Every protocol whose split is “transfer to a new person”: participant-disjoint folds.', zh: '数据划分为“迁移到新被试”的每个协议：被试不重叠的折。' } },
-        { key: 'person:dry-vs-wet', label: { en: 'Dry vs. wet electrodes', zh: '干电极与湿电极' }, href: '/topics/dry-vs-wet/', n: dryWet,
+        { key: 'person:dry-vs-wet', label: { en: 'Dry vs. wet electrodes', zh: '干电极与湿电极' }, href: '/topics/dry-vs-wet/', n: dryWet, with: { en: 'sensor', zh: '传感器' },
           note: { en: 'Source models trained on other people, so the new person and the new sensor arrive together.', zh: '源模型用其他被试训练，所以新被试与新传感器是同时出现的。' } },
         { key: 'person:model-adaptation', label: { en: 'LaBraM adaptation · EEGMAT', zh: 'LaBraM 适配 · EEGMAT' }, href: '/topics/model-adaptation/#adaptation',
           n: [count(ada.cohort.people, ADA)],
           note: { en: 'New people, same task, zero labels from the test person.', zh: '新被试、同一任务、不使用测试被试的任何标签。' } },
+        { key: 'person:mobile-ssvep', label: { en: 'Standing to walking and running, SSVEP', zh: '从站立到行走与跑动，SSVEP' }, href: '/topics/on-the-move/',
+          n: depPeople('mobile-ssvep-2s', 'standing_other_participants_only'), with: { en: 'movement', zh: '运动' },
+          note: { en: 'Trained on other people standing, tested on a new person on the move.', zh: '用其他被试站立时的数据训练，在运动中的新被试身上测试。' } },
         { key: 'person:pretraining', label: { en: 'Pretraining controls', zh: '预训练对照' }, href: '/topics/does-pretraining-help/',
           n: depPeople('pretraining-attribution-fixed'),
           note: { en: 'Frozen encoders with a readout fitted on other people, on a motor-imagery and a mental-workload task.', zh: '冻结编码器，分类头在其他被试上拟合，分别用于运动想象任务和脑力负荷任务。' } },
@@ -110,7 +119,7 @@ export const mapRows: MapRow[] = [
       ],
       status: [],
       held: [
-        { key: 'person:clinical-foundation-models', hold: 'clinical-foundation-models', href: '/releases/#holds',
+        { key: 'person:clinical-foundation-models', hold: 'clinical-foundation-models', href: '/releases/#hold-clinical-foundation-models',
           label: { en: 'Foundation models on the clinical cohort', zh: '临床队列上的基础模型' },
           note: { en: 'Not run: the source states no physical amplitude unit.', zh: '未运行：数据源没有说明物理幅值单位。' } },
       ],
@@ -124,16 +133,16 @@ export const mapRows: MapRow[] = [
     cells: {
       measured: [
         { key: 'session:mobile-erp', label: { en: 'Mobile ERP · first session to the others', zh: '移动 ERP · 第一次会话到其余会话' },
-          href: '/topics/on-the-move/#erp-heading', n: mobileErp,
+          href: '/topics/on-the-move/#erp-heading', n: mobileErp, with: { en: 'movement', zh: '运动' },
           note: { en: 'Fitted on the person’s first session, standing; the session and the movement change together.', zh: '在该被试第一次会话（站立）上拟合；会话与运动一起变化，相互混杂。' } },
       ],
       status: [
-        { key: 'session:cross-session', label: { en: 'Cross-session pilot', zh: '跨会话试点' }, href: '/topics/model-adaptation/#cross-session',
+        { key: 'session:cross-session', label: { en: 'Cross-session pilot', zh: '跨会话试点' }, href: '/topics/model-adaptation/#cross-session', hold: 'stieger-longitudinal',
           n: [count(crossSession.feasibility.people, CTX)],
           note: { en: 'One person: every score would be that person’s, so none is published.', zh: '只有一名被试：任何分数都是这个人的分数，所以不发布。' } },
       ],
       held: [
-        { key: 'session:next-day', hold: 'bnci2015-001-crossday', href: '/releases/#holds',
+        { key: 'session:next-day', hold: 'bnci2015-001-crossday', href: '/releases/#hold-bnci2015-001-crossday',
           label: { en: 'Next-day adaptation', zh: '次日适配' },
           note: { en: 'Run and independently replayed; held for a licence and ethics review.', zh: '已运行并通过独立复核；因许可与伦理审查暂缓。' } },
       ],
@@ -146,7 +155,7 @@ export const mapRows: MapRow[] = [
     gloss: { en: 'Another sensor type or another set of electrodes', zh: '换一种传感器或另一组电极' },
     cells: {
       measured: [
-        { key: 'sensor:dry-vs-wet', label: { en: 'Dry ⇄ wet electrodes', zh: '干电极 ⇄ 湿电极' }, href: '/topics/dry-vs-wet/', n: dryWet,
+        { key: 'sensor:dry-vs-wet', label: { en: 'Dry ⇄ wet electrodes', zh: '干电极 ⇄ 湿电极' }, href: '/topics/dry-vs-wet/', n: dryWet, with: { en: 'person', zh: '被试' },
           note: { en: 'Trained on one sensor type, tested on the other, in both directions.', zh: '在一种电极上训练、在另一种上测试，两个方向都做了。' } },
         { key: 'sensor:in-ear', label: { en: 'In-ear vs. scalp, sleep', zh: '耳道内与头皮，睡眠' }, href: '/topics/fewer-electrodes/#montage-finding',
           n: [count(evidence.results.eesm23.cohort.people, EVI)], comparison: true,
@@ -173,13 +182,13 @@ export const mapRows: MapRow[] = [
           n: [count(vr.cohort.people, CTX)],
           note: { en: 'The same people, calibrated on one display and tested on the other.', zh: '同样的被试，在一种显示设备上校准、在另一种上测试。' } },
         { key: 'context:mobile-ssvep', label: { en: 'Standing to walking and running, SSVEP', zh: '从站立到行走与跑动，SSVEP' }, href: '/topics/on-the-move/',
-          n: depPeople('mobile-ssvep-2s', 'standing_other_participants_only'),
+          n: depPeople('mobile-ssvep-2s', 'standing_other_participants_only'), with: { en: 'person', zh: '被试' },
           note: { en: 'Trained on other people standing, tested on a new person on the move.', zh: '用其他被试站立时的数据训练，在运动中的新被试身上测试。' } },
         { key: 'context:mobile-erp', label: { en: 'Standing to walking and running, ERP', zh: '从站立到行走与跑动，ERP' }, href: '/topics/on-the-move/#erp-heading',
-          n: mobileErp,
+          n: mobileErp, with: { en: 'session', zh: '会话' },
           note: { en: 'The same person; movement and session change together.', zh: '同一被试；运动与会话一起变化。' } },
         { key: 'context:image-rate', label: { en: 'Image rate, P300', zh: '图像速率，P300' }, href: '/topics/screen-to-vr/#image-rate',
-          n: [count(ltrsvp.cohort.people, EXT)],
+          n: [count(ltrsvp.cohort.people, EXT)], with: { en: 'recording', zh: '记录' },
           note: { en: 'Trained on one recording at one rate, tested on a different recording: rate and recording change together.', zh: '在一种速率的一段记录上训练、在另一段记录上测试：速率与记录一起变化。' } },
       ],
       status: [],
@@ -213,11 +222,13 @@ export const mapRows: MapRow[] = [
   for (const row of mapRows) for (const state of mapStates) for (const e of row.cells[state]) {
     if (keys.has(e.key) || !e.key.startsWith(`${row.id}:`)) throw new Error(`transfer-map.ts: bad or repeated key ${e.key}`);
     keys.add(e.key);
-    for (const text of [e.label.en, e.label.zh ?? '', e.note?.en ?? '', e.note?.zh ?? '', row.axis.en, row.gloss.en, row.gloss.zh ?? ''])
+    for (const text of [e.label.en, e.label.zh ?? '', e.note?.en ?? '', e.note?.zh ?? '', e.with?.en ?? '', e.with?.zh ?? '', row.axis.en, row.axis.zh ?? '', row.gloss.en, row.gloss.zh ?? ''])
       if (!digitFree(text)) throw new Error(`transfer-map.ts: ${e.key} prints a figure that is not a cohort size: "${text}"`);
-    if (state === 'held' && (!e.hold || !openHolds.has(e.hold) || e.href !== '/releases/#holds'))
-      throw new Error(`transfer-map.ts: ${e.key} must stand for an open hold and link the holds register`);
-    if (state !== 'held' && e.hold) throw new Error(`transfer-map.ts: ${e.key} names a hold outside the Held column`);
+    if (state === 'held' && (!e.hold || e.href !== `/releases/#hold-${e.hold}`))
+      throw new Error(`transfer-map.ts: ${e.key} must stand for a hold and link its row in the holds register`);
+    // An entry standing for a hold follows it: once the hold closes, the build fails until the map moves the entry.
+    if (e.hold && !openHolds.has(e.hold)) throw new Error(`transfer-map.ts: ${e.key} stands for ${e.hold}, which is not an open hold`);
+    if (e.hold && state !== 'held' && state !== 'status') throw new Error(`transfer-map.ts: ${e.key} names a hold outside the Held and Status-only columns`);
     // Hold cards carry no figures (releases.ts), and a held entry is a hold card in miniature.
     if (state === 'held' && e.n) throw new Error(`transfer-map.ts: ${e.key} is held, so it prints no cohort size`);
     if ((state === 'measured' || state === 'status') && !e.href) throw new Error(`transfer-map.ts: ${e.key} needs a link to its evidence`);

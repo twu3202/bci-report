@@ -216,7 +216,7 @@ assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>a
 // These pinned the count "82". The topics now draw on two exports measuring
 // different things (proportions, correlation, R²), so a summed total would be
 // the inflation these checks exist to prevent. The intent is kept, not the number.
-assert.match(built,/separate from the deployment topics above/,'homepage must distinguish the topic extension from the 39-comparison matrix');
+assert.match(built,/separate from the questions above/,'homepage must distinguish the topic extension from the 39-comparison matrix');
 assert.match(built,/not independent experiments, and not an overall ranking/,'homepage must not inflate repeated conditions into independent experiments');
 assert.doesNotMatch(built,/\d+ additional aggregate measurements/,'no summed measurement count across exports that measure different things');
 // Every protocol is reachable without JavaScript and without a dropdown. Since
@@ -1676,7 +1676,9 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
           if(r.track===track&&(!r.method||!/(?:^|\/)methods\//.test(f)||self.endsWith('/methods/'+r.method+'/'))) pointing.get(slug).add(self);
     }
     // The protocol rows really are printed: every idle method on when-not-to-act, the marked readout on model-adaptation.
-    for(const m of data.tracks.find(t=>t.id==='idle').rows) assert.ok(visible(pageOf(prefix+'topics/when-not-to-act/')).includes(m.name),prefix+'topics/when-not-to-act/: prints the idle row of '+m.name);
+    {const w=pageOf(prefix+'topics/when-not-to-act/'),a=w.indexOf('<table'),idleTable=w.slice(a,w.indexOf('</table>',a));
+     assert.match(w.slice(w.lastIndexOf('aria-label="',a),a),/Idle and command|空闲/,prefix+'topics/when-not-to-act/: its first table is the idle table');
+     for(const m of data.tracks.find(t=>t.id==='idle').rows) assert.ok(visible(idleTable).includes(m.name),prefix+'topics/when-not-to-act/: the idle table prints the row of '+m.name);}
     assert.ok(pageOf(prefix+'topics/model-adaptation/').includes('data-fig="experiments.json|'),prefix+'topics/model-adaptation/: prints the matrix readout');
     for(const [slug,pages] of pointing){
       const path=prefix+'topics/'+slug+'/',html=pageOf(path);
@@ -1771,6 +1773,7 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
 // link, the core matrix with its snapshot date, a directory band. The model directory and field
 // notes moved to /methods/, the public-data register to /datasets/. /topics/ is the Questions hub.
 {
+  const releasesHtml=pageOf('releases/');
   // Navigation: the same eight entries, in order, on every page of a language; the current one marked.
   const navOf=html=>{const m=html.match(/<nav aria-label="(?:Main navigation|主导航)">([\s\S]*?)<\/nav>/);assert.ok(m,'the main navigation must render');return [...m[1].matchAll(/<a href="([^"]+)"(?: aria-current="page")?>([^<]+)<\/a>/g)].map(x=>[x[1],x[2]]);};
   const navWant={en:[['/topics/','Questions'],['/#overview','Results'],['/protocols/','Protocols'],['/methods/','Methods'],['/datasets/','Datasets'],['/releases/','Releases'],['/api/','API'],['/data-use/','Data use']],
@@ -1824,16 +1827,26 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     }
   }
   // The transfer-coverage map, compact on the home page, full on the hub: cohort sizes and links only.
+  const sortedPeople=track=>peopleOf(track).sort((a,b)=>b-a);
   const mapPins={'person:dry-vs-wet':peopleOf('wearable-sensor-transfer'),'person:model-adaptation':[ad.results['eegmat-labram-adaptation'].cohort.people],
+    'person:mobile-ssvep':peopleOf('mobile-ssvep-2s'),'person:pretraining':sortedPeople('pretraining-attribution-fixed'),
+    'session:mobile-erp':sortedPeople('mobile-erp'),'context:mobile-erp':sortedPeople('mobile-erp'),
+    'session:cross-session':[cxs.feasibility.people],
+    'sensor:dry-vs-wet':peopleOf('wearable-sensor-transfer'),
     'person:clinical':[cl.results.ds004584.cohort.people],'sensor:in-ear':[ev.results.eesm23.cohort.people],'sensor:posterior-subset':[ev.results.alphawaves.cohort.people],
     'context:screen-to-vr':[cx.results['vr-pc-p300'].cohort.people],'context:image-rate':[ltr.cohort.people],'context:mobile-ssvep':peopleOf('mobile-ssvep-2s')};
   for(const page of ['','zh/','topics/','zh/topics/']){
-    const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap">'),html.indexOf('</table>',html.indexOf('<table class="tmap">')));
+    const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap"'),html.indexOf('</table>',html.indexOf('<table class="tmap"')));
     assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');
     assert.doesNotMatch(visible(table),/%|\bpp\b|个百分点|\d\.\d/,(page||'/')+': the map prints no score');
-    for(const [, state, cell] of table.matchAll(/<td data-state="([a-z]+)"[^>]*>([\s\S]*?)<\/td>/g)){
+    const cells=[...table.matchAll(/<td\b[^>]*\bdata-state="([a-z]+)"[^>]*>([\s\S]*?)<\/td>/g)];
+    assert.equal(cells.length,5*4,(page||'/')+': five rows of four states');
+    for(const [, state, cell] of cells){
       if(state==='held') assert.ok(!cell.includes('data-fig')&&!/\d/.test(visible(cell)),(page||'/')+': a held map entry prints no figure');
-      if(state==='held') for(const [,href] of cell.matchAll(/href="([^"]+)"/g)) assert.match(href,/^(?:\/zh)?\/releases\/#holds$/,(page||'/')+': a held map entry links only the holds register');
+      if(state==='held') for(const [,href] of cell.matchAll(/href="([^"]+)"/g)){
+        assert.match(href,/^(?:\/zh)?\/releases\/#hold-[a-z0-9-]+$/,(page||'/')+': a held map entry links only its holds-register row');
+        assert.ok(releasesHtml.includes(`<tr id="${href.split('#')[1]}"`),(page||'/')+': '+href+' names no register row');
+      }
       if(state==='absent') assert.ok(!cell.includes('data-fig')&&!cell.includes('<a '),(page||'/')+': a not-measured entry has no link or cohort');
     }
     for(const [, key, body] of table.matchAll(/<li data-map="([^"]+)">([\s\S]*?)<\/li>/g)){
@@ -1842,11 +1855,18 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
         assert.ok(leavesOf(file).has(Number(raw)),(page||'/')+' '+key+': '+raw+' is not a value in '+file);
         assert.equal(text,fmt.count(Number(raw)),(page||'/')+' '+key+': printed as '+text);
       }
+      if(figs.length) assert.ok(mapPins[key],(page||'/')+' '+key+': prints a cohort size that no pin holds');
       if(mapPins[key]) assert.deepEqual(figs.map(f=>Number(f[2])),mapPins[key],(page||'/')+' '+key+': the cohort sizes it must equal');
+    }
+    const keys=new Set([...table.matchAll(/<li data-map="([^"]+)">/g)].map(m=>m[1]));
+    for(const key of Object.keys(mapPins)) assert.ok(keys.has(key),(page||'/')+': pinned map entry '+key+' must render');
+    // An entry that changes two things at once says so in the compact map too.
+    for(const key of ['session:mobile-erp','context:mobile-erp','context:image-rate','person:dry-vs-wet','sensor:dry-vs-wet','person:mobile-ssvep']){
+      const li=table.slice(table.indexOf(`<li data-map="${key}">`),table.indexOf('</li>',table.indexOf(`<li data-map="${key}">`)));
+      assert.match(li,/class="tmap-tag tmap-with">(?:also changes: |同时变化：)/,(page||'/')+' '+key+': names what else changes');
     }
   }
   // Holds on the home page are links: to their own page where the register gives one, else to their register row.
-  const releasesHtml=pageOf('releases/');
   for(const [page,prefix] of [['',''],['zh/','/zh']]){
     const html=pageOf(page),grid=html.slice(html.indexOf('<div class="hold-grid">'),html.indexOf('</div>',html.indexOf('<div class="hold-grid">')));
     const hrefs=[...grid.matchAll(/<a class="hold-card" href="([^"]+)"/g)].map(m=>m[1]);
@@ -1854,7 +1874,11 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     for(const href of hrefs){
       const m=href.match(/^(?:\/zh)?\/releases\/#(hold-[a-z0-9-]+)$/);
       if(m) assert.ok(releasesHtml.includes(`<tr id="${m[1]}"`),(page||'/')+': '+href+' names no register row');
-      else assert.ok(existsSync(new URL(href.replace(/#.*$/,'').replace(/^\//,'')+'index.html',DIST)),(page||'/')+': hold link '+href+' leads nowhere');
+      else {
+        const target=href.replace(/#.*$/,'').replace(/^\//,''),frag=href.includes('#')?href.split('#')[1]:null;
+        assert.ok(existsSync(new URL(target+'index.html',DIST)),(page||'/')+': hold link '+href+' leads nowhere');
+        if(frag) assert.ok(pageOf(target).includes(`id="${frag}"`),(page||'/')+': hold link '+href+' names no anchor on its page');
+      }
     }
     const corr=releasesHtml.slice(releasesHtml.indexOf('id="corrections"'),releasesHtml.indexOf('</table>',releasesHtml.indexOf('id="corrections"')));
     const nCorrections=(corr.match(/<tr><th scope="row"><time /g)||[]).length;
@@ -1862,8 +1886,15 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     assert.ok(html.includes(`<a href="${prefix}/releases/#corrections">`)&&visible(html).includes(page?`更正（${nCorrections}）`:`Corrections (${nCorrections})`),(page||'/')+': the corrections link counts the register ('+nCorrections+')');
   }
   // Directory band counts are the counts of what they link to; the old home anchors still land.
+  const nReleases=(releasesHtml.match(/<article class="release-entry" id="/g)||[]).length;
+  const nFiles=new Set([...pageOf('api/').matchAll(/href="\/data\/([^"]+)"/g)].map(m=>m[1])).size;
   for(const page of ['','zh/']){
-    const html=pageOf(page),count=k=>Number(html.match(new RegExp(`<span data-count="${k}">(\\d+)</span>`))?.[1]);
+    const html=pageOf(page);
+    const counts=k=>[...html.matchAll(new RegExp(`<span data-count="${k}">(\\d+)</span>`,'g'))].map(m=>Number(m[1]));
+    for(const k of ['questions','datasets','methods','releases','files']) assert.ok(counts(k).length&&new Set(counts(k)).size===1,(page||'/')+': '+k+' is counted, and the same wherever it is printed');
+    const count=k=>counts(k)[0];
+    assert.equal(count('releases'),nReleases,(page||'/')+': reviewed releases');
+    assert.equal(count('files'),nFiles,(page||'/')+': downloadable files, as listed on /api/');
     assert.equal(count('methods'),entityPages.filter(f=>!f.startsWith('zh/')&&/^methods\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': methods with result pages');
     assert.equal(count('datasets'),entityPages.filter(f=>!f.startsWith('zh/')&&/^datasets\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': datasets with results');
     assert.equal(count('questions'),topicPages.length,(page||'/')+': questions');

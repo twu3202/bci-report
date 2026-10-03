@@ -234,6 +234,7 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .tmap-n{margin-left:6px;font-family:var(--mono);font-size:.76rem;color:var(--muted);white-space:nowrap}
 .tmap-n .num{color:var(--ink)}
 .tmap-tag{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.tmap-tag.tmap-with{border-style:dashed}
 .tmap li small{margin-top:2px;font-size:.72rem;line-height:1.45}
 .tmap-none{color:var(--rule)}
 .tmap-legend{padding:10px 16px;font-size:.74rem;border-top:1px solid var(--line);background:var(--soft)}
@@ -241,7 +242,8 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 :lang(zh-Hans) .tmap td::before{font-size:.75rem;letter-spacing:0;text-transform:none}
 @media(max-width:900px){
   .tmap,.tmap tbody,.tmap tr,.tmap th,.tmap td{display:block;width:auto}
-  .tmap thead{display:none}
+  /* Hidden visually, not removed: screen readers keep the column headers (roles are explicit in the markup). */
+  .tmap thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
   .tmap caption{display:block}
   .tmap tbody tr{border-bottom:1px solid var(--rule)}
   .tmap tbody tr:last-child{border-bottom:0}

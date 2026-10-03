@@ -551,7 +551,12 @@ export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as
 
 /** Models listed in the directory that have no published result here, and why (status as shown, directory-status.ts). */
 export const unmeasuredModels = data.models.filter(m => m.status !== 'Evaluated')
-  .map(m => ({ name: m.name, family: m.family, status: modelDirectoryStatus(m).status, url: m.url ?? undefined }));
+  .map(m => {
+    const shown = modelDirectoryStatus(m);
+    // An overridden status keeps the released one and its check date beside it.
+    return { name: m.name, family: m.family, status: shown.status, url: m.url ?? undefined,
+             released: shown.override?.released, checked: shown.override?.checked };
+  });
 
 /**
  * Core-matrix rows a topic prints from experiments.json, beyond the groups that

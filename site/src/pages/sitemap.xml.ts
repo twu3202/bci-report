@@ -4,7 +4,7 @@ import deployment from '../data/deployment-topics.json';
 import evidence from '../data/evidence-update.json';
 import clinical from '../data/clinical-update.json';
 import { site } from '../data/site';
-import { pagesUpdated, siteUpdates } from '../data/releases';
+import { siteUpdates } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 import { entityPaths } from '../data/entities';
 import { protocolPagesDate, protocolPaths } from '../data/protocols';
@@ -34,10 +34,16 @@ const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-mov
                                 '/topics/calibration-budget/']);
 const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
 // The newest site update that changed the page, if any (releases.ts keeps the history).
-const updatedOn = (path: string) => siteUpdates.find(u => (u.paths as readonly string[]).includes(path))?.date;
+// An update marked `entityPages` changed every dataset and method page (2026-10-02:
+// each gained a cite block), so it dates all of them without listing each one.
+const ENTITY = /^\/(?:datasets|methods)\//;
+const updatedOn = (path: string) => siteUpdates.find(u =>
+  (u.paths as readonly string[]).includes(path) || ('entityPages' in u && u.entityPages && ENTITY.test(path)))?.date;
+// Dataset and method pages that no update names keep the date they were first published.
+const ENTITY_FIRST_PUBLISHED = siteUpdates[siteUpdates.length - 1].date;
 const lastmodOf = (path: string) =>
   updatedOn(path) ?? (path.startsWith('/protocols/') ? protocolPagesDate
-  : /^\/(?:datasets|methods)\//.test(path) ? pagesUpdated.date
+  : ENTITY.test(path) ? ENTITY_FIRST_PUBLISHED
   : CLINICAL_PAGES.has(path) ? CLINICAL
   : EVIDENCE_PAGES.has(path) ? EVIDENCE
   : path.startsWith('/topics/') ? TOPICS : RELEASE);
@@ -47,7 +53,7 @@ export const GET: APIRoute = ({ site: origin }) => {
   const abs = (p: string) => new URL(p, base).href;
   const entries: string[] = [];
   // Dataset, method and API pages: generated from the payloads, first published
-  // in the 2026-09-27 site update, so they carry that date (pagesUpdated).
+  // in the 2026-09-27 site update; each carries the newest update that changed it.
   // Protocol pages (src/data/protocols.ts): one per core-matrix protocol, plus
   // their index, first published in the 2026-10-02 site update (protocolPagesDate).
   for (const path of [...translatedPaths, ...entityPaths, ...protocolPaths]) {

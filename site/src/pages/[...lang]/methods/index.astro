@@ -49,7 +49,7 @@ const structured = {
   </section>
   <section class="topic-section" aria-labelledby="unmeasured">
     <div class="topic-heading"><div><h2 id="unmeasured">{c.methodsUnmeasured}</h2></div><p>{c.methodsUnmeasuredLede}</p></div>
-    <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}</li>)}</ul>
+    <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}{m.released && <> ({c.releasedAs(modelStatus(m.released, locale), m.checked!)})</>}</li>)}</ul>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
   <ModelDirectory locale={locale} />

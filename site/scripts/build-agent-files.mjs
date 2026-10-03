@@ -70,7 +70,12 @@ function inline(nodes) {
         const title = find(n, k => /^h[2-4]$/.test(k.name) || k.name === 'strong');
         if (title && clean(inner).length > 80) {
           const label = clean(inline(kids(title)));
-          const rest = clean(inner).replace(label, '').replace(/^[\s—·:]+/, '');
+          // Its other parts (kicker, summary, detail) as separate phrases, without the
+          // card's own "Read the evidence →" call to action: the link is the heading.
+          const parts = kids(n).filter(k => k.type === ELEMENT_NODE && k !== title && !skipped(k)
+              && !(k.name === 'strong' && /→\s*$/.test(clean(inline(kids(k))))))
+            .map(k => clean(inline(kids(k)))).filter(Boolean);
+          const rest = parts.length ? parts.join(' · ') : clean(inner).replace(label, '').replace(/^[\s—·:]+/, '');
           out += `[${label}](${absolute(href)}): ${rest}`;
         } else out += !href ? inner : `[${inner.trim()}](${absolute(href)})`;
         break;
@@ -152,6 +157,13 @@ function block(nodes) {
         break;
       }
       case 'table': out += table(n); break;
+      // A grid of card links (topic cards, the directory band, hold cards): one list item per card.
+      case 'div':
+        if (kids(n).some(k => k.type === ELEMENT_NODE) && kids(n).every(k => k.type !== ELEMENT_NODE ? !rawText(k).trim() : k.name === 'a')) {
+          const items = kids(n).filter(k => k.type === ELEMENT_NODE).map(a => `- ${clean(inline([a]))}`);
+          out += `${items.join('\n')}\n\n`;
+        } else out += block(kids(n));
+        break;
       case 'figure': out += has(n, 'interval-plot') ? plot(n) : block(kids(n)); break;
       case 'blockquote': out += block(kids(n)).split('\n').map(l => (l ? `> ${l}` : l)).join('\n'); break;
       default: out += block(kids(n));
