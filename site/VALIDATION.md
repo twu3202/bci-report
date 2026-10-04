@@ -180,6 +180,45 @@ home card's cohort pins include it. These checks were mutation-tested on a copy
 of `dist/` (`SITE_DIST`): each of 28 injected violations was caught by the
 assertion written for it.
 
+Also since 2026-10-04, the v9 foundation-model boundary
+(`foundation-models-update.json` and one `foundation-models-<protocol>.csv` per
+core protocol, owner approved): eleven further models, sixteen encoder
+checkpoints, as frozen probes on the eight core protocols, nine adapted on
+EEGMAT. The batch's files are registered (release log, feed, API page, home
+Dataset markup) before any page prints them; the pages come in a later commit.
+Read from `dist/`: the served JSON is byte-identical to the source; one result,
+no status-only source and no hold; the eight core protocols in the matrix order;
+sixteen checkpoints, thirteen matrix rows before the three masking-ablation
+siblings; no v9 row in the released matrix (`experiments.json` keeps its bytes);
+one cell per checkpoint and protocol, and the two cells not run (BrainOmni on the
+two one-second ERP protocols) null with their reason, never 0. Pretraining
+exposure is the owner's sourced statement: a dataset absent from the authors'
+list reads "not in the authors' published pretraining list (checked
+2026-10-04)", no statement says "not exposed" or claims proof, ST-EEGFormer on
+BETA and SingLEM on TMNRED are the only exposed cells, every ZUNA 1.1 cell and
+only those is unknown, every cell carries its statement, and LaBraM and CBraMod
+are absent from their authors' lists on all seven datasets with a source link
+each; ZUNA 1.1's research-use sentence travels with its rows. Each CSV starts
+with its core results CSV's columns and carries the core protocol's values in
+them; every row fits the header; one row per checkpoint in the JSON's order;
+name, panel and exposure statement equal the JSON; `scoring_seconds` is empty
+(timings came from a shared GPU and are not published); a cell not run is empty
+with its reason; idle rates are the counts over 60 and the abstaining people the
+JSON's; balanced accuracy and its interval are the JSON's in percent; and the
+chance flag, in the CSV and in the JSON, follows the interval and the released
+chance level. The release log names the batch and its manifest. The CSVs carry
+100 × the proportion rounded to 12 decimals, so a tie such as 63.25 prints as
+63.3, as the approved handoff does; a page should print matrix figures from the
+CSV (`pct1raw`), not the JSON proportion. These checks were mutation-tested on a
+copy of `dist/` (`SITE_DIST`; where an assertion reads the source export, the
+source too, restored afterwards): each of 32 injected violations was caught by
+the assertion written for it. `check_site_artifact.py` re-derives the JSON and
+all eight CSVs from the pinned inputs and holds the nine files to their export
+audit (`foundation-models-export-audit.json`); the export itself re-resolves
+every traced figure of the release candidate and checks each frozen-probe, idle
+and adaptation figure against the approved handoff's tables, row by row
+(`pipeline/publication/test_foundation_models_update.py` forges each link).
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

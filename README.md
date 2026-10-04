@@ -46,7 +46,10 @@ and when a decoder should decline to decide — a fixed confidence threshold, a
 coverage target, a certified selective risk and a learned reject option, with
 probability quality and a per-person recalibration's label cost, on saved test
 scores of published models, as method comparisons rather than deployment error
-rates (4 October).
+rates (4 October); and sixteen further foundation-model encoder checkpoints, from
+eleven models, as frozen probes on the same eight protocols with only the encoder
+swapped, nine of them also adapted on EEGMAT, each cell marked with whether its
+dataset is in the model authors' published pretraining list (4 October).
 They are kept apart rather than summed, because they measure different things. Research results, not
 diagnosis. No raw EEG, no per-participant scores, no model weights.
 
@@ -71,6 +74,8 @@ curl -O https://bci.report/data/adaptation-update.json  # the 1 October batch
 curl -O https://bci.report/data/extension-update.json   # the 2 October batch
 curl -O https://bci.report/data/large-source-update.json  # the 3 October batch
 curl -O https://bci.report/data/reliable-decisions-update.json  # the 4 October batch
+curl -O https://bci.report/data/foundation-models-update.json   # the 4 October foundation models
+curl -O https://bci.report/data/foundation-models-beta-8ch.csv  # their rows, one CSV per protocol
 ```
 
 What each file holds, loading examples and how to cite a release:

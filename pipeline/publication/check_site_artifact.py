@@ -19,6 +19,7 @@ import export_adaptation_update as adaptation
 import export_extension_update as extension
 import export_large_source_update as large_source
 import export_reliable_decisions_update as reliable_decisions
+import export_foundation_models_update as foundation_models
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -125,6 +126,26 @@ def check(root):
     assert (root/'data/reliable-decisions-update.json').read_bytes() == reliable_payload, 'Unreviewed reliable-decisions download'
     assert all(p.read_bytes() == reliable_payload for p in reliable_decisions.OUTPUTS), 'Reliable-decisions source/download drift'
     expected.add('reliable-decisions-update.json')
+
+    # And the 2026-10-04 v9 foundation-model export: one JSON and a CSV per protocol, all held to one audit.
+    foundation_rederived = foundation_models.inputs_available()
+    if foundation_rederived:
+        foundation_payload, foundation_csvs = foundation_models.serialized_export()
+    else:
+        foundation_payload = (root/'data/foundation-models-update.json').read_bytes()
+        foundation_csvs = {name: (root/'data'/name).read_bytes()
+                           for name in json.loads(foundation_models.EXPORT_AUDIT.read_text())['csv_sha256']}
+    foundation_audit = json.loads(foundation_models.EXPORT_AUDIT.read_text())
+    assert foundation_audit['status'] == 'pass', 'Foundation-model export review did not pass'
+    assert hashlib.sha256(foundation_payload).hexdigest() == foundation_audit['export_sha256'], 'Stale foundation-model export audit'
+    assert {n: hashlib.sha256(b).hexdigest() for n, b in foundation_csvs.items()} == foundation_audit['csv_sha256'], \
+        'Stale foundation-model CSV audit'
+    assert (root/'data/foundation-models-update.json').read_bytes() == foundation_payload, 'Unreviewed foundation-model download'
+    assert all(p.read_bytes() == foundation_payload for p in foundation_models.OUTPUTS), 'Foundation-model source/download drift'
+    for name, body in foundation_csvs.items():
+        assert (root/'data'/name).read_bytes() == body, f'Unreviewed foundation-model CSV: {name}'
+        assert (foundation_models.CSV_DIR/name).read_bytes() == body, f'Foundation-model CSV source/download drift: {name}'
+    expected |= {'foundation-models-update.json', *foundation_csvs}
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -169,6 +190,8 @@ def check(root):
                    else 'large-source-update payload matched to its audit hash (private inputs not present)'),
                   ('reliable-decisions-update payload reproduced from its own manifest and audit' if reliable_rederived
                    else 'reliable-decisions-update payload matched to its audit hash (private inputs not present)'),
+                  ('foundation-models-update payload and CSVs reproduced from their own manifest and audit' if foundation_rederived
+                   else 'foundation-models-update payload and CSVs matched to their audit hashes (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

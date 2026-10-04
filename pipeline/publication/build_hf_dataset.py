@@ -29,6 +29,7 @@ import export_adaptation_update as adaptation_export
 import export_extension_update as extension_export
 import export_large_source_update as large_source_export
 import export_reliable_decisions_update as reliable_export
+import export_foundation_models_update as foundation_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -37,6 +38,10 @@ PUBLISHED = PROJECT/'site/public/data'
 # the dataset viewer can render. `protocol_id` keeps them separable.
 MERGED = 'results.csv'
 TOPICS = 'topics.csv'
+# The 2026-10-04 foundation-model rows: the site's eight per-protocol CSVs share one
+# header, so they stack into one table; `protocol_id` keeps them apart. Never
+# merged into MERGED, whose rows are the released matrix.
+FOUNDATION = 'foundation-models.csv'
 
 
 def topic_payload():
@@ -132,6 +137,25 @@ def reliable_payload():
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
+
+
+def foundation_payload():
+    """The 2026-10-04 v9 export and its per-protocol CSVs, refused unless they match their own review audit."""
+    raw = (PUBLISHED/'foundation-models-update.json').read_bytes()
+    audit = json.loads(foundation_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Foundation-model export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Foundation-model payload is not the reviewed one'
+    tables = {}
+    for name, digest in audit['csv_sha256'].items():
+        body = (PUBLISHED/name).read_bytes()
+        assert hashlib.sha256(body).hexdigest() == digest, f'{name} is not the reviewed one'
+        tables[name] = list(csv.reader(body.decode().splitlines()))
+    payload = json.loads(raw)
+    validate_public(payload)
+    header = next(iter(tables.values()))[0]
+    assert all(t[0] == header for t in tables.values()), 'the foundation-model CSVs have different schemas'
+    rows = [r for name in sorted(tables) for r in tables[name][1:]]
+    return raw, header, rows
 
 
 def flatten(rows, interval_key=None):
@@ -238,7 +262,7 @@ def protocol_table(snapshot):
     return '\n'.join(lines)
 
 
-def card(snapshot, n_rows, topics):
+def card(snapshot, n_rows, topics, n_foundation=128):
     tracks = len(snapshot['tracks'])
     # Methods that actually produced a row, not the size of the model catalogue.
     # The card said 18 for a table containing 9, because `snapshot['models']`
@@ -273,6 +297,8 @@ configs:
     data_files: contrasts.csv
   - config_name: seed_sensitivity
     data_files: seed-sensitivity.csv
+  - config_name: foundation_models
+    data_files: {FOUNDATION}
 ---
 
 <p align="center"><img src="https://huggingface.co/datasets/Twu31/bci-report/resolve/main/logo.png" alt="BCI Report logo: a head seen from above with five electrode sites" width="96"></p>
@@ -308,6 +334,7 @@ not belong in a table with rows from the other.
 | `topics` | {n_topic_rows} | {n_topics} deployment questions: {topic_slugs} | **proportion [0,1]** |
 | `contrasts` | {n_contrasts} | paired within-participant differences | percentage points |
 | `seed_sensitivity` | {n_seed_groups} | repeated training runs of one model | percent |
+| `foundation_models` | {n_foundation} | 16 further foundation-model checkpoints × {tracks} protocols, frozen probes | percent |
 
 Alongside: `protocols/` (full descriptor per protocol — preprocessing, split,
 budget, audit hashes), `snapshot.json` and `deployment-topics.json` (the reviewed
@@ -419,6 +446,33 @@ these are **method comparisons, never deployment error rates**. ds003810 is a
 crude secondary protocol; the idle protocol (another unit) and a source under
 editorial hold are left out.
 
+`foundation-models-update.json` and `{FOUNDATION}` — reviewed 4 October 2026:
+eleven further EEG foundation models, sixteen encoder checkpoints (REVE Base and
+Large, LUNA Base and Large, BrainOmni Base, CodeBrain, EEGMamba, ST-EEGFormer
+Base and Large, four eeg-fm-masking checkpoints, ERP-FM Base, SingLEM and ZUNA
+1.1), run as frozen probes on the same eight protocols with the published LaBraM
+and CBraMod recipe and only the encoder swapped; nine of them also adapted on
+EEGMAT with the 1 October recipe (a head trained on the frozen encoder against
+rank-4 LoRA, three seeds; the adaptation rows are in the JSON). `{FOUNDATION}`
+stacks the site's eight per-protocol CSVs: its first columns are the `results`
+config's, in percent, and the rest give each row's status, panel (matrix or
+masking ablation), chance flag, pretraining exposure, licence and footnote.
+**Kept apart from `results`, and not a ranking**: rows are grouped by family, and
+one is above or below another only where their 95% intervals do not overlap.
+Sleep staging is the only protocol where new cells lie entirely above every
+published row; elsewhere no new cell lies above the best published
+non-foundation row, and on BETA standard CCA, which needs no training, stays
+highest. Two BrainOmni cells were not run (its tokenizer needs two-second
+windows): empty, with the reason, **never zero**. Pretraining exposure is a
+sourced statement: ST-EEGFormer was pretrained on BETA and SingLEM on TMNRED;
+ZUNA 1.1 lists no pretraining data, so its cells are unknown; every other cell,
+LaBraM's and CBraMod's included, is **not in the authors' published pretraining
+list as checked on 4 October 2026** — not proof that a recording was never
+seen. Weights licences travel with every row (REVE Responsible Use License,
+LUNA CC BY-ND 4.0, ERP-FM CC BY-NC-SA 4.0; ZUNA 1.1's model card: research use
+only, not for diagnosis or clinical use). Timings came from a shared GPU and
+are not published.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -442,8 +496,12 @@ several are not, and this repository does not relicense any of them.
   sensitivity check; the main table keeps its original fixed seed.
 - **Electrode subsets are not headsets.** Four- and eight-electrode subsets of
   laboratory recordings do not validate a physical four- or eight-channel device.
-- **Pretraining overlap is unknown** where checkpoint-level records are
-  unavailable, so a frozen foundation encoder may have seen related data.
+- **Pretraining overlap is checked against published lists, not proven
+  absent.** For LaBraM and CBraMod, none of the seven datasets is in the
+  authors' published pretraining list (checked 4 October 2026; every source is
+  in `foundation-models-update.json`). The released protocol files keep their
+  original sentence, that overlap is unknown unless documented; recording-level
+  overlap was not audited, so a frozen encoder may still have seen related data.
 
 And for `{TOPICS}` specifically:
 
@@ -579,10 +637,19 @@ def build(output):
     (output/'large-source-update.json').write_bytes(raw_large_source)
     raw_reliable, _ = reliable_payload()
     (output/'reliable-decisions-update.json').write_bytes(raw_reliable)
+    raw_foundation, foundation_header, foundation_rows = foundation_payload()
+    (output/'foundation-models-update.json').write_bytes(raw_foundation)
+    for row in foundation_rows:
+        for cell in row:
+            assert not any(token in cell for token in forbidden), f'leak in foundation-model row: {cell[:80]}'
+    with (output/FOUNDATION).open('w', newline='') as fh:
+        writer = csv.writer(fh)
+        writer.writerow(foundation_header)
+        writer.writerows(foundation_rows)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
-    (output/'README.md').write_text(card(snapshot, len(rows), topics))
+    (output/'README.md').write_text(card(snapshot, len(rows), topics, len(foundation_rows)))
     # The card's logo. Not data, so it bypasses the data checks above; it is the
     # tiled raster from site/public/, which survives the Hub's dark theme.
     shutil.copyfile(PROJECT/'site/public/logo.png', output/'logo.png')

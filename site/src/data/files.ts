@@ -44,6 +44,10 @@ const named: Record<string, Text> = {
     en: 'Route 1, reliable decisions, on EEGMAT and BETA: each method’s coverage and error under a fixed confidence threshold (with how many people had nothing accepted), a coverage target and a certified selective risk (with folds certified and folds over target); the learned reject option against calibrated confidence (AURC, error at 80% coverage); errors at a matched coverage; NLL, ECE and Brier score; and person-specific recalibration with its label cost — with paired person-bootstrap intervals and verdicts. A crude ds003810 panel, secondary seeds, sensitivity arms and the audit record.',
     zh: '第一条路线“可靠的决策”，EEGMAT 与 BETA：每种方法在固定置信度阈值下的覆盖率与错误率（附什么都没被接受的被试人数）、在覆盖率目标与经认证的选择性风险下的覆盖率与错误率（附认证的折数与超过目标的折数）；可学习的拒识选项与校准后置信度的比较（AURC、80% 覆盖率下的错误率）；相同覆盖率下的错误率；NLL、ECE 与 Brier 分数；以及按人重新校准及其标签代价——均附配对的被试 bootstrap 区间与判定。另有标为粗略的 ds003810 面板、其余随机种子、敏感性分析与审计记录。',
   },
+  'foundation-models-update.json': {
+    en: 'The v9 foundation-model evaluation: sixteen encoder checkpoints of eleven further models as frozen probes on the eight core protocols (balanced accuracy with its participant-bootstrap interval, macro F1, chance flag and pretraining exposure per cell; idle false activations and detections as counts; two cells not run, with the reason), the masking ablation, nine models adapted on EEGMAT (head on a frozen encoder against rank-4 LoRA: three-seed means, per-seed means, paired changes with people helped and harmed, trainable parameters), comparisons decided by interval overlap, the pretraining-exposure table with sources, weights licences, row footnotes and the audit record.',
+    zh: '第九轮基础模型评测：另外 11 个模型的 16 个编码器检查点，作为冻结探针在 8 个核心协议上的结果（每个单元格的平衡准确率及其被试 bootstrap 区间、宏平均 F1、随机水平标记，以及该数据集是否在预训练数据清单中；空闲协议的误触发与检出以计数给出；两个未运行的单元格注明原因），掩码消融，9 个模型在 EEGMAT 上的适配（冻结编码器只训分类头对比秩为 4 的 LoRA：三个随机种子的均值、各种子均值、配对变化与提升/变差人数、可训练参数），按区间是否重叠判定的比较，附来源的预训练数据核查表，权重许可、行脚注与审计记录。',
+  },
   'large-source-update.json': {
     en: 'Dreem sleep staging in two separate cohorts, DOD-H (healthy) and DOD-O (obstructive sleep apnoea): a training prior and a spectral ridge with accuracy, balanced accuracy, macro F1 and Cohen’s kappa, the paired balanced-accuracy gain and the ridge’s per-stage recall, precision and F1 (nulls kept null); and OpenBMI cross-session motor-imagery calibration, 51 people at 0, 10, 20 and 40 labelled session-2 trials, with paired changes and how many people declined. Rights records and one figure-free hold.',
     zh: '两个独立队列上的 Dreem 睡眠分期——DOD-H（健康被试）与 DOD-O（阻塞性睡眠呼吸暂停）：训练集先验与 spectral ridge 的准确率、平衡准确率、宏平均 F1 与 Cohen kappa 系数，配对的平衡准确率提升，以及 spectral ridge 的逐期召回率、精确率与 F1（空值保持为空）；以及 OpenBMI 跨会话运动想象校准，51 名被试，第二次会话 0、10、20、40 个校准试次，附配对变化与下降人数。附权利记录与一项不含数字的暂缓。',
@@ -56,6 +60,16 @@ const named: Record<string, Text> = {
 
 export function describeFile(file: string): Text {
   if (named[file]) return named[file];
+  // The v9 batch's per-protocol CSVs (releases.ts foundationModelFiles).
+  const fm = file.match(/^foundation-models-(.+)\.csv$/);
+  if (fm) {
+    const t = track(fm[1]);
+    if (!t) throw new Error(`files.ts: no protocol for ${file}`);
+    return {
+      en: `${t.title}: the v9 foundation-model rows — one per encoder checkpoint, in the core results CSV’s columns and units, then status, panel, chance flag, pretraining exposure, licence and footnote. Not run is empty with its reason.`,
+      zh: `${zhTrack[fm[1]]}：第九轮基础模型的各行——每个编码器检查点一行，列与单位同核心结果 CSV，其后为状态、所属面板、随机水平标记、是否在预训练数据清单中、许可与脚注。未运行的单元格留空并注明原因。`,
+    };
+  }
   const m = file.match(/^(.+)-(results\.csv|protocol\.json)$/);
   if (!m) throw new Error(`files.ts: no description for ${file}`);
   const t = track(m[1]);

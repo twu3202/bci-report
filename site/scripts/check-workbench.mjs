@@ -2484,6 +2484,91 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     assert.ok(s0.length>800&&['EEGMAT','BETA','ds003810','BNCI2015-001','idle'].every(x=>s0.includes(x)),'data-use: the 4 October section names its recordings and what is left out');
   }
 }
+// --- 2026-10-04 v9 foundation models: the publication boundary ---------------------------------
+// Eleven further foundation models (sixteen encoder checkpoints) as frozen probes on the eight core
+// protocols, nine adapted on EEGMAT (owner approval 2026-10-04). The batch ships one JSON and a CSV
+// per protocol; the released matrix keeps its bytes. Read from dist/ so a hand-edited build is
+// caught. Pinned here: the files are the reviewed ones and agree with each other; each CSV starts
+// with its core results CSV's columns and protocol values, one row per checkpoint, matrix rows
+// before the masking ablation; a cell not run is empty with its reason, never 0; the chance flag
+// follows the interval; exposure is the owner's sourced statement — never "not exposed" or a proof
+// — with ST-EEGFormer on BETA and SingLEM on TMNRED in the list, ZUNA 1.1 unknown everywhere, and
+// LaBraM and CBraMod absent from their authors' lists, each with a source link; ZUNA 1.1's
+// research-use sentence travels with its rows; no timing is published; the release log names the
+// batch and its manifest.
+{
+  const served=f=>readFileSync(new URL('data/'+f,DIST));
+  assert.deepEqual(served('foundation-models-update.json'),readFileSync(new URL('../src/data/foundation-models-update.json',import.meta.url)),
+    'source and served foundation-model exports must be byte-identical');
+  const fm=JSON.parse(served('foundation-models-update.json')),F=fm.results['foundation-models-v9'];
+  assert.deepEqual(Object.keys(fm.results),['foundation-models-v9'],'one result, the v9 evaluation');
+  assert.deepEqual([fm.status_only,fm.holds],[[],[]],'the v9 batch has no status-only source and no hold');
+  const protocols=data.tracks.map(t=>t.id);
+  assert.deepEqual(F.protocols.map(p=>p.id),protocols,'the v9 rows cover the eight core protocols, in the matrix order');
+  const panel=k=>F.models.filter(m=>m.panel===k).map(m=>m.id);
+  assert.deepEqual([F.models.length,panel('matrix').length,panel('masking ablation').length,F.models.filter(m=>m.masking_ablation).length],[16,13,3,4],
+    'sixteen checkpoints: thirteen matrix rows and three ablation siblings of the fourth masking checkpoint');
+  assert.deepEqual(F.models.map(m=>m.id),[...panel('matrix'),...panel('masking ablation')],'matrix rows before the masking ablation');
+  // The released matrix is not edited: no v9 row reaches experiments.json (REVE Base stays in its directory).
+  const releasedRows=JSON.parse(served('experiments.json')).tracks.flatMap(t=>t.rows.map(r=>r.name));
+  for(const m of F.models) assert.ok(!releasedRows.includes(m.name),m.name+': a v9 row reached the released matrix');
+  const cell=(m,p)=>F.frozen_probe.find(c=>c.model===m&&c.protocol===p);
+  assert.equal(F.frozen_probe.length,16*8,'one cell per checkpoint and protocol');
+  const notRun=F.frozen_probe.filter(c=>c.status!=='complete');
+  assert.deepEqual(notRun.map(c=>c.model+' '+c.protocol).sort(),['brainomni-base p300-target','brainomni-base semantic-target'],'two cells not run');
+  assert.ok(notRun.every(c=>c.balanced_accuracy===null&&c.reason.length>40),'a cell not run is null with its reason, never zero');
+  // Exposure: a sourced statement, never a proof.
+  const E=F.pretraining_exposure,S=E.statements;
+  assert.equal(S.not_exposed,"not in the authors' published pretraining list (checked 2026-10-04)",'the owner\'s wording for a dataset absent from the list');
+  assert.ok(Object.values(S).every(x=>!/proven|no overlap|not exposed|guarantee/i.test(x)),'exposure statements never claim proof');
+  const exposed=F.frozen_probe.filter(c=>c.exposure.status==='exposed').map(c=>c.model+' '+c.protocol).sort();
+  assert.deepEqual(exposed,['singlem semantic-target','steegformer-base beta-4ch','steegformer-base beta-8ch','steegformer-large beta-4ch','steegformer-large beta-8ch'],'the exposed cells');
+  assert.ok(F.frozen_probe.every(c=>(c.model==='zuna')===(c.exposure.status==='unknown')),'every ZUNA 1.1 cell, and only those, unknown');
+  assert.ok(F.frozen_probe.every(c=>c.exposure.statement===S[c.exposure.status]),'every cell carries its statement');
+  for(const k of ['labram','cbramod']){
+    const rows=E.cells.filter(c=>c.model===k);
+    assert.ok(rows.length===7&&rows.every(c=>c.status==='not_exposed'&&c.statement===S.not_exposed&&c.urls.length&&c.urls.every(u=>u.startsWith('https://'))),
+      k+': every core dataset absent from the authors\' published list, with the source');
+  }
+  const zuna=F.models.find(m=>m.id==='zuna');
+  assert.match(zuna.licence_note,/research use only, not for diagnosis or clinical use/,'ZUNA 1.1: the model card\'s research-use sentence');
+  // Each protocol's CSV against the JSON and its core results CSV.
+  for(const p of protocols){
+    const rows=csvRows(served('foundation-models-'+p+'.csv').toString()),core=csvRows(served(p+'-results.csv').toString());
+    const [head,...body]=rows,col=k=>head.indexOf(k);
+    assert.deepEqual(head.slice(0,core[0].length),core[0],p+': the CSV starts with the core results CSV\'s columns');
+    assert.ok(body.every(r=>r.length===head.length),p+': every row fits the header');
+    assert.deepEqual(body.map(r=>r[col('model_id')]),F.models.map(m=>m.id),p+': one row per checkpoint, in order');
+    for(const k of ['dataset','dataset_version','protocol_id','channels','primary_metric','secondary_metric','chance_level_percent','source','license','license_url','attribution','scope'])
+      assert.ok(body.every(r=>r[col(k)]===core[1][core[0].indexOf(k)]),p+': '+k+' is the core protocol\'s');
+    for(const r of body){
+      const m=F.models.find(x=>x.id===r[col('model_id')]),c=cell(m.id,p),where=p+'/'+m.id;
+      assert.equal(r[col('model')],m.name,where+': name');
+      assert.equal(r[col('scoring_seconds')],'',where+': timings are not published');
+      assert.equal(r[col('pretraining_exposure')],c.exposure.statement,where+': exposure statement');
+      assert.equal(r[col('panel')],m.panel,where+': panel');
+      if(m.id==='zuna') assert.match(r[col('licence_note')],/research use only, not for diagnosis or clinical use/,where+': research-use sentence');
+      if(c.status!=='complete'){
+        assert.ok(['primary_percent','secondary_value','descriptive_interval_low_percent','descriptive_interval_high_percent','participants'].every(k=>r[col(k)]==='')&&r[col('not_run_reason')]===c.reason,where+': not run is empty with its reason');
+      }else if(p==='idle'){
+        assert.ok(Math.abs(Number(r[col('primary_percent')])-100*c.commands_detected/c.command_trials)<1e-9&&Math.abs(Number(r[col('secondary_value')])-100*c.idle_false_activations/c.idle_trials)<1e-9,where+': idle rates are the counts over 60');
+        assert.ok(Number(r[col('always_abstain_participants')])===c.always_abstain_people&&r[col('commands_detected')]===String(c.commands_detected),where+': idle counts');
+      }else{
+        const pc=v=>Number(v);
+        assert.ok(Math.abs(pc(r[col('primary_percent')])-100*c.balanced_accuracy)<1e-9&&Math.abs(pc(r[col('descriptive_interval_low_percent')])-100*c.interval_95[0])<1e-9
+          &&Math.abs(pc(r[col('descriptive_interval_high_percent')])-100*c.interval_95[1])<1e-9&&Number(r[col('participants')])===c.people,where+': balanced accuracy and interval in percent');
+        const chance=data.tracks.find(t=>t.id===p).chanceLevel;
+        const includes=pc(r[col('descriptive_interval_low_percent')])<=chance&&chance<=pc(r[col('descriptive_interval_high_percent')]);
+        assert.equal(r[col('interval_includes_chance')],String(includes),where+': the chance flag follows the interval');
+        assert.equal(c.interval_includes_chance,includes,where+': the JSON chance flag follows the interval');
+      }
+    }
+  }
+  for(const path of ['releases/','zh/releases/'])
+    assert.ok(pageOf(path).includes(`id="${fm.release_id}"`)&&pageOf(path).includes(fm.provenance.manifest_sha256),path+': the v9 release and its manifest');
+  // The API page and the feed list the nine files through the generic checks above (every served file, exactly once).
+}
+console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight CSVs served as reviewed and agreeing; the released matrix untouched; each CSV in its core results CSV\'s columns and protocol values, one row per checkpoint, matrix before ablation; not run empty with its reason; chance flags follow the intervals; exposure a sourced statement with LaBraM and CBraMod sourced, ST-EEGFormer×BETA and SingLEM×TMNRED exposed, ZUNA 1.1 unknown; research-use sentence; no timings; release log.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
 
 console.log('PASS: Chinese register — licence and rights-review notes with their English beside them, model notes in Chinese; chart colours equal the legend swatches.');

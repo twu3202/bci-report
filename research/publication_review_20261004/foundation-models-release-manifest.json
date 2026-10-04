@@ -1,0 +1,366 @@
+{
+  "release_id": "foundation-models-update-20261004",
+  "reviewed_at": "2026-10-04",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the v9 foundation-model evaluation (handoff dated 2026-10-04): eleven further EEG foundation models, sixteen encoder checkpoints, run as frozen probes on the eight core protocols with the published LaBraM and CBraMod frozen-row recipe and only the encoder swapped, and nine of them adapted on EEGMAT with the 2026-10-01 recipe (frozen encoder with a trained head, against rank-4 LoRA). Its own manifest: it amends no earlier review and changes no released file. The new rows sit beside the core matrix in their own files; experiments.json and the protocol files keep their bytes. The website input is the release candidate. The aggregate it was built from, the twelve group summaries its figures point into, the pretraining-exposure table, the audit status and the harness validation are pinned by SHA-256 and checked, never copied; the six independent audits stay in the private run root and are bound by the hashes the release candidate, the audit status and the handoff record.",
+  "approval": {
+    "date": "2026-10-04",
+    "decision": "aggregate_preview",
+    "basis": "Owner approval on 2026-10-04: build the v9 batch locally for review before any deploy; the owner reviews screenshots first. The release candidate keeps the status it was sealed with, 'pending user approval'; this record is that approval, and the export requires both.",
+    "candidateStatusAtSeal": "pending user approval",
+    "pretrainingExposureWording": "LaBraM and CBraMod, and every model whose cell the table rates not exposed, are described as not in the authors' published pretraining list (checked 2026-10-04), with the source links; never as proven free of overlap. The core release keeps its released sentence; pages add a dated note beside it.",
+    "releasedFiles": "Published release payloads (experiments.json, the protocol files, adaptation-update.json) are historical records and are not edited; pages carry dated notes instead."
+  },
+  "evaluation": {
+    "id": "foundation-models-v9",
+    "releaseCandidateId": "fm-eval-v9-20261004",
+    "handoff": {
+      "path": "research/fm_eval_v9_20261004/Foundation Model Evaluation v9 Website Handoff.md",
+      "sha256": "e05cd89ad1f6b5b915d157b6be0b7ec198c98c0fecc2bb9c2d65abc564ab2009"
+    },
+    "releaseCandidate": {
+      "path": "research/fm_eval_v9_20261004/fm-eval-v9-website-release-candidate.json",
+      "sha256": "770021b49a6619bc73fd862163e0b2309cd5292a91aed233fc20164fdf08fbb8"
+    },
+    "aggregate": {
+      "path": "research/fm_eval_v9_20261004/aggregate.json",
+      "sha256": "cc3fd8570ec96cfb725bde69c6616ff3565dd7d16739dc7dcf0a7b37b66c32be"
+    },
+    "pretrainingExposure": {
+      "path": "research/fm_eval_v9_20261004/pretraining-exposure.json",
+      "sha256": "c7b1370ffb6d996797dacbb202016de5071e6e3ecc6a53bb50ac297908dd1d95"
+    },
+    "auditStatus": {
+      "path": "research/fm_eval_v9_20261004/audit-status.json",
+      "sha256": "0b0560565058f8ca05da53e8fb6c4b567d20284cefc6859675a66534a8410165"
+    },
+    "harnessValidation": {
+      "path": "research/fm_eval_v9_20261004/setup/harness-validation.json",
+      "sha256": "4232b81a85c9fab619329b193f47ddd3c151e26f69b1868f11f951cf3354b130"
+    },
+    "summaries": {
+      "brainomni-base": {
+        "path": "research/fm_eval_v9_20261004/brainomni-base-summary.json",
+        "sha256": "5b64811fca6e8c50390a935a54644bf3ed5913d8fc6fcaa81dc2e33825a86e06"
+      },
+      "codebrain": {
+        "path": "research/fm_eval_v9_20261004/codebrain-summary.json",
+        "sha256": "03723e1b85fe1287b26ca3878a67e65afb9932b5fb1d74c4fe12c9b5332e62cc"
+      },
+      "eeg-fm-masking": {
+        "path": "research/fm_eval_v9_20261004/eeg-fm-masking-summary.json",
+        "sha256": "87ecee59bc8255ae94258904bca26df2c87796765c85fb4a847a5a25a9d41e96"
+      },
+      "eegmamba": {
+        "path": "research/fm_eval_v9_20261004/eegmamba-summary.json",
+        "sha256": "e1d829427c249e93655ab8edb4da5ea65a7b6c5ba4da1ff82a7e02c0fb10ebd4"
+      },
+      "erp-fm-base": {
+        "path": "research/fm_eval_v9_20261004/erp-fm-base-summary.json",
+        "sha256": "927186d046252a2777993dab1a6d4e0abc33b7a9ab1866162ee437e2364f351c"
+      },
+      "luna-base": {
+        "path": "research/fm_eval_v9_20261004/luna-base-summary.json",
+        "sha256": "c24e31555d6a7fa2bb2e3e46d789815ddaa586986d50735ae262fdaf88840d0d"
+      },
+      "luna-large": {
+        "path": "research/fm_eval_v9_20261004/luna-large-summary.json",
+        "sha256": "c88d0c687b871671c554779a7ebcbed0a364aa761e6b816a86ba20e769e06a5a"
+      },
+      "reve-base": {
+        "path": "research/fm_eval_v9_20261004/reve-base-summary.json",
+        "sha256": "a1f9acfdef02686f6a68f7866fed0bf23106a542b0ac9faa71d766676df49bc4"
+      },
+      "reve-large": {
+        "path": "research/fm_eval_v9_20261004/reve-large-summary.json",
+        "sha256": "5030e4df31af1ab882da1c49ffc0839870dc7f47f1a70bc5f070b5810af4b5a7"
+      },
+      "singlem": {
+        "path": "research/fm_eval_v9_20261004/singlem-summary.json",
+        "sha256": "4c5fd73d74829c1f8805b7860b1a1867886b3d7ec57ac8d29055ad8e8fa45942"
+      },
+      "steegformer": {
+        "path": "research/fm_eval_v9_20261004/steegformer-summary.json",
+        "sha256": "158ac348205215962591c7578d93fdd2923f570ec55259a10386dfbb1a23815b"
+      },
+      "zuna": {
+        "path": "research/fm_eval_v9_20261004/zuna-summary.json",
+        "sha256": "3534fcaf74f69e42c4af192610332b2c37b8deef13cbbdbcedfd822f579a3c44"
+      }
+    },
+    "independentAudits": {
+      "note": "In the private run root; they carry private storage paths. Bound by these hashes, which the release candidate, the audit status and the handoff all record; not opened here.",
+      "groups": {
+        "reve": "6368897ffa1528981ddbee728e58ccf6516df39fbacd8bbc1fdb79171ac1d9e0",
+        "erp-fm": "0ae0a3cae5b4dea51573eb54557a2e6267fbabc43482269e2f9e01a966e83b01",
+        "masking-steeg": "863fe6c10289690066fb9abef7876e3db2f17647a6727554283a6003b765e600",
+        "cbramod-layout": "e107711c628ed050ef36f7bcf163cb8fe1c782a9c7f911b451ef09dd23b766fd",
+        "positions": "3ddbd6e0d804e85cd19e193e4fd8b9944aaa8f9c5e103c3ff76429c101d1f565",
+        "single-channel": "6d540185453a1db3a785007b835116023dc79e45d88d6e3f2a2dda1b60dfb57b"
+      }
+    },
+    "verification": [
+      "Every {value, src} block of the release candidate re-resolves, by its JSON pointer, to the same value in the pinned file it names (a group summary, the pretraining-exposure table, or a released site file whose bytes are unchanged).",
+      "Every frozen cell and adaptation row of the release candidate equals the pinned aggregate's row of the same id, and the aggregate records every pinned input by the hash pinned here.",
+      "All six independent audits passed with no defect; the release candidate, the audit status, the aggregate and the handoff name the same audit hashes, and every evaluated checkpoint belongs to a passing group.",
+      "The harness validation reproduced the published LaBraM and CBraMod frozen rows and idle counts, and all 45 published LaBraM EEGMAT adaptation fits, before any new score.",
+      "Every figure the pages print is the one the pinned handoff states, row by row: the frozen-probe table, the idle table and the EEGMAT adaptation table."
+    ]
+  },
+  "sources": [
+    {
+      "id": "mi-rest",
+      "protocol": "mi-rest",
+      "coreTrack": "mi-rest",
+      "decision": "aggregate_preview",
+      "name": "ds003810",
+      "task": "Rest versus right-hand motor imagery, new people (participant-disjoint folds)",
+      "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+      "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+      "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+      ]
+    },
+    {
+      "id": "idle",
+      "protocol": "idle",
+      "coreTrack": "idle",
+      "decision": "aggregate_preview",
+      "name": "ds005342",
+      "task": "Seated motor imagery against idle, cue-gated replay, new people: command detection within 3 s and idle false activations, counted in test trials",
+      "source": "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+      "version": "OpenNeuro snapshot 1.0.3 · 30bb3b67d76ce007b822fed801e496fafe5598a0",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "OpenNeuro ds005342 contributors · version 1.0.3, doi:10.18112/openneuro.ds005342.v1.0.3; associated study doi:10.3389/fninf.2022.961089. Original author credits are retained at the linked source.",
+      "privacyReview": "README reports voluntary signed consent and Universidad Antonio Nariño ethics approval. participants.tsv links pseudonymous IDs to exact age, sex, handedness, and academic major. The current evaluated subset has only four people. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, test-trial counts of idle false activations (of 60) and commands detected within 3 s (of 60), how many of the 4 people always abstained, and the cohort-mean window balanced accuracy and AUROC. No interval, no per-person or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+        "https://eegdash.org/api/dataset/eegdash.dataset.DS005342.html",
+        "https://doi.org/10.3389/fninf.2022.961089"
+      ]
+    },
+    {
+      "id": "beta-8ch",
+      "protocol": "beta-8ch",
+      "coreTrack": "beta-8ch",
+      "decision": "aggregate_preview",
+      "name": "BETA",
+      "task": "40-target SSVEP speller, eight posterior electrodes, new people (participant-disjoint folds)",
+      "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+      "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ]
+    },
+    {
+      "id": "beta-4ch",
+      "protocol": "beta-4ch",
+      "coreTrack": "beta-4ch",
+      "decision": "aggregate_preview",
+      "name": "BETA",
+      "task": "40-target SSVEP speller, four posterior electrodes, new people (participant-disjoint folds)",
+      "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+      "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ]
+    },
+    {
+      "id": "arithmetic-rest",
+      "protocol": "arithmetic-rest",
+      "coreTrack": "arithmetic-rest",
+      "decision": "aggregate_preview",
+      "name": "EEGMAT",
+      "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds); also the EEGMAT adaptation recipe",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value. The EEGMAT adaptation rows add three-seed cohort means with participant-bootstrap intervals, per-seed cohort means, paired changes with how many of the 36 people were helped, harmed or tied, and trainable-parameter counts.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ]
+    },
+    {
+      "id": "p300-target",
+      "protocol": "p300-target",
+      "coreTrack": "p300-target",
+      "decision": "aggregate_preview",
+      "name": "ds006593",
+      "task": "Visual target versus nontarget events (1-second windows), new people (participant-disjoint folds)",
+      "source": "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+      "version": "OpenNeuro snapshot 1.0.0 · b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "OpenNeuro ds006593 contributors · version 1.0.0, doi:10.18112/openneuro.ds006593.v1.0.0; original author credits retained at the linked source.",
+      "privacyReview": "Dataset metadata/README report IRB approval #10-05-2022 and written informed consent. Participant metadata contains pseudonymous IDs and study descriptors without demographic fields. Eye-tracking and raw signals remain off-site. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "https://nemar.org/dataset/on006593"
+      ]
+    },
+    {
+      "id": "semantic-target",
+      "protocol": "semantic-target",
+      "coreTrack": "semantic-target",
+      "decision": "aggregate_preview",
+      "name": "TMNRED / ds005383",
+      "task": "Reading, target versus nontarget events (1-second windows), new people (participant-disjoint folds)",
+      "source": "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+      "version": "OpenNeuro snapshot 1.0.0 · ad78f3db430e636595b1b1c08417492f3067a25e",
+      "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Yanru Bai, Qi Tang et al. · TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments (2025), doi:10.1038/s41597-025-05036-2. OpenNeuro ds005383 v1.0.0.",
+      "privacyReview": "Paper reports Tianjin University ethics approval TJUE-2024-402, written consent, deidentification, and explicit participant permission for open sharing. Local participants.tsv appears column-shifted/malformed, so it must not feed public metadata. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+        "https://www.nature.com/articles/s41597-025-05036-2"
+      ]
+    },
+    {
+      "id": "sleep-scalp",
+      "protocol": "sleep-scalp",
+      "coreTrack": "sleep-scalp",
+      "decision": "aggregate_preview",
+      "name": "EESM19 scalp subset",
+      "task": "Five-stage sleep staging on a balanced scalp-EEG sample, new people (participant-disjoint folds)",
+      "source": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+      "version": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2 · {\"mirror\": \"fb045012b58a0b755f9fedf5931dff9b64a9797f\", \"upstream\": \"0857858f7a2ba1582930f23eca3ec56f90a96da9\"}",
+      "license": "CC0-1.0 declared by upstream and mirror",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+      "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed. Amended 2026-09-22: the 2025 data descriptor covering EESM19 and EESM23 (Mikkelsen et al., Scientific Data 12, 301, doi:10.1038/s41597-025-04579-8) states that publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: for each new frozen encoder, the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "https://www.nature.com/articles/s41598-019-53115-3",
+        "https://doi.org/10.1038/s41597-025-04579-8"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "ids": [
+        "reve-base",
+        "reve-large"
+      ],
+      "weightsLicence": "REVE Responsible Use License v1.0",
+      "decision": "aggregate_preview",
+      "basis": "Accepted by the owner on 2026-10-04. Aggregate scientific results only; no re-identification, model inversion, membership inference or non-consensual profiling; the REVE paper is cited and the model version named; no adapted weights are shared."
+    },
+    {
+      "ids": [
+        "luna-base",
+        "luna-large"
+      ],
+      "weightsLicence": "CC BY-ND 4.0",
+      "decision": "aggregate_preview",
+      "basis": "Owner-approved on 2026-10-04 for internal probing and adaptation with aggregate scores only. No modified weights, LoRA or adapter deltas are shared; no endorsement by the LUNA authors is implied, and the LUNA name is not used to suggest an official release."
+    },
+    {
+      "ids": [
+        "brainomni-base"
+      ],
+      "weightsLicence": "MIT",
+      "decision": "aggregate_preview",
+      "basis": "Permissive weights licence; aggregate scores only, no weights redistributed."
+    },
+    {
+      "ids": [
+        "codebrain"
+      ],
+      "weightsLicence": "Apache-2.0",
+      "decision": "aggregate_preview",
+      "basis": "Permissive weights licence; aggregate scores only, no weights redistributed."
+    },
+    {
+      "ids": [
+        "eegmamba"
+      ],
+      "weightsLicence": "MIT",
+      "decision": "aggregate_preview",
+      "basis": "Permissive weights licence; aggregate scores only, no weights redistributed."
+    },
+    {
+      "ids": [
+        "steegformer-base",
+        "steegformer-large"
+      ],
+      "weightsLicence": "MIT",
+      "decision": "aggregate_preview",
+      "basis": "MIT repository licence; its README reserves the paper, the diagrams and the ST-EEGFormer name, none of which is reproduced. Aggregate scores only."
+    },
+    {
+      "ids": [
+        "eeg-fm-masking/mae-r9cm-L2",
+        "eeg-fm-masking/jepa-r9cm-L2",
+        "eeg-fm-masking/mae-rone-L1",
+        "eeg-fm-masking/jepa-rone-L1"
+      ],
+      "weightsLicence": "CC-BY-4.0",
+      "decision": "aggregate_preview",
+      "basis": "Attribution licence; the paper is cited beside every row. Aggregate scores only."
+    },
+    {
+      "ids": [
+        "erp-fm-base"
+      ],
+      "weightsLicence": "CC BY-NC-SA 4.0",
+      "decision": "aggregate_preview",
+      "basis": "Non-commercial share-alike weights. This site is personal noncommercial research and publishes aggregate scores only, with attribution; no weights are redistributed."
+    },
+    {
+      "ids": [
+        "singlem"
+      ],
+      "weightsLicence": "MIT",
+      "decision": "aggregate_preview",
+      "basis": "Checkpoint committed in the MIT repository; aggregate scores only."
+    },
+    {
+      "ids": [
+        "zuna"
+      ],
+      "weightsLicence": "Apache-2.0",
+      "decision": "aggregate_preview",
+      "basis": "Apache-2.0 weights. The model card says research use only, not for diagnosis or clinical use; that sentence travels with its rows."
+    }
+  ],
+  "notPublished": [
+    "Per-trial predictions, per-person and per-fold metrics, features and their hashes, the channel lists and contracts of each run.",
+    "Timing, memory, hardware and software environments: measured on a shared GPU and indicative only, so the per-protocol CSVs leave scoring_seconds empty rather than put them beside the core rows' timings.",
+    "The declared sensitivity runs (REVE without per-segment mean removal, ERP-FM with an average reference and a 45 Hz low-pass, ST-EEGFormer sleep as 5 x 6 s segments): never substituted for a primary row, and published only as the row footnotes state them.",
+    "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
+    "The pretraining-exposure table's process history (its open items from the previous expansion round) and its overlaps outside the seven core datasets: no page uses them.",
+    "Revisions and checkpoint hashes of the three sibling masking checkpoints: the release candidate names only the paper-recommended checkpoint's revision.",
+    "Model weights, adapted weights and LoRA deltas: never kept or shared.",
+    "The aggregate, the group summaries, the audit status and the harness validation: pinned by SHA-256 and checked, never copied, because they carry private storage paths. The six independent audits, with their check names and notes, and the run's decision log stay in the private run root; the audits are bound by hash."
+  ],
+  "holds": []
+}

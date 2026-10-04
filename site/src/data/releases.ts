@@ -21,7 +21,8 @@ export const siteUpdates = [
     // when-not-to-act (before the roadmap, whose routes now carry their own status), the topic card
     // on the home page and the Questions hub, route-1 groups on the EEGMAT, BETA and ds003810 pages
     // (and their group counts on the dataset index) and through them the EEGNet, LaBraM, CBraMod and
-    // CCA pages, the release log, data use and the API page.
+    // CCA pages, the release log, data use and the API page. The v9 foundation-model files (same
+    // day) reached the release log, the API page and the home page's file count and Dataset markup.
     paths: ['/', '/topics/', '/topics/when-not-to-act/', '/datasets/', '/datasets/eegmat/', '/datasets/beta/', '/datasets/ds003810/',
             '/methods/eegnet/', '/methods/labram/', '/methods/cbramod/', '/methods/cca/', '/releases/', '/data-use/', '/api/'],
   },
@@ -92,7 +93,7 @@ export interface Release {
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
-    | 'reliableDecisions';
+    | 'reliableDecisions' | 'foundationModels';
   files: string[];
   pages: string[];
   summary: Text;
@@ -102,7 +103,28 @@ export interface Release {
 const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target',
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
+/** The v9 batch's per-protocol CSVs: the new rows in the core results CSVs' columns and units. */
+export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target',
+  'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
+
 export const releases: Release[] = [
+  {
+    id: 'foundation-models-update-20261004', date: '2026-10-04', payload: 'foundationModels',
+    files: ['foundation-models-update.json', ...foundationModelFiles],
+    pages: ['/topics/does-pretraining-help/', '/topics/fewer-electrodes/'],
+    summary: {
+      en: 'The v9 foundation-model evaluation: eleven further EEG foundation models — sixteen encoder checkpoints — run as frozen probes on the eight core protocols with the published LaBraM and CBraMod recipe and only the encoder swapped (the same windows, people, folds, heads and scoring), and nine of them adapted on EEGMAT with the 1 October recipe, a head trained on the frozen encoder against rank-4 LoRA over three seeds. New rows beside the core matrix, in their own files: one JSON, and a CSV per protocol whose first columns are the core results CSVs’. Grouped by family, never ranked: a row is above or below another only where their 95% intervals do not overlap. Every cell says whether its dataset is in the model authors’ published pretraining list, checked on 4 October 2026 with the source, and every model carries its weights licence.',
+      zh: '第九轮基础模型评测：另外 11 个 EEG 基础模型（共 16 个编码器检查点）作为冻结探针，在 8 个核心协议上沿用已发布的 LaBraM 与 CBraMod 冻结方案，只替换编码器（时间窗、被试、折、分类头与评分方式都不变）；其中 9 个模型又在 EEGMAT 上按 10 月 1 日的方案做了适配：在冻结编码器上只训分类头，对比秩为 4 的 LoRA，3 个随机种子。这些是放在核心矩阵旁边的新行，有自己的文件：一个 JSON，以及每个协议一个 CSV，其前几列与核心结果 CSV 完全相同。按模型类别分组，从不排名：只有 95% 区间不重叠时，才说一行高于或低于另一行。每个单元格都注明该数据集是否在模型作者公开的预训练数据清单中（2026 年 10 月 4 日核查，附来源），每个模型都注明其权重许可。',
+    },
+    notes: [
+      { en: 'Sleep staging is the only protocol where new frozen cells — ST-EEGFormer Large and Base, and REVE Large — lie entirely above every published row. On the other six scored protocols no new cell lies entirely above the best published non-foundation row; on BETA, standard CCA, which needs no training, stays the highest row. On EEGMAT, frozen readouts and LoRA order the models differently: one fixed recipe on one task, with LoRA budgets that differ by model, not a ranking.',
+        zh: '睡眠分期是唯一一个有新的冻结单元格——ST-EEGFormer Large、ST-EEGFormer Base 与 REVE Large——完全高于所有已发布行的协议。在其余 6 个有分数的协议上，没有任何新单元格完全高于已发布的最佳非基础模型行；在 BETA 上，无需训练的标准 CCA 仍是最高的一行。在 EEGMAT 上，冻结读出与 LoRA 给出的模型顺序并不一致：这是一项任务上的一个固定方案，各模型的 LoRA 参数量也各不相同，不是排名。' },
+      { en: 'ST-EEGFormer was pretrained on BETA and SingLEM on TMNRED, so those cells are flagged; ZUNA 1.1 does not list its pretraining data, so every ZUNA 1.1 cell is marked unknown. Every other cell, LaBraM’s and CBraMod’s included, is not in the authors’ published pretraining list as checked on 4 October 2026: a sourced statement, not proof that the recordings were never seen. Weights licences travel with the rows: REVE under its Responsible Use License, LUNA under CC BY-ND 4.0, ERP-FM for non-commercial use only, and ZUNA 1.1’s model card limits it to research use, not diagnosis or clinical use.',
+        zh: 'ST-EEGFormer 的预训练数据包含 BETA，SingLEM 的包含 TMNRED，这些单元格都已标出；ZUNA 1.1 没有公开其预训练数据清单，所以它的每个单元格都标为未知。其余单元格——包括 LaBraM 与 CBraMod 的——都不在作者公开的预训练数据清单中（2026 年 10 月 4 日核查）：这是有出处的陈述，并不证明这些记录从未被模型见过。权重许可随行标出：REVE 采用其负责任使用许可，LUNA 为 CC BY-ND 4.0，ERP-FM 仅限非商业用途，ZUNA 1.1 的模型卡限定仅供研究使用，不可用于诊断或临床。' },
+      { en: 'Not published: per-trial, per-person and per-fold values, features, and timings and memory — measured on a shared GPU, so the CSVs leave the scoring-time column empty — the declared sensitivity runs beyond the row footnotes that state them, and the aggregate, the group summaries and the six independent audits themselves, pinned by hash in the review manifest because they carry private storage paths. Two BrainOmni cells were not run, because its tokenizer needs two-second windows: they are null with that reason, never zero. The released matrix keeps its bytes; the new rows never enter experiments.json.',
+        zh: '不发布：逐试次、逐人与逐折的数值、特征，以及计算耗时与显存——它们在共享 GPU 上测得，所以 CSV 的评分耗时列留空；超出行脚注所述内容的预设敏感性分析；以及聚合文件、各组汇总与 6 份独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。BrainOmni 有两个单元格没有运行，因为它的分词器需要两秒的时间窗：这两格为空值并注明原因，而不是零。已发布的矩阵保持原有字节；新行不会进入 experiments.json。' },
+    ],
+  },
   {
     id: 'reliable-decisions-update-20261004', date: '2026-10-04', payload: 'reliableDecisions',
     files: ['reliable-decisions-update.json'],

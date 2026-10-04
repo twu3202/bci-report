@@ -18,8 +18,10 @@ abstract: >-
   should decline to decide (rejection rules and probability calibration
   compared as methods, not as deployment error rates), sensor and
   display transfer, image-rate transfer, movement, calibration budget within a
-  recording and across sessions, foundation-model adaptation (head only, last
-  block, LoRA), pretraining controls and a clinical case/control comparison. No
+  recording and across sessions, frozen probes of further EEG foundation models
+  with each dataset checked against the authors' published pretraining lists,
+  foundation-model adaptation (head only, last block, LoRA), pretraining
+  controls and a clinical case/control comparison. No
   raw EEG, no per-participant scores, no overall ranking.
 authors:
   - name: "BCI Report"
@@ -36,7 +38,7 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "reliable-decisions-update-20261004"
+version: "foundation-models-update-20261004"
 date-released: "2026-10-04"
 keywords:
   - EEG

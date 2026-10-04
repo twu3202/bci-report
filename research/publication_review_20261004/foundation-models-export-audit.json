@@ -1,0 +1,58 @@
+{
+  "status": "pass",
+  "release_id": "foundation-models-update-20261004",
+  "export_sha256": "8b07b98c5bae07501c8436a7ced9aea1a11a37c41b8951944507e5372d00d143",
+  "csv_sha256": {
+    "foundation-models-mi-rest.csv": "f7ead2c22a5d6049fe026cac6df4d1e863d69b3f2b31af376710004a67b72d32",
+    "foundation-models-idle.csv": "7e81e7402ad27218a9f98215937522f0e849037e92b53b0e497bb0c290b30e1e",
+    "foundation-models-beta-8ch.csv": "a041c84c1619e0057b96f6496cd5dded52b8e4645c65ea90e42bd1c78f79b294",
+    "foundation-models-beta-4ch.csv": "da74350103e8e56f109bab5252929ded423c11016c70816ceedd7e213d623db2",
+    "foundation-models-arithmetic-rest.csv": "1c4ab991046ffd6c48ee3fde733898571ec0b197010b21ba2a7c65fa7e196ce0",
+    "foundation-models-p300-target.csv": "27dc12a6a7bd4691b215d245a26ddea7fe63d634bb8d0873714f09cec5f87943",
+    "foundation-models-semantic-target.csv": "5dddb3a1433831a087851c3b27bd52a7bbb80d7f24f8af9bcdef7df71b6be95c",
+    "foundation-models-sleep-scalp.csv": "226de16195cff8934b4112f98ba07a130771134fec9c7978b811ef864e892229"
+  },
+  "manifest_sha256": "091881ba1ec44cc99b4b1a719a9f653972a60f840c0fc26e399ae6fdf45bf72c",
+  "release_candidate_sha256": "770021b49a6619bc73fd862163e0b2309cd5292a91aed233fc20164fdf08fbb8",
+  "included": [
+    "foundation-models-v9"
+  ],
+  "inputs": [
+    "mi-rest",
+    "idle",
+    "beta-8ch",
+    "beta-4ch",
+    "arithmetic-rest",
+    "p300-target",
+    "semantic-target",
+    "sleep-scalp"
+  ],
+  "status_only": [],
+  "holds": [],
+  "checks": [
+    "pinned handoff, release candidate, aggregate, pretraining-exposure table, audit status, harness validation and the twelve group summaries",
+    "every traced block of the release candidate re-resolves to the file and bytes it names (1499 references), released site files included",
+    "the aggregate records every pinned input by its pinned hash; the handoff records every hash bound here",
+    "all six independent audits passed with no defect, named by the same hash in the candidate, the audit status, the aggregate and the handoff; every checkpoint belongs to a passing group",
+    "the harness reproduced the published LaBraM and CBraMod frozen rows and the 45 LaBraM adaptation fits",
+    "every frozen cell and adaptation row equals the aggregate row of the same id; 126 scored cells, 2 not run with their reason and no figure",
+    "every interval holds its point; every chance flag follows the interval and the released chance level; idle figures are counts of 60 test trials",
+    "every paired change is the difference of its arms, helped + harmed + tied = 36, and its zero flag follows its interval",
+    "every size, electrode, masking and published-row comparison recomputed from the intervals and equal to the candidate's",
+    "exposure: each cell's pointer lands on its own model and dataset; ST-EEGFormer on BETA and SingLEM on TMNRED exposed, every ZUNA 1.1 cell unknown, the rest not in the published lists, with source links",
+    "cohorts, channels, chance levels and dataset rights equal the released core tracks",
+    "the frozen-probe, idle and adaptation tables equal the handoff's, row by row (45 rows)",
+    "per-trial, per-person, per-fold, timing and environment fields refused by key; no private path, host or volume name, file or participant identifier in the JSON or the CSVs"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "release candidate bytes: pinned here, and recorded in the handoff",
+      "every candidate figure: equal, at its JSON pointer, to the pinned summary, exposure table or released site file it names",
+      "aggregate, exposure table, audit status, harness validation and summaries: by the hashes the aggregate and the handoff record",
+      "independent audits: by the hashes the candidate, the audit status, the aggregate and the handoff record"
+    ],
+    "not_bound": [
+      "the independent audits are not opened here (they carry private storage paths); their pass is taken from the audit status and the candidate, whose bytes are pinned"
+    ]
+  }
+}
