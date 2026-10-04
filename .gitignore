@@ -72,6 +72,8 @@ research/hf_expansion_v6_20260926/
 research/expansion_v7_20261001/
 research/expansion_v8_20261001/
 research/large_source_expansion_20261002/
+research/decision_route1_20261004/
+research/fm_eval_v9_20261004/
 
 # IndexNow submission state and the last deploy log (site/scripts/deploy.mjs). Local only.
 site/.indexnow-state.json
