@@ -4,6 +4,7 @@ import context from '../../../data/context-update.json';
 import extension from '../../../data/extension-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
+import ReliableDecisions from '../../../components/ReliableDecisions.astro';
 import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
 import { decisionCopy, decisionRoadmap, decisionSources } from '../../../data/decision-research';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
@@ -13,9 +14,10 @@ const locale = localeOf(Astro.params.lang);
 const tc = topicChrome[locale];
 const plan = decisionCopy[locale];
 
-// Every figure on this page comes from the reviewed idle protocol in the core
-// snapshot. No new measurement enters here; the section below the table is a
-// plan, and renders no number.
+// The idle table's figures come from the reviewed idle protocol in the core
+// snapshot. The non-control section reads the 2026-09-27 and 2026-10-02 exports;
+// #reliable-decisions (ReliableDecisions.astro, 2026-10-04) reads route 1's own
+// export. The roadmap section at the end is a plan, and renders no number.
 const idle = data.tracks.find(t => t.id === 'idle')!;
 const [, idleN, cmdN] = idle.observations.match(/(\d+) idle \/ (\d+) command/)!.map(Number);
 const people = idle.subjects;
@@ -77,8 +79,8 @@ const copy = {
     documentTitle: `${topicCards.en['when-not-to-act'].question} · Jev-style decision models for EEG`,
     description: `It depends on how often the decoder acts at all. In a cue-gated idle test with ${people} people, ${quiet.name} made ${quiet.falseActs} / ${idleN} false activations but detected ${quiet.commands} / ${cmdN} commands: a decoder that never acts never fires by mistake, so both numbers are read together.`,
     answer: `It depends on how often the decoder acts at all: one that never acts never fires by mistake, so its false activations mean something only beside the commands it caught. In a cue-gated idle test with [[${people}]] people, the quietest decoder, ${quiet.name}, made [[${quiet.falseActs} / ${idleN}]] false activations in idle trials but detected [[${quiet.commands} / ${cmdN}]] commands, and for [[${quiet.abstain}]] of those people its threshold rejected every command. In a separate test with [[${extPeople}]] other people, a CCA decoder with a threshold fixed on an earlier pilot accepted [[${ncAccepted}]] windows when a command was intended, and ${series(ncFalse, ', ', ' and ')} in three states where none was. A threshold fitted instead on [[${pRule.target_person_labels}]] of each person’s own windows accepted fewer non-control windows overall, and fewer in each state, but did not raise the share of commands both accepted and correct; the contrast cannot separate fitting the threshold to the person from simply having those labels. Both tests count per trial or per window rather than per hour: neither can say how often a decoder would fire by mistake over an hour of real rest.`,
-    eyebrow: 'Abstention · Jev-style research plan',
-    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, then sets out a Jev-style research plan: what would have to be measured to say when a decoder should act at all.`,
+    eyebrow: 'Abstention · reliable decisions · Jev-style research plan',
+    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. A false-activation rate read on its own rewards a decoder for doing nothing. This page keeps the two numbers together, then measures, on two other protocols, when a decoder should decline to decide: the first route of a Jev-style research plan, set out at the end.`,
     findingLabel: `${quiet.name}: idle false activations, ${people} people`,
     findingH3: `No false activation, and ${quiet.commands} ${noun(quiet.commands, 'command', 'commands')} in ${cmdN}`,
     findingP: `Thresholds are chosen on calibration data only, and a threshold may reject every command. For ${quiet.abstain} of ${people} people it did. Someone who never triggers a command never triggers one by mistake either, so the number of people who always abstained is printed beside every method.`,
@@ -96,7 +98,7 @@ const copy = {
       [`${people} people`, `At this size an average stays close to its parts: a published rate can be turned back into a count, and a count narrowed to one of two people. The arithmetic is written out on the data-use page.`],
       ['Three minutes of idle', `The test holds ${idle.exposure.replace('of test idle', '').trim()} of idle. That cannot estimate how often a decoder would fire by mistake over an hour of real, unprompted rest.`],
       ['Cue-gated, not always-on', 'Detection restarts at every cue, so the decoder always knows a decision window has opened. A system that must notice intent on its own faces a harder problem than this protocol measures.'],
-      ['No probability quality yet', 'These are thresholded decisions. How well each method’s probabilities are calibrated — the basis for deciding when to defer — has not been measured on this protocol.'],
+      ['No probability quality on this protocol', 'These are thresholded decisions. How well each method’s probabilities are calibrated — the basis for deciding when to defer — has not been measured on this protocol. The reliable-decisions results further down measure it on two other protocols; their idle-protocol figures are in another unit and are left out.'],
     ],
     smallCohorts: 'The four-person arithmetic, in full (English)',
     consent: 'The source README reports voluntary signed consent and approval by the ethics committee of Universidad Antonio Nariño. Only cohort aggregates appear here.',
@@ -146,8 +148,8 @@ const copy = {
     documentTitle: `${topicCards.zh['when-not-to-act'].question} · Jev-style 的 EEG 决策模型`,
     description: `取决于解码器执行得有多频繁。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
     answer: `取决于解码器执行得有多频繁：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，触发最少的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令。在另一组 [[${extPeople}]] 名被试的测试中，CCA 解码器使用在更早一个试点上固定的阈值，在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的三种状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}。改用每名被试自己的 [[${pRule.target_person_labels}]] 个窗口拟合阈值后，被误接受的非控制窗口总体减少，每种状态下也都减少了，但被接受且正确的指令占比并没有提高；这项对比无法区分“按人拟合阈值”和“仅仅多了这些标签”各自的作用。两项测试都按试次或窗口计数，而不是按小时，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
-    eyebrow: '拒识 · Jev-style 研究计划',
-    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再给出一个 Jev-style 研究计划：要测什么，才能回答解码器究竟该不该执行。`,
+    eyebrow: '拒识 · 可靠的决策 · Jev-style 研究计划',
+    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。单看误触发率，等于奖励一个什么都不做的解码器。本页把两个数字放在一起，再在另外两个协议上测量解码器什么时候该拒绝作出决定——这是一个 Jev-style 研究计划的第一条路线，计划列在页末。`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
     findingH3: `没有误触发，${cmdN} 条指令只检出 ${quiet.commands} 条`,
     findingP: `阈值只用校准数据来选，而选出的阈值可能拒绝所有指令。${people} 名被试中有 ${quiet.abstain} 名正是如此。从不触发指令的人，自然也从不误触发，所以每种方法旁边都列出了始终拒识的人数。`,
@@ -165,7 +167,7 @@ const copy = {
       [`${people} 名被试`, '在这个规模下，平均值离每个人都很近：公开的比率可以还原成计数，计数又能缩小到两个人中的一个。具体算法写在数据使用页上。'],
       ['三分钟的空闲', '测试中只有 180 秒的空闲。它估计不了在一个小时真实、无提示的休息中，解码器会误触发多少次。'],
       ['提示同步，不是全天候', '每次提示都会重新开始检测，所以解码器总是知道决策窗口已经打开。一个必须自己察觉意图的系统，面对的问题比这个协议测的更难。'],
-      ['还没有测概率质量', '这些都是经过阈值的决策。每种方法的概率校准得好不好——这正是判断何时该推迟决策的依据——还没有在这个协议上测过。'],
+      ['这个协议上没有测概率质量', '这些都是经过阈值的决策。每种方法的概率校准得好不好——这正是判断何时该推迟决策的依据——还没有在这个协议上测过。下文“可靠的决策”的结果在另外两个协议上测了它；它在空闲协议上的数字单位不同，没有放进来。'],
     ],
     smallCohorts: '四人队列的完整算法（英文）',
     consent: '数据源 README 写明被试自愿签署了同意书，并经 Universidad Antonio Nariño 伦理委员会批准。这里只发布队列级聚合结果。',
@@ -312,11 +314,13 @@ const basis = idle.reviewBasis;
     <p class="citation-note">{tc.dataSource} <a href="/data/experiments.json" download>{tc.reviewedAggregate}</a> · <a href="/data/idle-results.csv" download>{copy.csv}</a> · {data.releaseId}{tc.period}</p>
   </section>
 
+  <ReliableDecisions locale={locale}/>
+
   <section class="topic-section roadmap" id="decision-research" aria-labelledby="decision-heading" data-status={decisionRoadmap.status} data-run-status={decisionRoadmap.runStatus}>
     <div class="topic-heading"><div><p class="eyebrow">{plan.eyebrow}</p><h2 id="decision-heading">{plan.h2}</h2></div><p>{plan.lede}</p></div>
     <p class="protocol-note research-status">{plan.statusLine}</p>
     <p class="roadmap-p research-scope">{plan.scope}</p>
-    <ol class="route-list">{plan.routes.map(r => <li><p class="eyebrow">{r.tag} · {plan.routeStatus}</p><h3>{r.title}</h3><p>{r.body}</p><p class="route-boundary">{r.boundary}</p></li>)}</ol>
+    <ol class="route-list">{plan.routes.map((r, i) => { const st = decisionRoadmap.routes[i]; return <li data-route={st.id} data-route-status={st.runStatus}><p class="eyebrow">{r.tag} · {r.status}</p><h3>{r.title}</h3><p>{r.body}</p><p class="route-boundary">{r.boundary}</p>{st.runStatus === 'run' && r.resultsLink && <p class="route-results"><a href={hrefFor(`/topics/when-not-to-act/${st.results}`, locale)}>{r.resultsLink} ↑</a></p>}</li>; })}</ol>
     <h3 class="roadmap-sub">{plan.boundaryH3}</h3>
     <p class="roadmap-p">{plan.boundary}</p>
     <p class="roadmap-p">{plan.inputsNote}</p>

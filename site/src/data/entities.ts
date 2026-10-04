@@ -24,6 +24,7 @@ import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
+import reliable from './reliable-decisions-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
@@ -36,9 +37,11 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
 /**
  * `sgn1` is a difference of proportions without its unit, for the lower bound of a
  * percentage-point interval ("+2.3 to +6.9 pp"): the unit is printed once, after
- * the upper bound, as intervalPp prints it (since 2026-10-03).
+ * the upper bound, as intervalPp prints it (since 2026-10-03). `sgn3` is a signed
+ * difference of a unitless quantity (AURC, NLL, ECE) to three decimals, always
+ * with its sign (since 2026-10-04).
  */
-export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 
@@ -51,6 +54,7 @@ export function formatFig(f: Fig): string {
     case 'pct2raw': return `${f.raw.toFixed(2)}%`;
     case 'pp1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)} pp`;
     case 'sgn1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)}`;
+    case 'sgn3': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(3)}`;
     case 'auc3': return f.raw.toFixed(3);
     case 'auc2': return f.raw.toFixed(2);
     case 'num3': return minus(f.raw.toFixed(3));
@@ -111,7 +115,7 @@ export interface DatasetEntity {
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
       CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json',
-      EXT = 'extension-update.json', LSU = 'large-source-update.json';
+      EXT = 'extension-update.json', LSU = 'large-source-update.json', RDU = 'reliable-decisions-update.json';
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
 const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig] | undefined =>
   iv ? [fig(iv[0], fmt, src), fig(iv[1], fmt, src)] : undefined;
@@ -593,6 +597,59 @@ function openbmiGroup(): ResultGroup {
   };
 }
 
+/* --- 2026-10-04: route 1, reliable decisions ------------------------------------------ */
+
+const rd = reliable.results['reliable-decisions'];
+/** Route-1 method ids → the method page, and a label where the method is an arm of one. */
+export const reliableMethod: Record<string, { slug?: MethodSlug; label: L }> = {
+  'spectral-ridge': { label: { en: 'Spectral ridge' } },
+  eegnet: { slug: 'eegnet', label: { en: 'EEGNet' } },
+  cca: { slug: 'cca', label: { en: 'Standard CCA' } },
+  cbramod: { slug: 'cbramod', label: { en: 'CBraMod' } },
+  'labram-frozen-ce': { slug: 'labram', label: { en: 'LaBraM · head only, encoder frozen', zh: 'LaBraM · 只训分类头，编码器冻结' } },
+  'labram-lora-r4': { slug: 'labram', label: { en: 'LaBraM · LoRA rank 4 + head', zh: 'LaBraM · 秩为 4 的 LoRA + 分类头' } },
+};
+type RdMethod = { id: string; label: string; fixed_cutoff: { n: number; accepted: number; people_with_nothing_accepted: number };
+                  learned_minus_confidence: { error_at_80: { mean: number; interval_95: number[]; excludes_zero: boolean } } };
+
+/**
+ * Route 1 on one dataset: for each method, how many trials the fixed threshold
+ * (calibrated confidence at least 0.8) accepted, with how many people had nothing
+ * accepted beside it, and the learned reject option minus calibrated confidence at
+ * 80% coverage, with its verdict. Balanced or uniform protocols, so a method
+ * comparison, never a deployment rate. ds003810 is labelled crude.
+ */
+function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): ResultGroup {
+  const p = (protocol === 'mi-rest' ? rd.robustness.mi_rest : rd.protocols[protocol]) as unknown as
+    { people: number; unit: string; methods: RdMethod[] };
+  const path = protocol === 'mi-rest' ? '/topics/when-not-to-act/#rd-robustness' : '/topics/when-not-to-act/#reliable-decisions';
+  const crude = protocol === 'mi-rest';
+  const unit = p.unit === 'windows' ? { en: 'Windows accepted', zh: '被接受的窗口' } : { en: 'Trials accepted', zh: '被接受的试次' };
+  const rows: ResultRow[] = [];
+  for (const m of p.methods) {
+    const who = reliableMethod[m.id];
+    const base = { path, method: who.label.en, label: who.label, methodSlug: who.slug, people: p.people };
+    const f = m.fixed_cutoff, d = m.learned_minus_confidence.error_at_80;
+    rows.push({ ...base, condition: { en: 'Fixed threshold: calibrated confidence at least 0.8', zh: '固定阈值：校准后的置信度不低于 0.8' },
+      metric: unit, value: fig(f.accepted, 'count', RDU), of: fig(f.n, 'count', RDU),
+      note: { en: [fig(f.people_with_nothing_accepted, 'count', RDU), ' of ', fig(p.people, 'count', RDU), ' people had nothing accepted. A method comparison on a balanced protocol, not a deployment rate.'],
+              zh: [fig(f.people_with_nothing_accepted, 'count', RDU), ' 名被试（共 ', fig(p.people, 'count', RDU), ' 名）一个都没有被接受。这是类别平衡协议上的方法比较，不是部署时的比率。'] } });
+    rows.push({ ...base, condition: { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
+      metric: { en: 'Error among the 80% most certain, difference', zh: '最确定的 80% 中的错误率，差值（百分点）' },
+      value: fig(d.mean, 'pp1', RDU), interval: pair(d.interval_95, 'pp1', RDU),
+      note: d.excludes_zero ? { en: ['Difference resolved: the interval excludes zero.'], zh: ['可以认定有差异：区间不含零。'] }
+                            : { en: ['No difference resolved: the interval includes zero.'], zh: ['不能认定有差异：区间包含零。'] } });
+  }
+  return {
+    // One id on every dataset page; method pages prefix the dataset slug. Not `…-<track id>`, which
+    // the protocol checks read as a core-matrix group.
+    id: 'reliable-decisions',
+    title: crude ? { en: 'Reliable decisions · when to decline a decision (crude: ten people)', zh: '可靠的决策 · 什么时候该拒绝作出决定（粗略：10 名被试）' }
+                 : { en: 'Reliable decisions · when to decline a decision', zh: '可靠的决策 · 什么时候该拒绝作出决定' },
+    path: '/topics/when-not-to-act/', rows,
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
@@ -619,9 +676,9 @@ const wear = citation('zhu2021-wearable102-author-snapshot-20260920');
 const mob = [citation('nemar-nm000125-v1.0.2'), citation('nemar-nm000201-v1.0.2')];
 
 export const datasets: DatasetEntity[] = [
-  fromMvp('ds003810', { en: 'Motor imagery / rest', zh: '运动想象 / 静息' }),
-  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup()]),
-  fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }),
+  fromMvp('ds003810', { en: 'Motor imagery / rest', zh: '运动想象 / 静息' }, [reliableGroup('mi-rest')]),
+  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup(), reliableGroup('arithmetic-rest')]),
+  fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }, [reliableGroup('beta-8ch')]),
   fromMvp('ds006593', { en: 'P300 target ERP', zh: 'P300 目标 ERP' }),
   fromMvp('TMNRED / ds005383', { en: 'Semantic target ERP', zh: '语义目标 ERP' }),
   fromMvp('EESM19 scalp subset', { en: 'Five-stage sleep', zh: '五期睡眠分期' }),

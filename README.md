@@ -41,7 +41,12 @@ pilot-fixed and a personal rejection threshold, plus a P300 decoder trained at
 one image rate and tested at another (2 October); and two simple sleep-staging
 baselines on healthy and sleep-apnoea cohorts kept as separate experiments,
 with accuracy beside balanced accuracy, plus a motor-imagery decoder carried to
-each person's next session with 0 to 40 labelled trials from it (3 October).
+each person's next session with 0 to 40 labelled trials from it (3 October);
+and when a decoder should decline to decide — a fixed confidence threshold, a
+coverage target, a certified selective risk and a learned reject option, with
+probability quality and a per-person recalibration's label cost, on saved test
+scores of published models, as method comparisons rather than deployment error
+rates (4 October).
 They are kept apart rather than summed, because they measure different things. Research results, not
 diagnosis. No raw EEG, no per-participant scores, no model weights.
 
@@ -65,6 +70,7 @@ curl -O https://bci.report/data/context-update.json     # the 27 September batch
 curl -O https://bci.report/data/adaptation-update.json  # the 1 October batch
 curl -O https://bci.report/data/extension-update.json   # the 2 October batch
 curl -O https://bci.report/data/large-source-update.json  # the 3 October batch
+curl -O https://bci.report/data/reliable-decisions-update.json  # the 4 October batch
 ```
 
 What each file holds, loading examples and how to cite a release:

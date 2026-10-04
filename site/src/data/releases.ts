@@ -17,9 +17,13 @@
 export const siteUpdates = [
   {
     date: '2026-10-04',
-    // Route 1 of the decision-research roadmap, reliable decisions: the release log, the API page and
-    // the home Dataset markup list the batch's file.
-    paths: ['/', '/releases/', '/api/'],
+    // Route 1 of the decision-research roadmap, reliable decisions: its results section on
+    // when-not-to-act (before the roadmap, whose routes now carry their own status), the topic card
+    // on the home page and the Questions hub, route-1 groups on the EEGMAT, BETA and ds003810 pages
+    // (and their group counts on the dataset index) and through them the EEGNet, LaBraM, CBraMod and
+    // CCA pages, the release log, data use and the API page.
+    paths: ['/', '/topics/', '/topics/when-not-to-act/', '/datasets/', '/datasets/eegmat/', '/datasets/beta/', '/datasets/ds003810/',
+            '/methods/eegnet/', '/methods/labram/', '/methods/cbramod/', '/methods/cca/', '/releases/', '/data-use/', '/api/'],
   },
   {
     date: '2026-10-03',

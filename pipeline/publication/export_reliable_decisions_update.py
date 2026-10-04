@@ -144,21 +144,21 @@ DESIGN = {
                'temperatures and selectors were written and hashed before scoring; outer-test labels were masked '
                'during stage 1; nothing was selected by test results; degenerate fits were flagged and kept.'),
 }
+# Titles and authors checked against each arXiv record on 2026-10-04.
 LITERATURE = [
-    {'id': 'temperature-scaling', 'cite': 'Guo et al., 2017 · On calibration of modern neural networks',
+    {'id': 'temperature-scaling', 'cite': 'Guo, Pleiss, Sun & Weinberger, ICML 2017 · On calibration of modern neural networks',
      'url': 'https://arxiv.org/abs/1706.04599'},
     {'id': 'sgr', 'cite': 'Geifman & El-Yaniv, 2017 · Selective classification for deep neural networks',
      'url': 'https://arxiv.org/abs/1705.08500'},
-    {'id': 'selectivenet', 'cite': 'Geifman & El-Yaniv, ICML 2019 · SelectiveNet',
+    {'id': 'selectivenet', 'cite': 'Geifman & El-Yaniv, ICML 2019 · SelectiveNet: a deep neural network with an integrated reject option',
      'url': 'https://proceedings.mlr.press/v97/geifman19a.html'},
-    {'id': 'aurc', 'cite': 'Geifman et al., 2018 · Bias-reduced uncertainty estimation for deep neural classifiers (AURC)',
+    {'id': 'aurc', 'cite': 'Geifman, Uziel & El-Yaniv, ICLR 2019 · Bias-reduced uncertainty estimation for deep neural classifiers (AURC)',
      'url': 'https://arxiv.org/abs/1805.08206'},
     {'id': 'equal-mass-ece', 'cite': 'Nixon et al., 2019 · Measuring calibration in deep learning',
      'url': 'https://arxiv.org/abs/1904.01685'},
-    {'id': 'ood-mi', 'cite': 'Out-of-distribution limits of uncertainty in motor-imagery BCIs (arXiv:2603.13324)',
+    {'id': 'ood-mi', 'cite': 'Mulder, Valdenegro-Toro, Sburlea & de Jong, 2026 · The challenge of out-of-distribution detection in motor imagery BCIs',
      'url': 'https://arxiv.org/abs/2603.13324'},
 ]
-
 
 
 # ---------------------------------------------------------------------------- helpers

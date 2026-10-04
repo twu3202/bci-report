@@ -1,7 +1,7 @@
 {
   "status": "pass",
   "release_id": "reliable-decisions-update-20261004",
-  "export_sha256": "4eabbd5ffd738814505695e2b2bfc5cd7e415e21dad315453461780af3f711b6",
+  "export_sha256": "cbdd000484ef01e8151ac814bf93f9bf7f440a8d5992cf7d36bf782981e85496",
   "manifest_sha256": "9b55306dd10ce90a4c2c0b56ace17689040733f83a830a0da85080bb36881be6",
   "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
   "included": [

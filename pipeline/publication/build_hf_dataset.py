@@ -28,6 +28,7 @@ import export_context_update as context_export
 import export_adaptation_update as adaptation_export
 import export_extension_update as extension_export
 import export_large_source_update as large_source_export
+import export_reliable_decisions_update as reliable_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -117,6 +118,17 @@ def large_source_payload():
     audit = json.loads(large_source_export.EXPORT_AUDIT.read_text())
     assert audit['status'] == 'pass', 'Large-source export review did not pass'
     assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Large-source payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def reliable_payload():
+    """The 2026-10-04 route-1 export (reliable decisions), refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'reliable-decisions-update.json').read_bytes()
+    audit = json.loads(reliable_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Reliable-decisions export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Reliable-decisions payload is not the reviewed one'
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
@@ -386,6 +398,27 @@ people declined; the relative-PSD gain at 40 trials has an interval that
 includes zero and is **not established**. An expanded cohort under the same
 method, not an independent replication.
 
+`reliable-decisions-update.json` — reviewed 4 October 2026: route 1 of the
+decision-research roadmap, **when a decoder should decline to decide**. No
+classifier was retrained: the saved test scores of models already published
+here — spectral ridge, EEGNet and two LaBraM arms on EEGMAT (36 people), standard
+CCA, CBraMod and EEGNet on BETA (70 people) — rescored under a fixed threshold on
+calibrated confidence, a coverage target, a certified selective risk (SGR) and a
+learned reject option, with NLL, ECE and Brier score and a person-specific
+recalibration whose label cost per new person is counted. Every full-coverage
+accuracy equals the published one. A fixed threshold accepted 28.4% of BETA
+trials for one method and 1.5% for another, so **compare methods at matched
+coverage, not at a shared cut-off**; how many people had nothing accepted
+travels with every coverage. The learned reject option erred less than the
+calibrated confidence for no method. The certified risk accepted nothing on
+EEGMAT — **no error rate, not a zero one** — and on BETA some certified folds
+exceeded their own target: a nominal guarantee across people. Every contrast
+carries its paired person-bootstrap interval and a verdict; nothing is ranked
+where intervals overlap. Every protocol is balanced or uniform by design, so
+these are **method comparisons, never deployment error rates**. ds003810 is a
+crude secondary protocol; the idle protocol (another unit) and a source under
+editorial hold are left out.
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -544,6 +577,8 @@ def build(output):
     (output/'extension-update.json').write_bytes(raw_extension)
     raw_large_source, _ = large_source_payload()
     (output/'large-source-update.json').write_bytes(raw_large_source)
+    raw_reliable, _ = reliable_payload()
+    (output/'reliable-decisions-update.json').write_bytes(raw_reliable)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

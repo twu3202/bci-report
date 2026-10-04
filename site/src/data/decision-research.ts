@@ -2,12 +2,15 @@
  * The decision-model research track, as the roadmap section of
  * /topics/when-not-to-act/.
  *
- * A proposal, not a result. Nothing in this file is measured by this site. The
- * status below is what the page renders, and check-workbench.mjs fails the
- * build if it changes while `results` is empty, or if a figure appears inside
- * the roadmap section. Literature cards are external evidence with their own
- * limits. Their numbers are left out on purpose, so that none of them can be
- * read as ours.
+ * A plan, not a result. Nothing in this file is measured by this site. Since
+ * 2026-10-04 (owner approval) the first route, reliable decisions, has been run:
+ * its results are a separate section of the page, #reliable-decisions, printed
+ * from reliable-decisions-update.json and placed before this one. Each route
+ * carries its own status; routes 2 and 3 are not run. check-workbench.mjs fails
+ * the build if a status changes without its assertions, or if a figure appears
+ * inside the roadmap section, which stays figure-free. Literature cards are
+ * external evidence with their own limits. Their numbers are left out on
+ * purpose, so that none of them can be read as ours.
  *
  * Origin: a research handoff of 2026-09-27 proposing a "Jev-style" EEG decision
  * model — an interface pattern from a vision paper (last card). The maintainer
@@ -18,10 +21,16 @@
  * and PMLR records on 2026-09-27.
  */
 export const decisionRoadmap = {
-  status: 'proposal',
-  runStatus: 'not_run',
-  results: [] as readonly never[],
-  reviewedAt: '2026-09-27',
+  status: 'plan',
+  runStatus: 'route-1-run',
+  // One status per route, in the order the routes are printed. A run route names
+  // the section and the release holding its results; the roadmap prints neither's figures.
+  routes: [
+    { id: 'reliable-decisions', runStatus: 'run', results: '#reliable-decisions', release: 'reliable-decisions-update-20261004', runAt: '2026-10-04' },
+    { id: 'one-representation', runStatus: 'not_run' },
+    { id: 'questions-in-language', runStatus: 'not_run' },
+  ],
+  reviewedAt: '2026-10-04',
 } as const;
 
 export const decisionSources = {
@@ -36,12 +45,12 @@ export const decisionSources = {
 } as const;
 
 type SourceId = keyof typeof decisionSources;
-type Route = { tag: string; title: string; body: string; boundary: string };
+type Route = { tag: string; status: string; title: string; body: string; boundary: string; resultsLink?: string };
 type Finding = [SourceId, string, string];
 
 interface RoadmapCopy {
   eyebrow: string; h2: string; scope: string; lede: string; statusLine: string;
-  routes: Route[]; routeStatus: string;
+  routes: Route[];
   boundaryH3: string; boundary: string; inputsNote: string;
   litH3: string; litLede: string; shows: string; limit: string;
   literature: Finding[];
@@ -50,24 +59,23 @@ interface RoadmapCopy {
 
 export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   en: {
-    eyebrow: 'Research proposal · not run',
+    eyebrow: 'Research plan · first route run',
     h2: 'Jev-style decision models for EEG',
-    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained. There are no results here yet.',
-    lede: 'A decoder has more choices than a class label. It can act, wait for more evidence, or ask for calibration. How well a model makes those choices can be measured, and nothing on this site measures it yet. This section is a plan: it has no results, and it borrows none.',
-    statusLine: 'Status: proposal. No experiment in this section has been run.',
-    routeStatus: 'Not run',
+    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes.',
+    lede: 'A decoder has more choices than a class label. It can act, wait for more evidence, or ask for calibration. How well a model makes those choices can be measured. The first route below now has been, and its results are in the section above. This section stays the plan: it prints no figure, and it borrows none.',
+    statusLine: 'Status: the first route has been run, and its results are in the section above. The other two routes have not been run.',
     routes: [
-      { tag: 'First', title: 'Reliable decisions',
+      { tag: 'First', status: 'Run · results above', resultsLink: 'Reliable decisions: the results', title: 'Reliable decisions',
         body: 'Compare a fixed threshold, a simple statistical policy and a learned reject option on the same data. Report error at matched coverage, acceptance per class, and probability quality — Brier score, log loss and reliability — with calibration data kept apart from test data. Recalibration is a separate experiment, with its label cost counted.',
         boundary: 'A risk–coverage curve is defined only where something is accepted; at zero coverage there is no error rate, not a zero one.' },
-      { tag: 'Then', title: 'One representation, several questions',
+      { tag: 'Then', status: 'Not run', title: 'One representation, several questions',
         body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.',
         boundary: 'If fixed heads do as well for less, that is the result, and it will be reported as one.' },
-      { tag: 'Later', title: 'Questions in language',
+      { tag: 'Later', status: 'Not run', title: 'Questions in language',
         body: 'Compare task identifiers, label templates and natural-language descriptions. Paraphrases and unseen concepts are tested separately and never merged into one zero-shot number.',
         boundary: 'Questions about negation, location or waveform shape need signal-level ground truth. Writing more prompts does not supply it.' },
     ],
-    boundaryH3: 'Two limits of the existing data, before anything runs',
+    boundaryH3: 'Two limits of the existing data',
     boundary: 'The sleep and P300 protocols on this site use balanced subsets. A probability estimated on them describes that balance, not how often each class occurs in real use, so they can compare methods with each other but cannot give a deployment error rate. The idle protocol is cue-gated and three minutes long, so no model run on it can give a false-activation rate per hour.',
     inputsNote: 'The first input with explicit non-control states is the asynchronous SSVEP data set above: a small pilot kept as the development set, then the rest of the same release, scored under rules fixed on the pilot. It is still one data set from one lab. Further input data sets are named here once their source review is complete.',
     litH3: 'What published work shows, and what it does not',
@@ -91,24 +99,23 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     ],
   },
   zh: {
-    eyebrow: '研究提案 · 尚未运行',
+    eyebrow: '研究计划 · 第一条路线已运行',
     h2: 'Jev-style 的 EEG 决策模型',
-    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。目前还没有任何结果。',
-    lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。模型在这些选择上做得好不好，是可以测量的，而本站目前还没有测。本节是计划：没有结果，也不借用任何结果。',
-    statusLine: '状态：提案。本节中的实验都尚未运行。',
-    routeStatus: '尚未运行',
+    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。',
+    lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。模型在这些选择上做得好不好，是可以测量的。下面的第一条路线现在已经测过，结果见上一节。本节仍然是计划：不列任何数字，也不借用任何数字。',
+    statusLine: '状态：第一条路线已经运行，结果见上一节；另外两条路线尚未运行。',
     routes: [
-      { tag: '首先', title: '可靠的决策',
+      { tag: '首先', status: '已运行 · 结果见上一节', resultsLink: '可靠的决策：结果', title: '可靠的决策',
         body: '在同一份数据上比较固定阈值、简单统计策略和可学习的拒识机制。报告相同覆盖率下的错误率、各类别的接受率，以及概率质量——Brier 分数、log loss 和可靠性图——校准数据与测试数据分开。重新校准另作一项实验，并计入所需标签的代价。',
         boundary: '风险—覆盖率曲线只在有样本被接受时才有定义；覆盖率为零时没有错误率，而不是错误率为零。' },
-      { tag: '随后', title: '一份表征，多个问题',
+      { tag: '随后', status: '尚未运行', title: '一份表征，多个问题',
         body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。',
         boundary: '如果固定分类头以更低成本做得一样好，那就是结果，也会照样报告。' },
-      { tag: '之后', title: '用语言提问',
+      { tag: '之后', status: '尚未运行', title: '用语言提问',
         body: '比较任务标识、标签模板和自然语言描述。同义改写与未见概念分开测试，绝不合成一个“零样本”数字。',
         boundary: '关于否定、位置或波形形态的问题，需要信号层面的真值标注。多写几条提示词补不上这一点。' },
     ],
-    boundaryH3: '开始实验之前，现有数据的两条限制',
+    boundaryH3: '现有数据的两条限制',
     boundary: '本站的睡眠和 P300 协议用的是类别平衡的子集。在上面估计出的概率描述的是这种平衡，而不是各类别在实际使用中出现的频率，所以它们可以用来比较方法之间的高下，却给不出部署时的错误率。空闲协议是提示同步的、只有三分钟，所以无论跑什么模型，都给不出每小时的误触发率。',
     inputsNote: '第一个带有明确非控制状态的输入，是上面的异步 SSVEP 数据集：先是一个保留为开发集的小规模试点，再是同一份数据中的其余被试，用在试点上固定的规则评分。它仍然只是来自一个实验室的一个数据集。其余数据集等来源审查完成后再在这里列出。',
     litH3: '已发表的工作说明了什么、没说明什么',

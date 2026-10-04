@@ -141,6 +141,45 @@ not a replication, and the earlier snapshot is history. These checks were
 mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 23 injected violations
 was caught by the assertion written for it.
 
+Since 2026-10-04, route 1 of the decision-research roadmap, reliable decisions
+(`reliable-decisions-update.json`, owner approved): its own section on
+`/topics/when-not-to-act/`, `#reliable-decisions`, after the idle methods and
+limits and before `#decision-research`, whose slice stays a figure-free plan.
+The roadmap now carries one status per route (`data-route-status`: route 1
+`run`, linking its results; routes 2 and 3 `not_run`, linking nothing), the
+section `data-status="plan"` and `data-run-status="route-1-run"`, a status line
+and a Jev scope sentence that say so, and none of the old "no experiment has
+been run" wording. In the new section every figure is a leaf of the route-1
+export (`data-fig`, re-read by the topic loop), the same multiset in both
+languages, and every figure-like token is a value of that export as the site
+formats it (a new format, `sgn3`, prints signed three-decimal differences of
+AURC, NLL and ECE). Pinned there: BETA and EEGMAT methods in the export's order,
+never re-sorted; each method's fixed-threshold coverage with its score bar and,
+in the same row, how many people had nothing accepted; nothing accepted is a
+dash and "not defined", never 0% (the fixed-threshold error, S-risk's error and
+its error-minus-target); fewer than ten accepted is a count of wrong among
+accepted with an "unstable" flag, never a rate; every contrast cell carries the
+verdict its interval supports, matched exactly ("no difference resolved"
+contains "difference resolved"), on the coverage pairs, the matched-coverage
+pairs, both learned-reject contrasts, error minus target and the four
+recalibration changes; the EEGMAT matched coverage is unstable with no verdict
+and no rate; certified folds, folds over their own target and a "nominal
+guarantee", never a guarantee; labels per new person in every recalibration
+row; the LoRA sentence with its figures and link; raw probability quality "not
+applicable", never a number, where a score has none; the robustness panel
+collapsed by default, ds003810 in it and labelled crude, the sensitivity arms as
+fold counts with no accuracy, and the idle protocol and the BNCI2015-001 arm
+figure-free with the hold's register row linked; every required limitation in
+the page's language; "deployment rate" only negated, no ranking word, no
+out-of-distribution claim; the three recordings' credits and the six method
+sources; the audit counts. The EEGMAT, BETA and ds003810 pages carry a route-1
+group with the people who had nothing accepted and each contrast's verdict
+beside its figure, and the EEGNet, LaBraM, CBraMod and CCA pages its rows; the
+when-not-to-act Dataset markup names the file; the release log, data use and the
+home card's cohort pins include it. These checks were mutation-tested on a copy
+of `dist/` (`SITE_DIST`): each of 28 injected violations was caught by the
+assertion written for it.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

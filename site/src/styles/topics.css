@@ -228,3 +228,17 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
 pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.55;color:var(--ink)}
 .code-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:14px}
 .topic-table code{font-family:var(--mono);font-size:.78rem}
+
+/* Reliable decisions (route 1, 2026-10-04): the four rules, a verdict beside every contrast,
+   and the secondary arms in a collapsed panel. */
+.rd-rules{margin:8px 0 0;padding-left:20px;display:grid;gap:6px;max-width:900px;font-size:.86rem}
+.rd-h4{font-family:var(--serif);font-size:1.02rem;margin:22px 0 6px}
+.verdict{display:block;margin-top:5px;font-size:.6875rem;line-height:1.4;color:var(--muted)}
+.verdict[data-resolved=true]{color:var(--accent-deep);font-weight:650}
+.rd-panel{margin:28px 0 8px;border:1px solid var(--line);background:var(--panel);padding:0 16px 14px}
+.rd-panel>summary{cursor:pointer;padding:14px 0;font-family:var(--serif);font-size:1.05rem;color:var(--ink)}
+.rd-panel[open]>summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+.rd-literature{margin:6px 0 0;padding-left:18px;display:grid;gap:5px;font-size:.82rem;overflow-wrap:anywhere}
+.rd-literature a{color:var(--accent)}
+.route-results{margin-top:10px;font-size:.84rem}
+.route-results a{color:var(--accent)}

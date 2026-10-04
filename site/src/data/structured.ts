@@ -30,6 +30,7 @@ import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
+import reliable from './reliable-decisions-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -156,14 +157,19 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                     generated: evidence.generated_at,
                     metrics: ['signed_correlation_r', 'predictive_r_squared'] },
                   contextExport(['balanced_accuracy', 'macro_f1'])],
-  // Its measured part is the idle protocol of the core snapshot; the roadmap on
-  // the same page has no result and contributes nothing here.
+  // The idle protocol of the core snapshot, the non-control batches, and since
+  // 2026-10-04 route 1 of the roadmap, reliable decisions (its own export). The
+  // roadmap section itself prints no figure and contributes nothing here.
   'when-not-to-act': [{ file: '/data/experiments.json', release: data.releaseId,
                         generated: data.generatedAt,
                         metrics: ['command_detection_within_3s', 'idle_false_activation'] },
                       contextExport(['control_window_acceptance', 'non_control_false_acceptance']),
                       extensionExport(['detection_balanced_accuracy', 'control_window_acceptance',
-                                       'correct_and_accepted_rate', 'non_control_false_acceptance'])],
+                                       'correct_and_accepted_rate', 'non_control_false_acceptance']),
+                      { file: '/data/reliable-decisions-update.json', release: reliable.release_id,
+                        generated: reliable.generated_at,
+                        metrics: ['selective_coverage', 'selective_error', 'aurc', 'negative_log_likelihood',
+                                  'expected_calibration_error', 'brier_score'] }],
   'model-adaptation': [{ file: '/data/adaptation-update.json', release: adaptation.release_id,
                          generated: adaptation.generated_at, metrics: ['balanced_accuracy', 'macro_f1'] },
                        { file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt,

@@ -585,22 +585,39 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(html.includes('href="/data-use/#small-cohorts"'),label+': the four-person arithmetic must be linked');
   const road=html.slice(html.indexOf('id="decision-research"'),html.indexOf('class="topic-switcher"'));
   assert.ok(road.length>2000,label+': the roadmap section must render');
-  assert.match(road,/data-status="proposal"/,label+': roadmap status is proposal');
-  assert.match(road,/data-run-status="not_run"/,label+': roadmap run status is not_run');
-  assert.match(road,label==='en'?/No experiment in this section has been run/:/本节中的实验都尚未运行/,label+': the roadmap states its status in words');
+  // Since 2026-10-04 (owner approval) route 1 has been run; its results are their own section,
+  // #reliable-decisions, before this one. The roadmap stays a plan: each route carries its own
+  // status, routes 2 and 3 are not run, and nothing in the section is a figure.
+  assert.match(road,/data-status="plan"/,label+': the roadmap is a plan');
+  assert.match(road,/data-run-status="route-1-run"/,label+': the roadmap says only route 1 has been run');
+  assert.match(road,label==='en'?/Status: the first route has been run, and its results are in the section above\. The other two routes have not been run\./
+                                :/状态：第一条路线已经运行，结果见上一节；另外两条路线尚未运行。/,label+': the roadmap states each route\'s status in words');
+  assert.doesNotMatch(road,/No experiment in this section has been run|本节中的实验都尚未运行/,label+': the old all-not-run status line');
+  const routes=[...road.matchAll(/<li data-route="([^"]+)" data-route-status="([^"]+)">([\s\S]*?)<\/li>/g)];
+  assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','not_run'],['questions-in-language','not_run']],label+': one status per route, route 1 run, routes 2 and 3 not run');
+  const [r1,...later]=routes.map(m=>m[3]);
+  assert.match(r1,label==='en'?/<p class="eyebrow">First · Run · results above<\/p>/:/<p class="eyebrow">首先 · 已运行 · 结果见上一节<\/p>/,label+': route 1 says it was run');
+  assert.ok(r1.includes(`href="${label==='zh'?'/zh':''}/topics/when-not-to-act/#reliable-decisions"`),label+': route 1 links its results');
+  for(const r of later){
+    assert.match(r,label==='en'?/<p class="eyebrow">(?:Then|Later) · Not run<\/p>/:/<p class="eyebrow">(?:随后|之后) · 尚未运行<\/p>/,label+': routes 2 and 3 are not run');
+    assert.doesNotMatch(r,/href=|route-results|reliable-decisions/,label+': a route that has not run links no result');
+  }
+  assert.ok(html.indexOf('id="reliable-decisions"')>0&&html.indexOf('id="reliable-decisions"')<html.indexOf('id="decision-research"'),label+': the results section comes before the roadmap, outside its slice');
   // A plan carries no figure: no percentage, no decimal, no speed-up, no ms.
   // Visible text only: arXiv identifiers in link targets are not figures.
   const roadText=road.replace(/<[^>]+>/g,' ');
   assert.doesNotMatch(roadText,/\d+(?:\.\d+)?\s?%|\d\.\d|\d+(?:\.\d+)?\s?[×x]\b|\d+\s?ms\b/,label+': a figure appeared in the roadmap');
-  // Wording that would read as done.
+  assert.ok(!road.includes('data-fig'),label+': the roadmap prints no data figure');
+  // Wording that would read as done, for routes that are not.
   assert.doesNotMatch(road,/calibrated policy|measured uncertainty|经过校准的策略|经过评测的不确定性|we (?:have )?(?:trained|measured|built)/i,label+': the roadmap must not read as completed work');
   // "Jev-style" is prominent by the maintainer's choice (heading, title, card).
   // Wherever it is, the page says what it is not: no Jev integration, no Jev
-  // model that reads EEG, no result.
+  // model that reads EEG, and that route 1's results need no such model.
   assert.match(road,/<h2[^>]*>Jev-style/,label+': the roadmap heading names the research track');
   assert.match(html,label==='en'
-    ?/not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained\. There are no results here yet\./
-    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。目前还没有任何结果。/,label+': the Jev scope sentence must stand beside the name');
+    ?/not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\./
+    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。/,label+': the Jev scope sentence must stand beside the name');
+  assert.doesNotMatch(html,/There are no results here yet|目前还没有任何结果/,label+': the old no-results scope sentence');
   assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
 }
 // A source on hold in any review manifest is not named on any page until the
@@ -732,7 +749,7 @@ const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{i
   else walk(JSON.parse(text));
   leaves.set(file,set);}return leaves.get(file);};
 const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=>r.toFixed(2)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
-  sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),
+  sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),sgn3:r=>(r>=0?'+':'−')+Math.abs(r).toFixed(3),
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s'};
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
@@ -2162,7 +2179,9 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'calibration-budget':{files:['deployment-topics.json','large-source-update.json'],pins:[...peopleOf('wearable-calibration'),...new Set(topics.rows.filter(r=>r.track==='wearable-calibration').map(r=>r.labeled_target_trials).filter(n=>n>12)),
       lsx.results['openbmi-cross-session-calibration'].cohort.evaluated]},
     'model-adaptation':{files:['adaptation-update.json'],pins:[ad.results['eegmat-labram-adaptation'].cohort.people]},
-    'when-not-to-act':{files:['experiments.json','extension-update.json'],pins:[...new Set(data.tracks.find(t=>t.id==='idle').rows.map(r=>r.subjects)),ysuX.cohort.people]},
+    // Since 2026-10-04 the card names route 1's two primary cohorts as well.
+    'when-not-to-act':{files:['experiments.json','extension-update.json','reliable-decisions-update.json'],pins:[...new Set(data.tracks.find(t=>t.id==='idle').rows.map(r=>r.subjects)),ysuX.cohort.people,
+      ...['arithmetic-rest','beta-8ch'].map(p=>JSON.parse(readFileSync(new URL('../src/data/reliable-decisions-update.json',import.meta.url),'utf8')).results['reliable-decisions'].protocols[p].people)]},
     'does-pretraining-help':{files:['deployment-topics.json'],pins:[]},
     'clinical-groups':{files:['clinical-update.json'],pins:[cl.results.ds004584.cohort.people]},
     'sleep-staging':{files:['large-source-update.json'],pins:Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights)},
@@ -2278,6 +2297,195 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
 }
 console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with the current page marked; Questions hub and breadcrumbs; every topic card once, grouped, with its counts from its payloads; transfer map with cohort sizes only, pinned, held entries figure-free; hold cards link; corrections counted; directory band counts; directory, register and field notes moved with their status dates and the REVE override; 404 hubs.');
 
+// --- 2026-10-04 route 1, reliable decisions ------------------------------------------------
+// The first route of the decision-research roadmap, run (owner approval 2026-10-04): its own
+// section, #reliable-decisions, after the idle methods and limits and before the roadmap, whose
+// slice stays figure-free. Every figure there is printed with data-fig and re-read from
+// reliable-decisions-update.json (the topic data-fig loop below); pinned here is what must travel
+// with those figures and what must never be said: method comparisons, never deployment rates;
+// nothing accepted is "not defined", never 0%; fewer than ten accepted is a count with a flag;
+// every contrast carries the verdict its interval supports; no ranking; people with nothing
+// accepted beside every coverage; the secondary arms collapsed, ds003810 crude; idle and
+// BNCI2015-001 without a figure.
+{
+  const releasesHtml=pageOf('releases/');
+  const rdx=JSON.parse(readFileSync(new URL('../src/data/reliable-decisions-update.json',import.meta.url),'utf8'));
+  assert.deepEqual(readFileSync(new URL('../src/data/reliable-decisions-update.json',import.meta.url)),readFileSync(new URL('../public/data/reliable-decisions-update.json',import.meta.url)),
+    'source and downloadable reliable-decisions exports must be byte-identical');
+  assert.deepEqual(Object.keys(rdx.results),['reliable-decisions'],'one result, route 1');
+  assert.deepEqual([rdx.status_only,rdx.holds],[[],[]],'route 1 has no status-only source and no hold');
+  const R=rdx.results['reliable-decisions'],E=R.protocols['arithmetic-rest'],B=R.protocols['beta-8ch'],M=R.robustness.mi_rest;
+  const mid=(p,id)=>p.methods.find(m=>m.id===id);
+  // The handoff's headline figures, so a changed export cannot pass by changing the page with it.
+  assert.deepEqual(B.methods.map(m=>[m.id,pct1(m.fixed_cutoff.coverage),m.fixed_cutoff.people_with_nothing_accepted]),[['cca','28.4%',0],['cbramod','1.5%',38],['eegnet','16.6%',10]],'BETA fixed-threshold coverage and people with nothing accepted');
+  assert.deepEqual(E.methods.map(m=>[m.id,m.fixed_cutoff.accepted,m.fixed_cutoff.people_with_nothing_accepted]),[['spectral-ridge',3,33],['eegnet',126,19],['labram-frozen-ce',1,35],['labram-lora-r4',44,24]],'EEGMAT fixed-threshold accepted and people with nothing accepted');
+  assert.deepEqual([...E.methods,...B.methods].map(m=>pct1(m.balanced_accuracy)),['56.8%','67.6%','56.9%','64.4%','63.1%','33.7%','55.8%'],'full-coverage accuracies, the published ones');
+  assert.deepEqual([E,B].flatMap(p=>p.methods.filter(m=>m.learned_minus_confidence.error_at_80.excludes_zero).map(m=>p.protocol+'/'+m.id)),['arithmetic-rest/eegnet','arithmetic-rest/labram-lora-r4','beta-8ch/eegnet'],'C2 resolved where the handoff says');
+  assert.ok([E,B].every(p=>p.methods.every(m=>!(m.learned_minus_confidence.error_at_80.excludes_zero&&m.learned_minus_confidence.error_at_80.mean<0))),'L had a lower error than S for no method');
+  assert.deepEqual(B.methods.map(m=>[m.risk_certification.certified_folds,m.risk_certification.folds_over_target]),[[7,4],[4,2],[7,2]],'BETA certified folds and folds over target');
+  assert.ok(E.methods.every(m=>m.risk_certification.certified_folds===0&&m.risk_certification.accepted===0&&m.risk_certification.selective_error===null),'EEGMAT: nothing certified, nothing accepted, no error rate');
+  assert.equal(B.common_coverage.accepted,165,'matched coverage on BETA: 165 trials');
+  assert.ok(E.common_coverage.unstable&&!E.common_coverage.errors,'matched coverage on EEGMAT: unstable, no verdict');
+  // Formatting and tokens, as the site prints them.
+  const sgn3=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(3);
+  const tokensOfRd=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of Object.values(fmt))for(const n of numbers(g(v)))out.add(n);}
+    else if(typeof v==='string'){for(const n of numbers(v))out.add(n);}else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(obj);return out;};
+  const rdTokens=tokensOfRd(rdx);
+  const figureLikeRd=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
+  const verdictWord={en:['difference resolved','no difference resolved'],zh:['可以认定有差异','不能认定有差异']};
+  const rdSec=html=>{const a=html.indexOf('<section class="topic-section" id="reliable-decisions"');assert.ok(a>0,'the reliable-decisions section must render');return html.slice(a,html.indexOf('</section>',a));};
+  const cellAt=(sec,attr)=>{const a=sec.indexOf(attr);assert.ok(a>0,'missing '+attr);const s0=sec.lastIndexOf('<td',a),open=s0>sec.lastIndexOf('</td>',a)?s0:a;return sec.slice(open,sec.indexOf('</td>',a));};
+  const rowAt=(sec,attr)=>{const a=sec.indexOf(attr);assert.ok(a>0,'missing row '+attr);return sec.slice(a,sec.indexOf('</tr>',a));};
+  const hasRd=(h,f,x)=>h.includes(`data-fig="reliable-decisions-update.json|${f}|${x}"`);
+  const figsetRd=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]).sort();
+  for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/when-not-to-act/']]){
+    const zh=label==='zh',html=pageOf(path),sec=rdSec(html),text=visible(sec),where=label+'/when-not-to-act #reliable-decisions';
+    const [yes,no]=verdictWord[label];
+    // A verdict cell: every data-resolved in it equals the export's, and its words are exactly the matching ones
+    // ("no difference resolved" contains "difference resolved", so a substring test would pass a flipped verdict).
+    const verdictIs=(cell,resolved)=>{const attrs=[...cell.matchAll(/data-resolved="(true|false)"/g)].map(m=>m[1]);
+      const words=[...cell.matchAll(/<span class="verdict"[^>]*>([^<]*)<\/span>/g)].map(m=>m[1]);
+      return attrs.length>=2&&attrs.every(a=>a===String(resolved))&&words.length===1&&words[0]===(resolved?yes:no);};
+    // Placement: after the idle methods and limits, before the roadmap.
+    const at=html.indexOf('id="reliable-decisions"');
+    assert.ok(at>html.indexOf('id="methods-and-limits"')&&at<html.indexOf('id="decision-research"')&&at>html.indexOf('id="non-control"'),where+': between methods and limits and the roadmap');
+    // Every figure from the export: data-fig only from this file; every figure-like token is one of its values.
+    assert.ok([...sec.matchAll(/data-fig="([^|"]+)\|/g)].every(m=>m[1]==='reliable-decisions-update.json'),where+': every figure is a leaf of the route-1 export');
+    for(const t of figureLikeRd(text)) assert.ok(rdTokens.has(t),where+': "'+t+'" is not a value of the route-1 export');
+    // Q1: every protocol panel, every method in the export's order, people with nothing accepted beside the coverage bar.
+    for(const p of [B,E]){
+      const rows=[...sec.matchAll(new RegExp(`data-rd-row="${p.protocol}\\|([^"]+)"`,'g'))].map(m=>m[1]);
+      assert.deepEqual(rows,p.methods.map(m=>m.id),where+': '+p.protocol+' methods in the export\'s order, not ranked');
+      for(const m of p.methods){
+        const F=m.fixed_cutoff,row=rowAt(sec,`data-rd-row="${p.protocol}|${m.id}"`);
+        for(const [f,x] of [['pct1',m.balanced_accuracy],['count',F.accepted],['count',F.n],['pct1',F.coverage],['count',F.people_with_nothing_accepted],['count',p.people],['pct1',m.coverage_target.coverage]])
+          assert.ok(hasRd(row,f,x),where+': '+p.protocol+'/'+m.id+' row prints '+f+' '+x);
+        assert.ok(row.includes('score-bar-svg')&&row.indexOf('score-bar-svg')<row.indexOf('data-cell="nothing-accepted"'),where+': '+m.id+' people with nothing accepted sit beside the coverage bar');
+        const err=cellAt(row,'data-cell="fixed-error"');
+        if(F.selective_error===null){
+          assert.ok(err.includes('data-null="true"')&&!/\d/.test(visible(err)),where+': '+m.id+' nothing accepted: a dash and its reason, no number');
+        } else if(F.accepted<R.design.unstable_below_accepted){
+          assert.ok(err.includes('data-unstable="true"')&&hasRd(err,'count',F.accepted_wrong)&&!/%/.test(visible(err)),where+': '+m.id+' fewer than ten accepted: a count with a flag, never a rate');
+          assert.match(visible(err),zh?/不稳定：被接受的少于 10 个/:/Unstable: fewer than 10 accepted/,where+': '+m.id+' the unstable flag');
+        } else assert.ok(hasRd(err,'pct1',F.selective_error)&&hasRd(err,'pct1',F.selective_error_interval_95[0]),where+': '+m.id+' error among accepted with its interval');
+      }
+      for(const d of p.fixed_cutoff_coverage_differences){
+        const row=rowAt(sec,`data-rd-pair="${p.protocol}|${d.a}|${d.b}"`);
+        assert.ok(hasRd(row,'pp1',d.mean)&&hasRd(row,'sgn1',d.interval_95[0])&&hasRd(row,'pp1',d.interval_95[1]),where+': coverage difference '+d.a+' − '+d.b);
+        assert.ok(verdictIs(row,d.excludes_zero),where+': coverage difference '+d.a+' − '+d.b+' carries its verdict');
+      }
+    }
+    // Matched coverage: BETA errors and differences with verdicts; EEGMAT unstable, without an error figure.
+    for(const e of B.common_coverage.errors) assert.ok(hasRd(rowAt(sec,`data-rd-matched="${e.id}"`),'pct1',e.mean),where+': matched-coverage error '+e.id);
+    for(const d of B.common_coverage.differences){const row=rowAt(sec,`data-rd-pair="matched|${d.a}|${d.b}"`);
+      assert.ok(verdictIs(row,d.excludes_zero),where+': matched difference '+d.a+' − '+d.b+' verdict');}
+    const un=sec.slice(sec.indexOf('data-rd-unstable="arithmetic-rest"'),sec.indexOf('</p>',sec.indexOf('data-rd-unstable="arithmetic-rest"')));
+    assert.ok(hasRd(un,'count',E.common_coverage.accepted)&&!/%/.test(visible(un))&&(zh?/不作判定/:/no verdict/).test(visible(un)),where+': EEGMAT matched coverage is unstable, no verdict, no rate');
+    // Q2: both measures, levels with intervals, both contrasts with their verdicts.
+    for(const p of [E,B]) for(const m of p.methods){
+      const row=rowAt(sec,`data-rd-learned="${p.protocol}|${m.id}"`),d1=m.learned_minus_confidence.aurc,d2=m.learned_minus_confidence.error_at_80;
+      for(const [f,x] of [['num3',m.ranking_S.aurc.mean],['num3',m.ranking_L.aurc.mean],['sgn3',d1.mean],['pct1',m.ranking_S.error_at_80.mean],['pct1',m.ranking_L.error_at_80.mean],['pp1',d2.mean],['sgn1',d2.interval_95[0]],['sgn3',d1.interval_95[1]]])
+        assert.ok(hasRd(row,f,x),where+': '+p.protocol+'/'+m.id+' Q2 prints '+f+' '+x);
+      for(const [k,d] of [['c1',d1],['c2',d2]]) assert.ok(verdictIs(cellAt(row,`data-diff="${k}"`),d.excludes_zero),where+': '+m.id+' '+k+' verdict');
+    }
+    assert.match(text,zh?/在 80% 覆盖率下，没有一种方法上 L 的错误率比 S 低；凡是能认定有差异的，都是 L 错得更多。/:/L had a lower error than S at 80% for no method; where a difference was resolved, L erred more\./,where+': the Q2 reading');
+    // Q3: certified folds, folds over target, nothing accepted is not defined.
+    for(const p of [B,E]) for(const m of p.methods){
+      const R3=m.risk_certification,row=rowAt(sec,`data-rd-risk="${p.protocol}|${m.id}"`);
+      assert.ok(hasRd(row,'count',R3.certified_folds)&&hasRd(row,'count',R3.outer_folds),where+': '+m.id+' certified folds');
+      const er=cellAt(row,'data-cell="risk-error"');
+      if(R3.accepted===0){
+        assert.ok(er.includes('data-null="true"')&&!/\d/.test(visible(er))&&visible(er).includes(zh?'没有定义':'not defined'),where+': '+p.protocol+'/'+m.id+' nothing accepted: no error rate, not a zero one');
+        assert.ok(!/\d/.test(visible(cellAt(row,'data-cell="c6"'))),where+': '+m.id+' no error-minus-target without anything accepted');
+      } else {
+        assert.ok(hasRd(er,'pct1',R3.selective_error)&&hasRd(row,'pct1',R3.target_weighted)&&hasRd(cellAt(row,'data-cell="over"'),'count',R3.folds_over_target),where+': '+m.id+' error, target and folds over target');
+        const c6=cellAt(row,'data-cell="c6"');
+        assert.ok(hasRd(c6,'pp1',R3.error_minus_target.mean)&&verdictIs(c6,R3.error_minus_target.excludes_zero),where+': '+m.id+' error minus target with its verdict');
+      }
+    }
+    assert.match(text,zh?/名义保证/:/nominal guarantee/,where+': S-risk is a nominal guarantee');
+    assert.doesNotMatch(text,zh?/保证不超过|确保错误率/:/\bguarantees? (?:that )?the error|is guaranteed\b/i,where+': no certified risk is read as a guarantee');
+    // Q5: labels per new person beside every recalibration row; each change with its verdict.
+    for(const p of [B,E]) for(const m of p.methods) for(const x of m.recalibration){
+      const row=rowAt(sec,`data-rd-recal="${p.protocol}|${m.id}|${x.prefix}"`);
+      assert.ok(hasRd(cellAt(row,'data-cell="labels"'),'count',x.labels_per_new_person),where+': '+m.id+' '+x.prefix+' labels per new person');
+      for(const [k,d] of [['nll',x.nll_change],['ece',x.ece_change],['aurc',x.aurc_change],['gap',x.unlabelled_cutoff_gap_change]])
+        assert.ok(verdictIs(cellAt(row,`data-diff="${k}"`),d.excludes_zero)&&hasRd(row,k==='gap'?'pp1':'sgn3',d.mean),where+': '+m.id+' '+x.prefix+' '+k+' with its verdict');
+    }
+    assert.ok(sec.includes(zh?'每名新被试的标签数':'Labels per new person'),where+': the label cost is a column');
+    // Q4: one sentence, its contrast and its link.
+    const lora=E.lora_minus_head_only,q4=sec.slice(sec.indexOf('id="rd-lora"'),sec.indexOf('id="rd-quality"'));
+    assert.ok(hasRd(q4,'sgn3',lora.nll_calibrated.mean)&&hasRd(q4,'sgn3',lora.ece_calibrated.mean)&&q4.includes(`href="${zh?'/zh':''}/topics/model-adaptation/"`),where+': the LoRA sentence, its figures and link');
+    assert.match(visible(q4),zh?/ECE 不能认定有差异/:/For ECE, no difference resolved/,where+': ECE not resolved, said so');
+    // Probability quality: raw is "not applicable", never a number, where the score has no probability.
+    for(const p of [E,B]) for(const m of p.methods){
+      const row=rowAt(sec,`data-rd-quality="${p.protocol}|${m.id}"`),q=m.probability_quality;
+      assert.ok(hasRd(row,'num3',q.calibrated.nll.mean)&&hasRd(row,'num3',q.calibrated.ece.mean)&&hasRd(row,'num3',q.calibrated.brier.mean),where+': '+m.id+' calibrated quality');
+      if(q.raw===null) assert.equal((row.match(/data-na="true"/g)||[]).length,2,where+': '+m.id+' raw quality not applicable, twice, no number');
+      else assert.ok(hasRd(row,'num3',q.raw.nll.mean)&&!row.includes('data-na'),where+': '+m.id+' raw quality');
+    }
+    // The robustness panel: collapsed by default; ds003810 labelled crude; the sensitivity arms print fold counts only.
+    const panelAt=sec.indexOf('<details class="rd-panel" id="rd-robustness">');
+    assert.ok(panelAt>0,where+': the robustness panel is collapsed by default');
+    const panel=sec.slice(panelAt,sec.indexOf('</details>',panelAt));
+    assert.match(visible(panel),zh?/ds003810，运动想象与静息：粗略/:/ds003810, motor imagery and rest: crude/,where+': ds003810 labelled crude');
+    for(const m of M.methods) assert.ok(panel.includes(`data-rd-crude="${m.id}"`)&&!sec.slice(0,panelAt).includes(`|${m.balanced_accuracy}"`),where+': ds003810 '+m.id+' only in the panel');
+    assert.equal((panel.match(/data-rd-seed=/g)||[]).length,R.robustness.seeds.rows.length,where+': every secondary seed row');
+    const sens=panel.slice(panel.indexOf('data-rd-sensitivity="true"'),panel.indexOf('</table>',panel.indexOf('data-rd-sensitivity="true"')));
+    assert.ok(sens.length>200&&!/%|\d\.\d/.test(visible(sens)),where+': sensitivity arms print fold counts only, never an accuracy');
+    assert.equal((panel.match(/data-rd-ljoint=/g)||[]).length,2,where+': the jointly trained reject head on both protocols');
+    const left=panel.slice(panel.indexOf('id="rd-left-out"'),panel.indexOf('</p>',panel.indexOf('id="rd-left-out"')));
+    assert.ok(left.length>100&&!/\d+(?:\.\d+)?\s?%|\d\.\d|\bpp\b/.test(visible(left))&&!left.includes('data-fig'),where+': idle and BNCI2015-001 left out, figure-free');
+    assert.ok(left.includes(`href="${zh?'/zh':''}/releases/#hold-bnci2015-001-crossday"`)&&releasesHtml.includes('<tr id="hold-bnci2015-001-crossday"'),where+': the BNCI2015-001 hold links its register row');
+    // The required limitations, in the page's language.
+    for(const re of zh?[/没有一个是部署时的错误率/,/每个类别各自是一段记录/,/没有空闲状态，所以给不出任何形式的误触发数字/,/覆盖率为零时没有错误率，而不是错误率为零/,/被接受的少于 10 个时标为不稳定/,/这个保证只是名义上的：它失效的频率在这里是测出来的，不是假设的/,
+                        /拒绝已知类别上可能判错的试次，不等于识别陌生的输入/,/第一条路线不作任何分布外的声明/,/约四分之三训练被试/,/全覆盖时的准确率都等于本站已发布的数值/,/它们的准确率不发布，也绝不与本站的数值混在一起/,
+                        /不做多重比较校正/,/区间重叠时不排名/,/从来不是每小时的误触发率/,/与本页的空闲数字单位不同/,/bootstrap 区间粗略/]
+                     :[/none is a deployment error rate/,/each class is its own recording/,/no idle state, so it gives no false-activation figure of any kind/,/At zero coverage there is no error rate, not a zero one/,/fewer than 10 accepted trials are flagged unstable/,/the guarantee is nominal: how often it fails is measured here, not assumed/,
+                        /Rejecting likely errors on known classes is not detecting unfamiliar input/,/Route 1 makes no out-of-distribution claim/,/about three quarters of the training people/,/every full-coverage accuracy equals the site’s published value/,/their accuracies are not published and are never mixed with the site’s/,
+                        /no multiplicity correction/,/Nothing is ranked where intervals overlap/,/never a false-activation rate per hour/,/in a different unit from this page’s idle figures/,/bootstrap intervals are crude/])
+      assert.match(text,re,where+': required limitation '+re);
+    // Never a deployment rate, a ranking or an out-of-distribution claim.
+    if(!zh) for(const m of text.matchAll(/deployment (?:error )?rates?/g)) assert.match(text.slice(Math.max(0,m.index-45),m.index),/\bnot\b|\bno\b|\bnone\b|\bnever\b/,where+': "'+m[0]+'" reads as a claim');
+    else for(const m of text.matchAll(/部署时的(?:错误率|比率)|部署比率/g)) assert.match(text.slice(Math.max(0,m.index-14),m.index),/不是|没有|从来不是|没有一个是/,where+': "'+m[0]+'" reads as a claim');
+    assert.doesNotMatch(text,zh?/排名第一|最好的方法|胜出|优于其他/:/\b(?:best|worst|outperform\w*|winner|ranks? first|top-ranked)\b/i,where+': nothing is ranked');
+    assert.doesNotMatch(text,zh?/(?<!不等于)识别陌生的输入|能检测分布外/:/(?<!not )detect(?:s|ing)? (?:unfamiliar|out-of-distribution)/i,where+': no out-of-distribution claim');
+    // Credits: the three recordings and the six method sources, the export linked, the audit counts printed.
+    for(const s0 of ['10.13026/C2JQ1P','10.3389/fnins.2020.00627','https://doi.org/10.18112/openneuro.ds003810.v2.0.2',...R.literature.map(l=>l.url)]) assert.ok(sec.includes(s0),where+': credit '+s0);
+    assert.ok(sec.includes('href="/data/reliable-decisions-update.json"'),where+': the reviewed export is linked');
+    const aud=sec.slice(sec.indexOf('id="rd-audits"'),sec.indexOf('</p>',sec.indexOf('id="rd-audits"')));
+    for(const x of [R.audits.independent_primary.passed,R.audits.independent_primary.checks,R.audits.independent_secondary.checks]) assert.ok(hasRd(aud,'count',x),where+': audit count '+x);
+    assert.match(visible(aud),zh?/文档错误，不是计算错误/:/a documentation error, not a computation error/,where+': the failed audit check is documentation, said so');
+    // The idle limit on the same page no longer says probability quality is unmeasured everywhere.
+    assert.ok(html.includes(zh?'这个协议上没有测概率质量':'No probability quality on this protocol'),where+': the idle limit is scoped to its protocol');
+  }
+  assert.deepEqual(figsetRd(rdSec(pageOf('zh/topics/when-not-to-act/'))),figsetRd(rdSec(pageOf('topics/when-not-to-act/'))),'#reliable-decisions: the same figures in both languages');
+  // Dataset and method pages: one route-1 group per dataset, each C2 row with its verdict and each coverage with the people who had nothing accepted.
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    for(const [ds,p] of [['eegmat',E],['beta',B],['ds003810',M]]){
+      const h=pageOf(pfx+'datasets/'+ds+'/'),g0=h.indexOf('id="g-reliable-decisions"'),g=h.slice(g0,h.indexOf('</section>',g0));
+      assert.ok(g0>0,label+'/datasets/'+ds+': the route-1 group');
+      assert.ok(g.includes(`href="${pfx?'/zh':''}/topics/when-not-to-act/"`),label+'/datasets/'+ds+': the group links its topic');
+      if(ds==='ds003810') assert.match(g,label==='zh'?/粗略/:/crude/,label+'/datasets/ds003810: labelled crude');
+      for(const m of p.methods){
+        assert.ok(hasRd(g,'count',m.fixed_cutoff.accepted)&&hasRd(g,'count',m.fixed_cutoff.people_with_nothing_accepted),label+'/datasets/'+ds+': '+m.id+' accepted with people who had nothing accepted');
+        const d=m.learned_minus_confidence.error_at_80,at=g.indexOf(`data-fig="reliable-decisions-update.json|pp1|${d.mean}"`),row=g.slice(at,g.indexOf('</tr>',at));
+        assert.ok(at>0&&(label==='zh'?(d.excludes_zero?/可以认定有差异/:/不能认定有差异/):(d.excludes_zero?/Difference resolved/:/No difference resolved/)).test(row),label+'/datasets/'+ds+': '+m.id+' C2 verdict beside the figure');
+      }
+    }
+    for(const mp of ['eegnet','labram','cbramod','cca']) assert.ok(pageOf(pfx+'methods/'+mp+'/').includes('data-fig="reliable-decisions-update.json|'),label+'/methods/'+mp+': route-1 figures reach the method page');
+  }
+  // Markup, releases and data use.
+  {
+    const node=ldOf(pageOf('topics/when-not-to-act/'))[0]['@graph'].find(n=>n['@type']==='Dataset');
+    assert.ok(node.distribution.some(d=>d.contentUrl==='https://bci.report/data/reliable-decisions-update.json')&&node.variableMeasured.includes('selective_coverage'),'when-not-to-act: Dataset markup names the route-1 file and what it measures');
+    for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${rdx.release_id}"`)&&pageOf(path).includes(rdx.provenance.manifest_sha256),path+': the route-1 release and its manifest');
+    const du=pageOf('data-use/'),s0=du.slice(du.indexOf('id="sources-2026-10-04"'),du.indexOf('</section>',du.indexOf('id="sources-2026-10-04"')));
+    assert.ok(s0.length>800&&['EEGMAT','BETA','ds003810','BNCI2015-001','idle'].every(x=>s0.includes(x)),'data-use: the 4 October section names its recordings and what is left out');
+  }
+}
+console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
+
 console.log('PASS: Chinese register — licence and rights-review notes with their English beside them, model notes in Chinese; chart colours equal the legend swatches.');
 console.log('PASS: 2026-10-02 discoverability — share card is the recorded badge-free bitmap with alt/size on every page; home Dataset cites the newest release with every file and topic part; Atom feed matches the release log; only /data/* is cross-origin; cite blocks name exactly their releases, in both languages and Markdown; table names survive into Markdown; footers, llms.txt, licences and .zenodo.json agree.');
 console.log('PASS: dataset, method and API pages — every figure re-read from its served file, bilingual parity, Markdown copies carry every figure, llms.txt complete, IndexNow key, no held source anywhere.');
@@ -2286,7 +2494,7 @@ console.log('PASS: coverage matrix, '+topicPages.length+' topic pages, track cha
 console.log('PASS: Chinese pages — lang, reciprocal hreflang, self canonical, every figure equal to English, credits kept, CSP, payload untranslated.');
 console.log('PASS: 2026-10-01 adaptation, on its own topic since 2026-10-02 — arm, contrast, seed and cost figures equal the audited export; matrix readout beside the head-only arm, marked and its release cited; no winner between LoRA and last block; next-day section figure-free with the BNCI2015-001 and cross-session statuses; labelled on card, snippets, answer and entity groups; calibration-budget keeps figure-free notes at the old anchors; corrections listed; API example runs; no stage label.');
 console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures equal the audited export; no same-display claim; comparator beside gait; coverage beside conditional accuracy; no held source named.');
-console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol, roadmap proposal-only and figure-free; releases list every served file with its true SHA-256.');
+console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol; roadmap a figure-free plan with one status per route (route 1 run, results above; routes 2 and 3 not run, since 2026-10-04); releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
 console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

@@ -1,0 +1,578 @@
+---
+/**
+ * Route 1 of the decision-research roadmap, reliable decisions (2026-10-04,
+ * owner approved): when a decoder should decline to decide, and what its
+ * confidence is worth. The #reliable-decisions section of /topics/when-not-to-act/,
+ * placed before #decision-research, whose slice check-workbench.mjs keeps
+ * figure-free.
+ *
+ * Every figure is a leaf of reliable-decisions-update.json, printed with data-fig
+ * (Fig.astro) and re-read from the served file. The rules this section lives under
+ * (handoff of 2026-10-04 and the review manifest): balanced or uniform protocols,
+ * so method comparisons and never deployment error rates; nothing accepted has
+ * no error rate (a dash and its reason, never 0%); fewer than ten accepted is
+ * flagged unstable and printed as a count, not a rate; a contrast is a difference
+ * only when its interval excludes zero, and every contrast prints its verdict;
+ * methods keep the matrix's order and are never ranked; people with nothing
+ * accepted sit beside every coverage; secondary arms live in a collapsed panel,
+ * ds003810 labelled crude; the idle protocol and BNCI2015-001 carry no figure.
+ * The sentences that summarise a table are checked against the export below, and
+ * the page refuses to build if the numbers stop supporting them.
+ */
+import reliable from '../data/reliable-decisions-update.json';
+import Fig from './Fig.astro';
+import ScoreBar from './ScoreBar.astro';
+import { reliableMethod, tr, isEnglishOnly, formatFig, type Fig as FigValue, type Fmt } from '../data/entities';
+import { hrefFor, topicCards, topicChrome, type Locale } from '../data/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const SRC = 'reliable-decisions-update.json';
+const f = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: SRC });
+type Part = string | FigValue;
+type Diff = { mean: number; interval_95: number[]; excludes_zero: boolean };
+type Level = { mean: number; interval_95: number[] };
+type Op = { n: number; accepted: number; coverage: number; coverage_interval_95?: number[]; selective_error: number | null;
+            selective_error_interval_95?: number[]; accepted_wrong?: number; unstable: boolean; people_with_nothing_accepted: number };
+type Risk = Op & { outer_folds: number; certified_folds: number; folds_over_target: number; target_weighted: number | null;
+                   error_minus_target: Diff | null };
+type Recal = { prefix: string; labelled_prefix: string; labels_per_new_person: number; people_with_degenerate_personal_temperature: number;
+               nll_change: Diff; ece_change: Diff; aurc_change: Diff; unlabelled_cutoff_gap_change: Diff };
+type Method = { id: string; balanced_accuracy: number; error_accepting_everything: number; fixed_cutoff: Op & { cutoff: number };
+                coverage_target: Op; risk_certification: Risk;
+                ranking_S: { aurc: Level; error_at_80: Level; error_at_test_coverage: { coverage: number; selective_error: number }[] };
+                ranking_L: { aurc: Level; error_at_80: Level };
+                learned_minus_confidence: { aurc: Diff; error_at_80: Diff };
+                probability_quality: { calibrated: { nll: Level; ece: Level; brier: Level }; raw: { nll: Level; ece: Level } | null;
+                                       degenerate_population_temperature_folds: number };
+                recalibration: Recal[] };
+type Protocol = { protocol: string; dataset: string; people: number; outer_folds: number; classes: number; test_items: number; unit: string;
+                  methods: Method[]; fixed_cutoff_coverage_differences: (Diff & { a: string; b: string })[];
+                  common_coverage: { coverage: number; accepted: number; unstable: boolean; errors?: (Level & { id: string })[];
+                                     differences?: (Diff & { a: string; b: string })[] };
+                  rights: { name: string; attribution: string; source: string; license: string; licenseUrl: string; reviewBasis: string[] } };
+const r = reliable.results['reliable-decisions'] as unknown as {
+  design: { unstable_below_accepted: number }; protocols: Record<'arithmetic-rest' | 'beta-8ch', Protocol>;
+  robustness: { mi_rest: Protocol & { methods: (Method & { risk_certification: Risk })[] };
+                seeds: { rows: { protocol: string; method: string; seed: number; learned_minus_confidence: { aurc: Diff; error_at_80: Diff } }[] };
+                matched_model_holdout: { rows: SensRow[] }; map_sensitivity: { rows: SensRow[] };
+                l_joint: { rows: { protocol: string; learned_minus_confidence: { aurc: Diff; error_at_80: Diff } }[] } };
+  audits: { independent_primary: { checks: number; passed: number }; independent_secondary: { checks: number; passed: number } };
+  literature: { id: string; cite: string; url: string }[];
+};
+type SensRow = { protocol: string; method: string; variant: string; outer_folds: number; certified_folds: number; folds_over_target: number };
+const EEGMAT = r.protocols['arithmetic-rest'], BETA = r.protocols['beta-8ch'], MIREST = r.robustness.mi_rest;
+const panels = [BETA, EEGMAT];                     // the handoff's order: BETA, then EEGMAT
+const tenth = r.design.unstable_below_accepted;
+const name = (id: string) => tr(reliableMethod[id].label, locale);
+// In prose and in "a − b" rows the LaBraM arms take a shorter name; tables keep the full label.
+const short: Record<string, string> = zh
+  ? { 'labram-frozen-ce': 'LaBraM（只训分类头）', 'labram-lora-r4': 'LaBraM（LoRA）' }
+  : { 'labram-frozen-ce': 'LaBraM (head only)', 'labram-lora-r4': 'LaBraM (LoRA)' };
+const shortName = (id: string) => short[id] ?? name(id);
+const nameLang = (id: string) => isEnglishOnly(reliableMethod[id].label, locale) ? 'en' : undefined;
+const byId = (p: Protocol, id: string) => p.methods.find(m => m.id === id)!;
+const words = zh ? ['零', '一', '两', '三', '四'] : ['no', 'one', 'two', 'three', 'four'];
+// A space between Latin text and Chinese, none after a full-width bracket.
+const gap = (t: string) => /[）]$/.test(t) ? '' : ' ';
+const listJoin = (xs: string[]) => zh ? xs.join('、') : xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
+
+// --- The sentences below summarise the tables; each rests on these facts of the export. ----------
+const primary = [EEGMAT, BETA];
+const c2 = primary.flatMap(p => p.methods.map(m => ({ p, m, d: m.learned_minus_confidence.error_at_80 })));
+if (c2.some(x => x.d.mean < 0 && x.d.excludes_zero)) throw new Error('reliable decisions: the copy says L had a lower error than S for no method');
+if (!c2.some(x => x.d.excludes_zero)) throw new Error('reliable decisions: the copy says some C2 differences were resolved, all with L worse');
+const c1 = primary.flatMap(p => p.methods.map(m => ({ p, m, d: m.learned_minus_confidence.aurc })));
+const where = (x: { p: Protocol; m: Method }) => zh ? `${x.p.dataset} 的 ${shortName(x.m.id)}` : `${shortName(x.m.id)} on ${x.p.dataset}`;
+const c1Better = c1.filter(x => x.d.excludes_zero && x.d.mean < 0).map(where), c1Worse = c1.filter(x => x.d.excludes_zero && x.d.mean > 0).map(where);
+if (!c1Better.length || !c1Worse.length) throw new Error('reliable decisions: the AURC sentence names a better and a worse case');
+if (EEGMAT.methods.some(m => m.risk_certification.certified_folds !== 0 || m.risk_certification.accepted !== 0))
+  throw new Error('reliable decisions: the copy says S-risk certified nothing on EEGMAT');
+if (BETA.methods.some(m => m.risk_certification.certified_folds === 0 || m.risk_certification.folds_over_target === 0))
+  throw new Error('reliable decisions: the copy says S-risk certified folds for every BETA method and some went over target');
+if (BETA.methods.some(m => m.risk_certification.error_minus_target!.excludes_zero))
+  throw new Error('reliable decisions: the copy says no pooled error-minus-target was resolved');
+const betaRecal = BETA.methods.map(m => m.recalibration[0]);
+if (!betaRecal.every(x => x.labels_per_new_person === 40 && x.nll_change.excludes_zero && x.nll_change.mean < 0 && x.aurc_change.excludes_zero && x.aurc_change.mean < 0))
+  throw new Error('reliable decisions: the copy says 40 labels lowered NLL and AURC for every BETA method');
+const k5 = EEGMAT.methods.map(m => m.recalibration.find(x => x.prefix === 'k5')!);
+const k5Up = k5.filter(x => x.nll_change.excludes_zero && x.nll_change.mean > 0).length;
+const k5Gap = k5.filter(x => x.unlabelled_cutoff_gap_change.excludes_zero && x.unlabelled_cutoff_gap_change.mean > 0).length;
+if (k5.some(x => x.labels_per_new_person !== 10) || k5Up < 2 || k5.some(x => x.nll_change.excludes_zero && x.nll_change.mean < 0) || k5Gap < 1
+    || k5.some(x => x.unlabelled_cutoff_gap_change.excludes_zero && x.unlabelled_cutoff_gap_change.mean < 0))
+  throw new Error('reliable decisions: the EEGMAT recalibration sentence no longer follows from the export');
+const c4 = (EEGMAT as unknown as { lora_minus_head_only: { nll_calibrated: Diff; ece_calibrated: Diff; head_only_degenerate_population_temperature_folds: number } }).lora_minus_head_only;
+if (!(c4.nll_calibrated.excludes_zero && c4.nll_calibrated.mean < 0) || c4.ece_calibrated.excludes_zero)
+  throw new Error('reliable decisions: the LoRA sentence says lower NLL and no ECE difference resolved');
+const lora = byId(EEGMAT, 'labram-lora-r4'), head = byId(EEGMAT, 'labram-frozen-ce');
+if (!(lora.balanced_accuracy > head.balanced_accuracy)) throw new Error('reliable decisions: the LoRA sentence says LoRA is also more accurate');
+if (c4.head_only_degenerate_population_temperature_folds !== 1) throw new Error('reliable decisions: the copy names one flagged fold');
+if (!BETA.common_coverage.errors || !EEGMAT.common_coverage.unstable || EEGMAT.common_coverage.errors)
+  throw new Error('reliable decisions: the matched-coverage copy expects BETA stable and EEGMAT unstable');
+if (MIREST.methods.some(m => m.risk_certification.certified_folds !== 0)) throw new Error('reliable decisions: the crude panel says S-risk accepted nothing on ds003810');
+const cstarOwner = BETA.methods.find(m => m.fixed_cutoff.coverage === BETA.common_coverage.coverage)!;
+const cca = byId(BETA, 'cca'), eegmatNet = byId(EEGMAT, 'eegnet');
+const half = (m: Method) => m.ranking_S.error_at_test_coverage.find(x => x.coverage === 0.5)!.selective_error;
+if (!(half(cca) < cca.error_accepting_everything && half(eegmatNet) < eegmatNet.error_accepting_everything))
+  throw new Error('reliable decisions: the rejection sentence says the error falls');
+
+const verdict = (d: Diff) => d.excludes_zero ? (zh ? '可以认定有差异' : 'difference resolved') : (zh ? '不能认定有差异' : 'no difference resolved');
+const prefixText: Record<string, string> = zh
+  ? { k5: '每段记录的前 5 个窗口，之后空出 1 个窗口', k10: '每段记录的前 10 个窗口，之后空出 1 个窗口', prefix: '第 1 组块（每个目标一个试次）' }
+  : { k5: 'first 5 windows of each recording, then a one-window gap', k10: 'first 10 windows of each recording, then a one-window gap', prefix: 'block 1, one trial per target' };
+const unitWord = (p: Protocol) => p.unit === 'windows' ? (zh ? '窗口' : 'windows') : (zh ? '试次' : 'trials');
+const variantName: Record<string, string> = zh
+  ? { matched: '匹配模型留出', platt: 'Platt 缩放', 'vector-scaling': '向量缩放' }
+  : { matched: 'matched-model holdout', platt: 'Platt scaling', 'vector-scaling': 'vector scaling' };
+const datasetOf = (protocol: string) => protocol === 'beta-8ch' ? BETA.dataset : protocol === 'arithmetic-rest' ? EEGMAT.dataset : MIREST.dataset;
+
+const copy = {
+  en: {
+    eyebrow: 'Reliable decisions · route 1 of the plan below · EEGMAT and BETA',
+    h2: 'When should a decoder decline to decide?',
+    lede: (): Part[] => ['The first route of the research plan below, run on 4 October 2026. It retrained nothing. It took the saved test scores of models this site already publishes — on EEGMAT, ', f(EEGMAT.people, 'count'), ' people, mental arithmetic against rest, and on BETA, ', f(BETA.people, 'count'), ' people, a ', f(BETA.classes, 'count'), '-target SSVEP speller — and asked which trials each decoder should have declined, under four rules fixed in advance. Every full-coverage accuracy below is the published one. Both protocols are balanced or uniform by design, so every figure compares methods; none is a deployment error rate.'],
+    rulesH3: 'Four rules, fixed before scoring',
+    rules: [
+      ['Fixed threshold (F)', 'accept a trial when its calibrated top-class probability is at least 0.8. Temperature scaling, fitted on calibration scores, keeps every predicted label.'],
+      ['Coverage target (S-cov)', 'accept the most confident trials, with the cut-off set from calibration quantiles so that 80% should be accepted.'],
+      ['Certified risk (S-risk)', 'selection with guaranteed risk (SGR, δ = 0.05) certifies a cut-off whose error should stay at or below a target r*, here half the calibration error. A fold where nothing can be certified accepts nothing.'],
+      ['Learned reject option (L)', 'a logistic selector on the classifier’s top two scores and their margin, plus a spectral description of the signal that does not depend on the model, trained to predict which trials the classifier gets wrong.'],
+    ],
+    rulesNote: () => ['Calibration scores never include a test person: in each outer fold the training people form four groups, and each group is scored by a model trained on the other three. Intervals are paired person-bootstrap 95% intervals over 2,000 resamples, with no multiplicity correction. A contrast is called a difference only when its interval excludes zero; differences of rates are in percentage points (pp).'],
+    q1H3: 'A fixed threshold is a different policy for each method',
+    q1P: 'The same cut-off — accept when the calibrated top-class probability is at least 0.8 — accepts very different shares of trials from different decoders, and from different people. Each coverage is printed beside how many people had nothing accepted at all.',
+    q1Caption: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.people, 'count'), ' people · ', f(p.test_items, 'count'), ` ${unitWord(p)}, ${p.protocol === 'beta-8ch' ? 'uniform over ' : 'half rest and half arithmetic'}`, ...(p.protocol === 'beta-8ch' ? [f(p.classes, 'count'), ' targets'] : []), '. Methods in the core matrix’s order, not ranked.'],
+    q1Region: (p: Protocol) => `${p.dataset}, fixed threshold by method, scrolls horizontally`,
+    colMethod: 'Method', colBa: 'Balanced accuracy, everything accepted', colFixed: 'Accepted at confidence ≥ 0.8', colFixedError: 'Error among accepted',
+    colNothing: 'People with nothing accepted', colTarget: 'Coverage when the cut-off targets 80%',
+    published: 'the published value', coverageOf: 'coverage', ofPeople: (n: FigValue): Part[] => ['of ', n, ' people'],
+    wrongOfAccepted: 'wrong, of those accepted', unstable: (k: FigValue): Part[] => ['Unstable: fewer than ', k, ' accepted, so no rate is read from it'],
+    notDefined: 'not defined: nothing accepted',
+    coverageBar: (v: string) => `${v} of trials accepted`,
+    pairsCaption: (p: Protocol) => `${p.dataset}: paired differences in coverage under the fixed threshold, first method minus second`,
+    pairsRegion: (p: Protocol) => `${p.dataset}, paired coverage differences, scrolls horizontally`,
+    colPair: 'Pair', colDiff: 'Difference', colReading: 'Reading',
+    matchedH4: 'Compare at matched coverage, not at a shared cut-off',
+    matchedP: (): Part[] => ['On BETA the smallest coverage the fixed threshold reached was ', f(BETA.common_coverage.accepted, 'count'), ' of ', f(BETA.test_items, 'count'), ' trials (', f(BETA.common_coverage.coverage), `, ${shortName(cstarOwner.id)}’s). Each method then accepts its own `, f(BETA.common_coverage.accepted, 'count'), ' most confident trials, so the threshold drops out of the comparison:'],
+    matchedRegion: 'BETA, error at a matched coverage, scrolls horizontally',
+    matchedCaption: (): Part[] => ['BETA: error among each method’s ', f(BETA.common_coverage.accepted, 'count'), ' most confident trials, with paired differences. Descriptive levels; only the differences carry a verdict.'],
+    colMatched: 'Error among its most confident', descriptive: 'a descriptive level, no verdict',
+    matchedEegmat: (): Part[] => ['On EEGMAT that common coverage is ', f(EEGMAT.common_coverage.accepted, 'count'), ' window of ', f(EEGMAT.test_items, 'count'), ': fewer than ', f(tenth, 'count'), ' accepted, so no verdict.'],
+    q2H3: 'A learned reject option did not beat the model’s own calibrated confidence',
+    q2P: () => `Holding the classifier fixed, the learned reject option L — which also sees a spectral description of the signal — was set against the calibrated confidence S of the same classifier, on the same test trials. Two measures: the area under the risk–coverage curve (AURC; lower means the errors sit among the trials ranked least certain), and the error among the 80% of trials each ranks as most certain. L had a lower error than S at 80% for no method; where a difference was resolved, L erred more. By AURC, L ranked better only for ${listJoin(c1Better)} and worse for ${listJoin(c1Worse)}; every other contrast: no difference resolved.`,
+    q2Region: (p: Protocol) => `${p.dataset}, learned reject option against calibrated confidence, scrolls horizontally`,
+    q2Caption: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.people, 'count'), ' people. Same classifier and test trials for S and L; error at 80% takes the most certain 80% of test trials under each ranking, so it measures the ranking alone.'],
+    colAurcS: 'AURC · confidence S', colAurcL: 'AURC · learned L', colAurcD: 'L − S, AURC', colErrS: 'Error at 80% · S', colErrL: 'Error at 80% · L', colErrD: 'L − S, error at 80%',
+    buysH4: 'What declining buys, under the calibrated confidence',
+    buysP: (): Part[] => ['Rejection pays off where confidence tracks correctness. On BETA, Standard CCA’s error falls from ', f(cca.error_accepting_everything), ' with everything accepted to ', f(half(cca)), ' among its most certain half; on EEGMAT, EEGNet’s falls only from ', f(eegmatNet.error_accepting_everything), ' to ', f(half(eegmatNet)), '. Point estimates; the 80% column has its interval in the table above.'],
+    buysRegion: 'Error as more trials are declined, by method, scrolls horizontally',
+    buysCaption: 'Error among the trials accepted, by the share of test trials the calibrated confidence accepts. Point estimates.',
+    colAll: 'Everything accepted', colAt80: 'Most certain 80%', colAt50: 'Most certain 50%',
+    q3H3: 'A certified error level did not reliably hold on new people',
+    q3P: 'Selection with guaranteed risk certifies, from calibration data, a cut-off whose error should stay at or below a target r* — here half the calibration error, with δ = 0.05. The guarantee assumes calibration and test trials are exchangeable; across people they are not. On EEGMAT it certified no outer fold for any method, so nothing was accepted: there is no error rate, not a zero one. On BETA it certified folds for every method, and in some certified folds the error on the new people exceeded that fold’s own target. The pooled error minus the target was not resolved from zero for any method.',
+    q3Region: 'Certified selective risk by method, scrolls horizontally',
+    q3Caption: 'S-risk at the relative target. Folds over their own target count certified outer folds whose realised error exceeded that fold’s r*.',
+    q3Sub: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.outer_folds, 'count'), ' outer folds · ', f(p.people, 'count'), ' people'],
+    colCertified: 'Folds certified', colAccepted: 'Accepted', colRiskError: 'Error among accepted', colRstar: 'Target r*, weighted over folds',
+    colOver: 'Certified folds over their own target', colC6: 'Error minus target',
+    noneCertified: 'no fold certified', nothingAccepted: 'nothing accepted',
+    q3Note: 'Each fold holds about ten people, so a fold’s error also carries sampling noise. Read the folds over target as the measured failure frequency of a nominal guarantee, not as a significance test.',
+    q5H3: 'A personal recalibration costs each new person labels',
+    q5P: () => `R0 uses the population temperature and no label from the new person; R1 fits a personal temperature on a labelled prefix of that person’s own trials. Both are scored on the same remaining trials, and a negative change is an improvement. With 40 labels per new person on BETA, NLL and AURC fell for every method. With 10 per person on EEGMAT, NLL rose for ${words[k5Up]} of the four methods: many personal temperatures were degenerate, and they were kept, as the protocol requires. Re-setting only the coverage cut-off from that prefix, without its labels, moved EEGMAT coverage further from the 80% target with the 10-label prefix, resolved for ${words[k5Gap]} of the four methods.`,
+    q5Region: 'Recalibration by method and labelled prefix, scrolls horizontally',
+    q5Caption: 'R1 minus R0 on the same remaining trials; negative is better. Labels per new person is the cost of R1.',
+    colPrefix: 'Labelled prefix', colLabels: 'Labels per new person', colNll: 'Change in NLL, R1 − R0', colEce: 'Change in ECE', colAurc: 'Change in AURC',
+    colDegenerate: 'People with a degenerate personal temperature', colGap: 'Label-free cut-off: change in distance from the 80% target',
+    q4H3: 'LoRA and probability quality, on EEGMAT',
+    q4P: (): Part[] => ['On EEGMAT, LaBraM adapted with rank-4 LoRA had a lower NLL than the head-only arm of the same recipe: calibrated ', f(c4.nll_calibrated.mean, 'sgn3'), ' (95% interval ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '). For ECE, no difference resolved (', f(c4.ece_calibrated.mean, 'sgn3'), '; ', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '). The LoRA arm is also more accurate, ', f(lora.balanced_accuracy), ' against ', f(head.balanced_accuracy), ' balanced accuracy, so the NLL gap alone is not evidence of more honest probabilities. The adaptation itself is on '],
+    q4Link: 'the model-adaptation page',
+    qualityH3: 'Probability quality, with everything accepted',
+    qualityP: (): Part[] => ['Negative log-likelihood (NLL), expected calibration error (ECE, 15 equal-mass bins) and the Brier score after temperature scaling, and NLL and ECE before it where the model outputs a probability. A spectral ridge’s decision value and a CCA correlation have none: “not applicable”, not zero. Lower is better throughout. NLL and the Brier score depend on the number of classes, so EEGMAT (', f(EEGMAT.classes, 'count'), ') and BETA (', f(BETA.classes, 'count'), ') are not compared. Binned ECE is biased upward under person resampling, so a small ECE can sit at the lower end of its interval. In one outer fold of the LaBraM head-only arm the population temperature reached its search bound; it was flagged and kept.'],
+    qualityRegion: 'Probability quality by method, scrolls horizontally',
+    qualityCaption: 'Full coverage, 95% person-bootstrap intervals.',
+    colNllCal: 'NLL, calibrated', colEceCal: 'ECE, calibrated', colBrier: 'Brier score, calibrated', colNllRaw: 'NLL, raw', colEceRaw: 'ECE, raw',
+    notApplicable: 'not applicable', notApplicableWhy: 'no raw probability, not zero',
+    robustSummary: 'Robustness and exploratory arms: descriptive, never compared between arms',
+    robustP: 'Secondary checks of the results above. Each is read on its own: no contrast is drawn between arms, and the accuracies of arms that change the model or its map are not the site’s and are not published.',
+    miH4: 'ds003810, motor imagery and rest: crude',
+    miP: (): Part[] => [f(MIREST.people, 'count'), ' people, two per test fold: crude intervals, no person-level spread and no primary contrast. Balanced, so no deployment rate. The certified risk accepted nothing here for any method.'],
+    miRegion: 'ds003810, crude, scrolls horizontally',
+    colCertifiedOf: 'Folds certified (S-risk)',
+    seedsH4: 'Secondary seeds',
+    seedsP: 'Every other saved seed of the trained methods, each with its own calibration, cut-offs and selector, scored on that seed’s saved test predictions. Seeds are never treated as people, and no contrast is drawn between seeds.',
+    seedsRegion: 'Secondary seeds, learned reject option against calibrated confidence, scrolls horizontally',
+    colProtocol: 'Dataset', colSeed: 'Seed',
+    sensH4: 'Two sensitivity arms: certified folds only',
+    sensP: 'The matched-model holdout trains the model on three quarters of the training people and calibrates it on the remaining quarter, so calibration and test scores come from one model. Platt scaling on two classes and vector scaling on BETA replace temperature scaling and can change predicted labels. Only the certified-risk fold counts are published from either.',
+    sensRegion: 'Sensitivity arms, certified-risk fold counts, scrolls horizontally',
+    colArm: 'Arm',
+    ljH4: 'A reject head trained with its classifier (exploratory)',
+    ljP: 'A SelectiveNet-style EEGNet, trained with its own selection head g (alpha 0.5, lambda 32, target coverage 0.8). Within the same model, g is set against the calibrated confidence of its own classifier head; a positive difference means g is worse. It changes the classifier, so its accuracy is not the site’s and is not published.',
+    ljRegion: 'Jointly trained reject head against calibrated confidence, scrolls horizontally',
+    colGAurc: 'g − confidence, AURC', colGErr: 'g − confidence, error at 80%',
+    leftOut: ['Left out on purpose: the idle protocol, where route 1’s figures are per-window proportions at each decision time — a different unit from the trial-level idle table above, for four people without intervals; and a cross-day label-budget arm on BNCI2015-001, a source that is held, so none of its figures is published (see ', 'the holds register', ').'],
+    limitsH3: 'What these results cannot say',
+    limits: [
+      ['Method comparisons, not deployment rates', 'Every protocol here is balanced or uniform by design: EEGMAT is half rest and half arithmetic, BETA uniform over its 40 targets, ds003810 balanced. The figures compare methods; none is a deployment error rate. On EEGMAT each class is its own recording, so recording-level differences are part of what any model or selector can use. BETA is cue-paced spelling with no idle state, so it gives no false-activation figure of any kind.'],
+      ['Nothing accepted, no error rate', 'A risk–coverage curve exists only where something is accepted. At zero coverage there is no error rate, not a zero one, and fewer than 10 accepted trials are flagged unstable.'],
+      ['A nominal guarantee', 'A certified selective risk assumes that calibration and test data are exchangeable. Across people they are not, so the guarantee is nominal: how often it fails is measured here, not assumed.'],
+      ['Not out-of-distribution detection', 'Rejecting likely errors on known classes is not detecting unfamiliar input: an uncertainty threshold may not flag an unseen class. Route 1 makes no out-of-distribution claim.'],
+      ['Calibration on fewer people', 'Calibration scores come from inner models that see about three quarters of the training people, so they may be less confident than the full model whose scores are tested. This approximation is part of every calibrated figure.'],
+      ['The published accuracies, and only those', 'Temperature scaling keeps each predicted label, so every full-coverage accuracy equals the site’s published value. The matched-model, map-sensitivity and jointly trained arms use other models or maps; their accuracies are not published and are never mixed with the site’s.'],
+      ['Differences, and only differences', 'A contrast is called a difference only when its paired 95% person-bootstrap interval excludes zero, with no multiplicity correction; otherwise “no difference resolved”. Nothing is ranked where intervals overlap, and descriptive levels are never called differences.'],
+      ['Idle left out', 'The idle protocol is cue-gated and about three minutes per test phase. Route 1 gives per-window proportions at each decision time there, never a false-activation rate per hour, in a different unit from this page’s idle figures; they are not compared or merged, and are left out.'],
+      ['ds003810 is crude', 'Ten people, two per test fold: bootstrap intervals are crude, and no person-level spread is published. It sits in the robustness panel for that reason.'],
+    ],
+    oodLink: 'Mulder et al. (2026), motor imagery: arXiv:2603.13324 ↗',
+    creditsH3: 'The recordings and the methods',
+    datasetLink: 'Dataset record ↗',
+    litH4: 'Methods these results rest on, checked against their records on 4 October 2026',
+    audit: (): Part[] => ['Checks behind these figures: both stage-0 audits passed. The independent primary audit passed ', f(r.audits.independent_primary.passed, 'count'), ' of its ', f(r.audits.independent_primary.checks, 'count'), ' checks; the one it failed found a documentation error, not a computation error — the run log said a degenerate personal temperature falls back to the population one, while the code keeps it, as the protocol requires, and every number was computed and reproduced that way. The independent secondary audit passed all ', f(r.audits.independent_secondary.checks, 'count'), '. Both re-implement the definitions without the study code; they stay in the private run root and are pinned by hash.'],
+  },
+  zh: {
+    eyebrow: '可靠的决策 · 下文计划的第一条路线 · EEGMAT 与 BETA',
+    h2: '解码器什么时候应该拒绝作出决定？',
+    lede: (): Part[] => ['下文研究计划的第一条路线，于 2026 年 10 月 4 日运行。它没有重新训练任何模型，而是取本站已发布模型保存下来的测试分数——EEGMAT 上 ', f(EEGMAT.people, 'count'), ' 名被试，心算对静息；BETA 上 ', f(BETA.people, 'count'), ' 名被试，', f(BETA.classes, 'count'), ' 目标的 SSVEP 拼写——在事先固定的四条规则下，看每个解码器本该拒绝哪些试次。下面全覆盖时的准确率都是已发布的数值。两个协议在设计上都是类别平衡或均匀的，所以每个数字都是方法之间的比较，没有一个是部署时的错误率。'],
+    rulesH3: '评分之前固定的四条规则',
+    rules: [
+      ['固定阈值（F）', '校准后最高类别的概率不低于 0.8 时，接受这个试次。温度缩放在校准分数上拟合，不改变任何预测标签。'],
+      ['覆盖率目标（S-cov）', '接受最有把握的试次，截断点由校准分数的分位数确定，使应有 80% 的试次被接受。'],
+      ['经认证的风险（S-risk）', '选择性风险保证方法（SGR，δ = 0.05）认证一个截断点，使被接受试次的错误率应不超过目标 r*——这里是校准错误率的一半。一个折里如果什么都认证不了，就什么都不接受。'],
+      ['可学习的拒识选项（L）', '一个逻辑回归选择器，输入分类器最高的两个分数及其差值，再加一份与模型无关的信号频谱描述，训练它预测分类器会判错哪些试次。'],
+    ],
+    rulesNote: () => ['校准分数里从不包含测试被试：每个外层折中，训练被试分成四组，每组由在另外三组上训练的模型评分。区间是配对的被试 bootstrap 95% 区间，重抽样 2,000 次，不做多重比较校正。只有区间不含零时，一个对比才称为有差异；比率之间的差值以百分点（pp）表示。'],
+    q1H3: '同一个固定阈值，对每种方法都是不同的策略',
+    q1P: '同一个截断点——校准后最高类别的概率不低于 0.8 就接受——对不同的解码器、不同的被试，接受的比例相差很大。每个覆盖率旁边都列出了一个试次都没被接受的被试人数。',
+    q1Caption: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.people, 'count'), ' 名被试 · ', f(p.test_items, 'count'), ` 个${unitWord(p)}，${p.protocol === 'beta-8ch' ? '在 ' : '一半静息、一半心算'}`, ...(p.protocol === 'beta-8ch' ? [f(p.classes, 'count'), ' 个目标上均匀分布'] : []), '。方法按核心矩阵中的顺序排列，不是排名。'],
+    q1Region: (p: Protocol) => `${p.dataset}：各方法在固定阈值下的结果，可横向滚动`,
+    colMethod: '方法', colBa: '全部接受时的平衡准确率', colFixed: '置信度 ≥ 0.8 时被接受', colFixedError: '被接受试次中的错误率',
+    colNothing: '一个都没被接受的被试', colTarget: '截断点以 80% 为目标时的覆盖率',
+    published: '已发布的数值', coverageOf: '覆盖率', ofPeople: (n: FigValue): Part[] => ['共 ', n, ' 名被试'],
+    wrongOfAccepted: '被接受的里判错的', unstable: (k: FigValue): Part[] => ['不稳定：被接受的少于 ', k, ' 个，不据此读出比率'],
+    notDefined: '没有定义：什么都没有接受',
+    coverageBar: (v: string) => `被接受的试次占 ${v}`,
+    pairsCaption: (p: Protocol) => `${p.dataset}：固定阈值下覆盖率的配对差值，前一种方法减后一种`,
+    pairsRegion: (p: Protocol) => `${p.dataset}：覆盖率的配对差值，可横向滚动`,
+    colPair: '方法对', colDiff: '差值', colReading: '判定',
+    matchedH4: '在相同覆盖率下比较，而不是用同一个截断点',
+    matchedP: (): Part[] => ['在 BETA 上，固定阈值达到的最小覆盖率是 ', f(BETA.test_items, 'count'), ' 个试次中的 ', f(BETA.common_coverage.accepted, 'count'), ' 个（', f(BETA.common_coverage.coverage), `，来自 ${shortName(cstarOwner.id)}）。于是每种方法都只接受自己最有把握的 `, f(BETA.common_coverage.accepted, 'count'), ' 个试次，阈值就从比较中去掉了：'],
+    matchedRegion: 'BETA：相同覆盖率下的错误率，可横向滚动',
+    matchedCaption: (): Part[] => ['BETA：每种方法最有把握的 ', f(BETA.common_coverage.accepted, 'count'), ' 个试次中的错误率，以及配对差值。错误率本身只作描述；只有差值才有判定。'],
+    colMatched: '最有把握的试次中的错误率', descriptive: '描述性水平，不作判定',
+    matchedEegmat: (): Part[] => ['在 EEGMAT 上，这个共同覆盖率只有 ', f(EEGMAT.test_items, 'count'), ' 个窗口中的 ', f(EEGMAT.common_coverage.accepted, 'count'), ' 个：被接受的少于 ', f(tenth, 'count'), ' 个，所以不作判定。'],
+    q2H3: '可学习的拒识选项，没有胜过模型自己校准后的置信度',
+    q2P: () => `分类器保持不变，把可学习的拒识选项 L（它还能看到一份信号的频谱描述）与同一分类器校准后的置信度 S 相比，测试试次也相同。两个指标：风险—覆盖率曲线下面积（AURC；越低，说明错误越集中在最没把握的试次里），以及各自最有把握的 80% 试次中的错误率。在 80% 覆盖率下，没有一种方法上 L 的错误率比 S 低；凡是能认定有差异的，都是 L 错得更多。按 AURC，L 只在 ${listJoin(c1Better)}${gap(listJoin(c1Better))}上排序更好，在 ${listJoin(c1Worse)}${gap(listJoin(c1Worse))}上更差；其余对比都不能认定有差异。`,
+    q2Region: (p: Protocol) => `${p.dataset}：可学习的拒识选项与校准后的置信度，可横向滚动`,
+    q2Caption: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.people, 'count'), ' 名被试。S 与 L 用同一个分类器、同一批测试试次；80% 覆盖率下的错误率取各自排序下最有把握的 80% 测试试次，所以只衡量排序本身。'],
+    colAurcS: 'AURC · 置信度 S', colAurcL: 'AURC · 拒识选项 L', colAurcD: 'L − S（AURC）', colErrS: '80% 覆盖率下的错误率 · S', colErrL: '80% 覆盖率下的错误率 · L', colErrD: 'L − S（80% 覆盖率下的错误率）',
+    buysH4: '按校准后的置信度拒识，能换来什么',
+    buysP: (): Part[] => ['拒识是否划算，取决于置信度能否反映判对与否。在 BETA 上，Standard CCA 全部接受时的错误率是 ', f(cca.error_accepting_everything), '，只接受最有把握的一半时降到 ', f(half(cca)), '；在 EEGMAT 上，EEGNet 只从 ', f(eegmatNet.error_accepting_everything), ' 降到 ', f(half(eegmatNet)), '。这些是点估计；80% 那一列的区间见上表。'],
+    buysRegion: '拒识更多试次时的错误率，按方法，可横向滚动',
+    buysCaption: '按校准后的置信度接受一定比例的测试试次时，被接受试次中的错误率。点估计。',
+    colAll: '全部接受', colAt80: '最有把握的 80%', colAt50: '最有把握的 50%',
+    q3H3: '经认证的错误率上限，在新被试身上并不可靠',
+    q3P: '选择性风险保证方法根据校准数据认证一个截断点，使被接受试次的错误率应不超过目标 r*——这里是校准错误率的一半，δ = 0.05。这个保证假设校准试次与测试试次可以互换；跨被试时并非如此。在 EEGMAT 上，它对任何方法都没有认证任何一个外层折，所以什么都没有接受：没有错误率，而不是错误率为零。在 BETA 上，每种方法都有被认证的折，而在其中一些折里，新被试的错误率超过了该折自己的目标。合并后的错误率减去目标，对任何方法都不能认定与零有差异。',
+    q3Region: '各方法经认证的选择性风险，可横向滚动',
+    q3Caption: '相对目标下的 S-risk。“超过自身目标的已认证折”统计的是实际错误率超过该折 r* 的已认证外层折。',
+    q3Sub: (p: Protocol): Part[] => [`${p.dataset} · `, f(p.outer_folds, 'count'), ' 个外层折 · ', f(p.people, 'count'), ' 名被试'],
+    colCertified: '被认证的折', colAccepted: '被接受', colRiskError: '被接受试次中的错误率', colRstar: '目标 r*（按各折加权）',
+    colOver: '超过自身目标的已认证折', colC6: '错误率减去目标',
+    noneCertified: '没有被认证的折', nothingAccepted: '什么都没有接受',
+    q3Note: '每个折大约十名被试，所以一个折的错误率也带有抽样噪声。超过目标的折数，应读作一个名义保证实际失效的频率，而不是显著性检验。',
+    q5H3: '按人重新校准，要花每名新被试的标签',
+    q5P: () => `R0 用总体温度参数，不用新被试的任何标签；R1 在新被试自己的一段带标签的开头试次上拟合个人温度参数。两者都在相同的剩余试次上评分，变化为负表示变好。在 BETA 上，每名新被试 40 个标签，每种方法的 NLL 和 AURC 都下降了。在 EEGMAT 上，每人 10 个标签时，四种方法中有${words[k5Up]}种的 NLL 上升：许多个人温度参数退化了，而按协议它们被保留。如果只用这段开头试次重设覆盖率的截断点、不用它们的标签：在 EEGMAT 上用 10 个标签的那段开头时，覆盖率反而离 80% 的目标更远，四种方法中有${words[k5Gap]}种可以认定这一变化。`,
+    q5Region: '各方法与带标签开头部分的重新校准结果，可横向滚动',
+    q5Caption: '相同剩余试次上的 R1 减 R0；负值更好。每名新被试的标签数就是 R1 的代价。',
+    colPrefix: '带标签的开头部分', colLabels: '每名新被试的标签数', colNll: 'NLL 变化（R1 − R0）', colEce: 'ECE 变化', colAurc: 'AURC 变化',
+    colDegenerate: '个人温度参数退化的被试', colGap: '不用标签、只重设截断点：离 80% 目标的距离变化',
+    q4H3: 'LoRA 与概率质量（EEGMAT）',
+    q4P: (): Part[] => ['在 EEGMAT 上，用秩为 4 的 LoRA 适配的 LaBraM，比同一配方只训分类头的版本 NLL 更低：校准后 ', f(c4.nll_calibrated.mean, 'sgn3'), '（95% 区间 ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '）。ECE 不能认定有差异（', f(c4.ece_calibrated.mean, 'sgn3'), '；', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '）。LoRA 版本的准确率也更高，平衡准确率 ', f(lora.balanced_accuracy), ' 对 ', f(head.balanced_accuracy), '，所以单凭 NLL 的差距，并不能说明它的概率更诚实。适配本身见'],
+    q4Link: '模型适配页面',
+    qualityH3: '全部接受时的概率质量',
+    qualityP: (): Part[] => ['温度缩放之后的负对数似然（NLL）、期望校准误差（ECE，15 个等量分箱）与 Brier 分数；模型本身输出概率时，也给出缩放之前的 NLL 与 ECE。spectral ridge 的决策值和 CCA 的相关系数都没有原始概率：标为“不适用”，不是零。各项都是越低越好。NLL 与 Brier 分数取决于类别数，所以 EEGMAT（', f(EEGMAT.classes, 'count'), ' 类）与 BETA（', f(BETA.classes, 'count'), ' 类）之间不作比较。被试重抽样会使分箱 ECE 偏高，所以较小的 ECE 可能落在其区间的下端。LaBraM 只训分类头的版本，有一个外层折的总体温度参数落在了搜索边界上；它被标记并保留。'],
+    qualityRegion: '各方法的概率质量，可横向滚动',
+    qualityCaption: '全覆盖，95% 被试 bootstrap 区间。',
+    colNllCal: 'NLL（校准后）', colEceCal: 'ECE（校准后）', colBrier: 'Brier 分数（校准后）', colNllRaw: 'NLL（原始）', colEceRaw: 'ECE（原始）',
+    notApplicable: '不适用', notApplicableWhy: '没有原始概率，不是零',
+    robustSummary: '稳健性与探索性分析：只作描述，不在各分析之间比较',
+    robustP: '对上面结果的补充检查。每一项都单独解读：各分析之间不作对比；改变了模型或其映射的那些分析，准确率不是本站的数值，也不发布。',
+    miH4: 'ds003810，运动想象与静息：粗略',
+    miP: (): Part[] => [f(MIREST.people, 'count'), ' 名被试，每个测试折两人：区间粗略，没有按人的离散度，也没有主要对比。类别平衡，所以没有部署比率。在这里，经认证的风险对任何方法都什么也没有接受。'],
+    miRegion: 'ds003810（粗略），可横向滚动',
+    colCertifiedOf: '被认证的折（S-risk）',
+    seedsH4: '其余随机种子',
+    seedsP: '已训练方法保存下来的其余每个随机种子，各自有自己的校准、截断点和选择器，在该种子保存的测试预测上评分。随机种子从不被当作被试，种子之间也不作对比。',
+    seedsRegion: '其余随机种子：可学习的拒识选项与校准后的置信度，可横向滚动',
+    colProtocol: '数据集', colSeed: '随机种子',
+    sensH4: '两个敏感性分析：只给认证的折数',
+    sensP: '匹配模型留出：模型在四分之三的训练被试上训练、在其余四分之一上校准，所以校准分数与测试分数来自同一个模型。Platt 缩放（两类）与向量缩放（BETA）代替温度缩放，可能改变预测标签。两者都只发布经认证风险的折数。',
+    sensRegion: '敏感性分析：经认证风险的折数，可横向滚动',
+    colArm: '分析',
+    ljH4: '与分类器一起训练的拒识头（探索性）',
+    ljP: '一个 SelectiveNet 式的 EEGNet，带有自己的选择头 g 一起训练（alpha 0.5，lambda 32，目标覆盖率 0.8）。在同一个模型内，把 g 与它自己分类头校准后的置信度相比；差值为正表示 g 更差。它改变了分类器，所以它的准确率不是本站的数值，也不发布。',
+    ljRegion: '联合训练的拒识头与校准后的置信度，可横向滚动',
+    colGAurc: 'g − 置信度（AURC）', colGErr: 'g − 置信度（80% 覆盖率下的错误率）',
+    leftOut: ['有意没有放进来的：空闲协议——第一条路线在那里得到的是每个决策时刻按窗口统计的比例，与上面按试次统计的空闲表单位不同，而且只有四名被试、没有区间；以及 BNCI2015-001 上的跨天标签预算分析——该数据源处于暂缓状态，所以不发布它的任何数字（见', '暂缓登记表', '）。'],
+    limitsH3: '这些结果说明不了什么',
+    limits: [
+      ['是方法比较，不是部署比率', '这里每个协议在设计上都是类别平衡或均匀的：EEGMAT 一半静息、一半心算，BETA 在 40 个目标上均匀，ds003810 类别平衡。这些数字比较的是方法，没有一个是部署时的错误率。在 EEGMAT 上，每个类别各自是一段记录，所以记录层面的差异也是任何模型或选择器都能利用的信息。BETA 是按提示节奏的拼写，没有空闲状态，所以给不出任何形式的误触发数字。'],
+      ['什么都没接受，就没有错误率', '风险—覆盖率曲线只在有试次被接受时才存在。覆盖率为零时没有错误率，而不是错误率为零；被接受的少于 10 个时标为不稳定。'],
+      ['名义上的保证', '经认证的选择性风险假设校准数据与测试数据可以互换。跨被试时并非如此，所以这个保证只是名义上的：它失效的频率在这里是测出来的，不是假设的。'],
+      ['不是分布外检测', '拒绝已知类别上可能判错的试次，不等于识别陌生的输入：不确定性阈值未必能标出没见过的类别。第一条路线不作任何分布外的声明。'],
+      ['校准用的被试更少', '校准分数来自只见过约四分之三训练被试的内层模型，所以它们可能比被测试分数的完整模型更不自信。这一近似体现在每一个经过校准的数字里。'],
+      ['只用已发布的准确率', '温度缩放不改变任何预测标签，所以全覆盖时的准确率都等于本站已发布的数值。匹配模型、映射敏感性与联合训练这几组分析用的是别的模型或映射；它们的准确率不发布，也绝不与本站的数值混在一起。'],
+      ['只把差异叫作差异', '只有配对的 95% 被试 bootstrap 区间不含零时，一个对比才称为有差异，且不做多重比较校正；否则写作“不能认定有差异”。区间重叠时不排名，描述性的水平值也从不称为差异。'],
+      ['空闲协议没有放进来', '空闲协议是提示同步的，每个测试阶段约三分钟。第一条路线在那里只能给出每个决策时刻按窗口统计的比例，从来不是每小时的误触发率，而且与本页的空闲数字单位不同；两者不比较、不合并，所以没有放进来。'],
+      ['ds003810 是粗略的', '十名被试，每个测试折两人：bootstrap 区间粗略，也不发布按人的离散度。所以它放在稳健性面板里。'],
+    ],
+    oodLink: 'Mulder 等（2026），运动想象：arXiv:2603.13324 ↗',
+    creditsH3: '所用的记录与方法',
+    datasetLink: '数据集记录 ↗',
+    litH4: '这些结果所依据的方法（2026 年 10 月 4 日对照原始记录核查）',
+    audit: (): Part[] => ['这些数字背后的检查：两项第 0 阶段审计都已通过。独立的主审计在 ', f(r.audits.independent_primary.checks, 'count'), ' 项检查中通过了 ', f(r.audits.independent_primary.passed, 'count'), ' 项；没有通过的那一项发现的是文档错误，不是计算错误——运行日志说退化的个人温度参数会退回到总体温度参数，而代码按协议的要求保留了它，每个数字都是这样计算和复现的。独立的次级审计 ', f(r.audits.independent_secondary.checks, 'count'), ' 项全部通过。两项审计都不调用研究代码、重新实现了各项定义；它们留在私有的运行目录中，以哈希固定。'],
+  },
+}[locale];
+
+const pctIv = (iv?: number[]) => iv ? [f(iv[0]), f(iv[1])] as const : null;
+---
+<section class="topic-section" id="reliable-decisions" aria-labelledby="rd-heading">
+  <div class="topic-heading"><div><p class="eyebrow">{copy.eyebrow}</p><h2 id="rd-heading">{copy.h2}</h2></div><p>{copy.lede().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+  <h3 class="roadmap-h3">{copy.rulesH3}</h3>
+  <ul class="rd-rules">{copy.rules.map(([h, p]) => <li><strong>{h}</strong>{zh ? '：' : ': '}{p}</li>)}</ul>
+  <p class="protocol-note">{copy.rulesNote().map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+
+  <h3 class="roadmap-h3" id="rd-fixed">{copy.q1H3}</h3>
+  <p class="roadmap-p">{copy.q1P}</p>
+  {panels.map(p => <>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.q1Region(p)} data-rd-panel={p.protocol}>
+      <table>
+        <caption>{copy.q1Caption(p).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</caption>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colFixed}</th><th scope="col">{copy.colFixedError}</th><th scope="col">{copy.colNothing}</th><th scope="col">{copy.colTarget}</th></tr></thead>
+        <tbody>{p.methods.map(m => { const F = m.fixed_cutoff, T = m.coverage_target, ci = pctIv(F.coverage_interval_95), ti = pctIv(T.coverage_interval_95), ei = pctIv(F.selective_error_interval_95); return (
+          <tr data-rd-row={`${p.protocol}|${m.id}`}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td data-cell="ba"><Fig f={f(m.balanced_accuracy)} cls="metric"/><span class="interval">{copy.published}</span></td>
+            <td data-cell="fixed"><span class="metric"><Fig f={f(F.accepted, 'count')}/> / <Fig f={f(F.n, 'count')}/></span><span class="interval">{copy.coverageOf} <Fig f={f(F.coverage)}/>{ci && <> · {tc.interval95} <Fig f={ci[0]}/>–<Fig f={ci[1]}/></>}</span><ScoreBar value={F.coverage} label={copy.coverageBar(formatFig(f(F.coverage)))}/></td>
+            {F.selective_error === null
+              ? <td data-cell="fixed-error" data-null="true"><span class="metric">—</span><span class="interval">{copy.notDefined}</span></td>
+              : F.unstable
+                ? <td data-cell="fixed-error" data-unstable="true"><span class="metric"><Fig f={f(F.accepted_wrong!, 'count')}/> / <Fig f={f(F.accepted, 'count')}/></span><span class="interval">{copy.wrongOfAccepted}</span><span class="flag">{copy.unstable(f(tenth, 'count')).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</span></td>
+                : <td data-cell="fixed-error"><Fig f={f(F.selective_error)} cls="metric"/>{ei && <span class="interval">{tc.interval95} <Fig f={ei[0]}/>–<Fig f={ei[1]}/></span>}</td>}
+            <td data-cell="nothing-accepted"><Fig f={f(F.people_with_nothing_accepted, 'count')} cls="metric"/><span class="interval">{copy.ofPeople(f(p.people, 'count')).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</span></td>
+            <td data-cell="target"><Fig f={f(T.coverage)} cls="metric"/>{ti && <span class="interval">{tc.interval95} <Fig f={ti[0]}/>–<Fig f={ti[1]}/></span>}</td>
+          </tr>); })}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.pairsRegion(p)}>
+      <table>
+        <caption>{copy.pairsCaption(p)}</caption>
+        <thead><tr><th scope="col">{copy.colPair}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colReading}</th></tr></thead>
+        <tbody>{p.fixed_cutoff_coverage_differences.map(d => (
+          <tr data-rd-pair={`${p.protocol}|${d.a}|${d.b}`}>
+            <th scope="row" lang={nameLang(d.a) && nameLang(d.b)}>{shortName(d.a)} − {shortName(d.b)}</th>
+            <td data-diff="coverage" data-resolved={String(d.excludes_zero)}><Fig f={f(d.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d.interval_95[1], 'pp1')}/></span></td>
+            <td><span class="verdict" data-resolved={String(d.excludes_zero)}>{verdict(d)}</span></td>
+          </tr>))}</tbody>
+      </table>
+    </div>
+  </>)}
+  <h4 class="rd-h4" id="rd-matched">{copy.matchedH4}</h4>
+  <p class="roadmap-p">{copy.matchedP().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+  <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.matchedRegion}>
+    <table>
+      <caption>{copy.matchedCaption().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</caption>
+      <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colMatched}</th><th scope="col">{copy.colReading}</th></tr></thead>
+      <tbody>
+        {BETA.common_coverage.errors!.map(e => (
+          <tr data-rd-matched={e.id}><th scope="row" lang={nameLang(e.id)}>{name(e.id)}</th><td><Fig f={f(e.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(e.interval_95[0])}/>–<Fig f={f(e.interval_95[1])}/></span></td><td><span class="verdict">{copy.descriptive}</span></td></tr>))}
+        {BETA.common_coverage.differences!.map((d, i) => (
+          <tr class={i === 0 ? 'pooled-row' : undefined} data-rd-pair={`matched|${d.a}|${d.b}`}><th scope="row" lang={nameLang(d.a) && nameLang(d.b)}>{shortName(d.a)} − {shortName(d.b)}</th><td data-diff="matched" data-resolved={String(d.excludes_zero)}><Fig f={f(d.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d.interval_95[1], 'pp1')}/></span></td><td><span class="verdict" data-resolved={String(d.excludes_zero)}>{verdict(d)}</span></td></tr>))}
+      </tbody>
+    </table>
+  </div>
+  <p class="roadmap-p" data-rd-unstable="arithmetic-rest">{copy.matchedEegmat().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+
+  <h3 class="roadmap-h3" id="rd-learned">{copy.q2H3}</h3>
+  <p class="roadmap-p">{copy.q2P()}</p>
+  {[EEGMAT, BETA].map(p => (
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.q2Region(p)}>
+      <table>
+        <caption>{copy.q2Caption(p).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</caption>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colAurcS}</th><th scope="col">{copy.colAurcL}</th><th scope="col">{copy.colAurcD}</th><th scope="col">{copy.colErrS}</th><th scope="col">{copy.colErrL}</th><th scope="col">{copy.colErrD}</th></tr></thead>
+        <tbody>{p.methods.map(m => { const S = m.ranking_S, L = m.ranking_L, d1 = m.learned_minus_confidence.aurc, d2 = m.learned_minus_confidence.error_at_80; return (
+          <tr data-rd-learned={`${p.protocol}|${m.id}`}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td><Fig f={f(S.aurc.mean, 'num3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(S.aurc.interval_95[0], 'num3')}/>–<Fig f={f(S.aurc.interval_95[1], 'num3')}/></span></td>
+            <td><Fig f={f(L.aurc.mean, 'num3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(L.aurc.interval_95[0], 'num3')}/>–<Fig f={f(L.aurc.interval_95[1], 'num3')}/></span></td>
+            <td data-diff="c1" data-resolved={String(d1.excludes_zero)}><Fig f={f(d1.mean, 'sgn3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d1.interval_95[0], 'sgn3')}/> {tc.to} <Fig f={f(d1.interval_95[1], 'sgn3')}/></span><span class="verdict" data-resolved={String(d1.excludes_zero)}>{verdict(d1)}</span></td>
+            <td><Fig f={f(S.error_at_80.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(S.error_at_80.interval_95[0])}/>–<Fig f={f(S.error_at_80.interval_95[1])}/></span></td>
+            <td><Fig f={f(L.error_at_80.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(L.error_at_80.interval_95[0])}/>–<Fig f={f(L.error_at_80.interval_95[1])}/></span></td>
+            <td data-diff="c2" data-resolved={String(d2.excludes_zero)}><Fig f={f(d2.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d2.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d2.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(d2.excludes_zero)}>{verdict(d2)}</span></td>
+          </tr>); })}</tbody>
+      </table>
+    </div>))}
+  <h4 class="rd-h4">{copy.buysH4}</h4>
+  <p class="roadmap-p">{copy.buysP().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+  <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.buysRegion}>
+    <table>
+      <caption>{copy.buysCaption}</caption>
+      <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colAll}</th><th scope="col">{copy.colAt80}</th><th scope="col">{copy.colAt50}</th></tr></thead>
+      <tbody>{[EEGMAT, BETA].map(p => <>
+        <tr class="subhead"><th colspan="4" scope="colgroup">{p.dataset}</th></tr>
+        {p.methods.map(m => { const at = (c: number) => m.ranking_S.error_at_test_coverage.find(x => x.coverage === c)!.selective_error; return (
+          <tr><th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th><td><Fig f={f(m.error_accepting_everything)} cls="metric"/></td><td><Fig f={f(at(0.8))} cls="metric"/></td><td><Fig f={f(at(0.5))} cls="metric"/></td></tr>); })}
+      </>)}</tbody>
+    </table>
+  </div>
+
+  <h3 class="roadmap-h3" id="rd-certified">{copy.q3H3}</h3>
+  <p class="roadmap-p">{copy.q3P}</p>
+  <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.q3Region}>
+    <table>
+      <caption>{copy.q3Caption}</caption>
+      <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colCertified}</th><th scope="col">{copy.colAccepted}</th><th scope="col">{copy.colRiskError}</th><th scope="col">{copy.colRstar}</th><th scope="col">{copy.colOver}</th><th scope="col">{copy.colC6}</th></tr></thead>
+      <tbody>{[BETA, EEGMAT].map(p => <>
+        <tr class="subhead"><th colspan="7" scope="colgroup">{copy.q3Sub(p).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</th></tr>
+        {p.methods.map(m => { const R = m.risk_certification, ri = pctIv(R.selective_error_interval_95), d = R.error_minus_target; return (
+          <tr data-rd-risk={`${p.protocol}|${m.id}`}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td><span class="metric"><Fig f={f(R.certified_folds, 'count')}/> / <Fig f={f(R.outer_folds, 'count')}/></span></td>
+            <td><span class="metric"><Fig f={f(R.accepted, 'count')}/> / <Fig f={f(R.n, 'count')}/></span>{R.accepted > 0 ? <span class="interval">{copy.coverageOf} <Fig f={f(R.coverage)}/></span> : <span class="interval">{copy.nothingAccepted}</span>}</td>
+            {R.selective_error === null
+              ? <td data-cell="risk-error" data-null="true"><span class="metric">—</span><span class="interval">{copy.notDefined}</span></td>
+              : <td data-cell="risk-error"><Fig f={f(R.selective_error)} cls="metric"/>{ri && <span class="interval">{tc.interval95} <Fig f={ri[0]}/>–<Fig f={ri[1]}/></span>}</td>}
+            {R.target_weighted === null
+              ? <td data-null="true"><span class="metric">—</span><span class="interval">{copy.noneCertified}</span></td>
+              : <td><Fig f={f(R.target_weighted)} cls="metric"/></td>}
+            {R.certified_folds === 0
+              ? <td data-null="true"><span class="metric">—</span><span class="interval">{copy.noneCertified}</span></td>
+              : <td data-cell="over"><span class="metric"><Fig f={f(R.folds_over_target, 'count')}/> / <Fig f={f(R.certified_folds, 'count')}/></span></td>}
+            {d === null
+              ? <td data-cell="c6" data-null="true"><span class="metric">—</span><span class="interval">{copy.notDefined}</span></td>
+              : <td data-cell="c6" data-diff="c6" data-resolved={String(d.excludes_zero)}><Fig f={f(d.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(d.excludes_zero)}>{verdict(d)}</span></td>}
+          </tr>); })}
+      </>)}</tbody>
+    </table>
+  </div>
+  <p class="protocol-note">{copy.q3Note}</p>
+
+  <h3 class="roadmap-h3" id="rd-recalibration">{copy.q5H3}</h3>
+  <p class="roadmap-p">{copy.q5P()}</p>
+  <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.q5Region}>
+    <table>
+      <caption>{copy.q5Caption}</caption>
+      <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colPrefix}</th><th scope="col">{copy.colLabels}</th><th scope="col">{copy.colNll}</th><th scope="col">{copy.colEce}</th><th scope="col">{copy.colAurc}</th><th scope="col">{copy.colDegenerate}</th><th scope="col">{copy.colGap}</th></tr></thead>
+      <tbody>{[BETA, EEGMAT].map(p => <>
+        <tr class="subhead"><th colspan="8" scope="colgroup">{p.dataset}</th></tr>
+        {p.methods.flatMap(m => m.recalibration.map(x => (
+          <tr data-rd-recal={`${p.protocol}|${m.id}|${x.prefix}`}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td>{prefixText[x.prefix]}</td>
+            <td data-cell="labels"><Fig f={f(x.labels_per_new_person, 'count')} cls="metric"/></td>
+            {[x.nll_change, x.ece_change, x.aurc_change].map((d, i) => (
+              <td data-diff={['nll', 'ece', 'aurc'][i]} data-resolved={String(d.excludes_zero)}><Fig f={f(d.mean, 'sgn3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d.interval_95[0], 'sgn3')}/> {tc.to} <Fig f={f(d.interval_95[1], 'sgn3')}/></span><span class="verdict" data-resolved={String(d.excludes_zero)}>{verdict(d)}</span></td>))}
+            <td><span class="metric"><Fig f={f(x.people_with_degenerate_personal_temperature, 'count')}/> / <Fig f={f(p.people, 'count')}/></span></td>
+            <td data-diff="gap" data-resolved={String(x.unlabelled_cutoff_gap_change.excludes_zero)}><Fig f={f(x.unlabelled_cutoff_gap_change.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.unlabelled_cutoff_gap_change.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(x.unlabelled_cutoff_gap_change.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(x.unlabelled_cutoff_gap_change.excludes_zero)}>{verdict(x.unlabelled_cutoff_gap_change)}</span></td>
+          </tr>)))}
+      </>)}</tbody>
+    </table>
+  </div>
+
+  <h3 class="roadmap-h3" id="rd-lora">{copy.q4H3}</h3>
+  <p class="roadmap-p">{copy.q4P().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}<a href={hrefFor('/topics/model-adaptation/', locale)}>{zh ? `「${copy.q4Link}」` : copy.q4Link}</a>{zh ? '。' : '.'}</p>
+
+  <h3 class="roadmap-h3" id="rd-quality">{copy.qualityH3}</h3>
+  <p class="roadmap-p">{copy.qualityP().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+  <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.qualityRegion}>
+    <table>
+      <caption>{copy.qualityCaption}</caption>
+      <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colNllCal}</th><th scope="col">{copy.colEceCal}</th><th scope="col">{copy.colBrier}</th><th scope="col">{copy.colNllRaw}</th><th scope="col">{copy.colEceRaw}</th></tr></thead>
+      <tbody>{[EEGMAT, BETA].map(p => <>
+        <tr class="subhead"><th colspan="6" scope="colgroup">{p.dataset}</th></tr>
+        {p.methods.map(m => { const q = m.probability_quality; const lv = (x: Level) => <><Fig f={f(x.mean, 'num3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.interval_95[0], 'num3')}/>–<Fig f={f(x.interval_95[1], 'num3')}/></span></>; return (
+          <tr data-rd-quality={`${p.protocol}|${m.id}`}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td>{lv(q.calibrated.nll)}</td><td>{lv(q.calibrated.ece)}</td><td>{lv(q.calibrated.brier)}</td>
+            {q.raw ? <><td>{lv(q.raw.nll)}</td><td>{lv(q.raw.ece)}</td></>
+                   : <><td data-null="true" data-na="true"><span class="metric">—</span><span class="interval">{copy.notApplicable}{zh ? '：' : ': '}{copy.notApplicableWhy}</span></td><td data-null="true" data-na="true"><span class="metric">—</span><span class="interval">{copy.notApplicable}{zh ? '：' : ': '}{copy.notApplicableWhy}</span></td></>}
+          </tr>); })}
+      </>)}</tbody>
+    </table>
+  </div>
+
+  <details class="rd-panel" id="rd-robustness">
+    <summary>{copy.robustSummary}</summary>
+    <p class="roadmap-p">{copy.robustP}</p>
+    <h4 class="rd-h4" id="rd-crude">{copy.miH4}</h4>
+    <p class="roadmap-p">{copy.miP().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.miRegion}>
+      <table>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colFixed}</th><th scope="col">{copy.colNothing}</th><th scope="col">{copy.colAurcD}</th><th scope="col">{copy.colErrD}</th><th scope="col">{copy.colCertifiedOf}</th></tr></thead>
+        <tbody>{MIREST.methods.map(m => { const F = m.fixed_cutoff, d1 = m.learned_minus_confidence.aurc, d2 = m.learned_minus_confidence.error_at_80; return (
+          <tr data-rd-crude={m.id}>
+            <th scope="row" lang={nameLang(m.id)}>{name(m.id)}</th>
+            <td><Fig f={f(m.balanced_accuracy)} cls="metric"/><span class="interval">{copy.published}</span></td>
+            <td><span class="metric"><Fig f={f(F.accepted, 'count')}/> / <Fig f={f(F.n, 'count')}/></span><span class="interval">{copy.coverageOf} <Fig f={f(F.coverage)}/></span></td>
+            <td><Fig f={f(F.people_with_nothing_accepted, 'count')} cls="metric"/><span class="interval">{copy.ofPeople(f(MIREST.people, 'count')).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</span></td>
+            <td data-diff="c1" data-resolved={String(d1.excludes_zero)}><Fig f={f(d1.mean, 'sgn3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d1.interval_95[0], 'sgn3')}/> {tc.to} <Fig f={f(d1.interval_95[1], 'sgn3')}/></span><span class="verdict" data-resolved={String(d1.excludes_zero)}>{verdict(d1)}</span></td>
+            <td data-diff="c2" data-resolved={String(d2.excludes_zero)}><Fig f={f(d2.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d2.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d2.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(d2.excludes_zero)}>{verdict(d2)}</span></td>
+            <td><span class="metric"><Fig f={f(m.risk_certification.certified_folds, 'count')}/> / <Fig f={f(m.risk_certification.outer_folds, 'count')}/></span><span class="interval">{copy.nothingAccepted}</span></td>
+          </tr>); })}</tbody>
+      </table>
+    </div>
+    <h4 class="rd-h4">{copy.seedsH4}</h4>
+    <p class="roadmap-p">{copy.seedsP}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.seedsRegion}>
+      <table>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colProtocol}</th><th scope="col">{copy.colSeed}</th><th scope="col">{copy.colAurcD}</th><th scope="col">{copy.colErrD}</th></tr></thead>
+        <tbody>{r.robustness.seeds.rows.map(s => { const d1 = s.learned_minus_confidence.aurc, d2 = s.learned_minus_confidence.error_at_80; return (
+          <tr data-rd-seed={`${s.protocol}|${s.method}|${s.seed}`}>
+            <th scope="row" lang={nameLang(s.method)}>{name(s.method)}</th><td lang="en">{datasetOf(s.protocol)}</td><td>{s.seed}</td>
+            <td data-diff="c1" data-resolved={String(d1.excludes_zero)}><Fig f={f(d1.mean, 'sgn3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d1.interval_95[0], 'sgn3')}/> {tc.to} <Fig f={f(d1.interval_95[1], 'sgn3')}/></span><span class="verdict" data-resolved={String(d1.excludes_zero)}>{verdict(d1)}</span></td>
+            <td data-diff="c2" data-resolved={String(d2.excludes_zero)}><Fig f={f(d2.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d2.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d2.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(d2.excludes_zero)}>{verdict(d2)}</span></td>
+          </tr>); })}</tbody>
+      </table>
+    </div>
+    <h4 class="rd-h4">{copy.sensH4}</h4>
+    <p class="roadmap-p">{copy.sensP}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.sensRegion} data-rd-sensitivity="true">
+      <table>
+        <thead><tr><th scope="col">{copy.colMethod}</th><th scope="col">{copy.colProtocol}</th><th scope="col">{copy.colArm}</th><th scope="col">{copy.colCertified}</th><th scope="col">{copy.colOver}</th></tr></thead>
+        <tbody>{[...r.robustness.matched_model_holdout.rows, ...r.robustness.map_sensitivity.rows].map(s => (
+          <tr>
+            <th scope="row" lang={nameLang(s.method)}>{name(s.method)}</th><td lang="en">{datasetOf(s.protocol)}</td><td>{variantName[s.variant]}</td>
+            <td><span class="metric"><Fig f={f(s.certified_folds, 'count')}/> / <Fig f={f(s.outer_folds, 'count')}/></span></td>
+            {s.certified_folds === 0 ? <td><span class="metric">—</span><span class="interval">{copy.noneCertified}</span></td>
+                                     : <td><span class="metric"><Fig f={f(s.folds_over_target, 'count')}/> / <Fig f={f(s.certified_folds, 'count')}/></span></td>}
+          </tr>))}</tbody>
+      </table>
+    </div>
+    <h4 class="rd-h4">{copy.ljH4}</h4>
+    <p class="roadmap-p">{copy.ljP}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.ljRegion}>
+      <table>
+        <thead><tr><th scope="col">{copy.colProtocol}</th><th scope="col">{copy.colGAurc}</th><th scope="col">{copy.colGErr}</th></tr></thead>
+        <tbody>{r.robustness.l_joint.rows.map(s => { const d1 = s.learned_minus_confidence.aurc, d2 = s.learned_minus_confidence.error_at_80; return (
+          <tr data-rd-ljoint={s.protocol}>
+            <th scope="row" lang="en">{datasetOf(s.protocol)}</th>
+            <td data-diff="c1" data-resolved={String(d1.excludes_zero)}><Fig f={f(d1.mean, 'sgn3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d1.interval_95[0], 'sgn3')}/> {tc.to} <Fig f={f(d1.interval_95[1], 'sgn3')}/></span><span class="verdict" data-resolved={String(d1.excludes_zero)}>{verdict(d1)}</span></td>
+            <td data-diff="c2" data-resolved={String(d2.excludes_zero)}><Fig f={f(d2.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(d2.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(d2.interval_95[1], 'pp1')}/></span><span class="verdict" data-resolved={String(d2.excludes_zero)}>{verdict(d2)}</span></td>
+          </tr>); })}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" id="rd-left-out">{copy.leftOut[0]}<a href={hrefFor('/releases/#hold-bnci2015-001-crossday', locale)}>{copy.leftOut[1]}</a>{copy.leftOut[2]}</p>
+  </details>
+
+  <h3 class="roadmap-h3" id="rd-limits">{copy.limitsH3}</h3>
+  <div class="method-grid-wide">{copy.limits.map(([h, p], i) => <article><h3>{h}</h3><p>{p}</p>{i === 3 && <p><a href={r.literature.find(x => x.id === 'ood-mi')!.url} target="_blank" rel="noreferrer">{copy.oodLink}</a></p>}</article>)}</div>
+  <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+  <div class="citation-list">{[EEGMAT, BETA, MIREST].map(p => (
+    <article><h3 lang="en">{p.rights.name}</h3><p lang="en">{p.rights.attribution}</p><p><a href={p.rights.source} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={p.rights.licenseUrl} target="_blank" rel="noreferrer">{p.rights.license}</a></p></article>))}
+  </div>
+  <h4 class="rd-h4">{copy.litH4}</h4>
+  <ul class="rd-literature">{r.literature.map(x => <li lang="en"><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
+  <p class="citation-note" id="rd-audits">{copy.audit().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
+  <p class="citation-note">{tc.dataSource} <a href="/data/reliable-decisions-update.json" download>reliable-decisions-update.json</a> · {tc.schema} {reliable.schema_version} · {tc.generated} {reliable.generated_at}{tc.period}</p>
+</section>

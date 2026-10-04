@@ -76,6 +76,17 @@
  *   consensus (sleep scoring)    共识分期
  *   derivation (EEG)             导联            a referenced or bipolar pair
  *                                                (C3-M2); a single channel is 通道
+ *   coverage (selective)         覆盖率          the share of trials accepted
+ *   error among accepted         被接受试次中的错误率
+ *   reject option                拒识选项        "learned reject option" 可学习的拒识选项
+ *   calibrated confidence        校准后的置信度
+ *   temperature scaling          温度缩放        a personal temperature: 个人温度参数
+ *   certified selective risk     经认证的选择性风险 / 经认证的风险
+ *   recalibration                重新校准
+ *   difference resolved          可以认定有差异  "no difference resolved": 不能认定有差异
+ *   unstable (< 10 accepted)     不稳定
+ *   outer fold                   外层折
+ *   crude (ten-person protocol)  粗略
  *   institutions                 Chinese institutions by their standard Chinese
  *                                names (清华大学, 天津大学, 燕山大学); others as
  *                                they name themselves
@@ -772,8 +783,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'EEGMAT, 36 people · three update rules · next day: held' },
     'when-not-to-act': { kicker: 'Abstention · Jev-style', title: 'When not to act',
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
-      summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together — and a Jev-style research plan for when to act, wait or recalibrate.',
-      detail: 'Idle, 4-person pilot · non-control, 20 people · research plan' },
+      summary: 'A decoder that never acts never fires by mistake. Command detection and false activation, read together; when a decoder should decline to decide, measured on two protocols; and the Jev-style research plan that measurement opens.',
+      detail: 'Idle, 4-person pilot · non-control, 20 people · reliable decisions, 36 and 70 people' },
     // Since 2026-10-03 (owner decision): Dreem, two cohorts kept apart.
     'sleep-staging': { kicker: 'Sleep staging · simple baselines', title: 'Sleep-stage balance',
       question: 'Why can a sleep stager be right most of the time and still miss whole stages?',
@@ -815,8 +826,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'EEGMAT，36 名被试 · 三种更新方式 · 次日：暂缓' },
     'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
       question: '没有人下指令时，EEG 解码器误触发有多频繁？',
-      summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读——并给出一个 Jev-style（一次编码、回答多个问题）研究计划：何时该执行、该等待、该重新校准。',
-      detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 研究计划' },
+      summary: '从不执行的解码器，也就从不误触发。把指令检出与误触发放在一起读；在两个协议上测量解码器什么时候该拒绝作出决定；以及这项测量所开启的 Jev-style（一次编码、回答多个问题）研究计划。',
+      detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 可靠的决策，36 与 70 名被试' },
     'sleep-staging': { kicker: '睡眠分期 · 简单基线', title: '睡眠分期的失衡',
       question: '为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？',
       summary: '25 名健康被试与 55 名睡眠呼吸暂停患者，两个简单基线，作为两项独立实验：准确率与平衡准确率并排，以及分期器从未预测过的那一期。',
