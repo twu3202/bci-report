@@ -1,0 +1,43 @@
+{
+  "status": "pass",
+  "release_id": "reliable-decisions-update-20261004",
+  "export_sha256": "4eabbd5ffd738814505695e2b2bfc5cd7e415e21dad315453461780af3f711b6",
+  "manifest_sha256": "9b55306dd10ce90a4c2c0b56ace17689040733f83a830a0da85080bb36881be6",
+  "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
+  "included": [
+    "reliable-decisions"
+  ],
+  "inputs": [
+    "eegmat",
+    "beta",
+    "ds003810"
+  ],
+  "status_only": [],
+  "holds": [],
+  "checks": [
+    "pinned handoff, release candidate, both aggregates, protocol, superseded freeze and both stage-0 audits",
+    "every {source, value} block of the release candidate re-resolves to its aggregate (1120 references)",
+    "the candidate names the pinned aggregates, protocol, superseded freeze, stage-0 audits and frozen thresholds; both aggregates name the same protocol and run",
+    "both stage-0 audits passed; the independent primary audit failed only its documentation check; the independent secondary audit passed all fifteen; the handoff records both hashes",
+    "every full-coverage balanced accuracy equals the site value (core matrix, or the adaptation release's seed-20260922 mean) and the stage-0 audit's reading of it",
+    "coverage is accepted / n; nothing accepted gives a null error, never zero; fewer than 10 accepted is flagged unstable; an error is a whole count of accepted trials",
+    "every interval holds its point; every verdict follows from its interval; every contrast equals the difference of the levels it compares",
+    "certified + uncertified folds is every fold; nothing accepted exactly when nothing is certified; folds over target never exceed folds certified",
+    "labels per new person: 10 and 20 on EEGMAT, 40 on BETA; scored trials are what remains after the prefix",
+    "ds003810 stays without primary contrasts and is published as crude",
+    "per-person percentiles and per-fold median temperatures refused by key, fragment and value; idle and BNCI2015-001 refused by key",
+    "the printed headline figures are the ones the pinned handoff states",
+    "no private paths or hosts, file or participant identifiers"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "release candidate bytes: pinned here, and recorded in the handoff",
+      "every candidate figure: equal, at its JSON pointer, to the pinned primary or secondary aggregate",
+      "aggregates, protocol and stage-0 audits: by the hashes the candidate records",
+      "independent audits: by the hashes the candidate and the handoff both record"
+    ],
+    "not_bound": [
+      "the independent audits are not opened here (they carry private storage paths); their pass, and the nature of the one failed check, are taken from the candidate, whose bytes are pinned"
+    ]
+  }
+}

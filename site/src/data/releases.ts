@@ -16,6 +16,12 @@
  */
 export const siteUpdates = [
   {
+    date: '2026-10-04',
+    // Route 1 of the decision-research roadmap, reliable decisions: the release log, the API page and
+    // the home Dataset markup list the batch's file.
+    paths: ['/', '/releases/', '/api/'],
+  },
+  {
     date: '2026-10-03',
     // The large-source batch: Dreem sleep staging got its own question,
     // sleep-staging, and dataset page; OpenBMI broadened calibration-budget to the
@@ -81,7 +87,8 @@ export interface Release {
   id: string;
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
-  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource';
+  payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
+    | 'reliableDecisions';
   files: string[];
   pages: string[];
   summary: Text;
@@ -92,6 +99,23 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
   'semantic-target', 'sleep-scalp'].flatMap(id => [`${id}-results.csv`, `${id}-protocol.json`]);
 
 export const releases: Release[] = [
+  {
+    id: 'reliable-decisions-update-20261004', date: '2026-10-04', payload: 'reliableDecisions',
+    files: ['reliable-decisions-update.json'],
+    pages: ['/topics/when-not-to-act/'],
+    summary: {
+      en: 'Route 1 of the decision-research roadmap, reliable decisions: when a decoder should decline to decide, and what its confidence is worth. The saved test scores of models this site already publishes — spectral ridge, EEGNet and two LaBraM arms on EEGMAT (36 people); standard CCA, CBraMod and EEGNet on BETA (70 people) — rescored under a fixed confidence threshold, a coverage target, a certified selective risk and a learned reject option, with probability quality and a person-specific recalibration whose label cost is counted. No classifier was retrained, so every full-coverage accuracy equals the published one. Every protocol is balanced or uniform by design: these are method comparisons, never deployment error rates, and nothing is ranked where intervals overlap.',
+      zh: '决策研究路线图的第一条路线——可靠的决策：解码器什么时候应当拒绝作出决定，它的置信度又值多少。本站已发布模型保存下来的测试分数——EEGMAT 上的 spectral ridge、EEGNet 与两种 LaBraM 配置（36 名被试），BETA 上的标准 CCA、CBraMod 与 EEGNet（70 名被试）——在固定置信度阈值、覆盖率目标、经认证的选择性风险和可学习的拒识选项四种策略下重新评分，另测概率质量，以及按人重新校准的效果和它所花费的标签。没有重新训练任何分类器，所以全覆盖时的准确率都与已发布的数值相同。每个协议在设计上都是类别平衡或均匀的：这些是方法之间的比较，从来不是部署时的错误率；区间重叠时不排名。',
+    },
+    notes: [
+      { en: 'The certified selective risk certified no outer fold on EEGMAT, so it accepted nothing there: no error rate, not a zero one. On BETA its realised error exceeded a certified fold’s own target in some folds: a nominal guarantee across people, whose failure rate is measured here, not assumed. The learned reject option had a lower error than the model’s own calibrated confidence for no method.',
+        zh: '经认证的选择性风险在 EEGMAT 上没有认证任何一个外层折，所以在那里什么都没有接受：没有错误率，而不是错误率为零。在 BETA 上，有些已认证折的实际错误率超过了该折自己的目标：这是跨被试的名义保证，它失效的频率在这里是测出来的，不是假设的。可学习的拒识选项在任何一种方法上都没有比模型自身校准后的置信度错得更少。' },
+      { en: 'ds003810 (ten people) is shown as crude, in a collapsed robustness panel beside secondary seeds, two sensitivity arms (their risk-certification fold counts only) and an exploratory reject head trained jointly with its classifier. Left out: the idle protocol, whose route-1 window proportions are a different unit from the trial-level idle figures on the same page, and every figure of the BNCI2015-001 arm, whose editorial hold stands.',
+        zh: 'ds003810（10 名被试）标为粗略，放在折叠的稳健性面板里，旁边是其余随机种子、两个敏感性分析（只给风险认证的折数），以及一个与分类器联合训练的探索性拒识头。没有放进来的：空闲协议——第一条路线在它上面得到的是按窗口的比例，与同一页上按试次统计的空闲数字单位不同；以及 BNCI2015-001 分析的全部数字——该数据源的编辑暂缓仍然有效。' },
+      { en: 'Not published: per-trial, per-person and per-fold values, including the release candidate’s person-level percentiles and its median temperature over folds; the accuracies of the matched-holdout, map-sensitivity and jointly trained arms; and the independent audits themselves, pinned by hash in the review manifest because they carry private storage paths. The primary audit’s one failed check is a documentation error, not a computation error, and is stated as such.',
+        zh: '不发布：逐试次、逐人和逐折的数值，包括发布候选文件中按人统计的百分位数，以及各折温度的中位数；匹配留出、映射敏感性与联合训练这几组分析的准确率；以及独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。主审计唯一没有通过的一项是文档错误，不是计算错误，这里如实说明。' },
+    ],
+  },
   {
     id: 'large-source-update-20261003', date: '2026-10-03', payload: 'largeSource',
     files: ['large-source-update.json'],

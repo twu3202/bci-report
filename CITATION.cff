@@ -34,8 +34,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "large-source-update-20261003"
-date-released: "2026-10-03"
+version: "reliable-decisions-update-20261004"
+date-released: "2026-10-04"
 keywords:
   - EEG
   - electroencephalography

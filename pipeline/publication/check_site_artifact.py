@@ -18,6 +18,7 @@ import export_context_update as context
 import export_adaptation_update as adaptation
 import export_extension_update as extension
 import export_large_source_update as large_source
+import export_reliable_decisions_update as reliable_decisions
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -113,6 +114,17 @@ def check(root):
     assert (root/'data/large-source-update.json').read_bytes() == large_source_payload, 'Unreviewed large-source download'
     assert all(p.read_bytes() == large_source_payload for p in large_source.OUTPUTS), 'Large-source source/download drift'
     expected.add('large-source-update.json')
+
+    # And the 2026-10-04 route-1 export (reliable decisions: rejection and probability calibration).
+    reliable_rederived = reliable_decisions.inputs_available()
+    reliable_payload = (reliable_decisions.serialized_export() if reliable_rederived
+                        else (root/'data/reliable-decisions-update.json').read_bytes())
+    reliable_audit = json.loads(reliable_decisions.EXPORT_AUDIT.read_text())
+    assert reliable_audit['status'] == 'pass', 'Reliable-decisions export review did not pass'
+    assert hashlib.sha256(reliable_payload).hexdigest() == reliable_audit['export_sha256'], 'Stale reliable-decisions export audit'
+    assert (root/'data/reliable-decisions-update.json').read_bytes() == reliable_payload, 'Unreviewed reliable-decisions download'
+    assert all(p.read_bytes() == reliable_payload for p in reliable_decisions.OUTPUTS), 'Reliable-decisions source/download drift'
+    expected.add('reliable-decisions-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -155,6 +167,8 @@ def check(root):
                    else 'extension-update payload matched to its audit hash (private inputs not present)'),
                   ('large-source-update payload reproduced from its own manifest and audit' if large_source_rederived
                    else 'large-source-update payload matched to its audit hash (private inputs not present)'),
+                  ('reliable-decisions-update payload reproduced from its own manifest and audit' if reliable_rederived
+                   else 'reliable-decisions-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

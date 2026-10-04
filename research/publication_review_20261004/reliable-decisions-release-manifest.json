@@ -1,0 +1,137 @@
+{
+  "release_id": "reliable-decisions-update-20261004",
+  "reviewed_at": "2026-10-04",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for route 1, reliable decisions (selective classification and probability calibration), of the decision-research roadmap on /topics/when-not-to-act/ (handoff dated 2026-10-04). Its own manifest: it amends no earlier review and adds no classifier, no accuracy ranking and no deployment error rate. Every input is a saved test score of a model the site already publishes, on recordings whose rights were reviewed on 2026-09-20; every full-coverage balanced accuracy equals the published value. The website input is the release candidate only. The aggregates it was built from, the frozen protocol, its superseded first freeze and the two stage-0 audits are pinned by SHA-256 and checked by the export, never copied; the two independent audits stay in the private run root and are bound by the hashes the release candidate and the handoff record. Primary protocols: EEGMAT (arithmetic and rest) and BETA (eight-channel SSVEP). ds003810 (motor imagery and rest) is a crude secondary protocol shown in a collapsed robustness panel. The idle protocol and the BNCI2015-001 arm are left out.",
+  "approval": {
+    "date": "2026-10-04",
+    "decision": "aggregate_preview",
+    "basis": "Owner approval on 2026-10-04: build route 1 locally for review before any deploy, change the decision-research roadmap so route 1 reads as run with results above and routes 2 and 3 stay not run, and change the check-workbench roadmap assertions in the same commit. The release candidate keeps the status it was sealed with, 'pending user approval'; this record is that approval, and the export requires both.",
+    "candidateStatusAtSeal": "pending user approval"
+  },
+  "route": {
+    "id": "reliable-decisions",
+    "runId": "decision-route1-v1/20261004",
+    "handoff": {
+      "path": "research/decision_route1_20261004/Route 1 Reliable Decisions Website Handoff.md",
+      "sha256": "d9c2ee5ff68b087ee243ec96be76665e0874c2340a5383bbad02fae0810b961c"
+    },
+    "releaseCandidate": {
+      "path": "research/decision_route1_20261004/route1-website-release-candidate.json",
+      "sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da"
+    },
+    "aggregatePrimary": {
+      "path": "research/decision_route1_20261004/aggregate-primary.json",
+      "sha256": "4f2acbe0633d9bbc840ad6b8e0ad3d76c81a0e65d7d3b6b2a2c4725af4c5c623"
+    },
+    "aggregateSecondary": {
+      "path": "research/decision_route1_20261004/aggregate-secondary.json",
+      "sha256": "37eac5ae02ba07d560ad886751ae03aa4e15bf61e5cbe3af41e164e03ddf9a14"
+    },
+    "protocol": {
+      "path": "research/decision_route1_20261004/protocol.json",
+      "sha256": "bfdfa0f6d2d6038b72f05958ae96ba0fdf8cbc9de2f9b41f894f62de798f1e3f"
+    },
+    "supersededProtocol": {
+      "path": "research/decision_route1_20261004/protocol.superseded-78dd2153ab97.json",
+      "sha256": "78dd2153ab97df2ae33f852bd9d98551c2eae8f0af6e65140761381e2f75e8a7"
+    },
+    "stage0Audit": {
+      "path": "research/decision_route1_20261004/audit-stage0.json",
+      "sha256": "adbc16317eefe8df9555a6a9bda691cc44fa3dc78007a5cb1991559d5c30178b"
+    },
+    "stage0SecondaryAudit": {
+      "path": "research/decision_route1_20261004/audit-stage0-secondary.json",
+      "sha256": "9fcf48e7c908f04eff9d4ff9ad84d2a290e3ede3d295709de81e381f1139ddf4"
+    },
+    "independentAudits": {
+      "note": "In the private run root; they carry private storage paths. Bound by these hashes, which the release candidate and the handoff both record; not opened here.",
+      "primary": "e49d34629297f48de7476a98912ead7a4c021ab6e9e97057e2c8c51869268bf9",
+      "secondary": "1dd7f74c473aea7ad2286f5c0aca7567c8c46b7c1e42874f25ecf5eb97a4d9db"
+    },
+    "verification": [
+      "Every {source, value} block of the release candidate re-resolves, by its JSON pointer, to the same value in the pinned primary or secondary aggregate (dict values as key subsets).",
+      "The release candidate names the two aggregates, the protocol, its superseded freeze and both stage-0 audits by the hashes pinned here; both aggregates name the same protocol and run; the primary aggregate names the primary frozen thresholds the candidate records.",
+      "Both stage-0 audits passed against that protocol. The independent primary audit passed checks 1 to 11 (computation and freeze integrity); check 12 failed on a documentation error, not a computation error, and is published as such. The independent secondary audit passed all fifteen checks.",
+      "Every full-coverage balanced accuracy equals the value the site publishes: the core matrix for spectral ridge, EEGNet, CCA and CBraMod, and the 2026-10-01 adaptation release's seed-20260922 means for the two LaBraM arms."
+    ]
+  },
+  "sources": [
+    {
+      "id": "eegmat",
+      "protocol": "arithmetic-rest",
+      "coreTrack": "arithmetic-rest",
+      "role": "primary",
+      "decision": "aggregate_preview",
+      "name": "EEGMAT",
+      "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds)",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: pooled coverage and selective error, probability-quality levels and paired contrasts with whole-person bootstrap intervals, and counts of people (with zero accepted windows, with a degenerate personal temperature) out of 36. No per-person, per-fold or percentile value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ]
+    },
+    {
+      "id": "beta",
+      "protocol": "beta-8ch",
+      "coreTrack": "beta-8ch",
+      "role": "primary",
+      "decision": "aggregate_preview",
+      "name": "BETA",
+      "task": "40-target SSVEP speller, eight posterior electrodes, new people (participant-disjoint folds)",
+      "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+      "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: pooled coverage and selective error, probability-quality levels and paired contrasts with whole-person bootstrap intervals, counts of people out of 70 and counts of outer folds out of 7. No per-person, per-fold or percentile value.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "https://doi.org/10.3389/fnins.2020.00627"
+      ]
+    },
+    {
+      "id": "ds003810",
+      "protocol": "mi-rest",
+      "coreTrack": "mi-rest",
+      "role": "secondary, crude",
+      "decision": "aggregate_preview",
+      "name": "ds003810",
+      "task": "Rest versus right-hand motor imagery, new people (participant-disjoint folds); ten people, so a crude secondary protocol with no primary contrast",
+      "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+      "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+      "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced. Reused unchanged from the 2026-09-20 review of the same recordings. Published here, in a panel labelled crude: pooled coverage under the fixed threshold with how many of the ten people had nothing accepted, and the learned-reject contrasts with whole-person bootstrap intervals. Two people per test fold, so no per-fold block and no person-level spread.",
+      "reviewedAt": "2026-10-04",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+      ]
+    }
+  ],
+  "notPublished": [
+    "Per-trial probabilities, selector outputs, thresholds and temperatures, per-person and per-fold metrics of any kind.",
+    "The person-level 10th, 50th and 90th percentiles the release candidate carries for EEGMAT and BETA. As with the 2026-10-03 OpenBMI percentiles, an order statistic over a cohort is one or two people's value; how many people had nothing accepted is published, which people is not.",
+    "The median population temperature over outer folds. With five or seven folds a median is one fold's value. Only the count of degenerate temperatures is published.",
+    "The idle protocol (ds005342): its route-1 figures are per-window proportions at each decision time, a different unit from the trial-level idle figures already on the same page, for four people without intervals. Left out, as the handoff recommends.",
+    "Every figure of the BNCI2015-001 cross-day label-budget arm: that source's editorial hold, recorded on 2026-10-01, stands.",
+    "Matched-model holdout and map-sensitivity accuracies, coverages and errors, and the L-joint arm's own accuracy: different models or maps, never mixed with site accuracies. Only the matched and map arms' risk-certification fold counts and the L-joint within-model contrasts are published.",
+    "Secondary seeds and ensembles on ds003810, and every ds003810 figure other than the fixed-threshold coverage and the learned-reject contrasts.",
+    "Reliability-diagram bins, per-class acceptance spreads, equal-width ECE, raw Brier, Brier decompositions, S-margin and L operating points, and the full risk-coverage curves: full-sample points without intervals, or quantities the pages do not use. Four test-coverage points per ranking are published, as point estimates, with an interval only at 80%.",
+    "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
+    "Runtime, wall time, platform and package versions.",
+    "The protocol, its superseded freeze, the two aggregates, the two stage-0 audits and the two independent audits: pinned by SHA-256 and checked, never copied, because they carry private storage paths.",
+    "A planned arm on two further sources that was deferred before any scoring because required fields were missing; nothing from it was read or scored."
+  ],
+  "holds": []
+}

@@ -1,0 +1,2957 @@
+{
+  "schema_version": "bci-report-reliable-decisions-update-v1",
+  "release_id": "reliable-decisions-update-20261004",
+  "generated_at": "2026-10-04",
+  "status": "aggregate_preview",
+  "metric_units": "coverage, selective error, balanced accuracy, AURC and expected calibration error (ECE, 15 equal-mass bins) are proportions in [0,1]; NLL is in nats per trial; the Brier score is the multi-class sum of squares; differences are differences of those quantities; counts of people, folds and trials are whole numbers; null means not defined, never zero",
+  "scope": "Route 1 of the decision-research roadmap: selective classification and probability calibration on saved test scores of models this site already publishes. Every protocol is balanced or uniform by design, so every figure compares methods; none is a deployment error rate. No classifier was retrained, nothing extends the eight-protocol matrix, and nothing is ranked where intervals overlap.",
+  "results": {
+    "reliable-decisions": {
+      "id": "reliable-decisions",
+      "title": "Reliable decisions: when a decoder should decline to decide, and what its confidence is worth",
+      "run_id": "decision-route1-v1/20261004",
+      "questions": {
+        "Q1": "Does a threshold fixed in advance give comparable coverage and error across methods and people? (C3)",
+        "Q2": "Holding the classifier fixed, does a learned reject option reject errors better than the calibrated confidence? (C1, C2)",
+        "Q3": "Does a selective error level certified on other people's calibration data hold on new people? (C6)",
+        "Q4": "On EEGMAT, does LoRA adaptation of LaBraM change probability quality compared with the frozen arm of the same recipe? (C4)",
+        "Q5": "What does person-specific recalibration change, and how many of the new person's labels does it cost? (C5)"
+      },
+      "design": {
+        "inputs": "The saved test scores of models this site already publishes, on the same people and outer folds. No outer-test score was recomputed and no classifier was retrained; temperature scaling keeps the predicted label, so every full-coverage balanced accuracy equals the published one.",
+        "calibration_data": "Participant-disjoint inner out-of-fold scores. In each outer fold the training people form four inner groups, and each group is scored by a model trained on the other three. No test person is in any calibration set. Inner models see about three quarters of the training people, so they may be less confident than the full model whose scores are tested; this approximation is part of every calibrated figure.",
+        "policies": {
+          "fixed_cutoff": "F: accept a trial when its calibrated top-class probability is at least 0.8 (temperature scaling fitted on the calibration scores).",
+          "coverage_target": "S-cov: accept the most confident trials, with the cut-off set from calibration quantiles so that 80% of trials should be accepted.",
+          "risk_certification": "S-risk: selection with guaranteed risk (SGR, delta 0.05) on the calibration scores, certifying a selective error no higher than r*, here the relative target: half the calibration error. A fold where nothing can be certified accepts nothing.",
+          "learned_reject": "L: an L2 logistic selector on the raw top-1 and top-2 scores and their margin, plus 16 principal components of a model-independent spectral descriptor (C = 1, untuned), trained on the calibration scores to predict which trials the classifier gets wrong.",
+          "ranking": "S ranks trials by calibrated top-class probability, L by the selector. Error at a test coverage takes the most confident share of the test trials under that ranking, so it measures the ranking alone.",
+          "recalibration": "R0: the population temperature, no label from the new person. R1: a personal temperature fitted on a labelled prefix of the new person's own trials. R-unl: the population temperature, with only the coverage cut-off re-set from the same prefix, unlabelled. All three are scored on the same remaining trials."
+        },
+        "uncertainty": "Paired participant-cluster bootstrap over the test people of a protocol: 2,000 resamples, seed 20261002, 95% percentile intervals, the same resampled people for every method, policy and arm. No multiplicity correction.",
+        "wording_rule": "A contrast is called a difference only when its paired 95% interval excludes 0; otherwise \"no difference resolved\". No ranking where intervals overlap. Descriptive levels are never called differences.",
+        "unstable_below_accepted": 10,
+        "zero_accepted": "A policy that accepts nothing has no error rate: null, never zero.",
+        "freeze": "The protocol was frozen and amended once (A1) before any stage-1 computation. Thresholds, temperatures and selectors were written and hashed before scoring; outer-test labels were masked during stage 1; nothing was selected by test results; degenerate fits were flagged and kept."
+      },
+      "protocol_amendment": "A1 (2026-10-04, after stage 0, before any stage-1 fit): wording rule restricted to genuine differences, C3 pairwise differences added, person percentiles need >= 20 people with a defined value",
+      "frozen_thresholds_sha256": {
+        "primary": "c139bed63a4f13324357aa8a868bec4d21cdfeb592edc30644ce414d1eb2954e",
+        "seeds": "f068524e309f36d4f8036cf687c02c33f5f41a5d8995dcd7e83280951db1948a",
+        "matched": "482e84c14027ff56a2edc59b98b6339e6262b24ff72064d81a9d26b6487a552a",
+        "mapsens": "8f41e00338d863be208d6784bff7ee5f8fab407b5eec9de53baec9b2d255ba7d",
+        "ljoint": "289baaacab63db075ee5227b8cec9c70ae513394c1a50fc11b3d1b5cc1119e6a"
+      },
+      "protocols": {
+        "arithmetic-rest": {
+          "protocol": "arithmetic-rest",
+          "dataset": "EEGMAT",
+          "role": "primary",
+          "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds)",
+          "people": 36,
+          "outer_folds": 5,
+          "classes": 2,
+          "test_items": 2160,
+          "unit": "windows",
+          "boundary": "Balanced by design. Error rates describe a 1:1 mix and are a method comparison, not a deployment rate. Class equals recording, so recording-level differences are part of what any model or selector can use.",
+          "methods": [
+            {
+              "id": "spectral-ridge",
+              "label": "Spectral ridge",
+              "seed": "deterministic",
+              "balanced_accuracy": 0.5675925925925925,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "arithmetic-rest",
+                "row": "Spectral ridge"
+              },
+              "error_accepting_everything": 0.4324074074074074,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 2160,
+                "accepted": 3,
+                "coverage": 0.001388888888888889,
+                "coverage_interval_95": [
+                  0.0,
+                  0.002789351851851789
+                ],
+                "selective_error": 0.0,
+                "accepted_wrong": 0,
+                "unstable": true,
+                "selective_error_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "people_with_nothing_accepted": 33
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.3859622755909627,
+                  "interval_95": [
+                    0.34755417287807727,
+                    0.4282013986892903
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.41435185185185186,
+                  "interval_95": [
+                    0.389453125,
+                    0.4392361111111111
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.39537037037037037
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.3994708994708995
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.41435185185185186
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.4202674897119342
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.3990585357451261,
+                  "interval_95": [
+                    0.3585574360051042,
+                    0.4400854826719776
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.41898148148148145,
+                  "interval_95": [
+                    0.3917824074074074,
+                    0.44386574074074076
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.4064814814814815
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.4126984126984127
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.41898148148148145
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.4254115226337449
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 2160,
+                "accepted": 1741,
+                "coverage": 0.8060185185185185,
+                "coverage_interval_95": [
+                  0.7888888888888889,
+                  0.8231481481481482
+                ],
+                "selective_error": 0.41585295807007466,
+                "accepted_wrong": 724,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.39107256954263164,
+                  0.4398887573908249
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.01309626015416343,
+                  "interval_95": [
+                    -0.005716521268260167,
+                    0.029265855266477372
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.004629629629629595,
+                  "interval_95": [
+                    -0.01157407407407407,
+                    0.017361111111111105
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 2160,
+                "accepted": 0,
+                "coverage": 0.0,
+                "coverage_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 36,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted",
+                "absolute_target_0_1": {
+                  "certified_folds": 0,
+                  "folds_over_target": 0
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 0.6793983411582935,
+                    "interval_95": [
+                      0.6680047473297016,
+                      0.6913913888630033
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.03713855458508056,
+                    "interval_95": [
+                      0.03270979944928042,
+                      0.07041676727193066
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.48622749532959547,
+                    "interval_95": [
+                      0.475396928720994,
+                      0.4977324945426198
+                    ]
+                  }
+                },
+                "raw": null,
+                "raw_status": "not applicable: this score type has no raw probability",
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "k5",
+                  "labelled_prefix": "first 5 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 10,
+                  "scored_trials": 1728,
+                  "people_with_degenerate_personal_temperature": 9,
+                  "nll_change": {
+                    "mean": 0.054004628692510215,
+                    "interval_95": [
+                      0.01742010239054738,
+                      0.10310070028793042
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": 0.05912740541797419,
+                    "interval_95": [
+                      0.005634611102025324,
+                      0.08350207730787283
+                    ],
+                    "excludes_zero": true
+                  },
+                  "aurc_change": {
+                    "mean": 0.006143210729695203,
+                    "interval_95": [
+                      -0.027405805905590025,
+                      0.038703441537744895
+                    ],
+                    "excludes_zero": false
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.1063657407407409,
+                    "interval_95": [
+                      0.04616608796296297,
+                      0.15787037037037044
+                    ],
+                    "excludes_zero": true
+                  }
+                },
+                {
+                  "prefix": "k10",
+                  "labelled_prefix": "first 10 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 20,
+                  "scored_trials": 1368,
+                  "people_with_degenerate_personal_temperature": 9,
+                  "nll_change": {
+                    "mean": 0.022832198812243854,
+                    "interval_95": [
+                      0.003096528069338922,
+                      0.04734862723792359
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": 0.031157868391777054,
+                    "interval_95": [
+                      -0.0055827746829275075,
+                      0.06117789116068169
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": 0.013026950546707106,
+                    "interval_95": [
+                      -0.02198907666409289,
+                      0.048029797193473514
+                    ],
+                    "excludes_zero": false
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.017397660818713523,
+                    "interval_95": [
+                      -0.019740497076023395,
+                      0.05687134502923985
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260919,
+              "balanced_accuracy": 0.6763888888888889,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "arithmetic-rest",
+                "row": "EEGNet"
+              },
+              "error_accepting_everything": 0.3236111111111111,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 2160,
+                "accepted": 126,
+                "coverage": 0.058333333333333334,
+                "coverage_interval_95": [
+                  0.022685185185185187,
+                  0.10601851851851851
+                ],
+                "selective_error": 0.42063492063492064,
+                "accepted_wrong": 53,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.12986411736411735,
+                  0.614068825910931
+                ],
+                "people_with_nothing_accepted": 19
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.2928478838819239,
+                  "interval_95": [
+                    0.21078153735226066,
+                    0.36847193583637594
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.2945601851851852,
+                  "interval_95": [
+                    0.23900462962962962,
+                    0.35013020833333325
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.2712962962962963
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.2857142857142857
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.2945601851851852
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.30761316872427985
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.3092206539912054,
+                  "interval_95": [
+                    0.23794235015239756,
+                    0.37940231644274447
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.3177083333333333,
+                  "interval_95": [
+                    0.26967592592592593,
+                    0.36863425925925924
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.3101851851851852
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.3148148148148148
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.3177083333333333
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.3204732510288066
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 2160,
+                "accepted": 1708,
+                "coverage": 0.7907407407407407,
+                "coverage_interval_95": [
+                  0.7490625000000001,
+                  0.8324189814814814
+                ],
+                "selective_error": 0.29508196721311475,
+                "accepted_wrong": 504,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.23882054255543866,
+                  0.35023855374761986
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.01637277010928151,
+                  "interval_95": [
+                    -0.013671734516977889,
+                    0.05034287054861084
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.02314814814814814,
+                  "interval_95": [
+                    0.006351273148148163,
+                    0.040509259259259245
+                  ],
+                  "excludes_zero": true
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 2160,
+                "accepted": 0,
+                "coverage": 0.0,
+                "coverage_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 36,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted",
+                "absolute_target_0_1": {
+                  "certified_folds": 0,
+                  "folds_over_target": 0
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 0.6482405971750684,
+                    "interval_95": [
+                      0.6125706751936347,
+                      0.6933047171465159
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.09933565799790285,
+                    "interval_95": [
+                      0.05912837433516698,
+                      0.15089601793000684
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.45043112001443586,
+                    "interval_95": [
+                      0.421638395527825,
+                      0.48467248676414937
+                    ]
+                  }
+                },
+                "raw": {
+                  "nll": {
+                    "mean": 0.8736145220263509,
+                    "interval_95": [
+                      0.6842747363076389,
+                      1.1024583138835764
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.13494237777016949,
+                    "interval_95": [
+                      0.08801706155761763,
+                      0.19987721702335026
+                    ]
+                  }
+                },
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "k5",
+                  "labelled_prefix": "first 5 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 10,
+                  "scored_trials": 1728,
+                  "people_with_degenerate_personal_temperature": 8,
+                  "nll_change": {
+                    "mean": 0.33281141612799536,
+                    "interval_95": [
+                      -0.051354674812301125,
+                      0.8807975763943672
+                    ],
+                    "excludes_zero": false
+                  },
+                  "ece_change": {
+                    "mean": -0.03966919034215233,
+                    "interval_95": [
+                      -0.09139180300179396,
+                      0.0244570237380506
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.08646915494717647,
+                    "interval_95": [
+                      -0.15412766230749889,
+                      -0.01372569321087714
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.05844907407407407,
+                    "interval_95": [
+                      -0.010543981481481425,
+                      0.1029079861111111
+                    ],
+                    "excludes_zero": false
+                  }
+                },
+                {
+                  "prefix": "k10",
+                  "labelled_prefix": "first 10 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 20,
+                  "scored_trials": 1368,
+                  "people_with_degenerate_personal_temperature": 5,
+                  "nll_change": {
+                    "mean": 0.02710984040048925,
+                    "interval_95": [
+                      -0.0880305905927976,
+                      0.18481437103490514
+                    ],
+                    "excludes_zero": false
+                  },
+                  "ece_change": {
+                    "mean": -0.05054972071640335,
+                    "interval_95": [
+                      -0.09495920113786528,
+                      0.02489027015814498
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.10422634976989101,
+                    "interval_95": [
+                      -0.1705179222821712,
+                      -0.03029643334403497
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.017397660818713523,
+                    "interval_95": [
+                      -0.03157894736842093,
+                      0.05979897660818717
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "labram-frozen-ce",
+              "label": "LaBraM · head only, encoder frozen",
+              "seed": 20260922,
+              "balanced_accuracy": 0.5689814814814814,
+              "site_value": {
+                "file": "adaptation-update.json",
+                "release": "adaptation-update-20261001",
+                "arm": "frozen",
+                "seed": 20260922
+              },
+              "error_accepting_everything": 0.4310185185185185,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 2160,
+                "accepted": 1,
+                "coverage": 0.000462962962962963,
+                "coverage_interval_95": [
+                  0.0,
+                  0.001388888888888889
+                ],
+                "selective_error": 0.0,
+                "accepted_wrong": 0,
+                "unstable": true,
+                "selective_error_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "people_with_nothing_accepted": 35
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.39585481383585425,
+                  "interval_95": [
+                    0.3505305198782327,
+                    0.4412410945540431
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.42939814814814814,
+                  "interval_95": [
+                    0.3900318287037037,
+                    0.4583333333333333
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.4074074074074074
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.41534391534391535
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.42939814814814814
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.42746913580246915
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.42174730981788183,
+                  "interval_95": [
+                    0.3775438474447184,
+                    0.4657140520083708
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.4357638888888889,
+                  "interval_95": [
+                    0.40159143518518514,
+                    0.46585648148148145
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.4388888888888889
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.43386243386243384
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.4357638888888889
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.4295267489711934
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 2160,
+                "accepted": 1714,
+                "coverage": 0.7935185185185185,
+                "coverage_interval_95": [
+                  0.7768518518518519,
+                  0.8111111111111111
+                ],
+                "selective_error": 0.40840140023337224,
+                "accepted_wrong": 700,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.37427203445453733,
+                  0.44182097200515047
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.025892495982027586,
+                  "interval_95": [
+                    0.005099116260356489,
+                    0.04631021487703595
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": 0.006365740740740755,
+                  "interval_95": [
+                    -0.00520833333333337,
+                    0.02719907407407407
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 2160,
+                "accepted": 0,
+                "coverage": 0.0,
+                "coverage_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 36,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted",
+                "absolute_target_0_1": {
+                  "certified_folds": 0,
+                  "folds_over_target": 0
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 0.6827403546280343,
+                    "interval_95": [
+                      0.6739715424137702,
+                      0.6913947108135734
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.0356809636559365,
+                    "interval_95": [
+                      0.033553352889896415,
+                      0.07211159223207399
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.48975266223813346,
+                    "interval_95": [
+                      0.4811809072824593,
+                      0.4980931773984134
+                    ]
+                  }
+                },
+                "raw": {
+                  "nll": {
+                    "mean": 0.6830659094622187,
+                    "interval_95": [
+                      0.6624625219354083,
+                      0.7031018466401768
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.060873626010293884,
+                    "interval_95": [
+                      0.046139827206315646,
+                      0.08956927497446397
+                    ]
+                  }
+                },
+                "degenerate_population_temperature_folds": 1
+              },
+              "recalibration": [
+                {
+                  "prefix": "k5",
+                  "labelled_prefix": "first 5 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 10,
+                  "scored_trials": 1728,
+                  "people_with_degenerate_personal_temperature": 10,
+                  "nll_change": {
+                    "mean": 0.0473001409474505,
+                    "interval_95": [
+                      0.015504389922021508,
+                      0.08233910038436683
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": 0.05700248645889373,
+                    "interval_95": [
+                      0.012248636256046183,
+                      0.08229628165005211
+                    ],
+                    "excludes_zero": true
+                  },
+                  "aurc_change": {
+                    "mean": -0.016594354761978625,
+                    "interval_95": [
+                      -0.05165144531548488,
+                      0.018230809603183264
+                    ],
+                    "excludes_zero": false
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.0717592592592593,
+                    "interval_95": [
+                      0.021409143518518574,
+                      0.11112557870370367
+                    ],
+                    "excludes_zero": true
+                  }
+                },
+                {
+                  "prefix": "k10",
+                  "labelled_prefix": "first 10 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 20,
+                  "scored_trials": 1368,
+                  "people_with_degenerate_personal_temperature": 10,
+                  "nll_change": {
+                    "mean": -0.0025035661176101565,
+                    "interval_95": [
+                      -0.02006130091897405,
+                      0.019259949321615233
+                    ],
+                    "excludes_zero": false
+                  },
+                  "ece_change": {
+                    "mean": 0.004208888570897774,
+                    "interval_95": [
+                      -0.03278498417420365,
+                      0.032287438234365896
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.028648642847510175,
+                    "interval_95": [
+                      -0.06373872104187402,
+                      0.007931985045177507
+                    ],
+                    "excludes_zero": false
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.027046783625731097,
+                    "interval_95": [
+                      -0.006582602339181248,
+                      0.05995614035087715
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "labram-lora-r4",
+              "label": "LaBraM · LoRA rank 4 + head",
+              "seed": 20260922,
+              "balanced_accuracy": 0.6439814814814815,
+              "site_value": {
+                "file": "adaptation-update.json",
+                "release": "adaptation-update-20261001",
+                "arm": "lora-r4",
+                "seed": 20260922
+              },
+              "error_accepting_everything": 0.3560185185185185,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 2160,
+                "accepted": 44,
+                "coverage": 0.020370370370370372,
+                "coverage_interval_95": [
+                  0.008796296296296297,
+                  0.034722222222222224
+                ],
+                "selective_error": 0.22727272727272727,
+                "accepted_wrong": 10,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.0625,
+                  0.45454545454545453
+                ],
+                "people_with_nothing_accepted": 24
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.3077439669407497,
+                  "interval_95": [
+                    0.24512180967110772,
+                    0.37326111578091076
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.3315972222222222,
+                  "interval_95": [
+                    0.2864583333333333,
+                    0.3744212962962963
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.2953703703703704
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.3187830687830688
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.3315972222222222
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.34002057613168724
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.3228389629434251,
+                  "interval_95": [
+                    0.2667951756146269,
+                    0.37932522506196065
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.3506944444444444,
+                  "interval_95": [
+                    0.30671296296296297,
+                    0.3975839120370369
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 1080,
+                    "selective_error": 0.33055555555555555
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 1512,
+                    "selective_error": 0.34325396825396826
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 1728,
+                    "selective_error": 0.3506944444444444
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 1944,
+                    "selective_error": 0.35288065843621397
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 2160,
+                "accepted": 1761,
+                "coverage": 0.8152777777777778,
+                "coverage_interval_95": [
+                  0.7911921296296297,
+                  0.8393634259259259
+                ],
+                "selective_error": 0.3259511641113004,
+                "accepted_wrong": 574,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.2830714886403497,
+                  0.37157756872132913
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.015094996002675443,
+                  "interval_95": [
+                    -0.011056118330693036,
+                    0.04051655938301632
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.01909722222222221,
+                  "interval_95": [
+                    0.006365740740740753,
+                    0.03530092592592593
+                  ],
+                  "excludes_zero": true
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 2160,
+                "accepted": 0,
+                "coverage": 0.0,
+                "coverage_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 36,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted",
+                "absolute_target_0_1": {
+                  "certified_folds": 0,
+                  "folds_over_target": 0
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 0.6482138735913932,
+                    "interval_95": [
+                      0.6237620337651834,
+                      0.674869770191894
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.0510995013094924,
+                    "interval_95": [
+                      0.03952091498172732,
+                      0.09425071503367187
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.4558167828313766,
+                    "interval_95": [
+                      0.43347206281396444,
+                      0.480835234057274
+                    ]
+                  }
+                },
+                "raw": {
+                  "nll": {
+                    "mean": 0.6470788237682537,
+                    "interval_95": [
+                      0.6071476792322953,
+                      0.691843972683802
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.04344792423764727,
+                    "interval_95": [
+                      0.03776165782429149,
+                      0.08783008027888498
+                    ]
+                  }
+                },
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "k5",
+                  "labelled_prefix": "first 5 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 10,
+                  "scored_trials": 1728,
+                  "people_with_degenerate_personal_temperature": 9,
+                  "nll_change": {
+                    "mean": 0.936780300923611,
+                    "interval_95": [
+                      0.1842867675160213,
+                      1.9239168266524016
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": 0.03645187349772873,
+                    "interval_95": [
+                      -0.008347927442960729,
+                      0.07770872150752922
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.0192516672319748,
+                    "interval_95": [
+                      -0.07472105627444763,
+                      0.03548697469074221
+                    ],
+                    "excludes_zero": false
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.06932870370370381,
+                    "interval_95": [
+                      0.02766203703703718,
+                      0.10475694444444436
+                    ],
+                    "excludes_zero": true
+                  }
+                },
+                {
+                  "prefix": "k10",
+                  "labelled_prefix": "first 10 windows of each recording, then a one-window gap",
+                  "labels_per_new_person": 20,
+                  "scored_trials": 1368,
+                  "people_with_degenerate_personal_temperature": 4,
+                  "nll_change": {
+                    "mean": -0.02186787718657468,
+                    "interval_95": [
+                      -0.05289551775335221,
+                      0.018893044979244315
+                    ],
+                    "excludes_zero": false
+                  },
+                  "ece_change": {
+                    "mean": -0.01961061538372854,
+                    "interval_95": [
+                      -0.04715999973003637,
+                      0.022443468338388315
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.07163789157662598,
+                    "interval_95": [
+                      -0.11751582365470112,
+                      -0.022322904823283158
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.018128654970760327,
+                    "interval_95": [
+                      -0.027192982456140324,
+                      0.053947368421052744
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            }
+          ],
+          "fixed_cutoff_coverage_differences": [
+            {
+              "a": "spectral-ridge",
+              "b": "eegnet",
+              "mean": -0.05694444444444444,
+              "interval_95": [
+                -0.10462962962962963,
+                -0.021296296296296296
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "spectral-ridge",
+              "b": "labram-frozen-ce",
+              "mean": 0.000925925925925926,
+              "interval_95": [
+                0.0,
+                0.0023148148148148147
+              ],
+              "excludes_zero": false
+            },
+            {
+              "a": "spectral-ridge",
+              "b": "labram-lora-r4",
+              "mean": -0.018981481481481485,
+              "interval_95": [
+                -0.03333333333333333,
+                -0.00787037037037037
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "eegnet",
+              "b": "labram-frozen-ce",
+              "mean": 0.05787037037037037,
+              "interval_95": [
+                0.02175925925925926,
+                0.10555555555555556
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "eegnet",
+              "b": "labram-lora-r4",
+              "mean": 0.03796296296296296,
+              "interval_95": [
+                0.004166666666666669,
+                0.08241898148148143
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "labram-frozen-ce",
+              "b": "labram-lora-r4",
+              "mean": -0.01990740740740741,
+              "interval_95": [
+                -0.03425925925925926,
+                -0.008796296296296297
+              ],
+              "excludes_zero": true
+            }
+          ],
+          "common_coverage": {
+            "coverage": 0.000462962962962963,
+            "coverage_interval_95": [
+              0.0,
+              0.001388888888888889
+            ],
+            "accepted": 1,
+            "unstable": true,
+            "verdict": "unstable: fewer than 10 accepted trials at the common coverage, so no verdict"
+          },
+          "rights": {
+            "name": "EEGMAT",
+            "task": "Rest versus serial-subtraction mental arithmetic, new people (participant-disjoint folds)",
+            "source": "https://physionet.org/content/eegmat/1.0.0/",
+            "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+            "license": "Open Data Commons Attribution License 1.0",
+            "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+            "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+            "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: pooled coverage and selective error, probability-quality levels and paired contrasts with whole-person bootstrap intervals, and counts of people (with zero accepted windows, with a degenerate personal temperature) out of 36. No per-person, per-fold or percentile value.",
+            "reviewedAt": "2026-10-04",
+            "reviewBasis": [
+              "https://physionet.org/content/eegmat/1.0.0/",
+              "https://www.mdpi.com/2306-5729/4/1/14",
+              "https://opendatacommons.org/licenses/by/1-0/"
+            ],
+            "coreTrack": "arithmetic-rest"
+          },
+          "lora_minus_head_only": {
+            "nll_calibrated": {
+              "mean": -0.03452648103664113,
+              "interval_95": [
+                -0.0537706382524312,
+                -0.013351788309336173
+              ],
+              "excludes_zero": true
+            },
+            "ece_calibrated": {
+              "mean": 0.0154185376535559,
+              "interval_95": [
+                -0.017454423922905783,
+                0.045011763033680215
+              ],
+              "excludes_zero": false
+            },
+            "nll_raw": {
+              "mean": -0.035987085693965026,
+              "interval_95": [
+                -0.06887977675932912,
+                -0.0010485174811663805
+              ],
+              "excludes_zero": true
+            },
+            "ece_raw": {
+              "mean": -0.017425701772646615,
+              "interval_95": [
+                -0.03128731807181301,
+                0.018860797910889595
+              ],
+              "excludes_zero": false
+            },
+            "head_only_degenerate_population_temperature_folds": 1
+          }
+        },
+        "beta-8ch": {
+          "protocol": "beta-8ch",
+          "dataset": "BETA",
+          "role": "primary",
+          "task": "40-target SSVEP speller, eight posterior electrodes, new people (participant-disjoint folds)",
+          "people": 70,
+          "outer_folds": 7,
+          "classes": 40,
+          "test_items": 11200,
+          "unit": "trials",
+          "boundary": "Uniform target prior by design; cue-paced lab spelling with no idle state, so no false-activation figure of any kind.",
+          "methods": [
+            {
+              "id": "cca",
+              "label": "Standard CCA",
+              "seed": "deterministic",
+              "balanced_accuracy": 0.6311607142857145,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "beta-8ch",
+                "row": "Standard CCA"
+              },
+              "error_accepting_everything": 0.3688392857142857,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 11200,
+                "accepted": 3176,
+                "coverage": 0.2835714285714286,
+                "coverage_interval_95": [
+                  0.22919642857142858,
+                  0.3421473214285714
+                ],
+                "selective_error": 0.042821158690176324,
+                "accepted_wrong": 136,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.027231064910501146,
+                  0.06804086096082615
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.14482715008528216,
+                  "interval_95": [
+                    0.10458777082378845,
+                    0.193858146408428
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.2715401785714286,
+                  "interval_95": [
+                    0.2078125,
+                    0.3393052455357142
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.12428571428571429
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.22244897959183674
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.2715401785714286
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.31954365079365077
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.14649072165167532,
+                  "interval_95": [
+                    0.10701942177688589,
+                    0.195765432698362
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.27421875,
+                  "interval_95": [
+                    0.21102678571428574,
+                    0.3449860491071428
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.12375
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.225
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.27421875
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.32569444444444445
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 11200,
+                "accepted": 8925,
+                "coverage": 0.796875,
+                "coverage_interval_95": [
+                  0.7502633928571428,
+                  0.8397321428571428
+                ],
+                "selective_error": 0.2696918767507003,
+                "accepted_wrong": 2407,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.22020492020231347,
+                  0.32472417075432947
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.0016635715663931572,
+                  "interval_95": [
+                    -0.003950784493796193,
+                    0.007646631646671316
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.002678571428571419,
+                  "interval_95": [
+                    -0.0030133928571428603,
+                    0.010270647321428576
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 7,
+                "certified_folds": 7,
+                "folds_over_target": 4,
+                "n": 11200,
+                "accepted": 6751,
+                "coverage": 0.6027678571428572,
+                "coverage_interval_95": [
+                  0.5407142857142857,
+                  0.6621517857142857
+                ],
+                "selective_error": 0.1700488816471634,
+                "accepted_wrong": 1148,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.1331484888259495,
+                  0.21630322666114976
+                ],
+                "people_with_nothing_accepted": 0,
+                "target_weighted": 0.18529501802202145,
+                "error_minus_target": {
+                  "mean": -0.015246136374858055,
+                  "interval_95": [
+                    -0.05285637593813814,
+                    0.03208409384288631
+                  ],
+                  "excludes_zero": false
+                },
+                "absolute_target_0_1": {
+                  "certified_folds": 7,
+                  "folds_over_target": 4
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 1.4757097212908177,
+                    "interval_95": [
+                      1.2469457278145062,
+                      1.7164969426892036
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.04987286820018605,
+                    "interval_95": [
+                      0.02762719995939814,
+                      0.07909823509393926
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.5038232382822403,
+                    "interval_95": [
+                      0.4365635679737907,
+                      0.5715674559529805
+                    ]
+                  }
+                },
+                "raw": null,
+                "raw_status": "not applicable: this score type has no raw probability",
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "prefix",
+                  "labelled_prefix": "block 1 (one trial per target)",
+                  "labels_per_new_person": 40,
+                  "scored_trials": 8400,
+                  "people_with_degenerate_personal_temperature": 1,
+                  "nll_change": {
+                    "mean": -0.06470931628778231,
+                    "interval_95": [
+                      -0.1031803554205098,
+                      -0.03202377849738352
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": -0.019396492752653774,
+                    "interval_95": [
+                      -0.0482549850294077,
+                      0.009351086818959235
+                    ],
+                    "excludes_zero": false
+                  },
+                  "aurc_change": {
+                    "mean": -0.01215312520616868,
+                    "interval_95": [
+                      -0.021813484391757954,
+                      -0.004623612937094204
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.010000000000000009,
+                    "interval_95": [
+                      -0.039532738095238086,
+                      0.021550595238095323
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "cbramod",
+              "label": "CBraMod",
+              "seed": "deterministic",
+              "balanced_accuracy": 0.33669642857142856,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "beta-8ch",
+                "row": "CBraMod"
+              },
+              "error_accepting_everything": 0.6633035714285714,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 11200,
+                "accepted": 165,
+                "coverage": 0.014732142857142857,
+                "coverage_interval_95": [
+                  0.008214285714285714,
+                  0.022591517857142845
+                ],
+                "selective_error": 0.22424242424242424,
+                "accepted_wrong": 37,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.05881398013750955,
+                  0.45124854819976756
+                ],
+                "people_with_nothing_accepted": 38
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.4967077494031653,
+                  "interval_95": [
+                    0.43027839287326025,
+                    0.5660052613422696
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.6167410714285714,
+                  "interval_95": [
+                    0.5684151785714285,
+                    0.6650669642857143
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.5321428571428571
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.5910714285714286
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.6167410714285714
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.6390873015873015
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.473027449919452,
+                  "interval_95": [
+                    0.41273734243614707,
+                    0.5384450249482479
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.61640625,
+                  "interval_95": [
+                    0.5707561383928572,
+                    0.6635072544642857
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.5189285714285714
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.5894132653061225
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.61640625
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.6412698412698413
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 11200,
+                "accepted": 8552,
+                "coverage": 0.7635714285714286,
+                "coverage_interval_95": [
+                  0.7275848214285714,
+                  0.7997366071428571
+                ],
+                "selective_error": 0.6073433115060805,
+                "accepted_wrong": 5194,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.5589613455533207,
+                  0.6569684569987627
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.023680299483713307,
+                  "interval_95": [
+                    -0.03858429383675112,
+                    -0.006917517475515379
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": -0.00033482142857133024,
+                  "interval_95": [
+                    -0.008147321428571441,
+                    0.006138392857142794
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 7,
+                "certified_folds": 4,
+                "folds_over_target": 2,
+                "n": 11200,
+                "accepted": 522,
+                "coverage": 0.046607142857142854,
+                "coverage_interval_95": [
+                  0.029372767857142854,
+                  0.06598214285714285
+                ],
+                "selective_error": 0.3314176245210728,
+                "accepted_wrong": 173,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.1868131522695838,
+                  0.48467732815166653
+                ],
+                "people_with_nothing_accepted": 35,
+                "target_weighted": 0.34911099137931034,
+                "error_minus_target": {
+                  "mean": -0.017693366858237525,
+                  "interval_95": [
+                    -0.1620244267100465,
+                    0.13573756425142564
+                  ],
+                  "excludes_zero": false
+                },
+                "absolute_target_0_1": {
+                  "certified_folds": 0,
+                  "folds_over_target": 0
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 2.808734750516383,
+                    "interval_95": [
+                      2.638170822208719,
+                      3.000626883839167
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.11874725432335453,
+                    "interval_95": [
+                      0.0841536020797395,
+                      0.15424223588373798
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.8433058328983984,
+                    "interval_95": [
+                      0.8150681409184756,
+                      0.8707997758735074
+                    ]
+                  }
+                },
+                "raw": null,
+                "raw_status": "not applicable: this score type has no raw probability",
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "prefix",
+                  "labelled_prefix": "block 1 (one trial per target)",
+                  "labels_per_new_person": 40,
+                  "scored_trials": 8400,
+                  "people_with_degenerate_personal_temperature": 0,
+                  "nll_change": {
+                    "mean": -0.11312774601773201,
+                    "interval_95": [
+                      -0.17071212807769706,
+                      -0.04836200076697307
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": -0.08266103174244269,
+                    "interval_95": [
+                      -0.12014333555804599,
+                      -0.04193842810931014
+                    ],
+                    "excludes_zero": true
+                  },
+                  "aurc_change": {
+                    "mean": -0.052275649464286145,
+                    "interval_95": [
+                      -0.06954040683479365,
+                      -0.03120563456929638
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": -0.002738095238095206,
+                    "interval_95": [
+                      -0.04380952380952374,
+                      0.03761904761904766
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260912,
+              "balanced_accuracy": 0.5575892857142857,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "beta-8ch",
+                "row": "EEGNet"
+              },
+              "error_accepting_everything": 0.44241071428571427,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 11200,
+                "accepted": 1863,
+                "coverage": 0.16633928571428572,
+                "coverage_interval_95": [
+                  0.12517633928571428,
+                  0.2102723214285714
+                ],
+                "selective_error": 0.05475040257648953,
+                "accepted_wrong": 102,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.02760480856582132,
+                  0.09091577540106949
+                ],
+                "people_with_nothing_accepted": 10
+              },
+              "ranking_S": {
+                "aurc": {
+                  "mean": 0.20779814814857092,
+                  "interval_95": [
+                    0.16138196954625364,
+                    0.26368972632653687
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.34776785714285713,
+                  "interval_95": [
+                    0.2873828125,
+                    0.41351562499999994
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.18839285714285714
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.2979591836734694
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.34776785714285713
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.3962301587301587
+                  }
+                ]
+              },
+              "ranking_L": {
+                "aurc": {
+                  "mean": 0.20099434700824695,
+                  "interval_95": [
+                    0.15385773351958965,
+                    0.2573737454819109
+                  ]
+                },
+                "error_at_80": {
+                  "mean": 0.35591517857142857,
+                  "interval_95": [
+                    0.2924107142857143,
+                    0.42388671875
+                  ]
+                },
+                "error_at_test_coverage": [
+                  {
+                    "coverage": 0.5,
+                    "accepted": 5600,
+                    "selective_error": 0.18232142857142858
+                  },
+                  {
+                    "coverage": 0.7,
+                    "accepted": 7840,
+                    "selective_error": 0.30051020408163265
+                  },
+                  {
+                    "coverage": 0.8,
+                    "accepted": 8960,
+                    "selective_error": 0.35591517857142857
+                  },
+                  {
+                    "coverage": 0.9,
+                    "accepted": 10080,
+                    "selective_error": 0.40228174603174605
+                  }
+                ]
+              },
+              "coverage_target": {
+                "target": 0.8,
+                "n": 11200,
+                "accepted": 9016,
+                "coverage": 0.805,
+                "coverage_interval_95": [
+                  0.7561517857142858,
+                  0.8507209821428572
+                ],
+                "selective_error": 0.3494897959183674,
+                "accepted_wrong": 3151,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.3015397195117243,
+                  0.4021539859351375
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.006803801140323973,
+                  "interval_95": [
+                    -0.014356309434486741,
+                    0.0010024631603747344
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.008147321428571441,
+                  "interval_95": [
+                    0.00022321428571425717,
+                    0.015736607142857184
+                  ],
+                  "excludes_zero": true
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 7,
+                "certified_folds": 7,
+                "folds_over_target": 2,
+                "n": 11200,
+                "accepted": 5605,
+                "coverage": 0.5004464285714286,
+                "coverage_interval_95": [
+                  0.43785491071428567,
+                  0.5623214285714285
+                ],
+                "selective_error": 0.18893844781445138,
+                "accepted_wrong": 1059,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.1485858516294317,
+                  0.2372509291265225
+                ],
+                "people_with_nothing_accepted": 0,
+                "target_weighted": 0.23316628568242642,
+                "error_minus_target": {
+                  "mean": -0.044227837867975045,
+                  "interval_95": [
+                    -0.08511779414192282,
+                    0.004583083104570343
+                  ],
+                  "excludes_zero": false
+                },
+                "absolute_target_0_1": {
+                  "certified_folds": 7,
+                  "folds_over_target": 1
+                }
+              },
+              "probability_quality": {
+                "calibrated": {
+                  "nll": {
+                    "mean": 1.9118332130746463,
+                    "interval_95": [
+                      1.6704030556008231,
+                      2.1767612502708444
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.13593597101281285,
+                    "interval_95": [
+                      0.10309878775052317,
+                      0.16805415976095756
+                    ]
+                  },
+                  "brier": {
+                    "mean": 0.6065144512791177,
+                    "interval_95": [
+                      0.553638726508885,
+                      0.6631876712489496
+                    ]
+                  }
+                },
+                "raw": {
+                  "nll": {
+                    "mean": 1.9074558543667657,
+                    "interval_95": [
+                      1.6645290900772536,
+                      2.1707285560408396
+                    ]
+                  },
+                  "ece": {
+                    "mean": 0.13630494475694074,
+                    "interval_95": [
+                      0.10316586213783643,
+                      0.16760050943409244
+                    ]
+                  }
+                },
+                "degenerate_population_temperature_folds": 0
+              },
+              "recalibration": [
+                {
+                  "prefix": "prefix",
+                  "labelled_prefix": "block 1 (one trial per target)",
+                  "labels_per_new_person": 40,
+                  "scored_trials": 8400,
+                  "people_with_degenerate_personal_temperature": 0,
+                  "nll_change": {
+                    "mean": -0.07970298830981637,
+                    "interval_95": [
+                      -0.13494079479834226,
+                      -0.020321641459927365
+                    ],
+                    "excludes_zero": true
+                  },
+                  "ece_change": {
+                    "mean": -0.08930702949681807,
+                    "interval_95": [
+                      -0.12468210695369117,
+                      -0.048086378997367236
+                    ],
+                    "excludes_zero": true
+                  },
+                  "aurc_change": {
+                    "mean": -0.015628345253850984,
+                    "interval_95": [
+                      -0.02703253785443754,
+                      -0.003570222849991169
+                    ],
+                    "excludes_zero": true
+                  },
+                  "unlabelled_cutoff_gap_change": {
+                    "mean": 0.0257142857142858,
+                    "interval_95": [
+                      -0.029172619047618944,
+                      0.03952380952380952
+                    ],
+                    "excludes_zero": false
+                  }
+                }
+              ]
+            }
+          ],
+          "fixed_cutoff_coverage_differences": [
+            {
+              "a": "cca",
+              "b": "cbramod",
+              "mean": 0.2688392857142857,
+              "interval_95": [
+                0.21686830357142856,
+                0.32402008928571424
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "cca",
+              "b": "eegnet",
+              "mean": 0.11723214285714287,
+              "interval_95": [
+                0.07767633928571425,
+                0.16205357142857144
+              ],
+              "excludes_zero": true
+            },
+            {
+              "a": "cbramod",
+              "b": "eegnet",
+              "mean": -0.15160714285714286,
+              "interval_95": [
+                -0.19161607142857143,
+                -0.11543750000000005
+              ],
+              "excludes_zero": true
+            }
+          ],
+          "common_coverage": {
+            "coverage": 0.014732142857142857,
+            "coverage_interval_95": [
+              0.008214285714285714,
+              0.022591517857142845
+            ],
+            "accepted": 165,
+            "unstable": false,
+            "errors": [
+              {
+                "id": "cca",
+                "mean": 0.006060606060606061,
+                "interval_95": [
+                  0.0,
+                  0.02255745295441994
+                ]
+              },
+              {
+                "id": "cbramod",
+                "mean": 0.22424242424242424,
+                "interval_95": [
+                  0.05881398013750955,
+                  0.45124854819976756
+                ]
+              },
+              {
+                "id": "eegnet",
+                "mean": 0.08484848484848485,
+                "interval_95": [
+                  0.0,
+                  0.28499259807549954
+                ]
+              }
+            ],
+            "differences": [
+              {
+                "a": "cca",
+                "b": "cbramod",
+                "mean": -0.21818181818181817,
+                "interval_95": [
+                  -0.4460013976653084,
+                  -0.050920893719806785
+                ],
+                "excludes_zero": true
+              },
+              {
+                "a": "cca",
+                "b": "eegnet",
+                "mean": -0.0787878787878788,
+                "interval_95": [
+                  -0.2824889462048637,
+                  0.017105263157894676
+                ],
+                "excludes_zero": false
+              },
+              {
+                "a": "cbramod",
+                "b": "eegnet",
+                "mean": 0.1393939393939394,
+                "interval_95": [
+                  0.053094414815683055,
+                  0.2222504230118442
+                ],
+                "excludes_zero": true
+              }
+            ]
+          },
+          "rights": {
+            "name": "BETA",
+            "task": "40-target SSVEP speller, eight posterior electrodes, new people (participant-disjoint folds)",
+            "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+            "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+            "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown. Reused unchanged from the 2026-09-20 review of the same recordings. Published here: pooled coverage and selective error, probability-quality levels and paired contrasts with whole-person bootstrap intervals, counts of people out of 70 and counts of outer folds out of 7. No per-person, per-fold or percentile value.",
+            "reviewedAt": "2026-10-04",
+            "reviewBasis": [
+              "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+              "https://doi.org/10.3389/fnins.2020.00627"
+            ],
+            "coreTrack": "beta-8ch"
+          }
+        }
+      },
+      "robustness": {
+        "mi_rest": {
+          "protocol": "mi-rest",
+          "dataset": "ds003810",
+          "role": "secondary, crude",
+          "task": "Rest versus right-hand motor imagery, new people (participant-disjoint folds); ten people, so a crude secondary protocol with no primary contrast",
+          "people": 10,
+          "outer_folds": 5,
+          "classes": 2,
+          "test_items": 1200,
+          "unit": "windows",
+          "boundary": "Ten people, two per test fold. Bootstrap intervals are crude; no person-level dispersion is published. Balanced, so no deployment rate.",
+          "label": "crude: ten people, two per test fold",
+          "methods": [
+            {
+              "id": "spectral-ridge",
+              "label": "Spectral ridge",
+              "seed": "deterministic",
+              "balanced_accuracy": 0.5491666666666667,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "mi-rest",
+                "row": "Spectral ridge"
+              },
+              "error_accepting_everything": 0.4508333333333333,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 1200,
+                "accepted": 0,
+                "coverage": 0.0,
+                "coverage_interval_95": [
+                  0.0,
+                  0.0
+                ],
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 10
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.003051705159515472,
+                  "interval_95": [
+                    -0.031333939983006216,
+                    0.03234565983582499
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.00520833333333337,
+                  "interval_95": [
+                    -0.011458333333333348,
+                    0.02291666666666664
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 1200,
+                "accepted": 0,
+                "coverage": 0.0,
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 10,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted"
+              }
+            },
+            {
+              "id": "cbramod",
+              "label": "CBraMod",
+              "seed": "deterministic",
+              "balanced_accuracy": 0.6291666666666667,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "mi-rest",
+                "row": "CBraMod"
+              },
+              "error_accepting_everything": 0.37083333333333335,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 1200,
+                "accepted": 7,
+                "coverage": 0.005833333333333334,
+                "coverage_interval_95": [
+                  0.0008333333333333334,
+                  0.011666666666666667
+                ],
+                "selective_error": 0.2857142857142857,
+                "accepted_wrong": 2,
+                "unstable": true,
+                "selective_error_interval_95": [
+                  0.0,
+                  0.4444444444444444
+                ],
+                "people_with_nothing_accepted": 6
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.01253911612542663,
+                  "interval_95": [
+                    -0.013942077872036045,
+                    0.029766035251249635
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.007291666666666696,
+                  "interval_95": [
+                    -0.008333333333333305,
+                    0.02395833333333336
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 1200,
+                "accepted": 0,
+                "coverage": 0.0,
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 10,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted"
+              }
+            },
+            {
+              "id": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260919,
+              "balanced_accuracy": 0.71,
+              "site_value": {
+                "file": "experiments.json",
+                "release": "research-preview-20260920",
+                "track": "mi-rest",
+                "row": "EEGNet"
+              },
+              "error_accepting_everything": 0.29,
+              "fixed_cutoff": {
+                "cutoff": 0.8,
+                "n": 1200,
+                "accepted": 250,
+                "coverage": 0.20833333333333334,
+                "coverage_interval_95": [
+                  0.13833333333333334,
+                  0.2825208333333332
+                ],
+                "selective_error": 0.148,
+                "accepted_wrong": 37,
+                "unstable": false,
+                "selective_error_interval_95": [
+                  0.06999216027874565,
+                  0.24206992523972043
+                ],
+                "people_with_nothing_accepted": 0
+              },
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.0379855854149109,
+                  "interval_95": [
+                    0.00857886978756598,
+                    0.06122363312718172
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": 0.009375000000000022,
+                  "interval_95": [
+                    -0.004166666666666652,
+                    0.023958333333333304
+                  ],
+                  "excludes_zero": false
+                }
+              },
+              "risk_certification": {
+                "delta": 0.05,
+                "target": "relative",
+                "outer_folds": 5,
+                "certified_folds": 0,
+                "folds_over_target": 0,
+                "n": 1200,
+                "accepted": 0,
+                "coverage": 0.0,
+                "selective_error": null,
+                "selective_error_status": "not defined: nothing accepted",
+                "unstable": true,
+                "people_with_nothing_accepted": 10,
+                "target_weighted": null,
+                "error_minus_target": null,
+                "error_minus_target_status": "not defined: nothing accepted"
+              }
+            }
+          ],
+          "rights": {
+            "name": "ds003810",
+            "task": "Rest versus right-hand motor imagery, new people (participant-disjoint folds); ten people, so a crude secondary protocol with no primary contrast",
+            "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+            "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+            "license": "CC0-1.0",
+            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+            "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced. Reused unchanged from the 2026-09-20 review of the same recordings. Published here, in a panel labelled crude: pooled coverage under the fixed threshold with how many of the ten people had nothing accepted, and the learned-reject contrasts with whole-person bootstrap intervals. Two people per test fold, so no per-fold block and no person-level spread.",
+            "reviewedAt": "2026-10-04",
+            "reviewBasis": [
+              "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+              "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+            ],
+            "coreTrack": "mi-rest"
+          }
+        },
+        "seeds": {
+          "description": "Every saved secondary seed of the trained methods, each with its own cross-fit, temperature, cut-offs and selector, scored on that seed's saved test predictions. Seeds are never treated as people; no contrast is drawn between seeds or with the primary row.",
+          "rows": [
+            {
+              "protocol": "arithmetic-rest",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260920,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.007191734984520859,
+                  "interval_95": [
+                    -0.028595415167752304,
+                    0.04114476170931448
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.01446759259259256,
+                  "interval_95": [
+                    -0.005787037037037037,
+                    0.032421874999999954
+                  ],
+                  "excludes_zero": false
+                }
+              }
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260921,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.0011370210848883344,
+                  "interval_95": [
+                    -0.044687390936539506,
+                    0.03774444405163834
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.022569444444444475,
+                  "interval_95": [
+                    0.0,
+                    0.04571759259259256
+                  ],
+                  "excludes_zero": false
+                }
+              }
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-frozen-ce",
+              "label": "LaBraM · head only, encoder frozen",
+              "seed": 20260923,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.04382364341623579,
+                  "interval_95": [
+                    0.013079354613438773,
+                    0.07448630332740552
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": 0.01851851851851849,
+                  "interval_95": [
+                    0.0028935185185184897,
+                    0.037037037037037035
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-frozen-ce",
+              "label": "LaBraM · head only, encoder frozen",
+              "seed": 20260924,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.024245593873718108,
+                  "interval_95": [
+                    -0.0006229698263156945,
+                    0.05025733898456898
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.013888888888888895,
+                  "interval_95": [
+                    0.0005787037037037202,
+                    0.028356481481481455
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-lora-r4",
+              "label": "LaBraM · LoRA rank 4 + head",
+              "seed": 20260923,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.02056529859594447,
+                  "interval_95": [
+                    -0.0006362693662178051,
+                    0.0426138967888368
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.020254629629629595,
+                  "interval_95": [
+                    0.00694444444444442,
+                    0.032407407407407385
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-lora-r4",
+              "label": "LaBraM · LoRA rank 4 + head",
+              "seed": 20260924,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.02438033850787119,
+                  "interval_95": [
+                    -0.003977382275829275,
+                    0.05020435883051637
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.01678240740740744,
+                  "interval_95": [
+                    0.006365740740740755,
+                    0.03182870370370372
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260919,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.0019276238114697142,
+                  "interval_95": [
+                    -0.010588436332870889,
+                    0.006732734987743853
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.00915178571428571,
+                  "interval_95": [
+                    -0.0010044642857142683,
+                    0.017522321428571408
+                  ],
+                  "excludes_zero": false
+                }
+              }
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260920,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.005771922601270907,
+                  "interval_95": [
+                    -0.013264960021480462,
+                    0.0018532825111683365
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.0030133928571428603,
+                  "interval_95": [
+                    -0.0046902901785714395,
+                    0.010491071428571419
+                  ],
+                  "excludes_zero": false
+                }
+              }
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "seed": 20260921,
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": -0.009675042533617145,
+                  "interval_95": [
+                    -0.01915854208621976,
+                    -0.0011900680425059923
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": 0.0005580357142856984,
+                  "interval_95": [
+                    -0.0077036830357143,
+                    0.008482142857142829
+                  ],
+                  "excludes_zero": false
+                }
+              }
+            }
+          ]
+        },
+        "matched_model_holdout": {
+          "description": "The base model is trained on three quarters of the training people and calibrated on the remaining quarter, so calibration and test scores come from one model. Its accuracy differs from the site's and is not published.",
+          "published": "risk-certification fold counts only; never an accuracy",
+          "rows": [
+            {
+              "protocol": "arithmetic-rest",
+              "method": "spectral-ridge",
+              "label": "Spectral ridge",
+              "variant": "matched",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "variant": "matched",
+              "outer_folds": 5,
+              "certified_folds": 1,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-frozen-ce",
+              "label": "LaBraM · head only, encoder frozen",
+              "variant": "matched",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-lora-r4",
+              "label": "LaBraM · LoRA rank 4 + head",
+              "variant": "matched",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "cca",
+              "label": "Standard CCA",
+              "variant": "matched",
+              "outer_folds": 7,
+              "certified_folds": 7,
+              "folds_over_target": 3
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "cbramod",
+              "label": "CBraMod",
+              "variant": "matched",
+              "outer_folds": 7,
+              "certified_folds": 6,
+              "folds_over_target": 3
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "variant": "matched",
+              "outer_folds": 7,
+              "certified_folds": 7,
+              "folds_over_target": 1
+            }
+          ]
+        },
+        "map_sensitivity": {
+          "description": "Platt scaling (two classes) or vector scaling (BETA) in place of temperature scaling, on the same calibration scores. These maps can change the predicted label, so their accuracy is not the site's and is not published.",
+          "published": "risk-certification fold counts only; never an accuracy",
+          "rows": [
+            {
+              "protocol": "arithmetic-rest",
+              "method": "spectral-ridge",
+              "label": "Spectral ridge",
+              "variant": "platt",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "variant": "platt",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-frozen-ce",
+              "label": "LaBraM · head only, encoder frozen",
+              "variant": "platt",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "arithmetic-rest",
+              "method": "labram-lora-r4",
+              "label": "LaBraM · LoRA rank 4 + head",
+              "variant": "platt",
+              "outer_folds": 5,
+              "certified_folds": 0,
+              "folds_over_target": 0
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "cca",
+              "label": "Standard CCA",
+              "variant": "vector-scaling",
+              "outer_folds": 7,
+              "certified_folds": 7,
+              "folds_over_target": 5
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "cbramod",
+              "label": "CBraMod",
+              "variant": "vector-scaling",
+              "outer_folds": 7,
+              "certified_folds": 4,
+              "folds_over_target": 2
+            },
+            {
+              "protocol": "beta-8ch",
+              "method": "eegnet",
+              "label": "EEGNet",
+              "variant": "vector-scaling",
+              "outer_folds": 7,
+              "certified_folds": 7,
+              "folds_over_target": 2
+            }
+          ]
+        },
+        "l_joint": {
+          "description": "Exploratory. A SelectiveNet-style EEGNet (alpha 0.5, lambda 32, target coverage 0.8) trained with its own selection head g. Within the same model, g is compared with the calibrated confidence of its own classifier head; positive means g is worse. It changes the classifier, so its accuracy is not the site's and is not published here, and it is never compared with the primary learned-reject contrasts.",
+          "source": "https://proceedings.mlr.press/v97/geifman19a.html",
+          "rows": [
+            {
+              "protocol": "arithmetic-rest",
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.010903881544958971,
+                  "interval_95": [
+                    -0.011747319236581932,
+                    0.03476212546242627
+                  ],
+                  "excludes_zero": false
+                },
+                "error_at_80": {
+                  "mean": 0.02430555555555558,
+                  "interval_95": [
+                    0.00752314814814814,
+                    0.04224537037037035
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            },
+            {
+              "protocol": "beta-8ch",
+              "learned_minus_confidence": {
+                "aurc": {
+                  "mean": 0.07964632502957622,
+                  "interval_95": [
+                    0.060966683188258076,
+                    0.09863093406255453
+                  ],
+                  "excludes_zero": true
+                },
+                "error_at_80": {
+                  "mean": 0.019308035714285687,
+                  "interval_95": [
+                    0.00982142857142859,
+                    0.026227678571428603
+                  ],
+                  "excludes_zero": true
+                }
+              }
+            }
+          ]
+        }
+      },
+      "boundaries": {
+        "all_protocols": [
+          "Every protocol in this route is balanced or uniform by design (EEGMAT 1:1, BETA uniform over 40 targets, mi-rest balanced, idle cue-gated with equal idle and command windows). The numbers compare methods; none of them is a deployment error rate, and class-conditional rows are given so that readers can re-weight to another prevalence.",
+          "A risk-coverage curve exists only where something is accepted. At zero coverage there is no error rate, not a zero one; fewer than 10 accepted trials is flagged unstable.",
+          "A certified selective risk (S-risk, SGR with delta 0.05) assumes that calibration and test data are exchangeable. Across people they are not, so S-risk is a nominal guarantee: its failure rate is measured here, not assumed.",
+          "Rejecting likely errors on known classes is not detecting unfamiliar input. An uncertainty threshold may not flag an unseen class (https://arxiv.org/abs/2603.13324). Route 1 makes no out-of-distribution claim.",
+          "The idle protocol is cue-gated and about three minutes per test phase. It gives per-window proportions at each decision time only, never a false-activation rate per hour, and these route-1 window proportions are a different unit from the site's existing trial-level idle figures; do not compare or merge them.",
+          "Calibration data are participant-disjoint inner out-of-fold scores (cross-fit). Inner models see about 3/4 of the training people, so they may be less confident than the full model whose scores are tested. This approximation is part of every calibrated figure.",
+          "Full-coverage balanced accuracy equals the site value for every primary method, because temperature scaling keeps the predicted label. Matched-model holdout, map-sensitivity and L-joint rows use different models or maps and must not be mixed with site accuracies.",
+          "A contrast is called a difference only when its paired 95% participant-bootstrap interval excludes 0 (no multiplicity correction); otherwise \"no difference resolved\". No ranking where intervals overlap. Descriptive entries are never called differences."
+        ],
+        "per_protocol": {
+          "arithmetic-rest": "Balanced by design. Error rates describe a 1:1 mix and are a method comparison, not a deployment rate. Class equals recording, so recording-level differences are part of what any model or selector can use.",
+          "beta-8ch": "Uniform target prior by design; cue-paced lab spelling with no idle state, so no false-activation figure of any kind.",
+          "mi-rest": "Ten people, two per test fold. Bootstrap intervals are crude; no person-level dispersion is published. Balanced, so no deployment rate."
+        }
+      },
+      "audits": {
+        "stage0": {
+          "status": "pass",
+          "sha256": "adbc16317eefe8df9555a6a9bda691cc44fa3dc78007a5cb1991559d5c30178b"
+        },
+        "stage0_secondary": {
+          "status": "pass",
+          "sha256": "9fcf48e7c908f04eff9d4ff9ad84d2a290e3ede3d295709de81e381f1139ddf4"
+        },
+        "independent_primary": {
+          "sha256": "e49d34629297f48de7476a98912ead7a4c021ab6e9e97057e2c8c51869268bf9",
+          "checks": 12,
+          "passed": 11,
+          "computation_and_freeze": "pass",
+          "failed_check": {
+            "name": "run-result description of degenerate R1 temperatures matches the computation",
+            "kind": "documentation, not computation",
+            "what": "The run log and the primary run headline said a degenerate personal temperature falls back to the population temperature. The code keeps the degenerate value, as the protocol requires, and every number was computed and reproduced that way."
+          }
+        },
+        "independent_secondary": {
+          "sha256": "1dd7f74c473aea7ad2286f5c0aca7567c8c46b7c1e42874f25ecf5eb97a4d9db",
+          "checks": 15,
+          "passed": 15
+        },
+        "note": "Both independent audits re-implement the definitions without importing the study code and reproduce every frozen value and aggregate leaf, bootstrap intervals included. They stay in the private run root and are bound by hash."
+      },
+      "literature": [
+        {
+          "id": "temperature-scaling",
+          "cite": "Guo et al., 2017 · On calibration of modern neural networks",
+          "url": "https://arxiv.org/abs/1706.04599"
+        },
+        {
+          "id": "sgr",
+          "cite": "Geifman & El-Yaniv, 2017 · Selective classification for deep neural networks",
+          "url": "https://arxiv.org/abs/1705.08500"
+        },
+        {
+          "id": "selectivenet",
+          "cite": "Geifman & El-Yaniv, ICML 2019 · SelectiveNet",
+          "url": "https://proceedings.mlr.press/v97/geifman19a.html"
+        },
+        {
+          "id": "aurc",
+          "cite": "Geifman et al., 2018 · Bias-reduced uncertainty estimation for deep neural classifiers (AURC)",
+          "url": "https://arxiv.org/abs/1805.08206"
+        },
+        {
+          "id": "equal-mass-ece",
+          "cite": "Nixon et al., 2019 · Measuring calibration in deep learning",
+          "url": "https://arxiv.org/abs/1904.01685"
+        },
+        {
+          "id": "ood-mi",
+          "cite": "Out-of-distribution limits of uncertainty in motor-imagery BCIs (arXiv:2603.13324)",
+          "url": "https://arxiv.org/abs/2603.13324"
+        }
+      ]
+    }
+  },
+  "status_only": [],
+  "holds": [],
+  "not_published": [
+    "Per-trial probabilities, selector outputs, thresholds and temperatures, per-person and per-fold metrics of any kind.",
+    "The person-level 10th, 50th and 90th percentiles the release candidate carries for EEGMAT and BETA. As with the 2026-10-03 OpenBMI percentiles, an order statistic over a cohort is one or two people's value; how many people had nothing accepted is published, which people is not.",
+    "The median population temperature over outer folds. With five or seven folds a median is one fold's value. Only the count of degenerate temperatures is published.",
+    "The idle protocol (ds005342): its route-1 figures are per-window proportions at each decision time, a different unit from the trial-level idle figures already on the same page, for four people without intervals. Left out, as the handoff recommends.",
+    "Every figure of the BNCI2015-001 cross-day label-budget arm: that source's editorial hold, recorded on 2026-10-01, stands.",
+    "Matched-model holdout and map-sensitivity accuracies, coverages and errors, and the L-joint arm's own accuracy: different models or maps, never mixed with site accuracies. Only the matched and map arms' risk-certification fold counts and the L-joint within-model contrasts are published.",
+    "Secondary seeds and ensembles on ds003810, and every ds003810 figure other than the fixed-threshold coverage and the learned-reject contrasts.",
+    "Reliability-diagram bins, per-class acceptance spreads, equal-width ECE, raw Brier, Brier decompositions, S-margin and L operating points, and the full risk-coverage curves: full-sample points without intervals, or quantities the pages do not use. Four test-coverage points per ranking are published, as point estimates, with an interval only at 80%.",
+    "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
+    "Runtime, wall time, platform and package versions.",
+    "The protocol, its superseded freeze, the two aggregates, the two stage-0 audits and the two independent audits: pinned by SHA-256 and checked, never copied, because they carry private storage paths.",
+    "A planned arm on two further sources that was deferred before any scoring because required fields were missing; nothing from it was read or scored."
+  ],
+  "provenance": {
+    "manifest_sha256": "9b55306dd10ce90a4c2c0b56ace17689040733f83a830a0da85080bb36881be6",
+    "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
+    "references_reresolved": 1120,
+    "included": [
+      "reliable-decisions"
+    ],
+    "inputs": [
+      "eegmat",
+      "beta",
+      "ds003810"
+    ],
+    "holds": []
+  }
+}
