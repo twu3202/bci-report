@@ -71,6 +71,13 @@ function relText(vs: VsPublished): string {
     : `${i === 0 ? relWord.en[rel] : relWord.en[rel].toLowerCase()} ${list(xs)}`).join(zh ? '；' : '; '));
 }
 const exposureText = (st: string) => zh ? fmZh[st] : st;
+/**
+ * The other released non-foundation rows whose interval overlaps the one with the highest point estimate: that row
+ * is named by its point estimate only, never as the best (review of 2026-10-05).
+ */
+const bestOverlaps = (track: string, best: { id: string; interval: [FigValue, FigValue] }) => data.tracks.find(t => t.id === track)!.rows
+  .filter(r => r.id !== best.id && r.family !== 'foundation' && r.interval && r.interval[0] <= best.interval[1].raw && best.interval[0].raw <= r.interval[1])
+  .map(r => zh ? ({ 'Standard CCA': '标准 CCA' } as Record<string, string>)[r.name] ?? r.name : /^[A-Z][a-z]/.test(r.name) ? r.name[0].toLowerCase() + r.name.slice(1) : r.name);
 const say = (en: string) => fmText(en, locale);
 
 const c = {
@@ -83,9 +90,9 @@ const c = {
     published: (p: string) => `Published rows on ${p} (core matrix, 20 September 2026):`,
     notAdapted: 'The others were not adapted:',
     colEncoder: 'Encoder', colBa: 'Balanced accuracy', colVs: 'Against the published rows',
-    vsLegend: (best: string) => `Against the published rows: LaBraM, CBraMod and ${best}, the best published non-foundation row, by whether the 95% intervals overlap.`,
+    vsLegend: (best: string, ov: string[]) => `Against the published rows: LaBraM, CBraMod and ${best}, the published non-foundation row with the highest point estimate${ov.length ? ` (its interval overlaps ${list(ov)}’s)` : ''}, by whether the 95% intervals overlap.`,
     sleepH3: (n: number) => `Sleep staging: ${words[n]} new encoders above every published row`,
-    sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the best published non-foundation row (', ', ', '–', `), the frozen LaBraM and CBraMod rows, and EEGNet. Sleep is the only one of the ${words[n]} scored protocols where a new row clears the best published non-foundation row. The other new rows overlap the published ones or lie below them.`],
+    sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the published non-foundation row with the highest point estimate (', ', ', '–', `), the frozen LaBraM and CBraMod rows, and EEGNet. Sleep is the only one of the ${words[n]} scored protocols where a new row clears the published non-foundation row with the highest point estimate. The other new rows overlap the published ones or lie below them.`],
     sleepRegion: 'Sleep staging, the new frozen encoders against the published rows, scrolls horizontally',
     sleepCaption: 'Sleep staging · frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
     betaH3: 'BETA: above CBraMod, not above training-free CCA',
@@ -131,9 +138,9 @@ const c = {
     published: (p: string) => `${p}上已发布的行（核心矩阵，2026 年 9 月 20 日）：`,
     notAdapted: '其余的没有做适配：',
     colEncoder: '编码器', colBa: '平衡准确率', colVs: '与已发布的行相比',
-    vsLegend: (best: string) => `与已发布的行相比：LaBraM、CBraMod，以及已发布的最佳非基础模型行 ${best}，按 95% 区间是否重叠判断。`,
+    vsLegend: (best: string, ov: string[]) => `与已发布的行相比：LaBraM、CBraMod，以及已发布的非基础模型行中点估计最高的${/^[A-Za-z]/.test(best) ? ' ' : ''}${best}${ov.length ? `（它的区间与 ${list(ov)} 的重叠）` : ''}，按 95% 区间是否重叠判断。`,
     sleepH3: (n: number) => `睡眠分期：${n} 个新编码器高于所有已发布的行`,
-    sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的最佳非基础模型行 spectral ridge（', '，', '–', `）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的最佳非基础模型行。其余新行与已发布的行重叠，或低于它们。`],
+    sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的非基础模型行中点估计最高的 spectral ridge（', '，', '–', `）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的非基础模型行中点估计最高的那一行。其余新行与已发布的行重叠，或低于它们。`],
     sleepRegion: '睡眠分期：新的冻结编码器与已发布的行对比，可横向滚动',
     sleepCaption: '睡眠分期 · 冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
     betaH3: 'BETA：高于 CBraMod，但不高于免训练的 CCA',
@@ -225,7 +232,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
       </tr>)}</tbody>
     </table>
   </div>
-  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(sleepBest.id, sleepBest.name))} {c.key(fmExposure.checkedOn)}</p>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(sleepBest.id, sleepBest.name), bestOverlaps(SLEEP, sleepBest))} {c.key(fmExposure.checkedOn)}</p>
 
   <h3 class="roadmap-h3" id="v9-beta">{c.betaH3}</h3>
   <p class="roadmap-p" data-claim="beta-above-cbramod" data-models={betaAboveCbramod.map(r => r.cell.model.id).join(' ')} data-ablation={betaAblationAboveCbramod.join(' ')}>{c.betaP[0]}<Fig f={people(BETA8)}/>{c.betaP[1]}<Fig f={chanceOf(BETA8)}/>{c.betaP[2]}<NameList names={betaAboveCbramod.map(r => r.cell.model.name)} locale={locale}/>{c.betaP[3]}<span data-core-topic={`${BETA8}|cbramod`}><Fig f={betaPublished(BETA8).find(p => p.id === 'cbramod')!.ba}/></span>{c.betaP[4]}<span data-core-topic={`${BETA8}|${betaBest.id}`}><Fig f={betaBest.ba}/></span>{c.betaP[5]}</p>
@@ -240,7 +247,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
       </tr>)}</tbody>
     </table>
   </div>
-  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(betaBest.id, betaBest.name))} {c.key(fmExposure.checkedOn)}</p>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(betaBest.id, betaBest.name), bestOverlaps(BETA8, betaBest))} {c.key(fmExposure.checkedOn)}</p>
 
   <h3 class="roadmap-h3" id="v9-adaptation">{c.adaptH3}</h3>
   <p class="roadmap-p">{c.adaptP[0]}<Fig f={fmAdaptationMeta.people}/>{c.adaptP[1]}<Fig f={fmAdaptationMeta.folds}/>{c.adaptP[2]}<Fig f={fmAdaptationMeta.chance}/>{c.adaptP[3]}<Fig f={fmAdaptationMeta.loraRange[0]}/>{c.adaptP[4]}<Fig f={fmAdaptationMeta.loraRange[1]}/>{c.adaptP[5]}</p>

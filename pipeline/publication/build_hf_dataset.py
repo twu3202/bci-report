@@ -460,11 +460,12 @@ masking ablation), chance flag, pretraining exposure, licence and footnote.
 **Kept apart from `results`, and not a ranking**: rows are grouped by family, and
 one is above or below another only where their 95% intervals do not overlap.
 Sleep staging is the only protocol where new cells lie entirely above every
-published row; elsewhere no new cell lies above the best published
-non-foundation row, and on BETA standard CCA, which needs no training, stays
-highest. Two BrainOmni cells were not run (its tokenizer needs two-second
+published row; elsewhere no new cell lies above the published non-foundation
+row with the highest point estimate, and on BETA no new row lies above standard
+CCA, which needs no training. Two BrainOmni cells were not run (its tokenizer needs two-second
 windows): empty, with the reason, **never zero**. Pretraining exposure is a
-sourced statement: ST-EEGFormer was pretrained on BETA and SingLEM on TMNRED;
+sourced statement: BETA is in ST-EEGFormer's published pretraining list and
+TMNRED in SingLEM's;
 ZUNA 1.1 lists no pretraining data, so its cells are unknown; every other cell,
 LaBraM's and CBraMod's included, is **not in the authors' published pretraining
 list as checked on 4 October 2026** — not proof that a recording was never

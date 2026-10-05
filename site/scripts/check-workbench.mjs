@@ -3069,9 +3069,11 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   const zhSrc=stripTypeScriptTypes(readFileSync(new URL('../src/data/foundation-models-zh.ts',import.meta.url),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'');
   const zhCtx={};vm.runInNewContext(zhSrc+'\nthis.fmZh=fmZh;',zhCtx);const Z=zhCtx.fmZh;
   const research={en:'Model card: research use only, not for diagnosis or clinical use.',zh:'模型卡：仅供研究使用，不可用于诊断或临床。'};
-  // A ranking word, after the phrases that deny one (and LoRA's rank, and the published best non-foundation row) are set aside.
-  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?|ranks?|ranked|ranking)\b/i,zh:/最佳|最好的|胜出|排名第|第一名/};
-  const rankingOk={en:/\b(?:not ranked|never ranked|not a ranking|none of them ranks|share a ranking)\b|rank-4|rank 4|best published non-foundation row|any model’s best/gi,zh:/不排名|不是排名|从不排名|都不用来给模型排名|不能放进同一个排名|最佳非基础模型行/g};
+  // A ranking word, after the phrases that deny one (and LoRA's rank) are set aside. Since the review of 2026-10-05
+  // "the best published non-foundation row" is not set aside: on BETA that row's interval overlaps EEGNet's, so the
+  // pages name it by its point estimate ("highest" is not a ranking word here, "best" and "stays the highest" are).
+  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?|ranks?|ranked|ranking)\b|stays? the highest|keeps the highest/i,zh:/最佳|最好的|胜出|排名第|第一名|仍是最高|仍是 4 个电极上的最高分/};
+  const rankingOk={en:/\b(?:not ranked|never ranked|not a ranking|none of them ranks|share a ranking)\b|rank-4|rank 4|any model’s best/gi,zh:/不排名|不是排名|从不排名|都不用来给模型排名|不能放进同一个排名/g};
   const notProof={en:/\bnot exposed\b|\bproven\b|\bno overlap\b/i,zh:/已证明|证明没有|没有重叠/};
   const flagOf=(y,lo,c)=>y<=c?'at-or-below':lo<=c?'interval-reaches':null;
   const flagWord={en:{'at-or-below':'At or below chance level','interval-reaches':'Interval reaches chance level'},zh:{'at-or-below':'不高于随机水平','interval-reaches':'区间触及随机水平'}};
@@ -3174,6 +3176,16 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
           assert.ok(row.includes('<td class="fm-rel">'+e(relText(relOf(id,track),best))+'</td>'),w+': '+track+'/'+id+' reads its relations as "'+relText(relOf(id,track),best)+'"');
           assert.deepEqual(rowFigs(row),[c.primary_percent,c.descriptive_interval_low_percent,c.descriptive_interval_high_percent].map(Number),w+': '+track+'/'+id+' prints its CSV row');
         }
+      }
+      // The key under each table names the published non-foundation row the relations are read against by its point
+      // estimate, never as the best; where its interval overlaps another released non-foundation row's, it says so.
+      const keys=[...sec.matchAll(/<p class="citation-note fm-exposure-key">([\s\S]*?)<\/p>/g)].map(m=>visible(m[1]));
+      for(const [i,track] of [[0,'sleep-scalp'],[1,'beta-8ch']]){
+        const T=MVPJ.tracks.find(t=>t.id===track),best=T.rows.find(r=>r.id===C.vs_published_rows.find(x=>x.protocol===track).best_non_foundation.row);
+        const ov=T.rows.filter(r=>r.id!==best.id&&r.family!=='foundation'&&r.interval[0]<=best.interval[1]&&best.interval[0]<=r.interval[1]);
+        assert.ok(keys[i]&&keys[i].includes(zh?'点估计最高':'with the highest point estimate'),w+': '+track+' key names the reference row by its point estimate');
+        if(ov.length) assert.ok(ov.every(r=>keys[i].includes(zh?`它的区间与 ${r.name} 的重叠`:`its interval overlaps ${r.name}’s`)),w+': '+track+' key says the reference row\'s interval overlaps '+ov.map(r=>r.name).join(', '));
+        else assert.ok(!keys[i].includes(zh?'它的区间与':'its interval overlaps'),w+': '+track+' key claims an overlap the intervals do not have');
       }
       const aboveAll=matrix.filter(id=>relOf(id,'sleep-scalp').every(r=>r==='above'));
       assert.deepEqual(aboveAll,['reve-large','steegformer-base','steegformer-large'],'the handoff\'s sleep result: three encoders above every published row');
@@ -3307,10 +3319,18 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       assert.match(vis,zh?/没有优势/:/No small-montage advantage/,w+': no small-montage advantage');
       // The short answer says the new encoders as a whole show none: no new row is higher at four electrodes with intervals apart.
       assert.ok(C.fewer_electrodes_beta.filter(x=>matrix.includes(x.model)).every(x=>x.four_minus_eight<=0||x.marginal_intervals_overlap),'no new row gains at four electrodes with intervals apart');
+      // Standard CCA at four electrodes, as interval facts (review of 2026-10-05): no new row above it; the new rows and the
+      // released rows whose intervals overlap it named, the released ones with their figures. Never "keeps the highest score".
       const cc=b4.rows.find(r=>r.id==='cca');
-      assert.ok([...b4.rows.map(r=>r.y),...matrix.map(id=>Number(cell('beta-4ch',id).primary_percent))].every(y=>y<=cc.y),'standard CCA keeps the highest four-electrode score');
-      const cl=sec.match(/data-claim="cca-four-electrodes" data-models="([^"]+)"/);
+      const cl=sec.match(/data-claim="cca-four-electrodes" data-models="([^"]+)" data-released="([^"]+)">([\s\S]*?)<\/p>/);
       assert.ok(cl&&cl[1]===matrix.filter(id=>relOf(id,'beta-4ch')[2]==='overlap').join(' ')&&matrix.every(id=>relOf(id,'beta-4ch')[2]!=='above'),w+': no new row above CCA; the overlapping ones named');
+      const relOverlap=b4.rows.filter(r=>r.id!=='cca'&&r.interval[0]<=cc.interval[1]&&cc.interval[0]<=r.interval[1]);
+      assert.ok(relOverlap.length&&cl[2]===relOverlap.map(r=>r.id).join(' '),w+': the released rows whose four-electrode interval overlaps CCA\'s are named');
+      for(const r of relOverlap) assert.ok([r.y,...r.interval].every(v=>cl[3].includes(`data-fig="experiments.json|pct1raw|${v}"`))&&cl[3].includes(`data-core-topic="beta-4ch|${r.id}"`),w+': '+r.id+' printed with its four-electrode interval');
+      assert.match(sec,zh?/<h3 class="roadmap-h3" id="v9-cca">在 4 个电极上，没有任何新编码器高于标准 CCA<\/h3>/:/<h3 class="roadmap-h3" id="v9-cca">No new encoder lies above standard CCA at four electrodes<\/h3>/,w+': the CCA heading states an interval fact');
+      // The short answer (and so FAQPage) says the same, without the ranking.
+      const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+      assert.ok(ans.includes(zh?'在 4 个电极上，也没有任何新编码器高于免训练的标准 CCA':'no new encoder lies above training-free CCA at four electrodes')&&!/keeps the highest|仍是 4 个电极上的最高分|最高分/.test(ans),w+': the short answer states the CCA reading as an interval fact');
       for(const re of zh?[/不能验证一顶实体的少通道电极帽/,/接近下限的分数在两个子集之间的先后并不可靠/,/不是上面的 EESM23，也不是耳部 EEG/,/两个睡眠结果不能放进同一个排名/,/没有做配对检验/]
                        :[/does not validate a physical low-channel cap/,/near-floor scores are not ordered reliably/,/not EESM23 above and not ear-EEG/,/do not share a ranking/,/no paired test/])
         assert.match(vis,re,w+': '+re);
@@ -3330,11 +3350,16 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   for(const prefix of ['','zh/']){
     const rel=pageOf(prefix+'releases/'),entry=rel.slice(rel.indexOf(`id="${REL}"`),rel.indexOf('</article>',rel.indexOf(`id="${REL}"`)));
     for(const t of ['does-pretraining-help','fewer-electrodes']) assert.ok(entry.includes(`href="/${prefix}topics/${t}/"`),prefix+'releases/: the v9 release names '+t);
+    // Interval facts and the authors' lists, never a ranking or a corpus claim (review of 2026-10-05).
+    assert.doesNotMatch(visible(entry),/stays? the highest|best published non-foundation|was pretrained on|仍是最高|最佳非基础模型行|的预训练数据包含/,prefix+'releases/: the v9 note ranks no overlapping rows and claims no corpus');
+    assert.ok(visible(entry).includes(prefix?'没有任何新行高于无需训练的标准 CCA':'no new row lies above standard CCA, which needs no training'),prefix+'releases/: the v9 note says no new row lies above standard CCA');
+    if(!prefix){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
+      assert.ok(fe.length>500&&!/stays? the highest|best published non-foundation|was pretrained on/.test(fe),'releases.xml: the v9 entry ranks no overlapping rows and claims no corpus');}
   }
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/'])
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
 }
-console.log('PASS: 2026-10-04 v9 foundation models, topics — does-pretraining-help #v9-encoders (sleep rows above every published row, BETA above CBraMod and not above CCA, the EEGMAT adaptation with verdicts and LoRA budgets, REVE Base against Large with marginal intervals and no paired test, the masking ablation) and fewer-electrodes #v9-montage (BETA eight to four beside the released rows, six-channel sleep, no small-montage advantage, CCA the highest four-electrode score): every figure from its file on a row naming its protocol, tokens pinned, the same in both languages, family order, the export\'s relations and claims, chance flags, exposure badges and ZUNA 1.1\'s sentence, limits, licences; model-adaptation\'s figure-free pointer; release log and sitemap.');
+console.log('PASS: 2026-10-04 v9 foundation models, topics — does-pretraining-help #v9-encoders (sleep rows above every published row, BETA above CBraMod and not above CCA, the EEGMAT adaptation with verdicts and LoRA budgets, REVE Base against Large with marginal intervals and no paired test, the masking ablation) and fewer-electrodes #v9-montage (BETA eight to four beside the released rows, six-channel sleep, no small-montage advantage, no new row above standard CCA at four electrodes, the overlapping rows named): every figure from its file on a row naming its protocol, tokens pinned, the same in both languages, family order, the export\'s relations and claims, chance flags, exposure badges and ZUNA 1.1\'s sentence, limits, licences; model-adaptation\'s figure-free pointer; release log and sitemap.');
 console.log('PASS: 2026-10-04 v9 foundation models, pages — every protocol page with its v9 section (each row its CSV row, in family order, never re-sorted; not run with its reason, no figure; chance flags by the core rule and the CSV; exposure statement, badge and source from the exposure table, ZUNA 1.1 unknown everywhere; footnotes, licences, research-use sentence; masking ablation collapsed; EEGMAT adaptation with verdicts on arithmetic-rest; LaBraM and CBraMod sourced beside the released sentence); the home table\'s embedded rows equal the CSVs, first paint equals the render, dialogs carry the caveats; directory cards with the export\'s statuses, licences and parameters, REVE Base evaluated, MIRepNet and EEG-DINO catalogue only; method pages with groups, checkpoints, terms and exposure; Measured-on lines; dataset groups; topic and data-use wording; hub counts; release log; sitemap.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
 

@@ -221,13 +221,19 @@ if (montageNonMontage.some(r => r.diff.raw >= 0 || r.overlap))
 /** The montage encoders above CBraMod on both BETA montages: the comparison the page sets the non-montage ones beside. */
 export const montageAboveCbramod = montageRows.filter(r => r.inputFamily === 'montage'
   && vsPublished(r.model.id, BETA8).cbramod === 'above' && vsPublished(r.model.id, BETA4).cbramod === 'above');
-/** Standard CCA: the highest four-electrode score, released or new; no new row lies above it. */
+/**
+ * Standard CCA at four electrodes: no new row lies above it (the export's relation). Interval facts only, never a
+ * ranking (review of 2026-10-05): the new rows and the released rows whose intervals overlap CCA's are named.
+ */
 export const cca4 = coreRow(BETA4, 'cca');
-if (![...montagePublished.map(p => p.r4.ba.raw), ...montageRows.map(r => r.cell4.primary!.raw)].every(v => v <= cca4.ba.raw)
-    || montageRows.some(r => vsPublished(r.model.id, BETA4).best === 'above'))
-  throw new Error('foundation-topics.ts: the page says standard CCA keeps the highest four-electrode score; it no longer does');
+if (montageRows.some(r => vsPublished(r.model.id, BETA4).best === 'above') || vsPublished(montageRows[0].model.id, BETA4).bestRow !== 'cca')
+  throw new Error('foundation-topics.ts: the page says no new row lies above standard CCA at four electrodes; the export no longer says so');
 /** New rows whose four-electrode interval overlaps CCA's. */
 export const cca4Overlapping = montageRows.filter(r => vsPublished(r.model.id, BETA4).best === 'overlap');
+/** Released rows whose four-electrode interval overlaps CCA's, by the export's rule. */
+export const cca4ReleasedOverlapping = montagePublished.filter(p => p.id !== 'cca'
+  && overlaps([p.r4.interval[0].raw, p.r4.interval[1].raw], [cca4.interval[0].raw, cca4.interval[1].raw]));
+if (!cca4ReleasedOverlapping.length) throw new Error('foundation-topics.ts: the page names a released row overlapping CCA at four electrodes; none does');
 
 /* --- What each topic prints, for its "Measured on" line ----------------------------------- */
 

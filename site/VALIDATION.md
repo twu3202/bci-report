@@ -340,6 +340,22 @@ acceptance per class and reliability, says those were not published in this upda
 (EN and ZH). Mutation-tested on a copy of `dist/` (the source export too, restored
 afterwards): each of 5 injected violations was caught.
 
+For the v9 wording, the same review found rows ranked where intervals overlap: on
+BETA standard CCA's interval overlaps EEGNet's (and at four electrodes spectral
+ridge's), so "stays the highest row", "the best published non-foundation row" and
+"keeps the highest four-electrode score" are gone. The ranking check no longer sets
+"best published non-foundation row" aside, and treats "stays/keeps the highest" (仍是
+最高) as ranking words. Pinned: the key under each does-pretraining-help table names
+the reference row by its point estimate and, where its interval overlaps another
+released non-foundation row's, says so (BETA: EEGNet), and claims no overlap where
+there is none (sleep); fewer-electrodes' heading, sentence and short answer say no new
+encoder lies above standard CCA at four electrodes and name the new and released rows
+whose intervals overlap it, the released ones with their figures; the release log (EN,
+ZH) and the feed say no new row lies above standard CCA and state BETA and TMNRED as
+being in ST-EEGFormer's and SingLEM's published lists, not "pretrained on". The Hugging
+Face card is held to the same in `test_hf_card.py`. Mutation-tested on a copy of
+`dist/`: each of 11 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

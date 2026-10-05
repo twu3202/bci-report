@@ -13,7 +13,8 @@
  * overlap; for a released row, only whether its two intervals overlap (no released
  * file states that difference). The two readings the handoff asks for: the
  * single-channel and channel-wise encoders show no small-montage advantage, and
- * standard CCA keeps the highest four-electrode score with no new row above it.
+ * no new row lies above standard CCA at four electrodes (interval facts only: the
+ * new and released rows whose intervals overlap CCA's are named, never ranked).
  */
 import Fig from './Fig.astro';
 import NameList from './NameList.astro';
@@ -22,7 +23,7 @@ import { protocolCopy } from '../data/entity-copy';
 import { hrefFor, type Locale } from '../data/i18n';
 import data from '../data/mvp.json';
 import { FM_ANCHOR, FM_JSON, fmExposure, fmRelease, fmResearchUse } from '../data/foundation-models';
-import { BETA4, BETA8, protocolFacts, cca4, cca4Overlapping, montageAboveCbramod, montageNonMontage, montagePublished, montageRows, SLEEP } from '../data/foundation-topics';
+import { BETA4, BETA8, protocolFacts, cca4, cca4Overlapping, cca4ReleasedOverlapping, montageAboveCbramod, montageNonMontage, montagePublished, montageRows, SLEEP } from '../data/foundation-topics';
 import type { Fig as FigValue } from '../data/entities';
 
 interface Props { locale: Locale }
@@ -51,8 +52,8 @@ const c = {
     lede: ['The core matrix scores BETA’s 40-target SSVEP twice, with eight and with four posterior electrodes selected from the same 64-channel recordings (', ' people, chance ', '), and sleep staging on six scalp channels (EESM19 scalp subset, ', ' people, chance ', '). On 4 October 2026 eleven further foundation models joined these protocols as frozen probes, with the published recipe and only the encoder swapped. Unlike the two comparisons above, each montage here is trained and tested on its own — nothing is carried from one to the other — and the released and the new rows share the people and folds.'],
     noAdvantageH3: 'No small-montage advantage for single-channel or channel-wise encoders',
     noAdvantage: ['SingLEM, which encodes each channel on its own, went from ', ' with eight electrodes to ', ' with four (', '); ZUNA 1.1, a channel-wise encoder, from ', ' to ', ' (', '). For both, the two intervals do not overlap. SingLEM lost about as much as the montage encoders that lie above CBraMod at both montages (', '); ZUNA 1.1 started from a much lower score. On six-channel sleep SingLEM is the lowest new row (', ', ', '–', '), below every other row, released or new.'],
-    ccaH3: 'Standard CCA keeps the highest four-electrode score',
-    cca: ['Standard CCA, which needs no training, scores ', ' with four electrodes (', '–', '). No new row lies above it; only ', ' has an interval that overlaps it (', ').'],
+    ccaH3: 'No new encoder lies above standard CCA at four electrodes',
+    cca: ['Standard CCA, which needs no training, scores ', ' with four electrodes (', '–', '). No new row lies above it. Of the new rows, only ', ' has an interval that overlaps it (', '); of the released rows, so does ', ' (', ').'],
     region: 'BETA at eight and four electrodes and sleep on six channels, released and new rows, scrolls horizontally',
     caption: 'Frozen encoders with a ridge head beside the released rows · balanced accuracy with its descriptive 95% interval.',
     colEncoder: 'Method', col8: 'BETA, 8 electrodes', col4: 'BETA, 4 electrodes', colChange: 'Eight to four', colSleep: 'Sleep, 6 channels',
@@ -77,8 +78,8 @@ const c = {
     lede: ['核心矩阵对 BETA 的 40 目标 SSVEP 评了两次，分别用从同一套 64 通道记录中选出的 8 个和 4 个后部电极（', ' 名被试，随机水平 ', '）；睡眠分期则用 6 个头皮通道（EESM19 头皮子集，', ' 名被试，随机水平 ', '）。2026 年 10 月 4 日，另外 11 个基础模型以冻结探针的方式加入这些协议，沿用已发布的方案，只替换编码器。与上面两项比较不同，这里每种电极布局都各自训练、各自测试，彼此之间不做任何迁移；已发布的行与新行用的是同一批被试和同样的折。'],
     noAdvantageH3: '电极更少时，单通道与逐通道编码器没有优势',
     noAdvantage: ['SingLEM 对每个通道单独编码，从 8 个电极的 ', ' 降到 4 个电极的 ', '（', '）；逐通道编码器 ZUNA 1.1 从 ', ' 降到 ', '（', '）。两者的两个区间都不重叠。SingLEM 的降幅与在两种电极布局上都高于 CBraMod 的多通道编码器相当（', '），而 ZUNA 1.1 的起点要低得多。在 6 通道睡眠分期上，SingLEM 是最低的一个新行（', '，', '–', '），低于其他所有行，无论已发布的还是新的。'],
-    ccaH3: '标准 CCA 仍是 4 个电极上的最高分',
-    cca: ['完全不需要训练的标准 CCA 在 4 个电极上得 ', '（', '–', '）。没有任何新行高于它；只有 ', ' 的区间与它重叠（', '）。'],
+    ccaH3: '在 4 个电极上，没有任何新编码器高于标准 CCA',
+    cca: ['完全不需要训练的标准 CCA 在 4 个电极上得 ', '（', '–', '）。没有任何新行高于它。新行中只有 ', ' 的区间与它重叠（', '）；已发布的行中，', ' 的区间也与它重叠（', '）。'],
     region: 'BETA 的 8 个与 4 个电极，以及 6 通道睡眠分期，已发布的行与新行，可横向滚动',
     caption: '冻结编码器加岭回归分类头，与已发布的行并列 · 平衡准确率及其描述性 95% 区间。',
     colEncoder: '方法', col8: 'BETA，8 个电极', col4: 'BETA，4 个电极', colChange: '从 8 个到 4 个', colSleep: '睡眠分期，6 通道',
@@ -111,7 +112,7 @@ const aboveNames = montageAboveCbramod;
     <span data-fm-topic={`${BETA8}|singlem`}>{c.noAdvantage[0]}<Fig f={singlem.cell8.primary!}/></span><span data-fm-topic={`${BETA4}|singlem`}>{c.noAdvantage[1]}<Fig f={singlem.cell4.primary!}/></span>{c.noAdvantage[2]}<Fig f={singlem.diff}/><span data-fm-topic={`${BETA8}|zuna`}>{c.noAdvantage[3]}<Fig f={zuna.cell8.primary!}/></span><span data-fm-topic={`${BETA4}|zuna`}>{c.noAdvantage[4]}<Fig f={zuna.cell4.primary!}/></span>{c.noAdvantage[5]}<Fig f={zuna.diff}/>{c.noAdvantage[6]}{aboveNames.map((r, i) => <>{i > 0 && (zh ? '；' : ', ')}<span lang={zh ? 'en' : undefined}>{r.model.name}</span> <Fig f={r.diff}/></>)}{c.noAdvantage[7]}<span data-fm-topic={`${SLEEP}|singlem`}><Fig f={singlem.sleep.primary!}/>{c.noAdvantage[8]}<Fig f={singlem.sleep.interval![0]}/>{c.noAdvantage[9]}<Fig f={singlem.sleep.interval![1]}/></span>{c.noAdvantage[10]}
   </p>
   <h3 class="roadmap-h3" id="v9-cca">{c.ccaH3}</h3>
-  <p class="roadmap-p" data-claim="cca-four-electrodes" data-models={cca4Overlapping.map(r => r.model.id).join(' ')}><span data-core-topic={`${BETA4}|cca`}>{c.cca[0]}<Fig f={cca4.ba}/>{c.cca[1]}<Fig f={cca4.interval[0]}/>{c.cca[2]}<Fig f={cca4.interval[1]}/></span>{c.cca[3]}<NameList names={cca4Overlapping.map(r => r.model.name)} locale={locale}/>{c.cca[4]}{cca4Overlapping.map((r, i) => <>{i > 0 && (zh ? '、' : ', ')}<span data-fm-topic={`${BETA4}|${r.model.id}`}><Fig f={r.cell4.primary!}/></span></>)}{c.cca[5]}</p>
+  <p class="roadmap-p" data-claim="cca-four-electrodes" data-models={cca4Overlapping.map(r => r.model.id).join(' ')} data-released={cca4ReleasedOverlapping.map(p => p.id).join(' ')}><span data-core-topic={`${BETA4}|cca`}>{c.cca[0]}<Fig f={cca4.ba}/>{c.cca[1]}<Fig f={cca4.interval[0]}/>{c.cca[2]}<Fig f={cca4.interval[1]}/></span>{c.cca[3]}<NameList names={cca4Overlapping.map(r => r.model.name)} locale={locale}/>{c.cca[4]}{cca4Overlapping.map((r, i) => <>{i > 0 && (zh ? '、' : ', ')}<span data-fm-topic={`${BETA4}|${r.model.id}`}><Fig f={r.cell4.primary!}/></span></>)}{c.cca[5]}<NameList names={cca4ReleasedOverlapping.map(p => /^[A-Z][a-z]/.test(p.name) ? p.name[0].toLowerCase() + p.name.slice(1) : p.name)} locale={locale}/>{c.cca[6]}{cca4ReleasedOverlapping.map((p, i) => <>{i > 0 && (zh ? '、' : ', ')}<span data-core-topic={`${BETA4}|${p.id}`}><Fig f={p.r4.ba}/>{zh ? '，' : ', '}<Fig f={p.r4.interval[0]}/>–<Fig f={p.r4.interval[1]}/></span></>)}{c.cca[7]}</p>
 
   <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={c.region}>
     <table class="fm-results fm-topic-table fm-montage"><caption>{c.caption}</caption>

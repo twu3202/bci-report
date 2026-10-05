@@ -70,5 +70,30 @@ class CardLtrsvpWording(unittest.TestCase):
             self.assertIn(phrase, self.ltrsvp)
 
 
+
+class CardFoundationWording(unittest.TestCase):
+    """The v9 paragraph: interval facts, never a ranking where intervals overlap (review of 2026-10-05).
+
+    On BETA standard CCA's interval overlaps EEGNet's and an eeg-fm-masking checkpoint's, so the card says no new
+    row lies above it, never that it stays highest or is the best row; exposure is what the authors' lists show.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        text = ' '.join(card(snapshot, len(rows), topic_payload()).split())
+        start = text.index('eleven further EEG foundation models')
+        cls.v9 = text[start:text.index('Timings came from a shared GPU', start)]
+
+    def test_no_ranking_word(self):
+        self.assertNotRegex(self.v9, r'\b(?:best|highest row|stays highest|top|winner|outperform\w*)\b')
+        self.assertIn('no new row lies above standard CCA', self.v9)
+
+    def test_exposure_is_the_authors_lists(self):
+        self.assertNotIn('was pretrained on', self.v9)
+        self.assertIn("BETA is in ST-EEGFormer's published pretraining list", self.v9)
+
+
 if __name__ == '__main__':
     unittest.main()
