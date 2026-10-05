@@ -426,6 +426,56 @@ class ReliableDecisionsBoundary(unittest.TestCase):
         self.assertEqual(len(item), 1)
         self.assertIn('opened on 2026-09-20', item[0])
 
+    # ------------------------------------------------------------------ not_published is a claim about the file (2026-10-05)
+    def test_no_not_published_item_withholds_what_the_file_carries(self):
+        p = build(MANIFEST)
+        result = p['results'][ex.ROUTE]
+        ex.check_not_published(result, p['not_published'])
+        # The ds003810 item names what is withheld; the file carries the rest, as the privacy review lists it.
+        item = [x for x in p['not_published'] if x.startswith('On ds003810')]
+        self.assertEqual(len(item), 1)
+        self.assertFalse([x for x in p['not_published'] if 'every ds003810 figure other than' in x])
+        mi = result['robustness']['mi_rest']
+        self.assertTrue(all(tuple(m) == ex.DS003810_FIELDS for m in mi['methods']))
+        self.assertTrue(mi['rights']['privacyReview'].endswith(ex.DS003810_PUBLISHED))
+        for words in ('selective error', 'unstable', 'certified-risk fold counts', 'balanced accuracy'):
+            self.assertIn(words, mi['rights']['privacyReview'])
+        # A field an item says is left out, put back into the file, is refused.
+        for edit in (lambda r: r['robustness']['mi_rest']['methods'][1].update(probability_quality={}),
+                     lambda r: r['robustness']['mi_rest']['methods'][0].update(ranking_S={}),
+                     lambda r: r['robustness']['matched_model_holdout']['rows'][0].update(balanced_accuracy=0.6),
+                     lambda r: r['robustness']['l_joint']['rows'][0].update(balanced_accuracy=0.6),
+                     lambda r: r['robustness']['seeds']['rows'].append({'protocol': 'mi-rest'}),
+                     lambda r: r['protocols']['beta-8ch']['methods'][0]['ranking_S']['error_at_test_coverage'][0]
+                     .update(interval_95=[0.1, 0.2]),
+                     lambda r: r['protocols']['arithmetic-rest'].update(median_temperature=1.0)):
+            forged = copy.deepcopy(result)
+            edit(forged)
+            with self.assertRaisesRegex(ValueError, 'not_published: the file carries'):
+                ex.check_not_published(forged, p['not_published'])
+
+    def test_a_not_published_item_without_a_check_is_refused(self):
+        p = build(MANIFEST)
+        result = p['results'][ex.ROUTE]
+        old = ('Secondary seeds and ensembles on ds003810, and every ds003810 figure other than the fixed-threshold '
+               'coverage and the learned-reject contrasts.')
+        items = [old if x.startswith('On ds003810') else x for x in p['not_published']]
+        with self.assertRaisesRegex(ValueError, 'no check for the item'):
+            ex.check_not_published(result, items)
+        with self.assertRaisesRegex(ValueError, 'missing or named twice'):
+            ex.check_not_published(result, p['not_published'][:-1])
+        m = copy.deepcopy(MANIFEST)
+        m['notPublished'] = items
+        with self.assertRaisesRegex(ValueError, 'no check for the item'):
+            build(m)
+
+    def test_the_ds003810_privacy_review_says_what_is_published(self):
+        m = copy.deepcopy(MANIFEST)
+        rec = next(s for s in m['sources'] if s['id'] == 'ds003810')
+        rec['privacyReview'] = rec['privacyReview'].replace('; and the certified-risk fold counts', '')
+        with self.assertRaisesRegex(ValueError, 'does not say what the panel publishes'):
+            build(m)
+
     def test_no_private_path_or_identifier_reaches_the_files(self):
         text = json.dumps(build(MANIFEST), ensure_ascii=False)
         # Path roots only: naming this operator's machines or volumes here would itself be the leak.

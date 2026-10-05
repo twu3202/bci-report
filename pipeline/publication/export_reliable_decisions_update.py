@@ -533,14 +533,30 @@ def protocol_block(protocol, block, record, matrix, adaptation, stage0):
     return out
 
 
+# What the ds003810 panel carries, and what its privacy review says is published (review of 2026-10-05: the review
+# and not_published used to name only the coverage and the learned-reject contrasts, while the file carries more).
+DS003810_FIELDS = ('id', 'label', 'seed', 'balanced_accuracy', 'site_value', 'error_accepting_everything',
+                   'fixed_cutoff', 'learned_minus_confidence', 'risk_certification')
+DS003810_WITHHELD = ('ranking_S', 'ranking_L', 'coverage_target', 'probability_quality', 'recalibration')
+DS003810_PUBLISHED = ('Published here, in a panel labelled crude: the published balanced accuracy and the error when '
+                      'everything is accepted; under the fixed threshold, pooled coverage, the selective error (a count '
+                      'of wrong among accepted, flagged unstable, where fewer than ten were accepted) and how many of '
+                      'the ten people had nothing accepted; the learned-reject contrasts with whole-person bootstrap '
+                      'intervals; and the certified-risk fold counts. Two people per test fold, so no per-fold block '
+                      'and no person-level spread.')
+
+
 def mi_rest_block(block, record, matrix, adaptation, stage0):
     design = PROTOCOL[SECONDARY]
     d = val(block['design'], 'mi-rest design')
     require(d['people'] == design['people'] and d['primary_contrasts'] is False, 'mi-rest: it must stay without primary contrasts')
+    require(record['privacyReview'].endswith(' ' + DS003810_PUBLISHED),
+            'ds003810: the privacy review does not say what the panel publishes')
     methods = [method_block(SECONDARY, mid, block['methods'][mid], block['contrasts'], matrix, adaptation, stage0, primary=False)
                for mid in design['methods']]
     for m in methods:
         m.pop('ranking_S'), m.pop('ranking_L')
+        require(tuple(m) == DS003810_FIELDS, f'ds003810 {m["id"]}: other fields than its privacy review lists')
         r = m['risk_certification']
         require(r['certified_folds'] == 0 and r['accepted'] == 0, 'mi-rest: the pages say S-risk accepted nothing here')
     return {'protocol': SECONDARY, 'dataset': record['name'], 'role': 'secondary, crude', 'task': record['task'],
@@ -621,6 +637,81 @@ def all_protocol_boundaries(items):
     require(first.endswith(CLASS_CONDITIONAL) and not any('class-conditional' in x for x in rest),
             'the balanced-design boundary changed: re-read what it says about class-conditional rows')
     return [first[:-len(CLASS_CONDITIONAL)] + NOT_CARRIED, *rest]
+
+
+# ---------------------------------------------------------------------------- what the file says it leaves out
+# Each not_published item is a claim about this file, and the file must bear it out (review of 2026-10-05: an item
+# said no ds003810 figure but the coverage and the learned-reject contrasts was published, while the file carries its
+# accuracy, the selective error at the fixed threshold and the certified-risk counts). Every item is matched, by its
+# opening words, to the check of what it says is absent; an item without a check is refused, so a new or reworded
+# claim must say how it is checked. Three items describe prose and pinned inputs, which leave no field to look for.
+def all_keys(value):
+    if isinstance(value, dict):
+        for k, v in value.items():
+            yield k
+            yield from all_keys(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from all_keys(v)
+
+
+SENSITIVITY_ROW = {'protocol', 'method', 'label', 'variant', 'outer_folds', 'certified_folds', 'folds_over_target'}
+RANKING_POINT = {'coverage', 'accepted', 'selective_error'}
+
+
+def check_not_published(result, items):
+    keys = set(all_keys(result))
+    rob = result['robustness']
+    # Aggregates whose names carry a refused word: a hash of the frozen thresholds, counts of degenerate temperatures,
+    # and probability quality at the cohort level.
+    aggregate_keys = {'frozen_thresholds_sha256', 'degenerate_population_temperature_folds',
+                      'head_only_degenerate_population_temperature_folds', 'people_with_degenerate_personal_temperature',
+                      'probability_quality'}
+
+    def none_of(pattern, allowed=frozenset()):
+        return not [k for k in keys if re.search(pattern, k, re.IGNORECASE) and k not in allowed]
+
+    def rankings():
+        for p in [*result['protocols'].values(), rob['mi_rest']]:
+            for m in p['methods']:
+                for r in ('ranking_S', 'ranking_L'):
+                    if r in m:
+                        yield m[r]
+    rules = {
+        'Per-trial probabilities, selector outputs, thresholds and temperatures, per-person and per-fold metrics':
+            lambda: none_of(r'probabilit|selector_output|threshold|temperature|per_person|per_fold|person_level',
+                            aggregate_keys),
+        'The person-level 10th, 50th and 90th percentiles': lambda: none_of(r'^p\d0$|percentile|spread'),
+        'The median population temperature': lambda: none_of(r'median'),
+        'The idle protocol (ds005342)': lambda: (list(result['protocols']) == list(PRIMARY) and none_of(r'idle')
+                                                  and all(r['protocol'] in PRIMARY for a in ('seeds', 'matched_model_holdout',
+                                                          'map_sensitivity', 'l_joint') for r in rob[a]['rows'])),
+        'Every figure of the BNCI2015-001 cross-day label-budget arm': lambda: none_of(r'bnci'),
+        'Matched-model holdout and map-sensitivity accuracies, coverages and errors, and the L-joint arm\'s own accuracy':
+            lambda: (all(set(r) == SENSITIVITY_ROW for a in ('matched_model_holdout', 'map_sensitivity')
+                         for r in rob[a]['rows'])
+                     and all(set(r) == {'protocol', 'learned_minus_confidence'} for r in rob['l_joint']['rows'])),
+        'On ds003810, the crude secondary protocol: its secondary seeds and ensembles, the coverage-target rule,':
+            lambda: (all(not set(m) & set(DS003810_WITHHELD) for m in rob['mi_rest']['methods'])
+                     and all(r['protocol'] != SECONDARY for r in rob['seeds']['rows'])),
+        'Reliability-diagram bins; the class-conditional rows':
+            lambda: (none_of(r'reliab|per_class|class_conditional|curve|decomposition|equal_width|margin|operating_point')
+                     and all(len(r['error_at_test_coverage']) == len(TEST_COVERAGES)
+                             and all(set(x) == RANKING_POINT for x in r['error_at_test_coverage']) for r in rankings())),
+        'The release candidate\'s generated headline sentences and the handoff\'s prose': None,
+        'Runtime, wall time, platform and package versions.': lambda: none_of(r'runtime|wall|platform|package|elapsed|seconds'),
+        'The protocol, its superseded freeze, the two aggregates, the two stage-0 audits and the two independent audits':
+            None,
+        'A planned arm on two further sources that was deferred before any scoring': None,
+    }
+    used = []
+    for item in items:
+        hits = [k for k in rules if item.startswith(k)]
+        require(len(hits) == 1, f'not_published: no check for the item "{item[:70]}"')
+        require(rules[hits[0]] is None or rules[hits[0]](),
+                f'not_published: the file carries what the item says it leaves out: "{item[:70]}"')
+        used.append(hits[0])
+    require(sorted(used) == sorted(rules), 'not_published: an item is missing or named twice')
 
 
 # ---------------------------------------------------------------------------- boundary
@@ -851,6 +942,7 @@ def build(manifest_bytes):
     }
     scrub_check(payload)
     validate_public(payload)
+    check_not_published(result, payload['not_published'])
     # Refused by value too. A withheld percentile can equal a published number by coincidence: a design
     # constant (0.5, 0.8) or a pooled coverage that is a verified whole count over n. Those stay; any
     # other equality is a leak.
@@ -904,7 +996,9 @@ def export():
             'certified + uncertified folds is every fold; nothing accepted exactly when nothing is certified; folds '
             'over target never exceed folds certified',
             'labels per new person: 10 and 20 on EEGMAT, 40 on BETA; scored trials are what remains after the prefix',
-            'ds003810 stays without primary contrasts and is published as crude',
+            'ds003810 stays without primary contrasts and is published as crude, with the fields its privacy review '
+            'lists',
+            'every not_published item is checked against the file: it carries nothing an item says it leaves out',
             'per-person percentiles and per-fold median temperatures refused by key, fragment and value; idle and '
             'BNCI2015-001 refused by key',
             'the printed headline figures are the ones the pinned handoff states',

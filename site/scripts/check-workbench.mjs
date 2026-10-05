@@ -2604,6 +2604,22 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     // decision, verbatim; and the terms that oblige — REVE's licence, LUNA's no-derivatives and no-endorsement, ERP-FM's
     // non-commercial terms, ZUNA 1.1's research use — are stated in the entry's own words.
     assert.ok(s0.includes('Route 1 adds no new dataset and no new model')&&!/<p>Under its own manifest\. No new dataset and no new model/.test(s0),'data-use: "no new model" is scoped to route 1');
+    // Follow-up review of 2026-10-05: the file said it carried no ds003810 figure but the coverage and the learned-reject
+    // contrasts, while it carries the accuracy, the error accepting everything, the selective error at the fixed
+    // threshold and the certified-risk counts. not_published names what is withheld, the file carries none of it, and
+    // the privacy review (printed in data use's ds003810 row) lists what is published.
+    {
+      const item=rdx.not_published.filter(x=>x.startsWith('On ds003810'));
+      assert.ok(item.length===1&&!rdx.not_published.some(x=>/every ds003810 figure other than/.test(x)),'route 1: not_published names what ds003810 withholds, not "every figure other than"');
+      const withheld={'the coverage-target rule':'coverage_target','the two rankings':'ranking_S','probability quality':'probability_quality','recalibration':'recalibration'};
+      for(const [words,key] of Object.entries(withheld)) assert.ok(item[0].includes(words)&&M.methods.every(m=>!(key in m)),'route 1: ds003810 withholds '+words+', and the file carries none');
+      assert.ok(R.robustness.seeds.rows.every(r=>r.protocol!=='mi-rest'),'route 1: no ds003810 secondary seed in the file');
+      const pr=M.rights.privacyReview,row=s0.slice(s0.lastIndexOf('<tr',s0.indexOf(escHtml(pr))),s0.indexOf('</tr>',s0.indexOf(escHtml(pr))));
+      assert.ok(s0.includes(escHtml(pr))&&row.includes('ds003810'),'data-use: the ds003810 row prints its privacy review');
+      const lists={'the published balanced accuracy':'balanced_accuracy','the error when everything is accepted':'error_accepting_everything','the selective error':'fixed_cutoff','flagged unstable':'fixed_cutoff','had nothing accepted':'fixed_cutoff','the learned-reject contrasts':'learned_minus_confidence','the certified-risk fold counts':'risk_certification'};
+      for(const [words,key] of Object.entries(lists)) assert.ok(pr.includes(words)&&M.methods.every(m=>key in m),'data-use: the ds003810 row lists '+words+', which the file carries');
+      assert.deepEqual(M.methods.map(m=>Object.keys(m).join()),M.methods.map(()=>'id,label,seed,balanced_accuracy,site_value,error_accepting_everything,fixed_cutoff,learned_minus_confidence,risk_certification'),'route 1: ds003810 carries exactly what its privacy review lists');
+    }
     const F9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
     const at9=s0.indexOf('<h3 id="sources-2026-10-04-v9">'),v9=s0.slice(at9);
     assert.ok(at9>0&&at9>s0.indexOf('<h3 id="sources-2026-10-04-route-1">'),'data-use: the v9 review is its own entry under 4 October, after route 1');

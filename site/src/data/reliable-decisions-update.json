@@ -2429,7 +2429,7 @@
             "license": "CC0-1.0",
             "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
             "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
-            "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced. Reused unchanged from the 2026-09-20 review of the same recordings. Published here, in a panel labelled crude: pooled coverage under the fixed threshold with how many of the ten people had nothing accepted, and the learned-reject contrasts with whole-person bootstrap intervals. Two people per test fold, so no per-fold block and no person-level spread.",
+            "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced. Reused unchanged from the 2026-09-20 review of the same recordings. Published here, in a panel labelled crude: the published balanced accuracy and the error when everything is accepted; under the fixed threshold, pooled coverage, the selective error (a count of wrong among accepted, flagged unstable, where fewer than ten were accepted) and how many of the ten people had nothing accepted; the learned-reject contrasts with whole-person bootstrap intervals; and the certified-risk fold counts. Two people per test fold, so no per-fold block and no person-level spread.",
             "reviewedAt": "2026-10-04",
             "reviewBasis": [
               "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
@@ -2933,7 +2933,7 @@
     "The idle protocol (ds005342): its route-1 figures are per-window proportions at each decision time, a different unit from the trial-level idle figures already on the same page, for four people without intervals. Left out, as the handoff recommends.",
     "Every figure of the BNCI2015-001 cross-day label-budget arm: that source's editorial hold, opened on 2026-09-20 and restated on 2026-10-01, stands.",
     "Matched-model holdout and map-sensitivity accuracies, coverages and errors, and the L-joint arm's own accuracy: different models or maps, never mixed with site accuracies. Only the matched and map arms' risk-certification fold counts and the L-joint within-model contrasts are published.",
-    "Secondary seeds and ensembles on ds003810, and every ds003810 figure other than the fixed-threshold coverage and the learned-reject contrasts.",
+    "On ds003810, the crude secondary protocol: its secondary seeds and ensembles, the coverage-target rule, the two rankings' AURC and errors at fixed test coverages, probability quality and recalibration. What the file carries for ds003810 is what its privacy review lists.",
     "Reliability-diagram bins; the class-conditional rows, which would let a reader re-weight to another prevalence (pooled acceptance per class on EEGMAT and ds003810, and its minimum, median and maximum over BETA's 40 targets); equal-width ECE, raw Brier, Brier decompositions, S-margin and L operating points, and the full risk-coverage curves: full-sample points without intervals, or quantities the pages do not use. Four test-coverage points per ranking are published, as point estimates, with an interval only at 80%.",
     "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
     "Runtime, wall time, platform and package versions.",
@@ -2941,7 +2941,7 @@
     "A planned arm on two further sources that was deferred before any scoring because required fields were missing; nothing from it was read or scored."
   ],
   "provenance": {
-    "manifest_sha256": "ce9ba5f55885101063f1c9562160f5f264f1d5b943a27dfc580e21b287b645cd",
+    "manifest_sha256": "2c640a23bb062cca10d039eac193ecd39a9c64952480fceb6d2c6e41f36787b1",
     "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
     "references_reresolved": 1120,
     "included": [

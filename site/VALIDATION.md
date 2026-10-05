@@ -500,6 +500,23 @@ at 12 decimals, and every one-decimal v9 figure (`pct1`, `pp1`, `sgn1` from
 stored value's 12-decimal form, so a float artefact cannot flip a printed digit.
 Mutation-tested on a copy of `dist/`: each of 2 injected violations was caught.
 
+Route 1's file misdescribed itself (same review): `not_published` said it carried no
+ds003810 figure other than the fixed-threshold coverage and the learned-reject
+contrasts, and ds003810's privacy review (printed in data use's route-1 table) said the
+same, while the file carries ds003810's published accuracy, the error accepting
+everything, the selective error at the fixed threshold with its count and unstable flag,
+and the certified-risk fold counts, all aggregate, and the handoff's own table prints
+them. They stay; the item now names what is withheld (secondary seeds and ensembles, the
+coverage-target rule, the rankings, probability quality and recalibration) and the
+privacy review lists what is published. The export checks every `not_published` item
+against the file by its opening words (an item with no check is refused, so a reworded
+claim must say how it is checked; three prose items have nothing to look for) and holds
+ds003810's methods to exactly the fields the review lists. Pinned: no "every ds003810
+figure other than"; each withheld field absent from the file; the data-use row prints
+the review and the review names each field the file carries, and nothing more is
+carried. Mutation-tested on a copy of `dist/` (the source export too, restored
+afterwards): each of 4 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
