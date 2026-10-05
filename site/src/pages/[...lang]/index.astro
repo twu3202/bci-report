@@ -25,7 +25,7 @@ import TopicGroups from '../../components/TopicGroups.astro';
 import TransferMap from '../../components/TransferMap.astro';
 import FmHomeRow from '../../components/FmHomeRow.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
-import { coreExposure, fmMatrixModels, fmProtocols, fmRelease, fmResearchUse, fmRowsByProtocol, fmFileOf, FM_ANCHOR, type FmRow } from '../../data/foundation-models';
+import { coreExposure, fmMatrixModels, fmProtocols, fmRelease, fmVersionsOf, fmResearchUse, fmRowsByProtocol, fmFileOf, FM_ANCHOR, type FmRow } from '../../data/foundation-models';
 import { fmText, fmZh } from '../../data/foundation-models-zh';
 import '../../styles/global.css';
 import '../../styles/matrix.css';
@@ -135,7 +135,9 @@ const fmJsonRow=(r:FmRow)=>({id:r.model.id,name:r.model.name,panel:r.model.panel
   channels:r.channels.raw,subjects:r.people?.raw??null,y:at(r.primary?.raw,1),interval:r.interval?[at(r.interval[0].raw,1)!,at(r.interval[1].raw,1)!]:null,
   x:at(r.secondary?.raw,r.protocol==='idle'?1:3),chanceFlag:r.chanceFlag,status:r.status,reason:r.reason?say(r.reason).text:null,reasonOriginal:r.reason?say(r.reason).original??null:null,
   exposure:r.exposure.status,exposureText:locale==='en'?r.exposure.statement:fmZh[r.exposure.statement],exposureSource:r.exposure.urls[0]??null,
-  footnote:say(r.model.footnote).text,footnoteOriginal:say(r.model.footnote).original??null,notes:r.notes,
+  footnote:say(r.model.footnote).text,footnoteOriginal:say(r.model.footnote).original??null,
+  // The notes in the page's language, the English beside them on the Chinese page; REVE's licence asks for its version (review of 2026-10-05).
+  notes:locale==='en'?r.notes:r.noteParts.map(n=>say(n).text).join(''),notesOriginal:locale==='en'||!r.notes?null:r.notes,version:fmVersionsOf([r.model])??null,
   licence:say(r.model.licenceNote).text,licenceOriginal:say(r.model.licenceNote).original??null,researchUse:fmResearchUse(r.model),
   idle:r.idle?{detected:r.idle.detected.raw,commandTrials:r.idle.commandTrials.raw,falseActivations:r.idle.falseActivations.raw,idleTrials:r.idle.idleTrials.raw,
                abstain:r.idle.abstain.raw}:null});

@@ -143,7 +143,8 @@ export const fmResearchUse = (m: FmModel) => m.licenceNote.includes(ZUNA_RESEARC
  * @ 317531c7", from each checkpoint's revision in the export (review of 2026-10-05).
  */
 export function fmVersionsOf(ms: FmModel[]): string | undefined {
-  if (!/name the model version/.test(ms[0].licenceNote)) return undefined;
+  // The family's terms are its first checkpoint's (REVE Large's note says "as REVE Base").
+  if (!/name the model version/.test(fmModels.find(m => m.slug === ms[0].slug)!.licenceNote)) return undefined;
   if (ms.some(m => !m.revision)) throw new Error(`foundation-models.ts: ${ms[0].name}'s licence asks for its version, and the export has none`);
   return ms.map(m => `${m.name} @ ${m.revision!.split(' @ ').at(-1)}`).join(' · ');
 }

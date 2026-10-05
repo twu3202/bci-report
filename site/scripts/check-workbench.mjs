@@ -2956,6 +2956,10 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
         assert.equal(r.footnote,say(m.row_footnote,label).text,w+': footnote');
         assert.equal(r.licence,say(m.licence_note,label).text,w+': licence note');
         assert.equal(r.researchUse,r.id==='zuna',w+': research use');
+        // Review of 2026-10-05: REVE's version where its licence asks for it; the notes in the page's language.
+        assert.equal(r.version,SLUG[r.id]==='reve'?`${m.name} @ ${m.revision.split(' @ ').at(-1)}`:null,w+': the model version where the licence asks for it');
+        {const c=F.frozen_probe.find(x=>x.model===r.id&&x.protocol===t.id),parts=[...m.notes,...(c.notes??[])];
+         assert.deepEqual([r.notes,r.notesOriginal],label==='en'||!rec.notes?[rec.notes,null]:[parts.map(x=>Z[x]).join(''),rec.notes],w+': the notes in the page\'s language');}
         assert.equal(r.reason,done?null:say(rec.not_run_reason,label).text,w+': the reason a cell was not run');
         assert.equal(r.href,`/${label==='zh'?'zh/':''}methods/${SLUG[r.id]}/`,w+': method page');
         if(tr) assert.deepEqual(r.idle,{detected:Number(rec.commands_detected),commandTrials:Number(rec.command_trials),falseActivations:Number(rec.idle_false_activations),idleTrials:Number(rec.idle_trials),abstain:Number(rec.always_abstain_participants)},w+': idle counts');
@@ -3015,6 +3019,10 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     const z=JSON.parse(fmEmbedded(label)).tracks['mi-rest'].rows.find(r=>r.id==='zuna'),zd=g('#dialog-body').innerHTML;
     for(const s of [z.exposureText,z.footnote,z.licence,research[label]]) assert.ok(zd.includes(e(s)),label+': the ZUNA 1.1 dialog carries "'+s.slice(0,40)+'"');
     assert.ok(zd.includes(`href="${z.exposureSource}"`)&&zd.includes('#foundation-v9')&&zd.includes(`href="${z.href}"`)&&g('#detail-dialog').open,label+': the dialog links the source, the section and the method page');
+    g('#close-dialog').events.click();
+    // REVE's dialog names the model version its licence asks for.
+    g('#result-rows').events.click({target:{closest:()=>({dataset:{model:'fm:reve-large'}})}});
+    assert.ok(g('#dialog-body').innerHTML.includes((label==='en'?'Model version: ':'模型版本：')+(label==='en'?'<span>':'<span lang="en">')+e(reveVersions.split(' · ')[1])+'</span>'),label+': the REVE Large dialog names its version');
     g('#close-dialog').events.click();
     // The note under the snapshot, and the lede: the count of what they point at.
     const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));

@@ -464,6 +464,14 @@ the CSV's notes verbatim, the Chinese page every sentence in Chinese with its En
 original, and every translation carries exactly its English's numbers (the existing
 table check). Mutation-tested: each of 4 injected violations was caught.
 
+The home page's v9 row dialog (same review) prints the notes in the page's language
+(the Chinese with the English beside it) and, for REVE, the model version its licence
+asks to be named ("Model version: REVE Large @ 317531c7"). The embedded rows carry
+both (`notes`, `notesOriginal`, `version`) and are held to the export: a version for
+the REVE checkpoints only, the notes as the protocol pages print them. Mutation-tested
+(the client script's source too, restored afterwards): each of 3 injected violations
+was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

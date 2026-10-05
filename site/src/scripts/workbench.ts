@@ -56,7 +56,7 @@ const S={
       fmNotRun:'Not run',fmNotPublished:'not published',fmExposed:'In the authors’ pretraining list',fmUnknown:'Exposure unknown',
       fmResearchUse:'Model card: research use only, not for diagnosis or clinical use.',
       fmAblationReference:'matrix row above',fmSource:'source ↗',fmMethod:'Model page →',fmCsv:'v9 rows · CSV ↓',
-      fmExposureLabel:'Pretraining exposure: ',fmFootnote:'Row footnote: ',fmLicence:'Weights licence: ',
+      fmExposureLabel:'Pretraining exposure: ',fmFootnote:'Row footnote: ',fmLicence:'Weights licence: ',fmVersion:'Model version: ',
       fmFrozen:'Frozen probe added 2026-10-04 (release v9): the published recipe with only the encoder swapped. Grouped by family, never ranked.',
       stop:'. ',coreExposureLead:'Checked 2026-10-04 — LaBraM and CBraMod: ',coreExposureTail:'That is what the authors’ lists show, not proof that these recordings were never seen; the sentence above is the released one, which predates the check.'},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
@@ -89,7 +89,7 @@ const S={
       fmNotRun:'未运行',fmNotPublished:'不发布',fmExposed:'在作者的预训练清单中',fmUnknown:'是否出现在预训练数据中：未知',
       fmResearchUse:'模型卡：仅供研究使用，不可用于诊断或临床。',
       fmAblationReference:'即上表中的那一行',fmSource:'来源 ↗',fmMethod:'模型页面 →',fmCsv:'第九轮各行 · CSV ↓',
-      fmExposureLabel:'是否出现在预训练数据中：',fmFootnote:'该行脚注：',fmLicence:'权重许可：',
+      fmExposureLabel:'是否出现在预训练数据中：',fmFootnote:'该行脚注：',fmLicence:'权重许可：',fmVersion:'模型版本：',
       fmFrozen:'2026-10-04 新增的冻结探针（第九轮发布）：沿用已发布的方案，只替换编码器。按模型类别分组，从不排名。',
       stop:'。',coreExposureLead:'2026-10-04 核查——LaBraM 与 CBraMod：',coreExposureTail:'这是作者清单所显示的情况，并不证明这些记录从未被模型见过；上面那句话是发布时的原文，早于这次核查。'},
 }[LANG];
@@ -103,7 +103,7 @@ const metric=(label:string)=>S.metric[label]??label;
    and the owner's sourced pretraining-exposure statement. */
 type FmRow={id:string;name:string;panel:string;href:string;mode:string;channels:number;subjects:number|null;y:number|null;interval:[number,number]|null;
   x:number|null;chanceFlag:'at-or-below'|'interval-reaches'|null;status:string;reason:string|null;reasonOriginal:string|null;exposure:string;exposureText:string;exposureSource:string|null;
-  footnote:string;footnoteOriginal:string|null;notes:string;licence:string;licenceOriginal:string|null;researchUse:boolean;
+  footnote:string;footnoteOriginal:string|null;notes:string;notesOriginal:string|null;version:string|null;licence:string;licenceOriginal:string|null;researchUse:boolean;
   idle:{detected:number;commandTrials:number;falseActivations:number;idleTrials:number;abstain:number}|null};
 type FmData={release:string;date:string;tracks:Record<string,{file:string;protocolHref:string;rows:FmRow[];coreExposure?:{text:string;urls:string[]}}>};
 const fmData:FmData=(()=>{try{return JSON.parse(document.querySelector('#fm-rows')?.textContent||'');}catch{return {release:'',date:'',tracks:{}};}})();
@@ -333,8 +333,9 @@ function fmDialog(r:FmRow){
     '<p><span'+EN+'>'+esc(r.mode)+'</span> · '+r.channels+' ch'+(r.subjects?' · '+r.subjects+S.participants:'')+'</p>'+figures+
     '<p class="detail-note">'+S.fmExposureLabel+esc(r.exposureText)+(r.exposureSource?' <a href="'+esc(r.exposureSource)+'" target="_blank" rel="noreferrer">'+S.fmSource+'</a>':'')+'</p>'+
     '<p class="detail-note">'+S.fmFootnote+esc(r.footnote)+orig(r.footnoteOriginal)+'</p>'+
-    (r.notes?'<p class="detail-note" lang="en">'+esc(r.notes)+'</p>':'')+
+    (r.notes?'<p class="detail-note"'+(r.notesOriginal?'':' lang="en"')+'>'+esc(r.notes)+orig(r.notesOriginal)+'</p>':'')+
     '<p class="detail-note">'+S.fmLicence+esc(r.licence)+orig(r.licenceOriginal)+'</p>'+
+    (r.version?'<p class="detail-note">'+S.fmVersion+'<span'+EN+'>'+esc(r.version)+'</span></p>':'')+
     (r.researchUse?'<p class="detail-note fm-research-use">'+S.fmResearchUse+'</p>':'')+
     '<p class="detail-note">'+S.fmFrozen+'</p>'+
     '<a class="button" href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a> <a class="button" href="'+esc(r.href)+'">'+S.fmMethod+'</a> <a class="button" href="/data/'+esc(t.file)+'" download>'+S.fmCsv+'</a>');
