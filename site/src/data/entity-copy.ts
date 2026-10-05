@@ -257,7 +257,7 @@ export const protocolCopy = {
     // The v9 foundation-model rows (2026-10-04): their own section, after the released table.
     fmH2: 'Further foundation encoders, frozen',
     fmEyebrow: (date: string) => `Added ${date} · release v9`,
-    fmLede: (tradeoff: boolean) => `Each encoder replaces LaBraM or CBraMod in the frozen recipe above, and nothing else changes: the same windows, people, folds, ${tradeoff ? 'per-person linear head with its calibration-only threshold' : 'ridge head'} and scoring. The rows are grouped by model family, never ranked: a row is above or below another only where their 95% intervals do not overlap. Compare within this protocol only.`,
+    fmLede: (tradeoff: boolean) => `Each encoder replaces LaBraM or CBraMod in the frozen recipe above, and nothing else changes: the same windows, people, folds, ${tradeoff ? 'per-person linear head with its calibration-only threshold' : 'ridge head'} and scoring. The rows are grouped by model family, never ranked: ${tradeoff ? 'they are counts with no interval, so no row is called above or below another' : 'a row is above or below another only where their 95% intervals do not overlap'}. Compare within this protocol only.`,
     fmPlotCaption: 'Balanced accuracy under this protocol.',
     fmPlotLegend: 'The released rows of the table above (grey), then the v9 encoders in family order (rust). Dot: the estimate; line: descriptive 95% interval; dashed line: chance level.',
     fmRegion: 'v9 foundation encoders under this protocol, scrolls horizontally',
@@ -378,7 +378,7 @@ export const protocolCopy = {
     dlAll: '核心矩阵 · JSON ↓',
     fmH2: '更多基础模型编码器（冻结）',
     fmEyebrow: (date: string) => `${date} 新增 · 第九轮发布`,
-    fmLede: (tradeoff: boolean) => `每个编码器只替换上面冻结方案中的 LaBraM 或 CBraMod，其余一概不变：时间窗、被试、折、${tradeoff ? '逐人线性分类头及其只用校准数据定的阈值' : '岭回归分类头'}和评分方式都相同。各行按模型类别分组，从不排名：只有 95% 区间不重叠时，才说一行高于或低于另一行。只在本协议内部比较。`,
+    fmLede: (tradeoff: boolean) => `每个编码器只替换上面冻结方案中的 LaBraM 或 CBraMod，其余一概不变：时间窗、被试、折、${tradeoff ? '逐人线性分类头及其只用校准数据定的阈值' : '岭回归分类头'}和评分方式都相同。各行按模型类别分组，从不排名：${tradeoff ? '这些是计数，没有区间，所以不说哪一行高于或低于另一行' : '只有 95% 区间不重叠时，才说一行高于或低于另一行'}。只在本协议内部比较。`,
     fmPlotCaption: '本协议下的平衡准确率。',
     fmPlotLegend: '先是上表中已发布的各行（灰色），再按模型类别列出第九轮的编码器（锈色）。点为估计值，横线为描述性 95% 区间，虚线为随机水平。',
     fmRegion: '本协议下第九轮的基础模型编码器，可横向滚动',

@@ -440,6 +440,21 @@ beta-8ch v9 bound 41.9%→42.9%, fewer-electrodes 37.0%→37.9%) and seven more 
 change, `llms-full.txt` alone, a dataset and two method-page groups): each of 12 was
 caught, one of them first by the generic check.
 
+The v9 export's own prose (same review): it carried the candidate's limitation
+"EEGMamba not exposed at medium confidence" and the approval as "user-approved". The
+export now restates the exposure limitation as the authors' published lists show them
+(checked 2026-10-04; not proof), names the approval "owner-approved", and says in its
+wording rule that a cell's confidence rates how closely its source enumerates the
+corpus, not how certain it is that the recordings were never seen; it refuses a
+candidate whose exposure limitation reads otherwise. Pinned: no "not exposed" and no
+"user-approved" in the JSON or any CSV, the restated limitation and the confidence
+sentence (the translation table follows the new English). The idle protocol page's v9
+lede no longer promises an interval rule its counts cannot follow: it says they are
+counts with no interval, so no row is called above or below another, and only the
+protocols with intervals state the overlap rule. Mutation-tested on a copy of `dist/`
+(a served file edited with its source and its listed SHA-256, at the same size): each
+of 5 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

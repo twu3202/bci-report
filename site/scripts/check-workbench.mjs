@@ -2678,6 +2678,13 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   }
   const zuna=F.models.find(m=>m.id==='zuna');
   assert.match(zuna.licence_note,/research use only, not for diagnosis or clinical use/,'ZUNA 1.1: the model card\'s research-use sentence');
+  // Review of 2026-10-05: the candidate's "EEGMamba not exposed at medium confidence" and "user-approved" are restated
+  // in the owner's wording, in the JSON and every CSV; the exposure limitation reads the authors' lists.
+  {const text=served('foundation-models-update.json').toString()+protocols.map(p=>served('foundation-models-'+p+'.csv').toString()).join('');
+   assert.ok(!/not exposed/i.test(text)&&!text.includes('user-approved'),'the v9 files say neither "not exposed" nor "user-approved"');
+   const lim=F.required_limitations.filter(x=>/^Pretraining exposure/.test(x));
+   assert.ok(lim.length===1&&/published pretraining lists show it \(checked 2026-10-04\)/.test(lim[0])&&/not proof/.test(lim[0]),'the exposure limitation is the authors\' lists, not a proof');
+   assert.match(E.wording_rule,/confidence rates how closely its source enumerates the corpus/,'the exposure confidence is said to rate the source, not the absence of overlap');}
   // Each protocol's CSV against the JSON and its core results CSV.
   for(const p of protocols){
     const rows=csvRows(served('foundation-models-'+p+'.csv').toString()),core=csvRows(served(p+'-results.csv').toString());
@@ -2876,6 +2883,9 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
        if(/pretraining overlap unknown/.test(t.limitation)) assert.ok(ptr>lim&&ptr<html.indexOf('id="steps"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('href="#pretraining-exposure"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('2026-10-04'),where+': a dated pointer beside "pretraining overlap unknown"');
        else assert.equal(ptr,-1,where+': a pointer without the released words it points from');}
       assert.ok(sec.includes(label==='en'?'which is not proof that its recordings were never seen':'这并不证明它的记录从未被模型见过'),where+': the exposure key says what a statement is not');
+      // The reading rule fits the rows: interval overlap where there are intervals; the idle rows are counts (review of 2026-10-05).
+      assert.equal(/95% intervals do not overlap|95% 区间不重叠/.test(visible(sec.slice(0,sec.indexOf('<table class="fm-results">')))),!tradeoff,where+': the interval reading rule only where rows have intervals');
+      if(tradeoff) assert.ok(visible(sec).includes(label==='en'?'they are counts with no interval, so no row is called above or below another':'这些是计数，没有区间，所以不说哪一行高于或低于另一行'),where+': the idle rows are counts, not ranked');
       assert.ok(sec.includes(`href="/data/${fmcsv}" download`)&&sec.includes(`href="/${prefix}releases/#${REL}"`),where+': the v9 CSV and its release are linked');
       const vis=visible(label==='zh'?chineseOnly(sec):sec);
       assert.doesNotMatch(vis,ranking[label],where+': the v9 rows are not ranked');

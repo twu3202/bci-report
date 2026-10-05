@@ -25,10 +25,10 @@ export const fmZh: Record<string, string> = {
   'unknown: the authors do not list their pretraining data closely enough to decide': '未知：作者公开的预训练数据清单不够详细，无法判断',
 
   // Weights licences, as each model row states them.
-  'REVE Responsible Use License v1.0 (user-approved 2026-10-04)': 'REVE 负责任使用许可 v1.0（站点所有者于 2026-10-04 批准）',
-  'CC BY-ND 4.0 (user-approved: internal adaptation, aggregate scores only, no adapted weights or LoRA deltas shared)':
+  'REVE Responsible Use License v1.0 (owner-approved 2026-10-04)': 'REVE 负责任使用许可 v1.0（站点所有者于 2026-10-04 批准）',
+  'CC BY-ND 4.0 (owner-approved: internal adaptation, aggregate scores only, no adapted weights or LoRA deltas shared)':
     'CC BY-ND 4.0（经站点所有者批准：仅限内部适配，只发布聚合分数，不分享任何适配后的权重或 LoRA 增量）',
-  'CC BY-ND 4.0 (user-approved terms as LUNA Base)': 'CC BY-ND 4.0（经批准的条款同 LUNA Base）',
+  'CC BY-ND 4.0 (owner-approved terms as LUNA Base)': 'CC BY-ND 4.0（经站点所有者批准的条款同 LUNA Base）',
   'MIT': 'MIT',
   'Apache-2.0': 'Apache-2.0',
   'MIT (repo LICENSE; README reserves the paper, diagrams and the name)': 'MIT（仓库的 LICENSE；README 保留论文、示意图与名称的权利）',

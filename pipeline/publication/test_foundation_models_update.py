@@ -274,6 +274,25 @@ class FoundationModelsBoundary(unittest.TestCase):
                                 for x in rows))
         self.assertEqual(e['counts'], {'exposed': 2, 'not_exposed': 82, 'unknown': 7})
 
+    def test_the_prose_is_the_owners_wording(self):
+        # Review of 2026-10-05: the candidate's "EEGMamba not exposed at medium confidence" and "user-approved" are
+        # restated as the owner's wording; no prose in the file says "not exposed" or "user-approved".
+        text = json.dumps(self.payload, ensure_ascii=False) + ''.join(b.decode() for b in self.csvs.values())
+        self.assertNotIn('not exposed', text.lower())
+        self.assertNotIn('user-approved', text)
+        lim = [x for x in result(self.payload)['required_limitations'] if x.startswith('Pretraining exposure')]
+        self.assertEqual(lim, [ex.EXPOSURE_LIMITATION])
+        self.assertIn("published pretraining list", lim[0])
+        self.assertIn('not how certain it is that the recordings were never seen', result(self.payload)['pretraining_exposure']['wording_rule'])
+        reve = next(m for m in result(self.payload)['models'] if m['id'] == 'reve-base')
+        self.assertEqual(reve['weights_licence'], 'REVE Responsible Use License v1.0 (owner-approved 2026-10-04)')
+
+    def test_a_changed_exposure_limitation_is_refused(self):
+        def reword(c):
+            c['required_limitations'] = [x.replace('medium confidence', 'high confidence') for x in c['required_limitations']]
+        with self.assertRaisesRegex(ValueError, 'exposure limitation'):
+            build(self.forged(candidate=reword))
+
     # ------------------------------------------------------------------ the chain of custody
     def test_a_changed_input_byte_is_refused(self):
         for key in ('handoff', 'releaseCandidate', 'aggregate', 'pretrainingExposure', 'auditStatus', 'harnessValidation'):

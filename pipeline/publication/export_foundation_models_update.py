@@ -343,6 +343,16 @@ def private_names(candidate, handoff):
     return {n for n in hosts | volumes if len(n) >= 3}
 
 
+# ---------------------------------------------------------------------------- the exposure limitation
+CANDIDATE_EXPOSURE_LIMITATION = ('Pretraining exposure: ST-EEGFormer x BETA and SingLEM x semantic-target are exposed; '
+                                 'ZUNA 1.1 is unknown on all core datasets; EEGMamba not exposed at medium confidence.')
+EXPOSURE_LIMITATION = ('Pretraining exposure, as the authors\' published pretraining lists show it (checked 2026-10-04): '
+                       'BETA is in ST-EEGFormer\'s list and TMNRED (semantic-target) in SingLEM\'s; ZUNA 1.1 publishes '
+                       'no list, so it is unknown on all core datasets; EEGMamba\'s list is read from its official code, '
+                       'with medium confidence. A dataset absent from a list is not proof that its recordings were '
+                       'never seen.')
+
+
 # ---------------------------------------------------------------------------- per cell
 def exposure_of(block, model, protocol, table, label):
     cell = at(table, block['src']['pointer'].rsplit('/', 1)[0], label)
@@ -440,6 +450,9 @@ def models_block(candidate, manifest):
                                      'same architecture, corpus and recipe, another masking framework or geometry.')}
         lic = licences[mid]
         require(base['weights_licence'].startswith(lic['weightsLicence']), f'{mid}: the weights licence is not the reviewed one')
+        # The approval is the site owner's, as the Chinese pages and the manifest say it (review of 2026-10-05).
+        require(base['weights_licence'].count('user-approved') <= 1, f'{mid}: the weights licence names the approval twice')
+        base['weights_licence'] = base['weights_licence'].replace('user-approved', 'owner-approved')
         adaptation = next(a for a in candidate['eegmat_adaptation']['rows'] if a['model'] == mid)
         out.append({
             'id': mid, **base, 'family': 'foundation', 'input_family': families[mid],
@@ -641,7 +654,9 @@ def exposure_block(table, candidate):
         'statements': EXPOSURE_STATEMENT,
         'wording_rule': ('Owner decision, 2026-10-04: a model\'s exposure is stated as what its authors\' published '
                          'pretraining list shows, checked on a date and linked to the source; never as proven absence '
-                         'of overlap. Recording-level audits were not done: exposure is decided per dataset.'),
+                         'of overlap. Recording-level audits were not done: exposure is decided per dataset. A '
+                         'cell\'s confidence rates how closely its source enumerates the corpus, not how certain it is '
+                         'that the recordings were never seen.'),
         'method': keep_method,
         'datasets': [{k: d[k] for k in ('key', 'name', 'protocols', 'url')} for d in table['datasets']],
         'models': [{k: m[k] for k in ('key', 'name', 'variants_covered', 'evaluated_in_v9', 'corpus_summary',
@@ -913,6 +928,12 @@ def build(manifest_bytes):
     limitations = list(candidate['required_limitations'])
     require(len(limitations) == 9 and any('not any model\'s ceiling' in x for x in limitations)
             and any('never ranked' in x for x in limitations), 'the required limitations changed')
+    # The candidate's exposure limitation says "EEGMamba not exposed at medium confidence": the owner's wording is the
+    # authors' published lists, never "not exposed" (decision of 2026-10-04; review of 2026-10-05). It is restated.
+    exposure_items = [i for i, x in enumerate(limitations) if x.startswith('Pretraining exposure:')]
+    require(len(exposure_items) == 1 and limitations[exposure_items[0]] == CANDIDATE_EXPOSURE_LIMITATION,
+            'the exposure limitation changed: re-read it against the owner\'s wording')
+    limitations[exposure_items[0]] = EXPOSURE_LIMITATION
 
     order = {p: i for i, p in enumerate(PROTOCOLS)}
     result = {
