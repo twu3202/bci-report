@@ -2563,6 +2563,36 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${rdx.release_id}"`)&&pageOf(path).includes(rdx.provenance.manifest_sha256),path+': the route-1 release and its manifest');
     const du=pageOf('data-use/'),s0=du.slice(du.indexOf('id="sources-2026-10-04"'),du.indexOf('</section>',du.indexOf('id="sources-2026-10-04"')));
     assert.ok(s0.length>800&&['EEGMAT','BETA','ds003810','BNCI2015-001','idle'].every(x=>s0.includes(x)),'data-use: the 4 October section names its recordings and what is left out');
+    // The same date's v9 review has its own entry (review of 2026-10-05): the route-1 sentence is scoped to route 1;
+    // each core protocol's reused 2026-09-20 rights record carries its v9 scope, verbatim; each model family's weights
+    // terms carry every checkpoint with its revision (REVE's named versions included), the licence note and the owner's
+    // decision, verbatim; and the terms that oblige — REVE's licence, LUNA's no-derivatives and no-endorsement, ERP-FM's
+    // non-commercial terms, ZUNA 1.1's research use — are stated in the entry's own words.
+    assert.ok(s0.includes('Route 1 adds no new dataset and no new model')&&!/<p>Under its own manifest\. No new dataset and no new model/.test(s0),'data-use: "no new model" is scoped to route 1');
+    const F9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
+    const at9=s0.indexOf('<h3 id="sources-2026-10-04-v9">'),v9=s0.slice(at9);
+    assert.ok(at9>0&&at9>s0.indexOf('<h3 id="sources-2026-10-04-route-1">'),'data-use: the v9 review is its own entry under 4 October, after route 1');
+    const e9=x=>escHtml(x);
+    assert.deepEqual([...v9.matchAll(/<tr data-v9-source="([^"]+)">/g)].map(m=>m[1]),F9.protocols.map(p=>p.id),'data-use: one v9 rights row per core protocol, in the matrix order');
+    for(const p of F9.protocols){
+      const r=v9.slice(v9.indexOf(`<tr data-v9-source="${p.id}">`),v9.indexOf('</tr>',v9.indexOf(`<tr data-v9-source="${p.id}">`)));
+      assert.ok(r.includes(e9(p.rights.privacyReview))&&/Reused unchanged from the 2026-09-20 review/.test(p.rights.privacyReview)&&/Published here:/.test(p.rights.privacyReview),'data-use: '+p.id+' carries its reused rights record and v9 scope');
+      assert.ok(r.includes(`href="${e9(p.rights.source)}"`)&&r.includes(`href="${e9(p.rights.licenseUrl)}"`)&&r.includes(`href="/protocols/${p.id}/#foundation-v9"`),'data-use: '+p.id+' links its source, licence and v9 rows');
+    }
+    const lic9=[...v9.matchAll(/<tr data-v9-licence="([^"]+)">([\s\S]*?)<\/tr>/g)];
+    for(const m of F9.models){
+      const r=lic9.find(x=>x[2].includes('<span>'+e9(m.name)+'</span>'));
+      assert.ok(r,'data-use: '+m.name+' is listed with the weights terms');
+      assert.ok(m.revision?r[2].includes('<code>'+e9(m.revision)+'</code>'):r[2].includes('revision not in the release'),'data-use: '+m.name+' with its revision');
+      assert.ok(r[2].includes(e9(m.rights_review)),'data-use: '+m.name+' with the owner\'s review of its weights');
+      if(!/\(as /.test(m.licence_note)) assert.ok(r[2].includes(e9(m.licence_note)),'data-use: '+m.name+' with its licence note');
+    }
+    for(const rev of F9.models.filter(m=>m.id.startsWith('reve-')).map(m=>m.revision)) assert.ok(v9.includes(e9(rev)),'data-use: REVE named by version ('+rev+')');
+    const v9t=visible(v9);
+    for(const re of [/REVE Responsible Use License, accepted by the owner/,/LUNA’s CC BY-ND 4\.0[^.]*no endorsement implied/,/ERP-FM’s CC BY-NC-SA 4\.0, non-commercial/,/ZUNA 1\.1’s model card, research use only, not for diagnosis or clinical use/,
+                     /no model’s authors endorse these results/,/not proof that a recording was never seen/,/pinned by hash in the review manifest/,/timings and memory/])
+      assert.match(v9t,re,'data-use: the v9 entry states '+re);
+    assert.ok(v9.includes('href="/releases/#foundation-models-update-20261004"'),'data-use: the v9 entry links its release');
   }
 }
 // --- 2026-10-04 v9 foundation models: the publication boundary ---------------------------------

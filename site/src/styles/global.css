@@ -352,6 +352,8 @@ dialog .button{margin-top:18px;max-width:100%}
 .policy-page{max-width:900px;padding-top:36px}
 .policy-page h1{margin-bottom:14px;font-size:1.95rem}
 .policy-page h2{margin-bottom:10px;font-size:1.3rem}
+.policy-page h3{margin-top:22px}
+.policy-page td code{overflow-wrap:anywhere}
 .policy-page section{margin-top:32px}
 .policy-page p{margin:10px 0}
 .policy-page li{margin:8px 0;color:var(--muted)}

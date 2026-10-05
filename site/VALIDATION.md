@@ -356,6 +356,20 @@ being in ST-EEGFormer's and SingLEM's published lists, not "pretrained on". The 
 Face card is held to the same in `test_hf_card.py`. Mutation-tested on a copy of
 `dist/`: each of 11 injected violations was caught.
 
+Data use, 4 October: the section said "no new model" for the whole date, although the
+v9 review of the same day added sixteen checkpoints whose weights carry terms. It now
+has two entries. Route 1's sentence is scoped to route 1. The v9 entry is pinned: one
+row per core protocol carrying its 2026-09-20 rights record, reused unchanged, with its
+v9 "Published here" scope, verbatim from the served JSON, and its source, licence and
+v9 rows linked; one row per model family listing every checkpoint with its revision
+(REVE's named versions included; "revision not in the release" for the three masking
+siblings), its licence note and the owner's decision, verbatim; the entry states REVE's
+licence accepted by the owner, LUNA's CC BY-ND with no endorsement implied, ERP-FM's
+non-commercial terms, ZUNA 1.1's research use, that no author endorses the results,
+that exposure is not proof, that timings and memory are not published and that the
+audits are pinned by hash, and links the release. Mutation-tested on a copy of `dist/`:
+each of 7 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
