@@ -3770,6 +3770,64 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   // bracket that opens the next element read "（−6.1 pp ）" on fewer-electrodes).
   for(const f of htmlPages.filter(f=>f.startsWith('zh/'))){const md=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8');
     const bad=md.match(/.{0,20}[^\s|] [）；，。：、].{0,4}/);assert.ok(!bad,f.replace(/index\.html$/,'index.md')+': a space before a full-width mark: "'+(bad&&bad[0])+'"');}
+  // Second follow-up review of 2026-10-05: the checks above read data-fig texts, home rows and short answers, so v9
+  // figures written as plain text still reached the copies (and, verbatim, llms-full.txt) with nothing holding them.
+  const squash=t=>norm(t).replace(/\s+/g,'');
+  // What the converter (build-agent-files.mjs) leaves out of a block: SVG, aria-hidden, visually hidden labels, form
+  // controls and in-page jump links.
+  const blockText=h=>h.replace(/<svg[\s\S]*?<\/svg>/g,' ').replace(/<(\w+)[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/\1>/g,' ')
+    .replace(/<span class="visually-hidden">[^<]*<\/span>/g,' ').replace(/<(button|select|label)\b[\s\S]*?<\/\1>/g,' ')
+    .replace(/<a href="#[^"]*"[^>]*>[\s\S]*?<\/a>/g,' ').replace(/<[^>]+>/g,' ');
+  const FMX=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
+  const ZT=(()=>{const c={};vm.runInNewContext(stripTypeScriptTypes(readFileSync(new URL('../src/data/foundation-models-zh.ts',import.meta.url),'utf8'))
+    .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'')+'\nthis.fmZh=fmZh;',c);return c.fmZh;})();
+  const inLang=(en,zh)=>zh?{text:ZT[en],original:en}:{text:en};
+  // A copy's list item, "- " and any label first; a Chinese text and its English are two elements on a protocol page
+  // (a space between them) and a text and an element in a checkpoint's term (none).
+  const itemIs=(line,lead,t)=>!!t.text&&(t.original?[lead+t.text+' '+t.original,lead+t.text+t.original].includes(line):line===lead+t.text);
+  // (N3a) REVE's row footnotes state the sensitivity run's size and direction in words ("P300 0.71 percentage points
+  // higher and sleep 1.40 lower"), inside a list item the data-fig check cannot see: a sign reversed in a copy and in
+  // llms-full.txt passed. Every row footnote a page prints — each protocol page's numbered list, each checkpoint on a
+  // method page — is in its copy verbatim, in the page's order: in English the export's row_footnote, in Chinese the
+  // translation table's text followed by the English (llms-full.txt, held verbatim to the English copies above,
+  // carries it too). Each checkpoint's other terms (parameters, revision, licence, notes) are in the copy as printed.
+  let footnotes=0,terms=0;
+  for(const pfx of ['','zh/']){const zh=pfx==='zh/';
+    for(const t of data.tracks){
+      const path=pfx+'protocols/'+t.id+'/',where=path+'index.md';
+      const html=readFileSync(new URL(path+'index.html',DIST),'utf8'),md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+      const ol=sectionHtml(html,'foundation-v9').match(/<h3 class="roadmap-h3" id="v9-footnotes">([^<]*)<\/h3>\s*<ol class="fm-footnotes">([\s\S]*?)<\/ol>/);
+      assert.ok(ol,path+': the v9 row footnotes');
+      const page=[...ol[2].matchAll(/<li id="fn-v9-\d+"><span>([^<]*)<\/span>(?:<span class="note-original" lang="en">([^<]*)<\/span>)?<\/li>/g)]
+        .map(m=>m[2]===undefined?{text:decodeHtml(m[1])}:{text:decodeHtml(m[1]),original:decodeHtml(m[2])});
+      assert.deepEqual(page,[...new Set(FMX.models.map(m=>m.row_footnote))].map(en=>inLang(en,zh)),path+': one footnote per distinct row footnote of the export, in order'+(zh?', in Chinese with the English':''));
+      const part=mdSection(md,norm(ol[1]),3);assert.ok(part,where+': the copy has "'+ol[1]+'"');
+      const items=part.split('\n').filter(l=>l.startsWith('- '));
+      assert.equal(items.length,page.length,where+': as many row footnotes as the page');
+      page.forEach((f,i)=>assert.ok(itemIs(items[i],'- ',f),where+': row footnote '+(i+1)+' is the page\'s, verbatim, not "'+items[i].slice(0,100)+'"'));
+      footnotes+=page.length;
+    }
+    for(const f of htmlPages.filter(f=>f.startsWith(pfx+'methods/')&&(zh||!f.startsWith('zh/')))){
+      const html=readFileSync(new URL(f,DIST),'utf8');if(!html.includes('id="checkpoints"'))continue;
+      const path=f.replace(/index\.html$/,''),where=path+'index.md',md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+      const sec=sectionHtml(html,'checkpoints'),h2=sec.match(/<h2 id="checkpoints-heading">([^<]*)<\/h2>/);
+      const part=h2&&mdSection(md,norm(h2[1]),2);assert.ok(part,where+': the copy has the checkpoints section');
+      const arts=[...sec.matchAll(/<article class="fm-checkpoint" data-checkpoint="([^"]+)">([\s\S]*?)<\/article>/g)];
+      assert.ok(arts.length>0,path+': its checkpoints');
+      for(const [,id,art] of arts){
+        const m=FMX.models.find(x=>x.id===id),name=decodeHtml(art.match(/<h3 lang="en">([^<]*)<\/h3>/)[1]);
+        assert.ok(m&&m.name===name,path+': '+id+' is the export\'s '+name);
+        const sub=mdSection(part,name,3);assert.ok(sub,where+': the checkpoint '+name);
+        const items=sub.split('\n').filter(l=>l.startsWith('- ')),pairs=[...art.matchAll(/<div><dt>([^<]*)<\/dt><dd>([\s\S]*?)<\/dd><\/div>/g)];
+        assert.equal(items.length,pairs.length,where+' '+name+': every term the page prints');
+        pairs.forEach(([,dt,dd],i)=>{assert.equal(squash(items[i]),squash('- '+dt+': '+blockText(dd)),where+' '+name+': "'+decodeHtml(dt)+'" as the page prints it');terms++;});
+        assert.equal(items.filter(l=>itemIs(l,'- '+(zh?'各行脚注':'Row footnote')+': ',inLang(m.row_footnote,zh))).length,1,where+' '+name+': its row footnote, verbatim');
+        footnotes++;
+      }
+    }
+  }
+  assert.ok(footnotes>=2*(8*13+16)&&terms>=2*16*8,'the row footnotes and checkpoint terms were read ('+footnotes+', '+terms+')');
+  console.log('PASS: 2026-10-05 second follow-up review — '+footnotes+' row footnotes verbatim in the copies (REVE\'s sensitivity runs with their direction) and '+terms+' checkpoint terms as printed.');
   console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim; the home page\'s v9 and ablation rows ('+homeRows+') and every topic\'s short answer ('+answers+') carry the page\'s figures into the copies, in order.');
 }
 // --- 2026-10-05 follow-up review: a v9 figure prints as decimal rounding gives it --------------------

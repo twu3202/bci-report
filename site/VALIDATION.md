@@ -627,6 +627,20 @@ Mutation-tested on a copy of `dist/` (the source and served JSON edited together
 same size, with the listed SHA-256, restored afterwards): each of 6 injected violations
 was caught by the assertion written for it; the export tests refuse five more.
 
+The copy checks above read `data-fig` texts, the home table's rows and the short
+answers, so v9 figures written as plain text still reached the Markdown copies and
+`llms-full.txt` with nothing holding them (same review, second round). REVE's row
+footnotes state the sensitivity run's size and direction in words, and a copy (with
+`llms-full.txt`) that said "lower" for "higher", 1.41 for 1.40, 2.07 for 2.06 or 低 for
+高 passed. Now, in both languages: each protocol page prints one footnote per distinct
+row footnote of the export, in order, and its copy's footnote list is exactly those
+items, verbatim — in English the export's `row_footnote`, in Chinese the translation
+table's text followed by the English; and on every method page with checkpoints, each
+checkpoint's copy carries every term the page prints (parameters, revision, licence,
+rights, notes, adaptation) as printed, and its row footnote verbatim. `llms-full.txt`,
+held verbatim to every English copy, carries them too. About 256 footnotes and 326
+terms are read.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
