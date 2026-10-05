@@ -19,7 +19,7 @@ const copy = {
     howH2: 'How it works',
     how: [
       ['Stable URLs', `Every file lives at ${base}<file>. A file is only ever replaced by a reviewed release, and the releases page gives the SHA-256 of the bytes currently served.`],
-      ['No key, no account', 'Plain HTTPS GET. Static files behind a CDN; no rate limit is promised, so cache what you use. The CDN refuses Python’s built-in urllib, which pd.read_csv uses for a URL: fetch with requests, curl or any client that sends its own User-Agent. Files under /data/ allow cross-origin reads, so a notebook running in a browser can fetch them too.'],
+      ['No key, no account', 'Plain HTTPS GET. Static files behind a CDN; no rate limit is promised, so cache what you use. Any HTTP client can fetch the files under /data/, the llms files and the Markdown copies, so pd.read_csv can read a CSV straight from its URL. Files under /data/ allow cross-origin reads, so a notebook running in a browser can fetch them too.'],
       ['Licence', 'The aggregate results are CC BY 4.0. The recordings they were computed from belong to their authors and keep their own terms — each dataset page names them. The code that builds the site and the exports is MIT-licensed.'],
       ['Mirror', 'The same files are on Hugging Face as the dataset Twu31/bci-report, with the per-protocol tables merged into loadable configurations.'],
     ],
@@ -52,7 +52,7 @@ const copy = {
     howH2: '使用方式',
     how: [
       ['固定地址', `每个文件都位于 ${base}<文件名>。文件只会被经过审核的发布替换，发布记录页给出当前所提供字节的 SHA-256。`],
-      ['无需密钥或账号', '普通的 HTTPS GET 请求。静态文件经 CDN 提供；不承诺任何速率上限，请缓存你用到的文件。CDN 会拒绝 Python 自带的 urllib（pd.read_csv 直接读网址时用的就是它）：请用 requests、curl 或任何会发送自己 User-Agent 的客户端下载。/data/ 下的文件允许跨域读取，在浏览器里运行的笔记本也能直接获取。'],
+      ['无需密钥或账号', '普通的 HTTPS GET 请求。静态文件经 CDN 提供；不承诺任何速率上限，请缓存你用到的文件。/data/ 下的文件、llms 文件和各页的 Markdown 副本，任何 HTTP 客户端都能下载，pd.read_csv 也可以直接按网址读取 CSV。/data/ 下的文件允许跨域读取，在浏览器里运行的笔记本也能直接获取。'],
       ['许可', '聚合结果采用 CC BY 4.0。计算这些结果所用的原始记录属于其作者，并保留各自的条款——每个数据集页面都写明了。构建本站和导出文件的代码采用 MIT 许可。'],
       ['镜像', '同样的文件也在 Hugging Face 上，数据集名为 Twu31/bci-report，各协议的表格已合并为可直接加载的配置。'],
     ],
@@ -78,10 +78,13 @@ const copy = {
   },
 }[locale];
 const curl = `curl -sO ${base}experiments.json\ncurl -s ${base}context-update.json | jq '.results | keys'`;
-// pd.read_csv(<url>) opens the URL with urllib, whose default User-Agent the
-// CDN's browser check refuses (HTTP 403, error 1010). Found 2026-10-01: the
-// example printed here until then did not run. Fetch with requests instead.
-const python = `import io\nimport pandas as pd, requests\n\nmatrix = requests.get("${base}experiments.json", timeout=30).json()\nfor track in matrix["tracks"]:\n    print(track["id"], track["chanceLevel"], len(track["rows"]))\n\n# Fetch with requests, then hand pandas the text (see the note above).\ncsv = requests.get("${base}mi-rest-results.csv", timeout=30).text\nmi_rest = pd.read_csv(io.StringIO(csv))`;
+// pd.read_csv(<url>) opens the URL with urllib. Until 2026-10-05 the CDN's browser
+// check refused urllib's default User-Agent (HTTP 403, error 1010), so this example
+// fetched with requests. Since 2026-10-05 a Cloudflare configuration rule (owner's
+// dashboard) turns that check off for /data/*, /llms.txt, /llms-full.txt and
+// */index.md; urllib and pd.read_csv were tested against /data/ that day. HTML pages
+// keep the check.
+const python = `import pandas as pd, requests\n\nmatrix = requests.get("${base}experiments.json", timeout=30).json()\nfor track in matrix["tracks"]:\n    print(track["id"], track["chanceLevel"], len(track["rows"]))\n\nmi_rest = pd.read_csv("${base}mi-rest-results.csv")`;
 const hf = `from datasets import load_dataset\n\nresults = load_dataset("Twu31/bci-report", "results")  # also: topics, contrasts, seed_sensitivity`;
 const bibtex = `@misc{bcireport,\n  title        = {BCI Report: public EEG decoding results reported with their protocol},\n  author       = {{BCI Report}},\n  year         = {${latest.date.slice(0, 4)}},\n  howpublished = {\\url{${site.origin}}},\n  doi          = {${archive.conceptDoi}},\n  note         = {Release ${latest.id}}\n}`;
 const structured = {

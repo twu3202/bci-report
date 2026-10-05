@@ -999,11 +999,13 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 // ds003810: the citation its OpenNeuro record asks for, on both dataset pages.
 for(const p of ['datasets/ds003810/','zh/datasets/ds003810/'])
   assert.ok(pageOf(p).includes('https://doi.org/10.1016/j.heliyon.2020.e03425'),p+': the requested citation');
-// The API page's Python example must run: pandas' URL reader is refused by the CDN.
+// The API page's Python example: since 2026-10-05 the CDN lets any client read /data/
+// (a Cloudflare configuration rule turns the browser check off there), so pandas reads
+// the CSV from its URL, and the page no longer tells readers urllib is refused.
 for(const p of ['api/','zh/api/']){
   const html=pageOf(p);
-  assert.doesNotMatch(html,/pd\.read_csv\(&quot;https?:|pd\.read_csv\("https?:/,p+': pandas must not open a URL itself');
-  assert.match(html,/io\.StringIO/,p+': the example fetches with requests');
+  assert.match(html,/pd\.read_csv\((?:&quot;|")https:\/\/bci\.report\/data\/mi-rest-results\.csv(?:&quot;|")\)/,p+': pandas reads the CSV from its /data/ URL');
+  assert.doesNotMatch(html,/io\.StringIO|refuses Python|会拒绝 Python/,p+': no workaround for a refusal that no longer applies');
 }
 // The "Research preview" badge is gone from every page and agent file (2026-10-01).
 // The core release keeps its id, research-preview-20260920, which is a label for bytes.
@@ -1954,8 +1956,9 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
       assert.ok(html.includes(`<a href="${href}"><code>${href}</code></a>（英文）——`),p+': '+href+' is English only and must say so');
     if(p==='zh/api/') assert.ok(html.includes('<a href="/sitemap.xml"><code>/sitemap.xml</code></a>——'),p+': the sitemap lists both languages and carries no English mark');
     for(const href of [repository,mirror,citationFile]) assert.ok(html.includes(`href="${href}"`),p+': '+href+' must be linked');
-    // The CDN still refuses urllib: the edge setting has not changed, so the caveat stays.
-    assert.match(html,p==='api/'?/The CDN refuses Python’s built-in urllib/:/CDN 会拒绝 Python 自带的 urllib/,p+': the urllib caveat must stay until the edge stops refusing it');
+    // Since 2026-10-05 the edge lets any client read /data/, the llms files and the Markdown
+    // copies (a Cloudflare configuration rule), so the page says so instead of the old caveat.
+    assert.match(html,p==='api/'?/Any HTTP client can fetch the files under \/data\/, the llms files and the Markdown copies/:/\/data\/ 下的文件、llms 文件和各页的 Markdown 副本，任何 HTTP 客户端都能下载/,p+': the page says which files any client can fetch');
   }
 }
 

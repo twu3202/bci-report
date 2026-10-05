@@ -667,6 +667,14 @@ and **fails on drift**; re-run it with `--accept` after an intended change. Befo
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
 detect a hand-edited `dist/`.
 
+Since 2026-10-05 the API page's Python example reads the CSV straight from its
+`/data/` URL with `pd.read_csv`: a Cloudflare configuration rule (the owner's
+dashboard) turns the browser check off for `/data/*`, `/llms.txt`, `/llms-full.txt`
+and `*/index.md`, and urllib was tested against them that day. The check requires
+that call in both languages and refuses the old `requests` + `io.StringIO`
+workaround and the sentence saying urllib is refused. It cannot see the dashboard:
+if the rule is removed, the example stops running and no check fails.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.
