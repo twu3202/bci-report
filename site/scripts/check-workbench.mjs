@@ -616,6 +616,9 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   const [r1,...later]=routes.map(m=>m[3]);
   assert.match(r1,label==='en'?/<p class="eyebrow">First · Run · results above<\/p>/:/<p class="eyebrow">首先 · 已运行 · 结果见上一节<\/p>/,label+': route 1 says it was run');
   assert.ok(r1.includes(`href="${label==='zh'?'/zh':''}/topics/when-not-to-act/#reliable-decisions"`),label+': route 1 links its results');
+  // The plan promised acceptance per class and reliability; the run published neither (review of 2026-10-05).
+  assert.match(r1,label==='en'?/<p class="route-run-note">[^<]*Not published in this update: acceptance per class and reliability-diagram bins\.<\/p>/
+                              :/<p class="route-run-note">[^<]*本次更新没有发布：各类别的接受率和可靠性图的分箱。<\/p>/,label+': route 1 says which planned measures it did not publish');
   for(const r of later){
     assert.match(r,label==='en'?/<p class="eyebrow">(?:Then|Later) · Not run<\/p>/:/<p class="eyebrow">(?:随后|之后) · 尚未运行<\/p>/,label+': routes 2 and 3 are not run');
     assert.doesNotMatch(r,/href=|route-results|reliable-decisions/,label+': a route that has not run links no result');
@@ -2381,6 +2384,19 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   assert.deepEqual([rdx.status_only,rdx.holds],[[],[]],'route 1 has no status-only source and no hold');
   const R=rdx.results['reliable-decisions'],E=R.protocols['arithmetic-rest'],B=R.protocols['beta-8ch'],M=R.robustness.mi_rest;
   const mid=(p,id)=>p.methods.find(m=>m.id===id);
+  // What the file says it carries (review of 2026-10-05). The candidate's first boundary said class-conditional rows
+  // are given so readers can re-weight to another prevalence; the export refuses those rows, so the boundary says they
+  // were not carried and not_published names them as they are (pooled per class, not person-level spreads). The
+  // BNCI2015-001 hold carries the date its register row gives it.
+  assert.ok(R.boundaries.all_protocols.every(b=>!/rows are given/.test(b))&&/class-conditional rows \(acceptance per class\)[^.]* are not carried into this file\.$/.test(R.boundaries.all_protocols[0]),
+    'route 1: the boundary must not promise class-conditional rows the file does not carry');
+  assert.ok(rdx.not_published.some(x=>/class-conditional rows/.test(x)&&/acceptance per class/.test(x))&&!rdx.not_published.some(x=>/per-class acceptance spreads/.test(x)),
+    'route 1: not_published names the class-conditional rows as they are');
+  {
+    const reg=releasesHtml.slice(releasesHtml.indexOf('<tr id="hold-bnci2015-001-crossday"'),releasesHtml.indexOf('</tr>',releasesHtml.indexOf('<tr id="hold-bnci2015-001-crossday"')));
+    const opened=reg.match(/<time datetime="(\d{4}-\d\d-\d\d)">/)[1],item=rdx.not_published.filter(x=>x.includes('BNCI2015-001'));
+    assert.ok(item.length===1&&item[0].includes('opened on '+opened),'route 1: the BNCI2015-001 hold is dated as its register row dates it ('+opened+')');
+  }
   // The handoff's headline figures, so a changed export cannot pass by changing the page with it.
   assert.deepEqual(B.methods.map(m=>[m.id,pct1(m.fixed_cutoff.coverage),m.fixed_cutoff.people_with_nothing_accepted]),[['cca','28.4%',0],['cbramod','1.5%',38],['eegnet','16.6%',10]],'BETA fixed-threshold coverage and people with nothing accepted');
   assert.deepEqual(E.methods.map(m=>[m.id,m.fixed_cutoff.accepted,m.fixed_cutoff.people_with_nothing_accepted]),[['spectral-ridge',3,33],['eegnet',126,19],['labram-frozen-ce',1,35],['labram-lora-r4',44,24]],'EEGMAT fixed-threshold accepted and people with nothing accepted');

@@ -2848,7 +2848,7 @@
       },
       "boundaries": {
         "all_protocols": [
-          "Every protocol in this route is balanced or uniform by design (EEGMAT 1:1, BETA uniform over 40 targets, mi-rest balanced, idle cue-gated with equal idle and command windows). The numbers compare methods; none of them is a deployment error rate, and class-conditional rows are given so that readers can re-weight to another prevalence.",
+          "Every protocol in this route is balanced or uniform by design (EEGMAT 1:1, BETA uniform over 40 targets, mi-rest balanced, idle cue-gated with equal idle and command windows). The numbers compare methods; none of them is a deployment error rate. The release candidate's class-conditional rows (acceptance per class), which would let a reader re-weight to another prevalence, are not carried into this file.",
           "A risk-coverage curve exists only where something is accepted. At zero coverage there is no error rate, not a zero one; fewer than 10 accepted trials is flagged unstable.",
           "A certified selective risk (S-risk, SGR with delta 0.05) assumes that calibration and test data are exchangeable. Across people they are not, so S-risk is a nominal guarantee: its failure rate is measured here, not assumed.",
           "Rejecting likely errors on known classes is not detecting unfamiliar input. An uncertainty threshold may not flag an unseen class (https://arxiv.org/abs/2603.13324). Route 1 makes no out-of-distribution claim.",
@@ -2931,17 +2931,17 @@
     "The person-level 10th, 50th and 90th percentiles the release candidate carries for EEGMAT and BETA. As with the 2026-10-03 OpenBMI percentiles, an order statistic over a cohort is one or two people's value; how many people had nothing accepted is published, which people is not.",
     "The median population temperature over outer folds. With five or seven folds a median is one fold's value. Only the count of degenerate temperatures is published.",
     "The idle protocol (ds005342): its route-1 figures are per-window proportions at each decision time, a different unit from the trial-level idle figures already on the same page, for four people without intervals. Left out, as the handoff recommends.",
-    "Every figure of the BNCI2015-001 cross-day label-budget arm: that source's editorial hold, recorded on 2026-10-01, stands.",
+    "Every figure of the BNCI2015-001 cross-day label-budget arm: that source's editorial hold, opened on 2026-09-20 and restated on 2026-10-01, stands.",
     "Matched-model holdout and map-sensitivity accuracies, coverages and errors, and the L-joint arm's own accuracy: different models or maps, never mixed with site accuracies. Only the matched and map arms' risk-certification fold counts and the L-joint within-model contrasts are published.",
     "Secondary seeds and ensembles on ds003810, and every ds003810 figure other than the fixed-threshold coverage and the learned-reject contrasts.",
-    "Reliability-diagram bins, per-class acceptance spreads, equal-width ECE, raw Brier, Brier decompositions, S-margin and L operating points, and the full risk-coverage curves: full-sample points without intervals, or quantities the pages do not use. Four test-coverage points per ranking are published, as point estimates, with an interval only at 80%.",
+    "Reliability-diagram bins; the class-conditional rows, which would let a reader re-weight to another prevalence (pooled acceptance per class on EEGMAT and ds003810, and its minimum, median and maximum over BETA's 40 targets); equal-width ECE, raw Brier, Brier decompositions, S-margin and L operating points, and the full risk-coverage curves: full-sample points without intervals, or quantities the pages do not use. Four test-coverage points per ranking are published, as point estimates, with an interval only at 80%.",
     "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
     "Runtime, wall time, platform and package versions.",
     "The protocol, its superseded freeze, the two aggregates, the two stage-0 audits and the two independent audits: pinned by SHA-256 and checked, never copied, because they carry private storage paths.",
     "A planned arm on two further sources that was deferred before any scoring because required fields were missing; nothing from it was read or scored."
   ],
   "provenance": {
-    "manifest_sha256": "9b55306dd10ce90a4c2c0b56ace17689040733f83a830a0da85080bb36881be6",
+    "manifest_sha256": "ce9ba5f55885101063f1c9562160f5f264f1d5b943a27dfc580e21b287b645cd",
     "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
     "references_reresolved": 1120,
     "included": [

@@ -329,6 +329,17 @@ sitemap dates the three topics and the hub 2026-10-04. These checks were
 mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 56 injected violations
 was caught by the assertion written for it.
 
+The review of the 2026-10-04 batches (2026-10-05) added, for route 1: the export no
+longer carries the candidate's promise that class-conditional rows "are given" — it
+refuses those rows (acceptance per class, pooled on EEGMAT and ds003810, a spread
+over BETA's 40 targets), so its first boundary says they were not carried and
+`not_published` names them as they are, and the check holds both; the BNCI2015-001
+item in `not_published` carries the date the holds register gives the hold (opened
+2026-09-20, restated 2026-10-01); and route 1's roadmap entry, which planned
+acceptance per class and reliability, says those were not published in this update
+(EN and ZH). Mutation-tested on a copy of `dist/` (the source export too, restored
+afterwards): each of 5 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

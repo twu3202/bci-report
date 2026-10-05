@@ -45,7 +45,7 @@ export const decisionSources = {
 } as const;
 
 type SourceId = keyof typeof decisionSources;
-type Route = { tag: string; status: string; title: string; body: string; boundary: string; resultsLink?: string };
+type Route = { tag: string; status: string; title: string; body: string; boundary: string; resultsLink?: string; runNote?: string };
 type Finding = [SourceId, string, string];
 
 interface RoadmapCopy {
@@ -67,7 +67,9 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     routes: [
       { tag: 'First', status: 'Run · results above', resultsLink: 'Reliable decisions: the results', title: 'Reliable decisions',
         body: 'Compare a fixed threshold, a simple statistical policy and a learned reject option on the same data. Report error at matched coverage, acceptance per class, and probability quality — Brier score, log loss and reliability — with calibration data kept apart from test data. Recalibration is a separate experiment, with its label cost counted.',
-        boundary: 'A risk–coverage curve is defined only where something is accepted; at zero coverage there is no error rate, not a zero one.' },
+        boundary: 'A risk–coverage curve is defined only where something is accepted; at zero coverage there is no error rate, not a zero one.',
+        // Since 2026-10-05: what the run published of this plan, and what it did not (review finding).
+        runNote: 'Published in the section above: error at matched coverage, log loss, the Brier score and calibration error. Not published in this update: acceptance per class and reliability-diagram bins.' },
       { tag: 'Then', status: 'Not run', title: 'One representation, several questions',
         body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.',
         boundary: 'If fixed heads do as well for less, that is the result, and it will be reported as one.' },
@@ -107,7 +109,8 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     routes: [
       { tag: '首先', status: '已运行 · 结果见上一节', resultsLink: '可靠的决策：结果', title: '可靠的决策',
         body: '在同一份数据上比较固定阈值、简单统计策略和可学习的拒识机制。报告相同覆盖率下的错误率、各类别的接受率，以及概率质量——Brier 分数、log loss 和可靠性图——校准数据与测试数据分开。重新校准另作一项实验，并计入所需标签的代价。',
-        boundary: '风险—覆盖率曲线只在有样本被接受时才有定义；覆盖率为零时没有错误率，而不是错误率为零。' },
+        boundary: '风险—覆盖率曲线只在有样本被接受时才有定义；覆盖率为零时没有错误率，而不是错误率为零。',
+        runNote: '上一节已发布：相同覆盖率下的错误率、log loss、Brier 分数和校准误差。本次更新没有发布：各类别的接受率和可靠性图的分箱。' },
       { tag: '随后', status: '尚未运行', title: '一份表征，多个问题',
         body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。',
         boundary: '如果固定分类头以更低成本做得一样好，那就是结果，也会照样报告。' },

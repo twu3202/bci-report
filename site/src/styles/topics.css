@@ -241,6 +241,7 @@ pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px 
 .rd-literature{margin:6px 0 0;padding-left:18px;display:grid;gap:5px;font-size:.82rem;overflow-wrap:anywhere}
 .rd-literature a{color:var(--accent)}
 .route-results{margin-top:10px;font-size:.84rem}
+.route-run-note{margin-top:8px;font-size:.84rem;color:var(--muted)}
 .route-results a{color:var(--accent)}
 
 /* The v9 foundation-model rows (2026-10-04): their own table beside the core one, footnotes,

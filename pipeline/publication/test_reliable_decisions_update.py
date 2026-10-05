@@ -406,6 +406,26 @@ class ReliableDecisionsBoundary(unittest.TestCase):
         self.assertNotIn('ds005342', json.dumps(payload['results']))
         self.assertNotIn('BNCI', json.dumps(payload['results']))
 
+    def test_the_class_conditional_rows_are_said_to_be_left_out(self):
+        # The candidate's first boundary says class-conditional rows are given; this file refuses them, so it says so.
+        p = build(MANIFEST)
+        bounds = p['results'][ROUTE]['boundaries']['all_protocols']
+        self.assertFalse([b for b in bounds if 'rows are given' in b])
+        self.assertTrue(bounds[0].endswith('are not carried into this file.'))
+        self.assertTrue(any('class-conditional rows' in x and 'acceptance per class' in x for x in p['not_published']))
+        self.assertFalse([x for x in p['not_published'] if 'per-class acceptance spreads' in x])
+        # A candidate whose boundary no longer says what the export replaces is refused, not carried.
+        def reword(c):
+            c['boundaries']['all_protocols'][0] = c['boundaries']['all_protocols'][0].replace('re-weight', 'reweight')
+        with self.assertRaisesRegex(ValueError, 'class-conditional'):
+            build(self.forged(candidate=reword))
+
+    def test_the_bnci_hold_carries_its_register_date(self):
+        # The holds register opened it on 2026-09-20; the 2026-10-01 release restated it.
+        item = [x for x in build(MANIFEST)['not_published'] if 'BNCI2015-001' in x]
+        self.assertEqual(len(item), 1)
+        self.assertIn('opened on 2026-09-20', item[0])
+
     def test_no_private_path_or_identifier_reaches_the_files(self):
         text = json.dumps(build(MANIFEST), ensure_ascii=False)
         # Path roots only: naming this operator's machines or volumes here would itself be the leak.

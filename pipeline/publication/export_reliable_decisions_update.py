@@ -607,6 +607,22 @@ def ljoint_block(arm):
             'source': 'https://proceedings.mlr.press/v97/geifman19a.html', 'rows': rows}
 
 
+# ---------------------------------------------------------------------------- boundaries
+# The candidate's first boundary ends by saying class-conditional rows are given so that readers can re-weight
+# to another prevalence. This export refuses those rows (per-class acceptance, by key and by fragment), so the
+# published sentence says they were not carried into this file instead (review finding, 2026-10-05).
+CLASS_CONDITIONAL = ', and class-conditional rows are given so that readers can re-weight to another prevalence.'
+NOT_CARRIED = ('. The release candidate\'s class-conditional rows (acceptance per class), which would let a reader '
+               're-weight to another prevalence, are not carried into this file.')
+
+
+def all_protocol_boundaries(items):
+    first, *rest = items
+    require(first.endswith(CLASS_CONDITIONAL) and not any('class-conditional' in x for x in rest),
+            'the balanced-design boundary changed: re-read what it says about class-conditional rows')
+    return [first[:-len(CLASS_CONDITIONAL)] + NOT_CARRIED, *rest]
+
+
 # ---------------------------------------------------------------------------- boundary
 def scrub_check(value, trail='$'):
     if isinstance(value, dict):
@@ -805,7 +821,7 @@ def build(manifest_bytes):
             'l_joint': ljoint_block(secondary['l_joint_selectivenet']),
         },
         'boundaries': {
-            'all_protocols': candidate['boundaries']['all_protocols'],
+            'all_protocols': all_protocol_boundaries(candidate['boundaries']['all_protocols']),
             'per_protocol': {p: val(b, p) for p, b in candidate['boundaries']['per_protocol'].items()},
         },
         'audits': audits,
