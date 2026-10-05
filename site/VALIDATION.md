@@ -421,6 +421,25 @@ agree with the protocols index's 12 scored), and the snapshot note says BrainOmn
 ran on six of the eight protocols. Mutation-tested on a copy of `dist/` (the client
 script's source too, restored afterwards): each of 5 injected violations was caught.
 
+The Markdown copies of the new sections (same review). The generic copy check only
+looks for figures in elements whose class is exactly `metric`, `num` or `fig`, and
+accepts them anywhere in the copy, so most interval bounds and coverages in the route-1
+and v9 sections were not held to their copies, and `llms-full.txt` is assembled from
+those copies. For `#reliable-decisions`, every protocol page's `#foundation-v9`,
+`#v9-encoders`, `#v9-montage` and every route-1 and v9 group on the dataset and method
+pages, in both languages, the check now takes the printed `data-fig` texts in order and
+requires them as an ordered subsequence of the matching section of `index.md` (found
+by its heading, ending at the next heading of the same level), each occurrence bounded
+as a number; and every decimal, percentage or grouped figure at least as often in the
+copy as on the page outside SVG, `aria-hidden` and visually hidden labels (a plot's
+value list repeats a table's figures, so order alone could match the plot and miss a
+changed cell). Every English copy that `llms-full.txt` assembles must be in it
+verbatim. About 7,600 figures are read. Mutation-tested on a copy of `dist/` with the
+review's five changes (route-1 EN and ZH 28.4%→28.5%, a C2 bound +1.6→+1.9 pp, a
+beta-8ch v9 bound 41.9%→42.9%, fewer-electrodes 37.0%→37.9%) and seven more (an order
+change, `llms-full.txt` alone, a dataset and two method-page groups): each of 12 was
+caught, one of them first by the generic check.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

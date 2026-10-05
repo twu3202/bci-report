@@ -3493,6 +3493,64 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/'])
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
 }
+// --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
+// The generic copy check above only looks for figures in elements whose class is exactly metric, num or fig, and
+// accepts them anywhere in the copy; most interval bounds and coverages in these sections are neither, and
+// llms-full.txt is assembled from the copies. Here, for each route-1 and v9 section and entity group, the printed
+// data-fig texts, in order, must be an ordered subsequence of the matching section of its index.md (found by its
+// heading, ending at the next heading of the same level), each occurrence bounded as a number, and each text at
+// least as often as the page prints it; and every English copy in llms-full.txt is the copy itself, verbatim.
+{
+  const norm=t=>decodeHtml(t).replace(/\[([^\]]*)\]\([^)]*\)/g,'$1').replace(/\*\*|`/g,'').replace(/\s+/g,' ').replace(/\s+([,.;:)])/g,'$1').replace(/\(\s+/g,'(').trim();
+  const sectionHtml=(html,id)=>{const a=html.search(new RegExp(`<section\\b[^>]*\\sid="${id}"`));if(a<0)return null;
+    const re=/<section\b|<\/section>/g;re.lastIndex=a;let d=0,m;while((m=re.exec(html))){d+=m[0]==='</section>'?-1:1;if(!d)return html.slice(a,m.index);}return null;};
+  const figTexts=h=>[...h.matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)].map(m=>decodeHtml(m[1]));
+  const esc=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const bounded=t=>new RegExp(`(?<![\\d.,])${esc(t)}(?!\\d|[.,]\\d)`,'g');
+  const mdSection=(md,head,level)=>{const lines=md.split('\n');const i=lines.findIndex(l=>new RegExp(`^#{${level}} `).test(l)&&norm(l.replace(/^#+ /,''))===head);
+    if(i<0)return null;let j=i+1;while(j<lines.length&&!new RegExp(`^#{1,${level}} `).test(lines[j]))j++;return lines.slice(i,j).join('\n');};
+  let checked=0;
+  const copyCarries=(path,id,where)=>{
+    const html=readFileSync(new URL(path+'index.html',DIST),'utf8'),md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    const sec=sectionHtml(html,id);assert.ok(sec,where+': section #'+id+' renders');
+    const h=sec.match(/<h([23])\b[^>]*>([\s\S]*?)<\/h\1>/);assert.ok(h,where+': #'+id+' has a heading');
+    const head=norm(h[2].replace(/<[^>]+>/g,' ')),part=mdSection(md,head,Number(h[1]));
+    assert.ok(part,where+': the copy has the section "'+head.slice(0,60)+'"');
+    const figs=figTexts(sec);assert.ok(figs.length>0,where+': #'+id+' prints figures');
+    let pos=0;
+    for(const t of figs){const re=bounded(t);re.lastIndex=pos;const m=re.exec(part);
+      assert.ok(m,where+': index.md #'+id+' lacks "'+t+'" after its preceding figures (in order)');pos=m.index+t.length;}
+    // As often as the page prints it, counting its text outside data-fig too (a plot's value list repeats a table's
+    // figures, so an order match alone could land on the plot and miss a changed table cell).
+    // What the copy leaves out on purpose: SVG, anything aria-hidden, visually hidden labels (build-agent-files.mjs).
+    const shown=decodeHtml(sec.replace(/<svg[\s\S]*?<\/svg>/g,' ').replace(/<(\w+)[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/\1>/g,' ')
+      .replace(/<span class="visually-hidden">[^<]*<\/span>/g,' ').replace(/<[^>]+>/g,' '));
+    // Bare whole numbers (10, 70) are left to the order check: dates and section labels repeat them in prose.
+    for(const t of new Set(figs.filter(t=>/[.%,]/.test(t)))){const n=(shown.match(bounded(t))||[]).length;
+      assert.ok((part.match(bounded(t))||[]).length>=n,where+': index.md #'+id+' prints "'+t+'" fewer times than the page ('+n+')');}
+    checked+=figs.length;
+  };
+  for(const pfx of ['','zh/']){
+    copyCarries(pfx+'topics/when-not-to-act/','reliable-decisions',pfx+'when-not-to-act');
+    copyCarries(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
+    copyCarries(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
+    for(const t of data.tracks) copyCarries(pfx+'protocols/'+t.id+'/','foundation-v9',pfx+'protocols/'+t.id);
+    // Every route-1 and v9 group on the dataset and method pages.
+    for(const f of htmlPages.filter(f=>f.startsWith(pfx+'datasets/')||f.startsWith(pfx+'methods/')).filter(f=>pfx||!f.startsWith('zh/'))){
+      const html=readFileSync(new URL(f,DIST),'utf8'),path=f.replace(/index\.html$/,'');
+      for(const [,gid] of html.matchAll(/<section class="entity-group" id="(g-[^"]*(?:reliable-decisions|foundation-v9|v9-adaptation))">/g))
+        if(sectionHtml(html,gid).includes('data-fig')) copyCarries(path,gid,path+' '+gid);
+    }
+  }
+  assert.ok(checked>3000,'the route-1 and v9 copy check read the sections ('+checked+' figures)');
+  // llms-full.txt is assembled from the English copies: each one is in it, verbatim.
+  const full=readFileSync(new URL('llms-full.txt',DIST),'utf8');
+  for(const f of htmlPages.filter(f=>!f.startsWith('zh/')&&f!=='404.html'&&/^(?:index\.html|(?:topics|datasets|methods|protocols)\/(?:[^/]+\/)?index\.html|(?:api|releases|data-use)\/index\.html)$/.test(f))){
+    const md=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8').trim();
+    assert.ok(full.includes(md),'llms-full.txt: the copy of /'+f.replace(/index\.html$/,'')+' is in it, verbatim');
+  }
+  console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim.');
+}
 console.log('PASS: 2026-10-04 v9 foundation models, topics — does-pretraining-help #v9-encoders (sleep rows above every published row, BETA above CBraMod and not above CCA, the EEGMAT adaptation with verdicts and LoRA budgets, REVE Base against Large with marginal intervals and no paired test, the masking ablation) and fewer-electrodes #v9-montage (BETA eight to four beside the released rows, six-channel sleep, no small-montage advantage, no new row above standard CCA at four electrodes, the overlapping rows named): every figure from its file on a row naming its protocol, tokens pinned, the same in both languages, family order, the export\'s relations and claims, chance flags, exposure badges and ZUNA 1.1\'s sentence, limits, licences; model-adaptation\'s figure-free pointer; release log and sitemap.');
 console.log('PASS: 2026-10-04 v9 foundation models, pages — every protocol page with its v9 section (each row its CSV row, in family order, never re-sorted; not run with its reason, no figure; chance flags by the core rule and the CSV; exposure statement, badge and source from the exposure table, ZUNA 1.1 unknown everywhere; footnotes, licences, research-use sentence; masking ablation collapsed; EEGMAT adaptation with verdicts on arithmetic-rest; LaBraM and CBraMod sourced beside the released sentence); the home table\'s embedded rows equal the CSVs, first paint equals the render, dialogs carry the caveats; directory cards with the export\'s statuses, licences and parameters, REVE Base evaluated, MIRepNet and EEG-DINO catalogue only; method pages with groups, checkpoints, terms and exposure; Measured-on lines; dataset groups; topic and data-use wording; hub counts; release log; sitemap.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
