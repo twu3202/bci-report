@@ -430,7 +430,7 @@ export const home = {
     // The snapshot's own highest score per column (2026-09-20). Since the v9 rows sit beside the
     // snapshot (2026-10-04), the key says whose highest it is; it never ranks the new rows.
     keyLead: 'Highest score in this snapshot',
-    matrixAdded: (n: number, date: string) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
+    matrixAdded: (n: number, date: string, partly: string) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
     matrixAddedLink: 'The v9 rows on the first protocol →',
     keyBar: "Bar = position between that protocol's chance level and 100%",
     keyGap: 'Not evaluated',
@@ -476,7 +476,7 @@ export const home = {
     seedWord: { highest: 'highest', lowest: 'lowest', middle: 'middle' } as Record<string, string>,
     // The v9 rows in the per-protocol table (2026-10-04). workbench.ts carries the same strings
     // (it cannot import this module); check-workbench.mjs compares the first paint with its render.
-    fmGroup: (n: number, date: string) => `Added ${date}: ${n} further foundation encoders, frozen (v9)`,
+    fmGroup: (n: number, date: string, notRun = 0) => `Added ${date}: ${n} further foundation encoders, frozen (v9)${notRun ? ` · ${notRun} not run on this protocol` : ''}`,
     fmGroupLink: 'Every v9 row with its footnote →',
     fmInterval: (lo: string, hi: string) => `Descriptive 95% interval: ${lo}–${hi}%`,
     fmF1: 'Mean across held-out participants',
@@ -560,7 +560,7 @@ export const home = {
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
     atChance: '≤ 随机',
     keyLead: '本快照中该协议的最高分',
-    matrixAdded: (n: number, date: string) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
+    matrixAdded: (n: number, date: string, partly: string) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
     matrixAddedLink: '第一个协议上的第九轮各行 →',
     keyBar: '条长 = 在该协议随机水平与 100% 之间的位置',
     keyGap: '未评测',
@@ -604,7 +604,7 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `仅单个随机种子——为 ${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
-    fmGroup: (n: number, date: string) => `${date} 新增：另外 ${n} 个基础模型编码器（冻结，第九轮）`,
+    fmGroup: (n: number, date: string, notRun = 0) => `${date} 新增：另外 ${n} 个基础模型编码器（冻结，第九轮）${notRun ? `，其中 ${notRun} 个在这个协议上未运行` : ''}`,
     fmGroupLink: '第九轮的每一行及其脚注 →',
     fmInterval: (lo: string, hi: string) => `描述性 95% 区间：${lo}–${hi}%`,
     fmF1: '各留出被试的均值',

@@ -390,6 +390,10 @@ dialog .button{margin-top:18px;max-width:100%}
 .fm-badge[data-exposure=exposed]{background:#f4e2cf;color:#7a3a0c}
 .fm-badge[data-exposure=unknown]{background:#ece6db;color:#5b4f3f}
 .fm-research-use{display:block;margin-top:4px;font-size:.7rem;color:var(--warn-ink)}
+/* The v9 rows' long names and ZUNA 1.1's sentence wrap (review of 2026-10-05): under the table's nowrap they
+   widened the first column until no score fitted a 375 px screen, and the table overflowed at 1280 px. */
+.fm-research-use,.fm-row .model-name,.fm-row td:first-child small{white-space:normal}
+.fm-row .model-name{text-align:left}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){

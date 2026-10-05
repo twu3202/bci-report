@@ -314,6 +314,16 @@ for(const css of readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>
 assert.ok(readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.css')).some(css=>
   /\.dataset-status \.note-original\{border-left:0;padding-left:0\}/.test(readFileSync(new URL(DIST+'_astro/'+css,import.meta.url),'utf8'))),
   'the status column drops the original-text margin rule');
+// The home table's v9 rows (review of 2026-10-05): the table is nowrap, and ZUNA 1.1's research-use line and the long
+// checkpoint names and modes inherited it, widening the first column until no score fitted a 375 px screen and the
+// table overflowed at 1280 px. The DOM doubles cannot measure layout, so the wrapping rules are pinned in what ships.
+{
+  const css=readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsWith('.css')).map(f=>readFileSync(new URL(DIST+'_astro/'+f,import.meta.url),'utf8')).join('\n');
+  const rule=css.match(/(?:^|})([^{}]*\.fm-row \.model-name[^{}]*)\{([^}]*)\}/);
+  assert.ok(rule&&/white-space:normal/.test(rule[2])&&['.fm-research-use','.fm-row .model-name','.fm-row td:first-child small'].every(s=>rule[1].split(',').map(x=>x.trim()).includes(s)),
+    'the v9 rows\' names, modes and research-use line wrap in the home table');
+  assert.match(css,/\.fm-row \.model-name\{text-align:left\}/,'a wrapped v9 name stays left-aligned');
+}
 const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
 assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
 assert.match(headers,/Content-Security-Policy:[^\n]*script-src 'self';/,'script-src must stay free of unsafe-inline');
@@ -2946,6 +2956,9 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       const head=label==='en'?`Added 2026-10-04: ${mx.length} further foundation encoders, frozen (v9)`:`2026-10-04 新增：另外 ${mx.length} 个基础模型编码器（冻结，第九轮）`;
       assert.ok(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup">'+head)&&html.indexOf('fm-group')>html.lastIndexOf('<tr><td><button class="model-name" data-model="'),label+'/'+t.id+': the v9 group follows the released rows, counted');
       assert.ok(html.includes(`href="/${label==='zh'?'zh/':''}protocols/${t.id}/#foundation-v9"`),label+'/'+t.id+': the group links the protocol page\'s v9 section');
+      // The count says how many of its rows were not run here, so it agrees with the protocols index's scored count (review of 2026-10-05).
+      const nr=mx.filter(r=>r.status!=='complete').length,tail=label==='en'?` · ${nr} not run on this protocol`:`，其中 ${nr} 个在这个协议上未运行`;
+      assert.equal(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup">'+e(head+tail)+' <a'),nr>0,label+'/'+t.id+': the v9 group says how many of its rows were not run here ('+nr+')');
       for(const r of mx){
         const at=html.indexOf(`<tr class="fm-row" data-fm="${r.id}">`),row=html.slice(at,html.indexOf('</tr>',at)),w=label+' home '+t.id+'/'+r.id;
         assert.ok(at>0,w+': rendered');
@@ -2988,6 +3001,9 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
     assert.ok(added.includes(`data-release="${REL}"`)&&added.includes(label==='en'?`${matrix.length} further foundation encoders`:`另外 ${matrix.length} 个基础模型编码器`),label+': the snapshot note counts the v9 matrix rows');
     assert.ok(added.includes(label==='en'?'not ranked against it':'也不与它排名'),label+': the v9 rows are not ranked against the snapshot');
+    // "On the same eight protocols", with the encoder that ran on fewer named and counted (BrainOmni Base: six).
+    for(const m of matrix){const ran=F.frozen_probe.filter(c=>c.model===m.id&&c.status==='complete').length;
+      if(ran<data.tracks.length) assert.ok(added.includes(label==='en'?`${e(m.name)} on ${['zero','one','two','three','four','five','six','seven'][ran]} of them`:`${e(m.name)} 只在其中 ${ran} 个上运行`),label+': the snapshot note says '+m.name+' ran on '+ran+' protocols');}
     assert.doesNotMatch(home,/Best on that protocol|该协议最佳/,label+': the snapshot\'s key names whose highest score it marks');
   }
 

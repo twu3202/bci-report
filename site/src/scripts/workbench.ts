@@ -50,7 +50,7 @@ const S={
       privacyLink:'The full review note is in the protocol JSON ↓',register:'Public-data register note',
       consentCaveat:{'sleep-scalp':'According to the 2025 data descriptor, the informed consent form did not mention publication, and before release the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.'} as Record<string,string>,
       metric:{} as Record<string,string>,
-      fmGroup:(n:number,date:string)=>'Added '+date+': '+n+' further foundation encoders, frozen (v9)',fmGroupLink:'Every v9 row with its footnote →',
+      fmGroup:(n:number,date:string,notRun=0)=>'Added '+date+': '+n+' further foundation encoders, frozen (v9)'+(notRun?' · '+notRun+' not run on this protocol':''),fmGroupLink:'Every v9 row with its footnote →',
       fmInterval:(lo:string,hi:string)=>'Descriptive 95% interval: '+lo+'–'+hi+'%',fmF1:'Mean across held-out participants',
       fmDetected:(d:number,n:number)=>d+' of '+n+' commands',fmIdle:(f:number,n:number)=>f+' of '+n+' idle trials',
       fmNotRun:'Not run',fmNotPublished:'not published',fmExposed:'In the authors’ pretraining list',fmUnknown:'Exposure unknown',
@@ -83,7 +83,7 @@ const S={
       privacyLink:'完整的审查说明在协议 JSON 中 ↓',register:'公开数据登记说明',
       consentCaveat:{'sleep-scalp':'据 2025 年的数据描述论文，知情同意书没有提到公开发布；发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'} as Record<string,string>,
       metric:{'Balanced accuracy':'平衡准确率','Command detection ≤3s':'指令检出率 ≤3 秒','Idle false activation':'空闲误触发率','Macro F1':'宏平均 F1'} as Record<string,string>,
-      fmGroup:(n:number,date:string)=>date+' 新增：另外 '+n+' 个基础模型编码器（冻结，第九轮）',fmGroupLink:'第九轮的每一行及其脚注 →',
+      fmGroup:(n:number,date:string,notRun=0)=>date+' 新增：另外 '+n+' 个基础模型编码器（冻结，第九轮）'+(notRun?'，其中 '+notRun+' 个在这个协议上未运行':''),fmGroupLink:'第九轮的每一行及其脚注 →',
       fmInterval:(lo:string,hi:string)=>'描述性 95% 区间：'+lo+'–'+hi+'%',fmF1:'各留出被试的均值',
       fmDetected:(d:number,n:number)=>'检出 '+d+' / '+n+' 条指令',fmIdle:(f:number,n:number)=>'误触发 '+f+' / '+n+' 个空闲试次',
       fmNotRun:'未运行',fmNotPublished:'不发布',fmExposed:'在作者的预训练清单中',fmUnknown:'是否出现在预训练数据中：未知',
@@ -230,7 +230,7 @@ function fmRowHtml(r:FmRow,reference=false){
 function fmGroupHtml(fm:FmRow[]){
   if(!fm.length)return '';
   const t=fmOf(track.id);
-  return '<tr class="fm-group"><th colspan="4" scope="colgroup">'+esc(S.fmGroup(fm.length,fmData.date))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
+  return '<tr class="fm-group"><th colspan="4" scope="colgroup">'+esc(S.fmGroup(fm.length,fmData.date,fm.filter(r=>r.status!=='complete').length))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
 }
 function ablationHtml(){
   const ref=visibleFm().filter(r=>r.id.startsWith('eeg-fm-masking/')),sib=visibleFm('masking ablation');

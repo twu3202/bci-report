@@ -408,6 +408,19 @@ must land. Mutation-tested on a copy of `dist/` (both languages and the Markdown
 where the figure parity and copy checks would otherwise fire first): each of 11
 injected violations was caught.
 
+The home table (same review): the v9 rows' long checkpoint names, their modes and ZUNA
+1.1's research-use line inherited the table's `nowrap`, so the first column grew from
+234 px to 364 px and no score was visible at 375 px, and the table overflowed at
+1280 px. They now wrap; the DOM doubles cannot measure layout, so the built CSS is held
+to the wrapping rule and to left-aligned names. Measured with headless Chromium on a
+`file://` copy of `dist/`, every protocol tab, EN and ZH: the first column is 227–283
+px at 375 px (the widest is a released row's mode, as before), with the score column
+on screen, and the table fits 896/896 at 1280 px. The v9 group's heading says how many
+of its rows were not run on that protocol ("· 1 not run on this protocol", so 13 rows
+agree with the protocols index's 12 scored), and the snapshot note says BrainOmni Base
+ran on six of the eight protocols. Mutation-tested on a copy of `dist/` (the client
+script's source too, restored afterwards): each of 5 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
