@@ -242,3 +242,30 @@ pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px 
 .rd-literature a{color:var(--accent)}
 .route-results{margin-top:10px;font-size:.84rem}
 .route-results a{color:var(--accent)}
+
+/* The v9 foundation-model rows (2026-10-04): their own table beside the core one, footnotes,
+   the masking-ablation panel, the exposure statements and the method pages' checkpoint terms. */
+.fm-section .fn-ref{font-size:.68rem;margin-left:2px}
+.fm-section .fn-ref a{color:var(--accent);text-decoration:none}
+.fm-results th small,.fm-adaptation th small{display:block}
+.fm-results td small,.fm-adaptation td small,.fm-exposure small{display:block;font-size:.7rem;color:var(--muted);margin-top:2px;line-height:1.4}
+.fm-exposure{max-width:18em}
+.fm-exposure a,.fm-exposure-table a{color:var(--accent)}
+.fm-not-run strong{display:block}
+.fm-footnotes{margin:8px 0 0;padding-left:22px;display:grid;gap:6px;max-width:900px;font-size:.82rem;overflow-wrap:anywhere}
+.fm-licences .fm-licence-note{display:block;margin-top:3px}
+.fm-exposure-key{max-width:900px}
+.fm-core-exposure a{color:var(--accent)}
+.fm-checkpoint{margin-top:26px}
+.fm-checkpoint h3{font-family:var(--serif);font-size:1.12rem}
+.fm-checkpoint .fm-note{display:block}
+.fm-checkpoint .fm-note+.fm-note{margin-top:6px}
+.entity-measured{margin-top:16px;max-width:900px;font-size:.84rem;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+.entity-measured a{color:var(--accent)}
+.entity-measured-label{font-weight:620;color:var(--ink)}
+/* Nine columns on the idle protocol: the constant ones need no 120px floor. */
+.topic-table .fm-results td,.topic-table .fm-results th{min-width:84px}
+.topic-table .fm-results th:first-child,.topic-table .fm-results td:first-child{min-width:180px}
+.topic-table .fm-results td.fm-exposure{min-width:12em}
+.fm-release{white-space:normal;max-width:100%}
+.fm-release code{overflow-wrap:anywhere;word-break:break-all}

@@ -14,6 +14,11 @@
  * carries the date of the newest update that changed it; keeping the history
  * stops a later update from rolling an earlier page's date back.
  */
+const protocols = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target', 'semantic-target', 'sleep-scalp'];
+// Every method page: the core methods' gained the Measured-on line on 2026-10-04, the v9 models' were
+// first published then. Listed here because entities.ts imports this module (no cycle).
+const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda', 'cca', 'fbcca', 'etrca',
+  'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna'];
 export const siteUpdates = [
   {
     date: '2026-10-04',
@@ -24,7 +29,14 @@ export const siteUpdates = [
     // CCA pages, the release log, data use and the API page. The v9 foundation-model files (same
     // day) reached the release log, the API page and the home page's file count and Dataset markup.
     paths: ['/', '/topics/', '/topics/when-not-to-act/', '/datasets/', '/datasets/eegmat/', '/datasets/beta/', '/datasets/ds003810/',
-            '/methods/eegnet/', '/methods/labram/', '/methods/cbramod/', '/methods/cca/', '/releases/', '/data-use/', '/api/'],
+            '/methods/eegnet/', '/methods/labram/', '/methods/cbramod/', '/methods/cca/', '/releases/', '/data-use/', '/api/',
+            // The v9 pages (same day): every protocol page and the protocols index carry the new rows;
+            // the seven core dataset pages their groups (and the dataset index its group counts); the
+            // model directory, the new method pages and, through the Measured-on line, every method
+            // page; the LaBraM and CBraMod exposure wording on does-pretraining-help and model-adaptation.
+            '/protocols/', ...protocols.map(id => `/protocols/${id}/`),
+            '/datasets/ds006593/', '/datasets/tmnred/', '/datasets/eesm19/', '/datasets/ds005342/',
+            '/methods/', ...methodPages.map(slug => `/methods/${slug}/`), '/topics/does-pretraining-help/', '/topics/model-adaptation/'],
   },
   {
     date: '2026-10-03',
@@ -111,7 +123,10 @@ export const releases: Release[] = [
   {
     id: 'foundation-models-update-20261004', date: '2026-10-04', payload: 'foundationModels',
     files: ['foundation-models-update.json', ...foundationModelFiles],
-    pages: ['/topics/does-pretraining-help/', '/topics/fewer-electrodes/'],
+    // The rows are printed on every protocol page and the home page's per-protocol table; each
+    // model has a method page and a directory card on /methods/. The two topics take the
+    // batch's findings.
+    pages: ['/protocols/', '/methods/', '/topics/does-pretraining-help/', '/topics/fewer-electrodes/'],
     summary: {
       en: 'The v9 foundation-model evaluation: eleven further EEG foundation models — sixteen encoder checkpoints — run as frozen probes on the eight core protocols with the published LaBraM and CBraMod recipe and only the encoder swapped (the same windows, people, folds, heads and scoring), and nine of them adapted on EEGMAT with the 1 October recipe, a head trained on the frozen encoder against rank-4 LoRA over three seeds. New rows beside the core matrix, in their own files: one JSON, and a CSV per protocol whose first columns are the core results CSVs’. Grouped by family, never ranked: a row is above or below another only where their 95% intervals do not overlap. Every cell says whether its dataset is in the model authors’ published pretraining list, checked on 4 October 2026 with the source, and every model carries its weights licence.',
       zh: '第九轮基础模型评测：另外 11 个 EEG 基础模型（共 16 个编码器检查点）作为冻结探针，在 8 个核心协议上沿用已发布的 LaBraM 与 CBraMod 冻结方案，只替换编码器（时间窗、被试、折、分类头与评分方式都不变）；其中 9 个模型又在 EEGMAT 上按 10 月 1 日的方案做了适配：在冻结编码器上只训分类头，对比秩为 4 的 LoRA，3 个随机种子。这些是放在核心矩阵旁边的新行，有自己的文件：一个 JSON，以及每个协议一个 CSV，其前几列与核心结果 CSV 完全相同。按模型类别分组，从不排名：只有 95% 区间不重叠时，才说一行高于或低于另一行。每个单元格都注明该数据集是否在模型作者公开的预训练数据清单中（2026 年 10 月 4 日核查，附来源），每个模型都注明其权重许可。',

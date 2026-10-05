@@ -1,0 +1,23 @@
+---
+/**
+ * A v9 row in the home page's per-protocol table, as the first paint prints it.
+ * Kept in step with fmRowHtml() in src/scripts/workbench.ts, which re-renders the
+ * table on every change; check-workbench.mjs compares the two.
+ */
+interface FmJsonRow {
+  id: string; name: string; panel: string; mode: string; channels: number; subjects: number | null;
+  y: number | null; interval: [number, number] | null; x: number | null; status: string; reason: string | null;
+  exposure: string; researchUse: boolean;
+  idle: { detected: number; commandTrials: number; falseActivations: number; idleTrials: number; abstain: number } | null;
+}
+interface Props { r: FmJsonRow; h: any; payloadLang?: string; chance: string | null; tradeoff: boolean; reference?: boolean }
+const { r, h, payloadLang, chance, tradeoff, reference = false } = Astro.props;
+const pct = (v: number) => v.toFixed(1) + '%';
+const i = r.idle;
+const complete = r.status === 'complete' && r.y !== null && r.x !== null;
+---
+<tr class="fm-row" data-fm={r.id}><td><button class="model-name" data-model={`fm:${r.id}`}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small>{reference && <small>{h.fmAblationReference}</small>}{r.researchUse && <small class="fm-research-use">{h.fmResearchUse}</small>}</td>{!complete
+  ? <td colspan="2" class="fm-not-run"><strong>{h.fmNotRun}</strong><small>{r.reason}</small>{r.exposure === 'exposed' ? <span class="flag fm-badge" data-exposure="exposed">{h.fmExposed}</span> : r.exposure === 'unknown' ? <span class="flag fm-badge" data-exposure="unknown">{h.fmUnknown}</span> : null}</td>
+  : tradeoff && i
+    ? <><td><strong>{pct(r.y!)}</strong><small>{h.fmDetected(i.detected, i.commandTrials)}</small>{i.abstain > 0 && <span class="flag">{h.fmAbstained(i.abstain, r.subjects ?? 0)}</span>}{r.exposure === 'exposed' ? <span class="flag fm-badge" data-exposure="exposed">{h.fmExposed}</span> : r.exposure === 'unknown' ? <span class="flag fm-badge" data-exposure="unknown">{h.fmUnknown}</span> : null}</td><td><strong>{pct(r.x!)}</strong><small>{h.fmIdle(i.falseActivations, i.idleTrials)}</small></td></>
+    : <><td><strong>{pct(r.y!)}</strong><small>{r.interval && h.fmInterval(r.interval[0].toFixed(1), r.interval[1].toFixed(1))}</small>{chance && <span class="flag">{chance}</span>}{r.exposure === 'exposed' ? <span class="flag fm-badge" data-exposure="exposed">{h.fmExposed}</span> : r.exposure === 'unknown' ? <span class="flag fm-badge" data-exposure="unknown">{h.fmUnknown}</span> : null}</td><td><strong>{r.x!.toFixed(3)}</strong><small>{h.fmF1}</small></td></>}<td><small>{h.fmNotPublished}</small></td></tr>

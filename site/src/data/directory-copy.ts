@@ -18,6 +18,10 @@ interface DirectoryCopy {
   /** After the released licence on a card whose status was overridden: the licence line is the code's, as released. */
   codeAsReleased: string;
   overrideSource: string;
+  /** Before a v9 model's weights licence note (2026-10-04). */
+  weights: string;
+  /** A catalogue-only card with no licence to state. */
+  noLicence: string;
   translated: string;
   datasetsEyebrow: string; datasetsH2: string; datasetsLede: string;
   dtSubjects: string; dtChannels: string;
@@ -37,6 +41,8 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     releasedStatus: (status) => `Released status: ${status}.`,
     codeAsReleased: ' (code, as released)',
     overrideSource: 'Source ↗',
+    weights: 'Weights:',
+    noLicence: 'Not evaluated: no licence reviewed',
     translated: '',
     datasetsEyebrow: 'Register',
     datasetsH2: 'Public-data register: documented experiments',
@@ -59,6 +65,8 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     releasedStatus: (status) => `发布时的状态：${status}。`,
     codeAsReleased: '（代码，发布时）',
     overrideSource: '来源 ↗',
+    weights: '权重：',
+    noLicence: '未评测：未审查许可',
     translated: '下面各条备注与许可说明由本站译自发布时的英文原文；许可与权利审查说明旁附英文原文。',
     datasetsEyebrow: '登记',
     datasetsH2: '公开数据登记：有据可查的实验',

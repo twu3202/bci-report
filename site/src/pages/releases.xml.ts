@@ -26,9 +26,15 @@ const facts = (file: string) => {
   return { file, length: bytes.length, sha: createHash('sha256').update(bytes).digest('hex') };
 };
 const typeOf = (file: string) => (file.endsWith('.csv') ? 'text/csv' : 'application/json');
+// Since 2026-10-04 a release can name a hub (the v9 rows: every protocol page, the method pages),
+// titled as releases.astro titles them.
+const hubName: Record<string, string> = { '/protocols/': 'Protocols', '/methods/': 'Methods', '/datasets/': 'Datasets' };
 const pageName = (p: string) => {
   const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
-  return slug ? topicCards.en[slug].title : 'Core matrix (home page)';
+  if (slug) return topicCards.en[slug].title;
+  if (hubName[p]) return hubName[p];
+  if (p !== '/') throw new Error(`releases.xml.ts: no title for the page ${p}`);
+  return 'Core matrix (home page)';
 };
 
 export const GET: APIRoute = ({ site: origin }) => {

@@ -219,6 +219,65 @@ every traced figure of the release candidate and checks each frozen-probe, idle
 and adaptation figure against the approved handoff's tables, row by row
 (`pipeline/publication/test_foundation_models_update.py` forges each link).
 
+The v9 rows on the pages (same day, owner approved): each protocol page has a
+section of its own, `#foundation-v9`, after the released table and before the
+limits, and the home page's per-protocol table a group under the released rows.
+On every protocol page, in both languages: thirteen matrix rows in the export's
+family order, never re-sorted, and the masking ablation in its own collapsed
+panel (the paper-recommended row, then its three siblings); each row equals its
+CSV row column by column and in order, every figure from that CSV; a cell not
+run (BrainOmni on the two one-second ERP protocols) prints "Not run" with the
+export's reason and no figure but its channels, never a zero; the chance flags
+follow the core rule (at or below chance, else an interval reaching it) and the
+CSV's own flag columns agree; the exposure badge (in the authors' list) or
+"Exposure unknown" and the statement are the exposure table's, with a source
+link from that cell, ZUNA 1.1 unknown on every cell and only ZUNA 1.1 carrying
+the research-use sentence; each row's footnote mark leads to the export's row
+footnote; one weights-licence entry per family with its licence note and paper;
+the plot is the released rows and every scored v9 matrix row; no ranking word and
+no exposure claim beyond the authors' lists. Beside the released pretraining
+sentence, which stays verbatim, a dated note gives LaBraM's and CBraMod's
+sourced statement with every source link of their cells. On arithmetic-rest the
+EEGMAT adaptation (LaBraM for context, then the nine adapted encoders in the
+export's order) prints every arm, change, people moved and trainable-parameter
+figure from the v9 JSON, the verdict its interval supports, and why the others
+were not adapted. Protocol pages now carry a cite block (the core and v9
+releases), and their Dataset markup names the v9 CSV. The home page embeds the
+rows as JSON (`#fm-rows`), which `workbench.ts` reads and the DOM double is
+handed from `dist/`: every value equals the CSV at the precision the table
+prints, the chance flag is computed from the CSV's full values, and the prose is
+the export's (or the translation table's). The rendered table counts its v9
+group, carries each figure, flag, badge and the research-use sentence, the
+ablation panel and the CSV link follow the protocol, the first paint of the v9
+group equals the script's render, a v9 row's dialog carries its exposure with
+source, footnote and licence, and the protocol dialog the dated LaBraM/CBraMod
+statement. The snapshot's note counts the v9 matrix rows and says they are not
+ranked against it; the matrix key no longer says "Best". The model directory has
+one card per entry the export suggests (status, method page, parameters as
+`m2` figures, weights licence and note; ZUNA 1.1's research-use sentence, LUNA's
+no-endorsement and ERP-FM's non-commercial terms), REVE Base evaluated since
+2026-10-04 with the released status beside it, MIRepNet and EEG-DINO catalogue
+only, EEGPT unchanged. Each of the ten new method pages has a group per protocol
+(a checkpoint not run named with its reason), the EEGMAT adaptation where the
+model was adapted, every checkpoint's revision, hash, parameters, licence,
+rights review, footnote and notes, and an exposure table per dataset with its
+sources and caveats; LaBraM and CBraMod have the same table. Every method page
+has a "Measured on … · Protocols …" line linking exactly the dataset and
+protocol pages its groups are read on (a group where nothing was run does not count). The seven core dataset pages carry a v9
+group per protocol after the released one, EEGMAT the adaptation. The
+translation table (`foundation-models-zh.ts`) is keyed by the export's exact
+English: every key matches a text of the export and every translation carries
+exactly its numbers. does-pretraining-help, model-adaptation and data use state
+LaBraM's and CBraMod's exposure as the authors' lists show it, linked and dated,
+and the old "unresolved"/"not certified" wording is gone. The protocols index
+counts the v9 rows it links to, the release log names the protocols and methods
+hubs (and so does the feed), and the sitemap dates every changed page 2026-10-04. Checks that the v9
+pages changed: the topic Measured-on derivation counts only bare protocol links
+(a v9 group links `#foundation-v9`), the model-card count includes the v9 cards,
+and the WebMCP tool returns the v9 rows with their release. These checks were
+mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 48 injected
+violations was caught by the assertion written for it.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

@@ -114,3 +114,18 @@
   .matrix th.corner,.matrix th.rowhead{min-width:146px;width:146px;padding-left:12px}
   .matrix .cell{padding:0 9px}
 }
+
+/* The v9 rows in the per-protocol table (2026-10-04): a group of their own under the released
+   rows, the masking-ablation siblings in a collapsed panel, and the note under the snapshot. */
+.table-panel .fm-group th{text-transform:none;letter-spacing:0;font-size:.8rem;color:var(--ink);background:var(--soft);padding:10px 18px;border-top:1px solid var(--rule)}
+.table-panel .fm-group th a{color:var(--accent);font-weight:500;margin-left:6px;white-space:nowrap}
+.fm-not-run strong{font-family:var(--sans);font-size:.9rem;letter-spacing:0}
+.fm-not-run small{white-space:normal;max-width:34em}
+.fm-ablation-home{border-top:1px solid var(--line);padding:0 18px 12px}
+.fm-ablation-home>summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:.875rem}
+.fm-ablation-home>p{font-size:.8rem;max-width:760px;margin:0 0 8px}
+.fm-ablation-home td:last-child{color:var(--muted)}
+.matrix-added{margin-top:10px;font-size:.84rem;max-width:900px}
+.matrix-added a{color:var(--accent)}
+.fm-download{padding:10px 18px 0;font-size:.8rem}
+.fm-download a{color:var(--accent)}

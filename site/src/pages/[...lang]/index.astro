@@ -23,7 +23,10 @@ import ShareImage from '../../components/ShareImage.astro';
 import FooterElsewhere from '../../components/FooterElsewhere.astro';
 import TopicGroups from '../../components/TopicGroups.astro';
 import TransferMap from '../../components/TransferMap.astro';
+import FmHomeRow from '../../components/FmHomeRow.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
+import { coreExposure, fmMatrixModels, fmRelease, fmResearchUse, fmRowsByProtocol, fmFileOf, FM_ANCHOR, type FmRow } from '../../data/foundation-models';
+import { fmText, fmZh } from '../../data/foundation-models-zh';
 import '../../styles/global.css';
 import '../../styles/matrix.css';
 import '../../styles/generated.css';
@@ -112,7 +115,37 @@ const fill=(t:typeof tracks[number],y:number)=>{
 };
 const datasetCount=new Set(tracks.map(t=>t.dataset)).size;
 const counts={methods:matrixRows.length,protocols:data.coverage.displayedProtocols,datasets:datasetCount,
-              comparisons:data.coverage.displayedComparisons};
+              comparisons:data.coverage.displayedComparisons,added:fmMatrixModels.length};
+
+// --- The v9 rows (2026-10-04) ------------------------------------------------
+// Embedded for workbench.ts as JSON (#fm-rows), read from the served per-protocol
+// CSVs (foundation-models.ts) with the prose in this page's language. The first
+// protocol's rows are also printed here, so the static HTML carries them as the
+// script renders them (kept in step with fmRowHtml() in workbench.ts).
+const say=(en:string)=>fmText(en,locale);
+// Values at the precision the table prints them (the CSV's percent to one decimal, macro
+// F1 to three), so the page carries no digits it does not show; the chance flag is the
+// protocol page's, computed from the full values (foundation-models.ts).
+const at=(v:number|undefined,d:number)=>v===undefined?null:Number(v.toFixed(d));
+const fmJsonRow=(r:FmRow)=>({id:r.model.id,name:r.model.name,panel:r.model.panel,href:hrefFor(`/methods/${r.model.slug}/`,locale),mode:r.mode,
+  channels:r.channels.raw,subjects:r.people?.raw??null,y:at(r.primary?.raw,1),interval:r.interval?[at(r.interval[0].raw,1)!,at(r.interval[1].raw,1)!]:null,
+  x:at(r.secondary?.raw,r.protocol==='idle'?1:3),chanceFlag:r.chanceFlag,status:r.status,reason:r.reason?say(r.reason).text:null,reasonOriginal:r.reason?say(r.reason).original??null:null,
+  exposure:r.exposure.status,exposureText:locale==='en'?r.exposure.statement:fmZh[r.exposure.statement],exposureSource:r.exposure.urls[0]??null,
+  footnote:say(r.model.footnote).text,footnoteOriginal:say(r.model.footnote).original??null,notes:r.notes,
+  licence:say(r.model.licenceNote).text,licenceOriginal:say(r.model.licenceNote).original??null,researchUse:fmResearchUse(r.model),
+  idle:r.idle?{detected:r.idle.detected.raw,commandTrials:r.idle.commandTrials.raw,falseActivations:r.idle.falseActivations.raw,idleTrials:r.idle.idleTrials.raw,
+               abstain:r.idle.abstain.raw}:null});
+const core=coreExposure('labram');
+const fmPayload={release:fmRelease.id,date:fmRelease.date,tracks:Object.fromEntries(tracks.map(t=>[t.id,{
+  file:fmFileOf(t.id),protocolHref:hrefFor(`/protocols/${t.id}/`,locale),rows:fmRowsByProtocol[t.id].map(fmJsonRow),
+  coreExposure:{text:locale==='en'?core.statement:fmZh[core.statement],urls:[...new Set([...coreExposure('labram').urls,...coreExposure('cbramod').urls])]}}]))};
+// "</" cannot close the data block: every "<" is escaped.
+const fmJson=JSON.stringify(fmPayload).replace(/</g,'\\u003c');
+const fm0=fmPayload.tracks[track.id];
+const fmMatrix0=fm0.rows.filter(r=>r.panel==='matrix').sort((a,b)=>a.name.localeCompare(b.name));
+const fmAblation0=[...fm0.rows.filter(r=>r.panel==='matrix'&&r.id.startsWith('eeg-fm-masking/')).sort((a,b)=>a.name.localeCompare(b.name)),
+                   ...fm0.rows.filter(r=>r.panel!=='matrix').sort((a,b)=>a.name.localeCompare(b.name))];
+const fmChance=(r:{chanceFlag:string|null})=>chance===null||!r.chanceFlag?null:r.chanceFlag==='at-or-below'?h.atOrBelow(chance):h.intervalReaches(chance);
 const stats=[
   [h.stats.protocols,counts.protocols],
   [h.stats.datasets,counts.datasets],
@@ -167,14 +200,18 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
   return <td class="cell" data-rank={leader.get(t.id)===m.name?'lead':below?'sub':null} title={`${m.name} · ${tt(t.title)}${h.colon}${y.toFixed(1)}% ${ml(t.yLabel).toLowerCase()}`}><span class="track"><span class={`bar w${Math.round(fill(t,y))}`}></span></span><span class="num">{y.toFixed(1)}</span>{below&&<span class="cmark">{h.atChance}</span>}</td>;
 })}</tr>)}</tbody></table></div>
 <p class="matrix-note"><span class="key"><i class="lead"></i>{h.keyLead}</span><span class="key"><i class="plain"></i>{h.keyBar}</span><span class="key"><i class="gap"></i>{h.keyGap}</span><a href="/data/experiments.json" download>{h.matrixDownload}</a></p></div>
-<p class="matrix-caveat" set:html={h.matrixCaveat}></p></section>
+<p class="matrix-caveat" set:html={h.matrixCaveat}></p>
+<p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.added,fmRelease.date)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a></p></section>
 
 <section id="benchmarks" class="section"><div class="section-heading"><div><p class="eyebrow">{h.protocolsEyebrow}</p><h2>{h.protocolsH2}</h2></div><p>{h.protocolsLede}</p></div>
 {h.payloadNote&&<p class="payload-note">{h.payloadNote}</p>}
 <div class="track-tabs" id="track-tabs" role="tablist" aria-label={h.tabsLabel} data-active={track.id}>{tracks.map(t=><button class="track-tab" type="button" role="tab" id={'tab-'+t.id} aria-controls="track-panel" data-track={t.id} aria-selected={t.id===track.id?'true':'false'} tabindex={t.id===track.id?0:-1}><strong>{tt(t.title)}</strong><small>{t.dataset} · {h.tabParticipants(t.subjects)}</small></button>)}</div>
 <div id="track-panel" role="tabpanel" aria-labelledby={'tab-'+track.id}><div class="context"><div><h2 id="track-title" lang={payloadLang}>{track.subtitle}</h2><p id="track-meta">{track.dataset} · {track.subjects} {h.subjects} · <span lang={payloadLang}>{track.observations} · {track.exposure}</span></p></div><button class="button" id="open-protocol">{h.viewProtocol}</button></div>
 <div class="results-panel"><div class="table-panel"><div class="toolbar"><div><p class="eyebrow">{h.measuredHere}</p><h3>{h.atAGlance}</h3></div><div class="controls"><label>{h.familyControl}<select id="family-filter"><option value="all">{h.allFamilies}</option><option value="foundation">{familyLabel('foundation',locale)}</option><option value="small">{familyLabel('small',locale)}</option><option value="classical">{familyLabel('classical',locale)}</option></select></label><label>{h.sortControl}<select id="sort-results"><option value="name">{h.sortName}</option><option value="y-desc">{h.sortPrimary}</option><option id="secondary-sort" value="x-asc">{h.sortSecondary}</option></select></label><a id="download-results" class="button" href={'/data/'+track.id+'-results.csv'} download>{h.csv}</a></div></div>
-<div class="scroll" tabindex="0" role="region" aria-label={h.tableRegion}><table><thead><tr><th>{h.colModel}</th><th id="metric-y-heading">{ml(track.yLabel)}</th><th id="metric-x-heading">{ml(track.xLabel)}</th><th>{h.colCompute}</th></tr></thead><tbody id="result-rows">{track.rows.map(r=><tr><td><button class="model-name" data-model={r.id}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small></td><td><strong>{r.y.toFixed(1)}%</strong><small lang={payloadLang}>{r.yDetail}</small>{chanceNote(r)&&<span class="flag">{chanceNote(r)}</span>}{seedNote(r.name)&&<span class="flag seed">{seedNote(r.name)}</span>}</td><td><strong>{track.type==='tradeoff'?r.x.toFixed(1)+'%':r.x.toFixed(3)}</strong><small lang={payloadLang}>{r.xDetail}</small></td><td>{r.seconds.toFixed(1)}s</td></tr>)}</tbody></table></div><p class="scroll-hint" id="scroll-hint">{h.scrollHint}</p><p class="caption">{h.tableCaption}</p></div>
+<div class="scroll" tabindex="0" role="region" aria-label={h.tableRegion}><table><thead><tr><th>{h.colModel}</th><th id="metric-y-heading">{ml(track.yLabel)}</th><th id="metric-x-heading">{ml(track.xLabel)}</th><th>{h.colCompute}</th></tr></thead><tbody id="result-rows">{track.rows.map(r=><tr><td><button class="model-name" data-model={r.id}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small></td><td><strong>{r.y.toFixed(1)}%</strong><small lang={payloadLang}>{r.yDetail}</small>{chanceNote(r)&&<span class="flag">{chanceNote(r)}</span>}{seedNote(r.name)&&<span class="flag seed">{seedNote(r.name)}</span>}</td><td><strong>{track.type==='tradeoff'?r.x.toFixed(1)+'%':r.x.toFixed(3)}</strong><small lang={payloadLang}>{r.xDetail}</small></td><td>{r.seconds.toFixed(1)}s</td></tr>)}{fmMatrix0.length>0&&<tr class="fm-group"><th colspan="4" scope="colgroup">{h.fmGroup(fmMatrix0.length,fmPayload.date)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.fmGroupLink}</a></th></tr>}{fmMatrix0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'}/>)}</tbody></table></div><p class="scroll-hint" id="scroll-hint">{h.scrollHint}</p>
+<p class="fm-download"><a id="download-fm" href={'/data/'+fm0.file} download>{h.fmCsv}</a></p>
+<details class="fm-ablation-home" id="ablation-panel"><summary>{h.fmAblation}</summary><p>{h.fmAblationLede}</p><div class="scroll" tabindex="0" role="region" aria-label={h.fmAblation}><table><tbody id="ablation-rows">{fmAblation0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'} reference={r.panel==='matrix'}/>)}</tbody></table></div></details>
+<p class="caption">{h.tableCaption}</p></div>
 <aside><p class="eyebrow">{h.visualEyebrow}</p><h3 id="chart-title">{h.chartTitle}</h3><div id="result-chart" class="chart"></div><ol id="chart-legend" class="legend"></ol><p id="chart-note">{h.chartNote}</p></aside></div>
 <div class="source-strip"><span id="track-rights"><span lang={payloadLang}>{track.license}</span> · {h.rights}</span><a id="track-source" href={track.source} target="_blank" rel="noreferrer">{h.originalDataset}</a><a href="/data-use/">{h.usePrivacy}</a><a href="/data-use/#corrections">{h.reportResult}</a></div><div class="evidence"><strong>{h.readWithCare}</strong><p id="track-limitation" lang={payloadLang}>{track.limitation}</p><a href="#methods">{h.methodsLink}</a></div></div></section>
 
@@ -185,5 +222,6 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <section id="methods" class="section methods"><div><p class="eyebrow">{h.methodsEyebrow}</p><h2>{h.methodsH2}</h2><p lang={payloadLang}>{data.evidencePolicy}</p><a class="button" href="/data/experiments.json" download>{h.downloadAll}</a></div><div class="method-grid">{h.principles.map(([title,body],i)=><article><span>0{i+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div></section>
 </main><footer><a class="brand" href={hrefFor('/',locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/#corrections">{t.footerReport}{t.englishMark}</a><a href={hrefFor('/releases/',locale)}>{t.footerReleases}</a><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#overview">{t.footerBack}</a><FooterElsewhere locale={locale}/></footer>
 <dialog id="detail-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><p class="eyebrow">{h.dialogEyebrow}</p><button id="close-dialog" aria-label={h.closeDialog}>×</button></div><h2 id="dialog-title"></h2><div id="dialog-body"></div></dialog>
+<script type="application/json" id="fm-rows" is:inline set:html={fmJson}></script>
 <script>import '../../scripts/workbench';</script>
 </body></html>

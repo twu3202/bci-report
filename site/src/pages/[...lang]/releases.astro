@@ -61,9 +61,16 @@ const date = (iso: string) => {
     : `${d} ${['January','February','March','April','May','June','July','August','September','October','November','December'][m - 1]} ${y}`;
 };
 const kib = (n: number) => n < 1024 ? `${n} B` : `${(n / 1024).toFixed(1)} KiB`;
+const hubTitle: Record<string, { en: string; zh: string }> = {
+  '/protocols/': { en: 'Protocols', zh: '协议' }, '/methods/': { en: 'Methods', zh: '方法' }, '/datasets/': { en: 'Datasets', zh: '数据集' },
+};
 const pageTitle = (p: string) => {
   const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
-  return slug ? topicCards[locale][slug].title : (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)');
+  if (slug) return topicCards[locale][slug].title;
+  // Since 2026-10-04 a release can name a hub (the v9 rows sit on every protocol page and have method pages).
+  if (hubTitle[p]) return hubTitle[p][locale];
+  if (p !== '/') throw new Error(`releases.astro: no title for the page ${p}`);
+  return locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)';
 };
 
 const copy = {

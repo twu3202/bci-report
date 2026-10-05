@@ -290,6 +290,8 @@ aside h3{font-size:.98rem}
 /* User units. The aside is 288px wide between 861 and 1180px, which drew
    10.5-unit text at about 9.5px; 12.5 keeps it near 11px at that width. */
 .chart text{font-family:var(--mono);font-size:12.5px;fill:var(--muted)}
+/* With the v9 rows a protocol can have 18 bars: their numbers shrink rather than overlap. */
+.chart text.dense{font-size:7.5px}
 aside>p:last-child{font-size:.8125rem;margin-top:13px}
 /* Numbered, because the bars are: the x axis prints 1..n and the palette has
    neighbours a colour-blind reader cannot tell apart. The number, not the
@@ -382,6 +384,10 @@ dialog .button{margin-top:18px;max-width:100%}
   background:var(--warn-bg);color:var(--warn-ink);font-family:var(--sans);
 }
 .flag.seed{background:#ece6db;color:#5b4f3f}
+/* Pretraining exposure beside a v9 row (2026-10-04): in the authors' list, or unknown. */
+.fm-badge[data-exposure=exposed]{background:#f4e2cf;color:#7a3a0c}
+.fm-badge[data-exposure=unknown]{background:#ece6db;color:#5b4f3f}
+.fm-research-use{display:block;margin-top:4px;font-size:.7rem;color:var(--warn-ink)}
 td .flag{margin-top:6px}
 
 @media(max-width:1180px){

@@ -28,6 +28,9 @@ import reliable from './reliable-decisions-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
+import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmPageNames, fmRowsByProtocol, fmSlugOf,
+         fmSlugs, type FmRow, type FmSlug } from './foundation-models';
+import { fmZh } from './foundation-models-zh';
 
 /** English is required; a missing `zh` renders the English text marked lang="en". */
 export type L = { en: string; zh?: string };
@@ -39,9 +42,10 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * percentage-point interval ("+2.3 to +6.9 pp"): the unit is printed once, after
  * the upper bound, as intervalPp prints it (since 2026-10-03). `sgn3` is a signed
  * difference of a unitless quantity (AURC, NLL, ECE) to three decimals, always
- * with its sign (since 2026-10-04).
+ * with its sign (since 2026-10-04). `m2` is a parameter count in millions to two
+ * decimals ("69.19M"), as the model directory prints it (v9 directory cards, 2026-10-04).
  */
-export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1';
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 
@@ -60,6 +64,7 @@ export function formatFig(f: Fig): string {
     case 'num3': return minus(f.raw.toFixed(3));
     case 'count': return f.raw.toLocaleString('en-US');
     case 's1': return `${f.raw.toFixed(1)} s`;
+    case 'm2': return `${(f.raw / 1e6).toFixed(2)}M`;
   }
 }
 
@@ -100,6 +105,11 @@ export interface ResultGroup {
   plotLegend?: L;
   path: string;
   rows: ResultRow[];
+  /**
+   * Methods of this group that were not run, with the export's reason: a dash and
+   * a sentence, never a zero (the v9 BrainOmni cells on the one-second ERP protocols).
+   */
+  notRun?: { method: string; methodSlug?: MethodSlug; reason: string }[];
 }
 
 export interface DatasetEntity {
@@ -122,20 +132,24 @@ const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig
 
 /* --- Methods that get a page -------------------------------------------------- */
 
-export const methodSlugs = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda',
-                            'cca', 'fbcca', 'etrca'] as const;
-export type MethodSlug = typeof methodSlugs[number];
+const coreMethodSlugs = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda',
+                         'cca', 'fbcca', 'etrca'] as const;
+// The v9 foundation models (2026-10-04): one page per model family (foundation-models.ts).
+export const methodSlugs = [...coreMethodSlugs, ...fmSlugs] as const;
+export type MethodSlug = typeof coreMethodSlugs[number] | FmSlug;
+export const isFmSlug = (slug: string): slug is FmSlug => (fmSlugs as readonly string[]).includes(slug);
 /** Model ids as the payloads write them → the method page they belong to. */
 const METHOD_OF: Record<string, MethodSlug> = {
   eegnet: 'eegnet', labram: 'labram', cbramod: 'cbramod', shallowfbcspnet: 'shallowfbcspnet',
   deep4net: 'deep4net', 'csp-lda': 'csp-lda', cca: 'cca', 'author-cca': 'cca', fbcca: 'fbcca',
   'ensemble-trca': 'etrca',
 };
-/** The method page a payload model id belongs to, if it has one. */
-export const methodSlugOf = (id: string): MethodSlug | undefined => METHOD_OF[id];
+/** The method page a payload model id belongs to, if it has one (a v9 checkpoint: its family's page). */
+export const methodSlugOf = (id: string): MethodSlug | undefined => METHOD_OF[id] ?? fmSlugOf(id);
 export const methodNames: Record<MethodSlug, string> = {
   eegnet: 'EEGNet', labram: 'LaBraM', cbramod: 'CBraMod', shallowfbcspnet: 'ShallowFBCSPNet',
   deep4net: 'Deep4Net', 'csp-lda': 'CSP+LDA', cca: 'CCA', fbcca: 'FBCCA', etrca: 'eTRCA',
+  ...fmPageNames,
 };
 
 /* --- Labels ------------------------------------------------------------------- */
@@ -193,6 +207,87 @@ function mvpGroups(datasetName: string): ResultGroup[] {
     return { id: t.id, title: trackTitles[t.id] ?? { en: t.title }, path, rows,
              chance: t.chanceLevel != null ? fig(t.chanceLevel, 'pct1raw', MVP) : undefined };
   });
+}
+
+/* --- v9 foundation models (foundation-models-update.json, 2026-10-04) ------------------- */
+
+// The v9 rows of a core protocol: a group of their own beside the core-matrix group, never
+// merged into it, read with the protocol page's v9 section. Figures come from the
+// protocol's v9 CSV (percent, as the core results CSVs), so ties print as the approved
+// handoff prints them. The group id ends in `-foundation-v9`, not in a track id: the
+// protocol checks read `…-<track id>` as the core-matrix group.
+const FM_MODE_ZH: Record<string, string> = {
+  'Frozen encoder + ridge head': '冻结编码器 + 岭回归分类头',
+  'Frozen encoder + linear head': '冻结编码器 + 线性分类头',
+};
+export const fmModeLabel = (mode: string): L => {
+  if (!FM_MODE_ZH[mode]) throw new Error(`entities.ts: no Chinese for the training mode ${mode}`);
+  return { en: mode, zh: FM_MODE_ZH[mode] };
+};
+const fmExposureNote = (r: FmRow): RowNote | undefined => r.exposure.status === 'not_exposed' ? undefined : {
+  en: [`Pretraining exposure: ${r.exposure.statement}.`],
+  zh: [`是否出现在预训练数据中：${fmZh[r.exposure.statement]}。`],
+};
+function fmGroups(datasetName: string): ResultGroup[] {
+  return data.tracks.filter(t => t.dataset === datasetName).map(t => {
+    const path = `/protocols/${t.id}/#${FM_ANCHOR}`;
+    const rows: ResultRow[] = [], notRun: NonNullable<ResultGroup['notRun']> = [];
+    for (const r of fmRowsByProtocol[t.id]) {
+      const ablation = r.model.panel !== 'matrix', mode = fmModeLabel(r.mode);
+      const base = { path, method: r.model.name, methodSlug: r.model.slug as MethodSlug,
+                     condition: ablation ? { en: `${mode.en} · masking ablation`, zh: `${mode.zh} · 掩码消融` } : mode };
+      if (r.status !== 'complete') { notRun.push({ method: r.model.name, methodSlug: r.model.slug, reason: r.reason! }); continue; }
+      const people = r.people!.raw, note = fmExposureNote(r);
+      if (t.type === 'tradeoff') {
+        const i = r.idle!;
+        rows.push({ ...base, people, metric: { en: 'Commands detected ≤3 s', zh: '检出的指令 ≤3 秒' }, value: i.detected, of: i.commandTrials,
+          note: { en: [i.abstain, ' of ', r.people!, ' people always abstained', ...(note ? ['. ', ...note.en] : ['.'])],
+                  zh: [i.abstain, ' 名始终拒识（共 ', r.people!, ' 名被试）', ...(note ? ['；', ...note.zh] : ['。'])] } });
+        rows.push({ ...base, people, metric: { en: 'Idle false activations', zh: '空闲误触发' }, value: i.falseActivations, of: i.idleTrials });
+      } else {
+        rows.push({ ...base, people, metric: BA, value: r.primary!, interval: r.interval, note });
+      }
+    }
+    const chance = fmRowsByProtocol[t.id].find(r => r.chance)?.chance;
+    const core = trackTitles[t.id];
+    return {
+      id: `${t.id}-${FM_ANCHOR}`,
+      title: { en: core.en.replace('Core matrix · ', 'v9 foundation encoders, frozen · '), zh: core.zh!.replace('核心矩阵 · ', '第九轮基础模型（编码器冻结）· ') },
+      path, rows, chance, notRun,
+    };
+  });
+}
+
+/**
+ * The v9 EEGMAT adaptation (2026-10-04): nine encoders, the 1 October recipe unchanged,
+ * a trained head on the frozen encoder against rank-4 LoRA, three seeds. One fixed
+ * recipe on one task, not a ranking; LoRA budgets differ by model, so each change
+ * carries its trainable-parameter counts and the people behind it.
+ */
+function fmAdaptationGroup(): ResultGroup {
+  const path = `/protocols/arithmetic-rest/#${FM_ADAPTATION_ANCHOR}`;
+  const people = fmAdaptationMeta.people.raw;
+  return {
+    id: 'eegmat-v9-adaptation',
+    title: { en: 'Model adaptation, v9 · new people, same task, one fixed recipe (not a ranking)', zh: '模型适配（第九轮）· 新被试、同一任务、一个固定方案（不是排名）' },
+    path, chance: fmAdaptationMeta.chance,
+    rows: fmAdaptation.flatMap(a => {
+      const base = { path, method: a.model.name, methodSlug: a.model.slug as MethodSlug, people };
+      const c = a.change;
+      return [
+        { ...base, condition: { en: 'Frozen encoder + trained head', zh: '冻结编码器 + 训练的分类头' }, metric: BA, value: a.frozen.ba, interval: a.frozen.interval,
+          note: { en: [a.frozen.trainable, ' trainable parameters.'], zh: [a.frozen.trainable, ' 个可训练参数。'] } },
+        { ...base, condition: { en: 'LoRA rank 4 + head', zh: '秩为 4 的 LoRA + 分类头' }, metric: BA, value: a.lora.ba, interval: a.lora.interval,
+          note: { en: [a.lora.trainable, ' trainable parameters.'], zh: [a.lora.trainable, ' 个可训练参数。'] } },
+        { ...base, condition: { en: 'LoRA minus frozen + head, same people and folds', zh: 'LoRA 减冻结 + 分类头，相同被试与折' }, metric: DIFF,
+          value: c.mean, interval: c.interval,
+          note: { en: [c.helped, ' people improved, ', c.harmed, ' got worse, ', c.tied, ' unchanged',
+                       c.excludesZero ? '. The interval excludes zero.' : '. The interval includes zero: no change is established.'],
+                  zh: [c.helped, ' 人提升、', c.harmed, ' 人变差、', c.tied, ' 人不变',
+                       c.excludesZero ? '。区间不含零。' : '。区间包含零：不能认定有变化。'] } },
+      ];
+    }),
+  };
 }
 
 /* --- Deployment topics (deployment-topics.json) ------------------------------------ */
@@ -662,7 +757,7 @@ function fromMvp(name: string, task: L, later: ResultGroup[] = []): DatasetEntit
   return {
     slug, name: d.name, task, license: d.license, licenseUrl: d.licenseUrl ?? undefined,
     attribution: d.attribution, sources: [d.source].filter(Boolean) as string[],
-    groups: [...mvpGroups(name), ...depGroups(slug), ...later],
+    groups: [...mvpGroups(name), ...fmGroups(name), ...depGroups(slug), ...later],
   };
 }
 
@@ -677,7 +772,7 @@ const mob = [citation('nemar-nm000125-v1.0.2'), citation('nemar-nm000201-v1.0.2'
 
 export const datasets: DatasetEntity[] = [
   fromMvp('ds003810', { en: 'Motor imagery / rest', zh: '运动想象 / 静息' }, [reliableGroup('mi-rest')]),
-  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup(), reliableGroup('arithmetic-rest')]),
+  fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup(), fmAdaptationGroup(), reliableGroup('arithmetic-rest')]),
   fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }, [reliableGroup('beta-8ch')]),
   fromMvp('ds006593', { en: 'P300 target ERP', zh: 'P300 目标 ERP' }),
   fromMvp('TMNRED / ds005383', { en: 'Semantic target ERP', zh: '语义目标 ERP' }),
@@ -721,25 +816,37 @@ export interface MethodEntity {
 }
 
 export const methods: MethodEntity[] = methodSlugs.map(slug => {
+  // A group carries only this method's rows, and its not-run entries for this method.
+  const groups = datasets.flatMap(d => d.groups
+    .map(g => ({ ...g, rows: g.rows.filter(r => r.methodSlug === slug), notRun: g.notRun?.filter(x => x.methodSlug === slug), dataset: d }))
+    .filter(g => g.rows.length || g.notRun?.length));
+  if (isFmSlug(slug)) {
+    // The v9 model directory (foundation-models.ts); REVE's Base card is the released one,
+    // shown as evaluated (directory-status.ts), and its Large card a new one.
+    const status = fmDirectory.find(e => e.slug === slug)!.status;
+    return { slug, name: methodNames[slug], family: 'foundation', status, groups };
+  }
   const model = data.models.find(m => (m.id ?? m.name.toLowerCase().replace('+', '-')) === slug
                                    || m.name === methodNames[slug] || (slug === 'cca' && m.name === 'Standard CCA'));
-  const groups = datasets.flatMap(d => d.groups
-    .map(g => ({ ...g, rows: g.rows.filter(r => r.methodSlug === slug), dataset: d }))
-    .filter(g => g.rows.length));
   return { slug, name: methodNames[slug], family: model?.family, status: model && modelDirectoryStatus(model).status,
            url: model?.url ?? undefined, groups };
 });
 
 export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as Record<MethodSlug, MethodEntity>;
 
-/** Models listed in the directory that have no published result here, and why (status as shown, directory-status.ts). */
-export const unmeasuredModels = data.models.filter(m => m.status !== 'Evaluated')
-  .map(m => {
-    const shown = modelDirectoryStatus(m);
-    // An overridden status keeps the released one and its check date beside it.
-    return { name: m.name, family: m.family, status: shown.status, url: m.url ?? undefined,
-             released: shown.override?.released, checked: shown.override?.checked };
-  });
+/**
+ * Models listed in the directory that have no published result here, and why (status as
+ * shown, directory-status.ts). REVE Base left this list on 2026-10-04 (evaluated in v9);
+ * MIRepNet and EEG-DINO joined it as catalogue-only entries.
+ */
+export const unmeasuredModels: { name: string; family: string; status: string; url?: string; released?: string; checked?: string }[] = [
+  ...data.models.map(m => ({ m, shown: modelDirectoryStatus(m) })).filter(({ shown }) => !shown.status.startsWith('Evaluated'))
+    .map(({ m, shown }) =>
+      // An overridden status keeps the released one and its check date beside it.
+      ({ name: m.name, family: m.family, status: shown.status, url: m.url ?? undefined,
+         released: shown.override?.released, checked: shown.override?.checked })),
+  ...fmDirectory.filter(e => !e.models.length).map(e => ({ name: e.name, family: 'foundation', status: e.status })),
+];
 
 /**
  * Core-matrix rows a topic prints from experiments.json, beyond the groups that

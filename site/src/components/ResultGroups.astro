@@ -11,6 +11,7 @@ import { formatFig, isEnglishOnly, methodLabel, methodLabelIsEnglish, tr, type F
 import { entityCopy } from '../data/entity-copy';
 import { hrefFor, topicCards, type Locale } from '../data/i18n';
 import { protocolLinkLabel } from '../data/protocols';
+import { fmText } from '../data/foundation-models-zh';
 
 interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
 const { locale, groups, showMethod = true } = Astro.props;
@@ -47,7 +48,7 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
                                value: r.value.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
                                text: `${formatFig(r.value)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: r.comparator ? 'muted' as const : 'rust' as const }))}
       />}
-      <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.resultsRegion(heading(g))}>
+      {g.rows.length > 0 && <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.resultsRegion(heading(g))}>
         <table>
           <thead><tr>{showMethod && <th scope="col">{c.colMethod}</th>}<th scope="col">{c.colCondition}</th><th scope="col">{c.colMetric}</th><th scope="col">{c.colValue}</th><th scope="col">{c.colPeople}</th></tr></thead>
           <tbody>{g.rows.map(r => (
@@ -64,7 +65,11 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
             </tr>
           ))}</tbody>
         </table>
-      </div>
+      </div>}
+      {g.notRun && g.notRun.length > 0 && <p class="protocol-note fm-not-run-note">{g.notRun.map((x, i) => {
+        const why = fmText(x.reason, locale);
+        return <>{i > 0 && ' '}<strong><span lang="en">{x.method}</span>{locale === 'zh' ? '：未运行，不是零。' : ': not run, never a zero.'}</strong> {why.text}{why.original && <span class="note-original" lang="en">{why.original}</span>}</>;
+      })}</p>}
     </section>
   );
 })}

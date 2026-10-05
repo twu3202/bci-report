@@ -10,6 +10,7 @@ import { protocols } from '../../../data/protocols';
 import { protocolCopy } from '../../../data/entity-copy';
 import { hrefFor, localeOf, localeParams, trackShort, trackTitle } from '../../../data/i18n';
 import { protocolCatalog } from '../../../data/structured';
+import { FM_ANCHOR, fmScored } from '../../../data/foundation-models';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -38,7 +39,9 @@ const structured = protocolCatalog(protocolCopy.en.protocolsDocTitle,
           <td>{trackShort(p.short, locale)}</td>
           <td><Fig f={p.subjects} cls="metric"/></td>
           <td>{p.chance ? <Fig f={p.chance} cls="metric"/> : c.noChance}</td>
-          <td lang="en">{p.rows.map((r, i) => <>{i > 0 && ', '}{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.name}</a> : r.name}</>)}</td>
+          <td><span lang="en">{p.rows.map((r, i) => <>{i > 0 && ', '}{r.methodSlug ? <a href={hrefFor(`/methods/${r.methodSlug}/`, locale)}>{r.name}</a> : r.name}</>)}</span>
+            {/* The v9 rows (2026-10-04): counted as the protocol page prints them — matrix rows with a score. */}
+            <small class="fm-count"><a href={hrefFor(`/protocols/${p.id}/#${FM_ANCHOR}`, locale)}>{c.fmCount(fmScored(p.id).length)}</a></small></td>
         </tr>)}</tbody>
       </table>
     </div>

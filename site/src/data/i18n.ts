@@ -326,8 +326,13 @@ export const modelStatus = zhLabel({
   'Evaluated': '已评测',
   'Adapter needed': '需要适配器',
   'Access gated': '访问受限',
-  // Display-only status (directory-status.ts): REVE Base since 2026-10-02.
+  // Display-only status (directory-status.ts): REVE Base from 2026-10-02 to 2026-10-04.
   'Licence review pending': '许可审查中',
+  // The v9 directory entries (foundation-models.ts, 2026-10-04), as the export suggests them.
+  'Evaluated (6 of 8 protocols)': '已评测（8 个协议中的 6 个）',
+  'Evaluated (frozen probes, masking ablation)': '已评测（冻结探针，掩码消融）',
+  'Evaluated (frozen probes)': '已评测（冻结探针）',
+  'Catalogue only (not evaluated)': '仅列入目录（未评测）',
   'Access unverified': '访问未核实',
   'Research candidate': '研究候选',
   'Rights review pending': '权利审查中',
@@ -374,7 +379,7 @@ export const familyLabel = (family: string, locale: Locale) => ({
 
 /* --- Homepage ------------------------------------------------------------- */
 
-interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number }
+interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number; added: number }
 
 export const home = {
   en: {
@@ -386,7 +391,8 @@ export const home = {
     eyebrow: 'Open EEG evaluation · updated',
     h1: 'Every EEG score, with the protocol that produced it.',
     lede: (c: HomeCounts) =>
-      `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets. ` +
+      `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets; ` +
+      `since 4 October 2026, ${c.added} further foundation encoders sit beside it as frozen probes on the same protocols. ` +
       `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
@@ -421,7 +427,11 @@ export const home = {
     covered: (k: number, n: number) => `${k} of ${n}`,
     notEvaluated: (m: string, t: string) => `${m} has not been evaluated on ${t}`,
     atChance: '≤ chance',
-    keyLead: 'Best on that protocol',
+    // The snapshot's own highest score per column (2026-09-20). Since the v9 rows sit beside the
+    // snapshot (2026-10-04), the key says whose highest it is; it never ranks the new rows.
+    keyLead: 'Highest score in this snapshot',
+    matrixAdded: (n: number, date: string) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
+    matrixAddedLink: 'The v9 rows on the first protocol →',
     keyBar: "Bar = position between that protocol's chance level and 100%",
     keyGap: 'Not evaluated',
     matrixDownload: 'Core matrix · JSON ↓',
@@ -464,6 +474,24 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `Single seed — the ${word} of ${n} run (${lo}–${hi}%, mean ${mean}%)`,
     seedWord: { highest: 'highest', lowest: 'lowest', middle: 'middle' } as Record<string, string>,
+    // The v9 rows in the per-protocol table (2026-10-04). workbench.ts carries the same strings
+    // (it cannot import this module); check-workbench.mjs compares the first paint with its render.
+    fmGroup: (n: number, date: string) => `Added ${date}: ${n} further foundation encoders, frozen (v9)`,
+    fmGroupLink: 'Every v9 row with its footnote →',
+    fmInterval: (lo: string, hi: string) => `Descriptive 95% interval: ${lo}–${hi}%`,
+    fmF1: 'Mean across held-out participants',
+    fmDetected: (d: number, n: number) => `${d} of ${n} commands`,
+    fmIdle: (f: number, n: number) => `${f} of ${n} idle trials`,
+    fmNotRun: 'Not run',
+    fmNotPublished: 'not published',
+    fmExposed: 'In the authors’ pretraining list',
+    fmUnknown: 'Exposure unknown',
+    fmResearchUse: 'Model card: research use only, not for diagnosis or clinical use.',
+    fmAblation: 'Masking ablation: three sibling checkpoints of eeg-fm-masking',
+    fmAblationLede: 'Read against the paper-recommended checkpoint, the matrix row above: the same architecture, corpus and recipe, another masking framework or geometry. Not further models, and not ranked.',
+    fmAblationReference: 'matrix row above',
+    fmCsv: 'v9 rows · CSV ↓',
+    fmAbstained: (a: number, n: number) => `${a} of ${n} participants always abstained`,
     // The directory band: one card per hub, each with a count read from the
     // module that builds it (entities.ts, releases.ts, files.ts).
     directoryEyebrow: 'Directory',
@@ -501,7 +529,8 @@ export const home = {
     eyebrow: '公开 EEG 评测 · 更新于',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
-      `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集。` +
+      `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集；` +
+      `自 2026 年 10 月 4 日起，另有 ${c.added} 个基础模型编码器以冻结探针的方式列在同样的协议旁边。` +
       `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练与临床分组的证据。`,
     statsCaption: '核心矩阵',
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -530,7 +559,9 @@ export const home = {
     covered: (k: number, n: number) => `${k} / ${n}`,
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
     atChance: '≤ 随机',
-    keyLead: '该协议最佳',
+    keyLead: '本快照中该协议的最高分',
+    matrixAdded: (n: number, date: string) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
+    matrixAddedLink: '第一个协议上的第九轮各行 →',
     keyBar: '条长 = 在该协议随机水平与 100% 之间的位置',
     keyGap: '未评测',
     matrixDownload: '核心矩阵 · JSON ↓',
@@ -573,6 +604,22 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `仅单个随机种子——为 ${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
+    fmGroup: (n: number, date: string) => `${date} 新增：另外 ${n} 个基础模型编码器（冻结，第九轮）`,
+    fmGroupLink: '第九轮的每一行及其脚注 →',
+    fmInterval: (lo: string, hi: string) => `描述性 95% 区间：${lo}–${hi}%`,
+    fmF1: '各留出被试的均值',
+    fmDetected: (d: number, n: number) => `检出 ${d} / ${n} 条指令`,
+    fmIdle: (f: number, n: number) => `误触发 ${f} / ${n} 个空闲试次`,
+    fmNotRun: '未运行',
+    fmNotPublished: '不发布',
+    fmExposed: '在作者的预训练清单中',
+    fmUnknown: '是否出现在预训练数据中：未知',
+    fmResearchUse: '模型卡：仅供研究使用，不可用于诊断或临床。',
+    fmAblation: '掩码消融：eeg-fm-masking 的另外 3 个同系列检查点',
+    fmAblationLede: '请对照论文推荐的检查点（即上表中的那一行）阅读：架构、语料与训练方案相同，只改变掩码框架或掩码几何。它们不是更多的模型，也不排名。',
+    fmAblationReference: '即上表中的那一行',
+    fmCsv: '第九轮各行 · CSV ↓',
+    fmAbstained: (a: number, n: number) => `${n} 名被试中有 ${a} 名始终拒识`,
     directoryEyebrow: '目录',
     directoryH2: '其余内容，按类别查找',
     directoryLede: '模型目录与外部领域动态在“方法”页，公开数据登记在“数据集”页。',

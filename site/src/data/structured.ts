@@ -38,6 +38,7 @@ import { servedFiles } from './files';
 import { topicPages } from './topics';
 import { topicCards } from './i18n';
 import { datasets as datasetEntities } from './entities';
+import { fmFileOf, fmMatrixModels, fmRelease } from './foundation-models';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
 const LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
@@ -235,9 +236,11 @@ export function protocolDataset(t: typeof data.tracks[number], description: stri
     creator,
     isAccessibleForFree: true,
     version: data.releaseId,
-    dateModified: data.generatedAt.slice(0, 10),
+    // The page changed when the v9 rows joined it (2026-10-04); the core release keeps its version.
+    dateModified: fmRelease.date,
     measurementTechnique: 'Electroencephalography',
-    keywords: ['EEG', 'brain-computer interface', 'benchmark', t.title, t.dataset, ...t.rows.map(r => r.name)],
+    keywords: ['EEG', 'brain-computer interface', 'benchmark', t.title, t.dataset, ...t.rows.map(r => r.name),
+               ...fmMatrixModels.map(m => m.name)],
     variableMeasured: [t.yLabel, t.xLabel],
     isBasedOn: t.source,
     // A citation the source asks for that the released credit line lacks (releases.ts).
@@ -246,6 +249,8 @@ export function protocolDataset(t: typeof data.tracks[number], description: stri
     distribution: [
       download(`/data/${t.id}-results.csv`, 'text/csv'),
       download(`/data/${t.id}-protocol.json`, 'application/json'),
+      // The v9 foundation-model rows the page prints beside the core table (2026-10-04).
+      download(`/data/${fmFileOf(t.id)}`, 'text/csv'),
     ],
   };
 }

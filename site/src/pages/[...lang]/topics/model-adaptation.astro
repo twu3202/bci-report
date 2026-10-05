@@ -9,6 +9,9 @@ import evidence from '../../../data/evidence-update.json';
 import adaptation from '../../../data/adaptation-update.json';
 import context from '../../../data/context-update.json';
 import mvp from '../../../data/mvp.json';
+import { coreExposure } from '../../../data/foundation-models';
+// LaBraM's published pretraining list, as the v9 exposure table links it (owner decision 2026-10-04).
+const labramExposure = coreExposure('labram');
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -111,7 +114,7 @@ const copy = {
     adLimits: [
       ['One recipe, not a tuned ranking', 'Five epochs, AdamW at learning rate 1e-4, batch 32, with no search, validation split, early stopping or checkpoint selection. Another learning rate or training budget could reorder the rules.'],
       ['New people, not a new day or device', 'The folds hold out people on a task the model is adapted to. Nothing here measures a new recording day, a new headset or a new dataset.'],
-      ['A known dataset', "EEGMAT is public, and whether it was in LaBraM's pretraining data is not certified."],
+      ['A known dataset', "EEGMAT is public. It is not in LaBraM's published pretraining list, checked on 4 October 2026 (source below): what the authors' list shows, not proof that the recordings were never seen."],
       ['Descriptive intervals', 'Person bootstrap after averaging the three seeds within each person. It ignores the dependence that shared cross-validation models create.'],
     ],
     rmEngH3: 'Adapter size',
@@ -167,7 +170,7 @@ const copy = {
     adLimits: [
       ['一个配方，不是调参后的排名', '5 轮，AdamW，学习率 1e-4，批大小 32；没有超参搜索、验证集、早停或检查点挑选。换一个学习率或训练预算，各方式的先后可能改变。'],
       ['新被试，不是新的一天或新设备', '数据划分留出的是被试，任务是模型已经适配过的任务。这里没有测量新的记录日、新的头戴设备或新的数据集。'],
-      ['已公开的数据集', 'EEGMAT 是公开数据，它是否在 LaBraM 的预训练数据中，无法证实。'],
+      ['已公开的数据集', 'EEGMAT 是公开数据。它不在 LaBraM 作者公开的预训练数据清单中，于 2026 年 10 月 4 日核查（来源见下）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。'],
       ['描述性区间', '先在每名被试内平均 3 个随机种子，再做被试 bootstrap。它没有计入共享交叉验证模型带来的相关性。'],
     ],
     rmEngH3: '适配器的大小',
@@ -235,6 +238,8 @@ const card = topicCards[locale]['model-adaptation'];
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.adLimitsH2}</h2></div><p>{copy.adLimitsLede}</p></div>
     <div class="method-grid-wide">{copy.adLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    {/* The owner's sourced exposure statement (2026-10-04): LaBraM's published list, linked. */}
+    <p class="citation-note fm-core-exposure">{locale === 'zh' ? `LaBraM 的预训练数据清单（${labramExposure.checkedOn} 核查）：` : `LaBraM’s pretraining list, checked ${labramExposure.checkedOn}:`} {labramExposure.urls.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{locale === 'zh' ? '来源 ↗' : 'source ↗'}</a></>)}</p>
     <h3 class="roadmap-h3">{copy.rmEngH3}</h3>
     <p class="roadmap-p">{copy.rmEng(eng.rank).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
     <p class="roadmap-p"><strong>{copy.rmChecksH}</strong> {eng.checks_passed.map(c => copy.rmCheck[c] ?? c).join(locale === 'zh' ? '；' : '; ')}{tc.period}</p>

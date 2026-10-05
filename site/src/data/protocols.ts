@@ -31,6 +31,7 @@
 import data from './mvp.json';
 import { corrections, requestedCitations, type Correction } from './releases';
 import { datasetSlugOf, methodSlugOf, type Fig, type Fmt, type MethodSlug } from './entities';
+import { coreExposure, exposureOf, fmFileOf, fmRowsByProtocol, type FmRow } from './foundation-models';
 import { trackTitle, type Locale } from './i18n';
 
 type Track = typeof data.tracks[number];
@@ -101,9 +102,18 @@ export interface Protocol {
   rows: ProtocolRow[];
   /** Matrix methods with no result under this protocol: blank cells, not failures. */
   notRun: { name: string; methodSlug?: MethodSlug }[];
-  files: { results: string; protocol: string };
+  files: { results: string; protocol: string; fm: string };
   requested?: { text: string; url: string; basis: string };
   corrections: Correction[];
+  /**
+   * The v9 foundation-model rows (2026-10-04), from the protocol's own v9 CSV: thirteen
+   * matrix rows and the three masking-ablation siblings, never merged into `rows`.
+   */
+  fm: { matrix: FmRow[]; ablation: FmRow[] };
+  /** LaBraM's and CBraMod's sourced exposure statement on this protocol's dataset (owner decision 2026-10-04). */
+  coreExposure: { model: 'LaBraM' | 'CBraMod'; statement: string; urls: string[] }[];
+  /** When the exposure was checked. */
+  exposureChecked: string;
 }
 
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
@@ -159,8 +169,15 @@ function build(t: Track): Protocol {
     registerNote: data.datasets.find(d => d.name === t.dataset)?.detail,
     rightsScope: t.rightsScope, reviewedAt: t.reviewedAt, reviewBasis: t.reviewBasis, source: t.source,
     rows, notRun: matrixMethods.filter(m => !names.has(m.name)),
-    files: { results, protocol },
+    files: { results, protocol, fm: fmFileOf(t.id) },
     requested: datasetSlug ? requestedCitations[datasetSlug] : undefined,
+    fm: { matrix: fmRowsByProtocol[t.id].filter(r => r.model.panel === 'matrix'),
+          ablation: fmRowsByProtocol[t.id].filter(r => r.model.panel !== 'matrix') },
+    coreExposure: (['labram', 'cbramod'] as const).map(k => {
+      const cell = exposureOf(k, t.id);
+      return { model: k === 'labram' ? 'LaBraM' as const : 'CBraMod' as const, statement: cell.statement, urls: cell.urls };
+    }),
+    exposureChecked: coreExposure('labram').checkedOn,
     // A correction that amends this protocol's own downloads (releases.ts).
     corrections: corrections.filter(c => c.files.includes(results) || c.files.includes(protocol)),
   };

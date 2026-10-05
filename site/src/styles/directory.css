@@ -25,6 +25,9 @@
   font-variant-numeric:tabular-nums;margin:4px 0 6px;
 }
 .parameter span{font-family:var(--sans);font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+/* A v9 card prints its count as a published figure (data-fig), in the count's own type. */
+.parameter span.fig{font:inherit;letter-spacing:inherit;text-transform:none;color:inherit}
+.model-card>p.param-sizes{flex:0 0 auto;font-size:.72rem;color:var(--muted);margin:-4px 0 6px}
 .model-card>p:not(.parameter){font-size:.8125rem;flex:1;overflow-wrap:anywhere}
 /* When a status was last checked, and a display-layer override beside the
    released status (directory-status.ts). Quiet lines that do not take the

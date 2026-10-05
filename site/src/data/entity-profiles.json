@@ -472,6 +472,157 @@
    "reference": "Nakanishi M, Wang Y, Chen X, Wang Y-T, Gao X, Jung T-P. Enhancing detection of SSVEPs for a high-speed brain speller using task-related component analysis. IEEE Transactions on Biomedical Engineering 65(1):104–112, 2018.",
    "reference_url": "https://doi.org/10.1109/TBME.2017.2694818",
    "code_url": "https://github.com/mnakanishi/TRCA-SSVEP"
+  },
+  "reve": {
+   "aliases": [
+    "REVE Base",
+    "REVE Large",
+    "brain-bzh/reve-base",
+    "brain-bzh/reve-large"
+   ],
+   "summary_en": "REVE is a pretrained EEG encoder released in Small, Base and Large sizes, all trained on one corpus that its paper's appendix lists: public collections from TUH, PhysioNet, OpenNeuro and MOABB among others, with the recordings of the authors' own downstream tasks removed. BCI Report ran the Base and Large checkpoints frozen, with the published ridge head; their input removes each segment's per-channel mean, a deviation declared before scoring. The weights are under the REVE Responsible Use License, accepted for this site on 4 October 2026.",
+   "summary_zh": "REVE 是一个预训练 EEG 编码器，发布了 Small、Base 与 Large 三种规模，都在同一份语料上训练，论文附录列出了这份语料：TUH、PhysioNet、OpenNeuro、MOABB 等公开来源，并去掉了作者自己下游任务所用的记录。本站把 Base 与 Large 检查点冻结，接上已发布的岭回归分类头运行；输入先去掉每个片段各通道的均值，这一偏离在评分前就已声明。权重采用 REVE 负责任使用许可，本站已于 2026 年 10 月 4 日接受。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2510.21585",
+    "https://huggingface.co/datasets/brain-bzh/reve-dataset",
+    "https://huggingface.co/brain-bzh/reve-base",
+    "https://huggingface.co/brain-bzh/reve-large"
+   ],
+   "reference": "REVE, arXiv:2510.21585",
+   "reference_url": "https://arxiv.org/abs/2510.21585",
+   "code_url": "https://huggingface.co/brain-bzh/reve-base"
+  },
+  "luna": {
+   "aliases": [
+    "LUNA Base",
+    "LUNA Large",
+    "PulpBio/LUNA"
+   ],
+   "summary_en": "LUNA is a pretrained EEG encoder released in Base, Large and Huge sizes; its paper lists the Temple University EEG corpus (TUEG) and the Siena Scalp EEG Database as its pretraining data. BCI Report ran Base and Large frozen. The input is resampled to 256 Hz and cut to whole patches, and the one- and two-second windows and four- to eight-channel layouts here are outside the regime its authors tested. The weights are CC BY-ND 4.0: no modified weights or adapters are shared, and no endorsement by the LUNA authors is implied.",
+   "summary_zh": "LUNA 是一个预训练 EEG 编码器，发布了 Base、Large 与 Huge 三种规模；论文列出的预训练数据是天普大学 EEG 语料（TUEG）和 Siena 头皮 EEG 数据库。本站把 Base 与 Large 冻结运行。输入重采样到 256 Hz 并截成完整的片段；这里 1 秒、2 秒的时间窗和 4 到 8 个通道的电极布局，超出了作者测试过的范围。权重为 CC BY-ND 4.0：不分享任何修改后的权重或适配器，也不代表 LUNA 作者的认可。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2510.22257",
+    "https://huggingface.co/PulpBio/LUNA"
+   ],
+   "reference": "LUNA, arXiv:2510.22257",
+   "reference_url": "https://arxiv.org/abs/2510.22257",
+   "code_url": "https://huggingface.co/PulpBio/LUNA"
+  },
+  "brainomni": {
+   "aliases": [
+    "BrainOmni Base",
+    "BrainTokenizer",
+    "OpenTSLab/BrainOmni"
+   ],
+   "summary_en": "BrainOmni is a pretrained foundation model for EEG and MEG, released in tiny and base sizes, with a BrainTokenizer front end; its paper's appendix lists the EEG and MEG recordings it was pretrained on. BCI Report ran Base frozen on six of the eight core protocols: its tokenizer needs two-second windows, so the two one-second ERP protocols were not run rather than padded with invented samples. It keeps its upstream common average reference on the small layouts here.",
+   "summary_zh": "BrainOmni 是面向 EEG 与 MEG 的预训练基础模型，发布了 tiny 与 base 两种规模，前端是 BrainTokenizer；论文附录列出了它预训练所用的 EEG 与 MEG 记录。本站把 Base 冻结，在 8 个核心协议中的 6 个上运行：它的分词器需要 2 秒的时间窗，所以两个 1 秒时间窗的 ERP 协议没有运行，而不是用凭空造出的采样点补齐。在这里的小电极布局上，它保留了上游的共同平均参考。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2505.18185v3"
+   ],
+   "reference": "BrainOmni, arXiv:2505.18185",
+   "reference_url": "https://arxiv.org/abs/2505.18185"
+  },
+  "codebrain": {
+   "aliases": [
+    "YjMajy/CodeBrain"
+   ],
+   "summary_en": "CodeBrain is a pretrained EEG encoder whose paper lists the Temple University EEG corpus (TUEG) as its only pretraining source. BCI Report ran the released checkpoint frozen, pooled as the published CBraMod rows are, and adapted it on EEGMAT, where its LoRA in effect adapts only the attention value projection.",
+   "summary_zh": "CodeBrain 是一个预训练 EEG 编码器，论文列出的唯一预训练来源是天普大学 EEG 语料（TUEG）。本站把发布的检查点冻结运行，池化方式与已发布的 CBraMod 行相同，并在 EEGMAT 上做了适配；在那里，它的 LoRA 实际上只适配了注意力的 V 投影。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2506.09110"
+   ],
+   "reference": "CodeBrain, arXiv:2506.09110",
+   "reference_url": "https://arxiv.org/abs/2506.09110"
+  },
+  "eegmamba": {
+   "aliases": [
+    "weighting666/EEGMamba",
+    "Wang et al. 2025 (Neural Networks)"
+   ],
+   "summary_en": "EEGMamba is the Mamba-based EEG encoder from the CBraMod group (Wang et al., Neural Networks, 2025), not the unrelated model of the same name on arXiv (2407.20254). Its official code lists five pretraining sources, including TUEG and the Siena Scalp EEG Database; the paywalled paper was not read. BCI Report ran the released checkpoint frozen, pooled as the published CBraMod rows are, and adapted it on EEGMAT.",
+   "summary_zh": "EEGMamba 是 CBraMod 团队基于 Mamba 的 EEG 编码器（Wang 等，Neural Networks，2025），与 arXiv 上同名但无关的模型（2407.20254）不是同一个。它的官方代码列出了 5 个预训练来源，包括 TUEG 和 Siena 头皮 EEG 数据库；需付费阅读的论文全文没有读过。本站把发布的检查点冻结运行，池化方式与已发布的 CBraMod 行相同，并在 EEGMAT 上做了适配。",
+   "facts_sources": [
+    "https://doi.org/10.1016/j.neunet.2025.107816",
+    "https://github.com/wjq-learning/EEGMamba/blob/main/pretrain_main.py"
+   ],
+   "reference": "Wang et al., EEGMamba, Neural Networks (2025). doi:10.1016/j.neunet.2025.107816",
+   "reference_url": "https://doi.org/10.1016/j.neunet.2025.107816",
+   "code_url": "https://github.com/wjq-learning/EEGMamba"
+  },
+  "st-eegformer": {
+   "aliases": [
+    "ST-EEGFormer Base",
+    "ST-EEGFormer Large",
+    "STEEGFormer"
+   ],
+   "summary_en": "ST-EEGFormer is a pretrained EEG Transformer released in small, base and large sizes. Its paper's appendix lists eleven public pretraining datasets — BETA among them — plus the authors' own in-house recordings, so its cells on both BETA protocols are marked as in the authors' pretraining list. BCI Report ran Base and Large frozen and adapted Base on EEGMAT. Its README reserves the paper, the diagrams and the name, none of which is reproduced here.",
+   "summary_zh": "ST-EEGFormer 是一个预训练的 EEG Transformer，发布了 small、base 与 large 三种规模。论文附录列出了 11 个公开预训练数据集（其中包括 BETA），外加作者自己实验室的记录，所以它在两个 BETA 协议上的单元格都标为“在作者的预训练清单中”。本站把 Base 与 Large 冻结运行，并在 EEGMAT 上适配了 Base。它的 README 保留论文、示意图与名称的权利，本站均未复制。",
+   "facts_sources": [
+    "https://openreview.net/forum?id=5Xwm8e6vbh",
+    "https://github.com/LiuyinYang1101/STEEGFormer"
+   ],
+   "reference": "ST-EEGFormer, OpenReview 5Xwm8e6vbh",
+   "reference_url": "https://openreview.net/forum?id=5Xwm8e6vbh",
+   "code_url": "https://github.com/LiuyinYang1101/STEEGFormer"
+  },
+  "eeg-fm-masking": {
+   "aliases": [
+    "PierreGtch/eeg-fm-masking_mae_r9cm_L2",
+    "eeg-fm-masking MAE",
+    "eeg-fm-masking JEPA"
+   ],
+   "summary_en": "eeg-fm-masking is a set of encoders released with a study of masking in EEG pretraining: one small backbone, one corpus (the open-licence subset of the REVE pretraining corpus) and one recipe, pretrained with a masked-autoencoder (MAE) or a joint-embedding predictive (JEPA) objective under different mask geometries. BCI Report ran four of them frozen: the paper-recommended MAE checkpoint (mask radius 9 cm, L = 2) as a matrix row, and three siblings — JEPA with the same geometry, and MAE and JEPA masking one channel — as a masking ablation.",
+   "summary_zh": "eeg-fm-masking 是随一项 EEG 预训练掩码研究发布的一组编码器：同一个小型主干、同一份语料（REVE 预训练语料中开放许可的部分）、同一套训练方案，分别用掩码自编码器（MAE）或联合嵌入预测（JEPA）目标，在不同的掩码几何下预训练。本站把其中 4 个冻结运行：论文推荐的 MAE 检查点（掩码半径 9 cm，L = 2）作为矩阵中的一行，另外 3 个同系列检查点——相同几何的 JEPA，以及只掩一个通道的 MAE 与 JEPA——作为掩码消融。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2609.33487",
+    "https://huggingface.co/datasets/brain-bzh/reve-dataset"
+   ],
+   "reference": "eeg-fm-masking, arXiv:2609.33487",
+   "reference_url": "https://arxiv.org/abs/2609.33487"
+  },
+  "erp-fm": {
+   "aliases": [
+    "ERP-FM Base"
+   ],
+   "summary_en": "ERP-FM is an EEG foundation model pretrained on event-related potential recordings only: its paper lists the task-level ERP datasets it used. On this site the two ERP protocols, P300 target and semantic target, are in its design; the other six are negative controls outside it, and the ERP windows here have no pre-stimulus baseline, so this is not a test of ERP-FM in its own setting. The weights are CC BY-NC-SA 4.0, for non-commercial use.",
+   "summary_zh": "ERP-FM 是只用事件相关电位（ERP）记录预训练的 EEG 基础模型：论文列出了它所用的任务级 ERP 数据集。在本站，P300 目标与语义目标这两个 ERP 协议在它的设计范围内；其余 6 个是设计范围之外的阴性对照，而且这里的 ERP 时间窗没有刺激前基线，所以这不是在 ERP-FM 自己的设定下对它的检验。权重为 CC BY-NC-SA 4.0，仅限非商业用途。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2609.32796",
+    "https://github.com/DL4mHealth/ERP-FM"
+   ],
+   "reference": "ERP-FM, arXiv:2609.32796",
+   "reference_url": "https://arxiv.org/abs/2609.32796",
+   "code_url": "https://github.com/DL4mHealth/ERP-FM"
+  },
+  "singlem": {
+   "aliases": [
+    "ttlabtuat/SingLEM"
+   ],
+   "summary_en": "SingLEM is a single-channel EEG foundation model: a tokenizer encodes each channel on its own. Its paper lists 71 public pretraining datasets, TMNRED among them, so its cells on the semantic-target protocol are marked as in the authors' pretraining list. BCI Report ran the primary checkpoint, the one that excludes the authors' own downstream sources, frozen, and adapted it on EEGMAT. Its tokenizer does not see the last quarter-second of each two-second segment.",
+   "summary_zh": "SingLEM 是单通道 EEG 基础模型：分词器单独编码每个通道。论文列出了 71 个公开预训练数据集，其中包括 TMNRED，所以它在语义目标协议上的单元格标为“在作者的预训练清单中”。本站把主检查点（排除了作者自己下游来源的那一个）冻结运行，并在 EEGMAT 上做了适配。它的分词器看不到每个 2 秒片段的最后 0.25 秒。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2509.17920v3",
+    "https://github.com/ttlabtuat/SingLEM"
+   ],
+   "reference": "SingLEM, arXiv:2509.17920",
+   "reference_url": "https://arxiv.org/abs/2509.17920v3",
+   "code_url": "https://github.com/ttlabtuat/SingLEM"
+  },
+  "zuna": {
+   "aliases": [
+    "ZUNA 1.1",
+    "ZUNA1.1",
+    "Zyphra/ZUNA1.1"
+   ],
+   "summary_en": "ZUNA 1.1 is a channel-wise EEG encoder from Zyphra. Its authors describe the pretraining data only at repository level — the TUH EEG corpus and OpenNeuro collections — and publish no list of datasets, so whether each core dataset was in it is unknown. BCI Report ran the encoder alone, frozen, with no channel upsampling or reconstruction, and adapted it on EEGMAT. Its model card says research use only, not for diagnosis or clinical use.",
+   "summary_zh": "ZUNA 1.1 是 Zyphra 发布的按通道 EEG 编码器。作者只在仓库层面描述了预训练数据（TUH EEG 语料与 OpenNeuro 上的数据集），没有公开数据集清单，所以每个核心数据集是否出现在预训练数据中都未知。本站只用它的编码器，冻结运行，不做通道上采样或重建，并在 EEGMAT 上做了适配。它的模型卡写明仅供研究使用，不可用于诊断或临床。",
+   "facts_sources": [
+    "https://arxiv.org/abs/2607.27308",
+    "https://huggingface.co/Zyphra/ZUNA1.1"
+   ],
+   "reference": "ZUNA 1.1, arXiv:2607.27308",
+   "reference_url": "https://arxiv.org/abs/2607.27308",
+   "code_url": "https://huggingface.co/Zyphra/ZUNA1.1"
   }
  }
 }

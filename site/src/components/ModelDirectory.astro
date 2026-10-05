@@ -11,15 +11,25 @@ import { methods } from '../data/entities';
 import { directoryText, familyLabel, hrefFor, modelStatus, type Locale } from '../data/i18n';
 import { directoryCopy } from '../data/directory-copy';
 import { modelDirectoryStatus } from '../data/directory-status';
+import Fig from './Fig.astro';
+import { fmDirectory, fmModels, fmRelease } from '../data/foundation-models';
+import { fmText } from '../data/foundation-models-zh';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = directoryCopy[locale];
 const dir = (text: string) => directoryText(text, locale);
 const methodPage = (name: string) => {
-  const m = methods.find(x => x.name === name || (x.slug === 'cca' && name === 'Standard CCA'));
+  // A released card whose model the v9 evaluation scored (REVE Base) leads to its family's page.
+  const v9 = fmModels.find(x => x.name === name);
+  const m = methods.find(x => x.name === name || (x.slug === 'cca' && name === 'Standard CCA') || x.slug === v9?.slug);
   return m ? hrefFor(`/methods/${m.slug}/`, locale) : null;
 };
+const say = (en: string) => fmText(en, locale);
+const ready = (status: string) => status.startsWith('Evaluated');
+// A family's sizes print their own parameter counts; identical checkpoints (the four masking encoders) print one.
+const sizes = (ms: typeof fmModels) => [...new Map(ms.map(m => [m.params.raw, m])).values()];
+const sizeLabel = (name: string, family: string) => name.replace(family, '').replace(/^[\s(]+|[\s)]+$/g, '');
 const params = (n: number | null | undefined) =>
   n ? (n / 1e6 >= 1 ? (n / 1e6).toFixed(2) + 'M' : (n / 1e3).toFixed(1) + 'K') : '—';
 ---
@@ -27,14 +37,32 @@ const params = (n: number | null | undefined) =>
   <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}{d.translated && <> {d.translated}</>}</p></div>
   <div class="model-grid">{data.models.map(m => {
     const s = modelDirectoryStatus(m);
+    const v9 = fmModels.find(x => x.name === m.name);
+    const weights = v9 && say(v9.licenceNote);
     return <article class="model-card" data-model={m.name}>
-      <div class="card-top"><span class="family">{familyLabel(m.family, locale)}</span><span class:list={['status', { ready: s.status === 'Evaluated' }]}>{modelStatus(s.status, locale)}</span></div>
+      <div class="card-top"><span class="family">{familyLabel(m.family, locale)}</span><span class:list={['status', { ready: ready(s.status) }]}>{modelStatus(s.status, locale)}</span></div>
       <h3 lang="en">{methodPage(m.name) ? <a href={methodPage(m.name)!}>{m.name}</a> : m.name}</h3>
-      <p class="parameter">{params(m.parameters)} <span>{d.parameters}</span></p>
+      <p class="parameter">{v9 ? <Fig f={v9.params} cls="fig"/> : params(m.parameters)} <span>{d.parameters}</span></p>
       <p lang={dir(m.note).lang}>{dir(m.note).text}</p>
       {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span> {s.override.note[locale] ?? s.override.note.en} <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></p>}
+      {weights && <p class="status-override fm-weights"><span>{d.weights}</span> {weights.text}{weights.original && <span class="note-original" lang="en">{weights.original}</span>}</p>}
       <p class="status-checked"><time datetime={s.checked}>{s.override ? d.statusChecked(s.checked) : d.statusAsReleased(s.checked)}</time></p>
       <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{s.override && d.codeAsReleased}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
+    </article>;
+  })}{fmDirectory.map(e => {
+    const page = e.slug ? hrefFor(`/methods/${e.slug}/`, locale) : null;
+    const lead = e.models[0];
+    // A note that only restates the licence's name ("MIT.") is not printed twice.
+    const licence = lead && say(lead.weightsLicence), note = lead && lead.licenceNote.replace(/\.$/, '') !== lead.weightsLicence ? say(lead.licenceNote) : undefined;
+    return <article class="model-card" data-model={e.name} data-release={fmRelease.id}>
+      <div class="card-top"><span class="family">{familyLabel('foundation', locale)}</span><span class:list={['status', { ready: ready(e.status) }]}>{modelStatus(e.status, locale)}</span></div>
+      <h3 lang="en">{page ? <a href={page}>{e.name}</a> : e.name}</h3>
+      <p class="parameter">{e.models.length ? sizes(e.models).map((m, i) => <>{i > 0 && ' · '}<Fig f={m.params} cls="fig"/></>) : '—'} <span>{d.parameters}</span></p>
+      {sizes(e.models).length > 1 && <p class="param-sizes" lang="en">{sizes(e.models).map(m => sizeLabel(m.name, e.name.replace(/ \(.*$/, ''))).join(' · ')}</p>}
+      <p>{e.note[locale]}</p>
+      {note && <p class="status-override fm-weights"><span>{d.weights}</span> {note.text}{note.original && <span class="note-original" lang="en">{note.original}</span>}</p>}
+      <p class="status-checked"><time datetime={fmRelease.date}>{d.statusChecked(fmRelease.date)}</time></p>
+      <div class="card-footer"><span>{licence ? <>{licence.text}{licence.original && <span class="note-original" lang="en">{licence.original}</span>}</> : d.noLicence}</span>{e.source && <a href={e.source} target="_blank" rel="noreferrer">{d.officialSource}</a>}</div>
     </article>;
   })}</div>
 </section>

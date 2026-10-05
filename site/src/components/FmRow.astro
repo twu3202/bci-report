@@ -1,0 +1,44 @@
+---
+/**
+ * One v9 foundation-model row on a protocol page (2026-10-04): the checkpoint, its
+ * training mode as the CSV states it, every figure as a `Fig` from the protocol's v9
+ * CSV in the CSV's column order, the chance flags the core rows carry, and the
+ * owner's sourced pretraining-exposure statement with its source. A cell not run
+ * prints its reason, never a figure. ZUNA 1.1's model-card sentence travels in its row.
+ */
+import Fig from './Fig.astro';
+import { protocolCopy } from '../data/entity-copy';
+import { familyLabel, hrefFor, type Locale } from '../data/i18n';
+import { fmResearchUse, type FmRow } from '../data/foundation-models';
+import { fmText, fmZh } from '../data/foundation-models-zh';
+
+interface Props { r: FmRow; locale: Locale; fn: number; fnId: string; reference?: boolean }
+const { r, locale, fn, fnId, reference = false } = Astro.props;
+const c = protocolCopy[locale];
+const payloadLang = locale === 'en' ? undefined : 'en';
+const tradeoff = r.protocol === 'idle';
+const reason = r.reason ? fmText(r.reason, locale) : undefined;
+const exposure = locale === 'en' ? r.exposure.statement : fmZh[r.exposure.statement];
+const source = r.exposure.urls[0];
+---
+<tr data-fm-row={r.model.id} data-panel={r.model.panel} data-status={r.status} data-exposure={r.exposure.status}>
+  <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.model.slug}/`, locale)}>{r.model.name}</a></span><sup class="fn-ref"><a href={`#${fnId}`}>{fn}</a></sup><small>{familyLabel('foundation', locale)}{reference && <> · {c.ablationReference}</>}</small>{fmResearchUse(r.model) && <small class="fm-research-use">{c.researchUse}</small>}</th>
+  <td lang={payloadLang}>{r.mode}</td>
+  {r.status === 'complete'
+    ? (tradeoff
+      ? <><td><Fig f={r.primary!} cls="metric"/><small><Fig f={r.idle!.detected}/>{c.commandsOf}<Fig f={r.idle!.commandTrials}/>{c.commandsTail}</small>{r.idle!.abstain.raw > 0
+              ? <span class="flag"><Fig f={r.idle!.abstain}/>{c.abstainedOf}<Fig f={r.people!}/>{c.abstainedTail}</span>
+              : <small><Fig f={r.idle!.abstain}/>{c.abstainedOf}<Fig f={r.people!}/>{c.abstainedTail}</small>}</td>
+          <td><Fig f={r.secondary!} cls="metric"/><small><Fig f={r.idle!.falseActivations}/>{c.commandsOf}<Fig f={r.idle!.idleTrials}/>{c.idleTail}</small></td>
+          <td><Fig f={r.idle!.windowBa} cls="metric"/><small>AUROC <Fig f={r.idle!.windowAuroc}/></small></td></>
+      : <><td><Fig f={r.primary!} cls="metric"/>{r.interval && <span class="interval"><Fig f={r.interval[0]}/>–<Fig f={r.interval[1]}/></span>}{r.chanceFlag && <span class="flag">{r.chanceFlag === 'at-or-below' ? c.atOrBelow : c.intervalReaches}</span>}</td>
+          <td><Fig f={r.secondary!} cls="metric"/></td></>)
+    : <td colspan={tradeoff ? 3 : 2} class="fm-not-run"><strong>{c.notRunCell}</strong><small>{reason!.text}{reason!.original && <span class="note-original" lang="en">{reason!.original}</span>}</small></td>}
+  <td><Fig f={r.channels}/></td>
+  <td>{r.people ? <Fig f={r.people}/> : '—'}</td>
+  <td class="fm-exposure">{r.exposure.status === 'exposed'
+    ? <span class="flag fm-badge" data-exposure="exposed">{exposure}</span>
+    : r.exposure.status === 'unknown'
+      ? <><span class="flag fm-badge" data-exposure="unknown">{c.unknown}</span><small>{exposure}</small></>
+      : <small>{exposure}</small>}{source && <small><a href={source} target="_blank" rel="noreferrer">{c.exposureSource}</a></small>}</td>
+</tr>

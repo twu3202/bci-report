@@ -20,6 +20,11 @@ import { formatFig } from '../../../data/entities';
 import { protocolCopy } from '../../../data/entity-copy';
 import { defaultLocale, directoryText, familyLabel, hrefFor, localeOf, locales, metricLabel, trackShort, trackTitle } from '../../../data/i18n';
 import { protocolDataset } from '../../../data/structured';
+import { FM_ABLATION_ANCHOR, FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmExposure, fmNotAdapted, fmRelease,
+         fmResearchUse, type FmRow } from '../../../data/foundation-models';
+import { fmAdaptationContext } from '../../../data/foundation-models';
+import { fmText, fmZh } from '../../../data/foundation-models-zh';
+import FmRowView from '../../../components/FmRow.astro';
 
 export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
   params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
@@ -49,6 +54,32 @@ const licence = directoryText(p.license, locale);
 // The dataset's reviewed rights note, as the register prints it (Chinese with the English beside it).
 const register = p.registerNote ? directoryText(p.registerNote, locale) : undefined;
 const consentCaveat = c.consentCaveat[p.id];
+
+// --- The v9 rows (2026-10-04) --------------------------------------------------
+const tradeoff = p.type === 'tradeoff';
+const fmAll = [...p.fm.matrix, ...p.fm.ablation];
+// One footnote per distinct text, numbered in the order the rows meet them.
+const footnotes = [...new Set(fmAll.map(r => r.model.footnote))];
+const fnOf = (r: FmRow) => footnotes.indexOf(r.model.footnote) + 1;
+const fnId = (n: number) => `fn-v9-${n}`;
+// The released rows (grey), then the v9 matrix rows in family order (rust): the plot adds no figure.
+const fmPlot = tradeoff ? [] : [
+  ...plot.map(r => ({ label: r.name, labelLang: payloadLang, value: r.primary.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+                      text: `${formatFig(r.primary)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: 'muted' as const })),
+  ...p.fm.matrix.filter(r => r.status === 'complete' && r.interval).map(r => ({ label: r.model.name, labelLang: payloadLang, value: r.primary!.raw,
+      interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+      text: `${formatFig(r.primary!)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: 'rust' as const })),
+];
+const say = (en: string) => fmText(en, locale);
+const exposureText = (statement: string) => locale === 'en' ? statement : fmZh[statement];
+// One licence entry per model family: the first checkpoint's terms (its siblings refer to them).
+const licenceFamilies = [...new Map(fmAll.map(r => [r.model.slug, fmAll.filter(x => x.model.slug === r.model.slug).map(x => x.model)])).values()];
+const fmNotes = fmAll.filter(r => r.notes);
+const adaptation = p.id === 'arithmetic-rest' ? fmAdaptation : [];
+const sgn = (f: { raw: number; fmt: string; src: string }) => ({ ...f, fmt: 'sgn1' as const });
+// The files this page's figures are leaves of: the core results CSV and protocol JSON, the v9 CSV,
+// and on arithmetic-rest the v9 JSON (the EEGMAT adaptation). The cite block names their releases.
+const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation.length ? ['foundation-models-update.json'] : [])];
 ---
 <EntityLayout
   locale={locale} path={path} active="protocols"
@@ -59,6 +90,7 @@ const consentCaveat = c.consentCaveat[p.id];
   dek={c.protocolDek(hasChance)}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.protocolsTitle, href: hrefFor('/protocols/', locale) }, { label: title }]}
   structured={structured}
+  cite={{ files: citeFiles, upstream: 'dataset' }}
 >
   {c.payloadNote && <p class="payload-note protocol-payload-note">{c.payloadNote}</p>}
   <section class="topic-section" aria-labelledby="glance-heading">
@@ -106,6 +138,85 @@ const consentCaveat = c.consentCaveat[p.id];
     {p.notRun.length > 0 && <p class="protocol-note not-run"><strong>{c.notRun}</strong> <span lang="en">{p.notRun.map((m, i) => <>{i > 0 && ', '}{m.methodSlug ? <a href={hrefFor(`/methods/${m.methodSlug}/`, locale)}>{m.name}</a> : m.name}</>)}</span>{locale === 'zh' ? '。' : '. '}{c.notRunCaveat}</p>}
   </section>
 
+  <section class="topic-section fm-section" id={FM_ANCHOR} aria-labelledby="fm-heading" data-release={fmRelease.id}>
+    <div class="topic-heading"><div><p class="eyebrow">{c.fmEyebrow(fmRelease.date)}</p><h2 id="fm-heading">{c.fmH2}</h2></div><p>{c.fmLede(tradeoff)}</p></div>
+    {fmPlot.length > 0 && <IntervalPlot
+      caption={c.fmPlotCaption}
+      legend={c.fmPlotLegend}
+      domain={[0, 100]}
+      ticks={['0%', '25%', '50%', '75%', '100%']}
+      reference={p.chance?.raw}
+      rows={fmPlot}
+    />}
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.fmRegion}>
+      <table class="fm-results">
+        <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colTraining}</th>
+          {tradeoff
+            ? <><th scope="col">{c.colDetected}</th><th scope="col">{c.colFalse}</th><th scope="col">{c.colWindow}</th></>
+            : <><th scope="col">{metricLabel(p.yLabel, locale)}</th><th scope="col">{metricLabel(p.xLabel, locale)}</th></>}
+          <th scope="col">{c.colChannels}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colExposure}</th></tr></thead>
+        <tbody>{p.fm.matrix.map(r => <FmRowView r={r} locale={locale} fn={fnOf(r)} fnId={fnId(fnOf(r))}/>)}</tbody>
+      </table>
+    </div>
+    <p class="citation-note fm-exposure-key">{c.exposureKey(fmExposure.checkedOn)}</p>
+    <h3 class="roadmap-h3" id="v9-footnotes">{c.footnotesH3}</h3>
+    <ol class="fm-footnotes">{footnotes.map((f, i) => {
+      const t = say(f);
+      return <li id={fnId(i + 1)}><span>{t.text}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</li>;
+    })}</ol>
+
+    <details class="rd-panel fm-ablation" id={FM_ABLATION_ANCHOR}>
+      <summary>{c.ablationSummary}</summary>
+      <p class="roadmap-p">{c.ablationLede}</p>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.ablationSummary}>
+        <table class="fm-results fm-ablation-table">
+          <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colTraining}</th>
+            {tradeoff
+              ? <><th scope="col">{c.colDetected}</th><th scope="col">{c.colFalse}</th><th scope="col">{c.colWindow}</th></>
+              : <><th scope="col">{metricLabel(p.yLabel, locale)}</th><th scope="col">{metricLabel(p.xLabel, locale)}</th></>}
+            <th scope="col">{c.colChannels}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colExposure}</th></tr></thead>
+          <tbody>
+            {p.fm.matrix.filter(r => r.model.slug === 'eeg-fm-masking').map(r => <FmRowView r={r} locale={locale} fn={fnOf(r)} fnId={fnId(fnOf(r))} reference={true}/>)}
+            {p.fm.ablation.map(r => <FmRowView r={r} locale={locale} fn={fnOf(r)} fnId={fnId(fnOf(r))}/>)}
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    {adaptation.length > 0 && <>
+      <h3 class="roadmap-h3" id={FM_ADAPTATION_ANCHOR}>{c.adaptH3}</h3>
+      <p class="roadmap-p">{c.adaptLede} <Fig f={fmAdaptationMeta.people} cls="fig"/>{locale === 'zh' ? ' 名被试，' : ' people, '}<Fig f={fmAdaptationMeta.folds} cls="fig"/>{locale === 'zh' ? ' 折。LoRA 增加的可训练参数从 ' : ' folds. LoRA adds '}<Fig f={fmAdaptationMeta.loraRange[0]} cls="fig"/>{locale === 'zh' ? ' 到 ' : ' to '}<Fig f={fmAdaptationMeta.loraRange[1]} cls="fig"/>{locale === 'zh' ? ' 个不等，随模型而异。' : ' trainable parameters, depending on the model.'}</p>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.adaptRegion}>
+        <table class="fm-adaptation">
+          <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colFrozenHead}</th><th scope="col">{c.colLora}</th><th scope="col">{c.colChange}</th><th scope="col">{c.colTrainable}</th></tr></thead>
+          <tbody>
+            {[{ name: fmAdaptationContext.model, slug: 'labram', context: true, ...fmAdaptationContext },
+              ...adaptation.map(a => ({ name: a.model.name, slug: a.model.slug, context: false, release: fmRelease.id, frozen: a.frozen, lora: a.lora, change: a.change, unknown: a.exposure.status === 'unknown', researchUse: fmResearchUse(a.model) }))].map(a => (
+              <tr data-adapt-row={a.name}>
+                <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${a.slug}/`, locale)}>{a.name}</a></span>{a.context && <small>{c.labramContext}</small>}{'unknown' in a && a.unknown && <span class="flag fm-badge" data-exposure="unknown">{c.unknown}</span>}{'researchUse' in a && a.researchUse && <small class="fm-research-use">{c.researchUse}</small>}</th>
+                <td><Fig f={a.frozen.ba} cls="metric"/><span class="interval"><Fig f={a.frozen.interval[0]}/>–<Fig f={a.frozen.interval[1]}/></span></td>
+                <td><Fig f={a.lora.ba} cls="metric"/><span class="interval"><Fig f={a.lora.interval[0]}/>–<Fig f={a.lora.interval[1]}/></span></td>
+                <td><Fig f={a.change.mean} cls="metric"/><span class="interval"><Fig f={sgn(a.change.interval[0])}/>{locale === 'zh' ? ' 至 ' : ' to '}<Fig f={a.change.interval[1]}/></span><small><Fig f={a.change.helped}/>{locale === 'zh' ? ' 人提升 · ' : ' improved · '}<Fig f={a.change.harmed}/>{locale === 'zh' ? ' 人变差 · ' : ' worse · '}<Fig f={a.change.tied}/>{locale === 'zh' ? ' 人不变' : ' unchanged'}</small><span class="verdict" data-resolved={a.change.excludesZero ? 'true' : 'false'}>{a.change.excludesZero ? c.excludesZero : c.includesZero}</span></td>
+                <td><Fig f={a.frozen.trainable}/> · <Fig f={a.lora.trainable}/></td>
+              </tr>))}
+          </tbody>
+        </table>
+      </div>
+      <p class="protocol-note"><strong>{c.notAdapted}</strong> {fmNotAdapted.map((m, i) => <>{i > 0 && (locale === 'zh' ? '；' : '; ')}<span lang="en">{m.name}</span>{colon}{say(m.adaptation).text}</>)}</p>
+    </>}
+
+    <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
+    <ul class="entity-links protocol-prose fm-licences">{licenceFamilies.map(ms => {
+      const w = say(ms[0].weightsLicence), n = say(ms[0].licenceNote);
+      // A note that only restates the licence's name ("MIT.") is not printed twice.
+      const restates = ms[0].licenceNote.replace(/\.$/, '') === ms[0].weightsLicence;
+      return <li data-licence={ms[0].slug}><strong lang="en">{ms.map(m => m.name).join(' · ')}</strong>{colon}<span>{w.text}</span>{w.original && <span class="note-original" lang="en">{w.original}</span>}{!restates && <><span class="fm-licence-note">{n.text}</span>{n.original && <span class="note-original" lang="en">{n.original}</span>}</>} <a href={ms[0].paper} target="_blank" rel="noreferrer">{locale === 'zh' ? '论文 ↗' : 'paper ↗'}</a></li>;
+    })}</ul>
+    <h3 class="roadmap-h3">{c.fmNotesH3}</h3>
+    <ul class="entity-links protocol-prose fm-notes">{fmNotes.map(r => <li><strong lang="en">{r.model.name}</strong>{colon}<span lang={payloadLang}>{r.notes}</span></li>)}</ul>
+    <div class="topic-actions"><a class="button" href={`/data/${p.files.fm}`} download>{c.fmDownload}</a><a class="button fm-release" href={hrefFor(`/releases/#${fmRelease.id}`, locale)}>{c.fmRelease}{' '}<code>{fmRelease.id}</code></a></div>
+  </section>
+
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <h2 id="limits-heading">{c.limits}</h2>
     <p class="protocol-limitation" lang={payloadLang}>{p.limitation}</p>
@@ -117,6 +228,8 @@ const consentCaveat = c.consentCaveat[p.id];
     {p.seed && <p class="roadmap-p" lang={payloadLang}>{p.seed.scope}</p>}
     <h3 class="roadmap-h3" id="pretraining-exposure">{c.exposure}</h3>
     <p class="roadmap-p" lang={payloadLang}>{p.pretrainingOverlap}</p>
+    {/* The owner's sourced statement (2026-10-04) beside the released sentence, which stays as released. */}
+    <p class="roadmap-p fm-core-exposure"><strong>{c.exposureChecked(p.exposureChecked)}</strong> {p.coreExposure.map((x, i) => <>{i > 0 && (locale === 'zh' ? '；' : '; ')}<span lang="en">{x.model}</span>{colon}{exposureText(x.statement)} {x.urls.map(u => <a href={u} target="_blank" rel="noreferrer">{c.exposureSource}</a>)}</>)}{locale === 'zh' ? '。' : '.'} {c.coreExposureTail} <a href={`#${FM_ANCHOR}`}>{c.fmExposureLink}</a></p>
     <h3 class="roadmap-h3">{c.methodNotes}</h3>
     <ul class="entity-links protocol-prose" lang={payloadLang}>{notes.map(n => <li>{n}</li>)}</ul>
     <h3 class="roadmap-h3">{c.modelTerms}</h3>

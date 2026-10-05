@@ -26,25 +26,27 @@ export interface StatusOverride {
   checked: string;
   source: string;
   /** What the source reported, in the words the note uses. */
-  facts: { sourceModified: string; licence: string };
+  facts: { licence: string; accepted: string };
   note: L;
 }
 
-const reve = { sourceModified: '2026-09-14', licence: 'REVE Responsible Use License v1.0' };
+const reve = { licence: 'REVE Responsible Use License v1.0', accepted: '2026-10-04' };
 export const modelStatusOverrides: Record<string, StatusOverride> = {
-  // The Hugging Face API (https://huggingface.co/api/models/brain-bzh/reve-base),
-  // read on 2026-10-02: gated false, last modified 2026-09-14, card licence
-  // "reve-responsible-use-license-v1.0". Access is no longer the blocker; the
-  // licence has not been reviewed for this site.
+  // REVE Base. Released as "Access gated"; from 2026-10-02 to 2026-10-04 shown as
+  // "Licence review pending" (Hugging Face reported the weights ungated under the REVE
+  // Responsible Use License, which had not been reviewed). On 2026-10-04 the owner
+  // accepted that licence and the v9 evaluation scored the model
+  // (foundation-models-update.json: directory_status, weights_licence, rights_review),
+  // so it is shown as evaluated, with the released status beside it.
   'REVE Base': {
     released: 'Access gated',
-    status: 'Licence review pending',
-    checked: '2026-10-02',
+    status: 'Evaluated',
+    checked: reve.accepted,
     source: 'https://huggingface.co/brain-bzh/reve-base',
     facts: reve,
     note: {
-      en: `Checked 2026-10-02: Hugging Face reports the base weights as no longer gated (repository last modified ${reve.sourceModified}), under the ${reve.licence}. That licence has not been reviewed for this site, so the model stays unscored. The note above is the released one.`,
-      zh: `2026-10-02 核查：Hugging Face 显示基础权重已不再受访问限制（仓库最后修改于 ${reve.sourceModified}），许可为 ${reve.licence}。本站尚未审查这份许可，所以该模型仍没有分数。上面的备注译自发布时的原文。`,
+      en: `Since ${reve.accepted}: the owner accepted the ${reve.licence}, and the v9 evaluation ran the base weights as a frozen probe on the eight core protocols and adapted them on EEGMAT. Aggregate scientific results only; no adapted weights are shared. The note above is the released one.`,
+      zh: `自 ${reve.accepted} 起：站点所有者接受了 ${reve.licence}，第九轮评测把基础权重作为冻结探针在 8 个核心协议上运行，并在 EEGMAT 上做了适配。只发布聚合的科学结果；不分享任何适配后的权重。上面的备注译自发布时的原文。`,
     },
   },
 };

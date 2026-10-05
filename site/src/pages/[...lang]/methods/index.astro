@@ -38,7 +38,7 @@ const structured = {
         <tbody>{methods.map(m => <tr>
           <th scope="row"><a href={hrefFor(`/methods/${m.slug}/`, locale)} lang="en">{m.name}</a></th>
           <td>{m.family ? familyLabel(m.family, locale) : '—'}</td>
-          <td lang="en">{[...new Set(m.groups.map(g => g.dataset.name))].join(' · ')}</td>
+          <td lang="en">{[...new Set(m.groups.filter(g => g.rows.length).map(g => g.dataset.name))].join(' · ')}</td>
         </tr>)}</tbody>
       </table>
     </div>

@@ -22,6 +22,15 @@ class Element {
 const elements=new Map();
 const get=s=>{if(!elements.has(s))elements.set(s,new Element());return elements.get(s);};
 get('#family-filter').value='all';get('#sort-results').value='name';
+// The v9 rows (2026-10-04) reach workbench.ts as JSON the home page embeds (#fm-rows), in the
+// page's language. The DOM double gets the same JSON, read from the built page; the v9 pages
+// block below holds that JSON to the served per-protocol CSVs.
+const fmEmbedded=lang=>{const html=readFileSync(new URL((lang==='zh'?'zh/':'')+'index.html',DIST),'utf8');
+  const m=html.match(/<script type="application\/json" id="fm-rows">([\s\S]*?)<\/script>/);
+  assert.ok(m,'run `npm run build` first: the home page must embed the v9 rows as JSON (#fm-rows)');return m[1];};
+const fmHome=JSON.parse(fmEmbedded('en'));
+const fmMatrixOf=id=>fmHome.tracks[id].rows.filter(r=>r.panel==='matrix');
+get('#fm-rows').textContent=fmEmbedded('en');
 const registered=[];
 const document={querySelector:get,querySelectorAll:()=>[],modelContext:{registerTool:t=>registered.push(t)}};
 const source=readFileSync(new URL('../src/scripts/workbench.ts',import.meta.url),'utf8').replace(/^import data[^\n]+\n/,'');
@@ -34,7 +43,9 @@ assert.equal(tool.name,'configure_eeg_comparison');
 assert.equal(tool.annotations.readOnlyHint,false);
 for(const t of data.tracks){
   const output=tool.execute({trackId:t.id,family:'all'});
-  assert.equal(output.models.length,t.rows.length);
+  // The released rows, then the v9 matrix rows (2026-10-04), each named with its release.
+  assert.equal(output.models.length,t.rows.length+fmMatrixOf(t.id).length);
+  assert.ok(output.models.slice(t.rows.length).every(m=>m.release==='foundation-models-update-20261004'),t.id+': the tool names the v9 rows\' release');
   assert.equal(get('#download-results').href,'/data/'+t.id+'-results.csv');
   assert.equal(get('#track-tabs').attributes['data-active'],t.id);
   assert.equal(get('#track-panel').attributes['aria-labelledby'],'tab-'+t.id);
@@ -750,7 +761,8 @@ const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{i
   leaves.set(file,set);}return leaves.get(file);};
 const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=>r.toFixed(2)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
   sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),sgn3:r=>(r>=0?'+':'−')+Math.abs(r).toFixed(3),
-  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s'};
+  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s',
+  m2:r=>(r/1e6).toFixed(2)+'M'};
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
 // sitemap and llms.txt. Their own checks follow in the protocol block.
@@ -1542,7 +1554,7 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
   // The home page's protocol dialog in each language, run as above, for comparison with these pages.
   const dialogIn=lang=>{
     const els=new Map(),g=s=>{if(!els.has(s))els.set(s,new Element());return els.get(s);};
-    g('#family-filter').value='all';g('#sort-results').value='name';
+    g('#family-filter').value='all';g('#sort-results').value='name';g('#fm-rows').textContent=fmEmbedded(lang.startsWith('zh')?'zh':'en');
     vm.runInNewContext(stripTypeScriptTypes(source),{data,document:{querySelector:g,querySelectorAll:()=>[],documentElement:{lang}},window:{addEventListener(){}},AbortController,Promise,console});
     return id=>{g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:id}})}});g('#open-protocol').events.click();return g('#dialog-body').innerHTML;};
   };
@@ -1590,7 +1602,9 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
     for(const [label,html] of [['en',en],['zh',zh]]){
       const where=(label==='zh'?'zh/':'')+path;
       // Only this protocol's own downloads back its figures.
-      assert.deepEqual([...new Set([...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]))].sort(),[csv,pj].sort(),where+': figures must cite this protocol\'s CSV and JSON');
+      // Since 2026-10-04 also its v9 CSV (the new rows), and on arithmetic-rest the v9 JSON (the EEGMAT adaptation).
+      assert.deepEqual([...new Set([...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]))].sort(),
+        [csv,pj,'foundation-models-'+t.id+'.csv',...(t.id==='arithmetic-rest'?['foundation-models-update.json']:[])].sort(),where+': figures must cite this protocol\'s CSV and JSON, and its v9 files');
       // Every method with a score, with every figure of its row.
       const t0=html.indexOf('class="protocol-results"'),body=html.slice(t0,html.indexOf('</tbody>',t0));
       assert.ok(t0>0,where+': the results table must render');
@@ -1709,7 +1723,7 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
     // Dataset markup, on the English page only: this protocol's CSV and JSON, part of the core matrix.
     const ld=JSON.parse(en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
     assert.equal(ld['@type'],'Dataset',path+': Dataset markup');
-    assert.deepEqual(ld.distribution.map(d=>d.contentUrl).sort(),[`https://bci.report/data/${csv}`,`https://bci.report/data/${pj}`].sort(),path+': distribution is the protocol\'s CSV and JSON');
+    assert.deepEqual(ld.distribution.map(d=>d.contentUrl).sort(),[`https://bci.report/data/${csv}`,`https://bci.report/data/${pj}`,`https://bci.report/data/foundation-models-${t.id}.csv`].sort(),path+': distribution is the protocol\'s CSV and JSON, and its v9 CSV');
     assert.equal(ld.url,'https://bci.report/'+path,path+': markup url');
     assert.equal(ld.isPartOf.url,'https://bci.report/',path+': part of the core-matrix Dataset');
     assert.ok(ld.variableMeasured.includes(t.yLabel)&&ld.variableMeasured.includes(t.xLabel),path+': both metrics');
@@ -1939,7 +1953,8 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
 // 2026-10-02 the files of any data-fig figure they print; entity pages: the files
 // their data-fig figures are leaves of). citation_* tags carry the same.
 {
-  const citePages=[...topicPages.map(([s])=>'topics/'+s+'/'),...entityBilingual.filter(p=>/^(?:datasets|methods)\/[^/]+\/$/.test(p))];
+  // Since 2026-10-04 the protocol pages too: they print the core release's rows and the v9 rows.
+  const citePages=[...topicPages.map(([s])=>'topics/'+s+'/'),...entityBilingual.filter(p=>/^(?:datasets|methods|protocols)\/[^/]+\/$/.test(p))];
   assert.ok(citePages.length>=9+16+9,'cite blocks on every topic, dataset and method page');
   for(const p of citePages) for(const path of [p,'zh/'+p]){
     const html=pageOf(path),zh=path.startsWith('zh/');
@@ -1959,7 +1974,7 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     // Plural on topic pages, which draw on several datasets; singular on a dataset's own page
     // (2026-10-02 review); method pages send the reader to the dataset pages.
     const upstream=p.startsWith('methods/')?(zh?'也请同时引用上游数据集：每个数据集页面都写明了署名。':'Cite the upstream datasets as well: each dataset’s page gives its credit.')
-      :p.startsWith('datasets/')?(zh?'也请同时引用上游数据集：其署名就在本页。':'Cite the upstream dataset as well: its credit is on this page.')
+      :/^(?:datasets|protocols)\//.test(p)?(zh?'也请同时引用上游数据集：其署名就在本页。':'Cite the upstream dataset as well: its credit is on this page.')
       :(zh?'也请同时引用上游数据集：署名就在本页。':'Cite the upstream datasets as well: their credits are on this page.');
     assert.ok(sec.includes(upstream),path+': the upstream credit sentence: '+upstream);
     const newest=releaseEntries.find(r=>r.id===named[0]);
@@ -2025,7 +2040,9 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
         assert.ok(pointing.has(slug),f+': a result group points at '+slug+', which is not a topic page');
         pointing.get(slug).add(self);
       }
-      for(const [,track] of text.matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?protocols\/([^/"#]+)\//g))
+      // A core-matrix group links its protocol page bare; a v9 group links the page's v9 section (#foundation-v9),
+      // which no topic prints through, so only bare links count here.
+      for(const [,track] of text.matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?protocols\/([^/"#]+)\/"/g))
         for(const [slug,r] of Object.entries(protocolRead))
           if(r.track===track&&(!r.method||!/(?:^|\/)methods\//.test(f)||self.endsWith('/methods/'+r.method+'/'))) pointing.get(slug).add(self);
     }
@@ -2276,16 +2293,24 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     assert.ok(!html.includes('class="model-grid"')&&!html.includes('class="dataset-list"')&&!html.includes('class="news-grid"'),(page||'/')+': the directory, register and field notes left the home page');
   }
   // The moved sections: every model card, every register row, every field note, with the status-checked date.
+  // Since 2026-10-04 the directory also carries the v9 entries the export suggests (REVE Base keeps its
+  // released card; EEGPT is unchanged; "MIRepNet, EEG-DINO" are two catalogue-only cards).
+  const fmDir=JSON.parse(readFileSync(new URL('../src/data/foundation-models-update.json',import.meta.url),'utf8')).results['foundation-models-v9'].directory_status;
+  const fmCards=fmDir.filter(x=>!['REVE Base','EEGPT'].includes(x.name)).flatMap(x=>/, /.test(x.name)&&!/\(/.test(x.name)?x.name.split(', '):[x.name]);
   for(const page of ['methods/','zh/methods/']){
     const html=pageOf(page);
     for(const m of data.models) assert.ok(html.includes(`<article class="model-card" data-model="${m.name.replace(/&/g,'&amp;')}">`),page+': model card for '+m.name);
-    assert.equal((html.match(/<p class="status-checked">/g)||[]).length,data.models.length,page+': every model card says when its status was checked');
+    assert.equal((html.match(/<p class="status-checked">/g)||[]).length,data.models.length+fmCards.length,page+': every model card says when its status was checked');
     for(const n of data.news) assert.ok(html.includes(n.sourceUrl.replace(/&/g,'&amp;')),page+': field note '+n.title.slice(0,30));
-    // REVE Base: the display-layer status with its source and checked date, the released status beside it.
+    // REVE Base: evaluated since 2026-10-04 (the owner accepted the REVE Responsible Use License), with its
+    // source and checked date, the released status beside it; the 2026-10-02 "Licence review pending" is gone.
     const reve=html.slice(html.indexOf('data-model="REVE Base"'),html.indexOf('</article>',html.indexOf('data-model="REVE Base"')));
-    assert.ok(reve.includes('class="status-override"')&&reve.includes('https://huggingface.co/brain-bzh/reve-base')&&reve.includes('2026-10-02'),page+': REVE Base override, source and date');
-    assert.match(reve,page.startsWith('zh')?/许可审查中/:/Licence review pending/,page+': REVE Base shows the checked status');
+    assert.ok(reve.includes('class="status-override"')&&reve.includes('https://huggingface.co/brain-bzh/reve-base')&&reve.includes('2026-10-04'),page+': REVE Base override, source and date');
+    assert.match(reve,page.startsWith('zh')?/<span class="status ready">已评测<\/span>/:/<span class="status ready">Evaluated<\/span>/,page+': REVE Base shows the checked status');
     assert.match(reve,page.startsWith('zh')?/访问受限/:/Access gated/,page+': REVE Base keeps the released status beside it');
+    assert.doesNotMatch(reve,/许可审查中|Licence review pending/,page+': the 2026-10-02 licence-review status is replaced');
+    assert.match(reve,page.startsWith('zh')?/REVE Responsible Use License v1\.0/:/accepted the REVE Responsible Use License v1\.0/,page+': REVE Base names the accepted licence');
+    assert.ok(reve.includes(`href="/${page.startsWith('zh')?'zh/':''}methods/reve/"`),page+': REVE Base leads to its method page');
   }
   for(const page of ['datasets/','zh/datasets/']){
     const html=pageOf(page);
@@ -2569,6 +2594,400 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   // The API page and the feed list the nine files through the generic checks above (every served file, exactly once).
 }
 console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight CSVs served as reviewed and agreeing; the released matrix untouched; each CSV in its core results CSV\'s columns and protocol values, one row per checkpoint, matrix before ablation; not run empty with its reason; chance flags follow the intervals; exposure a sourced statement with LaBraM and CBraMod sourced, ST-EEGFormer×BETA and SingLEM×TMNRED exposed, ZUNA 1.1 unknown; research-use sentence; no timings; release log.');
+// --- 2026-10-04 v9 foundation models: the pages ----------------------------------------------------
+// The v9 rows on the site (owner approval 2026-10-04): a section of their own on every protocol page
+// (#foundation-v9) and a group under the released rows in the home page's per-protocol table, the
+// masking-ablation siblings in a panel of their own, the EEGMAT adaptation on arithmetic-rest, a
+// group per protocol on each core dataset page, a method page per model family, the model
+// directory's cards, and the owner's sourced exposure statement for LaBraM and CBraMod beside the
+// released sentence. Every figure is re-read from the served CSV or JSON (the generic data-fig loop
+// above); what is pinned here is that each row is its CSV row, column by column and in order; a cell
+// not run carries its reason and no figure; the chance flags follow the core rule and the CSV's own
+// flag; the exposure badge, statement and source are the exposure table's, ZUNA 1.1 unknown on every
+// cell; the row footnote, the licence note and ZUNA 1.1's research-use sentence travel with the rows;
+// nothing is ranked; the Chinese is the translation table's, with the English beside it.
+{
+  const REL='foundation-models-update-20261004', FMJ='foundation-models-update.json';
+  const F=JSON.parse(readFileSync(new URL('data/'+FMJ,DIST),'utf8')).results['foundation-models-v9'];
+  const E=F.pretraining_exposure;
+  const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const textOf=s=>decodeHtml(s.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  // The translation table, evaluated from its source (type-only import and `export` removed).
+  const zhSrc=stripTypeScriptTypes(readFileSync(new URL('../src/data/foundation-models-zh.ts',import.meta.url),'utf8'))
+    .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'');
+  const zhCtx={};vm.runInNewContext(zhSrc+'\nthis.fmZh=fmZh;',zhCtx);const Z=zhCtx.fmZh;
+  // Every key is a sentence of the export, every translation carries exactly its English's numbers
+  // and is Chinese, no rejected rendering, and no key outlives its text.
+  {
+    const strings=new Set();const walk=v=>{if(typeof v==='string')strings.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(F);
+    const digits=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]).sort();
+    for(const [en,zh] of Object.entries(Z)){
+      assert.ok(strings.has(en),'foundation-models-zh.ts: "'+en.slice(0,50)+'" matches no text in the v9 export');
+      assert.deepEqual(digits(zh),digits(en),'foundation-models-zh.ts: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
+      if(!/^(?:MIT|Apache-2\.0)\.?$/.test(en)) assert.ok(/\p{Script=Han}/u.test(zh),'foundation-models-zh.ts: "'+en.slice(0,50)+'" has no Chinese');
+      for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zh,bad),`foundation-models-zh.ts: "${bad}" is a rejected rendering — use "${good}"`);
+    }
+  }
+  const say=(en,label)=>label==='en'?{text:en}:{text:Z[en],original:Z[en]===en||/^(?:MIT|Apache-2\.0)\.?$/.test(en)?undefined:en};
+  const printed=(html,en,label)=>{const t=say(en,label);assert.ok(t.text,'no Chinese for "'+en.slice(0,50)+'"');
+    return html.includes(e(t.text))&&(!t.original||html.includes('<span class="note-original" lang="en">'+e(t.original)+'</span>'));};
+  // Independent of foundation-models.ts: each checkpoint's page and exposure-table key.
+  const SLUG={'reve-base':'reve','reve-large':'reve','luna-base':'luna','luna-large':'luna','brainomni-base':'brainomni',codebrain:'codebrain',eegmamba:'eegmamba',
+    'steegformer-base':'st-eegformer','steegformer-large':'st-eegformer','eeg-fm-masking/mae-r9cm-L2':'eeg-fm-masking','eeg-fm-masking/jepa-r9cm-L2':'eeg-fm-masking',
+    'eeg-fm-masking/mae-rone-L1':'eeg-fm-masking','eeg-fm-masking/jepa-rone-L1':'eeg-fm-masking','erp-fm-base':'erp-fm',singlem:'singlem',zuna:'zuna'};
+  const XKEY={...SLUG,'reve-base':'reve-base','reve-large':'reve-large','brainomni-base':'brainomni','steegformer-base':'st-eegformer','steegformer-large':'st-eegformer','erp-fm-base':'erp-fm',zuna:'zuna-1.1'};
+  assert.deepEqual(Object.keys(SLUG).sort(),F.models.map(m=>m.id).sort(),'every checkpoint has a method page');
+  const slugs=[...new Set(Object.values(SLUG))];
+  const dsKeyOf=p=>E.datasets.find(d=>d.protocols.includes(p)).key;
+  const xcell=(key,p)=>E.cells.find(c=>c.model===key&&c.dataset===dsKeyOf(p));
+  const statementIn=(st,label)=>label==='en'?st:Z[st];
+  const MVPSLUG={ds003810:'ds003810',EEGMAT:'eegmat','EESM19 scalp subset':'eesm19',BETA:'beta','TMNRED / ds005383':'tmnred',ds006593:'ds006593',ds005342:'ds005342'};
+  const research={en:'Model card: research use only, not for diagnosis or clinical use.',zh:'模型卡：仅供研究使用，不可用于诊断或临床。'};
+  const csvOf=p=>{const [h,...b]=csvRows(readFileSync(new URL('data/foundation-models-'+p+'.csv',DIST),'utf8')).filter(r=>r.length>1);return b.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));};
+  const matrix=F.models.filter(m=>m.panel==='matrix'),ablation=F.models.filter(m=>m.panel!=='matrix');
+  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?)\b|\branked\b(?<!never ranked)(?<!not ranked)/i,zh:/最佳|最好的|胜出|排名第/};
+  const notProof={en:/\bnot exposed\b|\bproven\b|\bno overlap\b/i,zh:/已证明|证明没有|没有重叠/};
+  const bodyRows=grp=>{const tb=grp.indexOf('<tbody>');return tb<0?0:(grp.slice(tb,grp.indexOf('</tbody>',tb)).match(/<tr>/g)||[]).length;};
+  const NAME={reve:'REVE',luna:'LUNA',brainomni:'BrainOmni',codebrain:'CodeBrain',eegmamba:'EEGMamba','st-eegformer':'ST-EEGFormer','eeg-fm-masking':'eeg-fm-masking',
+    'erp-fm':'ERP-FM',singlem:'SingLEM',zuna:'ZUNA',labram:'LaBraM',cbramod:'CBraMod'};
+
+  // 1. Protocol pages.
+  for(const t of data.tracks){
+    const rows=csvOf(t.id),fmcsv='foundation-models-'+t.id+'.csv',tradeoff=t.type==='tradeoff';
+    for(const [label,prefix] of [['en',''],['zh','zh/']]){
+      const where=prefix+'protocols/'+t.id+'/',html=pageOf(where);
+      const a=html.indexOf('<section class="topic-section fm-section" id="foundation-v9"'),sec=html.slice(a,html.indexOf('</section>',a));
+      assert.ok(a>html.indexOf('id="results"')&&a<html.indexOf('id="methods-and-limits"'),where+': the v9 section follows the released results, before the limits');
+      assert.ok(sec.includes(`data-release="${REL}"`),where+': the v9 section names its release');
+      const main=sec.slice(sec.indexOf('<table class="fm-results">'),sec.indexOf('</table>',sec.indexOf('<table class="fm-results">')));
+      const abl=sec.slice(sec.indexOf('id="masking-ablation"'),sec.indexOf('</details>'));
+      assert.ok(/<details class="rd-panel fm-ablation" id="masking-ablation">/.test(sec)&&!/id="masking-ablation" open/.test(sec),where+': the masking ablation is its own collapsed panel');
+      const tags=part=>[...part.matchAll(/<tr data-fm-row="([^"]+)" data-panel="([^"]+)" data-status="([^"]+)" data-exposure="([^"]+)">/g)];
+      assert.deepEqual(tags(main).map(m=>m[1]),matrix.map(m=>m.id),where+': one row per matrix checkpoint, in the export\'s family order, never re-sorted');
+      assert.deepEqual(tags(abl).map(m=>m[1]),[F.masking_ablation.checkpoints[0],...ablation.map(m=>m.id)],where+': the ablation panel is the paper-recommended row, then its three siblings');
+      assert.ok(tags(main).every(m=>m[2]==='matrix')&&tags(abl).slice(1).every(m=>m[2]==='masking ablation'),where+': panels as the export assigns them');
+      const plotRows=(sec.match(/<div class="ip-row">/g)||[]).length;
+      if(!tradeoff) assert.equal(plotRows,t.rows.filter(r=>r.interval).length+rows.filter(r=>r.panel==='matrix'&&r.status==='complete').length,where+': the plot shows the released rows and every scored v9 matrix row');
+      for(const [part,list] of [[main,tags(main)],[abl,tags(abl)]]) for(const [tag,id,,status,xs] of list){
+        const at=part.indexOf(tag),row=part.slice(at,part.indexOf('</tr>',at)),rec=rows.find(r=>r.model_id===id),m=F.models.find(x=>x.id===id);
+        const cell=F.frozen_probe.find(c=>c.model===id&&c.protocol===t.id),xc=xcell(XKEY[id],t.id),w=where+'/'+id;
+        assert.equal(status,rec.status==='complete'?'complete':'not_run',w+': status (the CSV writes "not run")');
+        assert.equal(xs,cell.exposure.status,w+': exposure status');
+        assert.equal(xc.statement,rec.pretraining_exposure,w+': the CSV states the exposure table\'s statement');
+        assert.ok(row.includes(`href="/${prefix}methods/${SLUG[id]}/"`)&&row.includes('>'+e(m.name)+'<'),w+': name, linked to its method page');
+        assert.ok(row.includes('>'+e(rec.evaluation_mode)+'<'),w+': training mode as the CSV states it');
+        const figs=[...row.matchAll(/data-fig="([^|"]+)\|\w+\|([^"]+)"/g)];
+        assert.ok(figs.every(f=>f[1]===fmcsv),w+': every figure from the protocol\'s v9 CSV');
+        const n=k=>Number(rec[k]);
+        const expected=rec.status!=='complete'?[n('channels')]
+          :tradeoff?[n('primary_percent'),n('commands_detected'),n('command_trials'),n('always_abstain_participants'),n('participants'),n('secondary_value'),
+                     n('idle_false_activations'),n('idle_trials'),n('window_balanced_accuracy'),n('window_auroc'),n('channels'),n('participants')]
+          :[n('primary_percent'),n('descriptive_interval_low_percent'),n('descriptive_interval_high_percent'),n('secondary_value'),n('channels'),n('participants')];
+        assert.deepEqual(figs.map(f=>Number(f[2])),expected,w+': the row must equal its CSV row, column by column');
+        if(rec.status!=='complete'){
+          assert.match(row,label==='en'?/<strong>Not run<\/strong>/:/<strong>未运行<\/strong>/,w+': a cell not run says so');
+          assert.ok(printed(row,rec.not_run_reason,label),w+': with its reason');
+          assert.ok(rec.primary_percent===''&&!/\b0\.0%/.test(textOf(row)),w+': never a zero');
+        } else if(!tradeoff){
+          const c=t.chanceLevel,y=n('primary_percent'),lo=n('descriptive_interval_low_percent'),hi=n('descriptive_interval_high_percent');
+          const below=y<=c,reaches=!below&&lo<=c;
+          assert.equal(rec.at_or_below_chance,String(below),w+': the CSV\'s at-or-below flag is the core rule');
+          assert.equal(rec.interval_includes_chance,String(lo<=c&&c<=hi),w+': the CSV\'s interval flag');
+          const fb=label==='en'?/At or below chance level/:/不高于随机水平/,fr=label==='en'?/Interval reaches chance level/:/区间触及随机水平/;
+          if(below) assert.match(row,fb,w+': at-or-below-chance must be flagged');
+          else if(reaches) assert.match(row,fr,w+': chance-touching interval must be flagged');
+          else {assert.doesNotMatch(row,fb,w+': flagged without cause');assert.doesNotMatch(row,fr,w+': flagged without cause');}
+        } else if(n('always_abstain_participants')>0) assert.match(row,/class="flag"><span data-fig/,w+': people who always abstained are flagged');
+        // Exposure: the table's statement, its badge where it is in the list or unknown, its source.
+        const st=e(statementIn(xc.statement,label));
+        if(xs==='exposed') assert.ok(row.includes('<span class="flag fm-badge" data-exposure="exposed">'+st+'</span>'),w+': the exposure badge');
+        else if(xs==='unknown') assert.ok(row.includes('<span class="flag fm-badge" data-exposure="unknown">'+(label==='en'?'Exposure unknown':'是否出现在预训练数据中：未知')+'</span>')&&row.includes(st),w+': exposure unknown, with the statement');
+        else assert.ok(row.includes('<small>'+st+'</small>')&&!row.includes('fm-badge'),w+': the sourced statement, no badge');
+        const td=row.slice(row.indexOf('<td class="fm-exposure">'));
+        const hrefs=[...td.matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+        assert.ok(hrefs.length&&hrefs.every(h=>xc.urls.includes(decodeHtml(h))),w+': the exposure links its source');
+        if(id==='zuna'){assert.equal(xs,'unknown',w+': every ZUNA 1.1 cell is unknown');assert.ok(row.includes(research[label]),w+': the research-use sentence travels with its row');}
+        else assert.ok(!row.includes(research[label]),w+': the research-use sentence belongs to ZUNA 1.1');
+        // The row's footnote mark leads to its footnote: the export's text.
+        const fn=row.match(/<sup class="fn-ref"><a href="#(fn-v9-\d+)">(\d+)<\/a><\/sup>/);
+        assert.ok(fn,w+': the row carries its footnote mark');
+        const li=sec.slice(sec.indexOf(`<li id="${fn[1]}">`),sec.indexOf('</li>',sec.indexOf(`<li id="${fn[1]}">`)));
+        assert.ok(li.length>0&&printed(li,m.row_footnote,label),w+': the footnote is the export\'s row footnote');
+      }
+      // Weights licences and terms, one entry per family; a note that only restates the name is not repeated.
+      const lic=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose fm-licences">'),sec.indexOf('</ul>',sec.indexOf('fm-licences')));
+      for(const s of slugs){
+        const first=F.models.find(m=>SLUG[m.id]===s),li=lic.slice(lic.indexOf(`<li data-licence="${s}">`),lic.indexOf('</li>',lic.indexOf(`<li data-licence="${s}">`)));
+        assert.ok(li.length>0&&printed(li,first.weights_licence,label),where+': the '+s+' weights licence');
+        if(first.licence_note.replace(/\.$/,'')!==first.weights_licence) assert.ok(printed(li,first.licence_note,label),where+': the '+s+' licence note');
+        assert.ok(li.includes(`href="${first.paper}"`),where+': the '+s+' paper is cited');
+      }
+      assert.ok(sec.includes(label==='en'?'which is not proof that its recordings were never seen':'这并不证明它的记录从未被模型见过'),where+': the exposure key says what a statement is not');
+      assert.ok(sec.includes(`href="/data/${fmcsv}" download`)&&sec.includes(`href="/${prefix}releases/#${REL}"`),where+': the v9 CSV and its release are linked');
+      const vis=visible(label==='zh'?chineseOnly(sec):sec);
+      assert.doesNotMatch(vis,ranking[label],where+': the v9 rows are not ranked');
+      assert.doesNotMatch(vis,notProof[label],where+': no exposure claim beyond the authors\' lists');
+      // LaBraM and CBraMod beside the released sentence: the sourced statement, its date and sources.
+      const ce=html.slice(html.indexOf('<p class="roadmap-p fm-core-exposure">'),html.indexOf('</p>',html.indexOf('<p class="roadmap-p fm-core-exposure">')));
+      assert.ok(ce.length>0&&html.indexOf(e(t.pretrainingOverlap))<html.indexOf('fm-core-exposure'),where+': the dated exposure note follows the released sentence, which stays');
+      for(const k of ['labram','cbramod']){
+        const c=xcell(k,t.id);
+        assert.equal(c.status,'not_exposed',where+': '+k+' is absent from its authors\' list');
+        for(const u of c.urls) assert.ok(ce.includes(`href="${u}"`),where+': '+k+' source '+u);
+      }
+      assert.equal(ce.split(e(statementIn(E.statements.not_exposed,label))).length-1,2,where+': the statement, once for each model');
+      assert.ok(ce.includes(label==='en'?'Checked 2026-10-04.':'2026-10-04 核查。'),where+': the check date');
+      // The EEGMAT adaptation, on arithmetic-rest only.
+      const ad=html.indexOf('<table class="fm-adaptation">');
+      if(t.id!=='arithmetic-rest'){assert.equal(ad,-1,where+': the adaptation belongs to arithmetic-rest');continue;}
+      const body=html.slice(ad,html.indexOf('</table>',ad));
+      const A=F.eegmat_adaptation,ctx=A.published_context;
+      const arm=x=>[x.balanced_accuracy,...x.interval_95];
+      const adRows=[{name:ctx.model,f:[...arm(ctx.arms.frozen),...arm(ctx.arms['lora-r4']),ctx.paired_lora_minus_frozen.mean_change,...ctx.paired_lora_minus_frozen.interval_95,
+                     ctx.paired_lora_minus_frozen.helped,ctx.paired_lora_minus_frozen.harmed,ctx.paired_lora_minus_frozen.tied,ctx.arms.frozen.trainable_parameters,ctx.arms['lora-r4'].trainable_parameters],
+                     zero:ctx.paired_lora_minus_frozen.interval_95[0]>0||ctx.paired_lora_minus_frozen.interval_95[1]<0},
+        ...A.rows.map(r=>{const p=r.paired_lora_minus_frozen;return {name:F.models.find(m=>m.id===r.model).name,id:r.model,
+          f:[...arm(r.arms['frozen-ce']),...arm(r.arms['lora-r4']),p.mean_change,...p.interval_95,p.helped,p.harmed,p.tied,r.arms['frozen-ce'].trainable_parameters,r.arms['lora-r4'].trainable_parameters],zero:p.excludes_zero};})];
+      assert.deepEqual([...body.matchAll(/<tr data-adapt-row="([^"]+)">/g)].map(m=>decodeHtml(m[1])),adRows.map(r=>r.name),where+': LaBraM for context, then the nine adapted encoders in the export\'s order');
+      for(const r of adRows){
+        const at=body.indexOf(`<tr data-adapt-row="${e(r.name)}">`),row=body.slice(at,body.indexOf('</tr>',at));
+        const figs=[...row.matchAll(/data-fig="([^|"]+)\|(\w+)\|([^"]+)"/g)];
+        assert.ok(figs.every(f=>f[1]===FMJ),where+'/'+r.name+': adaptation figures from the v9 JSON');
+        assert.deepEqual(figs.map(f=>Number(f[3])),r.f,where+'/'+r.name+': the adaptation row, arm by arm');
+        assert.ok(row.includes(`data-resolved="${r.zero}"`)&&row.includes(label==='en'?(r.zero?'The interval excludes zero.':'The interval includes zero: no change is established.'):(r.zero?'区间不含零。':'区间包含零：不能认定有变化。')),where+'/'+r.name+': the verdict its interval supports');
+        if(r.id==='zuna') assert.ok(row.includes('data-exposure="unknown"')&&row.includes(research[label]),where+': ZUNA 1.1 adapted, exposure unknown, research use only');
+      }
+      const notAdapted=html.slice(html.indexOf('<p class="protocol-note">',ad),html.indexOf('</p>',html.indexOf('<p class="protocol-note">',ad)));
+      for(const m of F.models.filter(m=>m.adaptation!=='run')) assert.ok(notAdapted.includes('>'+e(m.name)+'<')&&notAdapted.includes(e(say(m.adaptation,label).text)),where+': '+m.name+' not adapted, with the reason');
+    }
+  }
+
+  // 2. The home page's per-protocol table: the embedded rows are the CSVs' at the precision printed,
+  //    the first paint equals the script's render, and the script carries every caveat.
+  const round=(v,d)=>Number(Number(v).toFixed(d));
+  for(const label of ['en','zh']){
+    const J=JSON.parse(fmEmbedded(label));
+    assert.equal(J.release,REL,label+': the embedded rows name their release');
+    for(const t of data.tracks){
+      const rows=csvOf(t.id),T=J.tracks[t.id];
+      assert.equal(T.file,'foundation-models-'+t.id+'.csv',label+'/'+t.id+': the embedded rows\' file');
+      assert.deepEqual(T.rows.map(r=>r.id),F.models.map(m=>m.id),label+'/'+t.id+': one embedded row per checkpoint, in order');
+      for(const r of T.rows){
+        const rec=rows.find(x=>x.model_id===r.id),m=F.models.find(x=>x.id===r.id),xc=xcell(XKEY[r.id],t.id),w=label+'/'+t.id+'/'+r.id;
+        const done=rec.status==='complete',tr=t.type==='tradeoff';
+        assert.deepEqual([r.name,r.panel,r.mode,r.channels,r.status],[m.name,m.panel,rec.evaluation_mode,Number(rec.channels),done?'complete':'not_run'],w+': identity');
+        assert.deepEqual([r.y,r.x,r.subjects],done?[round(rec.primary_percent,1),round(rec.secondary_value,tr?1:3),Number(rec.participants)]:[null,null,null],w+': figures at the precision printed');
+        assert.deepEqual(r.interval,done&&!tr?[round(rec.descriptive_interval_low_percent,1),round(rec.descriptive_interval_high_percent,1)]:null,w+': interval');
+        const c=t.chanceLevel,flag=!done||tr?null:Number(rec.primary_percent)<=c?'at-or-below':Number(rec.descriptive_interval_low_percent)<=c?'interval-reaches':null;
+        assert.equal(r.chanceFlag,flag,w+': the chance flag, from the CSV\'s full values');
+        assert.deepEqual([r.exposure,r.exposureText,r.exposureSource],[xc.status,statementIn(xc.statement,label),xc.urls[0]],w+': exposure');
+        assert.equal(r.footnote,say(m.row_footnote,label).text,w+': footnote');
+        assert.equal(r.licence,say(m.licence_note,label).text,w+': licence note');
+        assert.equal(r.researchUse,r.id==='zuna',w+': research use');
+        assert.equal(r.reason,done?null:say(rec.not_run_reason,label).text,w+': the reason a cell was not run');
+        assert.equal(r.href,`/${label==='zh'?'zh/':''}methods/${SLUG[r.id]}/`,w+': method page');
+        if(tr) assert.deepEqual(r.idle,{detected:Number(rec.commands_detected),commandTrials:Number(rec.command_trials),falseActivations:Number(rec.idle_false_activations),idleTrials:Number(rec.idle_trials),abstain:Number(rec.always_abstain_participants)},w+': idle counts');
+      }
+      assert.equal(T.coreExposure.text,statementIn(E.statements.not_exposed,label),label+'/'+t.id+': LaBraM and CBraMod, the sourced statement');
+      assert.deepEqual([...T.coreExposure.urls].sort(),[...new Set(['labram','cbramod'].flatMap(k=>xcell(k,t.id).urls))].sort(),label+'/'+t.id+': with their sources');
+    }
+    // Render every protocol as each language's page would, and open dialogs.
+    const els=new Map(),g=s=>{if(!els.has(s))els.set(s,new Element());return els.get(s);};
+    g('#family-filter').value='all';g('#sort-results').value='name';g('#fm-rows').textContent=fmEmbedded(label);
+    const reg=[];
+    vm.runInNewContext(stripTypeScriptTypes(source),{data,document:{querySelector:g,querySelectorAll:()=>[],documentElement:{lang:label==='zh'?'zh-Hans':'en'},modelContext:{registerTool:x=>reg.push(x)}},window:{addEventListener(){}},AbortController,Promise,console});
+    const home=pageOf(label==='zh'?'zh/':'');
+    for(const t of data.tracks){
+      g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});
+      const html=g('#result-rows').innerHTML,J=JSON.parse(fmEmbedded(label)).tracks[t.id],mx=J.rows.filter(r=>r.panel==='matrix');
+      const head=label==='en'?`Added 2026-10-04: ${mx.length} further foundation encoders, frozen (v9)`:`2026-10-04 新增：另外 ${mx.length} 个基础模型编码器（冻结，第九轮）`;
+      assert.ok(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup">'+head)&&html.indexOf('fm-group')>html.lastIndexOf('<tr><td><button class="model-name" data-model="'),label+'/'+t.id+': the v9 group follows the released rows, counted');
+      assert.ok(html.includes(`href="/${label==='zh'?'zh/':''}protocols/${t.id}/#foundation-v9"`),label+'/'+t.id+': the group links the protocol page\'s v9 section');
+      for(const r of mx){
+        const at=html.indexOf(`<tr class="fm-row" data-fm="${r.id}">`),row=html.slice(at,html.indexOf('</tr>',at)),w=label+' home '+t.id+'/'+r.id;
+        assert.ok(at>0,w+': rendered');
+        if(r.status==='complete') assert.ok(row.includes('<strong>'+r.y.toFixed(1)+'%</strong>'),w+': its figure');
+        else assert.ok(row.includes('<strong>'+(label==='en'?'Not run':'未运行')+'</strong>')&&row.includes(e(r.reason))&&!/<strong>\d/.test(row),w+': not run, with its reason, no figure');
+        const fl={'at-or-below':label==='en'?'At or below the ':'不高于 ','interval-reaches':label==='en'?'Interval reaches the ':'区间触及 '};
+        if(r.chanceFlag) assert.ok(row.includes('<span class="flag">'+fl[r.chanceFlag]),w+': chance flag');
+        else assert.ok(!/<span class="flag">(?:At or below|Interval reaches|不高于|区间触及)/.test(row),w+': flagged without cause');
+        if(r.exposure==='not_exposed') assert.ok(!row.includes('fm-badge'),w+': no badge');
+        else assert.ok(row.includes(`<span class="flag fm-badge" data-exposure="${r.exposure}">`),w+': exposure badge');
+        assert.equal(row.includes('fm-research-use'),r.researchUse,w+': research-use sentence with ZUNA 1.1 only');
+      }
+      const ab=g('#ablation-rows').innerHTML;
+      assert.deepEqual([...ab.matchAll(/<tr class="fm-row" data-fm="([^"]+)">/g)].map(m=>m[1]).sort(),[F.masking_ablation.checkpoints[0],...ablation.map(m=>m.id)].sort(),label+'/'+t.id+': the ablation panel');
+      assert.equal(g('#download-fm').href,'/data/foundation-models-'+t.id+'.csv',label+'/'+t.id+': the v9 CSV download follows the protocol');
+      // The protocol dialog: the dated LaBraM/CBraMod statement after the released sentence.
+      g('#open-protocol').events.click();
+      const dlg=g('#dialog-body').innerHTML;
+      assert.ok(dlg.indexOf('fm-core-exposure')>dlg.indexOf(e(t.pretrainingOverlap))&&dlg.includes(e(statementIn(E.statements.not_exposed,label)))
+        &&J.coreExposure.urls.every(u=>dlg.includes(`href="${u}"`)),label+'/'+t.id+': the protocol dialog carries the sourced statement beside the released one');
+      g('#close-dialog').events.click();
+      // The first paint is the script's render of the first protocol.
+      if(t.id===data.tracks[0].id){
+        // The v9 group only: the released rows' first paint keeps the payload's order, the script sorts by name.
+        const s0=home.indexOf('<tbody id="result-rows">'),staticRows=home.slice(s0+24,home.indexOf('</tbody>',s0));
+        const fromGroup=x=>x.slice(x.indexOf('<tr class="fm-group">'));
+        assert.equal(textOf(fromGroup(staticRows)),textOf(fromGroup(html)),label+': the first paint of the v9 group equals the script\'s render');
+        const a0=home.indexOf('<tbody id="ablation-rows">'),staticAbl=home.slice(a0+26,home.indexOf('</tbody>',a0));
+        assert.equal(textOf(staticAbl),textOf(ab),label+': the first paint of the ablation panel equals the script\'s render');
+      }
+    }
+    // A v9 row's dialog: figures, exposure with source, footnote, licence (research use), links.
+    g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:'mi-rest'}})}});
+    g('#result-rows').events.click({target:{closest:()=>({dataset:{model:'fm:zuna'}})}});
+    const z=JSON.parse(fmEmbedded(label)).tracks['mi-rest'].rows.find(r=>r.id==='zuna'),zd=g('#dialog-body').innerHTML;
+    for(const s of [z.exposureText,z.footnote,z.licence,research[label]]) assert.ok(zd.includes(e(s)),label+': the ZUNA 1.1 dialog carries "'+s.slice(0,40)+'"');
+    assert.ok(zd.includes(`href="${z.exposureSource}"`)&&zd.includes('#foundation-v9')&&zd.includes(`href="${z.href}"`)&&g('#detail-dialog').open,label+': the dialog links the source, the section and the method page');
+    g('#close-dialog').events.click();
+    // The note under the snapshot, and the lede: the count of what they point at.
+    const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
+    assert.ok(added.includes(`data-release="${REL}"`)&&added.includes(label==='en'?`${matrix.length} further foundation encoders`:`另外 ${matrix.length} 个基础模型编码器`),label+': the snapshot note counts the v9 matrix rows');
+    assert.ok(added.includes(label==='en'?'not ranked against it':'也不与它排名'),label+': the v9 rows are not ranked against the snapshot');
+    assert.doesNotMatch(home,/Best on that protocol|该协议最佳/,label+': the snapshot\'s key names whose highest score it marks');
+  }
+
+  // 3. The model directory and the methods hub.
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const html=pageOf(prefix+'methods/'),where=prefix+'methods/';
+    const statusZh={'Evaluated':'已评测','Evaluated (6 of 8 protocols)':'已评测（8 个协议中的 6 个）','Evaluated (frozen probes, masking ablation)':'已评测（冻结探针，掩码消融）',
+      'Evaluated (frozen probes)':'已评测（冻结探针）','Catalogue only (not evaluated)':'仅列入目录（未评测）'};
+    const entries=F.directory_status.filter(x=>!['REVE Base','EEGPT'].includes(x.name)).flatMap(x=>/, /.test(x.name)&&!/\(/.test(x.name)?x.name.split(', ').map(n=>({...x,name:n})):[x]);
+    const members={'REVE Large':['reve-large'],'LUNA (Base, Large)':['luna-base','luna-large'],'BrainOmni Base':['brainomni-base'],CodeBrain:['codebrain'],EEGMamba:['eegmamba'],
+      'ST-EEGFormer (Base, Large)':['steegformer-base','steegformer-large'],'eeg-fm-masking (4 checkpoints)':F.masking_ablation.checkpoints,'ERP-FM Base':['erp-fm-base'],SingLEM:['singlem'],'ZUNA 1.1':['zuna'],MIRepNet:[],'EEG-DINO':[]};
+    assert.deepEqual(entries.map(x=>x.name).sort(),Object.keys(members).sort(),where+': one card per directory entry the export suggests');
+    for(const x of entries){
+      const a=html.indexOf(`<article class="model-card" data-model="${e(x.name)}" data-release="${REL}">`),card=html.slice(a,html.indexOf('</article>',a)),w=where+' '+x.name;
+      assert.ok(a>0,w+': card');
+      assert.ok(card.includes('>'+(label==='en'?x.suggested_status:statusZh[x.suggested_status])+'</span>'),w+': the status the export suggests');
+      assert.ok(card.includes(`<time datetime="2026-10-04">`),w+': when its status was checked');
+      const ms=members[x.name].map(id=>F.models.find(m=>m.id===id));
+      if(ms.length){
+        assert.ok(card.includes(`href="/${prefix}methods/${SLUG[ms[0].id]}/"`),w+': its method page');
+        for(const v of new Set(ms.map(m=>m.parameters_encoder))) assert.ok(card.includes(`data-fig="${FMJ}|m2|${v}"`),w+': encoder parameters '+v);
+        assert.ok(printed(card,ms[0].weights_licence,label),w+': weights licence');
+        if(ms[0].licence_note.replace(/\.$/,'')!==ms[0].weights_licence) assert.ok(printed(card,ms[0].licence_note,label),w+': licence note');
+      } else assert.ok(!card.includes('data-fig')&&!/<a href="\/(?:zh\/)?methods\//.test(card),w+': a catalogue-only card has no figure and no page');
+    }
+    const card=n=>html.slice(html.indexOf(`data-model="${n}"`),html.indexOf('</article>',html.indexOf(`data-model="${n}"`)));
+    assert.match(card('ZUNA 1.1'),label==='en'?/research use only, not for diagnosis or clinical use/:/仅供研究使用，不可用于诊断或临床/,where+': ZUNA 1.1\'s research-use sentence');
+    assert.match(card('LUNA (Base, Large)'),label==='en'?/no implied endorsement by the LUNA authors/:/不代表 LUNA 作者的认可/,where+': LUNA\'s no-endorsement note');
+    assert.match(card('ERP-FM Base'),label==='en'?/non-commercial/:/非商业/,where+': ERP-FM is non-commercial');
+    assert.match(card('EEGPT'),label==='en'?/<span class="status">Rights review pending<\/span>/:/<span class="status">权利审查中<\/span>/,where+': EEGPT is unchanged');
+    const un=html.slice(html.indexOf('id="unmeasured"'),html.indexOf('</ul>',html.indexOf('id="unmeasured"')));
+    for(const [id,n] of [['mirepnet','MIRepNet'],['eeg-dino','EEG-DINO']]) assert.ok(un.includes(`<li id="${id}"><span lang="en">${n}</span>`)&&un.includes(label==='en'?'Catalogue only (not evaluated)':'仅列入目录（未评测）'),where+': '+n+' is catalogue only');
+    assert.ok(!un.includes('REVE Base'),where+': REVE Base is evaluated, not unmeasured');
+    const table=html.slice(html.indexOf('id="with-pages"'),html.indexOf('</table>',html.indexOf('id="with-pages"')));
+    for(const s of slugs) assert.ok(table.includes(`href="/${prefix}methods/${s}/"`),where+': the '+s+' page is listed');
+  }
+
+  // 4. Method pages: groups, checkpoints and terms, exposure; the Measured-on line on every one.
+  const methodPages=entityPages.filter(f=>/^(?:zh\/)?methods\/[^/]+\/index\.html$/.test(f));
+  for(const f of methodPages){
+    const html=readFileSync(new URL(f,DIST),'utf8'),zh=f.startsWith('zh/'),prefix=zh?'zh/':'',path=f.replace(/index\.html$/,'');
+    const at=html.indexOf('<p class="entity-measured">'),line=html.slice(at,html.indexOf('</p>',at));
+    assert.ok(at>html.indexOf('class="topic-hero"')&&at<html.indexOf('id="results-heading"'),path+': the Measured-on line sits under the hero');
+    // A group with no table (a checkpoint not run there) measured nothing and is not on the line.
+    const groups=[...html.matchAll(/<section class="entity-group" id="g-[^"]+">\s*<h3><a href="([^"]+)"[\s\S]*?<p class="entity-group-meta">[^<]*<a href="([^"#]+)[\s\S]*?<\/section>/g)].filter(g=>g[0].includes('<tbody>'));
+    const want=[...new Set(groups.map(g=>g[1])),...new Set(groups.map(g=>g[2]).filter(h=>/\/protocols\//.test(h)))];
+    assert.deepEqual([...line.matchAll(/href="([^"]+)"/g)].map(m=>m[1]).sort(),[...new Set(want)].sort(),path+': the line links exactly the dataset and protocol pages its groups are read on');
+    assert.match(line,zh?/测量所用数据集：/:/Measured on:/,path+': the line says what it lists');
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    for(const h of new Set(want)) assert.ok(md.includes('](https://bci.report'+h+')'),path+'index.md: the Measured-on line survives ('+h+')');
+  }
+  for(const s of slugs) for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const path=prefix+'methods/'+s+'/',html=pageOf(path),ms=F.models.filter(m=>SLUG[m.id]===s);
+    for(const t of data.tracks){
+      const ds=MVPSLUG[t.dataset],gid=`g-${ds}-${t.id}-foundation-v9`,a=html.indexOf(`id="${gid}"`),grp=html.slice(a,html.indexOf('</section>',a));
+      const scored=ms.filter(m=>F.frozen_probe.find(c=>c.model===m.id&&c.protocol===t.id).status==='complete'),missing=ms.filter(m=>!scored.includes(m));
+      assert.ok(a>0&&grp.includes(`href="/${prefix}protocols/${t.id}/#foundation-v9"`),path+': the '+t.id+' group, read with the protocol page\'s v9 section');
+      assert.equal(bodyRows(grp),scored.length*(t.type==='tradeoff'?2:1),path+': '+t.id+' rows');
+      for(const m of missing) assert.ok(grp.includes('fm-not-run-note')&&printed(grp,F.frozen_probe.find(c=>c.model===m.id&&c.protocol===t.id).reason,label),path+': '+m.name+' on '+t.id+' is not run, with its reason');
+    }
+    const adapted=ms.filter(m=>m.adaptation==='run');
+    assert.equal(html.includes('id="g-eegmat-eegmat-v9-adaptation"'),adapted.length>0,path+': the EEGMAT adaptation group where the model was adapted');
+    const cp=html.slice(html.indexOf('<section class="topic-section" id="checkpoints"'),html.indexOf('</section>',html.indexOf('id="checkpoints"')));
+    for(const m of ms){
+      const a=cp.indexOf(`<article class="fm-checkpoint" data-checkpoint="${m.id}">`),art=cp.slice(a,cp.indexOf('</article>',a)),w=path+' '+m.id;
+      assert.ok(a>=0,w+': its checkpoint entry');
+      assert.ok(art.includes(`data-fig="${FMJ}|m2|${m.parameters_encoder}"`),w+': encoder parameters');
+      if(m.revision) assert.ok(art.includes('<code>'+e(m.revision)+'</code>')&&art.includes(m.checkpoint_sha256),w+': revision and checkpoint hash');
+      else assert.match(art,label==='zh'?/发布中没有记录/:/Not in the release/,w+': a revision the release does not name is said to be missing');
+      for(const x of [m.weights_licence,m.rights_review,m.row_footnote,...m.notes]) assert.ok(printed(art,x,label),w+': "'+x.slice(0,40)+'"');
+      assert.equal(art.includes(research[label]),m.id==='zuna',w+': the research-use sentence with ZUNA 1.1');
+      if(m.adaptation!=='run') assert.ok(printed(art,m.adaptation,label),w+': why it was not adapted');
+    }
+  }
+  // Exposure, by dataset: the v9 families and LaBraM and CBraMod, from the exposure table.
+  for(const s of [...slugs,'labram','cbramod']) for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const path=prefix+'methods/'+s+'/',html=pageOf(path),sec=html.slice(html.indexOf('id="pretraining-exposure"'),html.indexOf('</section>',html.indexOf('id="pretraining-exposure"')));
+    const keys=s==='labram'||s==='cbramod'?[s]:[...new Set(F.models.filter(m=>SLUG[m.id]===s).map(m=>XKEY[m.id]))];
+    assert.ok(sec.includes(label==='en'?'checked on 2026-10-04':'于 2026-10-04 核查'),path+': the exposure section says when it was checked');
+    const trs=[...sec.matchAll(/<tr data-exposure="([^"]+)">([\s\S]*?)<\/tr>/g)];
+    const tables=(sec.match(/<table class="fm-exposure-table">/g)||[]).length;
+    assert.equal(trs.length,7*tables,path+': seven datasets per table');
+    for(const k of keys) for(const d of E.datasets){
+      const c=E.cells.find(x=>x.model===k&&x.dataset===d.key);
+      const tr=trs.find(x=>x[2].includes(`href="${d.url}"`)&&x[1]===c.status&&x[2].includes(e(statementIn(c.statement,label))));
+      assert.ok(tr,path+': '+k+' on '+d.key+': the statement');
+      const hrefs=[...tr[2].slice(tr[2].lastIndexOf('<td>')).matchAll(/href="([^"]+)"/g)].map(x=>decodeHtml(x[1]));
+      assert.deepEqual(hrefs,c.urls,path+': '+k+' on '+d.key+': its sources');
+      if(c.status!=='not_exposed') assert.ok(tr[2].includes(`<span class="flag fm-badge" data-exposure="${c.status}">`),path+': '+k+' on '+d.key+': badge');
+    }
+    if(s==='zuna') assert.ok(trs.every(x=>x[1]==='unknown'),path+': ZUNA 1.1 is unknown everywhere');
+    // The exposure table's caveats that name the model are printed with it.
+    for(const c of E.caveats.filter(c=>c.includes(NAME[s]))) assert.ok(printed(sec,c,label),path+': the caveat "'+c.slice(0,40)+'"');
+    const vis=visible(label==='zh'?chineseOnly(sec):sec);
+    assert.doesNotMatch(vis,notProof[label],path+': no exposure claim beyond the authors\' lists');
+  }
+
+  // 5. Dataset pages: a v9 group per core protocol beside the released one; EEGMAT the adaptation.
+  for(const t of data.tracks) for(const prefix of ['','zh/']){
+    const ds=MVPSLUG[t.dataset],path=prefix+'datasets/'+ds+'/',html=pageOf(path);
+    const a=html.indexOf(`id="g-${t.id}-foundation-v9"`),grp=html.slice(a,html.indexOf('</section>',a));
+    const scored=F.frozen_probe.filter(c=>c.protocol===t.id&&c.status==='complete').length;
+    assert.ok(a>html.indexOf(`id="g-${t.id}"`)&&grp.includes(`href="/${prefix}protocols/${t.id}/#foundation-v9"`),path+': the '+t.id+' v9 group follows the released one and links the v9 section');
+    assert.equal(bodyRows(grp),scored*(t.type==='tradeoff'?2:1),path+': every scored checkpoint');
+    assert.equal(grp.includes('fm-not-run-note'),scored<F.models.length,path+': a checkpoint not run is named with its reason');
+  }
+  for(const prefix of ['','zh/']){
+    const html=pageOf(prefix+'datasets/eegmat/'),a=html.indexOf('id="g-eegmat-v9-adaptation"'),grp=html.slice(a,html.indexOf('</section>',a));
+    assert.equal(bodyRows(grp),3*F.eegmat_adaptation.rows.length,prefix+'datasets/eegmat/: the v9 adaptation, three rows per adapted encoder');
+  }
+
+  // 6. LaBraM and CBraMod on the topic pages and data use: the sourced statement, never "unresolved".
+  for(const [slug,models] of [['does-pretraining-help',['labram','cbramod']],['model-adaptation',['labram']]]) for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const path=prefix+'topics/'+slug+'/',html=pageOf(path);
+    assert.doesNotMatch(visible(html),label==='en'?/unresolved|not certified|unseen during pretraining/i:/尚不能确定这些基准|无法证实|重叠尚不清楚|未曾出现/,path+': the old exposure wording is gone');
+    assert.ok(visible(html).includes(label==='en'?'published pretraining list':'公开的预训练数据清单'),path+': the authors\' published list');
+    assert.ok(visible(html).includes(label==='en'?'not proof that':'并不证明'),path+': which is not a proof');
+    const note=html.slice(html.indexOf('fm-core-exposure'),html.indexOf('</p>',html.indexOf('fm-core-exposure')));
+    assert.ok(note.includes('2026-10-04'),path+': the check date');
+    for(const k of models) for(const u of new Set(E.cells.filter(c=>c.model===k).flatMap(c=>c.urls))) assert.ok(note.includes(`href="${u}"`),path+': '+k+'\'s source '+u);
+  }
+  const dataUse=pageOf('data-use/');
+  assert.ok(!dataUse.includes('Pretraining overlap remains unknown')&&dataUse.includes('not in the authors’ published pretraining list'),'data-use/: the sourced statement replaces "overlap remains unknown"');
+
+  // 7. Hubs and the release log count and name what they lead to.
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const index=pageOf(prefix+'protocols/');
+    for(const t of data.tracks){
+      const tr=index.slice(index.indexOf(`<tr data-protocol="${t.id}">`),index.indexOf('</tr>',index.indexOf(`<tr data-protocol="${t.id}">`)));
+      const n=csvOf(t.id).filter(r=>r.panel==='matrix'&&r.status==='complete').length;
+      const m=tr.match(/<small class="fm-count"><a href="([^"]+)">([^<]+)<\/a><\/small>/);
+      assert.ok(m&&m[1]===`/${prefix}protocols/${t.id}/#foundation-v9`&&m[2].includes(label==='en'?`+ ${n} further foundation encoders`:`另有 ${n} 个基础模型编码器`),prefix+'protocols/: '+t.id+' counts the v9 rows it links to ('+n+')');
+    }
+    const rel=pageOf(prefix+'releases/'),entry=rel.slice(rel.indexOf(`id="${REL}"`),rel.indexOf('</article>',rel.indexOf(`id="${REL}"`)));
+    for(const p of ['protocols','methods']) assert.ok(entry.includes(`href="/${prefix}${p}/"`),prefix+'releases/: the v9 release names the '+p+' hub');
+    assert.doesNotMatch(entry,/Core matrix \(home page\)|核心矩阵（首页）/,prefix+'releases/: a hub is not the home page');
+    if(label==='en'){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
+      assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
+  }
+  for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/'])
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
+}
+console.log('PASS: 2026-10-04 v9 foundation models, pages — every protocol page with its v9 section (each row its CSV row, in family order, never re-sorted; not run with its reason, no figure; chance flags by the core rule and the CSV; exposure statement, badge and source from the exposure table, ZUNA 1.1 unknown everywhere; footnotes, licences, research-use sentence; masking ablation collapsed; EEGMAT adaptation with verdicts on arithmetic-rest; LaBraM and CBraMod sourced beside the released sentence); the home table\'s embedded rows equal the CSVs, first paint equals the render, dialogs carry the caveats; directory cards with the export\'s statuses, licences and parameters, REVE Base evaluated, MIRepNet and EEG-DINO catalogue only; method pages with groups, checkpoints, terms and exposure; Measured-on lines; dataset groups; topic and data-use wording; hub counts; release log; sitemap.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
 
 console.log('PASS: Chinese register — licence and rights-review notes with their English beside them, model notes in Chinese; chart colours equal the legend swatches.');
