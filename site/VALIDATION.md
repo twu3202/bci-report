@@ -641,6 +641,27 @@ rights, notes, adaptation) as printed, and its row footnote verbatim. `llms-full
 held verbatim to every English copy, carries them too. About 256 footnotes and 326
 terms are read.
 
+Other v9 counts reached the copies outside the regions those checks read (same
+review). Now: every transfer-map entry on `/`, `/zh/`, `/topics/` and `/zh/topics/`
+carries its figures on its own link line in the copy ("…#v9-adaptation) n=36"); each
+topic card's copy line is the card as printed, and the does-pretraining-help,
+fewer-electrodes and when-not-to-act cards end with their counts derived from the
+exports (16 further checkpoints; BETA, 8 and 4 electrodes, 70 people; route 1's 36 and
+70 people); the home snapshot note's copy is the page's paragraph, with its 13, 11, 3,
+16 and BrainOmni's six counted from the export; every paragraph after the heading of
+each `#foundation-v9`, `#reliable-decisions`, `#v9-encoders` and `#v9-montage` is in
+its copy section as printed (whitespace aside), with the 126 frozen cells re-counted on
+the seven protocols that have intervals; and the methods hub's model cards carry their
+parameters in their own subsections. No v9 or route-1 `data-fig` on any page may lie
+outside a region a copy check reads (about 7,500 today), so a figure placed elsewhere
+fails until something holds it. Mutation-tested on a copy of `dist/` with the review's
+twenty edits (REVE's footnotes on the p300-target, sleep-scalp and REVE pages, EN with
+`llms-full.txt` and ZH; the snapshot note's 16, 11 and 13 and the Chinese 共 16 个 and
+11 个模型; both map entries and both card counts on the home page and the hub; the 126)
+and seven more (two footnotes swapped, a checkpoint's and a hub card's parameters, the
+Chinese 126, map entry and card count, route 1's card): each of 27 was caught, 25 by the
+assertion written for it and the two parameter edits first by the generic copy check.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

@@ -3779,6 +3779,7 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     .replace(/<span class="visually-hidden">[^<]*<\/span>/g,' ').replace(/<(button|select|label)\b[\s\S]*?<\/\1>/g,' ')
     .replace(/<a href="#[^"]*"[^>]*>[\s\S]*?<\/a>/g,' ').replace(/<[^>]+>/g,' ');
   const FMX=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
+  const RDX=JSON.parse(readFileSync(new URL('data/reliable-decisions-update.json',DIST),'utf8')).results['reliable-decisions'];
   const ZT=(()=>{const c={};vm.runInNewContext(stripTypeScriptTypes(readFileSync(new URL('../src/data/foundation-models-zh.ts',import.meta.url),'utf8'))
     .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'')+'\nthis.fmZh=fmZh;',c);return c.fmZh;})();
   const inLang=(en,zh)=>zh?{text:ZT[en],original:en}:{text:en};
@@ -3827,7 +3828,91 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     }
   }
   assert.ok(footnotes>=2*(8*13+16)&&terms>=2*16*8,'the row footnotes and checkpoint terms were read ('+footnotes+', '+terms+')');
-  console.log('PASS: 2026-10-05 second follow-up review — '+footnotes+' row footnotes verbatim in the copies (REVE\'s sensitivity runs with their direction) and '+terms+' checkpoint terms as printed.');
+  // (N3b) v9 counts outside those regions. (1) The transfer-coverage map on /, /zh/, /topics/ and /zh/topics/: every
+  // entry's figures bound to its own link line ("…#v9-adaptation) n=36"). (2) The topic cards there: each card's line
+  // is the card as printed, its v9 and route-1 counts derived from the exports. (3) The home snapshot note as printed,
+  // its counts derived from the export. (4) Every paragraph of each protocol page's #foundation-v9 and of the route-1
+  // and v9 topic sections, as printed (whitespace aside), the 126 frozen cells re-counted where rows have intervals. (5) No v9 or route-1 data-fig on any
+  // page lies outside a region these checks read.
+  const b8=FMX.protocols.find(p=>p.id==='beta-8ch'),b4=FMX.protocols.find(p=>p.id==='beta-4ch');
+  const fmModels=FMX.pretraining_exposure.models.filter(m=>m.evaluated_in_v9).length,fmMatrix=FMX.models.filter(m=>m.panel==='matrix').length,fmAbl=FMX.models.filter(m=>m.panel==='masking ablation').length;
+  const frozenCells=FMX.frozen_probe.filter(c=>c.status==='complete').length;
+  assert.ok(b4.people===b8.people&&fmMatrix+fmAbl===FMX.models.length&&frozenCells===126,'v9: BETA\'s people, the checkpoints and the frozen cells, from the export');
+  const cardPinsMd={
+    'does-pretraining-help':{en:`${FMX.models.length} further checkpoints`,zh:`另外 ${FMX.models.length} 个检查点`},
+    'fewer-electrodes':{en:`BETA, ${b8.channels} and ${b4.channels} electrodes, ${b4.people} people`,zh:`BETA ${b8.channels} 与 ${b4.channels} 个电极，${b4.people} 名被试`},
+    'when-not-to-act':{en:`reliable decisions, ${RDX.protocols['arithmetic-rest'].people} and ${RDX.protocols['beta-8ch'].people} people`,zh:`可靠的决策，${RDX.protocols['arithmetic-rest'].people} 与 ${RDX.protocols['beta-8ch'].people} 名被试`}};
+  let mapEntries=0,cards=0;
+  for(const pfx of ['','zh/']) for(const page of [pfx,pfx+'topics/']){const zh=pfx==='zh/';
+    const html=readFileSync(new URL(page+'index.html',DIST),'utf8'),md=readFileSync(new URL(page+'index.md',DIST),'utf8'),where=page+'index.md';
+    const a=html.indexOf('<table class="tmap"'),table=html.slice(a,html.indexOf('</table>',a));
+    const entries=[...table.matchAll(/<li data-map="([^"]+)"><a href="([^"]+)">([^<]*)<\/a><span class="tmap-n">((?:[^<]|<span[^>]*>[^<]*<\/span>)*)<\/span>/g)];
+    assert.ok(entries.length===(table.match(/class="tmap-n"/g)||[]).length&&entries.filter(e=>e[4].includes('foundation-models-update.json')).length===2,page+': every map entry with a figure read, the two v9 entries among them');
+    for(const [,key,href,label,n] of entries){
+      const line=`[${decodeHtml(label)}](https://bci.report${href}) ${norm(n.replace(/<[^>]+>/g,''))}`;
+      assert.ok(new RegExp(esc(line)+'(?![\\d.,])').test(md),where+': the map entry '+key+' carries its figures on its own link ("'+line+'")');mapEntries++;}
+    for(const [,href,card] of html.matchAll(/<a class="topic-entry-card" href="([^"]+)">([\s\S]*?)<\/a>/g)){
+      const h4=decodeHtml(card.match(/<h([34])>([^<]*)<\/h\1>/)[2]),parts=[...card.matchAll(/<(span class="family"|p|small)>([\s\S]*?)<\/(?:span|p|small)>/g)].map(m=>norm(m[2].replace(/<[^>]+>/g,' ')));
+      const line=md.split('\n').find(l=>l.startsWith(`- [${h4}](https://bci.report${href}): `));
+      assert.ok(line,where+': the card "'+h4+'"');
+      assert.equal(norm(line),norm(`- [${h4}](https://bci.report${href}): ${parts.join(' · ')}`),where+': the card "'+h4+'" as the page prints it');
+      const slug=href.split('/').at(-2);
+      if(cardPinsMd[slug]) assert.ok(line.endsWith(' · '+cardPinsMd[slug][zh?'zh':'en']),where+': the '+slug+' card ends "'+cardPinsMd[slug][zh?'zh':'en']+'", counted from the export');
+      cards++;
+    }
+  }
+  assert.ok(mapEntries>=4*16&&cards===4*topicPages.length,'the map entries and topic cards were read ('+mapEntries+', '+cards+')');
+  for(const pfx of ['','zh/']){const zh=pfx==='zh/';
+    const html=readFileSync(new URL(pfx+'index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+'index.md',DIST),'utf8');
+    const p=html.match(/<p class="matrix-added"[^>]*>([\s\S]*?)<\/p>/)[1],para=md.split('\n\n').find(b=>b.startsWith(zh?'2026-10-04 新增：':'Added 2026-10-04: '));
+    assert.ok(para&&norm(para)===norm(blockText(p)),pfx+'index.md: the snapshot note as the page prints it');
+    const ran=FMX.frozen_probe.filter(c=>c.model==='brainomni-base'&&c.status==='complete').length;
+    for(const s of zh?[`另外 ${fmMatrix} 个基础模型编码器`,`BrainOmni Base 只在其中 ${ran} 个上运行`,`它们是 ${fmModels} 个模型的检查点；其中一个模型另有 ${fmAbl} 个检查点组成掩码消融，共 ${fmMatrix+fmAbl} 个。`]
+                     :[`${fmMatrix} further foundation encoders`,`BrainOmni Base on ${['zero','one','two','three','four','five','six','seven'][ran]} of them`,`They are checkpoints of ${fmModels} models; ${fmAbl} more checkpoints of one of them form a masking ablation, ${fmMatrix+fmAbl} in all.`])
+      assert.ok(para.includes(s),pfx+'index.md: the snapshot note says "'+s+'", counted from the export');
+  }
+  let paras=0;
+  const parasCarried=(path,id,where,pins=[])=>{
+    const html=readFileSync(new URL(path+'index.html',DIST),'utf8'),md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    const sec=sectionHtml(html,id),h=sec.match(/<h([23])\b[^>]*>([\s\S]*?)<\/h\1>/),part=mdSection(md,norm(h[2].replace(/<[^>]+>/g,' ')),Number(h[1]));
+    const flat=squash(part);
+    // From the heading on: an eyebrow above it is printed before the copy's heading line.
+    for(const [,p] of blockText(sec.slice(h.index+h[0].length).replace(/<p\b[^>]*>/g,'\u0001').replace(/<\/p>/g,'\u0002')).matchAll(/\u0001([^\u0001\u0002]*)\u0002/g)){
+      if(!squash(p))continue;
+      assert.ok(flat.includes(squash(p)),where+': index.md #'+id+' lacks the paragraph "'+norm(p).slice(0,90)+'…" as the page prints it');paras++;}
+    for(const s of pins) assert.ok(part.includes(s),where+': index.md #'+id+' says "'+s+'"');
+  };
+  for(const pfx of ['','zh/']){const zh=pfx==='zh/';
+    for(const t of data.tracks) parasCarried(pfx+'protocols/'+t.id+'/','foundation-v9',pfx+'protocols/'+t.id,
+      t.type==='tradeoff'?[]:[zh?`冻结单元格共有 ${frozenCells} 个，偶尔出现不重叠，本身就在随机误差的预料之中`:`with ${frozenCells} frozen cells an occasional non-overlap is expected by chance`]);
+    parasCarried(pfx+'topics/when-not-to-act/','reliable-decisions',pfx+'when-not-to-act');
+    parasCarried(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
+    parasCarried(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
+  }
+  // (5) Every v9 and route-1 data-fig on every page sits in a region a copy check reads.
+  const read=[/^(?:zh\/)?protocols\/[^/]+\/index\.html#foundation-v9$/,/^(?:zh\/)?topics\/when-not-to-act\/index\.html#reliable-decisions$/,/^(?:zh\/)?topics\/does-pretraining-help\/index\.html#v9-encoders$/,
+    /^(?:zh\/)?topics\/fewer-electrodes\/index\.html#v9-montage$/,/^(?:zh\/)?(?:datasets|methods)\/[^/]+\/index\.html#g-[^#]*(?:reliable-decisions|foundation-v9|v9-adaptation)$/,
+    /^(?:zh\/)?methods\/[^/]+\/index\.html#checkpoints$/,/^(?:zh\/)?(?:topics\/)?index\.html#tmap$/,/^(?:zh\/)?methods\/index\.html#model-card$/];
+  let located=0;
+  for(const f of htmlPages){const html=readFileSync(new URL(f,DIST),'utf8');
+    for(const m of html.matchAll(/data-fig="(?:foundation-models-|reliable-decisions-)[^"]*"/g)){
+      const before=html.slice(0,m.index),open=[];
+      for(const x of before.matchAll(/<(section|table|article)\b([^>]*)>|<\/(section|table|article)>/g)){
+        if(x[3]){open.pop();continue;}
+        open.push(x[1]==='table'&&/class="tmap"/.test(x[2])?'tmap':x[1]==='article'&&/class="model-card"/.test(x[2])?'model-card':(x[2].match(/\sid="([^"]+)"/)||[])[1]||'');}
+      assert.ok(open.some(id=>read.some(re=>re.test(f+'#'+id))),f+': the figure '+m[0]+' lies outside every region the copy checks read');located++;}
+  }
+  // The methods hub's model cards: each card's figures in its own subsection of the copy, as printed.
+  for(const pfx of ['','zh/']){
+    const html=readFileSync(new URL(pfx+'methods/index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+'methods/index.md',DIST),'utf8');
+    for(const [,card] of html.matchAll(/<article class="model-card"[^>]*>([\s\S]*?)<\/article>/g)){
+      if(!card.includes('data-fig="foundation-models-'))continue;
+      const name=norm(card.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/)[1].replace(/<[^>]+>/g,' ')),sub=mdSection(md,name,3);
+      assert.ok(sub,pfx+'methods/index.md: the card '+name);
+      const fig=card.match(/<p class="parameter">([\s\S]*?)<\/p>/);
+      assert.ok(fig&&sub.split('\n').some(l=>squash(l)===squash(blockText(fig[1]))),pfx+'methods/index.md: '+name+' carries its parameters as printed ("'+(fig&&norm(blockText(fig[1])))+'")');}
+  }
+  console.log('PASS: 2026-10-05 second follow-up review — '+footnotes+' row footnotes verbatim in the copies (REVE\'s sensitivity runs with their direction), '+terms+' checkpoint terms, '+mapEntries+' map entries bound to their links, '+cards+' topic cards and the home snapshot note as printed with their counts from the exports, '+paras+' paragraphs of the route-1 and v9 sections (126 frozen cells), and '+located+' v9 and route-1 figures, each inside a region a copy check reads.');
   console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim; the home page\'s v9 and ablation rows ('+homeRows+') and every topic\'s short answer ('+answers+') carry the page\'s figures into the copies, in order.');
 }
 // --- 2026-10-05 follow-up review: a v9 figure prints as decimal rounding gives it --------------------
