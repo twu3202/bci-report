@@ -2363,6 +2363,15 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     for(const m of data.models) assert.ok(html.includes(`<article class="model-card" data-model="${m.name.replace(/&/g,'&amp;')}">`),page+': model card for '+m.name);
     assert.equal((html.match(/<p class="status-checked">/g)||[]).length,data.models.length+fmCards.length,page+': every model card says when its status was checked');
     for(const n of data.news) assert.ok(html.includes(n.sourceUrl.replace(/&/g,'&amp;')),page+': field note '+n.title.slice(0,30));
+    // Follow-up review of 2026-10-05: the REVE note of 2025-10-24 keeps its words ("not yet available in our local test
+    // pool"), and a dated note after it says REVE Base and Large have since been evaluated, linking REVE's method page.
+    {const zh=page.startsWith('zh/'),n=data.news.find(x=>/not yet available in our local test pool/.test(x.summary));
+     const a0=html.lastIndexOf('<article',html.indexOf(escHtml(n.title)+' ↗</a></h3>')),card=html.slice(a0,html.indexOf('</article>',a0));
+     const fmDate=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).generated_at;
+     assert.ok(card.includes('<p>'+escHtml(n.summary)+'</p>'),page+': the REVE field note keeps its released words');
+     const later=card.match(/<p class="news-later" data-later="([^"]+)"[^>]*>([\s\S]*?)<\/p>/);
+     assert.ok(later&&later[1]===fmDate&&later[2].includes(fmDate)&&/REVE Base/.test(later[2])&&/REVE Large/.test(later[2])&&later[2].includes(`href="${zh?'/zh':''}/methods/reve/"`)&&card.indexOf('news-later')>card.indexOf(escHtml(n.summary)),
+       page+': the REVE field note carries a dated note, after its words, that REVE Base and Large have since been evaluated');}
     // REVE Base: evaluated since 2026-10-04 (the owner accepted the REVE Responsible Use License), with its
     // source and checked date, the released status beside it; the 2026-10-02 "Licence review pending" is gone.
     const reve=html.slice(html.indexOf('data-model="REVE Base"'),html.indexOf('</article>',html.indexOf('data-model="REVE Base"')));
@@ -2695,6 +2704,8 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       const r=lic9.find(x=>x[2].includes('<span>'+e9(m.name)+'</span>'));
       assert.ok(r,'data-use: '+m.name+' is listed with the weights terms');
       assert.ok(m.revision?r[2].includes('<code>'+e9(m.revision)+'</code>'):r[2].includes('revision not in the release'),'data-use: '+m.name+' with its revision');
+      // A revision that is only a file id names its SHA-256 as the identity: the hash is printed beside it (review of 2026-10-05).
+      if(/sha256 is the identity/.test(m.revision??'')) assert.ok(m.checkpoint_sha256&&r[2].includes('<code>'+e9(m.revision)+'</code> · SHA-256 <code>'+m.checkpoint_sha256+'</code>'),'data-use: '+m.name+' with the SHA-256 its revision names as its identity');
       assert.ok(r[2].includes(e9(m.rights_review)),'data-use: '+m.name+' with the owner\'s review of its weights');
       if(!/\(as /.test(m.licence_note)) assert.ok(r[2].includes(e9(m.licence_note)),'data-use: '+m.name+' with its licence note');
     }

@@ -7,11 +7,25 @@
 import data from '../data/mvp.json';
 import type { Locale } from '../data/i18n';
 import { directoryCopy } from '../data/directory-copy';
+import { hrefFor } from '../data/i18n';
+import { fmModelById, fmRelease } from '../data/foundation-models';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = directoryCopy[locale];
 const payloadLang = locale === 'en' ? undefined : 'en';
+// A released note that a later release overtook keeps its words; a dated note follows it (review of 2026-10-05: the
+// REVE note of 2025-10-24 still said Base "is not yet available in our local test pool").
+const reve = [fmModelById['reve-base'], fmModelById['reve-large']];
+if (reve.some(m => !m)) throw new Error('FieldNotes: the REVE note points at v9 rows that are not in the export');
+const later: Record<string, { date: string; text: string; link: string; href: string }> = {
+  'https://arxiv.org/abs/2510.21585': {
+    date: fmRelease.date,
+    text: locale === 'zh' ? `${fmRelease.date} 更新：本站此后已评测 REVE Base 和 REVE Large，它们作为冻结探针的第九轮各行列在每个协议页面上。`
+                          : `Update, ${fmRelease.date}: REVE Base and REVE Large have since been evaluated here; their v9 frozen-probe rows are on every protocol page.`,
+    link: locale === 'zh' ? 'REVE 的方法页 →' : 'REVE’s method page →', href: hrefFor('/methods/reve/', locale),
+  },
+};
 ---
 <section id="news" class="section" aria-labelledby="news-heading">
   <div class="section-heading"><div><p class="eyebrow">{d.newsEyebrow}</p><h2 id="news-heading">{d.newsH2}</h2></div><p>{d.newsLede}</p></div>
@@ -19,6 +33,7 @@ const payloadLang = locale === 'en' ? undefined : 'en';
     <div class="card-top"><span class="family">{n.tag}</span><time datetime={n.date}>{n.date}</time></div>
     <h3><a href={n.sourceUrl} target="_blank" rel="noreferrer">{n.title} ↗</a></h3>
     <p>{n.summary}</p>
+    {later[n.sourceUrl] && <p class="news-later" data-later={later[n.sourceUrl].date} lang={locale === 'zh' ? 'zh-Hans' : undefined}>{later[n.sourceUrl].text}{locale === 'en' && ' '}<a href={later[n.sourceUrl].href}>{later[n.sourceUrl].link}</a></p>}
     <span class="source">{n.source}</span>
   </article>)}</div>
 </section>

@@ -593,6 +593,16 @@ pages' exposure key and fewer-electrodes' "Pretraining exposure" limitation; bot
 say it. Pinned in both languages, with the 126 re-counted from the export. Mutation-tested
 on a copy of `dist/`: each of 5 injected violations was caught.
 
+Two released texts the v9 batch overtook (same review). The 2025-10-24 field note on
+`/methods/` still says REVE Base "is not yet available in our local test pool": it keeps
+its words (`mvp.json` is a released payload), and a dated note after them, dated with the
+v9 export, says REVE Base and Large have since been evaluated and links REVE's method
+page. And ERP-FM's revision in data use's weights table is a file id whose own text says
+"sha256 is the identity", so the checkpoint's SHA-256 is printed beside it. Pinned in both
+languages; mutation-tested on a copy of `dist/`: each of 3 injected violations was
+caught. Measured with headless Chromium: `/methods/`, `/data-use/` and the other pages
+this review changed scroll sideways at neither 320 nor 375 px.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
