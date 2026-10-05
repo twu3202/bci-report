@@ -25,6 +25,7 @@ import { FM_ABLATION_ANCHOR, FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAd
 import { fmAdaptationContext } from '../../../data/foundation-models';
 import { fmText, fmZh } from '../../../data/foundation-models-zh';
 import FmRowView from '../../../components/FmRow.astro';
+import FmLicences from '../../../components/FmLicences.astro';
 
 export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
   params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
@@ -72,8 +73,6 @@ const fmPlot = tradeoff ? [] : [
 ];
 const say = (en: string) => fmText(en, locale);
 const exposureText = (statement: string) => locale === 'en' ? statement : fmZh[statement];
-// One licence entry per model family: the first checkpoint's terms (its siblings refer to them).
-const licenceFamilies = [...new Map(fmAll.map(r => [r.model.slug, fmAll.filter(x => x.model.slug === r.model.slug).map(x => x.model)])).values()];
 const fmNotes = fmAll.filter(r => r.notes);
 const adaptation = p.id === 'arithmetic-rest' ? fmAdaptation : [];
 const sgn = (f: { raw: number; fmt: string; src: string }) => ({ ...f, fmt: 'sgn1' as const });
@@ -206,12 +205,7 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     </>}
 
     <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
-    <ul class="entity-links protocol-prose fm-licences">{licenceFamilies.map(ms => {
-      const w = say(ms[0].weightsLicence), n = say(ms[0].licenceNote);
-      // A note that only restates the licence's name ("MIT.") is not printed twice.
-      const restates = ms[0].licenceNote.replace(/\.$/, '') === ms[0].weightsLicence;
-      return <li data-licence={ms[0].slug}><strong lang="en">{ms.map(m => m.name).join(' · ')}</strong>{colon}<span>{w.text}</span>{w.original && <span class="note-original" lang="en">{w.original}</span>}{!restates && <><span class="fm-licence-note">{n.text}</span>{n.original && <span class="note-original" lang="en">{n.original}</span>}</>} <a href={ms[0].paper} target="_blank" rel="noreferrer">{locale === 'zh' ? '论文 ↗' : 'paper ↗'}</a></li>;
-    })}</ul>
+    <FmLicences models={fmAll.map(r => r.model)} locale={locale}/>
     <h3 class="roadmap-h3">{c.fmNotesH3}</h3>
     <ul class="entity-links protocol-prose fm-notes">{fmNotes.map(r => <li><strong lang="en">{r.model.name}</strong>{colon}<span lang={payloadLang}>{r.notes}</span></li>)}</ul>
     <div class="topic-actions"><a class="button" href={`/data/${p.files.fm}`} download>{c.fmDownload}</a><a class="button fm-release" href={hrefFor(`/releases/#${fmRelease.id}`, locale)}>{c.fmRelease}{' '}<code>{fmRelease.id}</code></a></div>
@@ -220,6 +214,8 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <h2 id="limits-heading">{c.limits}</h2>
     <p class="protocol-limitation" lang={payloadLang}>{p.limitation}</p>
+    {/* The released limitation keeps its words; where it calls pretraining overlap unknown, a dated pointer sits beside it (review of 2026-10-05). */}
+    {/pretraining overlap unknown/.test(p.limitation) && <p class="protocol-note fm-limitation-pointer">{c.overlapPointer(p.exposureChecked)} <a href="#pretraining-exposure">{c.exposure} ↓</a></p>}
     <h3 class="roadmap-h3" id="steps">{c.steps}</h3>
     <ol class="protocol-steps" lang={payloadLang}>{p.steps.map(s => <li>{s}</li>)}</ol>
     <h3 class="roadmap-h3" id="stability">{c.stability}</h3>

@@ -370,6 +370,27 @@ that exposure is not proof, that timings and memory are not published and that t
 audits are pinned by hash, and links the release. Mutation-tested on a copy of `dist/`:
 each of 7 injected violations was caught.
 
+Licence notes and ZUNA 1.1's sentence travel with the v9 rows everywhere (same review):
+on every dataset page's v9 groups and the ZUNA method page, each ZUNA 1.1 row carries
+the research-use sentence and no other row does, and its EEGMAT adaptation rows also
+say its exposure is unknown; every v9 group on a dataset or method page prints the
+weights terms of the checkpoints in its rows — each licence by name, REVE's versions
+where REVE is there, no endorsement — and links the protocol page's full list, which
+must exist. The weights-licence lists (`FmLicences.astro`) on the protocol pages,
+does-pretraining-help and now fewer-electrodes name REVE's versions ("REVE Base @
+dc2a075c · REVE Large @ 317531c7", from the export's revisions, because REVE's licence
+asks for the version to be named); the protocol pages and fewer-electrodes add that no
+model's authors endorse the results (does-pretraining-help says so in its limits).
+fewer-electrodes gains one licence entry per family in the export's order, with
+licence, note and paper, and the v9 limitations does-pretraining-help carries — small
+cohorts (BETA's and sleep's people as figures), descriptive bootstraps with no
+multiplicity correction and an occasional non-overlap expected by chance, balanced
+designs as method comparisons, new people on the same task and setup, windows shorter
+than the pretraining contexts. On the two BETA protocol pages, whose released
+limitation says "pretraining overlap unknown", a dated pointer to the exposure
+statement follows it, and no other page carries one. Mutation-tested on a copy of
+`dist/`: each of 15 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

@@ -18,6 +18,7 @@
 import Fig from './Fig.astro';
 import NameList from './NameList.astro';
 import FmTopicBa from './FmTopicBa.astro';
+import FmLicences from './FmLicences.astro';
 import { protocolCopy } from '../data/entity-copy';
 import { hrefFor, trackTitle, type Locale } from '../data/i18n';
 import data from '../data/mvp.json';
@@ -204,10 +205,6 @@ const limits: [string, Part[]][] = zh ? [
   ['No endorsement', ['No model’s authors endorse these results. No adapted weights or LoRA deltas were kept or shared, and each model’s weights licence travels with its rows. Timings were measured on a shared GPU and are not published.']],
 ];
 
-// One licence entry per family printed in this section.
-const families = [...new Map([...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].map(m => [m.slug, m])).values()];
-const familyModels = (slug: string) => [...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].filter((m, i, xs) => m.slug === slug && xs.indexOf(m) === i);
-const colon = zh ? '：' : ': ';
 const singlem = adaptRows.find(r => r.id === 'singlem')!;
 const reveSeparated = revePairs.filter(p => !p.overlap).map(p => p.track);
 const separatedMasking = maskingRows.filter(r => r.separated.length);
@@ -306,10 +303,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
   <h3 class="roadmap-h3" id="v9-limits">{c.limitsH3}</h3>
   <div class="method-grid-wide fm-limits">{limits.map(([h, parts]) => <article><h3>{h}</h3><p>{parts.map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p></article>)}</div>
   <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
-  <ul class="entity-links protocol-prose fm-licences">{families.map(m0 => {
-    const ms = familyModels(m0.slug), w = say(ms[0].weightsLicence), n = say(ms[0].licenceNote);
-    const restates = ms[0].licenceNote.replace(/\.$/, '') === ms[0].weightsLicence;
-    return <li data-licence={ms[0].slug}><strong lang="en">{ms.map(m => m.name).join(' · ')}</strong>{colon}<span>{w.text}</span>{w.original && <span class="note-original" lang="en">{w.original}</span>}{!restates && <><span class="fm-licence-note">{n.text}</span>{n.original && <span class="note-original" lang="en">{n.original}</span>}</>} <a href={ms[0].paper} target="_blank" rel="noreferrer">{zh ? '论文 ↗' : 'paper ↗'}</a></li>;
-  })}</ul>
+  {/* The limits above already say no author endorses these results. */}
+  <FmLicences models={[...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].filter((m, i, xs) => xs.indexOf(m) === i)} locale={locale} endorsement={false}/>
   <p class="citation-note">{c.files[0]}{SCORED_TRACKS.map((id, i) => <>{i > 0 && c.protocolLinkSep}<a href={`${hrefFor(`/protocols/${id}/`, locale)}#${FM_ANCHOR}`}>{protocolName(id)}</a></>)}{c.files[1]}<a href={`/data/${FM_JSON}`} download>{FM_JSON}</a>{c.files[2]}<a href={hrefFor(`/releases/#${fmRelease.id}`, locale)}><code>{fmRelease.id}</code></a>{c.files[3]}</p>
 </section>

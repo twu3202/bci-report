@@ -2736,6 +2736,31 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   const bodyRows=grp=>{const tb=grp.indexOf('<tbody>');return tb<0?0:(grp.slice(tb,grp.indexOf('</tbody>',tb)).match(/<tr>/g)||[]).length;};
   const NAME={reve:'REVE',luna:'LUNA',brainomni:'BrainOmni',codebrain:'CodeBrain',eegmamba:'EEGMamba','st-eegformer':'ST-EEGFormer','eeg-fm-masking':'eeg-fm-masking',
     'erp-fm':'ERP-FM',singlem:'SingLEM',zuna:'ZUNA',labram:'LaBraM',cbramod:'CBraMod'};
+  // Licence notes travel with the rows (review of 2026-10-05). REVE's licence asks for the model version to be named:
+  // each REVE checkpoint's revision from the export, wherever its licence entry is printed.
+  const reveVersions=F.models.filter(m=>SLUG[m.id]==='reve').map(m=>`${m.name} @ ${m.revision.split(' @ ').at(-1)}`).join(' · ');
+  assert.ok(/REVE Base @ [0-9a-f]{8} · REVE Large @ [0-9a-f]{8}/.test(reveVersions)&&/name the model version/.test(F.models.find(m=>m.id==='reve-base').licence_note),'REVE: its licence asks for the version, and the export names both');
+  const endorse={en:'No model’s authors endorse these results',zh:'任何模型的作者都没有为这些结果背书'};
+  const licName=m=>m.weights_licence.replace(/\s*[(;].*$/,'');
+  // A v9 group's weights terms: each licence of the checkpoints in its rows, REVE's versions where REVE is there,
+  // no endorsement, and a link to the protocol page's full list, which must exist.
+  const termsOk=(grp,label,prefix,where)=>{
+    const m=grp.match(/<p class="protocol-note fm-terms-note" data-fm-terms="([^"]+)">([\s\S]*?)<\/p>/);
+    assert.ok(m,where+': the group prints the weights terms of its rows');
+    const ms=F.models.filter(x=>grp.includes(`>${e(x.name)}</a>`));
+    assert.ok(ms.length,where+': the group has v9 rows');
+    for(const x of ms) assert.ok(m[2].includes(label==='zh'&&/^REVE /.test(licName(x))?'REVE 负责任使用许可 v1.0':licName(x)),where+': the terms name '+x.name+'\'s licence ('+licName(x)+')');
+    if(ms.some(x=>SLUG[x.id]==='reve')) assert.ok(m[2].includes(ms.filter(x=>SLUG[x.id]==='reve').map(x=>`${x.name} @ ${x.revision.split(' @ ').at(-1)}`).join(' · ')),where+': REVE named by version');
+    assert.ok(m[2].includes(endorse[label])&&m[2].includes(`href="/${prefix}protocols/${m[1]}/#v9-licences"`)&&pageOf(prefix+'protocols/'+m[1]+'/').includes('id="v9-licences"'),where+': no endorsement, and the full list linked');
+  };
+  // ZUNA 1.1's research-use sentence on every one of its rows in a group, and on no other row.
+  const zunaRowsOk=(grp,label,where,adapt)=>{
+    const trs=[...grp.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map(m=>m[1]),z=trs.filter(t=>t.includes('>ZUNA 1.1</a>'));
+    assert.ok(z.length>0,where+': ZUNA 1.1 has rows');
+    assert.ok(z.every(t=>t.includes(research[label])),where+': ZUNA 1.1\'s research-use sentence on every one of its rows');
+    assert.equal(trs.filter(t=>t.includes(research[label])).length,z.length,where+': the research-use sentence belongs to ZUNA 1.1\'s rows');
+    if(adapt) assert.ok(z.every(t=>t.includes(label==='en'?'Pretraining exposure: '+e(E.statements.unknown):'是否出现在预训练数据中：'+e(Z[E.statements.unknown]))),where+': ZUNA 1.1\'s adapted rows say its exposure is unknown');
+  };
 
   // 1. Protocol pages.
   for(const t of data.tracks){
@@ -2808,6 +2833,13 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
         if(first.licence_note.replace(/\.$/,'')!==first.weights_licence) assert.ok(printed(li,first.licence_note,label),where+': the '+s+' licence note');
         assert.ok(li.includes(`href="${first.paper}"`),where+': the '+s+' paper is cited');
       }
+      {const rl=lic.slice(lic.indexOf('<li data-licence="reve">'),lic.indexOf('</li>',lic.indexOf('<li data-licence="reve">')));
+       assert.ok(rl.includes(reveVersions),where+': the REVE licence entry names the model versions');
+       assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+endorse[label]),where+': no author endorses these results, under the licences');}
+      // The released limitation keeps its words; where it calls pretraining overlap unknown, a dated pointer follows it.
+      {const lim=html.indexOf('<p class="protocol-limitation"'),ptr=html.indexOf('<p class="protocol-note fm-limitation-pointer">');
+       if(/pretraining overlap unknown/.test(t.limitation)) assert.ok(ptr>lim&&ptr<html.indexOf('id="steps"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('href="#pretraining-exposure"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('2026-10-04'),where+': a dated pointer beside "pretraining overlap unknown"');
+       else assert.equal(ptr,-1,where+': a pointer without the released words it points from');}
       assert.ok(sec.includes(label==='en'?'which is not proof that its recordings were never seen':'这并不证明它的记录从未被模型见过'),where+': the exposure key says what a statement is not');
       assert.ok(sec.includes(`href="/data/${fmcsv}" download`)&&sec.includes(`href="/${prefix}releases/#${REL}"`),where+': the v9 CSV and its release are linked');
       const vis=visible(label==='zh'?chineseOnly(sec):sec);
@@ -2993,6 +3025,10 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     }
     const adapted=ms.filter(m=>m.adaptation==='run');
     assert.equal(html.includes('id="g-eegmat-eegmat-v9-adaptation"'),adapted.length>0,path+': the EEGMAT adaptation group where the model was adapted');
+    for(const g of [...html.matchAll(/<section class="entity-group" id="(g-[^"]+-(?:foundation-v9|v9-adaptation))">([\s\S]*?)<\/section>/g)].filter(g=>g[2].includes('<tbody>'))){
+      termsOk(g[2],label,prefix,path+' '+g[1]);
+      if(s==='zuna') zunaRowsOk(g[2],label,path+' '+g[1],g[1].endsWith('v9-adaptation'));
+    }
     const cp=html.slice(html.indexOf('<section class="topic-section" id="checkpoints"'),html.indexOf('</section>',html.indexOf('id="checkpoints"')));
     for(const m of ms){
       const a=cp.indexOf(`<article class="fm-checkpoint" data-checkpoint="${m.id}">`),art=cp.slice(a,cp.indexOf('</article>',a)),w=path+' '+m.id;
@@ -3036,10 +3072,15 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     assert.ok(a>html.indexOf(`id="g-${t.id}"`)&&grp.includes(`href="/${prefix}protocols/${t.id}/#foundation-v9"`),path+': the '+t.id+' v9 group follows the released one and links the v9 section');
     assert.equal(bodyRows(grp),scored*(t.type==='tradeoff'?2:1),path+': every scored checkpoint');
     assert.equal(grp.includes('fm-not-run-note'),scored<F.models.length,path+': a checkpoint not run is named with its reason');
+    const label=prefix?'zh':'en';
+    zunaRowsOk(grp,label,path+' '+t.id+' v9 group',false);
+    termsOk(grp,label,prefix,path+' '+t.id+' v9 group');
   }
   for(const prefix of ['','zh/']){
     const html=pageOf(prefix+'datasets/eegmat/'),a=html.indexOf('id="g-eegmat-v9-adaptation"'),grp=html.slice(a,html.indexOf('</section>',a));
     assert.equal(bodyRows(grp),3*F.eegmat_adaptation.rows.length,prefix+'datasets/eegmat/: the v9 adaptation, three rows per adapted encoder');
+    zunaRowsOk(grp,prefix?'zh':'en',prefix+'datasets/eegmat/ v9 adaptation',true);
+    termsOk(grp,prefix?'zh':'en',prefix,prefix+'datasets/eegmat/ v9 adaptation');
   }
 
   // 6. LaBraM and CBraMod on the topic pages and data use: the sourced statement, never "unresolved".
@@ -3106,6 +3147,8 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   const rankingOk={en:/\b(?:not ranked|never ranked|not a ranking|none of them ranks|share a ranking)\b|rank-4|rank 4|any model’s best/gi,zh:/不排名|不是排名|从不排名|都不用来给模型排名|不能放进同一个排名/g};
   const notProof={en:/\bnot exposed\b|\bproven\b|\bno overlap\b/i,zh:/已证明|证明没有|没有重叠/};
   const flagOf=(y,lo,c)=>y<=c?'at-or-below':lo<=c?'interval-reaches':null;
+  const famOf=id=>({'reve-base':'reve','reve-large':'reve','luna-base':'luna','luna-large':'luna','brainomni-base':'brainomni','steegformer-base':'st-eegformer','steegformer-large':'st-eegformer','erp-fm-base':'erp-fm'})[id]??(id.startsWith('eeg-fm-masking/')?'eeg-fm-masking':id);
+  const reveVersions=F.models.filter(m=>famOf(m.id)==='reve').map(m=>`${m.name} @ ${m.revision.split(' @ ').at(-1)}`).join(' · ');
   const flagWord={en:{'at-or-below':'At or below chance level','interval-reaches':'Interval reaches chance level'},zh:{'at-or-below':'不高于随机水平','interval-reaches':'区间触及随机水平'}};
   const textOf=s=>decodeHtml(s.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
   // Every value of the files these sections read, as the site prints it, and every number in their own text.
@@ -3308,6 +3351,7 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
         assert.ok(li.includes(e(zh?Z[m.weights_licence]:m.weights_licence))&&li.includes(`href="${m.paper}"`),w+': '+f+' weights licence and paper');
         if(m.licence_note.replace(/\.$/,'')!==m.weights_licence) assert.ok(li.includes(e(zh?Z[m.licence_note]:m.licence_note)),w+': '+f+' licence note');
       }
+      assert.ok(lic.slice(lic.indexOf('<li data-licence="reve">'),lic.indexOf('</li>',lic.indexOf('<li data-licence="reve">'))).includes(reveVersions),w+': the REVE licence entry names the model versions');
       assert.ok(sec.includes(`href="/${prefix}releases/#${REL}"`),w+': the release is linked');
     }
 
@@ -3364,6 +3408,25 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       for(const re of zh?[/不能验证一顶实体的少通道电极帽/,/接近下限的分数在两个子集之间的先后并不可靠/,/不是上面的 EESM23，也不是耳部 EEG/,/两个睡眠结果不能放进同一个排名/,/没有做配对检验/]
                        :[/does not validate a physical low-channel cap/,/near-floor scores are not ordered reliably/,/not EESM23 above and not ear-EEG/,/do not share a ranking/,/no paired test/])
         assert.match(vis,re,w+': '+re);
+      // The v9 export's required limitations that does-pretraining-help carries, in this page's words (review of 2026-10-05):
+      // small cohorts with descriptive intervals and no multiplicity correction, balanced designs as method comparisons,
+      // new people on the same task and setup only, windows shorter than the pretraining contexts.
+      const lim=sec.slice(sec.indexOf('<div class="method-grid-wide fm-limits">'),sec.indexOf('</div>',sec.indexOf('<div class="method-grid-wide fm-limits">')));
+      for(const re of zh?[/小队列，描述性区间/,/没有计入交叉验证带来的相关性/,/没有做多重比较校正/,/冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/通常比它预训练时的上下文更短/]
+                       :[/Small cohorts, descriptive intervals/,/ignores cross-validation dependence/,/no multiplicity correction/,/with 126 frozen cells an occasional non-overlap is expected by chance/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/shorter than its pretraining context/])
+        assert.match(visible(lim),re,w+': the limitation '+re);
+      for(const k of ['beta-8ch','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
+      // Licence notes travel with the rows: one entry per family printed, REVE by version, no endorsement.
+      const lic=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose fm-licences">'),sec.indexOf('</ul>',sec.indexOf('fm-licences')));
+      const fams=[...new Set(matrix.map(famOf))];
+      assert.deepEqual([...lic.matchAll(/<li data-licence="([^"]+)">/g)].map(m=>m[1]),fams,w+': one licence entry per family printed, in the export\'s order');
+      for(const f of fams){
+        const m=F.models.find(x=>famOf(x.id)===f),li=lic.slice(lic.indexOf(`<li data-licence="${f}">`),lic.indexOf('</li>',lic.indexOf(`<li data-licence="${f}">`)));
+        assert.ok(li.includes(e(zh?Z[m.weights_licence]:m.weights_licence))&&li.includes(`href="${m.paper}"`),w+': '+f+' weights licence and paper');
+        if(m.licence_note.replace(/\.$/,'')!==m.weights_licence) assert.ok(li.includes(e(zh?Z[m.licence_note]:m.licence_note)),w+': '+f+' licence note');
+      }
+      assert.ok(lic.slice(lic.indexOf('<li data-licence="reve">'),lic.indexOf('</li>',lic.indexOf('<li data-licence="reve">'))).includes(reveVersions),w+': the REVE licence entry names the model versions');
+      assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+(zh?'任何模型的作者都没有为这些结果背书':'No model’s authors endorse these results')),w+': no author endorses these results');
     }
     // model-adaptation: a pointer to the table, no figure; its own claims are pinned above.
     {

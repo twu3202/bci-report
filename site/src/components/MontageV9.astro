@@ -19,10 +19,11 @@
 import Fig from './Fig.astro';
 import NameList from './NameList.astro';
 import FmTopicBa from './FmTopicBa.astro';
+import FmLicences from './FmLicences.astro';
 import { protocolCopy } from '../data/entity-copy';
 import { hrefFor, type Locale } from '../data/i18n';
 import data from '../data/mvp.json';
-import { FM_ANCHOR, FM_JSON, fmExposure, fmRelease, fmResearchUse } from '../data/foundation-models';
+import { FM_ANCHOR, FM_JSON, fmExposure, fmMatrixModels, fmRelease, fmResearchUse } from '../data/foundation-models';
 import { BETA4, BETA8, protocolFacts, cca4, cca4Overlapping, cca4ReleasedOverlapping, montageAboveCbramod, montageNonMontage, montagePublished, montageRows, SLEEP } from '../data/foundation-topics';
 import type { Fig as FigValue } from '../data/entities';
 
@@ -64,7 +65,13 @@ const c = {
     notInSleep: 'Not in the sleep protocol',
     note: (d: string) => `Eight to four: for a new row, the change and whether the two intervals overlap, as the v9 export states them; for a released row only whether its two intervals overlap, because no released file states that difference. The changes are differences of marginal means, with no paired test. Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the lists show, not proof that the recordings were never seen.`,
     limitsLabel: 'BETA and sleep · the new frozen encoders',
+    licencesH3: 'Weights licences and terms',
+    // Since 2026-10-05 (review): the v9 export's required limitations that does-pretraining-help carries, in its words.
     limits: [
+      ['Small cohorts, descriptive intervals', ['BETA has ', people(BETA8), ' people and the sleep protocol ', people(SLEEP), '. Each interval is a participant bootstrap of one row on its own: it ignores cross-validation dependence and carries no multiplicity correction, and with 126 frozen cells an occasional non-overlap is expected by chance.']],
+      ['Method comparisons, not deployment rates', ['BETA is uniform over its 40 targets and the sleep protocol is a balanced sample of epochs: these rows compare methods; they are not detection, false-alarm or latency estimates for real use.']],
+      ['New people, same task and setup', ['The folds hold out people. Nothing here is cross-day, cross-device or cross-dataset evidence, and nothing is a clinical claim.']],
+      ['Short windows', ['Every encoder sees the published 1–2 s windows (sleep as 15 two-second segments), usually shorter than its pretraining context; each model’s input handling is in its row footnote on the protocol pages.']],
       ['Subsets of one recording, not two headsets', 'The eight and four electrodes are channels selected in software from the same 64-channel laboratory recordings. As the core protocol itself says, a subset picked this way does not validate a physical low-channel cap, and near-floor scores are not ordered reliably between the two subsets.'],
       ['Not the in-ear comparison', 'The six-channel column is the core matrix’s sleep protocol, a balanced, quality-screened scalp sample of EESM19 — not EESM23 above and not ear-EEG. The two sleep results do not share a ranking.'],
       ['One fixed recipe, grouped, not ranked', 'Every new row is the published frozen probe with only the encoder swapped. Rows keep the export’s family order; a row is above or below another only where the intervals do not overlap.'],
@@ -90,7 +97,12 @@ const c = {
     notInSleep: '不在睡眠协议中',
     note: (d: string) => `从 8 个到 4 个：新行给出第九轮导出文件中的变化量以及两个区间是否重叠；已发布的行只给出两个区间是否重叠，因为没有任何已发布的文件写出这个差值。这些变化是边际均值之差，没有做配对检验。未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是清单所显示的情况，并不证明这些记录从未被模型见过。`,
     limitsLabel: 'BETA 与睡眠分期 · 新的冻结编码器',
+    licencesH3: '权重许可与条款',
     limits: [
+      ['小队列，描述性区间', ['BETA 有 ', people(BETA8), ' 名被试，睡眠协议有 ', people(SLEEP), ' 名。每个区间都是对单独一行做的被试 bootstrap：没有计入交叉验证带来的相关性，也没有做多重比较校正；冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。']],
+      ['方法比较，不是部署时的比率', ['BETA 在 40 个目标上均匀分布，睡眠协议是类别平衡的抽样数据帧：这些行用来比较方法，不是实际使用中检出率、误报率或延迟的估计。']],
+      ['新被试、同一任务与设置', ['折留出的是被试。这里没有跨天、跨设备或跨数据集的证据，也不做任何临床方面的声明。']],
+      ['时间窗很短', ['每个编码器看到的都是已发布的 1–2 秒时间窗（睡眠为 15 个 2 秒片段），通常比它预训练时的上下文更短；各模型的输入处理写在协议页面上各行的脚注中。']],
       ['同一记录的子集，不是两款设备', '8 个和 4 个电极都是从同一套 64 通道实验室记录中用软件选出的通道。正如核心协议自己所说，这样选出的子集不能验证一顶实体的少通道电极帽，而且接近下限的分数在两个子集之间的先后并不可靠。'],
       ['不是耳道内的那项比较', '6 通道这一列是核心矩阵的睡眠协议：EESM19 中类别平衡、经过质量筛选的头皮样本——不是上面的 EESM23，也不是耳部 EEG。两个睡眠结果不能放进同一个排名。'],
       ['一个固定方案，分组列出，不排名', '每个新行都是已发布的冻结探针，只换了编码器。各行保持导出文件的模型类别顺序；只有区间不重叠时，才说一行高于或低于另一行。'],
@@ -139,6 +151,8 @@ const aboveNames = montageAboveCbramod;
   </div>
   <p class="citation-note fm-exposure-key">{c.note(fmExposure.checkedOn)}</p>
   <p class="eyebrow limits-label">{c.limitsLabel}</p>
-  <div class="method-grid-wide fm-limits">{c.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+  <div class="method-grid-wide fm-limits">{c.limits.map(([h, p]) => <article><h3>{h}</h3><p>{typeof p === 'string' ? p : p.map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p></article>)}</div>
+  <h3 class="roadmap-h3" id="v9-montage-licences">{c.licencesH3}</h3>
+  <FmLicences models={fmMatrixModels} locale={locale}/>
   <p class="citation-note">{c.files[0]}{protocolLinks.map((id, i) => <>{i > 0 && (zh ? '、' : ', ')}<a href={`${hrefFor(`/protocols/${id}/`, locale)}#${FM_ANCHOR}`}>{protocolLabel[id]}</a></>)}{c.files[1]}<a href={`/data/${FM_JSON}`} download>{FM_JSON}</a>{c.files[2]}</p>
 </section>

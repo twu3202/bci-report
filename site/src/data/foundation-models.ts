@@ -137,6 +137,40 @@ export const fmAblation: { design: string; paper: string; checkpoints: string[] 
 /** ZUNA 1.1's model-card sentence, which must travel with its rows. */
 export const ZUNA_RESEARCH_USE = 'research use only, not for diagnosis or clinical use';
 export const fmResearchUse = (m: FmModel) => m.licenceNote.includes(ZUNA_RESEARCH_USE);
+/**
+ * A family's checkpoint versions, where its weights licence asks for the model version to be named (REVE's
+ * Responsible Use License: "cite the REVE paper and name the model version"): "REVE Base @ dc2a075c · REVE Large
+ * @ 317531c7", from each checkpoint's revision in the export (review of 2026-10-05).
+ */
+export function fmVersionsOf(ms: FmModel[]): string | undefined {
+  if (!/name the model version/.test(ms[0].licenceNote)) return undefined;
+  if (ms.some(m => !m.revision)) throw new Error(`foundation-models.ts: ${ms[0].name}'s licence asks for its version, and the export has none`);
+  return ms.map(m => `${m.name} @ ${m.revision!.split(' @ ').at(-1)}`).join(' · ');
+}
+/** A weights licence's name, without the export's parenthesis or note ("CC BY-ND 4.0 (…)" → "CC BY-ND 4.0"). */
+export const fmLicenceName = (m: FmModel) => m.weightsLicence.replace(/\s*[(;].*$/, '');
+const LICENCE_ZH: Record<string, string> = { 'REVE Responsible Use License v1.0': 'REVE 负责任使用许可 v1.0' };
+/**
+ * The weights terms of the checkpoints a dataset or method group prints, in one sentence (review of 2026-10-05:
+ * licence notes travel with the rows): each licence with the families under it, REVE's versions, what the
+ * no-derivatives and non-commercial licences mean here, and that no model's authors endorse the results.
+ */
+export function fmTermsSentence(models: FmModel[], locale: 'en' | 'zh'): string {
+  const zh = locale === 'zh';
+  const byLicence = new Map<string, FmModel[]>();
+  for (const m of models) byLicence.set(fmLicenceName(m), [...(byLicence.get(fmLicenceName(m)) ?? []), m]);
+  const list = (xs: string[]) => zh ? xs.join('、') : xs.length < 3 ? xs.join(' and ') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
+  const parts = [...byLicence.entries()].map(([licence, ms]) => {
+    const families = [...new Set(ms.map(m => fmPageNames[m.slug]))];
+    const versions = [...new Set(ms.map(m => m.slug))].map(s => fmVersionsOf(ms.filter(m => m.slug === s))).filter(Boolean).join(' · ');
+    const nd = /\bND\b/.test(licence), nc = /\bNC\b/.test(licence);
+    return zh
+      ? `${list(families)} 采用 ${LICENCE_ZH[licence] ?? licence}${versions ? `（模型版本：${versions}）` : ''}${nd ? '，不分享修改后的权重' : ''}${nc ? '，仅限非商业用途' : ''}`
+      : `${list(families)} under ${/License/.test(licence) ? 'the ' : ''}${licence}${versions ? ` (model versions: ${versions})` : ''}${nd ? ', with no modified weights shared' : ''}${nc ? ', non-commercial' : ''}`;
+  });
+  return zh ? `权重条款：${parts.join('；')}。任何模型的作者都没有为这些结果背书。`
+            : `Weights terms: ${parts.join('; ')}. No model’s authors endorse these results.`;
+}
 
 /* --- Pretraining exposure: the owner's sourced statement --------------------------------- */
 

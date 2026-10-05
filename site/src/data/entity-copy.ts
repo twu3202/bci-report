@@ -292,6 +292,7 @@ export const protocolCopy = {
     adaptScale: (people: string) => `${people} people`,
     // LaBraM and CBraMod: the owner's sourced exposure statement (2026-10-04), beside the released sentence.
     exposureChecked: (date: string) => `Checked ${date}.`,
+    overlapPointer: (date: string) => `On “pretraining overlap unknown”: since ${date}, each model’s exposure is stated as its authors’ published pretraining list shows it, with the source.`,
     coreExposureTail: 'That is what the authors’ lists show, not proof that these recordings were never seen. The sentence above is the released protocol file’s; it predates the check.',
     fmExposureLink: 'The v9 encoders’ statements are in the exposure column of their table above →',
     otherProtocols: 'Other protocols',
@@ -410,6 +411,7 @@ export const protocolCopy = {
     notAdapted: '按设计未做适配：',
     adaptScale: (people: string) => `${people} 名被试`,
     exposureChecked: (date: string) => `${date} 核查。`,
+    overlapPointer: (date: string) => `关于上文的“pretraining overlap unknown”（预训练数据是否重叠未知）：自 ${date} 起，每个模型是否出现在预训练数据中，都按其作者公开的预训练数据清单陈述，并附来源。`,
     coreExposureTail: '这是作者清单所显示的情况，并不证明这些记录从未被模型见过。上面那句话来自已发布的协议文件，早于这次核查。',
     fmExposureLink: '第九轮各编码器的情况，见上方表格中“是否出现在预训练数据中”一列 →',
     otherProtocols: '其他协议',

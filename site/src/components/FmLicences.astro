@@ -1,0 +1,31 @@
+---
+/**
+ * The v9 models' weights licences and terms (2026-10-04), one entry per model family
+ * printed on the page: the checkpoints' names, the weights licence and its note as
+ * the export states them (Chinese from the translation table, with the English
+ * beside it), the paper, and — where the licence asks for the model version to be
+ * named (REVE's Responsible Use License) — each checkpoint's revision. Under the list,
+ * unless the page already says it, that no model's authors endorse these results and
+ * no adapted weights were kept or shared. Used on every protocol page's v9 section,
+ * on does-pretraining-help and on fewer-electrodes (review of 2026-10-05).
+ */
+import type { Locale } from '../data/i18n';
+import { fmVersionsOf, type FmModel } from '../data/foundation-models';
+import { fmText } from '../data/foundation-models-zh';
+
+interface Props { models: FmModel[]; locale: Locale; endorsement?: boolean }
+const { models, locale, endorsement = true } = Astro.props;
+const zh = locale === 'zh';
+const colon = zh ? '：' : ': ';
+const say = (en: string) => fmText(en, locale);
+// One entry per family, in the order the page meets them; a family's checkpoints in the export's order.
+const families = [...new Map(models.map(m => [m.slug, models.filter(x => x.slug === m.slug)])).values()];
+---
+<ul class="entity-links protocol-prose fm-licences">{families.map(ms => {
+  const w = say(ms[0].weightsLicence), n = say(ms[0].licenceNote);
+  // A note that only restates the licence's name ("MIT.") is not printed twice.
+  const restates = ms[0].licenceNote.replace(/\.$/, '') === ms[0].weightsLicence;
+  const versions = fmVersionsOf(ms);
+  return <li data-licence={ms[0].slug}><strong lang="en">{ms.map(m => m.name).join(' · ')}</strong>{colon}<span>{w.text}</span>{w.original && <span class="note-original" lang="en">{w.original}</span>}{!restates && <><span class="fm-licence-note">{n.text}</span>{n.original && <span class="note-original" lang="en">{n.original}</span>}</>}{versions && <span class="fm-licence-versions">{zh ? '模型版本：' : 'Model versions: '}<span lang="en">{versions}</span>{zh ? '。' : '.'}</span>} <a href={ms[0].paper} target="_blank" rel="noreferrer">{zh ? '论文 ↗' : 'paper ↗'}</a></li>;
+})}</ul>
+{endorsement && <p class="protocol-note fm-no-endorsement">{zh ? '任何模型的作者都没有为这些结果背书；没有保留或分享任何适配后的权重或 LoRA 增量。' : 'No model’s authors endorse these results, and no adapted weights or LoRA deltas were kept or shared.'}</p>}

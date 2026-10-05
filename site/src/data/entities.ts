@@ -29,8 +29,9 @@ import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
-         fmSlugs, type FmRow, type FmSlug } from './foundation-models';
+         fmResearchUse, fmSlugs, type FmModel, type FmRow, type FmSlug } from './foundation-models';
 import { fmZh } from './foundation-models-zh';
+import { entityCopy } from './entity-copy';
 import { TOPIC_PRINTS } from './foundation-topics';
 
 /** English is required; a missing `zh` renders the English text marked lang="en". */
@@ -111,6 +112,11 @@ export interface ResultGroup {
    * a sentence, never a zero (the v9 BrainOmni cells on the one-second ERP protocols).
    */
   notRun?: { method: string; methodSlug?: MethodSlug; reason: string }[];
+  /**
+   * A v9 group (2026-10-04): the protocol whose page lists every weights licence. The group prints the weights
+   * terms of the checkpoints in its rows beside them, and links that list (review of 2026-10-05).
+   */
+  fmTerms?: string;
 }
 
 export interface DatasetEntity {
@@ -225,9 +231,17 @@ export const fmModeLabel = (mode: string): L => {
   if (!FM_MODE_ZH[mode]) throw new Error(`entities.ts: no Chinese for the training mode ${mode}`);
   return { en: mode, zh: FM_MODE_ZH[mode] };
 };
-const fmExposureNote = (r: FmRow): RowNote | undefined => r.exposure.status === 'not_exposed' ? undefined : {
+const fmExposureNote = (r: { exposure: { status: string; statement: string } }): RowNote | undefined => r.exposure.status === 'not_exposed' ? undefined : {
   en: [`Pretraining exposure: ${r.exposure.statement}.`],
   zh: [`是否出现在预训练数据中：${fmZh[r.exposure.statement]}。`],
+};
+/**
+ * ZUNA 1.1's model-card sentence travels with every one of its rows, here as on the protocol and topic pages
+ * (review of 2026-10-05), after any other reading of the row.
+ */
+const withResearchUse = (model: FmModel, note: RowNote | undefined): RowNote | undefined => !fmResearchUse(model) ? note : {
+  en: [...(note?.en ?? []), ...(note ? [' '] : []), entityCopy.en.researchUse],
+  zh: [...(note?.zh ?? []), entityCopy.zh.researchUse],
 };
 function fmGroups(datasetName: string): ResultGroup[] {
   return data.tracks.filter(t => t.dataset === datasetName).map(t => {
@@ -242,11 +256,12 @@ function fmGroups(datasetName: string): ResultGroup[] {
       if (t.type === 'tradeoff') {
         const i = r.idle!;
         rows.push({ ...base, people, metric: { en: 'Commands detected ≤3 s', zh: '检出的指令 ≤3 秒' }, value: i.detected, of: i.commandTrials,
-          note: { en: [i.abstain, ' of ', r.people!, ' people always abstained', ...(note ? ['. ', ...note.en] : ['.'])],
-                  zh: [i.abstain, ' 名始终拒识（共 ', r.people!, ' 名被试）', ...(note ? ['；', ...note.zh] : ['。'])] } });
-        rows.push({ ...base, people, metric: { en: 'Idle false activations', zh: '空闲误触发' }, value: i.falseActivations, of: i.idleTrials });
+          note: withResearchUse(r.model, { en: [i.abstain, ' of ', r.people!, ' people always abstained', ...(note ? ['. ', ...note.en] : ['.'])],
+                  zh: [i.abstain, ' 名始终拒识（共 ', r.people!, ' 名被试）', ...(note ? ['；', ...note.zh] : ['。'])] }) });
+        rows.push({ ...base, people, metric: { en: 'Idle false activations', zh: '空闲误触发' }, value: i.falseActivations, of: i.idleTrials,
+          note: withResearchUse(r.model, undefined) });
       } else {
-        rows.push({ ...base, people, metric: BA, value: r.primary!, interval: r.interval, note });
+        rows.push({ ...base, people, metric: BA, value: r.primary!, interval: r.interval, note: withResearchUse(r.model, note) });
       }
     }
     const chance = fmRowsByProtocol[t.id].find(r => r.chance)?.chance;
@@ -254,7 +269,7 @@ function fmGroups(datasetName: string): ResultGroup[] {
     return {
       id: `${t.id}-${FM_ANCHOR}`,
       title: { en: core.en.replace('Core matrix · ', 'v9 foundation encoders, frozen · '), zh: core.zh!.replace('核心矩阵 · ', '第九轮基础模型（编码器冻结）· ') },
-      path, rows, chance, notRun,
+      path, rows, chance, notRun, fmTerms: t.id,
     };
   });
 }
@@ -271,21 +286,23 @@ function fmAdaptationGroup(): ResultGroup {
   return {
     id: 'eegmat-v9-adaptation',
     title: { en: 'Model adaptation, v9 · new people, same task, one fixed recipe (not a ranking)', zh: '模型适配（第九轮）· 新被试、同一任务、一个固定方案（不是排名）' },
-    path, chance: fmAdaptationMeta.chance,
+    path, chance: fmAdaptationMeta.chance, fmTerms: 'arithmetic-rest',
     rows: fmAdaptation.flatMap(a => {
       const base = { path, method: a.model.name, methodSlug: a.model.slug as MethodSlug, people };
       const c = a.change;
+      // ZUNA 1.1: exposure unknown and research use only, on each of its rows, as its frozen row says.
+      const tail = (n: RowNote): RowNote => { const x = fmExposureNote(a); const y = x ? { en: [...n.en, ' ', ...x.en], zh: [...n.zh, ...x.zh] } : n; return withResearchUse(a.model, y)!; };
       return [
         { ...base, condition: { en: 'Frozen encoder + trained head', zh: '冻结编码器 + 训练的分类头' }, metric: BA, value: a.frozen.ba, interval: a.frozen.interval,
-          note: { en: [a.frozen.trainable, ' trainable parameters.'], zh: [a.frozen.trainable, ' 个可训练参数。'] } },
+          note: tail({ en: [a.frozen.trainable, ' trainable parameters.'], zh: [a.frozen.trainable, ' 个可训练参数。'] }) },
         { ...base, condition: { en: 'LoRA rank 4 + head', zh: '秩为 4 的 LoRA + 分类头' }, metric: BA, value: a.lora.ba, interval: a.lora.interval,
-          note: { en: [a.lora.trainable, ' trainable parameters.'], zh: [a.lora.trainable, ' 个可训练参数。'] } },
+          note: tail({ en: [a.lora.trainable, ' trainable parameters.'], zh: [a.lora.trainable, ' 个可训练参数。'] }) },
         { ...base, condition: { en: 'LoRA minus frozen + head, same people and folds', zh: 'LoRA 减冻结 + 分类头，相同被试与折' }, metric: DIFF,
           value: c.mean, interval: c.interval,
-          note: { en: [c.helped, ' people improved, ', c.harmed, ' got worse, ', c.tied, ' unchanged',
+          note: tail({ en: [c.helped, ' people improved, ', c.harmed, ' got worse, ', c.tied, ' unchanged',
                        c.excludesZero ? '. The interval excludes zero.' : '. The interval includes zero: no change is established.'],
                   zh: [c.helped, ' 人提升、', c.harmed, ' 人变差、', c.tied, ' 人不变',
-                       c.excludesZero ? '。区间不含零。' : '。区间包含零：不能认定有变化。'] } },
+                       c.excludesZero ? '。区间不含零。' : '。区间包含零：不能认定有变化。'] }) },
       ];
     }),
   };
