@@ -5,6 +5,10 @@ import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import MontageV9 from '../../../components/MontageV9.astro';
+import { formatFig } from '../../../data/entities';
+import { cca4, montageRows } from '../../../data/foundation-topics';
+import mvp from '../../../data/mvp.json';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -39,17 +43,22 @@ const earBa = pct(ear.mean_balanced_accuracy), scalpBa = pct(scalp.mean_balanced
 const sleepChance = pct(e.chance_level, 0);
 const sleepGap = pp(d.mean, 1), alphaGap = pp(ad.mean, 1);
 const [alphaLo, alphaHi] = ad.bootstrap_95.map(v => pp(v, 1));
+// Since 2026-10-04: BETA at eight and four electrodes for the new frozen encoders (foundation-topics.ts).
+const v9 = (id: string) => montageRows.find(r => r.model.id === id)!;
+const sl = v9('singlem'), zu = v9('zuna');
+const [sl8, sl4, zu8, zu4] = [sl.cell8, sl.cell4, zu.cell8, zu.cell4].map(c => formatFig(c.primary!));
+const betaPeople = mvp.tracks.find(t => t.id === 'beta-4ch')!.subjects, cca4Ba = formatFig(cca4.ba);
 
 const copy = {
   en: {
-    description: `In-ear channels did not match scalp for sleep staging: ${earBa} against ${scalpBa} balanced accuracy on the same ${cov.people} people. For eyes open or closed, all sixteen electrodes minus four posterior ones was ${alphaGap}, an interval spanning zero. Neither is a headset result.`,
-    answer: `In-ear channels did not, for sleep staging in this cohort: on the same [[${cov.people}]] people and epochs, four in-ear channels scored [[${earBa}]] balanced accuracy on five-stage sleep against [[${scalpBa}]] for six scalp electrodes (chance [[${sleepChance}]]), a paired gap of [[${sleepGap}]]. In a separate eyes-open-or-closed task on [[${a.cohort.people}]] other people, four posterior electrodes showed no consistent difference from all sixteen: all sixteen minus four came to [[${alphaGap}]] (paired 95% interval [[${alphaLo}]] to [[${alphaHi}]]). These are channel sets from specific research recordings, not headsets—the sleep gap mixes electrode position, count and hardware, and the four posterior electrodes are a software subset of one recording—so neither shows that fewer electrodes are generally better or worse.`,
+    description: `In-ear channels did not match scalp for sleep staging: ${earBa} against ${scalpBa} on the same ${cov.people} people. Four posterior electrodes against sixteen: no consistent difference (${alphaGap}). On BETA, single-channel and channel-wise foundation encoders showed no advantage at four electrodes. No headset result.`,
+    answer: `In-ear channels did not, for sleep staging in this cohort: on the same [[${cov.people}]] people and epochs, four in-ear channels scored [[${earBa}]] balanced accuracy on five-stage sleep against [[${scalpBa}]] for six scalp electrodes (chance [[${sleepChance}]]), a paired gap of [[${sleepGap}]]. In a separate eyes-open-or-closed task on [[${a.cohort.people}]] other people, four posterior electrodes showed no consistent difference from all sixteen: all sixteen minus four came to [[${alphaGap}]] (paired 95% interval [[${alphaLo}]] to [[${alphaHi}]]). These are channel sets from specific research recordings, not headsets—the sleep gap mixes electrode position, count and hardware, and the four posterior electrodes are a software subset of one recording—so neither shows that fewer electrodes are generally better or worse. On the core matrix's BETA protocol ([[${betaPeople}]] people), the frozen foundation encoders added on 4 October 2026 show no small-montage advantage either: the single-channel SingLEM went from [[${sl8}]] with eight electrodes to [[${sl4}]] with four and the channel-wise ZUNA 1.1 from [[${zu8}]] to [[${zu4}]], and training-free CCA keeps the highest four-electrode score ([[${cca4Ba}]]), with no new encoder above it.`,
     plotCaption: 'Two separate paired comparisons, each on its own people and task.',
     plotLegend: `Paired difference in person-mean balanced accuracy, scalp or all sixteen minus in-ear or four posterior. Dot: the mean difference; line: descriptive person-bootstrap 95% interval; dashed line: zero, no difference. Right of zero, the scalp or sixteen-electrode configuration scored higher. Chance differs (${pct(e.chance_level, 0)} for five-stage sleep, ${pct(a.chance_level, 0)} for eyes open or closed), so the two rows do not rank against each other.`,
     plotRows: { sleep: `Sleep staging · six scalp minus four in-ear · ${cov.people} people`, alpha: `Eyes open or closed · all sixteen minus four posterior · ${a.cohort.people} people` },
     plotInterval: (i: number[]) => `95% interval ${ipp(i)}`,
-    eyebrow: 'Montage · two paired comparisons',
-    dek: `On the same ${cov.people} people and the same 30-second epochs, six scalp electrodes staged sleep better than four in-ear channels${allHigher ? ` — for every one of the ${cov.people}` : ''}. That is a paired, descriptive result from one simple model on one cohort. It does not rank headsets, and it does not separate the hardware from electrode position and count. A second, unrelated comparison — four posterior electrodes against all sixteen for telling eyes open from closed — ${spansZero ? 'found no consistent difference' : 'is reported below'} across ${a.cohort.people} people.`,
+    eyebrow: 'Montage · two paired comparisons · BETA and sleep montages',
+    dek: `On the same ${cov.people} people and the same 30-second epochs, six scalp electrodes staged sleep better than four in-ear channels${allHigher ? ` — for every one of the ${cov.people}` : ''}. That is a paired, descriptive result from one simple model on one cohort. It does not rank headsets, and it does not separate the hardware from electrode position and count. A second, unrelated comparison — four posterior electrodes against all sixteen for telling eyes open from closed — ${spansZero ? 'found no consistent difference' : 'is reported below'} across ${a.cohort.people} people. A third comparison, added on 4 October 2026, sets new frozen foundation encoders beside the released rows on BETA at eight and four electrodes and on six-channel sleep.`,
     findingLabel: `Scalp minus in-ear balanced accuracy, same ${cov.people} people`,
     findingH3: allHigher ? 'Every person scored higher on scalp' : 'Most people scored higher on scalp',
     findingP: `${d.people_scalp_higher} of ${cov.people} people scored higher with six scalp electrodes than with four in-ear channels. The descriptive person-bootstrap interval for the mean difference is ${ipp(d.bootstrap_95)}. Both configurations were scored on the identical epochs.`,
@@ -99,14 +108,14 @@ const copy = {
     zenodoLink: 'Zenodo record ↗', reportLink: 'HAL report ↗', codeLink: 'Authors’ code ↗',
   },
   zh: {
-    description: `睡眠分期上，耳道内通道不如头皮电极：同样 ${cov.people} 名被试，平衡准确率 ${earBa} 对 ${scalpBa}。区分睁眼与闭眼时，全部 16 个电极减后部 4 个为 ${alphaGap}，区间跨过零。两者都不是头戴设备的结果。`,
-    answer: `在这批被试的睡眠分期上，耳道内通道不如头皮电极：在同样 [[${cov.people}]] 名被试、同样的数据帧上，4 个耳道内通道的五期睡眠分期平衡准确率为 [[${earBa}]]，6 个头皮电极为 [[${scalpBa}]]（随机水平 [[${sleepChance}]]），配对差值为 [[${sleepGap}]]（百分点）。在另一项区分睁眼与闭眼的任务中，另一批 [[${a.cohort.people}]] 名被试上，后部 4 个电极与全部 16 个电极没有一致的差异：全部 16 个减后部 4 个为 [[${alphaGap}]]（配对 95% 区间 [[${alphaLo}]] 至 [[${alphaHi}]]）。这些是特定研究记录中的通道组合，不是头戴设备——睡眠上的差距里，电极位置、数量与硬件一起变化，后部 4 个电极则是从同一记录中用软件选出的子集——所以两者都不能说明电极越少一般越好或越差。`,
+    description: `睡眠分期上，耳道内通道不如头皮电极：同样 ${cov.people} 名被试，平衡准确率 ${earBa} 对 ${scalpBa}。后部 4 个电极对全部 16 个：没有一致的差异（${alphaGap}）。在 BETA 上，单通道与逐通道基础模型编码器在 4 个电极时也没有优势。都不是头戴设备的结果。`,
+    answer: `在这批被试的睡眠分期上，耳道内通道不如头皮电极：在同样 [[${cov.people}]] 名被试、同样的数据帧上，4 个耳道内通道的五期睡眠分期平衡准确率为 [[${earBa}]]，6 个头皮电极为 [[${scalpBa}]]（随机水平 [[${sleepChance}]]），配对差值为 [[${sleepGap}]]（百分点）。在另一项区分睁眼与闭眼的任务中，另一批 [[${a.cohort.people}]] 名被试上，后部 4 个电极与全部 16 个电极没有一致的差异：全部 16 个减后部 4 个为 [[${alphaGap}]]（配对 95% 区间 [[${alphaLo}]] 至 [[${alphaHi}]]）。这些是特定研究记录中的通道组合，不是头戴设备——睡眠上的差距里，电极位置、数量与硬件一起变化，后部 4 个电极则是从同一记录中用软件选出的子集——所以两者都不能说明电极越少一般越好或越差。在核心矩阵的 BETA 协议上（[[${betaPeople}]] 名被试），2026 年 10 月 4 日加入的冻结基础模型编码器在电极更少时同样没有优势：单通道的 SingLEM 从 8 个电极的 [[${sl8}]] 降到 4 个电极的 [[${sl4}]]，逐通道的 ZUNA 1.1 从 [[${zu8}]] 降到 [[${zu4}]]；而免训练的标准 CCA 仍是 4 个电极上的最高分（[[${cca4Ba}]]），没有任何新编码器高于它。`,
     plotCaption: '两项彼此独立的配对比较，各有各的被试和任务。',
     plotLegend: `被试平均平衡准确率的配对差值：头皮或全部 16 个电极，减耳道内或后部 4 个电极。点为平均差值，横线为描述性被试 bootstrap 95% 区间，虚线为零（没有差异）。零线右侧表示头皮或 16 电极配置更高。两个任务的随机水平不同（五期睡眠为 ${pct(e.chance_level, 0)}，睁眼闭眼为 ${pct(a.chance_level, 0)}），所以两行之间不能相互排名。`,
     plotRows: { sleep: `睡眠分期 · 6 个头皮减 4 个耳道内 · ${cov.people} 名被试`, alpha: `睁眼与闭眼 · 全部 16 个减后部 4 个 · ${a.cohort.people} 名被试` },
     plotInterval: (i: number[]) => `95% 区间 ${ipp(i)}`,
-    eyebrow: '电极布局 · 两项配对比较',
-    dek: `在同样的 ${cov.people} 名被试、同样的 30 秒数据帧上，6 个头皮电极的睡眠分期效果好于 4 个耳道内通道${allHigher ? `——${cov.people} 人无一例外` : ''}。这是单一队列、单一简单模型的配对描述性结果。它不给头戴设备排名，也无法把硬件本身的影响与电极位置、数量分开。另一项互不相关的比较——区分睁眼与闭眼时，后部 4 个电极对全部 16 个电极——${spansZero ? `在 ${a.cohort.people} 名被试上没有发现一致的差异` : `结果见下文（${a.cohort.people} 名被试）`}。`,
+    eyebrow: '电极布局 · 两项配对比较 · BETA 与睡眠分期的电极布局',
+    dek: `在同样的 ${cov.people} 名被试、同样的 30 秒数据帧上，6 个头皮电极的睡眠分期效果好于 4 个耳道内通道${allHigher ? `——${cov.people} 人无一例外` : ''}。这是单一队列、单一简单模型的配对描述性结果。它不给头戴设备排名，也无法把硬件本身的影响与电极位置、数量分开。另一项互不相关的比较——区分睁眼与闭眼时，后部 4 个电极对全部 16 个电极——${spansZero ? `在 ${a.cohort.people} 名被试上没有发现一致的差异` : `结果见下文（${a.cohort.people} 名被试）`}。第三项比较于 2026 年 10 月 4 日加入：在 BETA 的 8 个与 4 个电极以及 6 通道睡眠分期上，把新的冻结基础模型编码器与已发布的行并列。`,
     findingLabel: `头皮减耳道内的平衡准确率，同一批 ${cov.people} 名被试`,
     findingH3: allHigher ? '每名被试都是头皮更高' : '多数被试头皮更高',
     findingP: `${cov.people} 名被试中有 ${d.people_scalp_higher} 名，6 个头皮电极的结果高于 4 个耳道内通道。平均差值的描述性被试 bootstrap 区间为 ${ipp(d.bootstrap_95)}。两种配置在完全相同的数据帧上评分。`,
@@ -227,6 +236,8 @@ const basis = e.rights.reviewBasis;
       </table>
     </div>
   </section>
+
+  <MontageV9 locale={locale}/>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>

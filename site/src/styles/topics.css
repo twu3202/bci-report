@@ -269,3 +269,16 @@ pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px 
 .topic-table .fm-results td.fm-exposure{min-width:12em}
 .fm-release{white-space:normal;max-width:100%}
 .fm-release code{overflow-wrap:anywhere;word-break:break-all}
+/* The v9 findings on the topics (2026-10-04): does-pretraining-help #v9-encoders, fewer-electrodes #v9-montage.
+   Narrower name columns than the protocol pages, so a phone keeps the figure and its reading side by side;
+   the tables still scroll inside their own regions. */
+.topic-table .fm-topic-table th:first-child,.topic-table .fm-topic-table td:first-child{min-width:140px}
+.topic-table .fm-topic-table td.fm-rel{min-width:200px}
+.topic-table .fm-topic-table td.fm-word{min-width:110px}
+.topic-table .fm-topic-table .interval{white-space:nowrap}
+.fm-topic-table tr[data-rel="above above above"] .fm-rel{font-weight:650;color:var(--accent-deep)}
+.fm-topic-table td.fm-na small{display:block;color:var(--muted);font-size:.75rem}
+.fm-topic-table strong.fm-sep{display:block;margin-top:3px;font-family:var(--sans);font-size:.78rem;font-weight:650;letter-spacing:0;color:var(--accent-deep)}
+.fm-topic .fm-published{margin-top:14px}
+.fm-topic .fm-limits{margin-top:10px}
+.fm-topic .rd-panel .topic-table{margin-top:4px}

@@ -1,0 +1,308 @@
+---
+/**
+ * does-pretraining-help, #v9-encoders (2026-10-04, owner approved): eleven further
+ * foundation models swapped into the published LaBraM/CBraMod frozen recipe. A
+ * narrower question than the page's own — which pretrained encoders read out
+ * better, with no random-initialization control — so it has its own section,
+ * after the controls and before their methods and limits.
+ *
+ * What it prints, all from foundation-topics.ts: the sleep result (the new rows
+ * above every released one), BETA (above CBraMod, not above training-free CCA), the
+ * EEGMAT adaptation (one fixed recipe on one task, not a ranking; LoRA budgets
+ * differ), REVE Base against Large (marginal intervals, no paired test) and the
+ * masking ablation. Every figure is a `Fig` re-read by check-workbench.mjs; every
+ * relation word is the export's; rows keep the export's family order. Exposure is
+ * the owner's sourced statement: a badge where the dataset is in the authors' list
+ * or the list is unknown, the plain statement in the key under each table.
+ */
+import Fig from './Fig.astro';
+import NameList from './NameList.astro';
+import FmTopicBa from './FmTopicBa.astro';
+import { protocolCopy } from '../data/entity-copy';
+import { hrefFor, trackTitle, type Locale } from '../data/i18n';
+import data from '../data/mvp.json';
+import { FM_ANCHOR, FM_JSON, fmAblation, fmAdaptationMeta, fmExposure, fmMatrixModels, fmModelById, fmNotAdapted, fmRelease,
+         fmResearchUse, type FmModel, type FmRow } from '../data/foundation-models';
+import { fmText, fmZh } from '../data/foundation-models-zh';
+import { adaptOpen, adaptResolved, adaptRows, betaAblationAboveCbramod, betaAboveCbramod, betaBest, betaPublished, betaRows, BETA8,
+         maskingInseparable, maskingRows, protocolFacts, revePairs, SCORED_TRACKS, separatedOn, SLEEP, sleepAboveAll, sleepBest, sleepPublished,
+         sleepRows, type ChanceFlag, type Relation, type VsPublished } from '../data/foundation-topics';
+import type { Fig as FigValue } from '../data/entities';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const pc = protocolCopy[locale];
+const date = fmRelease.date;
+const track = (id: string) => data.tracks.find(t => t.id === id)!;
+const protocolName = (id: string) => trackTitle(track(id).title, locale);
+// A protocol's cohort and chance level, as the v9 export states them.
+const people = (id: string): FigValue => protocolFacts(id).people;
+const chanceOf = (id: string): FigValue => protocolFacts(id).chance;
+const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen'];
+// A count the page states in words in English and in digits in Chinese, as the site's Chinese does.
+const list = (xs: string[]) => zh ? xs.join('、') : xs.length < 3 ? xs.join(' and ') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
+const nameLang = zh ? 'en' : undefined;
+const idNames = (ids: string[]) => ids.map(id => fmModelById[id].name);
+/** A protocol as a sentence names it. */
+const inSentence: Record<string, { en: string; zh: string }> = {
+  'mi-rest': { en: 'motor imagery and rest', zh: '运动想象与静息' }, 'beta-8ch': { en: 'BETA at eight electrodes', zh: 'BETA 8 个电极' },
+  'beta-4ch': { en: 'BETA at four electrodes', zh: 'BETA 4 个电极' }, 'arithmetic-rest': { en: 'arithmetic and rest', zh: '心算与静息' },
+  'p300-target': { en: 'the P300 target ERP', zh: 'P300 目标 ERP' }, 'semantic-target': { en: 'the semantic target ERP', zh: '语义目标 ERP' },
+  'sleep-scalp': { en: 'sleep staging', zh: '睡眠分期' },
+};
+const sepName = (ids: string[]) => list(ids.map(id => inSentence[id][locale]));
+/** Chinese typesetting: a space where Chinese meets a Latin name or a figure, none between Chinese words. */
+const zhSpace = (t: string) => zh ? t.replace(/([\u4e00-\u9fff])([A-Za-z0-9])/g, '$1 $2').replace(/([A-Za-z0-9%)])([\u4e00-\u9fff])/g, '$1 $2') : t;
+
+// The released row a relation is read against, as a sentence names it.
+const refName = (row: string, name: string) => row === 'labram' ? 'LaBraM' : row === 'cbramod' ? 'CBraMod'
+  : zh ? ({ 'Standard CCA': '标准 CCA', 'Spectral ridge': 'spectral ridge' } as Record<string, string>)[name] ?? name
+  : name[0].toLowerCase() + name.slice(1);
+const relWord = { en: { above: 'Above', overlap: 'Overlaps', below: 'Below' }, zh: { above: '高于', overlap: '与', below: '低于' } };
+/** The export's three relations as one reading: "Above all three", or each relation with the rows it holds for. */
+function relText(vs: VsPublished): string {
+  const refs: [string, Relation][] = [['LaBraM', vs.labram], ['CBraMod', vs.cbramod], [refName(vs.bestRow, vs.bestName), vs.best]];
+  if (refs.every(r => r[1] === refs[0][1]))
+    return zh ? { above: '高于三者', overlap: '与三者都重叠', below: '低于三者' }[refs[0][1]] : `${relWord.en[refs[0][1]]} all three`;
+  const parts = (['above', 'overlap', 'below'] as Relation[]).map(rel => [rel, refs.filter(r => r[1] === rel).map(r => r[0])] as const).filter(([, xs]) => xs.length);
+  return zhSpace(parts.map(([rel, xs], i) => zh
+    ? (rel === 'overlap' ? `与${list(xs)}重叠` : `${relWord.zh[rel]}${list(xs)}`)
+    : `${i === 0 ? relWord.en[rel] : relWord.en[rel].toLowerCase()} ${list(xs)}`).join(zh ? '；' : '; '));
+}
+const exposureText = (st: string) => zh ? fmZh[st] : st;
+const say = (en: string) => fmText(en, locale);
+
+const c = {
+  en: {
+    eyebrow: `New frozen encoders · added ${date} · grouped, not ranked`,
+    h2: `New frozen encoders (${date})`,
+    lede: `Everything above asks whether pretraining helps two encoders against their own random initializations. This section asks a narrower question, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. On 4 October 2026 eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
+    rule: 'How to read the rows: a row is above or below another only where their 95% intervals do not overlap; otherwise they overlap and no order is claimed. Each interval is a descriptive participant bootstrap of one row on its own — the same people under two encoders are not tested as a pair — and with 126 frozen cells an occasional non-overlap is expected by chance. Rows keep the export’s family order and are never sorted by score.',
+    key: (d: string) => `Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the authors’ lists show, not proof that the recordings were never seen. Each model’s sources are on its method page.`,
+    published: (p: string) => `Published rows on ${p} (core matrix, 20 September 2026):`,
+    notAdapted: 'The others were not adapted:',
+    colEncoder: 'Encoder', colBa: 'Balanced accuracy', colVs: 'Against the published rows',
+    vsLegend: (best: string) => `Against the published rows: LaBraM, CBraMod and ${best}, the best published non-foundation row, by whether the 95% intervals overlap.`,
+    sleepH3: (n: number) => `Sleep staging: ${words[n]} new encoders above every published row`,
+    sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the best published non-foundation row (', ', ', '–', `), the frozen LaBraM and CBraMod rows, and EEGNet. Sleep is the only one of the ${words[n]} scored protocols where a new row clears the best published non-foundation row. The other new rows overlap the published ones or lie below them.`],
+    sleepRegion: 'Sleep staging, the new frozen encoders against the published rows, scrolls horizontally',
+    sleepCaption: 'Sleep staging · frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
+    betaH3: 'BETA: above CBraMod, not above training-free CCA',
+    betaP: ['On BETA’s 40-target SSVEP with eight electrodes (', ' people, chance ', '), ', ' lie above the published frozen CBraMod row (', '), as do the three masking-ablation siblings shown below. No new row lies above standard CCA (', '), which needs no training at all. ST-EEGFormer’s BETA cells are in its authors’ pretraining list, and they still lie below CBraMod.'],
+    betaRegion: 'BETA with eight electrodes, the new frozen encoders against the published rows, scrolls horizontally',
+    betaCaption: 'SSVEP, BETA, eight electrodes · frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
+    adaptH3: 'EEGMAT: frozen readouts and LoRA disagree',
+    adaptP: ['Nine of the new encoders were also adapted on EEGMAT, mental arithmetic against rest (', ' people, ', ' participant-disjoint folds, three seeds, chance ', '), with the recipe LaBraM was adapted with on 1 October: a head trained on the frozen encoder against rank-4 LoRA with the same head, five epochs, no tuning. It is one fixed recipe on one task, not a ranking, and LoRA’s budget differs by architecture, from ', ' to ', ' added trainable parameters.'],
+    adaptRead: ['The ridge readout of the frozen-probe table, the trained head and LoRA do not put the encoders in the same order, so none of them ranks the models here. LoRA’s change excludes zero for ', '; it includes zero for ', '.'],
+    adaptSinglem: ['The clearest case is SingLEM: both frozen readouts reach chance (', ' with the ridge head, ', ' with the trained head), while LoRA reached ', '.'],
+    adaptRegion: 'EEGMAT adaptation, nine encoders and LaBraM for context, scrolls horizontally',
+    adaptCaption: 'EEGMAT · balanced accuracy with its descriptive 95% interval · the paired change over the same people and folds, with how many people moved which way · trainable parameters of the head alone and of the LoRA arm.',
+    colRidge: 'Frozen, ridge head (frozen-probe table)', colFrozen: 'Frozen, trained head', colLora: 'LoRA rank 4 + head', colChange: 'LoRA minus trained head', colTrainable: 'Trainable parameters · head · LoRA arm',
+    moved: ['', ' improved · ', ' worse · ', ' unchanged'],
+    sizeH3: 'REVE Base and Large: a size comparison, not a paired test',
+    sizeP: (sep: string, n: number) => `REVE Large is at or above REVE Base on all ${words[n]} scored protocols, and their intervals do not overlap on ${sep}. Both checkpoints were scored on the same people, but each interval is marginal and no paired test was run, so a gap is a description, not an established effect of size.`,
+    sizeOthers: (luna: string, st: string) => `The other two size pairs do not show this pattern: LUNA’s Base and Large intervals separate only on ${luna}, ST-EEGFormer’s only on ${st}, where its cells are in the authors’ pretraining list.`,
+    sizeRegion: 'REVE Base and Large on every scored protocol, scrolls horizontally',
+    sizeSummary: 'REVE Base and Large on every scored protocol: the table',
+    maskSummary: 'The four eeg-fm-masking checkpoints on every scored protocol: the table',
+    sizeCaption: 'Frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval · Large minus Base as the export states it, and whether the two intervals overlap.',
+    colProtocol: 'Protocol', colBase: 'REVE Base', colLarge: 'REVE Large', colDiff: 'Large minus Base', colOverlap: 'Intervals',
+    overlapYes: 'Overlap', overlapNo: 'Do not overlap',
+    maskH3: (n: number, of: number) => `Masking ablation: not separable on ${words[n]} of ${words[of]} protocols`,
+    maskP: (n: number, of: number) => `eeg-fm-masking released four checkpoints of one study: masking framework (MAE or JEPA) crossed with mask geometry (the paper-recommended r = 9 cm with L = 2, or a single channel with L = 1), with the same architecture, corpus and recipe. The paper-recommended MAE checkpoint is a matrix row in the tables above; the other three are its ablation. On ${words[n]} of the ${words[of]} scored protocols every pair of the four overlaps.`,
+    maskSep: (a: string, b: string, p: string) => `On ${p} one pair separates — ${a} against ${b} — and it changes the framework and the geometry at once, so it isolates neither.`,
+    maskRegion: 'The four eeg-fm-masking checkpoints on every scored protocol, scrolls horizontally',
+    maskCaption: 'Frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
+    maskCols: { 'eeg-fm-masking/mae-r9cm-L2': 'MAE · r = 9 cm, L = 2 (matrix row)', 'eeg-fm-masking/jepa-r9cm-L2': 'JEPA · r = 9 cm, L = 2', 'eeg-fm-masking/mae-rone-L1': 'MAE · one channel, L = 1', 'eeg-fm-masking/jepa-rone-L1': 'JEPA · one channel, L = 1' } as Record<string, string>,
+    maskShort: { 'eeg-fm-masking/mae-r9cm-L2': 'MAE at r = 9 cm', 'eeg-fm-masking/jepa-r9cm-L2': 'JEPA at r = 9 cm', 'eeg-fm-masking/mae-rone-L1': 'MAE on one channel', 'eeg-fm-masking/jepa-rone-L1': 'JEPA on one channel' } as Record<string, string>,
+    colPairs: 'Pairs whose intervals separate', noPair: 'None: every pair overlaps',
+    limitsH3: 'What these rows can and cannot say',
+    licencesH3: 'Weights licences and terms',
+    files: ['Every row, with its footnote and exposure source, is on its protocol page (', '); the adaptation arms and the comparisons above are in ', '. Release ', '.'],
+    protocolLinkSep: ', ',
+  },
+  zh: {
+    eyebrow: `新的冻结编码器 · ${date} 新增 · 分组列出，不排名`,
+    h2: `新的冻结编码器（${date}）`,
+    lede: '上面的内容问的是：与各自的随机初始化相比，预训练对这两种编码器有没有帮助。这一节问的问题更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。2026 年 10 月 4 日，另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
+    rule: '怎么读这些行：只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；区间重叠就不分先后。每个区间都是对单独一行做的描述性被试 bootstrap——同一批被试在两个编码器下的结果没有作为配对来检验——而且冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。各行保持导出文件中的模型类别顺序，从不按分数排序。',
+    key: (d: string) => `未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。每个模型的来源见其方法页面。`,
+    published: (p: string) => `${p}上已发布的行（核心矩阵，2026 年 9 月 20 日）：`,
+    notAdapted: '其余的没有做适配：',
+    colEncoder: '编码器', colBa: '平衡准确率', colVs: '与已发布的行相比',
+    vsLegend: (best: string) => `与已发布的行相比：LaBraM、CBraMod，以及已发布的最佳非基础模型行 ${best}，按 95% 区间是否重叠判断。`,
+    sleepH3: (n: number) => `睡眠分期：${n} 个新编码器高于所有已发布的行`,
+    sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的最佳非基础模型行 spectral ridge（', '，', '–', `）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的最佳非基础模型行。其余新行与已发布的行重叠，或低于它们。`],
+    sleepRegion: '睡眠分期：新的冻结编码器与已发布的行对比，可横向滚动',
+    sleepCaption: '睡眠分期 · 冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
+    betaH3: 'BETA：高于 CBraMod，但不高于免训练的 CCA',
+    betaP: ['在 BETA 的 40 目标 SSVEP、8 个电极上（', ' 名被试，随机水平 ', '），', ' 高于已发布的冻结 CBraMod 行（', '），下文掩码消融中的 3 个同系列检查点也是如此。没有任何新行高于完全不需要训练的标准 CCA（', '）。ST-EEGFormer 在 BETA 上的单元格，数据在作者的预训练数据清单中，即便如此仍低于 CBraMod。'],
+    betaRegion: 'BETA 8 个电极：新的冻结编码器与已发布的行对比，可横向滚动',
+    betaCaption: 'SSVEP，BETA，8 个电极 · 冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
+    adaptH3: 'EEGMAT：冻结读出与 LoRA 给出的结论不一致',
+    adaptP: ['新编码器中有 9 个还在 EEGMAT（心算对静息）上做了适配（', ' 名被试，按被试不重叠分成 ', ' 折，3 个随机种子，随机水平 ', '），沿用 10 月 1 日适配 LaBraM 的方案：在冻结编码器上训练分类头，对比秩为 4 的 LoRA 加同样的分类头，训练 5 轮，不调参。这是一项任务上的一个固定方案，不是排名；而且 LoRA 的参数量随架构而异，增加的可训练参数从 ', ' 到 ', ' 个不等。'],
+    adaptRead: ['冻结探针表中的岭回归读出、训练的分类头与 LoRA，给出的编码器顺序并不一致，所以这里哪一种都不用来给模型排名。LoRA 带来的变化，区间不含零的有 ', '；区间包含零的有 ', '。'],
+    adaptSinglem: ['最明显的例子是 SingLEM：两种冻结读出都触及随机水平（岭回归分类头 ', '，训练的分类头 ', '），而 LoRA 达到 ', '。'],
+    adaptRegion: 'EEGMAT 适配：9 个编码器，另列 LaBraM 作参照，可横向滚动',
+    adaptCaption: 'EEGMAT · 平衡准确率及其描述性 95% 区间 · 同一批被试与折上的配对变化，以及各有多少人变好、变差 · 只训分类头与 LoRA 两组的可训练参数。',
+    colRidge: '冻结，岭回归分类头（冻结探针表）', colFrozen: '冻结，训练的分类头', colLora: '秩为 4 的 LoRA + 分类头', colChange: 'LoRA 减训练的分类头', colTrainable: '可训练参数 · 分类头 · LoRA 组',
+    moved: ['', ' 人提升 · ', ' 人变差 · ', ' 人不变'],
+    sizeH3: 'REVE Base 与 Large：规模比较，不是配对检验',
+    sizeP: (sep: string, n: number) => `在全部 ${n} 个有分数的协议上，REVE Large 都不低于 REVE Base；在${sep}上，两者的区间不重叠。两个检查点用的是同一批被试，但每个区间都是边际区间，也没有做配对检验，所以差距只是描述，不能认定是规模带来的效应。`,
+    sizeOthers: (luna: string, st: string) => `另外两对不同规模的模型没有呈现同样的规律：LUNA 的 Base 与 Large 只在${luna}上区间分开，ST-EEGFormer 只在${st}上分开，而这两个协议的数据在其作者的预训练数据清单中。`,
+    sizeRegion: '各个有分数的协议上的 REVE Base 与 Large，可横向滚动',
+    sizeSummary: '各个有分数的协议上的 REVE Base 与 Large：完整表格',
+    maskSummary: '4 个 eeg-fm-masking 检查点在各个有分数的协议上的结果：完整表格',
+    sizeCaption: '冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间 · 导出文件给出的 Large 减 Base，以及两个区间是否重叠。',
+    colProtocol: '协议', colBase: 'REVE Base', colLarge: 'REVE Large', colDiff: 'Large 减 Base', colOverlap: '区间',
+    overlapYes: '重叠', overlapNo: '不重叠',
+    maskH3: (n: number, of: number) => `掩码消融：${of} 个协议中有 ${n} 个分不出差别`,
+    maskP: (n: number, of: number) => `eeg-fm-masking 发布了同一项研究的 4 个检查点：掩码框架（MAE 或 JEPA）与掩码几何（论文推荐的 r = 9 cm、L = 2，或单通道、L = 1）两两组合，架构、语料与训练方案都相同。论文推荐的 MAE 检查点是上面各表中的矩阵行，另外 3 个是它的消融。在 ${of} 个有分数的协议中，有 ${n} 个协议上这 4 个检查点两两之间的区间都重叠。`,
+    maskSep: (a: string, b: string, p: string) => `在${p}上有一对区间分开：${a}对${b}；但这一对同时改变了掩码框架和掩码几何，所以哪个因素都无法单独归因。`,
+    maskRegion: '4 个 eeg-fm-masking 检查点在各个有分数的协议上的结果，可横向滚动',
+    maskCaption: '冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
+    maskCols: { 'eeg-fm-masking/mae-r9cm-L2': 'MAE · r = 9 cm，L = 2（矩阵行）', 'eeg-fm-masking/jepa-r9cm-L2': 'JEPA · r = 9 cm，L = 2', 'eeg-fm-masking/mae-rone-L1': 'MAE · 单通道，L = 1', 'eeg-fm-masking/jepa-rone-L1': 'JEPA · 单通道，L = 1' } as Record<string, string>,
+    maskShort: { 'eeg-fm-masking/mae-r9cm-L2': 'r = 9 cm 的 MAE', 'eeg-fm-masking/jepa-r9cm-L2': 'r = 9 cm 的 JEPA', 'eeg-fm-masking/mae-rone-L1': '单通道的 MAE', 'eeg-fm-masking/jepa-rone-L1': '单通道的 JEPA' } as Record<string, string>,
+    colPairs: '区间分开的检查点对', noPair: '没有：两两都重叠',
+    limitsH3: '这些行能说明什么、不能说明什么',
+    licencesH3: '权重许可与条款',
+    files: ['每一行连同其脚注和预训练数据来源都在各自的协议页面上（', '）；上面的适配结果与比较在 ', ' 中。发布版本 ', '。'],
+    protocolLinkSep: '、',
+  },
+}[locale];
+
+type Part = string | FigValue;
+const P = (xs: Part[]) => xs;
+
+// Limitations, each the page's own words for one of the export's required limitations.
+const mi = people('mi-rest'), p300 = people('p300-target'), sleepN = people(SLEEP);
+const limits: [string, Part[]][] = zh ? [
+  ['一个固定方案，不是上限', ['冻结探针就是已发布的线性分类头，只换了编码器；适配是一项任务上一个未调参、训练 5 轮的方案。这里没有任何分数是模型能达到的最好结果。']],
+  ['小队列，描述性区间', ['运动想象 ', mi, ' 名被试，P300 ', p300, ' 名，睡眠分期 ', sleepN, ' 名。区间是被试 bootstrap，没有计入交叉验证带来的相关性，也没有做多重比较校正。']],
+  ['分组列出，从不排名', ['各行保持导出文件的模型类别顺序。只有区间不重叠时，才说一行高于或低于另一行；同一批被试在两个编码器下的结果没有作为配对来检验。']],
+  ['方法比较，不是部署时的比率', ['类别平衡或类别匹配的设计（P300、语义目标、运动想象对静息、抽样的睡眠数据帧）用来比较方法，不是实际使用中检出率、误报率或延迟的估计。']],
+  ['新被试、同一任务与设置', ['折留出的是被试。这里没有跨天、跨设备或跨数据集的证据，也不做任何临床方面的声明。']],
+  ['时间窗很短', ['每个编码器看到的都是已发布的 1–2 秒时间窗（睡眠为 15 个 2 秒片段），通常比它预训练时的上下文更短；各模型的输入处理写在协议页面上各行的脚注中。']],
+  ['是否出现在预训练数据中：看作者的清单', ['BETA 在 ST-EEGFormer 作者公开的预训练数据清单中，TMNRED 在 SingLEM 的清单中；ZUNA 1.1 没有公开清单，所以它的每个单元格都是未知；EEGMamba 的清单读自其官方代码，把握程度为中等。其余单元格——包括 LaBraM 与 CBraMod 的——都不在作者公开的预训练数据清单中（2026-10-04 核查），这并不证明这些记录从未被模型见过。']],
+  ['不代表作者认可', ['任何模型的作者都没有为这些结果背书。没有保留或分享任何适配后的权重或 LoRA 增量；每个模型的权重许可随它的行一起列出。计算耗时在共享 GPU 上测得，只作参考，所以不发布。']],
+] : [
+  ['One fixed recipe, not a ceiling', ['The frozen probe is the published linear head with only the encoder swapped; the adaptation is one untuned five-epoch recipe on one task. No score here is any model’s best.']],
+  ['Small cohorts, descriptive intervals', ['Motor imagery has ', mi, ' people, P300 ', p300, ', sleep staging ', sleepN, '. The intervals are participant bootstraps that ignore cross-validation dependence and carry no multiplicity correction.']],
+  ['Grouped, never ranked', ['Rows keep the export’s family order. A row is above or below another only where the intervals do not overlap; the same people under two encoders are not tested as a pair.']],
+  ['Method comparisons, not deployment rates', ['Balanced or class-matched designs (P300, semantic target, motor imagery against rest, sampled sleep epochs) compare methods; they are not detection, false-alarm or latency estimates for real use.']],
+  ['New people, same task and setup', ['The folds hold out people. Nothing here is cross-day, cross-device or cross-dataset evidence, and nothing is a clinical claim.']],
+  ['Short windows', ['Every encoder sees the published 1–2 s windows (sleep as 15 two-second segments), usually shorter than its pretraining context; each model’s input handling is in its row footnote on the protocol pages.']],
+  ['Pretraining exposure: the authors’ lists', ['BETA is in ST-EEGFormer’s published pretraining list and TMNRED in SingLEM’s; ZUNA 1.1 publishes none, so every ZUNA 1.1 cell is unknown; EEGMamba’s list is read from its official code, with medium confidence. Every other cell, LaBraM’s and CBraMod’s included, is not in the authors’ published pretraining list (checked 2026-10-04) — not proof that the recordings were never seen.']],
+  ['No endorsement', ['No model’s authors endorse these results. No adapted weights or LoRA deltas were kept or shared, and each model’s weights licence travels with its rows. Timings were measured on a shared GPU and are not published.']],
+];
+
+// One licence entry per family printed in this section.
+const families = [...new Map([...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].map(m => [m.slug, m])).values()];
+const familyModels = (slug: string) => [...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].filter((m, i, xs) => m.slug === slug && xs.indexOf(m) === i);
+const colon = zh ? '：' : ': ';
+const singlem = adaptRows.find(r => r.id === 'singlem')!;
+const reveSeparated = revePairs.filter(p => !p.overlap).map(p => p.track);
+const separatedMasking = maskingRows.filter(r => r.separated.length);
+const nScored = SCORED_TRACKS.length;
+// The encoders not adapted, grouped by the export's reason (the four masking checkpoints share one).
+const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotAdapted.filter(x => x.adaptation === m.adaptation)])).entries()];
+---
+<section class="topic-section fm-topic" id="v9-encoders" aria-labelledby="v9-heading" data-release={fmRelease.id}>
+  <div class="topic-heading"><div><p class="eyebrow">{c.eyebrow}</p><h2 id="v9-heading">{c.h2}</h2></div><p>{c.lede}</p></div>
+  <p class="protocol-note fm-reading-rule">{c.rule}</p>
+
+  <h3 class="roadmap-h3" id="v9-sleep">{c.sleepH3(sleepAboveAll.length)}</h3>
+  <p class="roadmap-p" data-claim="sleep-above-all" data-models={sleepAboveAll.map(r => r.cell.model.id).join(' ')}>{c.sleepP(nScored)[0]}<Fig f={people(SLEEP)}/>{c.sleepP(nScored)[1]}<Fig f={chanceOf(SLEEP)}/>{c.sleepP(nScored)[2]}<NameList names={sleepAboveAll.map(r => r.cell.model.name)} locale={locale}/>{c.sleepP(nScored)[3]}<span data-core-topic={`${SLEEP}|${sleepBest.id}`}><Fig f={sleepBest.ba}/>{c.sleepP(nScored)[4]}<Fig f={sleepBest.interval[0]}/>{c.sleepP(nScored)[5]}<Fig f={sleepBest.interval[1]}/></span>{c.sleepP(nScored)[6]}</p>
+  <p class="protocol-note fm-published"><strong>{c.published(inSentence[SLEEP][locale])}</strong>{zh ? '' : ' '}{sleepPublished.map((p, i) => <>{i > 0 && ' · '}<span data-core-topic={`${SLEEP}|${p.id}`}><span lang="en">{p.name}</span> <Fig f={p.ba}/>{zh ? '（' : ' ('}<Fig f={p.interval[0]}/>–<Fig f={p.interval[1]}/>{zh ? '）' : ')'}</span></>)}</p>
+  <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.sleepRegion}>
+    <table class="fm-results fm-topic-table"><caption>{c.sleepCaption}</caption>
+      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs}</th></tr></thead>
+      <tbody>{sleepRows.map(r => <tr data-fm-topic={`${SLEEP}|${r.cell.model.id}`} data-rel={`${r.vs.labram} ${r.vs.cbramod} ${r.vs.best}`}>
+        <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
+        <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
+        <td class="fm-rel">{relText(r.vs)}</td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(sleepBest.id, sleepBest.name))} {c.key(fmExposure.checkedOn)}</p>
+
+  <h3 class="roadmap-h3" id="v9-beta">{c.betaH3}</h3>
+  <p class="roadmap-p" data-claim="beta-above-cbramod" data-models={betaAboveCbramod.map(r => r.cell.model.id).join(' ')} data-ablation={betaAblationAboveCbramod.join(' ')}>{c.betaP[0]}<Fig f={people(BETA8)}/>{c.betaP[1]}<Fig f={chanceOf(BETA8)}/>{c.betaP[2]}<NameList names={betaAboveCbramod.map(r => r.cell.model.name)} locale={locale}/>{c.betaP[3]}<span data-core-topic={`${BETA8}|cbramod`}><Fig f={betaPublished(BETA8).find(p => p.id === 'cbramod')!.ba}/></span>{c.betaP[4]}<span data-core-topic={`${BETA8}|${betaBest.id}`}><Fig f={betaBest.ba}/></span>{c.betaP[5]}</p>
+  <p class="protocol-note fm-published"><strong>{c.published(inSentence[BETA8][locale])}</strong>{zh ? '' : ' '}{betaPublished(BETA8).map((p, i) => <>{i > 0 && ' · '}<span data-core-topic={`${BETA8}|${p.id}`}><span lang="en">{p.name}</span> <Fig f={p.ba}/>{zh ? '（' : ' ('}<Fig f={p.interval[0]}/>–<Fig f={p.interval[1]}/>{zh ? '）' : ')'}</span></>)}</p>
+  <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.betaRegion}>
+    <table class="fm-results fm-topic-table"><caption>{c.betaCaption}</caption>
+      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs}</th></tr></thead>
+      <tbody>{betaRows.map(r => <tr data-fm-topic={`${BETA8}|${r.cell.model.id}`} data-rel={`${r.vs.labram} ${r.vs.cbramod} ${r.vs.best}`}>
+        <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
+        <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
+        <td class="fm-rel">{relText(r.vs)}</td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(betaBest.id, betaBest.name))} {c.key(fmExposure.checkedOn)}</p>
+
+  <h3 class="roadmap-h3" id="v9-adaptation">{c.adaptH3}</h3>
+  <p class="roadmap-p">{c.adaptP[0]}<Fig f={fmAdaptationMeta.people}/>{c.adaptP[1]}<Fig f={fmAdaptationMeta.folds}/>{c.adaptP[2]}<Fig f={fmAdaptationMeta.chance}/>{c.adaptP[3]}<Fig f={fmAdaptationMeta.loraRange[0]}/>{c.adaptP[4]}<Fig f={fmAdaptationMeta.loraRange[1]}/>{c.adaptP[5]}</p>
+  <p class="roadmap-p" data-claim="adaptation-verdicts" data-models={adaptResolved.join(' ')} data-open={adaptOpen.join(' ')}>{c.adaptRead[0]}<NameList names={idNames(adaptResolved)} locale={locale}/>{c.adaptRead[1]}<NameList names={idNames(adaptOpen)} locale={locale}/>{c.adaptRead[2]}</p>
+  <p class="roadmap-p" data-fm-topic="arithmetic-rest|singlem">{c.adaptSinglem[0]}<Fig f={singlem.ridge.ba}/>{c.adaptSinglem[1]}<Fig f={singlem.frozen.ba}/>{c.adaptSinglem[2]}<Fig f={singlem.lora.ba}/>{c.adaptSinglem[3]}</p>
+  <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.adaptRegion}>
+    <table class="fm-adaptation fm-topic-table"><caption>{c.adaptCaption}</caption>
+      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colRidge}</th><th scope="col">{c.colFrozen}</th><th scope="col">{c.colLora}</th><th scope="col">{c.colChange}</th><th scope="col">{c.colTrainable}</th></tr></thead>
+      <tbody>{adaptRows.map(a => <tr data-adapt-row={a.id} {...(a.context ? { 'data-core-topic': 'arithmetic-rest|labram' } : { 'data-fm-topic': `arithmetic-rest|${a.id}` })}>
+        <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${a.slug}/`, locale)}>{a.name}</a></span>{a.context && <small>{pc.labramContext}</small>}{a.exposure === 'unknown' && <span class="flag fm-badge" data-exposure="unknown">{pc.unknown}</span>}{a.model && fmResearchUse(a.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
+        <td><FmTopicBa ba={a.ridge.ba} interval={a.ridge.interval} flag={a.ridge.chanceFlag} locale={locale}/></td>
+        <td><FmTopicBa ba={a.frozen.ba} interval={a.frozen.interval} flag={a.frozen.chanceFlag} locale={locale}/></td>
+        <td><FmTopicBa ba={a.lora.ba} interval={a.lora.interval} flag={a.lora.chanceFlag} locale={locale}/></td>
+        <td><Fig f={a.change.mean} cls="metric"/><span class="interval"><Fig f={{ ...a.change.interval[0], fmt: 'sgn1' as const }}/>{zh ? ' 至 ' : ' to '}<Fig f={a.change.interval[1]}/></span><small>{c.moved[0]}<Fig f={a.change.helped}/>{c.moved[1]}<Fig f={a.change.harmed}/>{c.moved[2]}<Fig f={a.change.tied}/>{c.moved[3]}</small><span class="verdict" data-resolved={a.change.excludesZero ? 'true' : 'false'}>{a.change.excludesZero ? pc.excludesZero : pc.includesZero}</span></td>
+        <td><Fig f={a.frozen.trainable}/> · <Fig f={a.lora.trainable}/></td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <p class="protocol-note" data-claim="not-adapted"><strong>{c.notAdapted}</strong>{zh ? '' : ' '}{notAdaptedGroups.map(([reason, ms], i) => <>{i > 0 && (zh ? '；' : '; ')}<NameList names={ms.map(m => m.name)} locale={locale}/>{zh ? '（' : ' ('}{say(reason).text}{zh ? '）' : ')'}</>)}{zh ? '。' : '.'}</p>
+
+  <h3 class="roadmap-h3" id="v9-size">{c.sizeH3}</h3>
+  <p class="roadmap-p" data-claim="reve-separated" data-tracks={reveSeparated.join(' ')}>{zhSpace(c.sizeP(sepName(reveSeparated), nScored))}</p>
+  <details class="rd-panel fm-panel" id="v9-size-table">
+  <summary>{c.sizeSummary}</summary>
+  <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.sizeRegion}>
+    <table class="fm-results fm-topic-table"><caption>{c.sizeCaption}</caption>
+      <thead><tr><th scope="col">{c.colProtocol}</th><th scope="col">{c.colBase}</th><th scope="col">{c.colLarge}</th><th scope="col">{c.colDiff}</th><th scope="col">{c.colOverlap}</th></tr></thead>
+      <tbody>{revePairs.map(p => <tr data-size-pair={p.track} data-overlap={p.overlap ? 'true' : 'false'}>
+        <th scope="row"><a href={`${hrefFor(`/protocols/${p.track}/`, locale)}#${FM_ANCHOR}`}>{protocolName(p.track)}</a><small><Fig f={people(p.track)}/>{zh ? ' 名被试' : ' people'}</small></th>
+        <td data-fm-topic={`${p.track}|${p.base}`}><FmTopicBa ba={p.baseCell.primary!} interval={p.baseCell.interval!} flag={p.baseCell.chanceFlag} exposure={p.baseCell.exposure} locale={locale}/></td>
+        <td data-fm-topic={`${p.track}|${p.large}`}><FmTopicBa ba={p.largeCell.primary!} interval={p.largeCell.interval!} flag={p.largeCell.chanceFlag} exposure={p.largeCell.exposure} locale={locale}/></td>
+        <td><Fig f={p.diff} cls="metric"/></td>
+        <td class="fm-word">{p.overlap ? c.overlapYes : <strong class="fm-sep">{c.overlapNo}</strong>}</td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  </details>
+  <p class="protocol-note" data-claim="other-size-pairs" data-luna={separatedOn('luna-base').join(' ')} data-st={separatedOn('steegformer-base').join(' ')}>{zhSpace(c.sizeOthers(sepName(separatedOn('luna-base')), sepName(separatedOn('steegformer-base'))))}</p>
+
+  <h3 class="roadmap-h3" id="v9-masking">{c.maskH3(maskingInseparable, maskingRows.length)}</h3>
+  <p class="roadmap-p">{c.maskP(maskingInseparable, maskingRows.length)}{separatedMasking.map(r => <>{zh ? '' : ' '}{zhSpace(c.maskSep(c.maskShort[r.separated[0][0]], c.maskShort[r.separated[0][1]], inSentence[r.track][locale]))}</>)}</p>
+  <details class="rd-panel fm-panel" id="v9-masking-table">
+  <summary>{c.maskSummary}</summary>
+  <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.maskRegion}>
+    <table class="fm-results fm-topic-table fm-masking"><caption>{c.maskCaption}</caption>
+      <thead><tr><th scope="col">{c.colProtocol}</th>{fmAblation.checkpoints.map(id => <th scope="col">{c.maskCols[id]}</th>)}<th scope="col">{c.colPairs}</th></tr></thead>
+      <tbody>{maskingRows.map(r => <tr data-masking={r.track} data-separated={r.separated.map(p => p.join('+')).join(' ') || 'none'}>
+        <th scope="row"><a href={`${hrefFor(`/protocols/${r.track}/`, locale)}#${FM_ANCHOR}`}>{protocolName(r.track)}</a></th>
+        {r.cells.map(cell => <td data-fm-topic={`${r.track}|${cell.model.id}`}><FmTopicBa ba={cell.primary!} interval={cell.interval!} flag={cell.chanceFlag} exposure={cell.exposure} locale={locale}/></td>)}
+        <td class="fm-word">{r.separated.length ? r.separated.map(([a, b]) => <strong class="fm-sep">{c.maskShort[a]}{zh ? ' 对 ' : ' vs. '}{c.maskShort[b]}</strong>) : c.noPair}</td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  </details>
+
+  <h3 class="roadmap-h3" id="v9-limits">{c.limitsH3}</h3>
+  <div class="method-grid-wide fm-limits">{limits.map(([h, parts]) => <article><h3>{h}</h3><p>{parts.map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p></article>)}</div>
+  <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
+  <ul class="entity-links protocol-prose fm-licences">{families.map(m0 => {
+    const ms = familyModels(m0.slug), w = say(ms[0].weightsLicence), n = say(ms[0].licenceNote);
+    const restates = ms[0].licenceNote.replace(/\.$/, '') === ms[0].weightsLicence;
+    return <li data-licence={ms[0].slug}><strong lang="en">{ms.map(m => m.name).join(' · ')}</strong>{colon}<span>{w.text}</span>{w.original && <span class="note-original" lang="en">{w.original}</span>}{!restates && <><span class="fm-licence-note">{n.text}</span>{n.original && <span class="note-original" lang="en">{n.original}</span>}</>} <a href={ms[0].paper} target="_blank" rel="noreferrer">{zh ? '论文 ↗' : 'paper ↗'}</a></li>;
+  })}</ul>
+  <p class="citation-note">{c.files[0]}{SCORED_TRACKS.map((id, i) => <>{i > 0 && c.protocolLinkSep}<a href={`${hrefFor(`/protocols/${id}/`, locale)}#${FM_ANCHOR}`}>{protocolName(id)}</a></>)}{c.files[1]}<a href={`/data/${FM_JSON}`} download>{FM_JSON}</a>{c.files[2]}<a href={hrefFor(`/releases/#${fmRelease.id}`, locale)}><code>{fmRelease.id}</code></a>{c.files[3]}</p>
+</section>

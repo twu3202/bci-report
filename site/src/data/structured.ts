@@ -38,7 +38,7 @@ import { servedFiles } from './files';
 import { topicPages } from './topics';
 import { topicCards } from './i18n';
 import { datasets as datasetEntities } from './entities';
-import { fmFileOf, fmMatrixModels, fmRelease } from './foundation-models';
+import { FM_JSON, fmFileOf, fmMatrixModels, fmRelease } from './foundation-models';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
 const LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
@@ -147,13 +147,26 @@ const extensionExport = (metrics: string[]): LaterExport =>
 // The 2026-10-03 batch: Dreem on sleep-staging, OpenBMI on calibration-budget.
 const largeSourceExport = (metrics: string[]): LaterExport =>
   ({ file: '/data/large-source-update.json', release: large.release_id, generated: large.generated_at, metrics });
+// The 2026-10-04 v9 batch: its JSON (adaptation arms and the export's comparisons) and the CSV of each
+// protocol a topic prints, then the core release whose rows they are read against.
+const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
+  { file: `/data/${FM_JSON}`, release: fmRelease.id, generated: fmRelease.date, metrics: ['balanced_accuracy'] },
+  ...protocols.map(p => ({ file: `/data/${fmFileOf(p)}`, release: fmRelease.id, generated: fmRelease.date, metrics: ['balanced_accuracy'] })),
+  ...(core ? [{ file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt, metrics: ['balanced_accuracy'] }] : []),
+];
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
   'sleep-staging': largeSourceExport(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa', 'recall', 'precision', 'f1']),
   'calibration-budget': largeSourceExport(['balanced_accuracy']),
   'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],
-  'fewer-electrodes': { file: '/data/evidence-update.json', release: evidence.release_id,
-                        generated: evidence.generated_at,
-                        metrics: ['person_mean_balanced_accuracy', 'macro_f1'] },
+  // Since 2026-10-04 also BETA at eight and four electrodes and the six-channel sleep column for the
+  // v9 encoders (their CSVs, and the export's four-minus-eight comparison), beside the released rows.
+  'fewer-electrodes': [{ file: '/data/evidence-update.json', release: evidence.release_id,
+                         generated: evidence.generated_at,
+                         metrics: ['person_mean_balanced_accuracy', 'macro_f1'] },
+                       ...fmExports(['beta-8ch', 'beta-4ch', 'sleep-scalp'], true)],
+  // Since 2026-10-04: the v9 frozen encoders on sleep, BETA and EEGMAT, REVE Base against Large and the
+  // masking ablation (every scored core protocol's CSV), with the released rows they are read against.
+  'does-pretraining-help': fmExports(['mi-rest', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target', 'semantic-target', 'sleep-scalp'], true),
   'on-the-move': [{ file: '/data/evidence-update.json', release: evidence.release_id,
                     generated: evidence.generated_at,
                     metrics: ['signed_correlation_r', 'predictive_r_squared'] },
@@ -198,7 +211,7 @@ export function topicDataset(id: string, name: string, description: string, path
   const tracks = new Set(topic?.tracks ?? []);
   const rows = deployment.rows.filter(r => tracks.has(r.track));
   const later = [LATER_EXPORTS[id] ?? []].flat();
-  const files = topicFiles(id).map(f => download(f, 'application/json'));
+  const files = topicFiles(id).map(f => download(f, formatOf(f)));
   const dates = [...(topic ? [deployment.generated_at] : []), ...later.map(l => l.generated)];
   return {
     '@context': 'https://schema.org',

@@ -447,9 +447,16 @@ assert.ok(!JSON.stringify(ev).match(/L-FAME|lfame/i),'the evidence export carrie
 // Alpha Waves: its per-person minima, maxima, medians and quartiles (balanced accuracy,
 // macro F1, and the paired difference), none of which the export carries. Its all-16
 // macro-F1 lower quartile, 59.7%, is left out: it equals an EESM23 interval bound here.
+// Since 2026-10-04 the page also carries #v9-montage, whose every figure is a leaf of the v9 CSVs, the v9
+// JSON or experiments.json (re-read by the topic data-fig loop; its figure-like tokens are pinned to those
+// files in the v9 topics block below). 33.3% is a v9 interval bound there (REVE Base, BETA, eight
+// electrodes), so the per-person check reads the page without that section, which must be one section.
+const withoutV9Montage=html=>{const a=html.indexOf('<section class="topic-section fm-topic" id="v9-montage"');
+  if(a<0)return html;const b=html.indexOf('</section>',a);assert.equal(html.slice(a+8,b).indexOf('<section'),-1,'#v9-montage nests no section');
+  return html.slice(0,a)+html.slice(b);};
 for(const p of ['topics/fewer-electrodes/','zh/topics/fewer-electrodes/']){
-  assert.doesNotMatch(pageOf(p),/34\.8%|70\.9%|54\.4%|81\.6%|52\.2%|73\.3%/,p+': an individual person\'s score leaked');
-  assert.doesNotMatch(pageOf(p),/80\.0%|90\.0%|100\.0%|65\.0%|33\.3%|79\.2%|67\.0%|89\.9%|−40\.0 pp|\+30\.0 pp|\+10\.0 pp/,p+': an individual Alpha Waves score leaked');
+  assert.doesNotMatch(withoutV9Montage(pageOf(p)),/34\.8%|70\.9%|54\.4%|81\.6%|52\.2%|73\.3%/,p+': an individual person\'s score leaked');
+  assert.doesNotMatch(withoutV9Montage(pageOf(p)),/80\.0%|90\.0%|100\.0%|65\.0%|33\.3%|79\.2%|67\.0%|89\.9%|−40\.0 pp|\+30\.0 pp|\+10\.0 pp/,p+': an individual Alpha Waves score leaked');
 }
 for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageOf('zh/topics/fewer-electrodes/')]]){
   assert.match(html,/79\.5%/,label+': four posterior electrodes');
@@ -2007,12 +2014,16 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
       assert.equal(text,fmt[format](Number(raw)),path+': '+file+' '+raw+' printed as "'+text+'"');
       topicFigs++;
     }
-    // Any topic that prints the matrix LaBraM readout prints it marked, and names the core release.
-    if(matrixSentence.test(visible(html))||html.includes('data-fig="experiments.json|')){
+    // A topic that names the matrix LaBraM readout prints it marked. Since 2026-10-04 other topics print other
+    // released rows from experiments.json too (the v9 sections read new rows against them), so that file alone
+    // no longer implies the readout; any experiments.json figure still requires the core release in the cite block.
+    if(matrixSentence.test(visible(html))){
       printedMatrix++;
       assert.ok(html.includes(matrixMark),path+': the matrix LaBraM readout must be printed from experiments.json, marked');
+    }
+    if(matrixSentence.test(visible(html))||html.includes('data-fig="experiments.json|')){
       const cite=html.slice(html.indexOf('<section class="cite-page"'));
-      assert.ok(cite.match(/data-releases="([^"]+)"/)[1].split(' ').includes(data.releaseId),path+': prints the matrix LaBraM readout, so its cite block must name '+data.releaseId);
+      assert.ok(cite.match(/data-releases="([^"]+)"/)[1].split(' ').includes(data.releaseId),path+': prints a released matrix row, so its cite block must name '+data.releaseId);
     }
   }
   assert.ok(topicFigs>=2*5,'model-adaptation marks the matrix readout and the adapter counts ('+topicFigs+')');
@@ -2045,6 +2056,28 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
       for(const [,track] of text.matchAll(/<p class="entity-group-meta">[^<]*<a href="\/(?:zh\/)?protocols\/([^/"#]+)\/"/g))
         for(const [slug,r] of Object.entries(protocolRead))
           if(r.track===track&&(!r.method||!/(?:^|\/)methods\//.test(f)||self.endsWith('/methods/'+r.method+'/'))) pointing.get(slug).add(self);
+    }
+    // Since 2026-10-04 the v9 sections print released and new rows through their protocol pages (does-pretraining-help,
+    // fewer-electrodes). Read from the topic page itself, not from entities.ts: every such row carries
+    // data-core-topic="<track>|<row id>" or data-fm-topic="<track>|<checkpoint>", and the v9 topics block below holds
+    // every figure there to an attribute naming its file's protocol. A printed row adds its dataset's page and its
+    // method's page (a released row whose method has none, spectral ridge, adds only the dataset's).
+    {
+      const MVPS={ds003810:'ds003810',EEGMAT:'eegmat','EESM19 scalp subset':'eesm19',BETA:'beta','TMNRED / ds005383':'tmnred',ds006593:'ds006593',ds005342:'ds005342'};
+      const CORE_PAGE={eegnet:'eegnet',labram:'labram',cbramod:'cbramod',cca:'cca','csp-lda':'csp-lda',shallowfbcspnet:'shallowfbcspnet',deep4net:'deep4net',fbcca:'fbcca','ensemble-trca':'etrca'};
+      const FMS=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
+      const FAMILY=id=>({'reve-base':'reve','reve-large':'reve','luna-base':'luna','luna-large':'luna','brainomni-base':'brainomni','steegformer-base':'st-eegformer',
+        'steegformer-large':'st-eegformer','erp-fm-base':'erp-fm'})[id]??(id.startsWith('eeg-fm-masking/')?'eeg-fm-masking':id);
+      for(const [slug] of topicPages){
+        const html=pageOf(prefix+'topics/'+slug+'/');
+        for(const [,kind,track,id] of html.matchAll(/data-(core|fm)-topic="([^"|]+)\|([^"]+)"/g)){
+          const t=data.tracks.find(x=>x.id===track);
+          assert.ok(t,slug+': a printed row names '+track+', which is not a core protocol');
+          pointing.get(slug).add('/'+prefix+'datasets/'+MVPS[t.dataset]+'/');
+          if(kind==='core'){assert.ok(t.rows.some(r=>r.id===id),slug+': '+track+' has no released row '+id);if(CORE_PAGE[id])pointing.get(slug).add('/'+prefix+'methods/'+CORE_PAGE[id]+'/');}
+          else {assert.ok(FMS.models.some(m=>m.id===id),slug+': no v9 checkpoint '+id);pointing.get(slug).add('/'+prefix+'methods/'+FAMILY(id)+'/');}
+        }
+      }
     }
     // The protocol rows really are printed: every idle method on when-not-to-act, the marked readout on model-adaptation.
     {const w=pageOf(prefix+'topics/when-not-to-act/'),a=w.indexOf('<table'),idleTable=w.slice(a,w.indexOf('</table>',a));
@@ -2186,12 +2219,14 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   // Topic-card counts: every number a card prints is a cohort size or design figure from its own payload.
   const ysuX=xt.results['ysu-async-ssvep-extension'],ltr=xt.results['ltrsvp-rate-transfer'];
   const lsx=JSON.parse(readFileSync(new URL('../src/data/large-source-update.json',import.meta.url),'utf8'));
+  const fmCard=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
   const peopleOf=track=>[...new Set(topics.rows.filter(r=>r.track===track).map(r=>r.participants))];
   const cardPins={
     'dry-vs-wet':{files:['deployment-topics.json'],pins:peopleOf('wearable-sensor-transfer')},
     'screen-to-vr':{files:['context-update.json','extension-update.json'],pins:[cx.results['vr-pc-p300'].cohort.people,ltr.cohort.people]},
-    'fewer-electrodes':{files:['evidence-update.json'],pins:[ev.results.eesm23.cohort.people,ev.results.alphawaves.cohort.people],
-      allow:ev.results.alphawaves.configurations.map(c=>c.channels.length)},   // the zh card writes the electrode counts as digits
+    // Since 2026-10-04 the card also names BETA at eight and four electrodes for the v9 encoders, and its cohort.
+    'fewer-electrodes':{files:['evidence-update.json','foundation-models-update.json'],pins:[ev.results.eesm23.cohort.people,ev.results.alphawaves.cohort.people,fmCard.protocols.find(p=>p.id==='beta-4ch').people],
+      allow:[...ev.results.alphawaves.configurations.map(c=>c.channels.length),...fmCard.protocols.filter(p=>/^beta-/.test(p.id)).map(p=>p.channels)]},   // the zh card writes the electrode counts as digits
     'on-the-move':{files:['deployment-topics.json'],pins:[]},
     'calibration-budget':{files:['deployment-topics.json','large-source-update.json'],pins:[...peopleOf('wearable-calibration'),...new Set(topics.rows.filter(r=>r.track==='wearable-calibration').map(r=>r.labeled_target_trials).filter(n=>n>12)),
       lsx.results['openbmi-cross-session-calibration'].cohort.evaluated]},
@@ -2199,7 +2234,9 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     // Since 2026-10-04 the card names route 1's two primary cohorts as well.
     'when-not-to-act':{files:['experiments.json','extension-update.json','reliable-decisions-update.json'],pins:[...new Set(data.tracks.find(t=>t.id==='idle').rows.map(r=>r.subjects)),ysuX.cohort.people,
       ...['arithmetic-rest','beta-8ch'].map(p=>JSON.parse(readFileSync(new URL('../src/data/reliable-decisions-update.json',import.meta.url),'utf8')).results['reliable-decisions'].protocols[p].people)]},
-    'does-pretraining-help':{files:['deployment-topics.json'],pins:[]},
+    // Since 2026-10-04: the v9 checkpoints, counted, and (zh, in digits) how many lie above every published sleep row.
+    'does-pretraining-help':{files:['deployment-topics.json','foundation-models-update.json'],pins:[fmCard.models.length],
+      allow:[fmCard.comparisons.vs_published_rows.filter(x=>x.protocol==='sleep-scalp'&&['labram','cbramod','best_non_foundation'].every(k=>x[k].relation==='above')).length]},
     'clinical-groups':{files:['clinical-update.json'],pins:[cl.results.ds004584.cohort.people]},
     'sleep-staging':{files:['large-source-update.json'],pins:Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights)},
   };
@@ -2225,7 +2262,10 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'context:screen-to-vr':[cx.results['vr-pc-p300'].cohort.people],'context:image-rate':[ltr.cohort.people],'context:mobile-ssvep':peopleOf('mobile-ssvep-2s'),
     // 2026-10-03: both Dreem cohorts behind one new-person entry, largest first; OpenBMI's evaluated people, next session.
     'person:sleep-staging':Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights).sort((a,b)=>b-a),
-    'session:openbmi':[lsx.results['openbmi-cross-session-calibration'].cohort.evaluated]};
+    'session:openbmi':[lsx.results['openbmi-cross-session-calibration'].cohort.evaluated],
+    // 2026-10-04: the v9 EEGMAT adaptation's people (new people, as the LaBraM adaptation), and BETA's people for
+    // its eight-against-four-electrode comparison (two core protocols, a comparison, not a transfer).
+    'person:v9-adaptation':[fmCard.eegmat_adaptation.people],'sensor:beta-montage':[fmCard.protocols.find(p=>p.id==='beta-4ch').people]};
   for(const page of ['','zh/','topics/','zh/topics/']){
     const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap"'),html.indexOf('</table>',html.indexOf('<table class="tmap"')));
     assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');
@@ -2987,6 +3027,298 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/'])
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
 }
+// --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
+// The v9 findings on the questions (owner approval 2026-10-04): does-pretraining-help gains #v9-encoders —
+// sleep (the new rows above every released one), BETA (above CBraMod, not above training-free CCA), the EEGMAT
+// adaptation (one fixed recipe on one task, not a ranking; LoRA budgets differ), REVE Base against Large
+// (marginal intervals, no paired test) and the masking ablation — and fewer-electrodes gains #v9-montage, BETA
+// at eight and four electrodes beside the released rows and the six-channel sleep column; model-adaptation
+// points to the adaptation table without a figure. Every figure in the two sections is a data-fig re-read by
+// the topic loop above; pinned here: each figure is a leaf of the v9 JSON, the protocol's v9 CSV or
+// experiments.json and sits on a row naming its protocol; every figure-like token is one of those values as the
+// site prints it; the same figures in both languages; rows in the export's family order; each relation word
+// the export's; chance flags by the core rule; exposure badges and ZUNA 1.1's research-use sentence; every claim
+// the prose makes is the one the export supports; no ranking word and no exposure claim beyond the lists.
+{
+  const REL='foundation-models-update-20261004', FMJ='foundation-models-update.json';
+  const FX=JSON.parse(readFileSync(new URL('data/'+FMJ,DIST),'utf8')),F=FX.results['foundation-models-v9'],C=F.comparisons;
+  const MVPJ=JSON.parse(readFileSync(new URL('data/experiments.json',DIST),'utf8'));
+  const csvOf=p=>{const [h,...b]=csvRows(readFileSync(new URL('data/foundation-models-'+p+'.csv',DIST),'utf8')).filter(r=>r.length>1);return b.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));};
+  const cell=(p,id)=>csvOf(p).find(r=>r.model_id===id);
+  const coreRow=(t,id)=>MVPJ.tracks.find(x=>x.id===t).rows.find(r=>r.id===id);
+  const name=id=>F.models.find(m=>m.id===id).name;
+  const matrix=F.models.filter(m=>m.panel==='matrix').map(m=>m.id),siblings=F.models.filter(m=>m.panel!=='matrix').map(m=>m.id);
+  const scored=C.masking_ablation.map(x=>x.protocol);
+  const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const zhSrc=stripTypeScriptTypes(readFileSync(new URL('../src/data/foundation-models-zh.ts',import.meta.url),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'');
+  const zhCtx={};vm.runInNewContext(zhSrc+'\nthis.fmZh=fmZh;',zhCtx);const Z=zhCtx.fmZh;
+  const research={en:'Model card: research use only, not for diagnosis or clinical use.',zh:'模型卡：仅供研究使用，不可用于诊断或临床。'};
+  // A ranking word, after the phrases that deny one (and LoRA's rank, and the published best non-foundation row) are set aside.
+  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?|ranks?|ranked|ranking)\b/i,zh:/最佳|最好的|胜出|排名第|第一名/};
+  const rankingOk={en:/\b(?:not ranked|never ranked|not a ranking|none of them ranks|share a ranking)\b|rank-4|rank 4|best published non-foundation row|any model’s best/gi,zh:/不排名|不是排名|从不排名|都不用来给模型排名|不能放进同一个排名|最佳非基础模型行/g};
+  const notProof={en:/\bnot exposed\b|\bproven\b|\bno overlap\b/i,zh:/已证明|证明没有|没有重叠/};
+  const flagOf=(y,lo,c)=>y<=c?'at-or-below':lo<=c?'interval-reaches':null;
+  const flagWord={en:{'at-or-below':'At or below chance level','interval-reaches':'Interval reaches chance level'},zh:{'at-or-below':'不高于随机水平','interval-reaches':'区间触及随机水平'}};
+  const textOf=s=>decodeHtml(s.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  // Every value of the files these sections read, as the site prints it, and every number in their own text.
+  const tok=new Set();
+  const addVal=v=>{for(const g of Object.values(fmt))for(const n of numbers(g(v)))tok.add(n);};
+  const walk=v=>{if(typeof v==='number')addVal(v);else if(typeof v==='string')numbers(v).forEach(n=>tok.add(n));else if(v&&typeof v==='object')Object.values(v).forEach(walk);};
+  walk(FX);walk(MVPJ);walk(Z);
+  for(const p of scored.concat('idle')) for(const r of csvOf(p)) for(const v of Object.values(r)){if(v.trim()!==''&&Number.isFinite(Number(v)))addVal(Number(v));else numbers(v).forEach(n=>tok.add(n));}
+  const figureLike=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
+  // The extent of every element carrying an attribute: [start, end, value].
+  const extents=(html,attr)=>{const out=[];for(const m of html.matchAll(new RegExp(`<(\\w+)[^>]*\\s${attr}="([^"]+)"`,'g'))){
+    const tag=m[1];let depth=0,i=m.index;const re=new RegExp(`<${tag}[\\s>]|</${tag}>`,'g');re.lastIndex=i;let x;
+    while((x=re.exec(html))){depth+=x[0].startsWith('</')?-1:1;if(depth===0){out.push([m.index,x.index,m[2]]);break;}}}return out;};
+  const figsIn=h=>[...h.matchAll(/data-fig="([^|"]+)\|(\w+)\|([^"]+)"/g)].map(m=>({file:m[1],fmt:m[2],raw:Number(m[3]),at:m.index}));
+  const sectionOf=(html,id)=>{const a=html.indexOf(`<section class="topic-section fm-topic" id="${id}"`);assert.ok(a>0,id+' must render');
+    const b=html.indexOf('</section>',a);assert.equal(html.slice(a+8,b).indexOf('<section'),-1,id+' nests no section');return {a,sec:html.slice(a,b)};};
+  const rowFigs=(h,file)=>figsIn(h).filter(f=>!file||f.file===file).map(f=>f.raw);
+  const relOf=(id,p)=>{const x=C.vs_published_rows.find(c=>c.model===id&&c.protocol===p);return [x.labram.relation,x.cbramod.relation,x.best_non_foundation.relation];};
+  const xsec={};
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',W=flagWord[label];
+    // --- Shared to both sections: files, rows, tokens, words. ---
+    const common=(path,id)=>{
+      const html=pageOf(path),{a,sec}=sectionOf(html,id),w=path+'#'+id;
+      assert.ok(sec.includes(`data-release="${REL}"`),w+': names its release');
+      const figs=figsIn(sec);
+      assert.ok(figs.length>40,w+': prints its figures ('+figs.length+')');
+      assert.ok(figs.every(f=>f.file===FMJ||/^foundation-models-[a-z0-9-]+\.csv$/.test(f.file)||f.file==='experiments.json'),w+': every figure from the v9 JSON, a v9 CSV or experiments.json');
+      // A protocol's row figure sits on an element naming that protocol and the row.
+      const fmX=extents(sec,'data-fm-topic'),coreX=extents(sec,'data-core-topic');
+      for(const f of figs){
+        if(f.file===FMJ) continue;
+        const hit=(f.file==='experiments.json'?coreX:fmX).filter(([s,t])=>s<=f.at&&f.at<=t);
+        assert.ok(hit.length,w+': '+f.file+' '+f.raw+' is printed on no row that names its protocol');
+        const [track,rid]=hit.at(-1)[2].split('|');
+        if(f.file==='experiments.json') assert.ok(Object.values(coreRow(track,rid)).flat().includes(f.raw),w+': '+f.raw+' is not a value of the released '+track+' / '+rid+' row');
+        else {assert.equal(f.file,'foundation-models-'+track+'.csv',w+': '+f.raw+' sits on a '+track+' row but comes from '+f.file);
+              assert.ok(Object.values(cell(track,rid)).map(Number).includes(f.raw),w+': '+f.raw+' is not a value of '+rid+' on '+track);}
+      }
+      const vis=visible(zh?chineseOnly(sec):sec);
+      for(const t of figureLike(visible(sec))) assert.ok(tok.has(t),w+': "'+t+'" is not a value of the files this section reads');
+      assert.doesNotMatch(vis.replace(rankingOk[label],' '),ranking[label],w+': no ranking word');
+      assert.doesNotMatch(vis,notProof[label],w+': no exposure claim beyond the authors\' lists');
+      // Exposure badges: a v9 cell's badge is its exposure table status; ZUNA 1.1's rows carry the research-use sentence.
+      for(const [s,t,v] of fmX){
+        const [track,rid]=v.split('|'),h=sec.slice(s,t),st=cell(track,rid).pretraining_exposure,c=F.frozen_probe.find(x=>x.model===rid&&x.protocol===track).exposure.status;
+        if(/^<(?:td|tr)\b/.test(sec.slice(s,s+4))){
+          if(c==='exposed') assert.ok(h.includes('<span class="flag fm-badge" data-exposure="exposed">'+e(zh?Z[st]:st)+'</span>'),w+': '+v+' carries its exposure badge');
+          else if(c==='unknown') assert.ok(h.includes('<span class="flag fm-badge" data-exposure="unknown">'+(zh?'是否出现在预训练数据中：未知':'Exposure unknown')+'</span>'),w+': '+v+' is marked exposure unknown');
+          else assert.ok(!h.includes('fm-badge'),w+': '+v+' is not in the list and carries no badge');
+        }
+      }
+      const zunaRows=[...sec.matchAll(/<tr([^>]*data-(?:fm-topic|montage-row|adapt-row)="(?:[^"|]*\|)?zuna"[\s\S]*?)<\/tr>/g)];
+      assert.ok(zunaRows.length>0,w+': ZUNA 1.1 has rows');
+      for(const [,row] of zunaRows) assert.ok(row.includes(research[label]),w+': ZUNA 1.1\'s research-use sentence travels with its row');
+      // Only ZUNA 1.1's rows carry it.
+      assert.equal((sec.match(new RegExp(research[label].replace(/[.()]/g,'\\$&'),'g'))||[]).length,zunaRows.length,w+': the research-use sentence belongs to ZUNA 1.1\'s rows');
+      assert.ok(sec.includes(label==='en'?'not proof that the recordings were never seen':'并不证明这些记录从未被模型见过'),w+': the exposure key says what a statement is not');
+      assert.ok(sec.includes(`href="/data/${FMJ}" download`),w+': the v9 JSON is linked');
+      // Chance flags by the core rule, wherever a balanced accuracy is printed with its interval.
+      let flagged=0;
+      for(const m of sec.matchAll(/data-fig="([^|"]+)\|(pct1raw|pct1)\|([^"]+)"[^>]*>[^<]*<\/span><span class="interval"><span data-fig="[^|"]+\|\w+\|([^"]+)"[^>]*>[^<]*<\/span>–<span data-fig="[^"]+">[^<]*<\/span><\/span>((?:<span class="flag">[^<]*<\/span>)?)/g)){
+        const [,file,f,y,lo,flagHtml]=m;
+        const chance=file===FMJ?F.eegmat_adaptation.chance_level:file==='experiments.json'?null:Number(csvOf(file.replace(/^foundation-models-|\.csv$/g,'')).find(r=>r.chance_level_percent!=='').chance_level_percent);
+        const track=file==='experiments.json'?(()=>{const x=coreX.filter(([s,t])=>s<=m.index&&m.index<=t).at(-1);return x[2].split('|')[0];})():null;
+        const c=chance??(track&&MVPJ.tracks.find(t=>t.id===track).chanceLevel);
+        const want=flagOf(Number(y),Number(lo),c);
+        assert.equal(flagHtml,want?`<span class="flag">${W[want]}</span>`:'',w+': '+file+' '+y+' carries the chance flag the core rule gives ('+want+')');
+        flagged++;
+      }
+      // Every balanced accuracy printed with its interval in a table cell was read by the flag check above.
+      assert.equal(flagged,(sec.match(/<span class="interval"><span data-fig="[^"|]+\|pct1(?:raw)?\|/g)||[]).length,w+': every balanced accuracy with an interval is checked for its chance flag');
+      assert.ok(flagged>=50,w+': the chance-flag check read the tables ('+flagged+')');
+      let badges=0;for(const [s,t,v] of fmX) if(/^<(?:td|tr)\b/.test(sec.slice(s,s+4))) badges++;
+      assert.ok(badges>=13,w+': exposure checked on every v9 table cell ('+badges+')');
+      return {html,sec,vis,figs,w};
+    };
+
+    // --- does-pretraining-help #v9-encoders ---
+    {
+      const {html,sec,vis,figs,w}=common(prefix+'topics/does-pretraining-help/','v9-encoders');
+      xsec[label+'P']=figs.map(f=>f.file+'|'+f.raw);
+      const pos=html.indexOf('id="v9-encoders"');
+      assert.ok(pos>html.indexOf('id="seed-heading"')&&pos<html.indexOf('id="methods-and-limits"'),w+': after the controls, before their methods and limits');
+      // Sleep: every matrix row in the export's order with the export's relations; the claim names exactly the rows above all three.
+      const relText=(rels,best)=>{const refs=[['LaBraM',rels[0]],['CBraMod',rels[1]],[best,rels[2]]];
+        const list=xs=>zh?xs.join('、'):xs.length<3?xs.join(' and '):xs.slice(0,-1).join(', ')+' and '+xs.at(-1);
+        if(refs.every(r=>r[1]===refs[0][1])) return zh?{above:'高于三者',overlap:'与三者都重叠',below:'低于三者'}[refs[0][1]]:({above:'Above',overlap:'Overlaps',below:'Below'})[refs[0][1]]+' all three';
+        const parts=['above','overlap','below'].map(r=>[r,refs.filter(x=>x[1]===r).map(x=>x[0])]).filter(([,xs])=>xs.length);
+        const t=parts.map(([r,xs],i)=>zh?(r==='overlap'?`与${list(xs)}重叠`:`${{above:'高于',below:'低于'}[r]}${list(xs)}`):`${i?{above:'above',overlap:'overlaps',below:'below'}[r]:{above:'Above',overlap:'Overlaps',below:'Below'}[r]} ${list(xs)}`).join(zh?'；':'; ');
+        return zh?t.replace(/([一-鿿])([A-Za-z0-9])/g,'$1 $2').replace(/([A-Za-z0-9%)])([一-鿿])/g,'$1 $2'):t;};
+      for(const [track,best] of [['sleep-scalp',zh?'spectral ridge':'spectral ridge'],['beta-8ch',zh?'标准 CCA':'standard CCA']]){
+        const rows=[...sec.matchAll(new RegExp(`<tr data-fm-topic="${track}\\|([^"]+)" data-rel="([^"]+)">([\\s\\S]*?)<\\/tr>`,'g'))];
+        assert.deepEqual(rows.map(m=>m[1]),matrix,w+': '+track+' rows, every matrix checkpoint in the export\'s order, never sorted');
+        for(const [,id,rel,row] of rows){
+          const c=cell(track,id);
+          assert.equal(rel,relOf(id,track).join(' '),w+': '+track+'/'+id+' relations are the export\'s');
+          assert.ok(row.includes('<td class="fm-rel">'+e(relText(relOf(id,track),best))+'</td>'),w+': '+track+'/'+id+' reads its relations as "'+relText(relOf(id,track),best)+'"');
+          assert.deepEqual(rowFigs(row),[c.primary_percent,c.descriptive_interval_low_percent,c.descriptive_interval_high_percent].map(Number),w+': '+track+'/'+id+' prints its CSV row');
+        }
+      }
+      const aboveAll=matrix.filter(id=>relOf(id,'sleep-scalp').every(r=>r==='above'));
+      assert.deepEqual(aboveAll,['reve-large','steegformer-base','steegformer-large'],'the handoff\'s sleep result: three encoders above every published row');
+      const claim=sec.match(/<p class="roadmap-p" data-claim="sleep-above-all" data-models="([^"]+)">([\s\S]*?)<\/p>/);
+      assert.ok(claim&&claim[1]===aboveAll.join(' '),w+': the sleep sentence names exactly the rows above all three published rows');
+      for(const id of aboveAll) assert.ok(claim[2].includes('>'+e(name(id))+'<'),w+': the sleep sentence names '+name(id));
+      assert.match(sec,zh?new RegExp(`睡眠分期：${aboveAll.length} 个新编码器高于所有已发布的行`):new RegExp(`Sleep staging: ${['zero','one','two','three','four'][aboveAll.length]} new encoders above every published row`),w+': the sleep heading counts them');
+      // "above every published row": EEGNet's too, from the intervals; and sleep is the only protocol where any new row clears the best.
+      for(const id of aboveAll) for(const r of MVPJ.tracks.find(t=>t.id==='sleep-scalp').rows) assert.ok(Number(cell('sleep-scalp',id).descriptive_interval_low_percent)>r.interval[1],w+': '+id+' lies above the released '+r.name+' sleep row');
+      assert.equal(C.vs_published_rows.filter(x=>x.protocol!=='sleep-scalp'&&x.best_non_foundation.relation==='above').length,0,'no new row clears the best published row outside sleep');
+      const pub=t=>[...sec.matchAll(new RegExp(`<span data-core-topic="${t}\\|([^"]+)">`,'g'))].map(m=>m[1]);
+      assert.deepEqual([...new Set(pub('sleep-scalp'))],MVPJ.tracks.find(t=>t.id==='sleep-scalp').rows.map(r=>r.id),w+': every released sleep row, in the matrix order');
+      assert.deepEqual([...new Set(pub('beta-8ch'))].sort(),MVPJ.tracks.find(t=>t.id==='beta-8ch').rows.map(r=>r.id).sort(),w+': every released BETA row');
+      // BETA: the rows above CBraMod, the siblings above it too, none above standard CCA, the exposed cells below CBraMod.
+      const b=sec.match(/data-claim="beta-above-cbramod" data-models="([^"]+)" data-ablation="([^"]+)"/);
+      assert.ok(b&&b[1]===matrix.filter(id=>relOf(id,'beta-8ch')[1]==='above').join(' ')&&b[2]===siblings.filter(id=>relOf(id,'beta-8ch')[1]==='above').join(' '),w+': the BETA sentence names exactly the rows above CBraMod');
+      assert.equal(b[2].split(' ').length,siblings.length,w+': "as do the three masking-ablation siblings"');
+      assert.ok(C.vs_published_rows.filter(x=>x.protocol==='beta-8ch').every(x=>x.best_non_foundation.relation!=='above'&&x.best_non_foundation.row==='cca'),w+': no new BETA row above standard CCA');
+      assert.ok(F.models.filter(m=>F.frozen_probe.find(x=>x.model===m.id&&x.protocol==='beta-8ch').exposure.status==='exposed').every(m=>m.id.startsWith('steegformer')&&relOf(m.id,'beta-8ch')[1]==='below'),w+': the exposed BETA cells are ST-EEGFormer\'s, below CBraMod');
+      // EEGMAT: LaBraM for context, then the nine in the export's order, every figure, the verdict, the LoRA budgets.
+      const A=F.eegmat_adaptation,ctx=A.published_context;
+      const arows=[...sec.matchAll(/<tr data-adapt-row="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)];
+      assert.deepEqual(arows.map(m=>m[1]),['labram',...A.rows.map(r=>r.model)],w+': LaBraM for context, then the adapted encoders in the export\'s order');
+      const lab=coreRow('arithmetic-rest','labram');
+      for(const [,id,row] of arows){
+        const r=id==='labram'?null:A.rows.find(x=>x.model===id),fr=r?r.arms['frozen-ce']:ctx.arms.frozen,lo=r?r.arms['lora-r4']:ctx.arms['lora-r4'],p=r?r.paired_lora_minus_frozen:ctx.paired_lora_minus_frozen;
+        const ridge=r?[cell('arithmetic-rest',id).primary_percent,cell('arithmetic-rest',id).descriptive_interval_low_percent,cell('arithmetic-rest',id).descriptive_interval_high_percent].map(Number):[lab.y,...lab.interval];
+        assert.deepEqual(rowFigs(row),[...ridge,fr.balanced_accuracy,...fr.interval_95,lo.balanced_accuracy,...lo.interval_95,p.mean_change,...p.interval_95,p.helped,p.harmed,p.tied,fr.trainable_parameters,lo.trainable_parameters],w+': EEGMAT '+id+': every arm, the change, people moved and both budgets');
+        const zero=p.interval_95[0]>0||p.interval_95[1]<0;
+        assert.ok(row.includes(`data-resolved="${zero}"`)&&row.includes(zh?(zero?'区间不含零。':'区间包含零：不能认定有变化。'):(zero?'The interval excludes zero.':'The interval includes zero: no change is established.')),w+': '+id+' carries the verdict its interval supports');
+        if(r) assert.equal(zero,p.excludes_zero,w+': '+id+' the export\'s own flag');
+        assert.equal(row.includes('data-exposure="unknown"'),id==='zuna',w+': '+id+' exposure unknown only for ZUNA 1.1');
+      }
+      const v=sec.match(/data-claim="adaptation-verdicts" data-models="([^"]+)" data-open="([^"]+)"/);
+      assert.ok(v&&v[1]===A.rows.filter(r=>r.paired_lora_minus_frozen.excludes_zero).map(r=>r.model).join(' ')&&v[2]===A.rows.filter(r=>!r.paired_lora_minus_frozen.excludes_zero).map(r=>r.model).join(' '),w+': the verdict sentence names each side as the export does');
+      assert.match(vis,zh?/不是排名/:/not a ranking/,w+': one fixed recipe on one task, not a ranking');
+      assert.match(vis,zh?/LoRA 的参数量随架构而异/:/LoRA’s budget differs by architecture/,w+': LoRA budgets differ');
+      for(const x of A.lora_parameter_range) assert.ok(sec.includes(`data-fig="${FMJ}|count|${x}"`),w+': the LoRA budget range '+x);
+      const s1=A.rows.find(x=>x.model==='singlem'),sc=cell('arithmetic-rest','singlem');
+      assert.ok(Number(sc.interval_includes_chance==='true')&&s1.arms['frozen-ce'].interval_95[0]<=A.chance_level&&s1.arms['lora-r4'].interval_95[0]>A.chance_level&&s1.paired_lora_minus_frozen.excludes_zero,w+': the SingLEM sentence: frozen readouts reach chance, LoRA does not');
+      const na=sec.match(/data-claim="not-adapted">([\s\S]*?)<\/p>/)[1];
+      for(const m of F.models.filter(m=>m.adaptation!=='run')) assert.ok(na.includes('>'+e(m.name)+'<')&&na.includes(e(zh?Z[m.adaptation]:m.adaptation)),w+': '+m.name+' not adapted, with the export\'s reason');
+      // REVE Base and Large: every scored protocol, both rows, the export's change and overlap; the pattern and its caveat.
+      const pairs=C.base_vs_large.filter(x=>x.base==='reve-base');
+      const srows=[...sec.matchAll(/<tr data-size-pair="([^"]+)" data-overlap="(true|false)">([\s\S]*?)<\/tr>/g)];
+      assert.deepEqual(srows.map(m=>m[1]),scored,w+': REVE on every scored protocol, in the matrix order');
+      for(const [,t,ov,row] of srows){
+        const x=pairs.find(p=>p.protocol===t),bc=cell(t,'reve-base'),lc=cell(t,'reve-large');
+        assert.equal(ov,String(x.marginal_intervals_overlap),w+': REVE '+t+' overlap is the export\'s');
+        assert.ok(row.includes(x.marginal_intervals_overlap?(zh?'>重叠<':'>Overlap<'):(zh?'<strong class="fm-sep">不重叠</strong>':'<strong class="fm-sep">Do not overlap</strong>')),w+': REVE '+t+' says so');
+        assert.deepEqual(rowFigs(row).slice(1),[bc.primary_percent,bc.descriptive_interval_low_percent,bc.descriptive_interval_high_percent,lc.primary_percent,lc.descriptive_interval_low_percent,lc.descriptive_interval_high_percent].map(Number).concat(x.large_minus_base),w+': REVE '+t+': both rows and the export\'s change');
+      }
+      assert.ok(pairs.every(p=>p.large_minus_base>=0),'REVE Large is at or above Base everywhere');
+      assert.ok(sec.includes(`data-claim="reve-separated" data-tracks="${pairs.filter(p=>!p.marginal_intervals_overlap).map(p=>p.protocol).join(' ')}"`),w+': the size sentence names where the intervals separate');
+      assert.match(vis,zh?/没有做配对检验/:/no paired test was run/,w+': no paired test');
+      assert.match(vis,zh?/边际区间/:/marginal/,w+': marginal intervals');
+      assert.match(vis,zh?/同一批被试/:/the same people/,w+': the same people');
+      const o=sec.match(/data-claim="other-size-pairs" data-luna="([^"]*)" data-st="([^"]*)"/);
+      assert.ok(o&&o[1]===C.base_vs_large.filter(x=>x.base==='luna-base'&&!x.marginal_intervals_overlap).map(x=>x.protocol).join(' ')&&o[2]===C.base_vs_large.filter(x=>x.base==='steegformer-base'&&!x.marginal_intervals_overlap).map(x=>x.protocol).join(' '),w+': the other size pairs, where the export says they separate');
+      assert.ok(o[2].split(' ').every(t=>F.frozen_probe.find(x=>x.model==='steegformer-base'&&x.protocol===t).exposure.status==='exposed'),'ST-EEGFormer separates only on exposed cells');
+      // Masking: four checkpoints on every scored protocol; the separated pairs; six of seven.
+      const mrows=[...sec.matchAll(/<tr data-masking="([^"]+)" data-separated="([^"]+)">([\s\S]*?)<\/tr>/g)];
+      assert.deepEqual(mrows.map(m=>m[1]),scored,w+': the masking ablation on every scored protocol');
+      for(const [,t,sep,row] of mrows){
+        const x=C.masking_ablation.find(m=>m.protocol===t);
+        assert.equal(sep,x.non_overlapping_pairs.map(p=>p.join('+')).join(' ')||'none',w+': masking '+t+' separated pairs are the export\'s');
+        assert.deepEqual([...row.matchAll(/data-fm-topic="[^|]+\|([^"]+)"/g)].map(m=>m[1]),F.masking_ablation.checkpoints,w+': masking '+t+' the four checkpoints in order');
+        assert.deepEqual(rowFigs(row),F.masking_ablation.checkpoints.flatMap(id=>{const c=cell(t,id);return [c.primary_percent,c.descriptive_interval_low_percent,c.descriptive_interval_high_percent].map(Number);}),w+': masking '+t+' every cell');
+        assert.equal(row.includes(zh?'没有：两两都重叠':'None: every pair overlaps'),!x.non_overlapping_pairs.length,w+': masking '+t+' says whether a pair separates');
+        for(const [p1,p2] of x.non_overlapping_pairs) assert.ok(/jepa/.test(p1)!==/jepa/.test(p2)&&/r9cm/.test(p1)!==/r9cm/.test(p2),'the separated masking pair changes both factors');
+      }
+      const insep=C.masking_ablation.filter(m=>!m.non_overlapping_pairs.length).length;
+      // The two full tables sit in collapsed panels; the sentences above them carry the readings.
+      for(const id of ['v9-size-table','v9-masking-table']) assert.ok(sec.includes(`<details class="rd-panel fm-panel" id="${id}">`),w+': #'+id+' is a collapsed panel');
+      assert.match(sec,zh?new RegExp(`掩码消融：${scored.length} 个协议中有 ${insep} 个分不出差别`):new RegExp(`Masking ablation: not separable on ${['zero','one','two','three','four','five','six','seven'][insep]} of ${['zero','one','two','three','four','five','six','seven'][scored.length]} protocols`),w+': the masking heading counts the protocols');
+      assert.match(vis,zh?/同时改变了掩码框架和掩码几何/:/changes the framework and the geometry at once/,w+': the separated pair changes both factors');
+      // Limits: each of the export's required limitations, in the page's words; exposure as the owner's statement.
+      const lim=sec.slice(sec.indexOf('id="v9-limits"'),sec.indexOf('id="v9-licences"'));
+      for(const re of zh?[/不是上限/,/未调参、训练 5 轮/,/没有计入交叉验证带来的相关性/,/多重比较校正/,/从不排名/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/ZUNA 1\.1 没有公开清单/,/EEGMamba 的清单读自其官方代码，把握程度为中等/,/作者都没有为这些结果背书/,/LoRA 增量/,/共享 GPU/]
+                       :[/not a ceiling/,/untuned five-epoch recipe/,/ignore cross-validation dependence/,/no multiplicity correction/,/Grouped, never ranked/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/ZUNA 1\.1 publishes none/,/EEGMamba’s list is read from its official code, with medium confidence/,/No model’s authors endorse these results/,/LoRA deltas/,/shared GPU/])
+        assert.match(visible(lim),re,w+': the limitation '+re);
+      for(const k of ['mi-rest','p300-target','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
+      // Licences: one entry per family printed, with its weights licence, note and paper.
+      const lic=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose fm-licences">'),sec.indexOf('</ul>',sec.indexOf('fm-licences')));
+      const fams=[...new Set(F.models.map(m=>m.id).map(id=>({'reve-base':'reve','reve-large':'reve','luna-base':'luna','luna-large':'luna','brainomni-base':'brainomni','steegformer-base':'st-eegformer','steegformer-large':'st-eegformer','erp-fm-base':'erp-fm'})[id]??(id.startsWith('eeg-fm-masking/')?'eeg-fm-masking':id)))];
+      assert.deepEqual([...lic.matchAll(/<li data-licence="([^"]+)">/g)].map(m=>m[1]),fams,w+': one licence entry per family, in the export\'s order');
+      for(const f of fams){
+        const m=F.models.find(x=>(({'reve-base':'reve','reve-large':'reve','luna-base':'luna','luna-large':'luna','brainomni-base':'brainomni','steegformer-base':'st-eegformer','steegformer-large':'st-eegformer','erp-fm-base':'erp-fm'})[x.id]??(x.id.startsWith('eeg-fm-masking/')?'eeg-fm-masking':x.id))===f);
+        const li=lic.slice(lic.indexOf(`<li data-licence="${f}">`),lic.indexOf('</li>',lic.indexOf(`<li data-licence="${f}">`)));
+        assert.ok(li.includes(e(zh?Z[m.weights_licence]:m.weights_licence))&&li.includes(`href="${m.paper}"`),w+': '+f+' weights licence and paper');
+        if(m.licence_note.replace(/\.$/,'')!==m.weights_licence) assert.ok(li.includes(e(zh?Z[m.licence_note]:m.licence_note)),w+': '+f+' licence note');
+      }
+      assert.ok(sec.includes(`href="/${prefix}releases/#${REL}"`),w+': the release is linked');
+    }
+
+    // --- fewer-electrodes #v9-montage ---
+    {
+      const {html,sec,vis,figs,w}=common(prefix+'topics/fewer-electrodes/','v9-montage');
+      xsec[label+'M']=figs.map(f=>f.file+'|'+f.raw);
+      const pos=html.indexOf('id="v9-montage"');
+      assert.ok(pos>html.indexOf('id="posterior-subset"')&&pos<html.indexOf('id="methods-and-limits"'),w+': after the two paired comparisons, before their methods and limits');
+      const rows=[...sec.matchAll(/<tr data-montage-row="([^"]+)" data-released="(true|false)" data-overlap="(true|false)"(?: data-input="([^"]+)")?>([\s\S]*?)<\/tr>/g)];
+      const released=rows.filter(r=>r[2]==='true'),fresh=rows.filter(r=>r[2]==='false');
+      const b8=MVPJ.tracks.find(t=>t.id==='beta-8ch'),b4=MVPJ.tracks.find(t=>t.id==='beta-4ch'),sl=MVPJ.tracks.find(t=>t.id==='sleep-scalp');
+      assert.deepEqual(released.map(r=>r[1]),b8.rows.map(r=>r.id),w+': every released BETA row, in the matrix order');
+      for(const [,id,,ov,,row] of released){
+        const r8=b8.rows.find(r=>r.id===id),r4=b4.rows.find(r=>r.id===id),rs=sl.rows.find(r=>r.id===id);
+        assert.equal(ov,String(r8.interval[0]<=r4.interval[1]&&r4.interval[0]<=r8.interval[1]),w+': released '+id+': whether its two intervals overlap');
+        assert.deepEqual(rowFigs(row),[r8.y,...r8.interval,r4.y,...r4.interval,...(rs?[rs.y,...rs.interval]:[])],w+': released '+id+': its rows as released');
+        assert.ok(!/ pp</.test(row),w+': released '+id+': no difference no released file states');
+        if(!rs) assert.match(row,zh?/不在睡眠协议中/:/Not in the sleep protocol/,w+': '+id+' is not in the sleep protocol, and says so');
+      }
+      assert.deepEqual(fresh.map(r=>r[1]),matrix,w+': every new matrix row, in the export\'s order');
+      for(const [,id,,ov,inp,row] of fresh){
+        const x=C.fewer_electrodes_beta.find(c=>c.model===id),c8=cell('beta-8ch',id),c4=cell('beta-4ch',id),cs=cell('sleep-scalp',id);
+        assert.equal(ov,String(x.marginal_intervals_overlap),w+': '+id+': the export\'s overlap');
+        assert.equal(inp,x.input_family,w+': '+id+': its input family');
+        assert.deepEqual(rowFigs(row),[...[c8,c4].flatMap(c=>[c.primary_percent,c.descriptive_interval_low_percent,c.descriptive_interval_high_percent].map(Number)),x.four_minus_eight,...[cs.primary_percent,cs.descriptive_interval_low_percent,cs.descriptive_interval_high_percent].map(Number)],w+': '+id+': both montages, the export\'s change and sleep');
+        assert.ok(row.includes(x.marginal_intervals_overlap?(zh?'区间重叠':'Intervals overlap'):(zh?'区间不重叠':'Intervals do not overlap')),w+': '+id+' says whether its intervals overlap');
+      }
+      // The two readings: no small-montage advantage for the non-montage encoders; standard CCA keeps the highest four-electrode score.
+      const non=C.fewer_electrodes_beta.filter(x=>x.input_family!=='montage'&&matrix.includes(x.model));
+      assert.deepEqual(non.map(x=>x.model).sort(),['singlem','zuna'],'the single-channel and channel-wise encoders');
+      assert.ok(non.every(x=>x.four_minus_eight<0&&!x.marginal_intervals_overlap),w+': both lost accuracy at four electrodes, intervals apart');
+      const n=sec.match(/data-claim="no-small-montage-advantage" data-models="([^"]+)">([\s\S]*?)<\/p>/);
+      const above=C.fewer_electrodes_beta.filter(x=>x.input_family==='montage'&&matrix.includes(x.model)&&relOf(x.model,'beta-8ch')[1]==='above'&&relOf(x.model,'beta-4ch')[1]==='above').map(x=>x.model);
+      assert.ok(n&&n[1]===above.join(' '),w+': the montage encoders above CBraMod at both montages');
+      for(const x of [...non,...C.fewer_electrodes_beta.filter(c=>above.includes(c.model))]) assert.ok(n[2].includes(`data-fig="${FMJ}|pp1|${x.four_minus_eight}"`),w+': the change of '+x.model);
+      const sg=Number(cell('sleep-scalp','singlem').descriptive_interval_high_percent);
+      assert.ok(matrix.filter(id=>id!=='singlem').every(id=>sg<Number(cell('sleep-scalp',id).descriptive_interval_low_percent))&&sl.rows.every(r=>sg<r.interval[0]),w+': SingLEM lies below every other sleep row');
+      assert.match(vis,zh?/没有优势/:/No small-montage advantage/,w+': no small-montage advantage');
+      // The short answer says the new encoders as a whole show none: no new row is higher at four electrodes with intervals apart.
+      assert.ok(C.fewer_electrodes_beta.filter(x=>matrix.includes(x.model)).every(x=>x.four_minus_eight<=0||x.marginal_intervals_overlap),'no new row gains at four electrodes with intervals apart');
+      const cc=b4.rows.find(r=>r.id==='cca');
+      assert.ok([...b4.rows.map(r=>r.y),...matrix.map(id=>Number(cell('beta-4ch',id).primary_percent))].every(y=>y<=cc.y),'standard CCA keeps the highest four-electrode score');
+      const cl=sec.match(/data-claim="cca-four-electrodes" data-models="([^"]+)"/);
+      assert.ok(cl&&cl[1]===matrix.filter(id=>relOf(id,'beta-4ch')[2]==='overlap').join(' ')&&matrix.every(id=>relOf(id,'beta-4ch')[2]!=='above'),w+': no new row above CCA; the overlapping ones named');
+      for(const re of zh?[/不能验证一顶实体的少通道电极帽/,/接近下限的分数在两个子集之间的先后并不可靠/,/不是上面的 EESM23，也不是耳部 EEG/,/两个睡眠结果不能放进同一个排名/,/没有做配对检验/]
+                       :[/does not validate a physical low-channel cap/,/near-floor scores are not ordered reliably/,/not EESM23 above and not ear-EEG/,/do not share a ranking/,/no paired test/])
+        assert.match(vis,re,w+': '+re);
+    }
+    // model-adaptation: a pointer to the table, no figure; its own claims are pinned above.
+    {
+      const html=pageOf(prefix+'topics/model-adaptation/'),a=html.indexOf('<p class="protocol-note" id="v9-pointer">'),ptr=html.slice(a,html.indexOf('</p>',a));
+      assert.ok(a>html.indexOf('id="adaptation"')&&a<html.indexOf('id="next-day"'),prefix+'topics/model-adaptation/: the pointer sits in #adaptation');
+      assert.ok(ptr.includes(`href="/${prefix}topics/does-pretraining-help/#v9-adaptation"`)&&pageOf(prefix+'topics/does-pretraining-help/').includes('id="v9-adaptation"'),prefix+'topics/model-adaptation/: the pointer lands on the v9 adaptation');
+      assert.doesNotMatch(visible(ptr),/\d+\.\d|%|\bpp\b|data-fig/,prefix+'topics/model-adaptation/: the pointer carries no figure');
+      assert.match(visible(ptr),zh?/不是排名/:/not a ranking/,prefix+'topics/model-adaptation/: the pointer says the table is not a ranking');
+    }
+  }
+  assert.deepEqual(xsec.zhP,xsec.enP,'does-pretraining-help #v9-encoders: the same figures in both languages, in order');
+  assert.deepEqual(xsec.zhM,xsec.enM,'fewer-electrodes #v9-montage: the same figures in both languages, in order');
+  // The release log names both topics; the transfer map's two entries are pinned with the other map pins above.
+  for(const prefix of ['','zh/']){
+    const rel=pageOf(prefix+'releases/'),entry=rel.slice(rel.indexOf(`id="${REL}"`),rel.indexOf('</article>',rel.indexOf(`id="${REL}"`)));
+    for(const t of ['does-pretraining-help','fewer-electrodes']) assert.ok(entry.includes(`href="/${prefix}topics/${t}/"`),prefix+'releases/: the v9 release names '+t);
+  }
+  for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/'])
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
+}
+console.log('PASS: 2026-10-04 v9 foundation models, topics — does-pretraining-help #v9-encoders (sleep rows above every published row, BETA above CBraMod and not above CCA, the EEGMAT adaptation with verdicts and LoRA budgets, REVE Base against Large with marginal intervals and no paired test, the masking ablation) and fewer-electrodes #v9-montage (BETA eight to four beside the released rows, six-channel sleep, no small-montage advantage, CCA the highest four-electrode score): every figure from its file on a row naming its protocol, tokens pinned, the same in both languages, family order, the export\'s relations and claims, chance flags, exposure badges and ZUNA 1.1\'s sentence, limits, licences; model-adaptation\'s figure-free pointer; release log and sitemap.');
 console.log('PASS: 2026-10-04 v9 foundation models, pages — every protocol page with its v9 section (each row its CSV row, in family order, never re-sorted; not run with its reason, no figure; chance flags by the core rule and the CSV; exposure statement, badge and source from the exposure table, ZUNA 1.1 unknown everywhere; footnotes, licences, research-use sentence; masking ablation collapsed; EEGMAT adaptation with verdicts on arithmetic-rest; LaBraM and CBraMod sourced beside the released sentence); the home table\'s embedded rows equal the CSVs, first paint equals the render, dialogs carry the caveats; directory cards with the export\'s statuses, licences and parameters, REVE Base evaluated, MIRepNet and EEG-DINO catalogue only; method pages with groups, checkpoints, terms and exposure; Measured-on lines; dataset groups; topic and data-use wording; hub counts; release log; sitemap.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
 

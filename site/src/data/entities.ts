@@ -28,9 +28,10 @@ import reliable from './reliable-decisions-update.json';
 import type { Locale } from './i18n';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
-import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmPageNames, fmRowsByProtocol, fmSlugOf,
+import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
          fmSlugs, type FmRow, type FmSlug } from './foundation-models';
 import { fmZh } from './foundation-models-zh';
+import { TOPIC_PRINTS } from './foundation-topics';
 
 /** English is required; a missing `zh` renders the English text marked lang="en". */
 export type L = { en: string; zh?: string };
@@ -853,16 +854,29 @@ export const unmeasuredModels: { name: string; family: string; status: string; u
  * point at it. Those rows' groups point at their protocol page
  * (/protocols/<id>/), so a reverse index of group paths alone missed them: until
  * 2026-10-02 when-not-to-act named the YSU dataset and no method, though its
- * short answer leads with the idle protocol on ds005342. `method` narrows a
- * protocol to the one row printed. The model-adaptation row is the one its
- * export names as the matrix reference, so it follows the export.
+ * short answer leads with the idle protocol on ds005342. `methods` narrows a
+ * protocol to the rows printed, by the name the group rows carry. The
+ * model-adaptation row is the one its export names as the matrix reference, so it
+ * follows the export. Since 2026-10-04 the v9 rows a topic prints count too
+ * (foundation-topics.ts `TOPIC_PRINTS`): their groups point at the protocol page's
+ * v9 section (`anchor`), the EEGMAT adaptation at its own.
  */
 const matrixReference = adaptation.results['eegmat-labram-adaptation'].matrix_reference;
-const PROTOCOL_ROWS_PRINTED: Record<string, { track: string; method?: string }[]> = {
+type ProtocolRead = { track: string; anchor?: string; methods?: string[] };
+const coreName = (track: string, id: string) => {
+  const r = data.tracks.find(t => t.id === track)?.rows.find(x => x.id === id);
+  if (!r) throw new Error(`entities.ts: the core matrix has no ${track} / ${id}`);
+  return r.name;
+};
+const PROTOCOL_ROWS_PRINTED: Record<string, ProtocolRead[]> = {
   // The whole idle table: every method's detection and false activation.
   'when-not-to-act': [{ track: 'idle' }],
   // The frozen readout printed for scale beside the head-only arm.
-  'model-adaptation': [{ track: matrixReference.track_id, method: matrixReference.model }],
+  'model-adaptation': [{ track: matrixReference.track_id, methods: [matrixReference.model] }],
+  ...Object.fromEntries(Object.entries(TOPIC_PRINTS).map(([slug, prints]) => [slug, prints.map(p => ({
+    track: p.track, anchor: p.anchor,
+    methods: p.core ? p.core.map(id => coreName(p.track, id)) : (p.models ?? []).map(id => fmModelById[id].name),
+  }))])),
 };
 
 /**
@@ -870,7 +884,7 @@ const PROTOCOL_ROWS_PRINTED: Record<string, { track: string; method?: string }[]
  * topic prints. Derived from the served files the topic's cite block names
  * (structured.ts `topicFiles`): an entity row counts when its figure is a leaf
  * of one of those files and either its group points at the topic, or it is a
- * core-matrix row the topic prints, reached through its protocol page
+ * core-matrix or v9 row the topic prints, reached through its protocol page
  * (PROTOCOL_ROWS_PRINTED). A group pointing at the topic from a file the cite
  * block does not name fails the build: the line and the citation must agree.
  * check-workbench.mjs re-derives the line from the built pages, including the
@@ -880,14 +894,14 @@ export function topicEntities(slug: string, files: string[]): { datasets: Datase
   const path = `/topics/${slug}/`;
   const cited = new Set(files.map(f => f.replace(/^\/data\//, '')));
   const reads = PROTOCOL_ROWS_PRINTED[slug] ?? [];
-  for (const r of reads) if (!data.tracks.some(t => t.id === r.track && (!r.method || t.rows.some(x => x.name === r.method))))
-    throw new Error(`entities.ts: ${slug} prints ${r.track}${r.method ? ` / ${r.method}` : ''}, which the core matrix does not have`);
+  for (const r of reads) if (!data.tracks.some(t => t.id === r.track))
+    throw new Error(`entities.ts: ${slug} prints ${r.track}, which the core matrix does not have`);
   const pointsHere = (g: ResultGroup) => g.path.split('#')[0] === path;
   const viaProtocol = (g: ResultGroup, row: ResultRow) =>
-    reads.some(r => g.path === `/protocols/${r.track}/` && (!r.method || row.method === r.method));
+    reads.some(r => g.path === `/protocols/${r.track}/${r.anchor ? `#${r.anchor}` : ''}` && (!r.methods || r.methods.includes(row.method)));
   const prints = (g: ResultGroup, row: ResultRow) => {
     if (!cited.has(row.value.src)) {
-      if (pointsHere(g)) throw new Error(`entities.ts: ${slug} prints ${g.id} from ${row.value.src}, which its cite block does not name`);
+      if (pointsHere(g) || viaProtocol(g, row)) throw new Error(`entities.ts: ${slug} prints ${g.id} from ${row.value.src}, which its cite block does not name`);
       return false;
     }
     return pointsHere(g) || viaProtocol(g, row);

@@ -1,0 +1,20 @@
+---
+/**
+ * One balanced accuracy on a topic page's v9 tables (2026-10-04): the figure and its
+ * interval as `Fig`s, the chance flag the protocol pages print (the core rule), and
+ * — for a v9 cell — the exposure badge where the dataset is in the authors' list or
+ * the list is unknown. A not-exposed cell carries no badge; the key under the table
+ * gives the statement.
+ */
+import Fig from './Fig.astro';
+import { protocolCopy } from '../data/entity-copy';
+import type { Locale } from '../data/i18n';
+import type { Fig as FigValue } from '../data/entities';
+import { fmZh } from '../data/foundation-models-zh';
+import type { ChanceFlag } from '../data/foundation-topics';
+interface Props { ba: FigValue; interval: [FigValue, FigValue]; flag: ChanceFlag; exposure?: { status: string; statement: string }; locale: Locale }
+const { ba, interval, flag, exposure, locale } = Astro.props;
+const pc = protocolCopy[locale];
+const statement = exposure ? (locale === 'zh' ? fmZh[exposure.statement] : exposure.statement) : '';
+---
+<Fig f={ba} cls="metric"/><span class="interval"><Fig f={interval[0]}/>–<Fig f={interval[1]}/></span>{flag && <span class="flag">{flag === 'at-or-below' ? pc.atOrBelow : pc.intervalReaches}</span>}{exposure?.status === 'exposed' && <span class="flag fm-badge" data-exposure="exposed">{statement}</span>}{exposure?.status === 'unknown' && <span class="flag fm-badge" data-exposure="unknown">{pc.unknown}</span>}

@@ -278,6 +278,57 @@ and the WebMCP tool returns the v9 rows with their release. These checks were
 mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 48 injected
 violations was caught by the assertion written for it.
 
+The v9 findings on the questions (same day, owner approved): does-pretraining-help
+gains `#v9-encoders` after the pretrained-versus-random controls and before their
+methods and limits — sleep (the new rows whose intervals lie above every released
+sleep row), BETA (above CBraMod, none above training-free CCA), the EEGMAT
+adaptation (LaBraM for context, then the nine encoders in the export's order: the
+frozen-probe table's ridge readout, the trained head and LoRA, the paired change
+with the people who moved and the verdict its interval supports, both
+trainable-parameter budgets; one fixed recipe on one task, not a ranking, LoRA
+budgets differ), REVE Base against Large and the masking ablation (each read in
+prose, its full table in a collapsed panel), the required limitations in the page's
+words and the weights licences; fewer-electrodes gains `#v9-montage` after its two
+paired comparisons — BETA at eight and four electrodes and six-channel sleep, for
+the released rows and the new ones; model-adaptation a figure-free pointer to the
+adaptation table. Pinned from `dist/`: every figure in the two sections is a leaf
+of the v9 JSON, the protocol's v9 CSV or experiments.json, and a row figure sits on
+an element naming its protocol and row (`data-fm-topic`, `data-core-topic`) whose
+values include it; every figure-like token is a value of those files as the site
+prints it, or a number in their text; the same figures in both languages, in order;
+rows in the export's family order, never sorted; each relation (above, overlapping
+or below LaBraM, CBraMod and the best released non-foundation row) is the export's,
+and the words the page gives it are the ones it implies; every balanced accuracy
+printed with an interval carries the chance flag of the core rule (50% for the
+adaptation arms); an exposed cell carries its badge, an unknown one "Exposure
+unknown", a cell not in the list none; ZUNA 1.1's research-use sentence travels
+with its rows and only those; no ranking word once the denials are set aside, and
+no exposure claim beyond the lists. Every claim the prose makes is re-derived from
+the export: the encoders above every released sleep row (EEGNet's interval
+included) and that no new row clears the best released row on another protocol;
+the BETA rows and masking siblings above CBraMod, none above standard CCA, the
+exposed cells ST-EEGFormer's and below CBraMod; the adaptation verdicts on each
+side; REVE Large at or above Base everywhere, where their intervals separate, and
+where the other two size pairs do; the protocols on which no masking pair
+separates, and the separated pair changing both factors; the two non-montage
+encoders losing accuracy with intervals apart, no new row gaining at four
+electrodes with intervals apart, the montage encoders above CBraMod at both
+montages, SingLEM below every other sleep row, standard CCA the highest
+four-electrode score with no new row above it. For a released row the montage table
+states only whether its two intervals overlap: no released file states that
+difference. The per-person leak check on fewer-electrodes reads the page without
+`#v9-montage` (33.3% is a v9 interval bound there). The Measured-on derivation also
+reads the rows a topic prints through a protocol page from the page itself
+(`data-core-topic`, `data-fm-topic`), and a topic that prints released rows from
+experiments.json must name the core release without having to print the matrix
+LaBraM readout. Does-pretraining-help's card counts the v9 checkpoints and
+fewer-electrodes' names BETA's people and electrodes; the two new transfer-map
+entries (Person: the v9 adaptation; Sensor: BETA, eight vs. four electrodes, a
+comparison) are pinned to the export. The release log names both topics, and the
+sitemap dates the three topics and the hub 2026-10-04. These checks were
+mutation-tested on a copy of `dist/` (`SITE_DIST`): each of 56 injected violations
+was caught by the assertion written for it.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

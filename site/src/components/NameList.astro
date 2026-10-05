@@ -1,0 +1,9 @@
+---
+/** Names in a sentence ("A, B and C"; 甲、乙、丙), each marked English on a Chinese page. */
+import type { Locale } from '../data/i18n';
+interface Props { names: string[]; locale: Locale }
+const { names, locale } = Astro.props;
+const zh = locale === 'zh';
+const sep = (i: number) => i === 0 ? '' : zh ? '、' : i === names.length - 1 ? ' and ' : ', ';
+---
+{names.map((n, i) => <>{sep(i)}<span lang={zh ? 'en' : undefined}>{n}</span></>)}

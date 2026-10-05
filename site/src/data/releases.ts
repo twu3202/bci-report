@@ -36,7 +36,12 @@ export const siteUpdates = [
             // page; the LaBraM and CBraMod exposure wording on does-pretraining-help and model-adaptation.
             '/protocols/', ...protocols.map(id => `/protocols/${id}/`),
             '/datasets/ds006593/', '/datasets/tmnred/', '/datasets/eesm19/', '/datasets/ds005342/',
-            '/methods/', ...methodPages.map(slug => `/methods/${slug}/`), '/topics/does-pretraining-help/', '/topics/model-adaptation/'],
+            '/methods/', ...methodPages.map(slug => `/methods/${slug}/`), '/topics/does-pretraining-help/', '/topics/model-adaptation/',
+            // The v9 topics (same update): does-pretraining-help's new frozen encoders (sleep, BETA, the EEGMAT
+            // adaptation, REVE Base against Large, the masking ablation), fewer-electrodes' BETA eight-to-four
+            // and six-channel sleep comparison, model-adaptation's pointer to the v9 adaptation table; their
+            // cards and the two transfer-map entries on the home page and the Questions hub.
+            '/topics/fewer-electrodes/'],
   },
   {
     date: '2026-10-03',

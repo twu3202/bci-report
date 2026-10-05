@@ -34,6 +34,7 @@ import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
 import { holds } from './releases';
+import { FM_JSON, fmAdaptation, fmAdaptationMeta, fmProtocols } from './foundation-models';
 import type { Fig, L } from './entities';
 
 export const mapStates = ['measured', 'status', 'held', 'absent'] as const;
@@ -94,6 +95,11 @@ const ltrsvp = extension.results['ltrsvp-rate-transfer'];
 // changes in that contrast, so it carries no `with` tag.
 const dreemCohorts = Object.values(large.results['dreem-sleep-baselines'].cohorts).map(c => c.nights).sort((a, b) => b - a);
 const openbmi = large.results['openbmi-cross-session-calibration'];
+// 2026-10-04. The v9 EEGMAT adaptation: new people, same task, zero labels from the test person, as the
+// LaBraM adaptation; one fixed recipe, not a ranking. BETA at eight against four electrodes: two core
+// protocols, each trained and tested on its own, so a paired-design comparison, not a transfer.
+if (fmAdaptation.length !== 9) throw new Error('transfer-map.ts: the v9 adaptation entry says nine encoders');
+const betaPeople = fmProtocols.find(p => p.id === 'beta-4ch')!.people;
 
 // The core matrix's new-person protocols are the ones its payload labels so.
 if (!data.tracks.some(t => t.short === 'Transfer to a new person'))
@@ -122,6 +128,9 @@ export const mapRows: MapRow[] = [
         { key: 'person:pretraining', label: { en: 'Pretraining controls', zh: '预训练对照' }, href: '/topics/does-pretraining-help/',
           n: depPeople('pretraining-attribution-fixed'),
           note: { en: 'Frozen encoders with a readout fitted on other people, on a motor-imagery and a mental-workload task.', zh: '冻结编码器，分类头在其他被试上拟合，分别用于运动想象任务和脑力负荷任务。' } },
+        { key: 'person:v9-adaptation', label: { en: 'Nine encoders adapted · EEGMAT', zh: '九个编码器的适配 · EEGMAT' }, href: '/topics/does-pretraining-help/#v9-adaptation',
+          n: [count(fmAdaptationMeta.people.raw, FM_JSON)],
+          note: { en: 'A head on the frozen encoder against LoRA, new people, zero labels from the test person: one fixed recipe, not a ranking.', zh: '冻结编码器上的分类头对比 LoRA，新被试，不使用测试被试的任何标签：一个固定方案，不是排名。' } },
         { key: 'person:clinical', label: { en: 'Parkinson’s disease vs. controls', zh: '帕金森病与对照' }, href: '/topics/clinical-groups/',
           n: [count(clinicalCohort, CLI)],
           note: { en: 'Every person held out once; one site, and not a diagnosis.', zh: '每名被试各留出一次；单中心，也不是诊断。' } },
@@ -181,6 +190,9 @@ export const mapRows: MapRow[] = [
         { key: 'sensor:posterior-subset', label: { en: 'Posterior subset vs. all electrodes', zh: '后部子集与全部电极' }, href: '/topics/fewer-electrodes/#posterior-subset',
           n: [count(evidence.results.alphawaves.cohort.people, EVI)], comparison: true,
           note: { en: 'A software subset of one headset, not two devices.', zh: '同一设备上的软件子集，不是两款设备。' } },
+        { key: 'sensor:beta-montage', label: { en: 'BETA, eight vs. four electrodes', zh: 'BETA，八个与四个电极' }, href: '/topics/fewer-electrodes/#v9-montage',
+          n: [count(betaPeople, FM_JSON)], comparison: true,
+          note: { en: 'Two core protocols on the same people and folds, each trained and tested on its own: a comparison, not a transfer.', zh: '同一批被试、同样的折上的两个核心协议，各自训练、各自测试：是比较，不是迁移。' } },
       ],
       status: [],
       held: [],
