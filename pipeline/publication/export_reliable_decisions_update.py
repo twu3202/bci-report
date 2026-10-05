@@ -538,12 +538,51 @@ def protocol_block(protocol, block, record, matrix, adaptation, stage0):
 DS003810_FIELDS = ('id', 'label', 'seed', 'balanced_accuracy', 'site_value', 'error_accepting_everything',
                    'fixed_cutoff', 'learned_minus_confidence', 'risk_certification')
 DS003810_WITHHELD = ('ranking_S', 'ranking_L', 'coverage_target', 'probability_quality', 'recalibration')
+# Follow-up review of 2026-10-05: the review still named less than the file carries. Under the fixed threshold each
+# method also carries whole-person bootstrap intervals for its coverage and (where defined) its selective error, and
+# the certified-risk block carries the rule's settings and what accepting nothing leaves (n, accepted, a coverage of
+# zero, all ten people with nothing accepted, null errors), not only fold counts; and only top-level keys were
+# checked. The review now names them, and DS003810_NESTED holds every nested field to it.
 DS003810_PUBLISHED = ('Published here, in a panel labelled crude: the published balanced accuracy and the error when '
-                      'everything is accepted; under the fixed threshold, pooled coverage, the selective error (a count '
-                      'of wrong among accepted, flagged unstable, where fewer than ten were accepted) and how many of '
-                      'the ten people had nothing accepted; the learned-reject contrasts with whole-person bootstrap '
-                      'intervals; and the certified-risk fold counts. Two people per test fold, so no per-fold block '
-                      'and no person-level spread.')
+                      'everything is accepted; under the fixed threshold, pooled coverage and the selective error (a '
+                      'count of wrong among accepted, flagged unstable, where fewer than ten were accepted), each with '
+                      'its whole-person bootstrap interval where defined, and how many of the ten people had nothing '
+                      'accepted; the learned-reject contrasts with whole-person bootstrap intervals; and the '
+                      'certified-risk rule\'s settings (delta and target) and fold counts, with nothing accepted: a '
+                      'coverage of zero, all ten people with nothing accepted, and so no error and no error relative '
+                      'to the target. Two people per test fold, so no per-fold block and no person-level spread.')
+# Every nested field of a ds003810 method, in the export's order: the fixed threshold with nothing accepted or with
+# some accepted (a count of wrong and an error interval only then), the certified-risk block (it accepted nothing),
+# and each learned-reject contrast.
+DS003810_NESTED = {
+    'fixed_cutoff': {
+        False: ('cutoff', 'n', 'accepted', 'coverage', 'coverage_interval_95', 'selective_error',
+                'selective_error_status', 'unstable', 'people_with_nothing_accepted'),
+        True: ('cutoff', 'n', 'accepted', 'coverage', 'coverage_interval_95', 'selective_error', 'accepted_wrong',
+               'unstable', 'selective_error_interval_95', 'people_with_nothing_accepted'),
+    },
+    'risk_certification': {
+        False: ('delta', 'target', 'outer_folds', 'certified_folds', 'folds_over_target', 'n', 'accepted', 'coverage',
+                'selective_error', 'selective_error_status', 'unstable', 'people_with_nothing_accepted',
+                'target_weighted', 'error_minus_target', 'error_minus_target_status'),
+    },
+}
+DS003810_CONTRASTS = {'aurc': ('mean', 'interval_95', 'excludes_zero'),
+                      'error_at_80': ('mean', 'interval_95', 'excludes_zero')}
+
+
+def ds003810_fields(m, people):
+    """Whether a ds003810 method carries exactly what its privacy review lists, nested fields included."""
+    if tuple(m) != DS003810_FIELDS:
+        return False
+    for block, shapes in DS003810_NESTED.items():
+        if tuple(m[block]) != shapes.get(m[block]['accepted'] > 0):
+            return False
+    r = m['risk_certification']
+    nothing = (r['accepted'] == 0 and r['coverage'] == 0 and r['people_with_nothing_accepted'] == people
+               and r['selective_error'] is None and r['error_minus_target'] is None and r['target_weighted'] is None)
+    lmc = m['learned_minus_confidence']
+    return nothing and {k: tuple(v) for k, v in lmc.items()} == DS003810_CONTRASTS and tuple(lmc) == tuple(DS003810_CONTRASTS)
 
 
 def mi_rest_block(block, record, matrix, adaptation, stage0):
@@ -557,6 +596,8 @@ def mi_rest_block(block, record, matrix, adaptation, stage0):
     for m in methods:
         m.pop('ranking_S'), m.pop('ranking_L')
         require(tuple(m) == DS003810_FIELDS, f'ds003810 {m["id"]}: other fields than its privacy review lists')
+        require(ds003810_fields(m, design['people']),
+                f'ds003810 {m["id"]}: other nested fields than its privacy review lists')
         r = m['risk_certification']
         require(r['certified_folds'] == 0 and r['accepted'] == 0, 'mi-rest: the pages say S-risk accepted nothing here')
     return {'protocol': SECONDARY, 'dataset': record['name'], 'role': 'secondary, crude', 'task': record['task'],
@@ -693,7 +734,10 @@ def check_not_published(result, items):
                      and all(set(r) == {'protocol', 'learned_minus_confidence'} for r in rob['l_joint']['rows'])),
         'On ds003810, the crude secondary protocol: its secondary seeds and ensembles, the coverage-target rule,':
             lambda: (all(not set(m) & set(DS003810_WITHHELD) for m in rob['mi_rest']['methods'])
-                     and all(r['protocol'] != SECONDARY for r in rob['seeds']['rows'])),
+                     and all(r['protocol'] != SECONDARY for r in rob['seeds']['rows'])
+                     # "What the file carries for ds003810 is what its privacy review lists", nested fields included.
+                     and all(ds003810_fields(m, rob['mi_rest']['people']) for m in rob['mi_rest']['methods'])
+                     and rob['mi_rest']['rights']['privacyReview'].endswith(' ' + DS003810_PUBLISHED)),
         'Reliability-diagram bins; the class-conditional rows':
             lambda: (none_of(r'reliab|per_class|class_conditional|curve|decomposition|equal_width|margin|operating_point')
                      and all(len(r['error_at_test_coverage']) == len(TEST_COVERAGES)
@@ -996,8 +1040,8 @@ def export():
             'certified + uncertified folds is every fold; nothing accepted exactly when nothing is certified; folds '
             'over target never exceed folds certified',
             'labels per new person: 10 and 20 on EEGMAT, 40 on BETA; scored trials are what remains after the prefix',
-            'ds003810 stays without primary contrasts and is published as crude, with the fields its privacy review '
-            'lists',
+            'ds003810 stays without primary contrasts and is published as crude, with exactly the fields its privacy '
+            'review lists, nested ones included',
             'every not_published item is checked against the file: it carries nothing an item says it leaves out',
             'per-person percentiles and per-fold median temperatures refused by key, fragment and value; idle and '
             'BNCI2015-001 refused by key',

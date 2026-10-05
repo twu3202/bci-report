@@ -438,8 +438,18 @@ class ReliableDecisionsBoundary(unittest.TestCase):
         mi = result['robustness']['mi_rest']
         self.assertTrue(all(tuple(m) == ex.DS003810_FIELDS for m in mi['methods']))
         self.assertTrue(mi['rights']['privacyReview'].endswith(ex.DS003810_PUBLISHED))
-        for words in ('selective error', 'unstable', 'certified-risk fold counts', 'balanced accuracy'):
+        for words in ('selective error', 'unstable', 'balanced accuracy', 'each with its whole-person bootstrap interval',
+                      'certified-risk rule\'s settings (delta and target) and fold counts', 'with nothing accepted'):
             self.assertIn(words, mi['rights']['privacyReview'])
+        # Follow-up review of 2026-10-05: the nested fields too, as the review lists them. Each fixed threshold carries
+        # its coverage interval, and the error interval exactly where something was accepted; the certified-risk block
+        # accepted nothing, so its coverage is zero, all ten people had nothing accepted and every error is null.
+        self.assertTrue(all(ex.ds003810_fields(m, mi['people']) for m in mi['methods']))
+        for m in mi['methods']:
+            f, r = m['fixed_cutoff'], m['risk_certification']
+            self.assertIn('coverage_interval_95', f)
+            self.assertEqual('selective_error_interval_95' in f, f['accepted'] > 0)
+            self.assertEqual((r['accepted'], r['coverage'], r['people_with_nothing_accepted']), (0, 0, 10))
         # A field an item says is left out, put back into the file, is refused.
         for edit in (lambda r: r['robustness']['mi_rest']['methods'][1].update(probability_quality={}),
                      lambda r: r['robustness']['mi_rest']['methods'][0].update(ranking_S={}),
@@ -448,7 +458,16 @@ class ReliableDecisionsBoundary(unittest.TestCase):
                      lambda r: r['robustness']['seeds']['rows'].append({'protocol': 'mi-rest'}),
                      lambda r: r['protocols']['beta-8ch']['methods'][0]['ranking_S']['error_at_test_coverage'][0]
                      .update(interval_95=[0.1, 0.2]),
-                     lambda r: r['protocols']['arithmetic-rest'].update(median_temperature=1.0)):
+                     lambda r: r['protocols']['arithmetic-rest'].update(median_temperature=1.0),
+                     # A nested field the privacy review does not list, or one it lists taken away.
+                     lambda r: r['robustness']['mi_rest']['methods'][2]['risk_certification'].update(
+                         coverage_interval_95=[0.0, 0.0]),
+                     lambda r: r['robustness']['mi_rest']['methods'][2]['fixed_cutoff'].update(n_people=10),
+                     lambda r: r['robustness']['mi_rest']['methods'][1]['fixed_cutoff'].pop('selective_error_interval_95'),
+                     lambda r: r['robustness']['mi_rest']['methods'][0]['learned_minus_confidence']['aurc'].update(
+                         p_value=0.5),
+                     lambda r: r['robustness']['mi_rest']['methods'][0]['risk_certification'].update(
+                         people_with_nothing_accepted=9)):
             forged = copy.deepcopy(result)
             edit(forged)
             with self.assertRaisesRegex(ValueError, 'not_published: the file carries'):
@@ -472,9 +491,29 @@ class ReliableDecisionsBoundary(unittest.TestCase):
     def test_the_ds003810_privacy_review_says_what_is_published(self):
         m = copy.deepcopy(MANIFEST)
         rec = next(s for s in m['sources'] if s['id'] == 'ds003810')
-        rec['privacyReview'] = rec['privacyReview'].replace('; and the certified-risk fold counts', '')
-        with self.assertRaisesRegex(ValueError, 'does not say what the panel publishes'):
-            build(m)
+        for words in (', each with its whole-person bootstrap interval where defined',
+                      'certified-risk rule\'s settings (delta and target) and '):
+            self.assertIn(words, rec['privacyReview'])
+            forged = copy.deepcopy(m)
+            src = next(s for s in forged['sources'] if s['id'] == 'ds003810')
+            src['privacyReview'] = src['privacyReview'].replace(words, '')
+            with self.assertRaisesRegex(ValueError, 'does not say what the panel publishes'):
+                build(forged)
+
+    def test_ds003810_carries_no_nested_field_its_review_does_not_list(self):
+        # Follow-up review of 2026-10-05: only top-level keys were checked, so the intervals under the fixed threshold
+        # and the certified-risk block's extra fields went unnamed. Each shape is held, with nothing accepted or some.
+        r = build(MANIFEST)['results'][ROUTE]['robustness']['mi_rest']
+        self.assertEqual([m['fixed_cutoff']['accepted'] > 0 for m in r['methods']], [False, True, True])
+        for m in r['methods']:
+            self.assertTrue(ex.ds003810_fields(m, r['people']))
+            for block in ('fixed_cutoff', 'risk_certification'):
+                extra = copy.deepcopy(m)
+                extra[block]['interval_95'] = [0.0, 0.1]
+                self.assertFalse(ex.ds003810_fields(extra, r['people']), block)
+                fewer = copy.deepcopy(m)
+                fewer[block].pop(next(iter(fewer[block])))
+                self.assertFalse(ex.ds003810_fields(fewer, r['people']), block)
 
     def test_no_private_path_or_identifier_reaches_the_files(self):
         text = json.dumps(build(MANIFEST), ensure_ascii=False)

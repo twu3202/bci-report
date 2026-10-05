@@ -2688,9 +2688,26 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       assert.ok(R.robustness.seeds.rows.every(r=>r.protocol!=='mi-rest'),'route 1: no ds003810 secondary seed in the file');
       const pr=M.rights.privacyReview,row=s0.slice(s0.lastIndexOf('<tr',s0.indexOf(escHtml(pr))),s0.indexOf('</tr>',s0.indexOf(escHtml(pr))));
       assert.ok(s0.includes(escHtml(pr))&&row.includes('ds003810'),'data-use: the ds003810 row prints its privacy review');
-      const lists={'the published balanced accuracy':'balanced_accuracy','the error when everything is accepted':'error_accepting_everything','the selective error':'fixed_cutoff','flagged unstable':'fixed_cutoff','had nothing accepted':'fixed_cutoff','the learned-reject contrasts':'learned_minus_confidence','the certified-risk fold counts':'risk_certification'};
+      const lists={'the published balanced accuracy':'balanced_accuracy','the error when everything is accepted':'error_accepting_everything','the selective error':'fixed_cutoff','flagged unstable':'fixed_cutoff','had nothing accepted':'fixed_cutoff','the learned-reject contrasts':'learned_minus_confidence','the certified-risk rule\'s settings (delta and target) and fold counts':'risk_certification'};
       for(const [words,key] of Object.entries(lists)) assert.ok(pr.includes(words)&&M.methods.every(m=>key in m),'data-use: the ds003810 row lists '+words+', which the file carries');
       assert.deepEqual(M.methods.map(m=>Object.keys(m).join()),M.methods.map(()=>'id,label,seed,balanced_accuracy,site_value,error_accepting_everything,fixed_cutoff,learned_minus_confidence,risk_certification'),'route 1: ds003810 carries exactly what its privacy review lists');
+      // Second follow-up review of 2026-10-05: the nested fields too. Under the fixed threshold each method carries a
+      // whole-person bootstrap interval for its coverage and, where something was accepted, for its selective error;
+      // the certified-risk block carries the rule's settings and what accepting nothing leaves. The review names both,
+      // and the file carries exactly these fields, in this order.
+      assert.ok(pr.includes('pooled coverage and the selective error (a count of wrong among accepted, flagged unstable, where fewer than ten were accepted), each with its whole-person bootstrap interval where defined'),'data-use: the ds003810 row names the fixed threshold\'s intervals');
+      assert.ok(pr.includes('with nothing accepted: a coverage of zero, all ten people with nothing accepted, and so no error and no error relative to the target'),'data-use: the ds003810 row says the certified-risk rule accepted nothing');
+      const fixedSome='cutoff,n,accepted,coverage,coverage_interval_95,selective_error,accepted_wrong,unstable,selective_error_interval_95,people_with_nothing_accepted';
+      const fixedNone='cutoff,n,accepted,coverage,coverage_interval_95,selective_error,selective_error_status,unstable,people_with_nothing_accepted';
+      const riskNone='delta,target,outer_folds,certified_folds,folds_over_target,n,accepted,coverage,selective_error,selective_error_status,unstable,people_with_nothing_accepted,target_weighted,error_minus_target,error_minus_target_status';
+      for(const m of M.methods){
+        const f=m.fixed_cutoff,r=m.risk_certification;
+        assert.equal(Object.keys(f).join(),f.accepted>0?fixedSome:fixedNone,'route 1: ds003810 '+m.id+': the fixed threshold carries exactly what the review lists');
+        assert.equal(Object.keys(r).join(),riskNone,'route 1: ds003810 '+m.id+': the certified-risk block carries exactly what the review lists');
+        assert.ok(r.accepted===0&&r.coverage===0&&r.people_with_nothing_accepted===M.people&&M.people===10&&r.selective_error===null&&r.error_minus_target===null&&r.target_weighted===null,'route 1: ds003810 '+m.id+': the certified-risk rule accepted nothing, as the review says');
+        for(const [k,c] of Object.entries(m.learned_minus_confidence)) assert.equal(Object.keys(c).join(),'mean,interval_95,excludes_zero','route 1: ds003810 '+m.id+': the contrast '+k+' carries its mean and whole-person interval');
+        assert.deepEqual(Object.keys(m.learned_minus_confidence),['aurc','error_at_80'],'route 1: ds003810 '+m.id+': the two learned-reject contrasts');
+      }
     }
     const F9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).results['foundation-models-v9'];
     const at9=s0.indexOf('<h3 id="sources-2026-10-04-v9">'),v9=s0.slice(at9);

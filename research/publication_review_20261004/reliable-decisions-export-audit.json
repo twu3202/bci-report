@@ -1,8 +1,8 @@
 {
   "status": "pass",
   "release_id": "reliable-decisions-update-20261004",
-  "export_sha256": "18e55db55736cd6638b14d2916cee6fe7253ff591995be9f7c5ca1b4e6f9ab1b",
-  "manifest_sha256": "2c640a23bb062cca10d039eac193ecd39a9c64952480fceb6d2c6e41f36787b1",
+  "export_sha256": "9af91aa919e6af66bb2907c913ce616b2f98337bf6c9f11bba490d75b7f9fe51",
+  "manifest_sha256": "49486a87b692e03ddaad411c140a533816fba3b34fd19ce261faa243d6cd2885",
   "release_candidate_sha256": "90fdf3e250ae5d9de600c6c4c677441ac6f8b89d6ca84f93903456e50f2764da",
   "included": [
     "reliable-decisions"
@@ -24,7 +24,7 @@
     "every interval holds its point; every verdict follows from its interval; every contrast equals the difference of the levels it compares",
     "certified + uncertified folds is every fold; nothing accepted exactly when nothing is certified; folds over target never exceed folds certified",
     "labels per new person: 10 and 20 on EEGMAT, 40 on BETA; scored trials are what remains after the prefix",
-    "ds003810 stays without primary contrasts and is published as crude, with the fields its privacy review lists",
+    "ds003810 stays without primary contrasts and is published as crude, with exactly the fields its privacy review lists, nested ones included",
     "every not_published item is checked against the file: it carries nothing an item says it leaves out",
     "per-person percentiles and per-fold median temperatures refused by key, fragment and value; idle and BNCI2015-001 refused by key",
     "the printed headline figures are the ones the pinned handoff states",

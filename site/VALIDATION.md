@@ -606,6 +606,27 @@ languages; mutation-tested on a copy of `dist/`: each of 3 injected violations w
 caught. Measured with headless Chromium: `/methods/`, `/data-use/` and the other pages
 this review changed scroll sideways at neither 320 nor 375 px.
 
+Route 1's file still described ds003810 as carrying less than it does (second follow-up
+review of 2026-10-05). Under the fixed threshold each method also carries whole-person
+bootstrap intervals for its coverage and, where something was accepted, its selective
+error; the certified-risk block carries the rule's settings and what accepting nothing
+leaves (n, accepted, a coverage of zero, all ten people with nothing accepted, null
+errors), not only fold counts; and the export compared only top-level keys. The figures
+stay (no page prints the intervals). The privacy review, printed in data use's ds003810
+row, now names them ("each with its whole-person bootstrap interval where defined"; "the
+certified-risk rule's settings (delta and target) and fold counts, with nothing accepted:
+a coverage of zero, all ten people with nothing accepted, and so no error and no error
+relative to the target"), and the export holds every nested field of each ds003810
+method — the fixed threshold with nothing or some accepted, the certified-risk block
+with its nothing-accepted values, each learned-reject contrast — to that shape, both
+where it builds the panel and in the check of `not_published`'s ds003810 item ("What the
+file carries for ds003810 is what its privacy review lists"). The manifest, both JSON
+copies, the export audit and the build record are refreshed. Pinned: the two phrases on
+the data-use row, each block's keys in order, the certified-risk block's values.
+Mutation-tested on a copy of `dist/` (the source and served JSON edited together at the
+same size, with the listed SHA-256, restored afterwards): each of 6 injected violations
+was caught by the assertion written for it; the export tests refuse five more.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not
