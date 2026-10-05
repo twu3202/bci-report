@@ -455,6 +455,15 @@ protocols with intervals state the overlap rule. Mutation-tested on a copy of `d
 (a served file edited with its source and its listed SHA-256, at the same size): each
 of 5 injected violations was caught.
 
+The Chinese protocol pages' "第九轮各行的说明" (notes on the v9 rows) printed the CSV's
+English only, while footnotes and licences beside them were in Chinese. The CSV's notes
+join the export's sentences (the model's, then the cell's); each sentence is now in the
+translation table and printed in Chinese with the English beside it, and the build
+refuses a row whose CSV notes are not those sentences. Pinned: the English page prints
+the CSV's notes verbatim, the Chinese page every sentence in Chinese with its English
+original, and every translation carries exactly its English's numbers (the existing
+table check). Mutation-tested: each of 4 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

@@ -2883,6 +2883,15 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
        if(/pretraining overlap unknown/.test(t.limitation)) assert.ok(ptr>lim&&ptr<html.indexOf('id="steps"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('href="#pretraining-exposure"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('2026-10-04'),where+': a dated pointer beside "pretraining overlap unknown"');
        else assert.equal(ptr,-1,where+': a pointer without the released words it points from');}
       assert.ok(sec.includes(label==='en'?'which is not proof that its recordings were never seen':'这并不证明它的记录从未被模型见过'),where+': the exposure key says what a statement is not');
+      // The notes on the v9 rows: the CSV's, which join the export's sentences; on the Chinese page each sentence in
+      // Chinese from the translation table, the English beside it (review of 2026-10-05).
+      {const nu=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose fm-notes">'),sec.indexOf('</ul>',sec.indexOf('<ul class="entity-links protocol-prose fm-notes">')));
+       for(const rec of rows.filter(r=>r.notes)){
+         const m=F.models.find(x=>x.id===rec.model_id),c=F.frozen_probe.find(x=>x.model===m.id&&x.protocol===t.id),parts=[...m.notes,...(c.notes??[])];
+         assert.equal(parts.join(' '),rec.notes,where+'/'+m.id+': the CSV\'s notes are the export\'s sentences');
+         if(label==='en') assert.ok(nu.includes(e(rec.notes)),where+'/'+m.id+': the notes as the CSV states them');
+         else for(const x of parts) assert.ok(printed(nu,x,label),where+'/'+m.id+': the note "'+x.slice(0,40)+'" in Chinese, with the English beside it');
+       }}
       // The reading rule fits the rows: interval overlap where there are intervals; the idle rows are counts (review of 2026-10-05).
       assert.equal(/95% intervals do not overlap|95% 区间不重叠/.test(visible(sec.slice(0,sec.indexOf('<table class="fm-results">')))),!tradeoff,where+': the interval reading rule only where rows have intervals');
       if(tradeoff) assert.ok(visible(sec).includes(label==='en'?'they are counts with no interval, so no row is called above or below another':'这些是计数，没有区间，所以不说哪一行高于或低于另一行'),where+': the idle rows are counts, not ranked');

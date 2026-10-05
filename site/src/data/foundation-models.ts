@@ -233,6 +233,8 @@ export interface FmRow {
   exposure: ExposureCell;
   /** The CSV's notes for this cell: the model's notes, then the cell's own. */
   notes: string;
+  /** The same notes as the export's sentences, each translatable on its own (the CSV joins them with a space). */
+  noteParts: string[];
   idle?: { detected: Fig; commandTrials: Fig; falseActivations: Fig; idleTrials: Fig; abstain: Fig; windowBa: Fig; windowAuroc: Fig };
 }
 
@@ -244,7 +246,9 @@ function rowOf(protocol: string, c: Csv): FmRow {
   const exposure = exposureOf(model.exposureKey, protocol);
   if (json.exposure.status !== exposure.status || c.pretraining_exposure !== exposure.statement)
     throw new Error(`foundation-models.ts: ${model.id} on ${protocol}: the CSV, the cell and the exposure table disagree`);
-  const base = { model, protocol, file: src, mode: c.evaluation_mode, channels: fig(num('channels'), 'count', src), exposure, notes: c.notes };
+  const noteParts: string[] = [...model.notes, ...(json.notes ?? [])];
+  if (noteParts.join(' ') !== c.notes) throw new Error(`foundation-models.ts: ${model.id} on ${protocol}: the CSV's notes are not the export's sentences`);
+  const base = { model, protocol, file: src, mode: c.evaluation_mode, channels: fig(num('channels'), 'count', src), exposure, notes: c.notes, noteParts };
   if (c.status !== 'complete') {
     if (c.primary_percent !== '' || !c.not_run_reason) throw new Error(`foundation-models.ts: ${model.id} on ${protocol} is not run without its reason`);
     return { ...base, status: 'not_run', reason: c.not_run_reason, chanceFlag: null };

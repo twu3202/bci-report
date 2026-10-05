@@ -207,7 +207,9 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
     <FmLicences models={fmAll.map(r => r.model)} locale={locale}/>
     <h3 class="roadmap-h3">{c.fmNotesH3}</h3>
-    <ul class="entity-links protocol-prose fm-notes">{fmNotes.map(r => <li><strong lang="en">{r.model.name}</strong>{colon}<span lang={payloadLang}>{r.notes}</span></li>)}</ul>
+    <ul class="entity-links protocol-prose fm-notes">{fmNotes.map(r => <li><strong lang="en">{r.model.name}</strong>{colon}{locale === 'en'
+      ? <span>{r.notes}</span>
+      : r.noteParts.map(n => { const t = say(n); return <><span>{t.text}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</>; })}</li>)}</ul>
     <div class="topic-actions"><a class="button" href={`/data/${p.files.fm}`} download>{c.fmDownload}</a><a class="button fm-release" href={hrefFor(`/releases/#${fmRelease.id}`, locale)}>{c.fmRelease}{' '}<code>{fmRelease.id}</code></a></div>
   </section>
 

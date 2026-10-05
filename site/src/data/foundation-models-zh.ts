@@ -109,6 +109,34 @@ export const fmZh: Record<string, string> = {
   'ZUNA pretraining sources are not published: exposure unknown on every core dataset. 0-4 electrode coordinates per protocol are clamped to the edge of the +-0.12 m position grid as upstream does.':
     'ZUNA 没有公开预训练数据来源：每个核心数据集是否出现在预训练数据中都未知。每个协议有 0–4 个电极坐标被截到 ±0.12 m 位置网格的边缘，与上游做法相同。',
 
+  // Cell notes (2026-10-05 review: the protocol pages' "Notes on the v9 rows" print in Chinese, the English beside).
+  'BrainOmni common average reference on 4 channels removes a median 0.87 of segment channel variance.':
+    'BrainOmni 在 4 个通道上做共同平均参考，去掉的片段通道方差比例中位数为 0.87。',
+  'BrainOmni common average reference on 6 channels removes a median 0.45 of segment channel variance.':
+    'BrainOmni 在 6 个通道上做共同平均参考，去掉的片段通道方差比例中位数为 0.45。',
+  'BrainOmni keeps its upstream common average reference; on 8 channels it removes a median 0.79 of segment channel variance.':
+    'BrainOmni 保留上游的共同平均参考；在 8 个通道上，它去掉的片段通道方差比例中位数为 0.79。',
+  'Channel-retained pooling gives 15,360-d features (above the harness ~10k soft guideline).':
+    '保留通道维度的池化得到 15,360 维特征（高于评测框架约 10k 维的软性上限）。',
+  'In ERP-FM design (post-onset 1 s windows without baseline).':
+    '在 ERP-FM 的设计范围内（刺激后 1 秒时间窗，不做基线校正）。',
+  'In ERP-FM design (post-onset 1 s windows without baseline; pretraining used baselined, filtered epochs).':
+    '在 ERP-FM 的设计范围内（刺激后 1 秒时间窗，不做基线校正；预训练用的是做过基线校正和滤波的数据段）。',
+  'LUNA min-max position scaling on a 4-channel montage (see beta-8ch).':
+    'LUNA 在 4 通道电极布局上对电极位置做最小-最大缩放（见 beta-8ch）。',
+  'LUNA min-max position scaling on a 4-channel montage.': 'LUNA 在 4 通道电极布局上对电极位置做最小-最大缩放。',
+  'LUNA min-max position scaling on a 6-channel montage.': 'LUNA 在 6 通道电极布局上对电极位置做最小-最大缩放。',
+  'LUNA min-max position scaling on an 8-channel montage.': 'LUNA 在 8 通道电极布局上对电极位置做最小-最大缩放。',
+  'LUNA min-max scales electrode positions over the channel set; on 4-8 channel montages a small posterior cluster is stretched to the unit cube.':
+    'LUNA 在所用的通道集合上对电极位置做最小-最大缩放；在 4–8 通道的电极布局上，一小簇后部电极会被拉伸到单位立方体。',
+  'Outside the ERP-FM design: negative control.': '不在 ERP-FM 的设计范围内：阴性对照。',
+  'PRETRAINING-EXPOSED: BETA is in the ST-EEGFormer pretraining corpus (all 70 participants assumed).':
+    '在预训练数据中：BETA 在 ST-EEGFormer 的预训练语料中（按全部 70 名被试都在其中处理）。',
+  'PRETRAINING-EXPOSED: BETA is in the ST-EEGFormer pretraining corpus.': '在预训练数据中：BETA 在 ST-EEGFormer 的预训练语料中。',
+  'PRETRAINING-EXPOSED: TMNRED (ds005383) is in the SingLEM pretraining corpus.':
+    '在预训练数据中：TMNRED（ds005383）在 SingLEM 的预训练语料中。',
+  'Point estimate at chance; reported as is.': '点估计等于随机水平；按原值报告。',
+  'Point estimate below chance; reported as is.': '点估计低于随机水平；按原值报告。',
   // Not-run reasons: never a zero, always the reason.
   'BrainTokenizer needs a 512-sample window (2.0 s at 256 Hz); the published segment is 1 s = 256 samples, so upstream unfold() would zero-pad 256 of 512 samples of every window (invented samples). All upstream downstream tasks use >= 2 s windows.':
     'BrainTokenizer 需要 512 个采样点的时间窗（256 Hz 下 2.0 秒）；已发布的片段是 1 秒 = 256 个采样点，所以上游的 unfold() 会给每个时间窗的 512 个采样点补零 256 个（凭空造出的采样点）。上游所有下游任务用的时间窗都不短于 2 秒。',
