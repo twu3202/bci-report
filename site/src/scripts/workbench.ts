@@ -230,7 +230,7 @@ function fmRowHtml(r:FmRow,reference=false){
 function fmGroupHtml(fm:FmRow[]){
   if(!fm.length)return '';
   const t=fmOf(track.id);
-  return '<tr class="fm-group"><th colspan="4" scope="colgroup">'+esc(S.fmGroup(fm.length,fmData.date,fm.filter(r=>r.status!=='complete').length))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
+  return '<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+esc(S.fmGroup(fm.length,fmData.date,fm.filter(r=>r.status!=='complete').length))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></span></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
 }
 function ablationHtml(){
   const ref=visibleFm().filter(r=>r.id.startsWith('eeg-fm-masking/')),sib=visibleFm('masking ablation');
@@ -251,6 +251,7 @@ const fm=visibleFm();
 $('#result-rows').innerHTML=rows.length||fm.length?rows.map(r=>'<tr><td><button class="model-name" data-model="'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small></td><td><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small>'+chanceFlag(r)+seedFlag(r)+'</td><td><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small>'+abstainFlag(r)+'</td><td>'+r.seconds.toFixed(1)+'s</td></tr>').join('')+fmGroupHtml(fm):'<tr><td colspan="4" class="empty">'+S.empty+'</td></tr>';
 $('#ablation-rows').innerHTML=ablationHtml();
 $<HTMLAnchorElement>('#download-fm').href='/data/'+fmOf(track.id).file;
+$<HTMLAnchorElement>('#fm-terms-link').href=fmOf(track.id).protocolHref+'#v9-licences';
 draw([...rows.map(r=>({name:r.name,y:r.y,x:r.x,interval:(r as Partial<{interval:number[]|null}>).interval??null})),
       ...fm.filter(r=>r.y!==null&&r.x!==null).map(r=>({name:r.name,y:r.y as number,x:r.x as number,interval:r.interval}))],rows.length);
 hint();

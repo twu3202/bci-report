@@ -560,6 +560,26 @@ fewer-electrodes' closing bracket, which opened the next element, read "（−6.
 it is now plain text between them). Mutation-tested on a copy of `dist/`: each of 4
 injected violations was caught.
 
+The home page's v9 rows (same review). Their weights terms, REVE's versions and the
+no-endorsement sentence were only in each row's dialog: a terms line now sits under the
+v9 rows, before the masking-ablation panel, as on the dataset pages (every licence by
+name, REVE by version, no endorsement), linking the current protocol page's full list —
+the script moves the link with the protocol tab. The snapshot note's "13 further
+foundation encoders" now says what they are, from the export: checkpoints of 11 models,
+with 3 more of one of them in the masking ablation, 16 in all (the release log and data
+use count models and checkpoints). And the v9 group's heading, a cell as wide as the
+table, was cut at 375 px after "13 further foundation encoders": its words are now held
+in a label that wraps within the visible box and stays there while the rows scroll
+sideways (`position: sticky`). Measured with headless Chromium on the built pages, every
+protocol tab, EN and ZH, at 320, 375 and 1280 px, with the table scrolled 400 px
+sideways too: the heading's text lies within the table's visible box in every case
+(two to four lines on a phone), and no page scrolls sideways. Pinned: the terms line
+(each licence, REVE's versions, no endorsement, the link), the link following the
+protocol in the DOM double, the counts, the label in both first paints and the
+script's render, and the built CSS rule. Mutation-tested on a copy of `dist/` (the
+client script's source too, restored afterwards): each of 5 injected violations was
+caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

@@ -323,6 +323,12 @@ assert.ok(readdirSync(new URL(DIST+'_astro/',import.meta.url)).filter(f=>f.endsW
   assert.ok(rule&&/white-space:normal/.test(rule[2])&&['.fm-research-use','.fm-row .model-name','.fm-row td:first-child small'].every(s=>rule[1].split(',').map(x=>x.trim()).includes(s)),
     'the v9 rows\' names, modes and research-use line wrap in the home table');
   assert.match(css,/\.fm-row \.model-name\{text-align:left\}/,'a wrapped v9 name stays left-aligned');
+  // Follow-up review of 2026-10-05: the v9 group's heading spans the whole table, which scrolls sideways on a phone, so
+  // at 375 px it was cut after "13 further foundation encoders". Its words wrap within the visible box and stay there.
+  const g=css.match(/(?:^|})([^{}]*\.fm-group-label[^{}]*)\{([^}]*)\}/);
+  assert.ok(g&&['white-space:normal','display:block','position:sticky','left:18px'].every(d=>g[2].split(';').includes(d))&&/max-width:calc\(100vw - \d+px\)/.test(g[2]),
+    'the v9 group heading wraps within the visible box and stays in view while the rows scroll');
+  for(const p of ['','zh/']) assert.match(readFileSync(new URL(p+'index.html',DIST),'utf8'),/<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">/,p+'index.html: the v9 group heading is held in its label');
 }
 const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
 assert.match(headers,/Content-Security-Policy:[^\n]*style-src 'self';/,'style-src must stay free of unsafe-inline');
@@ -3068,11 +3074,11 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});
       const html=g('#result-rows').innerHTML,J=JSON.parse(fmEmbedded(label)).tracks[t.id],mx=J.rows.filter(r=>r.panel==='matrix');
       const head=label==='en'?`Added 2026-10-04: ${mx.length} further foundation encoders, frozen (v9)`:`2026-10-04 新增：另外 ${mx.length} 个基础模型编码器（冻结，第九轮）`;
-      assert.ok(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup">'+head)&&html.indexOf('fm-group')>html.lastIndexOf('<tr><td><button class="model-name" data-model="'),label+'/'+t.id+': the v9 group follows the released rows, counted');
+      assert.ok(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+head)&&html.indexOf('fm-group')>html.lastIndexOf('<tr><td><button class="model-name" data-model="'),label+'/'+t.id+': the v9 group follows the released rows, counted');
       assert.ok(html.includes(`href="/${label==='zh'?'zh/':''}protocols/${t.id}/#foundation-v9"`),label+'/'+t.id+': the group links the protocol page\'s v9 section');
       // The count says how many of its rows were not run here, so it agrees with the protocols index's scored count (review of 2026-10-05).
       const nr=mx.filter(r=>r.status!=='complete').length,tail=label==='en'?` · ${nr} not run on this protocol`:`，其中 ${nr} 个在这个协议上未运行`;
-      assert.equal(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup">'+e(head+tail)+' <a'),nr>0,label+'/'+t.id+': the v9 group says how many of its rows were not run here ('+nr+')');
+      assert.equal(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+e(head+tail)+' <a'),nr>0,label+'/'+t.id+': the v9 group says how many of its rows were not run here ('+nr+')');
       for(const r of mx){
         const at=html.indexOf(`<tr class="fm-row" data-fm="${r.id}">`),row=html.slice(at,html.indexOf('</tr>',at)),w=label+' home '+t.id+'/'+r.id;
         assert.ok(at>0,w+': rendered');
@@ -3088,6 +3094,8 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       const ab=g('#ablation-rows').innerHTML;
       assert.deepEqual([...ab.matchAll(/<tr class="fm-row" data-fm="([^"]+)">/g)].map(m=>m[1]).sort(),[F.masking_ablation.checkpoints[0],...ablation.map(m=>m.id)].sort(),label+'/'+t.id+': the ablation panel');
       assert.equal(g('#download-fm').href,'/data/foundation-models-'+t.id+'.csv',label+'/'+t.id+': the v9 CSV download follows the protocol');
+      // Follow-up review of 2026-10-05: the weights terms under the v9 rows link this protocol's full list.
+      assert.equal(g('#fm-terms-link').href,(label==='zh'?'/zh':'')+'/protocols/'+t.id+'/#v9-licences',label+'/'+t.id+': the weights terms link follows the protocol');
       // The protocol dialog: the dated LaBraM/CBraMod statement after the released sentence.
       g('#open-protocol').events.click();
       const dlg=g('#dialog-body').innerHTML;
@@ -3119,6 +3127,19 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
     assert.ok(added.includes(`data-release="${REL}"`)&&added.includes(label==='en'?`${matrix.length} further foundation encoders`:`另外 ${matrix.length} 个基础模型编码器`),label+': the snapshot note counts the v9 matrix rows');
     assert.ok(added.includes(label==='en'?'not ranked against it':'也不与它排名'),label+': the v9 rows are not ranked against the snapshot');
+    // Follow-up review of 2026-10-05: the release log and data use count eleven models and sixteen checkpoints; the note
+    // says what the 13 encoders are, from the export (the models evaluated in v9, the masking ablation's siblings).
+    {const models=E.models.filter(m=>m.evaluated_in_v9).length,abl=F.models.filter(m=>m.panel==='masking ablation').length;
+     assert.ok(models===11&&abl===3&&matrix.length+abl===F.models.length,'v9: eleven models, three ablation siblings, sixteen checkpoints');
+     assert.ok(added.includes(label==='en'?`They are checkpoints of ${models} models; ${abl} more checkpoints of one of them form a masking ablation, ${matrix.length+abl} in all.`
+       :`它们是 ${models} 个模型的检查点；其中一个模型另有 ${abl} 个检查点组成掩码消融，共 ${matrix.length+abl} 个。`),label+': the snapshot note says the encoders are checkpoints of '+models+' models, '+(matrix.length+abl)+' with the ablation');}
+    // The weights terms of every v9 checkpoint under the table, as on the dataset pages: each licence, REVE named by
+    // version, no endorsement, and the protocol page's full list linked (the first protocol on first paint).
+    {const t0=home.indexOf('<p class="fm-terms-home" id="fm-terms">'),terms=home.slice(t0,home.indexOf('</p>',t0));
+     assert.ok(t0>0&&t0>home.indexOf('id="download-fm"')&&t0<home.indexOf('id="ablation-panel"'),label+': the weights terms sit under the v9 rows, before the ablation panel');
+     for(const x of F.models) assert.ok(terms.includes(label==='zh'&&/^REVE /.test(licName(x))?'REVE 负责任使用许可 v1.0':licName(x)),label+': the home terms name '+x.name+'\'s licence');
+     assert.ok(terms.includes(F.models.filter(x=>SLUG[x.id]==='reve').map(x=>`${x.name} @ ${x.revision.split(' @ ').at(-1)}`).join(' · ')),label+': the home terms name REVE by version');
+     assert.ok(terms.includes(endorse[label])&&terms.includes(`id="fm-terms-link" href="/${label==='zh'?'zh/':''}protocols/${data.tracks[0].id}/#v9-licences"`),label+': no endorsement, and the full list linked');}
     // "On the same eight protocols", with the encoder that ran on fewer named and counted (BrainOmni Base: six).
     for(const m of matrix){const ran=F.frozen_probe.filter(c=>c.model===m.id&&c.status==='complete').length;
       if(ran<data.tracks.length) assert.ok(added.includes(label==='en'?`${e(m.name)} on ${['zero','one','two','three','four','five','six','seven'][ran]} of them`:`${e(m.name)} 只在其中 ${ran} 个上运行`),label+': the snapshot note says '+m.name+' ran on '+ran+' protocols');}

@@ -430,7 +430,9 @@ export const home = {
     // The snapshot's own highest score per column (2026-09-20). Since the v9 rows sit beside the
     // snapshot (2026-10-04), the key says whose highest it is; it never ranks the new rows.
     keyLead: 'Highest score in this snapshot',
-    matrixAdded: (n: number, date: string, partly: string) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
+    // The encoders are the matrix checkpoints of the v9 models; the masking ablation's siblings make the release's
+    // sixteen (review of 2026-10-05: the release log and data use count models and checkpoints).
+    matrixAdded: (n: number, date: string, partly: string, models: number, ablation: number) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are checkpoints of ${models} models; ${ablation} more checkpoints of one of them form a masking ablation, ${n + ablation} in all. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
     matrixAddedLink: 'The v9 rows on the first protocol →',
     keyBar: "Bar = position between that protocol's chance level and 100%",
     keyGap: 'Not evaluated',
@@ -491,6 +493,7 @@ export const home = {
     fmAblationLede: 'Read against the paper-recommended checkpoint, the matrix row above: the same architecture, corpus and recipe, another masking framework or geometry. Not further models, and not ranked.',
     fmAblationReference: 'matrix row above',
     fmCsv: 'v9 rows · CSV ↓',
+    fmTermsLink: 'Every weights licence and its terms →',
     fmAbstained: (a: number, n: number) => `${a} of ${n} participants always abstained`,
     // The directory band: one card per hub, each with a count read from the
     // module that builds it (entities.ts, releases.ts, files.ts).
@@ -560,7 +563,7 @@ export const home = {
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
     atChance: '≤ 随机',
     keyLead: '本快照中该协议的最高分',
-    matrixAdded: (n: number, date: string, partly: string) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
+    matrixAdded: (n: number, date: string, partly: string, models: number, ablation: number) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们是 ${models} 个模型的检查点；其中一个模型另有 ${ablation} 个检查点组成掩码消融，共 ${n + ablation} 个。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
     matrixAddedLink: '第一个协议上的第九轮各行 →',
     keyBar: '条长 = 在该协议随机水平与 100% 之间的位置',
     keyGap: '未评测',
@@ -619,6 +622,7 @@ export const home = {
     fmAblationLede: '请对照论文推荐的检查点（即上表中的那一行）阅读：架构、语料与训练方案相同，只改变掩码框架或掩码几何。它们不是更多的模型，也不排名。',
     fmAblationReference: '即上表中的那一行',
     fmCsv: '第九轮各行 · CSV ↓',
+    fmTermsLink: '全部权重许可与条款 →',
     fmAbstained: (a: number, n: number) => `${n} 名被试中有 ${a} 名始终拒识`,
     directoryEyebrow: '目录',
     directoryH2: '其余内容，按类别查找',

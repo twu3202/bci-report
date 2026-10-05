@@ -119,6 +119,11 @@
    rows, the masking-ablation siblings in a collapsed panel, and the note under the snapshot. */
 .table-panel .fm-group th{text-transform:none;letter-spacing:0;font-size:.8rem;color:var(--ink);background:var(--soft);padding:10px 18px;border-top:1px solid var(--rule)}
 .table-panel .fm-group th a{color:var(--accent);font-weight:500;margin-left:6px;white-space:nowrap}
+/* The group heading spans the whole table, which scrolls sideways on a phone: its words wrap within the visible box and
+   stay there while the rows scroll (review of 2026-10-05; at 375 px it was cut after "13 further foundation encoders"). */
+.table-panel .fm-group .fm-group-label{display:block;position:sticky;left:18px;max-width:calc(100vw - 72px);white-space:normal}
+.fm-terms-home{padding:8px 18px 0;font-size:.8rem;max-width:900px;color:var(--muted)}
+.fm-terms-home a{color:var(--accent)}
 .fm-not-run strong{font-family:var(--sans);font-size:.9rem;letter-spacing:0}
 .fm-not-run small{white-space:normal;max-width:34em}
 .fm-ablation-home{border-top:1px solid var(--line);padding:0 18px 12px}
