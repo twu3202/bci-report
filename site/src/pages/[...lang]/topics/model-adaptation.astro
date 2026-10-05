@@ -99,6 +99,7 @@ const copy = {
     costNote: 'LoRA trains far fewer weights than the last block but took longer here: its adapters sit in all twelve blocks, so gradients flow back through most of the encoder, and this implementation is an effective-weight parametrization, not an optimized low-rank kernel. Fewer trainable weights do not by themselves mean less time or memory.',
     notDelivered: 'Promised on the roadmap and not delivered by this batch: peak memory (only lower-bound samples were recorded, so none is published) and a comparison at a fixed computation budget (every rule trained for the same five epochs, not the same compute).',
     // Since 2026-10-04: the v9 adaptation, one table on does-pretraining-help. Figure-free here; this page's own claims stand.
+    rdPointer: ['Also added 4 October 2026, from the saved test scores of the head-only and LoRA arms above: how good their probabilities are — log loss and calibration error on the same people — and when either should decline a decision. Both are on ', '“When should a decoder decline to decide?”', '.'],
     v9Pointer: ['Added 4 October 2026: nine further foundation encoders were adapted on these same people and folds with two of the rules above — a head trained on the frozen encoder, and rank-4 LoRA — and the same five-epoch recipe. One fixed recipe on one task, with LoRA budgets that differ by model, so it is not a ranking: ', 'their table is on “Does pretraining help?”', '.'],
     nextEyebrow: 'Next day · status only',
     nextH2: 'Same person, the next day: run, not published',
@@ -157,6 +158,7 @@ const copy = {
     colRule: '更新方式', colParams: '可训练参数', colTime: '训练时间，15 次拟合', colSeeds: '平衡准确率，逐个随机种子',
     costNote: 'LoRA 可训练的权重比最后一个 Transformer 块少得多，但这里训练反而更久：它的适配器分布在全部 12 个 Transformer 块中，梯度要反传经过编码器的大部分；而且这里的实现是等效权重参数化，不是优化过的低秩算子。可训练权重少，本身并不意味着更省时间或内存。',
     notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 轮，而不是相同的计算量）。',
+    rdPointer: ['同样在 2026 年 10 月 4 日新增：根据上面只训分类头与 LoRA 两种配置保存下来的测试分数，看它们的概率有多可靠——同一批被试上的 log loss 与校准误差——以及它们什么时候该拒绝作出决定。两者都在', '「解码器什么时候应该拒绝作出决定？」', '一节。'],
     v9Pointer: ['2026 年 10 月 4 日新增：另外 9 个基础模型编码器在同一批被试、同样的折上，用上面三种方式中的两种——冻结编码器只训分类头，以及秩为 4 的 LoRA——按同样训练 5 轮的方案做了适配。这是一项任务上的一个固定方案，各模型的 LoRA 参数量也不同，所以不是排名：', '结果表见「预训练有用吗？」', '。'],
     nextEyebrow: '次日 · 只发状态',
     nextH2: '同一个人，第二天：已运行，不发布',
@@ -226,6 +228,8 @@ const card = topicCards[locale]['model-adaptation'];
     <p class="roadmap-p">{copy.costNote}</p>
     <p class="protocol-note">{copy.notDelivered}</p>
     <p class="protocol-note" id="v9-pointer">{copy.v9Pointer[0]}<a href={`${hrefFor('/topics/does-pretraining-help/', locale)}#v9-adaptation`}>{copy.v9Pointer[1]}</a>{copy.v9Pointer[2]}</p>
+    {/* Route 1 (2026-10-04) rescored these arms' saved test scores; its LoRA sentence links back here (review of 2026-10-05). */}
+    <p class="protocol-note" id="rd-pointer">{copy.rdPointer[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#rd-lora`}>{copy.rdPointer[1]}</a>{copy.rdPointer[2]}</p>
   </section>
 
   <section class="topic-section" id="next-day" aria-labelledby="next-day-heading">

@@ -391,6 +391,23 @@ limitation says "pretraining overlap unknown", a dated pointer to the exposure
 statement follows it, and no other page carries one. Mutation-tested on a copy of
 `dist/`: each of 15 injected violations was caught.
 
+Route 1 on the page (same review): its two LaBraM arms print the 1 October adaptation
+release's seed-20260922 means, while model-adaptation and does-pretraining-help print
+the three-seed means, so the Q1 cells say "the published seed-20260922 mean, 1 October
+adaptation release" (no other row's cell names a seed), the lede says which value it
+is, and the LoRA sentence says "seed 20260922". Three formats print a second decimal
+where one would read as zero (`pp2`, `sgn2`, `pct2`, in `entities.ts` and the
+check's `fmt`): a non-zero route-1 figure never prints as ±0.0 or 0.0% on the topic
+or the dataset pages, so a lower bound of +0.02 (resolved) and one of exactly 0 (not)
+no longer print alike, and one window in 2,160 is a coverage of 0.05%; the route-1
+row checks pick the same format. ds003810's contrasts are called secondary, not "no
+primary contrast" beside printed contrasts; the rejection paragraph no longer sets
+BETA's gain against EEGMAT's ("only"), and says the two are not compared; and
+model-adaptation gains a figure-free pointer to the LoRA sentence (`#rd-lora`), which
+must land. Mutation-tested on a copy of `dist/` (both languages and the Markdown copies
+where the figure parity and copy checks would otherwise fire first): each of 11
+injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

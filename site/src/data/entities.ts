@@ -46,10 +46,18 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * difference of a unitless quantity (AURC, NLL, ECE) to three decimals, always
  * with its sign (since 2026-10-04). `m2` is a parameter count in millions to two
  * decimals ("69.19M"), as the model directory prints it (v9 directory cards, 2026-10-04).
+ * `pp2`, `sgn2` and `pct2` (review of 2026-10-05) print a second decimal where one would read as zero: a
+ * difference of −0.03 pp is "−0.03 pp", not "−0.0 pp"; an interval bound of +0.02 and one of exactly 0 no longer
+ * both print "+0.0" beside opposite verdicts; one window in 2,160 is a coverage of "0.05%", not "0.0%".
  */
-export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pp1' | 'sgn1' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2';
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
+/** A difference in percentage points, and an interval's lower bound: a second decimal where one would print ±0.0. */
+export const ppFmt = (raw: number): Fmt => Math.abs(raw * 100) < 0.05 ? 'pp2' : 'pp1';
+export const sgnFmt = (raw: number): Fmt => Math.abs(raw * 100) < 0.05 ? 'sgn2' : 'sgn1';
+/** A coverage: a second decimal where a non-zero share would print 0.0%. */
+export const covFmt = (raw: number): Fmt => raw > 0 && raw < 0.0005 ? 'pct2' : 'pct1';
 
 const minus = (s: string) => s.replace(/^-/, '−');
 /** Kept in step with the formatters in check-workbench.mjs. */
@@ -59,6 +67,9 @@ export function formatFig(f: Fig): string {
     case 'pct1raw': return `${f.raw.toFixed(1)}%`;
     case 'pct2raw': return `${f.raw.toFixed(2)}%`;
     case 'pp1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)} pp`;
+    case 'pp2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(2)} pp`;
+    case 'sgn2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(2)}`;
+    case 'pct2': return `${(f.raw * 100).toFixed(2)}%`;
     case 'sgn1': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw * 100).toFixed(1)}`;
     case 'sgn3': return `${f.raw >= 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(3)}`;
     case 'auc3': return f.raw.toFixed(3);
@@ -749,7 +760,7 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
               zh: [fig(f.people_with_nothing_accepted, 'count', RDU), ' 名被试（共 ', fig(p.people, 'count', RDU), ' 名）一个都没有被接受。这是类别平衡协议上的方法比较，不是部署时的比率。'] } });
     rows.push({ ...base, condition: { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
       metric: { en: 'Error among the 80% most certain, difference', zh: '最确定的 80% 中的错误率，差值（百分点）' },
-      value: fig(d.mean, 'pp1', RDU), interval: pair(d.interval_95, 'pp1', RDU),
+      value: fig(d.mean, ppFmt(d.mean), RDU), interval: [fig(d.interval_95[0], ppFmt(d.interval_95[0]), RDU), fig(d.interval_95[1], ppFmt(d.interval_95[1]), RDU)],
       note: d.excludes_zero ? { en: ['Difference resolved: the interval excludes zero.'], zh: ['可以认定有差异：区间不含零。'] }
                             : { en: ['No difference resolved: the interval includes zero.'], zh: ['不能认定有差异：区间包含零。'] } });
   }

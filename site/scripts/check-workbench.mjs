@@ -771,6 +771,8 @@ const leavesOf=file=>{if(!leaves.has(file)){const set=new Set();const walk=v=>{i
   leaves.set(file,set);}return leaves.get(file);};
 const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=>r.toFixed(2)+'%',pp1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1)+' pp',
   sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),sgn3:r=>(r>=0?'+':'−')+Math.abs(r).toFixed(3),
+  // A second decimal where one would read as zero (review of 2026-10-05): −0.03 pp, a bound of +0.02, a coverage of 0.05%.
+  pp2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2)+' pp',sgn2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2),pct2:r=>(r*100).toFixed(2)+'%',
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s',
   m2:r=>(r/1e6).toFixed(2)+'M'};
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
@@ -2418,6 +2420,8 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   const cellAt=(sec,attr)=>{const a=sec.indexOf(attr);assert.ok(a>0,'missing '+attr);const s0=sec.lastIndexOf('<td',a),open=s0>sec.lastIndexOf('</td>',a)?s0:a;return sec.slice(open,sec.indexOf('</td>',a));};
   const rowAt=(sec,attr)=>{const a=sec.indexOf(attr);assert.ok(a>0,'missing row '+attr);return sec.slice(a,sec.indexOf('</tr>',a));};
   const hasRd=(h,f,x)=>h.includes(`data-fig="reliable-decisions-update.json|${f}|${x}"`);
+  // The formats the site picks (review of 2026-10-05): a second decimal where one would print ±0.0 or 0.0%.
+  const ppF=v=>Math.abs(v*100)<0.05?'pp2':'pp1',sgF=v=>Math.abs(v*100)<0.05?'sgn2':'sgn1',covF=v=>v>0&&v<0.0005?'pct2':'pct1';
   const figsetRd=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]).sort();
   for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/when-not-to-act/']]){
     const zh=label==='zh',html=pageOf(path),sec=rdSec(html),text=visible(sec),where=label+'/when-not-to-act #reliable-decisions';
@@ -2439,7 +2443,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       assert.deepEqual(rows,p.methods.map(m=>m.id),where+': '+p.protocol+' methods in the export\'s order, not ranked');
       for(const m of p.methods){
         const F=m.fixed_cutoff,row=rowAt(sec,`data-rd-row="${p.protocol}|${m.id}"`);
-        for(const [f,x] of [['pct1',m.balanced_accuracy],['count',F.accepted],['count',F.n],['pct1',F.coverage],['count',F.people_with_nothing_accepted],['count',p.people],['pct1',m.coverage_target.coverage]])
+        for(const [f,x] of [['pct1',m.balanced_accuracy],['count',F.accepted],['count',F.n],[covF(F.coverage),F.coverage],['count',F.people_with_nothing_accepted],['count',p.people],['pct1',m.coverage_target.coverage]])
           assert.ok(hasRd(row,f,x),where+': '+p.protocol+'/'+m.id+' row prints '+f+' '+x);
         assert.ok(row.includes('score-bar-svg')&&row.indexOf('score-bar-svg')<row.indexOf('data-cell="nothing-accepted"'),where+': '+m.id+' people with nothing accepted sit beside the coverage bar');
         const err=cellAt(row,'data-cell="fixed-error"');
@@ -2452,7 +2456,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       }
       for(const d of p.fixed_cutoff_coverage_differences){
         const row=rowAt(sec,`data-rd-pair="${p.protocol}|${d.a}|${d.b}"`);
-        assert.ok(hasRd(row,'pp1',d.mean)&&hasRd(row,'sgn1',d.interval_95[0])&&hasRd(row,'pp1',d.interval_95[1]),where+': coverage difference '+d.a+' − '+d.b);
+        assert.ok(hasRd(row,ppF(d.mean),d.mean)&&hasRd(row,sgF(d.interval_95[0]),d.interval_95[0])&&hasRd(row,ppF(d.interval_95[1]),d.interval_95[1]),where+': coverage difference '+d.a+' − '+d.b);
         assert.ok(verdictIs(row,d.excludes_zero),where+': coverage difference '+d.a+' − '+d.b+' carries its verdict');
       }
     }
@@ -2465,7 +2469,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     // Q2: both measures, levels with intervals, both contrasts with their verdicts.
     for(const p of [E,B]) for(const m of p.methods){
       const row=rowAt(sec,`data-rd-learned="${p.protocol}|${m.id}"`),d1=m.learned_minus_confidence.aurc,d2=m.learned_minus_confidence.error_at_80;
-      for(const [f,x] of [['num3',m.ranking_S.aurc.mean],['num3',m.ranking_L.aurc.mean],['sgn3',d1.mean],['pct1',m.ranking_S.error_at_80.mean],['pct1',m.ranking_L.error_at_80.mean],['pp1',d2.mean],['sgn1',d2.interval_95[0]],['sgn3',d1.interval_95[1]]])
+      for(const [f,x] of [['num3',m.ranking_S.aurc.mean],['num3',m.ranking_L.aurc.mean],['sgn3',d1.mean],['pct1',m.ranking_S.error_at_80.mean],['pct1',m.ranking_L.error_at_80.mean],[ppF(d2.mean),d2.mean],[sgF(d2.interval_95[0]),d2.interval_95[0]],['sgn3',d1.interval_95[1]]])
         assert.ok(hasRd(row,f,x),where+': '+p.protocol+'/'+m.id+' Q2 prints '+f+' '+x);
       for(const [k,d] of [['c1',d1],['c2',d2]]) assert.ok(verdictIs(cellAt(row,`data-diff="${k}"`),d.excludes_zero),where+': '+m.id+' '+k+' verdict');
     }
@@ -2481,7 +2485,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       } else {
         assert.ok(hasRd(er,'pct1',R3.selective_error)&&hasRd(row,'pct1',R3.target_weighted)&&hasRd(cellAt(row,'data-cell="over"'),'count',R3.folds_over_target),where+': '+m.id+' error, target and folds over target');
         const c6=cellAt(row,'data-cell="c6"');
-        assert.ok(hasRd(c6,'pp1',R3.error_minus_target.mean)&&verdictIs(c6,R3.error_minus_target.excludes_zero),where+': '+m.id+' error minus target with its verdict');
+        assert.ok(hasRd(c6,ppF(R3.error_minus_target.mean),R3.error_minus_target.mean)&&verdictIs(c6,R3.error_minus_target.excludes_zero),where+': '+m.id+' error minus target with its verdict');
       }
     }
     assert.match(text,zh?/名义保证/:/nominal guarantee/,where+': S-risk is a nominal guarantee');
@@ -2491,7 +2495,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       const row=rowAt(sec,`data-rd-recal="${p.protocol}|${m.id}|${x.prefix}"`);
       assert.ok(hasRd(cellAt(row,'data-cell="labels"'),'count',x.labels_per_new_person),where+': '+m.id+' '+x.prefix+' labels per new person');
       for(const [k,d] of [['nll',x.nll_change],['ece',x.ece_change],['aurc',x.aurc_change],['gap',x.unlabelled_cutoff_gap_change]])
-        assert.ok(verdictIs(cellAt(row,`data-diff="${k}"`),d.excludes_zero)&&hasRd(row,k==='gap'?'pp1':'sgn3',d.mean),where+': '+m.id+' '+x.prefix+' '+k+' with its verdict');
+        assert.ok(verdictIs(cellAt(row,`data-diff="${k}"`),d.excludes_zero)&&hasRd(row,k==='gap'?ppF(d.mean):'sgn3',d.mean),where+': '+m.id+' '+x.prefix+' '+k+' with its verdict');
     }
     assert.ok(sec.includes(zh?'每名新被试的标签数':'Labels per new person'),where+': the label cost is a column');
     // Q4: one sentence, its contrast and its link.
@@ -2537,10 +2541,29 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     const aud=sec.slice(sec.indexOf('id="rd-audits"'),sec.indexOf('</p>',sec.indexOf('id="rd-audits"')));
     for(const x of [R.audits.independent_primary.passed,R.audits.independent_primary.checks,R.audits.independent_secondary.checks]) assert.ok(hasRd(aud,'count',x),where+': audit count '+x);
     assert.match(visible(aud),zh?/文档错误，不是计算错误/:/a documentation error, not a computation error/,where+': the failed audit check is documentation, said so');
+    // Review of 2026-10-05. A value that would print ±0.0 or 0.0% gets a second decimal, so a bound of +0.02 (resolved)
+    // and one of exactly 0 (not) no longer print alike, and one window in 2,160 is not a coverage of 0.0%.
+    const zeroLike=h=>[...h.matchAll(/data-fig="reliable-decisions-update\.json\|(\w+)\|([^"]+)"[^>]*>([^<]*)</g)].filter(([,f,raw,t])=>Number(raw)!==0&&/^[+−]?0\.0(?: pp|%)?$/.test(t));
+    assert.deepEqual(zeroLike(sec).map(m=>m[0]),[],where+': no non-zero figure prints as ±0.0 or 0.0%');
+    // The two LaBraM arms are the 1 October release's seed-20260922 means, and say so (the three-seed means differ).
+    for(const id of ['labram-frozen-ce','labram-lora-r4']) assert.ok(visible(cellAt(rowAt(sec,`data-rd-row="arithmetic-rest|${id}"`),'data-cell="ba"')).includes(zh?'已发布的随机种子 20260922 均值（10 月 1 日适配发布）':'the published seed-20260922 mean, 1 October adaptation release'),where+': '+id+' is labelled as the seed-20260922 mean');
+    for(const p of [E,B]) for(const m of p.methods.filter(m=>!m.id.startsWith('labram-'))) assert.ok(!/20260922/.test(cellAt(rowAt(sec,`data-rd-row="${p.protocol}|${m.id}"`),'data-cell="ba"')),where+': '+m.id+' is not a LaBraM seed mean');
+    assert.ok(text.includes(zh?'两种 LaBraM 配置用的是 10 月 1 日适配发布中随机种子 20260922 的均值':'for the two LaBraM arms, the 1 October adaptation release’s seed-20260922 mean'),where+': the lede says which LaBraM value is printed');
+    assert.ok(visible(q4).includes(zh?'随机种子 20260922':'seed 20260922'),where+': the LoRA sentence says its accuracies are seed 20260922');
+    // ds003810's contrasts are secondary, and say so; the two protocols' rejection gains are not compared.
+    const crude=sec.slice(sec.indexOf('id="rd-crude"'),sec.indexOf('</table>',sec.indexOf('id="rd-crude"')));
+    assert.ok(!/no primary contrast|也没有主要对比/.test(visible(crude))&&visible(crude).includes(zh?'下面的对比是次要对比':'Its contrasts below are secondary'),where+': ds003810\'s contrasts are called secondary');
+    assert.ok(!/falls only from|只从/.test(text)&&text.includes(zh?'两个协议之间不作比较':'the two are not compared with each other'),where+': BETA and EEGMAT rejection gains are not compared');
     // The idle limit on the same page no longer says probability quality is unmeasured everywhere.
     assert.ok(html.includes(zh?'这个协议上没有测概率质量':'No probability quality on this protocol'),where+': the idle limit is scoped to its protocol');
   }
   assert.deepEqual(figsetRd(rdSec(pageOf('zh/topics/when-not-to-act/'))),figsetRd(rdSec(pageOf('topics/when-not-to-act/'))),'#reliable-decisions: the same figures in both languages');
+  // The model-adaptation page links the probability quality of its own arms (route 1's Q4), figure-free.
+  for(const pfx of ['','zh/']){
+    const html=pageOf(pfx+'topics/model-adaptation/'),a=html.indexOf('<p class="protocol-note" id="rd-pointer">'),ptr=html.slice(a,html.indexOf('</p>',a));
+    assert.ok(a>html.indexOf('id="adaptation"')&&a<html.indexOf('id="next-day"')&&ptr.includes(`href="/${pfx}topics/when-not-to-act/#rd-lora"`)&&pageOf(pfx+'topics/when-not-to-act/').includes('id="rd-lora"'),pfx+'topics/model-adaptation/: the route-1 pointer lands on the LoRA sentence');
+    assert.doesNotMatch(visible(ptr),/\d+\.\d|%|\bpp\b/,pfx+'topics/model-adaptation/: the route-1 pointer carries no figure');
+  }
   // Dataset and method pages: one route-1 group per dataset, each C2 row with its verdict and each coverage with the people who had nothing accepted.
   for(const [label,pfx] of [['en',''],['zh','zh/']]){
     for(const [ds,p] of [['eegmat',E],['beta',B],['ds003810',M]]){
@@ -2548,9 +2571,11 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       assert.ok(g0>0,label+'/datasets/'+ds+': the route-1 group');
       assert.ok(g.includes(`href="${pfx?'/zh':''}/topics/when-not-to-act/"`),label+'/datasets/'+ds+': the group links its topic');
       if(ds==='ds003810') assert.match(g,label==='zh'?/粗略/:/crude/,label+'/datasets/ds003810: labelled crude');
+      const zl=[...g.matchAll(/data-fig="reliable-decisions-update\.json\|(\w+)\|([^"]+)"[^>]*>([^<]*)</g)].filter(([,f,raw,t])=>Number(raw)!==0&&/^[+−]?0\.0(?: pp|%)?$/.test(t));
+      assert.deepEqual(zl.map(m=>m[0]),[],label+'/datasets/'+ds+': no non-zero route-1 figure prints as ±0.0');
       for(const m of p.methods){
         assert.ok(hasRd(g,'count',m.fixed_cutoff.accepted)&&hasRd(g,'count',m.fixed_cutoff.people_with_nothing_accepted),label+'/datasets/'+ds+': '+m.id+' accepted with people who had nothing accepted');
-        const d=m.learned_minus_confidence.error_at_80,at=g.indexOf(`data-fig="reliable-decisions-update.json|pp1|${d.mean}"`),row=g.slice(at,g.indexOf('</tr>',at));
+        const d=m.learned_minus_confidence.error_at_80,at=g.indexOf(`data-fig="reliable-decisions-update.json|${ppF(d.mean)}|${d.mean}"`),row=g.slice(at,g.indexOf('</tr>',at));
         assert.ok(at>0&&(label==='zh'?(d.excludes_zero?/可以认定有差异/:/不能认定有差异/):(d.excludes_zero?/Difference resolved/:/No difference resolved/)).test(row),label+'/datasets/'+ds+': '+m.id+' C2 verdict beside the figure');
       }
     }
