@@ -488,6 +488,18 @@ the Chinese (numbers alone cannot tell them apart). Mutation-tested on a copy of
 (the source export and translation table too, restored afterwards): each of 4 injected
 violations was caught.
 
+Same review: BrainOmni's BETA change from eight to four electrodes is exactly
+(1451 − 2431) / 11200 = −0.0875, but the export stored the difference of two binary
+proportions, −0.08749999999999997, and the pages printed −8.7 pp where the candidate's
+−8.75 gives −8.8 (the site rounds exact ties up everywhere else, e.g. 63.25 → 63.3 from
+the CSV). The export now stores every difference it derives (large minus base, four
+minus eight) rounded to 12 decimals and refuses one that would print otherwise than the
+half-up rounding of the candidate's stated value. Pinned: those 37 differences are stored
+at 12 decimals, and every one-decimal v9 figure (`pct1`, `pp1`, `sgn1` from
+`foundation-models-update.json`) on every page prints as the half-up rounding of its
+stored value's 12-decimal form, so a float artefact cannot flip a printed digit.
+Mutation-tested on a copy of `dist/`: each of 2 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

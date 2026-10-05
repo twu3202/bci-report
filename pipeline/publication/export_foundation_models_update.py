@@ -638,6 +638,21 @@ def adaptation_block(candidate, aggregate, frozen):
     }
 
 
+def derived(d, stated_pp, label):
+    """A difference this export computes, as the JSON stores it: rounded to 12 decimals, as the CSVs store percents.
+
+    A difference of two proportions carries the binary noise of both: BrainOmni's BETA change is exactly
+    (1451 - 2431) / 11200 = -0.0875, but beta4 - beta8 is -0.08749999999999997, which toFixed(1) prints as -8.7 pp
+    where the candidate's -8.75, like any decimal rounding, gives -8.8 (review of 2026-10-05). Each stored difference
+    must print, at the pages' one decimal, as the half-up rounding of the candidate's stated value.
+    """
+    v = round(d, 12)
+    printed = Decimal(fixed(100 * v, 1))
+    want = Decimal(repr(stated_pp)).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+    require(printed == want, f'{label}: prints {printed} pp where the candidate states {stated_pp} ({want})')
+    return v
+
+
 def comparisons_block(candidate, cells, matrix):
     """Every comparison the pages may state, recomputed from the cells and checked against the candidate's."""
     cr = candidate['topic_findings']['comparison_rows']
@@ -654,7 +669,8 @@ def comparisons_block(candidate, cells, matrix):
             w = want[(base, p)]
             require(w['large'] == large and abs(w['large_minus_base_pp'] - pp(d)) < 0.006
                     and w['marginal_intervals_overlap'] is o, f'{base} vs {large} {p}: the candidate says otherwise')
-            sizes.append({'base': base, 'large': large, 'protocol': p, 'large_minus_base': d,
+            sizes.append({'base': base, 'large': large, 'protocol': p,
+                          'large_minus_base': derived(d, w['large_minus_base_pp'], f'{base} vs {large} {p}'),
                           'marginal_intervals_overlap': o})
     # Eight to four BETA electrodes, every checkpoint.
     electrodes = []
@@ -667,7 +683,8 @@ def comparisons_block(candidate, cells, matrix):
         require(w['beta8_ba'] == e8['balanced_accuracy'] and w['beta4_ba'] == e4['balanced_accuracy']
                 and abs(w['four_minus_eight_pp'] - pp(d)) < 0.006 and w['exposed'] == e8['exposure']['status'],
                 f'{m}: the candidate\'s fewer-electrodes row says otherwise')
-        electrodes.append({'model': m, 'input_family': w['input_family'], 'four_minus_eight': d,
+        electrodes.append({'model': m, 'input_family': w['input_family'],
+                           'four_minus_eight': derived(d, w['four_minus_eight_pp'], f'{m} eight to four electrodes'),
                            'marginal_intervals_overlap': overlap(e8['interval_95'], e4['interval_95']),
                            'exposure': e8['exposure']['status']})
     # Against the published frozen LaBraM and CBraMod rows and the best published non-foundation row.

@@ -349,6 +349,27 @@ class FoundationModelsBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'restatement'):
                 build(m)
 
+    # ------------------------------------------------------------------ derived differences (review of 2026-10-05)
+    def test_a_derived_difference_prints_as_the_candidate_states_it(self):
+        # BrainOmni's BETA change is exactly (1451 - 2431) / 11200 = -0.0875: -8.8 pp at one decimal, not -8.7.
+        c = result(self.payload)['comparisons']
+        omni = next(x for x in c['fewer_electrodes_beta'] if x['model'] == 'brainomni-base')
+        self.assertEqual(omni['four_minus_eight'], -0.0875)
+        self.assertEqual(ex.fixed(100 * omni['four_minus_eight'], 1), '-8.8')
+        for v in [x['four_minus_eight'] for x in c['fewer_electrodes_beta']] + [x['large_minus_base'] for x in c['base_vs_large']]:
+            self.assertEqual(round(v, 12), v)
+        self.assertEqual(ex.derived(-0.08749999999999997, -8.75, 'x'), -0.0875)
+        with self.assertRaisesRegex(ValueError, 'prints'):
+            ex.derived(-0.0874, -8.75, 'x')
+
+    def test_a_stated_difference_that_prints_otherwise_is_refused(self):
+        # Within the comparison's tolerance, but -8.745 rounds to -8.7 where the export prints -8.8.
+        def edit(c):
+            r = next(x for x in c['topic_findings']['comparison_rows']['fewer_electrodes_beta'] if x['model'] == 'brainomni-base')
+            r['four_minus_eight_pp'] = -8.745
+        with self.assertRaisesRegex(ValueError, 'brainomni-base eight to four electrodes: prints'):
+            build(self.forged(candidate=edit))
+
     # ------------------------------------------------------------------ the chain of custody
     def test_a_changed_input_byte_is_refused(self):
         for key in ('handoff', 'releaseCandidate', 'aggregate', 'pretrainingExposure', 'auditStatus', 'harnessValidation'):

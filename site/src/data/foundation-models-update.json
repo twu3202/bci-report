@@ -6332,147 +6332,147 @@
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "mi-rest",
-            "large_minus_base": 0.040000000000000036,
+            "large_minus_base": 0.04,
             "marginal_intervals_overlap": true
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "beta-8ch",
-            "large_minus_base": 0.15205357142857134,
+            "large_minus_base": 0.152053571429,
             "marginal_intervals_overlap": false
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "beta-4ch",
-            "large_minus_base": 0.20830357142857148,
+            "large_minus_base": 0.208303571429,
             "marginal_intervals_overlap": false
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "arithmetic-rest",
-            "large_minus_base": 0.0023148148148146586,
+            "large_minus_base": 0.002314814815,
             "marginal_intervals_overlap": true
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "p300-target",
-            "large_minus_base": 0.041269841269841345,
+            "large_minus_base": 0.04126984127,
             "marginal_intervals_overlap": false
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "semantic-target",
-            "large_minus_base": 0.05999999999999983,
+            "large_minus_base": 0.06,
             "marginal_intervals_overlap": false
           },
           {
             "base": "reve-base",
             "large": "reve-large",
             "protocol": "sleep-scalp",
-            "large_minus_base": 0.020000000000000018,
+            "large_minus_base": 0.02,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "mi-rest",
-            "large_minus_base": -0.026666666666666727,
+            "large_minus_base": -0.026666666667,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "beta-8ch",
-            "large_minus_base": 0.01428571428571429,
+            "large_minus_base": 0.014285714286,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "beta-4ch",
-            "large_minus_base": 0.021339285714285727,
+            "large_minus_base": 0.021339285714,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "arithmetic-rest",
-            "large_minus_base": -0.03287037037037055,
+            "large_minus_base": -0.03287037037,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "p300-target",
-            "large_minus_base": 0.0003968253968253954,
+            "large_minus_base": 0.000396825397,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "semantic-target",
-            "large_minus_base": 0.008888888888888835,
+            "large_minus_base": 0.008888888889,
             "marginal_intervals_overlap": true
           },
           {
             "base": "luna-base",
             "large": "luna-large",
             "protocol": "sleep-scalp",
-            "large_minus_base": 0.048666666666666636,
+            "large_minus_base": 0.048666666667,
             "marginal_intervals_overlap": false
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "mi-rest",
-            "large_minus_base": 0.043333333333333335,
+            "large_minus_base": 0.043333333333,
             "marginal_intervals_overlap": true
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "beta-8ch",
-            "large_minus_base": 0.05517857142857149,
+            "large_minus_base": 0.055178571429,
             "marginal_intervals_overlap": false
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "beta-4ch",
-            "large_minus_base": 0.049196428571428585,
+            "large_minus_base": 0.049196428571,
             "marginal_intervals_overlap": false
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "arithmetic-rest",
-            "large_minus_base": -0.011111111111111072,
+            "large_minus_base": -0.011111111111,
             "marginal_intervals_overlap": true
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "p300-target",
-            "large_minus_base": -0.009126984126983984,
+            "large_minus_base": -0.009126984127,
             "marginal_intervals_overlap": true
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "semantic-target",
-            "large_minus_base": 0.0311111111111112,
+            "large_minus_base": 0.031111111111,
             "marginal_intervals_overlap": true
           },
           {
             "base": "steegformer-base",
             "large": "steegformer-large",
             "protocol": "sleep-scalp",
-            "large_minus_base": 0.0229999999999998,
+            "large_minus_base": 0.023,
             "marginal_intervals_overlap": true
           }
         ],
@@ -6480,112 +6480,112 @@
           {
             "model": "reve-base",
             "input_family": "montage",
-            "four_minus_eight": -0.12008928571428568,
+            "four_minus_eight": -0.120089285714,
             "marginal_intervals_overlap": false,
             "exposure": "not_exposed"
           },
           {
             "model": "reve-large",
             "input_family": "montage",
-            "four_minus_eight": -0.06383928571428554,
+            "four_minus_eight": -0.063839285714,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "luna-base",
             "input_family": "montage",
-            "four_minus_eight": 0.004642857142857129,
+            "four_minus_eight": 0.004642857143,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "luna-large",
             "input_family": "montage",
-            "four_minus_eight": 0.011696428571428566,
+            "four_minus_eight": 0.011696428571,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "brainomni-base",
             "input_family": "montage",
-            "four_minus_eight": -0.08749999999999997,
+            "four_minus_eight": -0.0875,
             "marginal_intervals_overlap": false,
             "exposure": "not_exposed"
           },
           {
             "model": "codebrain",
             "input_family": "montage",
-            "four_minus_eight": -0.006874999999999992,
+            "four_minus_eight": -0.006875,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "eegmamba",
             "input_family": "montage",
-            "four_minus_eight": -0.07455357142857133,
+            "four_minus_eight": -0.074553571429,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "steegformer-base",
             "input_family": "montage",
-            "four_minus_eight": 0.0038392857142857117,
+            "four_minus_eight": 0.003839285714,
             "marginal_intervals_overlap": true,
             "exposure": "exposed"
           },
           {
             "model": "steegformer-large",
             "input_family": "montage",
-            "four_minus_eight": -0.0021428571428571963,
+            "four_minus_eight": -0.002142857143,
             "marginal_intervals_overlap": true,
             "exposure": "exposed"
           },
           {
             "model": "eeg-fm-masking/mae-r9cm-L2",
             "input_family": "montage",
-            "four_minus_eight": -0.07696428571428576,
+            "four_minus_eight": -0.076964285714,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "erp-fm-base",
             "input_family": "montage",
-            "four_minus_eight": 0.024642857142857133,
+            "four_minus_eight": 0.024642857143,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "singlem",
             "input_family": "single-channel",
-            "four_minus_eight": -0.060535714285714304,
+            "four_minus_eight": -0.060535714286,
             "marginal_intervals_overlap": false,
             "exposure": "not_exposed"
           },
           {
             "model": "zuna",
             "input_family": "channel-wise",
-            "four_minus_eight": -0.03455357142857145,
+            "four_minus_eight": -0.034553571429,
             "marginal_intervals_overlap": false,
             "exposure": "unknown"
           },
           {
             "model": "eeg-fm-masking/jepa-r9cm-L2",
             "input_family": "montage",
-            "four_minus_eight": -0.061428571428571555,
+            "four_minus_eight": -0.061428571429,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "eeg-fm-masking/mae-rone-L1",
             "input_family": "montage",
-            "four_minus_eight": -0.0672321428571428,
+            "four_minus_eight": -0.067232142857,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           },
           {
             "model": "eeg-fm-masking/jepa-rone-L1",
             "input_family": "montage",
-            "four_minus_eight": -0.05580357142857134,
+            "four_minus_eight": -0.055803571429,
             "marginal_intervals_overlap": true,
             "exposure": "not_exposed"
           }

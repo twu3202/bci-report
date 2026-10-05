@@ -3599,6 +3599,33 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   }
   console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim.');
 }
+// --- 2026-10-05 follow-up review: a v9 figure prints as decimal rounding gives it --------------------
+// A difference of two proportions carries the binary noise of both: BrainOmni's BETA change is exactly
+// (1451 − 2431) / 11200 = −0.0875, but was stored as −0.08749999999999997 and printed −8.7 pp where the candidate's
+// −8.75 gives −8.8. The export now stores every difference it derives rounded to 12 decimals (as the CSVs store
+// percents) and checks each against the candidate's stated value; held here: those differences are stored at 12
+// decimals, and every one-decimal v9 JSON figure on every page prints as the half-up rounding of its stored value's
+// 12-decimal form, so no float artefact can flip a printed digit.
+{
+  const FMJ='foundation-models-update.json';
+  const C=JSON.parse(readFileSync(new URL('data/'+FMJ,DIST),'utf8')).results['foundation-models-v9'].comparisons;
+  const derived=[...C.base_vs_large.map(x=>x.large_minus_base),...C.fewer_electrodes_beta.map(x=>x.four_minus_eight)];
+  assert.equal(derived.length,21+16,'every v9 derived difference');
+  // 100·v at one decimal, rounded half up on v's 12-decimal form (integers below 2^53 throughout).
+  const tenths=v=>{const u=Math.round(Math.abs(v)*1e12),t=Math.floor((u+5e8)/1e9);return Math.floor(t/10)+'.'+(t%10);};
+  const want={pct1:v=>(v<0?'-':'')+tenths(v)+'%',pp1:v=>(v>=0?'+':'−')+tenths(v)+' pp',sgn1:v=>(v>=0?'+':'−')+tenths(v)};
+  let n=0;
+  for(const f of htmlPages){
+    const html=readFileSync(new URL(f,DIST),'utf8');
+    for(const [,format,raw,text] of html.matchAll(/data-fig="foundation-models-update\.json\|(pct1|pp1|sgn1)\|([^"]+)"[^>]*>([^<]*)</g)){
+      assert.equal(text,want[format](Number(raw)),f+': the v9 figure '+raw+' prints "'+text+'", not its decimal rounding');n++;}
+  }
+  assert.ok(n>500,'the v9 one-decimal figures were read ('+n+')');
+  for(const v of derived) assert.equal(Number(v.toFixed(12)),v,'a v9 derived difference is stored rounded to 12 decimals, not '+v);
+  // The case the review found, on both topic pages that print it, in both languages.
+  for(const p of ['','zh/']) assert.ok(readFileSync(new URL(p+'topics/fewer-electrodes/index.html',DIST),'utf8').match(/data-fig="foundation-models-update\.json\|pp1\|-0\.0875"[^>]*>−8\.8 pp</),p+'fewer-electrodes: BrainOmni\'s change prints −8.8 pp');
+  console.log('PASS: 2026-10-05 follow-up review — v9 derived differences stored at 12 decimals; '+n+' one-decimal v9 figures print as decimal rounding of their stored values (BrainOmni −8.8 pp).');
+}
 console.log('PASS: 2026-10-04 v9 foundation models, topics — does-pretraining-help #v9-encoders (sleep rows above every published row, BETA above CBraMod and not above CCA, the EEGMAT adaptation with verdicts and LoRA budgets, REVE Base against Large with marginal intervals and no paired test, the masking ablation) and fewer-electrodes #v9-montage (BETA eight to four beside the released rows, six-channel sleep, no small-montage advantage, no new row above standard CCA at four electrodes, the overlapping rows named): every figure from its file on a row naming its protocol, tokens pinned, the same in both languages, family order, the export\'s relations and claims, chance flags, exposure badges and ZUNA 1.1\'s sentence, limits, licences; model-adaptation\'s figure-free pointer; release log and sitemap.');
 console.log('PASS: 2026-10-04 v9 foundation models, pages — every protocol page with its v9 section (each row its CSV row, in family order, never re-sorted; not run with its reason, no figure; chance flags by the core rule and the CSV; exposure statement, badge and source from the exposure table, ZUNA 1.1 unknown everywhere; footnotes, licences, research-use sentence; masking ablation collapsed; EEGMAT adaptation with verdicts on arithmetic-rest; LaBraM and CBraMod sourced beside the released sentence); the home table\'s embedded rows equal the CSVs, first paint equals the render, dialogs carry the caveats; directory cards with the export\'s statuses, licences and parameters, REVE Base evaluated, MIRepNet and EEG-DINO catalogue only; method pages with groups, checkpoints, terms and exposure; Measured-on lines; dataset groups; topic and data-use wording; hub counts; release log; sitemap.');
 console.log('PASS: 2026-10-04 route 1, reliable decisions — its own section before the roadmap; every figure from its export, the same in both languages; each coverage beside the people with nothing accepted; nothing accepted is not defined, fewer than ten a flagged count; every contrast with the verdict its interval supports; methods unranked; certified risk a nominal guarantee with folds over target; labels per new person; LoRA sentence; raw quality not applicable, never zero; robustness panel collapsed with ds003810 crude, sensitivity arms as fold counts, idle and BNCI2015-001 figure-free; required limitations; credits; dataset and method groups; markup, releases and data use.');
