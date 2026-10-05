@@ -439,7 +439,9 @@ coverage, not at a shared cut-off**; how many people had nothing accepted
 travels with every coverage. The learned reject option erred less than the
 calibrated confidence for no method. The certified risk accepted nothing on
 EEGMAT — **no error rate, not a zero one** — and on BETA some certified folds
-exceeded their own target: a nominal guarantee across people. Every contrast
+exceeded their own target: a nominal guarantee across people. Calibration data
+are participant-disjoint inner cross-fit scores, and rejecting likely errors on
+known classes is not detecting unfamiliar input. Every contrast
 carries its paired person-bootstrap interval and a verdict; nothing is ranked
 where intervals overlap. Every protocol is balanced or uniform by design, so
 these are **method comparisons, never deployment error rates**. ds003810 is a

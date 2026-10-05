@@ -39,7 +39,7 @@ export const rdLimitsZh: Record<string, string> = {
 /** ds003810's contrasts are secondary: the topic page reads them only as such, and so does every group that shows them. */
 export const rdSecondary = {
   en: 'Its learned-reject contrasts are secondary, not the route’s primary contrasts, and are read only as such.',
-  zh: '其中可学习拒识选项的对比是次要对比，不是这条路线的主要对比，只能按次要对比来读。',
+  zh: '这个数据集上可学习拒识选项的对比是次要对比，不是这条路线的主要对比，只能按次要对比来读。',
 };
 
 /** The sentences a route-1 group on a dataset or method page carries, in the page's language, the export's order. */

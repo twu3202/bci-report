@@ -766,7 +766,7 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
     // ds003810's contrasts are secondary (the topic page reads them only as such): the row says so.
     rows.push({ ...base, condition: crude ? { en: 'Learned reject option minus calibrated confidence, same classifier (a secondary contrast)', zh: '可学习的拒识选项减校准后的置信度，同一分类器（次要对比）' }
                                           : { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
-      metric: { en: 'Error among the 80% most certain, difference', zh: '最确定的 80% 中的错误率，差值（百分点）' },
+      metric: { en: 'Error among the 80% most certain, difference', zh: '最有把握的 80% 中的错误率，差值（百分点）' },
       value: fig(d.mean, ppFmt(d.mean), RDU), interval: [fig(d.interval_95[0], ppFmt(d.interval_95[0]), RDU), fig(d.interval_95[1], ppFmt(d.interval_95[1]), RDU)],
       note: d.excludes_zero ? { en: ['Difference resolved: the interval excludes zero.'], zh: ['可以认定有差异：区间不含零。'] }
                             : { en: ['No difference resolved: the interval includes zero.'], zh: ['不能认定有差异：区间包含零。'] } });
