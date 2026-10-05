@@ -533,7 +533,10 @@ export's English verbatim, the table's Chinese), no `data-fig`, the link, "secon
 on ds003810 and only there; and the table's keys are limitations of the export, with
 their numbers, in Chinese, keeping 交叉拟合, 分布外 and 不做多重比较校正.
 Mutation-tested on a copy of `dist/` (the translation table too, restored afterwards):
-each of 8 injected violations was caught.
+each of 8 injected violations was caught. The out-of-distribution sentence's source URL is
+linked as itself; in the first build the Chinese after it (no space before "）。") joined the
+link, so each note's one link must have its text as its address, printable ASCII, and be
+the export's literature URL (one more injected violation, caught).
 
 The copy check above held the named sections and entity groups, but two places on this
 branch still reached the Markdown copies and `llms-full.txt` with nothing holding them

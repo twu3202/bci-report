@@ -28,8 +28,9 @@ const plottable = (g: ResultGroup) => {
   return rows.length >= 2 && rows.length <= 16 && new Set(rows.map(r => r.value.fmt)).size === 1 ? rows : [];
 };
 const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `${g.dataset.name} · ${tr(g.title, locale)}` : tr(g.title, locale);
-// A URL the export's text carries in parentheses is printed as itself, linked.
-const urlParts = (s: string) => s.split(/(https:\/\/[^\s)]+)/);
+// A URL the export's text carries in parentheses is printed as itself, linked: printable ASCII without brackets, ending in
+// a letter, digit or slash, so neither a closing bracket and full stop nor the Chinese that follows it joins the link.
+const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
 ---
 {groups.map(g => {
   const plot = plottable(g);

@@ -2646,6 +2646,9 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
         const n0=g.indexOf('<p class="protocol-note rd-limits-note"'),note=g.slice(n0,g.indexOf('</p>',n0));
         assert.ok(p&&n0>0&&note.includes(`data-rd-limits="${p}"`),where+': the limitations of its protocol under its rows');
         assert.ok(!/data-fig=/.test(note),where+': the limitations carry no figure');
+        // A URL in the text is linked as itself, and nothing after it joins the link (the Chinese did, once).
+        const urls=[...note.matchAll(/<a href="(https:[^"]*)"[^>]*>([^<]*)<\/a>/g)];
+        assert.ok(urls.length===1&&urls.every(([,h,t])=>h===t&&/^https:\/\/[!-~]+$/.test(h)&&R.literature.some(l=>l.url===h)),where+': the out-of-distribution source is linked as itself ('+urls.map(u=>u[1]).join(' ')+')');
         const text=decodeHtml(note.replace(/<[^>]+>/g,'')).replace(/\s+/g,' ');
         const want=[R.boundaries.per_protocol[p],...shared].map(x=>zh?ctx.Z[x]:x);
         for(const x of want) assert.ok(x&&text.includes(x.replace(/\s+/g,' ')),where+': "'+String(x).slice(0,60)+'"');
