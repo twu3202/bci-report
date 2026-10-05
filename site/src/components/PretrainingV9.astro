@@ -90,7 +90,7 @@ const c = {
     key: (d: string) => `Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the authors’ lists show, not proof that the recordings were never seen. Each model’s sources are on its method page.`,
     published: (p: string) => `Published rows on ${p} (core matrix, 20 September 2026):`,
     notAdapted: 'The others were not adapted:',
-    colEncoder: 'Encoder', colBa: 'Balanced accuracy', colVs: 'Against the published rows',
+    colEncoder: 'Encoder', colBa: 'Balanced accuracy', colVs: (best: string) => `Against LaBraM, CBraMod and ${best}`,
     vsLegend: (best: string, ov: string[]) => `Against the published rows: LaBraM, CBraMod and ${best}, the published non-foundation row with the highest point estimate${ov.length ? ` (its interval overlaps ${list(ov)}’s)` : ''}, by whether the 95% intervals overlap.`,
     sleepH3: (n: number) => `Sleep staging: ${words[n]} new encoders above every published row`,
     sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the published non-foundation row with the highest point estimate (', ', ', '–', `), the frozen LaBraM and CBraMod rows, and EEGNet. Sleep is the only one of the ${words[n]} scored protocols where a new row clears the published non-foundation row with the highest point estimate. The other new rows overlap the published ones or lie below them.`],
@@ -138,7 +138,7 @@ const c = {
     key: (d: string) => `未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。每个模型的来源见其方法页面。`,
     published: (p: string) => `${p}上已发布的行（核心矩阵，2026 年 9 月 20 日）：`,
     notAdapted: '其余的没有做适配：',
-    colEncoder: '编码器', colBa: '平衡准确率', colVs: '与已发布的行相比',
+    colEncoder: '编码器', colBa: '平衡准确率', colVs: (best: string) => `与 LaBraM、CBraMod 和${/^[A-Za-z]/.test(best) ? ' ' : ''}${best}${/[A-Za-z]$/.test(best) ? ' ' : ''}相比`,
     vsLegend: (best: string, ov: string[]) => `与已发布的行相比：LaBraM、CBraMod，以及已发布的非基础模型行中点估计最高的${/^[A-Za-z]/.test(best) ? ' ' : ''}${best}${ov.length ? `（它的区间与 ${list(ov)} 的重叠）` : ''}，按 95% 区间是否重叠判断。`,
     sleepH3: (n: number) => `睡眠分期：${n} 个新编码器高于所有已发布的行`,
     sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的非基础模型行中点估计最高的 spectral ridge（', '，', '–', `）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的非基础模型行中点估计最高的那一行。其余新行与已发布的行重叠，或低于它们。`],
@@ -221,7 +221,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
   <p class="protocol-note fm-published"><strong>{c.published(inSentence[SLEEP][locale])}</strong>{zh ? '' : ' '}{sleepPublished.map((p, i) => <>{i > 0 && ' · '}<span data-core-topic={`${SLEEP}|${p.id}`}><span lang="en">{p.name}</span> <Fig f={p.ba}/>{zh ? '（' : ' ('}<Fig f={p.interval[0]}/>–<Fig f={p.interval[1]}/>{zh ? '）' : ')'}</span></>)}</p>
   <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.sleepRegion}>
     <table class="fm-results fm-topic-table"><caption>{c.sleepCaption}</caption>
-      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs}</th></tr></thead>
+      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs(refName(sleepBest.id, sleepBest.name))}</th></tr></thead>
       <tbody>{sleepRows.map(r => <tr data-fm-topic={`${SLEEP}|${r.cell.model.id}`} data-rel={`${r.vs.labram} ${r.vs.cbramod} ${r.vs.best}`}>
         <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
         <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
@@ -236,7 +236,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
   <p class="protocol-note fm-published"><strong>{c.published(inSentence[BETA8][locale])}</strong>{zh ? '' : ' '}{betaPublished(BETA8).map((p, i) => <>{i > 0 && ' · '}<span data-core-topic={`${BETA8}|${p.id}`}><span lang="en">{p.name}</span> <Fig f={p.ba}/>{zh ? '（' : ' ('}<Fig f={p.interval[0]}/>–<Fig f={p.interval[1]}/>{zh ? '）' : ')'}</span></>)}</p>
   <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.betaRegion}>
     <table class="fm-results fm-topic-table"><caption>{c.betaCaption}</caption>
-      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs}</th></tr></thead>
+      <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colBa}</th><th scope="col">{c.colVs(refName(betaBest.id, betaBest.name))}</th></tr></thead>
       <tbody>{betaRows.map(r => <tr data-fm-topic={`${BETA8}|${r.cell.model.id}`} data-rel={`${r.vs.labram} ${r.vs.cbramod} ${r.vs.best}`}>
         <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
         <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
