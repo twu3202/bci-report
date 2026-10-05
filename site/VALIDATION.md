@@ -549,6 +549,17 @@ bound in the English copy and `llms-full.txt`, the same in the Chinese copy, and
 does-pretraining-help short answer's 79.6% in each language) and two more (an ablation
 row's bound, two rows swapped): each of 6 was caught.
 
+Wording from the same review: when-not-to-act reads the rejection gain per protocol
+("is read per protocol; the two are not compared"), not as a cross-protocol "differs by
+protocol" (因协议而异); its EEGMAT recalibration sentence counts the NLL rises "with the
+interval excluding zero" (three of four; EEGNet's point estimate rose too, unresolved),
+re-derived from the export; does-pretraining-help says REVE Large's point estimate is at
+or above Base's, since their intervals overlap on three protocols; and no Chinese copy
+has a space before a full-width mark (the converter spaced two adjacent elements, so
+fewer-electrodes' closing bracket, which opened the next element, read "（−6.1 pp ）";
+it is now plain text between them). Mutation-tested on a copy of `dist/`: each of 4
+injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

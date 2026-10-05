@@ -2563,7 +2563,14 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     // ds003810's contrasts are secondary, and say so; the two protocols' rejection gains are not compared.
     const crude=sec.slice(sec.indexOf('id="rd-crude"'),sec.indexOf('</table>',sec.indexOf('id="rd-crude"')));
     assert.ok(!/no primary contrast|也没有主要对比/.test(visible(crude))&&visible(crude).includes(zh?'下面的对比是次要对比':'Its contrasts below are secondary'),where+': ds003810\'s contrasts are called secondary');
-    assert.ok(!/falls only from|只从/.test(text)&&text.includes(zh?'两个协议之间不作比较':'the two are not compared with each other'),where+': BETA and EEGMAT rejection gains are not compared');
+    assert.ok(!/falls only from|只从/.test(text)&&text.includes(zh?'两个协议之间不作比较':'the two are not compared'),where+': BETA and EEGMAT rejection gains are not compared');
+    // Follow-up review of 2026-10-05: "differs by protocol" was itself a comparison across protocols; the gain is read
+    // per protocol. And the EEGMAT NLL rise is counted where its interval excludes zero (EEGNet's point estimate rose
+    // too, unresolved), so the sentence says so.
+    assert.ok(text.includes(zh?'拒识能换来多少，按协议分别来读':'How much declining buys is read per protocol')&&!/declining buys differs by protocol|拒识能换来多少，因协议而异/.test(text),where+': the rejection gain is read per protocol, not said to differ');
+    {const k5=E.methods.map(m=>m.recalibration.find(x=>x.prefix==='k5')),up=k5.filter(x=>x.nll_change.excludes_zero&&x.nll_change.mean>0).length;
+     assert.ok(up===3&&k5.some(x=>!x.nll_change.excludes_zero&&x.nll_change.mean>0),'route 1: three resolved NLL rises at 10 labels, and one unresolved point-estimate rise');
+     assert.ok(text.includes(zh?'四种方法中有三种的 NLL 上升，且区间不含零':'NLL rose, with the interval excluding zero, for three of the four methods'),where+': the NLL rise is counted where its interval excludes zero');}
     // The idle limit on the same page no longer says probability quality is unmeasured everywhere.
     assert.ok(html.includes(zh?'这个协议上没有测概率质量':'No probability quality on this protocol'),where+': the idle limit is scoped to its protocol');
   }
@@ -3465,6 +3472,8 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       }
       assert.ok(pairs.every(p=>p.large_minus_base>=0),'REVE Large is at or above Base everywhere');
       assert.ok(sec.includes(`data-claim="reve-separated" data-tracks="${pairs.filter(p=>!p.marginal_intervals_overlap).map(p=>p.protocol).join(' ')}"`),w+': the size sentence names where the intervals separate');
+      // Follow-up review of 2026-10-05: on the protocols where the intervals overlap, "at or above" orders point estimates.
+      assert.ok(vis.includes(zh?'REVE Large 的点估计都不低于 REVE Base':'REVE Large’s point estimate is at or above REVE Base’s')&&!/REVE Large is at or above|REVE Large 都不低于/.test(vis),w+': REVE Large against Base as point estimates');
       assert.match(vis,zh?/没有做配对检验/:/no paired test was run/,w+': no paired test');
       assert.match(vis,zh?/边际区间/:/marginal/,w+': marginal intervals');
       assert.match(vis,zh?/同一批被试/:/the same people/,w+': the same people');
@@ -3696,6 +3705,10 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     assert.deepEqual([...para.matchAll(/\*\*([^*]+)\*\*/g)].map(m=>m[1]),page,where+': the short answer\'s bold figures are the page\'s marked figures, in order');
     answers++;
   }
+  // No space before a full-width mark in a Chinese copy (the converter spaces two adjacent elements, so a closing
+  // bracket that opens the next element read "（−6.1 pp ）" on fewer-electrodes).
+  for(const f of htmlPages.filter(f=>f.startsWith('zh/'))){const md=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8');
+    const bad=md.match(/.{0,20}[^\s|] [）；，。：、].{0,4}/);assert.ok(!bad,f.replace(/index\.html$/,'index.md')+': a space before a full-width mark: "'+(bad&&bad[0])+'"');}
   console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim; the home page\'s v9 and ablation rows ('+homeRows+') and every topic\'s short answer ('+answers+') carry the page\'s figures into the copies, in order.');
 }
 // --- 2026-10-05 follow-up review: a v9 figure prints as decimal rounding gives it --------------------
