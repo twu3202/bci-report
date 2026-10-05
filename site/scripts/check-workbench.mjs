@@ -2591,6 +2591,53 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     }
     for(const mp of ['eegnet','labram','cbramod','cca']) assert.ok(pageOf(pfx+'methods/'+mp+'/').includes('data-fig="reliable-decisions-update.json|'),label+'/methods/'+mp+': route-1 figures reach the method page');
   }
+  // Follow-up review of 2026-10-05: the handoff's required limitations go "on any page that shows route-1 results".
+  // Every route-1 group on a dataset or method page carries, under its rows and without a figure, its protocol's
+  // boundary and the three route-wide limitations that bear on every figure in it (calibration on cross-fit inner
+  // models, rejecting errors is not out-of-distribution detection, the difference rule with no multiplicity
+  // correction): the export's English verbatim, or the translation table's Chinese; links the rest; and on ds003810
+  // calls the contrasts secondary, in the note and on each contrast row.
+  {
+    const src=stripTypeScriptTypes(readFileSync(new URL('../src/data/reliable-decisions-limits.ts',import.meta.url),'utf8'))
+      .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'');
+    const ctx={reliable:rdx};vm.runInNewContext(src+'\nthis.Z=rdLimitsZh;this.S=rdSecondary;',ctx);
+    const digits=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]).sort();
+    const shared=['Calibration data are participant-disjoint inner out-of-fold scores','Rejecting likely errors on known classes','A contrast is called a difference only when']
+      .map(start=>{const hits=R.boundaries.all_protocols.filter(x=>x.startsWith(start));assert.equal(hits.length,1,'route 1: one limitation starting "'+start+'"');return hits[0];});
+    assert.ok(/cross-fit/.test(shared[0])&&/not detecting unfamiliar input/.test(shared[1])&&/no multiplicity correction/.test(shared[2]),'route 1: the three limitations the groups carry');
+    const allEn=new Set([...R.boundaries.all_protocols,...Object.values(R.boundaries.per_protocol)]);
+    for(const [en,zh] of Object.entries(ctx.Z)){
+      assert.ok(allEn.has(en),'reliable-decisions-limits.ts: "'+en.slice(0,50)+'" is no limitation of the export');
+      // "Route 1" is 第一条路线 in Chinese, as on the topic page.
+      assert.deepEqual(digits(zh),digits(en.replace(/\bRoute 1\b/g,'')),'reliable-decisions-limits.ts: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
+      assert.ok(/\p{Script=Han}/u.test(zh),'reliable-decisions-limits.ts: "'+en.slice(0,50)+'" has no Chinese');
+      for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zh,bad),`reliable-decisions-limits.ts: "${bad}" is a rejected rendering — use "${good}"`);
+    }
+    assert.ok(/交叉拟合/.test(ctx.Z[shared[0]])&&/分布外/.test(ctx.Z[shared[1]])&&/不做多重比较校正/.test(ctx.Z[shared[2]]),'reliable-decisions-limits.ts: the Chinese keeps cross-fit, out-of-distribution and no multiplicity correction');
+    const protocolOf={eegmat:'arithmetic-rest',beta:'beta-8ch',ds003810:'mi-rest'};
+    let groups=0;
+    for(const f of htmlPages.filter(f=>/^(?:zh\/)?(?:datasets|methods)\//.test(f))){
+      const zh=f.startsWith('zh/'),html=readFileSync(new URL(f,DIST),'utf8');
+      for(const [,ds] of html.matchAll(/<section class="entity-group" id="g-(?:([a-z0-9-]+?)-)?reliable-decisions">/g)){
+        const slug=ds??f.match(/datasets\/([^/]+)\//)[1],p=protocolOf[slug],where=f+' route-1 group ('+slug+')';
+        const g0=html.indexOf(`id="g-${ds?ds+'-':''}reliable-decisions"`),g=html.slice(g0,html.indexOf('</section>',g0));
+        const n0=g.indexOf('<p class="protocol-note rd-limits-note"'),note=g.slice(n0,g.indexOf('</p>',n0));
+        assert.ok(p&&n0>0&&note.includes(`data-rd-limits="${p}"`),where+': the limitations of its protocol under its rows');
+        assert.ok(!/data-fig=/.test(note),where+': the limitations carry no figure');
+        const text=decodeHtml(note.replace(/<[^>]+>/g,'')).replace(/\s+/g,' ');
+        const want=[R.boundaries.per_protocol[p],...shared].map(x=>zh?ctx.Z[x]:x);
+        for(const x of want) assert.ok(x&&text.includes(x.replace(/\s+/g,' ')),where+': "'+String(x).slice(0,60)+'"');
+        assert.ok(note.includes(`href="${zh?'/zh':''}/topics/when-not-to-act/#rd-limits"`),where+': links every limitation of route 1');
+        if(p==='mi-rest'){
+          assert.ok(text.includes(zh?ctx.S.zh:ctx.S.en)&&(zh?/次要对比/:/secondary/).test(ctx.S[zh?'zh':'en']),where+': the contrasts are called secondary');
+          const c2=[...g.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map(m=>m[1]).filter(r=>/Learned reject option|可学习的拒识选项/.test(r));
+          assert.ok(c2.length>0&&c2.every(r=>(zh?/（次要对比）/:/\(a secondary contrast\)/).test(r)),where+': each contrast row says it is secondary');
+        }else assert.ok(!(zh?/次要对比/:/secondary contrast/).test(g),where+': a primary protocol\'s contrasts are not called secondary');
+        groups++;
+      }
+    }
+    assert.equal(groups,2*10,'route-1 groups with their limitations: three dataset pages and seven method-page groups, in both languages');
+  }
   // Markup, releases and data use.
   {
     const node=ldOf(pageOf('topics/when-not-to-act/'))[0]['@graph'].find(n=>n['@type']==='Dataset');

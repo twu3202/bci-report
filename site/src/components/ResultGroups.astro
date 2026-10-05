@@ -13,6 +13,7 @@ import { hrefFor, topicCards, type Locale } from '../data/i18n';
 import { protocolLinkLabel } from '../data/protocols';
 import { fmText } from '../data/foundation-models-zh';
 import { fmModels, fmTermsSentence } from '../data/foundation-models';
+import { rdLimits } from '../data/reliable-decisions-limits';
 
 interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
 const { locale, groups, showMethod = true } = Astro.props;
@@ -27,6 +28,8 @@ const plottable = (g: ResultGroup) => {
   return rows.length >= 2 && rows.length <= 16 && new Set(rows.map(r => r.value.fmt)).size === 1 ? rows : [];
 };
 const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `${g.dataset.name} · ${tr(g.title, locale)}` : tr(g.title, locale);
+// A URL the export's text carries in parentheses is printed as itself, linked.
+const urlParts = (s: string) => s.split(/(https:\/\/[^\s)]+)/);
 ---
 {groups.map(g => {
   const plot = plottable(g);
@@ -68,6 +71,7 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
         </table>
       </div>}
       {g.fmTerms && g.rows.length > 0 && <p class="protocol-note fm-terms-note" data-fm-terms={g.fmTerms}>{fmTermsSentence(fmModels.filter(m => g.rows.some(r => r.method === m.name)), locale)} <a href={`${hrefFor(`/protocols/${g.fmTerms}/`, locale)}#v9-licences`}>{locale === 'zh' ? '全部权重许可与条款 →' : 'Every weights licence and its terms →'}</a></p>}
+      {g.rdLimits && <p class="protocol-note rd-limits-note" data-rd-limits={g.rdLimits}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{rdLimits(g.rdLimits, locale).map((x, i) => <>{i > 0 && locale === 'en' && ' '}{urlParts(x).map((part, j) => j % 2 ? <a href={part} target="_blank" rel="noreferrer">{part}</a> : part)}</>)}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#rd-limits`}>{locale === 'zh' ? '第一条路线的全部局限 →' : 'Every limitation of route 1 →'}</a></p>}
       {g.notRun && g.notRun.length > 0 && <p class="protocol-note fm-not-run-note">{g.notRun.map((x, i) => {
         const why = fmText(x.reason, locale);
         return <>{i > 0 && ' '}<strong><span lang="en">{x.method}</span>{locale === 'zh' ? '：未运行，不是零。' : ': not run, never a zero.'}</strong> {why.text}{why.original && <span class="note-original" lang="en">{why.original}</span>}</>;

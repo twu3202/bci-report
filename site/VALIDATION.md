@@ -517,6 +517,24 @@ the review and the review names each field the file carries, and nothing more is
 carried. Mutation-tested on a copy of `dist/` (the source export too, restored
 afterwards): each of 4 injected violations was caught.
 
+The route-1 handoff asks for its required limitations "on any page that shows route-1
+results", and the route-1 groups on the EEGMAT, BETA and ds003810 pages and the EEGNet,
+LaBraM, CBraMod and CCA pages carried only "a method comparison on a balanced protocol"
+and the verdicts (same review). Each now carries, under its rows and without a figure,
+its protocol's boundary and the three route-wide limitations that bear on every figure
+in it — calibration on cross-fit inner models, rejecting likely errors is not
+out-of-distribution detection, the difference rule with no multiplicity correction —
+printed from the export (`reliable-decisions-limits.ts` reads them by their opening
+words, so a changed export fails the build), in Chinese from a table keyed by that
+English, and links `#rd-limits` for the rest; on ds003810 the note and each contrast row
+say the contrasts are secondary. The Chinese row note now reads "没有任何试次被接受的被试：
+0 名（共 70 名）". Pinned on all 20 groups: the note, its protocol, each sentence (the
+export's English verbatim, the table's Chinese), no `data-fig`, the link, "secondary"
+on ds003810 and only there; and the table's keys are limitations of the export, with
+their numbers, in Chinese, keeping 交叉拟合, 分布外 and 不做多重比较校正.
+Mutation-tested on a copy of `dist/` (the translation table too, restored afterwards):
+each of 8 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

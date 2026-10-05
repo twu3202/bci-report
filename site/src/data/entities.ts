@@ -128,6 +128,11 @@ export interface ResultGroup {
    * terms of the checkpoints in its rows beside them, and links that list (review of 2026-10-05).
    */
   fmTerms?: string;
+  /**
+   * A route-1 group (review of 2026-10-05): the protocol whose boundary, with the route's limitations that bear on every
+   * figure in the group, is printed under its rows from the export (reliable-decisions-limits.ts), linking the rest.
+   */
+  rdLimits?: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest';
 }
 
 export interface DatasetEntity {
@@ -757,8 +762,10 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
     rows.push({ ...base, condition: { en: 'Fixed threshold: calibrated confidence at least 0.8', zh: '固定阈值：校准后的置信度不低于 0.8' },
       metric: unit, value: fig(f.accepted, 'count', RDU), of: fig(f.n, 'count', RDU),
       note: { en: [fig(f.people_with_nothing_accepted, 'count', RDU), ' of ', fig(p.people, 'count', RDU), ' people had nothing accepted. A method comparison on a balanced protocol, not a deployment rate.'],
-              zh: [fig(f.people_with_nothing_accepted, 'count', RDU), ' 名被试（共 ', fig(p.people, 'count', RDU), ' 名）一个都没有被接受。这是类别平衡协议上的方法比较，不是部署时的比率。'] } });
-    rows.push({ ...base, condition: { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
+              zh: [`没有任何${p.unit === 'windows' ? '窗口' : '试次'}被接受的被试：`, fig(f.people_with_nothing_accepted, 'count', RDU), ' 名（共 ', fig(p.people, 'count', RDU), ' 名）。这是类别平衡协议上的方法比较，不是部署时的比率。'] } });
+    // ds003810's contrasts are secondary (the topic page reads them only as such): the row says so.
+    rows.push({ ...base, condition: crude ? { en: 'Learned reject option minus calibrated confidence, same classifier (a secondary contrast)', zh: '可学习的拒识选项减校准后的置信度，同一分类器（次要对比）' }
+                                          : { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
       metric: { en: 'Error among the 80% most certain, difference', zh: '最确定的 80% 中的错误率，差值（百分点）' },
       value: fig(d.mean, ppFmt(d.mean), RDU), interval: [fig(d.interval_95[0], ppFmt(d.interval_95[0]), RDU), fig(d.interval_95[1], ppFmt(d.interval_95[1]), RDU)],
       note: d.excludes_zero ? { en: ['Difference resolved: the interval excludes zero.'], zh: ['可以认定有差异：区间不含零。'] }
@@ -770,7 +777,7 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
     id: 'reliable-decisions',
     title: crude ? { en: 'Reliable decisions · when to decline a decision (crude: ten people)', zh: '可靠的决策 · 什么时候该拒绝作出决定（粗略：10 名被试）' }
                  : { en: 'Reliable decisions · when to decline a decision', zh: '可靠的决策 · 什么时候该拒绝作出决定' },
-    path: '/topics/when-not-to-act/', rows,
+    path: '/topics/when-not-to-act/', rows, rdLimits: protocol,
   };
 }
 
