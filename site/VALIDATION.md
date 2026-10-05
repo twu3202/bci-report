@@ -580,6 +580,19 @@ script's render, and the built CSS rule. Mutation-tested on a copy of `dist/` (t
 client script's source too, restored afterwards): each of 5 injected violations was
 caught.
 
+The v9 caveats on the protocol pages (same review). Each `#foundation-v9` lede gave the
+grouping rule, but not the multiplicity caveat the topics carry: on every protocol with
+intervals it now says each interval is a descriptive participant bootstrap with no
+multiplicity correction, and that with 126 frozen cells an occasional non-overlap is
+expected by chance (the idle page, whose rows are counts, does not); and on every
+protocol that the encoders see its published windows, usually shorter than their
+pretraining contexts. EEGMamba's exposure (its list read from the official code, the
+paper not read, medium confidence) was stated on does-pretraining-help, the release log
+and its method page, but its cells read like the high-confidence ones in the protocol
+pages' exposure key and fewer-electrodes' "Pretraining exposure" limitation; both now
+say it. Pinned in both languages, with the 126 re-counted from the export. Mutation-tested
+on a copy of `dist/`: each of 5 injected violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

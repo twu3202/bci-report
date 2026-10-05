@@ -2992,6 +2992,15 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       // The reading rule fits the rows: interval overlap where there are intervals; the idle rows are counts (review of 2026-10-05).
       assert.equal(/95% intervals do not overlap|95% 区间不重叠/.test(visible(sec.slice(0,sec.indexOf('<table class="fm-results">')))),!tradeoff,where+': the interval reading rule only where rows have intervals');
       if(tradeoff) assert.ok(visible(sec).includes(label==='en'?'they are counts with no interval, so no row is called above or below another':'这些是计数，没有区间，所以不说哪一行高于或低于另一行'),where+': the idle rows are counts, not ranked');
+      // Follow-up review of 2026-10-05: the v9 limitations the topics carry, here too — no multiplicity correction where
+      // there are intervals (126 frozen cells), windows shorter than the pretraining contexts everywhere — and EEGMamba's
+      // exposure read from its official code, with medium confidence, in the exposure key.
+      {const lede=visible(sec.slice(0,sec.indexOf('<table class="fm-results">')));
+       assert.equal(lede.includes(label==='en'?'Each interval is a descriptive participant bootstrap with no multiplicity correction, and with 126 frozen cells an occasional non-overlap is expected by chance':'每个区间都是描述性的被试 bootstrap，没有做多重比较校正；冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中'),!tradeoff,where+': no multiplicity correction, where the rows have intervals');
+       assert.equal(F.frozen_probe.filter(c=>c.status==='complete').length,126,'v9: 126 frozen cells');
+       assert.ok(lede.includes(label==='en'?'Every encoder sees this protocol’s published windows, usually shorter than its pretraining context':'每个编码器看到的都是本协议已发布的时间窗，通常比它预训练时的上下文更短'),where+': the windows are shorter than the pretraining contexts');
+       const key=visible(sec.slice(sec.indexOf('<p class="citation-note fm-exposure-key">'),sec.indexOf('</p>',sec.indexOf('<p class="citation-note fm-exposure-key">'))));
+       assert.ok(key.includes(label==='en'?'EEGMamba’s list is read from its official code (its paper was not read), with medium confidence':'EEGMamba 的清单读自其官方代码（论文全文没有读过），把握程度为中等'),where+': EEGMamba\'s exposure, read from its code, medium confidence');}
       assert.ok(sec.includes(`href="/data/${fmcsv}" download`)&&sec.includes(`href="/${prefix}releases/#${REL}"`),where+': the v9 CSV and its release are linked');
       const vis=visible(label==='zh'?chineseOnly(sec):sec);
       assert.doesNotMatch(vis,ranking[label],where+': the v9 rows are not ranked');
@@ -3594,8 +3603,8 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       // small cohorts with descriptive intervals and no multiplicity correction, balanced designs as method comparisons,
       // new people on the same task and setup only, windows shorter than the pretraining contexts.
       const lim=sec.slice(sec.indexOf('<div class="method-grid-wide fm-limits">'),sec.indexOf('</div>',sec.indexOf('<div class="method-grid-wide fm-limits">')));
-      for(const re of zh?[/小队列，描述性区间/,/没有计入交叉验证带来的相关性/,/没有做多重比较校正/,/冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/通常比它预训练时的上下文更短/]
-                       :[/Small cohorts, descriptive intervals/,/ignores cross-validation dependence/,/no multiplicity correction/,/with 126 frozen cells an occasional non-overlap is expected by chance/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/shorter than its pretraining context/])
+      for(const re of zh?[/小队列，描述性区间/,/没有计入交叉验证带来的相关性/,/没有做多重比较校正/,/冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/通常比它预训练时的上下文更短/,/EEGMamba 的清单读自其官方代码（论文全文没有读过），把握程度为中等/]
+                       :[/Small cohorts, descriptive intervals/,/ignores cross-validation dependence/,/no multiplicity correction/,/with 126 frozen cells an occasional non-overlap is expected by chance/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/shorter than its pretraining context/,/EEGMamba’s list is read from its official code \(its paper was not read\), with medium confidence/])
         assert.match(visible(lim),re,w+': the limitation '+re);
       for(const k of ['beta-8ch','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
       // Licence notes travel with the rows: one entry per family printed, REVE by version, no endorsement.
