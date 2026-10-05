@@ -95,5 +95,43 @@ class CardFoundationWording(unittest.TestCase):
         self.assertIn("BETA is in ST-EEGFormer's published pretraining list", self.v9)
 
 
+class CardRouteOneFigures(unittest.TestCase):
+    """The route-1 paragraph's figures are typed into the card: each must be the served export's (review of 2026-10-05)."""
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        text = ' '.join(card(snapshot, len(rows), topic_payload()).split())
+        start = text.index('`reliable-decisions-update.json`')
+        cls.r1 = text[start:text.index('Every contrast', start)]
+        cls.result = json.loads((PUBLISHED/'reliable-decisions-update.json').read_text())['results']['reliable-decisions']
+
+    def test_cohorts_and_coverages_are_the_exports(self):
+        eegmat, beta = self.result['protocols']['arithmetic-rest'], self.result['protocols']['beta-8ch']
+        self.assertIn(f'two LaBraM arms on EEGMAT ({eegmat["people"]} people)', self.r1)
+        self.assertIn(f'EEGNet on BETA ({beta["people"]} people)', self.r1)
+        cov = {m['id']: f'{100 * m["fixed_cutoff"]["coverage"]:.1f}%' for m in beta['methods']}
+        stated = re.search(r'accepted (\d+\.\d%) of BETA trials for one method and (\d+\.\d%) for another', self.r1)
+        self.assertIsNotNone(stated)
+        self.assertEqual([stated[1], stated[2]], [cov['cca'], cov['cbramod']])
+        self.assertEqual(max(cov.values(), key=lambda v: float(v[:-1])), stated[1])
+        self.assertEqual(min(cov.values(), key=lambda v: float(v[:-1])), stated[2])
+
+    def test_the_claims_follow_from_the_export(self):
+        protocols = self.result['protocols'].values()
+        # "The learned reject option erred less than the calibrated confidence for no method."
+        self.assertIn('erred less than the calibrated confidence for no method', self.r1)
+        self.assertFalse([m['id'] for p in protocols for m in p['methods']
+                          if m['learned_minus_confidence']['error_at_80']['excludes_zero']
+                          and m['learned_minus_confidence']['error_at_80']['mean'] < 0])
+        # "The certified risk accepted nothing on EEGMAT", and on BETA some certified folds exceeded their target.
+        self.assertIn('The certified risk accepted nothing on EEGMAT', self.r1)
+        self.assertTrue(all(m['risk_certification']['accepted'] == 0
+                            for m in self.result['protocols']['arithmetic-rest']['methods']))
+        self.assertTrue(any(m['risk_certification']['folds_over_target'] > 0
+                            for m in self.result['protocols']['beta-8ch']['methods']))
+
+
 if __name__ == '__main__':
     unittest.main()
