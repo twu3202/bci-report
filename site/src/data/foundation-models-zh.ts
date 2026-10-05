@@ -54,10 +54,10 @@ export const fmZh: Record<string, string> = {
   'Apache-2.0 weights; model card states research use only, not for diagnosis or clinical use.': 'Apache-2.0 权重；模型卡写明仅供研究使用，不可用于诊断或临床。',
 
   // Row footnotes: one per checkpoint, printed with its row.
-  'Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run changes P300 by -0.71 and sleep by +1.40 percentage points.':
-    '输入在已发布的 /100 缩放之前，先去掉每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析使 P300 的结果变化 -0.71、睡眠变化 +1.40（单位：百分点）。',
-  'Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run changes P300 by +2.06 and sleep by +0.93 percentage points.':
-    '输入先去掉每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析使 P300 的结果变化 +2.06、睡眠变化 +0.93（单位：百分点）。',
+  'Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run scores P300 0.71 percentage points higher and sleep 1.40 lower.':
+    '输入在已发布的 /100 缩放之前，先去掉每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析中，P300 的得分高 0.71、睡眠低 1.40（单位：百分点）。',
+  'Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run scores P300 2.06 percentage points lower and sleep 0.93 lower.':
+    '输入先去掉每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析中，P300 的得分低 2.06、睡眠低 0.93（单位：百分点）。',
   "Resampled to 256 Hz and truncated to whole 40-sample patches; 1-2 s windows and 4-8 channel montages are outside the authors' tested regime.":
     '重采样到 256 Hz，并截断为完整的 40 采样点片段；1–2 秒的时间窗和 4–8 通道的电极布局，都超出了作者测试过的范围。',
   'As LUNA Base. Frozen probes only.': '同 LUNA Base。只做冻结探针。',
@@ -96,10 +96,10 @@ export const fmZh: Record<string, string> = {
     'Apache-2.0 权重。模型卡写明仅供研究使用，不可用于诊断或临床；这句话随它的每一行一起出现。',
 
   // Model notes (shared by all eight cells of a model).
-  'REVE input removes the per-segment per-channel mean (declared before scoring; the published LaBraM/CBraMod rows did not); a no-mean-removal sensitivity run is reported separately.':
-    'REVE 的输入去掉了每个片段各通道的均值（评分前已声明；已发布的 LaBraM/CBraMod 行没有这样做）；不去均值的敏感性分析另行报告。',
-  'REVE input removes the per-segment per-channel mean (declared before scoring); a no-mean-removal sensitivity run is reported separately.':
-    'REVE 的输入去掉了每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析另行报告。',
+  'REVE input removes the per-segment per-channel mean (declared before scoring; the published LaBraM/CBraMod rows did not); a no-mean-removal sensitivity run is stated in the row footnote.':
+    'REVE 的输入去掉了每个片段各通道的均值（评分前已声明；已发布的 LaBraM/CBraMod 行没有这样做）；不去均值的敏感性分析见该行脚注。',
+  'REVE input removes the per-segment per-channel mean (declared before scoring); a no-mean-removal sensitivity run is stated in the row footnote.':
+    'REVE 的输入去掉了每个片段各通道的均值（评分前已声明）；不去均值的敏感性分析见该行脚注。',
   'LUNA resamples to 256 Hz and keeps whole 40-sample patches: 1 s keeps 240/256 samples, 2 s keeps 480/512.':
     'LUNA 重采样到 256 Hz，只保留完整的 40 采样点片段：1 秒保留 240/256 个采样点，2 秒保留 480/512 个。',
   "ST-EEGFormer Large uses the authors' downstream class (1-based temporal index); a label-free reconstruction check suggests Large was pretrained with a 0-based index, so its temporal sinusoid may be shifted by one position.":

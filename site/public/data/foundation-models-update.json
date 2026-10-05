@@ -275,7 +275,7 @@
           "paper": "https://arxiv.org/abs/2510.21585",
           "weights_licence": "REVE Responsible Use License v1.0 (owner-approved 2026-10-04)",
           "licence_note": "REVE Responsible Use License v1.0: aggregate scientific results only; no re-identification, model inversion, membership inference or non-consensual profiling; cite the REVE paper and name the model version; no adapted weights shared.",
-          "row_footnote": "Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run changes P300 by -0.71 and sleep by +1.40 percentage points.",
+          "row_footnote": "Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run scores P300 0.71 percentage points higher and sleep 1.40 lower.",
           "family": "foundation",
           "input_family": "montage",
           "panel": "matrix",
@@ -285,7 +285,7 @@
           "adaptation": "run",
           "rights_review": "Accepted by the owner on 2026-10-04. Aggregate scientific results only; no re-identification, model inversion, membership inference or non-consensual profiling; the REVE paper is cited and the model version named; no adapted weights are shared.",
           "notes": [
-            "REVE input removes the per-segment per-channel mean (declared before scoring; the published LaBraM/CBraMod rows did not); a no-mean-removal sensitivity run is reported separately."
+            "REVE input removes the per-segment per-channel mean (declared before scoring; the published LaBraM/CBraMod rows did not); a no-mean-removal sensitivity run is stated in the row footnote."
           ]
         },
         {
@@ -298,7 +298,7 @@
           "paper": "https://arxiv.org/abs/2510.21585",
           "weights_licence": "REVE Responsible Use License v1.0 (owner-approved 2026-10-04)",
           "licence_note": "REVE Responsible Use License v1.0 (as REVE Base).",
-          "row_footnote": "Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run changes P300 by +2.06 and sleep by +0.93 percentage points.",
+          "row_footnote": "Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run scores P300 2.06 percentage points lower and sleep 0.93 lower.",
           "family": "foundation",
           "input_family": "montage",
           "panel": "matrix",
@@ -308,7 +308,7 @@
           "adaptation": "run",
           "rights_review": "Accepted by the owner on 2026-10-04. Aggregate scientific results only; no re-identification, model inversion, membership inference or non-consensual profiling; the REVE paper is cited and the model version named; no adapted weights are shared.",
           "notes": [
-            "REVE input removes the per-segment per-channel mean (declared before scoring); a no-mean-removal sensitivity run is reported separately."
+            "REVE input removes the per-segment per-channel mean (declared before scoring); a no-mean-removal sensitivity run is stated in the row footnote."
           ]
         },
         {
@@ -8632,7 +8632,7 @@
     "The aggregate, the group summaries, the audit status and the harness validation: pinned by SHA-256 and checked, never copied, because they carry private storage paths. The six independent audits, with their check names and notes, and the run's decision log stay in the private run root; the audits are bound by hash."
   ],
   "provenance": {
-    "manifest_sha256": "091881ba1ec44cc99b4b1a719a9f653972a60f840c0fc26e399ae6fdf45bf72c",
+    "manifest_sha256": "234fc9bf732de4e5cd7b1c94456233d11f7621a5dbc42a615f84fe9b382bcf57",
     "release_candidate_sha256": "770021b49a6619bc73fd862163e0b2309cd5292a91aed233fc20164fdf08fbb8",
     "aggregate_sha256": "cc3fd8570ec96cfb725bde69c6616ff3565dd7d16739dc7dcf0a7b37b66c32be",
     "pretraining_exposure_sha256": "c7b1370ffb6d996797dacbb202016de5071e6e3ecc6a53bb50ac297908dd1d95",

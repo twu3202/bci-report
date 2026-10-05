@@ -352,6 +352,43 @@
       "basis": "Apache-2.0 weights. The model card says research use only, not for diagnosis or clinical use; that sentence travels with its rows."
     }
   ],
+  "restatements": [
+    {
+      "what": "required_limitations: the pretraining-exposure limitation",
+      "date": "2026-10-05",
+      "candidate": "Pretraining exposure: ST-EEGFormer x BETA and SingLEM x semantic-target are exposed; ZUNA 1.1 is unknown on all core datasets; EEGMamba not exposed at medium confidence.",
+      "published": "Pretraining exposure, as the authors' published pretraining lists show it (checked 2026-10-04): BETA is in ST-EEGFormer's list and TMNRED (semantic-target) in SingLEM's; ZUNA 1.1 publishes no list, so it is unknown on all core datasets; EEGMamba's list is read from its official code, with medium confidence. A dataset absent from a list is not proof that its recordings were never seen.",
+      "why": "The owner's wording decision of 2026-10-04: exposure is what the authors' published lists show, checked on a date, never \"not exposed\" or a proof."
+    },
+    {
+      "what": "models: weights licence, the approval",
+      "date": "2026-10-05",
+      "candidate": "user-approved",
+      "published": "owner-approved",
+      "why": "The REVE and LUNA terms were approved by the site owner, as this manifest's model records and the Chinese pages say."
+    },
+    {
+      "what": "models[reve-base].row_footnote",
+      "date": "2026-10-05",
+      "candidate": "Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run changes P300 by -0.71 and sleep by +1.40 percentage points.",
+      "published": "Input removes the per-segment per-channel mean before the published /100 scaling (declared before scoring); a no-mean-removal sensitivity run scores P300 0.71 percentage points higher and sleep 1.40 lower.",
+      "why": "The candidate's figures are the aggregate's primary_minus_sensitivity_pp (the primary row minus the sensitivity run), so its signs read backwards: without mean removal REVE Base scores higher on P300 and lower on sleep, not the reverse. Restated from the aggregate's two balanced accuracies, which the export reads; it refuses a footnote whose stated direction disagrees with them. This changes the candidate's text: flagged for the owner's screenshot review."
+    },
+    {
+      "what": "models[reve-large].row_footnote",
+      "date": "2026-10-05",
+      "candidate": "Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run changes P300 by +2.06 and sleep by +0.93 percentage points.",
+      "published": "Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal sensitivity run scores P300 2.06 percentage points lower and sleep 0.93 lower.",
+      "why": "As REVE Base: the candidate's signs are the primary row minus the sensitivity run. Without mean removal REVE Large scores lower on both P300 and sleep, not higher. This changes the candidate's text: flagged for the owner's screenshot review."
+    },
+    {
+      "what": "frozen_probe: REVE notes, the sensitivity run",
+      "date": "2026-10-05",
+      "candidate": "a no-mean-removal sensitivity run is reported separately.",
+      "published": "a no-mean-removal sensitivity run is stated in the row footnote.",
+      "why": "The site publishes the sensitivity run only in the row footnote (see notPublished); there is no separate report."
+    }
+  ],
   "notPublished": [
     "Per-trial predictions, per-person and per-fold metrics, features and their hashes, the channel lists and contracts of each run.",
     "Timing, memory, hardware and software environments: measured on a shared GPU and indicative only, so the per-protocol CSVs leave scoring_seconds empty rather than put them beside the core rows' timings.",

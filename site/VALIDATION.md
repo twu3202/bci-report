@@ -472,6 +472,22 @@ the REVE checkpoints only, the notes as the protocol pages print them. Mutation-
 (the client script's source too, restored afterwards): each of 3 injected violations
 was caught.
 
+The follow-up review of the same batches (2026-10-05) found REVE's two row footnotes
+stating the no-mean-removal sensitivity run with every sign reversed: the candidate's
+"changes P300 by -0.71 and sleep by +1.40" are the aggregate's primary-minus-sensitivity
+differences. The export now restates both from the aggregate's two balanced accuracies
+("scores P300 0.71 percentage points higher and sleep 1.40 lower"; REVE Large "P300 2.06
+… lower and sleep 0.93 lower"), refuses a footnote whose direction or size disagrees with
+them and a candidate footnote it has not read, and the REVE notes say the run "is stated
+in the row footnote" (the site publishes it nowhere else). The manifest records every
+restatement of the candidate's text (`restatements`: these two, the exposure limitation
+and "owner-approved"), and the export requires that record to be exactly what it does.
+Pinned: neither "changes P300 by" nor "reported separately" in the JSON or any CSV, each
+REVE footnote's size and direction in the JSON and every CSV row, the note, and 高/低 in
+the Chinese (numbers alone cannot tell them apart). Mutation-tested on a copy of `dist/`
+(the source export and translation table too, restored afterwards): each of 4 injected
+violations was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

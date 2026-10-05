@@ -353,6 +353,95 @@ EXPOSURE_LIMITATION = ('Pretraining exposure, as the authors\' published pretrai
                        'never seen.')
 
 
+# ---------------------------------------------------------------------------- the REVE sensitivity footnotes
+# The candidate states each REVE row's no-mean-removal sensitivity run as "changes P300 by -0.71 and sleep by +1.40
+# percentage points", but those numbers are the aggregate's primary_minus_sensitivity_pp: the primary score minus the
+# sensitivity run's, so every sign reads backwards (REVE Base's run scores P300 higher, not lower). Review of
+# 2026-10-05: each footnote is restated from the aggregate's two balanced accuracies, a footnote whose stated
+# direction disagrees with them is refused, and the cell notes say where the run is stated: in the row footnote,
+# the only place the site publishes it. The manifest records each restatement (`restatements`).
+SENSITIVITY_PROTOCOLS = (('p300-target', 'P300'), ('sleep-scalp', 'sleep'))
+CANDIDATE_REVE_FOOTNOTE = {
+    'reve-base': ('Input removes the per-segment per-channel mean before the published /100 scaling (declared before '
+                  'scoring); a no-mean-removal sensitivity run changes P300 by -0.71 and sleep by +1.40 percentage '
+                  'points.'),
+    'reve-large': ('Input removes the per-segment per-channel mean (declared before scoring); the no-mean-removal '
+                   'sensitivity run changes P300 by +2.06 and sleep by +0.93 percentage points.'),
+}
+CANDIDATE_SENSITIVITY = re.compile(r'sensitivity run changes P300 by (?P<P300>[+-]\d+\.\d\d) and sleep by '
+                                   r'(?P<sleep>[+-]\d+\.\d\d) percentage points\.$')
+SENSITIVITY_STATED = re.compile(r'sensitivity run scores P300 (\d+\.\d\d) percentage points (higher|lower) and sleep '
+                                r'(\d+\.\d\d) (higher|lower)\.$')
+CANDIDATE_REVE_NOTE = 'a no-mean-removal sensitivity run is reported separately.'
+REVE_NOTE = 'a no-mean-removal sensitivity run is stated in the row footnote.'
+
+
+def sensitivity_changes(aggregate, model):
+    """The sensitivity run minus the primary row, in percentage points, for each protocol a REVE footnote names."""
+    cells = {c['id']: c for c in aggregate['frozen_probe_cells']}
+    rows = {(r['model'], r['protocol']): r for r in aggregate['sensitivity_rows']}
+    out = {}
+    for protocol, name in SENSITIVITY_PROTOCOLS:
+        r = rows[(model, protocol)]
+        primary = cells[f'frozen:{model}:{protocol}']['balanced_accuracy']['value']
+        change = 100 * (r['balanced_accuracy']['value'] - primary)
+        # The aggregate's own difference runs the other way: primary minus sensitivity, rounded to 0.01.
+        close(-change, r['primary_minus_sensitivity_pp']['value'], f'{model} {protocol}: the sensitivity difference', 0.006)
+        require(abs(change) >= 0.005, f'{model} {protocol}: a sensitivity change that rounds to zero has no direction')
+        out[name] = change
+    return out
+
+
+def sensitivity_clause(changes):
+    (n1, c1), (n2, c2) = changes.items()
+    word = lambda c: 'higher' if c > 0 else 'lower'
+    return (f'sensitivity run scores {n1} {fixed(abs(c1), 2)} percentage points {word(c1)} and {n2} '
+            f'{fixed(abs(c2), 2)} {word(c2)}.')
+
+
+def restate_reve_footnote(model, footnote, aggregate):
+    """The candidate's footnote with the sensitivity clause rewritten in the direction the aggregate gives."""
+    require(footnote == CANDIDATE_REVE_FOOTNOTE[model], f'{model}: the row footnote changed: re-read its sensitivity clause')
+    changes = sensitivity_changes(aggregate, model)
+    m = CANDIDATE_SENSITIVITY.search(footnote)
+    # The candidate's figures are primary minus sensitivity: confirm that reading before reversing it.
+    require(m and all(m[name] == ('+' if -c > 0 else '-') + fixed(abs(c), 2) for name, c in changes.items()),
+            f'{model}: the candidate\'s sensitivity figures are not primary minus sensitivity')
+    return footnote[:m.start()] + sensitivity_clause(changes)
+
+
+def check_sensitivity_footnotes(models, aggregate):
+    """Every footnote that states a sensitivity run states the direction and size the aggregate gives."""
+    stated = 0
+    for m in models:
+        text = m['row_footnote']
+        if 'sensitivity run' not in text:
+            continue
+        require(m['id'] in CANDIDATE_REVE_FOOTNOTE, f'{m["id"]}: a sensitivity run in a footnote this export does not check')
+        s = SENSITIVITY_STATED.search(text)
+        require(s and 'changes' not in text, f'{m["id"]}: the sensitivity clause does not state a direction')
+        changes = sensitivity_changes(aggregate, m['id'])
+        for (name, c), size, word in zip(changes.items(), (s[1], s[3]), (s[2], s[4])):
+            require(size == fixed(abs(c), 2) and word == ('higher' if c > 0 else 'lower'),
+                    f'{m["id"]}: the footnote says {name} {size} {word}; the aggregate says otherwise')
+        stated += 1
+    require(stated == len(CANDIDATE_REVE_FOOTNOTE), 'a REVE footnote without its sensitivity run')
+
+
+def restate_note(note):
+    if note.startswith('REVE input removes') and note.endswith(CANDIDATE_REVE_NOTE):
+        return note[:-len(CANDIDATE_REVE_NOTE)] + REVE_NOTE
+    require('reported separately' not in note, f'a note says a run is reported separately: {note}')
+    return note
+
+
+def check_restatements(manifest, done):
+    """The manifest records exactly the restatements this export makes, with the candidate's and the published text."""
+    recorded = {r['what']: (r['candidate'], r['published']) for r in manifest.get('restatements', [])}
+    require(len(recorded) == len(manifest.get('restatements', [])), 'the manifest records a restatement twice')
+    require(recorded == done, 'the manifest does not record the restatements this export makes, as it makes them')
+
+
 # ---------------------------------------------------------------------------- per cell
 def exposure_of(block, model, protocol, table, label):
     cell = at(table, block['src']['pointer'].rsplit('/', 1)[0], label)
@@ -419,7 +508,7 @@ def frozen_cell(c, model, protocol, track, agg_cell, table):
     if c.get('design_role'):
         out['design_role'] = c['design_role']
     if c.get('notes'):
-        out['notes'] = list(c['notes'])
+        out['notes'] = [restate_note(n) for n in c['notes']]
     return out
 
 
@@ -910,6 +999,11 @@ def build(manifest_bytes):
     require(scored == 126 and len(NOT_RUN) == 2, 'not the 126 frozen cells and 2 not-run cells the handoff describes')
 
     models = models_block(candidate, manifest)
+    # The REVE footnotes' sensitivity clause, in the direction the aggregate gives (review of 2026-10-05).
+    for m in models:
+        if m['id'] in CANDIDATE_REVE_FOOTNOTE:
+            m['row_footnote'] = restate_reve_footnote(m['id'], m['row_footnote'], aggregate)
+    check_sensitivity_footnotes(models, aggregate)
     # A note every cell of a model carries is the model's: printed once, beside its row.
     for m in models:
         own = [cells[(m['id'], p)].get('notes', []) for p in PROTOCOLS]
@@ -934,6 +1028,14 @@ def build(manifest_bytes):
     require(len(exposure_items) == 1 and limitations[exposure_items[0]] == CANDIDATE_EXPOSURE_LIMITATION,
             'the exposure limitation changed: re-read it against the owner\'s wording')
     limitations[exposure_items[0]] = EXPOSURE_LIMITATION
+    # Every restatement of the candidate's text, recorded in the manifest as it is made here.
+    reve = {m['id']: m['row_footnote'] for m in models if m['id'] in CANDIDATE_REVE_FOOTNOTE}
+    check_restatements(manifest, {
+        'required_limitations: the pretraining-exposure limitation': (CANDIDATE_EXPOSURE_LIMITATION, EXPOSURE_LIMITATION),
+        'models: weights licence, the approval': ('user-approved', 'owner-approved'),
+        **{f'models[{k}].row_footnote': (CANDIDATE_REVE_FOOTNOTE[k], v) for k, v in reve.items()},
+        'frozen_probe: REVE notes, the sensitivity run': (CANDIDATE_REVE_NOTE, REVE_NOTE),
+    })
 
     order = {p: i for i, p in enumerate(PROTOCOLS)}
     result = {

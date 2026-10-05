@@ -2685,6 +2685,23 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
    const lim=F.required_limitations.filter(x=>/^Pretraining exposure/.test(x));
    assert.ok(lim.length===1&&/published pretraining lists show it \(checked 2026-10-04\)/.test(lim[0])&&/not proof/.test(lim[0]),'the exposure limitation is the authors\' lists, not a proof');
    assert.match(E.wording_rule,/confidence rates how closely its source enumerates the corpus/,'the exposure confidence is said to rate the source, not the absence of overlap');}
+  // Review of 2026-10-05: the candidate stated each REVE sensitivity run as primary minus sensitivity ("changes P300 by
+  // -0.71"), so every sign read backwards. The export restates both footnotes from the aggregate's balanced accuracies
+  // (REVE Base without mean removal: P300 up, sleep down; Large: both down) and the notes say the run is stated in the
+  // row footnote, the only place it is published. The sizes and directions are pinned here because the run's scores
+  // are not in any served file.
+  {const text=served('foundation-models-update.json').toString()+protocols.map(p=>served('foundation-models-'+p+'.csv').toString()).join('');
+   assert.ok(!/changes P300 by|reported separately/.test(text),'the v9 files state no sensitivity run as a signed "change" and none as "reported separately"');
+   const want={'reve-base':'a no-mean-removal sensitivity run scores P300 0.71 percentage points higher and sleep 1.40 lower.',
+               'reve-large':'the no-mean-removal sensitivity run scores P300 2.06 percentage points lower and sleep 0.93 lower.'};
+   assert.deepEqual(F.models.filter(m=>/sensitivity run/.test(m.row_footnote)).map(m=>m.id),Object.keys(want),'only the REVE footnotes state a sensitivity run');
+   for(const [k,s] of Object.entries(want)){
+     const m=F.models.find(x=>x.id===k);
+     assert.ok(m.row_footnote.endsWith(s),k+': the footnote states the sensitivity run in the direction the aggregate gives ("'+s+'")');
+     assert.ok(m.notes.some(n=>n.endsWith('; a no-mean-removal sensitivity run is stated in the row footnote.')),k+': the note says where the sensitivity run is stated');
+     for(const p of protocols){const [head,...body]=csvRows(served('foundation-models-'+p+'.csv').toString()),r=body.find(x=>x[head.indexOf('model_id')]===k);
+       assert.ok(r[head.indexOf('row_footnote')]===m.row_footnote&&r[head.indexOf('notes')].includes('stated in the row footnote'),p+'/'+k+': the CSV carries the restated footnote and note');}
+   }}
   // Each protocol's CSV against the JSON and its core results CSV.
   for(const p of protocols){
     const rows=csvRows(served('foundation-models-'+p+'.csv').toString()),core=csvRows(served(p+'-results.csv').toString());
@@ -2755,6 +2772,10 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
       if(!/^(?:MIT|Apache-2\.0)\.?$/.test(en)) assert.ok(/\p{Script=Han}/u.test(zh),'foundation-models-zh.ts: "'+en.slice(0,50)+'" has no Chinese');
       for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zh,bad),`foundation-models-zh.ts: "${bad}" is a rejected rendering — use "${good}"`);
     }
+    // The REVE sensitivity runs keep their direction in Chinese (review of 2026-10-05): the numbers alone cannot tell
+    // 高 from 低.
+    for(const [k,dir] of [['reve-base','P300 的得分高 0.71、睡眠低 1.40'],['reve-large','P300 的得分低 2.06、睡眠低 0.93']])
+      assert.ok((Z[F.models.find(m=>m.id===k).row_footnote]||'').includes(dir),'foundation-models-zh.ts: '+k+'\'s footnote says "'+dir+'"');
   }
   const say=(en,label)=>label==='en'?{text:en}:{text:Z[en],original:Z[en]===en||/^(?:MIT|Apache-2\.0)\.?$/.test(en)?undefined:en};
   const printed=(html,en,label)=>{const t=say(en,label);assert.ok(t.text,'no Chinese for "'+en.slice(0,50)+'"');

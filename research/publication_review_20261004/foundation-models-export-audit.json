@@ -1,18 +1,18 @@
 {
   "status": "pass",
   "release_id": "foundation-models-update-20261004",
-  "export_sha256": "c6b90c9ef451313b7ae43d1a2b686812d5c847beb268035c2f0a17cd41eec889",
+  "export_sha256": "3be0327499a4c4e2dfac0084febd9ab4a6a5f6c6c305e6f12d8eb59002c1e87f",
   "csv_sha256": {
-    "foundation-models-mi-rest.csv": "8b3b51379c872d328e186b7bff469086a491779181940af9ab707711bcdaf056",
-    "foundation-models-idle.csv": "c2541216400f5900b7ad62bf35b6b63edd60d9d1f24a43f73e00d42621036bb6",
-    "foundation-models-beta-8ch.csv": "5f16e79fb65d49c634463b795db8a4fe3987b46626d83fe02d94250484f768e7",
-    "foundation-models-beta-4ch.csv": "cc9fac1c294a4c2d5cf951385854a7fe9074c830d4db2a20f55a339039e55d91",
-    "foundation-models-arithmetic-rest.csv": "3fe2205767dbaf776c9c01fa5b2f6d5fac379682c3c66f591adf99e3c54455ac",
-    "foundation-models-p300-target.csv": "ab8e1c7b6bc149389e41e4e18d10a7da1b3c8ea8330959c7b16720b02012ed8b",
-    "foundation-models-semantic-target.csv": "6fec55e9a64e61806eda8c7b628a71df5852dc01519b47506bca97ff3c1292da",
-    "foundation-models-sleep-scalp.csv": "650a571898f6966ea5389f68d005e05f686464e9faf17663882ba554aa6e5567"
+    "foundation-models-mi-rest.csv": "29f29270ca80637936b3a54fe7f1d8b000516329b9584b90265f4c0d5a481775",
+    "foundation-models-idle.csv": "9c32e21661d602c8c7cb90ee08617c1ce34dc69afe60e03731c3566236d37464",
+    "foundation-models-beta-8ch.csv": "8ed510e75ec78e6db8f81c5b3d3c9c53bc92188ac59d27936f69b6fca01d88f9",
+    "foundation-models-beta-4ch.csv": "56e716518fe5383bcabe50977a588082d8ef780486569740cb80f62392bbf9be",
+    "foundation-models-arithmetic-rest.csv": "61cd05ee7bf418e759663632942e57da8a0b4ded6b2156aa3885fe0c2005db7c",
+    "foundation-models-p300-target.csv": "45e9bb5e87ed07e94d783078416171a1da05b6686a5653517f004f570f6d96c4",
+    "foundation-models-semantic-target.csv": "011e724ab480305b98cc8d910e0d83df7f65d94123bb8620ab0a88529c76b115",
+    "foundation-models-sleep-scalp.csv": "9128234574c9c49152db7b8a1c052b65ad42f5cb56afab57dc97f4e9ab2b5e7d"
   },
-  "manifest_sha256": "091881ba1ec44cc99b4b1a719a9f653972a60f840c0fc26e399ae6fdf45bf72c",
+  "manifest_sha256": "234fc9bf732de4e5cd7b1c94456233d11f7621a5dbc42a615f84fe9b382bcf57",
   "release_candidate_sha256": "770021b49a6619bc73fd862163e0b2309cd5292a91aed233fc20164fdf08fbb8",
   "included": [
     "foundation-models-v9"

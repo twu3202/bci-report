@@ -293,6 +293,62 @@ class FoundationModelsBoundary(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'exposure limitation'):
             build(self.forged(candidate=reword))
 
+    # ------------------------------------------------------------------ the REVE sensitivity footnotes (review of 2026-10-05)
+    def test_the_reve_footnotes_state_the_direction_of_the_aggregate(self):
+        # The candidate's "changes P300 by -0.71 and sleep by +1.40" are primary minus sensitivity: read backwards.
+        models = {m['id']: m for m in result(self.payload)['models']}
+        self.assertTrue(models['reve-base']['row_footnote'].endswith(
+            'a no-mean-removal sensitivity run scores P300 0.71 percentage points higher and sleep 1.40 lower.'))
+        self.assertTrue(models['reve-large']['row_footnote'].endswith(
+            'the no-mean-removal sensitivity run scores P300 2.06 percentage points lower and sleep 0.93 lower.'))
+        for k in ('reve-base', 'reve-large'):
+            self.assertEqual([n for n in models[k]['notes'] if 'sensitivity run' in n],
+                             [n for n in models[k]['notes'] if n.endswith('is stated in the row footnote.')])
+        text = json.dumps(self.payload, ensure_ascii=False) + ''.join(b.decode() for b in self.csvs.values())
+        for gone in ('changes P300', 'reported separately'):
+            self.assertNotIn(gone, text)
+        agg = load(EV['aggregate'])
+        cells = {c['id']: c['balanced_accuracy']['value'] for c in agg['frozen_probe_cells'] if 'balanced_accuracy' in c}
+        for r in agg['sensitivity_rows']:
+            if r['model'] == 'reve-base' and r['protocol'] == 'p300-target':
+                self.assertGreater(r['balanced_accuracy']['value'], cells['frozen:reve-base:p300-target'])
+
+    def test_a_footnote_with_the_wrong_direction_is_refused(self):
+        agg = load(EV['aggregate'])
+        models = copy.deepcopy(result(self.payload)['models'])
+        ex.check_sensitivity_footnotes(models, agg)
+        for k, a, b in (('reve-base', 'higher', 'lower'), ('reve-large', '0.93', '0.94'),
+                        ('reve-large', 'scores P300 2.06 percentage points lower', 'changes P300 by -2.06')):
+            forged = copy.deepcopy(models)
+            m = next(x for x in forged if x['id'] == k)
+            m['row_footnote'] = m['row_footnote'].replace(a, b, 1)
+            with self.assertRaises(ValueError):
+                ex.check_sensitivity_footnotes(forged, agg)
+
+    def test_a_changed_candidate_footnote_is_refused(self):
+        # A candidate that fixes or changes its own sign must be re-read, not reversed a second time.
+        def fix(c):
+            r = next(x for x in c['matrix_rows'] if x['model'] == 'reve-base')
+            r['row_footnote'] = r['row_footnote'].replace('-0.71', '+0.71')
+        with self.assertRaisesRegex(ValueError, 'row footnote changed'):
+            build(self.forged(candidate=fix))
+
+    def test_a_sensitivity_run_the_aggregate_contradicts_is_refused(self):
+        def flip(a):
+            r = next(x for x in a['sensitivity_rows'] if x['model'] == 'reve-large' and x['protocol'] == 'sleep-scalp')
+            r['primary_minus_sensitivity_pp']['value'] = -r['primary_minus_sensitivity_pp']['value']
+        with self.assertRaisesRegex(ValueError, 'sensitivity difference'):
+            build(self.forged(aggregate=flip))
+
+    def test_the_manifest_records_every_restatement(self):
+        for edit in (lambda m: m.pop('restatements'),
+                     lambda m: m['restatements'].pop(),
+                     lambda m: m['restatements'][2].update(published=m['restatements'][2]['candidate'])):
+            m = copy.deepcopy(MANIFEST)
+            edit(m)
+            with self.assertRaisesRegex(ValueError, 'restatement'):
+                build(m)
+
     # ------------------------------------------------------------------ the chain of custody
     def test_a_changed_input_byte_is_refused(self):
         for key in ('handoff', 'releaseCandidate', 'aggregate', 'pretrainingExposure', 'auditStatus', 'harnessValidation'):
