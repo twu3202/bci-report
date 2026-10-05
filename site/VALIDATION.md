@@ -535,6 +535,20 @@ their numbers, in Chinese, keeping 交叉拟合, 分布外 and 不做多重比�
 Mutation-tested on a copy of `dist/` (the translation table too, restored afterwards):
 each of 8 injected violations was caught.
 
+The copy check above held the named sections and entity groups, but two places on this
+branch still reached the Markdown copies and `llms-full.txt` with nothing holding them
+(same review): the home page's per-protocol table (its v9 group and masking-ablation
+rows) and the topic pages' short answers (does-pretraining-help's prints v9 figures).
+Now, in both languages: each v9 and ablation row of the home table's first paint
+carries, in its own row of `index.md`'s matching table and in the same row order, the
+page's figure tokens in order (so `llms-full.txt`, held verbatim to the English copy,
+carries them too); and every topic page's short answer in its copy (the first paragraph
+under its heading) has exactly the page's `[[…]]`-marked figures, in order, as its bold
+text. Mutation-tested on a copy of `dist/` with the review's four changes (a home v9
+bound in the English copy and `llms-full.txt`, the same in the Chinese copy, and the
+does-pretraining-help short answer's 79.6% in each language) and two more (an ablation
+row's bound, two rows swapped): each of 6 was caught.
+
 `check_site_artifact.py` now compares the built payload against the recorded build
 and **fails on drift**; re-run it with `--accept` after an intended change. Before
 2026-09-20 it overwrote the record with whatever was on disk, so it could not

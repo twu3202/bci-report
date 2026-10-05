@@ -3660,7 +3660,43 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
     const md=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8').trim();
     assert.ok(full.includes(md),'llms-full.txt: the copy of /'+f.replace(/index\.html$/,'')+' is in it, verbatim');
   }
-  console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim.');
+  // Follow-up review of 2026-10-05: two places on this branch still reached the copies unchecked. (1) The home page's
+  // per-protocol table, its v9 group and masking-ablation rows: the first paint's figures, row by row and in order, must
+  // be the figures of the same rows of index.md's table (the v9 rows after the released ones, the ablation panel's own
+  // table), so llms-full.txt (verbatim, above) carries them too. (2) Every topic page's short answer: the bold figures
+  // of the copy's short answer are the [[…]]-marked figures of the page's, in order.
+  const figTokens=t=>[...decodeHtml(t).matchAll(/\d[\d,]*\.\d+%?|\d+%/g)].map(m=>m[0]);
+  let homeRows=0,answers=0;
+  for(const pfx of ['','zh/']){
+    const html=readFileSync(new URL(pfx+'index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+'index.md',DIST),'utf8');
+    const tbody=id=>{const a=html.indexOf(`<tbody id="${id}"`);assert.ok(a>0,pfx+'index.html: #'+id);return html.slice(a,html.indexOf('</tbody>',a));};
+    const rowsOf=b=>[...b.matchAll(/<tr class="fm-row" data-fm="[^"]+">([\s\S]*?)<\/tr>/g)].map(m=>({name:decodeHtml(m[1].match(/<button[^>]*>([^<]*)<\/button>/)[1]).replace(/ ↗$/,''),figs:figTokens(m[1].replace(/<[^>]+>/g,' '))}));
+    const tables=md.split('\n\n').filter(b=>b.trimStart().startsWith('|')).map(b=>b.split('\n').filter(l=>l.startsWith('|')&&!/^\|\s*---/.test(l)));
+    const mdRow=(table,name)=>table.filter(l=>l.startsWith('| '+name+' — '));
+    for(const [id,pick,label] of [['result-rows',ts=>ts.find(t=>t.some(l=>/\| (?:Added 2026-10-04|2026-10-04 新增)/.test(l))),'v9 group'],
+                                  ['ablation-rows',ts=>ts.find(t=>t.some(l=>/— (?:matrix row above|即上方的矩阵行)/.test(l))||(t.length===4&&t.every(l=>/^\| eeg-fm-masking /.test(l)))),'masking ablation']]){
+      const rows=rowsOf(tbody(id)),table=pick(tables),where=pfx+'index.md, the home '+label;
+      assert.ok(rows.length>0&&table,where+': the page\'s rows and the copy\'s table');
+      const names=table.map(l=>l.slice(2).split(' — ')[0]).filter(n=>rows.some(r=>r.name===n));
+      assert.deepEqual(names,rows.map(r=>r.name),where+': the same rows, in the same order');
+      for(const r of rows){const m=mdRow(table,r.name);
+        assert.ok(m.length===1,where+': one row for '+r.name);
+        assert.deepEqual(figTokens(m[0]),r.figs,where+': '+r.name+' carries the page\'s figures, in order');homeRows++;}
+    }
+  }
+  assert.ok(homeRows>=2*(13+4),'the home v9 and ablation rows were read ('+homeRows+')');
+  for(const [slug] of topicPages) for(const pfx of ['','zh/']){
+    const html=readFileSync(new URL(pfx+'topics/'+slug+'/index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+'topics/'+slug+'/index.md',DIST),'utf8');
+    const a=html.indexOf('<section class="short-answer"'),sec=html.slice(a,html.indexOf('</section>',a));
+    const head=decodeHtml(sec.match(/<h2 id="short-answer-heading">([^<]*)<\/h2>/)[1]),page=[...sec.matchAll(/<strong class="fig">([^<]*)<\/strong>/g)].map(m=>decodeHtml(m[1]));
+    const part=mdSection(md,head,2),where=pfx+'topics/'+slug+'/index.md';
+    assert.ok(part,where+': the copy has the short answer');
+    // The answer is the first paragraph under its heading; what follows it before the next heading is the evidence.
+    const para=part.split('\n').slice(1).join('\n').trim().split('\n\n')[0];
+    assert.deepEqual([...para.matchAll(/\*\*([^*]+)\*\*/g)].map(m=>m[1]),page,where+': the short answer\'s bold figures are the page\'s marked figures, in order');
+    answers++;
+  }
+  console.log('PASS: 2026-10-05 review — the route-1 and v9 sections and entity groups carry every printed figure into their Markdown copies, in order ('+checked+' figures); llms-full.txt holds every English copy verbatim; the home page\'s v9 and ablation rows ('+homeRows+') and every topic\'s short answer ('+answers+') carry the page\'s figures into the copies, in order.');
 }
 // --- 2026-10-05 follow-up review: a v9 figure prints as decimal rounding gives it --------------------
 // A difference of two proportions carries the binary noise of both: BrainOmni's BETA change is exactly
