@@ -193,7 +193,7 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 
 <section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede}</p></div>
 <TopicGroups locale={locale} level={3} readLabel={h.readEvidence}/>
-<div class="topic-map" id="transfer-map"><div class="topic-group-head"><h3>{topicsHubCopy[locale].mapH2}</h3><p>{topicsHubCopy[locale].mapLede}</p></div>
+<div class="topic-map" id="transfer-map"><div class="topic-group-head"><h3>{topicsHubCopy[locale].mapH2}</h3></div>
 <TransferMap locale={locale}/>
 <p class="topic-map-more"><a href={hrefFor('/topics/#transfer',locale)}>{transferMapCopy[locale].fullMap}</a></p></div></section>
 
@@ -214,7 +214,7 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <p class="matrix-caveat" set:html={h.matrixCaveat}></p>
 <p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.added,fmRelease.date,fmPartly,counts.addedModels,counts.addedAblation)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a></p></section>
 
-<section id="benchmarks" class="section"><div class="section-heading"><div><p class="eyebrow">{h.protocolsEyebrow}</p><h2>{h.protocolsH2}</h2></div><p>{h.protocolsLede}</p></div>
+<section id="benchmarks" class="section"><div class="section-heading"><div><p class="eyebrow">{h.protocolsEyebrow}</p><h2>{h.protocolsH2}</h2></div></div>
 {h.payloadNote&&<p class="payload-note">{h.payloadNote}</p>}
 <div class="track-tabs" id="track-tabs" role="tablist" aria-label={h.tabsLabel} data-active={track.id}>{tracks.map(t=><button class="track-tab" type="button" role="tab" id={'tab-'+t.id} aria-controls="track-panel" data-track={t.id} aria-selected={t.id===track.id?'true':'false'} tabindex={t.id===track.id?0:-1}><strong>{tt(t.title)}</strong><small>{t.dataset} · {h.tabParticipants(t.subjects)}</small></button>)}</div>
 <div id="track-panel" role="tabpanel" aria-labelledby={'tab-'+track.id}><div class="context"><div><h2 id="track-title" lang={payloadLang}>{track.subtitle}</h2><p id="track-meta">{track.dataset} · {track.subjects} {h.subjects} · <span lang={payloadLang}>{track.observations} · {track.exposure}</span></p></div><button class="button" id="open-protocol">{h.viewProtocol}</button></div>
@@ -224,10 +224,10 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <p class="fm-terms-home" id="fm-terms">{fmTermsSentence(fmModels,locale)} <a id="fm-terms-link" href={`${fm0.protocolHref}#v9-licences`}>{h.fmTermsLink}</a></p>
 <details class="fm-ablation-home" id="ablation-panel"><summary>{h.fmAblation}</summary><p>{h.fmAblationLede}</p><div class="scroll" tabindex="0" role="region" aria-label={h.fmAblation}><table><tbody id="ablation-rows">{fmAblation0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'} reference={r.panel==='matrix'}/>)}</tbody></table></div></details>
 <p class="caption">{h.tableCaption}</p></div>
-<aside><p class="eyebrow">{h.visualEyebrow}</p><h3 id="chart-title">{h.chartTitle}</h3><div id="result-chart" class="chart"></div><ol id="chart-legend" class="legend"></ol><p id="chart-note">{h.chartNote}</p></aside></div>
+<aside><p class="eyebrow">{h.visualEyebrow}</p><h3 id="chart-title">{h.chartTitle}</h3><div id="result-chart" class="chart"></div><ol id="chart-legend" class="legend"></ol><p id="chart-note"></p></aside></div>
 <div class="source-strip"><span id="track-rights"><span lang={payloadLang}>{track.license}</span> · {h.rights}</span><a id="track-source" href={track.source} target="_blank" rel="noreferrer">{h.originalDataset}</a><a href="/data-use/">{h.usePrivacy}</a><a href="/data-use/#corrections">{h.reportResult}</a></div><div class="evidence"><strong>{h.readWithCare}</strong><p id="track-limitation" lang={payloadLang}>{track.limitation}</p><a href="#methods">{h.methodsLink}</a></div></div></section>
 
-<section id="directory" class="section directory-band"><div class="section-heading"><div><p class="eyebrow">{h.directoryEyebrow}</p><h2>{h.directoryH2}</h2></div><p>{h.directoryLede}</p></div>
+<section id="directory" class="section directory-band"><div class="section-heading"><div><p class="eyebrow">{h.directoryEyebrow}</p><h2>{h.directoryH2}</h2></div></div>
 {/* The old home anchors (#models, #datasets, #news) land on the card that now leads to that content. */}
 <div class="directory-grid">{directory.map(d=><a class="directory-card" id={oldAnchor[d.key]} href={d.href}>{d.key==='methods'&&<span id="news"></span>}<span class="family">{d.title}</span><strong class="directory-count"><span data-count={d.key}>{d.n}</span> {d.count}</strong><p>{d.body}</p></a>)}</div></section>
 

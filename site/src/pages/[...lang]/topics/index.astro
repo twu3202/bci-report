@@ -38,7 +38,7 @@ const structured = {
     <TopicGroups locale={locale} level={2} readLabel={home[locale].readEvidence}/>
   </section>
   <section class="topic-section" id="transfer" aria-labelledby="transfer-heading">
-    <div class="topic-heading"><div><p class="eyebrow">{c.mapEyebrow}</p><h2 id="transfer-heading">{c.mapH2}</h2></div><p>{c.mapLede}</p></div>
+    <div class="topic-heading"><div><p class="eyebrow">{c.mapEyebrow}</p><h2 id="transfer-heading">{c.mapH2}</h2></div></div>
     <TransferMap locale={locale} full={true}/>
     <p class="citation-note">{c.sources} {mapFiles.map((f, i) => <>{i > 0 && ' · '}<a href={`/data/${f}`} download>{f}</a></>)} · <a href={hrefFor('/releases/#holds', locale)}>{home[locale].holdsRegister}</a></p>
   </section>

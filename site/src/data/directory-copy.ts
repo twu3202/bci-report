@@ -32,7 +32,7 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
   en: {
     modelsEyebrow: 'Catalogue',
     modelsH2: 'Model directory: from compact baselines to foundation models',
-    modelsLede: 'Availability and measured performance are separate. Parameter counts depend on the backbone and task configuration.',
+    modelsLede: 'Parameter counts depend on the backbone and task configuration.',
     parameters: 'parameters',
     officialSource: 'Official source ↗',
     statusChecked: (date) => `Status checked ${date}`,
@@ -51,12 +51,12 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     dtChannels: 'Channels',
     newsEyebrow: 'External',
     newsH2: 'Field notes: other people’s work',
-    newsLede: 'Curated research updates, linked to original sources. They report other people’s results, not this site’s.',
+    newsLede: 'Curated research updates, linked to original sources.',
   },
   zh: {
     modelsEyebrow: '目录',
     modelsH2: '模型目录：从轻量基线到基础模型',
-    modelsLede: '可获得性与实测表现是两回事。参数量取决于主干网络与任务配置。',
+    modelsLede: '参数量取决于主干网络与任务配置。',
     parameters: '参数',
     officialSource: '官方来源 ↗',
     statusChecked: (date) => `状态核查于 ${date}`,
@@ -75,6 +75,6 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     dtChannels: '通道',
     newsEyebrow: '外部',
     newsH2: '领域动态：他人的研究',
-    newsLede: '精选研究动态，均链接至原始来源。这些是他人的结果，不是本站的。',
+    newsLede: '精选研究动态，均链接至原始来源。',
   },
 };
