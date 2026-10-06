@@ -116,6 +116,8 @@ const fill=(t:typeof tracks[number],y:number)=>{
 const datasetCount=new Set(tracks.map(t=>t.dataset)).size;
 const counts={methods:matrixRows.length,protocols:data.coverage.displayedProtocols,datasets:datasetCount,
               comparisons:data.coverage.displayedComparisons,added:fmMatrixModels.length,
+              // The date the v9 encoders were added, from their release, as the page writes dates.
+              addedOn:holdDate(fmRelease.date),
               // The models the matrix checkpoints belong to (REVE Base and Large count apart, as the release does), and the masking ablation's siblings.
               addedModels:new Set(fmMatrixModels.map(m=>m.exposureKey)).size,addedAblation:fmModels.length-fmMatrixModels.length};
 // A matrix encoder not run on every protocol is named with how many it ran on (BrainOmni Base: six of eight).
@@ -186,6 +188,7 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <SiteHeader locale={locale} path="/" active="home" anchorsAreLocal={true}/>
 <main><section class="masthead"><div><p class="eyebrow">{h.eyebrow} <time datetime={latestRelease.date}>{latestRelease.date}</time></p><h1>{h.h1}</h1><p class="lede">{h.lede(counts)}</p></div>
 <div class="stat-block"><p class="stat-caption" id="stat-caption">{h.statsCaption}</p><dl class="stat-rail" aria-labelledby="stat-caption">{stats.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+<p class="stat-added"><a href={hrefFor('/protocols/',locale)}>{h.statsAdded[0]}<span data-count="encoders">{counts.added}</span>{h.statsAdded[1]}</a></p>
 <p class="site-counts">{h.siteCountsLead} <a href={hrefFor('/topics/',locale)}><span data-count="questions">{siteCounts.questions}</span> {h.siteCounts.questions}</a> · <a href={hrefFor('/datasets/',locale)}><span data-count="datasets">{siteCounts.datasets}</span> {h.siteCounts.datasets}</a> · <a href={hrefFor('/methods/',locale)}><span data-count="methods">{siteCounts.methods}</span> {h.siteCounts.methods}</a></p></div></section>
 
 <section id="topics" class="topic-entry"><div class="section-heading"><div><p class="eyebrow">{h.topicsEyebrow}</p><h2>{h.topicsH2}</h2></div><p>{h.topicsLede}</p></div>

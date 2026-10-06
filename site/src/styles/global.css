@@ -121,7 +121,9 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 /* The four counts, set as a rule-separated rail — an almanac header, not cards.
    They are the core matrix's, and a visible caption says so; the whole site's
    counts sit on one quiet line beneath. The newest release date is in the
-   eyebrow (the rail's own "Updated" entry went on 2026-10-02: one date, once). */
+   eyebrow (the rail's own "Updated" entry went on 2026-10-02: one date, once).
+   Since 2026-10-06 a line under the rail counts the v9 encoders on the same
+   protocols, apart from the core counts and never added to them. */
 .stat-block{flex:0 1 auto;min-width:0}
 .stat-caption{font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;font-weight:650;color:var(--ink);
   margin:0 0 6px;padding-left:20px}
@@ -129,8 +131,9 @@ main{max-width:1412px;margin:auto;padding:0 26px}
 .stat-rail>div{padding:2px 20px;border-right:1px solid var(--rule)}
 .stat-rail dt{font-size:.6875rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .stat-rail dd{margin:1px 0 0;font-family:var(--mono);font-size:1.5rem;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-.site-counts{margin-top:9px;padding-left:20px;font-size:.78rem}
-.site-counts span{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.stat-added,.site-counts{margin-top:9px;padding-left:20px;font-size:.78rem}
+.stat-added+.site-counts{margin-top:3px}
+:is(.stat-added,.site-counts) span{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
 .masthead .eyebrow time{font-variant-numeric:tabular-nums}
 
 /* --- Protocol selector ----------------------------------------------------
@@ -423,7 +426,7 @@ td .flag{margin-top:6px}
   .stat-caption{margin-top:20px;padding-left:0}
   .stat-rail{flex-wrap:wrap;border-left:0;border-top:1px solid var(--rule)}
   .stat-rail>div{padding:8px 18px 8px 0;border-right:0;flex:1 0 auto}
-  .site-counts{padding-left:0}
+  .stat-added,.site-counts{padding-left:0}
   .results-panel{grid-template-columns:1fr}
   aside{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;column-gap:24px}
   aside .eyebrow,aside h3{grid-column:1}
@@ -512,7 +515,7 @@ td .flag{margin-top:6px}
 :lang(zh-Hans) .code-label{letter-spacing:0;text-transform:none}
 /* The 2026-10-02 home sections and the Questions hub, held to the same floors. */
 :lang(zh-Hans) .stat-caption,:lang(zh-Hans) .switcher-group>p{font-size:.75rem;letter-spacing:0;text-transform:none}
-:lang(zh-Hans) .site-counts,:lang(zh-Hans) .hold-card p,:lang(zh-Hans) .topic-group-head p,:lang(zh-Hans) .topic-map-more,
+:lang(zh-Hans) .stat-added,:lang(zh-Hans) .site-counts,:lang(zh-Hans) .hold-card p,:lang(zh-Hans) .topic-group-head p,:lang(zh-Hans) .topic-map-more,
 :lang(zh-Hans) .directory-card p,:lang(zh-Hans) .tmap{font-size:.875rem}
 :lang(zh-Hans) .matrix .cmark{font-size:.6875rem}
 :lang(zh-Hans) .citation-list p,:lang(zh-Hans) .literature-grid p,:lang(zh-Hans) .citation-note,

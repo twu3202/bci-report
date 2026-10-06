@@ -675,6 +675,19 @@ that call in both languages and refuses the old `requests` + `io.StringIO`
 workaround and the sentence saying urllib is refused. It cannot see the dashboard:
 if the rule is removed, the example stops running and no check fails.
 
+Since 2026-10-06 the home masthead counts what the protocol pages carry. The lede
+names the core matrix's protocols, datasets and methods (from `experiments.json`) and
+the v9 matrix encoders (from the v9 export), dated by the v9 release, and never adds the
+two into one total; the stat rail keeps the core matrix's four counts in order (the
+share card prints the same four), and a line under it counts the v9 matrix encoders and
+links the protocols hub. Pinned in both languages. Mutation-tested on a copy of `dist/`:
+each of 8 injected violations (a count or the date in either lede, a summed total, the
+rail's order, the encoder line's count, link or presence) was caught by the assertion
+written for it. The same day's copy edit cut maxims, repeated caveats and the site
+describing its own layout across the home page, the hubs, the protocol, dataset and
+method pages and the ten topics; no cut sentence was pinned, and every pinned figure,
+limitation, licence, hold and count still holds.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

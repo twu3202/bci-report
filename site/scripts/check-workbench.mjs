@@ -1853,6 +1853,32 @@ console.log('PASS: protocol pages — both languages, every method with a score,
     assert.ok(newest&&mast.includes(`${word} <time datetime="${newest}">${newest}</time></p>`),(path||'/')+': the masthead eyebrow carries the newest release date');
     assert.ok(!/class="live"/.test(mast)&&/<p class="stat-caption" id="stat-caption">[^<]+<\/p><dl class="stat-rail" aria-labelledby="stat-caption">/.test(mast),(path||'/')+': the stat rail has a visible caption and no second date');
   }
+  // Since 2026-10-06 the lede and the stats under it count what the protocol pages carry, from the data: the core
+  // matrix's protocols, datasets and methods (experiments.json; the rail keeps its four core counts, which the share
+  // card prints) and the v9 matrix encoders (the export), on a line of their own under the rail. The two sets are
+  // named apart and never summed; the lede dates the encoders by their release.
+  {
+    const core={protocols:data.coverage.displayedProtocols,datasets:new Set(data.tracks.map(t=>t.dataset)).size,
+      comparisons:data.coverage.displayedComparisons,methods:new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name))).size};
+    const v9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8'));
+    const enc=v9.results['foundation-models-v9'].models.filter(m=>m.panel==='matrix').length;
+    const [y,mo,d]=v9.generated_at.split('-').map(Number);
+    const month=['January','February','March','April','May','June','July','August','September','October','November','December'][mo-1];
+    assert.ok(core.protocols===8&&core.datasets===7&&core.methods===9&&enc===13,'the masthead counts: 8 protocols, 7 datasets, 9 core methods, 13 v9 matrix encoders');
+    for(const [path,zh] of [['',false],['zh/',true]]){
+      const html=read(path),mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
+      const lede=(mast.match(/<p class="lede">([\s\S]*?)<\/p>/)||[,''])[1].replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+      const where=(path||'/')+': the masthead lede';
+      for(const s of zh?[`${core.protocols} 个固定协议、${core.datasets} 个公开数据集`,`核心矩阵的 ${core.methods} 种解码方法`,`自 ${y} 年 ${mo} 月 ${d} 日起以冻结探针方式运行的 ${enc} 个基础模型编码器`]
+                       :[`${core.protocols} fixed protocols on ${core.datasets} public datasets`,`the core matrix’s ${core.methods} decoding methods`,`since ${d} ${month} ${y}, ${enc} foundation encoders as frozen probes`])
+        assert.ok(lede.includes(s),where+' says "'+s+'", counted from the data');
+      assert.ok(!new RegExp('(^|\\D)'+(core.methods+enc)+'(\\D|$)').test(lede),where+': no summed count of core methods and v9 encoders');
+      assert.deepEqual([...mast.matchAll(/<dd>(\d+)<\/dd>/g)].map(m=>Number(m[1])),[core.protocols,core.datasets,core.comparisons,core.methods],(path||'/')+': the stat rail is the core matrix\'s four counts, in order');
+      const added=mast.match(/<\/dl>\s*<p class="stat-added">([\s\S]*?)<\/p>/);
+      assert.ok(added&&added[1].includes(`<span data-count="encoders">${enc}</span>`)&&added[1].includes(`href="${zh?'/zh':''}/protocols/"`)&&added[1].includes(zh?'第九轮':'(v9)'),
+        (path||'/')+': the line under the rail counts the v9 matrix encoders ('+enc+') and links the protocols');
+    }
+  }
 }
 
 // --- 2026-10-02 discoverability and citation ---------------------------------------------

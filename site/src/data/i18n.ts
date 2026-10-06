@@ -379,7 +379,7 @@ export const familyLabel = (family: string, locale: Locale) => ({
 
 /* --- Homepage ------------------------------------------------------------- */
 
-interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number; added: number }
+interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number; added: number; addedOn: string }
 
 export const home = {
   en: {
@@ -390,12 +390,17 @@ export const home = {
     // snapshot date is in the matrix heading, so the masthead states one date.
     eyebrow: 'Open EEG evaluation · updated',
     h1: 'Every EEG score, with the protocol that produced it.',
+    // What the protocol pages carry, counted from the data: the core matrix's methods (20 September)
+    // and the v9 encoders (4 October), named apart and never summed (review of 2026-10-06).
     lede: (c: HomeCounts) =>
-      `The core matrix covers ${c.methods} decoding methods under ${c.protocols} fixed protocols on ${c.datasets} public datasets; ` +
-      `since 4 October 2026, ${c.added} further foundation encoders sit beside it as frozen probes on the same protocols. ` +
+      `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
+      `and, since ${c.addedOn}, ${c.added} foundation encoders as frozen probes. ` +
       `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
+    // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
+    // Before and after the count, which the page prints in a span of its own.
+    statsAdded: ['+ ', ' foundation encoders on the same protocols, frozen (v9) →'] as const,
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     // The whole site, counted from the pages it builds. No summed comparison count.
     siteCountsLead: 'Across the site:',
@@ -532,10 +537,11 @@ export const home = {
     eyebrow: '公开 EEG 评测 · 更新于',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
-      `核心矩阵覆盖 ${c.methods} 种解码方法、${c.protocols} 个固定协议、${c.datasets} 个公开数据集；` +
-      `自 2026 年 10 月 4 日起，另有 ${c.added} 个基础模型编码器以冻结探针的方式列在同样的协议旁边。` +
+      `${c.protocols} 个固定协议、${c.datasets} 个公开数据集：协议上既有核心矩阵的 ${c.methods} 种解码方法，` +
+      `也有自 ${c.addedOn}起以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
       `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练与临床分组的证据。`,
     statsCaption: '核心矩阵',
+    statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结，第九轮）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     siteCountsLead: '全站：',
     siteCounts: { questions: '个问题', datasets: '个有结果的数据集', methods: '种方法有结果页' },
