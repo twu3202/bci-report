@@ -45,7 +45,7 @@ export const decisionSources = {
 } as const;
 
 type SourceId = keyof typeof decisionSources;
-type Route = { tag: string; status: string; title: string; body: string; boundary: string; resultsLink?: string; runNote?: string };
+type Route = { tag: string; status: string; title: string; body: string; boundary?: string; resultsLink?: string; runNote?: string };
 type Finding = [SourceId, string, string];
 
 interface RoadmapCopy {
@@ -62,26 +62,24 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     eyebrow: 'Research plan · first route run',
     h2: 'Jev-style decision models for EEG',
     scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes.',
-    lede: 'A decoder has more choices than a class label. It can act, wait for more evidence, or ask for calibration. How well a model makes those choices can be measured. The first route below now has been, and its results are in the section above. This section stays the plan: it prints no figure, and it borrows none.',
+    lede: 'A decoder has more choices than a class label: it can act, wait for more evidence, or ask for calibration.',
     statusLine: 'Status: the first route has been run, and its results are in the section above. The other two routes have not been run.',
     routes: [
       { tag: 'First', status: 'Run · results above', resultsLink: 'Reliable decisions: the results', title: 'Reliable decisions',
         body: 'Compare a fixed threshold, a simple statistical policy and a learned reject option on the same data. Report error at matched coverage, acceptance per class, and probability quality — Brier score, log loss and reliability — with calibration data kept apart from test data. Recalibration is a separate experiment, with its label cost counted.',
-        boundary: 'A risk–coverage curve is defined only where something is accepted; at zero coverage there is no error rate, not a zero one.',
         // Since 2026-10-05: what the run published of this plan, and what it did not (review finding).
         runNote: 'Published in the section above: error at matched coverage, log loss, the Brier score and calibration error. Not published in this update: acceptance per class and reliability-diagram bins.' },
       { tag: 'Then', status: 'Not run', title: 'One representation, several questions',
-        body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.',
-        boundary: 'If fixed heads do as well for less, that is the result, and it will be reported as one.' },
+        body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.' },
       { tag: 'Later', status: 'Not run', title: 'Questions in language',
         body: 'Compare task identifiers, label templates and natural-language descriptions. Paraphrases and unseen concepts are tested separately and never merged into one zero-shot number.',
-        boundary: 'Questions about negation, location or waveform shape need signal-level ground truth. Writing more prompts does not supply it.' },
+        boundary: 'Questions about negation, location or waveform shape need signal-level ground truth.' },
     ],
-    boundaryH3: 'Two limits of the existing data',
-    boundary: 'The sleep and P300 protocols on this site use balanced subsets. A probability estimated on them describes that balance, not how often each class occurs in real use, so they can compare methods with each other but cannot give a deployment error rate. The idle protocol is cue-gated and three minutes long, so no model run on it can give a false-activation rate per hour.',
-    inputsNote: 'The first input with explicit non-control states is the asynchronous SSVEP data set above: a small pilot kept as the development set, then the rest of the same release, scored under rules fixed on the pilot. It is still one data set from one lab. Further input data sets are named here once their source review is complete.',
+    boundaryH3: 'A limit of the existing data',
+    boundary: 'The sleep and P300 protocols on this site use balanced subsets. A probability estimated on them describes that balance, not how often each class occurs in real use, so they can compare methods with each other but cannot give a deployment error rate.',
+    inputsNote: 'The first input with explicit non-control states is the asynchronous SSVEP data set above: a small pilot kept as the development set, then the rest of the same release, scored under rules fixed on the pilot. It is still one data set from one lab.',
     litH3: 'What published work shows, and what it does not',
-    litLede: 'External evidence, checked against the original records on 27 September 2026. None of it was reproduced here, and its figures are left out so that none can be read as this site’s.',
+    litLede: 'External evidence, checked against the original records on 27 September 2026. None of it was reproduced here.',
     shows: 'Shows', limit: 'Does not show',
     literature: [
       ['selective', 'A trained classifier can be given a reject option with a target risk set by the user, trading coverage for error.', 'Evidence from image benchmarks. Its guarantee assumes test data that resemble the calibration data, which EEG across people and sessions often does not.'],
@@ -89,7 +87,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
       ['conformal', 'On EEG seizure classification, patient shift left standard conformal prediction short of its nominal coverage, and personalised calibration raised coverage substantially.', 'One clinical task. It shows that coverage must be measured under the split that will actually be used, not that conformal methods fail.'],
       ['mteeg', 'One pretrained EEG model can be adapted to several tasks at once with task-specific LoRA modules.', 'A separate adapter per task is not the same as several questions sharing one computation over the same window.'],
       ['neurolm', 'EEG tokens fed to a language model, with instruction tuning, support several EEG tasks in one model.', 'Instruction-style EEG models already exist. A multi-task result is not evidence that arbitrary questions generalise.'],
-      ['unimind', 'A language-model-based EEG model can select task-aware queries to decode several tasks.', 'Its queries are internal tokens, not criteria a user writes. Cross-task averages from it do not belong in a ranking here.'],
+      ['unimind', 'A language-model-based EEG model can select task-aware queries to decode several tasks.', 'Its queries are internal tokens, not criteria a user writes.'],
       ['elm', 'EEG aligned with clinical reports enables zero-shot classification and retrieval in the authors’ clinical evaluations.', 'Hospital EEG and clinical phenotypes. Nothing yet about wearable devices, few channels or arbitrary concepts.'],
       ['jev', 'In vision, one encoding of an image can serve many forced-choice questions run as a batch — the “Jev-style” interface that prompted this plan.', 'Its own typed-head control gave no consistent accuracy advantage, and its training gains stayed within the task families it was trained on. Its speed-ups are vision results, not EEG ones.'],
     ],
@@ -104,25 +102,23 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     eyebrow: '研究计划 · 第一条路线已运行',
     h2: 'Jev-style 的 EEG 决策模型',
     scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。',
-    lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。模型在这些选择上做得好不好，是可以测量的。下面的第一条路线现在已经测过，结果见上一节。本节仍然是计划：不列任何数字，也不借用任何数字。',
+    lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。',
     statusLine: '状态：第一条路线已经运行，结果见上一节；另外两条路线尚未运行。',
     routes: [
       { tag: '首先', status: '已运行 · 结果见上一节', resultsLink: '可靠的决策：结果', title: '可靠的决策',
         body: '在同一份数据上比较固定阈值、简单统计策略和可学习的拒识机制。报告相同覆盖率下的错误率、各类别的接受率，以及概率质量——Brier 分数、log loss 和可靠性图——校准数据与测试数据分开。重新校准另作一项实验，并计入所需标签的代价。',
-        boundary: '风险—覆盖率曲线只在有样本被接受时才有定义；覆盖率为零时没有错误率，而不是错误率为零。',
         runNote: '上一节已发布：相同覆盖率下的错误率、log loss、Brier 分数和校准误差。本次更新没有发布：各类别的接受率和可靠性图的分箱。' },
       { tag: '随后', status: '尚未运行', title: '一份表征，多个问题',
-        body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。',
-        boundary: '如果固定分类头以更低成本做得一样好，那就是结果，也会照样报告。' },
+        body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。' },
       { tag: '之后', status: '尚未运行', title: '用语言提问',
         body: '比较任务标识、标签模板和自然语言描述。同义改写与未见概念分开测试，绝不合成一个“零样本”数字。',
-        boundary: '关于否定、位置或波形形态的问题，需要信号层面的真值标注。多写几条提示词补不上这一点。' },
+        boundary: '关于否定、位置或波形形态的问题，需要信号层面的真值标注。' },
     ],
-    boundaryH3: '现有数据的两条限制',
-    boundary: '本站的睡眠和 P300 协议用的是类别平衡的子集。在上面估计出的概率描述的是这种平衡，而不是各类别在实际使用中出现的频率，所以它们可以用来比较方法之间的高下，却给不出部署时的错误率。空闲协议是提示同步的、只有三分钟，所以无论跑什么模型，都给不出每小时的误触发率。',
-    inputsNote: '第一个带有明确非控制状态的输入，是上面的异步 SSVEP 数据集：先是一个保留为开发集的小规模试点，再是同一份数据中的其余被试，用在试点上固定的规则评分。它仍然只是来自一个实验室的一个数据集。其余数据集等来源审查完成后再在这里列出。',
+    boundaryH3: '现有数据的一条限制',
+    boundary: '本站的睡眠和 P300 协议用的是类别平衡的子集。在上面估计出的概率描述的是这种平衡，而不是各类别在实际使用中出现的频率，所以它们可以用来比较方法之间的高下，却给不出部署时的错误率。',
+    inputsNote: '第一个带有明确非控制状态的输入，是上面的异步 SSVEP 数据集：先是一个保留为开发集的小规模试点，再是同一份数据中的其余被试，用在试点上固定的规则评分。它仍然只是来自一个实验室的一个数据集。',
     litH3: '已发表的工作说明了什么、没说明什么',
-    litLede: '外部证据，已于 2026 年 9 月 27 日对照原始记录核查。这里没有复现其中任何一项，也不引用它们的数字，以免被当成本站的结果。',
+    litLede: '外部证据，已于 2026 年 9 月 27 日对照原始记录核查。这里没有复现其中任何一项。',
     shows: '说明了', limit: '没有说明',
     literature: [
       ['selective', '可以给已训练好的分类器加上拒识选项，由使用者设定目标风险，用覆盖率换取更低的错误率。', '证据来自图像基准。它的保证假设测试数据与校准数据相似，而跨被试、跨会话的 EEG 往往不满足这一点。'],
@@ -130,7 +126,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
       ['conformal', '在 EEG 癫痫分类上，被试之间的分布漂移使标准 conformal 预测达不到名义覆盖率，按被试个别校准能明显提高覆盖率。', '只是一项临床任务。它说明覆盖率必须在实际使用的数据划分下测量，而不是说 conformal 方法失效。'],
       ['mteeg', '一个预训练 EEG 模型可以借助任务专属的 LoRA 模块同时适配多个任务。', '每个任务一个适配器，不等于多个问题共享同一窗口上的一次计算。'],
       ['neurolm', '把 EEG token 输入语言模型并做指令微调，可以在一个模型里支持多项 EEG 任务。', '指令式 EEG 模型已经存在。多任务结果不能证明任意问题都能泛化。'],
-      ['unimind', '基于语言模型的 EEG 模型可以选择与任务相关的查询，用来解码多项任务。', '这些查询是模型内部的 token，不是使用者写下的判据。它的跨任务平均值也不适合放进这里的排名。'],
+      ['unimind', '基于语言模型的 EEG 模型可以选择与任务相关的查询，用来解码多项任务。', '这些查询是模型内部的 token，不是使用者写下的判据。'],
       ['elm', '在作者的临床评测中，与临床报告对齐的 EEG 支持零样本分类和检索。', '医院 EEG 与临床表型。对可穿戴设备、少通道或任意概念，目前还说明不了什么。'],
       ['jev', '在视觉领域，一张图像编码一次，就能批量回答多个强制选择的问题——这就是促成本计划的“Jev-style”接口。', '它自己设置的对照——换成输出类型固定的分类头——没有带来一致的准确率提升；训练带来的提升也集中在训练中见过的任务类型上。它的加速是视觉结果，不是 EEG 结果。'],
     ],
