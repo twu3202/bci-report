@@ -76,7 +76,7 @@ const copy = {
     plotLegend: 'Participant-mean balanced accuracy on 12-target, two-second SSVEP. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, 1 in 12. Rust rows are wet recordings, dark rows dry. CCA uses no labels; the source-only arm is a different mechanism and is not plotted.',
     plotNote: (s: string, reference: boolean) => `${s} recording · ${reference ? 'training-free reference' : 'target-only'}`,
     eyebrow: 'Calibration budget · the same session and the next one',
-    dek: 'More labeled trials do not have one universal value. On a 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings. Across two sessions of the same people, a few labeled trials from the new session help one motor-imagery baseline on average — not everyone — and another not demonstrably.',
+    dek: 'On a 12-target wearable protocol, target-only spectral ridge improves gradually but remains low; single-band ensemble TRCA benefits sharply on wet recordings from 24 to 48 labels and only modestly on dry recordings. Across two sessions of the same people, a few labeled trials from the new session help one motor-imagery baseline on average — not everyone — and another not demonstrably.',
     sensor: { wet: 'wet', dry: 'dry' } as Record<string, string>,
     ridgeEyebrow: 'Target-only spectral ridge',
     ridgeH2: 'Twelve, 24 and 48 labeled trials',
@@ -85,7 +85,6 @@ const copy = {
     baLabel: (v: string) => `${v} balanced accuracy`,
     participantMean: 'Participant-mean balanced accuracy',
     trialsStrong: 'Trial counts are not minutes.',
-    trialsRest: ' The export records 12, 24 or 48 labeled trials per person. It does not convert those trials into a setup-time claim.',
     zeroEyebrow: 'A separate arm',
     zeroH2: 'Zero target labels is source-only transfer',
     zeroLede: 'The zero-budget spectral-ridge rows use a model trained on other participants from one source sensor. They are not the starting point of an incremental target-person update curve.',
@@ -94,7 +93,7 @@ const copy = {
     colSource: 'Training source', testWet: 'Test on wet', testDry: 'Test on dry',
     sourceRow: (s: string) => `${s} source`,
     otherOnly: 'other participants only',
-    trcaEyebrow: 'Method matters',
+    trcaEyebrow: 'eTRCA and CCA',
     trcaH2: 'Single-band eTRCA responds differently',
     trcaLede: 'The target-only eTRCA arm uses 24 or 48 calibration trials and the same future test blocks. CCA at zero labels is an analytic reference, not an unfitted eTRCA point.',
     trcaFindingLabel: 'Wet eTRCA: 48 labels minus 24 labels',
@@ -106,22 +105,19 @@ const copy = {
     ccaRow: 'CCA · 0 labels', ccaNote: 'analytic target-recording reference',
     targetOnly: 'target-only adaptation',
     limitsH2: 'What the budget curves do and do not mean',
-    limitsLede: 'All results are tied to a frozen protocol. They describe labeled-trial budgets for these methods, sensors and fixed test blocks.',
     limits: [
-      ['Different zero-label mechanisms', "Spectral ridge at budget zero is source-only supervised transfer. CCA at budget zero is an analytic target-recording reference. Neither should be connected to target-only points as one model's learning curve."],
-      ['Target-only means target-only', "The 12/24/48 ridge and 24/48 eTRCA conditions fit only the target person's calibration recordings, then test on blocks 5–10."],
       ['Prespecified single band', 'eTRCA uses the fixed 6–80 Hz prepared band, not the filter bank of the original method (five sub-bands in the paper and in the reference code’s tutorials), so low scores do not establish an optimized TRCA ceiling.'],
-      ['Descriptive intervals', 'Bootstrap intervals summarize participants under this protocol. They do not add retraining uncertainty or establish general calibration requirements for another headset.'],
+      ['Descriptive intervals', 'Bootstrap intervals summarize participants under this protocol. They do not add retraining uncertainty.'],
     ],
     citationNote: (license: string) => `Official Tsinghua author mirror snapshot acquired 2026-09-20 · ${license}. Aggregate results only.`,
     movedAdH2: 'LaBraM adaptation has its own page',
-    movedAd: ['The LaBraM results on new people, same task, zero labels from the test person — head only, last block or LoRA — moved to their own page: ', ' They are not calibration: the model adapts on other people and uses no label from the person it is tested on.'],
+    movedAd: ['The LaBraM results on new people, same task, zero labels from the test person — head only, last block or LoRA — moved to their own page: ', ''],
     // Self-contained: a link to #next-day lands on this heading, not on the one above it.
     movedNextH2: 'The next-day experiment has moved to the model-adaptation page',
     movedNext: ['The next-day status — run, independently replayed and held, with no figure published — is on the same page: ', ''],
     nsEyebrow: 'Next session · OpenBMI motor imagery · reviewed 3 October 2026',
     nsH2: 'The next session: how much do a few labeled trials help?',
-    nsLede: (): Part[] => ['A different data set, task and test from the SSVEP results above, so nothing here is compared with them. In OpenBMI, people imagined moving the left or the right hand in two sessions. Each person’s decoder is trained on their session 1 — the first 80 trials fit it, the last 20 calibrate its probabilities — then given the first 0, 10, 20 or 40 labeled trials of their session 2, and tested on the final ', lf(ob.cohort.test_trials_each_person, 'count'), ' trials of session 2. Every budget is tested on those same trials, so the budgets add no people and no test trials.'],
+    nsLede: (): Part[] => ['A different data set, task and test from the SSVEP results above, so nothing here is compared with them. In OpenBMI, people imagined moving the left or the right hand in two sessions. Each person’s decoder is trained on their session 1 — the first 80 trials fit it, the last 20 calibrate its probabilities — then given the first 0, 10, 20 or 40 labeled trials of their session 2, and tested on the final ', lf(ob.cohort.test_trials_each_person, 'count'), ' trials of session 2. Every budget is tested on those same trials.'],
     cardPeople: 'People evaluated', cardPeopleP: (): Part[] => [lf(ob.cohort.acquisition_identities, 'count'), ' acquired, minus ', lf(ob.cohort.engineering_exclusion, 'count'), ' engineering exclusion and ', lf(ob.cohort.input_quality_holds, 'count'), ' held for input quality.'],
     cardTrials: 'Held-out trials', cardTrialsP: (): Part[] => [lf(ob.cohort.test_trials_each_person, 'count'), ' per person: the same final trials of session 2 at every budget.'],
     cardJobs: 'Prediction jobs', cardJobsP: (): Part[] => ['Every person × two baselines × four budgets; ', ...(ob.cohort.jobs.failed === 0 ? ['none failed.'] : [lf(ob.cohort.jobs.failed, 'count'), ' failed.'])],
@@ -159,7 +155,7 @@ const copy = {
     plotLegend: '12 目标、两秒 SSVEP 上的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（12 选 1）。锈色行为湿电极记录，深色行为干电极记录。CCA 不使用校准试次；仅源域迁移是另一种机制，不在图中。',
     plotNote: (s: string, reference: boolean) => `${s}记录 · ${reference ? '免训练参考' : '仅用目标被试数据'}`,
     eyebrow: '校准预算 · 同一次会话与下一次会话',
-    dek: '增加校准试次的价值并不是一个固定值。在 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。在同一批被试的两次会话之间，新会话的少量校准试次平均上帮助了一个运动想象基线——但不是对每个人都有帮助——对另一个基线的帮助则没有得到证实。',
+    dek: '在 12 目标可穿戴协议上，仅用目标被试数据的 spectral ridge（频谱特征岭回归）逐步提升，但始终偏低；单频带集成 TRCA 在湿电极上从 24 增加到 48 个校准试次时提升明显，在干电极上只有小幅提升。在同一批被试的两次会话之间，新会话的少量校准试次平均上帮助了一个运动想象基线——但不是对每个人都有帮助——对另一个基线的帮助则没有得到证实。',
     sensor: { wet: '湿电极', dry: '干电极' } as Record<string, string>,
     ridgeEyebrow: '仅用目标被试数据的 spectral ridge',
     ridgeH2: '12、24 与 48 个校准试次',
@@ -168,7 +164,6 @@ const copy = {
     baLabel: (v: string) => `平衡准确率 ${v}`,
     participantMean: '被试平均平衡准确率',
     trialsStrong: '试次数不等于分钟数。',
-    trialsRest: '导出数据记录的是每名被试 12、24 或 48 个校准试次，并不据此推算校准需要多长时间。',
     zeroEyebrow: '单独的对照组',
     zeroH2: '零个校准试次，即仅源域迁移',
     zeroLede: '校准预算为零的 spectral ridge 各行，使用的是在其他被试、单一源传感器上训练好的模型。它们不是目标被试逐步增加校准数据的学习曲线起点。',
@@ -177,7 +172,7 @@ const copy = {
     colSource: '训练来源', testWet: '在湿电极上测试', testDry: '在干电极上测试',
     sourceRow: (s: string) => `以${s}为源域`,
     otherOnly: '仅使用其他被试',
-    trcaEyebrow: '方法很关键',
+    trcaEyebrow: 'eTRCA 与 CCA',
     trcaH2: '单频带 eTRCA 的反应不同',
     trcaLede: '仅用目标被试数据的 eTRCA 组使用 24 或 48 个校准试次，并在相同的后续测试组块上评测。零校准试次的 CCA 是免训练参考方法，不是未经拟合的 eTRCA。',
     trcaFindingLabel: '湿电极 eTRCA：48 减 24 个校准试次（pp 为百分点）',
@@ -189,21 +184,18 @@ const copy = {
     ccaRow: 'CCA · 0 个校准试次', ccaNote: '直接作用于目标记录的免训练参考',
     targetOnly: '仅用目标被试数据适配',
     limitsH2: '校准预算曲线说明什么，不说明什么',
-    limitsLede: '所有结果都绑定在一个预先冻结的协议上，描述的是这些方法、传感器和固定测试组块下的校准试次预算。',
     limits: [
-      ['零校准试次背后的机制不同', '预算为零的 spectral ridge 是仅源域的监督迁移；预算为零的 CCA 是直接作用于目标记录的免训练参考。两者都不应与仅用目标被试数据的结果连成同一个模型的学习曲线。'],
-      ['「仅目标被试」名副其实', '12/24/48 的 spectral ridge 与 24/48 的 eTRCA 只拟合目标被试自己的校准记录，然后在第 5–10 组块上测试。'],
       ['预先指定的单一频带', 'eTRCA 使用固定的 6–80 Hz 预处理频带，而不是原方法的滤波器组（原论文与参考代码的教程都用 5 个子带），所以较低的分数并不代表 TRCA 经过优化后的上限。'],
-      ['描述性区间', 'bootstrap 区间概括的是本协议下的被试间分布，不包含重新训练带来的不确定性，也不能推出其他头戴设备的通用校准需求。'],
+      ['描述性区间', 'bootstrap 区间概括的是本协议下的被试间分布，不包含重新训练带来的不确定性。'],
     ],
     citationNote: (license: string) => `2026-09-20 获取的清华作者官方镜像快照 · ${license}。仅发布聚合结果。`,
     movedAdH2: 'LaBraM 适配已有单独的页面',
-    movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。它们不是校准：模型在其他被试上适配，不使用被测试者本人的任何标签。'],
+    movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。'],
     movedNextH2: '次日实验已移到模型适配页面',
     movedNext: ['次日实验的状态——已运行、通过独立复核、暂缓发布、不公布任何数字——也在同一页面「', '」。'],
     nsEyebrow: '下一次会话 · OpenBMI 运动想象 · 2026 年 10 月 3 日审核',
     nsH2: '下一次会话：少量校准试次能帮多少？',
-    nsLede: (): Part[] => ['与上面的 SSVEP 结果是不同的数据集、任务和测试，所以这里不与它们比较。在 OpenBMI 中，被试在两次会话中都做左手与右手的运动想象。每名被试的解码器用其第一次会话训练——前 80 个试次拟合分类器，后 20 个用于概率校准——再加入其第二次会话最前面的 0、10、20 或 40 个校准试次，并在第二次会话最后的 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个试次上测试。每档预算都在这些相同的试次上测试，所以各档预算不增加被试，也不增加测试试次。'],
+    nsLede: (): Part[] => ['与上面的 SSVEP 结果是不同的数据集、任务和测试，所以这里不与它们比较。在 OpenBMI 中，被试在两次会话中都做左手与右手的运动想象。每名被试的解码器用其第一次会话训练——前 80 个试次拟合分类器，后 20 个用于概率校准——再加入其第二次会话最前面的 0、10、20 或 40 个校准试次，并在第二次会话最后的 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个试次上测试。每档预算都在这些相同的试次上测试。'],
     cardPeople: '评测的被试', cardPeopleP: (): Part[] => ['采集 ', lf(ob.cohort.acquisition_identities, 'count'), ' 人，减去 ', lf(ob.cohort.engineering_exclusion, 'count'), ' 人工程排除、', lf(ob.cohort.input_quality_holds, 'count'), ' 人因输入质量暂缓。'],
     cardTrials: '留出的测试试次', cardTrialsP: (): Part[] => ['每人 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个：每档预算都是第二次会话最后的同一批试次。'],
     cardJobs: '预测任务', cardJobsP: (): Part[] => ['每名被试 × 两个基线 × 四档预算；', ...(ob.cohort.jobs.failed === 0 ? ['没有一个失败。'] : [lf(ob.cohort.jobs.failed, 'count'), ' 个失败。'])],
@@ -265,7 +257,7 @@ const card = topicCards[locale]['calibration-budget'];
       const row = targetRidge(sensor,budget);
       return <article class="evidence-card"><p class="eyebrow">{copy.sensor[sensor]} · {copy.labels(budget)}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} max={0.85} label={copy.baLabel(pct(row.value))} tone={sensor === 'wet' ? 'rust' : 'ink'} /><p>{copy.participantMean}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
     }))}</div>
-    <p class="protocol-note"><strong>{copy.trialsStrong}</strong>{copy.trialsRest}</p>
+    <p class="protocol-note"><strong>{copy.trialsStrong}</strong></p>
   </section>
 
   <section class="topic-section" aria-labelledby="zero-heading">
@@ -324,7 +316,7 @@ const card = topicCards[locale]['calibration-budget'];
 
   <section class="topic-section topic-moved" id="adaptation" aria-labelledby="adaptation-heading">
     <h2 id="adaptation-heading">{copy.movedAdH2}</h2>
-    <p class="roadmap-p">{copy.movedAd[0]}<a href={hrefFor('/topics/model-adaptation/#adaptation', locale)}>{moved}</a>{locale === 'zh' ? '' : ' '}{copy.movedAd[1]}</p>
+    <p class="roadmap-p">{copy.movedAd[0]}<a href={hrefFor('/topics/model-adaptation/#adaptation', locale)}>{moved}</a>{copy.movedAd[1]}</p>
   </section>
 
   <section class="topic-section topic-moved" id="next-day" aria-labelledby="next-day-heading">
@@ -333,7 +325,7 @@ const card = topicCards[locale]['calibration-budget'];
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
-    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     {citation && <div class="citation-list"><article><h3 lang="en">{citation.identity.title}</h3><p lang="en">{citation.identity.canonical_dataset_citation}</p><p lang="en">{citation.identity.paper_citation}</p><p>{copy.citationNote(citation.identity.license ?? '')}</p><p><a href={citation.primary_sources[0]} target="_blank" rel="noreferrer">{tc.datasetRecord}</a> · <a href={citation.primary_sources[1]} target="_blank" rel="noreferrer">{tc.sensorsPaper}</a></p></article></div>}
     <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>

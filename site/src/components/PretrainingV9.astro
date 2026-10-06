@@ -85,8 +85,8 @@ const c = {
   en: {
     eyebrow: `New frozen encoders · added ${date} · grouped, not ranked`,
     h2: `New frozen encoders (${date})`,
-    lede: `Everything above asks whether pretraining helps two encoders against their own random initializations. This section asks a narrower question, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. On 4 October 2026 eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
-    rule: 'How to read the rows: a row is above or below another only where their 95% intervals do not overlap; otherwise they overlap and no order is claimed. Each interval is a descriptive participant bootstrap of one row on its own — the same people under two encoders are not tested as a pair — and with 126 frozen cells an occasional non-overlap is expected by chance. Rows keep the export’s family order and are never sorted by score.',
+    lede: `This section asks a narrower question, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. On 4 October 2026 eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
+    rule: 'A row is above or below another only where their 95% intervals do not overlap; with 126 frozen cells, an occasional non-overlap is expected by chance.',
     key: (d: string) => `Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the authors’ lists show, not proof that the recordings were never seen. Each model’s sources are on its method page.`,
     published: (p: string) => `Published rows on ${p} (core matrix, 20 September 2026):`,
     notAdapted: 'The others were not adapted:',
@@ -102,7 +102,7 @@ const c = {
     betaCaption: 'SSVEP, BETA, eight electrodes · frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
     adaptH3: 'EEGMAT: frozen readouts and LoRA disagree',
     adaptP: ['Nine of the new encoders were also adapted on EEGMAT, mental arithmetic against rest (', ' people, ', ' participant-disjoint folds, three seeds, chance ', '), with the recipe LaBraM was adapted with on 1 October: a head trained on the frozen encoder against rank-4 LoRA with the same head, five epochs, no tuning. It is one fixed recipe on one task, not a ranking, and LoRA’s budget differs by architecture, from ', ' to ', ' added trainable parameters.'],
-    adaptRead: ['The ridge readout of the frozen-probe table, the trained head and LoRA do not put the encoders in the same order, so none of them ranks the models here. LoRA’s change excludes zero for ', '; it includes zero for ', '.'],
+    adaptRead: ['The ridge readout of the frozen-probe table, the trained head and LoRA do not put the encoders in the same order. LoRA’s change excludes zero for ', '; it includes zero for ', '.'],
     adaptSinglem: ['The clearest case is SingLEM: both frozen readouts reach chance (', ' with the ridge head, ', ' with the trained head), while LoRA reached ', '.'],
     adaptRegion: 'EEGMAT adaptation, nine encoders and LaBraM for context, scrolls horizontally',
     adaptCaption: 'EEGMAT · balanced accuracy with its descriptive 95% interval · the paired change over the same people and folds, with how many people moved which way · trainable parameters of the head alone and of the LoRA arm.',
@@ -133,8 +133,8 @@ const c = {
   zh: {
     eyebrow: `新的冻结编码器 · ${date} 新增 · 分组列出，不排名`,
     h2: `新的冻结编码器（${date}）`,
-    lede: '上面的内容问的是：与各自的随机初始化相比，预训练对这两种编码器有没有帮助。这一节问的问题更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。2026 年 10 月 4 日，另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
-    rule: '怎么读这些行：只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；区间重叠就不分先后。每个区间都是对单独一行做的描述性被试 bootstrap——同一批被试在两个编码器下的结果没有作为配对来检验——而且冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。各行保持导出文件中的模型类别顺序，从不按分数排序。',
+    lede: '这一节问的问题更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。2026 年 10 月 4 日，另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
+    rule: '只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。',
     key: (d: string) => `未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。每个模型的来源见其方法页面。`,
     published: (p: string) => `${p}上已发布的行（核心矩阵，2026 年 9 月 20 日）：`,
     notAdapted: '其余的没有做适配：',
@@ -150,7 +150,7 @@ const c = {
     betaCaption: 'SSVEP，BETA，8 个电极 · 冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
     adaptH3: 'EEGMAT：冻结读出与 LoRA 给出的结论不一致',
     adaptP: ['新编码器中有 9 个还在 EEGMAT（心算对静息）上做了适配（', ' 名被试，按被试不重叠分成 ', ' 折，3 个随机种子，随机水平 ', '），沿用 10 月 1 日适配 LaBraM 的方案：在冻结编码器上训练分类头，对比秩为 4 的 LoRA 加同样的分类头，训练 5 轮，不调参。这是一项任务上的一个固定方案，不是排名；而且 LoRA 的参数量随架构而异，增加的可训练参数从 ', ' 到 ', ' 个不等。'],
-    adaptRead: ['冻结探针表中的岭回归读出、训练的分类头与 LoRA，给出的编码器顺序并不一致，所以这里哪一种都不用来给模型排名。LoRA 带来的变化，区间不含零的有 ', '；区间包含零的有 ', '。'],
+    adaptRead: ['冻结探针表中的岭回归读出、训练的分类头与 LoRA，给出的编码器顺序并不一致。LoRA 带来的变化，区间不含零的有 ', '；区间包含零的有 ', '。'],
     adaptSinglem: ['最明显的例子是 SingLEM：两种冻结读出都触及随机水平（岭回归分类头 ', '，训练的分类头 ', '），而 LoRA 达到 ', '。'],
     adaptRegion: 'EEGMAT 适配：9 个编码器，另列 LaBraM 作参照，可横向滚动',
     adaptCaption: 'EEGMAT · 平衡准确率及其描述性 95% 区间 · 同一批被试与折上的配对变化，以及各有多少人变好、变差 · 只训分类头与 LoRA 两组的可训练参数。',
@@ -186,7 +186,7 @@ const P = (xs: Part[]) => xs;
 // Limitations, each the page's own words for one of the export's required limitations.
 const mi = people('mi-rest'), p300 = people('p300-target'), sleepN = people(SLEEP);
 const limits: [string, Part[]][] = zh ? [
-  ['一个固定方案，不是上限', ['冻结探针就是已发布的线性分类头，只换了编码器；适配是一项任务上一个未调参、训练 5 轮的方案。这里没有任何分数是模型能达到的最好结果。']],
+  ['一个固定方案，不是上限', ['冻结探针就是已发布的线性分类头，只换了编码器；适配是一项任务上一个未调参、训练 5 轮的方案。']],
   ['小队列，描述性区间', ['运动想象 ', mi, ' 名被试，P300 ', p300, ' 名，睡眠分期 ', sleepN, ' 名。区间是被试 bootstrap，没有计入交叉验证带来的相关性，也没有做多重比较校正。']],
   ['分组列出，从不排名', ['各行保持导出文件的模型类别顺序。只有区间不重叠时，才说一行高于或低于另一行；同一批被试在两个编码器下的结果没有作为配对来检验。']],
   ['方法比较，不是部署时的比率', ['类别平衡或类别匹配的设计（P300、语义目标、运动想象对静息、抽样的睡眠数据帧）用来比较方法，不是实际使用中检出率、误报率或延迟的估计。']],
@@ -195,7 +195,7 @@ const limits: [string, Part[]][] = zh ? [
   ['是否出现在预训练数据中：看作者的清单', ['BETA 在 ST-EEGFormer 作者公开的预训练数据清单中，TMNRED 在 SingLEM 的清单中；ZUNA 1.1 没有公开清单，所以它的每个单元格都是未知；EEGMamba 的清单读自其官方代码，把握程度为中等。其余单元格——包括 LaBraM 与 CBraMod 的——都不在作者公开的预训练数据清单中（2026-10-04 核查），这并不证明这些记录从未被模型见过。']],
   ['不代表作者认可', ['任何模型的作者都没有为这些结果背书。没有保留或分享任何适配后的权重或 LoRA 增量；每个模型的权重许可随它的行一起列出。计算耗时在共享 GPU 上测得，只作参考，所以不发布。']],
 ] : [
-  ['One fixed recipe, not a ceiling', ['The frozen probe is the published linear head with only the encoder swapped; the adaptation is one untuned five-epoch recipe on one task. No score here is any model’s best.']],
+  ['One fixed recipe, not a ceiling', ['The frozen probe is the published linear head with only the encoder swapped; the adaptation is one untuned five-epoch recipe on one task.']],
   ['Small cohorts, descriptive intervals', ['Motor imagery has ', mi, ' people, P300 ', p300, ', sleep staging ', sleepN, '. The intervals are participant bootstraps that ignore cross-validation dependence and carry no multiplicity correction.']],
   ['Grouped, never ranked', ['Rows keep the export’s family order. A row is above or below another only where the intervals do not overlap; the same people under two encoders are not tested as a pair.']],
   ['Method comparisons, not deployment rates', ['Balanced or class-matched designs (P300, semantic target, motor imagery against rest, sampled sleep epochs) compare methods; they are not detection, false-alarm or latency estimates for real use.']],
