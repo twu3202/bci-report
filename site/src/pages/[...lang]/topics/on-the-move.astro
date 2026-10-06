@@ -63,7 +63,7 @@ const copy = {
     plotCaption: `Author-style CCA, the same ${ssPeople} people standing and walking.`,
     plotLegend: `Participant-mean balanced accuracy of the training-free reference on three-target, two-second SSVEP with eight selected scalp channels. Dot: the estimate; line: participant bootstrap 95% interval; dashed line: chance, ${pct(ssvepChance)}.`,
     eyebrow: 'Motion robustness · scalp and ear EEG',
-    dek: 'Performance declines as participants move, but the size and meaning of that decline depend on the task, time window, electrode layout and metric. The two mobile derivatives come from one original study, so they are related evidence rather than independent replication cohorts.',
+    dek: 'Performance declines as participants move.',
     s2Eyebrow: 'Matched operating point',
     s2H2: 'Two seconds, eight selected scalp channels',
     s2Lede: 'The direct model comparison fixes the window at [0, 2 s), selects the same eight posterior scalp channels and evaluates 23 people on three SSVEP targets. Uniform chance is 33.3%.',
@@ -74,11 +74,10 @@ const copy = {
     s2RoleFm: 'frozen encoder + ridge, trained on other participants',
     baLabel: (v: string) => `${v} balanced accuracy`,
     scaleNote: 'Bars span 0–100%; chance is 33.3%.',
-    matchedStrong: 'Matched here means matched within this table.',
-    matchedRest: ' The foundation-model rows are fixed frozen-encoder adapters, not best fine-tuned results. LaBraM uses verified standard channel IDs; CBraMod uses an exploratory positional channel order. Record-level pretraining exposure is not certified.',
+    matchedRest: 'The foundation-model rows are fixed frozen-encoder adapters, not best fine-tuned results. LaBraM uses verified standard channel IDs; CBraMod uses an exploratory positional channel order. Record-level pretraining exposure is not certified.',
     s5Eyebrow: 'A separate operating point',
     s5H2: 'Five-second scalp and ear comparisons',
-    s5Lede: 'Longer windows and different electrode layouts change the problem. These classical five-second results do not share a ranking with the two-second foundation-model table above.',
+    s5Lede: 'These classical five-second results do not share a ranking with the two-second foundation-model table above.',
     s5Region: 'Five-second mobile SSVEP scalp and ear results, scrolls horizontally',
     s5Caption: 'Participant-mean balanced accuracy · 23 people · 3 targets. Scalp uses 8 selected channels from 32 recorded; ear uses 14 contacts.',
     colMethodModality: 'Method / modality',
@@ -87,17 +86,15 @@ const copy = {
     erpH2: 'AUC falls toward chance while moving',
     erpLede: 'A separate temporal-feature L2 logistic regression is fit for each participant and modality on the first standing session, then used unchanged later. The endpoint is ROC AUC, not balanced accuracy.',
     erpFindingLabel: 'Scalp ROC AUC change: standing to running, same 17 people',
-    erpFindingH3: 'Use the paired common cohort for the running contrast',
+    erpFindingH3: 'The running contrast is paired on the same people',
     erpFindingP: `Running contains 17 participants while standing and walking contain 24. Among the same 17 people, the standing-to-running change is ${scalp} for scalp and ${ear} for ear. Their descriptive 95% intervals are ${scalpIv} and ${earIv}.`,
     erpRegion: 'Mobile ERP scalp and ear ROC AUC results, scrolls horizontally',
     erpCaption: 'Participant-mean ROC AUC. Scalp uses 32 channels; ear uses 14 contacts. Values in parentheses are participant bootstrap 95% intervals.',
     colModality: 'Modality',
     erpScalp: 'Scalp · 32 channels', erpEar: 'Ear · 14 contacts',
     erpFit: 'standing-session fit · unchanged weights',
-    limitsH2: 'Four distinctions that keep the result honest',
-    limitsLede: 'Motion is the common theme, but the protocols answer different questions. No score is promoted into a cross-task leaderboard.',
+    limitsH2: 'How these results differ',
     limits: [
-      ['2 s stays separate from 5 s', 'A longer analysis window can change decoding performance. The five-second classical results are an operating point, not a comparator for the two-second frozen encoders.'],
       ['Scalp 8 is a selection', 'The mobile SSVEP scalp view selects eight posterior channels from 32 recorded. It is not the native eight-channel wearable device used on the dry-versus-wet page.'],
       ['Balanced accuracy differs from AUC', 'The SSVEP endpoint is participant-mean balanced accuracy for a three-class task. The ERP endpoint is participant-mean ROC AUC. Their numeric values do not share a scale of practical meaning.'],
       ['The derivatives share a study', 'NEMAR nm000125 and nm000201 are SSVEP and ERP derivatives of the same original mobile BCI study, with different assessed sample counts.'],
@@ -106,9 +103,9 @@ const copy = {
     ssvepLink: 'SSVEP dataset ↗', erpLink: 'ERP dataset ↗',
     phEyebrow: 'Engineering control · physical phantom',
     phH2: 'Artifacts, measured without people',
-    phLede: 'A conductive head phantom broadcast ten known brain sources while artifacts were added one kind at a time. A linear decoder trained on the clean recording was tested on held-out time blocks of every condition. One phantom is one experimental unit: this ranks no people, models or denoising methods, and it does not belong in a table with the human results above.',
+    phLede: 'A conductive head phantom broadcast ten known brain sources while artifacts were added one kind at a time. A linear decoder trained on the clean recording was tested on held-out time blocks of every condition. One phantom is one experimental unit.',
     phNoteStrong: 'Neither column is accuracy.',
-    phNoteRest: ' Correlation asks whether the recovered source moves with the true one. Predictive R² also scores amplitude and has no floor: below zero, the prediction is further from the true source than a flat line would be. The negative values are reported as measured, not rounded up to zero.',
+    phNoteRest: ' Correlation asks whether the recovered source moves with the true one. Predictive R² also scores amplitude and has no floor: below zero, the prediction is further from the true source than a flat line would be.',
     phRegion: 'Phantom source-recovery results by artifact condition, scrolls horizontally',
     phCaption: 'Median across five folds of the within-fold median across ten brain sources. The same 60-second blocks are held out in every condition, with a two-second purge on each side of a training block. Trained on the brain-only recording.',
     colCondition: 'Condition', colR: 'Signed correlation r', colR2: 'Predictive R²',
@@ -130,7 +127,6 @@ const copy = {
     gNote: { spectral_logistic: `five relative bands on each of ${gc.scalp_channels} scalp channels`, nuisance_logistic: 'comparator · three features, no spectral pattern' } as Record<string, string>,
     gBaLabel: (v: string) => `${v} balanced accuracy`,
     gLimits: [
-      ['Not a leaderboard entry', 'This is a context-robustness case study. Neither row joins any model comparison on this site.'],
       ['No motion sensors in the model', 'The source also recorded inertial and muscle signals; they were not used as controls. Speed order was not verified to be counterbalanced, so fatigue, drift and electrode contact may change with it.'],
       [`${gc.people_excluded} person excluded before scoring`, `One source file has malformed channel labels. That person's ${gc.recordings_excluded} recordings were excluded before any score existed, and no channel was relabelled.`],
     ],
@@ -143,7 +139,7 @@ const copy = {
     plotCaption: `CCA（按原作者设置）：同样 ${ssPeople} 名被试站立与行走时的结果。`,
     plotLegend: `三目标、两秒、选定八个头皮通道的 SSVEP 上，免训练参考方法的被试平均平衡准确率。点为估计值，横线为被试 bootstrap 95% 区间，虚线为随机水平（${pct(ssvepChance)}）。`,
     eyebrow: '运动鲁棒性 · 头皮与耳部 EEG',
-    dek: '被试一动起来表现就会下降，但下降多少、意味着什么，取决于任务、时间窗、电极布局和指标。两个移动场景衍生数据集来自同一项原始研究，因此是相关证据，而不是相互独立的重复队列。',
+    dek: '被试一动起来，表现就会下降。',
     s2Eyebrow: '匹配的工作点',
     s2H2: '两秒时间窗，选定八个头皮通道',
     s2Lede: '直接的模型对比把时间窗固定在 [0, 2 秒)，选用相同的八个后部头皮通道，在三个 SSVEP 刺激目标上评测 23 名被试。均匀猜测的随机水平为 33.3%。',
@@ -154,11 +150,10 @@ const copy = {
     s2RoleFm: '冻结编码器 + 岭回归，在其他被试上训练',
     baLabel: (v: string) => `平衡准确率 ${v}`,
     scaleNote: '条形范围 0–100%；随机水平为 33.3%。',
-    matchedStrong: '这里的「匹配」只在本表内部成立。',
     matchedRest: '基础模型各行是固定的冻结编码器适配器，不是最佳微调结果。LaBraM 使用经核实的标准通道 ID；CBraMod 使用探索性的、按位置排列的通道顺序。尚未核实这些记录是否出现在预训练数据中。',
     s5Eyebrow: '另一个工作点',
     s5H2: '五秒时间窗的头皮与耳部对比',
-    s5Lede: '更长的时间窗和不同的电极布局会改变问题本身。这些五秒经典方法结果不与上方两秒基础模型表共享排名。',
+    s5Lede: '这些五秒经典方法结果不与上方两秒基础模型表共享排名。',
     s5Region: '五秒移动 SSVEP 头皮与耳部结果，可横向滚动',
     s5Caption: '被试平均平衡准确率 · 23 名被试 · 3 个目标。头皮从 32 个记录通道中选定 8 个；耳部使用 14 个触点。',
     colMethodModality: '方法 / 模态',
@@ -167,17 +162,15 @@ const copy = {
     erpH2: '移动时 AUC 向随机水平回落',
     erpLede: '对每位被试的每种模态，分别在第一次站立会话上拟合一个基于时域特征的 L2 正则化逻辑回归，之后原样沿用。终点指标是 ROC AUC，不是平衡准确率。',
     erpFindingLabel: '头皮 ROC AUC 变化：从站立到慢跑，同一批 17 名被试',
-    erpFindingH3: '慢跑对比要用配对的共同队列',
+    erpFindingH3: '慢跑对比只在同一批被试中配对',
     erpFindingP: `慢跑条件有 17 名被试，站立与行走条件有 24 名。在同一批 17 名被试中，从站立到慢跑的变化在头皮为 ${scalp}，在耳部为 ${ear}。对应的描述性 95% 区间分别为 ${scalpIv} 和 ${earIv}。`,
     erpRegion: '移动 ERP 头皮与耳部 ROC AUC 结果，可横向滚动',
     erpCaption: '被试平均 ROC AUC。头皮使用 32 个通道；耳部使用 14 个触点。括号内为被试 bootstrap 95% 区间。',
     colModality: '模态',
     erpScalp: '头皮 · 32 通道', erpEar: '耳部 · 14 触点',
     erpFit: '站立会话拟合 · 权重不变',
-    limitsH2: '让结论保持诚实的四个区分',
-    limitsLede: '运动是共同主题，但各协议回答的是不同的问题。没有任何分数被放进跨任务排行榜。',
+    limitsH2: '这些结果有何不同',
     limits: [
-      ['2 秒与 5 秒分开', '更长的分析时间窗会改变解码表现。五秒经典方法的结果是一个工作点，不是两秒冻结编码器的对照组。'],
       ['头皮 8 通道是选出来的', '移动 SSVEP 的头皮视图是从 32 个记录通道中选出八个后部通道，而不是「干电极与湿电极」页面上那种原生八通道可穿戴设备。'],
       ['平衡准确率不同于 AUC', 'SSVEP 的终点是三分类任务的被试平均平衡准确率；ERP 的终点是被试平均 ROC AUC。两者的数值不在同一个尺度上，不能直接比较。'],
       ['两个衍生数据集出自同一研究', 'NEMAR nm000125 与 nm000201 是同一项原始移动 BCI 研究的 SSVEP 与 ERP 衍生数据，评估的样本数不同。'],
@@ -186,9 +179,9 @@ const copy = {
     ssvepLink: 'SSVEP 数据集 ↗', erpLink: 'ERP 数据集 ↗',
     phEyebrow: '工程对照 · 物理头模',
     phH2: '不用真人测量的伪迹',
-    phLede: '一个导电头模播放 10 个已知的脑源信号，同时每次加入一种伪迹。一个在无伪迹记录上训练的线性解码器，在每种条件的留出时间段上测试。一个头模就是一个实验单元：这里不给任何人、模型或去噪方法排名，也不能和上方的真人结果放进同一张表。',
+    phLede: '一个导电头模播放 10 个已知的脑源信号，同时每次加入一种伪迹。一个在无伪迹记录上训练的线性解码器，在每种条件的留出时间段上测试。一个头模就是一个实验单元。',
     phNoteStrong: '两列都不是准确率。',
-    phNoteRest: '相关系数衡量恢复出的源信号是否与真实源同步变化；预测 R² 还会计入幅值，而且没有下限：低于零意味着预测离真实源比一条水平线还远。负值按实测报告，没有截断为零。',
+    phNoteRest: '相关系数衡量恢复出的源信号是否与真实源同步变化；预测 R² 还会计入幅值，而且没有下限：低于零意味着预测离真实源比一条水平线还远。',
     phRegion: '按伪迹条件的头模源信号恢复结果，可横向滚动',
     phCaption: '先在每折内对 10 个脑源取中位数，再对 5 折取中位数。每种条件留出相同的 60 秒时间段，训练段两侧各剔除 2 秒。只在仅含脑源的记录上训练。',
     colCondition: '条件', colR: '带符号相关系数 r', colR2: '预测 R²',
@@ -210,7 +203,6 @@ const copy = {
     gNote: { spectral_logistic: `${gc.scalp_channels} 个头皮通道各 5 个相对频带`, nuisance_logistic: '对照基线 · 3 个特征，没有频谱模式' } as Record<string, string>,
     gBaLabel: (v: string) => `平衡准确率 ${v}`,
     gLimits: [
-      ['不进入任何排名', '这是一个场景鲁棒性的案例研究。两行都不参与本站的任何模型比较。'],
       ['模型里没有运动传感器', '数据源还记录了惯性与肌电信号，但没有用作对照。行走速度的先后顺序没有核实是否做了平衡，所以疲劳、漂移和电极接触都可能随之变化。'],
       [`评分前排除了 ${gc.people_excluded} 名被试`, `有一个源文件的通道标签格式错误。这名被试的 ${gc.recordings_excluded} 段记录在任何分数产生之前就被排除，没有重新标注任何通道。`],
     ],
@@ -247,7 +239,7 @@ const card = topicCards[locale]['on-the-move'];
       })}</tr>)}</tbody></table>
     </div>
     <p class="citation-note">{copy.scaleNote}</p>
-    <p class="protocol-note"><strong>{copy.matchedStrong}</strong>{copy.matchedRest}</p>
+    <p class="protocol-note">{copy.matchedRest}</p>
   </section>
 
   <section class="topic-section" aria-labelledby="five-heading">
@@ -299,7 +291,7 @@ const card = topicCards[locale]['on-the-move'];
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
-    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list">
       {ssvepCitation && <article><h3 lang="en">{ssvepCitation.identity.title}</h3><p lang="en">{ssvepCitation.identity.dataset_citation}</p><p lang="en">{ssvepCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {ssvepCitation.identity.license}{tc.period}</p><p><a href={ssvepCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.ssvepLink}</a> · <a href={ssvepCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}

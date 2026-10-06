@@ -52,13 +52,13 @@ const copy = {
   en: {
     description: `Above chance after the switch, but its cost is not measured: across ${c.people} people calibrated on a PC screen and tested in VR, and the reverse, a logistic regression reached ${leadBa} balanced accuracy (${leadIv}; chance ${chance}). Nobody was tested on the display they were calibrated on.`,
     answer: `It scores above chance after the switch, but this dataset cannot say how much the switch costs. Across [[${c.people}]] people, each calibrated on a PC screen and tested in a VR headset and also the other way round, a simple logistic regression averaged [[${leadBa}]] balanced accuracy over the two directions (95% interval [[${leadIv}]]; chance is [[${chance}]]), with stimulus-onset timing corrected. Nobody was also tested on the display they were calibrated on, so this is the level reached after the display change, not its cost.`,
-    plotCaption: `The level after a display change, ${c.people} people — not its cost.`,
-    plotLegend: `Each person was calibrated on one display and tested on the other, in both directions, averaged within the person. Nobody was tested on the display they were calibrated on, so there is no same-display row to compare against. Balanced accuracy, onset-corrected timing. Dot: mean over people; line: participant-bootstrap 95% interval; dashed line: chance, ${chance}. Rust: the logistic regression the short answer quotes; dark: the second fixed baseline.`,
+    plotCaption: `The level after a display change, ${c.people} people.`,
+    plotLegend: `Each person was calibrated on one display and tested on the other, in both directions, averaged within the person. Balanced accuracy, onset-corrected timing. Dot: mean over people; line: participant-bootstrap 95% interval; dashed line: chance, ${chance}. Rust: the logistic regression the short answer quotes; dark: the second fixed baseline.`,
     eyebrow: 'Context transfer · P300 on a screen and in VR',
-    dek: `${c.people} people used the same P300 interface on a PC screen and in a virtual-reality headset. Calibrated on one display and tested on the other, a simple logistic regression reached ${pct(lead.balanced_accuracy.mean)} balanced accuracy, where chance is ${pct(r.chance_level, 0)}. That is how well a calibration carries over. It is not how much the change costs: this protocol did not also test each person on the display they were calibrated on.`,
+    dek: `${c.people} people used the same P300 interface on a PC screen and in a virtual-reality headset. Calibrated on one display and tested on the other, a simple logistic regression reached ${pct(lead.balanced_accuracy.mean)} balanced accuracy, where chance is ${pct(r.chance_level, 0)}. That is not the cost of the change: this protocol did not also test each person on the display they were calibrated on.`,
     findingLabel: `Balanced accuracy after the display change, ${c.people} people`,
     findingH3: 'Above chance after the change — with no same-display score to compare',
-    findingP: `Interval ${iv(lead.balanced_accuracy)}; AUROC ${auc(lead.auroc)}. Each person was calibrated on one display and tested on the other in both directions, and the two directions were averaged within the person. Without a same-display score for the same people, this number cannot say whether the display change lowered performance, or by how much.`,
+    findingP: `Interval ${iv(lead.balanced_accuracy)}; AUROC ${auc(lead.auroc)}.`,
     tableEyebrow: 'Two fixed baselines',
     tableH2: 'Calibrated on one display, tested on the other',
     tableLede: `Target against non-target epochs, ${Math.round(ratio)} non-targets to every target, so accuracy would reward always answering “non-target”; balanced accuracy and AUROC do not. Primary timing.`,
@@ -68,12 +68,12 @@ const copy = {
     modelLabel: { mean_window_logreg: 'Mean-window logistic regression', spatiotemporal_shrinkage_lda: 'Spatiotemporal shrinkage LDA' } as Record<string, string>,
     baLabel: (v: string) => `${v} balanced accuracy`,
     timingEyebrow: 'Prespecified sensitivity',
-    timingH2: 'The timing correction is part of the result',
+    timingH2: 'With and without the onset correction',
     timingLede: 'The headset and the screen report stimulus onset with different delays. The primary analysis shifts each epoch by the source-reported offset — 19 samples on the PC and 60 in VR, at 512 Hz. The sensitivity analysis leaves epochs at the recorded tag. Neither scheme was chosen from test scores.',
     timingRegion: 'Balanced accuracy with and without the onset correction, scrolls horizontally',
     timingCaption: 'Balanced accuracy under each timing scheme, with participant-bootstrap 95% intervals.',
     colCorrected: 'Onset corrected (primary)', colTag: 'At the recorded tag',
-    timingNote: `${timingDrop.m.label} depends on timing most: ${pct(timingDrop.m.balanced_accuracy.mean)} with the correction, ${pct(timingDrop.tagged.balanced_accuracy.mean)} without. A mean offset is not the same as correct timing, but a result reported without saying which timing it used is incomplete.`,
+    timingNote: `${timingDrop.m.label} depends on timing most: ${pct(timingDrop.m.balanced_accuracy.mean)} with the correction, ${pct(timingDrop.tagged.balanced_accuracy.mean)} without.`,
     covEyebrow: 'What the scores are computed on',
     covH2: 'Twenty-one people, one recording on each display',
     covLede: `Every label comes from the source; none was interpolated. One malformed row at the very end of one recording was discarded; it followed every possible epoch.`,
@@ -81,7 +81,6 @@ const copy = {
     covEvents: 'Labelled events', covEventsOf: `1 target to ${Math.round(ratio)} non-targets`,
     covKept: 'Epochs kept, primary timing', covKeptOf: `${n(c.rejected_epochs.onset_corrected)} rejected at 500 µV peak to peak`,
     limitsH2: 'What this comparison can and cannot support',
-    limitsLede: 'A within-person, offline transfer test with two simple baselines. It narrows one question; it does not rank displays or headsets.',
     limits: [
       ['No same-display reference', 'Nobody was tested on the display they were calibrated on in this protocol, so the cost of changing display is not measured here — only the level reached after the change.'],
       ['Within one person, not across people or days', 'Each person supplies both their calibration and their test data, on the same day. Nothing here speaks to a model that works for a new person or a later session.'],
@@ -97,7 +96,7 @@ const copy = {
     ltAuroc: (v: string) => `AUROC ${v}`,
     ltFindingLabel: `Trained at 5 Hz minus trained at 10 Hz, same 10-Hz test images, ${ltPeople} people`,
     ltFindingH3: 'Slightly lower on average — and the interval crosses zero',
-    ltFindingP: `Paired interval ${ipp(ltDiff.bootstrap_95)}: it crosses zero, so no change is established. ${ltDiff.people_lower} of ${ltPeople} people had a lower point estimate and ${ltDiff.people_higher} a higher one. AUROC moved by ${signed3(ltAuc.mean)} (interval ${signed3(ltAuc.bootstrap_95[0])} to ${signed3(ltAuc.bootstrap_95[1])}), which also crosses zero. Even a clear difference could not be put down to image rate, because the training recording, and its place in the session, changed with it.`,
+    ltFindingP: `Paired interval ${ipp(ltDiff.bootstrap_95)}: it crosses zero, so no change is established. ${ltDiff.people_lower} of ${ltPeople} people had a lower point estimate and ${ltDiff.people_higher} a higher one. AUROC moved by ${signed3(ltAuc.mean)} (interval ${signed3(ltAuc.bootstrap_95[0])} to ${signed3(ltAuc.bootstrap_95[1])}), which also crosses zero.`,
     ltMatrixCaption: `Participant-mean balanced accuracy for each training rate (rows, run a) and test rate (columns, run b), ${ltPeople} people, with participant-bootstrap 95% intervals. Chance is ${pct(lt.chance_level, 0)}.`,
     ltMatrixRegion: 'Balanced accuracy by training and test image rate, scrolls horizontally',
     ltCorner: 'Training recording', ltTrain: (hz: number) => `Trained at ${hz} Hz`, ltTest: (hz: number) => `Tested at ${hz} Hz`,
@@ -116,13 +115,13 @@ const copy = {
   zh: {
     description: `换设备后高于随机水平，但测不出换设备的代价：${c.people} 名被试在电脑屏幕上校准、在 VR 里测试，也反过来做一遍，逻辑回归的平衡准确率为 ${leadBa}（${leadIv}；随机水平 ${chance}）。没有被试在校准所用的设备上接受测试。`,
     answer: `换设备后的表现高于随机水平，但这个数据集测不出换设备的代价。[[${c.people}]] 名被试各自在电脑屏幕上校准、在 VR 头显里测试，也反过来做一遍；校正刺激出现时刻后，一个简单的逻辑回归在两个方向上平均达到 [[${leadBa}]] 的平衡准确率（95% 区间 [[${leadIv}]]；随机水平为 [[${chance}]]）。没有任何被试在校准所用的设备上接受测试，所以这是换设备之后达到的水平，而不是换设备的代价。`,
-    plotCaption: `${c.people} 名被试更换显示设备后达到的水平——不是换设备的代价。`,
-    plotLegend: `每名被试在一种设备上校准、在另一种上测试，两个方向都做，再在被试内取平均。没有被试在校准所用的设备上接受测试，所以这里没有同设备的一行可比。平衡准确率，主分析时间校正。点为被试平均值，横线为被试 bootstrap 95% 区间，虚线为随机水平（${chance}）。锈色为简答引用的逻辑回归，深色为另一个固定基线。`,
+    plotCaption: `${c.people} 名被试更换显示设备后达到的水平。`,
+    plotLegend: `每名被试在一种设备上校准、在另一种上测试，两个方向都做，再在被试内取平均。平衡准确率，主分析时间校正。点为被试平均值，横线为被试 bootstrap 95% 区间，虚线为随机水平（${chance}）。锈色为简答引用的逻辑回归，深色为另一个固定基线。`,
     eyebrow: '场景迁移 · 屏幕与 VR 中的 P300',
-    dek: `${c.people} 名被试分别在电脑屏幕和虚拟现实头显里使用同一套 P300 界面。在一种显示设备上校准、在另一种上测试，一个简单的逻辑回归达到 ${pct(lead.balanced_accuracy.mean)} 的平衡准确率，随机水平为 ${pct(r.chance_level, 0)}。这说明校准能沿用到什么程度，却说明不了换设备的代价：这个协议没有在被试校准时所用的那种设备上再测一次。`,
+    dek: `${c.people} 名被试分别在电脑屏幕和虚拟现实头显里使用同一套 P300 界面。在一种显示设备上校准、在另一种上测试，一个简单的逻辑回归达到 ${pct(lead.balanced_accuracy.mean)} 的平衡准确率，随机水平为 ${pct(r.chance_level, 0)}。这不是换设备的代价：这个协议没有在被试校准时所用的那种设备上再测一次。`,
     findingLabel: `更换显示设备后的平衡准确率，${c.people} 名被试`,
     findingH3: '换设备后仍高于随机水平——但没有同设备的分数可比',
-    findingP: `区间 ${iv(lead.balanced_accuracy)}；AUROC ${auc(lead.auroc)}。每名被试在一种设备上校准、在另一种上测试，两个方向都做，再在被试内取平均。由于没有同一批被试在同一设备上的分数，这个数字说明不了更换设备是否降低了表现，也说明不了降低了多少。`,
+    findingP: `区间 ${iv(lead.balanced_accuracy)}；AUROC ${auc(lead.auroc)}。`,
     tableEyebrow: '两个固定基线',
     tableH2: '在一种设备上校准，在另一种上测试',
     tableLede: `区分目标与非目标分段，每 1 个目标对应 ${Math.round(ratio)} 个非目标，所以准确率会奖励一律回答“非目标”的模型；平衡准确率和 AUROC 不会。主分析时间校正。`,
@@ -132,12 +131,12 @@ const copy = {
     modelLabel: { mean_window_logreg: '窗口均值逻辑回归', spatiotemporal_shrinkage_lda: '时空收缩 LDA' } as Record<string, string>,
     baLabel: (v: string) => `平衡准确率 ${v}`,
     timingEyebrow: '预先设定的敏感性分析',
-    timingH2: '时间校正本身就是结果的一部分',
+    timingH2: '校正与不校正刺激出现时刻',
     timingLede: '头显和屏幕报告刺激出现时刻的延迟不同。主分析按数据源报告的偏移量平移每个分段——在 512 Hz 下，电脑为 19 个采样点，VR 为 60 个。敏感性分析则把分段留在记录的标记处。两种方案都不是根据测试分数挑选的。',
     timingRegion: '有无出现时刻校正时的平衡准确率，可横向滚动',
     timingCaption: '两种时间方案下的平衡准确率，附被试 bootstrap 95% 区间。',
     colCorrected: '校正出现时刻（主分析）', colTag: '记录标记处',
-    timingNote: `${timingDrop.m.id === 'spatiotemporal_shrinkage_lda' ? '时空收缩 LDA' : '窗口均值逻辑回归'} 对时间最敏感：校正后 ${pct(timingDrop.m.balanced_accuracy.mean)}，不校正 ${pct(timingDrop.tagged.balanced_accuracy.mean)}。平均偏移并不等于精确的时间对齐，但一个结果如果不交代用的是哪种时间方案，就是不完整的。`,
+    timingNote: `${timingDrop.m.id === 'spatiotemporal_shrinkage_lda' ? '时空收缩 LDA' : '窗口均值逻辑回归'} 对时间最敏感：校正后 ${pct(timingDrop.m.balanced_accuracy.mean)}，不校正 ${pct(timingDrop.tagged.balanced_accuracy.mean)}。`,
     covEyebrow: '这些分数算在什么之上',
     covH2: '21 名被试，每种设备各一段记录',
     covLede: '所有标签都来自数据源，没有插补任何一个。一段记录末尾有一行格式错误的数据被丢弃，它位于所有可用分段之后。',
@@ -145,7 +144,6 @@ const copy = {
     covEvents: '有标签的事件', covEventsOf: `1 个目标对 ${Math.round(ratio)} 个非目标`,
     covKept: '保留的分段（主分析时间）', covKeptOf: `${n(c.rejected_epochs.onset_corrected)} 个因峰峰值超过 500 µV 被剔除`,
     limitsH2: '这项比较能支持什么、不能支持什么',
-    limitsLede: '被试内、离线的迁移测试，两个简单基线。它只回答一个较窄的问题，不给显示设备或头显排名。',
     limits: [
       ['没有同设备的参照', '这个协议没有让被试在校准所用的设备上接受测试，所以这里测不出更换设备的代价，只测出了换设备之后达到的水平。'],
       ['被试内迁移，不是跨被试或跨天', '每名被试既提供自己的校准数据，也提供自己的测试数据，而且在同一天。这里的结果说明不了模型对新被试或之后的会话是否有效。'],
@@ -161,7 +159,7 @@ const copy = {
     ltAuroc: (v: string) => `AUROC ${v}`,
     ltFindingLabel: `5 Hz 训练减 10 Hz 训练，相同的 10 Hz 测试图像，${ltPeople} 名被试`,
     ltFindingH3: '平均略低——但区间跨过零',
-    ltFindingP: `配对区间 ${ipp(ltDiff.bootstrap_95)}：跨过零，所以不能认定有变化。${ltPeople} 名被试中 ${ltDiff.people_lower} 人的点估计更低、${ltDiff.people_higher} 人更高。AUROC 变化 ${signed3(ltAuc.mean)}（区间 ${signed3(ltAuc.bootstrap_95[0])} 至 ${signed3(ltAuc.bootstrap_95[1])}），同样跨过零。即使差异明显，也不能归因于图像速率，因为训练所用的记录、以及它在实验中的先后位置，也跟着变了。`,
+    ltFindingP: `配对区间 ${ipp(ltDiff.bootstrap_95)}：跨过零，所以不能认定有变化。${ltPeople} 名被试中 ${ltDiff.people_lower} 人的点估计更低、${ltDiff.people_higher} 人更高。AUROC 变化 ${signed3(ltAuc.mean)}（区间 ${signed3(ltAuc.bootstrap_95[0])} 至 ${signed3(ltAuc.bootstrap_95[1])}），同样跨过零。`,
     ltMatrixCaption: `每种训练速率（行，a 段）与测试速率（列，b 段）下的被试平均平衡准确率，${ltPeople} 名被试，附被试 bootstrap 95% 区间。随机水平为 ${pct(lt.chance_level, 0)}。`,
     ltMatrixRegion: '按训练与测试图像速率的平衡准确率，可横向滚动',
     ltCorner: '训练记录', ltTrain: (hz: number) => `${hz} Hz 训练`, ltTest: (hz: number) => `${hz} Hz 测试`,
@@ -257,7 +255,7 @@ const card = topicCards[locale]['screen-to-vr'];
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="vr-limits">
-    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="vr-limits">{copy.limitsH2}</h2></div><p>{copy.limitsLede}</p></div>
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="vr-limits">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list"><article><h3 lang="en">{r.rights.name}</h3><p lang="en">{r.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.docLink}</a> · <a href={r.rights.licenseUrl} target="_blank" rel="noreferrer">{r.rights.license}</a></p></article></div>
     <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
