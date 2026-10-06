@@ -999,6 +999,18 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 // ds003810: the citation its OpenNeuro record asks for, on both dataset pages.
 for(const p of ['datasets/ds003810/','zh/datasets/ds003810/'])
   assert.ok(pageOf(p).includes('https://doi.org/10.1016/j.heliyon.2020.e03425'),p+': the requested citation');
+// The released evidence policy (mvp.json) under 'How these results were produced': printed as released on /,
+// and on /zh/ translated, with the released English verbatim beside it (2026-10-06).
+{
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const sec=p=>{const h=pageOf(p);const i=h.indexOf('id="methods"');assert.ok(i>=0,p+': #methods');return h.slice(i,h.indexOf('</section>',i));};
+  const en=sec(''), zh=sec('zh/'), policy=esc(data.evidencePolicy);
+  assert.ok(en.includes('<p>'+policy+'</p>'),'/: the released evidence policy, as released');
+  assert.ok(!/note-original/.test(en),'/: no translation note on the English page');
+  assert.ok(zh.includes('<p>只导出经过明确审核的队列层面研究结果。原始 EEG、个人结果和模型权重都不放到网站上。每项比较都写明来源、许可、协议和局限。没有跨任务的总分。</p>'),'/zh/: the evidence policy in Chinese');
+  assert.ok(zh.includes('<p class="note-original" lang="en">'+policy+'</p>'),'/zh/: the released English beside the translation, verbatim');
+  assert.ok(zh.indexOf('只导出经过明确审核')<zh.indexOf('note-original'),'/zh/: the translation comes first');
+}
 // The API page's Python example: since 2026-10-05 the CDN lets any client read /data/
 // (a Cloudflare configuration rule turns the browser check off there), so pandas reads
 // the CSV from its URL, and the page no longer tells readers urllib is refused.

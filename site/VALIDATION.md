@@ -688,6 +688,10 @@ describing its own layout across the home page, the hubs, the protocol, dataset 
 method pages and the ten topics; no cut sentence was pinned, and every pinned figure,
 limitation, licence, hold and count still holds.
 
+Since 2026-10-06 the home page's "How these results were produced" section prints the released
+evidence policy (mvp.json `evidencePolicy`) as released on `/`, and on `/zh/` a Chinese translation
+followed by the released English verbatim (`.note-original`, `lang="en"`); the check pins both.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

@@ -514,6 +514,8 @@ export const home = {
     },
     methodsEyebrow: 'Evaluation',
     methodsH2: 'How these results were produced',
+    // The released policy sentence is printed as it is on /; the Chinese page translates it and keeps the English beside it.
+    evidencePolicyLocal: null as string | null,
     downloadAll: 'Download all results · JSON ↓',
     principles: [
       ['Status labels', 'Downloads, loading checks and scored evaluations have distinct status labels. Models awaiting an adapter have no result.'],
@@ -639,6 +641,7 @@ export const home = {
     },
     methodsEyebrow: '评测方式',
     methodsH2: '这些结果是怎么得到的',
+    evidencePolicyLocal: '只导出经过明确审核的队列层面研究结果。原始 EEG、个人结果和模型权重都不放到网站上。每项比较都写明来源、许可、协议和局限。没有跨任务的总分。' as string | null,
     downloadAll: '下载全部结果 · JSON ↓',
     principles: [
       ['状态标签', '下载、加载检查与完成评分的评测有各自的状态标签。仍待适配器的模型没有结果。'],
