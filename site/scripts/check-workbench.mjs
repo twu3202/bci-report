@@ -1869,14 +1869,20 @@ console.log('PASS: protocol pages — both languages, every method with a score,
       const html=read(path),mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
       const lede=(mast.match(/<p class="lede">([\s\S]*?)<\/p>/)||[,''])[1].replace(/&#39;/g,"'").replace(/&amp;/g,'&');
       const where=(path||'/')+': the masthead lede';
-      for(const s of zh?[`${core.protocols} 个固定协议、${core.datasets} 个公开数据集`,`核心矩阵的 ${core.methods} 种解码方法`,`自 ${y} 年 ${mo} 月 ${d} 日起以冻结探针方式运行的 ${enc} 个基础模型编码器`]
+      // The Chinese lede is one sentence framed by 在……上 (review of 2026-10-06: '8 个固定协议、7 个公开数据集：协议上既有' read clipped).
+      for(const s of zh?[`在 ${core.protocols} 个固定协议、${core.datasets} 个公开数据集上，既有核心矩阵的 ${core.methods} 种解码方法，也有自 ${y} 年 ${mo} 月 ${d} 日起以冻结探针方式运行的 ${enc} 个基础模型编码器。`]
                        :[`${core.protocols} fixed protocols on ${core.datasets} public datasets`,`the core matrix’s ${core.methods} decoding methods`,`since ${d} ${month} ${y}, ${enc} foundation encoders as frozen probes`])
         assert.ok(lede.includes(s),where+' says "'+s+'", counted from the data');
+      assert.ok(!/公开数据集：协议上/.test(lede),where+': not the clipped "……公开数据集：协议上既有" opening');
       assert.ok(!new RegExp('(^|\\D)'+(core.methods+enc)+'(\\D|$)').test(lede),where+': no summed count of core methods and v9 encoders');
       assert.deepEqual([...mast.matchAll(/<dd>(\d+)<\/dd>/g)].map(m=>Number(m[1])),[core.protocols,core.datasets,core.comparisons,core.methods],(path||'/')+': the stat rail is the core matrix\'s four counts, in order');
       const added=mast.match(/<\/dl>\s*<p class="stat-added">([\s\S]*?)<\/p>/);
       assert.ok(added&&added[1].includes(`<span data-count="encoders">${enc}</span>`)&&added[1].includes(`href="${zh?'/zh':''}/protocols/"`)&&added[1].includes(zh?'第九轮':'(v9)'),
         (path||'/')+': the line under the rail counts the v9 matrix encoders ('+enc+') and links the protocols');
+      // It sits under 'Methods 9': no leading '+', which invited reading 9 + 13 (review of 2026-10-06).
+      const addedText=added?added[1].replace(/<[^>]+>/g,'').replace(/&#43;|&plus;/g,'+').replace(/&amp;/g,'&').trim():'';
+      assert.ok(!/^[+＋]/.test(addedText),(path||'/')+': the line under the rail must not open with "+", which reads as a sum with the methods above it');
+      assert.equal(addedText,zh?`另有 ${enc} 个基础模型编码器在同样的协议上（冻结，第九轮）→`:`Also on these protocols: ${enc} foundation encoders, frozen (v9) →`,(path||'/')+': the line under the rail');
     }
   }
 }

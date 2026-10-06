@@ -85,7 +85,7 @@ const c = {
   en: {
     eyebrow: `New frozen encoders · added ${date} · grouped, not ranked`,
     h2: `New frozen encoders (${date})`,
-    lede: `This section asks a narrower question, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. On 4 October 2026 eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
+    lede: `This section asks a narrower question than the sections above, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. On 4 October 2026 eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
     rule: 'A row is above or below another only where their 95% intervals do not overlap; with 126 frozen cells, an occasional non-overlap is expected by chance.',
     key: (d: string) => `Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the authors’ lists show, not proof that the recordings were never seen. Each model’s sources are on its method page.`,
     published: (p: string) => `Published rows on ${p} (core matrix, 20 September 2026):`,
@@ -133,7 +133,7 @@ const c = {
   zh: {
     eyebrow: `新的冻结编码器 · ${date} 新增 · 分组列出，不排名`,
     h2: `新的冻结编码器（${date}）`,
-    lede: '这一节问的问题更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。2026 年 10 月 4 日，另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
+    lede: '这一节问的问题比上面几节更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。2026 年 10 月 4 日，另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
     rule: '只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。',
     key: (d: string) => `未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。每个模型的来源见其方法页面。`,
     published: (p: string) => `${p}上已发布的行（核心矩阵，2026 年 9 月 20 日）：`,

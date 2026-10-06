@@ -61,7 +61,7 @@ const copy = {
     limitsH2: 'What this result is not',
     limits: [
       ['Not a diagnosis', 'This is group discrimination on a fixed research split, reported as balanced accuracy. It is not diagnostic accuracy, not a screening tool, not clinical validation, and it supports no interpretation about any individual person.'],
-      ['Not replicated', 'One site, one cohort, one split seed, no held-out tuning. The intervals are descriptive bootstrap ranges: the cross-validation training folds overlap.'],
+      ['Not replicated', 'One site, one cohort, one split seed, no held-out tuning. The intervals are descriptive bootstrap ranges, because the cross-validation training folds overlap.'],
       ['Age and sex are not removed', 'The comparator shows that part of this separation is available with no brain signal at all. The EEG model is not adjusted for age or sex, so its score is not a measure of disease-specific brain activity.'],
       ['Group differences are not only in the brain', 'Anything that differs between patients and controls travels with the labels: medication, recording session, movement, alertness. A case/control score cannot separate those from the disease.'],
       ['No foundation-model score for this data set', 'The source does not state a physical amplitude unit. A relative spectrum does not need one; models that need a calibrated scale were left unrun rather than run on an assumed unit.'],
@@ -105,7 +105,7 @@ const copy = {
     limitsH2: '这个结果不是什么',
     limits: [
       ['不是诊断', '这是固定研究划分下的分组区分，用平衡准确率报告。它不是诊断准确率，不是筛查工具，没有经过临床验证，也不能用来解释任何一个具体的人。'],
-      ['没有被重复验证', '单中心、单队列、单一划分种子，没有留出调参。区间是描述性的 bootstrap 范围：交叉验证的训练折彼此重叠。'],
+      ['没有被重复验证', '单中心、单队列、单一划分种子，没有留出调参。区间是描述性的 bootstrap 范围，因为交叉验证的训练折彼此重叠。'],
       ['没有扣除年龄和性别', '对照基线说明，这种区分有一部分完全不需要脑信号就能做到。EEG 模型并没有对年龄、性别做校正，所以它的分数不能当作疾病特异的脑活动的度量。'],
       ['组间差异不只在大脑里', '凡是患者与对照之间不同的东西，都会跟着标签一起进入模型：用药、记录场次、身体活动、清醒程度。病例对照分数无法把这些与疾病本身分开。'],
       ['这个数据集上没有基础模型分数', '数据源没有说明物理幅值单位。相对频谱不需要这个单位；需要标定幅值的模型就先不跑，而不是按假设的单位跑一遍。'],

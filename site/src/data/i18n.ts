@@ -399,8 +399,9 @@ export const home = {
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
-    // Before and after the count, which the page prints in a span of its own.
-    statsAdded: ['+ ', ' foundation encoders on the same protocols, frozen (v9) →'] as const,
+    // Before and after the count, which the page prints in a span of its own. No leading '+':
+    // under 'Methods 9' it invited reading 9 + 13 (review of 2026-10-06).
+    statsAdded: ['Also on these protocols: ', ' foundation encoders, frozen (v9) →'] as const,
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     // The whole site, counted from the pages it builds. No summed comparison count.
     siteCountsLead: 'Across the site:',
@@ -533,7 +534,7 @@ export const home = {
     eyebrow: '公开 EEG 评测 · 更新于',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
-      `${c.protocols} 个固定协议、${c.datasets} 个公开数据集：协议上既有核心矩阵的 ${c.methods} 种解码方法，` +
+      `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有自 ${c.addedOn}起以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
       `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练与临床分组的证据。`,
     statsCaption: '核心矩阵',
