@@ -31,6 +31,26 @@ export const site = {
 } as const;
 
 /**
+ * Things built on the site's published files, kept on the owner's Hugging Face
+ * account rather than here. Linked low-key from the page each one belongs to,
+ * never from the home page or the header, and kept out of the JSON-LD `sameAs`
+ * list (which names the site's own homes).
+ *
+ * - `explorer`: a Space that reads the Hugging Face mirror at one pinned release
+ *   and labels every answer with it; /api/ and llms.txt link it.
+ * - `articles`: long-form write-ups, one line per article; `page` is the topic
+ *   page that links it. The link label is the page's own copy, so a title that
+ *   says "Jev-style" does not need the scope sentence beside the link.
+ */
+export const elsewhere = {
+  explorer: 'https://huggingface.co/spaces/Twu31/bci-report-explorer',
+  articles: [
+    { id: 'when-should-an-eeg-decoder-abstain', page: '/topics/when-not-to-act/', published: '2026-10-07',
+      url: 'https://huggingface.co/blog/Twu31/when-should-an-eeg-decoder-abstain' },
+  ],
+} as const;
+
+/**
  * Inbound is verified; outbound is deliberately not configured.
  *
  * Verified end to end on 2026-09-20 before these were filled in: the MX and SPF

@@ -26,6 +26,11 @@ ops/
 # --- the publication boundary in pipeline/, and the rights review in research/.
 docs/
 
+# --- Outreach drafts, publishing packs and their review records. They carry
+# --- unpublished drafts and local paths. Articles go out on their platforms;
+# --- this folder stays local, never on GitHub or the HF dataset.
+outreach/
+
 # --- Where this machine keeps the run outputs. One operator's mount points.
 pipeline/publication/local_paths.json
 
@@ -80,3 +85,4 @@ research/decision_route2_20261006/
 # IndexNow submission state and the last deploy log (site/scripts/deploy.mjs). Local only.
 site/.indexnow-state.json
 site/.deploy.log
+research/decision_route3_20261007/

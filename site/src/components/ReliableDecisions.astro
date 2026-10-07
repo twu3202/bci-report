@@ -24,6 +24,7 @@ import Fig from './Fig.astro';
 import ScoreBar from './ScoreBar.astro';
 import { reliableMethod, tr, isEnglishOnly, formatFig, ppFmt, sgnFmt, covFmt, type Fig as FigValue, type Fmt } from '../data/entities';
 import { hrefFor, topicCards, topicChrome, type Locale } from '../data/i18n';
+import { elsewhere } from '../data/site';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -230,6 +231,7 @@ const copy = {
     creditsH3: 'The recordings and the methods',
     datasetLink: 'Dataset record ↗',
     litH4: 'Methods these results rest on, checked against their records on 4 October 2026',
+    article: ['A longer write-up of the BETA results is on Hugging Face: ', 'When should an EEG decoder abstain? ↗'],
     audit: (): Part[] => ['Checks behind these figures: both stage-0 audits passed. The independent primary audit passed ', f(r.audits.independent_primary.passed, 'count'), ' of its ', f(r.audits.independent_primary.checks, 'count'), ' checks; the one it failed found a documentation error, not a computation error — the run log said a degenerate personal temperature falls back to the population one, while the code keeps it, as the protocol requires, and every number was computed and reproduced that way. The independent secondary audit passed all ', f(r.audits.independent_secondary.checks, 'count'), '. Both re-implement the definitions without the study code; they stay in the private run root and are pinned by hash.'],
   },
   zh: {
@@ -331,6 +333,7 @@ const copy = {
     creditsH3: '所用的记录与方法',
     datasetLink: '数据集记录 ↗',
     litH4: '这些结果所依据的方法（2026 年 10 月 4 日对照原始记录核查）',
+    article: ['', 'BETA 部分结果的长文解读（英文，Hugging Face）↗'],
     audit: (): Part[] => ['这些数字背后的检查：两项第 0 阶段审计都已通过。独立的主审计在 ', f(r.audits.independent_primary.checks, 'count'), ' 项检查中通过了 ', f(r.audits.independent_primary.passed, 'count'), ' 项；没有通过的那一项发现的是文档错误，不是计算错误——运行日志说退化的个人温度参数会退回到总体温度参数，而代码按协议的要求保留了它，每个数字都是这样计算和复现的。独立的次级审计 ', f(r.audits.independent_secondary.checks, 'count'), ' 项全部通过。两项审计都不调用研究代码、重新实现了各项定义；它们留在私有的运行目录中，以哈希固定。'],
   },
 }[locale];
@@ -574,4 +577,5 @@ const pctIv = (iv?: number[]) => iv ? [f(iv[0]), f(iv[1])] as const : null;
   <ul class="rd-literature">{r.literature.map(x => <li lang="en"><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
   <p class="citation-note" id="rd-audits">{copy.audit().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
   <p class="citation-note">{tc.dataSource} <a href="/data/reliable-decisions-update.json" download>reliable-decisions-update.json</a> · {tc.schema} {reliable.schema_version} · {tc.generated} {reliable.generated_at}{tc.period}</p>
+  {elsewhere.articles.filter(a => a.page === '/topics/when-not-to-act/').map(a => <p class="citation-note" id="rd-article">{copy.article[0]}<a href={a.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a></p>)}
 </section>

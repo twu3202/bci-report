@@ -240,7 +240,8 @@ const one = path => en.find(p => p.path === path);
 
 // Citation and mirrors, read from what the pages publish: the release and the
 // other homes from the home page's Dataset markup (release log, site.ts), the
-// citation file from /api/. So llms.txt cannot cite a release the site does not.
+// citation file and the Explorer link from /api/. So llms.txt cannot cite a
+// release the site does not, or link something /api/ does not.
 const homeLd = [...readFileSync(join(dist, 'index.html'), 'utf8').matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
   .map(m => JSON.parse(m[1]));
 const umbrella = homeLd.find(x => x['@type'] === 'Dataset');
@@ -248,8 +249,9 @@ const sameAs = host => umbrella?.sameAs?.find(u => new URL(u).hostname === host)
 const repository = sameAs('github.com'), mirror = sameAs('huggingface.co');
 const bibKey = api.md.match(/```\n@misc\{([^,]+),/)?.[1];
 const citationFile = api.md.match(/\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+\/CITATION\.cff)\)/)?.[1];
-if (!umbrella?.version || !umbrella?.dateModified || !umbrella?.identifier || !repository || !mirror || !bibKey || !citationFile)
-  throw new Error('build-agent-files: the home Dataset markup or /api/ no longer carries the release, mirrors or citation');
+const explorer = api.md.match(/\]\((https:\/\/huggingface\.co\/spaces\/[^)]+)\)/)?.[1];
+if (!umbrella?.version || !umbrella?.dateModified || !umbrella?.identifier || !repository || !mirror || !bibKey || !citationFile || !explorer)
+  throw new Error('build-agent-files: the home Dataset markup or /api/ no longer carries the release, mirrors, citation or explorer link');
 
 const llms = `# BCI Report
 
@@ -289,6 +291,7 @@ ${apiFiles.join('\n')}
 - [Code on GitHub](${repository}): the site, the publication boundary and the review evidence. Code MIT.
 - [Dataset mirror on Hugging Face](${mirror}): the same files, with the per-protocol tables merged into loadable configurations.
 - [Release feed](${origin}/releases.xml): Atom, one entry per reviewed release, with every file's SHA-256.
+- [BCI Report Explorer](${explorer}): a Hugging Face Space that reads one pinned release of the mirror, shows its results and serves them as MCP tools; every answer names the release.
 
 ## Optional
 

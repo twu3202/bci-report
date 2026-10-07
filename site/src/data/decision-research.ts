@@ -45,7 +45,7 @@ export const decisionSources = {
   neurolm: { cite: 'Jiang et al., 2024 · NeuroLM: a universal multi-task foundation model for EEG', url: 'https://arxiv.org/abs/2409.00101' },
   unimind: { cite: 'Lu et al., 2025 · UniMind: LLMs for unified multi-task brain decoding', url: 'https://arxiv.org/abs/2506.18962' },
   elm: { cite: 'Gijsen & Ritter, 2024 · EEG-language pretraining for label-efficient clinical phenotyping', url: 'https://arxiv.org/abs/2409.07480' },
-  jev: { cite: 'Yu et al., 2026 · Visual Jev: decisions from shared visual context', url: 'https://arxiv.org/abs/2609.25845' },
+  jev: { cite: 'Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context', url: 'https://arxiv.org/abs/2609.25845' },
 } as const;
 
 type SourceId = keyof typeof decisionSources;

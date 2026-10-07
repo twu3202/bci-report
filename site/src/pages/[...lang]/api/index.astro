@@ -3,7 +3,7 @@ import EntityLayout from '../../../components/EntityLayout.astro';
 import { describeFile, servedFiles } from '../../../data/files';
 import { releases } from '../../../data/releases';
 import { chrome, hrefFor, localeOf, localeParams } from '../../../data/i18n';
-import { archive, site } from '../../../data/site';
+import { archive, elsewhere, site } from '../../../data/site';
 import { creator } from '../../../data/structured';
 
 export const getStaticPaths = localeParams;
@@ -43,6 +43,7 @@ const copy = {
       ['/releases.xml', 'an Atom feed with one entry per reviewed release', true],
     ] as [string | null, string, boolean][],
     releasesLink: 'Releases, with SHA-256 of every file →',
+    explorer: ['BCI Report Explorer on Hugging Face ↗', ': browse the same results, or query them through MCP tools. It reads one pinned release of the mirror and names it in every answer.'],
   },
   zh: {
     title: '数据 API', h1: 'BCI Report 数据 API：固定地址的静态 JSON 与 CSV',
@@ -75,6 +76,7 @@ const copy = {
       ['/releases.xml', 'Atom 订阅源，每次经过审核的发布一条', true],
     ] as [string | null, string, boolean][],
     releasesLink: '发布记录（附每个文件的 SHA-256）→',
+    explorer: ['Hugging Face 上的 BCI Report Explorer ↗', '（英文）：浏览同一批结果，或通过 MCP 工具查询。它读取镜像中固定的一次发布，并在每个回答里注明是哪一次。'],
   },
 }[locale];
 const curl = `curl -sO ${base}experiments.json\ncurl -s ${base}context-update.json | jq '.results | keys'`;
@@ -126,5 +128,6 @@ const structured = {
   <section class="topic-section" aria-labelledby="agents-heading">
     <h2 id="agents-heading">{copy.agentsH2}</h2>
     <ul class="entity-links">{copy.agents.map(([href, text, englishOnly]) => <li>{href ? <><a href={href}><code>{href}</code></a>{englishOnly && chrome[locale].englishMark}{locale === 'zh' ? '——' : ' — '}{text}</> : text}</li>)}</ul>
+    <p class="citation-note" id="explorer"><a href={elsewhere.explorer} target="_blank" rel="noreferrer" hreflang="en">{copy.explorer[0]}</a>{copy.explorer[1]}</p>
   </section>
 </EntityLayout>
