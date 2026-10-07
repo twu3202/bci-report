@@ -178,17 +178,33 @@ export function differenceText(e: SrEntry | SrLogR, locale: Locale): string {
   return zh ? `${code(who, locale)} 更高` : `${code(who, locale)} higher`;
 }
 
+/**
+ * The arm a non-inferior flag clears, by its code as the contrast column prints it: the interval rules out its being
+ * the margin or more behind the other arm. For x − y that is y when the upper bound lies below +2 pp, x when the lower
+ * bound lies above −2 pp (never both: that is equivalence); for log R it is the read-out, whose error the dedicated
+ * model is shown not to cut by 20%.
+ */
+function nonInferiorArm(e: SrEntry | SrLogR, locale: Locale): string {
+  if (isLogR(e)) {
+    if (!(e.interval_95[0] > Math.log(1 - P3_CUT) && e.interval_95[1] >= -Math.log(1 - P3_CUT))) throw new Error(`shared-encoder.ts: ${e.id} is flagged non-inferior against its interval`);
+    return locale === 'zh' ? '读出' : 'Read-out';
+  }
+  const [lo, hi] = e.interval_95_pp, yClears = hi < DELTA, xClears = lo > -DELTA;
+  if (yClears === xClears) throw new Error(`shared-encoder.ts: ${e.id} ${e.level} ${e.question} is flagged non-inferior against its interval`);
+  return code(yClears ? e.y : e.x, locale);
+}
 /** The margin flag in words, the margin printed with it: 2 pp for a difference, 20% of the remaining error for log R. */
-export function marginText(flag: string, kind: 'pp' | 'logr', locale: Locale): string {
-  const zh = locale === 'zh';
-  const m = kind === 'pp' ? { en: `${DELTA} pp`, zh: `${DELTA} pp` } : { en: `${Math.round(P3_CUT * 100)}%`, zh: `${Math.round(P3_CUT * 100)}%` };
-  switch (flag) {
-    case 'equivalent within delta': return kind === 'pp' ? (zh ? `在 ±${m.zh} 内等效` : `Equivalent within ±${m.en}`) : (zh ? `在 ${m.zh} 界值内等效` : `Equivalent within the ${m.en} margin`);
-    case 'non-inferior': return zh ? `非劣（界值 ${m.zh}）` : `Non-inferior at ${m.en}`;
-    case 'margin not met': return zh ? `未达到 ${m.zh} 界值` : `${m.en} margin not met`;
+export function marginText(e: SrEntry | SrLogR, locale: Locale): string {
+  const zh = locale === 'zh', logr = isLogR(e);
+  const m = logr ? `${Math.round(P3_CUT * 100)}%` : `${DELTA} pp`;
+  switch (e.margin) {
+    case 'equivalent within delta': return !logr ? (zh ? `在 ±${m} 内等效` : `Equivalent within ±${m}`) : (zh ? `在 ${m} 界值内等效` : `Equivalent within the ${m} margin`);
+    case 'non-inferior': { const who = nonInferiorArm(e, locale);
+      return zh ? `${who}${logr ? '' : ' '}非劣（界值 ${m}）` : `${who} non-inferior at ${m}`; }
+    case 'margin not met': return zh ? `未达到 ${m} 界值` : `${m} margin not met`;
     case 'not applicable (descriptive contrast)': return zh ? '描述性对比，不设界值' : 'No margin: a descriptive contrast';
   }
-  throw new Error(`shared-encoder.ts: unknown margin flag "${flag}"`);
+  throw new Error(`shared-encoder.ts: unknown margin flag "${e.margin}"`);
 }
 export const inconclusiveText: T = { en: 'inconclusive at this sample size', zh: '在这个样本量下无法下结论' };
 export const floorMarginText: T = { en: 'not read: at floor', zh: '处于下限，不读界值' };
@@ -283,13 +299,13 @@ export const srZh: Record<string, string> = {
     '冻结的草案里列了它，但从未实现，事后也没有补算：那需要新的拟合，而它留下的每个选择都会在所有结果已知之后才做。没有任何结论用到它。',
   'Arm-level results of the secondary arms (interval, AUROC, log loss, per-seed means)': '次要设置在单个设置层面的结果（区间、AUROC、log loss、各随机种子的均值）',
   'Not produced by the frozen stage 2; each secondary contrast carries the mean balanced accuracy of its two arms.':
-    '冻结的阶段 2没有产出这些；每个次要对比都附上了它两个设置的平均平衡准确率。',
+    '冻结的阶段 2 没有产出这些；每个次要对比都附上了它两个设置的平均平衡准确率。',
   'P3 at E2': 'E2 层级上的 P3',
   'Not declared for the E2-sleep block, so its five wake-or-sleep fits feed no contrast.':
     'E2 睡眠这一组没有预先声明这项对比，所以它的五个“清醒还是睡着”拟合不进入任何对比。',
   'Counts of people whose paired contrast is above or below zero': '配对对比高于或低于零的被试人数',
   'Allowed by the BOAS review, not computed by the frozen stage 2, and not added afterwards.':
-    'BOAS 的权利审核允许发布，但冻结的阶段 2没有计算，事后也没有补上。',
+    'BOAS 的权利审核允许发布，但冻结的阶段 2 没有计算，事后也没有补上。',
 };
 /** The export's English in the page's language; Chinese pages print it with the English beside it. */
 export function srText(en: string, locale: Locale): { text: string; original?: string } {
@@ -316,31 +332,64 @@ export function boasStatements(): { ethics: string; consent: string } {
   return { ethics, consent };
 }
 
+/** A sentence as printed: words, and figures that carry data-fig. */
+export type SrPart = string | Fig;
 /**
  * What a route-2 group on a dataset or method page carries under its rows, in the page's language: the export's
  * limitations that bear on every figure in it (identifier questions; balanced accuracy is not a deployment rate; the
- * dataset's own boundary), and the multiplicity rule. The topic page carries the rest.
+ * dataset's own boundary), the stage sentence on the two sleep datasets, and the multiplicity rule. The topic page
+ * carries the rest.
+ *
+ * The stage sentence is written here, not taken from the export: the export's "their results are shown beside a
+ * stage-only readout" is true on the topic page, where the read-out sits in the sleep section, but a group shows
+ * no read-out row, and on a method page the read-out (no encoder) would be filtered out with the other rows. So the
+ * BOAS group prints the read-out's two figures in the sentence itself (inside its data-boas section, beside the
+ * gaps), and the EESM19 group says, for the reader, that none was computed there (the export's sentence on EESM19 is
+ * an instruction to whoever prints its rows).
  */
 const GROUP_LIMITS: Record<'openbmi' | 'boas' | 'eesm19', string[]> = {
   openbmi: ['The questions are label-backed classification targets', 'Per-person balanced accuracy averages people equally',
             "The OpenBMI numbers here use route 2's own"],
-  boas: ['The questions are label-backed classification targets', 'Per-person balanced accuracy averages people equally',
-         'SL-E and SL-F are largely predictable from the current stage'],
-  eesm19: ['The questions are label-backed classification targets', 'EESM19 full (S13) uses every stored epoch',
-           'On EESM19 (S13) no stage-only readout was computed'],
+  boas: ['The questions are label-backed classification targets', 'Per-person balanced accuracy averages people equally'],
+  eesm19: ['The questions are label-backed classification targets', 'EESM19 full (S13) uses every stored epoch'],
 };
-export function groupLimits(id: 'openbmi' | 'boas' | 'eesm19', locale: Locale): { text: string; original?: string }[] {
+const stageSentence = (id: 'boas' | 'eesm19', locale: Locale): SrPart[] => {
+  const zh = locale === 'zh';
   const all = [...R2.boundaries.protocol, ...R2.boundaries.added];
-  return GROUP_LIMITS[id].map(start => {
+  if (!all.some(x => x.startsWith('SL-E and SL-F are largely predictable from the current stage'))
+      || !all.some(x => x.startsWith('On EESM19 (S13) no stage-only readout was computed'))) throw new Error('shared-encoder.ts: the export no longer carries the stage sentences');
+  if (id === 'eesm19') return [zh ? 'SL-E 和 SL-F 在很大程度上可以由当前分期预测；EESM19 上没有计算只用分期的读出。'
+                                  : 'SL-E and SL-F are largely predictable from the current stage; no stage-only read-out was computed on EESM19.'];
+  const o = (q: string) => {
+    const hits = D.boas.secondary.filter(e => e.id === 'S11-oracle' && e.question === q) as SrOracle[];
+    if (hits.length !== 1 || hits[0].read_out_from !== 'the true current stage' || hits[0].gate !== 'not applicable') throw new Error(`shared-encoder.ts: no single stage-only read-out for ${q}`);
+    return hits[0];
+  };
+  const e = o('SL-E'), f = o('SL-F');
+  if (e.included_people !== f.included_people) throw new Error('shared-encoder.ts: the two stage-only read-outs pool different people');
+  return zh ? ['SL-E 和 SL-F 在很大程度上可以由当前分期预测：只用真实的当前分期读出，平衡准确率就能达到 ', srFig(e.mean, 'pct1'), ' 和 ', srFig(f.mean, 'pct1'), '（', srFig(e.included_people, 'count'), ' 名被试，描述性）。']
+            : ['SL-E and SL-F are largely predictable from the current stage: read off the true current stage alone, they reach ', srFig(e.mean, 'pct1'), ' and ', srFig(f.mean, 'pct1'), ' balanced accuracy (', srFig(e.included_people, 'count'), ' people; descriptive).'];
+};
+export function groupLimits(id: 'openbmi' | 'boas' | 'eesm19', locale: Locale): SrPart[][] {
+  const all = [...R2.boundaries.protocol, ...R2.boundaries.added];
+  const fromExport = GROUP_LIMITS[id].map(start => {
     const hits = all.filter(x => x.startsWith(start));
     if (hits.length !== 1) throw new Error(`shared-encoder.ts: the export has no single limitation starting "${start}"`);
-    return srText(hits[0], locale);
+    return [srText(hits[0], locale).text];
   });
+  return id === 'openbmi' ? fromExport : [...fromExport, stageSentence(id, locale)];
 }
-/** The margin and multiplicity rule every route-2 group states, in words the page writes (no export sentence says it this short). */
+/** The primary comparisons the multiplicity statement counts, as the export's design states them. */
+const PRIMARY_N = [...D.openbmi.entries, ...D.boas.entries].filter(e => e.role === 'primary').length;
+if (!R2.design.multiplicity.startsWith(`${PRIMARY_N} pre-declared primary entries`) || !/about one in 20 null entries may show a 'difference' by chance/.test(R2.design.multiplicity))
+  throw new Error('shared-encoder.ts: the multiplicity statement no longer matches the primary entries');
+/**
+ * The margin and multiplicity rule every route-2 group states, in words the page writes. The multiplicity statement
+ * must travel with the results (the export's audits, D-5), so it is here in full, not only "no correction".
+ */
 export const groupRule: T = {
-  en: `A contrast shows a difference when its paired 95% interval excludes zero; it is equivalent when the whole interval lies within ±${DELTA} pp, the margin fixed before any result. No multiplicity correction; no ranking where intervals overlap.`,
-  zh: `配对 95% 区间不含零时，才算显示出差异；整个区间落在 ±${DELTA} pp 以内（这个界值在任何结果出来之前就已定下）时，才算等效。不做多重比较校正；区间重叠时不排名。`,
+  en: `A contrast shows a difference when its paired 95% interval excludes zero; it is equivalent when the whole interval lies within ±${DELTA} pp, the margin fixed before any result, and an arm is non-inferior when the interval rules out its being ${DELTA} pp or more behind. No multiplicity correction: across route 2’s ${PRIMARY_N} primary comparisons and its secondary ones, about one in 20 comparisons with no true difference may show one by chance. No ranking where intervals overlap.`,
+  zh: `配对 95% 区间不含零时，才算显示出差异；整个区间落在 ±${DELTA} pp 以内（这个界值在任何结果出来之前就已定下）时，才算等效；区间排除了某个设置落后 ${DELTA} pp 或以上的可能时，说它非劣。不做多重比较校正：第二条路线有 ${PRIMARY_N} 项主分析比较，另有各项次要比较，在没有真实差异的比较里，约每 20 项就可能有 1 项偶然显示出差异。区间重叠时不排名。`,
 };
 
 /** The BOAS conditions as a group or section prints them: the three gaps, the participants' wording, what is not evaluated, the credit. */

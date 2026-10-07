@@ -27,7 +27,7 @@ import large from './large-source-update.json';
 import reliable from './reliable-decisions-update.json';
 import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
-         isLogR, ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
+         ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
@@ -818,19 +818,19 @@ const SR_ARM: Record<string, L> = {
 const SR_CONTRAST: Record<string, L> = {
   P1: { en: 'conditioned head minus fixed heads', zh: '问题条件化分类头减固定分类头' },
   P5: { en: 'conditioned head minus the same layer not told the question', zh: '问题条件化分类头减不告知问题的同一隐藏层' },
-  P2: { en: 'fixed heads on one shared trunk minus separate models', zh: '共享主干上的固定分类头减分开的模型' },
+  // P2 at E1 (and S13-P2, EEGNet from scratch) is small-CNN trunk sharing, not foundation-model sharing (the export's boundary).
+  P2: { en: 'fixed heads on one shared small-CNN trunk minus separate models', zh: '一个共享小 CNN 主干上的固定分类头减分开的模型' },
   P4: { en: 'conditioned head minus fixed heads, on frozen CBraMod features', zh: '冻结 CBraMod 特征上，问题条件化分类头减固定分类头' },
   'S13-P1': { en: 'conditioned head minus fixed heads', zh: '问题条件化分类头减固定分类头' },
-  'S13-P2': { en: 'fixed heads on one shared trunk minus separate models', zh: '共享主干上的固定分类头减分开的模型' },
+  'S13-P2': { en: 'fixed heads on one shared small-CNN trunk minus separate models', zh: '一个共享小 CNN 主干上的固定分类头减分开的模型' },
 };
 const srWho = (level: string) => level === 'E1' ? { method: 'EEGNet', methodSlug: 'eegnet' as MethodSlug } : { method: 'CBraMod', methodSlug: 'cbramod' as MethodSlug };
 const srArmKey = (a: string) => a.startsWith('A_') ? 'A' : a;
 /** The reading beside a contrast: both flags, the margin with them, the gate; at floor, the margin flag is not read. */
 function srReading(e: SrEntry | SrLogR): RowNote {
-  const kind = isLogR(e) ? 'logr' as const : 'pp' as const;
   const parts = (locale: Locale) => {
     const sep = locale === 'zh' ? '；' : '; ';
-    const margin = marginText(e.margin, kind, locale) + (e.gate === 'floor' ? (locale === 'zh' ? `（${floorMarginText.zh}）` : ` (${floorMarginText.en})`) : '');
+    const margin = marginText(e, locale) + (e.gate === 'floor' ? (locale === 'zh' ? `（${floorMarginText.zh}）` : ` (${floorMarginText.en})`) : '');
     const inconclusive = e.wording === 'inconclusive at this sample size' ? (locale === 'zh' ? '：在这个样本量下无法下结论' : ': inconclusive at this sample size') : '';
     // One sentence: in English the second and third readings start in lower case ("2 pp margin not met" stays as it is).
     const low = (t: string) => locale === 'en' ? t.replace(/^[A-Z](?=[a-z])/, c => c.toLowerCase()) : t;

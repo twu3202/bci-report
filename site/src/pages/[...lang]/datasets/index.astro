@@ -39,8 +39,8 @@ const structured = {
       </table>
     </div>
     {datasets.some(d => d.rightsNote === 'boas') && <p class="protocol-note" data-boas-pointer="true">{locale === 'zh'
-      ? <>BOAS 在说明三处缺口后发布：知情同意声明没有说明是否同意公开共享或二次使用；伦理与知情同意的陈述只来自发布者，没有同行评审论文描述它；伦理批件编号在 1.1.1 版才加入，没有写明批准日期。见<a href={hrefFor('/datasets/boas/', locale)}>它的页面</a>。</>
-      : <>BOAS is published with three stated gaps: its consent statement does not say whether participants agreed to public sharing or secondary use; its ethics and consent statements come only from the publisher, and no peer-reviewed paper describes it; its ethics reference was added in version 1.1.1 with no approval date. See <a href={hrefFor('/datasets/boas/', locale)}>its page</a>.</>}</p>}
+      ? <>BOAS 在说明三处缺口后发布：知情同意声明没有说明是否同意公开共享或二次使用；伦理与知情同意的陈述只来自发布者，没有同行评审论文描述它；伦理批件编号在 1.1.1 版才加入，没有写明批准日期。完整表述与署名见<a href={hrefFor('/datasets/boas/', locale)}>它的页面</a>。</>
+      : <>BOAS is published with three stated gaps: its consent statement does not say whether participants agreed to public sharing or secondary use; its ethics and consent statements come only from the publisher, and no peer-reviewed paper describes it; its ethics reference was added in version 1.1.1 with no approval date. <a href={hrefFor('/datasets/boas/', locale)}>Its page</a> states them in full, with the credit.</>}</p>}
   </section>
   <section class="topic-section" aria-labelledby="not-scored">
     <div class="topic-heading"><div><h2 id="not-scored">{c.datasetsNotScored}</h2></div><p>{c.datasetsNotScoredLede}</p></div>

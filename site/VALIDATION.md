@@ -768,6 +768,26 @@ model was trained); the OpenBMI page cites both its releases; the EESM19 page an
 Mutation-tested on a copy of `dist/` (`SITE_DIST`; the translation table's source too, restored afterwards): each of
 50 injected violations was caught by the assertion written for it.
 
+After the independent review of the route-2 pages (2026-10-07), also pinned, both languages. The short answer opens
+with the verdict as tested ("not shown", never a categorical "not at a lower cost"); it reads P5 by its flags
+(equivalent on both motor-imagery questions, the layer not told the question non-inferior on sleep, each said exactly
+when the export says so) and assigns no gain to the hidden layer; it gives P2 on which hand with its interval and
+both flags in words, and the other counted P2 contrasts as inconclusive. The motor-imagery reading prints B-sh − B-lin
+(S2) inconclusive and assigns it no gain; the sleep reading says the gain is the hidden layer's only while S2 shows
+B-sh higher, its figure beside. Every non-inferior flag, on the topic and in group row notes, names the arm it
+clears, derived here from the frozen rule (upper or lower bound by contrast; the read-out for log R). The gate
+sentence states the interval rule (not wholly above the floor), not the mean. The E2 disclosure says no checkpoint
+outlived its fit; the Chinese says 未得到支持, never 不成立. Every route-2 group carries the multiplicity statement
+(the count of primary comparisons and one in 20); the BOAS group prints the stage-only read-out's two figures in its
+stage sentence and never the export's claim of a read-out beside the rows, and the EESM19 group says none was computed
+there. The release log and data use name the compute items withheld (GPU-hours, wall time per fit and per block,
+steps per outer fold) and the indicative times the ledger prints; the release log limits the hidden layer's lift to
+sleep and says no checkpoint outlived its fit. The Markdown copy of every BOAS section and group holds, once per
+gaps block the page prints there, the three gaps (in Chinese with the English), "pseudonymised", what is not
+evaluated and the credit. Mutation-tested the same way: each of 30 injected violations was caught by the assertion
+written for it (where an older check would have caught it first, the mutation was made consistent so it reached the
+new one: the FAQPage markup and llms.txt with the answer, both languages for a number, llms-full.txt with a copy).
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

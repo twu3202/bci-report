@@ -65,7 +65,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   en: {
     eyebrow: 'Research plan · two routes run',
     h2: 'Jev-style decision models for EEG',
-    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained small shared encoders whose questions are given by an identifier, never in language; its results have their own page.',
+    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language; its results have their own page.',
     lede: 'A decoder has more choices than a class label: it can act, wait for more evidence, or ask for calibration.',
     statusLine: 'Status: the first two routes have been run. The first route’s results are in the section above, the second’s on their own page. The third route has not been run.',
     routes: [
@@ -107,7 +107,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   zh: {
     eyebrow: '研究计划 · 两条路线已运行',
     h2: 'Jev-style 的 EEG 决策模型',
-    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了小型共享编码器，问题只以标识给出，从不用语言；它的结果有单独的页面。',
+    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。',
     lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。',
     statusLine: '状态：前两条路线已经运行。第一条的结果见上一节，第二条的结果在单独的页面上；第三条路线尚未运行。',
     routes: [

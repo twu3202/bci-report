@@ -665,10 +665,11 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   // model that reads EEG, and that route 1's results need no such model.
   assert.match(road,/<h2[^>]*>Jev-style/,label+': the roadmap heading names the research track');
   // Since 2026-10-07 route 2 trained models of its own, so the scope no longer says none was trained; it says what
-  // they are (questions given by an identifier, never in language).
+  // they are (one shared encoder: small EEGNets, CBraMod frozen or adapted; questions given by an identifier, never in
+  // language). The review of 2026-10-07 had it name CBraMod too, not small encoders only.
   assert.match(html,label==='en'
-    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained small shared encoders whose questions are given by an identifier, never in language; its results have their own page\./
-    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了小型共享编码器，问题只以标识给出，从不用语言；它的结果有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
+    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained models that share one encoder \(small EEGNets from scratch, and CBraMod frozen or adapted by LoRA\) and are given each question by an identifier, never in language; its results have their own page\./
+    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
   assert.doesNotMatch(html,/not a model BCI Report has trained|更不是本站训练出的模型/i,label+': the old scope said no model was trained');
   assert.doesNotMatch(html,/There are no results here yet|目前还没有任何结果/,label+': the old no-results scope sentence');
   assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
@@ -3050,11 +3051,17 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     if(!(lo>0||hi<0)) return zh?'未显示差异':'No difference shown';
     if(/^readout\[/.test(e.y)) return e.estimate_pp>0?(zh?'专用分类头更高':'Dedicated head higher'):(zh?'由分期概率读出的更高':'Read-out from the stage probabilities higher');
     const who=codeIn(e.estimate_pp>0?e.x:e.y,zh);return zh?who+' 更高':who+' higher';};
-  const marginWords=(flag,logr,zh)=>({
+  // A non-inferior flag names the arm it clears (review of 2026-10-07: "Non-inferior at 2 pp" left readers to take the
+  // first-named arm, which on P5 SL-A is the wrong one). By the frozen rule (the protocol's decision_rules.flags, as
+  // the export check above has it): where the upper bound decides, x − y below +2 pp clears y; where the lower bound
+  // decides, above −2 pp clears x; for log R the dedicated model is shown not to cut 20% of the read-out's error.
+  const UPPER_BOUND=new Set(['P1','P4','P5','S1','S2','S3-P1','S3-P5','S5','S6-P1','S7','S8','S13-P1','S14','X1']);
+  const niWho=(e,zh)=>'log_r' in e?(zh?'读出':'Read-out'):codeIn(UPPER_BOUND.has(e.id)?e.y:e.x,zh);
+  const marginWords=(e,zh)=>{const logr='log_r' in e;return ({
     'equivalent within delta':logr?(zh?`在 ${CUT}% 界值内等效`:`Equivalent within the ${CUT}% margin`):(zh?`在 ±${DELTA} pp 内等效`:`Equivalent within ±${DELTA} pp`),
-    'non-inferior':logr?(zh?`非劣（界值 ${CUT}%）`:`Non-inferior at ${CUT}%`):(zh?`非劣（界值 ${DELTA} pp）`:`Non-inferior at ${DELTA} pp`),
+    'non-inferior':logr?(zh?`读出非劣（界值 ${CUT}%）`:`Read-out non-inferior at ${CUT}%`):(zh?`${niWho(e,zh)} 非劣（界值 ${DELTA} pp）`:`${niWho(e,zh)} non-inferior at ${DELTA} pp`),
     'margin not met':logr?(zh?`未达到 ${CUT}% 界值`:`${CUT}% margin not met`):(zh?`未达到 ${DELTA} pp 界值`:`${DELTA} pp margin not met`),
-    'not applicable (descriptive contrast)':zh?'描述性对比，不设界值':'No margin: a descriptive contrast'})[flag];
+    'not applicable (descriptive contrast)':zh?'描述性对比，不设界值':'No margin: a descriptive contrast'})[e.margin];};
   const gateWords=(g,zh)=>({pass:zh?'通过门槛':'Gate passed',floor:zh?'处于下限：报告，不计入':'At floor: reported, not counted','not applicable':zh?'不适用：描述性':'No gate: descriptive'})[g];
   const byWords=(b,zh)=>({'independent secondary audit':zh?'由独立的次要审计附上':'attached by the independent secondary audit',run:zh?'由运行本身附上':'attached by the run',
     'level gate':zh?'所在层级的门槛':'the level’s gate','E2-sleep scorer, recomputed by its independent audit':zh?'由 E2 睡眠评分程序附上，并经其审计重算':'attached by the E2-sleep scorer, recomputed by its audit',
@@ -3075,7 +3082,7 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     else assert.ok(hasFig(est,'ppr2',e.estimate_pp)&&hasFig(est,'sgr2',e.interval_95_pp[0])&&hasFig(est,'ppr2',e.interval_95_pp[1]),where+': '+e.id+' '+e.question+' difference and its interval');
     const d=cellOf(row,'difference'),m=cellOf(row,'margin'),g=cellOf(row,'gate');
     assert.ok(flagOf(d)===e.difference&&words(d)===diffWords(e,zh),where+': '+e.id+' '+e.question+' says "'+diffWords(e,zh)+'", not "'+words(d)+'"');
-    assert.ok(flagOf(m)===e.margin&&words(m)===marginWords(e.margin,logr,zh),where+': '+e.id+' '+e.question+' prints its margin flag with the margin');
+    assert.ok(flagOf(m)===e.margin&&words(m)===marginWords(e,zh),where+': '+e.id+' '+e.question+' prints its margin flag with the margin'+(e.margin==='non-inferior'?' and the arm it clears':''));
     const ms=smalls(m).map(x=>x.text);
     assert.equal(ms.includes(inconclusive[zh?'zh':'en']),e.wording==='inconclusive at this sample size',where+': '+e.id+' '+e.question+': "inconclusive" exactly where the export says so');
     assert.equal(ms.includes(notRead[zh?'zh':'en']),e.gate==='floor',where+': '+e.id+' '+e.question+': the margin is not read exactly at floor');
@@ -3133,11 +3140,24 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     const a1=p1(DS.openbmi,'MI-A'),aS=p1(DS.boas,'SL-A');
     assert.ok(ans.includes(fmt.ppr2(a1.estimate_pp))&&ans.includes(fmt.sgr2(a1.interval_95_pp[0]))&&ans.includes(fmt.ppr2(a1.interval_95_pp[1]))&&ans.includes(`${DELTA} pp`),where+': the short answer gives the motor-imagery P1 contrast and the margin');
     assert.equal(ans.includes(zh?`整个区间都高于 ${DELTA} pp`:`its whole interval lay above ${DELTA} pp`),aS.interval_95_pp[0]>DELTA,where+': the short answer says the BOAS interval lies above the margin exactly when it does');
-    assert.ok(!DS.openbmi.route_sentence.supported&&!DS.boas.route_sentence.supported&&ans.trim().startsWith(zh?'简答 在这些数据上，做不到更省又一样好。':'Short answer Not at a lower cost, on these data.'),where+': the short answer opens with the route verdict');
+    // Review of 2026-10-07: the verdict as tested ("not supported"), not a categorical "not at a lower cost".
+    assert.ok(!DS.openbmi.route_sentence.supported&&!DS.boas.route_sentence.supported&&ans.trim().startsWith(zh?'简答 在这些数据上，没能证明更省的设置也一样好。':'Short answer The cheaper set-up was not shown to do as well, on these data.'),where+': the short answer opens with the route verdict as tested');
+    // P5 read by its flags: naming the question adds nothing (equivalent on both motor-imagery questions, B-sh
+    // non-inferior on sleep). That assigns no gain to the hidden layer: at a 2 pp margin an equivalence cannot account
+    // for a 1.48 pp lift, and B-sh − B-lin (S2) is inconclusive on imagery or rest. P2 on which hand with both flags in
+    // words; the other counted P2 contrasts, inconclusive, said so.
+    const E1=(d,id,q)=>d.entries.find(e=>e.id===id&&e.level==='E1'&&e.question===q);
+    const p5m=['MI-A','MI-B'].map(q=>E1(DS.openbmi,'P5',q)),p5s=E1(DS.boas,'P5','SL-A'),p2b=E1(DS.openbmi,'P2','MI-B');
+    assert.equal(ans.includes(zh?`在两个运动想象问题上都与那个分类头在 ±${DELTA} pp 内等效`:`equivalent to that head within ±${DELTA} pp on both motor-imagery questions`),p5m.every(e=>e.margin==='equivalent within delta'),where+': the short answer says P5 is equivalent on motor imagery exactly when it is');
+    assert.equal(ans.includes(zh?`在睡眠上非劣（界值 ${DELTA} pp）`:`non-inferior at ${DELTA} pp on sleep`),p5s.margin==='non-inferior'&&p5s.interval_95_pp[1]<DELTA,where+': the short answer says the layer not told the question is non-inferior on sleep exactly when it is');
+    assert.doesNotMatch(ans,zh?/来自它多出的隐藏层|高出的部分来自/:/came from the head’s extra hidden layer|gain is the hidden layer|whatever lifted/,where+': the short answer assigns no gain to the hidden layer');
+    assert.ok(ans.includes(fmt.ppr2(p2b.estimate_pp))&&ans.includes(fmt.sgr2(p2b.interval_95_pp[0]))&&ans.includes(fmt.ppr2(p2b.interval_95_pp[1])),where+': the short answer gives P2 on which hand with its interval');
+    assert.equal(ans.includes(zh?`显示出差异，而且不能排除损失达到 ${DELTA} pp 或以上`:`a difference, and a loss of ${DELTA} pp or more cannot be ruled out`),p2b.difference==='difference: A higher'&&p2b.margin==='margin not met',where+': P2 on which hand carries both flags in words');
+    assert.equal(ans.includes(zh?'在想象还是静息和睡眠分期上，这项比较无法下结论':'on imagery or rest and on the sleep stage the comparison was inconclusive'),[E1(DS.openbmi,'P2','MI-A'),E1(DS.boas,'P2','SL-A')].every(e=>e.wording==='inconclusive at this sample size'),where+': the other counted P2 contrasts, inconclusive');
     // The route verdicts: the export's route sentences, the counted questions, the floor named.
     for(const [ds,d] of [['openbmi',DS.openbmi],['boas',DS.boas]]){
       const rs=d.route_sentence,a=html.indexOf(`data-route-verdict="${ds}"`),box=html.slice(a,html.indexOf('</div></div>',a));
-      assert.ok(a>0&&box.includes(`data-supported="${rs.supported}"`)&&box.includes(rs.supported?'':(zh?'“固定分类头以更少的代价做得一样好”：不成立':'Fixed heads did as well for less: not supported')),where+': '+ds+' verdict follows its route sentence');
+      assert.ok(a>0&&box.includes(`data-supported="${rs.supported}"`)&&box.includes(rs.supported?'':(zh?'“固定分类头以更少的代价做得一样好”：未得到支持':'Fixed heads did as well for less: not supported')),where+': '+ds+' verdict follows its route sentence');
       for(const q of rs.counted) assert.ok(hasFig(box,'ppr2',p1(d,q).estimate_pp),where+': '+ds+' verdict prints P1 on the counted '+q);
       for(const q of Object.keys(rs.excluded)){const g=d.gates.find(x=>x.level==='E1'&&x.question===q);
         assert.ok(rs.excluded[q]==='floor'&&g.gate==='floor'&&hasFig(box,'pct1',g.mean)&&box.includes(zh?'处于下限':'at floor'),where+': '+ds+' verdict names '+q+' at floor with its fixed-head score');}
@@ -3156,8 +3176,9 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
       assert.equal(/data-computed-by="audit"/.test(row),!!e.computed_by,where+': '+e.id+' '+e.level+' '+e.question+': "computed by the independent audit" exactly where the export says so');}
     // E2 sleep: its disclosure, beside its figures; the stage-only read-out beside SL-E and SL-F; the derivable question.
     const sleep=secOf(html,'sleep'),dis=sleep.slice(sleep.indexOf('data-e2-disclosure="true"'),sleep.indexOf('</p>',sleep.indexOf('data-e2-disclosure="true"')));
-    for(const s of zh?['在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果','在冻结协议时就已确定','没有任何一项是根据结果选的','临时的私有检查点']
-                     :['ran on 7 October 2026, after every other result of the run','were fixed when the protocol was frozen','nothing about it was chosen from results','temporary private checkpoints'])
+    // "None outlived its fit" (review of 2026-10-07): some checkpoints were replaced by their fit's next one, not deleted.
+    for(const s of zh?['在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果','在冻结协议时就已确定','没有任何一项是根据结果选的','临时的私有检查点','没有一个留到拟合结束之后']
+                     :['ran on 7 October 2026, after every other result of the run','were fixed when the protocol was frozen','nothing about it was chosen from results','temporary private checkpoints','so none outlived its fit'])
       assert.ok(visible(dis).includes(s),where+': the E2-sleep disclosure says "'+s+'"');
     assert.ok(E2.run_after_other_results&&hasFig(dis,'count',E2.resume_checkpoints.left_after_the_run)&&hasFig(dis,'count',E2.fits),where+': the disclosure counts the fits and the checkpoints left');
     assert.ok(sleep.indexOf('data-e2-disclosure')<sleep.indexOf('data-sr-contrast="boas|E2|'),where+': the disclosure comes before the E2 figures');
@@ -3165,6 +3186,19 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     for(const q of ['SL-E','SL-F']) assert.ok(hasFig(lede,'pct1',DS.boas.secondary.find(e=>e.id==='S11-oracle'&&e.question===q).mean),where+': '+q+' beside the stage-only read-out');
     assert.ok(visible(lede).includes(zh?'SL-E 和 SL-F 在很大程度上可以由当前分期预测':'SL-E and SL-F are largely predictable from the current stage'),where+': the stage sentence');
     assert.ok(sleep.indexOf('data-boas-gaps')<sleep.indexOf('data-route-verdict'),where+': BOAS\'s gaps come before its first result');
+    // Where the conditioned head's lift comes from (review of 2026-10-07): B-sh − B-lin (S2, secondary) beside the
+    // reading. On motor imagery it is printed and inconclusive, and no gain is assigned to the hidden layer; on the
+    // sleep stage the gain is the hidden layer's only while S2 shows B-sh higher, its figure beside the sentence.
+    const rd=id=>{const a=html.indexOf(`data-reading="${id}"`);return html.slice(a,html.indexOf('</p>',a));};
+    const s2=(d,q)=>d.secondary.find(e=>e.id==='S2'&&e.level==='E1'&&e.question===q),s2a=s2(DS.openbmi,'MI-A'),s2s=s2(DS.boas,'SL-A');
+    assert.ok(hasFig(rd('openbmi'),'ppr2',s2a.estimate_pp)&&hasFig(rd('openbmi'),'sgr2',s2a.interval_95_pp[0])&&s2a.wording==='inconclusive at this sample size'
+      &&visible(rd('openbmi')).includes(zh?'次要对比 S2），在想象还是静息上为':'(B-sh − B-lin, secondary S2), was ')&&!/来自隐藏层|gain is the hidden layer/.test(visible(rd('openbmi'))),where+': on motor imagery the hidden layer\'s own contrast is printed, inconclusive, and gets no gain');
+    assert.equal(visible(rd('boas')).includes(zh?'在睡眠分期上，高出的部分来自隐藏层':'On the sleep stage the gain is the hidden layer’s'),s2s.difference==='difference: B-sh higher'&&s2s.interval_95_pp[0]>0&&hasFig(rd('boas'),'ppr2',s2s.estimate_pp),where+': the gain is the hidden layer\'s only where S2 shows it, its figure beside');
+    // The gate's rule is the interval's: the L1 MI-B mean lies above the floor, its interval not wholly (review of 2026-10-07).
+    const gm=visible(html.slice(html.indexOf('data-gates="openbmi"'),html.indexOf('</p>',html.indexOf('data-gates="openbmi"')))),fg=DS.openbmi.gates.find(g=>g.level==='L1'&&g.question==='MI-B');
+    assert.ok(fg.gate==='floor'&&fg.interval_95[0]<=fg.floor&&gm.includes(zh?`区间没有完全高于 ${fmt.pct1(fg.floor)} 的下限`:`its interval does not lie wholly above the ${fmt.pct1(fg.floor)} floor`)&&!(zh?/没有高于/:/\bnot above\b/).test(gm),where+': the gate sentence states the interval rule, not the mean');
+    // "Not supported", never "refuted": an unmet margin is not a refutation (the Chinese said 不成立).
+    if(zh) assert.doesNotMatch(visible(main),/不成立/,where+': "not supported" is 未得到支持, not 不成立');
     // EESM19: crude, one seed, the stage sentence, another protocol than the scalp subset.
     const e19=visible(secOf(html,'eesm19'));
     for(const s of zh?['粗略重复','1 个随机种子','在很大程度上可以由当前分期预测','与核心矩阵中类别平衡的头皮子集是不同的协议']:['crude replication','one seed','largely predictable from the current stage','A different protocol from the balanced scalp subset'])
@@ -3194,9 +3228,15 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
   // The dataset and method pages: a route-2 group where its figures are, each row with both flags; the limits note.
   const groupOf=(h,id)=>{const a=h.search(new RegExp(`<section class="entity-group" id="${id}"`));return a<0?null:h.slice(...spanOf(h,a));};
   const noteWords=(e,zh)=>{const low=t=>zh?t:t.replace(/^[A-Z](?=[a-z])/,c=>c.toLowerCase()),sep=zh?'；':'; ';
-    return diffWords(e,zh)+sep+low(marginWords(e.margin,'log_r' in e,zh))+(e.gate==='floor'?(zh?`（${notRead.zh}）`:` (${notRead.en})`):'')+(e.wording==='inconclusive at this sample size'?(zh?'：'+inconclusive.zh:': '+inconclusive.en):'')+sep+low(gateWords(e.gate,zh))+(zh?'。':'.');};
+    return diffWords(e,zh)+sep+low(marginWords(e,zh))+(e.gate==='floor'?(zh?`（${notRead.zh}）`:` (${notRead.en})`):'')+(e.wording==='inconclusive at this sample size'?(zh?'：'+inconclusive.zh:': '+inconclusive.en):'')+sep+low(gateWords(e.gate,zh))+(zh?'。':'.');};
   const groupEntries={openbmi:DS.openbmi.entries.filter(e=>['P1','P5','P2','P4'].includes(e.id)),boas:DS.boas.entries.filter(e=>['P1','P5','P2','P4','P3'].includes(e.id)),eesm19:DS.eesm19.secondary};
-  const LIMIT_STARTS={openbmi:["The OpenBMI numbers here use route 2's own"],boas:['SL-E and SL-F are largely predictable from the current stage'],eesm19:['EESM19 full (S13) uses every stored epoch','On EESM19 (S13) no stage-only readout was computed']};
+  const LIMIT_STARTS={openbmi:["The OpenBMI numbers here use route 2's own"],boas:[],eesm19:['EESM19 full (S13) uses every stored epoch']};
+  // The stage sentence on the sleep groups is the page's (review of 2026-10-07): the export's "their results are shown
+  // beside a stage-only readout" was false on groups, which show no read-out row, so the BOAS group prints the
+  // read-out's two figures in the sentence and never that claim; the EESM19 group says none was computed there.
+  const stageClaim=required.find(x=>x.startsWith('SL-E and SL-F are largely predictable from the current stage'));
+  const oracleOf=q=>DS.boas.secondary.find(e=>e.id==='S11-oracle'&&e.question===q);
+  const nPrimaryAll=[...DS.openbmi.entries,...DS.boas.entries].filter(e=>e.role==='primary').length;
   let groupRows=0;
   for(const [label,pfx] of [['en',''],['zh','zh/']]){const zh=label==='zh';
     for(const [page,gid,ds,only] of [...['openbmi','boas','eesm19'].map(ds=>['datasets/'+ds+'/','g-shared-encoder',ds,null]),
@@ -3212,6 +3252,12 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
       const n=g.slice(g.indexOf('data-sr-limits='),g.indexOf('</p>',g.indexOf('data-sr-limits=')));
       assert.ok(n.includes(`href="/${pfx}topics/shared-encoder/#methods-and-limits"`)&&LIMIT_STARTS[ds].every(s=>{const en=required.find(x=>x.startsWith(s));return decodeHtml(n).includes(zh?SRZ[en]:en);})
         &&decodeHtml(n).includes(zh?`整个区间落在 ±${DELTA} pp 以内`:`within ±${DELTA} pp, the margin fixed before any result`),where+': what these figures cannot say, the margin and a link to every limitation');
+      const nt=decodeHtml(n);
+      if(ds==='boas') assert.ok(nt.includes(zh?'SL-E 和 SL-F 在很大程度上可以由当前分期预测：只用真实的当前分期读出，平衡准确率就能达到 ':'SL-E and SL-F are largely predictable from the current stage: read off the true current stage alone, they reach ')
+        &&['SL-E','SL-F'].every(q=>hasFig(n,'pct1',oracleOf(q).mean))&&hasFig(n,'count',oracleOf('SL-E').included_people)&&!nt.includes(zh?SRZ[stageClaim]:stageClaim),where+': SL-E and SL-F beside the stage-only read-out\'s figures, never a read-out the group does not show');
+      if(ds==='eesm19') assert.ok(nt.includes(zh?'SL-E 和 SL-F 在很大程度上可以由当前分期预测；EESM19 上没有计算只用分期的读出。':'SL-E and SL-F are largely predictable from the current stage; no stage-only read-out was computed on EESM19.'),where+': the stage sentence, and that no read-out was computed');
+      // The multiplicity statement travels with the results (the export's audits, D-5): the count and one in 20.
+      assert.ok(nt.includes(zh?`第二条路线有 ${nPrimaryAll} 项主分析比较，另有各项次要比较，在没有真实差异的比较里，约每 20 项就可能有 1 项偶然显示出差异`:`across route 2’s ${nPrimaryAll} primary comparisons and its secondary ones, about one in 20 comparisons with no true difference may show one by chance`),where+': the multiplicity statement travels with the group');
     }
     // No other method page carries a route-2 group.
     for(const f of htmlPages.filter(f=>new RegExp(`^${pfx}methods/[^/]+/index\\.html$`).test(f)&&!/\/(?:eegnet|cbramod)\//.test(f)))
@@ -3226,6 +3272,15 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     // The release log names the new question; when-not-to-act prints no route-2 figure and does not cite the release.
     const rel=pageOf(pfx+'releases/'),ra=rel.indexOf(`id="${sr.release_id}"`),entry=rel.slice(ra,rel.indexOf('</article>',ra));
     assert.ok(entry.includes(`href="/${pfx}topics/shared-encoder/"`),pfx+'releases/: the route-2 release names its question');
+    // Review of 2026-10-07: what is withheld is the measured compute totals, as the export's not_published says; the
+    // page's cost ledger prints the indicative step times. The hidden layer carries the lift on sleep only; no
+    // checkpoint outlived its fit.
+    const ev=visible(entry),du=zh?null:visible(pageOf('data-use/').slice(pageOf('data-use/').indexOf('id="sources-2026-10-07"')));
+    for(const [t,w] of [[ev,pfx+'releases/'],...(du?[[du.slice(0,du.indexOf('Release ')),'data-use/#sources-2026-10-07']]:[])])
+      assert.ok(t.includes(zh?'实测的计算总量（GPU 小时、每次拟合与每组的实际耗时、每个外层折的训练步数）':'measured compute totals (GPU-hours, wall time per fit and per block, training steps per outer fold)')
+        &&t.includes(zh?'“仅供参考”的标注发布在共享 GPU 上交替测得的两项耗时':'labelled indicative, the two times measured interleaved on a shared GPU')&&!/measured compute time;|实测的计算耗时；/.test(t),w+': the compute items withheld, and the indicative times the ledger prints');
+    assert.ok(ev.includes(zh?'在运动想象上，这个隐藏层与固定头的对比无法下结论':'on motor imagery its own contrast with the fixed heads was inconclusive')&&!/whatever lifted|同一个隐藏层不加条件时也有/.test(ev)
+      &&ev.includes(zh?'没有一个留到对应的拟合结束之后':'none outlived its fit'),pfx+'releases/: the lift is the hidden layer\'s on sleep only, and no checkpoint outlived its fit');
     const w=pageOf(pfx+'topics/when-not-to-act/');
     assert.ok(!w.includes(`data-fig="${SRF}|`)&&!w.slice(w.indexOf('<section class="cite-page"')).includes(sr.release_id),pfx+'topics/when-not-to-act/: links route 2, prints none of its figures and does not cite it');
   }
@@ -4284,6 +4339,34 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     parasCarried(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
     parasCarried(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
     for(const id of ['design','motor-imagery','sleep','eesm19','secondary','methods-and-limits']) parasCarried(pfx+'topics/shared-encoder/',id,pfx+'shared-encoder');
+  }
+  // Review of 2026-10-07: the copies of every BOAS region carry its conditions. The checks above read figures, and
+  // paragraphs of the topic page only, so a gap line dropped from a copy (and with it from llms-full.txt, which holds the
+  // English copies verbatim) passed. Each BOAS section or group in a copy holds, once per gaps block the page prints
+  // there, the three gaps (in Chinese with the English), "pseudonymised", what is not evaluated and the credit.
+  {
+    const srx=JSON.parse(readFileSync(new URL('data/shared-representation-update.json',DIST),'utf8')),BC=srx.results['one-representation'].boas_conditions;
+    const SRZB=(()=>{const c={shared:srx};vm.runInNewContext(stripTypeScriptTypes(readFileSync(new URL('../src/data/shared-encoder.ts',import.meta.url),'utf8'))
+      .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'')+'\nthis.srZh=srZh;',c);return c.srZh;})();
+    let boasCopies=0;
+    for(const pfx of ['','zh/']){const zh=pfx==='zh/';
+      const items=[...BC.gaps.flatMap(g=>zh?[SRZB[g],g]:[g]),zh?'被试在公开发布中是假名化的。':'Participants are pseudonymised in the public release.',
+                   ...(zh?[SRZB[BC.not_an_evaluation_of],BC.not_an_evaluation_of]:[BC.not_an_evaluation_of]),BC.attribution];
+      assert.ok(items.every(t=>typeof t==='string'&&t.length>10),pfx+': the BOAS conditions to look for');
+      for(const [path,id] of [['topics/shared-encoder/','sleep'],['topics/shared-encoder/','secondary'],['datasets/boas/','g-shared-encoder'],
+                              ['methods/eegnet/','g-boas-shared-encoder'],['methods/cbramod/','g-boas-shared-encoder']]){
+        const html=readFileSync(new URL(pfx+path+'index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+path+'index.md',DIST),'utf8'),where=pfx+path+'index.md #'+id;
+        const sec=sectionHtml(html,id);assert.ok(sec,where+': the section renders');
+        const blocks=(sec.match(/data-boas-gaps="true"/g)||[]).length;assert.ok(blocks>0,where+': the page prints BOAS\'s conditions here');
+        const h=sec.match(/<h([23])\b[^>]*>([\s\S]*?)<\/h\1>/),part=mdSection(md,norm(h[2].replace(/<[^>]+>/g,' ')),Number(h[1]));
+        assert.ok(part,where+': the copy has the section');
+        const flat=squash(part);
+        for(const t of items){const k=flat.split(squash(t)).length-1;
+          assert.ok(k>=blocks,where+': "'+t.slice(0,60)+'" '+k+' times, for '+blocks+' gaps block(s) on the page');}
+        boasCopies++;
+      }
+    }
+    assert.equal(boasCopies,10,'the BOAS regions of the copies were read');
   }
   // (5) Every v9 and route-1 data-fig on every page sits in a region a copy check reads.
   const read=[/^(?:zh\/)?protocols\/[^/]+\/index\.html#foundation-v9$/,/^(?:zh\/)?topics\/when-not-to-act\/index\.html#reliable-decisions$/,/^(?:zh\/)?topics\/does-pretraining-help\/index\.html#v9-encoders$/,

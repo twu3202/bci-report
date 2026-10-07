@@ -52,13 +52,19 @@ need(p1a.difference === 'difference: C1 higher' && p1a.margin === 'margin not me
 need(eq(p1b), 'MI-B is equivalent within the margin');
 need(p1s.difference === 'difference: C1 higher' && p1s.interval_95_pp[0] > DELTA, 'the whole SL-A interval lies above the margin');
 const p5 = [P(O, 'P5', 'MI-A'), P(O, 'P5', 'MI-B'), P(B, 'P5', 'SL-A')];
-need(p5.every(e => e.gate === 'pass' && near(e)) && eq(p5[0]) && eq(p5[1]) && p5[2].margin === 'non-inferior', 'the layer not told the question never fell 2 pp behind');
+need(p5.every(e => e.gate === 'pass' && near(e)) && eq(p5[0]) && eq(p5[1]) && p5[2].margin === 'non-inferior' && p5[2].interval_95_pp[1] < DELTA,
+  'the layer not told the question is equivalent on both motor-imagery questions and, on the sleep stage, B-sh is the non-inferior arm');
+// Where the conditioned head's lift comes from (S2, B-sh − B-lin, secondary): shown on the sleep stage, not on imagery or rest.
+const s2a = ppEntry(O.secondary, 'S2', 'MI-A', 'E1'), s2s = ppEntry(B.secondary, 'S2', 'SL-A', 'E1');
+need(s2a.x === 'B-sh' && s2a.y === 'B-lin' && s2a.wording === 'inconclusive at this sample size' && s2a.gate === 'pass', 'the hidden layer\'s own contrast is inconclusive on imagery or rest');
+need(s2s.x === 'B-sh' && s2s.y === 'B-lin' && s2s.difference === 'difference: B-sh higher' && s2s.interval_95_pp[0] > 0 && s2s.gate === 'pass', 'the hidden layer is higher than the fixed heads on the sleep stage');
 const s1 = [entry(O.entries, 'S1', 'MI-A', 'L1'), ...['SL-A', 'SL-E', 'SL-F'].map(q => entry(B.entries, 'S1', q, 'L1'))] as SrEntry[];
 need(s1.every(e => e.gate === 'pass' && eq(e)), 'C1 − B-sh on frozen features is equivalent wherever it is counted');
 need((entry(O.entries, 'S1', 'MI-B', 'L1') as SrEntry).gate === 'floor', 'which hand is at floor on frozen features');
 const p2a = P(O, 'P2', 'MI-A'), p2b = P(O, 'P2', 'MI-B'), p2s = P(B, 'P2', 'SL-A');
 need(p2b.difference === 'difference: A higher' && p2b.margin === 'margin not met', 'sharing the trunk cost accuracy on which hand');
 need(p2a.wording === 'inconclusive at this sample size' && p2s.wording === 'inconclusive at this sample size', 'sharing is inconclusive on MI-A and SL-A');
+need(OR.counted.concat(BR.counted).join() === 'MI-A,MI-B,SL-A', 'the counted P2 contrasts are MI-A, MI-B and SL-A');
 const p4a = P(O, 'P4', 'MI-A', 'L1'), p4b = P(O, 'P4', 'MI-B', 'L1');
 need(p4a.difference === 'difference: C1-fz higher' && p4a.margin === 'margin not met' && p4b.gate === 'floor', 'P4 repeats P1 on MI-A and MI-B is at floor');
 const p4s = ['SL-A', 'SL-E', 'SL-F'].map(q => P(B, 'P4', q, 'L1'));
@@ -74,6 +80,7 @@ const s13 = ppEntry(E.secondary, 'S13-P1', 'SL-A');
 need(s13.difference === 'difference: C1 higher' && s13.margin === 'margin not met' && s13.single_seed, 'EESM19 matches BOAS on SL-A, one seed');
 for (const d of [O, B, E]) need(d.canary.questions.every(q => q.balanced_accuracy < d.canary.demotes_at && q.label === 'passes canary'), 'the canary demoted nothing');
 const floorMi = gate(O, 'L1', 'MI-B'), floorE = gate(B, 'E1', 'SL-E'), floorF = gate(B, 'E1', 'SL-F');
+need(floorMi.interval_95[0] <= floorMi.floor, 'the L1 MI-B interval does not lie wholly above its floor');
 need(floorMi.gate === 'floor' && floorE.gate === 'floor' && floorF.gate === 'floor'
   && [O, B].every(d => d.gates.filter(g => g.gate !== 'pass').length === (d === O ? 1 : 2)), 'the gate set aside L1 MI-B and E1 SL-E, SL-F only');
 const primaryN = [...O.entries, ...B.entries].filter(e => e.role === 'primary').length;
@@ -86,13 +93,14 @@ need([L, LB].every(l => (['B-sh', 'C1', 'A'] as const).every(k => l['B-lin'].par
 
 // --- What the tables print. ---------------------------------------------------------------------------------
 const contrastName = (id: string): string => {
-  const base = id.replace(/^S3-|^S13-/, '');
+  const base = id === 'S3-P2' ? id : id.replace(/^S3-|^S13-/, '');
   const names: Record<string, [string, string]> = {
     P1: ['Conditioned head − fixed heads', '条件化分类头 − 固定分类头'],
     P4: ['Conditioned head − fixed heads', '条件化分类头 − 固定分类头'],
     P5: ['Conditioned head − the same layer, not told the question', '条件化分类头 − 不告知问题的同一隐藏层'],
     S1: ['Conditioned head − the same layer, not told the question', '条件化分类头 − 不告知问题的同一隐藏层'],
-    P2: ['Fixed heads on one trunk − separate models', '共享主干上的固定分类头 − 分开的模型'],
+    P2: ['Fixed heads on one small-CNN trunk − separate models', '一个小 CNN 主干上的固定分类头 − 分开的模型'],
+    'S3-P2': ['Fixed heads on one adapted CBraMod − separate models', '一个适配后的 CBraMod 上的固定分类头 − 分开的模型'],
   };
   const x = names[base];
   if (!x) throw new Error(`shared-encoder: no name for ${id}`);
@@ -135,7 +143,7 @@ const ivAns = (e: SrEntry) => `${ans(srLo(e.interval_95_pp[0]))} ${tc.to} ${ans(
 const copy = {
   en: {
     description: `A shared EEGNet with a fixed output per question cost less than a head told the question, but was not shown to come within ${DELTA} pp of it: ${F(srPp(p1a.estimate_pp))} (${F(srLo(p1a.interval_95_pp[0]))} to ${F(srPp(p1a.interval_95_pp[1]))}) on imagery against rest, ${O.people} people. Naming the question added nothing measurable.`,
-    answer: `Not at a lower cost, on these data. A shared EEGNet with a fixed linear output per question cost less than a head told which question it was answering (${ans(n(L['B-lin'].parameters))} against ${ans(n(L.C1.parameters))} trainable parameters on motor imagery), but it was not shown to come within ${DELTA} pp of that head, the margin fixed before the run. On imagery against rest, in ${ans(n(O.people))} people (OpenBMI), that head scored ${ans(srPp(p1a.estimate_pp))} higher (${ivAns(p1a)}); on five-stage sleep scoring (BOAS) its whole interval lay above ${DELTA} pp. The gain came from the head’s extra hidden layer, not from naming the question: the same layer, not told the question, never fell ${DELTA} pp behind. Against a separate EEGNet per question, the shared trunk scored ${ans(srPp(p2b.estimate_pp))} on which hand (${ivAns(p2b)}).`,
+    answer: `The cheaper set-up was not shown to do as well, on these data. A shared EEGNet with a fixed linear output per question cost less than a head told which question it was answering (${ans(n(L['B-lin'].parameters))} against ${ans(n(L.C1.parameters))} trainable parameters on motor imagery), but it was not shown to come within ${DELTA} pp of that head, the margin fixed before the run. On imagery against rest, in ${ans(n(O.people))} people (OpenBMI), that head scored ${ans(srPp(p1a.estimate_pp))} higher (${ivAns(p1a)}); on five-stage sleep scoring (BOAS) its whole interval lay above ${DELTA} pp. Naming the question added nothing measurable: the same hidden layer, not told the question, was equivalent to that head within ±${DELTA} pp on both motor-imagery questions and non-inferior at ${DELTA} pp on sleep. Against a separate EEGNet per question, the small shared EEGNet trunk scored ${ans(srPp(p2b.estimate_pp))} on which hand (${ivAns(p2b)}): a difference, and a loss of ${DELTA} pp or more cannot be ruled out; on imagery or rest and on the sleep stage the comparison was inconclusive.`,
     eyebrow: 'Shared encoders · route 2 of the decision-research plan',
     dek: 'One encoder answering several questions about the same windows, against a separate model per question and against a head told which question it is answering, at matched data and compute. Motor imagery on OpenBMI and sleep on BOAS, with EESM19 as a crude replication.',
     designEyebrow: 'How the comparison works',
@@ -164,7 +172,7 @@ const copy = {
     miTableRegion: 'Motor imagery, paired comparisons, scrolls horizontally',
     miTableCaption: (): Part[] => ['Paired differences in balanced accuracy, in pp, with 95% intervals; ', n(O.people), ' people, three seeds.'],
     e1Sub: 'EEGNet trained from scratch (E1)', l1Sub: 'Heads on frozen CBraMod features (L1)', e2Sub: 'CBraMod adapted by LoRA (E2), one seed',
-    miReading: (): Part[] => [`Telling the head the question added nothing measurable: C1 − B-sh was equivalent within ±${DELTA} pp on both questions from scratch, and on imagery or rest on frozen features. Against a separate EEGNet per question, sharing one small trunk (`, n(L['B-lin'].parameters_by_part!.encoder), ' parameters) scored ', srPp(p2b.estimate_pp), ' on which hand (', ...iv(p2b), `): a difference, and a cost of ${DELTA} pp or more cannot be ruled out; on imagery or rest it was inconclusive. On frozen CBraMod features the conditioned head was again higher on imagery or rest (`, srPp(p4a.estimate_pp), ', ', ...iv(p4a), '); which hand is at floor there.'],
+    miReading: (): Part[] => [`Telling the head the question added nothing measurable: C1 − B-sh was equivalent within ±${DELTA} pp on both questions from scratch, and on imagery or rest on frozen features. That does not show where the conditioned head’s lift over the fixed heads comes from: the same layer not told the question, against the fixed heads (B-sh − B-lin, secondary S2), was `, srPp(s2a.estimate_pp), ' on imagery or rest (', ...iv(s2a), `), inconclusive at this sample size. Against a separate EEGNet per question, sharing one small trunk (`, n(L['B-lin'].parameters_by_part!.encoder), ' parameters) scored ', srPp(p2b.estimate_pp), ' on which hand (', ...iv(p2b), `): a difference, and a cost of ${DELTA} pp or more cannot be ruled out; on imagery or rest it was inconclusive. On frozen CBraMod features the conditioned head was again higher on imagery or rest (`, srPp(p4a.estimate_pp), ', ', ...iv(p4a), '); which hand is at floor there.'],
     armsRegion: (d: string) => `${d}, balanced accuracy of each set-up, scrolls horizontally`,
     miArmsCaption: (): Part[] => ['Balanced accuracy of each set-up: the mean over ', n(O.people), ' people with its 95% interval. Chance is ', f(arm(O, 'E1', 'B-lin', 'MI-A').chance), '; the gate’s floor is ', f(gate(O, 'E1', 'MI-A').floor), '. Overlapping intervals are not ranked: the paired differences above are the comparison.'],
     ledgerRegion: (d: string) => `${d}, what each set-up costs, scrolls horizontally`,
@@ -173,7 +181,7 @@ const copy = {
     parts: (l: { encoder: number; heads: number; conditioning: number }): Part[] => ['encoder ', n(l.encoder), ' · heads ', n(l.heads), ' · conditioning ', n(l.conditioning)],
     oneEach: 'one EEGNet per question',
     gatesH3: 'What the canary and the gate set aside',
-    miGates: (): Part[] => ['Before any fit, a ridge classifier on each window’s per-channel mean and log-variance, trained and tested within the first fold’s ', n(O.canary.training_people), ' training people, checked whether a question could be answered from those statistics alone; it demotes a question at ', f(O.canary.demotes_at), ' or more. It gave ', ...O.canary.questions.flatMap((q, i): Part[] => [i ? ', ' : '', `${q.id} `, f(q.balanced_accuracy)]), ', so none was demoted. The gate set one entry aside: on frozen CBraMod features the fixed heads scored ', f(floorMi.mean), ' (', ...pctIv(floorMi), ') on which hand, not above ', f(floorMi.floor), ', so that question is at floor there.'],
+    miGates: (): Part[] => ['Before any fit, a ridge classifier on each window’s per-channel mean and log-variance, trained and tested within the first fold’s ', n(O.canary.training_people), ' training people, checked whether a question could be answered from those statistics alone; it demotes a question at ', f(O.canary.demotes_at), ' or more. It gave ', ...O.canary.questions.flatMap((q, i): Part[] => [i ? ', ' : '', `${q.id} `, f(q.balanced_accuracy)]), ', so none was demoted. The gate set one entry aside: on frozen CBraMod features the fixed heads scored ', f(floorMi.mean), ' (', ...pctIv(floorMi), ') on which hand; its interval does not lie wholly above the ', f(floorMi.floor), ' floor, so that question is at floor there.'],
     slEyebrow: (): Part[] => ['Primary · BOAS · EEGNet and CBraMod'],
     slH2: 'Sleep: the stage, the next change and the half of the night',
     slLede: (): Part[] => { const s = B.questions.find(q => q.id === 'SL-A')!.shares, e = B.questions.find(q => q.id === 'SL-E')!.shares;
@@ -182,7 +190,7 @@ const copy = {
     slFinding: (): Part[] => ['Only the sleep stage counts. On EEGNet the fixed heads are at floor on the next change (', f(floorE.mean), ', ', ...pctIv(floorE), ') and on the half of the night (', f(floorF.mean), ', ', ...pctIv(floorF), '): reported, not counted. On the sleep stage the conditioned head scored ', srPp(p1s.estimate_pp), ' above the fixed heads (', ...iv(p1s), `): the whole interval lies above +${DELTA} pp. The fixed heads were cheaper: `, n(LB['B-lin'].parameters), ' against ', n(LB.C1.parameters), ' trainable parameters, ', n(LB['B-lin'].head_macs_per_window), ' against ', n(LB.C1.head_macs_per_window), ' head multiply-accumulates per epoch, and a shorter step.'],
     slTableRegion: 'Sleep, paired comparisons, scrolls horizontally',
     slTableCaption: (): Part[] => ['Paired differences in balanced accuracy, in pp, with 95% intervals; ', n(B.people), ' people, three seeds.'],
-    slReading: (): Part[] => ['The gain is the hidden layer’s: C1 − B-sh on the sleep stage was ', srPp(p5[2].estimate_pp), ' (', ...iv(p5[2]), `), non-inferior, and on frozen CBraMod features equivalent within ±${DELTA} pp on all three questions. Sharing the trunk, against separate models, was inconclusive on the sleep stage. On frozen CBraMod features the fixed heads were equivalent within ±${DELTA} pp of the conditioned head on the sleep stage and the half of the night, not on the next change (`, srPp(p4s[1].estimate_pp), ', ', ...iv(p4s[1]), '). Five-stage accuracy on the small EEGNet trunk is modest: ', f(arm(B, 'E1', 'B-lin', 'SL-A').mean), ' with fixed heads and ', f(arm(B, 'E1', 'C1', 'SL-A').mean), ' with the conditioned head, against a chance of ', f(arm(B, 'E1', 'B-lin', 'SL-A').chance), '; fixed heads on frozen CBraMod features reach ', f(arm(B, 'L1', 'B-lin-fz-sgd', 'SL-A').mean), '.'],
+    slReading: (): Part[] => ['On the sleep stage the gain is the hidden layer’s: the same layer not told the question scored ', srPp(s2s.estimate_pp), ' above the fixed heads (B-sh − B-lin, secondary S2; ', ...iv(s2s), '), and C1 − B-sh was ', srPp(p5[2].estimate_pp), ' (', ...iv(p5[2]), `), B-sh non-inferior at ${DELTA} pp; on frozen CBraMod features C1 − B-sh was equivalent within ±${DELTA} pp on all three questions. Sharing the trunk, against separate models, was inconclusive on the sleep stage. On frozen CBraMod features the fixed heads were equivalent within ±${DELTA} pp of the conditioned head on the sleep stage and the half of the night, not on the next change (`, srPp(p4s[1].estimate_pp), ', ', ...iv(p4s[1]), '). Five-stage accuracy on the small EEGNet trunk is modest: ', f(arm(B, 'E1', 'B-lin', 'SL-A').mean), ' with fixed heads and ', f(arm(B, 'E1', 'C1', 'SL-A').mean), ' with the conditioned head, against a chance of ', f(arm(B, 'E1', 'B-lin', 'SL-A').chance), '; fixed heads on frozen CBraMod features reach ', f(arm(B, 'L1', 'B-lin-fz-sgd', 'SL-A').mean), '.'],
     slArmsCaption: (): Part[] => ['Balanced accuracy of each set-up: the mean over ', n(B.people), ' people with its 95% interval. Chance is ', f(gate(B, 'E1', 'SL-A').chance), ' for the sleep stage and ', f(gate(B, 'E1', 'SL-E').chance), ' for the other two; the gate’s floors are ', f(gate(B, 'E1', 'SL-A').floor), ' and ', f(gate(B, 'E1', 'SL-E').floor), '. Overlapping intervals are not ranked.'],
     derivedH3: 'A question that follows from another: does it need its own model?',
     derived: (): Part[] => ['Awake or asleep (SL-B) follows from the sleep stage. A separate wake-or-sleep model, A(SL-B), left less error than reading the answer off the five-stage model A(SL-A): its remaining error was ', f(p3.r, 'num3'), ' times the read-out’s. The interval does not rule out a reduction of ', `${Math.round(P3_CUT * 100)}%`, ' or more, the margin set before the run, so “a derivable question needs no model of its own” is not supported.'],
@@ -191,7 +199,7 @@ const copy = {
     colLogR: 'log R', colR: 'R', colAuroc: 'AUROC, dedicated / read-out', colMargin20: `Margin, ${Math.round(P3_CUT * 100)}%`,
     p3Name: 'Its own model − reading it off the five-stage model',
     e2H3: 'CBraMod adapted by LoRA (E2): secondary, one seed, run last',
-    e2Disclosure: (): Part[] => ['This arm ran on 7 October 2026, after every other result of the run, and two independent audits, were known. Its design (', n(E2.fits), ' LoRA fits, the seed, the recipe, the 30-second input as fifteen 2-second segments, the comparisons) and the condition for running it were fixed when the protocol was frozen, and nothing about it was chosen from results. It ran with temporary private checkpoints so that a fit could resume: ', n(E2.resume_checkpoints.written), ' were written for ', n(E2.resume_checkpoints.fits_that_wrote_one), ' fits, each deleted when its fit finished, and ', n(E2.resume_checkpoints.left_after_the_run), ' remain. Its scoring ran the frozen code, and an independent audit recomputed all ', n(R2.audits.e2_sleep.entries_recomputed), ' entries.'],
+    e2Disclosure: (): Part[] => ['This arm ran on 7 October 2026, after every other result of the run, and two independent audits, were known. Its design (', n(E2.fits), ' LoRA fits, the seed, the recipe, the 30-second input as fifteen 2-second segments, the comparisons) and the condition for running it were fixed when the protocol was frozen, and nothing about it was chosen from results. It ran with temporary private checkpoints so that a fit could resume: during the run ', n(E2.resume_checkpoints.written), ' were written for ', n(E2.resume_checkpoints.fits_that_wrote_one), ' fits, each replaced by its fit’s next one or deleted when its fit finished, so none outlived its fit, and ', n(E2.resume_checkpoints.left_after_the_run), ' remain; a check of resuming, run before the fits, removed its own the same way. Its scoring ran the frozen code, and an independent audit recomputed all ', n(R2.audits.e2_sleep.entries_recomputed), ' entries.'],
     e2Gates: (): Part[] => ['Gate arm, fixed heads at E2: ', ...E2.gates.flatMap((g, i): Part[] => [i ? ', ' : '', `${g.question} `, f(g.mean), ' (', ...pctIv(g), ')']), '; all passed.'],
     e2Region: 'Sleep, CBraMod adapted by LoRA, scrolls horizontally',
     e2Caption: (): Part[] => ['Paired differences in balanced accuracy, in pp, with 95% intervals; ', n(B.people), ' people, one seed: no training-run variance in these intervals.'],
@@ -223,7 +231,7 @@ const copy = {
   },
   zh: {
     description: `共享一个 EEGNet、每个问题一个固定输出，比“知道是哪个问题”的分类头更省，但没能证明两者相差在 ${DELTA} pp 以内：在想象还是静息上差 ${F(srPp(p1a.estimate_pp))}（${F(srLo(p1a.interval_95_pp[0]))} 至 ${F(srPp(p1a.interval_95_pp[1]))}），${O.people} 名被试。告诉模型是哪个问题，本身没有可测的帮助。`,
-    answer: `在这些数据上，做不到更省又一样好。共享一个 EEGNet、每个问题配一个固定线性输出，比“知道自己在回答哪个问题”的分类头更省（运动想象上可训练参数 ${ans(n(L['B-lin'].parameters))} 个，对比 ${ans(n(L.C1.parameters))} 个），但没能证明它与那个分类头相差在 ${DELTA} pp（百分点）以内——这是运行前就定下的界值。在想象还是静息这个问题上（OpenBMI，${ans(n(O.people))} 名被试），那个分类头高出 ${ans(srPp(p1a.estimate_pp))}（${ivAns(p1a)}）；在睡眠五期分期上（BOAS），整个区间都高于 ${DELTA} pp。高出的部分来自它多出的隐藏层，而不是告诉它问题：同一个隐藏层在不告诉它问题时，也从没落后 ${DELTA} pp 以上。与每个问题单独一个 EEGNet 相比，共享一个小主干在“哪只手”上的差值是 ${ans(srPp(p2b.estimate_pp))}（${ivAns(p2b)}）。`,
+    answer: `在这些数据上，没能证明更省的设置也一样好。共享一个 EEGNet、每个问题配一个固定线性输出，比“知道自己在回答哪个问题”的分类头更省（运动想象上可训练参数 ${ans(n(L['B-lin'].parameters))} 个，对比 ${ans(n(L.C1.parameters))} 个），但没能证明它与那个分类头相差在 ${DELTA} pp（百分点）以内——这是运行前就定下的界值。在想象还是静息这个问题上（OpenBMI，${ans(n(O.people))} 名被试），那个分类头高出 ${ans(srPp(p1a.estimate_pp))}（${ivAns(p1a)}）；在睡眠五期分期上（BOAS），整个区间都高于 ${DELTA} pp。告诉模型是哪个问题，本身没有可测的帮助：同一个隐藏层不告诉它问题时，在两个运动想象问题上都与那个分类头在 ±${DELTA} pp 内等效，在睡眠上非劣（界值 ${DELTA} pp）。与每个问题单独一个 EEGNet 相比，共享一个小 EEGNet 主干在“哪只手”上的差值是 ${ans(srPp(p2b.estimate_pp))}（${ivAns(p2b)}）：显示出差异，而且不能排除损失达到 ${DELTA} pp 或以上；在想象还是静息和睡眠分期上，这项比较无法下结论。`,
     eyebrow: '共享编码器 · 决策研究计划的第二条路线',
     dek: '一个编码器回答同一批窗口上的多个问题，对比每个问题单独一个模型，以及“知道自己在回答哪个问题”的分类头，数据量与计算量保持一致。运动想象用 OpenBMI，睡眠用 BOAS，EESM19 作为粗略重复。',
     designEyebrow: '比较方法',
@@ -240,7 +248,7 @@ const copy = {
     reading: `每项比较都是平衡准确率的配对差值，单位是 pp，95% 区间由对被试重采样得到（有 3 个随机种子时，也对训练过程重采样）。每项比较都有两种读法。区间不含零，才算显示出差异。界值是 ±${DELTA} pp，由所有者在任何结果出来之前定下：整个区间都在界值以内，算等效；起作用的那一端在界值以内，算非劣；否则就是未达到界值。只有当一个领域里每个计入的问题在 P1 上都达到界值、而且固定分类头更省时，才说“固定分类头以更少的代价做得一样好”。固定分类头的准确率没有明显高于随机水平加 5 pp 的问题处于下限：照样报告，但从不计入。`,
     multiplicity: `主分析共有 ${primaryN} 项比较，不做多重比较校正，所以在没有真实差异的比较里，约每 20 项就可能有 1 项偶然显示出差异。平衡准确率先逐人计算，再在被试之间平均：它用来比较设置，不是部署时的错误率。`,
     routeOf: ['这是“', '何时不该执行', '”页上研究计划的第二条路线。'],
-    verdict: '“固定分类头以更少的代价做得一样好”：不成立',
+    verdict: '“固定分类头以更少的代价做得一样好”：未得到支持',
     colComparison: '比较', colQuestion: '问题', colDiff: '差值（pp）', colShown: '是否显示差异', colMargin: `界值 ±${DELTA} pp`, colGate: '门槛',
     colSetup: '设置', colEntry: '条目', colLevel: '层级', colContrast: '对比', colMeans: '两种设置的均值',
     secondaryMark: '次要',
@@ -252,7 +260,7 @@ const copy = {
     miTableRegion: '运动想象，配对比较，可横向滚动',
     miTableCaption: (): Part[] => ['平衡准确率的配对差值（pp），附 95% 区间；', n(O.people), ' 名被试，3 个随机种子。'],
     e1Sub: '从头训练的 EEGNet（E1）', l1Sub: '冻结 CBraMod 特征上的分类头（L1）', e2Sub: '用 LoRA 适配的 CBraMod（E2），1 个随机种子',
-    miReading: (): Part[] => [`告诉分类头是哪个问题，没有带来可测的帮助：从头训练时，C1 − B-sh 在两个问题上都在 ±${DELTA} pp 内等效；在冻结特征上，想象还是静息也是如此。与每个问题单独一个 EEGNet 相比，共享一个小主干（`, n(L['B-lin'].parameters_by_part!.encoder), ' 个参数）在哪只手上的差值是 ', srPp(p2b.estimate_pp), '（', ...iv(p2b), `）：显示出差异，而且不能排除损失达到 ${DELTA} pp 或以上；在想象还是静息上无法下结论。在冻结的 CBraMod 特征上，条件化分类头在想象还是静息上再次更高（`, srPp(p4a.estimate_pp), '，', ...iv(p4a), '）；哪只手在那里处于下限。'],
+    miReading: (): Part[] => [`告诉分类头是哪个问题，没有带来可测的帮助：从头训练时，C1 − B-sh 在两个问题上都在 ±${DELTA} pp 内等效；在冻结特征上，想象还是静息也是如此。但这说明不了条件化分类头比固定分类头高出的部分从何而来：不告诉它问题的同一隐藏层对比固定分类头（B-sh − B-lin，次要对比 S2），在想象还是静息上为 `, srPp(s2a.estimate_pp), '（', ...iv(s2a), `），在这个样本量下无法下结论。与每个问题单独一个 EEGNet 相比，共享一个小主干（`, n(L['B-lin'].parameters_by_part!.encoder), ' 个参数）在哪只手上的差值是 ', srPp(p2b.estimate_pp), '（', ...iv(p2b), `）：显示出差异，而且不能排除损失达到 ${DELTA} pp 或以上；在想象还是静息上无法下结论。在冻结的 CBraMod 特征上，条件化分类头在想象还是静息上再次更高（`, srPp(p4a.estimate_pp), '，', ...iv(p4a), '）；哪只手在那里处于下限。'],
     armsRegion: (d: string) => `${d}，每种设置的平衡准确率，可横向滚动`,
     miArmsCaption: (): Part[] => ['每种设置的平衡准确率：', n(O.people), ' 名被试的均值，附 95% 区间。随机水平为 ', f(arm(O, 'E1', 'B-lin', 'MI-A').chance), '；门槛的下限为 ', f(gate(O, 'E1', 'MI-A').floor), '。区间重叠时不排名：上面的配对差值才是比较。'],
     ledgerRegion: (d: string) => `${d}，每种设置的代价，可横向滚动`,
@@ -261,7 +269,7 @@ const copy = {
     parts: (l: { encoder: number; heads: number; conditioning: number }): Part[] => ['编码器 ', n(l.encoder), ' · 分类头 ', n(l.heads), ' · 条件化 ', n(l.conditioning)],
     oneEach: '每个问题一个 EEGNet',
     gatesH3: '捷径检查和门槛排除了什么',
-    miGates: (): Part[] => ['捷径检查（canary）：在任何拟合之前，用每个窗口各通道的均值和对数方差训练一个岭回归分类器，只在第一折的 ', n(O.canary.training_people), ' 名训练被试内部训练和测试，看一个问题能不能只靠这些统计量回答；达到 ', f(O.canary.demotes_at), ' 或以上的问题会被降级。结果为 ', ...O.canary.questions.flatMap((q, i): Part[] => [i ? '、' : '', `${q.id} `, f(q.balanced_accuracy)]), '，所以没有问题被降级。门槛排除了一项：在冻结的 CBraMod 特征上，固定分类头在哪只手上的得分为 ', f(floorMi.mean), '（', ...pctIv(floorMi), '），没有高于 ', f(floorMi.floor), '，所以这个问题在那里处于下限。'],
+    miGates: (): Part[] => ['捷径检查（canary）：在任何拟合之前，用每个窗口各通道的均值和对数方差训练一个岭回归分类器，只在第一折的 ', n(O.canary.training_people), ' 名训练被试内部训练和测试，看一个问题能不能只靠这些统计量回答；达到 ', f(O.canary.demotes_at), ' 或以上的问题会被降级。结果为 ', ...O.canary.questions.flatMap((q, i): Part[] => [i ? '、' : '', `${q.id} `, f(q.balanced_accuracy)]), '，所以没有问题被降级。门槛排除了一项：在冻结的 CBraMod 特征上，固定分类头在哪只手上的得分为 ', f(floorMi.mean), '（', ...pctIv(floorMi), '），区间没有完全高于 ', f(floorMi.floor), ' 的下限，所以这个问题在那里处于下限。'],
     slEyebrow: (): Part[] => ['主分析 · BOAS · EEGNet 与 CBraMod'],
     slH2: '睡眠：分期、下一帧是否改变、前半夜还是后半夜',
     slLede: (): Part[] => { const s = B.questions.find(q => q.id === 'SL-A')!.shares, e = B.questions.find(q => q.id === 'SL-E')!.shares;
@@ -270,16 +278,16 @@ const copy = {
     slFinding: (): Part[] => ['只有睡眠分期计入。在 EEGNet 上，固定分类头在下一帧是否改变上处于下限（', f(floorE.mean), '，', ...pctIv(floorE), '），在前半夜还是后半夜上也是（', f(floorF.mean), '，', ...pctIv(floorF), '）：照样报告，但不计入。在睡眠分期上，条件化分类头比固定分类头高出 ', srPp(p1s.estimate_pp), '（', ...iv(p1s), `）：整个区间都高于 +${DELTA} pp。固定分类头更省：可训练参数 `, n(LB['B-lin'].parameters), ' 个，对比 ', n(LB.C1.parameters), ' 个；每个数据帧的分类头乘加次数 ', n(LB['B-lin'].head_macs_per_window), ' 次，对比 ', n(LB.C1.head_macs_per_window), ' 次；每步也更快。'],
     slTableRegion: '睡眠，配对比较，可横向滚动',
     slTableCaption: (): Part[] => ['平衡准确率的配对差值（pp），附 95% 区间；', n(B.people), ' 名被试，3 个随机种子。'],
-    slReading: (): Part[] => ['高出的部分来自隐藏层：睡眠分期上 C1 − B-sh 为 ', srPp(p5[2].estimate_pp), '（', ...iv(p5[2]), `），非劣；在冻结的 CBraMod 特征上，三个问题都在 ±${DELTA} pp 内等效。共享主干与分开的模型相比，在睡眠分期上无法下结论。在冻结的 CBraMod 特征上，固定分类头在睡眠分期和前半夜还是后半夜上都与条件化分类头在 ±${DELTA} pp 内等效，在下一帧是否改变上则不然（`, srPp(p4s[1].estimate_pp), '，', ...iv(p4s[1]), '）。小 EEGNet 主干的五期分期准确率不高：固定分类头 ', f(arm(B, 'E1', 'B-lin', 'SL-A').mean), '，条件化分类头 ', f(arm(B, 'E1', 'C1', 'SL-A').mean), '，随机水平为 ', f(arm(B, 'E1', 'B-lin', 'SL-A').chance), '；冻结 CBraMod 特征上的固定分类头达到 ', f(arm(B, 'L1', 'B-lin-fz-sgd', 'SL-A').mean), '。'],
+    slReading: (): Part[] => ['在睡眠分期上，高出的部分来自隐藏层：不告诉它问题的同一隐藏层比固定分类头高出 ', srPp(s2s.estimate_pp), '（B-sh − B-lin，次要对比 S2；', ...iv(s2s), '），而 C1 − B-sh 为 ', srPp(p5[2].estimate_pp), '（', ...iv(p5[2]), `），B-sh 非劣（界值 ${DELTA} pp）；在冻结的 CBraMod 特征上，C1 − B-sh 在三个问题上都在 ±${DELTA} pp 内等效。共享主干与分开的模型相比，在睡眠分期上无法下结论。在冻结的 CBraMod 特征上，固定分类头在睡眠分期和前半夜还是后半夜上都与条件化分类头在 ±${DELTA} pp 内等效，在下一帧是否改变上则不然（`, srPp(p4s[1].estimate_pp), '，', ...iv(p4s[1]), '）。小 EEGNet 主干的五期分期准确率不高：固定分类头 ', f(arm(B, 'E1', 'B-lin', 'SL-A').mean), '，条件化分类头 ', f(arm(B, 'E1', 'C1', 'SL-A').mean), '，随机水平为 ', f(arm(B, 'E1', 'B-lin', 'SL-A').chance), '；冻结 CBraMod 特征上的固定分类头达到 ', f(arm(B, 'L1', 'B-lin-fz-sgd', 'SL-A').mean), '。'],
     slArmsCaption: (): Part[] => ['每种设置的平衡准确率：', n(B.people), ' 名被试的均值，附 95% 区间。睡眠分期的随机水平为 ', f(gate(B, 'E1', 'SL-A').chance), '，另两个问题为 ', f(gate(B, 'E1', 'SL-E').chance), '；门槛的下限分别为 ', f(gate(B, 'E1', 'SL-A').floor), ' 和 ', f(gate(B, 'E1', 'SL-E').floor), '。区间重叠时不排名。'],
     derivedH3: '由另一个问题推出的问题，需要单独的模型吗？',
-    derived: (): Part[] => ['清醒还是睡着（SL-B）可以由睡眠分期推出。单独的清醒/睡眠模型 A(SL-B) 剩余的错误，比从五期模型 A(SL-A) 读出答案更少：它的剩余错误是读出的 ', f(p3.r, 'num3'), ' 倍。区间不能排除减少 ', `${Math.round(P3_CUT * 100)}%`, ' 或以上（这是运行前定下的界值），所以“能推出的问题不需要自己的模型”不成立。'],
+    derived: (): Part[] => ['清醒还是睡着（SL-B）可以由睡眠分期推出。单独的清醒/睡眠模型 A(SL-B) 剩余的错误，比从五期模型 A(SL-A) 读出答案更少：它的剩余错误是读出的 ', f(p3.r, 'num3'), ' 倍。区间不能排除减少 ', `${Math.round(P3_CUT * 100)}%`, ' 或以上（这是运行前定下的界值），所以“能推出的问题不需要自己的模型”未得到支持。'],
     derivedRegion: '睡眠，可推出的问题，可横向滚动',
     derivedCaption: (): Part[] => ['log R：专用模型的剩余错误（1 − AUROC）与读出的剩余错误之比的对数，附 95% 区间；', n(p3.included_people), ' 名被试，3 个随机种子。'],
     colLogR: 'log R', colR: 'R', colAuroc: 'AUROC，专用 / 读出', colMargin20: `界值 ${Math.round(P3_CUT * 100)}%`,
     p3Name: '它自己的模型 − 从五期模型读出',
     e2H3: '用 LoRA 适配的 CBraMod（E2）：次要，1 个随机种子，最后运行',
-    e2Disclosure: (): Part[] => ['这一组在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果、以及两份独立审计都已知。它的设计（', n(E2.fits), ' 次 LoRA 拟合、随机种子、训练方案、把 30 秒输入切成 15 段 2 秒、各项比较）和运行条件在冻结协议时就已确定，没有任何一项是根据结果选的。为了让拟合能在中断后接着跑，运行时用了临时的私有检查点：为 ', n(E2.resume_checkpoints.fits_that_wrote_one), ' 次拟合写了 ', n(E2.resume_checkpoints.written), ' 个，每个都在对应拟合完成时删除，现在剩下 ', n(E2.resume_checkpoints.left_after_the_run), ' 个。评分用的是冻结的代码，一份独立审计重算了全部 ', n(R2.audits.e2_sleep.entries_recomputed), ' 个条目。'],
+    e2Disclosure: (): Part[] => ['这一组在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果、以及两份独立审计都已知。它的设计（', n(E2.fits), ' 次 LoRA 拟合、随机种子、训练方案、把 30 秒输入切成 15 段 2 秒、各项比较）和运行条件在冻结协议时就已确定，没有任何一项是根据结果选的。为了让拟合能在中断后接着跑，运行时用了临时的私有检查点：运行期间为 ', n(E2.resume_checkpoints.fits_that_wrote_one), ' 次拟合写了 ', n(E2.resume_checkpoints.written), ' 个，每个要么被同一拟合的下一个覆盖，要么在拟合完成时删除，没有一个留到拟合结束之后，现在剩下 ', n(E2.resume_checkpoints.left_after_the_run), ' 个；运行前对续训做的一次检查，也以同样的方式删掉了它写的检查点。评分用的是冻结的代码，一份独立审计重算了全部 ', n(R2.audits.e2_sleep.entries_recomputed), ' 个条目。'],
     e2Gates: (): Part[] => ['门槛所用的设置（E2 的固定分类头）：', ...E2.gates.flatMap((g, i): Part[] => [i ? '，' : '', `${g.question} `, f(g.mean), '（', ...pctIv(g), '）']), '；全部通过。'],
     e2Region: '睡眠，用 LoRA 适配的 CBraMod，可横向滚动',
     e2Caption: (): Part[] => ['平衡准确率的配对差值（pp），附 95% 区间；', n(B.people), ' 名被试，1 个随机种子：区间里没有训练过程的随机波动。'],
@@ -355,7 +363,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
               <td><span lang="en">{e.question}</span><small>{qName(e.question, locale)}</small></td>
               <td data-cell="estimate"><Fig f={srPp(e.estimate_pp)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={srLo(e.interval_95_pp[0])}/> {tc.to} <Fig f={srPp(e.interval_95_pp[1])}/></span></td>
               <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-              <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'pp', locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
+              <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
               <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}</td>
             </tr>))}
         </>)}</tbody>
@@ -409,7 +417,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
               <td><span lang="en">{e.question}</span><small>{qName(e.question, locale)}</small></td>
               <td data-cell="estimate"><Fig f={srPp(e.estimate_pp)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={srLo(e.interval_95_pp[0])}/> {tc.to} <Fig f={srPp(e.interval_95_pp[1])}/></span></td>
               <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-              <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'pp', locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
+              <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
               <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}</td>
             </tr>))}
         </>)}</tbody>
@@ -439,7 +447,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
           <td><Fig f={f(p3.r, 'num3')} cls="metric"/></td>
           <td><span class="metric"><Fig f={f(p3.auroc.dedicated, 'auc3')}/> / <Fig f={f(p3.auroc.read_out, 'auc3')}/></span></td>
           <td data-cell="difference" data-flag={p3.difference}>{differenceText(p3, locale)}</td>
-          <td data-cell="margin" data-flag={p3.margin}>{marginText(p3.margin, 'logr', locale)}</td>
+          <td data-cell="margin" data-flag={p3.margin}>{marginText(p3, locale)}</td>
           <td data-cell="gate" data-flag={p3.gate}>{gateText(p3.gate, locale)}</td>
         </tr></tbody>
       </table>
@@ -457,7 +465,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
             <td><span lang="en">{e.question}</span><small>{qName(e.question, locale)}</small></td>
             <td data-cell="estimate"><Fig f={srPp(e.estimate_pp)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={srLo(e.interval_95_pp[0])}/> {tc.to} <Fig f={srPp(e.interval_95_pp[1])}/></span></td>
             <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-            <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'pp', locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}</td>
+            <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}</td>
             <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}<small>{attachedText(e.gate_attached_by, locale)}</small></td>
           </tr>))}</tbody>
       </table>
@@ -495,7 +503,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
             <td><span class="metric"><Fig f={f(e.mean_balanced_accuracy[e.x])}/> / <Fig f={f(e.mean_balanced_accuracy[e.y])}/></span></td>
             <td data-cell="estimate"><Fig f={srPp(e.estimate_pp)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={srLo(e.interval_95_pp[0])}/> {tc.to} <Fig f={srPp(e.interval_95_pp[1])}/></span></td>
             <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-            <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'pp', locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
+            <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
             <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}<small>{attachedText(e.gate_attached_by, locale)}</small></td>
           </tr>))}</tbody>
       </table>
@@ -523,7 +531,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
                   <td>{code(e.x, locale)} − {code(e.y, locale)}</td>
                   <td data-cell="estimate"><Fig f={srPp(e.estimate_pp)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={srLo(e.interval_95_pp[0])}/> {tc.to} <Fig f={srPp(e.interval_95_pp[1])}/></span></td>
                   <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-                  <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'pp', locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
+                  <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}{e.wording === 'inconclusive at this sample size' && <small>{inconclusiveText[locale]}</small>}{e.gate === 'floor' && <small data-floor="true">{floorMarginText[locale]}</small>}</td>
                   <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}<small data-attached={e.gate_attached_by}>{attachedText(e.gate_attached_by, locale)}</small></td>
                 </tr>))}</tbody>
             </table>
@@ -541,7 +549,7 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
                   <td><Fig f={f(e.r, 'num3')} cls="metric"/></td>
                   <td><span class="metric"><Fig f={f(e.auroc.dedicated, 'auc3')}/> / <Fig f={f(e.auroc.read_out, 'auc3')}/></span></td>
                   <td data-cell="difference" data-flag={e.difference}>{differenceText(e, locale)}</td>
-                  <td data-cell="margin" data-flag={e.margin}>{marginText(e.margin, 'logr', locale)}</td>
+                  <td data-cell="margin" data-flag={e.margin}>{marginText(e, locale)}</td>
                   <td data-cell="gate" data-flag={e.gate}>{gateText(e.gate, locale)}<small data-attached={e.gate_attached_by}>{attachedText(e.gate_attached_by, locale)}</small></td>
                 </tr>))}</tbody>
             </table>
