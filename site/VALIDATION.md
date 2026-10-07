@@ -692,6 +692,44 @@ Since 2026-10-06 the home page's "How these results were produced" section print
 evidence policy (mvp.json `evidencePolicy`) as released on `/`, and on `/zh/` a Chinese translation
 followed by the released English verbatim (`.note-original`, `lang="en"`); the check pins both.
 
+Since 2026-10-07, the route-2 boundary (`shared-representation-update.json`, owner approved:
+the decisions of 2026-10-06 that fixed the run and of 2026-10-07 that approved the BOAS rights
+review as publishable with stated gaps and ran E2 sleep): one representation answering several
+questions, fixed heads on a shared encoder against a question-conditioned head and separate
+models, on OpenBMI motor imagery and BOAS sleep with EESM19 as a crude replication. The file is
+registered (release log, feed, API page, home Dataset markup, data use) before any page prints
+it; the page comes in a later commit. Read from `dist/`: the served JSON is byte-identical to
+the source; one result, no status-only source and no hold; OpenBMI, BOAS and EESM19 in that
+order, EESM19 crude and one seed; 21 primary entries; every difference flag, margin flag and
+wording follows its interval and the 2-pp margin fixed at the freeze (the upper bound for the
+conditioned-minus-fixed contrasts, the lower bound for P2, S10 and S12, log 0.8 for P3 and S4,
+"not applicable" for the descriptive S11); every contrast is the difference of its two arms'
+means; R is the ratio of remaining errors and its gate follows the read-out's AUROC interval;
+per-seed points exist exactly for three-seed entries; every level gate follows its arm's
+interval (chance + 5 pp to 95%); each route sentence counts exactly the questions that pass
+their gate, is supported only if every counted question meets the margin and the ledger makes
+the fixed heads cheaper, and a floor-gated entry states no sentence; every secondary entry
+carries its gate and who attached it, and S2 at Level 1 is labelled as the independent audit's;
+E2 sleep carries its disclosure (run after every other result, design fixed at the freeze), one
+seed, its own E2 gates and no resume checkpoint left. BOAS: the three gaps, the attribution and
+"pseudonymised in the public release" are in the file's conditions and its rights record alike;
+the approval is the owner's of 2026-10-07; every count of people behind a BOAS figure is at least
+20 (the smallest, 71); no key in the file names a per-person percentile or a per-fold value. The
+release log names the batch and its manifest in both languages, and its English entry states the
+gaps, "pseudonymised" and the E2 disclosure; data use prints the three rights records, each
+ending with what route 2 publishes (OpenBMI's and EESM19's reused, BOAS new), and a BOAS
+paragraph with the three gaps, the credit, the participants' wording and that neither the
+headband nor its automatic scoring is used. Mutation-tested on a copy of `dist/` (`SITE_DIST`;
+where an assertion reads the source export, the source too, restored afterwards, and the served
+file's hash and size re-stated on the release pages and the feed so only the edit differs): each
+of 44 injected violations was caught by the assertion written for it.
+`check_site_artifact.py` re-derives the JSON from the pinned inputs and holds it to its export
+audit (`shared-representation-export-audit.json`); the export re-resolves every traced block of
+the release candidate against the file it names (363, the stage-0 report's 5 bound through the
+consolidated aggregate), opens the three independent audits and checks their verdicts, and
+refuses a flag, gate, route sentence or figure the numbers or the pinned handoff do not give
+(`pipeline/publication/test_shared_representation_update.py` forges each link).
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

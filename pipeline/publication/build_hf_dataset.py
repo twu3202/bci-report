@@ -30,6 +30,7 @@ import export_extension_update as extension_export
 import export_large_source_update as large_source_export
 import export_reliable_decisions_update as reliable_export
 import export_foundation_models_update as foundation_export
+import export_shared_representation_update as shared_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -156,6 +157,58 @@ def foundation_payload():
     assert all(t[0] == header for t in tables.values()), 'the foundation-model CSVs have different schemas'
     rows = [r for name in sorted(tables) for r in tables[name][1:]]
     return raw, header, rows
+
+
+def shared_payload():
+    """The 2026-10-07 route-2 export (one representation, several questions), refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'shared-representation-update.json').read_bytes()
+    audit = json.loads(shared_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Shared-representation export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Shared-representation payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def shared_paragraph():
+    """The card's route-2 paragraph. Its figures, gaps and credit are read from the served export, and each claim
+    it makes is asserted against that export, so the card cannot say what the file does not."""
+    r = shared_payload()[1]['results']['one-representation']
+    mi, boas, eesm = (r['datasets'][k] for k in ('openbmi', 'boas', 'eesm19'))
+    entry = lambda d, i, q: next(e for e in d['entries'] if e['id'] == i and e['question'] == q)
+    pp = lambda e: f"{e['estimate_pp']:+.2f} pp [{e['interval_95_pp'][0]:+.2f}, {e['interval_95_pp'][1]:+.2f}]"
+    mi_a, sl_a = entry(mi, 'P1', 'MI-A'), entry(boas, 'P1', 'SL-A')
+    assert not mi['route_sentence']['supported'] and not boas['route_sentence']['supported'], 'route sentence'
+    assert mi_a['difference'] == sl_a['difference'] == 'difference: C1 higher', 'C1 higher'
+    assert mi['route_sentence']['fixed_heads_for_less'] and boas['route_sentence']['fixed_heads_for_less'], 'for less'
+    assert all(entry(mi, 'P5', q)['margin'] == 'equivalent within delta' for q in ('MI-A', 'MI-B')), 'P5'
+    assert boas['route_sentence']['excluded'] == {'SL-E': 'floor', 'SL-F': 'floor'}, 'floor'
+    c = r['boas_conditions']
+    return f"""`shared-representation-update.json` — reviewed 7 October 2026: route 2 of
+the decision-research roadmap, **one representation, several questions**.
+Independent models (A), one shared encoder with a fixed linear head per question
+(B-lin), a shared hidden layer (B-sh) and that layer conditioned on the
+question's identity by FiLM (C1), compared at matched data and compute: EEGNet
+trained from scratch and frozen CBraMod features, three seeds each, and CBraMod
+adapted by LoRA, one seed and secondary; motor imagery on OpenBMI
+({mi['people']} people) and sleep on BOAS ({boas['people']} people), with EESM19
+({eesm['people']} people, one seed) as a crude replication. "Fixed heads did as
+well for less" is **supported on neither domain**: C1 scored {pp(mi_a)} above
+B-lin on imagery against rest and {pp(sl_a)} on five-stage sleep scoring, while
+B-lin was the cheaper set-up. C1 against B-sh was within the 2-point margin on
+both motor-imagery questions: whatever lifts C1 above B-lin, B-sh (the same
+hidden layer without conditioning) has too, so the question's identity itself
+adds nothing measurable. On sleep, next-epoch change and time of night were at
+floor for the fixed heads: reported, not counted. Every contrast carries a
+difference flag and a margin flag fixed before any result; with 21 primary
+entries and no multiplicity correction, about one in twenty entries with no true
+difference may show one by chance. E2 sleep ran after every other result was
+known (owner decision; its design was fixed at the freeze). Questions are asked
+by identifier, not in language, and these are **method comparisons, never
+deployment error rates**. **BOAS is published with three stated gaps**:
+{' '.join(c['gaps'])} Participants are {c['participants']}, and only cohort
+aggregates of at least {c['minimum_cell_people']} people are published. BOAS:
+{c['attribution']}"""
 
 
 def flatten(rows, interval_key=None):
@@ -476,6 +529,8 @@ LUNA CC BY-ND 4.0, ERP-FM CC BY-NC-SA 4.0; ZUNA 1.1's model card: research use
 only, not for diagnosis or clinical use). Timings came from a shared GPU and
 are not published.
 
+{shared_paragraph()}
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -649,6 +704,8 @@ def build(output):
         writer = csv.writer(fh)
         writer.writerow(foundation_header)
         writer.writerows(foundation_rows)
+    raw_shared, _ = shared_payload()
+    (output/'shared-representation-update.json').write_bytes(raw_shared)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

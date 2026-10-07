@@ -1,0 +1,44 @@
+{
+  "status": "pass",
+  "release_id": "shared-representation-update-20261007",
+  "export_sha256": "0dec02f86d2ef9347c4e42e8c2c7d165ad169293247b759049b170f0f2ae41d2",
+  "manifest_sha256": "d777e980a42db43b14004677d3a93455414c62f45eaec51e73c7ab60bee103b4",
+  "release_candidate_sha256": "17d72ee4c22757ceb98a1023f7df2e60548617c3baa9e83b5c6eb417dc096a4f",
+  "included": [
+    "one-representation"
+  ],
+  "inputs": [
+    "openbmi",
+    "boas",
+    "eesm19"
+  ],
+  "status_only": [],
+  "holds": [],
+  "checks": [
+    "pinned handoff, release candidate, consolidated aggregate, both run-root aggregates, the audit work extract, the protocol, the BOAS rights review (JSON and text) and the three independent audits",
+    "every {source, value} block of the release candidate re-resolves to the pinned file it names (363 references; 5 nested ones name the stage-0 report and are bound through the consolidated aggregate's hash)",
+    "the candidate, the aggregate and the handoff record every pinned hash; the aggregates and the audits name the same run and protocol; the protocol is the one frozen at 07:17 UTC with eight engineering amendments",
+    "the three independent audits passed (10, 10 and 25 checks; no mismatch in 1,673 and 971 recomputed values; the 9 E2-sleep entries equal; no resume checkpoint left); the handoff records each hash",
+    "every difference flag, margin flag and wording follows from its interval and the frozen margin (2.0 pp; log 0.8 for P3 and S4); every contrast is the difference of its arms' means; per-seed points average to the estimate; R is the ratio of remaining errors",
+    "every gate follows from its arm's interval (chance + 5 pp to 95%; read-out AUROC above 0.55 for P3 and S4); E2-sleep gates from the E2 B-lin arm; secondary gates carry who attached them",
+    "each route sentence follows from the counted questions' P1 flags and the cost ledger's \"for less\" rule; the audit's per-question sentences follow from the flags",
+    "21 primary entries; every per-arm interval holds its mean and the per-seed means average to it; counts equal windows and shares; the canary demoted nothing",
+    "BOAS: the owner-approved review, its three gaps and attribution in the candidate, the manifest and the file; every BOAS cell pools at least 20 people; the privacy review is the reviewed draft with its \"Published here\" clause replaced",
+    "OpenBMI and EESM19 rights are the released records'",
+    "every not_published item is checked against the file",
+    "per-person percentiles refused by key, fragment and value; no demographics, dates or measured compute time",
+    "the printed figures are the ones the pinned handoff states",
+    "no private paths or hosts, file or participant identifiers"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "release candidate bytes: pinned here, and recorded in the handoff",
+      "every candidate figure: equal, at its JSON pointer, to the pinned file it names",
+      "aggregates, protocol, audit extract and BOAS rights review: by the hashes the candidate, the aggregate and the handoff record",
+      "independent audits: opened and checked here, by the hashes the candidate, the aggregate and the handoff record"
+    ],
+    "not_bound": [
+      "the stage-0 report, which the aggregate cites for the canary and preparation counts: bound through the aggregate's hash, not opened here (its file name marks it private)"
+    ]
+  }
+}

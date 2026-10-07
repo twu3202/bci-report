@@ -49,7 +49,12 @@ scores of published models, as method comparisons rather than deployment error
 rates (4 October); and sixteen further foundation-model encoder checkpoints, from
 eleven models, as frozen probes on the same eight protocols with only the encoder
 swapped, nine of them also adapted on EEGMAT, each cell marked with whether its
-dataset is in the model authors' published pretraining list (4 October).
+dataset is in the model authors' published pretraining list (4 October); and
+whether one shared encoder with a fixed head per question answers several
+questions as well as a question-conditioned head or separate models, for less —
+motor imagery and sleep, at matched data and compute, every contrast with a
+margin fixed before any result, and a new sleep source published with three
+stated gaps in its consent and ethics record (7 October).
 They are kept apart rather than summed, because they measure different things. Research results, not
 diagnosis. No raw EEG, no per-participant scores, no model weights.
 
@@ -76,6 +81,7 @@ curl -O https://bci.report/data/large-source-update.json  # the 3 October batch
 curl -O https://bci.report/data/reliable-decisions-update.json  # the 4 October batch
 curl -O https://bci.report/data/foundation-models-update.json   # the 4 October foundation models
 curl -O https://bci.report/data/foundation-models-beta-8ch.csv  # their rows, one CSV per protocol
+curl -O https://bci.report/data/shared-representation-update.json  # the 7 October batch
 ```
 
 What each file holds, loading examples and how to cite a release:

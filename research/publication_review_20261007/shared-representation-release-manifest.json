@@ -1,0 +1,188 @@
+{
+  "release_id": "shared-representation-update-20261007",
+  "reviewed_at": "2026-10-07",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for route 2, one representation and several questions, of the decision-research roadmap on /topics/when-not-to-act/ (handoff revision 2, dated 2026-10-07). Its own manifest: it amends no earlier review and changes no released file. Route 2 compares independent task models, a shared encoder with fixed linear heads, and the same encoder with a question-conditioned head, at matched data and compute, on motor imagery (OpenBMI, 51 people) and sleep (BOAS, 100 people), with EESM19 as a crude one-seed replication (20 people). The website input is the release candidate. Every {source, value} block in it is re-resolved against the file it names; the consolidated aggregate, the two audited run-root aggregates, the named parts of the audit work files, the frozen protocol, the BOAS rights review and the three independent audits are pinned by SHA-256 and checked, never copied, because they carry private storage paths. OpenBMI keeps its 2026-10-03 rights record and EESM19 its 2026-09-20 record; BOAS is new to this site and is published under the owner's approval of its rights review, with three stated gaps and an attribution.",
+  "approval": {
+    "date": "2026-10-07",
+    "decision": "aggregate_preview",
+    "basis": "Owner decisions in chat. 2026-10-06 (D1-D14, before the freeze): OpenBMI's published 51-person cohort with its holds inherited; BOAS run with every BOAS figure private until its publication review passes, and EESM19 full as the publishable sleep replication; delta fixed at 2.0 pp balanced accuracy and the P3 cut at 20% of the remaining error, before any pilot result; canary at 0.85 and headroom gate at chance + 5 pp to 95%; E2 is CBraMod with LoRA rank 4, one seed, secondary, so the E1 sharing contrast is labelled small-CNN trunk sharing; Ying 2025 deferred. 2026-10-07: (1) the BOAS publication review is approved as publishable with stated gaps: cohort aggregates only, with cells of at least 20 people, no demographics and no per-person distributions, and every page that prints a BOAS figure states the three gaps and the attribution; (2) E2 sleep runs with temporary private resume checkpoints, written only under the run root and deleted when each fit completes, frozen before scoring, scored with the frozen code and audited independently, and disclosed as run after the other results were known; (3) after E2 sleep, the BOAS array is restored to its original location and the temporary copy deleted; (4) route 2 is put on the site locally for review, and the owner sees screenshots before any deploy. The release candidate keeps the status it was sealed with, 'pending user approval'; this record is that approval, and the export requires both.",
+    "candidateStatusAtSeal": "pending user approval",
+    "ownerDecisions": [
+      {
+        "date": "2026-10-06",
+        "id": "D1-D14",
+        "decision": "Run design fixed before the freeze: OpenBMI's published 51-person cohort, holds inherited (D1, D2); BOAS run, every BOAS figure private until its publication review passes, EESM19 full the publishable replication (D3, D13); delta 2.0 pp and the P3 cut at 20%, fixed before any pilot result (D4); primary shared arms on the non-derived questions, all-question arms one seed (D5); every 3rd sleep epoch for training (D6); shared GPU through the slot lock (D7); Ying 2025 deferred (D8); E2 = CBraMod LoRA rank 4 (D9), one seed and secondary, with E1 sharing labelled small-CNN trunk sharing (D14); float32 (D10); 2-s windows (D11); canary 0.85 and headroom gate chance + 5 pp to 95% (D12)."
+      },
+      {
+        "date": "2026-10-07",
+        "id": "1",
+        "decision": "BOAS publication review approved as publishable with stated gaps: cohort aggregates only (cells of at least 20 people, no demographics, no per-person distributions); every page that prints a BOAS figure states the three gaps and the proposed attribution."
+      },
+      {
+        "date": "2026-10-07",
+        "id": "2",
+        "decision": "E2 sleep (CBraMod LoRA, secondary block S3 on BOAS) run with temporary private resume checkpoints, written only under the run root and deleted when each fit completes; the block frozen before scoring, scored with the frozen code and audited independently; disclosed as run after the other results were known, its design and run condition fixed at the freeze."
+      },
+      {
+        "date": "2026-10-07",
+        "id": "3",
+        "decision": "After E2 sleep: the BOAS array restored to its original location and the temporary copy deleted, its hash verified after the move."
+      },
+      {
+        "date": "2026-10-07",
+        "id": "4",
+        "decision": "Route 2 put on the site locally and reviewed; the owner sees screenshots before any deploy."
+      }
+    ]
+  },
+  "route": {
+    "id": "one-representation",
+    "runId": "decision-route2-v1/20261006",
+    "handoff": {
+      "path": "research/decision_route2_20261006/Route 2 Shared Representation Website Handoff.md",
+      "sha256": "06124b30709bee91c21a427e0ea92dd83dfb77ed3e427e1667271c845333e368"
+    },
+    "releaseCandidate": {
+      "path": "research/decision_route2_20261006/route2-website-release-candidate.json",
+      "sha256": "17d72ee4c22757ceb98a1023f7df2e60548617c3baa9e83b5c6eb417dc096a4f"
+    },
+    "aggregate": {
+      "path": "research/decision_route2_20261006/aggregate.json",
+      "sha256": "2a2c19618aba8a31642d8dac52726cb1da94be112c01f339761dad6f32f1aba8"
+    },
+    "aggregatePrimary": {
+      "path": "experiments/decision_route2_tools/writeup/inputs/aggregate-primary.full.json",
+      "sha256": "2c4d1052e4d078e3e091b37655c6ee1ef0cdb539358814c90ee529fca3f2585f"
+    },
+    "aggregateSecondary": {
+      "path": "experiments/decision_route2_tools/writeup/inputs/aggregate-secondary.full.json",
+      "sha256": "0feb84fc4690eee5af8e076d39341c1050d3b6f1814223518f088f1b0d9e175e"
+    },
+    "auditExtract": {
+      "path": "experiments/decision_route2_tools/writeup/inputs/audit-work.boas-extract.json",
+      "sha256": "31d6b5dd93f78bf7543964de1b54c4216b0005d5fdd33321fc71c0cf757e68d0"
+    },
+    "protocol": {
+      "path": "research/decision_route2_20261006/protocol.json",
+      "sha256": "03a5ff3129d539625b885dc86b95ab467542841456e3ece1eb016fc27cb10824"
+    },
+    "boasRightsReview": {
+      "path": "research/decision_route2_20261006/boas-rights-review.json",
+      "sha256": "39a79c7f81957701b1b42b93cb1536c55c8f469c499e1a36190468357c7083c9"
+    },
+    "boasRightsReviewText": {
+      "path": "research/decision_route2_20261006/boas-rights-review.md",
+      "sha256": "7e2ff400fc5e5cd43c0cc0502c9363afad5f02c8f07252372102c97732a962a0"
+    },
+    "independentAudits": {
+      "note": "Copies of the private run root's audit files. They carry private storage paths, so they are opened and checked here and never copied; the release candidate, the consolidated aggregate and the handoff record the same hashes.",
+      "primary": {
+        "path": "experiments/decision_route2_tools/writeup/inputs/audit-primary.json",
+        "sha256": "e916846a811a34dcd299eacdb93016ed3beb60132ae0af8b8f66130247f9802b"
+      },
+      "secondary": {
+        "path": "experiments/decision_route2_tools/writeup/inputs/audit-secondary.json",
+        "sha256": "3f36a67ab40d7ec7e0c4744d94bcf80f8a4c847823a7fb04f4d5f3a3f3522c33"
+      },
+      "e2Sleep": {
+        "path": "experiments/decision_route2_tools/writeup/inputs/audit-e2-sleep.json",
+        "sha256": "03a136f4995a3c51e50da44a3b93b9fc10503b54b193d63b9b8d13859d3b2dc9"
+      }
+    },
+    "verification": [
+      "Every {source, value} block of the release candidate re-resolves, by its JSON pointer, to the same value in the pinned file it names (dict values as key subsets), nested blocks included where the named file is pinned here; every reference of a generated headline resolves.",
+      "The release candidate, the consolidated aggregate and the handoff record every pinned input by the hash pinned here; the aggregates and the audits name the same run and protocol.",
+      "The three independent audits passed: the primary audit all 10 checks with 1,673 values recomputed and no mismatch, the secondary audit all 10 checks with 971 values and no mismatch, the E2-sleep audit all 25 checks with its 9 entries recomputed equal and no resume checkpoint left.",
+      "The BOAS rights review is approved by the owner (2026-10-07) as publishable with stated gaps; its three gaps and its attribution are the release candidate's and travel with every BOAS record in the export; every BOAS cell pools at least 20 people.",
+      "OpenBMI's source, licence, attribution and review basis are the released 2026-10-03 record's; EESM19's are the released sleep-scalp core track's (the same release)."
+    ]
+  },
+  "sources": [
+    {
+      "id": "openbmi",
+      "dataset": "openbmi",
+      "role": "primary",
+      "decision": "aggregate_preview",
+      "name": "OpenBMI motor imagery (Lee et al. 2019)",
+      "task": "Two motor-imagery questions asked of one representation (imagining a hand movement or resting; which hand, offline trials only) and two recording-context questions (offline or online run; day 1 or day 2), new people (person-disjoint folds)",
+      "source": "https://doi.org/10.5524/100542",
+      "version": "GigaDB dataset 100542, the published 51-person cohort of the 2026-10-03 release (two sessions each, its two holds inherited); the offline and online motor-imagery runs and the rest recordings before and after each run of both sessions: 62 channels at 1,000 Hz, cut into 2-s windows at 250 Hz",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Min-Ho Lee, O-Yeon Kwon, Yong-Jeong Kim, Hong-Kyung Kim, Young-Eun Lee, John Williamson, Siamac Fazli and Seong-Whan Lee · EEG dataset and OpenBMI toolbox for three BCI paradigms: an investigation into BCI illiteracy, GigaScience (2019), giz002, doi:10.1093/gigascience/giz002. Data: Supporting data, GigaScience Database, doi:10.5524/100542.",
+      "privacyReview": "The paper's Ethical Approval section states that the study was approved by the Korea University Institutional Review Board (1040548-KUIRB-16-159-A-2) and that written informed consent was obtained from all participants before the experiments. Published here: participant-equal means with whole-participant bootstrap intervals for each arm and calibration budget, paired contrasts, and how many of the 51 people declined. The release's per-person summaries (worst observed change, medians, 10th percentiles) are dropped, and no participant, session file or trial identifier is published. Reused unchanged from the 2026-10-03 review of the same recordings. Published here for route 2: participant-equal means with person-level bootstrap intervals for each arm and question, cohort-level AUROC and log loss, paired contrasts with their intervals and per-seed points, cohort-level window counts and question prevalences, and the canary's cohort-level balanced accuracy on the first fold's 40 training people. The per-person 10th, 50th and 90th percentiles route 2 computed are dropped, as the 2026-10-03 release dropped its own.",
+      "reviewedAt": "2026-10-07",
+      "reviewBasis": [
+        "https://doi.org/10.1093/gigascience/giz002",
+        "https://doi.org/10.5524/100542",
+        "https://api.datacite.org/dois/10.5524/100542"
+      ]
+    },
+    {
+      "id": "boas",
+      "dataset": "boas",
+      "role": "primary",
+      "decision": "aggregate_preview",
+      "name": "BOAS, the Bitbrain Open Access Sleep dataset",
+      "task": "Sleep questions asked of one representation (five-stage scoring; wake or sleep; REM or NREM; N3 or not; whether the next 30-s epoch's stage differs; first or second half of the night), new people (person-disjoint folds, all nights of a person in one fold)",
+      "source": "https://openneuro.org/datasets/ds005555/versions/1.1.3",
+      "version": "OpenNeuro ds005555 1.1.3, doi:10.18112/openneuro.ds005555.v1.1.3: 128 nights from 100 people; the six polysomnography EEG channels (F3, C3, O1, F4, C4, O2) and the human-consensus stage labels only",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Eduardo López-Larraz, María Sierra-Torralba, Sergio Clemente, Galit Fierro, David Oriol, Javier Minguez, Luis Montesano and Jens G. Klinzing · The Bitbrain Open Access Sleep (BOAS) dataset, OpenNeuro ds005555, version 1.1.3 (2026), doi:10.18112/openneuro.ds005555.v1.1.3. Polysomnography EEG and the human-consensus stage labels only; the headband recordings and the publisher's automatic labels are not used.",
+      "privacyReview": "Released on OpenNeuro under CC0 by its authors (ds005555, version 1.1.3). The dataset description states approval by the Comité de Ética de la Investigación de la Comunidad Autónoma de Aragón (C.I. PI24/046). The README states that participants, adult members of the general population, provided written informed consent. Neither says whether the consent covered public sharing. Both statements come from the publisher's dataset description and README; no peer-reviewed paper describes BOAS. The ethics reference was added in version 1.1.1 (May 2025) with no approval date. Published here: cohort-level participant-equal means with person-level bootstrap intervals, paired contrasts with their intervals and per-seed points, log R with its interval, cohort-level AUROC, log loss and Cohen's kappa, cohort-level stage counts and question prevalences, the share of test windows where two heads disagree, and the canary's cohort-level balanced accuracy on the first fold's 80 training people; every cell pools at least 20 people (the smallest, 71). No per-person, per-night or per-fold value, no per-person percentiles, no identifier, date or demographic. Only the polysomnography EEG and the human-consensus labels are used.",
+      "reviewedAt": "2026-10-07",
+      "reviewBasis": [
+        "https://openneuro.org/datasets/ds005555/versions/1.1.3",
+        "https://api.datacite.org/dois/10.18112/openneuro.ds005555.v1.1.3",
+        "https://github.com/OpenNeuroOrg/openneuro/blob/master/packages/openneuro-app/src/scripts/common/content/terms.tsx",
+        "https://www.bitbrain.com/science/eeg-datasets"
+      ],
+      "rightsReview": {
+        "reviewedAt": "2026-10-06",
+        "ownerApprovalDate": "2026-10-07",
+        "decision": "publishable with stated gaps",
+        "gaps": [
+          "The consent statement does not say whether participants agreed to public sharing or secondary use.",
+          "The ethics and consent statements come from the publisher's dataset description and README. No peer-reviewed paper describes BOAS.",
+          "The ethics reference was added to the release in version 1.1.1 (May 2025), and the release does not say when it was granted relative to the recordings."
+        ],
+        "participants": "pseudonymised in the public release",
+        "notAnEvaluationOf": "No result here evaluates Bitbrain's headband or its automatic sleep scoring; neither is used."
+      }
+    },
+    {
+      "id": "eesm19",
+      "dataset": "eesm19",
+      "role": "secondary, crude",
+      "decision": "aggregate_preview",
+      "name": "EESM19, full release (first scorer)",
+      "task": "Three sleep questions asked of one representation (five-stage scoring; whether the next 30-s epoch's stage differs; first or second half of the night), new people (person-disjoint folds); 20 people and one seed, so a crude secondary replication",
+      "source": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+      "version": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2 · {\"mirror\": \"fb045012b58a0b755f9fedf5931dff9b64a9797f\", \"upstream\": \"0857858f7a2ba1582930f23eca3ec56f90a96da9\"}",
+      "license": "CC0-1.0 declared by upstream and mirror",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+      "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed. Amended 2026-09-22: the 2025 data descriptor covering EESM19 and EESM23 (Mikkelsen et al., Scientific Data 12, 301, doi:10.1038/s41597-025-04579-8) states that publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment. Reused unchanged from the 2026-09-20 review of the same release, with its 2026-09-22 amendment. Published here for route 2, in a panel labelled crude: every stored epoch of the first scorer that passes the published core quality rules, at the natural stage mix (a different protocol from the balanced scalp subset), and for the three questions participant-equal means of each arm, paired contrasts with person-level bootstrap intervals, cohort-level epoch counts and the canary's cohort-level balanced accuracy on the first fold's 16 training people. One seed; no per-person, per-night or per-fold value.",
+      "reviewedAt": "2026-10-07",
+      "reviewBasis": [
+        "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "https://www.nature.com/articles/s41598-019-53115-3",
+        "https://doi.org/10.1038/s41597-025-04579-8"
+      ]
+    }
+  ],
+  "notPublished": [
+    "Per-window predictions and probabilities, features, adapted weights and the temporary resume checkpoints, fold assignments, and per-person, per-night, per-recording or per-fold values of any kind.",
+    "The per-person 10th, 50th and 90th percentiles of the OpenBMI contrasts that the release candidate carries, as the OpenBMI release of 3 October 2026 dropped its own; the BOAS ones never left the private run root.",
+    "The BOAS stage-0 pilot standard deviations of per-person paired differences: a per-person spread.",
+    "Any BOAS cell of fewer than 20 people, demographics, recording dates and clock times, nights per person, and any hypnogram, epoch or trace from a real recording.",
+    "Measured compute time: GPU-hours used, wall time per fit and per block, and training steps per outer fold. The cost ledger publishes its exact items and, labelled indicative, the two times measured interleaved across arms on a shared GPU; the E2-sleep disclosure keeps its run condition, a stage-0 projection of at most 6 GPU-hours.",
+    "The text of the audits' discrepancy lists, which names private files and machines. The four items that must travel with the results are carried: the multiplicity statement, S2 at Level 1 labelled as computed by the audit, a gate label on every secondary entry, and the E2-sleep disclosure.",
+    "The per-recording metadata behind the third BOAS gap: only the release facts are stated (the ethics reference added in version 1.1.1, no approval date).",
+    "The release candidate's generated headline sentences and the handoff's prose: the pages write their own copy from the values.",
+    "The handoff, the release candidate, the aggregates, the protocol, the BOAS rights review and the three independent audits: pinned by SHA-256 in this manifest and checked, never copied, because they carry private storage paths."
+  ],
+  "holds": []
+}

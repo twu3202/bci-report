@@ -20,8 +20,10 @@ abstract: >-
   display transfer, image-rate transfer, movement, calibration budget within a
   recording and across sessions, frozen probes of further EEG foundation models
   with each dataset checked against the authors' published pretraining lists,
-  foundation-model adaptation (head only, last block, LoRA), pretraining
-  controls and a clinical case/control comparison. No
+  foundation-model adaptation (head only, last block, LoRA), one shared
+  representation answering several questions (fixed heads against
+  question-conditioned heads and separate models, at matched data and compute),
+  pretraining controls and a clinical case/control comparison. No
   raw EEG, no per-participant scores, no overall ranking.
 authors:
   - name: "BCI Report"
@@ -38,8 +40,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "foundation-models-update-20261004"
-date-released: "2026-10-04"
+version: "shared-representation-update-20261007"
+date-released: "2026-10-07"
 keywords:
   - EEG
   - electroencephalography

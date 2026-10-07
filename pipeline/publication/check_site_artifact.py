@@ -20,6 +20,7 @@ import export_extension_update as extension
 import export_large_source_update as large_source
 import export_reliable_decisions_update as reliable_decisions
 import export_foundation_models_update as foundation_models
+import export_shared_representation_update as shared_representation
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -146,6 +147,17 @@ def check(root):
         assert (root/'data'/name).read_bytes() == body, f'Unreviewed foundation-model CSV: {name}'
         assert (foundation_models.CSV_DIR/name).read_bytes() == body, f'Foundation-model CSV source/download drift: {name}'
     expected |= {'foundation-models-update.json', *foundation_csvs}
+
+    # And the 2026-10-07 route-2 export (one representation, several questions; BOAS under its stated gaps).
+    shared_rederived = shared_representation.inputs_available()
+    shared_payload = (shared_representation.serialized_export() if shared_rederived
+                      else (root/'data/shared-representation-update.json').read_bytes())
+    shared_audit = json.loads(shared_representation.EXPORT_AUDIT.read_text())
+    assert shared_audit['status'] == 'pass', 'Shared-representation export review did not pass'
+    assert hashlib.sha256(shared_payload).hexdigest() == shared_audit['export_sha256'], 'Stale shared-representation export audit'
+    assert (root/'data/shared-representation-update.json').read_bytes() == shared_payload, 'Unreviewed shared-representation download'
+    assert all(p.read_bytes() == shared_payload for p in shared_representation.OUTPUTS), 'Shared-representation source/download drift'
+    expected.add('shared-representation-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -192,6 +204,8 @@ def check(root):
                    else 'reliable-decisions-update payload matched to its audit hash (private inputs not present)'),
                   ('foundation-models-update payload and CSVs reproduced from their own manifest and audit' if foundation_rederived
                    else 'foundation-models-update payload and CSVs matched to their audit hashes (private inputs not present)'),
+                  ('shared-representation-update payload reproduced from its own manifest and audit' if shared_rederived
+                   else 'shared-representation-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

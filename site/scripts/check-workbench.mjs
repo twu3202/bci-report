@@ -2893,6 +2893,103 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   // The API page and the feed list the nine files through the generic checks above (every served file, exactly once).
 }
 console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight CSVs served as reviewed and agreeing; the released matrix untouched; each CSV in its core results CSV\'s columns and protocol values, one row per checkpoint, matrix before ablation; not run empty with its reason; chance flags follow the intervals; exposure a sourced statement with LaBraM and CBraMod sourced, ST-EEGFormer×BETA and SingLEM×TMNRED exposed, ZUNA 1.1 unknown; research-use sentence; no timings; release log.');
+// --- 2026-10-07 route 2, one representation and several questions: the publication boundary -----
+// A shared encoder with fixed heads against a question-conditioned head and separate models, at matched
+// data and compute (owner approvals of 2026-10-06 and 2026-10-07). One JSON, registered (release log,
+// feed, API page, home Dataset markup, data use) before any page prints it; the page comes in a later
+// commit. Read from dist/ so a hand-edited build is caught. Pinned here: the served file is the
+// reviewed one; one result, no status-only source and no hold; OpenBMI, BOAS and EESM19 in that order;
+// 21 primary entries; every flag and wording follows its interval and the 2-pp margin (log 0.8 for P3
+// and S4); every contrast is the difference of its arms; every gate follows its arm's interval; each
+// route sentence follows its counted questions, and a floor-gated question is never counted; every
+// secondary entry carries its gate and who attached it, S2 at Level 1 labelled as the audit's; E2 sleep
+// carries its disclosure, one seed, its own gates and no checkpoint left; BOAS carries its three gaps,
+// its attribution and "pseudonymised", in the file, its rights record, the release log and data use,
+// every BOAS cell pools at least 20 people, and no per-person percentile is a key anywhere in the file.
+{
+  const served=f=>readFileSync(new URL('data/'+f,DIST));
+  assert.deepEqual(served('shared-representation-update.json'),readFileSync(new URL('../src/data/shared-representation-update.json',import.meta.url)),
+    'source and served route-2 exports must be byte-identical');
+  const sr=JSON.parse(served('shared-representation-update.json')),R2=sr.results['one-representation'];
+  assert.deepEqual(Object.keys(sr.results),['one-representation'],'route 2: one result');
+  assert.deepEqual([sr.status_only,sr.holds],[[],[]],'route 2: no status-only source and no hold');
+  const D=R2.datasets;
+  assert.deepEqual(Object.keys(D),['openbmi','boas','eesm19'],'route 2: OpenBMI and BOAS primary, EESM19 a crude replication');
+  assert.ok(D.eesm19.role==='secondary, crude'&&D.eesm19.seeds===1&&D.eesm19.secondary.every(e=>e.single_seed&&e.label==='crude (20 people), one seed'),'route 2: EESM19 is crude and one seed');
+  assert.equal([...D.openbmi.entries,...D.boas.entries].filter(e=>e.role==='primary').length,21,'route 2: 21 pre-declared primary entries');
+  const DELTA=R2.design.margin.delta_pp,L08=Math.log(0.8);
+  assert.equal(DELTA,2,'route 2: the margin fixed at the freeze');
+  const upper=new Set(['P1','P4','P5','S1','S2','S3-P1','S3-P5','S5','S6-P1','S7','S8','S13-P1','S14','X1']);
+  const lower=new Set(['P2','S3-P2','S6-P2','S10','S12','S12-P2','S13-P2']);
+  const all=Object.values(D).flatMap(d=>[...(d.entries??[]),...(d.secondary??[]),...(d.e2_sleep?.entries??[])]);
+  for(const e of all){
+    const w=`route 2: ${e.id} ${e.level} ${e.question}`;
+    if('log_r' in e){
+      const [lo,hi]=e.interval_95;
+      assert.ok(lo<=e.log_r&&e.log_r<=hi,w+': the interval holds its point');
+      const diff=hi<0?'difference: dedicated model leaves less error':lo>0?'difference: read-out leaves less error':'no difference shown';
+      const margin=L08<lo&&hi<-L08?'equivalent within delta':lo>L08?'non-inferior':'margin not met';
+      assert.deepEqual([e.difference,e.margin],[diff,margin],w+': the flags follow the interval and log 0.8');
+      assert.ok(Math.abs(Math.log(e.r)-e.log_r)<1e-9&&Math.abs((1-e.auroc.dedicated)/(1-e.auroc.read_out)-e.r)<1e-9,w+': R is the ratio of remaining errors');
+      assert.equal(e.gate,e.read_out_auroc_interval_95[0]>0.55?'pass':'floor',w+': the gate follows the read-out\'s AUROC interval');
+    }else if('estimate_pp' in e){
+      const [lo,hi]=e.interval_95_pp;
+      assert.ok(lo<=e.estimate_pp&&e.estimate_pp<=hi,w+': the interval holds its point');
+      assert.equal(e.difference.startsWith('difference: '),lo>0||hi<0,w+': the difference flag follows the interval');
+      assert.ok(e.id==='S11'||upper.has(e.id)||lower.has(e.id),w+': a margin rule');
+      const margin=e.id==='S11'?'not applicable (descriptive contrast)':-DELTA<lo&&hi<DELTA?'equivalent within delta'
+        :(upper.has(e.id)?hi<DELTA:lo>-DELTA)?'non-inferior':'margin not met';
+      assert.equal(e.margin,margin,w+': the margin flag follows the interval and the 2-pp margin');
+      assert.equal(e.wording,e.difference==='no difference shown'&&e.margin==='margin not met'?'inconclusive at this sample size':e.difference+'; '+e.margin,w+': the wording follows the flags');
+      const [x,y]=Object.values(e.mean_balanced_accuracy);
+      assert.ok(Math.abs(100*(x-y)-e.estimate_pp)<1e-9,w+': the contrast is the difference of its arms');
+      assert.equal(e.per_seed.length,e.single_seed?0:3,w+': per-seed points only with three seeds');
+    }
+    if(e.role!=='primary') assert.ok(e.gate&&e.gate_attached_by,w+': a gate label and who attached it');
+  }
+  for(const d of [D.openbmi,D.boas]){
+    for(const g of d.gates) assert.equal(g.gate,g.interval_95[0]<=g.chance+0.05?'floor':g.interval_95[1]>=0.95?'ceiling: equivalence uninformative':'pass',`route 2: ${d.dataset} ${g.level} ${g.question}: the gate follows the arm's interval`);
+    const p1=d.entries.filter(e=>e.id==='P1'),rs=d.route_sentence,counted=p1.filter(e=>e.gate==='pass').map(e=>e.question);
+    assert.deepEqual(rs.counted,counted,`route 2: ${d.dataset}: the route sentence counts the questions that pass their gate`);
+    assert.deepEqual(Object.keys(rs.excluded),p1.filter(e=>e.gate!=='pass').map(e=>e.question),`route 2: ${d.dataset}: the questions it leaves out`);
+    const met=counted.every(q=>['equivalent within delta','non-inferior'].includes(p1.find(e=>e.question===q).margin));
+    assert.ok(rs.supported===(counted.length>0&&met&&rs.fixed_heads_for_less)&&(rs.sentence==='The fixed-heads sentence is not supported')===!rs.supported,`route 2: ${d.dataset}: the route sentence follows its counted questions and the ledger`);
+    for(const e of d.entries.filter(e=>e.role==='primary'&&e.gate!=='pass')) assert.deepEqual(e.sentences_derived_by_audit,[],`route 2: ${d.dataset} ${e.id} ${e.question}: a floor-gated entry is never counted`);
+  }
+  const s2=all.filter(e=>e.id==='S2'&&e.level==='L1');
+  assert.ok(s2.length===5&&s2.every(e=>/independent secondary audit/.test(e.computed_by)),'route 2: S2 at Level 1 labelled as computed by the independent audit');
+  const E2=D.boas.e2_sleep;
+  assert.ok(E2.run_after_other_results===true&&/after every other primary and secondary result/.test(E2.disclosure)&&/fixed at the freeze/.test(E2.disclosure)
+    &&E2.resume_checkpoints.left_after_the_run===0&&E2.seeds===1&&E2.entries.length===9
+    &&E2.entries.every(e=>e.single_seed&&e.gate===E2.gates.find(g=>g.question===e.question).gate),'route 2: E2 sleep with its disclosure, one seed, its own gates and no checkpoint left');
+  // BOAS: the owner's conditions.
+  const C=R2.boas_conditions,B=D.boas.rights;
+  assert.ok(C.gaps.length===3&&JSON.stringify(B.gaps)===JSON.stringify(C.gaps)&&B.attribution===C.attribution&&C.participants==='pseudonymised in the public release'&&B.participants===C.participants,
+    'route 2: BOAS carries its three gaps, its attribution and "pseudonymised" in the file and its rights record');
+  assert.ok(C.owner_approval.approved_on==='2026-10-07'&&C.owner_approval.decision==='publishable with stated gaps','route 2: the BOAS approval');
+  const peopleIn=v=>Array.isArray(v)?v.flatMap(peopleIn):v&&typeof v==='object'?Object.entries(v).flatMap(([k,x])=>['included_people','people','training_people'].includes(k)&&Number.isInteger(x)?[x]:peopleIn(x)):[];
+  const boasPeople=peopleIn(D.boas);
+  assert.ok(boasPeople.length>100&&Math.min(...boasPeople)>=C.minimum_cell_people&&C.minimum_cell_people===20&&Math.min(...boasPeople)===C.smallest_cell_people,'route 2: every BOAS cell pools at least 20 people');
+  assert.doesNotMatch(served('shared-representation-update.json').toString(),/"(?:p[159]0(?:_pp)?|[^"]*percentile[^"]*|[^"]*per_person[^"]*|[^"]*per_fold[^"]*)":/,'route 2: no per-person percentile or per-fold value in the file');
+  for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${sr.release_id}"`)&&pageOf(path).includes(sr.provenance.manifest_sha256),path+': the route-2 release and its manifest');
+  {const rel=pageOf('releases/'),at=rel.indexOf(`id="${sr.release_id}"`),entry=visible(rel.slice(at,rel.indexOf('</article>',at)));
+   for(const re of [/publishable with stated gaps/,/public sharing or secondary use/,/no peer-reviewed paper describes BOAS/i,/version 1\.1\.1 \(May 2025\)/,/pseudonymised in the public release/,/after every other result was known/])
+     assert.match(entry,re,'releases: the route-2 entry states '+re);}
+  // Data use: the three records, each ending with what route 2 publishes; BOAS's gaps and credit in full.
+  const du=pageOf('data-use/'),at7=du.indexOf('id="sources-2026-10-07"'),s7=du.slice(at7,du.indexOf('</section>',at7));
+  assert.deepEqual([...s7.matchAll(/<tr data-route2-source="([^"]+)">/g)].map(m=>m[1]),['openbmi','boas','eesm19'],'data-use: one route-2 rights row per dataset');
+  for(const id of ['openbmi','boas','eesm19']){
+    const r=D[id].rights,row=s7.slice(s7.indexOf(`<tr data-route2-source="${id}">`),s7.indexOf('</tr>',s7.indexOf(`<tr data-route2-source="${id}">`)));
+    assert.ok(row.includes(escHtml(r.privacyReview))&&row.includes(escHtml(r.attribution))&&row.includes(`href="${escHtml(r.source)}"`)&&row.includes(`href="${escHtml(r.licenseUrl)}"`),'data-use: '+id+' prints its rights record');
+    assert.ok(id==='boas'?/Published here: /.test(r.privacyReview):/Reused unchanged from the 2026-\d\d-\d\d review[^.]*\. Published here for route 2[,:] /.test(r.privacyReview),'data-use: '+id+' says what route 2 publishes');
+  }
+  // The BOAS paragraph itself (the table rows carry the attribution too): the three gaps, the credit and the wording.
+  {const gp=s7.indexOf('<p id="boas-gaps">'),t=visible(s7.slice(gp,s7.indexOf('</p>',gp)));
+   assert.ok(gp>0,'data-use: the BOAS paragraph');
+   for(const x of [...C.gaps,C.attribution,'Participants are pseudonymised in the public release.',C.not_an_evaluation_of]) assert.ok(t.includes(x),'data-use: the BOAS entry states "'+x.slice(0,50)+'"');}
+  assert.ok(s7.includes(`href="/releases/#${sr.release_id}"`),'data-use: the route-2 entry links its release');
+}
+console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI, BOAS and EESM19 (crude, one seed); 21 primary entries; every flag, wording and gate follows its interval and the frozen margin; contrasts are their arms\' differences; route sentences from the counted questions, floor never counted; secondary gates with who attached them, S2 at Level 1 the audit\'s; E2 sleep disclosed with no checkpoint left; BOAS gaps, credit and "pseudonymised" in the file, the release log and data use; no BOAS cell under 20 people; no per-person percentile.');
 // --- 2026-10-04 v9 foundation models: the pages ----------------------------------------------------
 // The v9 rows on the site (owner approval 2026-10-04): a section of their own on every protocol page
 // (#foundation-v9) and a group under the released rows in the home page's per-protocol table, the

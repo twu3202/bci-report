@@ -21,6 +21,13 @@ const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net
   'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna'];
 export const siteUpdates = [
   {
+    date: '2026-10-07',
+    // Route 2 of the decision-research roadmap, one representation and several questions: its boundary.
+    // The release log, the API page and the home page's file count and Dataset markup list the batch's
+    // file, and data use gains the batch's rights records (BOAS new, with its three stated gaps).
+    paths: ['/', '/releases/', '/api/', '/data-use/'],
+  },
+  {
     date: '2026-10-04',
     // Route 1 of the decision-research roadmap, reliable decisions: its results section on
     // when-not-to-act (before the roadmap, whose routes now carry their own status), the topic card
@@ -110,7 +117,7 @@ export interface Release {
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
-    | 'reliableDecisions' | 'foundationModels';
+    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation';
   files: string[];
   pages: string[];
   summary: Text;
@@ -125,6 +132,23 @@ export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 
   'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
 
 export const releases: Release[] = [
+  {
+    id: 'shared-representation-update-20261007', date: '2026-10-07', payload: 'sharedRepresentation',
+    files: ['shared-representation-update.json'],
+    pages: ['/topics/when-not-to-act/'],
+    summary: {
+      en: 'Route 2 of the decision-research roadmap, one representation and several questions: can one shared encoder with a fixed linear head per question answer several questions as well as a question-conditioned head, or as separate models, for less? Independent models, fixed heads, a shared hidden layer, and that layer conditioned on the question’s identity, compared at matched data and compute: EEGNet trained from scratch and frozen CBraMod features as the primary levels, three seeds each, and CBraMod adapted by LoRA, one seed, as a secondary level. Motor imagery on OpenBMI and sleep on BOAS are primary; EESM19 is a crude one-seed replication. Every contrast carries two flags — whether its interval excludes zero, and whether it lies within the 2-point margin fixed before any result — and nothing is ranked where intervals overlap.',
+      zh: '决策研究路线图的第二条路线——一份表征，多个问题：一个共享编码器、每个问题配一个固定的线性头，能不能像以问题为条件的头、或者每个问题单独建模那样答好几个问题，同时花得更少？在数据量与计算量匹配的条件下，比较四种设置：每个问题一个独立模型、固定头、共享隐藏层，以及按问题身份调制该隐藏层的条件头。主分析层级是从头训练的 EEGNet 与冻结的 CBraMod 特征，各 3 个随机种子；次要层级是用 LoRA 适配的 CBraMod，1 个随机种子。运动想象（OpenBMI）与睡眠（BOAS）是主分析，EESM19 是只跑一个随机种子的粗略重复。每个对比都带两个标记——区间是否排除零，以及区间是否落在任何结果出来之前就定下的 2 pp 的界值之内；区间重叠时不排名。',
+    },
+    notes: [
+      { en: 'The fixed-heads sentence is supported on neither domain: the question-conditioned head was higher on imagery against rest, and on five-stage sleep scoring, while the fixed heads were the cheaper set-up in both. The question’s identity itself added nothing measurable: whatever lifted the conditioned head above the fixed heads, the same hidden layer without conditioning has too. Sharing one small EEGNet trunk cost accuracy on which hand. Questions at floor are reported and never counted, and with 21 primary entries and no multiplicity correction about one in twenty entries with no true difference may show one by chance.',
+        zh: '两个领域都不支持“固定头以更少的代价做得一样好”这句话：以问题为条件的头在“想象还是静息”上更高，在睡眠五期分期上也更高，而两个领域里固定头都是更省的设置。问题身份本身没有带来可测的增益：条件头比固定头高出的那部分，同一个隐藏层不加条件时也有。共享一个小的 EEGNet 主干，在“哪只手”上损失了准确率。处于下限的问题照样报告，但从不计入；21 个主分析条目没有做多重比较校正，在没有真实差异的条目里，约每 20 个就可能有 1 个偶然显示出差异。' },
+      { en: 'BOAS is new to this site. Its rights review was approved by the owner on 7 October 2026 as publishable with stated gaps. The consent statement does not say whether participants agreed to public sharing or secondary use. The ethics and consent statements come from the publisher’s dataset description and README. No peer-reviewed paper describes BOAS. The ethics reference was added to the release in version 1.1.1 (May 2025), and the release does not say when it was granted relative to the recordings. Only cohort aggregates of at least 20 people are published. Participants are pseudonymised in the public release, and neither Bitbrain’s headband nor its automatic scoring is used or evaluated.',
+        zh: 'BOAS 是本站新增的数据源。它的权利审核于 2026 年 10 月 7 日经所有者批准，结论是“说明缺口后可以发布”：知情同意声明没有说明被试是否同意公开共享或二次使用；伦理与知情同意的陈述只来自发布者的数据集说明与 README，没有任何同行评审论文描述 BOAS；伦理批件编号是在 1.1.1 版（2025 年 5 月）才加入发布的，发布中没有说明它是在记录之前还是之后批准的。只发布至少 20 人的队列汇总。被试在公开发布中是假名化的；Bitbrain 的头带及其自动分期既没有使用，也没有被评估。' },
+      { en: 'E2 sleep — CBraMod adapted by LoRA on BOAS — ran on 7 October 2026 by the owner’s decision, after every other result was known; its design and run condition were fixed at the freeze and nothing about it was chosen from results. It ran with temporary private resume checkpoints, each deleted when its fit completed. Not published: per-window and per-person values, including the per-person percentiles the release candidate carries for OpenBMI; measured compute time; and the aggregates and the three independent audits themselves, pinned by hash in the review manifest because they carry private storage paths.',
+        zh: 'E2 睡眠——在 BOAS 上用 LoRA 适配的 CBraMod——按所有者的决定，于 2026 年 10 月 7 日、在其他所有结果都已知之后运行；它的设计与运行条件在冻结时就已确定，没有任何一项是根据结果选的。运行时用了临时的私有续训检查点，每个都在对应的拟合完成时删除。不发布：逐窗口与逐人的数值，包括发布候选文件为 OpenBMI 携带的逐人百分位数；实测的计算耗时；以及聚合文件与三份独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。' },
+    ],
+  },
   {
     id: 'foundation-models-update-20261004', date: '2026-10-04', payload: 'foundationModels',
     files: ['foundation-models-update.json', ...foundationModelFiles],

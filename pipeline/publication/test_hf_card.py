@@ -133,5 +133,41 @@ class CardRouteOneFigures(unittest.TestCase):
                             for m in self.result['protocols']['beta-8ch']['methods']))
 
 
+class CardRouteTwo(unittest.TestCase):
+    """The route-2 paragraph: its figures are the served export's, and BOAS travels with its three gaps and credit."""
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        text = ' '.join(card(snapshot, len(rows), topic_payload()).split())
+        start = text.index('`shared-representation-update.json`')
+        cls.r2 = text[start:text.index('catalogued methods have been scored', start)]
+        cls.result = json.loads((PUBLISHED/'shared-representation-update.json').read_text())['results']['one-representation']
+
+    def test_the_figures_are_the_exports(self):
+        d = self.result['datasets']
+        p1 = {(k, e['question']): e for k in ('openbmi', 'boas') for e in d[k]['entries'] if e['id'] == 'P1'}
+        for key in (('openbmi', 'MI-A'), ('boas', 'SL-A')):
+            e = p1[key]
+            self.assertIn(f"{e['estimate_pp']:+.2f} pp [{e['interval_95_pp'][0]:+.2f}, {e['interval_95_pp'][1]:+.2f}]", self.r2)
+        for k in ('openbmi', 'boas', 'eesm19'):
+            self.assertIn(f"({d[k]['people']} people", self.r2)
+
+    def test_boas_carries_its_gaps_and_credit(self):
+        c = self.result['boas_conditions']
+        self.assertEqual(len(c['gaps']), 3)
+        for gap in c['gaps']:
+            self.assertIn(' '.join(gap.split()), self.r2)
+        self.assertIn(' '.join(c['attribution'].split()), self.r2)
+        self.assertIn('pseudonymised in the public release', self.r2)
+        self.assertNotIn('anonymous', self.r2)
+
+    def test_no_ranking_and_no_language_claim(self):
+        self.assertNotRegex(self.r2, r'\b(?:best|winner|outperform\w*|beats)\b')
+        self.assertIn('not in language', self.r2)
+        self.assertIn('supported on neither domain', self.r2)
+
+
 if __name__ == '__main__':
     unittest.main()
