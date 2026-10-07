@@ -583,10 +583,20 @@ for(const [label,html] of [['en',pageOf('topics/clinical-groups/')],['zh',pageOf
   assert.ok(zh.includes('<p class="protocol-note">公开数据集上的研究结果：不是诊断，不是诊断准确率，也不是医疗器械或医疗建议。'),'zh: the medical disclaimer must be in Chinese');
   assert.ok(zh.includes('<span lang="en">'+cl.medical_disclaimer+'</span>'),'zh: the released English disclaimer stays beside it, marked English');
 }
+// Home section order (owner, 2026-10-07): the core matrix right under the title, then the evidence behind each
+// score, then the questions, holds, directory and method notes.
+for(const path of ['','zh/']){
+  const home=pageOf(path);
+  const at=['overview','benchmarks','topics','holds','directory','methods'].map(id=>home.indexOf('<section id="'+id+'"'));
+  assert.ok(at.every(i=>i>0),(path||'/')+': every home section renders');
+  assert.ok(at.every((i,k)=>k===0||i>at[k-1]),(path||'/')+': home sections in the order matrix, evidence, questions, holds, directory, methods');
+  assert.ok(home.indexOf('class="masthead"')<at[0],(path||'/')+': the core matrix comes right after the masthead');
+}
 // Holds: three of them, stated without numbers, on both home pages.
 for(const [label,path] of [['en',''],['zh','zh/']]){
   const home=pageOf(path);
-  const holds=home.slice(home.indexOf('id="holds"'),home.indexOf('id="overview"'));
+  // Holds end where the next section starts (the directory band since the 2026-10-07 reorder).
+  const hs=home.indexOf('id="holds"'), holds=home.slice(hs,home.indexOf('<section',hs+1));
   assert.ok(holds.length>400,label+': the holds section must render');
   for(const word of label==='en'?['No score','Held','Described, not scored']:['没有分数','暂缓','只有描述，没有评分'])
     assert.ok(holds.includes(word),label+': hold state "'+word+'" must be shown');

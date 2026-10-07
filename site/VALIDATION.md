@@ -788,6 +788,10 @@ evaluated and the credit. Mutation-tested the same way: each of 30 injected viol
 written for it (where an older check would have caught it first, the mutation was made consistent so it reached the
 new one: the FAQPage markup and llms.txt with the answer, both languages for a number, llms-full.txt with a copy).
 
+Since 2026-10-07 the home page puts the core benchmark matrix right under the masthead, then "The evidence
+behind each score", then the questions, holds, directory and method notes; check-workbench pins that order in
+both languages.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.
