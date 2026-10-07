@@ -121,6 +121,8 @@ export const translatedPaths = [
   '/topics/when-not-to-act/',
   // Since 2026-10-03: Dreem sleep staging.
   '/topics/sleep-staging/',
+  // Since 2026-10-07: route 2, one model for several questions.
+  '/topics/shared-encoder/',
   '/releases/',
   '/api/',
 ] as const;
@@ -395,7 +397,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, since ${c.addedOn}, ${c.added} foundation encoders as frozen probes. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining and clinical groups.`,
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -538,7 +540,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有自 ${c.addedOn}起以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练与临床分组的证据。`,
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题，以及临床分组的证据。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结，第九轮）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -749,7 +751,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation and pretraining; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
+    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation, pretraining and one model for several questions; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
     dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -758,7 +760,7 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配与预训练；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配、预训练与一个模型回答多个问题；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
     dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
@@ -775,7 +777,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: 'Transfer',
       lede: 'Does a decoder still work when the sensor, the display, the electrode layout or the body’s movement changes?' },
     adapting: { title: 'Adapting models',
-      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, and whether pretraining helps at all.' },
+      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, and whether one model can answer several questions.' },
     reliability: { title: 'Reliability & clinical',
       lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG can and cannot say about a clinical group.' },
   },
@@ -783,7 +785,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: '迁移',
       lede: '换了传感器、显示设备、电极布局，或者人在运动时，解码器还管用吗？' },
     adapting: { title: '调整模型',
-      lede: '解码器需要多少校准、预训练模型该更新哪一部分，以及预训练到底有没有帮助。' },
+      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助，以及一个模型能不能回答多个问题。' },
     reliability: { title: '可靠性与临床',
       lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
   },
@@ -850,6 +852,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
       summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings. Plus further foundation models in the same frozen recipe: three checkpoints above every published row on sleep staging, none above training-free CCA on BETA.',
       detail: 'Two tasks · two encoders · three random initializations · 16 further checkpoints' },
+    // Since 2026-10-07 (owner approval): route 2. No BOAS figure on the card: the home page and the hub do not
+    // carry BOAS's three stated gaps, so the card names the dataset and prints OpenBMI's cohort only.
+    'shared-encoder': { kicker: 'Shared encoder · route 2', title: 'One model, several questions',
+      question: 'Can one EEG model answer several questions about the same data as well as separate models, and at what cost?',
+      summary: 'One shared encoder with a fixed output per question, against a head told which question it is answering and against a separate model per question, at matched data and compute — with what each costs.',
+      detail: 'Motor imagery, OpenBMI, 51 people · sleep, BOAS · EESM19, crude' },
   },
   zh: {
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
@@ -892,6 +900,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
       summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。另有更多基础模型按同样的冻结方案评测：睡眠分期上有 3 个检查点高于所有已发布的行，BETA 上没有一个高于免训练的 CCA。',
       detail: '两个任务 · 两种编码器 · 三次随机初始化 · 另外 16 个检查点' },
+    'shared-encoder': { kicker: '共享编码器 · 第二条路线', title: '一个模型，多个问题',
+      question: '一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？',
+      summary: '一个共享编码器、每个问题配一个固定输出，对比“知道自己在回答哪个问题”的分类头，以及每个问题单独一个模型，数据量与计算量保持一致——并给出每种设置的代价。',
+      detail: '运动想象，OpenBMI，51 名被试 · 睡眠，BOAS · EESM19，粗略重复' },
   },
 };
 
@@ -917,6 +929,7 @@ export const topicQuestionPhrases: Record<string, string> = {
   'sleep-staging': '为什么睡眠分期器|大多数时候判对，|却仍会漏掉|整类睡眠阶段？',
   'clinical-groups': '静息态 EEG 能把|帕金森病患者|和对照组|区分开吗？',
   'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
+  'shared-encoder': '一个 EEG 模型|回答同一份|数据上的|多个问题，|能和分开的模型|一样好吗，|代价又是多少？',
 };
 
 /** The h1 of a topic page as phrases, to be joined with <wbr>. */

@@ -111,6 +111,10 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://openneuro.org/datasets/ds005555/versions/1.1.3",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://physionet.org/content/eegmat/1.0.0/",
       "relation": "isDerivedFrom"
     },

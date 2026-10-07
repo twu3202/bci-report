@@ -25,7 +25,14 @@ export const siteUpdates = [
     // Route 2 of the decision-research roadmap, one representation and several questions: its boundary.
     // The release log, the API page and the home page's file count and Dataset markup list the batch's
     // file, and data use gains the batch's rights records (BOAS new, with its three stated gaps).
-    paths: ['/', '/releases/', '/api/', '/data-use/'],
+    // Then its pages (same day): the new question, shared-encoder, with its card on the home page and the
+    // Questions hub; when-not-to-act's roadmap, where route 2 is now run; the BOAS dataset page and register
+    // entry (and the dataset index's new row and its pointer to BOAS's gaps); route-2 groups on the OpenBMI and
+    // EESM19 pages and, through them, the EEGNet and CBraMod pages. The topic switcher on every other topic page
+    // lists the new question too; that is navigation and is not counted here.
+    paths: ['/', '/releases/', '/api/', '/data-use/',
+            '/topics/', '/topics/shared-encoder/', '/topics/when-not-to-act/',
+            '/datasets/', '/datasets/boas/', '/datasets/openbmi/', '/datasets/eesm19/', '/methods/eegnet/', '/methods/cbramod/'],
   },
   {
     date: '2026-10-04',
@@ -135,7 +142,8 @@ export const releases: Release[] = [
   {
     id: 'shared-representation-update-20261007', date: '2026-10-07', payload: 'sharedRepresentation',
     files: ['shared-representation-update.json'],
-    pages: ['/topics/when-not-to-act/'],
+    // Its own question since the pages of the same day; the roadmap on when-not-to-act marks route 2 run.
+    pages: ['/topics/shared-encoder/', '/topics/when-not-to-act/'],
     summary: {
       en: 'Route 2 of the decision-research roadmap, one representation and several questions: can one shared encoder with a fixed linear head per question answer several questions as well as a question-conditioned head, or as separate models, for less? Independent models, fixed heads, a shared hidden layer, and that layer conditioned on the question’s identity, compared at matched data and compute: EEGNet trained from scratch and frozen CBraMod features as the primary levels, three seeds each, and CBraMod adapted by LoRA, one seed, as a secondary level. Motor imagery on OpenBMI and sleep on BOAS are primary; EESM19 is a crude one-seed replication. Every contrast carries two flags — whether its interval excludes zero, and whether it lies within the 2-point margin fixed before any result — and nothing is ranked where intervals overlap.',
       zh: '决策研究路线图的第二条路线——一份表征，多个问题：一个共享编码器、每个问题配一个固定的线性头，能不能像以问题为条件的头、或者每个问题单独建模那样答好几个问题，同时花得更少？在数据量与计算量匹配的条件下，比较四种设置：每个问题一个独立模型、固定头、共享隐藏层，以及按问题身份调制该隐藏层的条件头。主分析层级是从头训练的 EEGNet 与冻结的 CBraMod 特征，各 3 个随机种子；次要层级是用 LoRA 适配的 CBraMod，1 个随机种子。运动想象（OpenBMI）与睡眠（BOAS）是主分析，EESM19 是只跑一个随机种子的粗略重复。每个对比都带两个标记——区间是否排除零，以及区间是否落在任何结果出来之前就定下的 2 pp 的界值之内；区间重叠时不排名。',

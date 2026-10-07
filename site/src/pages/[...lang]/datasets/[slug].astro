@@ -9,6 +9,7 @@ import { site } from '../../../data/site';
 import { requestedCitations } from '../../../data/releases';
 import { protocolLinkLabel } from '../../../data/protocols';
 import { creator } from '../../../data/structured';
+import { boasConditions, boasStatements, srText } from '../../../data/shared-encoder';
 
 export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
   params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
@@ -33,6 +34,10 @@ const requested = requestedCitations[d.slug];
 // The licence note as the home page's register prints it (directory-zh.json).
 const licence = directoryText(d.license, locale);
 const abs = (p: string) => new URL(p, site.origin).href;
+// BOAS (2026-10-07): its register entry prints the ethics committee and reference and the written consent as its
+// rights record gives them; its three stated gaps travel with its figures, in the result group above.
+const zh = locale === 'zh';
+const rights = d.rightsNote === 'boas' ? { ...boasStatements(), conditions: boasConditions(locale) } : null;
 const structured = {
   '@context': 'https://schema.org', '@type': 'Dataset',
   name: `${site.name}: results on ${d.name}`,
@@ -76,7 +81,13 @@ const structured = {
       {requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{requested.text}</span> <a href={requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
       <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>}{licence.original && <> <span class="note-original-inline" lang="en">({licence.original})</span></>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
       <p>{c.notRedistributed}</p>
-    </article></div>
+    </article>
+    {rights && <article data-rights-note="boas">
+      <h3>{zh ? '发布者陈述的伦理与知情同意' : 'Ethics and consent, as the publisher states them'}</h3>
+      {[rights.ethics, rights.consent].map(en => { const t = srText(en, locale); return <p>{t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</p>; })}
+      <p>{zh ? `所有者于 ${rights.conditions.approvedOn} 批准以“说明缺口后发布”的方式发布 BOAS 的队列汇总结果；三处缺口与上面的每一组结果一起列出。${rights.conditions.participants}`
+             : `The owner approved publishing BOAS cohort aggregates with stated gaps on ${rights.conditions.approvedOn}; the three gaps are printed with the results above. ${rights.conditions.participants}`}</p>
+    </article>}</div>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
   </section>
 </EntityLayout>

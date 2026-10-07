@@ -18,7 +18,8 @@
 .finding{display:grid;grid-template-columns:minmax(240px,340px) 1fr;border:1px solid var(--line);background:var(--panel);margin:22px 0}
 .finding-number{padding:24px;background:var(--wash);border-right:1px solid var(--line)}
 .finding-number strong{display:block;font-family:var(--mono);font-size:2.4rem;line-height:1;color:var(--accent-deep);letter-spacing:-.06em}
-.finding-number span{display:block;font-size:.75rem;color:var(--muted);margin-top:10px}
+/* The label under the number; a figure printed inside the number (data-fig span) keeps the number's size. */
+.finding-number>span{display:block;font-size:.75rem;color:var(--muted);margin-top:10px}
 .finding-copy{padding:22px 26px}
 .finding-copy h3{font-family:var(--serif);font-size:1.2rem;margin-bottom:6px}
 .finding-copy p{font-size:.875rem}
@@ -283,3 +284,12 @@ pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px 
 .fm-topic .fm-published{margin-top:14px}
 .fm-topic .fm-limits{margin-top:10px}
 .fm-topic .rd-panel .topic-table{margin-top:4px}
+
+/* Route 2, one model for several questions (2026-10-07): BOAS's three stated gaps beside its figures, the
+   set-ups and limits as lists, the secondary results in a collapsed panel (rd-panel). */
+.sr-boas-note p{margin:0}
+.sr-boas-note p+p,.sr-boas-note ol+p{margin-top:8px}
+.sr-gaps{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.sr-gaps .note-original,.sr-boas-note .note-original{display:block;font-size:.75rem}
+.sr-setups strong span{font-family:var(--mono)}
+tr[data-sr-contrast] td small,tr[data-sr-secondary] td small,tr[data-sr-logr] td small,tr[data-sr-ledger] td small{display:block;font-size:.7rem;color:var(--muted);margin-top:3px;line-height:1.4}

@@ -262,13 +262,16 @@ const topicPages=[
   // Since 2026-10-03 (owner decision): Dreem sleep staging, two cohorts kept apart.
   ['sleep-staging','Why can a sleep stager be right most of the time and still miss whole stages?'],
   ['does-pretraining-help','Does pretraining help EEG foundation models like LaBraM and CBraMod?'],
+  // Since 2026-10-07 (owner approval): route 2 of the decision-research plan, one model for several questions.
+  ['shared-encoder','Can one EEG model answer several questions about the same data as well as separate models, and at what cost?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
   :slug==='clinical-groups'?'clinical-update.json'
   :slug==='when-not-to-act'?'experiments.json'
   :slug==='screen-to-vr'?'context-update.json'
-  :slug==='sleep-staging'?'large-source-update.json':'deployment-topics.json';
+  :slug==='sleep-staging'?'large-source-update.json'
+  :slug==='shared-encoder'?'shared-representation-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -368,7 +371,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -596,9 +599,12 @@ for(const [label,path] of [['en',''],['zh','zh/']]){
 }
 // The withheld six-person descriptors appear nowhere, in any locale.
 const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
+// The route-2 page (2026-10-07) carries contrasts in pp whose full-precision raw values, inside data-fig attributes
+// that the data-fig loop holds to the route-2 export, begin "0.230" and "0.231"; those attributes are set aside here,
+// and everything printed, and every other attribute, is still read.
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
-    assert.ok(!pageOf(p).includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+    assert.ok(!pageOf(p).replace(/ data-fig="shared-representation-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
 
 // --- 2026-09-27 site update: when not to act, and the release log ----------
 // The abstention topic: every figure from the reviewed idle protocol, and a
@@ -620,24 +626,31 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   const road=html.slice(html.indexOf('id="decision-research"'),html.indexOf('class="topic-switcher"'));
   assert.ok(road.length>2000,label+': the roadmap section must render');
   // Since 2026-10-04 (owner approval) route 1 has been run; its results are their own section,
-  // #reliable-decisions, before this one. The roadmap stays a plan: each route carries its own
-  // status, routes 2 and 3 are not run, and nothing in the section is a figure.
+  // #reliable-decisions, before this one. Since 2026-10-07 (owner approval) route 2 has been run too; its
+  // results are their own question, /topics/shared-encoder/. The roadmap stays a plan: each route carries
+  // its own status, route 3 is not run, and nothing in the section is a figure.
   assert.match(road,/data-status="plan"/,label+': the roadmap is a plan');
-  assert.match(road,/data-run-status="route-1-run"/,label+': the roadmap says only route 1 has been run');
-  assert.match(road,label==='en'?/Status: the first route has been run, and its results are in the section above\. The other two routes have not been run\./
-                                :/状态：第一条路线已经运行，结果见上一节；另外两条路线尚未运行。/,label+': the roadmap states each route\'s status in words');
-  assert.doesNotMatch(road,/No experiment in this section has been run|本节中的实验都尚未运行/,label+': the old all-not-run status line');
+  assert.match(road,/data-run-status="routes-1-2-run"/,label+': the roadmap says routes 1 and 2 have been run');
+  assert.match(road,label==='en'?/Status: the first two routes have been run\. The first route’s results are in the section above, the second’s on their own page\. The third route has not been run\./
+                                :/状态：前两条路线已经运行。第一条的结果见上一节，第二条的结果在单独的页面上；第三条路线尚未运行。/,label+': the roadmap states each route\'s status in words');
+  assert.doesNotMatch(road,/No experiment in this section has been run|本节中的实验都尚未运行|The other two routes have not been run|另外两条路线尚未运行/,label+': an old status line');
   const routes=[...road.matchAll(/<li data-route="([^"]+)" data-route-status="([^"]+)">([\s\S]*?)<\/li>/g)];
-  assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','not_run'],['questions-in-language','not_run']],label+': one status per route, route 1 run, routes 2 and 3 not run');
-  const [r1,...later]=routes.map(m=>m[3]);
+  assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','run'],['questions-in-language','not_run']],label+': one status per route, routes 1 and 2 run, route 3 not run');
+  const [r1,r2,...later]=routes.map(m=>m[3]);
   assert.match(r1,label==='en'?/<p class="eyebrow">First · Run · results above<\/p>/:/<p class="eyebrow">首先 · 已运行 · 结果见上一节<\/p>/,label+': route 1 says it was run');
   assert.ok(r1.includes(`href="${label==='zh'?'/zh':''}/topics/when-not-to-act/#reliable-decisions"`),label+': route 1 links its results');
   // The plan promised acceptance per class and reliability; the run published neither (review of 2026-10-05).
   assert.match(r1,label==='en'?/<p class="route-run-note">[^<]*Not published in this update: acceptance per class and reliability-diagram bins\.<\/p>/
                               :/<p class="route-run-note">[^<]*本次更新没有发布：各类别的接受率和可靠性图的分箱。<\/p>/,label+': route 1 says which planned measures it did not publish');
+  // Route 2 (2026-10-07): run, its results on their own page, linked; its run note names where it ran and that the
+  // E2-sleep arm ran after the other results were known.
+  assert.match(r2,label==='en'?/<p class="eyebrow">Then · Run · results on their own page<\/p>/:/<p class="eyebrow">随后 · 已运行 · 结果在单独的页面上<\/p>/,label+': route 2 says it was run');
+  assert.ok(r2.includes(`<p class="route-results"><a href="${label==='zh'?'/zh':''}/topics/shared-encoder/">`),label+': route 2 links its page');
+  assert.match(r2,label==='en'?/<p class="route-run-note">Run on motor imagery \(OpenBMI\) and sleep \(BOAS, with EESM19 as a crude replication\)\. One secondary arm, CBraMod adapted by LoRA on sleep, ran after the other results were known; its design was fixed beforehand\.<\/p>/
+                              :/<p class="route-run-note">在运动想象（OpenBMI）和睡眠（BOAS，EESM19 作粗略重复）上运行。有一项次要设置——在睡眠上用 LoRA 适配 CBraMod——是在其他结果已知之后才运行的；它的设计事先已定。<\/p>/,label+': route 2 says where it ran and that E2 sleep ran last');
   for(const r of later){
-    assert.match(r,label==='en'?/<p class="eyebrow">(?:Then|Later) · Not run<\/p>/:/<p class="eyebrow">(?:随后|之后) · 尚未运行<\/p>/,label+': routes 2 and 3 are not run');
-    assert.doesNotMatch(r,/href=|route-results|reliable-decisions/,label+': a route that has not run links no result');
+    assert.match(r,label==='en'?/<p class="eyebrow">Later · Not run<\/p>/:/<p class="eyebrow">之后 · 尚未运行<\/p>/,label+': route 3 is not run');
+    assert.doesNotMatch(r,/href=|route-results|reliable-decisions|shared-encoder/,label+': a route that has not run links no result');
   }
   assert.ok(html.indexOf('id="reliable-decisions"')>0&&html.indexOf('id="reliable-decisions"')<html.indexOf('id="decision-research"'),label+': the results section comes before the roadmap, outside its slice');
   // A plan carries no figure: no percentage, no decimal, no speed-up, no ms.
@@ -651,9 +664,12 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   // Wherever it is, the page says what it is not: no Jev integration, no Jev
   // model that reads EEG, and that route 1's results need no such model.
   assert.match(road,/<h2[^>]*>Jev-style/,label+': the roadmap heading names the research track');
+  // Since 2026-10-07 route 2 trained models of its own, so the scope no longer says none was trained; it says what
+  // they are (questions given by an identifier, never in language).
   assert.match(html,label==='en'
-    ?/not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\./
-    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。/,label+': the Jev scope sentence must stand beside the name');
+    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained small shared encoders whose questions are given by an identifier, never in language; its results have their own page\./
+    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了小型共享编码器，问题只以标识给出，从不用语言；它的结果有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
+  assert.doesNotMatch(html,/not a model BCI Report has trained|更不是本站训练出的模型/i,label+': the old scope said no model was trained');
   assert.doesNotMatch(html,/There are no results here yet|目前还没有任何结果/,label+': the old no-results scope sentence');
   assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
 }
@@ -790,7 +806,12 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   // A second decimal where one would read as zero (review of 2026-10-05): −0.03 pp, a bound of +0.02, a coverage of 0.05%.
   pp2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2)+' pp',sgn2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2),pct2:r=>(r*100).toFixed(2)+'%',
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s',
-  m2:r=>(r/1e6).toFixed(2)+'M'};
+  m2:r=>(r/1e6).toFixed(2)+'M',
+  // Route 2 (2026-10-07): values already in percentage points, two decimals; a step time in seconds as milliseconds.
+  ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms'};
+// The token checks of the earlier batches read every format but these three: their pages print none, and a
+// route-2 format applied to their values would only widen what those checks accept.
+const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2'].includes(k)).map(([,g])=>g);
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
 // sitemap and llms.txt. Their own checks follow in the protocol block.
@@ -1293,7 +1314,7 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
   // counts — is a value of its source, formatted as the site formats it, or a number written in
   // the source's own text (a DOI, "0.5–30 Hz"). A typed figure, or one from the unpublished
   // 40-person OpenBMI snapshot, has nothing to match.
-  const tokensOf=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of Object.values(fmt))for(const n of numbers(g(v)))out.add(n);}
+  const tokensOf=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of fmtEarlier)for(const n of numbers(g(v)))out.add(n);}
     else if(typeof v==='string'){for(const n of numbers(v))out.add(n);}else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(obj);return out;};
   const figureLike=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
   const drTokens=tokensOf(dr),obTokens=tokensOf(ob);
@@ -1575,9 +1596,10 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       const cite=html.slice(html.indexOf('<section class="cite-page"'));
       assert.ok(cite.match(/data-releases="([^"]+)"/)[1].split(' ').includes(ls.release_id),label+'/'+slug+': the cite block names '+ls.release_id);
     }
-    for(const ds of ['dreem-dod','openbmi']){
+    // Since 2026-10-07 the OpenBMI page also prints route 2's group, so it names that release too, newest first.
+    for(const [ds,rels] of [['dreem-dod',[ls.release_id]],['openbmi',['shared-representation-update-20261007',ls.release_id]]]){
       const html=pageOf(pfx+'datasets/'+ds+'/'),cite=html.slice(html.indexOf('<section class="cite-page"'));
-      assert.equal(cite.match(/data-releases="([^"]+)"/)[1],ls.release_id,label+'/datasets/'+ds+': the cite block names the batch\'s release alone');
+      assert.equal(cite.match(/data-releases="([^"]+)"/)[1],rels.join(' '),label+'/datasets/'+ds+': the cite block names exactly the releases its figures come from');
       assert.ok(html.includes('class="entity-profile"'),label+'/datasets/'+ds+': the sourced profile renders');
     }
   }
@@ -2307,6 +2329,9 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
       allow:[fmCard.comparisons.vs_published_rows.filter(x=>x.protocol==='sleep-scalp'&&['labram','cbramod','best_non_foundation'].every(k=>x[k].relation==='above')).length]},
     'clinical-groups':{files:['clinical-update.json'],pins:[cl.results.ds004584.cohort.people]},
     'sleep-staging':{files:['large-source-update.json'],pins:Object.values(lsx.results['dreem-sleep-baselines'].cohorts).map(c=>c.nights)},
+    // Since 2026-10-07: OpenBMI's people only. No BOAS figure on a card: the home page and the hub do not carry
+    // BOAS's three stated gaps (the route-2 pages block below holds that).
+    'shared-encoder':{files:['shared-representation-update.json'],pins:[JSON.parse(readFileSync(new URL('data/shared-representation-update.json',DIST),'utf8')).results['one-representation'].datasets.openbmi.people]},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -2483,7 +2508,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   assert.ok(E.common_coverage.unstable&&!E.common_coverage.errors,'matched coverage on EEGMAT: unstable, no verdict');
   // Formatting and tokens, as the site prints them.
   const sgn3=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(3);
-  const tokensOfRd=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of Object.values(fmt))for(const n of numbers(g(v)))out.add(n);}
+  const tokensOfRd=obj=>{const out=new Set();const walk=v=>{if(typeof v==='number'){for(const g of fmtEarlier)for(const n of numbers(g(v)))out.add(n);}
     else if(typeof v==='string'){for(const n of numbers(v))out.add(n);}else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(obj);return out;};
   const rdTokens=tokensOfRd(rdx);
   const figureLikeRd=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
@@ -2990,6 +3015,225 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   assert.ok(s7.includes(`href="/releases/#${sr.release_id}"`),'data-use: the route-2 entry links its release');
 }
 console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI, BOAS and EESM19 (crude, one seed); 21 primary entries; every flag, wording and gate follows its interval and the frozen margin; contrasts are their arms\' differences; route sentences from the counted questions, floor never counted; secondary gates with who attached them, S2 at Level 1 the audit\'s; E2 sleep disclosed with no checkpoint left; BOAS gaps, credit and "pseudonymised" in the file, the release log and data use; no BOAS cell under 20 people; no per-person percentile.');
+// --- 2026-10-07 route 2 on the site: one model, several questions --------------------------------------------
+// The route's own question, /topics/shared-encoder/ (owner approval 2026-10-07; the roadmap on when-not-to-act marks
+// it run, checked with the roadmap above), the BOAS dataset page and register entry, and route-2 groups on the
+// OpenBMI, BOAS and EESM19 pages and, through them, the EEGNet and CBraMod pages. Every figure there is a data-fig
+// re-read from the export by the loops above; pinned here is what travels with those figures. Every contrast row
+// prints the export's two flags in words: the arm its interval favours (or no difference shown), the margin with
+// its 2 pp (20% for log R), "inconclusive" exactly where the export says so; a floor-gated row says the margin is not
+// read and the entry is not counted; a secondary row says who attached its gate, S2 on frozen features that the
+// audit computed it. Every BOAS figure, on any page, lies in an element marked data-boas that holds the three gaps,
+// the credit and "pseudonymised in the public release"; the short answer, the description and the cards print none.
+// The route verdicts follow the export's route sentences; E2 sleep carries its disclosure; EESM19 is crude, one seed,
+// with the stage sentence; SL-E and SL-F sit beside the stage-only read-out; the secondary panel is collapsed; every
+// required limitation is printed in the page's language, and the Chinese carries exactly the English's numbers.
+{
+  const SRF='shared-representation-update.json';
+  const sr=JSON.parse(readFileSync(new URL('data/'+SRF,DIST),'utf8')),R=sr.results['one-representation'],DS=R.datasets,E2=DS.boas.e2_sleep;
+  const DELTA=R.design.margin.delta_pp,CUT=Math.round(R.design.margin.p3_min_error_removed*100);
+  // The Chinese the pages print for the export's English, read from the module that prints it (shared-encoder.ts).
+  const SRZ=(()=>{const c={shared:sr};vm.runInNewContext(stripTypeScriptTypes(readFileSync(new URL('../src/data/shared-encoder.ts',import.meta.url),'utf8'))
+    .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'')+'\nthis.srZh=srZh;',c);return c.srZh;})();
+  const noMonth=t=>t.replace(/(\d{4}) 年 \d{1,2} 月/g,'$1');
+  for(const [en,zh] of Object.entries(SRZ))
+    assert.deepEqual(numbers(noMonth(zh)).map(n=>n.replace(/,$/,'')).sort(),numbers(en).map(n=>n.replace(/,$/,'')).sort(),'shared-encoder.ts: the Chinese of "'+en.slice(0,60)+'" carries exactly its numbers');
+  const required=[...R.boundaries.protocol,...R.boundaries.added];
+  for(const en of [...required,...R.boas_conditions.gaps,R.boas_conditions.not_an_evaluation_of,...R.not_run.flatMap(x=>[x.arm,x.status]),...R.not_reported.flatMap(x=>[x.item,x.status])])
+    assert.ok(typeof SRZ[en]==='string','shared-encoder.ts: a Chinese text for "'+en.slice(0,60)+'"');
+  // Words, written here independently of the page module.
+  const codeIn=(c,zh)=>{const s=c.match(/^A_([A-Z]{2}-[A-Z])\(step-matched\)$/);if(s)return zh?`A(${s[1]})，步数匹配`:`A(${s[1]}), step-matched`;
+    const a=c.match(/^A_([A-Z]{2}-[A-Z])$/);return a?`A(${a[1]})`:c;};
+  const diffWords=(e,zh)=>{
+    if('log_r' in e){const [lo,hi]=e.interval_95;return !(lo>0||hi<0)?(zh?'未显示差异':'No difference shown'):hi<0?(zh?'专用模型剩余的错误更少':'Dedicated model leaves less error'):(zh?'读出剩余的错误更少':'Read-out leaves less error');}
+    const [lo,hi]=e.interval_95_pp;
+    if(!(lo>0||hi<0)) return zh?'未显示差异':'No difference shown';
+    if(/^readout\[/.test(e.y)) return e.estimate_pp>0?(zh?'专用分类头更高':'Dedicated head higher'):(zh?'由分期概率读出的更高':'Read-out from the stage probabilities higher');
+    const who=codeIn(e.estimate_pp>0?e.x:e.y,zh);return zh?who+' 更高':who+' higher';};
+  const marginWords=(flag,logr,zh)=>({
+    'equivalent within delta':logr?(zh?`在 ${CUT}% 界值内等效`:`Equivalent within the ${CUT}% margin`):(zh?`在 ±${DELTA} pp 内等效`:`Equivalent within ±${DELTA} pp`),
+    'non-inferior':logr?(zh?`非劣（界值 ${CUT}%）`:`Non-inferior at ${CUT}%`):(zh?`非劣（界值 ${DELTA} pp）`:`Non-inferior at ${DELTA} pp`),
+    'margin not met':logr?(zh?`未达到 ${CUT}% 界值`:`${CUT}% margin not met`):(zh?`未达到 ${DELTA} pp 界值`:`${DELTA} pp margin not met`),
+    'not applicable (descriptive contrast)':zh?'描述性对比，不设界值':'No margin: a descriptive contrast'})[flag];
+  const gateWords=(g,zh)=>({pass:zh?'通过门槛':'Gate passed',floor:zh?'处于下限：报告，不计入':'At floor: reported, not counted','not applicable':zh?'不适用：描述性':'No gate: descriptive'})[g];
+  const byWords=(b,zh)=>({'independent secondary audit':zh?'由独立的次要审计附上':'attached by the independent secondary audit',run:zh?'由运行本身附上':'attached by the run',
+    'level gate':zh?'所在层级的门槛':'the level’s gate','E2-sleep scorer, recomputed by its independent audit':zh?'由 E2 睡眠评分程序附上，并经其审计重算':'attached by the E2-sleep scorer, recomputed by its audit',
+    'none: descriptive':zh?'描述性':'descriptive'})[b];
+  const inconclusive={en:'inconclusive at this sample size',zh:'在这个样本量下无法下结论'},notRead={en:'not read: at floor',zh:'处于下限，不读界值'};
+  const hasFig=(h,f,x)=>h.includes(`data-fig="${SRF}|${f}|${x}"`);
+  const rowOf=(h,attr)=>{const a=h.indexOf(attr);return a<0?null:h.slice(h.lastIndexOf('<tr',a),h.indexOf('</tr>',a));};
+  const cellOf=(row,name)=>{const a=row.indexOf(`data-cell="${name}"`);assert.ok(a>0,'a route-2 row without its '+name+' cell');return row.slice(row.lastIndexOf('<td',a),row.indexOf('</td>',a));};
+  const words=c=>decodeHtml(c.replace(/<small[\s\S]*?<\/small>/g,'').replace(/<[^>]+>/g,'')).trim();
+  const smalls=c=>[...c.matchAll(/<small([^>]*)>([\s\S]*?)<\/small>/g)].map(m=>({attrs:m[1],text:decodeHtml(m[2].replace(/<[^>]+>/g,'')).trim()}));
+  const flagOf=c=>decodeHtml((c.match(/data-flag="([^"]*)"/)||[])[1]??'');
+  const ppEntries=list=>list.filter(e=>'estimate_pp' in e),logEntries=list=>list.filter(e=>'log_r' in e);
+  // A row: its figures, both flags in words, inconclusive and floor exactly where they apply, its gate and who attached it.
+  const checkRow=(row,e,zh,where,attached)=>{
+    assert.ok(row,where+': a row for '+e.id+' '+e.level+' '+e.question);
+    const est=cellOf(row,'estimate'),logr='log_r' in e;
+    if(logr) assert.ok(hasFig(est,'num3',e.log_r)&&hasFig(est,'num3',e.interval_95[0])&&hasFig(est,'num3',e.interval_95[1]),where+': '+e.id+' log R and its interval');
+    else assert.ok(hasFig(est,'ppr2',e.estimate_pp)&&hasFig(est,'sgr2',e.interval_95_pp[0])&&hasFig(est,'ppr2',e.interval_95_pp[1]),where+': '+e.id+' '+e.question+' difference and its interval');
+    const d=cellOf(row,'difference'),m=cellOf(row,'margin'),g=cellOf(row,'gate');
+    assert.ok(flagOf(d)===e.difference&&words(d)===diffWords(e,zh),where+': '+e.id+' '+e.question+' says "'+diffWords(e,zh)+'", not "'+words(d)+'"');
+    assert.ok(flagOf(m)===e.margin&&words(m)===marginWords(e.margin,logr,zh),where+': '+e.id+' '+e.question+' prints its margin flag with the margin');
+    const ms=smalls(m).map(x=>x.text);
+    assert.equal(ms.includes(inconclusive[zh?'zh':'en']),e.wording==='inconclusive at this sample size',where+': '+e.id+' '+e.question+': "inconclusive" exactly where the export says so');
+    assert.equal(ms.includes(notRead[zh?'zh':'en']),e.gate==='floor',where+': '+e.id+' '+e.question+': the margin is not read exactly at floor');
+    assert.ok(flagOf(g)===e.gate&&words(g)===gateWords(e.gate,zh),where+': '+e.id+' '+e.question+' gate in words');
+    if(attached) assert.ok(smalls(g).some(x=>x.text===byWords(e.gate_attached_by,zh)),where+': '+e.id+' '+e.question+' says who attached its gate');
+  };
+  // BOAS figures: leaves of the BOAS block that no other block of the export carries.
+  const leavesIn=v=>{const out=new Set();const walk=x=>{if(typeof x==='number')out.add(x);else if(x&&typeof x==='object')Object.values(x).forEach(walk);};walk(v);return out;};
+  const other=leavesIn([DS.openbmi,DS.eesm19,R.design,R.audits,R.boas_conditions.minimum_cell_people]);
+  const boasOnly=new Set([...leavesIn([DS.boas,R.boas_conditions.smallest_cell_people])].filter(v=>!other.has(v)));
+  const tokenSet=vals=>{const out=new Set();for(const v of vals)for(const k of ['pct1','ppr2','sgr2','num3','auc3','count','ms2'])for(const n of numbers(fmt[k](v)))out.add(n);return out;};
+  const otherTok=tokenSet(other),boasTok=new Set([...tokenSet(boasOnly)].filter(t=>!otherTok.has(t)));
+  const noBoasFigure=(text,where)=>{for(const n of numbers(text))assert.ok(!boasTok.has(n),where+': "'+n+'" is a BOAS figure, printed where BOAS\'s three gaps are not');};
+  const spanOf=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let depth=0,m;
+    while((m=re.exec(h))){depth+=m[0].startsWith('</')?-1:1;if(!depth)return [at,m.index];}return [at,h.length];};
+  const gapsBlock=(block,zh,where)=>{
+    const t=decodeHtml(block.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ');
+    const C=R.boas_conditions;
+    for(const g of C.gaps) assert.ok(zh?(t.includes(SRZ[g])&&t.includes(g)):t.includes(g),where+': the BOAS gap "'+g.slice(0,50)+'"'+(zh?' in Chinese with its English':''));
+    assert.ok(t.includes(zh?'被试在公开发布中是假名化的。':'Participants are pseudonymised in the public release.')&&t.includes(C.attribution)&&t.includes(zh?SRZ[C.not_an_evaluation_of]:C.not_an_evaluation_of),
+      where+': the BOAS block names the participants\' wording, the credit and what is not evaluated');
+    assert.ok(t.includes(zh?'所有者决定，2026 年 10 月 7 日':'owner decision, 7 October 2026'),where+': the BOAS block dates the owner\'s approval');
+  };
+  let boasFigs=0,boasPages=0;
+  for(const f of htmlPages){
+    const h=readFileSync(new URL(f,DIST),'utf8');
+    const regions=[...h.matchAll(/<(\w+)\b[^>]*\sdata-boas="true"[^>]*>/g)].map(m=>spanOf(h,m.index)).map(([a,b])=>({a,b,ok:h.slice(a,b).includes('data-boas-gaps="true"')}));
+    let here=0;
+    for(const m of h.matchAll(new RegExp(`data-fig="${SRF.replace(/\./g,'\\.')}\\|\\w+\\|([^"]+)"`,'g'))){
+      if(!boasOnly.has(Number(m[1])))continue;
+      assert.ok(regions.some(r=>r.ok&&r.a<m.index&&m.index<r.b),f+': the BOAS figure '+m[1]+' lies outside every element that carries the three gaps');
+      here++;boasFigs++;}
+    if(here){boasPages++;
+      for(const [,blk] of h.matchAll(/(<div class="protocol-note sr-boas-note" data-boas-gaps="true">[\s\S]*?<\/div>)/g)) gapsBlock(blk,f.startsWith('zh/'),f);}
+  }
+  assert.ok(boasFigs>300&&boasPages>=8,'BOAS figures read, each beside its gaps ('+boasFigs+' on '+boasPages+' pages)');
+  // The topic page, both languages.
+  const secOf=(h,id)=>{const a=h.search(new RegExp(`<section\\b[^>]*\\sid="${id}"`));assert.ok(a>0,'section #'+id+' renders');const [s,e]=spanOf(h,a);return h.slice(s,e);};
+  const p1=(d,q)=>d.entries.find(e=>e.id==='P1'&&e.level==='E1'&&e.question===q);
+  let rows=0;
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'topics/shared-encoder/',html=pageOf(path),where=path;
+    const order=['design','motor-imagery','sleep','eesm19','secondary','methods-and-limits'].map(id=>html.search(new RegExp(`<section\\b[^>]*\\sid="${id}"`)));
+    assert.ok(order.every((x,i)=>x>0&&(!i||x>order[i-1])),where+': design, motor imagery, sleep, EESM19, secondary, limits, in that order');
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<nav class="topic-switcher"'));
+    assert.ok([...main.matchAll(/data-fig="([^|"]+)\|/g)].every(m=>m[1]===SRF),where+': every figure is a leaf of the route-2 export');
+    // Every figure-like token is a value of the export as the site prints it, or a number in its own text.
+    const allTok=new Set();const walkT=v=>{if(typeof v==='number'){for(const g of Object.values(fmt))for(const n of numbers(g(v)))allTok.add(n);}else if(typeof v==='string'){for(const n of numbers(v))allTok.add(n);}else if(v&&typeof v==='object')Object.values(v).forEach(walkT);};walkT(sr);
+    const body=main.slice(main.indexOf('<section class="short-answer"'));
+    for(const t of [...visible(body).matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0])) assert.ok(allTok.has(t),where+': "'+t+'" is not a value of the route-2 export');
+    // The short answer and the description: the route verdicts with their margin, and no BOAS figure.
+    const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+    const desc=decodeHtml(html.match(/<meta name="description" content="([^"]*)"/)[1]);
+    noBoasFigure(ans,where+' short answer');noBoasFigure(desc,where+' description');
+    const a1=p1(DS.openbmi,'MI-A'),aS=p1(DS.boas,'SL-A');
+    assert.ok(ans.includes(fmt.ppr2(a1.estimate_pp))&&ans.includes(fmt.sgr2(a1.interval_95_pp[0]))&&ans.includes(fmt.ppr2(a1.interval_95_pp[1]))&&ans.includes(`${DELTA} pp`),where+': the short answer gives the motor-imagery P1 contrast and the margin');
+    assert.equal(ans.includes(zh?`整个区间都高于 ${DELTA} pp`:`its whole interval lay above ${DELTA} pp`),aS.interval_95_pp[0]>DELTA,where+': the short answer says the BOAS interval lies above the margin exactly when it does');
+    assert.ok(!DS.openbmi.route_sentence.supported&&!DS.boas.route_sentence.supported&&ans.trim().startsWith(zh?'简答 在这些数据上，做不到更省又一样好。':'Short answer Not at a lower cost, on these data.'),where+': the short answer opens with the route verdict');
+    // The route verdicts: the export's route sentences, the counted questions, the floor named.
+    for(const [ds,d] of [['openbmi',DS.openbmi],['boas',DS.boas]]){
+      const rs=d.route_sentence,a=html.indexOf(`data-route-verdict="${ds}"`),box=html.slice(a,html.indexOf('</div></div>',a));
+      assert.ok(a>0&&box.includes(`data-supported="${rs.supported}"`)&&box.includes(rs.supported?'':(zh?'“固定分类头以更少的代价做得一样好”：不成立':'Fixed heads did as well for less: not supported')),where+': '+ds+' verdict follows its route sentence');
+      for(const q of rs.counted) assert.ok(hasFig(box,'ppr2',p1(d,q).estimate_pp),where+': '+ds+' verdict prints P1 on the counted '+q);
+      for(const q of Object.keys(rs.excluded)){const g=d.gates.find(x=>x.level==='E1'&&x.question===q);
+        assert.ok(rs.excluded[q]==='floor'&&g.gate==='floor'&&hasFig(box,'pct1',g.mean)&&box.includes(zh?'处于下限':'at floor'),where+': '+ds+' verdict names '+q+' at floor with its fixed-head score');}
+      assert.ok(!/C1 is \d|is \d+(?:\.\d+)? pp better|好 \d+(?:\.\d+)? pp/.test(visible(box)),where+': "margin not met" is never read as a size');
+    }
+    // Every contrast row, both flags in words.
+    for(const [ds,list,attached] of [['openbmi',ppEntries(DS.openbmi.entries),false],['boas',ppEntries(DS.boas.entries),false],['boas',E2.entries,true],['eesm19',DS.eesm19.secondary,true]])
+      for(const e of list){checkRow(rowOf(html,`data-sr-contrast="${ds}|${e.level}|${e.id}|${e.question}"`),e,zh,where,attached);rows++;}
+    assert.equal((html.match(/data-sr-contrast="/g)||[]).length,DS.openbmi.entries.length+ppEntries(DS.boas.entries).length+E2.entries.length+DS.eesm19.secondary.length,where+': one row per contrast, no other');
+    for(const e of logEntries([...DS.boas.entries,...DS.boas.secondary])){checkRow(rowOf(html,`data-sr-logr="boas|${e.id}|${e.question}"`),e,zh,where,e.role!=='primary');rows++;}
+    // The secondary panel: collapsed; every secondary contrast with its gate and who attached it; S2 on frozen features the audit's.
+    const sec=secOf(html,'secondary');
+    assert.match(sec,/<details class="rd-panel sr-panel">/,where+': the secondary results sit in a collapsed panel');
+    for(const [ds,d] of [['openbmi',DS.openbmi],['boas',DS.boas]]) for(const e of ppEntries(d.secondary)){
+      const row=rowOf(sec,`data-sr-secondary="${ds}|${e.level}|${e.id}|${e.question}|${escHtml(e.x)}|${escHtml(e.y)}"`);checkRow(row,e,zh,where+' #secondary',true);rows++;
+      assert.equal(/data-computed-by="audit"/.test(row),!!e.computed_by,where+': '+e.id+' '+e.level+' '+e.question+': "computed by the independent audit" exactly where the export says so');}
+    // E2 sleep: its disclosure, beside its figures; the stage-only read-out beside SL-E and SL-F; the derivable question.
+    const sleep=secOf(html,'sleep'),dis=sleep.slice(sleep.indexOf('data-e2-disclosure="true"'),sleep.indexOf('</p>',sleep.indexOf('data-e2-disclosure="true"')));
+    for(const s of zh?['在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果','在冻结协议时就已确定','没有任何一项是根据结果选的','临时的私有检查点']
+                     :['ran on 7 October 2026, after every other result of the run','were fixed when the protocol was frozen','nothing about it was chosen from results','temporary private checkpoints'])
+      assert.ok(visible(dis).includes(s),where+': the E2-sleep disclosure says "'+s+'"');
+    assert.ok(E2.run_after_other_results&&hasFig(dis,'count',E2.resume_checkpoints.left_after_the_run)&&hasFig(dis,'count',E2.fits),where+': the disclosure counts the fits and the checkpoints left');
+    assert.ok(sleep.indexOf('data-e2-disclosure')<sleep.indexOf('data-sr-contrast="boas|E2|'),where+': the disclosure comes before the E2 figures');
+    const lede=sleep.slice(0,sleep.indexOf('data-boas-gaps'));
+    for(const q of ['SL-E','SL-F']) assert.ok(hasFig(lede,'pct1',DS.boas.secondary.find(e=>e.id==='S11-oracle'&&e.question===q).mean),where+': '+q+' beside the stage-only read-out');
+    assert.ok(visible(lede).includes(zh?'SL-E 和 SL-F 在很大程度上可以由当前分期预测':'SL-E and SL-F are largely predictable from the current stage'),where+': the stage sentence');
+    assert.ok(sleep.indexOf('data-boas-gaps')<sleep.indexOf('data-route-verdict'),where+': BOAS\'s gaps come before its first result');
+    // EESM19: crude, one seed, the stage sentence, another protocol than the scalp subset.
+    const e19=visible(secOf(html,'eesm19'));
+    for(const s of zh?['粗略重复','1 个随机种子','在很大程度上可以由当前分期预测','与核心矩阵中类别平衡的头皮子集是不同的协议']:['crude replication','one seed','largely predictable from the current stage','A different protocol from the balanced scalp subset'])
+      assert.ok(e19.includes(s),where+': EESM19 says "'+s+'"');
+    // The design: the margin, fixed before any result; the multiplicity statement.
+    const mult=visible(html.slice(html.indexOf('id="multiplicity"'),html.indexOf('</p>',html.indexOf('id="multiplicity"'))));
+    const nPrimary=[...DS.openbmi.entries,...DS.boas.entries].filter(e=>e.role==='primary').length;
+    assert.ok(mult.includes(zh?`主分析共有 ${nPrimary} 项比较，不做多重比较校正`:`There are ${nPrimary} primary comparisons and no multiplicity correction`)&&mult.includes(zh?'约每 20 项就可能有 1 项偶然显示出差异':'about one in 20 comparisons with no true difference may show one by chance'),where+': the multiplicity statement');
+    assert.ok(visible(secOf(html,'design')).includes(zh?`界值是 ±${DELTA} pp，由所有者在任何结果出来之前定下`:`margin of ±${DELTA} pp, fixed by the owner before any result`),where+': the margin, fixed before any result');
+    // Limits: every required limitation and every not-run item, in the page's language; the literature and the credits.
+    const lim=secOf(html,'methods-and-limits'),limItems=[...lim.matchAll(/<ul class="rd-rules sr-limits">([\s\S]*?)<\/ul>/g)][0][1];
+    assert.deepEqual([...limItems.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m=>decodeHtml(m[1])),required.map(x=>zh?SRZ[x]:x),where+': every required limitation, in the page\'s language, in the export\'s order');
+    const nr=visible(lim.slice(lim.indexOf('sr-not-run'),lim.indexOf('</ul>',lim.indexOf('sr-not-run'))));
+    for(const [a,b] of [...R.not_run.map(x=>[x.arm,x.status]),...R.not_reported.map(x=>[x.item,x.status])]) assert.ok(nr.includes(zh?SRZ[a]:a)&&nr.includes(zh?SRZ[b]:b),where+': not run or not reported: '+a.slice(0,40));
+    assert.deepEqual([...lim.slice(lim.indexOf('rd-literature')).matchAll(/<li lang="en"><a href="([^"]+)"/g)].map(m=>m[1]),R.literature.map(x=>x.url),where+': the export\'s five literature anchors, in order');
+    for(const d of [DS.openbmi,DS.boas,DS.eesm19]){const a=lim.indexOf(escHtml(d.rights.attribution)),art=a<0?'':lim.slice(lim.lastIndexOf('<article',a),lim.indexOf('</article>',a));
+      assert.ok(art.includes(`href="${escHtml(d.rights.licenseUrl)}"`)&&art.includes(`href="${escHtml(d.rights.source)}"`),where+': credit, source and licence of '+d.dataset+', in one entry');}
+    const au=lim.slice(lim.indexOf('data-audits="true"'),lim.indexOf('</p>',lim.indexOf('data-audits="true"')));
+    assert.ok(hasFig(au,'count',R.audits.primary.values_recomputed)&&hasFig(au,'count',R.audits.secondary.values_recomputed)&&hasFig(au,'count',R.audits.e2_sleep.checks),where+': the three audits, counted');
+    // No ranking word; the cite block names the route's release alone.
+    assert.doesNotMatch(visible(main),/\b(?:best|worst|outperform\w*|beats?|winner)\b|最好|最佳|胜出/i,where+': no ranking word');
+    assert.equal(html.slice(html.indexOf('<section class="cite-page"')).match(/data-releases="([^"]+)"/)[1],sr.release_id,where+': the cite block names the route-2 release alone');
+  }
+  // The cards on the home page and the Questions hub print no BOAS figure.
+  for(const page of ['','topics/','zh/','zh/topics/']){const h=pageOf(page),a=h.search(/<a class="topic-entry-card" href="(?:\/zh)?\/topics\/shared-encoder\/"/);
+    assert.ok(a>0,(page||'/')+': the route-2 card');noBoasFigure(visible(h.slice(a,h.indexOf('</a>',a))),(page||'/')+' route-2 card');}
+  // The dataset and method pages: a route-2 group where its figures are, each row with both flags; the limits note.
+  const groupOf=(h,id)=>{const a=h.search(new RegExp(`<section class="entity-group" id="${id}"`));return a<0?null:h.slice(...spanOf(h,a));};
+  const noteWords=(e,zh)=>{const low=t=>zh?t:t.replace(/^[A-Z](?=[a-z])/,c=>c.toLowerCase()),sep=zh?'；':'; ';
+    return diffWords(e,zh)+sep+low(marginWords(e.margin,'log_r' in e,zh))+(e.gate==='floor'?(zh?`（${notRead.zh}）`:` (${notRead.en})`):'')+(e.wording==='inconclusive at this sample size'?(zh?'：'+inconclusive.zh:': '+inconclusive.en):'')+sep+low(gateWords(e.gate,zh))+(zh?'。':'.');};
+  const groupEntries={openbmi:DS.openbmi.entries.filter(e=>['P1','P5','P2','P4'].includes(e.id)),boas:DS.boas.entries.filter(e=>['P1','P5','P2','P4','P3'].includes(e.id)),eesm19:DS.eesm19.secondary};
+  const LIMIT_STARTS={openbmi:["The OpenBMI numbers here use route 2's own"],boas:['SL-E and SL-F are largely predictable from the current stage'],eesm19:['EESM19 full (S13) uses every stored epoch','On EESM19 (S13) no stage-only readout was computed']};
+  let groupRows=0;
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){const zh=label==='zh';
+    for(const [page,gid,ds,only] of [...['openbmi','boas','eesm19'].map(ds=>['datasets/'+ds+'/','g-shared-encoder',ds,null]),
+        ...['openbmi','boas','eesm19'].map(ds=>['methods/eegnet/',`g-${ds}-shared-encoder`,ds,'E1']),...['openbmi','boas'].map(ds=>['methods/cbramod/',`g-${ds}-shared-encoder`,ds,'L1'])]){
+      const where=pfx+page+'#'+gid,g=groupOf(pageOf(pfx+page),gid);
+      assert.ok(g&&g.includes(`href="/${pfx}topics/shared-encoder/`),where+': the route-2 group, read on its question');
+      assert.equal(/data-boas="true"/.test(g.slice(0,g.indexOf('>'))),ds==='boas',where+': marked data-boas exactly on BOAS');
+      for(const e of groupEntries[ds].filter(e=>!only||e.level===only)){
+        const key='log_r' in e?`data-fig="${SRF}|num3|${e.log_r}"`:`data-fig="${SRF}|ppr2|${e.estimate_pp}"`,a=g.indexOf(key);
+        assert.ok(a>0,where+': '+e.id+' '+e.level+' '+e.question+' printed');
+        const row=g.slice(g.lastIndexOf('<tr',a),g.indexOf('</tr>',a)),note=decodeHtml((row.match(/<small class="row-note">([\s\S]*?)<\/small>/)||[])[1]??'');
+        assert.equal(note,noteWords(e,zh),where+': '+e.id+' '+e.level+' '+e.question+' carries both flags, the margin and its gate');groupRows++;}
+      const n=g.slice(g.indexOf('data-sr-limits='),g.indexOf('</p>',g.indexOf('data-sr-limits=')));
+      assert.ok(n.includes(`href="/${pfx}topics/shared-encoder/#methods-and-limits"`)&&LIMIT_STARTS[ds].every(s=>{const en=required.find(x=>x.startsWith(s));return decodeHtml(n).includes(zh?SRZ[en]:en);})
+        &&decodeHtml(n).includes(zh?`整个区间落在 ±${DELTA} pp 以内`:`within ±${DELTA} pp, the margin fixed before any result`),where+': what these figures cannot say, the margin and a link to every limitation');
+    }
+    // No other method page carries a route-2 group.
+    for(const f of htmlPages.filter(f=>new RegExp(`^${pfx}methods/[^/]+/index\\.html$`).test(f)&&!/\/(?:eegnet|cbramod)\//.test(f)))
+      assert.ok(!readFileSync(new URL(f,DIST),'utf8').includes('-shared-encoder"'),f+': no route-2 group');
+    // BOAS's register entry: the ethics committee and reference, written consent, the approval, "pseudonymised"; the index points at its gaps.
+    const bp=pageOf(pfx+'datasets/boas/'),rn=bp.slice(bp.indexOf('data-rights-note="boas"'),bp.indexOf('</article>',bp.indexOf('data-rights-note="boas"')));
+    const pr=DS.boas.rights.privacyReview,eth=pr.match(/The dataset description states approval by [^.]*\(C\.I\. PI24\/046\)\./)[0],con=pr.match(/The README states that participants[^.]*written informed consent\./)[0];
+    assert.ok(decodeHtml(rn).includes(eth)&&decodeHtml(rn).includes(con)&&(!zh||(decodeHtml(rn).includes(SRZ[eth])&&decodeHtml(rn).includes(SRZ[con]))),pfx+'datasets/boas/: the ethics committee, its reference and written consent'+(zh?', in Chinese with the English':''));
+    assert.ok(visible(rn).includes(zh?'被试在公开发布中是假名化的。':'Participants are pseudonymised in the public release.')&&rn.includes(R.boas_conditions.owner_approval.approved_on),pfx+'datasets/boas/: the approval and the participants\' wording');
+    assert.ok(bp.includes(`href="${DS.boas.rights.licenseUrl}"`)&&bp.includes(DS.boas.rights.license)&&bp.includes('class="entity-profile"'),pfx+'datasets/boas/: CC0 linked, and the sourced profile');
+    const ix=pageOf(pfx+'datasets/');assert.ok(ix.includes(`href="/${pfx}datasets/boas/"`)&&/data-boas-pointer="true"/.test(ix),pfx+'datasets/: the BOAS row and the pointer to its gaps');
+    // The release log names the new question; when-not-to-act prints no route-2 figure and does not cite the release.
+    const rel=pageOf(pfx+'releases/'),ra=rel.indexOf(`id="${sr.release_id}"`),entry=rel.slice(ra,rel.indexOf('</article>',ra));
+    assert.ok(entry.includes(`href="/${pfx}topics/shared-encoder/"`),pfx+'releases/: the route-2 release names its question');
+    const w=pageOf(pfx+'topics/when-not-to-act/');
+    assert.ok(!w.includes(`data-fig="${SRF}|`)&&!w.slice(w.indexOf('<section class="cite-page"')).includes(sr.release_id),pfx+'topics/when-not-to-act/: links route 2, prints none of its figures and does not cite it');
+  }
+  const nRows=DS.openbmi.entries.length+ppEntries(DS.boas.entries).length+E2.entries.length+DS.eesm19.secondary.length+logEntries([...DS.boas.entries,...DS.boas.secondary]).length
+    +ppEntries(DS.openbmi.secondary).length+ppEntries(DS.boas.secondary).length;
+  assert.ok(rows===2*nRows&&groupRows>=100,'route-2 rows read ('+rows+' on the topic, '+groupRows+' in groups)');
+}
+console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: every contrast with both flags in words, the margin with them, inconclusive and floor exactly where the export says, gates with who attached them; route verdicts from the route sentences; BOAS figures always inside an element holding the three gaps, the credit and "pseudonymised" (none in the short answer, description or cards); E2 sleep disclosed before its figures; EESM19 crude with the stage sentence; SL-E and SL-F beside the stage-only read-out; secondary results collapsed; limits in the page\'s language with exactly the English\'s numbers; route-2 groups on the OpenBMI, BOAS, EESM19, EEGNet and CBraMod pages with both flags; BOAS register entry; release log; when-not-to-act links without citing.');
 // --- 2026-10-04 v9 foundation models: the pages ----------------------------------------------------
 // The v9 rows on the site (owner approval 2026-10-04): a section of their own on every protocol page
 // (#foundation-v9) and a group under the released rows in the home page's per-protocol table, the
@@ -3371,7 +3615,8 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     const at=html.indexOf('<p class="entity-measured">'),line=html.slice(at,html.indexOf('</p>',at));
     assert.ok(at>html.indexOf('class="topic-hero"')&&at<html.indexOf('id="results-heading"'),path+': the Measured-on line sits under the hero');
     // A group with no table (a checkpoint not run there) measured nothing and is not on the line.
-    const groups=[...html.matchAll(/<section class="entity-group" id="g-[^"]+">\s*<h3><a href="([^"]+)"[\s\S]*?<p class="entity-group-meta">[^<]*<a href="([^"#]+)[\s\S]*?<\/section>/g)].filter(g=>g[0].includes('<tbody>'));
+    // A BOAS group (route 2, 2026-10-07) is marked data-boas, the region its three gaps hold.
+    const groups=[...html.matchAll(/<section class="entity-group" id="g-[^"]+"(?: data-boas="true")?>\s*<h3><a href="([^"]+)"[\s\S]*?<p class="entity-group-meta">[^<]*<a href="([^"#]+)[\s\S]*?<\/section>/g)].filter(g=>g[0].includes('<tbody>'));
     const want=[...new Set(groups.map(g=>g[1])),...new Set(groups.map(g=>g[2]).filter(h=>/\/protocols\//.test(h)))];
     assert.deepEqual([...line.matchAll(/href="([^"]+)"/g)].map(m=>m[1]).sort(),[...new Set(want)].sort(),path+': the line links exactly the dataset and protocol pages its groups are read on');
     assert.match(line,zh?/测量所用数据集：/:/Measured on:/,path+': the line says what it lists');
@@ -3475,8 +3720,10 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     if(label==='en'){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
   }
-  for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/'])
-    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
+  // The EESM19 page changed again on 2026-10-07 (route 2's group), so it carries that date now.
+  for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
+    const d=p==='datasets/eesm19/'?'2026-10-07':'2026-10-04';
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
 // The v9 findings on the questions (owner approval 2026-10-04): does-pretraining-help gains #v9-encoders —
@@ -3517,7 +3764,7 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
   const textOf=s=>decodeHtml(s.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
   // Every value of the files these sections read, as the site prints it, and every number in their own text.
   const tok=new Set();
-  const addVal=v=>{for(const g of Object.values(fmt))for(const n of numbers(g(v)))tok.add(n);};
+  const addVal=v=>{for(const g of fmtEarlier)for(const n of numbers(g(v)))tok.add(n);};
   const walk=v=>{if(typeof v==='number')addVal(v);else if(typeof v==='string')numbers(v).forEach(n=>tok.add(n));else if(v&&typeof v==='object')Object.values(v).forEach(walk);};
   walk(FX);walk(MVPJ);walk(Z);
   for(const p of scored.concat('idle')) for(const r of csvOf(p)) for(const v of Object.values(r)){if(v.trim()!==''&&Number.isFinite(Number(v)))addVal(Number(v));else numbers(v).forEach(n=>tok.add(n));}
@@ -3815,8 +4062,10 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     if(!prefix){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.length>500&&!/stays? the highest|best published non-foundation|was pretrained on/.test(fe),'releases.xml: the v9 entry ranks no overlapping rows and claims no corpus');}
   }
-  for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/'])
-    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>2026-10-04</lastmod>`),'sitemap: '+p+' changed on 2026-10-04');
+  // The Questions hub changed again on 2026-10-07 (route 2's card), so it carries that date now.
+  for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
+    const d=p==='topics/'?'2026-10-07':'2026-10-04';
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
 // The generic copy check above only looks for figures in elements whose class is exactly metric, num or fig, and
@@ -3860,10 +4109,12 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     copyCarries(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
     copyCarries(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
     for(const t of data.tracks) copyCarries(pfx+'protocols/'+t.id+'/','foundation-v9',pfx+'protocols/'+t.id);
-    // Every route-1 and v9 group on the dataset and method pages.
+    // Route 2 (2026-10-07): every section of its question that prints a figure.
+    for(const id of ['motor-imagery','sleep','eesm19','secondary','methods-and-limits']) copyCarries(pfx+'topics/shared-encoder/',id,pfx+'shared-encoder');
+    // Every route-1, v9 and route-2 group on the dataset and method pages.
     for(const f of htmlPages.filter(f=>f.startsWith(pfx+'datasets/')||f.startsWith(pfx+'methods/')).filter(f=>pfx||!f.startsWith('zh/'))){
       const html=readFileSync(new URL(f,DIST),'utf8'),path=f.replace(/index\.html$/,'');
-      for(const [,gid] of html.matchAll(/<section class="entity-group" id="(g-[^"]*(?:reliable-decisions|foundation-v9|v9-adaptation))">/g))
+      for(const [,gid] of html.matchAll(/<section class="entity-group" id="(g-[^"]*(?:reliable-decisions|foundation-v9|v9-adaptation|shared-encoder))"(?: data-boas="true")?>/g))
         if(sectionHtml(html,gid).includes('data-fig')) copyCarries(path,gid,path+' '+gid);
     }
   }
@@ -4032,14 +4283,17 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     parasCarried(pfx+'topics/when-not-to-act/','reliable-decisions',pfx+'when-not-to-act');
     parasCarried(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
     parasCarried(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
+    for(const id of ['design','motor-imagery','sleep','eesm19','secondary','methods-and-limits']) parasCarried(pfx+'topics/shared-encoder/',id,pfx+'shared-encoder');
   }
   // (5) Every v9 and route-1 data-fig on every page sits in a region a copy check reads.
   const read=[/^(?:zh\/)?protocols\/[^/]+\/index\.html#foundation-v9$/,/^(?:zh\/)?topics\/when-not-to-act\/index\.html#reliable-decisions$/,/^(?:zh\/)?topics\/does-pretraining-help\/index\.html#v9-encoders$/,
     /^(?:zh\/)?topics\/fewer-electrodes\/index\.html#v9-montage$/,/^(?:zh\/)?(?:datasets|methods)\/[^/]+\/index\.html#g-[^#]*(?:reliable-decisions|foundation-v9|v9-adaptation)$/,
-    /^(?:zh\/)?methods\/[^/]+\/index\.html#checkpoints$/,/^(?:zh\/)?(?:topics\/)?index\.html#tmap$/,/^(?:zh\/)?methods\/index\.html#model-card$/];
+    /^(?:zh\/)?methods\/[^/]+\/index\.html#checkpoints$/,/^(?:zh\/)?(?:topics\/)?index\.html#tmap$/,/^(?:zh\/)?methods\/index\.html#model-card$/,
+    // Route 2 (2026-10-07): its question's sections and its groups.
+    /^(?:zh\/)?topics\/shared-encoder\/index\.html#(?:motor-imagery|sleep|eesm19|secondary|methods-and-limits)$/,/^(?:zh\/)?(?:datasets|methods)\/[^/]+\/index\.html#g-[^#]*shared-encoder$/];
   let located=0;
   for(const f of htmlPages){const html=readFileSync(new URL(f,DIST),'utf8');
-    for(const m of html.matchAll(/data-fig="(?:foundation-models-|reliable-decisions-)[^"]*"/g)){
+    for(const m of html.matchAll(/data-fig="(?:foundation-models-|reliable-decisions-|shared-representation-)[^"]*"/g)){
       const before=html.slice(0,m.index),open=[];
       for(const x of before.matchAll(/<(section|table|article)\b([^>]*)>|<\/(section|table|article)>/g)){
         if(x[3]){open.pop();continue;}

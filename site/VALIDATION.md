@@ -730,6 +730,44 @@ consolidated aggregate), opens the three independent audits and checks their ver
 refuses a flag, gate, route sentence or figure the numbers or the pinned handoff do not give
 (`pipeline/publication/test_shared_representation_update.py` forges each link).
 
+Route 2 on the site (same day, owner approved): its own question, `/topics/shared-encoder/` ("Can one EEG model
+answer several questions about the same data as well as separate models, and at what cost?", in Adapting models),
+with the roadmap on when-not-to-act marking route 2 run and linking it; the BOAS dataset page and its register entry;
+route-2 groups on the OpenBMI, BOAS and EESM19 pages and, through them, the EEGNet and CBraMod pages. Every figure is
+a `data-fig` leaf of `shared-representation-update.json`, re-read by the loops above (three formats added: `ppr2` and
+`sgr2` for values already in pp, two decimals so the 2-pp boundary shows; `ms2` for the ledger's step times; the
+earlier batches' token checks read every format but these). Pinned from `dist/`, both languages: every contrast row on
+the topic (25 at the two primary levels, 9 of E2 sleep, 6 of EESM19, 5 log-R rows and 69 secondary rows) prints its figures, the arm its
+interval favours or "no difference shown" (the words derived here from the interval, the export's flag in
+`data-flag`), its margin flag with the margin (±2 pp; 20% for log R), "inconclusive at this sample size" exactly where
+the export says so, "not read: at floor" exactly on floor-gated rows, its gate in words, and on secondary, E2 and
+EESM19 rows who attached the gate; S2 on frozen features is labelled as the independent audit's exactly where the
+export says so; one row per contrast and no other; the route verdicts follow the export's route sentences, print P1 on
+the counted questions and name the floor-gated ones with their fixed-head score; the short answer opens with the
+verdict, gives the motor-imagery P1 contrast and the margin, and says the BOAS interval lies above the margin exactly
+when it does. BOAS: every BOAS figure (a leaf only the BOAS block carries) on any page lies inside an element marked
+`data-boas` that holds the three gaps (the Chinese with the English beside it), "pseudonymised in the public release",
+what is not evaluated, the credit and the approval date; the short answer, the description and the home and hub cards
+print none; the BOAS register entry prints the ethics committee and reference and written consent from its rights
+record, the approval and CC0, and the dataset index points at its gaps. E2 sleep's disclosure (run after every other
+result, design fixed at the freeze, nothing chosen from results, temporary private checkpoints, none left) comes
+before its figures; SL-E and SL-F sit beside the stage-only read-out; EESM19 is crude, one seed, with the stage
+sentence and as another protocol than the scalp subset; the multiplicity statement and the margin fixed before any
+result; the secondary panel is collapsed; every required limitation and not-run item in the page's language, the
+Chinese (shared-encoder.ts) carrying exactly the English's numbers; the export's five literature anchors in order
+(titles checked against arXiv on 2026-10-07); each dataset's credit, source and licence in one entry; no ranking word;
+the cite block names the route-2 release alone. Each route-2 group carries both flags, the margin and the gate in every
+row note, is marked `data-boas` exactly on BOAS, and ends with what its figures cannot say and a link to every
+limitation; no other method page has one; the release log names the question; when-not-to-act links route 2 and
+neither prints nor cites its figures. The Markdown copies hold the new sections and groups (ordered figures and
+paragraphs as printed), and no route-2 figure lies outside a region they read. Changed with it: the roadmap now has
+routes 1 and 2 run and route 3 not run, a status line and a Jev scope sentence that say so (and no longer that no
+model was trained); the OpenBMI page cites both its releases; the EESM19 page and the Questions hub carry the
+2026-10-07 date; the L-FAME check sets aside the route-2 `data-fig` attributes whose raw pp values begin "0.230" and
+"0.231"; a BOAS group's `data-boas` attribute is allowed where the method pages' Measured-on check reads groups.
+Mutation-tested on a copy of `dist/` (`SITE_DIST`; the translation table's source too, restored afterwards): each of
+50 injected violations was caught by the assertion written for it.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

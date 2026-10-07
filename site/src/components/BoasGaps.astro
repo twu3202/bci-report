@@ -1,0 +1,25 @@
+---
+/**
+ * BOAS's conditions of publication (owner approval of 2026-10-07, "publishable with stated gaps"), printed beside
+ * every BOAS figure: the three gaps (the Chinese with the English beside it), the participants' wording, that
+ * neither Bitbrain's headband nor its automatic scoring is used, and the credit. Read from the route-2 export
+ * (shared-encoder.ts `boasConditions`). check-workbench.mjs requires a BOAS figure to sit in an element marked
+ * data-boas that holds this block.
+ */
+import { boasConditions } from '../data/shared-encoder';
+import type { Locale } from '../data/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const b = boasConditions(locale);
+const [y, m, d] = b.approvedOn.split('-').map(Number);
+const date = zh ? `${y} 年 ${m} 月 ${d} 日`
+  : `${d} ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m - 1]} ${y}`;
+---
+<div class="protocol-note sr-boas-note" data-boas-gaps="true">
+  <p><strong>{zh ? `BOAS 在说明三处缺口后发布（所有者决定，${date}）：` : `BOAS is published with three stated gaps (owner decision, ${date}):`}</strong></p>
+  <ol class="sr-gaps">{b.gaps.map(x => <li>{x.text}{x.original && <span class="note-original" lang="en">{x.original}</span>}</li>)}</ol>
+  <p>{b.participants}{zh ? '' : ' '}{b.notEvaluated.text}{b.notEvaluated.original && <span class="note-original" lang="en">{b.notEvaluated.original}</span>}</p>
+  <p><strong>{zh ? '署名：' : 'Credit:'}</strong>{zh ? '' : ' '}<span lang={zh ? 'en' : undefined}>{b.attribution}</span></p>
+</div>

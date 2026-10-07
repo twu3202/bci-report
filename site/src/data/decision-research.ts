@@ -5,8 +5,11 @@
  * A plan, not a result. Nothing in this file is measured by this site. Since
  * 2026-10-04 (owner approval) the first route, reliable decisions, has been run:
  * its results are a separate section of the page, #reliable-decisions, printed
- * from reliable-decisions-update.json and placed before this one. Each route
- * carries its own status; routes 2 and 3 are not run. check-workbench.mjs fails
+ * from reliable-decisions-update.json and placed before this one. Since
+ * 2026-10-07 (owner approval) the second, one representation and several
+ * questions, has been run too: its results are their own question,
+ * /topics/shared-encoder/, printed from shared-representation-update.json. Each
+ * route carries its own status; route 3 is not run. check-workbench.mjs fails
  * the build if a status changes without its assertions, or if a figure appears
  * inside the roadmap section, which stays figure-free. Literature cards are
  * external evidence with their own limits. Their numbers are left out on
@@ -22,15 +25,16 @@
  */
 export const decisionRoadmap = {
   status: 'plan',
-  runStatus: 'route-1-run',
+  runStatus: 'routes-1-2-run',
   // One status per route, in the order the routes are printed. A run route names
-  // the section and the release holding its results; the roadmap prints neither's figures.
+  // where its results are (a section of this page, or a page of its own) and the
+  // release holding them; the roadmap prints neither's figures.
   routes: [
     { id: 'reliable-decisions', runStatus: 'run', results: '#reliable-decisions', release: 'reliable-decisions-update-20261004', runAt: '2026-10-04' },
-    { id: 'one-representation', runStatus: 'not_run' },
+    { id: 'one-representation', runStatus: 'run', results: '/topics/shared-encoder/', release: 'shared-representation-update-20261007', runAt: '2026-10-07' },
     { id: 'questions-in-language', runStatus: 'not_run' },
   ],
-  reviewedAt: '2026-10-04',
+  reviewedAt: '2026-10-07',
 } as const;
 
 export const decisionSources = {
@@ -59,18 +63,20 @@ interface RoadmapCopy {
 
 export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   en: {
-    eyebrow: 'Research plan · first route run',
+    eyebrow: 'Research plan · two routes run',
     h2: 'Jev-style decision models for EEG',
-    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev, not a Jev model that reads EEG, and not a model BCI Report has trained. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes.',
+    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained small shared encoders whose questions are given by an identifier, never in language; its results have their own page.',
     lede: 'A decoder has more choices than a class label: it can act, wait for more evidence, or ask for calibration.',
-    statusLine: 'Status: the first route has been run, and its results are in the section above. The other two routes have not been run.',
+    statusLine: 'Status: the first two routes have been run. The first route’s results are in the section above, the second’s on their own page. The third route has not been run.',
     routes: [
       { tag: 'First', status: 'Run · results above', resultsLink: 'Reliable decisions: the results', title: 'Reliable decisions',
         body: 'Compare a fixed threshold, a simple statistical policy and a learned reject option on the same data. Report error at matched coverage, acceptance per class, and probability quality — Brier score, log loss and reliability — with calibration data kept apart from test data. Recalibration is a separate experiment, with its label cost counted.',
         // Since 2026-10-05: what the run published of this plan, and what it did not (review finding).
         runNote: 'Published in the section above: error at matched coverage, log loss, the Brier score and calibration error. Not published in this update: acceptance per class and reliability-diagram bins.' },
-      { tag: 'Then', status: 'Not run', title: 'One representation, several questions',
-        body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.' },
+      { tag: 'Then', status: 'Run · results on their own page', resultsLink: 'One model, several questions: the results', title: 'One representation, several questions',
+        body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.',
+        // Since 2026-10-07: where it ran, and the one arm that ran after the others were known.
+        runNote: 'Run on motor imagery (OpenBMI) and sleep (BOAS, with EESM19 as a crude replication). One secondary arm, CBraMod adapted by LoRA on sleep, ran after the other results were known; its design was fixed beforehand.' },
       { tag: 'Later', status: 'Not run', title: 'Questions in language',
         body: 'Compare task identifiers, label templates and natural-language descriptions. Paraphrases and unseen concepts are tested separately and never merged into one zero-shot number.',
         boundary: 'Questions about negation, location or waveform shape need signal-level ground truth.' },
@@ -99,17 +105,18 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     ],
   },
   zh: {
-    eyebrow: '研究计划 · 第一条路线已运行',
+    eyebrow: '研究计划 · 两条路线已运行',
     h2: 'Jev-style 的 EEG 决策模型',
-    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型，更不是本站训练出的模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。',
+    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了小型共享编码器，问题只以标识给出，从不用语言；它的结果有单独的页面。',
     lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。',
-    statusLine: '状态：第一条路线已经运行，结果见上一节；另外两条路线尚未运行。',
+    statusLine: '状态：前两条路线已经运行。第一条的结果见上一节，第二条的结果在单独的页面上；第三条路线尚未运行。',
     routes: [
       { tag: '首先', status: '已运行 · 结果见上一节', resultsLink: '可靠的决策：结果', title: '可靠的决策',
         body: '在同一份数据上比较固定阈值、简单统计策略和可学习的拒识机制。报告相同覆盖率下的错误率、各类别的接受率，以及概率质量——Brier 分数、log loss 和可靠性图——校准数据与测试数据分开。重新校准另作一项实验，并计入所需标签的代价。',
         runNote: '上一节已发布：相同覆盖率下的错误率、log loss、Brier 分数和校准误差。本次更新没有发布：各类别的接受率和可靠性图的分箱。' },
-      { tag: '随后', status: '尚未运行', title: '一份表征，多个问题',
-        body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。' },
+      { tag: '随后', status: '已运行 · 结果在单独的页面上', resultsLink: '一个模型，多个问题：结果', title: '一份表征，多个问题',
+        body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。',
+        runNote: '在运动想象（OpenBMI）和睡眠（BOAS，EESM19 作粗略重复）上运行。有一项次要设置——在睡眠上用 LoRA 适配 CBraMod——是在其他结果已知之后才运行的；它的设计事先已定。' },
       { tag: '之后', status: '尚未运行', title: '用语言提问',
         body: '比较任务标识、标签模板和自然语言描述。同义改写与未见概念分开测试，绝不合成一个“零样本”数字。',
         boundary: '关于否定、位置或波形形态的问题，需要信号层面的真值标注。' },

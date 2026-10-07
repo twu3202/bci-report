@@ -99,7 +99,7 @@ What each file holds, loading examples and how to cite a release:
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Nine questions sit alongside, each with its own protocol:
+Eleven questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
@@ -108,7 +108,9 @@ Nine questions sit alongside, each with its own protocol:
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
 [which part of a pretrained model to update](https://bci.report/topics/model-adaptation/) ·
 [when not to act](https://bci.report/topics/when-not-to-act/) ·
-[does pretraining help](https://bci.report/topics/does-pretraining-help/)
+[sleep-stage balance](https://bci.report/topics/sleep-staging/) ·
+[does pretraining help](https://bci.report/topics/does-pretraining-help/) ·
+[one model, several questions](https://bci.report/topics/shared-encoder/)
 
 Every dataset and every method also has its own page, gathering each figure
 measured on it wherever it appears on the site:
@@ -126,11 +128,13 @@ page with its short answer, [llms-full.txt](https://bci.report/llms-full.txt)
 holds every English page in one file, and every page has a Markdown copy at
 `<page>/index.md`.
 
-**Jev-style decision models for EEG** — a research plan, not a result: can one
+**Jev-style decision models for EEG** — a research plan in three routes: can one
 EEG representation answer several explicit questions, and know when to abstain?
 It sits on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research),
-next to the measured idle-protocol trade-off it would build on. Not an
-integration with Jev, and no results yet.
+next to the measured idle-protocol trade-off it would build on. Two routes have
+been run: [reliable decisions](https://bci.report/topics/when-not-to-act/#reliable-decisions)
+(4 October) and [one model, several questions](https://bci.report/topics/shared-encoder/)
+(7 October); the third, questions in language, has not. Not an integration with Jev.
 
 Every reviewed release, each download with its SHA-256, and a dated register of
 what was held back: [bci.report/releases](https://bci.report/releases/).

@@ -119,6 +119,8 @@ export const topicPages = [
   { slug: 'calibration-budget', group: 'adapting' },
   { slug: 'model-adaptation', group: 'adapting' },
   { slug: 'does-pretraining-help', group: 'adapting' },
+  // Since 2026-10-07 (owner approval): route 2 of the decision-research plan, one model for several questions.
+  { slug: 'shared-encoder', group: 'adapting' },
   { slug: 'when-not-to-act', group: 'reliability' },
   // Since 2026-10-03 (owner decision): Dreem sleep staging, two simple baselines.
   { slug: 'sleep-staging', group: 'reliability' },

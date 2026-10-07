@@ -26,6 +26,8 @@ import extension from './extension-update.json';
 import large from './large-source-update.json';
 import reliable from './reliable-decisions-update.json';
 import type { Locale } from './i18n';
+import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
+         isLogR, ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
 import { conditionLabel, modelLabel } from './topics';
 import { modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
@@ -49,8 +51,12 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * `pp2`, `sgn2` and `pct2` (review of 2026-10-05) print a second decimal where one would read as zero: a
  * difference of −0.03 pp is "−0.03 pp", not "−0.0 pp"; an interval bound of +0.02 and one of exactly 0 no longer
  * both print "+0.0" beside opposite verdicts; one window in 2,160 is a coverage of "0.05%", not "0.0%".
+ * `ppr2` and `sgr2` (route 2, 2026-10-07) print a value that is already in percentage points (the route-2 export's
+ * `estimate_pp`, `interval_95_pp`) with two decimals, so the 2-pp margin's boundary is visible (+1.98 is not +2.0);
+ * `ms2` prints a time in seconds as milliseconds to two decimals (the route-2 ledger's step times, indicative).
  */
-export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2';
+export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2'
+  | 'ppr2' | 'sgr2' | 'ms2';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 /** A difference in percentage points, and an interval's lower bound: a second decimal where one would print ±0.0. */
@@ -78,6 +84,9 @@ export function formatFig(f: Fig): string {
     case 'count': return f.raw.toLocaleString('en-US');
     case 's1': return `${f.raw.toFixed(1)} s`;
     case 'm2': return `${(f.raw / 1e6).toFixed(2)}M`;
+    case 'ppr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)} pp`;
+    case 'sgr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)}`;
+    case 'ms2': return `${(f.raw * 1000).toFixed(2)} ms`;
   }
 }
 
@@ -133,6 +142,12 @@ export interface ResultGroup {
    * figure in the group, is printed under its rows from the export (reliable-decisions-limits.ts), linking the rest.
    */
   rdLimits?: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest';
+  /**
+   * A route-2 group (2026-10-07): the dataset whose limitations print under its rows (shared-encoder.ts
+   * `groupLimits`), with the margin rule; on BOAS also the three stated gaps, the participants' wording, what is not
+   * evaluated and the credit, so a BOAS figure never stands without them on any page (dataset or method).
+   */
+  srNotes?: 'openbmi' | 'boas' | 'eesm19';
 }
 
 export interface DatasetEntity {
@@ -144,6 +159,11 @@ export interface DatasetEntity {
   attribution: string;
   sources: string[];
   groups: ResultGroup[];
+  /**
+   * A source whose register entry prints its consent and ethics statements beside its credit (BOAS, 2026-10-07:
+   * the ethics committee and reference, written consent, and that its three gaps are stated with every figure).
+   */
+  rightsNote?: 'boas';
 }
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
@@ -781,6 +801,114 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
   };
 }
 
+/* --- 2026-10-07: route 2, one representation and several questions ---------------------- */
+
+const SRBA: L = { en: 'Balanced accuracy', zh: '平衡准确率' };
+const SRDIFF: L = { en: 'Paired difference, balanced accuracy', zh: '配对差值（百分点），平衡准确率' };
+const SRLOGR: L = { en: 'log R, the dedicated model’s remaining error over the read-out’s', zh: 'log R：专用模型与读出的剩余错误之比' };
+const SR_ARM: Record<string, L> = {
+  'B-lin': { en: 'fixed heads (B-lin)', zh: '固定分类头（B-lin）' },
+  'B-sh': { en: 'shared hidden layer (B-sh)', zh: '共享隐藏层（B-sh）' },
+  C1: { en: 'question-conditioned head (C1)', zh: '问题条件化分类头（C1）' },
+  A: { en: 'separate model (A)', zh: '分开的模型（A）' },
+  'B-lin-fz-sgd': { en: 'fixed heads (B-lin-fz-sgd)', zh: '固定分类头（B-lin-fz-sgd）' },
+  'B-sh-fz': { en: 'shared hidden layer (B-sh-fz)', zh: '共享隐藏层（B-sh-fz）' },
+  'C1-fz': { en: 'question-conditioned head (C1-fz)', zh: '问题条件化分类头（C1-fz）' },
+};
+const SR_CONTRAST: Record<string, L> = {
+  P1: { en: 'conditioned head minus fixed heads', zh: '问题条件化分类头减固定分类头' },
+  P5: { en: 'conditioned head minus the same layer not told the question', zh: '问题条件化分类头减不告知问题的同一隐藏层' },
+  P2: { en: 'fixed heads on one shared trunk minus separate models', zh: '共享主干上的固定分类头减分开的模型' },
+  P4: { en: 'conditioned head minus fixed heads, on frozen CBraMod features', zh: '冻结 CBraMod 特征上，问题条件化分类头减固定分类头' },
+  'S13-P1': { en: 'conditioned head minus fixed heads', zh: '问题条件化分类头减固定分类头' },
+  'S13-P2': { en: 'fixed heads on one shared trunk minus separate models', zh: '共享主干上的固定分类头减分开的模型' },
+};
+const srWho = (level: string) => level === 'E1' ? { method: 'EEGNet', methodSlug: 'eegnet' as MethodSlug } : { method: 'CBraMod', methodSlug: 'cbramod' as MethodSlug };
+const srArmKey = (a: string) => a.startsWith('A_') ? 'A' : a;
+/** The reading beside a contrast: both flags, the margin with them, the gate; at floor, the margin flag is not read. */
+function srReading(e: SrEntry | SrLogR): RowNote {
+  const kind = isLogR(e) ? 'logr' as const : 'pp' as const;
+  const parts = (locale: Locale) => {
+    const sep = locale === 'zh' ? '；' : '; ';
+    const margin = marginText(e.margin, kind, locale) + (e.gate === 'floor' ? (locale === 'zh' ? `（${floorMarginText.zh}）` : ` (${floorMarginText.en})`) : '');
+    const inconclusive = e.wording === 'inconclusive at this sample size' ? (locale === 'zh' ? '：在这个样本量下无法下结论' : ': inconclusive at this sample size') : '';
+    // One sentence: in English the second and third readings start in lower case ("2 pp margin not met" stays as it is).
+    const low = (t: string) => locale === 'en' ? t.replace(/^[A-Z](?=[a-z])/, c => c.toLowerCase()) : t;
+    return [differenceText(e, locale) + sep + low(margin) + inconclusive + sep + low(gateText(e.gate, locale)) + (locale === 'zh' ? '。' : '.')];
+  };
+  return { en: parts('en'), zh: parts('zh') };
+}
+function srContrastRow(e: SrEntry, path: string, contrast: L): ResultRow {
+  const [lo, hi] = e.interval_95_pp;
+  return { path, ...srWho(e.level), condition: { en: `${qName(e.question, 'en')} (${e.question}) · ${contrast.en} (${srCode(e.x, 'en')} − ${srCode(e.y, 'en')})`,
+                                                  zh: `${qName(e.question, 'zh')}（${e.question}）· ${contrast.zh}（${srCode(e.x, 'zh')} − ${srCode(e.y, 'zh')}）` },
+    metric: SRDIFF, value: srPp(e.estimate_pp), interval: [srLo(lo), srPp(hi)], people: e.included_people, note: srReading(e) };
+}
+/**
+ * Route 2 on one primary dataset (OpenBMI or BOAS): for each primary question, each arm's balanced accuracy at
+ * the two primary levels (EEGNet from scratch; heads on frozen CBraMod features), three seeds, and the contrasts
+ * with both flags: P1, P5 and P2 at E1, P4 on frozen features; on BOAS also P3, the derivable question. The
+ * secondary arms (E2, K-all, …) stay on the topic page.
+ */
+function sharedGroup(id: 'openbmi' | 'boas'): ResultGroup {
+  const d = SRD[id];
+  const anchor = id === 'openbmi' ? 'motor-imagery' : 'sleep';
+  const path = `/topics/shared-encoder/#${anchor}`;
+  const questions = d.questions.filter(q => q.role === 'primary').map(q => q.id);
+  const rows: ResultRow[] = [];
+  for (const q of questions) {
+    for (const [level, arms] of [['E1', ['B-lin', 'B-sh', 'C1', `A_${q}`]], ['L1', ['B-lin-fz-sgd', 'B-sh-fz', 'C1-fz']]] as const) {
+      for (const a of arms) {
+        // The method is the encoder; the set-up is part of the condition, so the page names its methods EEGNet and CBraMod.
+        const x = srArm(d, level, a, q), who = srWho(level), name = SR_ARM[srArmKey(a)];
+        rows.push({ path, ...who,
+          condition: level === 'E1' ? { en: `${name.en} · ${qName(q, 'en')} (${q}) · trained from scratch, three seeds`, zh: `${name.zh} · ${qName(q, 'zh')}（${q}）· 从头训练，3 个随机种子` }
+                                    : { en: `${name.en} · ${qName(q, 'en')} (${q}) · heads on frozen features, three seeds`, zh: `${name.zh} · ${qName(q, 'zh')}（${q}）· 冻结特征上只训分类头，3 个随机种子` },
+          metric: SRBA, value: srFig(x.mean, 'pct1'), interval: [srFig(x.interval_95[0], 'pct1'), srFig(x.interval_95[1], 'pct1')], people: x.included_people });
+      }
+      for (const cid of level === 'E1' ? ['P1', 'P5', 'P2'] : ['P4'])
+        rows.push(srContrastRow(ppEntry(d.entries, cid, q, level), path, SR_CONTRAST[cid]));
+    }
+  }
+  if (id === 'boas') {
+    const p3 = srEntry(d.entries, 'P3', 'SL-B') as SrLogR;
+    rows.push({ path: '/topics/shared-encoder/#sleep-derived', method: 'EEGNet', methodSlug: 'eegnet',
+      condition: { en: `${qName('SL-B', 'en')} (SL-B) · its own model, ${srCode(p3.dedicated, 'en')}, against reading it off ${srCode(p3.read_out_of, 'en')}`,
+                   zh: `${qName('SL-B', 'zh')}（SL-B）· 它自己的模型 ${srCode(p3.dedicated, 'zh')}，对比从 ${srCode(p3.read_out_of, 'zh')} 读出` },
+      metric: SRLOGR, value: srFig(p3.log_r, 'num3'), interval: [srFig(p3.interval_95[0], 'num3'), srFig(p3.interval_95[1], 'num3')],
+      people: p3.included_people, note: srReading(p3) });
+  }
+  return {
+    id: 'shared-encoder',
+    title: id === 'openbmi' ? { en: 'One model, several questions · motor imagery (route 2)', zh: '一个模型，多个问题 · 运动想象（第二条路线）' }
+                            : { en: 'One model, several questions · sleep (route 2)', zh: '一个模型，多个问题 · 睡眠（第二条路线）' },
+    // OpenBMI's two questions share one chance level; BOAS's do not (five stages, then two answers), so it has none.
+    chance: id === 'openbmi' ? srFig(srArm(d, 'E1', 'B-lin', 'MI-A').chance, 'pct1') : undefined,
+    path: '/topics/shared-encoder/', rows, srNotes: id,
+  };
+}
+/**
+ * EESM19, the crude replication (S13): 20 people, one seed, EEGNet from scratch, no shared-hidden-layer arm.
+ * Arm means come without an interval (one seed); the contrasts carry both flags and their gate.
+ */
+function sharedEesm19Group(): ResultGroup {
+  const d = SRD.eesm19, path = '/topics/shared-encoder/#eesm19', rows: ResultRow[] = [];
+  for (const q of d.questions) {
+    const p1 = ppEntry(d.secondary, 'S13-P1', q), p2 = ppEntry(d.secondary, 'S13-P2', q);
+    const means: [string, number][] = [['B-lin', p1.mean_balanced_accuracy['B-lin']], ['C1', p1.mean_balanced_accuracy.C1], ['A', p2.mean_balanced_accuracy[`A_${q}`]]];
+    if (p2.mean_balanced_accuracy['B-lin'] !== p1.mean_balanced_accuracy['B-lin']) throw new Error('entities.ts: EESM19 B-lin differs between its two contrasts');
+    for (const [a, v] of means)
+      rows.push({ path, method: 'EEGNet', methodSlug: 'eegnet',
+        condition: { en: `${SR_ARM[a].en} · ${qName(q, 'en')} (${q}) · trained from scratch, one seed`, zh: `${SR_ARM[a].zh} · ${qName(q, 'zh')}（${q}）· 从头训练，1 个随机种子` },
+        metric: SRBA, value: srFig(v, 'pct1'), people: p1.included_people,
+        note: { en: ['One seed: a mean with no interval.'], zh: ['1 个随机种子：只有均值，没有区间。'] } });
+    rows.push(srContrastRow(p1, path, SR_CONTRAST['S13-P1']), srContrastRow(p2, path, SR_CONTRAST['S13-P2']));
+  }
+  return { id: 'shared-encoder', title: { en: 'One model, several questions · sleep, the full EESM19 release (crude: 20 people, one seed)',
+                                           zh: '一个模型，多个问题 · 睡眠，EESM19 完整版（粗略：20 名被试，1 个随机种子）' },
+           path: '/topics/shared-encoder/', rows, srNotes: 'eesm19' };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
@@ -812,7 +940,7 @@ export const datasets: DatasetEntity[] = [
   fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }, [reliableGroup('beta-8ch')]),
   fromMvp('ds006593', { en: 'P300 target ERP', zh: 'P300 目标 ERP' }),
   fromMvp('TMNRED / ds005383', { en: 'Semantic target ERP', zh: '语义目标 ERP' }),
-  fromMvp('EESM19 scalp subset', { en: 'Five-stage sleep', zh: '五期睡眠分期' }),
+  fromMvp('EESM19 scalp subset', { en: 'Five-stage sleep', zh: '五期睡眠分期' }, [sharedEesm19Group()]),
   fromMvp('ds005342', { en: 'Cue-gated idle / command', zh: '提示同步的空闲 / 指令' }),
   {
     slug: 'wearable-ssvep-102', name: 'Wearable SSVEP BCI dataset (dry and wet electrodes)', task: { en: '12-target SSVEP, dry and wet electrodes', zh: '12 目标 SSVEP，干电极与湿电极' },
@@ -834,7 +962,10 @@ export const datasets: DatasetEntity[] = [
   fromRights('ysu-async-ssvep', cx['ysu-async-ssvep'], [ysuExtensionGroup(), ysuGroup()], { en: 'Asynchronous SSVEP, control and non-control states', zh: '异步 SSVEP，控制与非控制状态' }),
   fromRights('ltrsvp', extension.results['ltrsvp-rate-transfer'], [ltrsvpGroup()], { en: 'P300 target images in rapid serial visual presentation at three rates', zh: '三种速率下快速序列视觉呈现中的 P300 目标图像' }, 'LTRSVP · EEG Signals from an RSVP Task'),
   fromRights('dreem-dod', dreem, [dreemGroup('DOD-H'), dreemGroup('DOD-O')], { en: 'Five-stage sleep staging, healthy sleepers and people with obstructive sleep apnoea, kept apart', zh: '五期睡眠分期，健康被试与阻塞性睡眠呼吸暂停患者，分开分析' }),
-  fromRights('openbmi', large.results['openbmi-cross-session-calibration'], [openbmiGroup()], { en: 'Left- vs. right-hand motor imagery across two sessions', zh: '跨两次会话的左右手运动想象' }),
+  fromRights('openbmi', large.results['openbmi-cross-session-calibration'], [openbmiGroup(), sharedGroup('openbmi')], { en: 'Motor imagery: left or right hand across two sessions, and imagery or rest', zh: '运动想象：跨两次会话的左右手，以及想象还是静息' }),
+  // Since 2026-10-07 (owner approval of its rights review, publishable with stated gaps): route 2's sleep source.
+  { ...fromRights('boas', SRD.boas, [sharedGroup('boas')], { en: 'Overnight sleep, six polysomnography EEG channels, human-consensus stages', zh: '整夜睡眠，6 个多导睡眠图 EEG 通道，人工共识分期' },
+                  'BOAS · Bitbrain Open Access Sleep dataset'), rightsNote: 'boas' as const },
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));

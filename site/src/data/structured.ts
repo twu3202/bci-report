@@ -30,6 +30,7 @@ import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
+import shared from './shared-representation-update.json';
 import reliable from './reliable-decisions-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
@@ -155,6 +156,10 @@ const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
   ...(core ? [{ file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt, metrics: ['balanced_accuracy'] }] : []),
 ];
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
+  // Since 2026-10-07: route 2 of the decision-research plan, its own export only. when-not-to-act's roadmap links
+  // the page and prints no figure of it, so its entry below is unchanged.
+  'shared-encoder': { file: '/data/shared-representation-update.json', release: shared.release_id, generated: shared.generated_at,
+                      metrics: ['balanced_accuracy', 'paired_difference_balanced_accuracy', 'log_remaining_error_ratio', 'auroc'] },
   'sleep-staging': largeSourceExport(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa', 'recall', 'precision', 'f1']),
   'calibration-budget': largeSourceExport(['balanced_accuracy']),
   'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],

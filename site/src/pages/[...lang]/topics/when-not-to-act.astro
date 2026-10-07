@@ -318,7 +318,7 @@ const basis = idle.reviewBasis;
     <div class="topic-heading"><div><p class="eyebrow">{plan.eyebrow}</p><h2 id="decision-heading">{plan.h2}</h2></div><p>{plan.lede}</p></div>
     <p class="protocol-note research-status">{plan.statusLine}</p>
     <p class="roadmap-p research-scope">{plan.scope}</p>
-    <ol class="route-list">{plan.routes.map((r, i) => { const st = decisionRoadmap.routes[i]; return <li data-route={st.id} data-route-status={st.runStatus}><p class="eyebrow">{r.tag} · {r.status}</p><h3>{r.title}</h3><p>{r.body}</p>{st.runStatus === 'run' && r.runNote && <p class="route-run-note">{r.runNote}</p>}{r.boundary && <p class="route-boundary">{r.boundary}</p>}{st.runStatus === 'run' && r.resultsLink && <p class="route-results"><a href={hrefFor(`/topics/when-not-to-act/${st.results}`, locale)}>{r.resultsLink} ↑</a></p>}</li>; })}</ol>
+    <ol class="route-list">{plan.routes.map((r, i) => { const st = decisionRoadmap.routes[i]; return <li data-route={st.id} data-route-status={st.runStatus}><p class="eyebrow">{r.tag} · {r.status}</p><h3>{r.title}</h3><p>{r.body}</p>{st.runStatus === 'run' && r.runNote && <p class="route-run-note">{r.runNote}</p>}{r.boundary && <p class="route-boundary">{r.boundary}</p>}{st.runStatus === 'run' && r.resultsLink && <p class="route-results">{st.results.startsWith('#') ? <a href={hrefFor(`/topics/when-not-to-act/${st.results}`, locale)}>{r.resultsLink} ↑</a> : <a href={hrefFor(st.results, locale)}>{r.resultsLink} →</a>}</p>}</li>; })}</ol>
     <h3 class="roadmap-sub">{plan.boundaryH3}</h3>
     <p class="roadmap-p">{plan.boundary}</p>
     <p class="roadmap-p">{plan.inputsNote}</p>

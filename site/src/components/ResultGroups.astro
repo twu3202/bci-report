@@ -14,6 +14,8 @@ import { protocolLinkLabel } from '../data/protocols';
 import { fmText } from '../data/foundation-models-zh';
 import { fmModels, fmTermsSentence } from '../data/foundation-models';
 import { rdLimits } from '../data/reliable-decisions-limits';
+import BoasGaps from './BoasGaps.astro';
+import { groupLimits, groupRule } from '../data/shared-encoder';
 
 interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
 const { locale, groups, showMethod = true } = Astro.props;
@@ -31,6 +33,8 @@ const heading = (g: ResultGroup & { dataset?: DatasetEntity }) => g.dataset ? `$
 // A URL the export's text carries in parentheses is printed as itself, linked: printable ASCII without brackets, ending in
 // a letter, digit or slash, so neither a closing bracket and full stop nor the Chinese that follows it joins the link.
 const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
+// Route 2 (2026-10-07): a BOAS group carries the three stated gaps, the participants' wording and the credit beside
+// its rows (BoasGaps.astro), on the dataset page and on every method page that shows them.
 ---
 {groups.map(g => {
   const plot = plottable(g);
@@ -39,7 +43,7 @@ const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
   const scale = plot[0]?.value.fmt === 'pct1raw' ? 100 : 1;
   const files = [...new Set(g.rows.flatMap(r => [r.value.src]))];
   return (
-    <section class="entity-group" id={`g-${g.dataset ? g.dataset.slug + '-' : ''}${g.id}`}>
+    <section class="entity-group" id={`g-${g.dataset ? g.dataset.slug + '-' : ''}${g.id}`} data-boas={g.srNotes === 'boas' ? 'true' : undefined}>
       <h3>{g.dataset ? <><a href={hrefFor(`/datasets/${g.dataset.slug}/`, locale)} lang="en">{g.dataset.name}</a> · {tr(g.title, locale)}</> : tr(g.title, locale)}</h3>
       <p class="entity-group-meta">{c.readOn} <a href={hrefFor(g.path, locale)}>{pageLabel(g.path)}</a>{g.chance && <> · {c.chance} <span data-fig={attr(g.chance)}>{formatFig(g.chance)}</span></>} · {files.map((f, i) => <>{i > 0 && ', '}<a href={`/data/${f}`} download>{f}</a></>)}</p>
       {plot.length > 0 && <IntervalPlot
@@ -73,6 +77,8 @@ const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
       </div>}
       {g.fmTerms && g.rows.length > 0 && <p class="protocol-note fm-terms-note" data-fm-terms={g.fmTerms}>{fmTermsSentence(fmModels.filter(m => g.rows.some(r => r.method === m.name)), locale)} <a href={`${hrefFor(`/protocols/${g.fmTerms}/`, locale)}#v9-licences`}>{locale === 'zh' ? '全部权重许可与条款 →' : 'Every weights licence and its terms →'}</a></p>}
       {g.rdLimits && <p class="protocol-note rd-limits-note" data-rd-limits={g.rdLimits}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{rdLimits(g.rdLimits, locale).map((x, i) => <>{i > 0 && locale === 'en' && ' '}{urlParts(x).map((part, j) => j % 2 ? <a href={part} target="_blank" rel="noreferrer">{part}</a> : part)}</>)}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#rd-limits`}>{locale === 'zh' ? '第一条路线的全部局限 →' : 'Every limitation of route 1 →'}</a></p>}
+      {g.srNotes === 'boas' && g.rows.length > 0 && <BoasGaps locale={locale}/>}
+      {g.srNotes && g.rows.length > 0 && <p class="protocol-note sr-limits-note" data-sr-limits={g.srNotes}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{groupLimits(g.srNotes, locale).map((x, i) => <>{i > 0 && locale === 'en' && ' '}{x.text}</>)}{locale === 'en' && ' '}{groupRule[locale]}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/shared-encoder/', locale)}#methods-and-limits`}>{locale === 'zh' ? '第二条路线的全部局限 →' : 'Every limitation of route 2 →'}</a></p>}
       {g.notRun && g.notRun.length > 0 && <p class="protocol-note fm-not-run-note">{g.notRun.map((x, i) => {
         const why = fmText(x.reason, locale);
         return <>{i > 0 && ' '}<strong><span lang="en">{x.method}</span>{locale === 'zh' ? '：未运行，不是零。' : ': not run, never a zero.'}</strong> {why.text}{why.original && <span class="note-original" lang="en">{why.original}</span>}</>;
