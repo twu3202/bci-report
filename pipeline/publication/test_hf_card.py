@@ -168,6 +168,14 @@ class CardRouteTwo(unittest.TestCase):
         self.assertIn('not in language', self.r2)
         self.assertIn('supported on neither domain', self.r2)
 
+    def test_the_lift_is_attributed_only_where_the_flags_show_it(self):
+        # Review of 2026-10-07: an equivalence at a 2 pp margin cannot assign a 1.48 pp gain to the hidden layer on
+        # motor imagery; B-sh - B-lin (S2) shows it on sleep and is inconclusive on motor imagery.
+        self.assertNotIn('whatever lifts', self.r2)
+        self.assertIn('On sleep B-sh carries the lift over B-lin; on motor imagery B-sh against B-lin was inconclusive.', self.r2)
+        # The floor on next-epoch change and time of night is EEGNet's only.
+        self.assertIn('at floor for the fixed heads on EEGNet', self.r2)
+
 
 if __name__ == '__main__':
     unittest.main()

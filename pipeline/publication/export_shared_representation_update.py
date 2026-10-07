@@ -15,9 +15,14 @@ and the three independent audits are pinned by SHA-256, opened and checked, neve
   value); the BOAS ones never reached this machine;
 - a BOAS figure without its three stated gaps and attribution, a BOAS cell of fewer than 20 people, demographics,
   dates and measured compute time;
-- a flag its interval does not give, a gate its arm's interval does not give, a route sentence the counted questions
-  and the cost ledger do not give, a contrast that is not the difference of its arms, and a figure the pinned
-  handoff does not state.
+- a flag its interval does not give, a level or E2-sleep gate its arm's interval does not give, a P3 or S4 gate the
+  read-out's AUROC interval does not give, a primary entry whose gate is not its level's, a secondary gate without a known value and source, a route sentence the counted
+  questions and the cost ledger do not give, a contrast that is not the difference of its arms, and a figure the
+  pinned handoff does not state.
+A secondary entry's gate is the one its source attached (the run, the level, or the independent secondary audit,
+D-S3); it is checked against the allowed values and carried with its source, not re-derived here from the reference
+arm's interval (review of 2026-10-07: the 41 BOAS reference-arm gates and the 5 motor-imagery floors were recomputed
+by hand and match).
 
     python3 pipeline/publication/export_shared_representation_update.py
 """
@@ -1216,8 +1221,10 @@ def export():
             'every difference flag, margin flag and wording follows from its interval and the frozen margin (2.0 pp; '
             'log 0.8 for P3 and S4); every contrast is the difference of its arms\' means; per-seed points average to '
             'the estimate; R is the ratio of remaining errors',
-            'every gate follows from its arm\'s interval (chance + 5 pp to 95%; read-out AUROC above 0.55 for P3 and '
-            'S4); E2-sleep gates from the E2 B-lin arm; secondary gates carry who attached them',
+            'every level gate follows from its arm\'s interval (chance + 5 pp to 95%) and every P3 and S4 gate from the '
+            'read-out\'s AUROC interval (above 0.55); every primary entry carries its level\'s gate; E2-sleep gates from '
+            'the E2 B-lin arm; the other secondary gates are the attached ones, checked against the allowed values and '
+            'carried with who attached them, not re-derived here',
             'each route sentence follows from the counted questions\' P1 flags and the cost ledger\'s "for less" rule; '
             'the audit\'s per-question sentences follow from the flags',
             '21 primary entries; every per-arm interval holds its mean and the per-seed means average to it; '

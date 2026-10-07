@@ -182,7 +182,15 @@ def shared_paragraph():
     assert mi_a['difference'] == sl_a['difference'] == 'difference: C1 higher', 'C1 higher'
     assert mi['route_sentence']['fixed_heads_for_less'] and boas['route_sentence']['fixed_heads_for_less'], 'for less'
     assert all(entry(mi, 'P5', q)['margin'] == 'equivalent within delta' for q in ('MI-A', 'MI-B')), 'P5'
+    assert entry(boas, 'P5', 'SL-A')['margin'] == 'non-inferior' and entry(boas, 'P5', 'SL-A')['interval_95_pp'][1] < 2, 'P5 sleep: B-sh non-inferior'
+    # Where C1's lift over B-lin comes from (S2, B-sh - B-lin, secondary): shown on sleep, inconclusive on motor imagery.
+    s2 = lambda d, q: next(e for e in d['secondary'] if e['id'] == 'S2' and e['level'] == 'E1' and e['question'] == q)
+    assert s2(boas, 'SL-A')['difference'] == 'difference: B-sh higher', 'S2 sleep'
+    assert s2(mi, 'MI-A')['wording'] == 'inconclusive at this sample size', 'S2 motor imagery'
     assert boas['route_sentence']['excluded'] == {'SL-E': 'floor', 'SL-F': 'floor'}, 'floor'
+    # The floor is EEGNet's (E1): on frozen CBraMod features and in E2 both questions passed the gate.
+    assert [g['gate'] for g in boas['gates'] if g['level'] == 'E1' and g['question'] in ('SL-E', 'SL-F')] == ['floor', 'floor'], 'floor on EEGNet'
+    assert all(g['gate'] == 'pass' for g in boas['gates'] if g['level'] != 'E1'), 'pass elsewhere'
     c = r['boas_conditions']
     return f"""`shared-representation-update.json` — reviewed 7 October 2026: route 2 of
 the decision-research roadmap, **one representation, several questions**.
@@ -195,11 +203,12 @@ adapted by LoRA, one seed and secondary; motor imagery on OpenBMI
 ({eesm['people']} people, one seed) as a crude replication. "Fixed heads did as
 well for less" is **supported on neither domain**: C1 scored {pp(mi_a)} above
 B-lin on imagery against rest and {pp(sl_a)} on five-stage sleep scoring, while
-B-lin was the cheaper set-up. C1 against B-sh was within the 2-point margin on
-both motor-imagery questions: whatever lifts C1 above B-lin, B-sh (the same
-hidden layer without conditioning) has too, so the question's identity itself
-adds nothing measurable. On sleep, next-epoch change and time of night were at
-floor for the fixed heads: reported, not counted. Every contrast carries a
+B-lin was the cheaper set-up. C1 against B-sh (the same hidden layer without
+conditioning) was equivalent within the 2 pp margin on both motor-imagery
+questions and non-inferior on sleep, so the question's identity itself adds
+nothing measurable. On sleep B-sh carries the lift over B-lin; on motor imagery
+B-sh against B-lin was inconclusive. On sleep, next-epoch change and time of
+night were at floor for the fixed heads on EEGNet: reported, not counted. Every contrast carries a
 difference flag and a margin flag fixed before any result; with 21 primary
 entries and no multiplicity correction, about one in twenty entries with no true
 difference may show one by chance. E2 sleep ran after every other result was
