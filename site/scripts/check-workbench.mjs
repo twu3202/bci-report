@@ -227,7 +227,7 @@ assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>a
 // These pinned the count "82". The topics now draw on two exports measuring
 // different things (proportions, correlation, R²), so a summed total would be
 // the inflation these checks exist to prevent. The intent is kept, not the number.
-assert.match(built,/separate from the questions above/,'homepage must distinguish the topic extension from the 39-comparison matrix');
+assert.match(built,/separate from the questions below/,'homepage must distinguish the topic extension from the 39-comparison matrix');
 assert.match(built,/not independent experiments, and not an overall ranking/,'homepage must not inflate repeated conditions into independent experiments');
 assert.doesNotMatch(built,/\d+ additional aggregate measurements/,'no summed measurement count across exports that measure different things');
 // Every protocol is reachable without JavaScript and without a dropdown. Since
