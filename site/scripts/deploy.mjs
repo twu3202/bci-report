@@ -104,21 +104,28 @@ if (!noDeploy) await new Promise((resolve, reject) => {
 // The edge can briefly serve the previous copy, so retry before calling it a mismatch.
 // Ask for gzip or brotli: the edge otherwise answers zstd, which Node's fetch
 // hands back still compressed, and every page would look different.
-const get = u => fetch(u, { headers: { 'cache-control': 'no-cache', 'accept-encoding': 'gzip, br' } });
+// On a slow or flaky link (2026-10-08) one response body stalled until undici's
+// 300-second stream timeout and the uncaught error ended the run before IndexNow:
+// each request now gives up after 30 s and counts as a failed attempt, and six
+// pages are checked at a time.
+const get = u => fetch(u, { headers: { 'cache-control': 'no-cache', 'accept-encoding': 'gzip, br' }, signal: AbortSignal.timeout(30_000) });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const bodyOf = async u => { try { const res = await get(u); return res.ok ? Buffer.from(await res.arrayBuffer()) : null; } catch { return null; } };
 const mismatched = [];
-for (const u of changed.length ? changed : urls.slice(0, 3)) {
-  const want = readFileSync(fileOf(u));
-  let ok = false;
-  for (let attempt = 0; attempt < 6 && !ok; attempt++) {
-    if (attempt) await sleep(3000);
-    const res = await get(u).catch(() => null);
-    ok = !!res && res.ok && Buffer.from(await res.arrayBuffer()).equals(want);
+const queue = [...(changed.length ? changed : urls.slice(0, 3))];
+await Promise.all(Array.from({ length: 6 }, async () => {
+  for (let u; (u = queue.shift()) !== undefined;) {
+    const want = readFileSync(fileOf(u));
+    let ok = false;
+    for (let attempt = 0; attempt < 6 && !ok; attempt++) {
+      if (attempt) await sleep(3000);
+      ok = !!(await bodyOf(u))?.equals(want);
+    }
+    if (!ok) mismatched.push(u);
   }
-  if (!ok) mismatched.push(u);
-}
+}));
 const keyRes = await get(`${origin}/${keyFile}`).catch(() => null);
-const keyLive = !!keyRes && keyRes.ok && (await keyRes.text()).trim() === key;
+const keyLive = !!keyRes && keyRes.ok && (await keyRes.text().catch(() => '')).trim() === key;
 if (mismatched.length) die(`production does not match dist/ for:\n  ${mismatched.join('\n  ')}\nNothing was submitted to IndexNow.`);
 console.log(`deploy: production matches dist/ for ${changed.length || 3} checked page(s).`);
 
