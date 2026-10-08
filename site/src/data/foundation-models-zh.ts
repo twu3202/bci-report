@@ -140,7 +140,7 @@ export const fmZh: Record<string, string> = {
   // Not-run reasons: never a zero, always the reason.
   'BrainTokenizer needs a 512-sample window (2.0 s at 256 Hz); the published segment is 1 s = 256 samples, so upstream unfold() would zero-pad 256 of 512 samples of every window (invented samples). All upstream downstream tasks use >= 2 s windows.':
     'BrainTokenizer 需要 512 个采样点的时间窗（256 Hz 下 2.0 秒）；已发布的片段是 1 秒 = 256 个采样点，所以上游的 unfold() 会给每个时间窗的 512 个采样点补零 256 个（凭空造出的采样点）。上游所有下游任务用的时间窗都不短于 2 秒。',
-  'not run by design: LUNA Large is frozen probes only in the v9 stage specification': '按设计未运行：在 v9 阶段的规格中，LUNA Large 只做冻结探针',
+  'not run by design: LUNA Large is frozen probes only in the v9 stage specification': '按设计未运行：该阶段的评测规格规定 LUNA Large 只做冻结探针',
   'not run by design: ST-EEGFormer Large is frozen probes only': '按设计未运行：ST-EEGFormer Large 只做冻结探针',
   'not run by design: eeg-fm-masking is a frozen-probe masking ablation': '按设计未运行：eeg-fm-masking 是用冻结探针做的掩码消融',
   'not run by design: ERP-FM is frozen probes only and EEGMAT arithmetic is outside the ERP design': '按设计未运行：ERP-FM 只做冻结探针，而 EEGMAT 的心算任务不在 ERP 设计范围内',
@@ -165,9 +165,19 @@ export const fmZh: Record<string, string> = {
  * one spelling everywhere; "MIT." prints "MIT。" alone).
  */
 const LICENCE_NAME = /^(?:MIT|Apache-2\.0)\.?$/;
+/**
+ * Released sentences that name an internal evaluation version. The site does not
+ * print version labels (owner, 2026-10-08), so the page says the same thing
+ * without one; the served JSON keeps the sentence as released.
+ */
+const enDisplay: Record<string, string> = {
+  'not run by design: LUNA Large is frozen probes only in the v9 stage specification':
+    'not run by design: LUNA Large is frozen probes only in this evaluation’s specification',
+};
 export function fmText(en: string, locale: Locale): { text: string; original?: string } {
-  if (locale === 'en') return { text: en };
+  const shown = enDisplay[en] ?? en;
+  if (locale === 'en') return { text: shown };
   const zh = fmZh[en];
   if (zh === undefined) throw new Error(`foundation-models-zh.ts: no Chinese for "${en.slice(0, 80)}"`);
-  return zh === en || LICENCE_NAME.test(en) ? { text: zh } : { text: zh, original: en };
+  return zh === en || LICENCE_NAME.test(en) ? { text: zh } : { text: zh, original: shown };
 }

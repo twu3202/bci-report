@@ -273,7 +273,7 @@ const card = topicCards[locale]['on-the-move'];
       <table><caption>{copy.phCaption}</caption><thead><tr><th scope="col">{copy.colCondition}</th><th scope="col">{copy.colR}</th><th scope="col">{copy.colR2}</th></tr></thead><tbody>{phantom.conditions.map(c => <tr><th scope="row">{copy.phCond[c.condition]}{copy.phCondNote[c.condition] && <small>{copy.phCondNote[c.condition]}</small>}</th><td><span class="metric">{signed(c.signed_correlation_r.value)}</span><span class="interval">{copy.foldRange(signed(c.signed_correlation_r.fold_range[0]), signed(c.signed_correlation_r.fold_range[1]))}</span></td><td><span class="metric">{signed(c.predictive_r_squared.value)}</span><span class="interval">{copy.foldRange(signed(c.predictive_r_squared.fold_range[0]), signed(c.predictive_r_squared.fold_range[1]))}</span></td></tr>)}</tbody></table>
     </div>
     <div class="citation-list"><article><h3 lang="en">{phantom.rights.name}</h3><p lang="en">{phantom.rights.attribution}</p><p>{copy.phUnit}</p><p><a href={phBasis[0]} target="_blank" rel="noreferrer">{copy.phDataset}</a> · <a href={phBasis[1]} target="_blank" rel="noreferrer">{copy.phMethod}</a> · <a href={phantom.rights.licenseUrl} target="_blank" rel="noreferrer">{phantom.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version} · {tc.generated} {evidence.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {evidence.schema_version}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="treadmill-speed" aria-labelledby="gait-heading">
@@ -287,7 +287,7 @@ const card = topicCards[locale]['on-the-move'];
     </div>
     <div class="method-grid-wide">{copy.gLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list"><article><h3 lang="en">{gaitData.rights.name}</h3><p lang="en">{gaitData.rights.attribution}</p><p>{copy.gConsent}</p><p><a href={gBasis[0]} target="_blank" rel="noreferrer">{copy.gDataset}</a> · <a href={gaitData.rights.licenseUrl} target="_blank" rel="noreferrer">{gaitData.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
@@ -297,6 +297,6 @@ const card = topicCards[locale]['on-the-move'];
       {ssvepCitation && <article><h3 lang="en">{ssvepCitation.identity.title}</h3><p lang="en">{ssvepCitation.identity.dataset_citation}</p><p lang="en">{ssvepCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {ssvepCitation.identity.license}{tc.period}</p><p><a href={ssvepCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.ssvepLink}</a> · <a href={ssvepCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
       {erpCitation && <article><h3 lang="en">{erpCitation.identity.title}</h3><p lang="en">{erpCitation.identity.dataset_citation}</p><p lang="en">{erpCitation.identity.source_paper_citation}</p><p>{copy.derivative} · {erpCitation.identity.license}{tc.period}</p><p><a href={erpCitation.primary_sources[0]} target="_blank" rel="noreferrer">{copy.erpLink}</a> · <a href={erpCitation.primary_sources[2]} target="_blank" rel="noreferrer">{tc.sourceStudy}</a></p></article>}
     </div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

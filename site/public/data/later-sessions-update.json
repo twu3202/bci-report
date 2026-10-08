@@ -1,0 +1,1417 @@
+{
+  "schema_version": "bci-report-later-sessions-update-v1",
+  "release_id": "later-sessions-update-20261008",
+  "generated_at": "2026-10-08",
+  "status": "aggregate_preview",
+  "question": "Does a decoder trained on an earlier session still work later?",
+  "metric_units": "balanced accuracy, accuracy, macro F1, AUROC, average precision, Brier score, ECE, shares and chance levels are proportions in [0,1]; differences of these are differences of proportions; log loss is per event in nats; the Forenzo primary error is a dimensionless source-SD-normalized RMSE (lower is better), its raw RMSE is in each response’s stored units, R² and Pearson are unitless; counts of people, records, trials, events, rows and runs are whole numbers; null means undefined or unavailable, never zero",
+  "scope": "Four results on one question, each from its own approved release: WBCIC-SHU session 1 to session 3 with two fixed CPU baselines and with frozen CBraMod; a first-visit ERP decoder at the longitudinal RSVP source’s later visits; and a fixed spectral ridge in continuous cursor tracking, a negative result. Same person, later session, no labels from the later session in every case. No dataset, cohort or response arm is pooled, nothing joins the eight-protocol matrix, and the results share no ranking.",
+  "results": {
+    "wbcic-cross-session-cpu": {
+      "id": "wbcic-cross-session-cpu",
+      "dataset": "wbcic-shu",
+      "title": "WBCIC-SHU: session 1 to session 3, two fixed CPU baselines",
+      "question": "A decoder trained on each person's first recording session and tested on their third, with no labels from the third: how far do two fixed CPU baselines get?",
+      "model_family": "classical",
+      "foundation_model": false,
+      "fine_tuning": false,
+      "generalization": "the same person, a later recording session: trained on session 1, tested on session 3. Not an unseen person and not another dataset.",
+      "sessions": {
+        "train": 1,
+        "test": 3,
+        "unused": 2,
+        "target_session_labels": 0,
+        "unit": "recording-session ordinal",
+        "time_between": "not stated: the ordinals are not a guaranteed time gap or distinct calendar days"
+      },
+      "metric": "balanced_accuracy",
+      "weighting": "participant-equal: each person counts once in a cohort mean; never a trial-weighted score across people, and the two cohorts are never averaged together",
+      "cohorts": {
+        "2C": {
+          "label": "Two-class motor imagery",
+          "classes": [
+            "left hand",
+            "right hand"
+          ],
+          "people": 51,
+          "chance_level": 0.5,
+          "source_trials": 10199,
+          "target_trials": 10195,
+          "arms": {
+            "source_prior": {
+              "label": "Source-majority prior",
+              "description": "predicts, for every session-3 trial, the class most frequent in the person's session 1 (the smallest class code on a tie); its balanced accuracy is one over the number of classes when every class is present",
+              "balanced_accuracy": {
+                "mean": 0.5,
+                "interval_95": [
+                  0.5,
+                  0.5
+                ]
+              },
+              "accuracy": {
+                "mean": 0.5001508295625943
+              },
+              "macro_f1": {
+                "mean": 0.33340002667733754
+              }
+            },
+            "relative_spectral_ridge": {
+              "label": "Relative spectral power + ridge",
+              "description": "Welch relative band power per channel as log ratios, standardized on session 1, then a ridge classifier",
+              "balanced_accuracy": {
+                "mean": 0.538767330164389,
+                "interval_95": [
+                  0.5271976567142007,
+                  0.550924192909487
+                ]
+              },
+              "accuracy": {
+                "mean": 0.5387028657616892
+              },
+              "macro_f1": {
+                "mean": 0.4965466588519137
+              }
+            }
+          },
+          "paired": {
+            "comparison": "relative spectral ridge minus source prior, the same people and trials",
+            "balanced_accuracy_difference": {
+              "mean": 0.03876733016438899,
+              "interval_95": [
+                0.02719765671420083,
+                0.05092419290948703
+              ]
+            },
+            "interval_excludes_zero": true,
+            "people": 51
+          }
+        },
+        "3C": {
+          "label": "Three-class motor imagery",
+          "classes": [
+            "left hand",
+            "right hand",
+            "foot"
+          ],
+          "people": 11,
+          "chance_level": 0.3333333333333333,
+          "source_trials": 3299,
+          "target_trials": 3300,
+          "arms": {
+            "source_prior": {
+              "label": "Source-majority prior",
+              "description": "predicts, for every session-3 trial, the class most frequent in the person's session 1 (the smallest class code on a tie); its balanced accuracy is one over the number of classes when every class is present",
+              "balanced_accuracy": {
+                "mean": 0.33333333333333337,
+                "interval_95": [
+                  0.33333333333333337,
+                  0.33333333333333337
+                ]
+              },
+              "accuracy": {
+                "mean": 0.33333333333333337
+              },
+              "macro_f1": {
+                "mean": 0.16666666666666669
+              }
+            },
+            "relative_spectral_ridge": {
+              "label": "Relative spectral power + ridge",
+              "description": "Welch relative band power per channel as log ratios, standardized on session 1, then a ridge classifier",
+              "balanced_accuracy": {
+                "mean": 0.37636363636363634,
+                "interval_95": [
+                  0.35424242424242425,
+                  0.39969696969696966
+                ]
+              },
+              "accuracy": {
+                "mean": 0.37636363636363634
+              },
+              "macro_f1": {
+                "mean": 0.34081486636246594
+              }
+            }
+          },
+          "paired": {
+            "comparison": "relative spectral ridge minus source prior, the same people and trials",
+            "balanced_accuracy_difference": {
+              "mean": 0.04303030303030306,
+              "interval_95": [
+                0.020909090909090922,
+                0.0663636363636364
+              ]
+            },
+            "interval_excludes_zero": true,
+            "people": 11
+          }
+        }
+      },
+      "trials": {
+        "source": 13498,
+        "target": 13495,
+        "session_files": 124,
+        "excluded": 0
+      },
+      "session_quality": {
+        "sessions": 186,
+        "fixed_count_holds": 6,
+        "holds_in_selected_sessions": 3,
+        "holds_in_unused_session_2": 3,
+        "delivered_trials": 40490,
+        "nominal_trials": 40500,
+        "missing_trial_cause": "unknown",
+        "rule": "The short sessions are admitted under a reviewed variable-N rule: no filling, truncation, balancing or performance-based exclusion, and the original holds stay recorded."
+      },
+      "method": {
+        "data": "the publisher's processed derivative: 58 anonymous channel indices at 250 Hz in four-second epochs; each cohort kept apart",
+        "split": "every person's complete session 1 trains, their session 3 is the test; session 2 is unused",
+        "spectra": "Welch relative band power in 4–8, 8–13, 13–30 and 30–40 Hz per channel, as log ratios with a floor of 1e-12: 232 values per trial, float64",
+        "arms": {
+          "source_prior": "predicts, for every session-3 trial, the class most frequent in the person's session 1 (the smallest class code on a tie); its balanced accuracy is one over the number of classes when every class is present",
+          "relative_spectral_ridge": "Welch relative band power per channel as log ratios, standardized on session 1, then a ridge classifier"
+        },
+        "ridge": "StandardScaler fitted on session 1 only; RidgeClassifier with alpha 1, an intercept, no class weights and the SVD solver",
+        "selection": "none: no hyperparameter search, target normalization, calibration or abstention",
+        "scoring": "the ordered session-3 labels were opened only by a separate scorer after every prediction was sealed; earlier schema checks had inspected label domains and counts",
+        "balanced_accuracy": "per person, the mean recall over the classes; then the mean over the people of the cohort"
+      },
+      "uncertainty": {
+        "kind": "pointwise 95% percentile interval from 10,000 paired participant bootstrap draws within each cohort",
+        "conditional_on": "the fixed trained models and predictions: refitting and preprocessing-selection uncertainty are not included"
+      },
+      "reading": "In both cohorts the spectral ridge is above the source prior, with paired intervals above zero, and the gains are small: a few points of balanced accuracy, with no labels from the test session.",
+      "limitations": [
+        "One dataset and the same people: trained on recording session 1 and tested on session 3 of each person. Not an unseen person, another dataset or a held-out-person benchmark.",
+        "Session numbers are recording-session ordinals, not a guaranteed time gap or distinct calendar days.",
+        "Six of the 186 session records hold fewer trials than the publisher’s nominal count (40,490 delivered against 40,500 nominal). Three of them are in the selected sessions and are admitted under the reviewed variable-N rule; the original holds stay recorded. Why the trials are missing is unknown.",
+        "The publisher’s processed derivative is used as delivered. The selection history and temporal support of its reference, filter, epoch and baseline choices are not fully established, and its channel order rests on the publisher’s procedures and the raw headers, not on a direct raw-to-processed proof.",
+        "Offline only: no real-time, causal, clinical, prospective-deployment or physical-amplitude claim.",
+        "Two fixed baselines. They say nothing about EEGNet, CSP, any foundation model or LoRA, and nothing about whether calibration labels from session 3 would help: that needs its own matched arm.",
+        "The ordered test labels were read only after every prediction was sealed, but earlier schema checks had inspected label domains and counts: the investigators were not blind to all target metadata."
+      ],
+      "release_limits": [
+        "Source EEG and PSD features were not independently recomputed; this audit verifies their sealed masks, arrays, reason counts and hashes.",
+        "Saved source features and labels were used only to verify source-only scaler/model provenance and fixed predictions; no model was refit.",
+        "Publisher preprocessing remains offline with uncertain temporal support and anonymous processed channel indices; causal, online, named-montage and fixed-calendar-lag claims remain unsupported.",
+        "Bootstrap intervals condition on the fixed trained models, fixed predictions and observed participant cohort.",
+        "Missing-trial cause is unknown; guarded variable-N admission did not erase upstream fixed-count holds.",
+        "Not a held-out-person or cross-dataset benchmark; no foundation model, CSP, EEGNet or LoRA result in this release.",
+        "No raw EEG, identities, individual scores, feature arrays, predictions or model artifacts may be published from this handoff."
+      ],
+      "claims_not_supported": [
+        "not a foundation-model leaderboard or a LoRA comparison",
+        "not a held-out-person or cross-dataset result",
+        "no real-time, causal, clinical or deployment claim",
+        "not a guaranteed time gap between sessions"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "people": 62,
+        "checked": "every person’s session-3 labels re-extracted and verified, the saved predictions replayed, the session-1 scaler statistics recomputed and the ridge normal equations checked; every person’s metrics and both cohorts’ paired bootstrap intervals reproduced exactly",
+        "not_checked": "the models were not refitted and the spectral features were not recomputed from the EEG"
+      }
+    },
+    "wbcic-frozen-cbramod": {
+      "id": "wbcic-frozen-cbramod",
+      "dataset": "wbcic-shu",
+      "title": "WBCIC-SHU: frozen CBraMod against the spectral ridge, session 1 to session 3",
+      "question": "Can an EEG model trained on a person's earlier recording session work in a later session without new calibration labels?",
+      "model_family": "foundation",
+      "foundation_model": true,
+      "encoder": "frozen",
+      "fine_tuning": false,
+      "lora": false,
+      "model": {
+        "name": "CBraMod",
+        "method_slug": "cbramod",
+        "paper": "https://proceedings.iclr.cc/paper_files/paper/2025/file/bbbd6d915cb90be21c1254a82d45cedd-Paper-Conference.pdf",
+        "checkpoint_sha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+        "source_revision": "b9e961003214326972c567eff390e75b0287e32a",
+        "readout": "a StandardScaler and RidgeClassifier fitted on each person's session 1 only"
+      },
+      "pretraining_exposure": {
+        "status": "not established",
+        "statement": "Not established for this checkpoint. The model paper describes pretraining on the TUH EEG corpus (TUEG), and the pinned repository lists SHU as a downstream task; neither gives a checkpoint-specific file manifest that would show WBCIC-SHU was absent. No claim of certified unseen pretraining data."
+      },
+      "generalization": "the same person, a later recording session: each person's session-1 labels train the readout. Not cross-person zero-shot decoding.",
+      "sessions": {
+        "train": 1,
+        "test": 3,
+        "unused": 2,
+        "target_session_labels": 0,
+        "unit": "recording-session ordinal",
+        "time_between": "not stated: the ordinals are not a guaranteed time gap or distinct calendar days"
+      },
+      "reused_targets": "The spectral ridge results existed before this arm was frozen: a comparative follow-up on the same test trials, not a fresh untouched test set.",
+      "metric": "balanced_accuracy",
+      "weighting": "participant-equal: each person counts once in a cohort mean, and the two cohorts are never averaged together",
+      "cohorts": {
+        "2C": {
+          "label": "Two-class motor imagery",
+          "classes": [
+            "left hand",
+            "right hand"
+          ],
+          "people": 51,
+          "chance_level": 0.5,
+          "source_trials": 10199,
+          "target_trials": 10195,
+          "frozen_cbramod": {
+            "balanced_accuracy": {
+              "mean": 0.6768569271142799,
+              "interval_95": [
+                0.6483333333333334,
+                0.7048039215686275
+              ]
+            },
+            "accuracy": {
+              "mean": 0.6768778280542984
+            },
+            "macro_f1": {
+              "mean": 0.6694566424859869
+            }
+          },
+          "relative_spectral_ridge": {
+            "balanced_accuracy": {
+              "mean": 0.538767330164389
+            },
+            "same_as": "wbcic-cross-session-cpu: the same people, trials and ridge results"
+          },
+          "paired": {
+            "comparison": "frozen CBraMod minus relative spectral ridge, the same people and trials",
+            "balanced_accuracy_difference": {
+              "mean": 0.1380895969498911,
+              "interval_95": [
+                0.11254901960784314,
+                0.1636802832244008
+              ]
+            },
+            "interval_excludes_zero": true,
+            "people": 51
+          }
+        },
+        "3C": {
+          "label": "Three-class motor imagery",
+          "classes": [
+            "left hand",
+            "right hand",
+            "foot"
+          ],
+          "people": 11,
+          "chance_level": 0.3333333333333333,
+          "source_trials": 3299,
+          "target_trials": 3300,
+          "frozen_cbramod": {
+            "balanced_accuracy": {
+              "mean": 0.5160606060606061,
+              "interval_95": [
+                0.4518181818181819,
+                0.5827348484848484
+              ]
+            },
+            "accuracy": {
+              "mean": 0.516060606060606
+            },
+            "macro_f1": {
+              "mean": 0.505110998488047
+            }
+          },
+          "relative_spectral_ridge": {
+            "balanced_accuracy": {
+              "mean": 0.37636363636363634
+            },
+            "same_as": "wbcic-cross-session-cpu: the same people, trials and ridge results"
+          },
+          "paired": {
+            "comparison": "frozen CBraMod minus relative spectral ridge, the same people and trials",
+            "balanced_accuracy_difference": {
+              "mean": 0.1396969696969697,
+              "interval_95": [
+                0.07454545454545453,
+                0.20818939393939384
+              ]
+            },
+            "interval_excludes_zero": true,
+            "people": 11
+          }
+        }
+      },
+      "method": {
+        "adapter": "resampled from 250 Hz to 200 Hz (polyphase, 4/5) and zero-padded to 800 samples; each trial and channel centred and divided by its own standard deviation, with no epsilon; a whole person would be rejected on invalid variance, and none was",
+        "encoder": "CBraMod in evaluation mode, every weight frozen, its output projection replaced by identity; the four temporal patch embeddings averaged: 58 × 200 = 11,600 values per trial, float32",
+        "readout": "a separate StandardScaler and RidgeClassifier fitted on each person's session 1 only: alpha 1, SVD solver, intercept, no class weights, no search",
+        "not_done": "no backbone training, LoRA, target-session calibration or adaptation",
+        "scoring": "all 62 sets of predictions were sealed before a separate scorer opened the ordered session-3 labels; earlier schema checks had inspected label domains and counts"
+      },
+      "uncertainty": {
+        "kind": "pointwise 95% percentile interval from 10,000 paired participant bootstrap draws within each cohort (PCG64, seed 20261002, two-class then three-class)",
+        "paired": "the difference intervals resample matched per-person differences, not the gap between two separately estimated intervals",
+        "conditional_on": "the fixed models and predictions, without refitting: model-selection, preprocessing-selection and pretraining-overlap uncertainty are not included"
+      },
+      "reading": "In both cohorts frozen CBraMod with a session-1 ridge readout is above the spectral ridge, with paired intervals above zero. This compares two fixed pipelines; it does not show that pretraining caused the difference.",
+      "limitations": [
+        "A fixed pipeline comparison on reused benchmark targets: the spectral ridge results existed before this arm was frozen. A comparative follow-up, not a fresh untouched test set or an independent replication.",
+        "No claim that pretraining caused the difference: there is no matched random-weight control, the feature spaces, their size and the preprocessing differ, and the same ridge alpha does not equalize regularization across them.",
+        "A dimensionless adapter, not a native-amplitude replication: physical amplitude is unresolved, and upstream benchmark numbers are not reproduced here.",
+        "Pretraining exposure is not established for this checkpoint; nothing here certifies that WBCIC-SHU was unseen in pretraining.",
+        "The original six fixed-count holds stay recorded; three affected sessions enter under the reviewed variable-N rule, without filling, truncation or performance-based exclusion. The cause of the missing trials is unknown.",
+        "Offline evidence only: whole-epoch normalization and the publisher’s offline derivative establish no causal, online, clinical or closed-loop performance. No LoRA or calibration-budget comparison was run in this arm.",
+        "Same-person session transfer: each person’s session-1 labels are required. Not cross-person zero-shot decoding and not a label-free decoder.",
+        "The three-class cohort is small.",
+        "Audit scope: the independent checker refitted the session-1 readouts and recomputed predictions, metrics and intervals from the saved embeddings; the encoder was not rerun on all the EEG. An earlier fixed eight-trial adapter pilot was independently replayed and matched exactly."
+      ],
+      "release_limits": [
+        "Complete fixed pipeline comparison on reused benchmark target data, not fresh untouched validation.",
+        "Frozen CBraMod with declared dimensionless per-trial/channel normalization; not checkpoint-native amplitude evaluation or replication of upstream benchmark numbers.",
+        "No random-weight matched-architecture control; a difference from spectral ridge cannot isolate a causal pretraining benefit.",
+        "No fine-tuning, LoRA or target-session calibration tested in this arm.",
+        "Pretraining absence on exact checkpoint not forensically established.",
+        "Separate preparation/encoder/readout/scoring/audit timing, since safety checks and disk I/O are not model training throughput.",
+        "Training uses each person’s earlier-session labels; zero target-session calibration is not zero-shot cross-person transfer or a label-free decoder.",
+        "The same fixed alpha does not equalize representation dimension or numerical regularization between spectral and CBraMod feature spaces; compare these declared pipelines, not an architecture-only controlled experiment.",
+        "Anonymous processed channel order has publisher/header support but no direct raw-to-processed proof; physical amplitude and preprocessing selection chronology remain uncertain.",
+        "Three selected sessions are admitted under the separately frozen internally aligned variable-N rule. All original six fixed-count QA holds are preserved; missing-trial cause remains unknown.",
+        "Participant bootstrap intervals condition on the observed fixed trained pipelines; they do not include refitting, preprocessing selection or checkpoint contamination uncertainty.",
+        "The independent auditor refits source-only readouts and recomputes predictions/metrics from retained embeddings, but does not repeat all raw-to-embedding computations. An earlier fixed eight-source-trial adapter pilot was independently replayed.",
+        "Whole-epoch normalization and publisher offline derivatives do not establish online, causal, clinical or closed-loop performance."
+      ],
+      "claims_not_supported": [
+        "not evidence that pretraining caused the difference",
+        "not cross-person zero-shot decoding or a label-free decoder",
+        "no certified unseen pretraining data",
+        "not a replication of upstream benchmark numbers",
+        "no online, causal, clinical or closed-loop claim",
+        "no LoRA or calibration-budget result"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "people": 62,
+        "checked": "every artifact chain, the session-1 and session-3 label-stream bindings and the order of prediction before scoring; the session-1 readouts refitted and the predictions, metrics and paired intervals recomputed from the saved embeddings; then a separate root check rehashed the saved arrays and recomputed the metrics and paired intervals",
+        "not_checked": "the full encoder was not rerun on all the EEG during the result audit"
+      }
+    },
+    "rsvp-later-visits": {
+      "id": "rsvp-later-visits",
+      "dataset": "longitudinal-rsvp",
+      "title": "Longitudinal RSVP: a first-visit decoder at later visits",
+      "question": "How well does an EEG decoder trained at the first visit work at later visits without recalibration?",
+      "subtitle": "Same-person, offline RSVP classification; publisher nominal visit labels; no target-session adaptation.",
+      "model": {
+        "label": "Normalized ERP features + logistic/Platt (CPU baseline)",
+        "kind": "CPU baseline"
+      },
+      "model_family": "classical",
+      "foundation_model": false,
+      "fine_tuning": false,
+      "generalization": "the same person at later visits: each person’s first-visit labels train and calibrate their own decoder. Not cross-person zero-shot decoding.",
+      "cohort": {
+        "group": "A",
+        "people": 15,
+        "group_b": "not used"
+      },
+      "visits": [
+        {
+          "visit": "Day 7",
+          "nominal_day": 7,
+          "people": 15,
+          "events": 72000,
+          "target_events": 1794,
+          "non_target_events": 70206,
+          "target_share": 0.024916666666666667,
+          "signal_invalid_events": 0,
+          "delivered_events": null,
+          "delivered_events_note": "not available: the protected scoring interface does not report a delivered-event count, so it stays null, never zero",
+          "auroc": {
+            "mean": 0.8876332080192084,
+            "interval_95": [
+              0.8640941048199073,
+              0.9109000329539169
+            ]
+          },
+          "average_precision": {
+            "mean": 0.3592046456700177
+          },
+          "log_loss": {
+            "mean": 0.15428668691048328
+          },
+          "brier_score": {
+            "mean": 0.029215708484101693
+          },
+          "ece_10_bins": {
+            "mean": 0.023249623530733777
+          }
+        },
+        {
+          "visit": "Day 80",
+          "nominal_day": 80,
+          "people": 15,
+          "events": 72000,
+          "target_events": 1786,
+          "non_target_events": 70214,
+          "target_share": 0.024805555555555556,
+          "signal_invalid_events": 0,
+          "delivered_events": null,
+          "delivered_events_note": "not available: the protected scoring interface does not report a delivered-event count, so it stays null, never zero",
+          "auroc": {
+            "mean": 0.8790568908026509,
+            "interval_95": [
+              0.8544585482326771,
+              0.9034515461505049
+            ]
+          },
+          "average_precision": {
+            "mean": 0.310370829655321
+          },
+          "log_loss": {
+            "mean": 0.11364598042454978
+          },
+          "brier_score": {
+            "mean": 0.026648230970320912
+          },
+          "ece_10_bins": {
+            "mean": 0.020115158554492158
+          }
+        },
+        {
+          "visit": "Day 200",
+          "nominal_day": 200,
+          "people": 15,
+          "events": 72000,
+          "target_events": 1793,
+          "non_target_events": 70207,
+          "target_share": 0.024902777777777777,
+          "signal_invalid_events": 0,
+          "delivered_events": null,
+          "delivered_events_note": "not available: the protected scoring interface does not report a delivered-event count, so it stays null, never zero",
+          "auroc": {
+            "mean": 0.8527741395759905,
+            "interval_95": [
+              0.8272502426741786,
+              0.8786244810792299
+            ]
+          },
+          "average_precision": {
+            "mean": 0.2398875545778719
+          },
+          "log_loss": {
+            "mean": 0.1642904960332179
+          },
+          "brier_score": {
+            "mean": 0.03818527813031282
+          },
+          "ece_10_bins": {
+            "mean": 0.03901064527663797
+          }
+        }
+      ],
+      "contrast": {
+        "comparison": "Day 200 minus Day 7 AUROC, the same people",
+        "auroc_difference": {
+          "mean": -0.03485906844321781,
+          "interval_95": [
+            -0.06499979367960235,
+            -0.006367797491129307
+          ]
+        },
+        "interval_excludes_zero": true,
+        "people": 15,
+        "people_declined_by_0_05_or_more": 6,
+        "share_declined_by_0_05_or_more": 0.4
+      },
+      "design": {
+        "first_visit_fit_events": 72000,
+        "first_visit_calibration_events": 24000,
+        "scored_events": 216000,
+        "blocks": 195,
+        "selected_events": 312000,
+        "events_removed_for_signal": 0,
+        "note": "structural and valid event counts; overlapping events stay inside their original blocks"
+      },
+      "units": {
+        "auroc": "a ranking measure from 0 to 1, not classification accuracy",
+        "average_precision": "from 0 to 1, not precision at a chosen threshold",
+        "log_loss": "per event, natural log",
+        "brier_score": "mean squared error of the calibrated probability, 0 to 1",
+        "ece_10_bins": "expected calibration error over 10 equal-width bins, 0 to 1",
+        "contrast": "absolute difference in AUROC"
+      },
+      "label_coding": "The paper and the publisher’s sample script code 1 as non-target and 2 as target; the release’s Trigger.txt reverses these roles. The paper and script were followed, a precedence decided before modeling, and the contradiction stays visible.",
+      "method": {
+        "split": "per person, nominal Day 1 blocks 1–3 fit the classifier and block 4 fits Platt calibration; the later visits are scored on blocks 2–4, and their block 1 stays reserved",
+        "events": "57 EEG channels, −200 to +700 ms around each event, baseline-normalized per event and channel, then six 100 ms averages from +100 to +700 ms: 342 values per event, float64; the event column is not a feature",
+        "classifier": "a StandardScaler fitted on Day 1 only, then a fixed L2 logistic regression (C = 1, lbfgs, at most 2,000 iterations, tolerance 1e-6), and the same fixed logistic form for Platt calibration",
+        "selection": "none: no hyperparameter search, target-label calibration, fine-tuning or LoRA; all 15 first-visit fits succeeded and all 45 visit predictions were sealed before scoring",
+        "weighting": "every cohort mean weights people equally; counts are event totals"
+      },
+      "uncertainty": {
+        "kind": "pointwise 95% percentile interval from 10,000 participant bootstrap resamples (PCG64, seed 20261002, fixed visit and contrast order)",
+        "conditional_on": "the fixed predictions, with no refitting: model-fitting, dataset-selection and protocol-selection uncertainty are not included, and there is no multiple-comparison adjustment",
+        "resampled": "participants only; splits use whole physical blocks"
+      },
+      "reading": "AUROC stays well above chance at every later visit and is lower at Day 200 than at Day 7, with a paired interval below zero. Average precision falls too, and targets are rare. This describes this cohort and this decoder; it does not show that elapsed time caused the change.",
+      "limitations": [
+        "Day 7, Day 80 and Day 200 are the publisher’s nominal visit labels, not verified participant-specific elapsed days.",
+        "Same person, one decoder per person: each person’s first-visit labels are required. Not cross-person zero-shot decoding.",
+        "A 15-person observational cohort and one fixed offline baseline: not a clinical diagnostic result, a real-time deployment validation, evidence of causality or evidence that one foundation model is best.",
+        "Targets are rare, about 2.5% of the events at every visit. AUROC is a ranking measure and average precision is not precision at a chosen threshold: a high AUROC is not a high precision or an online selection success rate. The target share is descriptive, not a comparator arm.",
+        "Event roles and target labels had been inspected during quality checks. They did not enter normalization, model fitting or calibration, prediction, or any hyperparameter, threshold, abstention or retry decision.",
+        "A delivered-event count is not available from the protected scoring interface and stays null.",
+        "Audit scope: the saved predictions were independently reconstructed and every visit metric, interval and the contrast independently recomputed; the full production feature extraction was not independently repeated."
+      ],
+      "release_limits": [
+        "Publisher nominal visit labels; exact participant-specific elapsed days unverified.",
+        "Same-person source labels required; not cross-person zero-shot.",
+        "15 participants and one fixed offline baseline; no clinical or online performance claim.",
+        "Paper and sample script define code1 non-target/code2 target; conflicting Trigger.txt remains disclosed.",
+        "Target event roles were inspected during QA but excluded from normalization, fitting/calibration, prediction and model-selection decisions.",
+        "Intervals resample participants conditional on fixed predictions; no refitting, causal interpretation or multiple-comparison correction.",
+        "Independent numerical replay covered the fixed engineering block and all saved predictions/metrics, not every production EEG feature."
+      ],
+      "claims_not_supported": [
+        "not cross-person zero-shot generalization",
+        "no clinical, real-time or online claim",
+        "no causal effect of elapsed time",
+        "no fitted continuous decay curve",
+        "not a foundation-model ranking"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "people": 15,
+        "checked": "the saved preparation provenance, event identities, masks and features of every selected block; all saved predictions reconstructed from the saved scalers and models (largest difference 1.11e-16); all 45 visit metrics, the person-level summaries, the intervals and the contrast recomputed at an absolute tolerance of 1e-12",
+        "not_checked": "the full production EEG feature extraction was not independently repeated"
+      }
+    },
+    "forenzo-continuous-control": {
+      "id": "forenzo-continuous-control",
+      "dataset": "forenzo-continuous-tracking",
+      "title": "Continuous cursor tracking: a fixed decoder from the earliest to the latest session",
+      "question": "Can a fixed EEG decoder trained in one session outperform a constant baseline in a later session?",
+      "label": "Offline, same-person, no target-session adaptation",
+      "kind": "negative result",
+      "model_family": "classical",
+      "foundation_model": false,
+      "fine_tuning": false,
+      "models": {
+        "ridge": "source-normalized spectral features and a ridge regression (alpha 1, Cholesky), a fixed CPU baseline",
+        "source_mean": "the source session's response mean, repeated for every target row"
+      },
+      "arms": {
+        "historical_decoder_velocity_imitation": {
+          "label": "Historical decoder velocity",
+          "description": "imitates the publisher's stored output of the decoder used at recording time; not intended hand motion or intended control"
+        },
+        "constructed_raw_target_displacement_proxy": {
+          "label": "Constructed displacement proxy",
+          "description": "a separately fitted target-position-minus-cursor-position proxy in publisher screen coordinates"
+        }
+      },
+      "primary_metric": {
+        "id": "joint_source_sd_normalized_rmse",
+        "name": "Joint source-SD-normalized RMSE",
+        "lower_is_better": true,
+        "unit": "dimensionless: errors divided by the source session’s response standard deviation; an error, not a percentage or a classification accuracy",
+        "aggregation": "each trial averages the normalized squared errors over its eligible rows and both axes before the square root; a record averages its target trials equally; a cohort mean weights records equally"
+      },
+      "secondary_metrics": {
+        "raw_rmse_x": "the response's stored units, horizontal axis",
+        "raw_rmse_y": "the response's stored units, vertical axis",
+        "r2_x": "coefficient of determination, horizontal axis",
+        "r2_y": "coefficient of determination, vertical axis",
+        "pearson_x": "Pearson correlation, horizontal axis",
+        "pearson_y": "Pearson correlation, vertical axis"
+      },
+      "cohorts": {
+        "Main": {
+          "publisher_cohort_name": "Main",
+          "candidate_records": 14,
+          "admitted_records": 9,
+          "held_before_scoring": 5,
+          "hold_reasons": [
+            {
+              "reason": "a session lacks its required Chance R01 record",
+              "records": 2
+            },
+            {
+              "reason": "the decoder-local run allocation differs from the documented contract",
+              "records": 2
+            },
+            {
+              "reason": "the sample-boundary geometry differs; its exact numeric cause was not independently reconstructed",
+              "records": 1
+            }
+          ],
+          "conditional_on_admitted_records": true,
+          "arms": {
+            "historical_decoder_velocity_imitation": {
+              "label": "Historical decoder velocity",
+              "records": 9,
+              "target_rows": 782814,
+              "target_trials": 540,
+              "target_runs": 108,
+              "ridge": {
+                "label": "Spectral ridge",
+                "primary": {
+                  "mean": 192.29013468000335,
+                  "interval_95": [
+                    1.291814197492962,
+                    574.2346689216779
+                  ],
+                  "median": 1.3166008716240398
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 38.88919687660402,
+                    "interval_95": [
+                      0.3091286499899909,
+                      116.0376962409907
+                    ],
+                    "records_defined": 9
+                  },
+                  "raw_rmse_y": {
+                    "mean": 50.599090997221545,
+                    "interval_95": [
+                      0.31202176091158845,
+                      151.15902103839895
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_x": {
+                    "mean": -172983.2368205666,
+                    "interval_95": [
+                      -518949.64373443637,
+                      -0.018359390396782697
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_y": {
+                    "mean": -296662.70343864686,
+                    "interval_95": [
+                      -889987.9586215146,
+                      -0.045549203637304234
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_x": {
+                    "mean": 0.029449744580277666,
+                    "interval_95": [
+                      0.0023337074233192863,
+                      0.060529188794816786
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_y": {
+                    "mean": 0.03372059594775116,
+                    "interval_95": [
+                      0.0010453703206127316,
+                      0.07278696852473118
+                    ],
+                    "records_defined": 9
+                  }
+                }
+              },
+              "source_mean": {
+                "label": "Source-mean comparator",
+                "primary": {
+                  "mean": 1.2657539539308018,
+                  "interval_95": [
+                    1.2141606144888708,
+                    1.3164217959051656
+                  ]
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 0.30556305703450487,
+                    "interval_95": [
+                      0.29001589045026305,
+                      0.320564456438991
+                    ],
+                    "records_defined": 9
+                  },
+                  "raw_rmse_y": {
+                    "mean": 0.3019799693100075,
+                    "interval_95": [
+                      0.289016492642198,
+                      0.3133972543850734
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_x": {
+                    "mean": -0.0004981991577395453,
+                    "interval_95": [
+                      -0.0007861030958594078,
+                      -0.0002550755784865731
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_y": {
+                    "mean": -0.00037711984622356017,
+                    "interval_95": [
+                      -0.0006592043212534247,
+                      -0.00012659907427213312
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_x": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  },
+                  "pearson_y": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  }
+                }
+              },
+              "paired": {
+                "comparison": "spectral ridge minus source-mean comparator, the same records; positive means the ridge has the larger error",
+                "primary_difference": {
+                  "mean": 191.02438072607254,
+                  "interval_95": [
+                    0.02570272197835099,
+                    572.995102299441
+                  ]
+                },
+                "interval_excludes_zero": true,
+                "records_with_higher_ridge_error": 9,
+                "records": 9
+              },
+              "upper_tail": {
+                "ridge_mean_over_median": 146.05043853784755,
+                "reading": "The ridge's mean error is many times its median: a few records carry very large errors. No scored record was removed, clipped or winsorized, and the cause of the extreme errors is not established."
+              }
+            },
+            "constructed_raw_target_displacement_proxy": {
+              "label": "Constructed displacement proxy",
+              "records": 9,
+              "target_rows": 782814,
+              "target_trials": 540,
+              "target_runs": 108,
+              "ridge": {
+                "label": "Spectral ridge",
+                "primary": {
+                  "mean": 698.4992548793624,
+                  "interval_95": [
+                    1.165690929299981,
+                    2093.0187392094435
+                  ],
+                  "median": 1.2250620348084718
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 124.82832669772989,
+                    "interval_95": [
+                      0.411910333114067,
+                      373.6162498121119
+                    ],
+                    "records_defined": 9
+                  },
+                  "raw_rmse_y": {
+                    "mean": 332.15249651010004,
+                    "interval_95": [
+                      0.43052511635710505,
+                      995.5337175311414
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_x": {
+                    "mean": -928350.2365985936,
+                    "interval_95": [
+                      -2785050.082030762,
+                      -0.1827286352759143
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_y": {
+                    "mean": -6442340.872504745,
+                    "interval_95": [
+                      -19327021.361132503,
+                      -0.38845100962285933
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_x": {
+                    "mean": 0.04986278104425823,
+                    "interval_95": [
+                      0.03141228162910373,
+                      0.07428026522652519
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_y": {
+                    "mean": 0.07208777498601172,
+                    "interval_95": [
+                      0.017804817702981948,
+                      0.13706218539046297
+                    ],
+                    "records_defined": 9
+                  }
+                }
+              },
+              "source_mean": {
+                "label": "Source-mean comparator",
+                "primary": {
+                  "mean": 1.05583169132284,
+                  "interval_95": [
+                    0.9769461601689398,
+                    1.1330586406704628
+                  ]
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 0.388286594608906,
+                    "interval_95": [
+                      0.3658862533510245,
+                      0.41268004817184006
+                    ],
+                    "records_defined": 9
+                  },
+                  "raw_rmse_y": {
+                    "mean": 0.3760693081037118,
+                    "interval_95": [
+                      0.34911927850351365,
+                      0.40381117917838516
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_x": {
+                    "mean": -0.02552848620638394,
+                    "interval_95": [
+                      -0.04473896057545923,
+                      -0.007714376984368188
+                    ],
+                    "records_defined": 9
+                  },
+                  "r2_y": {
+                    "mean": -0.020846740437812192,
+                    "interval_95": [
+                      -0.039157425484551776,
+                      -0.006124074320006019
+                    ],
+                    "records_defined": 9
+                  },
+                  "pearson_x": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  },
+                  "pearson_y": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  }
+                }
+              },
+              "paired": {
+                "comparison": "spectral ridge minus source-mean comparator, the same records; positive means the ridge has the larger error",
+                "primary_difference": {
+                  "mean": 697.4434231880394,
+                  "interval_95": [
+                    0.120641452397638,
+                    2091.9457727775334
+                  ]
+                },
+                "interval_excludes_zero": true,
+                "records_with_higher_ridge_error": 9,
+                "records": 9
+              },
+              "upper_tail": {
+                "ridge_mean_over_median": 570.1745993528948,
+                "reading": "The ridge's mean error is many times its median: a few records carry very large errors. No scored record was removed, clipped or winsorized, and the cause of the extreme errors is not established."
+              }
+            }
+          }
+        },
+        "Transfer Learning": {
+          "publisher_cohort_name": "Transfer Learning",
+          "candidate_records": 14,
+          "admitted_records": 14,
+          "held_before_scoring": 0,
+          "hold_reasons": [],
+          "conditional_on_admitted_records": false,
+          "arms": {
+            "historical_decoder_velocity_imitation": {
+              "label": "Historical decoder velocity",
+              "records": 14,
+              "target_rows": 1217112,
+              "target_trials": 840,
+              "target_runs": 168,
+              "ridge": {
+                "label": "Spectral ridge",
+                "primary": {
+                  "mean": 44.17198888480959,
+                  "interval_95": [
+                    0.9546496469683917,
+                    130.4764161208264
+                  ],
+                  "median": 0.9898671411856127
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 4.443013432467188,
+                    "interval_95": [
+                      0.2122278227382719,
+                      12.876613043730085
+                    ],
+                    "records_defined": 14
+                  },
+                  "raw_rmse_y": {
+                    "mean": 13.814699797199678,
+                    "interval_95": [
+                      0.22883533956481608,
+                      40.95354684929206
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_x": {
+                    "mean": -5439.8230583615705,
+                    "interval_95": [
+                      -16318.7523713941,
+                      -0.1876272764849177
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_y": {
+                    "mean": -58116.910454120465,
+                    "interval_95": [
+                      -174349.5740423732,
+                      -0.3390348427644849
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_x": {
+                    "mean": 0.04511561810235688,
+                    "interval_95": [
+                      0.0052730806384136035,
+                      0.09565825906204409
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_y": {
+                    "mean": 0.01891240877592154,
+                    "interval_95": [
+                      -0.02242797471857933,
+                      0.07526609207767262
+                    ],
+                    "records_defined": 14
+                  }
+                }
+              },
+              "source_mean": {
+                "label": "Source-mean comparator",
+                "primary": {
+                  "mean": 0.8636577658433955,
+                  "interval_95": [
+                    0.8005213267802641,
+                    0.9290540236570575
+                  ]
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 0.19794041769699583,
+                    "interval_95": [
+                      0.18356201819753903,
+                      0.21183816276851955
+                    ],
+                    "records_defined": 14
+                  },
+                  "raw_rmse_y": {
+                    "mean": 0.2012873054301101,
+                    "interval_95": [
+                      0.18666039320739117,
+                      0.21660348852761244
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_x": {
+                    "mean": -0.00018669615129875337,
+                    "interval_95": [
+                      -0.00031370789854493245,
+                      -7.541327930014053e-05
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_y": {
+                    "mean": -0.0009365775619476332,
+                    "interval_95": [
+                      -0.0014048609096781641,
+                      -0.0005310327246451355
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_x": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  },
+                  "pearson_y": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  }
+                }
+              },
+              "paired": {
+                "comparison": "spectral ridge minus source-mean comparator, the same records; positive means the ridge has the larger error",
+                "primary_difference": {
+                  "mean": 43.308331118966194,
+                  "interval_95": [
+                    0.10503623975024132,
+                    129.60131653761798
+                  ]
+                },
+                "interval_excludes_zero": true,
+                "records_with_higher_ridge_error": 14,
+                "records": 14
+              },
+              "upper_tail": {
+                "ridge_mean_over_median": 44.62415918958844,
+                "reading": "The ridge's mean error is many times its median: a few records carry very large errors. No scored record was removed, clipped or winsorized, and the cause of the extreme errors is not established."
+              }
+            },
+            "constructed_raw_target_displacement_proxy": {
+              "label": "Constructed displacement proxy",
+              "records": 14,
+              "target_rows": 1217112,
+              "target_trials": 840,
+              "target_runs": 168,
+              "ridge": {
+                "label": "Spectral ridge",
+                "primary": {
+                  "mean": 69.84447155468665,
+                  "interval_95": [
+                    1.0710702971670378,
+                    207.2867681821551
+                  ],
+                  "median": 1.1817970118829662
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 9.772310871432083,
+                    "interval_95": [
+                      0.4150339861453765,
+                      28.423310321290792
+                    ],
+                    "records_defined": 14
+                  },
+                  "raw_rmse_y": {
+                    "mean": 38.1513987349809,
+                    "interval_95": [
+                      0.44500608551870613,
+                      113.51454871966668
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_x": {
+                    "mean": -21504.12448596043,
+                    "interval_95": [
+                      -64511.44287635383,
+                      -0.3177180277168541
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_y": {
+                    "mean": -337640.40998916875,
+                    "interval_95": [
+                      -1012920.1788433075,
+                      -0.391129499760802
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_x": {
+                    "mean": 0.034886205085514,
+                    "interval_95": [
+                      0.008470396503031243,
+                      0.06703205228953447
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_y": {
+                    "mean": 0.034114470643660987,
+                    "interval_95": [
+                      0.0075337434248758115,
+                      0.061858365174203976
+                    ],
+                    "records_defined": 14
+                  }
+                }
+              },
+              "source_mean": {
+                "label": "Source-mean comparator",
+                "primary": {
+                  "mean": 0.9160138451541766,
+                  "interval_95": [
+                    0.8411481321455158,
+                    0.9872267433165447
+                  ]
+                },
+                "secondary": {
+                  "raw_rmse_x": {
+                    "mean": 0.36622798903388876,
+                    "interval_95": [
+                      0.3273712873340029,
+                      0.4019771577740365
+                    ],
+                    "records_defined": 14
+                  },
+                  "raw_rmse_y": {
+                    "mean": 0.37951664934691837,
+                    "interval_95": [
+                      0.34114869906942297,
+                      0.41390831200039235
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_x": {
+                    "mean": -0.00663770244955199,
+                    "interval_95": [
+                      -0.010202176908395914,
+                      -0.00352331797366287
+                    ],
+                    "records_defined": 14
+                  },
+                  "r2_y": {
+                    "mean": -0.016056865099732524,
+                    "interval_95": [
+                      -0.03021767680766576,
+                      -0.005255341891011729
+                    ],
+                    "records_defined": 14
+                  },
+                  "pearson_x": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  },
+                  "pearson_y": {
+                    "mean": null,
+                    "interval_95": null,
+                    "records_defined": 0,
+                    "undefined": "a constant prediction has no correlation: null, never zero"
+                  }
+                }
+              },
+              "paired": {
+                "comparison": "spectral ridge minus source-mean comparator, the same records; positive means the ridge has the larger error",
+                "primary_difference": {
+                  "mean": 68.92845770953247,
+                  "interval_95": [
+                    0.14264242428901647,
+                    206.40992430067845
+                  ]
+                },
+                "interval_excludes_zero": true,
+                "records_with_higher_ridge_error": 14,
+                "records": 14
+              },
+              "upper_tail": {
+                "ridge_mean_over_median": 59.100226902251954,
+                "reading": "The ridge's mean error is many times its median: a few records carry very large errors. No scored record was removed, clipped or winsorized, and the cause of the extreme errors is not established."
+              }
+            }
+          }
+        }
+      },
+      "coverage": {
+        "candidate_records": 28,
+        "admitted_records": 23,
+        "counting_unit": "cohort records, not proven unique people",
+        "target_rows_per_arm": 1999926,
+        "response_rows_removed": 0,
+        "response_fits": 46,
+        "source_target_members": 552,
+        "input_rows": 4000407,
+        "note": "the same target rows support both response arms: two outcomes do not double the independent sample"
+      },
+      "cohort_name_note": "Transfer Learning is the publisher’s name for how that cohort’s data were collected; no transfer-learning model was trained here.",
+      "method": {
+        "split": "per admitted record, every eligible non-chance run of the earliest complete recorded session trains the model and every eligible run of the latest complete recorded session is the target; the sessions are disjoint, and no target label enters fitting, normalization, hyperparameters or adaptation",
+        "signal": "62 channels at 1,000 Hz, already 0.1–200 Hz band-pass and 60 Hz notch filtered by the publisher; five bands, 4–8, 8–12, 12–16, 16–24 and 24–30 Hz, through a 1001-tap Hamming FIR reset each trial; the preceding 1,000 filtered power samples averaged, as channel-relative log band power with a floor of 1e-12: 310 values per row",
+        "timing": "each row uses a trial-contained 2-second past window and responses step every 40 ms; overlapping windows stay inside whole sessions and are never split at random",
+        "models": "per response arm, a StandardScaler and a response scaling fitted on the source session only, then Ridge (alpha 1, intercept, Cholesky solver); the comparator repeats the source response mean; no tuning, LoRA, target-session calibration or foundation-model inference",
+        "scoring": "every target prediction was sealed before the protected target responses were scored"
+      },
+      "uncertainty": {
+        "kind": "pointwise 95% percentile interval from 10,000 within-cohort participant bootstrap resamples (PCG64, seed 20261002) with paired method draws",
+        "conditional_on": "the fixed predictions: model-refitting, dataset-selection and protocol-selection uncertainty are not included; Main is conditional on its admitted records"
+      },
+      "reading": "A negative result. In both cohorts and both response arms the spectral ridge has a higher overall primary error than the source-mean comparator for every admitted record, and its mean error is far above its median: a severe upper tail. A simple constant baseline exposes the failure.",
+      "limitations": [
+        "The every-record statement is about overall primary error. It does not extend to every recorded-decoder stratum or to the secondary metrics.",
+        "Offline, the same person, whole sessions, no target labels: not online control quality, intended-motion or intention decoding, clinical validation, a foundation-model ranking, LoRA or target adaptation.",
+        "Velocity is the publisher’s stored historical decoder output, not intended hand motion or intended control; displacement is a separately fitted target-minus-cursor proxy in publisher screen coordinates. The two outcomes are never combined, and their magnitudes are not compared as if they measured the same thing.",
+        "Main uses 9 of 14 candidate records and is conditional on that admitted subset; five metadata holds decided before scoring stay recorded. Transfer Learning uses 14 of 14. Records are counted, not proven unique people, and the two cohorts are never pooled.",
+        "The cause of the extreme errors is not established: feature distribution shift, scaling sensitivity or something else. No scored record was removed, clipped or winsorized. A source-only stability diagnostic would be a new, separately frozen analysis, not a revision of these scores.",
+        "The same target rows support both response arms, so two outcomes do not double the independent sample; overlapping windows do not enlarge it either.",
+        "Session, practice, speed and the historical decoder in use are confounded, and the recorded decoder labels are observational contexts, not randomized comparisons. The unknown order of decoders within a session rules out chronological-prefix and online-adaptation claims.",
+        "Undefined values stay null, never zero: the constant comparator has no correlation.",
+        "Audit scope: the saved features, fits, transforms, predictions, scores, cohort aggregates and bootstrap were independently replayed; the responses and features were not re-extracted from every raw file."
+      ],
+      "release_limits": [
+        "Offline same-person whole-session transfer, k=0; not online BCI, intention decoding, clinical validation or foundation-model ranking.",
+        "Velocity imitates historical decoder output; displacement is a separate constructed target-minus-cursor proxy.",
+        "Main uses 9 of 14 candidate records; five pre-scoring metadata holds remain. Transfer Learning uses 14 of 14. Cohorts may contain overlapping people and must not be pooled.",
+        "The source-mean comparator has lower overall primary error for every admitted record in both arms; severe ridge mean/median gaps are retained. Cause of extreme errors is not established by this run.",
+        "Feature, source-response and target-response saved-array audits do not independently repeat all raw extraction.",
+        "Fixed-prediction participant-bootstrap intervals omit refitting, selection and protocol uncertainty; intervals are pointwise, not multiplicity-adjusted.",
+        "Publisher decoder labels and the Transfer Learning cohort name do not denote model arms trained here. No adaptation or LoRA was performed."
+      ],
+      "claims_not_supported": [
+        "no online control quality or closed-loop claim",
+        "no intended-motion or intention decoding",
+        "no clinical validation",
+        "not a foundation-model ranking, and no LoRA or target adaptation",
+        "not 23 proven unique people, and the cohorts are never pooled",
+        "no reproduction or endorsement of the original paper’s online results"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "records": 23,
+        "checked": "source fits, transforms and saved predictions replayed numerically; the target responses scored independently; the cohort aggregates and bootstrap replayed and matched exactly; a final independent review of the release and its claims",
+        "not_checked": "raw responses were not re-extracted from every source file, and the full feature extraction was not repeated on all the raw EEG"
+      }
+    }
+  },
+  "datasets": {
+    "wbcic-shu": {
+      "rights": {
+        "name": "WBCIC-SHU motor imagery (Yang et al. 2025)",
+        "task": "Two-class (left- or right-hand grasping) and three-class (adding foot-hooking) motor imagery, same person across three recording sessions: trained on session 1, tested on session 3; session 2 unused",
+        "source": "https://doi.org/10.25452/figshare.plus.22671172.v5",
+        "version": "Figshare+ record 22671172, version 5 (doi:10.25452/figshare.plus.22671172.v5, posted 2024-12-06), one archive, read from the figshare API on 2026-10-08. The publisher's processed derivative is used: 58 channel indices at 250 Hz in four-second epochs, sessions 1 and 3 of each of 62 participants (51 two-class, 11 three-class).",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Banghua Yang, Fenqi Rong, Yunlong Xie, Du Li, Jiayang Zhang, Fu Li, Guangming Shi and Xiaorong Gao · A multi-day and high-quality EEG dataset for motor imagery brain-computer interface, Scientific Data 12, 488 (2025), doi:10.1038/s41597-025-04826-y. Data: Banghua Yang and Fenqi Rong, WBCIC-SHU Motor Imagery Dataset, Figshare+, doi:10.25452/figshare.plus.22671172.v5, CC BY 4.0. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The data paper states that written informed consent was obtained after the participants were informed about the procedure, and that the study was approved by the Tsinghua University Medical Ethics Committee (approval number 20190002) and adhered to the Declaration of Helsinki. Published here: participant-equal means with paired whole-participant bootstrap intervals for each cohort, the paired differences, secondary accuracy and macro-F1 means, and trial counts. No per-person value, participant or session-file identifier, confusion matrix or demographic is published.",
+        "reviewedAt": "2026-10-08",
+        "reviewBasis": [
+          "https://api.figshare.com/v2/articles/22671172/versions/5",
+          "https://doi.org/10.1038/s41597-025-04826-y",
+          "https://europepmc.org/article/PMC/PMC11930978"
+        ]
+      },
+      "consent_and_ethics": {
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Tsinghua University Medical Ethics Committee (approval number 20190002); carried out in line with the Declaration of Helsinki.",
+          "quote": "approval from the Tsinghua University Medical Ethics Committee (approval number: 20190002)"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "Written informed consent was obtained from the participants after they were informed about the procedure, purpose, requirements and motor-imagery techniques.",
+          "quote": "written informed consent is obtained"
+        },
+        "read_from": "https://europepmc.org/article/PMC/PMC11930978 (doi:10.1038/s41597-025-04826-y), Methods, Participants and environment, read 2026-10-08"
+      },
+      "results": [
+        "wbcic-cross-session-cpu",
+        "wbcic-frozen-cbramod"
+      ]
+    },
+    "longitudinal-rsvp": {
+      "rights": {
+        "name": "Longitudinal ERP dataset, RSVP face task (Yang et al. 2025)",
+        "task": "Rapid serial visual presentation of faces, target versus non-target event classification, same person: trained at the first visit, scored at the publisher's nominal Day 7, 80 and 200 visits",
+        "source": "https://doi.org/10.6084/m9.figshare.27201003.v1",
+        "version": "figshare record 27201003, version 1 (doi:10.6084/m9.figshare.27201003.v1, posted 2025-06-24), read from the figshare API on 2026-10-08. Group A only (15 participants), nominal Day 1, 7, 80 and 200 visits; Group B is not used.",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Chen Yang, Yufeng Zhang, Hongxin Zhang, Yixuan Li, Yijun Wang and Xiaorong Gao · A longitudinal EEG dataset of event-related potential, figshare, doi:10.6084/m9.figshare.27201003.v1, CC0. Paper: Yufeng Zhang, Hongxin Zhang, Yixuan Li, Yijun Wang, Xiaorong Gao and Chen Yang, A longitudinal EEG dataset of event-related potential, Scientific Data 12, 1069 (2025), doi:10.1038/s41597-025-05378-x. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The data paper states that the experiment was approved by the Tsinghua Institutional Review Board (No. 20230058) and that each participant read and signed an informed consent form before the experiment. Published here: participant-equal visit means for the 15 Group A participants, the AUROC interval at each visit, the paired Day 200 minus Day 7 contrast with its interval, how many participants declined by 0.05 AUROC or more, and event counts per visit. No per-person value, participant identifier, prediction or demographic is published.",
+        "reviewedAt": "2026-10-08",
+        "reviewBasis": [
+          "https://api.figshare.com/v2/articles/27201003/versions/1",
+          "https://doi.org/10.1038/s41597-025-05378-x",
+          "https://europepmc.org/article/PMC/PMC12185715"
+        ]
+      },
+      "consent_and_ethics": {
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Tsinghua Institutional Review Board (No. 20230058).",
+          "quote": "approved by the Tsinghua Institutional Review Board with No. 20230058"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "Each participant read and signed an informed consent form before the experiment.",
+          "quote": "each participant was asked to read and sign an informed consent form"
+        },
+        "read_from": "https://europepmc.org/article/PMC/PMC12185715 (doi:10.1038/s41597-025-05378-x), Methods, Subject, read 2026-10-08"
+      },
+      "results": [
+        "rsvp-later-visits"
+      ]
+    },
+    "forenzo-continuous-tracking": {
+      "rights": {
+        "name": "Forenzo & He continuous-tracking EEG-BCI dataset (KiltHub)",
+        "task": "Continuous two-dimensional cursor tracking with a noninvasive BCI, same record across sessions: trained on the earliest complete recorded session, tested on the latest; two separate response arms",
+        "source": "https://doi.org/10.1184/R1/25360300.v1",
+        "version": "KiltHub (Carnegie Mellon University's repository on figshare) record 25360300, version 1 (doi:10.1184/R1/25360300.v1, posted 2024-04-03), read from the figshare API on 2026-10-08. Two publisher cohorts, Main and Transfer Learning; 23 of 28 candidate records admitted.",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Dylan Forenzo and Bin He · EEG-BCI Dataset for “Continuous Tracking using Deep Learning-based Decoding for Non-invasive Brain-Computer Interface”, KiltHub, Carnegie Mellon University, doi:10.1184/R1/25360300.v1, CC BY 4.0. Citation the record requests: Dylan Forenzo, Hao Zhu, Jenn Shanahan, Jaehyun Lim and Bin He, Continuous tracking using deep learning-based decoding for noninvasive brain–computer interface, PNAS Nexus 3(4), pgae145 (2024), doi:10.1093/pnasnexus/pgae145. Derived analysis by BCI Report; not endorsed by the authors and not a reproduction of the paper's online results.",
+        "privacyReview": "The associated paper states that the study was approved by the Institutional Review Board at Carnegie Mellon University and that each subject gave written consent to the protocol before participating; it gives no approval number. Published here: for each cohort and response arm, record-equal means of the primary error for the spectral ridge and the source-mean comparator with bootstrap intervals, the ridge's median, the paired difference with its interval and how many admitted records the ridge did worse on, secondary means with undefined values kept null, and coverage counts. No other per-record value, no record, file or participant identifier, prediction or demographic is published.",
+        "reviewedAt": "2026-10-08",
+        "reviewBasis": [
+          "https://api.figshare.com/v2/articles/25360300/versions/1",
+          "https://doi.org/10.1093/pnasnexus/pgae145",
+          "https://europepmc.org/article/PMC/PMC11060102"
+        ]
+      },
+      "consent_and_ethics": {
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Institutional Review Board at Carnegie Mellon University; no approval number is given.",
+          "quote": "This study was approved by the Institutional Review Board at Carnegie Mellon University"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "Each subject provided written consent to the protocol before participating.",
+          "quote": "each subject provided written consent to the protocol before participating"
+        },
+        "read_from": "https://europepmc.org/article/PMC/PMC11060102 (doi:10.1093/pnasnexus/pgae145), Materials and methods, Subject recruitment, read 2026-10-08"
+      },
+      "results": [
+        "forenzo-continuous-control"
+      ]
+    }
+  },
+  "status_only": [],
+  "holds": [],
+  "not_published": [
+    "Per-person and per-record values of any kind: every minimum, 10th percentile and 90th percentile in the four releases, every median other than the four Forenzo ridge medians named in the approval, the Forenzo paired minimum and paired median, and the RSVP medians. How many people or records declined or did worse is published; which ones is not.",
+    "Participant, record, session-file and upstream file identifiers, session maps, label vectors, predictions, probabilities, features, embeddings, fitted scalers, readouts and models, and the checkpoint.",
+    "WBCIC-SHU aggregate confusion matrices (both releases) and per-class recall means: secondary point estimates without intervals, pooled over trials.",
+    "The Forenzo recorded-decoder strata (AR, EG and PN in Main; CL, DL and TL in Transfer Learning). They are observational contexts from the publisher's historical decoders, not randomized comparisons, and the overall result is the one the handoff states. Also the paired differences of the Forenzo secondary metrics.",
+    "Measured compute and storage: wall times, stage times, memory and process counts from every handoff and release, including the CBraMod release's resources block. They include archive access, hashing and safeguards and are not model throughput.",
+    "The duplicated bootstrap and conditional-descriptive blocks of the releases: the same means and intervals are published once.",
+    "Demographic tables from the original publications: ages, sex, handedness and the like. The dataset pages say only how many people took part and that they were healthy volunteers where the paper says so.",
+    "The handoffs, release decisions, independent audits, root checks, activations and protocol reviews themselves: each is pinned by SHA-256 in this manifest and its pass or binding is checked by the export. They carry private storage paths and are not copied. The batch's candidate files are not inputs and were not opened.",
+    "The status of the batch's other sources and any analysis outside the four approved releases."
+  ],
+  "provenance": {
+    "manifest_sha256": "ece37ea382fbb7fc0fb2bfe360e47d673fd150862c909d7026b57c2e2af8a53e",
+    "included": [
+      "wbcic-cross-session-cpu",
+      "wbcic-frozen-cbramod",
+      "rsvp-later-visits",
+      "forenzo-continuous-control"
+    ],
+    "holds": [],
+    "source_export_sha256": {
+      "wbcic-cross-session-cpu": "63a4ba5393380dea9aa4fbe44ec0c7a1b40cf8915abd1985e74af329e9d571b7",
+      "wbcic-frozen-cbramod": "db2b3141bd1d6d5e3be410fe67b341ea7debbfbf435df0fa6824285deb0ebb56",
+      "rsvp-later-visits": "d8b2df555c9854b3326aedf39c3f0c37835a14840465f685d66202cb05881c7d",
+      "forenzo-continuous-control": "74d6ca98fb64ee79af8f03f3bce55676536f63491fd602d80331a0fd938811bb"
+    }
+  }
+}

@@ -39,6 +39,10 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://doi.org/10.1184/R1/25360300.v1",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://doi.org/10.13026/r0ea-7161",
       "relation": "isDerivedFrom"
     },
@@ -75,6 +79,10 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://doi.org/10.25452/figshare.plus.22671172.v5",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://doi.org/10.3390/s21041256",
       "relation": "isDerivedFrom"
     },
@@ -92,6 +100,10 @@
     },
     {
       "identifier": "https://doi.org/10.6084/m9.figshare.24906300.v3",
+      "relation": "isDerivedFrom"
+    },
+    {
+      "identifier": "https://doi.org/10.6084/m9.figshare.27201003.v1",
       "relation": "isDerivedFrom"
     },
     {

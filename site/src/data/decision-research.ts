@@ -72,7 +72,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
       { tag: 'First', status: 'Run · results above', resultsLink: 'Reliable decisions: the results', title: 'Reliable decisions',
         body: 'Compare a fixed threshold, a simple statistical policy and a learned reject option on the same data. Report error at matched coverage, acceptance per class, and probability quality — Brier score, log loss and reliability — with calibration data kept apart from test data. Recalibration is a separate experiment, with its label cost counted.',
         // Since 2026-10-05: what the run published of this plan, and what it did not (review finding).
-        runNote: 'Published in the section above: error at matched coverage, log loss, the Brier score and calibration error. Not published in this update: acceptance per class and reliability-diagram bins.' },
+        runNote: 'Published in the section above: error at matched coverage, log loss, the Brier score and calibration error. Not published: acceptance per class and reliability-diagram bins.' },
       { tag: 'Then', status: 'Run · results on their own page', resultsLink: 'One model, several questions: the results', title: 'One representation, several questions',
         body: 'On the motor-imagery and sleep protocols separately, compare independent task models, a shared encoder with fixed heads, and the same encoder with a question-conditioned head, at matched data and compute.',
         // Since 2026-10-07: where it ran, and the one arm that ran after the others were known.
@@ -113,7 +113,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
     routes: [
       { tag: '首先', status: '已运行 · 结果见上一节', resultsLink: '可靠的决策：结果', title: '可靠的决策',
         body: '在同一份数据上比较固定阈值、简单统计策略和可学习的拒识机制。报告相同覆盖率下的错误率、各类别的接受率，以及概率质量——Brier 分数、log loss 和可靠性图——校准数据与测试数据分开。重新校准另作一项实验，并计入所需标签的代价。',
-        runNote: '上一节已发布：相同覆盖率下的错误率、log loss、Brier 分数和校准误差。本次更新没有发布：各类别的接受率和可靠性图的分箱。' },
+        runNote: '上一节已发布：相同覆盖率下的错误率、log loss、Brier 分数和校准误差。没有发布：各类别的接受率和可靠性图的分箱。' },
       { tag: '随后', status: '已运行 · 结果在单独的页面上', resultsLink: '一个模型，多个问题：结果', title: '一份表征，多个问题',
         body: '在运动想象和睡眠两个协议上分别比较：各任务独立的模型、共享编码器加固定分类头，以及同一编码器加问题条件化分类头，数据量与计算量保持一致。',
         runNote: '在运动想象（OpenBMI）和睡眠（BOAS，EESM19 作粗略重复）上运行。有一项次要设置——在睡眠上用 LoRA 适配 CBraMod——是在其他结果已知之后才运行的；它的设计事先已定。' },

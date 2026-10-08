@@ -45,8 +45,9 @@ export const modelStatusOverrides: Record<string, StatusOverride> = {
     source: 'https://huggingface.co/brain-bzh/reve-base',
     facts: reve,
     note: {
-      en: `Since ${reve.accepted}: the owner accepted the ${reve.licence}, and the v9 evaluation ran the base weights as a frozen probe on the eight core protocols and adapted them on EEGMAT. Aggregate scientific results only; no adapted weights are shared. The note above is the released one.`,
-      zh: `自 ${reve.accepted} 起：站点所有者接受了 ${reve.licence}，第九轮评测把基础权重作为冻结探针在 8 个核心协议上运行，并在 EEGMAT 上做了适配。只发布聚合的科学结果；不分享任何适配后的权重。上面的备注译自发布时的原文。`,
+      // The date is the card's "Status checked" line, not the note's words (owner decision 2026-10-08).
+      en: `The owner accepted the ${reve.licence}, and the foundation-model evaluation ran the base weights as a frozen probe on the eight core protocols and adapted them on EEGMAT. Aggregate scientific results only; no adapted weights are shared. The note above is the released one.`,
+      zh: `站点所有者接受了 ${reve.licence}，基础模型评测把 REVE Base 的权重作为冻结探针在 8 个核心协议上运行，并在 EEGMAT 上做了适配。只发布聚合的科学结果；不分享任何适配后的权重。上面的备注译自发布时的原文。`,
     },
   },
 };

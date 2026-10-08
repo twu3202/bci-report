@@ -21,8 +21,9 @@ if (reve.some(m => !m)) throw new Error('FieldNotes: the REVE note points at v9 
 const later: Record<string, { date: string; text: string; link: string; href: string }> = {
   'https://arxiv.org/abs/2510.21585': {
     date: fmRelease.date,
-    text: locale === 'zh' ? `${fmRelease.date} 更新：本站此后已评测 REVE Base 和 REVE Large，它们作为冻结探针的第九轮各行列在每个协议页面上。`
-                          : `Update, ${fmRelease.date}: REVE Base and REVE Large have since been evaluated here; their v9 frozen-probe rows are on every protocol page.`,
+    // No date in the words (owner decision 2026-10-08); the release is in data-later for the checks.
+    text: locale === 'zh' ? '本站此后已评测 REVE Base 和 REVE Large，它们作为冻结探针的各行列在每个协议页面上。'
+                          : 'REVE Base and REVE Large have since been evaluated here; their frozen-probe rows are on every protocol page.',
     link: locale === 'zh' ? 'REVE 的方法页 →' : 'REVE’s method page →', href: hrefFor('/methods/reve/', locale),
   },
 };

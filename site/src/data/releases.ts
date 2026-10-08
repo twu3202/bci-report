@@ -21,6 +21,17 @@ const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net
   'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna'];
 export const siteUpdates = [
   {
+    date: '2026-10-08',
+    // The later-sessions question (owner decision): its page; its card on the home page and the Questions hub, with
+    // three transfer-map entries; the three new dataset pages and the dataset index; CBraMod's page (its WBCIC-SHU
+    // group); one pointer on does-pretraining-help; the release log, the API page and data use. The same day the
+    // site's prose stopped stating update dates and version labels (owner decision); like the "Research preview"
+    // badge, that is a label about the site, not content, and is not counted here.
+    paths: ['/', '/topics/', '/topics/later-sessions/', '/topics/does-pretraining-help/',
+            '/datasets/', '/datasets/wbcic-shu/', '/datasets/longitudinal-rsvp/', '/datasets/forenzo-continuous-tracking/',
+            '/methods/cbramod/', '/releases/', '/api/', '/data-use/'],
+  },
+  {
     date: '2026-10-07',
     // Route 2 of the decision-research roadmap, one representation and several questions: its boundary.
     // The release log, the API page and the home page's file count and Dataset markup list the batch's
@@ -124,7 +135,7 @@ export interface Release {
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
-    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation';
+    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions';
   files: string[];
   pages: string[];
   summary: Text;
@@ -139,6 +150,24 @@ export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 
   'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
 
 export const releases: Release[] = [
+  {
+    id: 'later-sessions-update-20261008', date: '2026-10-08', payload: 'laterSessions',
+    files: ['later-sessions-update.json'],
+    // Its own question page; the four results come from the large-source batch's approved releases.
+    pages: ['/topics/later-sessions/'],
+    summary: {
+      en: 'Four results under one question — does a decoder trained on an earlier session still work later? — each from its own approved release, and none uses labels from the later session. WBCIC-SHU (62 people in two separate cohorts, 51 with two-class and 11 with three-class motor imagery): a source-majority prior and a relative spectral ridge trained on each person’s recording session 1 and tested on session 3, and frozen CBraMod with a ridge readout fitted on session 1, on the same people and trials. A longitudinal RSVP dataset (15 people): one ERP baseline trained at the first visit and scored at the publisher’s nominal Day 7, 80 and 200 visits. Forenzo’s continuous cursor-tracking dataset (23 admitted records in two cohorts, two response arms): a fixed spectral ridge from each record’s earliest to its latest complete session, against a source-mean comparator, published as a negative result. Nothing is pooled across datasets, cohorts or response arms, and the results share no ranking.',
+      zh: '同一个问题下的四项结果——在较早会话上训练的解码器，到后来还管用吗？——每项都来自各自已批准的发布文件，都不使用后一次会话的任何标签。WBCIC-SHU（62 名被试，分为两个独立队列：51 名做二分类、11 名做三分类运动想象）：在每名被试的第 1 次记录会话上训练、在第 3 次会话上测试的源会话多数类先验与相对频谱功率 + 岭回归（relative spectral ridge），以及在同一批被试与试次上、分类头用第 1 次会话拟合的冻结 CBraMod。一个纵向 RSVP 数据集（15 名被试）：在第一次访次训练的 ERP 基线，在发布者标称的第 7、80、200 天访次上评分。Forenzo 的连续光标追踪数据集（两个队列共 23 条纳入记录，两种响应变量）：从每条记录最早的完整会话到最晚的完整会话的固定 spectral ridge，与源会话均值对照比较，作为阴性结果发布。不跨数据集、队列或响应变量合并，各结果之间不排名。',
+    },
+    notes: [
+      { en: 'WBCIC-SHU: in both cohorts the spectral ridge is above the source prior and frozen CBraMod above the spectral ridge, each with a paired interval above zero. The CBraMod arm was frozen after the spectral ridge results existed and reuses their test trials; there is no matched random-weight control, and whether this checkpoint saw WBCIC-SHU in pretraining is not established, so it does not show that pretraining caused the gain. Session numbers are recording-session ordinals, not a guaranteed time gap.',
+        zh: 'WBCIC-SHU：两个队列中，spectral ridge 都高于源会话先验，冻结 CBraMod 又都高于 spectral ridge，配对区间均在零以上。CBraMod 这一组是在 spectral ridge 的结果出来之后才冻结的，并复用了同样的测试试次；没有结构相同的随机初始化对照，这个检查点的预训练数据中是否出现过 WBCIC-SHU 也没有确定，所以它不能说明提升来自预训练。会话编号只是记录会话的序号，不保证固定的时间间隔。' },
+      { en: 'Longitudinal RSVP: AUROC is lower at the nominal Day 200 visit than at Day 7, with a paired interval below zero, and some people lost 0.05 AUROC or more; targets are rare, so average precision is printed beside AUROC. Day 7, 80 and 200 are the publisher’s nominal labels, and nothing here shows that elapsed time caused the change. Forenzo: the spectral ridge has a higher overall error than a constant source-mean comparator on every admitted record, in both cohorts and both response arms, with means far above medians; velocity imitates the publisher’s historical decoder output, not intended motion, and no online-control claim is made.',
+        zh: '纵向 RSVP：标称第 200 天访次的 AUROC 低于第 7 天，配对区间在零以下，部分被试下降了 0.05 AUROC 及以上；目标事件很少，所以 AUROC 旁边同时给出平均精确率。第 7、80、200 天是发布者标称的访次标签，这里没有任何结果说明变化是由时间流逝造成的。Forenzo：在两个队列、两种响应变量下，spectral ridge 在每一条纳入记录上的总体误差都高于常数的源会话均值对照，均值远高于中位数；速度变量模仿的是发布者历史解码器的输出，不是意图运动，也不作任何在线控制方面的声明。' },
+      { en: 'All three datasets are new to this site. Licences, from each repository’s record: WBCIC-SHU CC BY 4.0, the RSVP dataset CC0, Forenzo’s KiltHub record CC BY 4.0; each paper states ethics approval and written or signed informed consent. Not published: per-person and per-record values (minimums, percentiles and medians, except the Forenzo ridge medians the handoff requires beside their means), confusion matrices, the Forenzo recorded-decoder strata, measured compute, and the handoffs, release decisions and independent audits themselves, pinned by hash in the review manifest because they carry private storage paths.',
+        zh: '这三个数据集都是本站新增的数据源。许可来自各自数据仓库的记录：WBCIC-SHU 为 CC BY 4.0，RSVP 数据集为 CC0，Forenzo 的 KiltHub 记录为 CC BY 4.0；每篇论文都写明了伦理批准，以及书面或签署的知情同意。不发布：逐人与逐条记录的数值（最小值、百分位数与中位数；交接文件要求与均值并列给出的 Forenzo spectral ridge 中位数除外）、混淆矩阵、Forenzo 按记录时所用解码器划分的分层结果、实测的计算量，以及交接文件、发布决定与独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。' },
+    ],
+  },
   {
     id: 'shared-representation-update-20261007', date: '2026-10-07', payload: 'sharedRepresentation',
     files: ['shared-representation-update.json'],
@@ -341,6 +370,11 @@ export interface Hold {
   opened: string;
   closed: string | null;
   outcome: Text;
+  /**
+   * The home card's sentence, where the register's `outcome` tells the hold's history by date: what is held and
+   * why, with no date (owner decision, 2026-10-08). The register keeps the dated outcome.
+   */
+  card?: Text;
   href?: string;
 }
 
@@ -397,6 +431,8 @@ export const holds: Hold[] = [
     opened: '2026-09-22', closed: null,
     outcome: { en: 'Not included on 22 September (intake only). Since 23 September: described, not scored; its per-condition numbers withheld.',
                zh: '9 月 22 日未纳入（只完成了数据接收）。9 月 23 日起：只有描述、没有评分，按条件汇总的数值不发布。' },
+    card: { en: 'Described, not scored: its per-condition numbers are withheld.',
+            zh: '只有描述、没有评分：按条件汇总的数值不发布。' },
   },
   {
     id: 'alphawaves-consent',
@@ -414,6 +450,8 @@ export const holds: Hold[] = [
     opened: '2026-09-20', closed: null,
     outcome: { en: 'Run and independently replayed on 22 September. The catalogue licence is CC BY-NC-ND and the description names no ethics approval, so no figure is published until that review is done.',
                zh: '9 月 22 日已运行并通过独立复核。目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准，所以审查完成之前不发布任何数字。' },
+    card: { en: 'Run and independently replayed. The catalogue licence is CC BY-NC-ND and the description names no ethics approval, so no figure is published until that review is done.',
+            zh: '已运行并通过独立复核。目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准，所以审查完成之前不发布任何数字。' },
     href: '/topics/model-adaptation/#next-day',
   },
 ];

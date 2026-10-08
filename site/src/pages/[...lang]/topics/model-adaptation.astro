@@ -77,7 +77,7 @@ const copy = {
     eyebrow: 'Model adaptation · new people; next day held',
     dek: 'Which part of a pretrained encoder to update when it meets people it has not seen, on a task it is adapted to: the head only, the last block, or a low-rank adapter — with the same checkpoint, folds, starting heads, batches and five-epoch recipe for all three. The next-day version of the question has run too; its source is held, so it is listed without a figure.',
     baLabel: (v: string) => `${v} balanced accuracy`,
-    rmEyebrow: 'New people, same task, zero labels from the test person · reviewed 1 October 2026',
+    rmEyebrow: 'New people, same task, zero labels from the test person',
     rmH2: 'Adapting a foundation model: head only, last block or LoRA?',
     rmLede: `LaBraM Base on EEGMAT, mental arithmetic versus rest: ${adPeople} people in five participant-disjoint folds, so every score is on people the model was not adapted on, and no label from a test person is used. The three update rules start from the same head, see the same batches in the same order and train for the same five epochs. Three seeds are averaged within each person before the cohort mean.`,
     armLabel: { frozen: 'Head only · encoder frozen', 'last-block': 'Last block + head', 'lora-r4': 'LoRA rank 4 + head' } as Record<string, string>,
@@ -99,15 +99,15 @@ const copy = {
     costNote: 'LoRA trains far fewer weights than the last block but took longer here: its adapters sit in all twelve blocks, so gradients flow back through most of the encoder, and this implementation is an effective-weight parametrization, not an optimized low-rank kernel.',
     notDelivered: 'Promised on the roadmap and not delivered by this batch: peak memory (only lower-bound samples were recorded, so none is published) and a comparison at a fixed computation budget (every rule trained for the same five epochs, not the same compute).',
     // Since 2026-10-04: the v9 adaptation, one table on does-pretraining-help. Figure-free here; this page's own claims stand.
-    rdPointer: ['Also added 4 October 2026, from the saved test scores of the head-only and LoRA arms above: how good their probabilities are — log loss and calibration error on the same people — and when either should decline a decision. Both are on ', '“When should a decoder decline to decide?”', '.'],
-    v9Pointer: ['Added 4 October 2026: nine further foundation encoders were adapted on these same people and folds with two of the rules above — a head trained on the frozen encoder, and rank-4 LoRA — and the same five-epoch recipe. One fixed recipe on one task, with LoRA budgets that differ by model, so it is not a ranking: ', 'their table is on “Does pretraining help?”', '.'],
+    rdPointer: ['From the saved test scores of the head-only and LoRA arms above: how good their probabilities are — log loss and calibration error on the same people — and when either should decline a decision. Both are on ', '“When should a decoder decline to decide?”', '.'],
+    v9Pointer: ['Nine further foundation encoders were also adapted on these same people and folds with two of the rules above — a head trained on the frozen encoder, and rank-4 LoRA — and the same five-epoch recipe. One fixed recipe on one task, with LoRA budgets that differ by model, so it is not a ranking: ', 'their table is on “Does pretraining help?”', '.'],
     nextEyebrow: 'Next day · status only',
     nextH2: 'Same person, the next day: run, not published',
     nextLede: 'Whether a model fitted on one day still works on a later one, and which part to update when it does not, has no published figure here. Two sources were prepared for it; for different reasons, neither can be scored in public.',
     nextH3: 'Two recording days: run and replayed, held',
-    nextP: `${nextDaySource}: ${nextDay.design.people} people recorded on two days. Each person's model is trained on day A, calibrated with the first ${series(budgets, ', ', ' or ')} labeled trials of day B under the same three update rules, and tested on the same later day-B trials. Unlike the result above, this design uses the test person's own labels: their day-A trials to train and, except at the zero budget, their first day-B trials to calibrate. It ran on 22 September and passed an independent replay. The source's editorial hold stands — its catalogue licence is CC BY-NC-ND and its description names no ethics approval — so no figure from it is published.`,
+    nextP: `${nextDaySource}: ${nextDay.design.people} people recorded on two days. Each person's model is trained on day A, calibrated with the first ${series(budgets, ', ', ' or ')} labeled trials of day B under the same three update rules, and tested on the same later day-B trials. Unlike the result above, this design uses the test person's own labels: their day-A trials to train and, except at the zero budget, their first day-B trials to calibrate. It was run and passed an independent replay. The source's editorial hold stands — its catalogue licence is CC BY-NC-ND and its description names no ethics approval — so no figure from it is published.`,
     crossH3: 'Same person, later sessions: status only',
-    crossP: [`${stieger.name.split(' · ')[0]}: one person's ${stiegerSessions} sessions were acquired, not the full release. What is published is that the loader and a chronological split work on it — earlier sessions train, later sessions test. With one person, every score would be that person's, so none is published; the source is listed as status only in the `, 'release of 27 September', '.'],
+    crossP: [`${stieger.name.split(' · ')[0]}: one person's ${stiegerSessions} sessions were acquired, not the full release. What is published is that the loader and a chronological split work on it — earlier sessions train, later sessions test. With one person, every score would be that person's, so none is published; the source is listed as status only in the `, 'release log', '.'],
     // Since 2026-10-03: the next-session question has a measured answer elsewhere, for classical baselines only.
     nextSession: ['A related question now has a measured answer, for two classical baselines on other data: the same person’s next session, with and without a few labeled trials from it. It is on ', '.'],
     adLimitsH2: 'What this result is not',
@@ -122,7 +122,7 @@ const copy = {
     rmEngNote: 'These are parameter counts — not accuracy, speed, memory-saving or privacy claims.',
     rmChecksH: 'Engineering checks passed before any real-EEG run:',
     rmCheck: {} as Record<string, string>,
-    engSource: 'the adapter counts and checks, from the engineering check released on 22 September',
+    engSource: 'the adapter counts and checks, from the released engineering check',
     rmPriorH3: 'Not the first to ask',
     rmPrior: ['Other groups already benchmark EEG adapters: ', 'OpenEEGBench', ' covers parameter-efficient fine-tuning of EEG foundation models; a ', 'systematic study of test-time adaptation', ' reports inconsistent gains under distribution shift; a recent ', 'preprint', ' compares self-supervised adaptation under fixed computation budgets.'],
     creditNote: (license: string) => `${license} · aggregate results only; the adaptation reuses the 2026-09-20 review of these recordings.`,
@@ -134,7 +134,7 @@ const copy = {
     eyebrow: '模型适配 · 新被试；次日实验暂缓发布',
     dek: '预训练编码器遇到没见过的被试、而任务是它已适配过的任务时，该更新哪一部分：只训分类头、最后一个 Transformer 块，还是低秩适配器（LoRA）——三种方式的检查点、数据划分、初始分类头、批次和训练 5 轮的配方都相同。同一问题的次日版本也已运行；它的数据源处于暂缓状态，所以只列出、不给数字。',
     baLabel: (v: string) => `平衡准确率 ${v}`,
-    rmEyebrow: '新被试、同一任务、不使用测试被试的任何标签 · 2026 年 10 月 1 日审核',
+    rmEyebrow: '新被试、同一任务、不使用测试被试的任何标签',
     rmH2: '基础模型怎么适配：只训分类头、最后一个 Transformer 块（block）还是 LoRA？',
     rmLede: `LaBraM Base 在 EEGMAT 上区分心算与静息：${adPeople} 名被试，按被试不重叠分成 5 折，所以每个分数都来自模型适配时没见过的人，也不使用测试被试的任何标签。三种更新方式从同一个分类头出发，以相同顺序看到相同的批次，都训练 5 轮（epoch）。3 个随机种子先在每名被试内平均，再求队列均值。`,
     armLabel: { frozen: '只训分类头 · 编码器冻结', 'last-block': '最后一个 Transformer 块 + 分类头', 'lora-r4': '秩为 4 的 LoRA + 分类头' } as Record<string, string>,
@@ -155,15 +155,15 @@ const copy = {
     colRule: '更新方式', colParams: '可训练参数', colTime: '训练时间，15 次拟合', colSeeds: '平衡准确率，逐个随机种子',
     costNote: 'LoRA 可训练的权重比最后一个 Transformer 块少得多，但这里训练反而更久：它的适配器分布在全部 12 个 Transformer 块中，梯度要反传经过编码器的大部分；而且这里的实现是等效权重参数化，不是优化过的低秩算子。',
     notDelivered: '路线图上承诺、但这一批没有给出的：峰值内存（只记录了下界采样，因此不发布）；以及固定计算预算下的比较（各方式训练的是相同的 5 轮，而不是相同的计算量）。',
-    rdPointer: ['同样在 2026 年 10 月 4 日新增：根据上面只训分类头与 LoRA 两种配置保存下来的测试分数，看它们的概率有多可靠——同一批被试上的 log loss 与校准误差——以及它们什么时候该拒绝作出决定。两者都在', '「解码器什么时候应该拒绝作出决定？」', '一节。'],
-    v9Pointer: ['2026 年 10 月 4 日新增：另外 9 个基础模型编码器在同一批被试、同样的折上，用上面三种方式中的两种——冻结编码器只训分类头，以及秩为 4 的 LoRA——按同样训练 5 轮的方案做了适配。这是一项任务上的一个固定方案，各模型的 LoRA 参数量也不同，所以不是排名：', '结果表见「预训练有用吗？」', '。'],
+    rdPointer: ['根据上面只训分类头与 LoRA 两种配置保存下来的测试分数，看它们的概率有多可靠——同一批被试上的 log loss 与校准误差——以及它们什么时候该拒绝作出决定。两者都在', '「解码器什么时候应该拒绝作出决定？」', '一节。'],
+    v9Pointer: ['另外 9 个基础模型编码器也在同一批被试、同样的折上，用上面三种方式中的两种——冻结编码器只训分类头，以及秩为 4 的 LoRA——按同样训练 5 轮的方案做了适配。这是一项任务上的一个固定方案，各模型的 LoRA 参数量也不同，所以不是排名：', '结果表见「预训练有用吗？」', '。'],
     nextEyebrow: '次日 · 只发状态',
     nextH2: '同一个人，第二天：已运行，不发布',
     nextLede: '在某一天拟合的模型，换一天还管不管用、不管用时该更新哪一部分——这里还没有公开的数字。为它准备了两个数据源；出于不同的原因，两者都不能公开评分。',
     nextH3: '两个记录日：已运行并通过复核，暂缓发布',
-    nextP: `${nextDaySource}：${nextDay.design.people} 名被试，每人记录两天。每名被试的模型用第一天训练，用第二天最前面的 ${series(budgets, '、', ' 或 ')} 个有标签的校准试次、以同样三种更新方式校准，再在第二天同一批后续试次上测试。与上面的结果不同，这个设计要用到测试被试本人的标签：用其第一天的试次训练，并且（零预算时除外）用其第二天最前面的试次校准。它已于 9 月 22 日运行，并通过了独立复核。该数据源的编辑暂缓仍然有效——目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准——所以不发布它的任何数字。`,
+    nextP: `${nextDaySource}：${nextDay.design.people} 名被试，每人记录两天。每名被试的模型用第一天训练，用第二天最前面的 ${series(budgets, '、', ' 或 ')} 个有标签的校准试次、以同样三种更新方式校准，再在第二天同一批后续试次上测试。与上面的结果不同，这个设计要用到测试被试本人的标签：用其第一天的试次训练，并且（零预算时除外）用其第二天最前面的试次校准。它已经运行，并通过了独立复核。该数据源的编辑暂缓仍然有效——目录标注的许可是 CC BY-NC-ND，数据说明也没有写伦理批准——所以不发布它的任何数字。`,
     crossH3: '同一个人，之后的会话：只发状态',
-    crossP: [`Stieger 纵向 BCI：获取的是一名被试的 ${stiegerSessions} 次会话，而不是完整的数据集。公开的只有一点：加载程序和按时间顺序的划分（较早的会话训练、较晚的会话测试）在它上面可以运行。只有一个人时，任何分数都是这个人的分数，所以不发布；该数据源在`, '9 月 27 日的发布', '中只列状态。'],
+    crossP: [`Stieger 纵向 BCI：获取的是一名被试的 ${stiegerSessions} 次会话，而不是完整的数据集。公开的只有一点：加载程序和按时间顺序的划分（较早的会话训练、较晚的会话测试）在它上面可以运行。只有一个人时，任何分数都是这个人的分数，所以不发布；该数据源在`, '发布记录', '中只列状态。'],
     nextSession: ['一个相关的问题如今在另一份数据上有了两个经典基线的实测答案：同一个人的下一次会话，加入或不加入少量该会话的校准试次。见「', '」。'],
     adLimitsH2: '这个结果不是什么',
     adLimits: [
@@ -183,7 +183,7 @@ const copy = {
       'frozen encoder weights unchanged after updates': '更新后冻结编码器的权重保持不变',
       'identical output at zero adapter initialization': '适配器零初始化时输出完全不变',
     } as Record<string, string>,
-    engSource: '适配器的参数计数与检查，来自 9 月 22 日发布的工程检查',
+    engSource: '适配器的参数计数与检查，来自已发布的工程检查',
     rmPriorH3: '这个问题已有前人研究',
     rmPrior: ['已有其他工作在评测 EEG 适配器：', 'OpenEEGBench', ' 覆盖 EEG 基础模型的参数高效微调；一项', '关于测试时适配的系统研究', '报告了分布偏移下时好时坏的收益；一篇近期', '预印本', '比较了固定计算预算下的自监督适配。'],
     creditNote: (license: string) => `${license} · 仅发布聚合结果；本次适配沿用 2026-09-20 对这些记录的审查。`,
@@ -250,7 +250,7 @@ const card = topicCards[locale]['model-adaptation'];
       <article><h3 lang="en">{ad.rights.name}</h3><p lang="en">{ad.rights.attribution}</p><p>{copy.creditNote(ad.rights.license)}</p><p><a href={ad.rights.source} target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article>
       <article><h3 lang="en">{stieger.name}</h3><p lang="en">{stieger.rights.attribution}</p><p>{copy.stiegerNote(stieger.rights.license)}</p><p><a href={stieger.rights.source} target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article>
     </div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/adaptation-update.json" download>adaptation-update.json</a> · {tc.schema} {adaptation.schema_version} · {tc.generated} {adaptation.generated_at}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/adaptation-update.json" download>adaptation-update.json</a> · {tc.schema} {adaptation.schema_version}{tc.period}</p>
     <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>evidence-update.json</a> · {copy.engSource}{tc.period}</p>
   </section>
 </TopicLayout>

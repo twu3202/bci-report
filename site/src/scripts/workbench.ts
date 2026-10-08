@@ -50,14 +50,14 @@ const S={
       privacyLink:'The full review note is in the protocol JSON ↓',register:'Public-data register note',
       consentCaveat:{'sleep-scalp':'According to the 2025 data descriptor, the informed consent form did not mention publication, and before release the GDPR office of Region Midt judged the data fully anonymised: consent covered the study, and the public release rests on that anonymisation judgement.'} as Record<string,string>,
       metric:{} as Record<string,string>,
-      fmGroup:(n:number,date:string,notRun=0)=>'Added '+date+': '+n+' further foundation encoders, frozen (v9)'+(notRun?' · '+notRun+' not run on this protocol':''),fmGroupLink:'Every v9 row with its footnote →',
+      fmGroup:(n:number,notRun=0)=>n+' further foundation encoders, frozen'+(notRun?' · '+notRun+' not run on this protocol':''),fmGroupLink:'Every row with its footnote →',
       fmInterval:(lo:string,hi:string)=>'Descriptive 95% interval: '+lo+'–'+hi+'%',fmF1:'Mean across held-out participants',
       fmDetected:(d:number,n:number)=>d+' of '+n+' commands',fmIdle:(f:number,n:number)=>f+' of '+n+' idle trials',
       fmNotRun:'Not run',fmNotPublished:'not published',fmExposed:'In the authors’ pretraining list',fmUnknown:'Exposure unknown',
       fmResearchUse:'Model card: research use only, not for diagnosis or clinical use.',
-      fmAblationReference:'matrix row above',fmSource:'source ↗',fmMethod:'Model page →',fmCsv:'v9 rows · CSV ↓',
+      fmAblationReference:'matrix row above',fmSource:'source ↗',fmMethod:'Model page →',fmCsv:'Foundation-encoder rows · CSV ↓',
       fmExposureLabel:'Pretraining exposure: ',fmFootnote:'Row footnote: ',fmLicence:'Weights licence: ',fmVersion:'Model version: ',
-      fmFrozen:'Frozen probe added 2026-10-04 (release v9): the published recipe with only the encoder swapped. Grouped by family, never ranked.',
+      fmFrozen:'Frozen probe: the published recipe with only the encoder swapped. Grouped by family, never ranked.',
       stop:'. ',coreExposureLead:'Checked 2026-10-04 — LaBraM and CBraMod: ',coreExposureTail:'That is what the authors’ lists show, not proof that these recordings were never seen; the sentence above is the released one, which predates the check.'},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
       empty:'该协议下没有这一类别的已评测模型。请换一个类别。',noResults:'无可显示的结果',
@@ -83,14 +83,14 @@ const S={
       privacyLink:'完整的审查说明在协议 JSON 中 ↓',register:'公开数据登记说明',
       consentCaveat:{'sleep-scalp':'据 2025 年的数据描述论文，知情同意书没有提到公开发布；发布前，Region Midt（丹麦中部大区）的 GDPR 办公室判定这些数据已完全匿名化：同意书覆盖的是研究本身，公开发布依据的是这一匿名化判定。'} as Record<string,string>,
       metric:{'Balanced accuracy':'平衡准确率','Command detection ≤3s':'指令检出率 ≤3 秒','Idle false activation':'空闲误触发率','Macro F1':'宏平均 F1'} as Record<string,string>,
-      fmGroup:(n:number,date:string,notRun=0)=>date+' 新增：另外 '+n+' 个基础模型编码器（冻结，第九轮）'+(notRun?'，其中 '+notRun+' 个在这个协议上未运行':''),fmGroupLink:'第九轮的每一行及其脚注 →',
+      fmGroup:(n:number,notRun=0)=>'另外 '+n+' 个基础模型编码器（冻结）'+(notRun?'，其中 '+notRun+' 个在这个协议上未运行':''),fmGroupLink:'每一行及其脚注 →',
       fmInterval:(lo:string,hi:string)=>'描述性 95% 区间：'+lo+'–'+hi+'%',fmF1:'各留出被试的均值',
       fmDetected:(d:number,n:number)=>'检出 '+d+' / '+n+' 条指令',fmIdle:(f:number,n:number)=>'误触发 '+f+' / '+n+' 个空闲试次',
       fmNotRun:'未运行',fmNotPublished:'不发布',fmExposed:'在作者的预训练清单中',fmUnknown:'是否出现在预训练数据中：未知',
       fmResearchUse:'模型卡：仅供研究使用，不可用于诊断或临床。',
-      fmAblationReference:'即上表中的那一行',fmSource:'来源 ↗',fmMethod:'模型页面 →',fmCsv:'第九轮各行 · CSV ↓',
+      fmAblationReference:'即上表中的那一行',fmSource:'来源 ↗',fmMethod:'模型页面 →',fmCsv:'基础模型编码器各行 · CSV ↓',
       fmExposureLabel:'是否出现在预训练数据中：',fmFootnote:'该行脚注：',fmLicence:'权重许可：',fmVersion:'模型版本：',
-      fmFrozen:'2026-10-04 新增的冻结探针（第九轮发布）：沿用已发布的方案，只替换编码器。按模型类别分组，从不排名。',
+      fmFrozen:'冻结探针：沿用已发布的方案，只替换编码器。按模型类别分组，从不排名。',
       stop:'。',coreExposureLead:'2026-10-04 核查——LaBraM 与 CBraMod：',coreExposureTail:'这是作者清单所显示的情况，并不证明这些记录从未被模型见过；上面那句话是发布时的原文，早于这次核查。'},
 }[LANG];
 const metric=(label:string)=>S.metric[label]??label;
@@ -105,8 +105,8 @@ type FmRow={id:string;name:string;panel:string;href:string;mode:string;channels:
   x:number|null;chanceFlag:'at-or-below'|'interval-reaches'|null;status:string;reason:string|null;reasonOriginal:string|null;exposure:string;exposureText:string;exposureSource:string|null;
   footnote:string;footnoteOriginal:string|null;notes:string;notesOriginal:string|null;version:string|null;licence:string;licenceOriginal:string|null;researchUse:boolean;
   idle:{detected:number;commandTrials:number;falseActivations:number;idleTrials:number;abstain:number}|null};
-type FmData={release:string;date:string;tracks:Record<string,{file:string;protocolHref:string;rows:FmRow[];coreExposure?:{text:string;urls:string[]}}>};
-const fmData:FmData=(()=>{try{return JSON.parse(document.querySelector('#fm-rows')?.textContent||'');}catch{return {release:'',date:'',tracks:{}};}})();
+type FmData={release:string;tracks:Record<string,{file:string;protocolHref:string;rows:FmRow[];coreExposure?:{text:string;urls:string[]}}>};
+const fmData:FmData=(()=>{try{return JSON.parse(document.querySelector('#fm-rows')?.textContent||'');}catch{return {release:'',tracks:{}};}})();
 const fmOf=(id:string)=>fmData.tracks[id]??{file:'',protocolHref:'',rows:[]};
 /* Two tracks carry a JSON fragment in their release text ('… v3 · {"mirror": …,
    "upstream": …}'). Printed as its fields, "mirror … · upstream …", as the
@@ -230,7 +230,7 @@ function fmRowHtml(r:FmRow,reference=false){
 function fmGroupHtml(fm:FmRow[]){
   if(!fm.length)return '';
   const t=fmOf(track.id);
-  return '<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+esc(S.fmGroup(fm.length,fmData.date,fm.filter(r=>r.status!=='complete').length))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></span></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
+  return '<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+esc(S.fmGroup(fm.length,fm.filter(r=>r.status!=='complete').length))+' <a href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a></span></th></tr>'+fm.map(r=>fmRowHtml(r)).join('');
 }
 function ablationHtml(){
   const ref=visibleFm().filter(r=>r.id.startsWith('eeg-fm-masking/')),sib=visibleFm('masking ablation');

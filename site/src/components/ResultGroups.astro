@@ -71,7 +71,7 @@ const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
                 : <span data-fig={attr(r.value)} class="metric">{formatFig(r.value)}</span>}
                 {r.interval && <span class="interval"><span data-fig={attr(r.interval[0])}>{formatFig(r.interval[0])}</span>–<span data-fig={attr(r.interval[1])}>{formatFig(r.interval[1])}</span></span>}
                 {r.note && <small class="row-note">{r.note[locale].map(p => typeof p === 'string' ? p : <span data-fig={attr(p)} class="fig">{formatFig(p)}</span>)}</small>}</td>
-              <td>{r.people ? r.people : c.noPeople}</td>
+              <td>{r.records ? <><span data-fig={attr(r.records)}>{formatFig(r.records)}</span>{c.records}</> : r.people ? r.people : c.noPeople}</td>
             </tr>
           ))}</tbody>
         </table>

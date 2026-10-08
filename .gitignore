@@ -31,6 +31,10 @@ docs/
 # --- this folder stays local, never on GitHub or the HF dataset.
 outreach/
 
+# --- Rights evidence a release pins by hash: publishers' API records and the full text of the
+# --- papers its consent quotes come from. Third-party copies; the manifest keeps the hashes and quotes.
+research/publication_review_*/evidence/
+
 # --- Where this machine keeps the run outputs. One operator's mount points.
 pipeline/publication/local_paths.json
 

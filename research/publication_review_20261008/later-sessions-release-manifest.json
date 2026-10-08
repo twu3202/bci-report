@@ -1,0 +1,315 @@
+{
+  "release_id": "later-sessions-update-20261008",
+  "reviewed_at": "2026-10-08",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for four completed results of the execution session's large-source batch (handoff index dated 2026-10-08), published together under one question: does a decoder trained on an earlier session still work later? Its own manifest: it amends no earlier review and changes no released file; OpenBMI and Dreem keep their 2026-10-03 release unchanged. WBCIC-SHU: two fixed CPU baselines from each person's first to third recording session, and frozen CBraMod with a session-1 ridge readout on the same people and trials. Longitudinal RSVP: one fixed ERP baseline trained at the first visit and scored at the publisher's nominal Day 7, 80 and 200 visits. Forenzo (KiltHub): a fixed spectral ridge from each record's earliest to latest complete session in continuous cursor tracking, against a source-mean comparator, published as a negative result. Nothing here joins the eight-protocol matrix, the four results share no ranking, and no cohort, response arm or dataset is pooled. The website inputs are the four approved release JSONs only; the handoffs, release decisions, independent audits and checks they cite are pinned by SHA-256 and checked by the export, never copied, because they carry private storage paths. The rights evidence was read by this session from each source's official record and paper and is kept under evidence/.",
+  "approval": {
+    "date": "2026-10-08",
+    "decision": "aggregate_preview",
+    "basis": "The owner's request in chat on 2026-10-08: update the site from the batch's completed analyses, the latest Forenzo result included, and do not state on the site when it was updated or which version it is. Relayed by the workflow with it: one new question page for these results, and a local build for the owner's preview before anything is deployed. Each source's own root release decision approves its aggregate export; this record is the publishing review on top of those, not a replacement for them.",
+    "decisionsOfThisReview": [
+      "Forenzo: the ridge's median primary error is published beside its mean in every cohort and response arm, because the handoff requires mean and median together to show the upper tail. This departs from the OpenBMI (2026-10-03) and route-2 (2026-10-07) releases, which dropped medians; it is limited to those four medians, and it is flagged for the owner's preview. The comparator's median, every minimum, 10th and 90th percentile and the paired median stay out.",
+      "Forenzo: the paired minimum is never published; what it implies is: the number of admitted records on which the ridge's overall primary error was higher than the comparator's, as a whole count over the cohort.",
+      "RSVP: per-visit means are published for AUROC (with its interval), average precision, log loss, Brier score and 10-bin ECE, as the handoff's results table gives them; medians, 10th percentiles and minimums stay out. The probabilities are Platt-calibrated on a held-out first-visit block and the handoff's table carries these metrics, so they are published here; the Dreem release, whose probabilities were uncalibrated, withheld them.",
+      "WBCIC-SHU: the two releases are published as two results on one cohort. The spectral ridge in the CBraMod release must equal the CPU release's ridge to the last digit, cohort by cohort."
+    ]
+  },
+  "notPublished": [
+    "Per-person and per-record values of any kind: every minimum, 10th percentile and 90th percentile in the four releases, every median other than the four Forenzo ridge medians named in the approval, the Forenzo paired minimum and paired median, and the RSVP medians. How many people or records declined or did worse is published; which ones is not.",
+    "Participant, record, session-file and upstream file identifiers, session maps, label vectors, predictions, probabilities, features, embeddings, fitted scalers, readouts and models, and the checkpoint.",
+    "WBCIC-SHU aggregate confusion matrices (both releases) and per-class recall means: secondary point estimates without intervals, pooled over trials.",
+    "The Forenzo recorded-decoder strata (AR, EG and PN in Main; CL, DL and TL in Transfer Learning). They are observational contexts from the publisher's historical decoders, not randomized comparisons, and the overall result is the one the handoff states. Also the paired differences of the Forenzo secondary metrics.",
+    "Measured compute and storage: wall times, stage times, memory and process counts from every handoff and release, including the CBraMod release's resources block. They include archive access, hashing and safeguards and are not model throughput.",
+    "The duplicated bootstrap and conditional-descriptive blocks of the releases: the same means and intervals are published once.",
+    "Demographic tables from the original publications: ages, sex, handedness and the like. The dataset pages say only how many people took part and that they were healthy volunteers where the paper says so.",
+    "The handoffs, release decisions, independent audits, root checks, activations and protocol reviews themselves: each is pinned by SHA-256 in this manifest and its pass or binding is checked by the export. They carry private storage paths and are not copied. The batch's candidate files are not inputs and were not opened.",
+    "The status of the batch's other sources and any analysis outside the four approved releases."
+  ],
+  "holds": [],
+  "datasets": [
+    {
+      "id": "wbcic-shu",
+      "name": "WBCIC-SHU motor imagery (Yang et al. 2025)",
+      "task": "Two-class (left- or right-hand grasping) and three-class (adding foot-hooking) motor imagery, same person across three recording sessions: trained on session 1, tested on session 3; session 2 unused",
+      "source": "https://doi.org/10.25452/figshare.plus.22671172.v5",
+      "version": "Figshare+ record 22671172, version 5 (doi:10.25452/figshare.plus.22671172.v5, posted 2024-12-06), one archive, read from the figshare API on 2026-10-08. The publisher's processed derivative is used: 58 channel indices at 250 Hz in four-second epochs, sessions 1 and 3 of each of 62 participants (51 two-class, 11 three-class).",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Banghua Yang, Fenqi Rong, Yunlong Xie, Du Li, Jiayang Zhang, Fu Li, Guangming Shi and Xiaorong Gao · A multi-day and high-quality EEG dataset for motor imagery brain-computer interface, Scientific Data 12, 488 (2025), doi:10.1038/s41597-025-04826-y. Data: Banghua Yang and Fenqi Rong, WBCIC-SHU Motor Imagery Dataset, Figshare+, doi:10.25452/figshare.plus.22671172.v5, CC BY 4.0. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The data paper states that written informed consent was obtained after the participants were informed about the procedure, and that the study was approved by the Tsinghua University Medical Ethics Committee (approval number 20190002) and adhered to the Declaration of Helsinki. Published here: participant-equal means with paired whole-participant bootstrap intervals for each cohort, the paired differences, secondary accuracy and macro-F1 means, and trial counts. No per-person value, participant or session-file identifier, confusion matrix or demographic is published.",
+      "reviewedAt": "2026-10-08",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/22671172/versions/5",
+        "https://doi.org/10.1038/s41597-025-04826-y",
+        "https://europepmc.org/article/PMC/PMC11930978"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261008/evidence/figshare-22671172-v5.json",
+        "sha256": "e229782fe19cc36a2c8ac9b3028cc155e9f2f7d80677a0cd10c7b9552b569919",
+        "retrievedFrom": "https://api.figshare.com/v2/articles/22671172/versions/5",
+        "retrievedAt": "2026-10-08"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "source": "https://europepmc.org/article/PMC/PMC11930978",
+        "record": {
+          "path": "research/publication_review_20261008/evidence/europepmc-PMC11930978.xml",
+          "sha256": "9b9c01d75be126a11536bef6eea5e995981bddcc17b9f86c68821c3f05626799",
+          "retrievedFrom": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11930978/fullTextXML",
+          "retrievedAt": "2026-10-08"
+        },
+        "paperDoi": "10.1038/s41597-025-04826-y",
+        "section": "Methods, Participants and environment",
+        "ethics": "Approved by the Tsinghua University Medical Ethics Committee (approval number 20190002); carried out in line with the Declaration of Helsinki.",
+        "consent": "Written informed consent was obtained from the participants after they were informed about the procedure, purpose, requirements and motor-imagery techniques.",
+        "quotes": [
+          {"statement": "ethics", "text": "approval from the Tsinghua University Medical Ethics Committee (approval number: 20190002)"},
+          {"statement": "consent", "text": "written informed consent is obtained"}
+        ]
+      },
+      "verification": [
+        "Licence: the figshare API record of version 5 (pinned here) names CC BY 4.0 with its URL, the DOI 10.25452/figshare.plus.22671172.v5 and one file, the archive the handoff names.",
+        "Consent and ethics: the paper's Methods, read from the Europe PMC full text of PMC11930978 (pinned here); the short quotes are recorded above and checked against the pinned text by the export.",
+        "The record's description says 52 participants took part in the two-class experiment; the paper says 51, and the evaluated archive has 51. The paper and the archive are followed.",
+        "The paper describes the three sessions as recorded on different days. The handoff says to call them recording-session ordinals and not to promise a time gap, because that was not verified in the derivative; the export follows the handoff."
+      ]
+    },
+    {
+      "id": "longitudinal-rsvp",
+      "name": "Longitudinal ERP dataset, RSVP face task (Yang et al. 2025)",
+      "task": "Rapid serial visual presentation of faces, target versus non-target event classification, same person: trained at the first visit, scored at the publisher's nominal Day 7, 80 and 200 visits",
+      "source": "https://doi.org/10.6084/m9.figshare.27201003.v1",
+      "version": "figshare record 27201003, version 1 (doi:10.6084/m9.figshare.27201003.v1, posted 2025-06-24), read from the figshare API on 2026-10-08. Group A only (15 participants), nominal Day 1, 7, 80 and 200 visits; Group B is not used.",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Chen Yang, Yufeng Zhang, Hongxin Zhang, Yixuan Li, Yijun Wang and Xiaorong Gao · A longitudinal EEG dataset of event-related potential, figshare, doi:10.6084/m9.figshare.27201003.v1, CC0. Paper: Yufeng Zhang, Hongxin Zhang, Yixuan Li, Yijun Wang, Xiaorong Gao and Chen Yang, A longitudinal EEG dataset of event-related potential, Scientific Data 12, 1069 (2025), doi:10.1038/s41597-025-05378-x. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The data paper states that the experiment was approved by the Tsinghua Institutional Review Board (No. 20230058) and that each participant read and signed an informed consent form before the experiment. Published here: participant-equal visit means for the 15 Group A participants, the AUROC interval at each visit, the paired Day 200 minus Day 7 contrast with its interval, how many participants declined by 0.05 AUROC or more, and event counts per visit. No per-person value, participant identifier, prediction or demographic is published.",
+      "reviewedAt": "2026-10-08",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/27201003/versions/1",
+        "https://doi.org/10.1038/s41597-025-05378-x",
+        "https://europepmc.org/article/PMC/PMC12185715"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261008/evidence/figshare-27201003-v1.json",
+        "sha256": "10883552412519716809d8c84658ad4753e4dfbd04ed283dca538a1098fb969b",
+        "retrievedFrom": "https://api.figshare.com/v2/articles/27201003/versions/1",
+        "retrievedAt": "2026-10-08"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "source": "https://europepmc.org/article/PMC/PMC12185715",
+        "record": {
+          "path": "research/publication_review_20261008/evidence/europepmc-PMC12185715.xml",
+          "sha256": "55ce4a3cb37180c49a89559e6859617f211a21bfbce0768b273034d5e897b632",
+          "retrievedFrom": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12185715/fullTextXML",
+          "retrievedAt": "2026-10-08"
+        },
+        "paperDoi": "10.1038/s41597-025-05378-x",
+        "section": "Methods, Subject",
+        "ethics": "Approved by the Tsinghua Institutional Review Board (No. 20230058).",
+        "consent": "Each participant read and signed an informed consent form before the experiment.",
+        "quotes": [
+          {"statement": "ethics", "text": "approved by the Tsinghua Institutional Review Board with No. 20230058"},
+          {"statement": "consent", "text": "each participant was asked to read and sign an informed consent form"}
+        ]
+      },
+      "verification": [
+        "Licence: the figshare API record of version 1 (pinned here) names CC0 with the CC0 1.0 URL, the DOI 10.6084/m9.figshare.27201003.v1 and the paper as its related publication. The paper itself is published under CC BY-NC-ND 4.0; it is cited, not reproduced.",
+        "Consent and ethics: the paper's Methods, read from the Europe PMC full text of PMC12185715 (pinned here); the short quotes are recorded above and checked against the pinned text by the export.",
+        "The dataset record lists Chen Yang first; the paper lists Chen Yang last, as corresponding author. Each is credited in its own order."
+      ]
+    },
+    {
+      "id": "forenzo-continuous-tracking",
+      "name": "Forenzo & He continuous-tracking EEG-BCI dataset (KiltHub)",
+      "task": "Continuous two-dimensional cursor tracking with a noninvasive BCI, same record across sessions: trained on the earliest complete recorded session, tested on the latest; two separate response arms",
+      "source": "https://doi.org/10.1184/R1/25360300.v1",
+      "version": "KiltHub (Carnegie Mellon University's repository on figshare) record 25360300, version 1 (doi:10.1184/R1/25360300.v1, posted 2024-04-03), read from the figshare API on 2026-10-08. Two publisher cohorts, Main and Transfer Learning; 23 of 28 candidate records admitted.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Dylan Forenzo and Bin He · EEG-BCI Dataset for “Continuous Tracking using Deep Learning-based Decoding for Non-invasive Brain-Computer Interface”, KiltHub, Carnegie Mellon University, doi:10.1184/R1/25360300.v1, CC BY 4.0. Citation the record requests: Dylan Forenzo, Hao Zhu, Jenn Shanahan, Jaehyun Lim and Bin He, Continuous tracking using deep learning-based decoding for noninvasive brain–computer interface, PNAS Nexus 3(4), pgae145 (2024), doi:10.1093/pnasnexus/pgae145. Derived analysis by BCI Report; not endorsed by the authors and not a reproduction of the paper's online results.",
+      "privacyReview": "The associated paper states that the study was approved by the Institutional Review Board at Carnegie Mellon University and that each subject gave written consent to the protocol before participating; it gives no approval number. Published here: for each cohort and response arm, record-equal means of the primary error for the spectral ridge and the source-mean comparator with bootstrap intervals, the ridge's median, the paired difference with its interval and how many admitted records the ridge did worse on, secondary means with undefined values kept null, and coverage counts. No other per-record value, no record, file or participant identifier, prediction or demographic is published.",
+      "reviewedAt": "2026-10-08",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/25360300/versions/1",
+        "https://doi.org/10.1093/pnasnexus/pgae145",
+        "https://europepmc.org/article/PMC/PMC11060102"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261008/evidence/figshare-25360300-v1.json",
+        "sha256": "9f07490fa52f56a70c8516f9f3a5ad5210ac1170ec64d712799bcb101aa21d96",
+        "retrievedFrom": "https://api.figshare.com/v2/articles/25360300/versions/1",
+        "retrievedAt": "2026-10-08"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "source": "https://europepmc.org/article/PMC/PMC11060102",
+        "record": {
+          "path": "research/publication_review_20261008/evidence/europepmc-PMC11060102.xml",
+          "sha256": "44c1ea3d3fd34768b2d5ad0a72911c0de931c7f2db495547b995cf18b0f784e6",
+          "retrievedFrom": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11060102/fullTextXML",
+          "retrievedAt": "2026-10-08"
+        },
+        "paperDoi": "10.1093/pnasnexus/pgae145",
+        "section": "Materials and methods, Subject recruitment",
+        "ethics": "Approved by the Institutional Review Board at Carnegie Mellon University; no approval number is given.",
+        "consent": "Each subject provided written consent to the protocol before participating.",
+        "quotes": [
+          {"statement": "ethics", "text": "This study was approved by the Institutional Review Board at Carnegie Mellon University"},
+          {"statement": "consent", "text": "each subject provided written consent to the protocol before participating"}
+        ]
+      },
+      "verification": [
+        "Licence: the figshare API record of KiltHub version 1 (pinned here) names CC BY 4.0 with its URL and the DOI 10.1184/R1/25360300.v1, and asks users to cite the PNAS Nexus paper. Its SHA-256 equals the one the independent final review recorded for the publisher metadata the analysis session saved, so both sessions read the same record. The independent final review records that one of the analysis session's saved requests returned HTTP 403 and was not used as licensing evidence. Nothing was bypassed here: the public figshare API answered this session's plain request.",
+        "Consent and ethics: the paper's Materials and methods, read from the Europe PMC full text of PMC11060102 (pinned here); the short quotes are recorded above and checked against the pinned text by the export.",
+        "The paper states that the subjects of its two substudies were different people. The analysis did not verify the mapping from records to people, so this release counts cohort records, keeps the two cohorts apart, and never states a number of unique people."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "wbcic-cross-session-cpu",
+      "dataset": "wbcic-shu",
+      "decision": "aggregate_preview",
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/WBCIC Cross-Session CPU Baselines Website Handoff.md",
+        "sha256": "aced038cd77046b218cd725012e132ceb5cade92334173942765a40499a97195"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/wbcic-cross-session-cpu-v1-website-release.json",
+        "sha256": "63a4ba5393380dea9aa4fbe44ec0c7a1b40cf8915abd1985e74af329e9d571b7"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cpu-aggregate-release-decision-v1.json",
+        "sha256": "d41c318bd8550b171ae5b2fed3e7f45a788436f1ce682a77f1dad7872d31decd"
+      },
+      "numericalAudit": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cpu-result-independent-audit-v1.json",
+        "sha256": "883fd82f36c05322bb9a67120728a2f8d18fbcf0303829a8da69b72647729acf"
+      },
+      "rootActivation": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cpu-baseline-root-freeze-v1.json",
+        "sha256": "b3aa8aef7e356da163bcc8d92e139a02fa58200adfe94e547123ced8a8c09b72"
+      },
+      "protocolReview": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cpu-protocol-independent-review-v1.json",
+        "sha256": "4483bf1ea69347231f7fb66edd73da100e8d63478b036ec6e054433b022c4c6a"
+      },
+      "codeReview": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cpu-baseline-independent-code-review-v1.json",
+        "sha256": "239be774322d36559d7ac4ff7523aff2fb620f1a96657bea790d3c0ca2012c5a"
+      },
+      "verification": [
+        "The release decision names the exact release bytes and the independent audit by SHA-256; the release names the same audit, protocol, activation and score completion.",
+        "Every cohort block of the release (both arms' means, intervals, counts and the paired summary) equals the independent audit's method results value for value, and the trial accounting and QA holds are the audit's.",
+        "The root freeze names the independent code review and the protocol the release names; the protocol review approved the guarded variable-N rule that admits the three short sessions."
+      ]
+    },
+    {
+      "id": "wbcic-frozen-cbramod",
+      "dataset": "wbcic-shu",
+      "decision": "aggregate_preview",
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/WBCIC Frozen CBraMod Comparison Website Handoff.md",
+        "sha256": "7938866913a261d4582245e6afbe7df70c826cece43cbbe70206902aa54eb914"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/wbcic-frozen-cbramod-v1-website-release.json",
+        "sha256": "db2b3141bd1d6d5e3be410fe67b341ea7debbfbf435df0fa6824285deb0ebb56"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cbramod-aggregate-release-decision-v1.json",
+        "sha256": "88fc710fd8791f60b8fbcc38f10c1d124f977b54991e7b7835667338980fc3a3"
+      },
+      "numericalAudit": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cbramod-frozen-ridge-independent-result-audit-v1.json",
+        "sha256": "8664c63e95d1e9b8062bff659d887941859ebd8e8a53571491bed7157a4faa15"
+      },
+      "rootCheck": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cbramod-root-aggregate-check-v1.json",
+        "sha256": "ebde3a352322dded94deffaa94f8086b2457e82da7adb3b3831b63ba5a640702"
+      },
+      "rootActivation": {
+        "path": "research/large_source_expansion_20261002/review/wbcic-cbramod-frozen-ridge-root-activation-v1.json",
+        "sha256": "83356d7a775b22849e59d2e8efead01c9cb565df1d4eaf7cde1ed09e1468c91c"
+      },
+      "model": {
+        "name": "CBraMod",
+        "paper": "https://proceedings.iclr.cc/paper_files/paper/2025/file/bbbd6d915cb90be21c1254a82d45cedd-Paper-Conference.pdf",
+        "checkpointSha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+        "sourceRevision": "b9e961003214326972c567eff390e75b0287e32a",
+        "pretrainingExposure": "Not established for this checkpoint. The model paper describes pretraining on the TUH EEG corpus (TUEG), and the pinned repository lists SHU as a downstream task; neither gives a checkpoint-specific file manifest that would show WBCIC-SHU was absent. No claim of certified unseen pretraining data."
+      },
+      "verification": [
+        "The release decision names the exact release bytes, the independent audit and the root aggregate check by SHA-256; the release names the same audit, root check, checkpoint and input manifest.",
+        "Every cohort figure of the release equals the root aggregate check exactly and the independent audit within 1e-12; the checkpoint hash equals the root activation's.",
+        "The spectral ridge balanced accuracy in this release equals the CPU release's, cohort by cohort, and the input manifest is the same: one cohort, one set of trials."
+      ]
+    },
+    {
+      "id": "rsvp-later-visits",
+      "dataset": "longitudinal-rsvp",
+      "decision": "aggregate_preview",
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/RSVP Longitudinal Retention Benchmark Website Handoff.md",
+        "sha256": "8af698cd168f3874c9d2c338a0f5d2827440d169c3d6c87a879a76e0ab55c0ca"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/rsvp-longitudinal-retention-cpu-v2-website-release.json",
+        "sha256": "d8b2df555c9854b3326aedf39c3f0c37835a14840465f685d66202cb05881c7d"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/rsvp-longitudinal-retention-root-release-decision-v2.json",
+        "sha256": "36e62dbef1a7ed05ec6ad0951795955ed78973099a2a31187ffa82a13534b685"
+      },
+      "preparationAudit": {
+        "path": "research/large_source_expansion_20261002/review/rsvp-full-preparation-independent-result-audit-v2.json",
+        "sha256": "9f8ed2aac132322300fff86a43c8e9aeda5642768dec542fd86b3ef79bdf7593"
+      },
+      "predictionAudit": {
+        "path": "research/large_source_expansion_20261002/review/rsvp-source-only-fit-independent-result-audit-v2.json",
+        "sha256": "9e10cdeb03bdd12fb284aa4a85ab4fdeb20e9bbbae15c7d2a8245f5ea4adfa07"
+      },
+      "numericalAudit": {
+        "path": "research/large_source_expansion_20261002/review/rsvp-source-only-cpu-v2-independent-scoring-audit.json",
+        "sha256": "23fe25cfac5560f321faebfdb3a5e98861aa78f665e39dacac5ff5513c86a500"
+      },
+      "finalCheck": {
+        "path": "research/large_source_expansion_20261002/review/rsvp-longitudinal-retention-website-handoff-final-independent-check-v2.json",
+        "sha256": "6d39f30d497c100854317afd5003c975708220a0c7745a4de112193f1529ab9b"
+      },
+      "verification": [
+        "The release decision names the exact release bytes, the accepted aggregate and the three independent audits (preparation, prediction replay, metric recomputation) by SHA-256; the release names the same three audits.",
+        "The final independent check pins the release, the decision, the handoff and the three audits at these hashes and passed every check, including that the release's metrics, counts, contrast and bootstrap equal the accepted aggregate.",
+        "The metric audit recomputed all 45 visit scores and the aggregate at an absolute tolerance of 1e-12 from the accepted aggregate the decision names; the prediction replay matched 216,000 predictions within 1.11e-16; the preparation audit counts 195 blocks and 312,000 valid events. The accepted aggregate itself is a candidate file and is bound by hash, not opened."
+      ]
+    },
+    {
+      "id": "forenzo-continuous-control",
+      "dataset": "forenzo-continuous-tracking",
+      "decision": "aggregate_preview",
+      "handoff": {
+        "path": "research/large_source_expansion_20261002/Forenzo Whole-Session Continuous-Control Baselines Website Handoff.md",
+        "sha256": "1273dcf35db9ab48ec2190522494b23c08188d03258a977be8bbdbddfde8d371"
+      },
+      "release": {
+        "path": "research/large_source_expansion_20261002/results/forenzo-whole-session-continuous-control-cpu-v1-website-release.json",
+        "sha256": "74d6ca98fb64ee79af8f03f3bce55676536f63491fd602d80331a0fd938811bb"
+      },
+      "releaseDecision": {
+        "path": "research/large_source_expansion_20261002/review/forenzo-continuous-control-root-release-decision-v1.json",
+        "sha256": "4dbf1ce4e5939e3199e10a4f76f1217270cdbee723240a6f45c040a5d707a35d"
+      },
+      "independentReview": {
+        "path": "research/large_source_expansion_20261002/review/forenzo-final-result-and-website-handoff-independent-review-v1.json",
+        "sha256": "498188ff65d07256275605b761f6b50fae8d27a2a6b686a42c40ed873cda48e7"
+      },
+      "verification": [
+        "The root release decision names the exact release bytes, the final handoff and the independent final review by SHA-256, and the release names the same review and handoff.",
+        "The independent final review found the candidate's cohorts exactly equal to the private aggregate and to the independent aggregate replay (maximum absolute difference 0), and the candidate's bootstrap exactly equal to the private aggregate; the release preserved those results verbatim, changing only its schema, approval flags and release provenance.",
+        "Coverage (14 and 14 candidates, 9 and 14 admitted, the five Main holds and their reasons, rows, trials and runs) is the independent review's, and the release agrees with it."
+      ]
+    }
+  ]
+}

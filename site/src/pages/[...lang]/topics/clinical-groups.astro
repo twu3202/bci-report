@@ -180,6 +180,6 @@ const rows = [
       <article><h3>{copy.auditH3}</h3><p>{copy.auditP}</p></article>
       <article><h3 lang="en">{c.rights.name}</h3><p lang="en">{c.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[2]} target="_blank" rel="noreferrer">{copy.manuscriptLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.mirrorLink}</a> · <a href={c.rights.licenseUrl} target="_blank" rel="noreferrer">{c.rights.license}</a></p></article>
     </div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/clinical-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {clinical.schema_version} · {tc.generated} {clinical.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/clinical-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {clinical.schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

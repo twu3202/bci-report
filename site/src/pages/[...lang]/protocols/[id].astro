@@ -138,7 +138,7 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
   </section>
 
   <section class="topic-section fm-section" id={FM_ANCHOR} aria-labelledby="fm-heading" data-release={fmRelease.id}>
-    <div class="topic-heading"><div><p class="eyebrow">{c.fmEyebrow(fmRelease.date)}</p><h2 id="fm-heading">{c.fmH2}</h2></div><p>{c.fmLede(tradeoff)}</p></div>
+    <div class="topic-heading"><div><p class="eyebrow">{c.fmEyebrow}</p><h2 id="fm-heading">{c.fmH2}</h2></div><p>{c.fmLede(tradeoff)}</p></div>
     {fmPlot.length > 0 && <IntervalPlot
       caption={c.fmPlotCaption}
       legend={c.fmPlotLegend}

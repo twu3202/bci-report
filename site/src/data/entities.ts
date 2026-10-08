@@ -25,6 +25,7 @@ import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
 import reliable from './reliable-decisions-update.json';
+import later from './later-sessions-update.json';
 import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
          ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
@@ -56,12 +57,18 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * `ms2` prints a time in seconds as milliseconds to two decimals (the route-2 ledger's step times, indicative).
  */
 export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2'
-  | 'ppr2' | 'sgr2' | 'ms2';
+  | 'ppr2' | 'sgr2' | 'ms2' | 'int0' | 'sig3';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 /** A difference in percentage points, and an interval's lower bound: a second decimal where one would print ±0.0. */
 export const ppFmt = (raw: number): Fmt => Math.abs(raw * 100) < 0.05 ? 'pp2' : 'pp1';
 export const sgnFmt = (raw: number): Fmt => Math.abs(raw * 100) < 0.05 ? 'sgn2' : 'sgn1';
+/**
+ * A dimensionless value whose size spans many decades (the later-sessions page's continuous-tracking errors and R²):
+ * a whole number with thousands separators from 1,000 up, three significant digits where three decimals would print
+ * a non-zero value as 0.000, else three decimals.
+ */
+export const wideFmt = (raw: number): Fmt => Math.abs(raw) >= 1000 ? 'int0' : raw !== 0 && Math.abs(raw) < 0.01 ? 'sig3' : 'num3';
 /** A coverage: a second decimal where a non-zero share would print 0.0%. */
 export const covFmt = (raw: number): Fmt => raw > 0 && raw < 0.0005 ? 'pct2' : 'pct1';
 
@@ -87,6 +94,8 @@ export function formatFig(f: Fig): string {
     case 'ppr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)} pp`;
     case 'sgr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)}`;
     case 'ms2': return `${(f.raw * 1000).toFixed(2)} ms`;
+    case 'int0': return minus(Math.round(f.raw).toLocaleString('en-US'));
+    case 'sig3': return minus(f.raw.toPrecision(3));
   }
 }
 
@@ -114,6 +123,11 @@ export interface ResultRow {
   /** For counts: `value` out of `of`. */
   of?: Fig;
   people: number;
+  /**
+   * A count of records that are not proven unique people (the later-sessions page's Forenzo cohorts): printed in the
+   * people column as records, in place of `people`, which is then 0.
+   */
+  records?: Fig;
   /** What the figure may and may not be read as, printed beside it. */
   note?: RowNote;
 }
@@ -169,6 +183,7 @@ export interface DatasetEntity {
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
       CLI = 'clinical-update.json', CTX = 'context-update.json', ADA = 'adaptation-update.json',
       EXT = 'extension-update.json', LSU = 'large-source-update.json', RDU = 'reliable-decisions-update.json';
+const LTS = 'later-sessions-update.json';
 const fig = (raw: number, fmt: Fmt, src: string): Fig => ({ raw, fmt, src });
 const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig] | undefined =>
   iv ? [fig(iv[0], fmt, src), fig(iv[1], fmt, src)] : undefined;
@@ -304,7 +319,7 @@ function fmGroups(datasetName: string): ResultGroup[] {
     const core = trackTitles[t.id];
     return {
       id: `${t.id}-${FM_ANCHOR}`,
-      title: { en: core.en.replace('Core matrix · ', 'v9 foundation encoders, frozen · '), zh: core.zh!.replace('核心矩阵 · ', '第九轮基础模型（编码器冻结）· ') },
+      title: { en: core.en.replace('Core matrix · ', 'Further foundation encoders, frozen · '), zh: core.zh!.replace('核心矩阵 · ', '更多基础模型编码器（冻结）· ') },
       path, rows, chance, notRun, fmTerms: t.id,
     };
   });
@@ -321,7 +336,7 @@ function fmAdaptationGroup(): ResultGroup {
   const people = fmAdaptationMeta.people.raw;
   return {
     id: 'eegmat-v9-adaptation',
-    title: { en: 'Model adaptation, v9 · new people, same task, one fixed recipe (not a ranking)', zh: '模型适配（第九轮）· 新被试、同一任务、一个固定方案（不是排名）' },
+    title: { en: 'Model adaptation, further encoders · new people, same task, one fixed recipe (not a ranking)', zh: '模型适配（更多编码器）· 新被试、同一任务、一个固定方案（不是排名）' },
     path, chance: fmAdaptationMeta.chance, fmTerms: 'arithmetic-rest',
     rows: fmAdaptation.flatMap(a => {
       const base = { path, method: a.model.name, methodSlug: a.model.slug as MethodSlug, people };
@@ -909,6 +924,146 @@ function sharedEesm19Group(): ResultGroup {
            path: '/topics/shared-encoder/', rows, srNotes: 'eesm19' };
 }
 
+/* --- Later sessions: WBCIC-SHU, longitudinal RSVP, Forenzo (later-sessions-update.json) -------------------- */
+
+/**
+ * The topic page these groups are read on, and its sections: the page must carry these anchors, and its topic
+ * card must exist in i18n.ts (a group's "Read on" link takes the card's title).
+ */
+export const LATER_PATH = '/topics/later-sessions/';
+const LATER_ANCHOR = { wbcic: 'wbcic-shu', rsvp: 'longitudinal-rsvp', forenzo: 'forenzo' } as const;
+const lt = later.results;
+/** Labels for the arms these results name, where the Chinese differs (method names stay English). */
+export const laterArmLabel: Record<string, L> = {
+  source_prior: { en: 'Source-majority prior', zh: '源会话多数类先验' },
+  relative_spectral_ridge: { en: 'Relative spectral power + ridge', zh: '相对频谱功率 + 岭回归' },
+  frozen_cbramod: { en: 'CBraMod · frozen encoder, session-1 ridge readout', zh: 'CBraMod · 冻结编码器，分类头用第 1 次会话拟合' },
+  rsvp: { en: 'Normalized ERP features + logistic/Platt (CPU baseline)', zh: '归一化 ERP 特征 + logistic/Platt（CPU 基线）' },
+  ridge: { en: 'Spectral ridge' },
+  source_mean: { en: 'Source-mean comparator', zh: '源会话均值对照' },
+};
+
+/** WBCIC-SHU, one group per cohort: the two CPU baselines and frozen CBraMod, session 1 to session 3. */
+function laterWbcicGroup(c: '2C' | '3C'): ResultGroup {
+  const cpu = lt['wbcic-cross-session-cpu'].cohorts[c], fm = lt['wbcic-frozen-cbramod'].cohorts[c];
+  const path = `${LATER_PATH}#${LATER_ANCHOR.wbcic}`;
+  const n = cpu.people;
+  if (fm.people !== n) throw new Error(`entities.ts: WBCIC ${c} cohorts differ between the two results`);
+  const name = c === '2C' ? { en: 'two-class motor imagery', zh: '二分类运动想象' } : { en: 'three-class motor imagery', zh: '三分类运动想象' };
+  const condition: L = { en: 'Session 1 → session 3 · no session-3 labels', zh: '第 1 次会话 → 第 3 次会话 · 不使用第 3 次会话的标签' };
+  const prior = cpu.arms.source_prior, ridge = cpu.arms.relative_spectral_ridge;
+  const rows: ResultRow[] = [
+    { path, method: laterArmLabel.source_prior.en, label: laterArmLabel.source_prior, comparator: true, condition, metric: BA,
+      value: fig(prior.balanced_accuracy.mean, 'pct1', LTS), people: n,
+      note: { en: ['One over the number of classes: a floor, not a model.'], zh: ['等于类别数的倒数：是一个下限，不是模型。'] } },
+    { path, method: laterArmLabel.relative_spectral_ridge.en, label: laterArmLabel.relative_spectral_ridge, condition, metric: BA,
+      value: fig(ridge.balanced_accuracy.mean, 'pct1', LTS), interval: pair(ridge.balanced_accuracy.interval_95, 'pct1', LTS), people: n },
+    { path, method: laterArmLabel.relative_spectral_ridge.en, label: laterArmLabel.relative_spectral_ridge,
+      condition: { en: 'Minus the source prior, the same people and trials', zh: '减源会话先验，相同被试与试次' }, metric: DIFF,
+      value: fig(cpu.paired.balanced_accuracy_difference.mean, 'pp1', LTS),
+      interval: pair(cpu.paired.balanced_accuracy_difference.interval_95, 'pp1', LTS), people: n },
+    { path, method: 'CBraMod', methodSlug: 'cbramod', label: laterArmLabel.frozen_cbramod, condition, metric: BA,
+      value: fig(fm.frozen_cbramod.balanced_accuracy.mean, 'pct1', LTS), interval: pair(fm.frozen_cbramod.balanced_accuracy.interval_95, 'pct1', LTS),
+      people: n },
+    { path, method: 'CBraMod', methodSlug: 'cbramod', label: laterArmLabel.frozen_cbramod,
+      condition: { en: 'Minus the relative spectral ridge, the same people and trials', zh: '减相对频谱功率 + 岭回归，相同被试与试次' }, metric: DIFF,
+      value: fig(fm.paired.balanced_accuracy_difference.mean, 'pp1', LTS),
+      interval: pair(fm.paired.balanced_accuracy_difference.interval_95, 'pp1', LTS), people: n,
+      note: { en: ['A comparison of two fixed pipelines on reused test trials; it does not show that pretraining caused the gain, and whether this checkpoint saw WBCIC-SHU in pretraining is not established.'],
+              zh: ['这是两条固定流程在复用的测试试次上的比较，不能说明提升来自预训练；这个检查点的预训练数据中是否出现过 WBCIC-SHU 也没有确定。'] } },
+  ];
+  return {
+    id: `later-wbcic-${c.toLowerCase()}`,
+    title: { en: `Later sessions · ${name.en}, session 1 to session 3`, zh: `后续会话 · ${name.zh}，第 1 次会话到第 3 次会话` },
+    path, chance: fig(cpu.chance_level, 'pct1', LTS), rows,
+  };
+}
+
+/** The longitudinal RSVP source: one first-visit baseline at the nominal later visits, and the paired change. */
+function laterRsvpGroup(): ResultGroup {
+  const r = lt['rsvp-later-visits'];
+  const path = `${LATER_PATH}#${LATER_ANCHOR.rsvp}`;
+  const base = { path, method: laterArmLabel.rsvp.en, label: laterArmLabel.rsvp, people: r.cohort.people };
+  const AP: L = { en: 'Average precision', zh: '平均精确率' };
+  const rows: ResultRow[] = [];
+  for (const v of r.visits) {
+    const condition: L = { en: `Trained at the first visit · nominal ${v.visit}`, zh: `第一次访次训练 · 标称第 ${v.nominal_day} 天` };
+    rows.push({ ...base, condition, metric: AUROC, value: fig(v.auroc.mean, 'auc3', LTS), interval: pair(v.auroc.interval_95, 'auc3', LTS),
+      note: { en: ['Targets: ', fig(v.target_events, 'count', LTS), ' of ', fig(v.events, 'count', LTS), ' events. AUROC ranks; it is not accuracy.'],
+              zh: ['目标事件：', fig(v.target_events, 'count', LTS), ' 个（共 ', fig(v.events, 'count', LTS), ' 个事件）。AUROC 衡量排序，不是准确率。'] } });
+    rows.push({ ...base, condition, metric: AP, value: fig(v.average_precision.mean, 'auc3', LTS) });
+  }
+  const d = r.contrast;
+  rows.push({ ...base, condition: { en: 'Day 200 minus Day 7, the same people', zh: '第 200 天减第 7 天，相同被试' },
+    metric: { en: 'AUROC difference', zh: 'AUROC 差值' },
+    value: fig(d.auroc_difference.mean, 'sgn3', LTS), interval: pair(d.auroc_difference.interval_95, 'sgn3', LTS),
+    note: { en: [fig(d.people_declined_by_0_05_or_more, 'count', LTS), ' of ', fig(d.people, 'count', LTS), ' people lost 0.05 AUROC or more. Nominal visit labels: no claim that elapsed time caused it.'],
+            zh: [fig(d.people_declined_by_0_05_or_more, 'count', LTS), ' 人下降 0.05 AUROC 及以上（共 ', fig(d.people, 'count', LTS), ' 人）。访次为标称标签：不说明下降由时间流逝造成。'] } });
+  return {
+    id: 'later-rsvp', title: { en: 'Later sessions · RSVP target detection, first visit to later visits', zh: '后续会话 · RSVP 目标检测，从第一次访次到后续访次' },
+    path, rows,
+  };
+}
+
+/**
+ * Forenzo, one group per cohort and response arm: the ridge against the source-mean comparator. A negative result.
+ * The two arms are different outcomes on the same rows, so each has its own group, as on the topic page; the paired
+ * row carries the cohort's coverage (Main is conditional on its admitted subset).
+ */
+function laterForenzoGroup(c: 'Main' | 'Transfer Learning', arm: 'historical_decoder_velocity_imitation' | 'constructed_raw_target_displacement_proxy'): ResultGroup {
+  const r = lt['forenzo-continuous-control'];
+  const cohort = (r.cohorts as Record<string, any>)[c];
+  const a = cohort.arms[arm];
+  if (!a) throw new Error(`entities.ts: Forenzo ${c} has no ${arm} arm`);
+  const path = `${LATER_PATH}#${LATER_ANCHOR.forenzo}`;
+  const ERR: L = { en: 'Normalized RMSE (lower is better)', zh: '归一化 RMSE（越低越好）' };
+  const PDIFF: L = { en: 'Paired difference in normalized RMSE', zh: '归一化 RMSE 的配对差值' };
+  // Each arm with its label, beside every figure: the two arms are different outcomes, never compared.
+  const armName: Record<string, L> = {
+    historical_decoder_velocity_imitation: { en: 'Historical decoder velocity (historical decoder imitation, not intended motion)', zh: '历史解码器速度（模仿历史解码器，不是意图运动）' },
+    constructed_raw_target_displacement_proxy: { en: 'Constructed displacement proxy (constructed proxy)', zh: '构造的位移代理变量（构造的代理变量）' },
+  };
+  const armShort: Record<string, L> = {
+    historical_decoder_velocity_imitation: { en: 'historical decoder velocity', zh: '历史解码器速度' },
+    constructed_raw_target_displacement_proxy: { en: 'constructed displacement proxy', zh: '构造的位移代理变量' },
+  };
+  // Errors span several decades: thousands separators from 1,000 up (wideFmt).
+  const w = (x: number) => fig(x, wideFmt(x), LTS);
+  const pr = (iv: number[]) => [w(iv[0]), w(iv[1])] as [Fig, Fig];
+  const recs = fig(a.records, 'count', LTS);
+  const admitted = fig(cohort.admitted_records, 'count', LTS), candidates = fig(cohort.candidate_records, 'count', LTS);
+  if (c === 'Main' ? !cohort.conditional_on_admitted_records || cohort.admitted_records >= cohort.candidate_records
+                   : cohort.conditional_on_admitted_records || cohort.admitted_records !== cohort.candidate_records)
+    throw new Error(`entities.ts: the Forenzo ${c} coverage note no longer fits the export`);
+  const condition: L = { en: `${armName[arm].en} · earliest → latest session`, zh: `${armName[arm].zh} · 最早会话 → 最晚会话` };
+  const rows: ResultRow[] = [
+    { path, method: laterArmLabel.ridge.en, label: laterArmLabel.ridge, condition, metric: ERR,
+      value: w(a.ridge.primary.mean), interval: pr(a.ridge.primary.interval_95), people: 0, records: recs,
+      note: { en: ['Median ', w(a.ridge.primary.median), ': the mean is far above it, a severe upper tail.'],
+              zh: ['中位数 ', w(a.ridge.primary.median), '：均值远高于中位数，上尾极重。'] } },
+    { path, method: laterArmLabel.source_mean.en, label: laterArmLabel.source_mean, comparator: true, condition, metric: ERR,
+      value: w(a.source_mean.primary.mean), interval: pr(a.source_mean.primary.interval_95), people: 0, records: recs },
+    { path, method: laterArmLabel.ridge.en, label: laterArmLabel.ridge,
+      condition: { en: `${armName[arm].en} · ridge minus comparator, the same records`, zh: `${armName[arm].zh} · ridge 减对照，相同记录` },
+      metric: PDIFF, value: w(a.paired.primary_difference.mean),
+      interval: pr(a.paired.primary_difference.interval_95), people: 0, records: recs,
+      note: { en: ['The ridge had the larger error on ', fig(a.paired.records_with_higher_ridge_error, 'count', LTS), ' of ', fig(a.paired.records, 'count', LTS), ' admitted records; ',
+                   admitted, ' of ', candidates, ' candidate records admitted',
+                   c === 'Main' ? ', the rest held on metadata before scoring, so the result is conditional on that subset.'
+                                : '. “Transfer Learning” is the publisher’s name for how the data were collected, not a model trained here.'],
+              zh: ['ridge 误差更大的纳入记录有 ', fig(a.paired.records_with_higher_ridge_error, 'count', LTS), ' 条（共 ', fig(a.paired.records, 'count', LTS), ' 条）；纳入 ',
+                   admitted, ' 条候选记录（共 ', candidates, ' 条）',
+                   c === 'Main' ? '，其余在评分前因元数据问题暂缓，结果以纳入的子集为条件。'
+                                : '。“Transfer Learning”是发布者对该队列数据采集方式的命名，不是这里训练的模型。'] } },
+  ];
+  return {
+    id: `later-forenzo-${c === 'Main' ? 'main' : 'transfer-learning'}-${arm === 'historical_decoder_velocity_imitation' ? 'velocity' : 'displacement'}`,
+    title: { en: `Later sessions · continuous cursor tracking, ${c} cohort, ${armShort[arm].en} (a negative result; offline, no online-control claim)`,
+             zh: `后续会话 · 连续光标追踪，${c} 队列，${armShort[arm].zh}（阴性结果；离线，不涉及在线控制）` },
+    path, rows,
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
@@ -966,6 +1121,17 @@ export const datasets: DatasetEntity[] = [
   // Since 2026-10-07 (owner approval of its rights review, publishable with stated gaps): route 2's sleep source.
   { ...fromRights('boas', SRD.boas, [sharedGroup('boas')], { en: 'Overnight sleep, six polysomnography EEG channels, human-consensus stages', zh: '整夜睡眠，6 个多导睡眠图 EEG 通道，人工共识分期' },
                   'BOAS · Bitbrain Open Access Sleep dataset'), rightsNote: 'boas' as const },
+  // The large-source batch's later-session results (later-sessions-update.json): three sources new to the site.
+  fromRights('wbcic-shu', later.datasets['wbcic-shu'], [laterWbcicGroup('2C'), laterWbcicGroup('3C')],
+             { en: 'Motor imagery across three recording sessions: two-class and three-class cohorts, kept apart', zh: '跨三次记录会话的运动想象：二分类与三分类两个队列，分开分析' },
+             'WBCIC-SHU motor imagery dataset'),
+  fromRights('longitudinal-rsvp', later.datasets['longitudinal-rsvp'], [laterRsvpGroup()],
+             { en: 'RSVP face-target ERP, the same people at nominal Day 1, 7, 80 and 200 visits', zh: 'RSVP 人脸目标 ERP，同一批被试在标称第 1、7、80、200 天的访次' },
+             'Longitudinal ERP dataset (RSVP)'),
+  fromRights('forenzo-continuous-tracking', later.datasets['forenzo-continuous-tracking'], (['Main', 'Transfer Learning'] as const).flatMap(c => ([
+               'historical_decoder_velocity_imitation', 'constructed_raw_target_displacement_proxy'] as const).map(a => laterForenzoGroup(c, a))),
+             { en: 'Continuous cursor tracking with a noninvasive BCI, across sessions', zh: '无创 BCI 的连续光标追踪，跨会话' },
+             'Forenzo & He continuous-tracking EEG-BCI dataset'),
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));

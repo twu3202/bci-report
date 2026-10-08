@@ -1,0 +1,55 @@
+{
+  "status": "pass",
+  "release_id": "later-sessions-update-20261008",
+  "export_sha256": "b9db90486ef70f0c70b7feca315c58b09917e9327a1107d09b6f11b0d9982285",
+  "manifest_sha256": "ece37ea382fbb7fc0fb2bfe360e47d673fd150862c909d7026b57c2e2af8a53e",
+  "auditor": "pipeline/publication/audit_later_sessions_export.py",
+  "independence": "A separate program from the export. It reads the served bytes, the review manifest and the four pinned source releases, plus the pinned handoffs and the Forenzo independent review for the few counts no release carries, builds its own table of what every figure must be and shares no extraction code with the export.",
+  "source_export_sha256": {
+    "wbcic-cross-session-cpu": "63a4ba5393380dea9aa4fbe44ec0c7a1b40cf8915abd1985e74af329e9d571b7",
+    "wbcic-frozen-cbramod": "db2b3141bd1d6d5e3be410fe67b341ea7debbfbf435df0fa6824285deb0ebb56",
+    "rsvp-later-visits": "d8b2df555c9854b3326aedf39c3f0c37835a14840465f685d66202cb05881c7d",
+    "forenzo-continuous-control": "74d6ca98fb64ee79af8f03f3bce55676536f63491fd602d80331a0fd938811bb"
+  },
+  "included": [
+    "wbcic-cross-session-cpu",
+    "wbcic-frozen-cbramod",
+    "rsvp-later-visits",
+    "forenzo-continuous-control"
+  ],
+  "status_only": [],
+  "holds": [],
+  "figures_compared": 412,
+  "figures_by_result": {
+    "wbcic-cross-session-cpu": 51,
+    "wbcic-frozen-cbramod": 33,
+    "rsvp-later-visits": 59,
+    "forenzo-continuous-control": 269
+  },
+  "copied_exactly": 382,
+  "recomputed": 11,
+  "nulls_kept": 19,
+  "interval_flags_recomputed": 9,
+  "per_person_values_checked_absent": 1137,
+  "checks": [
+    "each source release is the pinned file and the one the handoff index fingerprints; the served file names the same four hashes and the manifest it was built from; the two served copies are byte-identical",
+    "every number and null in the served file has an expected value derived here from the source releases, and every expected value is in the file: no unaudited figure and no missing one",
+    "copied figures equal the source release exactly, type included; chance levels (one over the classes of each confusion matrix), RSVP target shares and the Forenzo mean-to-median ratios are recomputed here",
+    "the WBCIC spectral ridge is the same number in both WBCIC releases, cohort by cohort",
+    "the Forenzo count of records the ridge did worse on follows from a positive paired minimum in every cohort and arm; the minimum itself is absent from the file",
+    "nulls stay null: the RSVP delivered-event counts and the comparator correlations",
+    "every interval_excludes_zero flag follows from its interval",
+    "no minimum, 10th or 90th percentile and no median of any source release reaches the file, except the four Forenzo ridge medians the manifest approves",
+    "counts no release carries (124 session files, 40,490 and 40,500 trials, the RSVP design counts, 46 fits, 552 members, 4,000,407 rows) are read from the pinned handoffs and the Forenzo independent review"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "source release bytes: pinned in the manifest, fingerprinted in the handoff index, named in the served file",
+      "every figure: equal to its source-release leaf or recomputed from source-release leaves"
+    ],
+    "not_bound": [
+      "the release decisions, independent audits and checks behind each release are verified by the export (their verdicts and hash chains), not re-read here",
+      "prose in the served file is checked by the export (numerals against the pinned handoffs and releases, claims and labels by pattern), not by this audit"
+    ]
+  }
+}

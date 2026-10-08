@@ -127,8 +127,8 @@ const copy = {
       ['No amplitude unit', 'The source states no physical unit for its EEG values. Nothing here depends on one: the decoder uses correlations, which are unit-free.'],
       ['Descriptive intervals', `Whole-person bootstrap over the ${extPeople}, conditional on the ${ext.development_pilot.people} pilot people and on each realised calibration split. Not a population guarantee.`],
     ],
-    pilotH3: `Development set: the ${ext.development_pilot.people}-person pilot (27 September)`,
-    pilotLede: `Published on 27 September, scored with per-person thresholds fitted on each person’s own calibration trials. Its ${ext.development_pilot.people} people supplied the global threshold above and are not among the ${extPeople}. Pooled window counts.`,
+    pilotH3: `Development set: the ${ext.development_pilot.people}-person pilot`,
+    pilotLede: `Already published, scored with per-person thresholds fitted on each person’s own calibration trials. Its ${ext.development_pilot.people} people supplied the global threshold above and are not among the ${extPeople}. Pooled window counts.`,
     ncControlH3: 'When a command was intended',
     ncControlNote: 'Rejecting hard windows raises accuracy among accepted windows while refusing commands the person meant.',
     ncRows: ['Frequency recognised, before rejection', 'Accepted (coverage)', 'Accepted and correct (end to end)', 'Correct among accepted'],
@@ -195,8 +195,8 @@ const copy = {
       ['没有幅值单位', '数据源没有说明 EEG 数值的物理单位。这里没有任何结果依赖单位：解码器用的是相关系数，本身无单位。'],
       ['描述性区间', `对 ${extPeople} 名被试做整人 bootstrap，以 ${ext.development_pilot.people} 名试点被试和每次实际的校准划分为条件。不是对总体的保证。`],
     ],
-    pilotH3: `开发集：${ext.development_pilot.people} 人试点（9 月 27 日）`,
-    pilotLede: `9 月 27 日发布，用每名被试自己的校准试次拟合逐人阈值。这 ${ext.development_pilot.people} 名被试提供了上文的全局阈值，不在那 ${extPeople} 人之中。下表为合并后的窗口计数。`,
+    pilotH3: `开发集：${ext.development_pilot.people} 人试点`,
+    pilotLede: `此前已发布，用每名被试自己的校准试次拟合逐人阈值。这 ${ext.development_pilot.people} 名被试提供了上文的全局阈值，不在那 ${extPeople} 人之中。下表为合并后的窗口计数。`,
     ncControlH3: '有意发出指令时',
     ncControlNote: '拒绝困难窗口会抬高被接受窗口中的准确率，但代价是拒绝了被试本想发出的指令。',
     ncRows: ['拒识前识别出正确频率', '被接受（覆盖率）', '被接受且正确（端到端）', '被接受窗口中的正确率'],
@@ -300,8 +300,8 @@ const basis = idle.reviewBasis;
     <p class="citation-note"><a href="/data-use/#small-cohorts">{copy.ncSmall}</a></p>
     </>}
     <div class="citation-list"><article><h3 lang="en">{ext.rights.name}</h3><p lang="en">{ext.rights.attribution}</p><p>{copy.ncConsent}</p><p><a href={ext.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ncPaper}</a> · <a href={ext.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ncData}</a> · <a href={ext.rights.licenseUrl} target="_blank" rel="noreferrer">{ext.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version} · {tc.generated} {extension.generated_at}{tc.period}</p>
-    {nc && <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>}
+    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version}{tc.period}</p>
+    {nc && <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version}{tc.period}</p>}
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="abstain-limits">

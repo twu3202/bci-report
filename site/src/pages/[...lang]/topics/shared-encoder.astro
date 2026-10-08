@@ -199,7 +199,7 @@ const copy = {
     colLogR: 'log R', colR: 'R', colAuroc: 'AUROC, dedicated / read-out', colMargin20: `Margin, ${Math.round(P3_CUT * 100)}%`,
     p3Name: 'Its own model − reading it off the five-stage model',
     e2H3: 'CBraMod adapted by LoRA (E2): secondary, one seed, run last',
-    e2Disclosure: (): Part[] => ['This arm ran on 7 October 2026, after every other result of the run, and two independent audits, were known. Its design (', n(E2.fits), ' LoRA fits, the seed, the recipe, the 30-second input as fifteen 2-second segments, the comparisons) and the condition for running it were fixed when the protocol was frozen, and nothing about it was chosen from results. It ran with temporary private checkpoints so that a fit could resume: during the run ', n(E2.resume_checkpoints.written), ' were written for ', n(E2.resume_checkpoints.fits_that_wrote_one), ' fits, each replaced by its fit’s next one or deleted when its fit finished, so none outlived its fit, and ', n(E2.resume_checkpoints.left_after_the_run), ' remain; a check of resuming, run before the fits, removed its own the same way. Its scoring ran the frozen code, and an independent audit recomputed all ', n(R2.audits.e2_sleep.entries_recomputed), ' entries.'],
+    e2Disclosure: (): Part[] => ['This arm ran after every other result of the run, and two independent audits, were known. Its design (', n(E2.fits), ' LoRA fits, the seed, the recipe, the 30-second input as fifteen 2-second segments, the comparisons) and the condition for running it were fixed when the protocol was frozen, and nothing about it was chosen from results. It ran with temporary private checkpoints so that a fit could resume: during the run ', n(E2.resume_checkpoints.written), ' were written for ', n(E2.resume_checkpoints.fits_that_wrote_one), ' fits, each replaced by its fit’s next one or deleted when its fit finished, so none outlived its fit, and ', n(E2.resume_checkpoints.left_after_the_run), ' remain; a check of resuming, run before the fits, removed its own the same way. Its scoring ran the frozen code, and an independent audit recomputed all ', n(R2.audits.e2_sleep.entries_recomputed), ' entries.'],
     e2Gates: (): Part[] => ['Gate arm, fixed heads at E2: ', ...E2.gates.flatMap((g, i): Part[] => [i ? ', ' : '', `${g.question} `, f(g.mean), ' (', ...pctIv(g), ')']), '; all passed.'],
     e2Region: 'Sleep, CBraMod adapted by LoRA, scrolls horizontally',
     e2Caption: (): Part[] => ['Paired differences in balanced accuracy, in pp, with 95% intervals; ', n(B.people), ' people, one seed: no training-run variance in these intervals.'],
@@ -287,7 +287,7 @@ const copy = {
     colLogR: 'log R', colR: 'R', colAuroc: 'AUROC，专用 / 读出', colMargin20: `界值 ${Math.round(P3_CUT * 100)}%`,
     p3Name: '它自己的模型 − 从五期模型读出',
     e2H3: '用 LoRA 适配的 CBraMod（E2）：次要，1 个随机种子，最后运行',
-    e2Disclosure: (): Part[] => ['这一组在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果、以及两份独立审计都已知。它的设计（', n(E2.fits), ' 次 LoRA 拟合、随机种子、训练方案、把 30 秒输入切成 15 段 2 秒、各项比较）和运行条件在冻结协议时就已确定，没有任何一项是根据结果选的。为了让拟合能在中断后接着跑，运行时用了临时的私有检查点：运行期间为 ', n(E2.resume_checkpoints.fits_that_wrote_one), ' 次拟合写了 ', n(E2.resume_checkpoints.written), ' 个，每个要么被同一拟合的下一个覆盖，要么在拟合完成时删除，没有一个留到拟合结束之后，现在剩下 ', n(E2.resume_checkpoints.left_after_the_run), ' 个；运行前对续训做的一次检查，也以同样的方式删掉了它写的检查点。评分用的是冻结的代码，一份独立审计重算了全部 ', n(R2.audits.e2_sleep.entries_recomputed), ' 个条目。'],
+    e2Disclosure: (): Part[] => ['这一组运行时，本次运行的其他所有结果、以及两份独立审计都已知。它的设计（', n(E2.fits), ' 次 LoRA 拟合、随机种子、训练方案、把 30 秒输入切成 15 段 2 秒、各项比较）和运行条件在冻结协议时就已确定，没有任何一项是根据结果选的。为了让拟合能在中断后接着跑，运行时用了临时的私有检查点：运行期间为 ', n(E2.resume_checkpoints.fits_that_wrote_one), ' 次拟合写了 ', n(E2.resume_checkpoints.written), ' 个，每个要么被同一拟合的下一个覆盖，要么在拟合完成时删除，没有一个留到拟合结束之后，现在剩下 ', n(E2.resume_checkpoints.left_after_the_run), ' 个；运行前对续训做的一次检查，也以同样的方式删掉了它写的检查点。评分用的是冻结的代码，一份独立审计重算了全部 ', n(R2.audits.e2_sleep.entries_recomputed), ' 个条目。'],
     e2Gates: (): Part[] => ['门槛所用的设置（E2 的固定分类头）：', ...E2.gates.flatMap((g, i): Part[] => [i ? '，' : '', `${g.question} `, f(g.mean), '（', ...pctIv(g), '）']), '；全部通过。'],
     e2Region: '睡眠，用 LoRA 适配的 CBraMod，可横向滚动',
     e2Caption: (): Part[] => ['平衡准确率的配对差值（pp），附 95% 区间；', n(B.people), ' 名被试，1 个随机种子：区间里没有训练过程的随机波动。'],
@@ -574,6 +574,6 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
     </article>)}</div>
     <h3 class="roadmap-h3">{copy.litH3}</h3>
     <ul class="rd-literature">{literature.map(x => <li lang="en"><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
-    <p class="citation-note">{tc.dataSource} <a href="/data/shared-representation-update.json" download>shared-representation-update.json</a> · {tc.schema} {srRelease.schema} · {tc.generated} {srRelease.date}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/shared-representation-update.json" download>shared-representation-update.json</a> · {tc.schema} {srRelease.schema}{tc.period}</p>
   </section>
 </TopicLayout>

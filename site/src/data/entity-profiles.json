@@ -308,6 +308,54 @@
     "https://api.datacite.org/dois/10.18112/openneuro.ds005555.v1.1.3",
     "https://www.bitbrain.com/science/eeg-datasets"
    ]
+  },
+  "wbcic-shu": {
+   "aliases": [
+    "WBCIC-SHU",
+    "WBCIC-SHU Motor Imagery Dataset",
+    "WBCIC_SHU Motor Imagery dataset",
+    "Figshare+ 22671172",
+    "A multi-day and high-quality EEG dataset for motor imagery brain-computer interface",
+    "Yang et al. (2025)"
+   ],
+   "summary_en": "The WBCIC-SHU motor imagery dataset (Figshare+ 22671172) holds EEG from 62 healthy participants, each recorded in three sessions with the same motor-imagery paradigm: 51 in a two-class task (left- or right-hand grasping) and 11 in a three-class task that adds foot-hooking. It was collected at the 2019 World Robot Conference BCI robot contest with a 64-channel wireless Neuracle cap at 1,000 Hz, and the release holds raw data, a processed derivative and code. Released by Banghua Yang and Fenqi Rong (Shanghai University) and described in Scientific Data (2025). Only the processed derivative of sessions 1 and 3 is used here.",
+   "summary_zh": "WBCIC-SHU 运动想象数据集（Figshare+ 22671172）收录 62 名健康被试的 EEG，每人用同一种运动想象范式记录三次会话：51 人做二分类任务（左手或右手抓握），11 人做加入脚部勾起的三分类任务。数据采集于 2019 年世界机器人大会脑控机器人大赛，使用 64 通道 Neuracle 无线脑电帽，采样率 1,000 Hz；发布内容包括原始数据、预处理后的衍生数据与代码。由上海大学的 Banghua Yang 与 Fenqi Rong 发布，并在 Scientific Data（2025）中描述。这里只用到第 1 次与第 3 次会话的预处理衍生数据。",
+   "facts_sources": [
+    "https://doi.org/10.25452/figshare.plus.22671172.v5",
+    "https://doi.org/10.1038/s41597-025-04826-y",
+    "https://api.figshare.com/v2/articles/22671172/versions/5"
+   ]
+  },
+  "longitudinal-rsvp": {
+   "aliases": [
+    "A longitudinal EEG dataset of event-related potential",
+    "figshare 27201003",
+    "Longitudinal ERP dataset",
+    "Zhang et al. (2025)"
+   ],
+   "summary_en": "A longitudinal EEG dataset of event-related potential (figshare 27201003) holds EEG from a rapid serial visual presentation task in which participants identified a target face: 15 people (Group A) recorded at four visits labelled Day 1, 7, 80 and 200, and 52 people (Group B) recorded once, with 57 EEG channels. Released by Chen Yang, Yufeng Zhang and colleagues (Beijing University of Posts and Telecommunications) under CC0 and described in Scientific Data (2025). Only Group A is used here.",
+   "summary_zh": "A longitudinal EEG dataset of event-related potential（figshare 27201003）收录快速序列视觉呈现（RSVP）任务中的 EEG，被试需要识别目标人脸：15 名被试（A 组）在标称第 1、7、80、200 天的四次访次中记录，另有 52 名被试（B 组）只记录一次，共 57 个 EEG 通道。由北京邮电大学的 Chen Yang、Yufeng Zhang 等人以 CC0 发布，并在 Scientific Data（2025）中描述。这里只用到 A 组。",
+   "facts_sources": [
+    "https://doi.org/10.6084/m9.figshare.27201003.v1",
+    "https://doi.org/10.1038/s41597-025-05378-x",
+    "https://api.figshare.com/v2/articles/27201003/versions/1"
+   ]
+  },
+  "forenzo-continuous-tracking": {
+   "aliases": [
+    "Forenzo & He (2024)",
+    "KiltHub 25360300",
+    "EEG-BCI Dataset for Continuous Tracking using Deep Learning-based Decoding for Non-invasive Brain-Computer Interface",
+    "Forenzo et al. (2024)",
+    "continuous pursuit BCI dataset"
+   ],
+   "summary_en": "The Forenzo & He continuous-tracking dataset (KiltHub 25360300, Carnegie Mellon University) holds EEG from 28 participants who used motor imagery to steer a cursor after a target moving continuously across a screen (continuous pursuit), over several sessions with traditional and deep-learning decoders, in two substudies, the second testing transfer learning; recorded with a 64-channel cap at 1 kHz. Released by Dylan Forenzo and Bin He under CC BY 4.0 and described in PNAS Nexus (2024). Only offline analyses from each record's earliest to its latest complete session are run here; the paper's online results are not reproduced.",
+   "summary_zh": "Forenzo & He 连续追踪数据集（KiltHub 25360300，Carnegie Mellon University）收录 28 名被试的 EEG：被试用运动想象控制光标，追踪在屏幕上连续移动的目标（连续追踪任务），在若干次会话中分别使用传统解码器与深度学习解码器，分为两个子研究，其中第二个检验迁移学习；使用 64 通道脑电帽，采样率 1 kHz。由 Dylan Forenzo 与 Bin He 以 CC BY 4.0 发布，并在 PNAS Nexus（2024）中描述。这里只做从每条记录最早到最晚的完整会话的离线分析，不复现论文的在线结果。",
+   "facts_sources": [
+    "https://doi.org/10.1184/R1/25360300.v1",
+    "https://doi.org/10.1093/pnasnexus/pgae145",
+    "https://api.figshare.com/v2/articles/25360300/versions/1"
+   ]
   }
  },
  "methods": {

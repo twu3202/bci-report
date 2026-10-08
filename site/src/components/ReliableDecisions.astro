@@ -135,7 +135,7 @@ const copy = {
   en: {
     eyebrow: 'Reliable decisions · route 1 of the plan below · EEGMAT and BETA',
     h2: 'When should a decoder decline to decide?',
-    lede: (): Part[] => ['The first route of the research plan below, run on 4 October 2026. It retrained nothing. It took the saved test scores of models this site already publishes — on EEGMAT, ', f(EEGMAT.people, 'count'), ' people, mental arithmetic against rest, and on BETA, ', f(BETA.people, 'count'), ' people, a ', f(BETA.classes, 'count'), '-target SSVEP speller — and asked which trials each decoder should have declined, under four rules fixed in advance. Every full-coverage accuracy below is the published one: for the two LaBraM arms, the 1 October adaptation release’s seed-20260922 mean, which the model-adaptation page lists beside the three-seed mean. Both protocols are balanced or uniform by design, so every figure compares methods; none is a deployment error rate.'],
+    lede: (): Part[] => ['The first route of the research plan below. It retrained nothing. It took the saved test scores of models this site already publishes — on EEGMAT, ', f(EEGMAT.people, 'count'), ' people, mental arithmetic against rest, and on BETA, ', f(BETA.people, 'count'), ' people, a ', f(BETA.classes, 'count'), '-target SSVEP speller — and asked which trials each decoder should have declined, under four rules fixed in advance. Every full-coverage accuracy below is the published one: for the two LaBraM arms, the adaptation release’s seed-20260922 mean, which the model-adaptation page lists beside the three-seed mean. Both protocols are balanced or uniform by design, so every figure compares methods; none is a deployment error rate.'],
     rulesH3: 'Four rules, fixed before scoring',
     rules: [
       ['Fixed threshold (F)', 'accept a trial when its calibrated top-class probability is at least 0.8. Temperature scaling, fitted on calibration scores, keeps every predicted label.'],
@@ -150,7 +150,7 @@ const copy = {
     q1Region: (p: Protocol) => `${p.dataset}, fixed threshold by method, scrolls horizontally`,
     colMethod: 'Method', colBa: 'Balanced accuracy, everything accepted', colFixed: 'Accepted at confidence ≥ 0.8', colFixedError: 'Error among accepted',
     colNothing: 'People with nothing accepted', colTarget: 'Coverage when the cut-off targets 80%',
-    published: 'the published value', publishedSeed: 'the published seed-20260922 mean, 1 October adaptation release', coverageOf: 'coverage', ofPeople: (n: FigValue): Part[] => ['of ', n, ' people'],
+    published: 'the published value', publishedSeed: 'the published seed-20260922 mean, adaptation release', coverageOf: 'coverage', ofPeople: (n: FigValue): Part[] => ['of ', n, ' people'],
     wrongOfAccepted: 'wrong, of those accepted', unstable: (k: FigValue): Part[] => ['Unstable: fewer than ', k, ' accepted, so no rate is read from it'],
     notDefined: 'not defined: nothing accepted',
     coverageBar: (v: string) => `${v} of trials accepted`,
@@ -189,7 +189,7 @@ const copy = {
     colPrefix: 'Labelled prefix', colLabels: 'Labels per new person', colNll: 'Change in NLL, R1 − R0', colEce: 'Change in ECE', colAurc: 'Change in AURC',
     colDegenerate: 'People with a degenerate personal temperature', colGap: 'Label-free cut-off: change in distance from the 80% target',
     q4H3: 'LoRA and probability quality, on EEGMAT',
-    q4P: (): Part[] => ['On EEGMAT, LaBraM adapted with rank-4 LoRA had a lower NLL than the head-only arm of the same recipe: calibrated ', f(c4.nll_calibrated.mean, 'sgn3'), ' (95% interval ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '). For ECE, no difference resolved (', f(c4.ece_calibrated.mean, 'sgn3'), '; ', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '). The LoRA arm is also more accurate, ', f(lora.balanced_accuracy), ' against ', f(head.balanced_accuracy), ' balanced accuracy (seed 20260922, as the 1 October release publishes it; the three-seed means are on the model-adaptation page), so the NLL gap alone is not evidence of more honest probabilities. The adaptation itself is on '],
+    q4P: (): Part[] => ['On EEGMAT, LaBraM adapted with rank-4 LoRA had a lower NLL than the head-only arm of the same recipe: calibrated ', f(c4.nll_calibrated.mean, 'sgn3'), ' (95% interval ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '). For ECE, no difference resolved (', f(c4.ece_calibrated.mean, 'sgn3'), '; ', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' to ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '). The LoRA arm is also more accurate, ', f(lora.balanced_accuracy), ' against ', f(head.balanced_accuracy), ' balanced accuracy (seed 20260922, as the adaptation release publishes it; the three-seed means are on the model-adaptation page), so the NLL gap alone is not evidence of more honest probabilities. The adaptation itself is on '],
     q4Link: 'the model-adaptation page',
     qualityH3: 'Probability quality, with everything accepted',
     qualityP: (): Part[] => ['Negative log-likelihood (NLL), expected calibration error (ECE, 15 equal-mass bins) and the Brier score after temperature scaling, and NLL and ECE before it where the model outputs a probability. A spectral ridge’s decision value and a CCA correlation have none: “not applicable”, not zero. Lower is better throughout. NLL and the Brier score depend on the number of classes, so EEGMAT (', f(EEGMAT.classes, 'count'), ') and BETA (', f(BETA.classes, 'count'), ') are not compared. Binned ECE is biased upward under person resampling, so a small ECE can sit at the lower end of its interval. In one outer fold of the LaBraM head-only arm the population temperature reached its search bound; it was flagged and kept.'],
@@ -237,7 +237,7 @@ const copy = {
   zh: {
     eyebrow: '可靠的决策 · 下文计划的第一条路线 · EEGMAT 与 BETA',
     h2: '解码器什么时候应该拒绝作出决定？',
-    lede: (): Part[] => ['下文研究计划的第一条路线，于 2026 年 10 月 4 日运行。它没有重新训练任何模型，而是取本站已发布模型保存下来的测试分数——EEGMAT 上 ', f(EEGMAT.people, 'count'), ' 名被试，心算对静息；BETA 上 ', f(BETA.people, 'count'), ' 名被试，', f(BETA.classes, 'count'), ' 目标的 SSVEP 拼写——在事先固定的四条规则下，看每个解码器本该拒绝哪些试次。下面全覆盖时的准确率都是已发布的数值：两种 LaBraM 配置用的是 10 月 1 日适配发布中随机种子 20260922 的均值，模型适配页面把它与三个随机种子的均值并列给出。两个协议在设计上都是类别平衡或均匀的，所以每个数字都是方法之间的比较，没有一个是部署时的错误率。'],
+    lede: (): Part[] => ['下文研究计划的第一条路线。它没有重新训练任何模型，而是取本站已发布模型保存下来的测试分数——EEGMAT 上 ', f(EEGMAT.people, 'count'), ' 名被试，心算对静息；BETA 上 ', f(BETA.people, 'count'), ' 名被试，', f(BETA.classes, 'count'), ' 目标的 SSVEP 拼写——在事先固定的四条规则下，看每个解码器本该拒绝哪些试次。下面全覆盖时的准确率都是已发布的数值：两种 LaBraM 配置用的是适配发布中随机种子 20260922 的均值，模型适配页面把它与三个随机种子的均值并列给出。两个协议在设计上都是类别平衡或均匀的，所以每个数字都是方法之间的比较，没有一个是部署时的错误率。'],
     rulesH3: '评分之前固定的四条规则',
     rules: [
       ['固定阈值（F）', '校准后最高类别的概率不低于 0.8 时，接受这个试次。温度缩放在校准分数上拟合，不改变任何预测标签。'],
@@ -252,7 +252,7 @@ const copy = {
     q1Region: (p: Protocol) => `${p.dataset}：各方法在固定阈值下的结果，可横向滚动`,
     colMethod: '方法', colBa: '全部接受时的平衡准确率', colFixed: '置信度 ≥ 0.8 时被接受', colFixedError: '被接受试次中的错误率',
     colNothing: '一个都没被接受的被试', colTarget: '截断点以 80% 为目标时的覆盖率',
-    published: '已发布的数值', publishedSeed: '已发布的随机种子 20260922 均值（10 月 1 日适配发布）', coverageOf: '覆盖率', ofPeople: (n: FigValue): Part[] => ['共 ', n, ' 名被试'],
+    published: '已发布的数值', publishedSeed: '已发布的随机种子 20260922 均值（适配发布）', coverageOf: '覆盖率', ofPeople: (n: FigValue): Part[] => ['共 ', n, ' 名被试'],
     wrongOfAccepted: '被接受的里判错的', unstable: (k: FigValue): Part[] => ['不稳定：被接受的少于 ', k, ' 个，不据此读出比率'],
     notDefined: '没有定义：什么都没有接受',
     coverageBar: (v: string) => `被接受的试次占 ${v}`,
@@ -291,7 +291,7 @@ const copy = {
     colPrefix: '带标签的开头部分', colLabels: '每名新被试的标签数', colNll: 'NLL 变化（R1 − R0）', colEce: 'ECE 变化', colAurc: 'AURC 变化',
     colDegenerate: '个人温度参数退化的被试', colGap: '不用标签、只重设截断点：离 80% 目标的距离变化',
     q4H3: 'LoRA 与概率质量（EEGMAT）',
-    q4P: (): Part[] => ['在 EEGMAT 上，用秩为 4 的 LoRA 适配的 LaBraM，比同一配方只训分类头的版本 NLL 更低：校准后 ', f(c4.nll_calibrated.mean, 'sgn3'), '（95% 区间 ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '）。ECE 不能认定有差异（', f(c4.ece_calibrated.mean, 'sgn3'), '；', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '）。LoRA 版本的准确率也更高，平衡准确率 ', f(lora.balanced_accuracy), ' 对 ', f(head.balanced_accuracy), '（随机种子 20260922，即 10 月 1 日发布的数值；三个随机种子的均值见模型适配页面），所以单凭 NLL 的差距，并不能说明它的概率更诚实。适配本身见'],
+    q4P: (): Part[] => ['在 EEGMAT 上，用秩为 4 的 LoRA 适配的 LaBraM，比同一配方只训分类头的版本 NLL 更低：校准后 ', f(c4.nll_calibrated.mean, 'sgn3'), '（95% 区间 ', f(c4.nll_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.nll_calibrated.interval_95[1], 'sgn3'), '）。ECE 不能认定有差异（', f(c4.ece_calibrated.mean, 'sgn3'), '；', f(c4.ece_calibrated.interval_95[0], 'sgn3'), ' 至 ', f(c4.ece_calibrated.interval_95[1], 'sgn3'), '）。LoRA 版本的准确率也更高，平衡准确率 ', f(lora.balanced_accuracy), ' 对 ', f(head.balanced_accuracy), '（随机种子 20260922，即适配发布中的数值；三个随机种子的均值见模型适配页面），所以单凭 NLL 的差距，并不能说明它的概率更诚实。适配本身见'],
     q4Link: '模型适配页面',
     qualityH3: '全部接受时的概率质量',
     qualityP: (): Part[] => ['温度缩放之后的负对数似然（NLL）、期望校准误差（ECE，15 个等量分箱）与 Brier 分数；模型本身输出概率时，也给出缩放之前的 NLL 与 ECE。spectral ridge 的决策值和 CCA 的相关系数都没有原始概率：标为“不适用”，不是零。各项都是越低越好。NLL 与 Brier 分数取决于类别数，所以 EEGMAT（', f(EEGMAT.classes, 'count'), ' 类）与 BETA（', f(BETA.classes, 'count'), ' 类）之间不作比较。被试重抽样会使分箱 ECE 偏高，所以较小的 ECE 可能落在其区间的下端。LaBraM 只训分类头的版本，有一个外层折的总体温度参数落在了搜索边界上；它被标记并保留。'],
@@ -576,6 +576,6 @@ const pctIv = (iv?: number[]) => iv ? [f(iv[0]), f(iv[1])] as const : null;
   <h4 class="rd-h4">{copy.litH4}</h4>
   <ul class="rd-literature">{r.literature.map(x => <li lang="en"><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
   <p class="citation-note" id="rd-audits">{copy.audit().map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</p>
-  <p class="citation-note">{tc.dataSource} <a href="/data/reliable-decisions-update.json" download>reliable-decisions-update.json</a> · {tc.schema} {reliable.schema_version} · {tc.generated} {reliable.generated_at}{tc.period}</p>
+  <p class="citation-note">{tc.dataSource} <a href="/data/reliable-decisions-update.json" download>reliable-decisions-update.json</a> · {tc.schema} {reliable.schema_version}{tc.period}</p>
   {elsewhere.articles.filter(a => a.page === '/topics/when-not-to-act/').map(a => <p class="citation-note" id="rd-article">{copy.article[0]}<a href={a.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a></p>)}
 </section>

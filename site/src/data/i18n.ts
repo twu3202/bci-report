@@ -123,6 +123,8 @@ export const translatedPaths = [
   '/topics/sleep-staging/',
   // Since 2026-10-07: route 2, one model for several questions.
   '/topics/shared-encoder/',
+  // A decoder trained on an earlier session, tested on a later one.
+  '/topics/later-sessions/',
   '/releases/',
   '/api/',
 ] as const;
@@ -175,8 +177,6 @@ export function alternates(path: string, origin: string) {
 export type NavKey = 'home' | 'topics' | 'protocols' | 'methods' | 'datasets' | 'releases' | 'api' | 'data-use';
 
 interface Chrome {
-  /** Before the date of the newest release, on the home page. */
-  updated: string;
   skipToResults: string;
   skipToEvidence: string;
   mainNav: string;
@@ -211,7 +211,6 @@ export interface ShareCounts { protocols: number; datasets: number; comparisons:
 
 export const chrome: Record<Locale, Chrome> = {
   en: {
-    updated: 'Updated',
     skipToResults: 'Skip to results',
     skipToEvidence: 'Skip to evidence',
     mainNav: 'Main navigation',
@@ -236,7 +235,6 @@ export const chrome: Record<Locale, Chrome> = {
     footerElsewhere: 'Elsewhere',
   },
   zh: {
-    updated: '更新于',
     skipToResults: '跳至结果',
     skipToEvidence: '跳至证据',
     mainNav: '主导航',
@@ -381,29 +379,29 @@ export const familyLabel = (family: string, locale: Locale) => ({
 
 /* --- Homepage ------------------------------------------------------------- */
 
-interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number; added: number; addedOn: string }
+interface HomeCounts { methods: number; protocols: number; datasets: number; comparisons: number; added: number }
 
 export const home = {
   en: {
     title: 'Public EEG Model Evaluation',
     /** One source: the English description is the site's own. */
     description: site.description,
-    // Followed by the newest release's date (releases.ts). The core matrix's own
-    // snapshot date is in the matrix heading, so the masthead states one date.
-    eyebrow: 'Open EEG evaluation · updated',
+    // No date and no version label anywhere in visible text (owner decision 2026-10-08): the
+    // release log (/releases/) is where dates live; check-workbench.mjs refuses one elsewhere.
+    eyebrow: 'Open EEG evaluation',
     h1: 'Every EEG score, with the protocol that produced it.',
-    // What the protocol pages carry, counted from the data: the core matrix's methods (20 September)
-    // and the v9 encoders (4 October), named apart and never summed (review of 2026-10-06).
+    // What the protocol pages carry, counted from the data: the core matrix's methods
+    // and the further frozen encoders, named apart and never summed (review of 2026-10-06).
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
-      `and, since ${c.addedOn}, ${c.added} foundation encoders as frozen probes. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions and clinical groups.`,
+      `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
     // Before and after the count, which the page prints in a span of its own. No leading '+':
     // under 'Methods 9' it invited reading 9 + 13 (review of 2026-10-06).
-    statsAdded: ['Also on these protocols: ', ' foundation encoders, frozen (v9) →'] as const,
+    statsAdded: ['Also on these protocols: ', ' foundation encoders, frozen →'] as const,
     stats: { protocols: 'Protocols', datasets: 'Datasets', comparisons: 'Comparisons', methods: 'Methods' },
     // The whole site, counted from the pages it builds. No summed comparison count.
     siteCountsLead: 'Across the site:',
@@ -417,14 +415,12 @@ export const home = {
       'These measurements are repeated conditions within protocols, not independent experiments, and not an overall ranking.',
     readEvidence: 'Read the evidence →',
     holdsEyebrow: 'Holds',
-    holdsH2: 'What is held back, and since when',
+    holdsH2: 'What is held back, and why',
     holdsLede: 'Results that are missing on purpose.',
-    holdsSince: (d: string) => `Held since ${d}`,
     holdsRegister: 'Full holds register →',
     correctionsLink: (n: number) => `Corrections (${n}) →`,
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
-    snapshot: 'snapshot',
     matrixLede: 'The original eight-protocol snapshot, separate from the questions below. Blank cells are protocols a method has not been run on — not failures.',
     matrixRegion: 'Coverage matrix of methods against protocols, scrolls horizontally',
     matrixCaption: 'Balanced accuracy of each method on each protocol. Chance level differs by protocol and is given in each column heading.',
@@ -434,13 +430,13 @@ export const home = {
     covered: (k: number, n: number) => `${k} of ${n}`,
     notEvaluated: (m: string, t: string) => `${m} has not been evaluated on ${t}`,
     atChance: '≤ chance',
-    // The snapshot's own highest score per column (2026-09-20). Since the v9 rows sit beside the
-    // snapshot (2026-10-04), the key says whose highest it is; it never ranks the new rows.
+    // The snapshot's own highest score per column. Since the further frozen encoders sit beside the
+    // snapshot, the key says whose highest it is; it never ranks those rows.
     keyLead: 'Highest score in this snapshot',
-    // The encoders are the matrix checkpoints of the v9 models; the masking ablation's siblings make the release's
+    // The encoders are the matrix checkpoints of the further models; the masking ablation's siblings make the release's
     // sixteen (review of 2026-10-05: the release log and data use count models and checkpoints).
-    matrixAdded: (n: number, date: string, partly: string, models: number, ablation: number) => `Added ${date}: ${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are checkpoints of ${models} models; ${ablation} more checkpoints of one of them form a masking ablation, ${n + ablation} in all. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
-    matrixAddedLink: 'The v9 rows on the first protocol →',
+    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are checkpoints of ${models} models; ${ablation} more checkpoints of one of them form a masking ablation, ${n + ablation} in all. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
+    matrixAddedLink: 'The foundation-encoder rows on the first protocol →',
     keyBar: "Bar = position between that protocol's chance level and 100%",
     keyGap: 'Not evaluated',
     matrixDownload: 'Core matrix · JSON ↓',
@@ -481,10 +477,10 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `Single seed — the ${word} of ${n} run (${lo}–${hi}%, mean ${mean}%)`,
     seedWord: { highest: 'highest', lowest: 'lowest', middle: 'middle' } as Record<string, string>,
-    // The v9 rows in the per-protocol table (2026-10-04). workbench.ts carries the same strings
+    // The further frozen encoders in the per-protocol table. workbench.ts carries the same strings
     // (it cannot import this module); check-workbench.mjs compares the first paint with its render.
-    fmGroup: (n: number, date: string, notRun = 0) => `Added ${date}: ${n} further foundation encoders, frozen (v9)${notRun ? ` · ${notRun} not run on this protocol` : ''}`,
-    fmGroupLink: 'Every v9 row with its footnote →',
+    fmGroup: (n: number, notRun = 0) => `${n} further foundation encoders, frozen${notRun ? ` · ${notRun} not run on this protocol` : ''}`,
+    fmGroupLink: 'Every row with its footnote →',
     fmInterval: (lo: string, hi: string) => `Descriptive 95% interval: ${lo}–${hi}%`,
     fmF1: 'Mean across held-out participants',
     fmDetected: (d: number, n: number) => `${d} of ${n} commands`,
@@ -497,7 +493,7 @@ export const home = {
     fmAblation: 'Masking ablation: three sibling checkpoints of eeg-fm-masking',
     fmAblationLede: 'Read against the paper-recommended checkpoint, the matrix row above: the same architecture, corpus and recipe, another masking framework or geometry. Not further models, and not ranked.',
     fmAblationReference: 'matrix row above',
-    fmCsv: 'v9 rows · CSV ↓',
+    fmCsv: 'Foundation-encoder rows · CSV ↓',
     fmTermsLink: 'Every weights licence and its terms →',
     fmAbstained: (a: number, n: number) => `${a} of ${n} participants always abstained`,
     // The directory band: one card per hub, each with a count read from the
@@ -535,14 +531,14 @@ export const home = {
     description:
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
       'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发。',
-    eyebrow: '公开 EEG 评测 · 更新于',
+    eyebrow: '公开 EEG 评测',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
-      `也有自 ${c.addedOn}起以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题，以及临床分组的证据。`,
+      `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题，以及临床分组的证据。`,
     statsCaption: '核心矩阵',
-    statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结，第九轮）→'] as const,
+    statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
     siteCountsLead: '全站：',
     siteCounts: { questions: '个问题', datasets: '个有结果的数据集', methods: '种方法有结果页' },
@@ -552,14 +548,12 @@ export const home = {
       '这些测量是同一协议内的重复条件，不是独立实验，也不是总排名。',
     readEvidence: '查看证据 →',
     holdsEyebrow: '暂缓发布',
-    holdsH2: '暂缓发布的内容，以及从何时开始',
+    holdsH2: '暂缓发布的内容，以及原因',
     holdsLede: '有意暂不发布的结果。',
-    holdsSince: (d: string) => `${d}起暂缓`,
     holdsRegister: '完整暂缓登记册 →',
     correctionsLink: (n: number) => `更正（${n}）→`,
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
-    snapshot: '快照',
     matrixLede: '最初的八协议快照，与下方的问题页相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
     matrixRegion: '方法与协议的覆盖矩阵，可横向滚动',
     matrixCaption: '各方法在各协议上的平衡准确率。随机水平因协议而异，标注在每列表头中。',
@@ -570,8 +564,8 @@ export const home = {
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
     atChance: '≤ 随机',
     keyLead: '本快照中该协议的最高分',
-    matrixAdded: (n: number, date: string, partly: string, models: number, ablation: number) => `${date} 新增：另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们是 ${models} 个模型的检查点；其中一个模型另有 ${ablation} 个检查点组成掩码消融，共 ${n + ablation} 个。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
-    matrixAddedLink: '第一个协议上的第九轮各行 →',
+    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们是 ${models} 个模型的检查点；其中一个模型另有 ${ablation} 个检查点组成掩码消融，共 ${n + ablation} 个。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
+    matrixAddedLink: '第一个协议上的基础模型编码器各行 →',
     keyBar: '条长 = 在该协议随机水平与 100% 之间的位置',
     keyGap: '未评测',
     matrixDownload: '核心矩阵 · JSON ↓',
@@ -612,8 +606,8 @@ export const home = {
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
       `仅单个随机种子——为 ${n} 次运行中${word}（${lo}–${hi}%，均值 ${mean}%）`,
     seedWord: { highest: '最高的一次', lowest: '最低的一次', middle: '居中的一次' } as Record<string, string>,
-    fmGroup: (n: number, date: string, notRun = 0) => `${date} 新增：另外 ${n} 个基础模型编码器（冻结，第九轮）${notRun ? `，其中 ${notRun} 个在这个协议上未运行` : ''}`,
-    fmGroupLink: '第九轮的每一行及其脚注 →',
+    fmGroup: (n: number, notRun = 0) => `另外 ${n} 个基础模型编码器（冻结）${notRun ? `，其中 ${notRun} 个在这个协议上未运行` : ''}`,
+    fmGroupLink: '每一行及其脚注 →',
     fmInterval: (lo: string, hi: string) => `描述性 95% 区间：${lo}–${hi}%`,
     fmF1: '各留出被试的均值',
     fmDetected: (d: number, n: number) => `检出 ${d} / ${n} 条指令`,
@@ -626,7 +620,7 @@ export const home = {
     fmAblation: '掩码消融：eeg-fm-masking 的另外 3 个同系列检查点',
     fmAblationLede: '请对照论文推荐的检查点（即上表中的那一行）阅读：架构、语料与训练方案相同，只改变掩码框架或掩码几何。它们不是更多的模型，也不排名。',
     fmAblationReference: '即上表中的那一行',
-    fmCsv: '第九轮各行 · CSV ↓',
+    fmCsv: '基础模型编码器各行 · CSV ↓',
     fmTermsLink: '全部权重许可与条款 →',
     fmAbstained: (a: number, n: number) => `${n} 名被试中有 ${a} 名始终拒识`,
     directoryEyebrow: '目录',
@@ -675,8 +669,8 @@ export const topicChrome = {
     allQuestions: 'All questions, and the map of which kinds of transfer have been measured →',
     dataSource: 'Data source:',
     reviewedAggregate: 'reviewed aggregate JSON',
+    // The data-source note names the file and its schema, never the date it was generated.
     schema: 'schema',
-    generated: 'generated',
     datasetRecord: 'Dataset record ↗',
     sensorsPaper: 'Sensors paper ↗',
     sourceStudy: 'Source study ↗',
@@ -703,7 +697,6 @@ export const topicChrome = {
     dataSource: '数据来源：',
     reviewedAggregate: '已审核的聚合 JSON',
     schema: 'schema',
-    generated: '生成于',
     datasetRecord: '数据集记录 ↗',
     sensorsPaper: 'Sensors 论文 ↗',
     sourceStudy: '原始研究 ↗',
@@ -751,7 +744,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes and movement; calibration, model adaptation, pretraining and one model for several questions; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
+    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining and one model for several questions; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
     dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -760,7 +753,7 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极与运动的迁移；校准、模型适配、预训练与一个模型回答多个问题；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练与一个模型回答多个问题；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
     dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
@@ -775,7 +768,7 @@ export const topicsHubCopy = {
 export const topicGroupLabels: Record<Locale, Record<string, { title: string; lede: string }>> = {
   en: {
     transfer: { title: 'Transfer',
-      lede: 'Does a decoder still work when the sensor, the display, the electrode layout or the body’s movement changes?' },
+      lede: 'Does a decoder still work when the sensor, the display, the electrode layout, the body’s movement or the session changes?' },
     adapting: { title: 'Adapting models',
       lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, and whether one model can answer several questions.' },
     reliability: { title: 'Reliability & clinical',
@@ -783,7 +776,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
   },
   zh: {
     transfer: { title: '迁移',
-      lede: '换了传感器、显示设备、电极布局，或者人在运动时，解码器还管用吗？' },
+      lede: '换了传感器、显示设备、电极布局或记录会话，或者人在运动时，解码器还管用吗？' },
     adapting: { title: '调整模型',
       lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助，以及一个模型能不能回答多个问题。' },
     reliability: { title: '可靠性与临床',
@@ -822,6 +815,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Does EEG decoding still work while walking or running?',
       summary: 'Standing, walking and running results, with scalp and ear recordings and incompatible time windows kept apart.',
       detail: 'SSVEP balanced accuracy · ERP ROC AUC' },
+    // The large-source batch's later-session results. The Forenzo records are not proven unique people, so the card
+    // counts people only where the export does (WBCIC-SHU's two cohorts, the RSVP cohort).
+    'later-sessions': { kicker: 'Session transfer · same person', title: 'Later sessions',
+      question: 'Does a decoder trained on an earlier session still work later?',
+      summary: 'Trained on a person’s earlier session and tested on a later one, with no labels from it: motor imagery across recording sessions, with simple baselines and frozen CBraMod; target detection at the publisher’s nominal later visits; and continuous cursor tracking, where a constant baseline does better.',
+      detail: 'Motor imagery, WBCIC-SHU, 51 and 11 people · RSVP, 15 people · cursor tracking, a negative result' },
     // Broadened on 2026-10-03 (owner decision): the OpenBMI next-session result
     // sits beside the wearable SSVEP one, which keeps every figure it had.
     'calibration-budget': { kicker: 'Calibration budget', title: 'How much calibration?',
@@ -876,6 +875,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '走路或跑步时，EEG 解码还管用吗？',
       summary: '站立、行走与跑动时的结果，头皮与耳部记录、互不兼容的时间窗分开呈现。',
       detail: 'SSVEP 平衡准确率 · ERP ROC AUC' },
+    'later-sessions': { kicker: '跨会话迁移 · 同一被试', title: '后续会话',
+      question: '在较早会话上训练的解码器，到后来还管用吗？',
+      summary: '用同一个人较早的会话训练、在较晚的会话上测试，不使用后一次会话的任何标签：跨记录会话的运动想象（简单基线与冻结的 CBraMod）；在发布者标称的后续访次上的目标检测；以及连续光标追踪——在这里，一个常数基线反而更好。',
+      detail: '运动想象，WBCIC-SHU，51 与 11 名被试 · RSVP，15 名被试 · 光标追踪，阴性结果' },
     'calibration-budget': { kicker: '校准预算', title: '需要多少校准？',
       question: 'EEG 解码器需要多少校准数据？',
       summary: '可穿戴 SSVEP 任务上的 12、24 或 48 个校准试次，以及同一被试下一次运动想象会话中最多 40 个校准试次：对某些方法帮助更大，也不是对每个人都有帮助——而且试次数不等于耗时。',
@@ -923,6 +926,7 @@ export const topicQuestionPhrases: Record<string, string> = {
   'screen-to-vr': '在屏幕上|校准的 P300 解码器，换到 VR 里|还管用吗？',
   'fewer-electrodes': '更少的电极、|或耳道内电极，|能比得上|完整的|头皮电极吗？',
   'on-the-move': '走路或跑步时，EEG 解码|还管用吗？',
+  'later-sessions': '在较早会话上|训练的解码器，|到后来|还管用吗？',
   'calibration-budget': 'EEG 解码器|需要多少|校准数据？',
   'model-adaptation': '新被试、|第二天：|预训练模型|该更新|哪一部分？',
   'when-not-to-act': '没有人下指令时，EEG 解码器|误触发|有多频繁？',

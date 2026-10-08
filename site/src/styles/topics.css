@@ -293,3 +293,12 @@ pre.code{margin:8px 0 18px;padding:14px 16px;background:var(--panel);border:1px 
 .sr-gaps .note-original,.sr-boas-note .note-original{display:block;font-size:.75rem}
 .sr-setups strong span{font-family:var(--mono)}
 tr[data-sr-contrast] td small,tr[data-sr-secondary] td small,tr[data-sr-logr] td small,tr[data-sr-ledger] td small{display:block;font-size:.7rem;color:var(--muted);margin-top:3px;line-height:1.4}
+
+/* Later sessions: a section's required subtitle under its heading, the response-arm label beside its name, the
+   cursor-tracking tables' cells (mean, interval and a reading, each on its own line). */
+.topic-subtitle{margin-top:8px;font-size:.875rem;font-weight:600;color:var(--accent-deep)}
+.topic-subtitle .note-original{font-weight:400;color:var(--muted);font-size:.8125rem}
+.arm-tag{font-family:var(--sans);font-size:.8125rem;font-weight:500;color:var(--muted)}
+.forenzo-arm{margin-top:26px}
+tr[data-forenzo-cell] .interval,tr[data-forenzo-secondary] .interval{display:block}
+tr[data-forenzo-secondary] td{min-width:120px}

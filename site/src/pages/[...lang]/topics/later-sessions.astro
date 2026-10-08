@@ -1,0 +1,602 @@
+---
+/**
+ * Does a decoder trained on an earlier session still work later? (owner decision): four results from the
+ * large-source batch, each the same person in a later session with no labels from it — WBCIC-SHU motor imagery (two
+ * fixed CPU baselines, and frozen CBraMod with a session-1 readout; two cohorts kept apart), the longitudinal RSVP
+ * source (one first-visit ERP decoder at the publisher's nominal later visits) and Forenzo's continuous cursor
+ * tracking (a negative result). Its own question, in "Transfer".
+ *
+ * Every figure is a leaf of later-sessions-update.json, printed with data-fig (Fig.astro) and re-read by
+ * check-workbench.mjs. Rules, from the four handoffs and the review manifest: aggregates only; datasets, cohorts and
+ * response arms never pooled and never ranked; the RSVP section under the subtitle its handoff words, its chart three
+ * points with participant-bootstrap intervals and no fitted curve, AP beside AUROC; Forenzo's mean, median, comparator
+ * and paired interval together, its upper tail visible, its two response arms never compared with each other, its
+ * coverage beside the result, no online-control or intended-motion claim. The sentences that summarise the export
+ * are checked against it below, and the page refuses to build if the numbers stop supporting them.
+ */
+import later from '../../../data/later-sessions-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { formatFig, wideFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+type Part = string | FigValue;
+const LTS = 'later-sessions-update.json';
+const f = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: LTS });
+const n = (raw: number) => f(raw, 'count');
+const w = (raw: number) => f(raw, wideFmt(raw));
+const F = (x: FigValue) => formatFig(x);
+const ans = (x: FigValue) => `[[${F(x)}]]`;
+const R = later.results;
+const cpu = R['wbcic-cross-session-cpu'], fm = R['wbcic-frozen-cbramod'], rs = R['rsvp-later-visits'], fz = R['forenzo-continuous-control'];
+
+// --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
+const need = (ok: boolean, what: string) => { if (!ok) throw new Error(`later-sessions: the copy says ${what}`); };
+const same = (a: number, b: number) => Math.abs(a - b) < 1e-12;
+const cohorts = ['2C', '3C'] as const;
+need(cpu.sessions.train === 1 && cpu.sessions.test === 3 && cpu.sessions.unused === 2 && cpu.sessions.target_session_labels === 0
+  && fm.sessions.train === 1 && fm.sessions.test === 3 && fm.sessions.target_session_labels === 0, 'session 1 trains, session 3 tests, session 2 is unused and no session-3 label is used');
+for (const c of cohorts) {
+  const a = cpu.cohorts[c], b = fm.cohorts[c];
+  need(a.people === b.people && a.target_trials === b.target_trials && a.source_trials === b.source_trials, `both WBCIC-SHU results read the same ${c} cohort and trials`);
+  need(b.relative_spectral_ridge.balanced_accuracy.mean === a.arms.relative_spectral_ridge.balanced_accuracy.mean, 'the CBraMod release reads against the CPU release\'s spectral ridge figure');
+  need(same(a.arms.source_prior.balanced_accuracy.mean, a.chance_level), `the source prior sits on chance in ${c}`);
+  need(a.paired.interval_excludes_zero && a.paired.balanced_accuracy_difference.interval_95[0] > 0, `the spectral ridge is above the source prior in ${c}, its paired interval above zero`);
+  need(b.paired.interval_excludes_zero && b.paired.balanced_accuracy_difference.interval_95[0] > 0, `frozen CBraMod is above the spectral ridge in ${c}, its paired interval above zero`);
+}
+need(cpu.cohorts['2C'].people > cpu.cohorts['3C'].people, 'the three-class cohort is the small one');
+need(fm.encoder === 'frozen' && !fm.fine_tuning && !fm.lora && fm.pretraining_exposure.status === 'not established', 'the encoder is frozen, with no fine-tuning or LoRA, and its pretraining exposure is not established');
+need(cpu.trials.excluded === 0 && cpu.session_quality.holds_in_selected_sessions + cpu.session_quality.holds_in_unused_session_2 === cpu.session_quality.fixed_count_holds
+  && cpu.session_quality.missing_trial_cause === 'unknown', 'no trial excluded; six short sessions, three of them used; the cause unknown');
+const visits = rs.visits;
+need(visits.map(v => v.nominal_day).join() === '7,80,200' && visits.every(v => v.people === rs.cohort.people), 'the nominal visits are Day 7, 80 and 200, the same people at each');
+need(visits.every(v => v.delivered_events === null && v.signal_invalid_events === 0), 'the delivered-event count is null at every visit, and no event was invalid');
+need(visits.every(v => v.target_share > 0.02 && v.target_share < 0.03), 'targets are about 2.5% of events at every visit');
+need(rs.contrast.interval_excludes_zero && rs.contrast.auroc_difference.interval_95[1] < 0 && rs.contrast.people === rs.cohort.people, 'the Day 200 minus Day 7 AUROC interval lies below zero, the same people');
+need(visits[2].auroc.mean < visits[0].auroc.mean && visits[2].average_precision.mean < visits[0].average_precision.mean, 'AUROC and average precision are lower at Day 200 than at Day 7');
+need(visits.every(v => v.auroc.interval_95[0] > 0.8), 'AUROC stays well above chance at every later visit');
+need(rs.subtitle === 'Same-person, offline RSVP classification; publisher nominal visit labels; no target-session adaptation.', 'the RSVP subtitle as its handoff words it');
+need(rs.model.label === 'Normalized ERP features + logistic/Platt (CPU baseline)', 'the RSVP model label as its handoff words it');
+const fzCohorts = ['Main', 'Transfer Learning'] as const;
+const fzArms = ['historical_decoder_velocity_imitation', 'constructed_raw_target_displacement_proxy'] as const;
+type FzArm = typeof fzArms[number];
+const fzc = fz.cohorts as Record<string, any>;
+const cell = (c: string, a: FzArm) => fzc[c].arms[a];
+for (const c of fzCohorts) for (const a of fzArms) {
+  const x = cell(c, a);
+  need(x.records === fzc[c].admitted_records && x.paired.records === x.records && x.paired.records_with_higher_ridge_error === x.records,
+    `the ridge has the larger error on every admitted ${c} record (${a})`);
+  need(x.paired.interval_excludes_zero && x.paired.primary_difference.interval_95[0] > 0 && x.ridge.primary.mean > x.source_mean.primary.mean, `the paired ${c} ${a} interval lies above zero`);
+  need(x.ridge.primary.mean > 10 * x.ridge.primary.median && x.upper_tail.ridge_mean_over_median > 10, `the ${c} ${a} ridge mean lies far above its median`);
+  need(x.source_mean.secondary.pearson_x.mean === null && x.source_mean.secondary.pearson_y.mean === null, 'the comparator\'s correlations are null');
+}
+const main = fzc.Main, tl = fzc['Transfer Learning'];
+need(main.admitted_records + main.held_before_scoring === main.candidate_records && main.hold_reasons.reduce((s: number, h: { records: number }) => s + h.records, 0) === main.held_before_scoring,
+  'Main\'s holds add up to its candidates');
+need(tl.admitted_records === tl.candidate_records && tl.held_before_scoring === 0 && main.conditional_on_admitted_records && !tl.conditional_on_admitted_records, 'Transfer Learning admits every record; Main is conditional on its admitted subset');
+need(fz.coverage.admitted_records === main.admitted_records + tl.admitted_records && fz.coverage.counting_unit === 'cohort records, not proven unique people', 'records, not people');
+need(fz.coverage.response_rows_removed === 0 && fz.coverage.response_fits === 2 * fz.coverage.admitted_records, 'no response row removed, one fit per record and arm');
+need(fz.primary_metric.lower_is_better && fz.kind === 'negative result', 'the primary metric is an error, lower is better, and the result is negative');
+need(fz.label === 'Offline, same-person, no target-session adaptation', 'the Forenzo label as its handoff words it');
+// The method facts the page types (channels, rates, bands, sizes) are the export's own words.
+const says = (text: string, ...xs: string[]) => xs.forEach(x => need(text.includes(x), `the method says "${x}"`));
+says(cpu.method.data, '58 anonymous channel indices at 250 Hz in four-second epochs');
+says(cpu.method.spectra, '4–8, 8–13, 13–30 and 30–40 Hz', '232 values per trial');
+says(cpu.method.ridge, 'session 1 only', 'alpha 1', 'no class weights');
+says(cpu.method.selection, 'no hyperparameter search, target normalization, calibration or abstention');
+says(fm.method.adapter, '200 Hz', '800 samples', 'its own standard deviation');
+says(fm.method.encoder, 'every weight frozen', 'four temporal patch embeddings averaged', '11,600 values per trial');
+says(fm.method.not_done, 'no backbone training, LoRA, target-session calibration');
+says(rs.method.events, '57 EEG channels', '−200 to +700 ms', 'six 100 ms averages from +100 to +700 ms', '342 values per event');
+says(rs.method.split, 'blocks 1–3 fit the classifier', 'block 4 fits Platt calibration', 'blocks 2–4');
+says(rs.method.classifier, 'L2 logistic regression');
+says(fz.method.signal, '62 channels at 1,000 Hz', '4–8, 8–12, 12–16, 16–24 and 24–30 Hz', 'preceding 1,000 filtered power samples', '310 values per row');
+says(fz.method.split, 'every eligible non-chance run');
+says(fz.method.timing, '2-second past window', 'every 40 ms');
+says(fz.method.models, 'source session only', 'Ridge (alpha 1', 'no tuning, LoRA, target-session calibration or foundation-model inference');
+for (const u of [cpu.uncertainty.kind, fm.uncertainty.kind, rs.uncertainty.kind, fz.uncertainty.kind]) says(u, 'pointwise 95% percentile interval from 10,000');
+says(rs.label_coding, 'Trigger.txt reverses');
+const tails = fzCohorts.flatMap(c => fzArms.map(a => cell(c, a).upper_tail.ridge_mean_over_median as number));
+const tailLo = Math.min(...tails), tailHi = Math.max(...tails);
+// Typed English the Chinese page translates, kept equal to the export so a changed export fails the build.
+const holdReasonZh: Record<string, string> = {
+  'a session lacks its required Chance R01 record': '某次会话缺少必需的 Chance R01 记录',
+  'the decoder-local run allocation differs from the documented contract': '按解码器划分的 run 分配与文档约定不符',
+  'the sample-boundary geometry differs; its exact numeric cause was not independently reconstructed': '样本边界的几何结构不一致，其确切的数值原因没有得到独立重建',
+};
+for (const h of main.hold_reasons) need(h.reason in holdReasonZh, `a Chinese hold reason for "${h.reason}"`);
+
+// --- Names. ------------------------------------------------------------------------------------------------------
+const cohortName = (c: '2C' | '3C') => c === '2C' ? (zh ? '二分类运动想象' : 'Two-class motor imagery') : (zh ? '三分类运动想象' : 'Three-class motor imagery');
+const cohortClasses = (c: '2C' | '3C') => c === '2C' ? (zh ? '左手或右手' : 'left or right hand') : (zh ? '左手、右手或脚' : 'left hand, right hand or foot');
+const armName = {
+  source_prior: zh ? '源会话多数类先验' : 'Source-majority prior',
+  relative_spectral_ridge: zh ? '相对频谱功率 + 岭回归' : 'Relative spectral power + ridge',
+  frozen_cbramod: zh ? 'CBraMod · 冻结编码器，分类头用第 1 次会话拟合' : 'CBraMod · frozen encoder, session-1 ridge readout',
+};
+const armNote = {
+  source_prior: zh ? '预测第 1 次会话中最常见的类别：一个下限，不是模型' : 'predicts session 1’s most frequent class: a floor, not a model',
+  relative_spectral_ridge: zh ? '固定的 CPU 基线' : 'a fixed CPU baseline',
+  frozen_cbramod: zh ? '只拟合分类头，不训练编码器' : 'only the readout is fitted; the encoder is not trained',
+};
+const fzCohortName = (c: string) => zh ? `${c === 'Main' ? 'Main' : 'Transfer Learning'} 队列` : `${c} cohort`;
+const fzArmName: Record<FzArm, { name: string; tag: string; what: string }> = zh ? {
+  historical_decoder_velocity_imitation: { name: '历史解码器速度', tag: '模仿历史解码器（historical decoder imitation）',
+    what: '模仿的是记录时所用解码器的输出（由发布者保存），不是意图中的手部运动，也不是意图控制。' },
+  constructed_raw_target_displacement_proxy: { name: '构造的位移代理变量', tag: '构造的代理变量（constructed proxy）',
+    what: '在发布者的屏幕坐标中，目标位置减光标位置，单独拟合的代理变量。' },
+} : {
+  historical_decoder_velocity_imitation: { name: 'Historical decoder velocity', tag: 'historical decoder imitation',
+    what: 'The output of the decoder in use at recording time, as the publisher stored it, imitated: not intended hand motion or intended control.' },
+  constructed_raw_target_displacement_proxy: { name: 'Constructed displacement proxy', tag: 'constructed proxy',
+    what: 'Target position minus cursor position in the publisher’s screen coordinates, a separately fitted proxy.' },
+};
+const secondaryKeys = ['raw_rmse_x', 'raw_rmse_y', 'r2_x', 'r2_y', 'pearson_x', 'pearson_y'] as const;
+const secondaryHead: Record<string, string> = zh
+  ? { raw_rmse_x: '原始 RMSE，水平', raw_rmse_y: '原始 RMSE，垂直', r2_x: 'R²，水平', r2_y: 'R²，垂直', pearson_x: 'Pearson，水平', pearson_y: 'Pearson，垂直' }
+  : { raw_rmse_x: 'Raw RMSE, x', raw_rmse_y: 'Raw RMSE, y', r2_x: 'R², x', r2_y: 'R², y', pearson_x: 'Pearson, x', pearson_y: 'Pearson, y' };
+
+// --- What the RSVP chart and the Forenzo tail plots draw. -----------------------------------------------------
+const visitName = (v: typeof visits[number]) => zh ? `标称第 ${v.nominal_day} 天` : `Nominal ${v.visit}`;
+const rsvpRows = visits.map(v => ({
+  label: visitName(v), value: v.auroc.mean, interval: v.auroc.interval_95 as [number, number], fig: f(v.auroc.mean, 'auc3'),
+  noteParts: [`${tc.interval95} `, f(v.auroc.interval_95[0], 'auc3'), '–', f(v.auroc.interval_95[1], 'auc3')] as Part[], tone: 'rust' as const,
+}));
+const lg = (x: number) => Math.log10(x);
+const lgIv = (iv: number[]) => [lg(iv[0]), lg(iv[1])] as [number, number];
+const tailRows = (a: FzArm) => fzCohorts.flatMap(c => {
+  const x = cell(c, a), cn = c;
+  return [
+    { label: zh ? `${cn} · spectral ridge · 均值` : `${cn} · spectral ridge · mean`, value: lg(x.ridge.primary.mean), interval: lgIv(x.ridge.primary.interval_95),
+      fig: w(x.ridge.primary.mean), noteParts: [`${tc.interval95} `, w(x.ridge.primary.interval_95[0]), '–', w(x.ridge.primary.interval_95[1])] as Part[], tone: 'rust' as const },
+    { label: zh ? `${cn} · spectral ridge · 中位数` : `${cn} · spectral ridge · median`, value: lg(x.ridge.primary.median), fig: w(x.ridge.primary.median), tone: 'olive' as const },
+    { label: zh ? `${cn} · 源会话均值对照 · 均值` : `${cn} · source-mean comparator · mean`, value: lg(x.source_mean.primary.mean), interval: lgIv(x.source_mean.primary.interval_95),
+      fig: w(x.source_mean.primary.mean), noteParts: [`${tc.interval95} `, w(x.source_mean.primary.interval_95[0]), '–', w(x.source_mean.primary.interval_95[1])] as Part[], tone: 'ink' as const },
+  ];
+});
+const allTail = fzCohorts.flatMap(c => fzArms.flatMap(a => { const x = cell(c, a); return [x.ridge.primary.interval_95[1], x.source_mean.primary.interval_95[0], x.ridge.primary.median]; }));
+need(Math.min(...allTail) > 0.01 && Math.max(...allTail) < 1e6, 'every Forenzo value fits the log axis, 0.01 to 1,000,000');
+
+// --- Figures the short answer and the description name. ------------------------------------------------------
+const c2 = cpu.cohorts['2C'], c3 = cpu.cohorts['3C'], m2 = fm.cohorts['2C'], m3 = fm.cohorts['3C'];
+const d7 = visits[0], d200 = visits[2], dd = rs.contrast;
+const fmBa2 = f(m2.frozen_cbramod.balanced_accuracy.mean), fmBa3 = f(m3.frozen_cbramod.balanced_accuracy.mean);
+const gain2 = f(m2.paired.balanced_accuracy_difference.mean, 'pp1'), gain3 = f(m3.paired.balanced_accuracy_difference.mean, 'pp1');
+const au7 = f(d7.auroc.mean, 'auc3'), au200 = f(d200.auroc.mean, 'auc3');
+const dAu = f(dd.auroc_difference.mean, 'sgn3'), dLo = f(dd.auroc_difference.interval_95[0], 'sgn3'), dHi = f(dd.auroc_difference.interval_95[1], 'sgn3');
+const ap7 = f(d7.average_precision.mean, 'auc3'), ap200 = f(d200.average_precision.mean, 'auc3'), share = f(d7.target_share);
+const lede = (c: '2C' | '3C') => cpu.cohorts[c].people;
+
+const copy = {
+  en: {
+    description: `Partly. Same person, no later-session labels. WBCIC-SHU: frozen CBraMod beat a spectral ridge by ${F(gain2)} and ${F(gain3)}. RSVP, nominal Day 7 to 200: AUROC ${F(au7)} → ${F(au200)}, average precision ${F(ap7)} → ${F(ap200)}. Cursor tracking: a fixed decoder had a higher overall error than a constant baseline on every admitted record.`,
+    answer: `Partly, and each result stands on its own. On WBCIC-SHU motor imagery — trained on each person’s recording session 1 and tested on session 3 with no labels from it, ${ans(n(lede('2C')))} people in a two-class and ${ans(n(lede('3C')))} in a three-class cohort, kept apart — frozen CBraMod with a ridge readout fitted on session 1 reached ${ans(fmBa2)} and ${ans(fmBa3)} balanced accuracy, ${ans(gain2)} and ${ans(gain3)} above a relative spectral ridge, each paired interval above zero. It needs that person’s labelled earlier session, so it is same-person transfer, not decoding for someone new, and it does not show that pretraining caused the gain. On a longitudinal RSVP task, a decoder trained at each of ${ans(n(rs.cohort.people))} people’s first visit ranked targets with an AUROC of ${ans(au7)} at the publisher’s nominal Day 7 visit and ${ans(au200)} at nominal Day 200, a paired change of ${ans(dAu)} (${ans(dLo)} to ${ans(dHi)}). With targets only about ${ans(share)} of events, average precision fell from ${ans(ap7)} to ${ans(ap200)}. The nominal visit labels do not tie either decline to elapsed time. In continuous cursor tracking, a fixed spectral ridge trained on each record’s earliest session had a higher overall error in its latest session than a constant source-mean comparator, for every admitted record in both cohorts and both response arms: a negative result, with a severe upper tail.`,
+    eyebrow: 'Session transfer · the same person, no labels from the later session',
+    dek: 'Three datasets, four results, each read on its own. Motor imagery across recording sessions: frozen CBraMod with a readout fitted on the earlier session scores above a spectral baseline in both cohorts. Target detection at later visits: a first-visit decoder ranks targets less well at the last nominal visit, and its average precision is lower. Continuous cursor tracking: a fixed decoder does worse than a constant baseline for every admitted record.',
+    // WBCIC-SHU
+    wbEyebrow: 'WBCIC-SHU · motor imagery · session 1 to session 3',
+    wbH2: 'Motor imagery two sessions later: two baselines and a frozen encoder',
+    wbLede: (): Part[] => ['People imagined moving the left or the right hand (a two-class cohort, ', n(c2.people), ' people) or, in a separate three-class cohort (', n(c3.people), ' people), a foot movement as well, in three recording sessions. Each person’s complete session 1 trains the decoder and session 3 is the test; session 2 is unused, and no label from session 3 is used. Session numbers are recording-session ordinals, not a guaranteed time gap or distinct calendar days. The cohorts are kept apart and never averaged.'],
+    baRegion: 'WBCIC-SHU, balanced accuracy on session 3 by cohort, scrolls horizontally',
+    baCaption: (): Part[] => ['Participant-equal mean balanced accuracy on session 3, with a paired whole-participant bootstrap 95% interval. Chance is ', f(c2.chance_level), ' for two classes and ', f(c3.chance_level), ' for three, where the source-majority prior sits by construction. Accuracy and macro F1 are the secondary means.'],
+    colArm: 'Decoder',
+    colCohort: (c: '2C' | '3C', people: FigValue): Part[] => [cohortName(c), ' · ', people, ' people'],
+    secondary: (acc: FigValue, f1: FigValue): Part[] => ['Accuracy ', acc, ' · macro F1 ', f1],
+    diffRegion: 'WBCIC-SHU, paired differences in balanced accuracy by cohort, scrolls horizontally',
+    diffCaption: 'Paired differences in balanced accuracy, in percentage points (pp), the same people and test trials. Each interval resamples matched per-person differences within its cohort, conditional on the fixed trained models and predictions.',
+    diffRow: { ridge: 'Spectral ridge minus the source prior', cbramod: 'Frozen CBraMod minus the spectral ridge' },
+    aboveZero: 'Interval above zero.',
+    findLabel: (people: FigValue): Part[] => ['Frozen CBraMod minus the spectral ridge, two-class cohort, ', people, ' people'],
+    findH3: 'Above the spectral baseline in both cohorts — as a comparison of two pipelines',
+    findP: (): Part[] => ['Paired interval ', f(m2.paired.balanced_accuracy_difference.interval_95[0], 'sgn1'), ' to ', f(m2.paired.balanced_accuracy_difference.interval_95[1], 'pp1'), '. In the small three-class cohort the gap was ', gain3, ' (', f(m3.paired.balanced_accuracy_difference.interval_95[0], 'sgn1'), ' to ', f(m3.paired.balanced_accuracy_difference.interval_95[1], 'pp1'), '). The CBraMod arm was frozen after the spectral results existed and reuses their test trials: a comparative follow-up, not a fresh test set. There is no matched random-weight control, the two feature spaces differ in size and preprocessing (the same ridge alpha does not equalize regularization across them), and whether this checkpoint saw WBCIC-SHU in pretraining is not established, so the gap compares the two pipelines; it does not show that pretraining caused it. Each person’s session-1 labels train the readout: zero labels from session 3 is not a decoder for someone new.'],
+    trials: (): Part[] => ['Trials: ', n(c2.source_trials), ' training and ', n(c2.target_trials), ' test trials in the two-class cohort, ', n(c3.source_trials), ' and ', n(c3.target_trials), ' in the three-class cohort; no person or trial was excluded. ', n(cpu.session_quality.fixed_count_holds), ' of the ', n(cpu.session_quality.sessions), ' session records hold fewer trials than the publisher’s nominal count (', n(cpu.session_quality.delivered_trials), ' delivered against ', n(cpu.session_quality.nominal_trials), '); ', n(cpu.session_quality.holds_in_selected_sessions), ' of them are in the sessions used and are admitted under a reviewed variable-N rule, with no filling, truncation or performance-based exclusion; the original strict-count holds stay recorded. Why the trials are missing is unknown.'],
+    // RSVP
+    rsEyebrow: 'Longitudinal RSVP · target detection · a first-visit decoder',
+    rsH2: 'Does your decoder still work at later visits?',
+    rsSubtitle: rs.subtitle,
+    rsModel: (): Part[] => ['Decoder: ', rs.model.label, '.'],
+    rsLede: (): Part[] => ['In rapid serial visual presentation (RSVP), a stream of face images is shown and the decoder has to pick out the rare target. ', n(rs.cohort.people), ' people, the source’s Group A, were recorded at visits the publisher labels Day 1, 7, 80 and 200. Each person’s decoder is trained and calibrated on their first visit only, then scored unchanged at each later visit: ', n(visits[0].events), ' events per visit across the ', n(rs.cohort.people), ' people.'],
+    plotCaption: 'AUROC at each nominal later visit: the same people, one first-visit decoder each.',
+    plotLegend: 'Participant-equal mean AUROC. Dot: the mean; line: its participant-bootstrap 95% interval, printed under each label; dashed line: chance, a decoder that orders events at random. The visits are labels, evenly spaced, not a time axis, and no curve is fitted between them. AUROC ranks targets above non-targets; it is not accuracy.',
+    caveatsH: 'Read the chart with these',
+    caveats: (): Part[][] => [
+      ['Same person: each person’s first-visit labels train and calibrate their own decoder. Not a decoder for someone new.'],
+      ['Nominal visits: Day 7, Day 80 and Day 200 are the publisher’s labels, not verified participant-specific calendar intervals.'],
+      ['Rare targets: about ', f(visits[0].target_share), ' of events at every visit (the table gives each). AUROC ranks; average precision is not precision at a chosen threshold; neither is an online selection success rate. The target share describes the data; it is not a comparator.'],
+      [n(rs.cohort.people), ' people and one fixed offline baseline: no clinical, real-time or causal claim, and no foundation model.'],
+    ],
+    rsRegion: 'Longitudinal RSVP, every published measure at each nominal visit, scrolls horizontally',
+    rsCaption: (): Part[] => ['Participant-equal means at each nominal visit, ', n(rs.cohort.people), ' people; counts are event totals.'],
+    colMeasure: 'Measure',
+    measures: { auroc: 'AUROC', ap: 'Average precision', logloss: 'Log loss', brier: 'Brier score', ece: 'ECE, 10 bins', targets: 'Target events', delivered: 'Delivered events' },
+    measureNote: { auroc: 'ranks targets, 0 to 1; not accuracy', ap: '0 to 1; not precision at a threshold', logloss: 'per event, natural log; lower is better', brier: 'lower is better', ece: 'expected calibration error; lower is better', targets: 'of all events at the visit', delivered: 'not available from the protected scoring interface' },
+    ofEvents: (k: FigValue, all: FigValue): Part[] => [k, ' of ', all],
+    nullCell: 'not available (null, not zero)',
+    rsFindLabel: (people: FigValue): Part[] => ['AUROC, nominal Day 200 minus Day 7, the same ', people, ' people'],
+    rsFindH3: 'AUROC and average precision lower at nominal Day 200',
+    rsFindP: (): Part[] => ['Paired interval ', dLo, ' to ', dHi, ', below zero. ', n(dd.people_declined_by_0_05_or_more), ' of ', n(dd.people), ' people lost 0.05 AUROC or more. Average precision is lower too: ', f(d7.average_precision.mean, 'auc3'), ' at nominal Day 7, ', f(d200.average_precision.mean, 'auc3'), ' at Day 200. This describes this cohort and this decoder; it does not show that elapsed time caused the change.'],
+    rsCoding: 'Label coding: the paper and the publisher’s sample script code 1 as non-target and 2 as target, and the release’s Trigger.txt reverses them. The paper and script were followed, a precedence decided before modelling; the contradiction stays visible.',
+    // Forenzo
+    fzEyebrow: 'Continuous cursor tracking · a negative result',
+    fzH2: 'A simple baseline exposes cross-session decoder failures',
+    fzLabel: `${fz.label}.`,
+    fzLede: 'People used motor imagery to steer a cursor after a target moving continuously across a screen, in two cohorts the publisher calls Main and Transfer Learning. For each admitted record, a fixed spectral ridge is trained on every eligible non-chance run of the earliest complete recorded session and tested on the latest, with no label from it, against a source-mean comparator: the earliest session’s average response, repeated for every row. Can the decoder beat that constant in the later session? Here, it did not.',
+    fzCards: [
+      { h: 'Cohort records admitted', v: (): Part[] => [n(fz.coverage.admitted_records)], p: (): Part[] => ['Main ', n(main.admitted_records), ' of ', n(main.candidate_records), ', Transfer Learning ', n(tl.admitted_records), ' of ', n(tl.candidate_records), '. Records, not proven unique people.'] },
+      { h: 'Target rows per response arm', v: (): Part[] => [n(fz.coverage.target_rows_per_arm)], p: (): Part[] => ['The same rows for both arms: two outcomes do not double the independent sample. No response row was removed.'] },
+      { h: 'Response fits', v: (): Part[] => [n(fz.coverage.response_fits)], p: (): Part[] => ['One per admitted record and response arm; every one succeeded.'] },
+    ],
+    metric: 'The error is the joint source-SD-normalized RMSE: errors divided by the earliest session’s response standard deviation, averaged over both axes within each trial before the square root. Lower is better. It is an error, not a percentage or an accuracy. Each record averages its trials equally, and each cohort mean weights records equally; intervals resample records within a cohort.',
+    armsNote: 'Two response arms, each with its own table. They are different outcomes on the same rows: never combined, and their errors are not compared with each other.',
+    fzRegion: (arm: string) => `Continuous cursor tracking, ${arm}, by cohort, scrolls horizontally`,
+    fzCaption: (arm: string, tag: string) => `${arm} (${tag}) · error in the latest session, lower is better: the ridge’s mean with its interval and its median, the comparator’s mean, and the paired difference (positive: the ridge’s error is larger).`,
+    colCohort2: 'Cohort',
+    colRidgeMean: 'Spectral ridge · mean',
+    colRidgeMedian: 'Spectral ridge · median',
+    colComparator: 'Source-mean comparator · mean',
+    colPaired: 'Ridge minus comparator · same records',
+    admitted: (k: FigValue, of: FigValue): Part[] => [k, ' of ', of, ' records admitted'],
+    timesMedian: (r: FigValue): Part[] => ['the mean is ', r, ' times the median'],
+    worseOn: (k: FigValue, of: FigValue): Part[] => ['ridge error higher on ', k, ' of ', of, ' records'],
+    tailCaption: (arm: string) => `${arm}: the ridge’s mean and median beside the comparator, on a log scale. Read within this arm only.`,
+    tailLegend: 'Log scale, powers of ten from 10⁻² to 10⁶: each gridline is a hundredfold step, marking 1, 100 and 10,000. Dot: the value; line: its 95% interval; the ridge’s median has no interval here. The printed values are the published figures; the strip is their picture.',
+    tail: (): Part[] => ['Across the four cohort-and-arm cells, the ridge’s mean error is ', f(tailLo, 'int0'), ' to ', f(tailHi, 'int0'), ' times its median: a few records carry very large errors. No scored record was removed, clipped or winsorized, and what caused the extreme errors — feature distribution shift, scaling sensitivity or something else — is not established. The every-record statement is about the overall primary error; it does not extend to the secondary metrics or to each recorded-decoder context.'],
+    coverage: (): Part[] => ['Coverage. Main admits ', n(main.admitted_records), ' of its ', n(main.candidate_records), ' candidate records and is read conditional on that subset; ', n(main.held_before_scoring), ' were held on metadata before any scoring and stay recorded: ',
+      ...main.hold_reasons.flatMap((h: { reason: string; records: number }, i: number) => [i ? '; ' : '', n(h.records), ' because ', h.reason]), '. Transfer Learning admits ', n(tl.admitted_records), ' of ', n(tl.candidate_records), '. That is ', n(fz.coverage.admitted_records), ' admitted cohort records, not ', n(fz.coverage.admitted_records), ' proven unique people: the cohorts may share people, and they are never pooled.'],
+    cohortNameNote: 'Transfer Learning is the publisher’s name for how that cohort’s data were collected; no transfer-learning model was trained here.',
+    secSummary: 'Secondary metrics per axis — raw RMSE, R² and Pearson correlation',
+    secKey: 'Record-equal means with their 95% intervals. Raw RMSE is in each response’s stored units; R² and Pearson are unitless. A constant prediction has no correlation, so the comparator’s Pearson values are undefined: null, not zero. The every-record statement above does not extend to these metrics, and their paired differences are not published.',
+    secRegion: (arm: string) => `Continuous cursor tracking, ${arm}, secondary metrics, scrolls horizontally`,
+    secCaption: (arm: string) => `${arm} · secondary metrics in the latest session.`,
+    colModel: 'Cohort and model',
+    undefinedCell: 'undefined (null)',
+    ridgeName: 'Spectral ridge', comparatorName: 'Source-mean comparator',
+    // Methods and limits
+    limitsH2: 'What these results can and cannot say',
+    methodsH3: 'How each result was produced',
+    methods: (): [string, Part[]][] => [
+      ['WBCIC-SHU baselines', ['The publisher’s processed derivative: 58 anonymous channel indices at 250 Hz in four-second epochs. Welch relative band power in 4–8, 8–13, 13–30 and 30–40 Hz per channel, as log ratios: 232 values per trial. A StandardScaler fitted on session 1 only, then a RidgeClassifier (alpha 1, no class weights). No hyperparameter search, target normalization, calibration or abstention.']],
+      ['WBCIC-SHU, frozen CBraMod', ['The same trials, resampled to 200 Hz and zero-padded to 800 samples; each trial and channel divided by its own standard deviation, a dimensionless input, not the checkpoint’s native amplitude, so upstream benchmark numbers are not reproduced. CBraMod in evaluation mode with every weight frozen; its four temporal patch embeddings averaged into 11,600 values per trial; a separate StandardScaler and RidgeClassifier fitted on each person’s session 1 only. No backbone training, LoRA or target-session calibration.']],
+      ['Longitudinal RSVP', ['57 EEG channels, −200 to +700 ms around each event, baseline-normalized; six 100 ms averages from +100 to +700 ms, 342 values per event. Per person, first-visit blocks 1–3 fit a fixed L2 logistic regression and block 4 fits Platt calibration; later visits are scored on blocks 2–4. Group B is not used. No hyperparameter search, target-label calibration, fine-tuning or LoRA.']],
+      ['Continuous cursor tracking', ['62 channels at 1,000 Hz, already band-passed and notch-filtered by the publisher. Five bands from 4 to 30 Hz through a per-trial FIR filter, the preceding second of band power as channel-relative log power: 310 values per row, from a trial-contained 2-second past window, every 40 ms. Per response arm, a StandardScaler and response scaling fitted on the earliest session only, then Ridge (alpha 1). No tuning, LoRA, target-session calibration or foundation-model inference.']],
+    ],
+    intervalsH3: 'What the intervals cover',
+    limitsH3: 'Limits that hold for all four results',
+    intervals: 'Every interval is a pointwise 95% percentile interval from 10,000 participant (or, for cursor tracking, record) bootstrap resamples within its cohort, with paired draws for every difference. Each is conditional on the fixed trained models and predictions: refitting, preprocessing, model and protocol selection — and, for CBraMod, pretraining overlap — are not included, and there is no multiple-comparison adjustment.',
+    limits: [
+      'The same person in every result. Each decoder is trained on that person’s own earlier labelled data; none of this measures a decoder on someone it has never seen, or on another dataset.',
+      'Offline only. No real-time, closed-loop, clinical or deployment claim, and in cursor tracking no claim about online control quality or intended-motion decoding.',
+      'Nothing pooled, nothing ranked. The three datasets, the two WBCIC-SHU cohorts, the two cursor-tracking cohorts and its two response arms are each reported apart; no single score summarises them, and none joins the eight-protocol core matrix.',
+      'Fixed protocols, frozen before scoring; the scores here were not used to tune them. The CBraMod arm is the exception that is disclosed: it was frozen after the spectral ridge results existed and reuses their test trials.',
+      'Target labels and metadata had been seen. Earlier WBCIC-SHU schema checks inspected label domains and counts, and RSVP event roles and target labels were inspected during quality checks. Every prediction was sealed before scoring, and no target label entered normalization, fitting, calibration, prediction or any hyperparameter, threshold, abstention or retry decision.',
+      'Publisher preprocessing as delivered. WBCIC-SHU’s channel order rests on the publisher’s procedures and the raw headers, not a direct raw-to-processed proof, and its physical amplitude is unresolved. The selection history and temporal support of its reference, filter, epoch and baseline choices are not fully established.',
+      'No calibration arm. Neither WBCIC-SHU result says whether a few labelled session-3 trials would help: that needs its own matched arm, and none was run (no LoRA or calibration-budget comparison either).',
+      'Cursor tracking: session, practice, speed and the historical decoder in use are confounded, and the recorded decoder labels are observational contexts, not randomized comparisons; the unknown order of decoders within a session rules out chronological-prefix and online-adaptation claims. A source-only stability diagnostic would be a new, separately frozen analysis, not a revision of these scores.',
+      'Audit scope. Each result passed an independent numerical audit of its saved predictions, metrics and intervals; none independently repeated the full feature extraction from the raw EEG, and for CBraMod the encoder was not rerun on all the EEG.',
+    ],
+    notPubH3: 'Not published here',
+    notPub: 'Per-person and per-record values of any kind — every minimum and percentile, and every median other than the four cursor-tracking ridge medians printed beside their means; which people declined or which records did worse; WBCIC-SHU confusion matrices; the cursor-tracking results split by recorded decoder; measured compute; and any participant, record or file identifier.',
+    creditsH3: 'Credits, licences and consent',
+    consentH: 'Ethics and consent, as the paper states them:',
+    readFrom: 'Read from the paper’s full text ↗',
+    recordLink: 'Dataset record ↗', paperLink: 'Paper ↗',
+    cbramodCredit: (): Part[] => ['CBraMod, the frozen encoder: its paper and the pinned checkpoint’s SHA-256 ', fm.model.checkpoint_sha256.slice(0, 12), '… (revision ', fm.model.source_revision.slice(0, 12), '…). Its pretraining exposure for WBCIC-SHU is not established: the model paper describes pretraining on the TUH EEG corpus and the pinned repository lists SHU as a downstream task, and neither gives a checkpoint-specific file manifest.'],
+    cbramodPaper: 'CBraMod paper ↗', cbramodPage: 'CBraMod’s page',
+    derived: 'Derived analyses by BCI Report, aggregates only; not endorsed by the data’s authors, and no raw data are redistributed.',
+    relatedH2: 'Related questions',
+    related: [
+      { text: 'The same person’s next session, with and without a few labelled trials from it — OpenBMI motor imagery, two classical baselines: ', href: '/topics/calibration-budget/#next-session', link: topicCards.en['calibration-budget'].question },
+      { text: 'The next day, with three ways to update a pretrained model — run and independently replayed, and held, so no figure is published: ', href: '/topics/model-adaptation/#next-day', link: topicCards.en['model-adaptation'].question },
+      { text: 'Later sessions of one person, a longitudinal pilot listed as status only, on the same page: ', href: '/topics/model-adaptation/#cross-session', link: 'Same person, later sessions' },
+      { text: 'CBraMod and other frozen encoders on the core protocols, and pretrained against random initialization: ', href: '/topics/does-pretraining-help/', link: topicCards.en['does-pretraining-help'].question },
+    ],
+  },
+  zh: {
+    description: `部分管用。同一被试、较晚的会话、不使用该会话的标签：WBCIC-SHU 上，分类头用第 1 次会话拟合的冻结 CBraMod 在两个队列中分别比 spectral ridge 高 ${F(gain2)} 和 ${F(gain3)}；纵向 RSVP 上，到标称第 200 天，AUROC 从 ${F(au7)} 降到 ${F(au200)}，平均精确率从 ${F(ap7)} 降到 ${F(ap200)}；光标追踪中，固定解码器在每一条纳入记录上的总体误差都高于一个常数基线。`,
+    answer: `部分管用，而且每项结果都要单独看。WBCIC-SHU 运动想象——用每名被试的第 1 次记录会话训练、在第 3 次会话上测试，不使用第 3 次会话的任何标签；二分类队列 ${ans(n(lede('2C')))} 名被试、三分类队列 ${ans(n(lede('3C')))} 名被试，分开分析——分类头用第 1 次会话拟合的冻结 CBraMod，平衡准确率分别为 ${ans(fmBa2)} 和 ${ans(fmBa3)}，比相对频谱功率 + 岭回归（relative spectral ridge）高 ${ans(gain2)} 和 ${ans(gain3)}（pp 即百分点），两个配对区间都在零以上。它需要这名被试较早会话的标签，所以是同一被试的跨会话迁移，不是给新被试解码，也不能说明提升来自预训练。纵向 RSVP 任务上，${ans(n(rs.cohort.people))} 名被试各自在第一次访次训练的解码器，在发布者标称的第 7 天访次上，对目标排序的 AUROC 为 ${ans(au7)}，在标称第 200 天为 ${ans(au200)}，配对变化 ${ans(dAu)}（${ans(dLo)} 至 ${ans(dHi)}）；目标事件只占约 ${ans(share)}，平均精确率从 ${ans(ap7)} 降到 ${ans(ap200)}。标称的访次标签不能把这两项下降归因于时间流逝。连续光标追踪中，用每条记录最早会话训练的固定 spectral ridge，在最晚会话上的总体误差高于一个常数的源会话均值对照——两个队列、两种响应变量下的每一条纳入记录都是如此：这是一个阴性结果，并且上尾极重。`,
+    eyebrow: '跨会话迁移 · 同一被试，不使用后一次会话的标签',
+    dek: '三个数据集、四项结果，逐项分开看。跨记录会话的运动想象：分类头用较早会话拟合的冻结 CBraMod，在两个队列中都高于频谱基线。后续访次上的目标检测：第一次访次训练的解码器，到最后一个标称访次时对目标的排序变差，平均精确率也更低。连续光标追踪：每一条纳入记录上，固定解码器都不如一个常数基线。',
+    wbEyebrow: 'WBCIC-SHU · 运动想象 · 第 1 次会话到第 3 次会话',
+    wbH2: '隔两次会话的运动想象：两个基线与一个冻结编码器',
+    wbLede: (): Part[] => ['被试想象左手或右手运动（二分类队列，', n(c2.people), ' 名被试），或者在另一个独立的三分类队列中（', n(c3.people), ' 名被试）再加上脚部动作，共记录三次会话。每名被试完整的第 1 次会话用于训练解码器，第 3 次会话用于测试；第 2 次会话不使用，也不使用第 3 次会话的任何标签。会话编号只是记录会话的序号，不保证固定的时间间隔，也不保证在不同的日子。两个队列分开分析，从不平均。'],
+    baRegion: 'WBCIC-SHU：按队列列出第 3 次会话上的平衡准确率，可横向滚动',
+    baCaption: (): Part[] => ['第 3 次会话上的被试平均平衡准确率，附配对的以被试为单位的 bootstrap 95% 区间。二分类的随机水平为 ', f(c2.chance_level), '，三分类为 ', f(c3.chance_level), '；源会话多数类先验按构造正好落在随机水平上。准确率与宏平均 F1 是次要指标的均值。'],
+    colArm: '解码器',
+    colCohort: (c: '2C' | '3C', people: FigValue): Part[] => [cohortName(c), ' · ', people, ' 名被试'],
+    secondary: (acc: FigValue, f1: FigValue): Part[] => ['准确率 ', acc, ' · 宏平均 F1 ', f1],
+    diffRegion: 'WBCIC-SHU：按队列列出平衡准确率的配对差值，可横向滚动',
+    diffCaption: '平衡准确率的配对差值，单位为百分点（pp），相同被试与测试试次。每个区间都在各自队列内对逐人配对差值重抽样，以训练好的固定模型及其预测为条件。',
+    diffRow: { ridge: 'spectral ridge 减源会话先验', cbramod: '冻结 CBraMod 减 spectral ridge' },
+    aboveZero: '区间在零以上。',
+    findLabel: (people: FigValue): Part[] => ['冻结 CBraMod 减 spectral ridge，二分类队列，', people, ' 名被试'],
+    findH3: '两个队列中都高于频谱基线——这是两条流程之间的比较',
+    findP: (): Part[] => ['配对区间 ', f(m2.paired.balanced_accuracy_difference.interval_95[0], 'sgn1'), ' 至 ', f(m2.paired.balanced_accuracy_difference.interval_95[1], 'pp1'), '。在人数较少的三分类队列中，差值为 ', gain3, '（', f(m3.paired.balanced_accuracy_difference.interval_95[0], 'sgn1'), ' 至 ', f(m3.paired.balanced_accuracy_difference.interval_95[1], 'pp1'), '）。CBraMod 这一组是在频谱结果出来之后才冻结的，并复用了同样的测试试次：这是一次比较性的后续分析，不是全新的测试集。没有结构相同的随机初始化对照，两种特征空间的维度与预处理也不同（相同的岭回归 alpha 并不能使两者的正则化程度相当），这个检查点的预训练数据中是否出现过 WBCIC-SHU 也没有确定，所以这个差值比较的是两条流程，不能说明它来自预训练。分类头用每名被试第 1 次会话的标签训练：不使用第 3 次会话的标签，并不等于能给新被试解码。'],
+    trials: (): Part[] => ['试次：二分类队列训练 ', n(c2.source_trials), ' 个、测试 ', n(c2.target_trials), ' 个；三分类队列训练 ', n(c3.source_trials), ' 个、测试 ', n(c3.target_trials), ' 个；没有排除任何被试或试次。', n(cpu.session_quality.sessions), ' 条会话记录中有 ', n(cpu.session_quality.fixed_count_holds), ' 条的试次数少于发布者标称的数量（实际 ', n(cpu.session_quality.delivered_trials), ' 个，标称 ', n(cpu.session_quality.nominal_trials), ' 个）；其中 ', n(cpu.session_quality.holds_in_selected_sessions), ' 条在所用的会话中，按经过审查的可变试次数规则纳入，不补齐、不截断，也不按表现剔除；原先按严格计数设置的暂缓仍保留在记录中。缺失试次的原因不明。'],
+    rsEyebrow: '纵向 RSVP · 目标检测 · 第一次访次训练的解码器',
+    rsH2: '第一次训练的脑电解码器，在后续访次还有效吗？',
+    rsSubtitle: '同一被试、离线的 RSVP 分类；访次为发布者的标称标签；不对目标会话做任何适配。',
+    rsModel: (): Part[] => ['解码器：', rs.model.label, '（归一化 ERP 特征 + logistic/Platt，CPU 基线）。'],
+    rsLede: (): Part[] => ['在快速序列视觉呈现（RSVP）中，屏幕上连续呈现人脸图像，解码器要找出其中少见的目标。', n(rs.cohort.people), ' 名被试（数据源中的 A 组）在发布者标为第 1、7、80、200 天的访次上记录。每名被试的解码器只用其第一次访次训练和校准，之后原样在每个后续访次上评分：每个访次 ', n(rs.cohort.people), ' 名被试合计 ', n(visits[0].events), ' 个事件。'],
+    plotCaption: '每个标称后续访次上的 AUROC：同一批被试，每人一个在第一次访次训练的解码器。',
+    plotLegend: '被试平均 AUROC。点为均值，横线为被试 bootstrap 95% 区间（数值见各行标签下方），虚线为随机水平，即随机排列事件的解码器。访次只是标签，等距排列，不是时间轴，访次之间也没有拟合曲线。AUROC 衡量把目标排在非目标之前的能力，不是准确率。',
+    caveatsH: '读图时请同时注意',
+    caveats: (): Part[][] => [
+      ['同一被试：每名被试的解码器用其本人第一次访次的标签训练和校准。不是给新被试用的解码器。'],
+      ['标称访次：第 7、80、200 天是发布者的标签，并没有核实每名被试具体的日历间隔。'],
+      ['目标很少：每个访次中目标事件都只占约 ', f(visits[0].target_share), '（各访次的数值见下表）。AUROC 衡量排序；平均精确率不是某个阈值下的精确率；两者都不是在线选择的成功率。目标占比只是对数据的描述，不是对照组。'],
+      [n(rs.cohort.people), ' 名被试、一个固定的离线基线：不涉及临床、实时或因果方面的结论，也没有基础模型。'],
+    ],
+    rsRegion: '纵向 RSVP：每个标称访次上发布的全部指标，可横向滚动',
+    rsCaption: (): Part[] => ['每个标称访次上的被试平均值，', n(rs.cohort.people), ' 名被试；计数为事件总数。'],
+    colMeasure: '指标',
+    measures: { auroc: 'AUROC', ap: '平均精确率', logloss: '对数损失', brier: 'Brier 分数', ece: 'ECE，10 个分箱', targets: '目标事件', delivered: '实际呈现的事件' },
+    measureNote: { auroc: '衡量排序，0 到 1；不是准确率', ap: '0 到 1；不是某个阈值下的精确率', logloss: '每个事件，自然对数；越低越好', brier: '越低越好', ece: '期望校准误差；越低越好', targets: '占该访次全部事件', delivered: '受保护的评分接口不提供此计数' },
+    ofEvents: (k: FigValue, all: FigValue): Part[] => [k, ' 个（共 ', all, ' 个）'],
+    nullCell: '不可得（空值，不是零）',
+    rsFindLabel: (people: FigValue): Part[] => ['AUROC，标称第 200 天减第 7 天，相同的 ', people, ' 名被试'],
+    rsFindH3: '标称第 200 天时，AUROC 与平均精确率都更低',
+    rsFindP: (): Part[] => ['配对区间 ', dLo, ' 至 ', dHi, '，在零以下。', n(dd.people), ' 名被试中有 ', n(dd.people_declined_by_0_05_or_more), ' 人下降了 0.05 AUROC 及以上。平均精确率也更低：标称第 7 天为 ', f(d7.average_precision.mean, 'auc3'), '，第 200 天为 ', f(d200.average_precision.mean, 'auc3'), '。这描述的是这一队列和这一解码器，不能说明变化是由时间流逝造成的。'],
+    rsCoding: '标签编码：论文和发布者的示例脚本都把 1 记为非目标、2 记为目标，而数据发布中的 Trigger.txt 正好相反。这里遵循论文和脚本，这一优先顺序在建模之前就已确定；这处矛盾保留在明处。',
+    fzEyebrow: '连续光标追踪 · 阴性结果',
+    fzH2: '一个简单基线揭示了跨会话解码器的失败',
+    fzLabel: '离线、同一被试、不对目标会话做任何适配。',
+    fzLede: '被试用运动想象控制光标，追踪一个在屏幕上连续移动的目标；发布者把数据分为 Main 与 Transfer Learning 两个队列。对每条纳入记录，固定的 spectral ridge 用最早一次完整记录会话中所有符合条件、非 chance 的 run 训练，在最晚一次会话上测试，不使用该会话的任何标签，并与源会话均值对照比较：即最早会话的平均响应，对每一行都重复使用。解码器在较晚的会话上能胜过这个常数吗？这里没有。',
+    fzCards: [
+      { h: '纳入的队列记录', v: (): Part[] => [n(fz.coverage.admitted_records)], p: (): Part[] => ['Main ', n(main.admitted_records), ' 条（共 ', n(main.candidate_records), ' 条），Transfer Learning ', n(tl.admitted_records), ' 条（共 ', n(tl.candidate_records), ' 条）。这是记录数，不能证明是不同的人。'] },
+      { h: '每种响应变量的目标行数', v: (): Part[] => [n(fz.coverage.target_rows_per_arm)], p: (): Part[] => ['两种响应变量用的是同一批行：两个结果变量并不使独立样本加倍。没有删除任何响应行。'] },
+      { h: '响应拟合', v: (): Part[] => [n(fz.coverage.response_fits)], p: (): Part[] => ['每条纳入记录、每种响应变量各一次，全部成功。'] },
+    ],
+    metric: '误差指标是联合的源会话标准差归一化 RMSE：误差除以最早会话中响应的标准差，在每个试次内先对两个坐标轴平均再开平方。越低越好。它是误差，不是百分比，也不是准确率。每条记录对其试次等权平均，每个队列的均值对记录等权；区间在队列内对记录重抽样。',
+    armsNote: '两种响应变量，各有一张表。它们是同一批行上的不同结果变量：从不合并，它们的误差也不互相比较。',
+    fzRegion: (arm: string) => `连续光标追踪，${arm}，按队列列出，可横向滚动`,
+    fzCaption: (arm: string, tag: string) => `${arm} · ${tag} · 最晚会话上的误差，越低越好：spectral ridge 的均值及其区间与中位数、对照的均值，以及配对差值（为正表示 ridge 的误差更大）。`,
+    colCohort2: '队列',
+    colRidgeMean: 'spectral ridge · 均值',
+    colRidgeMedian: 'spectral ridge · 中位数',
+    colComparator: '源会话均值对照 · 均值',
+    colPaired: 'ridge 减对照 · 相同记录',
+    admitted: (k: FigValue, of: FigValue): Part[] => ['纳入 ', k, ' 条记录（共 ', of, ' 条）'],
+    timesMedian: (r: FigValue): Part[] => ['均值是中位数的 ', r, ' 倍'],
+    worseOn: (k: FigValue, of: FigValue): Part[] => ['ridge 误差更高的记录：', k, ' 条（共 ', of, ' 条）'],
+    tailCaption: (arm: string) => `${arm}：spectral ridge 的均值与中位数，与对照并排，对数刻度。只在这一种响应变量内部阅读。`,
+    tailLegend: '对数刻度，以 10 的幂标注，从 10⁻² 到 10⁶：相邻网格线相差 100 倍，依次为 1、100 与 10,000。点为数值，横线为其 95% 区间；ridge 的中位数在这里没有区间。所印数值就是发布的数字，横条只是示意。',
+    tail: (): Part[] => ['在四个“队列 × 响应变量”格子中，spectral ridge 的平均误差是其中位数的 ', f(tailLo, 'int0'), ' 到 ', f(tailHi, 'int0'), ' 倍：少数记录的误差极大。没有删除、截断或缩尾任何已评分的记录；极端误差的原因——特征分布偏移、对缩放敏感，还是别的原因——尚未确定。“每一条记录”这一结论针对的是总体主要误差，不延伸到次要指标，也不延伸到按记录时所用解码器划分的每一种情形。'],
+    coverage: (): Part[] => ['覆盖情况。Main 队列纳入 ', n(main.admitted_records), ' 条记录（共 ', n(main.candidate_records), ' 条候选），结果以这一子集为条件；', n(main.held_before_scoring), ' 条在任何评分之前因元数据问题暂缓，并保留记录：',
+      ...main.hold_reasons.flatMap((h: { reason: string; records: number }, i: number) => [i ? '；' : '', n(h.records), ' 条因为', holdReasonZh[h.reason]]), '。Transfer Learning 队列纳入 ', n(tl.admitted_records), ' 条（共 ', n(tl.candidate_records), ' 条）。合计 ', n(fz.coverage.admitted_records), ' 条纳入的队列记录，不能证明是 ', n(fz.coverage.admitted_records), ' 个不同的人：两个队列可能有相同的人，所以从不合并。'],
+    cohortNameNote: 'Transfer Learning 是发布者对该队列数据采集方式的命名；这里没有训练任何迁移学习模型。',
+    secSummary: '各坐标轴的次要指标——原始 RMSE、R² 与 Pearson 相关系数',
+    secKey: '对记录等权的均值及其 95% 区间。原始 RMSE 的单位是各响应变量的存储单位；R² 与 Pearson 无单位。常数预测没有相关系数，所以对照的 Pearson 值无定义：为空值，不是零。上面“每一条记录”的结论不延伸到这些指标，它们的配对差值也不发布。',
+    secRegion: (arm: string) => `连续光标追踪，${arm}，次要指标，可横向滚动`,
+    secCaption: (arm: string) => `${arm} · 最晚会话上的次要指标。`,
+    colModel: '队列与模型',
+    undefinedCell: '无定义（空值）',
+    ridgeName: 'spectral ridge', comparatorName: '源会话均值对照',
+    limitsH2: '这些结果能说明什么，不能说明什么',
+    methodsH3: '每项结果是怎样得到的',
+    methods: (): [string, Part[]][] => [
+      ['WBCIC-SHU 基线', ['使用发布者预处理后的衍生数据：58 个匿名通道编号，250 Hz，4 秒分段。每个通道在 4–8、8–13、13–30 与 30–40 Hz 频带上的 Welch 相对频带功率，取对数比：每个试次 232 个值。StandardScaler 只在第 1 次会话上拟合，之后是 RidgeClassifier（alpha 为 1，不加类别权重）。没有超参搜索、目标会话归一化、校准或拒识。']],
+      ['WBCIC-SHU，冻结 CBraMod', ['同样的试次，重采样到 200 Hz 并补零到 800 个采样点；每个试次、每个通道除以其自身的标准差，这是无量纲的输入，不是该检查点原生的幅值，所以这里也不复现上游基准中的数字。CBraMod 处于评估模式，所有权重冻结；四个时间片嵌入取平均，每个试次 11,600 个值；为每名被试单独在其第 1 次会话上拟合 StandardScaler 与 RidgeClassifier。没有训练主干网络，没有 LoRA，也没有目标会话校准。']],
+      ['纵向 RSVP', ['57 个 EEG 通道，每个事件前 200 ms 到后 700 ms，做基线归一化；从 +100 到 +700 ms 取 6 个 100 ms 平均，每个事件 342 个值。每名被试第一次访次的第 1–3 组块拟合固定的 L2 逻辑回归，第 4 组块拟合 Platt 校准；后续访次在第 2–4 组块上评分。不使用 B 组。没有超参搜索、目标标签校准、微调或 LoRA。']],
+      ['连续光标追踪', ['62 个通道，1,000 Hz，发布者已做带通与陷波滤波。4 到 30 Hz 之间的 5 个频带，经逐试次的 FIR 滤波，取前 1 秒的频带功率，表示为相对通道的对数功率：每行 310 个值，来自试次内过去 2 秒的窗口，每 40 ms 一行。每种响应变量分别只在最早会话上拟合 StandardScaler 与响应缩放，之后是 Ridge（alpha 为 1）。没有调参、LoRA、目标会话校准或基础模型推理。']],
+    ],
+    intervalsH3: '区间覆盖了什么',
+    limitsH3: '四项结果共同的局限',
+    intervals: '每个区间都是逐点的 95% 百分位区间，来自在各自队列内对被试（光标追踪中为记录）做的 10,000 次 bootstrap 重抽样，每个差值都用配对抽样。区间都以训练好的固定模型及其预测为条件：不包含重新拟合、预处理、模型与协议选择带来的不确定性——对 CBraMod 也不包含预训练数据重叠带来的不确定性——也没有做多重比较校正。',
+    limits: [
+      '每项结果都是同一被试。每个解码器都用这个人自己较早的有标签数据训练；这里没有任何结果衡量解码器在从未见过的人身上、或在另一个数据集上的表现。',
+      '只有离线结果。不涉及实时、闭环、临床或部署方面的结论；在光标追踪中，也不涉及在线控制质量或意图运动解码。',
+      '不合并，不排名。三个数据集、WBCIC-SHU 的两个队列、光标追踪的两个队列及其两种响应变量，都分开报告；没有一个分数能概括它们，也都不进入八个协议的核心矩阵。',
+      '协议固定，在评分之前冻结；这里的分数没有用来调整协议。已说明的例外是 CBraMod 这一组：它在 spectral ridge 的结果出来之后才冻结，并复用了同样的测试试次。',
+      '目标数据的标签与元信息曾被查看过。WBCIC-SHU 较早的结构检查查看过标签的取值范围与计数，RSVP 的事件角色与目标标签在质量检查中查看过。所有预测都在评分之前封存，没有任何目标标签进入归一化、拟合、校准、预测，或超参数、阈值、拒识与重试方面的决定。',
+      '沿用发布者的预处理。WBCIC-SHU 的通道顺序依据的是发布者的处理流程与原始文件头，而不是从原始数据到处理后数据的直接证明，它的物理幅值也尚未确定。其参考、滤波、分段与基线处理的选择过程及时间支撑也没有完全确定。',
+      '没有校准组。WBCIC-SHU 的两项结果都不能说明加入少量第 3 次会话的有标签试次是否有帮助：这需要单独匹配的一组，而这里没有运行（也没有 LoRA 或校准预算方面的比较）。',
+      '光标追踪：会话、练习、速度与当时所用的历史解码器相互混杂，记录中的解码器标签是观察性的情境，不是随机分配的比较；会话内解码器的先后顺序未知，所以不能作按时间顺序的前缀划分或在线适配方面的结论。只用源会话数据的稳定性诊断将是一项新的、单独冻结的分析，而不是对这些分数的修改。',
+      '审计范围。每项结果都通过了针对其已保存预测、指标与区间的独立数值审计；都没有从原始 EEG 独立重做完整的特征提取，CBraMod 的编码器也没有在全部 EEG 上重新运行。',
+    ],
+    notPubH3: '这里不发布的内容',
+    notPub: '任何逐人或逐条记录的数值——所有最小值与百分位数，以及除光标追踪中与均值并列的四个 spectral ridge 中位数之外的所有中位数；哪些人下降了、哪些记录更差；WBCIC-SHU 的混淆矩阵；按记录时所用解码器划分的光标追踪结果；实测的计算量；以及任何被试、记录或文件标识。',
+    creditsH3: '署名、许可与知情同意',
+    consentH: '论文陈述的伦理与知情同意：',
+    readFrom: '读自论文全文 ↗',
+    recordLink: '数据集记录 ↗', paperLink: '论文 ↗',
+    cbramodCredit: (): Part[] => ['CBraMod，即这里的冻结编码器：其论文，以及固定检查点的 SHA-256 ', fm.model.checkpoint_sha256.slice(0, 12), '…（版本 ', fm.model.source_revision.slice(0, 12), '…）。WBCIC-SHU 是否出现在它的预训练数据中没有确定：模型论文说明预训练使用 TUH EEG 语料，固定版本的代码仓库把 SHU 列为下游任务，两者都没有给出针对该检查点的文件清单。'],
+    cbramodPaper: 'CBraMod 论文 ↗', cbramodPage: 'CBraMod 的页面',
+    derived: '以上均为 BCI Report 的衍生分析，只发布聚合结果；不代表数据作者的认可，也不再分发任何原始数据。',
+    relatedH2: '相关问题',
+    related: [
+      { text: '同一个人的下一次会话，加入或不加入少量该会话的校准试次——OpenBMI 运动想象，两个经典基线：', href: '/topics/calibration-budget/#next-session', link: topicCards.zh['calibration-budget'].question },
+      { text: '第二天，以及更新预训练模型的三种方式——已运行并通过独立复核，处于暂缓状态，所以不发布任何数字：', href: '/topics/model-adaptation/#next-day', link: topicCards.zh['model-adaptation'].question },
+      { text: '同一个人之后的会话，一项只发状态的纵向试点，在同一页面：', href: '/topics/model-adaptation/#cross-session', link: '同一个人，之后的会话' },
+      { text: 'CBraMod 与其他冻结编码器在核心协议上的结果，以及预训练与随机初始化的对比：', href: '/topics/does-pretraining-help/', link: topicCards.zh['does-pretraining-help'].question },
+    ],
+  },
+}[locale];
+
+// The consent and ethics sentences: the export's English, and its Chinese here, held to the export's wording.
+const consentZh: Record<string, [string, string, string, string]> = {
+  'wbcic-shu': ['Approved by the Tsinghua University Medical Ethics Committee (approval number 20190002); carried out in line with the Declaration of Helsinki.',
+    'Written informed consent was obtained from the participants after they were informed about the procedure, purpose, requirements and motor-imagery techniques.',
+    '经清华大学医学伦理委员会批准（批准号 20190002），按《赫尔辛基宣言》开展。',
+    '被试在了解实验流程、目的、要求与运动想象技巧之后，签署了书面知情同意。'],
+  'longitudinal-rsvp': ['Approved by the Tsinghua Institutional Review Board (No. 20230058).',
+    'Each participant read and signed an informed consent form before the experiment.',
+    '经清华大学机构审查委员会批准（编号 20230058）。',
+    '每名被试在实验前阅读并签署了知情同意书。'],
+  'forenzo-continuous-tracking': ['Approved by the Institutional Review Board at Carnegie Mellon University; no approval number is given.',
+    'Each subject provided written consent to the protocol before participating.',
+    '经 Carnegie Mellon University 机构审查委员会批准；论文没有给出批准编号。',
+    '每名被试在参加之前对实验方案给予了书面同意。'],
+};
+const credits = (['wbcic-shu', 'longitudinal-rsvp', 'forenzo-continuous-tracking'] as const).map(id => {
+  const d = (later.datasets as Record<string, any>)[id], e = d.consent_and_ethics, r = d.rights, z = consentZh[id];
+  need(e.ethics_approval.stated && e.informed_consent.stated && e.ethics_approval.statement === z[0] && e.informed_consent.statement === z[1], `the ${id} consent and ethics sentences`);
+  const paper = r.reviewBasis.find((u: string) => u.startsWith('https://doi.org/') && u !== r.source);
+  const pmc = r.reviewBasis.find((u: string) => u.includes('europepmc.org'));
+  need(Boolean(paper && pmc), `the ${id} rights record names its paper and the full text the statements were read from`);
+  return { id, r, e, paper, pmc, ethics: zh ? z[2] : e.ethics_approval.statement, consent: zh ? z[3] : e.informed_consent.statement };
+});
+const card = topicCards[locale]['later-sessions'];
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/later-sessions/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="later-sessions"
+  answer={copy.answer}
+  dataFiles={['/data/later-sessions-update.json']}
+>
+  <section class="topic-section" id="wbcic-shu" aria-labelledby="wbcic-heading" data-later="wbcic">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.wbEyebrow}</p><h2 id="wbcic-heading">{copy.wbH2}</h2></div><p>{(copy.wbLede()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.baRegion}>
+      <table data-later-table="wbcic-ba">
+        <caption>{(copy.baCaption()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</caption>
+        <thead><tr><th scope="col">{copy.colArm}</th>{cohorts.map(c => <th scope="col">{(copy.colCohort(c, n(cpu.cohorts[c].people))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}<small>{cohortClasses(c)}</small></th>)}</tr></thead>
+        <tbody>
+          <tr data-later-row="source_prior"><th scope="row">{armName.source_prior}<small>{armNote.source_prior}</small></th>{cohorts.map(c => { const x = cpu.cohorts[c].arms.source_prior; return <td data-cell={`${c}|source_prior`}><Fig f={f(x.balanced_accuracy.mean)} cls="metric"/><span class="interval">{(copy.secondary(f(x.accuracy.mean), f(x.macro_f1.mean))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></td>; })}</tr>
+          <tr data-later-row="relative_spectral_ridge"><th scope="row">{armName.relative_spectral_ridge}<small>{armNote.relative_spectral_ridge}</small></th>{cohorts.map(c => { const x = cpu.cohorts[c].arms.relative_spectral_ridge; return <td data-cell={`${c}|relative_spectral_ridge`}><Fig f={f(x.balanced_accuracy.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.balanced_accuracy.interval_95[0])}/>–<Fig f={f(x.balanced_accuracy.interval_95[1])}/></span><span class="interval">{(copy.secondary(f(x.accuracy.mean), f(x.macro_f1.mean))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></td>; })}</tr>
+          <tr data-later-row="frozen_cbramod"><th scope="row">{armName.frozen_cbramod}<small>{armNote.frozen_cbramod}</small></th>{cohorts.map(c => { const x = fm.cohorts[c].frozen_cbramod; return <td data-cell={`${c}|frozen_cbramod`}><Fig f={f(x.balanced_accuracy.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.balanced_accuracy.interval_95[0])}/>–<Fig f={f(x.balanced_accuracy.interval_95[1])}/></span><span class="interval">{(copy.secondary(f(x.accuracy.mean), f(x.macro_f1.mean))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></td>; })}</tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.diffRegion}>
+      <table data-later-table="wbcic-diff">
+        <caption>{copy.diffCaption}</caption>
+        <thead><tr><th scope="col">{copy.colArm}</th>{cohorts.map(c => <th scope="col">{(copy.colCohort(c, n(cpu.cohorts[c].people))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</th>)}</tr></thead>
+        <tbody>
+          {([['ridge', (c: '2C' | '3C') => cpu.cohorts[c].paired], ['cbramod', (c: '2C' | '3C') => fm.cohorts[c].paired]] as const).map(([k, get]) => <tr data-later-row={`diff-${k}`}><th scope="row">{copy.diffRow[k]}</th>{cohorts.map(c => { const d = get(c), x = d.balanced_accuracy_difference; return <td data-cell={`${c}|diff-${k}`}><Fig f={f(x.mean, 'pp1')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.interval_95[0], 'sgn1')}/> {tc.to} <Fig f={f(x.interval_95[1], 'pp1')}/></span>{d.interval_excludes_zero && <span class="interval">{copy.aboveZero}</span>}</td>; })}</tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="wbcic|2C|frozen_cbramod">
+      <div class="finding-number"><strong><Fig f={gain2}/></strong><span>{(copy.findLabel(n(m2.people))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></div>
+      <div class="finding-copy"><h3>{copy.findH3}</h3><p>{(copy.findP()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    </div>
+    <p class="protocol-note" data-later-note="wbcic-trials">{(copy.trials()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+  </section>
+
+  <section class="topic-section" id="longitudinal-rsvp" aria-labelledby="rsvp-heading" data-later="rsvp">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.rsEyebrow}</p><h2 id="rsvp-heading">{copy.rsH2}</h2><p class="topic-subtitle" data-subtitle="rsvp">{copy.rsSubtitle}{zh && <span class="note-original" lang="en">{rs.subtitle}</span>}</p></div><p>{(copy.rsLede()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    <p class="protocol-note" data-later-note="rsvp-model">{copy.rsModel().map(p => typeof p === 'string' ? (p === rs.model.label ? <span lang="en">{p}</span> : p) : <Fig f={p}/>)}</p>
+    <IntervalPlot
+      id="rsvp-auroc"
+      caption={copy.plotCaption}
+      legend={copy.plotLegend}
+      domain={[0.5, 1]}
+      ticks={['0.50', '0.625', '0.75', '0.875', '1.00']}
+      reference={0.5}
+      rows={rsvpRows}
+    />
+    <div class="rsvp-caveats" data-later-note="rsvp-caveats"><h3 class="roadmap-h3">{copy.caveatsH}</h3><ul class="rd-rules">{copy.caveats().map(c => <li>{(c).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</li>)}</ul></div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.rsRegion}>
+      <table data-later-table="rsvp">
+        <caption>{(copy.rsCaption()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</caption>
+        <thead><tr><th scope="col">{copy.colMeasure}</th>{visits.map(v => <th scope="col">{visitName(v)}</th>)}</tr></thead>
+        <tbody>
+          <tr data-later-row="auroc"><th scope="row">{copy.measures.auroc}<small>{copy.measureNote.auroc}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|auroc`}><Fig f={f(v.auroc.mean, 'auc3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(v.auroc.interval_95[0], 'auc3')}/>–<Fig f={f(v.auroc.interval_95[1], 'auc3')}/></span></td>)}</tr>
+          <tr data-later-row="average_precision"><th scope="row">{copy.measures.ap}<small>{copy.measureNote.ap}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|average_precision`}><Fig f={f(v.average_precision.mean, 'auc3')} cls="metric"/></td>)}</tr>
+          <tr data-later-row="log_loss"><th scope="row">{copy.measures.logloss}<small>{copy.measureNote.logloss}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|log_loss`}><Fig f={f(v.log_loss.mean, 'num3')} cls="metric"/></td>)}</tr>
+          <tr data-later-row="brier_score"><th scope="row">{copy.measures.brier}<small>{copy.measureNote.brier}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|brier_score`}><Fig f={f(v.brier_score.mean, 'num3')} cls="metric"/></td>)}</tr>
+          <tr data-later-row="ece_10_bins"><th scope="row">{copy.measures.ece}<small>{copy.measureNote.ece}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|ece_10_bins`}><Fig f={f(v.ece_10_bins.mean, 'num3')} cls="metric"/></td>)}</tr>
+          <tr data-later-row="target_events"><th scope="row">{copy.measures.targets}<small>{copy.measureNote.targets}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|target_events`}><span class="metric">{(copy.ofEvents(n(v.target_events), n(v.events))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span><span class="interval"><Fig f={f(v.target_share)}/></span></td>)}</tr>
+          <tr data-later-row="delivered_events"><th scope="row">{copy.measures.delivered}<small>{copy.measureNote.delivered}</small></th>{visits.map(v => <td data-cell={`${v.nominal_day}|delivered_events`} data-null="true">{copy.nullCell}</td>)}</tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="rsvp|contrast">
+      <div class="finding-number"><strong><Fig f={dAu}/></strong><span>{(copy.rsFindLabel(n(dd.people))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></div>
+      <div class="finding-copy"><h3>{copy.rsFindH3}</h3><p>{(copy.rsFindP()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></div>
+    </div>
+    <p class="protocol-note" data-later-note="rsvp-coding">{copy.rsCoding}</p>
+  </section>
+
+  <section class="topic-section" id="forenzo" aria-labelledby="forenzo-heading" data-later="forenzo">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.fzEyebrow}</p><h2 id="forenzo-heading">{copy.fzH2}</h2><p class="topic-subtitle" data-subtitle="forenzo">{copy.fzLabel}{zh && <span class="note-original" lang="en">{fz.label}</span>}</p></div><p>{copy.fzLede}</p></div>
+    <div class="evidence-grid">{copy.fzCards.map(x => <article class="evidence-card"><p class="eyebrow">{x.h}</p><div class="reading">{(x.v()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</div><p>{(x.p()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></article>)}</div>
+    <p class="roadmap-p" data-later-note="forenzo-metric">{copy.metric}</p>
+    <p class="protocol-note" data-later-note="forenzo-arms">{copy.armsNote}</p>
+    {fzArms.map(a => <div class="forenzo-arm" data-forenzo-arm={a}>
+      <h3 class="roadmap-h3">{fzArmName[a].name} <span class="arm-tag">{zh ? `· ${fzArmName[a].tag}` : `(${fzArmName[a].tag})`}</span></h3>
+      <p class="roadmap-p">{fzArmName[a].what}</p>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.fzRegion(fzArmName[a].name)}>
+        <table data-later-table={`forenzo|${a}`}>
+          <caption>{copy.fzCaption(fzArmName[a].name, fzArmName[a].tag)}</caption>
+          <thead><tr><th scope="col">{copy.colCohort2}</th><th scope="col">{copy.colRidgeMean}</th><th scope="col">{copy.colRidgeMedian}</th><th scope="col">{copy.colComparator}</th><th scope="col">{copy.colPaired}</th></tr></thead>
+          <tbody>{fzCohorts.map(c => { const x = cell(c, a); return <tr data-forenzo-cell={`${c}|${a}`}>
+            <th scope="row">{fzCohortName(c)}<small>{(copy.admitted(n(fzc[c].admitted_records), n(fzc[c].candidate_records))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</small></th>
+            <td data-cell="ridge-mean"><Fig f={w(x.ridge.primary.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={w(x.ridge.primary.interval_95[0])}/> {tc.to} <Fig f={w(x.ridge.primary.interval_95[1])}/></span></td>
+            <td data-cell="ridge-median"><Fig f={w(x.ridge.primary.median)} cls="metric"/><span class="interval">{(copy.timesMedian(f(x.upper_tail.ridge_mean_over_median, 'int0'))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></td>
+            <td data-cell="comparator"><Fig f={w(x.source_mean.primary.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={w(x.source_mean.primary.interval_95[0])}/> {tc.to} <Fig f={w(x.source_mean.primary.interval_95[1])}/></span></td>
+            <td data-cell="paired"><Fig f={w(x.paired.primary_difference.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={w(x.paired.primary_difference.interval_95[0])}/> {tc.to} <Fig f={w(x.paired.primary_difference.interval_95[1])}/></span><span class="interval">{(copy.worseOn(n(x.paired.records_with_higher_ridge_error), n(x.paired.records))).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</span></td>
+          </tr>; })}</tbody>
+        </table>
+      </div>
+      <IntervalPlot
+        id={`forenzo-tail-${a === 'historical_decoder_velocity_imitation' ? 'velocity' : 'displacement'}`}
+        caption={copy.tailCaption(fzArmName[a].name)}
+        legend={copy.tailLegend}
+        domain={[-2, 6]}
+        ticks={['10⁻²', '1', '10²', '10⁴', '10⁶']}
+        rows={tailRows(a)}
+      />
+    </div>)}
+    <p class="roadmap-p" data-later-note="forenzo-tail">{(copy.tail()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+    <p class="protocol-note" data-later-note="forenzo-coverage">{(copy.coverage()).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+    <p class="protocol-note" data-later-note="forenzo-cohort-name">{copy.cohortNameNote}</p>
+    <details class="rd-panel" data-later-note="forenzo-secondary">
+      <summary>{copy.secSummary}</summary>
+      <p class="roadmap-p">{copy.secKey}</p>
+      {fzArms.map(a => <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.secRegion(fzArmName[a].name)}>
+        <table data-later-table={`forenzo-secondary|${a}`}>
+          <caption>{copy.secCaption(fzArmName[a].name)}</caption>
+          <thead><tr><th scope="col">{copy.colModel}</th>{secondaryKeys.map(k => <th scope="col">{secondaryHead[k]}</th>)}</tr></thead>
+          <tbody>{fzCohorts.flatMap(c => (['ridge', 'source_mean'] as const).map(m => { const s = cell(c, a)[m].secondary; return <tr data-forenzo-secondary={`${c}|${a}|${m}`}>
+            <th scope="row">{fzCohortName(c)}<small>{m === 'ridge' ? copy.ridgeName : copy.comparatorName}</small></th>
+            {secondaryKeys.map(k => { const v = s[k]; return v.mean === null
+              ? <td data-cell={k} data-null="true">{copy.undefinedCell}</td>
+              : <td data-cell={k}><Fig f={w(v.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={w(v.interval_95[0])}/> {tc.to} <Fig f={w(v.interval_95[1])}/></span></td>; })}
+          </tr>; }))}</tbody>
+        </table>
+      </div>)}
+    </details>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <h3 class="roadmap-h3">{copy.methodsH3}</h3>
+    <div class="method-grid-wide" data-later-note="methods">{copy.methods().map(([h, p]) => <article><h3>{h}</h3><p>{(p).map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</p></article>)}</div>
+    <h3 class="roadmap-h3">{copy.intervalsH3}</h3>
+    <p class="roadmap-p" data-later-note="intervals">{copy.intervals}</p>
+    <h3 class="roadmap-h3">{copy.limitsH3}</h3>
+    <ul class="rd-rules" data-later-note="limits">{copy.limits.map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <p class="roadmap-p" data-later-note="not-published">{copy.notPub}</p>
+    <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+    <div class="citation-list" id="credits">{credits.map(x => <article data-credit={x.id}>
+      <h3 lang="en">{x.r.name}</h3>
+      <p lang="en">{x.r.attribution}</p>
+      <p data-consent={x.id}><strong>{copy.consentH}</strong>{zh ? '' : ' '}{x.ethics}{zh ? '' : ' '}{x.consent}{zh && <span class="note-original" lang="en">{x.e.ethics_approval.statement} {x.e.informed_consent.statement}</span>}</p>
+      <p><a href={x.r.source} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={x.paper} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={x.r.licenseUrl} target="_blank" rel="noreferrer">{x.r.license}</a> · <a href={x.pmc} target="_blank" rel="noreferrer">{copy.readFrom}</a></p>
+    </article>)}
+      <article data-credit="cbramod">
+        <h3 lang="en">CBraMod</h3>
+        <p>{copy.cbramodCredit().map(p => typeof p === 'string' && /^[0-9a-f]{12}$/.test(p) ? <code>{p}</code> : typeof p === 'string' ? p : <Fig f={p}/>)}</p>
+        <p><a href={fm.model.paper} target="_blank" rel="noreferrer">{copy.cbramodPaper}</a> · <a href={hrefFor('/methods/cbramod/', locale)}>{copy.cbramodPage}</a></p>
+      </article>
+    </div>
+    <p class="citation-note">{copy.derived}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/later-sessions-update.json" download>later-sessions-update.json</a> · {tc.schema} {later.schema_version}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="related" aria-labelledby="related-heading">
+    <div class="topic-heading"><div><h2 id="related-heading">{copy.relatedH2}</h2></div></div>
+    <ul class="rd-rules" data-later-note="related">{copy.related.map(x => <li>{x.text}<a href={hrefFor(x.href, locale)}>{x.link}</a>{/[?？]$/.test(x.link) ? '' : zh ? '。' : '.'}</li>)}</ul>
+  </section>
+</TopicLayout>

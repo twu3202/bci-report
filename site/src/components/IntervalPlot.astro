@@ -11,18 +11,28 @@
  * gridlines line up down the column and read as one axis.
  *
  * The printed value is the figure; the strip is its picture. Values carry the
- * `.fig` class, so the English/Chinese figure-parity check covers them.
+ * `.fig` class, so the English/Chinese figure-parity check covers them. A row
+ * may instead print its value, and its note's figures, as published figures
+ * (`fig`, `noteParts`: Fig.astro, data-fig), which check-workbench.mjs re-reads
+ * from their served file; the strip then draws `value`, which may be a
+ * transform of the figure (a log scale), and the legend says so.
  */
+import Fig from './Fig.astro';
+import type { Fig as FigValue } from '../data/entities';
 type Tone = 'rust' | 'ink' | 'olive' | 'muted';
 interface Row {
   label: string;
   /** "en" when the label is English on a Chinese page. */
   labelLang?: string;
   note?: string;
+  /** The note with its figures as published figures, in place of `note`. */
+  noteParts?: (string | FigValue)[];
   value: number;
   interval?: [number, number] | null;
   /** The value as printed, e.g. "64.6%" — formatted by the page, never here. */
-  text: string;
+  text?: string;
+  /** The value as a published figure, in place of `text`. */
+  fig?: FigValue;
   tone?: Tone;
 }
 interface Props {
@@ -46,7 +56,7 @@ const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).
   <div class="ip-rows">
     {rows.map(r => (
       <div class="ip-row">
-        <div class="ip-label" lang={r.labelLang}>{r.label}{r.note && <small>{r.note}</small>}</div>
+        <div class="ip-label" lang={r.labelLang}>{r.label}{r.noteParts ? <small>{r.noteParts.map(p => typeof p === 'string' ? p : <Fig f={p}/>)}</small> : r.note && <small>{r.note}</small>}</div>
         <svg class={`ip-strip ${r.tone ?? 'rust'}`} viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
           <line class="ip-grid" x1="25" x2="25" y1="0" y2="12"></line>
           <line class="ip-grid" x1="50" x2="50" y1="0" y2="12"></line>
@@ -55,7 +65,7 @@ const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).
           {r.interval && <line class="ip-ci" x1={x(r.interval[0])} x2={x(r.interval[1])} y1="6" y2="6"></line>}
           <line class="ip-pt" x1={x(r.value)} x2={x(r.value)} y1="1.5" y2="10.5"></line>
         </svg>
-        <div class="ip-value"><span class="fig">{r.text}</span></div>
+        <div class="ip-value">{r.fig ? <Fig f={r.fig} cls="fig"/> : <span class="fig">{r.text}</span>}</div>
       </div>
     ))}
     <div class="ip-row ip-axis" aria-hidden="true">

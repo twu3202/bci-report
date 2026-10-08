@@ -99,12 +99,13 @@ What each file holds, loading examples and how to cite a release:
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Eleven questions sit alongside, each with its own protocol:
+Twelve questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
 [clinical groups](https://bci.report/topics/clinical-groups/) ·
 [standing, walking, running](https://bci.report/topics/on-the-move/) ·
+[an earlier session to a later one](https://bci.report/topics/later-sessions/) ·
 [what calibration buys](https://bci.report/topics/calibration-budget/) ·
 [which part of a pretrained model to update](https://bci.report/topics/model-adaptation/) ·
 [when not to act](https://bci.report/topics/when-not-to-act/) ·

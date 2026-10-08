@@ -792,6 +792,26 @@ Since 2026-10-07 the home page puts the core benchmark matrix right under the ma
 behind each score", then the questions, holds, directory and method notes; check-workbench pins that order in
 both languages.
 
+The later-sessions question, `/topics/later-sessions/` ("Does a decoder trained on an earlier session still work
+later?", Transfer): four results of the large-source batch from `later-sessions-update.json` — WBCIC-SHU session 1
+to session 3 (two CPU baselines, and frozen CBraMod with a session-1 ridge readout; two cohorts kept apart), the
+longitudinal RSVP source's first-visit decoder at its nominal later visits, and Forenzo's continuous cursor tracking,
+a negative result. check-workbench pins every figure to its table cell, chart row or reading from the export (WBCIC
+priors, means, intervals and paired differences with "above zero" exactly where the interval is; every RSVP measure
+per visit, delivered events null and printed as unavailable; each Forenzo cohort and response arm in its own table
+with mean, median, comparator, paired interval, records counted and coverage; secondary metrics with the comparator's
+correlations null), the same figures in both languages, the RSVP subtitle word for word and its chart as three points
+with intervals and no curve, the handoffs' required caveats in both languages, forbidden readings (online control,
+intended motion, a ranking or leaderboard, a pooled or single score, "best") only inside a denial, no typed figure in
+the result sections, the related holds figure-free, no Jev in the page's own words, the cite block naming this release
+alone, and the Markdown copy carrying every figure in order. does-pretraining-help carries one figure-free pointer;
+the card and the transfer map count people only where the export does, and Forenzo's dataset page counts records, not
+people. Mutation-tested on a copy of dist: each of 12 injected violations was caught.
+
+The site's prose no longer states when it was updated or which version it is (owner decision): check-workbench reads
+every page, Markdown copy and llms file for update markers and internal version labels, leaving the release log, the
+Cite blocks, evidence dates and /data-use/'s policy dates.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

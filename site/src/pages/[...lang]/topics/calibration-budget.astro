@@ -115,7 +115,7 @@ const copy = {
     // Self-contained: a link to #next-day lands on this heading, not on the one above it.
     movedNextH2: 'The next-day experiment has moved to the model-adaptation page',
     movedNext: ['The next-day status — run, independently replayed and held, with no figure published — is on the same page: ', ''],
-    nsEyebrow: 'Next session · OpenBMI motor imagery · reviewed 3 October 2026',
+    nsEyebrow: 'Next session · OpenBMI motor imagery',
     nsH2: 'The next session: how much do a few labeled trials help?',
     nsLede: (): Part[] => ['A different data set, task and test from the SSVEP results above, so nothing here is compared with them. In OpenBMI, people imagined moving the left or the right hand in two sessions. Each person’s decoder is trained on their session 1 — the first 80 trials fit it, the last 20 calibrate its probabilities — then given the first 0, 10, 20 or 40 labeled trials of their session 2, and tested on the final ', lf(ob.cohort.test_trials_each_person, 'count'), ' trials of session 2. Every budget is tested on those same trials.'],
     cardPeople: 'People evaluated', cardPeopleP: (): Part[] => [lf(ob.cohort.acquisition_identities, 'count'), ' acquired, minus ', lf(ob.cohort.engineering_exclusion, 'count'), ' engineering exclusion and ', lf(ob.cohort.input_quality_holds, 'count'), ' held for input quality.'],
@@ -193,7 +193,7 @@ const copy = {
     movedAd: ['LaBraM 的适配结果（新被试、同一任务、不使用测试被试的任何标签）——只训分类头、最后一个 Transformer 块还是 LoRA——已移到单独的页面「', '」。'],
     movedNextH2: '次日实验已移到模型适配页面',
     movedNext: ['次日实验的状态——已运行、通过独立复核、暂缓发布、不公布任何数字——也在同一页面「', '」。'],
-    nsEyebrow: '下一次会话 · OpenBMI 运动想象 · 2026 年 10 月 3 日审核',
+    nsEyebrow: '下一次会话 · OpenBMI 运动想象',
     nsH2: '下一次会话：少量校准试次能帮多少？',
     nsLede: (): Part[] => ['与上面的 SSVEP 结果是不同的数据集、任务和测试，所以这里不与它们比较。在 OpenBMI 中，被试在两次会话中都做左手与右手的运动想象。每名被试的解码器用其第一次会话训练——前 80 个试次拟合分类器，后 20 个用于概率校准——再加入其第二次会话最前面的 0、10、20 或 40 个校准试次，并在第二次会话最后的 ', lf(ob.cohort.test_trials_each_person, 'count'), ' 个试次上测试。每档预算都在这些相同的试次上测试。'],
     cardPeople: '评测的被试', cardPeopleP: (): Part[] => ['采集 ', lf(ob.cohort.acquisition_identities, 'count'), ' 人，减去 ', lf(ob.cohort.engineering_exclusion, 'count'), ' 人工程排除、', lf(ob.cohort.input_quality_holds, 'count'), ' 人因输入质量暂缓。'],
@@ -311,7 +311,7 @@ const card = topicCards[locale]['calibration-budget'];
     <h3 class="roadmap-h3">{copy.nsLimitsH3}</h3>
     <div class="method-grid-wide" id="next-session-limits">{copy.nsLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list"><article><h3 lang="en">{ob.rights.name}</h3><p lang="en">{ob.rights.attribution}</p><p>{copy.nsConsent}</p><p><a href={ob.rights.source} target="_blank" rel="noreferrer">{copy.nsRecord}</a> · <a href={obPaper} target="_blank" rel="noreferrer">{copy.nsPaper}</a> · <a href={ob.rights.licenseUrl} target="_blank" rel="noreferrer">{ob.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/large-source-update.json" download>large-source-update.json</a> · {tc.schema} {large.schema_version} · {tc.generated} {large.generated_at}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/large-source-update.json" download>large-source-update.json</a> · {tc.schema} {large.schema_version}{tc.period}</p>
   </section>
 
   <section class="topic-section topic-moved" id="adaptation" aria-labelledby="adaptation-heading">
@@ -328,6 +328,6 @@ const card = topicCards[locale]['calibration-budget'];
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     {citation && <div class="citation-list"><article><h3 lang="en">{citation.identity.title}</h3><p lang="en">{citation.identity.canonical_dataset_citation}</p><p lang="en">{citation.identity.paper_citation}</p><p>{copy.citationNote(citation.identity.license ?? '')}</p><p><a href={citation.primary_sources[0]} target="_blank" rel="noreferrer">{tc.datasetRecord}</a> · <a href={citation.primary_sources[1]} target="_blank" rel="noreferrer">{tc.sensorsPaper}</a></p></article></div>}
-    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

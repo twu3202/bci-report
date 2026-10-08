@@ -18,7 +18,9 @@ abstract: >-
   should decline to decide (rejection rules and probability calibration
   compared as methods, not as deployment error rates), sensor and
   display transfer, image-rate transfer, movement, calibration budget within a
-  recording and across sessions, frozen probes of further EEG foundation models
+  recording and across sessions, decoders trained on a person's earlier
+  session and tested on a later one (including a negative result in
+  continuous cursor tracking), frozen probes of further EEG foundation models
   with each dataset checked against the authors' published pretraining lists,
   foundation-model adaptation (head only, last block, LoRA), one shared
   representation answering several questions (fixed heads against
@@ -40,8 +42,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "shared-representation-update-20261007"
-date-released: "2026-10-07"
+version: "later-sessions-update-20261008"
+date-released: "2026-10-08"
 keywords:
   - EEG
   - electroencephalography

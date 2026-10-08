@@ -89,7 +89,7 @@ const copy = {
     ],
     consent: 'All participants gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment; the study was approved by the ethics committee of the University of Grenoble Alpes (CERNI). Only cohort aggregates appear here.',
     datasetLink: 'Zenodo record ↗', docLink: 'Dataset documentation ↗',
-    rateEyebrow: 'Another presentation change · image rate · reviewed 2 October 2026',
+    rateEyebrow: 'Another presentation change · image rate',
     rateH2: 'Trained at 5 images a second, tested at 10: does a P300 decoder carry over?',
     rateLede: `A different data set and a different decoder, so nothing here compares with the VR scores above. In LTRSVP, ${ltPeople} people watched aerial images flash past at 5, 6 and 10 a second and looked for the ones with an airplane, recording twice at each rate. A fixed logistic regression is trained on one recording at one rate (run a) and tested on a different recording of the same person (run b), at the same rate or another; within a rate, run b followed run a after a long break. Both arms below are tested on the same 10-Hz images: ${n(lt.primary.target_events)} targets and ${n(lt.primary.non_target_events)} non-targets across the ${ltPeople} people.`,
     ltArm: (train: number, test: number) => `Trained at ${train} Hz, run a → tested at ${test} Hz, run b`,
@@ -152,7 +152,7 @@ const copy = {
     ],
     consent: '所有被试都签署了书面知情同意，内容涵盖实验流程、数据管理方式以及随时退出实验的权利；研究经格勒诺布尔-阿尔卑斯大学伦理委员会（CERNI）批准。这里只发布队列级聚合结果。',
     datasetLink: 'Zenodo 记录 ↗', docLink: '数据集说明文档 ↗',
-    rateEyebrow: '另一种呈现变化 · 图像速率 · 2026 年 10 月 2 日审核',
+    rateEyebrow: '另一种呈现变化 · 图像速率',
     rateH2: '在每秒 5 张图像上训练、在每秒 10 张上测试：P300 解码器还管用吗？',
     rateLede: `另一个数据集、另一个解码器，所以这里的结果不能和上面的 VR 分数比较。在 LTRSVP 中，${ltPeople} 名被试观看以每秒 5、6、10 张的速度快速闪过的航拍图像，找出其中有飞机的那些；每种速率各记录两次。一个固定的逻辑回归在某一速率的一段记录（a 段）上训练，在同一被试的另一段记录（b 段）上测试，测试速率可以相同，也可以不同；在同一速率内，b 段是在 a 段之后、隔了较长的休息才记录的。下面两组都在同样的 10 Hz 图像上测试：${ltPeople} 名被试合计 ${n(lt.primary.target_events)} 个目标、${n(lt.primary.non_target_events)} 个非目标。`,
     ltArm: (train: number, test: number) => `${train} Hz a 段训练 → ${test} Hz b 段测试`,
@@ -251,13 +251,13 @@ const card = topicCards[locale]['screen-to-vr'];
     <h3 class="roadmap-h3">{copy.ltLimitsH3}</h3>
     <div class="method-grid-wide" id="image-rate-limits">{copy.ltLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list"><article><h3 lang="en">{lt.rights.name}</h3><p lang="en">{lt.rights.attribution}</p><p>{copy.ltConsent}</p><p><a href={lt.rights.reviewBasis[0]} target="_blank" rel="noreferrer">{copy.ltRecord}</a> · <a href={lt.rights.reviewBasis[1]} target="_blank" rel="noreferrer">{copy.ltPaper}</a> · <a href={lt.rights.licenseUrl} target="_blank" rel="noreferrer">{lt.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version} · {tc.generated} {extension.generated_at}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/extension-update.json" download>extension-update.json</a> · {tc.schema} {extension.schema_version}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="vr-limits">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="vr-limits">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <div class="citation-list"><article><h3 lang="en">{r.rights.name}</h3><p lang="en">{r.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.docLink}</a> · <a href={r.rights.licenseUrl} target="_blank" rel="noreferrer">{r.rights.license}</a></p></article></div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version} · {tc.generated} {context.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/context-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {context.schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

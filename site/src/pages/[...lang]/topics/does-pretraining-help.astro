@@ -4,7 +4,7 @@ import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { type DeploymentData, type DeploymentRow, datasetLabel, intervalPct, intervalPp, modelLabel, pct, pp, seedProtocolLabel } from '../../../data/topics';
-import { chrome, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { chrome, hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import { coreExposure } from '../../../data/foundation-models';
 import { formatFig } from '../../../data/entities';
 import { betaBest, sleepAboveAll, sleepBest, SLEEP } from '../../../data/foundation-topics';
@@ -54,12 +54,12 @@ const ticks = [-span, -span / 2, 0, span / 2, span].map(v => v === 0 ? '0' : pp(
 const copy = {
   en: {
     description: `Sometimes. Frozen pretrained CBraMod beat random initialization on MI/rest (${d2(cbMi)}) and mental workload (${d2(cbWl)}); LaBraM on workload only. Of sixteen further encoder checkpoints, ${v9Above.length === 3 ? 'three' : v9Above.length} lie above every published sleep-staging row; none lies above training-free CCA on BETA.`,
-    answer: `Sometimes, depending on the encoder and the task: with frozen encoders and the fixed readout, pretrained CBraMod beat the mean of its three random initializations by [[${d2(cbMi)}]] of balanced accuracy on MI/rest ([[${nMi}]] people) and by [[${d2(cbWl)}]] on mental workload ([[${nWl}]] people), and pretrained LaBraM beat its own by [[${d2(lbWl)}]] on mental workload, each with a paired 95% interval above zero. On MI/rest, LaBraM's difference was [[${d2(lbMi)}]] (interval crosses zero), and [[${d2(lbMiSel)}]] under the train-selected readout (interval wholly below zero). Neither benchmark is in LaBraM's or CBraMod's published pretraining list (checked 2026-10-04) — what the authors' lists show, not proof that the recordings were never seen — and the comparison does not establish a benefit on other tasks or adaptation budgets. Eleven further foundation models swapped into the same frozen recipe on 4 October 2026 answer a narrower question, with no random-initialization control: on sleep staging ([[${v9Sleep}]] people) ${v9Names(false)} (${v9Figs}) lie above every published row, spectral ridge at [[${v9Best}]] included; on BETA none lies above training-free CCA ([[${v9Cca}]]); and on EEGMAT the frozen readouts and LoRA put the encoders in different orders, so none is ranked.`,
+    answer: `Sometimes, depending on the encoder and the task: with frozen encoders and the fixed readout, pretrained CBraMod beat the mean of its three random initializations by [[${d2(cbMi)}]] of balanced accuracy on MI/rest ([[${nMi}]] people) and by [[${d2(cbWl)}]] on mental workload ([[${nWl}]] people), and pretrained LaBraM beat its own by [[${d2(lbWl)}]] on mental workload, each with a paired 95% interval above zero. On MI/rest, LaBraM's difference was [[${d2(lbMi)}]] (interval crosses zero), and [[${d2(lbMiSel)}]] under the train-selected readout (interval wholly below zero). Neither benchmark is in LaBraM's or CBraMod's published pretraining list (checked 2026-10-04) — what the authors' lists show, not proof that the recordings were never seen — and the comparison does not establish a benefit on other tasks or adaptation budgets. Eleven further foundation models swapped into the same frozen recipe answer a narrower question, with no random-initialization control: on sleep staging ([[${v9Sleep}]] people) ${v9Names(false)} (${v9Figs}) lie above every published row, spectral ridge at [[${v9Best}]] included; on BETA none lies above training-free CCA ([[${v9Cca}]]); and on EEGMAT the frozen readouts and LoRA put the encoders in different orders, so none is ranked.`,
     plotCaption: `Pretrained minus random: MI/rest, ${nMi} people; mental workload, ${nWl} people.`,
     plotLegend: 'Difference in participant-mean balanced accuracy, in percentage points (pp): pretrained encoder minus the mean of three random initializations, same frozen architecture and splits. Dot: the difference; line: paired participant bootstrap 95% interval, printed under each label; dashed line: zero, no difference. Dark rows use the fixed readout, rust rows the train-selected readout.',
     readout: { fixed: 'Fixed readout', selected: 'Train-selected readout' },
     eyebrow: 'Representation controls · matched frozen encoders',
-    dek: 'Sometimes. CBraMod gains under both readout settings on both tasks; LaBraM gains on mental workload and does not on MI/rest. Since 4 October 2026 the page also carries eleven further foundation models in the same frozen recipe: a narrower question, with no random-initialization control.',
+    dek: 'Sometimes. CBraMod gains under both readout settings on both tasks; LaBraM gains on mental workload and does not on MI/rest. The page also carries eleven further foundation models in the same frozen recipe: a narrower question, with no random-initialization control.',
     settings: { fixed: 'Fixed head · alpha 100', selected: 'Train-selected head · alpha 100 / 10,000 / 1' },
     contrastEyebrow: 'Paired attribution contrasts',
     contrastH2: 'Pretrained minus random, same readout',
@@ -94,18 +94,19 @@ const copy = {
       ['Exposure: the authors’ lists, not a proof', 'Neither ds003810 nor EEGMAT is in LaBraM’s or CBraMod’s published pretraining list, checked on 4 October 2026 (sources below). That is what the authors’ lists show, not proof that these recordings were never seen.'],
     ],
     exposureSources: (date: string) => `Pretraining lists, checked ${date}:`,
+    laterPointer: ['Frozen CBraMod with a ridge readout is also read in another setting, a later session of the same person on WBCIC-SHU, with no random-initialization control there: ', ''] as const,
     miTitle: 'MI / rest · OpenNeuro ds003810 v2.0.2',
     wlTitle: 'Mental workload · EEGMAT 1.0.0',
     physionetRecord: 'PhysioNet record ↗',
   },
   zh: {
     description: `有时有用。冻结编码器下，预训练 CBraMod 在运动想象/静息（${d2(cbMi)}）和脑力负荷（${d2(cbWl)}）上都优于随机初始化；LaBraM 只在脑力负荷上如此。另外 16 个编码器检查点中，有 ${v9Above.length} 个高于睡眠分期上所有已发布的行；在 BETA 上没有一个高于免训练的 CCA。`,
-    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（百分点；运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这三项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这两个基准数据集都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中（2026-10-04 核查）——这是作者清单所显示的情况，并不证明这些记录从未被模型见过；这项比较也不能证明预训练在其他任务或其他适配预算下同样有益。另外 11 个基础模型于 2026 年 10 月 4 日换进同样的冻结方案，回答的是一个更窄的问题，也没有随机初始化对照：在睡眠分期上（[[${v9Sleep}]] 名被试），${v9Names(true)}（${v9Figs}）高于所有已发布的行，包括 spectral ridge 的 [[${v9Best}]]；在 BETA 上，没有一个高于免训练的 CCA（[[${v9Cca}]]）；在 EEGMAT 上，冻结读出与 LoRA 给出的编码器顺序不一致，所以不排名。`,
+    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（百分点；运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这三项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这两个基准数据集都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中（2026-10-04 核查）——这是作者清单所显示的情况，并不证明这些记录从未被模型见过；这项比较也不能证明预训练在其他任务或其他适配预算下同样有益。另外 11 个基础模型换进同样的冻结方案，回答的是一个更窄的问题，也没有随机初始化对照：在睡眠分期上（[[${v9Sleep}]] 名被试），${v9Names(true)}（${v9Figs}）高于所有已发布的行，包括 spectral ridge 的 [[${v9Best}]]；在 BETA 上，没有一个高于免训练的 CCA（[[${v9Cca}]]）；在 EEGMAT 上，冻结读出与 LoRA 给出的编码器顺序不一致，所以不排名。`,
     plotCaption: `预训练减随机初始化：运动想象/静息 ${nMi} 名被试，脑力负荷 ${nWl} 名被试。`,
     plotLegend: '被试平均平衡准确率之差，单位为百分点（pp）：预训练编码器减三次随机初始化的均值，架构冻结、数据划分相同。点为差值，横线为被试配对 bootstrap 95% 区间（数值见各行标签下方），虚线为零（没有差别）。深色行为固定分类头，锈色行为训练集内选定分类头。',
     readout: { fixed: '固定分类头', selected: '训练集内选定分类头' },
     eyebrow: '表征对照 · 匹配的冻结编码器',
-    dek: '有时有用。CBraMod 在两个任务、两种分类头设置下都有提升；LaBraM 在脑力负荷上有提升，在运动想象/静息上没有。自 2026 年 10 月 4 日起，本页还列出另外 11 个按同样冻结方案评测的基础模型：这是一个更窄的问题，没有随机初始化对照。',
+    dek: '有时有用。CBraMod 在两个任务、两种分类头设置下都有提升；LaBraM 在脑力负荷上有提升，在运动想象/静息上没有。本页还列出另外 11 个按同样冻结方案评测的基础模型：这是一个更窄的问题，没有随机初始化对照。',
     settings: { fixed: '固定分类头 · alpha 100', selected: '训练集内选定分类头 · alpha 100 / 10,000 / 1' },
     contrastEyebrow: '预训练贡献的配对对比',
     contrastH2: '预训练减随机初始化，分类头条件保持一致',
@@ -140,6 +141,7 @@ const copy = {
       ['是否出现在预训练数据中：看作者的清单，不是证明', 'ds003810 与 EEGMAT 都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中，于 2026 年 10 月 4 日核查（来源见下）。这是作者清单所显示的情况，并不证明这些记录从未被模型见过。'],
     ],
     exposureSources: (date: string) => `预训练数据清单（${date} 核查）：`,
+    laterPointer: ['冻结 CBraMod 加岭回归分类头还在另一种情形下评测过：同一被试较晚的一次会话（WBCIC-SHU），那里没有随机初始化对照。见「', '」。'] as const,
     miTitle: '运动想象 / 静息 · OpenNeuro ds003810 v2.0.2',
     wlTitle: '脑力负荷 · EEGMAT 1.0.0',
     physionetRecord: 'PhysioNet 记录 ↗',
@@ -219,10 +221,12 @@ const exposure = [...lb.urls.map(url => ({ label: 'LaBraM', url })), ...cb.urls.
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     {/* The owner's sourced exposure statement (2026-10-04): the authors' lists, linked. */}
     <p class="citation-note fm-core-exposure">{copy.exposureSources(checked)} {exposure.map((x, i) => <>{i > 0 && ' · '}<a href={x.url} target="_blank" rel="noreferrer" lang="en">{x.label} ↗</a></>)}</p>
+    {/* One low-key pointer (owner decision): frozen CBraMod read in another setting, with no figure of it here. */}
+    <p class="citation-note" data-later-pointer="true">{copy.laterPointer[0]}<a href={hrefFor('/topics/later-sessions/#wbcic-shu', locale)}>{topicCards[locale]['later-sessions'].question}</a>{copy.laterPointer[1]}</p>
     <div class="citation-list">
       <article><h3>{copy.miTitle}</h3><p lang="en">Peterson et al. · CC0-1.0.</p><p><a href="https://doi.org/10.18112/openneuro.ds003810.v2.0.2" target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article>
       <article><h3>{copy.wlTitle}</h3><p lang="en">Zyma et al. · Open Data Commons Attribution License 1.0.</p><p><a href="https://physionet.org/content/eegmat/1.0.0/" target="_blank" rel="noreferrer">{copy.physionetRecord}</a></p></article>
     </div>
-    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version} · {tc.generated} {data.generated_at.slice(0,10)}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

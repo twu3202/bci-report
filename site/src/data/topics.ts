@@ -116,6 +116,9 @@ export const topicPages = [
   { slug: 'screen-to-vr', group: 'transfer' },
   { slug: 'fewer-electrodes', group: 'transfer' },
   { slug: 'on-the-move', group: 'transfer' },
+  // Owner decision: a decoder trained on an earlier session, tested on a later one (the large-source batch's
+  // WBCIC-SHU, longitudinal RSVP and Forenzo results).
+  { slug: 'later-sessions', group: 'transfer' },
   { slug: 'calibration-budget', group: 'adapting' },
   { slug: 'model-adaptation', group: 'adapting' },
   { slug: 'does-pretraining-help', group: 'adapting' },

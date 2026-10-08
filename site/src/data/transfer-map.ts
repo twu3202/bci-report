@@ -33,6 +33,7 @@ import context from './context-update.json';
 import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
+import later from './later-sessions-update.json';
 import { holds } from './releases';
 import { FM_JSON, fmAdaptation, fmAdaptationMeta, fmProtocols } from './foundation-models';
 import type { Fig, L } from './entities';
@@ -67,7 +68,7 @@ export interface MapRow {
 
 const DEP = 'deployment-topics.json', EVI = 'evidence-update.json', CLI = 'clinical-update.json',
       CTX = 'context-update.json', ADA = 'adaptation-update.json', EXT = 'extension-update.json',
-      LSU = 'large-source-update.json';
+      LSU = 'large-source-update.json', LTS = 'later-sessions-update.json';
 const count = (raw: number, src: string): Fig => ({ raw, fmt: 'count', src });
 
 /** The cohort sizes behind a deployment track (one regime, if given), largest first. */
@@ -100,6 +101,13 @@ const openbmi = large.results['openbmi-cross-session-calibration'];
 // protocols, each trained and tested on its own, so a paired-design comparison, not a transfer.
 if (fmAdaptation.length !== 9) throw new Error('transfer-map.ts: the v9 adaptation entry says nine encoders');
 const betaPeople = fmProtocols.find(p => p.id === 'beta-4ch')!.people;
+// The later-sessions question: each the same person, trained on an earlier session and tested on a later one with no
+// labels from it. WBCIC-SHU has two cohorts (one entry, both sizes); the RSVP source one. Forenzo counts records,
+// which the export says are not proven unique people, so its entry prints no n (the legend says n is people).
+const wbcicCohorts = Object.values(later.results['wbcic-cross-session-cpu'].cohorts).map(c => c.people).sort((a, b) => b - a);
+const rsvpPeople = later.results['rsvp-later-visits'].cohort.people;
+if (later.results['forenzo-continuous-control'].coverage.counting_unit !== 'cohort records, not proven unique people')
+  throw new Error('transfer-map.ts: the Forenzo entry prints no n because its export counts records, not people');
 
 // The core matrix's new-person protocols are the ones its payload labels so.
 if (!data.tracks.some(t => t.short === 'Transfer to a new person'))
@@ -162,6 +170,15 @@ export const mapRows: MapRow[] = [
         { key: 'session:openbmi', label: { en: 'OpenBMI motor imagery · first session to the second', zh: 'OpenBMI 运动想象 · 第一次会话到第二次' },
           href: '/topics/calibration-budget/#next-session', n: [count(openbmi.cohort.evaluated, LSU)],
           note: { en: 'The same person and task: trained on the first session, tested on the second, with and without a few of its labelled trials.', zh: '同一被试、同一任务：在第一次会话上训练、在第二次会话上测试，加入或不加入该会话的少量校准试次。' } },
+        { key: 'session:wbcic', label: { en: 'WBCIC-SHU motor imagery · an earlier session to a later one', zh: 'WBCIC-SHU 运动想象 · 较早会话到较晚会话' },
+          href: '/topics/later-sessions/#wbcic-shu', n: wbcicCohorts.map(n => count(n, LTS)),
+          note: { en: 'Two cohorts kept apart: simple baselines, and frozen CBraMod with a readout, fitted on each person’s first recording session and tested on their third with no labels from it.', zh: '两个队列分开分析：简单基线，以及带分类头的冻结 CBraMod，都在每名被试的第一次记录会话上拟合，在其第三次会话上测试，不使用该会话的标签。' } },
+        { key: 'session:rsvp', label: { en: 'Longitudinal RSVP · first visit to later visits', zh: '纵向 RSVP · 第一次访次到后续访次' },
+          href: '/topics/later-sessions/#longitudinal-rsvp', n: [count(rsvpPeople, LTS)],
+          note: { en: 'One decoder per person, trained at the first visit and scored at the publisher’s nominal later visits.', zh: '每名被试一个解码器，在第一次访次训练，在发布者标称的后续访次上评分。' } },
+        { key: 'session:forenzo', label: { en: 'Continuous cursor tracking · earliest to latest session', zh: '连续光标追踪 · 最早会话到最晚会话' },
+          href: '/topics/later-sessions/#forenzo',
+          note: { en: 'A negative result: a constant baseline did better. Counted in records, not proven unique people, so no n is shown.', zh: '阴性结果：一个常数基线反而更好。按记录计数，不能证明是不同的人，所以不标 n。' } },
       ],
       status: [
         { key: 'session:cross-session', label: { en: 'Cross-session pilot', zh: '跨会话试点' }, href: '/topics/model-adaptation/#cross-session', hold: 'stieger-longitudinal',

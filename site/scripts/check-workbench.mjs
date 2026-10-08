@@ -5,6 +5,9 @@ import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
+// foundation-models-zh.ts enDisplay: a released sentence that names an internal evaluation version
+// prints without it (no version labels on the site, owner 2026-10-08); the JSON keeps it as released.
+const EN_SHOWN={'not run by design: LUNA Large is frozen probes only in the v9 stage specification':'not run by design: LUNA Large is frozen probes only in this evaluation\u2019s specification'};
 // The built site under test. SITE_DIST points the checks at another build
 // (e.g. `astro build --outDir <dir>`) without touching dist/.
 const DIST=process.env.SITE_DIST?pathToFileURL(resolve(process.env.SITE_DIST)+'/').href:new URL('../dist/',import.meta.url).href;
@@ -264,6 +267,8 @@ const topicPages=[
   ['does-pretraining-help','Does pretraining help EEG foundation models like LaBraM and CBraMod?'],
   // Since 2026-10-07 (owner approval): route 2 of the decision-research plan, one model for several questions.
   ['shared-encoder','Can one EEG model answer several questions about the same data as well as separate models, and at what cost?'],
+  // Owner decision: the large-source batch's later-session results (WBCIC-SHU, longitudinal RSVP, Forenzo).
+  ['later-sessions','Does a decoder trained on an earlier session still work later?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
@@ -271,7 +276,8 @@ const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='when-not-to-act'?'experiments.json'
   :slug==='screen-to-vr'?'context-update.json'
   :slug==='sleep-staging'?'large-source-update.json'
-  :slug==='shared-encoder'?'shared-representation-update.json':'deployment-topics.json';
+  :slug==='shared-encoder'?'shared-representation-update.json'
+  :slug==='later-sessions'?'later-sessions-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -281,6 +287,8 @@ for(const [slug,title] of topicPages){
   assert.ok(html.includes('rel="canonical"'),slug+': canonical link is required');
 }
 const sitemap=readFileSync(new URL(DIST+'sitemap.xml',import.meta.url),'utf8');
+// The later-sessions export, as served (its own block near the end reads it in full).
+const LTX=JSON.parse(readFileSync(new URL('data/later-sessions-update.json',DIST),'utf8'));
 for(const [slug] of topicPages)
   assert.ok(sitemap.includes('https://bci.report/topics/'+slug+'/'),slug+': sitemap entry is required');
 const motionPage=readFileSync(new URL(DIST+'topics/on-the-move/index.html',import.meta.url),'utf8');
@@ -371,7 +379,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -603,18 +611,20 @@ for(const [label,path] of [['en',''],['zh','zh/']]){
   // A hold has no result. No percentage, and no decimal figure, inside the cards.
   const cards=holds.slice(holds.indexOf('hold-grid'));
   assert.doesNotMatch(cards,/\d+(?:\.\d+)?%|\d\.\d/,label+': a hold must not carry a figure');
-  // Every open hold says since when, and the full register is one click away.
-  assert.match(holds,label==='en'?/Held since \d+ \w+ 20\d\d/:/20\d\d 年 \d+ 月 \d+ 日起暂缓/,label+': a hold must carry its date');
+  // A card says what is held and why, with no date (owner decision 2026-10-08): the date each hold was
+  // opened is in the full register, one click away.
+  assert.doesNotMatch(holds,/Held since|起暂缓|<time\b/,label+': a hold card carries no date; the register does');
   assert.ok(holds.includes(label==='en'?'href="/releases/#holds"':'href="/zh/releases/#holds"'),label+': the holds register must be linked');
 }
 // The withheld six-person descriptors appear nowhere, in any locale.
 const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
 // The route-2 page (2026-10-07) carries contrasts in pp whose full-precision raw values, inside data-fig attributes
-// that the data-fig loop holds to the route-2 export, begin "0.230" and "0.231"; those attributes are set aside here,
-// and everything printed, and every other attribute, is still read.
+// that the data-fig loop holds to the route-2 export, begin "0.230" and "0.231"; the later-sessions page's raw values
+// (a 35.4% interval bound, 0.0052730… and the like) contain them too. Those attributes are set aside here, and
+// everything printed, and every other attribute, is still read.
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
-    assert.ok(!pageOf(p).replace(/ data-fig="shared-representation-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+    assert.ok(!pageOf(p).replace(/ data-fig="(?:shared-representation|later-sessions)-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
 
 // --- 2026-09-27 site update: when not to act, and the release log ----------
 // The abstention topic: every figure from the reviewed idle protocol, and a
@@ -650,8 +660,8 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.match(r1,label==='en'?/<p class="eyebrow">First · Run · results above<\/p>/:/<p class="eyebrow">首先 · 已运行 · 结果见上一节<\/p>/,label+': route 1 says it was run');
   assert.ok(r1.includes(`href="${label==='zh'?'/zh':''}/topics/when-not-to-act/#reliable-decisions"`),label+': route 1 links its results');
   // The plan promised acceptance per class and reliability; the run published neither (review of 2026-10-05).
-  assert.match(r1,label==='en'?/<p class="route-run-note">[^<]*Not published in this update: acceptance per class and reliability-diagram bins\.<\/p>/
-                              :/<p class="route-run-note">[^<]*本次更新没有发布：各类别的接受率和可靠性图的分箱。<\/p>/,label+': route 1 says which planned measures it did not publish');
+  assert.match(r1,label==='en'?/<p class="route-run-note">[^<]*Not published: acceptance per class and reliability-diagram bins\.<\/p>/
+                              :/<p class="route-run-note">[^<]*没有发布：各类别的接受率和可靠性图的分箱。<\/p>/,label+': route 1 says which planned measures it did not publish');
   // Route 2 (2026-10-07): run, its results on their own page, linked; its run note names where it ran and that the
   // E2-sleep arm ran after the other results were known.
   assert.match(r2,label==='en'?/<p class="eyebrow">Then · Run · results on their own page<\/p>/:/<p class="eyebrow">随后 · 已运行 · 结果在单独的页面上<\/p>/,label+': route 2 says it was run');
@@ -819,10 +829,13 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s',
   m2:r=>(r/1e6).toFixed(2)+'M',
   // Route 2 (2026-10-07): values already in percentage points, two decimals; a step time in seconds as milliseconds.
-  ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms'};
-// The token checks of the earlier batches read every format but these three: their pages print none, and a
-// route-2 format applied to their values would only widen what those checks accept.
-const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2'].includes(k)).map(([,g])=>g);
+  ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms',
+  // The later-sessions page: values spanning many decades — a whole number with thousands separators, or three
+  // significant digits where three decimals would print a non-zero value as 0.000 (entities.ts wideFmt).
+  int0:r=>Math.round(r).toLocaleString('en-US').replace(/^-/,'−'),sig3:r=>r.toPrecision(3).replace(/^-/,'−')};
+// The token checks of the earlier batches read every format but these: their pages print none, and a later
+// format applied to their values would only widen what those checks accept.
+const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2','int0','sig3'].includes(k)).map(([,g])=>g);
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
 // sitemap and llms.txt. Their own checks follow in the protocol block.
@@ -1890,44 +1903,42 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   assert.ok(colours.length>=8,'workbench.ts: the chart colours');
   assert.deepEqual(swatches.map(m=>Number(m[1])),colours.map((_,i)=>i),'generated.css: one .legend i.sN swatch per chart colour, numbered from 0');
   assert.deepEqual(swatches.map(m=>m[2].toLowerCase()),colours,'generated.css: the legend swatches must be the chart colours, in order');
-  // Since 2026-10-02 the masthead states one date, the newest release's, in its eyebrow; the
-  // stat rail carries only the core matrix's counts, under a visible caption.
-  const newest=[...read('releases/').matchAll(/<article class="release-entry" id="[^"]+">\s*<header><time datetime="([^"]+)"/g)].map(m=>m[1]).sort().at(-1);
-  for(const [path,word] of [['','updated'],['zh/','更新于']]){
+  // Since 2026-10-08 (owner decision) the masthead states no date and no version: the eyebrow is the
+  // site's description alone, and the release log is where dates live. The stat rail carries only the
+  // core matrix's counts, under a visible caption.
+  for(const [path,eyebrow] of [['','Open EEG evaluation'],['zh/','公开 EEG 评测']]){
     const html=read(path), mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
-    assert.ok(newest&&mast.includes(`${word} <time datetime="${newest}">${newest}</time></p>`),(path||'/')+': the masthead eyebrow carries the newest release date');
-    assert.ok(!/class="live"/.test(mast)&&/<p class="stat-caption" id="stat-caption">[^<]+<\/p><dl class="stat-rail" aria-labelledby="stat-caption">/.test(mast),(path||'/')+': the stat rail has a visible caption and no second date');
+    assert.ok(mast.includes(`<p class="eyebrow">${eyebrow}</p>`)&&!/<time\b/.test(mast),(path||'/')+': the masthead eyebrow carries no date');
+    assert.ok(!/class="live"/.test(mast)&&/<p class="stat-caption" id="stat-caption">[^<]+<\/p><dl class="stat-rail" aria-labelledby="stat-caption">/.test(mast),(path||'/')+': the stat rail has a visible caption and no date');
   }
   // Since 2026-10-06 the lede and the stats under it count what the protocol pages carry, from the data: the core
   // matrix's protocols, datasets and methods (experiments.json; the rail keeps its four core counts, which the share
   // card prints) and the v9 matrix encoders (the export), on a line of their own under the rail. The two sets are
-  // named apart and never summed; the lede dates the encoders by their release.
+  // named apart and never summed. Since 2026-10-08 the lede no longer dates the encoders.
   {
     const core={protocols:data.coverage.displayedProtocols,datasets:new Set(data.tracks.map(t=>t.dataset)).size,
       comparisons:data.coverage.displayedComparisons,methods:new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name))).size};
     const v9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8'));
     const enc=v9.results['foundation-models-v9'].models.filter(m=>m.panel==='matrix').length;
-    const [y,mo,d]=v9.generated_at.split('-').map(Number);
-    const month=['January','February','March','April','May','June','July','August','September','October','November','December'][mo-1];
     assert.ok(core.protocols===8&&core.datasets===7&&core.methods===9&&enc===13,'the masthead counts: 8 protocols, 7 datasets, 9 core methods, 13 v9 matrix encoders');
     for(const [path,zh] of [['',false],['zh/',true]]){
       const html=read(path),mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
       const lede=(mast.match(/<p class="lede">([\s\S]*?)<\/p>/)||[,''])[1].replace(/&#39;/g,"'").replace(/&amp;/g,'&');
       const where=(path||'/')+': the masthead lede';
       // The Chinese lede is one sentence framed by 在……上 (review of 2026-10-06: '8 个固定协议、7 个公开数据集：协议上既有' read clipped).
-      for(const s of zh?[`在 ${core.protocols} 个固定协议、${core.datasets} 个公开数据集上，既有核心矩阵的 ${core.methods} 种解码方法，也有自 ${y} 年 ${mo} 月 ${d} 日起以冻结探针方式运行的 ${enc} 个基础模型编码器。`]
-                       :[`${core.protocols} fixed protocols on ${core.datasets} public datasets`,`the core matrix’s ${core.methods} decoding methods`,`since ${d} ${month} ${y}, ${enc} foundation encoders as frozen probes`])
+      for(const s of zh?[`在 ${core.protocols} 个固定协议、${core.datasets} 个公开数据集上，既有核心矩阵的 ${core.methods} 种解码方法，也有以冻结探针方式运行的 ${enc} 个基础模型编码器。`]
+                       :[`${core.protocols} fixed protocols on ${core.datasets} public datasets`,`the core matrix’s ${core.methods} decoding methods`,`and, beside them, ${enc} foundation encoders as frozen probes`])
         assert.ok(lede.includes(s),where+' says "'+s+'", counted from the data');
       assert.ok(!/公开数据集：协议上/.test(lede),where+': not the clipped "……公开数据集：协议上既有" opening');
       assert.ok(!new RegExp('(^|\\D)'+(core.methods+enc)+'(\\D|$)').test(lede),where+': no summed count of core methods and v9 encoders');
       assert.deepEqual([...mast.matchAll(/<dd>(\d+)<\/dd>/g)].map(m=>Number(m[1])),[core.protocols,core.datasets,core.comparisons,core.methods],(path||'/')+': the stat rail is the core matrix\'s four counts, in order');
       const added=mast.match(/<\/dl>\s*<p class="stat-added">([\s\S]*?)<\/p>/);
-      assert.ok(added&&added[1].includes(`<span data-count="encoders">${enc}</span>`)&&added[1].includes(`href="${zh?'/zh':''}/protocols/"`)&&added[1].includes(zh?'第九轮':'(v9)'),
+      assert.ok(added&&added[1].includes(`<span data-count="encoders">${enc}</span>`)&&added[1].includes(`href="${zh?'/zh':''}/protocols/"`)&&!/v9|第九轮/.test(added[1]),
         (path||'/')+': the line under the rail counts the v9 matrix encoders ('+enc+') and links the protocols');
       // It sits under 'Methods 9': no leading '+', which invited reading 9 + 13 (review of 2026-10-06).
       const addedText=added?added[1].replace(/<[^>]+>/g,'').replace(/&#43;|&plus;/g,'+').replace(/&amp;/g,'&').trim():'';
       assert.ok(!/^[+＋]/.test(addedText),(path||'/')+': the line under the rail must not open with "+", which reads as a sum with the methods above it');
-      assert.equal(addedText,zh?`另有 ${enc} 个基础模型编码器在同样的协议上（冻结，第九轮）→`:`Also on these protocols: ${enc} foundation encoders, frozen (v9) →`,(path||'/')+': the line under the rail');
+      assert.equal(addedText,zh?`另有 ${enc} 个基础模型编码器在同样的协议上（冻结）→`:`Also on these protocols: ${enc} foundation encoders, frozen →`,(path||'/')+': the line under the rail');
     }
   }
 }
@@ -2343,6 +2354,9 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     // Since 2026-10-07: OpenBMI's people only. No BOAS figure on a card: the home page and the hub do not carry
     // BOAS's three stated gaps (the route-2 pages block below holds that).
     'shared-encoder':{files:['shared-representation-update.json'],pins:[JSON.parse(readFileSync(new URL('data/shared-representation-update.json',DIST),'utf8')).results['one-representation'].datasets.openbmi.people]},
+    // The later-sessions card counts people only where the export does: WBCIC-SHU's two cohorts and the RSVP cohort.
+    // Forenzo counts records, not proven unique people, so its count stays off the card.
+    'later-sessions':{files:['later-sessions-update.json'],pins:[...Object.values(LTX.results['wbcic-cross-session-cpu'].cohorts).map(c=>c.people),LTX.results['rsvp-later-visits'].cohort.people]},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -2369,7 +2383,11 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'session:openbmi':[lsx.results['openbmi-cross-session-calibration'].cohort.evaluated],
     // 2026-10-04: the v9 EEGMAT adaptation's people (new people, as the LaBraM adaptation), and BETA's people for
     // its eight-against-four-electrode comparison (two core protocols, a comparison, not a transfer).
-    'person:v9-adaptation':[fmCard.eegmat_adaptation.people],'sensor:beta-montage':[fmCard.protocols.find(p=>p.id==='beta-4ch').people]};
+    'person:v9-adaptation':[fmCard.eegmat_adaptation.people],'sensor:beta-montage':[fmCard.protocols.find(p=>p.id==='beta-4ch').people],
+    // The later-sessions question: WBCIC-SHU's two cohorts, largest first, and the RSVP cohort. Forenzo prints no n
+    // (records, not proven unique people), which the map loop below holds as a pin of nothing.
+    'session:wbcic':Object.values(LTX.results['wbcic-cross-session-cpu'].cohorts).map(c=>c.people).sort((a,b)=>b-a),
+    'session:rsvp':[LTX.results['rsvp-later-visits'].cohort.people]};
   for(const page of ['','zh/','topics/','zh/topics/']){
     const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap"'),html.indexOf('</table>',html.indexOf('<table class="tmap"')));
     assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');
@@ -2447,14 +2465,15 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     assert.equal((html.match(/<p class="status-checked">/g)||[]).length,data.models.length+fmCards.length,page+': every model card says when its status was checked');
     for(const n of data.news) assert.ok(html.includes(n.sourceUrl.replace(/&/g,'&amp;')),page+': field note '+n.title.slice(0,30));
     // Follow-up review of 2026-10-05: the REVE note of 2025-10-24 keeps its words ("not yet available in our local test
-    // pool"), and a dated note after it says REVE Base and Large have since been evaluated, linking REVE's method page.
+    // pool"), and a note after it says REVE Base and Large have since been evaluated, linking REVE's method page. Since
+    // 2026-10-08 (owner decision) the note's words carry no date; data-later still names the release date for this check.
     {const zh=page.startsWith('zh/'),n=data.news.find(x=>/not yet available in our local test pool/.test(x.summary));
      const a0=html.lastIndexOf('<article',html.indexOf(escHtml(n.title)+' ↗</a></h3>')),card=html.slice(a0,html.indexOf('</article>',a0));
      const fmDate=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8')).generated_at;
      assert.ok(card.includes('<p>'+escHtml(n.summary)+'</p>'),page+': the REVE field note keeps its released words');
      const later=card.match(/<p class="news-later" data-later="([^"]+)"[^>]*>([\s\S]*?)<\/p>/);
-     assert.ok(later&&later[1]===fmDate&&later[2].includes(fmDate)&&/REVE Base/.test(later[2])&&/REVE Large/.test(later[2])&&later[2].includes(`href="${zh?'/zh':''}/methods/reve/"`)&&card.indexOf('news-later')>card.indexOf(escHtml(n.summary)),
-       page+': the REVE field note carries a dated note, after its words, that REVE Base and Large have since been evaluated');}
+     assert.ok(later&&later[1]===fmDate&&!later[2].includes(fmDate)&&!/\bv9\b|第九轮/.test(later[2])&&/REVE Base/.test(later[2])&&/REVE Large/.test(later[2])&&later[2].includes(`href="${zh?'/zh':''}/methods/reve/"`)&&card.indexOf('news-later')>card.indexOf(escHtml(n.summary)),
+       page+': the REVE field note carries a note, after its words and with no date in them, that REVE Base and Large have since been evaluated');}
     // REVE Base: evaluated since 2026-10-04 (the owner accepted the REVE Responsible Use License), with its
     // source and checked date, the released status beside it; the 2026-10-02 "Licence review pending" is gone.
     const reve=html.slice(html.indexOf('data-model="REVE Base"'),html.indexOf('</article>',html.indexOf('data-model="REVE Base"')));
@@ -2654,9 +2673,9 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     const zeroLike=h=>[...h.matchAll(/data-fig="reliable-decisions-update\.json\|(\w+)\|([^"]+)"[^>]*>([^<]*)</g)].filter(([,f,raw,t])=>Number(raw)!==0&&/^[+−]?0\.0(?: pp|%)?$/.test(t));
     assert.deepEqual(zeroLike(sec).map(m=>m[0]),[],where+': no non-zero figure prints as ±0.0 or 0.0%');
     // The two LaBraM arms are the 1 October release's seed-20260922 means, and say so (the three-seed means differ).
-    for(const id of ['labram-frozen-ce','labram-lora-r4']) assert.ok(visible(cellAt(rowAt(sec,`data-rd-row="arithmetic-rest|${id}"`),'data-cell="ba"')).includes(zh?'已发布的随机种子 20260922 均值（10 月 1 日适配发布）':'the published seed-20260922 mean, 1 October adaptation release'),where+': '+id+' is labelled as the seed-20260922 mean');
+    for(const id of ['labram-frozen-ce','labram-lora-r4']) assert.ok(visible(cellAt(rowAt(sec,`data-rd-row="arithmetic-rest|${id}"`),'data-cell="ba"')).includes(zh?'已发布的随机种子 20260922 均值（适配发布）':'the published seed-20260922 mean, adaptation release'),where+': '+id+' is labelled as the seed-20260922 mean');
     for(const p of [E,B]) for(const m of p.methods.filter(m=>!m.id.startsWith('labram-'))) assert.ok(!/20260922/.test(cellAt(rowAt(sec,`data-rd-row="${p.protocol}|${m.id}"`),'data-cell="ba"')),where+': '+m.id+' is not a LaBraM seed mean');
-    assert.ok(text.includes(zh?'两种 LaBraM 配置用的是 10 月 1 日适配发布中随机种子 20260922 的均值':'for the two LaBraM arms, the 1 October adaptation release’s seed-20260922 mean'),where+': the lede says which LaBraM value is printed');
+    assert.ok(text.includes(zh?'两种 LaBraM 配置用的是适配发布中随机种子 20260922 的均值':'for the two LaBraM arms, the adaptation release’s seed-20260922 mean'),where+': the lede says which LaBraM value is printed');
     assert.ok(visible(q4).includes(zh?'随机种子 20260922':'seed 20260922'),where+': the LoRA sentence says its accuracies are seed 20260922');
     // ds003810's contrasts are secondary, and say so; the two protocols' rejection gains are not compared.
     const crude=sec.slice(sec.indexOf('id="rd-crude"'),sec.indexOf('</table>',sec.indexOf('id="rd-crude"')));
@@ -3187,8 +3206,9 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     // E2 sleep: its disclosure, beside its figures; the stage-only read-out beside SL-E and SL-F; the derivable question.
     const sleep=secOf(html,'sleep'),dis=sleep.slice(sleep.indexOf('data-e2-disclosure="true"'),sleep.indexOf('</p>',sleep.indexOf('data-e2-disclosure="true"')));
     // "None outlived its fit" (review of 2026-10-07): some checkpoints were replaced by their fit's next one, not deleted.
-    for(const s of zh?['在 2026 年 10 月 7 日运行，那时本次运行的其他所有结果','在冻结协议时就已确定','没有任何一项是根据结果选的','临时的私有检查点','没有一个留到拟合结束之后']
-                     :['ran on 7 October 2026, after every other result of the run','were fixed when the protocol was frozen','nothing about it was chosen from results','temporary private checkpoints','so none outlived its fit'])
+    // Since 2026-10-08 (owner decision) it says when it ran relative to the other results, not on which date.
+    for(const s of zh?['这一组运行时，本次运行的其他所有结果','在冻结协议时就已确定','没有任何一项是根据结果选的','临时的私有检查点','没有一个留到拟合结束之后']
+                     :['ran after every other result of the run','were fixed when the protocol was frozen','nothing about it was chosen from results','temporary private checkpoints','so none outlived its fit'])
       assert.ok(visible(dis).includes(s),where+': the E2-sleep disclosure says "'+s+'"');
     assert.ok(E2.run_after_other_results&&hasFig(dis,'count',E2.resume_checkpoints.left_after_the_run)&&hasFig(dis,'count',E2.fits),where+': the disclosure counts the fits and the checkpoints left');
     assert.ok(sleep.indexOf('data-e2-disclosure')<sleep.indexOf('data-sr-contrast="boas|E2|'),where+': the disclosure comes before the E2 figures');
@@ -3325,7 +3345,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // and is Chinese, no rejected rendering, and no key outlives its text.
   {
     const strings=new Set();const walk=v=>{if(typeof v==='string')strings.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(F);
-    const digits=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]).sort();
+    // A version label ("v9") is not a figure: the Chinese may drop it (no version labels on the site, 2026-10-08).
+    const digits=s=>[...s.replace(/(?<![\w.])v\d+(?![\w.])/g,' ').matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]).sort();
     for(const [en,zh] of Object.entries(Z)){
       assert.ok(strings.has(en),'foundation-models-zh.ts: "'+en.slice(0,50)+'" matches no text in the v9 export');
       assert.deepEqual(digits(zh),digits(en),'foundation-models-zh.ts: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
@@ -3337,7 +3358,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     for(const [k,dir] of [['reve-base','P300 的得分高 0.71、睡眠低 1.40'],['reve-large','P300 的得分低 2.06、睡眠低 0.93']])
       assert.ok((Z[F.models.find(m=>m.id===k).row_footnote]||'').includes(dir),'foundation-models-zh.ts: '+k+'\'s footnote says "'+dir+'"');
   }
-  const say=(en,label)=>label==='en'?{text:en}:{text:Z[en],original:Z[en]===en||/^(?:MIT|Apache-2\.0)\.?$/.test(en)?undefined:en};
+  const say=(en,label)=>{const shown=EN_SHOWN[en]??en;return label==='en'?{text:shown}:{text:Z[en],original:Z[en]===en||/^(?:MIT|Apache-2\.0)\.?$/.test(en)?undefined:shown};};
   const printed=(html,en,label)=>{const t=say(en,label);assert.ok(t.text,'no Chinese for "'+en.slice(0,50)+'"');
     return html.includes(e(t.text))&&(!t.original||html.includes('<span class="note-original" lang="en">'+e(t.original)+'</span>'));};
   // Independent of foundation-models.ts: each checkpoint's page and exposure-table key.
@@ -3566,7 +3587,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     for(const t of data.tracks){
       g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});
       const html=g('#result-rows').innerHTML,J=JSON.parse(fmEmbedded(label)).tracks[t.id],mx=J.rows.filter(r=>r.panel==='matrix');
-      const head=label==='en'?`Added 2026-10-04: ${mx.length} further foundation encoders, frozen (v9)`:`2026-10-04 新增：另外 ${mx.length} 个基础模型编码器（冻结，第九轮）`;
+      // Since 2026-10-08 (owner decision) the group heading carries no date and no version label.
+      const head=label==='en'?`${mx.length} further foundation encoders, frozen`:`另外 ${mx.length} 个基础模型编码器（冻结）`;
       assert.ok(html.includes('<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+head)&&html.indexOf('fm-group')>html.lastIndexOf('<tr><td><button class="model-name" data-model="'),label+'/'+t.id+': the v9 group follows the released rows, counted');
       assert.ok(html.includes(`href="/${label==='zh'?'zh/':''}protocols/${t.id}/#foundation-v9"`),label+'/'+t.id+': the group links the protocol page\'s v9 section');
       // The count says how many of its rows were not run here, so it agrees with the protocols index's scored count (review of 2026-10-05).
@@ -3610,6 +3632,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     g('#result-rows').events.click({target:{closest:()=>({dataset:{model:'fm:zuna'}})}});
     const z=JSON.parse(fmEmbedded(label)).tracks['mi-rest'].rows.find(r=>r.id==='zuna'),zd=g('#dialog-body').innerHTML;
     for(const s of [z.exposureText,z.footnote,z.licence,research[label]]) assert.ok(zd.includes(e(s)),label+': the ZUNA 1.1 dialog carries "'+s.slice(0,40)+'"');
+    // The script's own words carry no date and no version label either (owner decision 2026-10-08).
+    assert.ok(!/\bv9\b|第九轮|新增|\b[Aa]dded\b|20\d\d-\d\d-\d\d/.test(visible(zd))&&!/\bv9\b|第九轮|新增|\b[Aa]dded\b/.test(visible(g('#result-rows').innerHTML)),label+': the rendered rows and dialog state no date or version label');
     assert.ok(zd.includes(`href="${z.exposureSource}"`)&&zd.includes('#foundation-v9')&&zd.includes(`href="${z.href}"`)&&g('#detail-dialog').open,label+': the dialog links the source, the section and the method page');
     g('#close-dialog').events.click();
     // REVE's dialog names the model version its licence asks for.
@@ -3785,9 +3809,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     if(label==='en'){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
   }
-  // The EESM19 page changed again on 2026-10-07 (route 2's group), so it carries that date now.
+  // The EESM19 page changed again on 2026-10-07 (route 2's group), so it carries that date now; does-pretraining-help
+  // on 2026-10-08 (its pointer to the later-sessions question).
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
-    const d=p==='datasets/eesm19/'?'2026-10-07':'2026-10-04';
+    const d=p==='datasets/eesm19/'?'2026-10-07':p==='topics/does-pretraining-help/'?'2026-10-08':'2026-10-04';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
@@ -3976,7 +4001,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       const s1=A.rows.find(x=>x.model==='singlem'),sc=cell('arithmetic-rest','singlem');
       assert.ok(Number(sc.interval_includes_chance==='true')&&s1.arms['frozen-ce'].interval_95[0]<=A.chance_level&&s1.arms['lora-r4'].interval_95[0]>A.chance_level&&s1.paired_lora_minus_frozen.excludes_zero,w+': the SingLEM sentence: frozen readouts reach chance, LoRA does not');
       const na=sec.match(/data-claim="not-adapted">([\s\S]*?)<\/p>/)[1];
-      for(const m of F.models.filter(m=>m.adaptation!=='run')) assert.ok(na.includes('>'+e(m.name)+'<')&&na.includes(e(zh?Z[m.adaptation]:m.adaptation)),w+': '+m.name+' not adapted, with the export\'s reason');
+      for(const m of F.models.filter(m=>m.adaptation!=='run')) assert.ok(na.includes('>'+e(m.name)+'<')&&na.includes(e(zh?Z[m.adaptation]:(EN_SHOWN[m.adaptation]??m.adaptation))),w+': '+m.name+' not adapted, with the export\'s reason');
       // REVE Base and Large: every scored protocol, both rows, the export's change and overlap; the pattern and its caveat.
       const pairs=C.base_vs_large.filter(x=>x.base==='reve-base');
       const srows=[...sec.matchAll(/<tr data-size-pair="([^"]+)" data-overlap="(true|false)">([\s\S]*?)<\/tr>/g)];
@@ -4127,9 +4152,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     if(!prefix){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.length>500&&!/stays? the highest|best published non-foundation|was pretrained on/.test(fe),'releases.xml: the v9 entry ranks no overlapping rows and claims no corpus');}
   }
-  // The Questions hub changed again on 2026-10-07 (route 2's card), so it carries that date now.
+  // The Questions hub changed again on 2026-10-07 (route 2's card) and 2026-10-08 (the later-sessions card), and
+  // does-pretraining-help on 2026-10-08 (its pointer to the later-sessions question), so they carry that date now.
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
-    const d=p==='topics/'?'2026-10-07':'2026-10-04';
+    const d=p==='topics/'||p==='topics/does-pretraining-help/'?'2026-10-08':'2026-10-04';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
@@ -4203,7 +4229,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     const rowsOf=b=>[...b.matchAll(/<tr class="fm-row" data-fm="[^"]+">([\s\S]*?)<\/tr>/g)].map(m=>({name:decodeHtml(m[1].match(/<button[^>]*>([^<]*)<\/button>/)[1]).replace(/ ↗$/,''),figs:figTokens(m[1].replace(/<[^>]+>/g,' '))}));
     const tables=md.split('\n\n').filter(b=>b.trimStart().startsWith('|')).map(b=>b.split('\n').filter(l=>l.startsWith('|')&&!/^\|\s*---/.test(l)));
     const mdRow=(table,name)=>table.filter(l=>l.startsWith('| '+name+' — '));
-    for(const [id,pick,label] of [['result-rows',ts=>ts.find(t=>t.some(l=>/\| (?:Added 2026-10-04|2026-10-04 新增)/.test(l))),'v9 group'],
+    for(const [id,pick,label] of [['result-rows',ts=>ts.find(t=>t.some(l=>/\| (?:\d+ further foundation encoders, frozen|另外 \d+ 个基础模型编码器（冻结）)/.test(l))),'v9 group'],
                                   ['ablation-rows',ts=>ts.find(t=>t.some(l=>/— (?:matrix row above|即上方的矩阵行)/.test(l))||(t.length===4&&t.every(l=>/^\| eeg-fm-masking /.test(l)))),'masking ablation']]){
       const rows=rowsOf(tbody(id)),table=pick(tables),where=pfx+'index.md, the home '+label;
       assert.ok(rows.length>0&&table,where+': the page\'s rows and the copy\'s table');
@@ -4324,7 +4350,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   assert.ok(mapEntries>=4*16&&cards===4*topicPages.length,'the map entries and topic cards were read ('+mapEntries+', '+cards+')');
   for(const pfx of ['','zh/']){const zh=pfx==='zh/';
     const html=readFileSync(new URL(pfx+'index.html',DIST),'utf8'),md=readFileSync(new URL(pfx+'index.md',DIST),'utf8');
-    const p=html.match(/<p class="matrix-added"[^>]*>([\s\S]*?)<\/p>/)[1],para=md.split('\n\n').find(b=>b.startsWith(zh?'2026-10-04 新增：':'Added 2026-10-04: '));
+    const p=html.match(/<p class="matrix-added"[^>]*>([\s\S]*?)<\/p>/)[1],para=md.split('\n\n').find(b=>b.startsWith(zh?`另外 ${fmMatrix} 个基础模型编码器，`:`${fmMatrix} further foundation encoders, `));
     assert.ok(para&&norm(para)===norm(blockText(p)),pfx+'index.md: the snapshot note as the page prints it');
     const ran=FMX.frozen_probe.filter(c=>c.model==='brainomni-base'&&c.status==='complete').length;
     for(const s of zh?[`另外 ${fmMatrix} 个基础模型编码器`,`BrainOmni Base 只在其中 ${ran} 个上运行`,`它们是 ${fmModels} 个模型的检查点；其中一个模型另有 ${fmAbl} 个检查点组成掩码消融，共 ${fmMatrix+fmAbl} 个。`]
@@ -4448,4 +4474,301 @@ console.log('PASS: 2026-09-27 context — PC/VR, gait and non-control figures eq
 console.log('PASS: 2026-09-27 when not to act — idle figures from the reviewed protocol; roadmap a figure-free plan with one status per route (route 1 run, results above; routes 2 and 3 not run, since 2026-10-04); releases list every served file with its true SHA-256.');
 console.log('PASS: 2026-09-23 clinical — comparator marked, claim boundary stated, demographics and withheld descriptors absent, holds carry no figures.');
 console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no per-person values, R² unclamped, roadmap stays planned.');
+// --- The later-sessions question (owner decision, 2026-10-08) ----------------------------------------------------
+// /topics/later-sessions/: does a decoder trained on an earlier session still work later? Four results from the
+// large-source batch — WBCIC-SHU (two CPU baselines; frozen CBraMod), the longitudinal RSVP source and Forenzo's
+// continuous cursor tracking (a negative result) — each from later-sessions-update.json. The topic data-fig loop
+// re-reads every figure from the export; pinned here: (1) each table cell, chart row and reading carries the export's
+// own figures in its own place; (2) English and Chinese print the same figures; (3) the handoffs' required caveats are
+// on the page in both languages; (4) online control, intended motion, a ranking or leaderboard and a pooled score
+// appear only in a denial, and Jev nowhere; (5) the result sections type no figure of their own, so no per-person
+// value can enter outside the export, and the only medians are the four Forenzo ridge medians; (6) the related holds
+// and statuses print no figure; (7) the cite block names this release alone, and the Markdown copy carries every
+// figure in order; (8) does-pretraining-help's one pointer is figure-free; the card and the map count people only
+// where the export does, and Forenzo's records are never printed as people.
+{
+  const LTS='later-sessions-update.json',R=LTX.results;
+  const cpu=R['wbcic-cross-session-cpu'],fm=R['wbcic-frozen-cbramod'],rs=R['rsvp-later-visits'],fz=R['forenzo-continuous-control'];
+  const wide=x=>Math.abs(x)>=1000?'int0':x!==0&&Math.abs(x)<0.01?'sig3':'num3';
+  const fmtOf={pct1:fmt.pct1,pp1:fmt.pp1,sgn1:fmt.sgn1,sgn3:fmt.sgn3,auc3:fmt.auc3,num3:fmt.num3,count:fmt.count,int0:fmt.int0,sig3:fmt.sig3};
+  // A figure as printed: its attribute and its text, so a cell holds the leaf and prints it in its format.
+  const has=(h,f,x)=>new RegExp(`data-fig="${LTS.replace(/\./g,'\\.')}\\|${f}\\|${String(x).replace(/[.+-]/g,'\\$&')}"[^>]*>${fmtOf[f](x).replace(/[.+]/g,'\\$&')}<`).test(h);
+  const figAttrs=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]);
+  const spanEnd=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let d=0,m;
+    while((m=re.exec(h))){d+=m[0].startsWith('</')?-1:1;if(!d)return m.index;}return h.length;};
+  const el=(h,sel,where)=>{const a=h.search(sel);assert.ok(a>=0,where+': '+sel+' renders');return h.slice(a,spanEnd(h,a));};
+  const vis=h=>decodeHtml(h.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  const cohorts=['2C','3C'],fzC=['Main','Transfer Learning'],fzA=['historical_decoder_velocity_imitation','constructed_raw_target_displacement_proxy'];
+  const releaseId=LTX.release_id;
+  let pinned=0;
+  const pages={};
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'topics/later-sessions/',where=path,html=pageOf(path);
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"'));
+    pages[label]=main;
+    // Every figure on the page is a leaf of this export, and nothing else is cited.
+    assert.ok(figAttrs(main).length>300&&figAttrs(main).every(a=>a.startsWith(LTS+'|')),where+': every figure is a leaf of '+LTS);
+    const cite=html.slice(html.indexOf('<section class="cite-page"'));
+    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],releaseId,where+': the cite block names this release alone');
+    assert.ok(html.includes('href="/data/'+LTS+'"')&&vis(el(main,/<p class="citation-note">(?:Data source:|数据来源：)/,where)).match(/^(?:Data source:|数据来源：) later-sessions-update\.json · schema bci-report-later-sessions-update-v1[.。]$/),where+': the data-source note names the file and its schema, and no date');
+    // (1) WBCIC-SHU: each cohort's three decoders, the two paired differences, the trial and session accounting.
+    const wb=el(main,/<section\b[^>]*\sid="wbcic-shu"/,where);
+    for(const c of cohorts){
+      const P=cpu.cohorts[c],M=fm.cohorts[c];
+      const cell=k=>el(wb,new RegExp(`<td data-cell="${c}\\|${k}"`),where+' '+c+' '+k);
+      const pr=cell('source_prior'),rd=cell('relative_spectral_ridge'),cb=cell('frozen_cbramod');
+      for(const [h,x] of [[pr,P.arms.source_prior],[rd,P.arms.relative_spectral_ridge],[cb,M.frozen_cbramod]]){
+        assert.ok(has(h,'pct1',x.balanced_accuracy.mean)&&has(h,'pct1',x.accuracy.mean)&&has(h,'pct1',x.macro_f1.mean),where+': '+c+' balanced accuracy, accuracy and macro F1');pinned+=3;}
+      for(const [h,x] of [[rd,P.arms.relative_spectral_ridge],[cb,M.frozen_cbramod]]){
+        assert.ok(has(h,'pct1',x.balanced_accuracy.interval_95[0])&&has(h,'pct1',x.balanced_accuracy.interval_95[1]),where+': '+c+' interval');pinned+=2;}
+      assert.equal(figAttrs(pr).length,3,where+': '+c+' the prior prints no interval (it is a floor, by construction)');
+      for(const [k,d] of [['ridge',P.paired],['cbramod',M.paired]]){
+        const h=cell('diff-'+k),x=d.balanced_accuracy_difference;
+        assert.ok(has(h,'pp1',x.mean)&&has(h,'sgn1',x.interval_95[0])&&has(h,'pp1',x.interval_95[1]),where+': '+c+' '+k+' paired difference and interval');pinned+=3;
+        assert.equal(vis(h).includes(zh?'区间在零以上':'Interval above zero'),d.interval_excludes_zero===true&&x.interval_95[0]>0,where+': '+c+' '+k+' says above zero exactly where the interval is');
+      }
+      assert.ok(has(wb,'pct1',P.chance_level)&&has(wb,'count',P.people)&&has(wb,'count',P.source_trials)&&has(wb,'count',P.target_trials),where+': '+c+' chance, people and trials');
+    }
+    const q=cpu.session_quality;
+    const tn=el(wb,/<p class="protocol-note" data-later-note="wbcic-trials"/,where);
+    for(const v of [q.fixed_count_holds,q.sessions,q.delivered_trials,q.nominal_trials,q.holds_in_selected_sessions]) assert.ok(has(tn,'count',v),where+': the session accounting, '+v);
+    const fd=el(wb,/<div class="finding" data-finding="wbcic\|2C\|frozen_cbramod"/,where);
+    assert.ok(has(fd,'pp1',fm.cohorts['2C'].paired.balanced_accuracy_difference.mean)&&has(fd,'pp1',fm.cohorts['3C'].paired.balanced_accuracy_difference.mean),where+': the finding states both cohorts\' gaps');
+    // (1) RSVP: the subtitle as the handoff words it, the model label, a three-point chart with no curve, every measure.
+    const rv=el(main,/<section\b[^>]*\sid="longitudinal-rsvp"/,where);
+    assert.equal(vis(el(rv,/<h2 id="rsvp-heading"/,where)),zh?'第一次训练的脑电解码器，在后续访次还有效吗？':'Does your decoder still work at later visits?',where+': the RSVP section has the title its handoff gives');
+    const sub=el(rv,/<p class="topic-subtitle" data-subtitle="rsvp"/,where);
+    assert.ok(rs.subtitle==='Same-person, offline RSVP classification; publisher nominal visit labels; no target-session adaptation.'&&(zh?sub.includes('<span class="note-original" lang="en">'+rs.subtitle+'</span>'):vis(sub)===rs.subtitle),where+': the visible subtitle is the handoff\'s, word for word'+(zh?' (beside its Chinese)':''));
+    assert.ok(vis(rv).includes(rs.model.label),where+': the RSVP model label');
+    const chart=el(rv,/<figure class="interval-plot" id="rsvp-auroc"/,where);
+    const rows=[...chart.matchAll(/<div class="ip-row">([\s\S]*?<div class="ip-value">[\s\S]*?<\/div>)/g)].map(m=>m[1]);
+    assert.equal(rows.length,rs.visits.length,where+': the AUROC chart has one point per nominal visit');
+    rs.visits.forEach((v,i)=>{assert.ok(has(rows[i],'auc3',v.auroc.mean)&&has(rows[i],'auc3',v.auroc.interval_95[0])&&has(rows[i],'auc3',v.auroc.interval_95[1])&&rows[i].includes('class="ip-ci"'),where+': nominal Day '+v.nominal_day+' AUROC with its interval bar');pinned+=3;});
+    assert.ok(!/<path|<polyline|<polygon/.test(chart)&&chart.includes('class="ip-ref"'),where+': no fitted curve, a chance line');
+    const rtab=el(rv,/<table data-later-table="rsvp"/,where);
+    for(const v of rs.visits){
+      const c=k=>el(rtab,new RegExp(`<td data-cell="${v.nominal_day}\\|${k}"`),where+' Day '+v.nominal_day+' '+k);
+      assert.ok(has(c('auroc'),'auc3',v.auroc.mean)&&has(c('auroc'),'auc3',v.auroc.interval_95[0])&&has(c('auroc'),'auc3',v.auroc.interval_95[1])
+        &&has(c('average_precision'),'auc3',v.average_precision.mean)&&has(c('log_loss'),'num3',v.log_loss.mean)&&has(c('brier_score'),'num3',v.brier_score.mean)
+        &&has(c('ece_10_bins'),'num3',v.ece_10_bins.mean)&&has(c('target_events'),'count',v.target_events)&&has(c('target_events'),'count',v.events)&&has(c('target_events'),'pct1',v.target_share),
+        where+': nominal Day '+v.nominal_day+', every published measure in its cell');pinned+=10;
+      const d=c('delivered_events');
+      assert.ok(v.delivered_events===null&&d.includes('data-null="true"')&&!d.includes('data-fig')&&!/\d/.test(vis(d)),where+': Day '+v.nominal_day+' delivered events: null, printed as unavailable, never a zero');
+    }
+    const ct=el(rv,/<div class="finding" data-finding="rsvp\|contrast"/,where),D=rs.contrast;
+    assert.ok(has(ct,'sgn3',D.auroc_difference.mean)&&has(ct,'sgn3',D.auroc_difference.interval_95[0])&&has(ct,'sgn3',D.auroc_difference.interval_95[1])
+      &&has(ct,'count',D.people_declined_by_0_05_or_more)&&has(ct,'count',D.people)&&has(ct,'auc3',rs.visits[0].average_precision.mean)&&has(ct,'auc3',rs.visits[2].average_precision.mean),where+': the paired Day 200 minus Day 7 change, its interval, who declined (counted) and AP beside it');pinned+=7;
+    // (1) Forenzo: one table per response arm, each cohort's mean, median, comparator and paired interval together.
+    const fs=el(main,/<section\b[^>]*\sid="forenzo"/,where);
+    assert.ok(vis(el(fs,/<p class="topic-subtitle" data-subtitle="forenzo"/,where)).includes(fz.label),where+': "'+fz.label+'" beside the heading');
+    for(const a of fzA){
+      const tab=el(fs,new RegExp(`<table data-later-table="forenzo\\|${a}"`),where+' '+a);
+      for(const c of fzC){
+        const x=fz.cohorts[c].arms[a],row=el(tab,new RegExp(`<tr data-forenzo-cell="${c}\\|${a}"`),where+' '+c+' '+a);
+        const td=k=>el(row,new RegExp(`<td data-cell="${k}"`),where+' '+c+' '+a+' '+k);
+        for(const [k,m,iv] of [['ridge-mean',x.ridge.primary.mean,x.ridge.primary.interval_95],['comparator',x.source_mean.primary.mean,x.source_mean.primary.interval_95],['paired',x.paired.primary_difference.mean,x.paired.primary_difference.interval_95]]){
+          assert.ok(has(td(k),wide(m),m)&&has(td(k),wide(iv[0]),iv[0])&&has(td(k),wide(iv[1]),iv[1]),where+': '+c+' '+a+' '+k+' with its interval');pinned+=3;}
+        assert.ok(has(td('ridge-median'),wide(x.ridge.primary.median),x.ridge.primary.median)&&has(td('ridge-median'),'int0',x.upper_tail.ridge_mean_over_median),where+': '+c+' '+a+' the ridge median beside its mean, and how many times over');pinned+=2;
+        assert.ok(has(td('paired'),'count',x.paired.records_with_higher_ridge_error)&&has(td('paired'),'count',x.paired.records)&&x.paired.records_with_higher_ridge_error===x.paired.records,where+': '+c+' '+a+' the ridge did worse on every admitted record, counted');
+        assert.ok(has(row,'count',fz.cohorts[c].admitted_records)&&has(row,'count',fz.cohorts[c].candidate_records),where+': '+c+' coverage beside the result');
+        // A table holds its own arm only: the other arm's figures never sit beside it.
+        const other=fz.cohorts[c].arms[fzA.find(o=>o!==a)];
+        for(const v of [other.ridge.primary.mean,other.source_mean.primary.mean,other.paired.primary_difference.mean]) assert.ok(!tab.includes(`|${v}"`),where+': '+a+' table carries no figure of the other arm');
+      }
+      const lab=zh?{historical_decoder_velocity_imitation:'模仿历史解码器（historical decoder imitation）',constructed_raw_target_displacement_proxy:'构造的代理变量（constructed proxy）'}[a]
+                  :{historical_decoder_velocity_imitation:'historical decoder imitation',constructed_raw_target_displacement_proxy:'constructed proxy'}[a];
+      const box=el(fs,new RegExp(`<div class="forenzo-arm" data-forenzo-arm="${a}"`),where+' '+a);
+      assert.ok(vis(el(box,/<h3/,where)).includes(lab)&&vis(el(tab,/<caption/,where)).includes(lab),where+': '+a+' carries its label "'+lab+'" in its heading and its table');
+      const tail=el(box,/<figure class="interval-plot" id="forenzo-tail-/,where+' '+a);
+      assert.equal((tail.match(/<div class="ip-row">/g)||[]).length,2*3,where+': '+a+' the upper-tail plot shows each cohort\'s ridge mean, median and comparator');
+      assert.ok(vis(tail).includes(zh?'对数刻度':'log scale'),where+': '+a+' the tail plot\'s axis is labelled as a log scale');
+    }
+    const medians=figAttrs(main).filter(a=>fzC.some(c=>fzA.some(x=>a.endsWith('|'+fz.cohorts[c].arms[x].ridge.primary.median))));
+    assert.ok(medians.length>=4&&new Set(medians.map(a=>a.split('|')[2])).size===4,where+': the four ridge medians, and no other median (the export holds no other)');
+    const cov=el(fs,/<p class="protocol-note" data-later-note="forenzo-coverage"/,where),Mn=fz.cohorts.Main,TL=fz.cohorts['Transfer Learning'];
+    for(const v of [Mn.admitted_records,Mn.candidate_records,Mn.held_before_scoring,TL.admitted_records,TL.candidate_records,fz.coverage.admitted_records,...Mn.hold_reasons.map(h=>h.records)]) assert.ok(has(cov,'count',v),where+': the coverage note counts '+v);
+    assert.equal(Mn.hold_reasons.length,3,'later-sessions: the export\'s three Main hold reasons');
+    if(!zh) for(const h of Mn.hold_reasons) assert.ok(vis(cov).includes(h.reason),where+': the hold reason "'+h.reason+'"');
+    for(const v of [fz.coverage.target_rows_per_arm,fz.coverage.response_fits]) assert.ok(has(fs,'count',v),where+': coverage '+v);
+    // Secondary metrics: each mean with its interval; the comparator's correlations null, printed as undefined.
+    let nulls=0;
+    for(const a of fzA) for(const c of fzC) for(const m of ['ridge','source_mean']){
+      const row=el(fs,new RegExp(`<tr data-forenzo-secondary="${c}\\|${a}\\|${m}"`),where);
+      for(const [k,v] of Object.entries(fz.cohorts[c].arms[a][m].secondary)){
+        const td=el(row,new RegExp(`<td data-cell="${k}"`),where);
+        if(v.mean===null){assert.ok(td.includes('data-null="true"')&&!td.includes('data-fig')&&!/\d/.test(vis(td)),where+': '+c+' '+a+' '+m+' '+k+' null, never zero');nulls++;}
+        else {assert.ok(has(td,wide(v.mean),v.mean)&&has(td,wide(v.interval_95[0]),v.interval_95[0])&&has(td,wide(v.interval_95[1]),v.interval_95[1]),where+': '+c+' '+a+' '+m+' '+k);pinned+=3;}
+      }
+    }
+    assert.equal(nulls,2*2*2,where+': the comparator\'s two correlations, null in every cohort and arm');
+    // (3) The handoffs' required caveats, in each language.
+    const page=vis(main);
+    for(const s of zh?['会话编号只是记录会话的序号，不保证固定的时间间隔','分开分析，从不平均','不能说明它来自预训练','是否出现过 WBCIC-SHU 也没有确定','复用了同样的测试试次','不是全新的测试集','缺失试次的原因不明',
+                       '不是给新被试','第 7、80、200 天是发布者的标签','不是某个阈值下的精确率','不是在线选择的成功率','不能说明变化是由时间流逝造成的','Trigger.txt 正好相反',
+                       '不是意图中的手部运动，也不是意图控制','不能证明是','从不合并','没有删除、截断或缩尾任何已评分的记录','极端误差的原因','尚未确定','空值，不是零','这里没有训练任何迁移学习模型',
+                       '它们的误差也不互相比较','不涉及在线控制质量或意图运动解码','没有做多重比较校正','没有从原始 EEG 独立重做完整的特征提取']
+                    :['recording-session ordinals, not a guaranteed time gap','kept apart and never averaged','it does not show that pretraining caused it','whether this checkpoint saw WBCIC-SHU in pretraining is not established','reuses their test trials','not a fresh test set','Why the trials are missing is unknown',
+                       'Not a decoder for someone new','Day 7, Day 80 and Day 200 are the publisher’s labels','not precision at a chosen threshold','an online selection success rate','it does not show that elapsed time caused the change','Trigger.txt reverses',
+                       'not intended hand motion or intended control','not proven unique people','never pooled','No scored record was removed, clipped or winsorized','what caused the extreme errors','is not established','null, not zero','no transfer-learning model was trained here',
+                       'their errors are not compared with each other','no claim about online control quality or intended-motion decoding','no multiple-comparison adjustment','none independently repeated the full feature extraction'])
+      assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
+    // (4) Forbidden readings appear only as denials; Jev nowhere. ("AUROC ranks targets" is what AUROC measures, not a
+    // ranking of decoders, so the verb alone is not read.)
+    const sentences=page.split(/(?<=[.;:?])\s+|(?<=[。；：？])/);
+    const forbidden=zh?/在线控制|意图运动|意图控制|排行榜|排名|合并|总分|最好|最佳/:/online[- ]control|intended[- ]motion|intended control|intention decoding|leaderboard|\branking\b|\branked\b(?! targets)|\bpool(?:s|ed|ing)?\b|overall score|single score|\bbest\b/i;
+    const denial=zh?/不|没有|无|从不|并非|不是/:/\b(?:not|no|never|nor|none|nothing|neither)\b/i;
+    for(const t of sentences) if(forbidden.test(t)) assert.match(t,denial,where+': "'+t.slice(0,120)+'" reads as a claim it may only deny');
+    // The page's own words: the topic switcher below it is the site's navigation, the same on every topic page.
+    const own=main.slice(0,main.indexOf('<nav class="topic-switcher"')),ownMd=readFileSync(new URL(path+'index.md',DIST),'utf8').split(/^(?:Keep exploring|继续探索)$/m)[0];
+    assert.ok(own.length>10000&&ownMd.length>5000,where+': the page\'s own content read');
+    assert.doesNotMatch(own+ownMd,/\bJev\b/,where+': the page does not mention Jev');
+    // (5) The result sections type no figure: every number there is a data-fig leaf, or a label (session and visit
+    // numbers, 95%, the 0.05 AUROC threshold, ECE's 10 bins, Chance R01, the log axis's gridlines).
+    const allowed=new Set(['0','1','2','3','7','80','200','95%','10','0.05','01','0.01','100','10,000']);
+    for(const id of ['wbcic-shu','longitudinal-rsvp','forenzo']){
+      const sec=el(main,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where).replace(/<span data-fig="[^"]*"[^>]*>[^<]*<\/span>/g,' ')
+        .replace(/<div class="ip-row ip-axis"[\s\S]*?<\/div>\s*<div class="ip-value"><\/div>\s*<\/div>/g,' ').replace(/<code>[\s\S]*?<\/code>/g,' ');
+      const typed=[...vis(sec).matchAll(/\d[\d,]*(?:\.\d+)?%?/g)].map(m=>m[0].replace(/,$/,'')).filter(t=>!allowed.has(t));
+      assert.deepEqual(typed,[],where+': #'+id+' types a figure outside the export');
+    }
+    // (6) The related next-day hold and longitudinal status, and the OpenBMI and pretraining links, print no figure.
+    const rel=el(main,/<section\b[^>]*\sid="related"/,where);
+    assert.ok(!rel.includes('data-fig')&&!/\d/.test(vis(rel)),where+': the related holds and statuses print no figure');
+    for(const href of ['/topics/calibration-budget/#next-session','/topics/model-adaptation/#next-day','/topics/model-adaptation/#cross-session','/topics/does-pretraining-help/'])
+      assert.ok(rel.includes(`href="${zh?'/zh':''}${href}"`),where+': links '+href);
+    // The short answer: the mixed reading, with its limits.
+    const ans=vis(el(main,/<section class="short-answer"/,where));
+    for(const s of zh?['同一被试的跨会话迁移，不是给新被试解码','不能说明提升来自预训练','标称','阴性结果','每一条纳入记录']:['same-person transfer, not decoding for someone new','does not show that pretraining caused the gain','nominal','a negative result','every admitted record'])
+      assert.ok(ans.includes(s),where+': the short answer says "'+s+'"');
+    // (7) The Markdown copy carries every figure, in order.
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    let at=0;
+    for(const [,t] of main.slice(main.indexOf('<section class="short-answer"')).matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)){
+      const k=md.indexOf(decodeHtml(t),at);assert.ok(k>=0,where+'index.md: the figure "'+t+'" after offset '+at);at=k+t.length;}
+  }
+  // (2) The same figures in both languages.
+  const ms=h=>figAttrs(h).sort();
+  assert.deepEqual(ms(pages.zh),ms(pages.en),'later-sessions: the Chinese page prints exactly the English page\'s figures');
+  // (8) does-pretraining-help: one pointer, no figure from this export, no citation of its release.
+  for(const pfx of ['','zh/']){
+    const h=pageOf(pfx+'topics/does-pretraining-help/'),w=pfx+'topics/does-pretraining-help/';
+    const body=h.slice(h.indexOf('<main'),h.indexOf('<nav class="topic-switcher"'));
+    assert.equal((body.match(/href="(?:\/zh)?\/topics\/later-sessions\/[^"]*"/g)||[]).length,1,w+': one low-key pointer to the later-sessions question (the switcher aside)');
+    assert.ok(body.includes(`<p class="citation-note" data-later-pointer="true">`),w+': the pointer is a citation note');
+    assert.ok(!h.includes('data-fig="'+LTS)&&!h.slice(h.indexOf('<section class="cite-page"')).includes(releaseId),w+': the pointer prints no figure and cites nothing new');
+  }
+  // The card sits under Transfer and counts people only where the export does; the map prints no n for Forenzo.
+  for(const pfx of ['','zh/']) for(const page of [pfx,pfx+'topics/']){
+    const h=pageOf(page),grp=el(h,/<div class="topic-group" id="group-transfer"/,page);
+    const card=el(grp,new RegExp(`<a class="topic-entry-card" href="${pfx?'/zh':''}/topics/later-sessions/"`),page+' card');
+    const nums=[...vis(card.replace(/<span class="topic-number"[^>]*>\d+<\/span>/,'')).matchAll(/\d+/g)].map(m=>Number(m[0]));
+    assert.deepEqual(nums,[...cohorts.map(c=>cpu.cohorts[c].people),rs.cohort.people],page+': the later-sessions card counts the WBCIC-SHU cohorts and the RSVP cohort, and no Forenzo record');
+    const map=el(h,/<table class="tmap"/,page),li=el(map,/<li data-map="session:forenzo"/,page);
+    assert.ok(!li.includes('tmap-n')&&!li.includes('data-fig')&&li.includes('later-sessions/#forenzo'),page+': the Forenzo map entry links its section and prints no n');
+  }
+  // Forenzo's dataset page prints records, never people.
+  for(const pfx of ['','zh/']){
+    const h=pageOf(pfx+'datasets/forenzo-continuous-tracking/');
+    assert.ok(!/<td>\d+<\/td>/.test(h)&&!h.includes(pfx?'没有人类被试':'no human participants')&&(h.match(/条记录，不能证明是不同的人|records, not proven unique people/g)||[]).length===12,pfx+'datasets/forenzo-continuous-tracking/: every row counts records, not people');
+  }
+  assert.ok(pinned>300,'later-sessions: figures pinned to their cells ('+pinned+')');
+  console.log(`PASS: later sessions — /topics/later-sessions/ in both languages: ${pinned} figures pinned to their cells from ${LTS}, the same figures in English and Chinese; WBCIC-SHU's two cohorts apart with priors and paired intervals; the RSVP subtitle word for word, three AUROC points with intervals and no curve, AP beside AUROC, delivered events null; Forenzo per cohort and arm in separate tables with mean, median, comparator and paired interval, coverage, nulls kept; required caveats present, forbidden readings only denied, no typed figure, holds figure-free, no Jev; one figure-free pointer from does-pretraining-help; Forenzo counted as records.`);
+}
+// --- No update date and no version label in the site's text (owner decision 2026-10-08) ---------------------------
+// The site does not say when it was updated or which version it is: the release log does. Every built page, in both
+// languages — its HTML (visible text, and aria-label, title and alt) and its Markdown copy — and llms.txt and
+// llms-full.txt are read for an update marker ("updated <date>", "Added <date>", "since <date>", "Held since",
+// "run on <date>", a "· reviewed <date>" label, "snapshot <date>", "this update", "generated <date>") or an internal
+// version label ("v9", "(v9", "release v9", 第九轮), and a data-source note may carry no date at all.
+// Kept on purpose, and so left out here: /releases/ and releases.xml (dates and release ids); each page's "Cite this
+// page" block and the /api/ BibTeX (release ids and their dates); evidence dates ("checked … on <date>", "Rights
+// reviewed <date>", "Status checked <date>", an upstream snapshot's acquisition date, an owner's decision or licence
+// acceptance), which no pattern below targets; dataset, licence and model versions (OpenNeuro 1.0.3, Figshare v3,
+// REVE licence v1.0, protocol ids …-v1), which the version pattern does not match; and /data-use/'s policy dates.
+{
+  const MONTH='(?:January|February|March|April|May|June|July|August|September|October|November|December)';
+  const DAY=`\\d{1,2} ${MONTH}`,ISO='20\\d\\d-\\d\\d-\\d\\d',ZHD='20\\d\\d 年 \\d+ 月 \\d+ 日';
+  const rules=[
+    ['an "updated" date',new RegExp(`\\b[Uu]pdated:? (?:on )?(?:20\\d\\d|${DAY})|· [Uu]pdated\\b|\\bUpdate, 20\\d\\d|更新于|${ISO} ?更新|\\d+ 月 \\d+ 日更新`)],
+    ['an "added" date',new RegExp(`\\b[Aa]dded:? (?:on )?(?:20\\d\\d|${DAY})|新增于|${ISO} ?新增|${ZHD}(?:新增|加入)`)],
+    ['a "since" date',new RegExp(`\\b[Ss]ince (?:${ISO}|${DAY})|(?<!来)自 ?20\\d\\d|\\d+ 月 \\d+ 日起[，,：:]`)],
+    ['"held since"',/[Hh]eld since|起暂缓/],
+    ['a "run on" date',new RegExp(`\\b(?:[Rr]un|[Rr]an|replayed) on (?:${ISO}|${DAY})|于 ${ZHD}运行|\\d+ 月 \\d+ 日已?运行`)],
+    ['a "reviewed <date>" label',new RegExp(`· [Rr]eviewed (?:on )?(?:${ISO}|${DAY})|· ${ZHD}审核`)],
+    ['a "snapshot <date>" label',new RegExp(`\\b[Ss]napshot (?:${ISO}|${DAY})|快照 ?(?:${ISO}|${ZHD})`)],
+    ['"this update"',/\b[Tt]his update\b|本次更新|这次更新/],
+    ['a "generated" date',new RegExp(`\\bgenerated:? (?:on )?(?:20\\d\\d|${DAY})|生成于 ?20\\d\\d`)],
+    ['a version label',/(?<![\w.\/#-])(?<!Figshare(?: record)?(?: \d+)? )v\d+(?![\w.]|-\d)|\brelease v\d|第[一二三四五六七八九十]+轮/],
+  ];
+  const anyDate=new RegExp(`${ISO}|${ZHD}|${DAY} 20\\d\\d`);
+  // Phrases still printed while an edit is outstanding, each leaving this list when its edit lands; the PASS line
+  // counts the ones still printed. Empty: the data modules' group titles (entities.ts), the /api/ file descriptions
+  // (files.ts) and the two dated hold outcomes on the home cards (releases.ts `card`, which index.astro prints in
+  // place of the outcome; the register keeps the dated one) no longer carry a date or a version label.
+  const pending=[];
+  // Kept: the export's own not-run reason, printed as released (foundation-models-update.json); its Chinese carries no version label.
+  const verbatim=['LUNA Large is frozen probes only in the v9 stage specification'];
+  // /data-use/'s policy dates: the review each source was added under, and a status-only source's released reason.
+  const policy={'/data-use/':[new RegExp(`Sources added ${DAY} 20\\d\\d`,'g'),/replayed on 2026-09-22/g]};
+  const KEEP_PAGES=new Set(['/releases/','/zh/releases/']);
+  const pendingSeen=new Set(),bad=[];
+  const scrub=(text,path)=>{
+    let t=text;
+    for(const p of pending) if(t.includes(p)){pendingSeen.add(p);t=t.split(p).join(' ');}
+    for(const p of verbatim) t=t.split(p).join(' ');
+    for(const re of policy[path]??[]) t=t.replace(re,' ');
+    return t;
+  };
+  // Link targets are not text: an anchor such as #v9-licences stays, as every link does.
+  const scan=(text,where,path)=>{
+    const t=scrub(text.replace(/\]\([^)\s]*\)/g,']()').replace(/https?:\/\/\S+/g,' '),path);
+    for(const [what,re] of rules){const m=t.match(re);
+      if(m) bad.push(`${where}: ${what} — “…${t.slice(Math.max(0,m.index-50),m.index+m[0].length+30).replace(/\s+/g,' ')}…”`);}
+  };
+  const decode=s=>s.replace(/&#x([0-9a-f]+);/gi,(_,h)=>String.fromCodePoint(parseInt(h,16))).replace(/&#(\d+);/g,(_,d)=>String.fromCodePoint(Number(d)))
+    .replace(/&(amp|lt|gt|quot|apos|nbsp);/g,(_,e)=>({amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '})[e]);
+  const cutCiteMd=md=>md.replace(/^## (?:Cite this page|引用本页)\n[\s\S]*?(?=^---$|(?![\s\S]))/m,'');
+  const walk=rel=>readdirSync(new URL(rel,DIST),{withFileTypes:true}).flatMap(d=>d.isDirectory()
+    ?(['_astro','data'].includes(d.name)&&rel===''?[]:walk(rel+d.name+'/')):[rel+d.name]);
+  const files=walk('');
+  let nHtml=0,nMd=0;
+  for(const f of files.filter(f=>/(?:^|\/)index\.(?:html|md)$|^404\.html$/.test(f))){
+    const path='/'+f.replace(/index\.(?:html|md)$/,'').replace(/^404\.html$/,'404');
+    if(KEEP_PAGES.has(path)) continue;
+    const raw=readFileSync(new URL(f,DIST),'utf8');
+    if(f.endsWith('.html')){
+      const body=raw.replace(/<head>[\s\S]*?<\/head>/,'').replace(/<(script|style)\b[\s\S]*?<\/\1>/g,'')
+        .replace(/<section class="cite-page"[\s\S]*?<\/section>/g,'');
+      const attrs=[...body.matchAll(/\s(?:aria-label|title|alt)="([^"]*)"/g)].map(m=>m[1]).join(' ¶ ');
+      scan(decode(body.replace(/<[^>]+>/g,' ')+' ¶ '+attrs).replace(/\s+/g,' '),f,path);
+      // A data-source note names its file and schema, never a date.
+      for(const [,note] of body.matchAll(/<p class="citation-note">([\s\S]*?)<\/p>/g)){
+        const t=decode(note.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+        if(/^(?:Data source:|数据来源：)/.test(t)&&anyDate.test(t)) bad.push(`${f}: a dated data-source note — “${t}”`);
+      }
+      nHtml++;
+    }else{
+      const md=cutCiteMd(raw);
+      scan(md,f,path);
+      for(const line of md.split('\n')) if(/^(?:Data source:|数据来源：)/.test(line)&&anyDate.test(line)) bad.push(`${f}: a dated data-source note — “${line}”`);
+      nMd++;
+    }
+  }
+  // llms.txt: everything but its Cite section, which names the current release and its date.
+  const llms=readFileSync(new URL('llms.txt',DIST),'utf8');
+  assert.ok(/^## Cite$/m.test(llms),'llms.txt: the Cite section this check leaves out');
+  scan(llms.replace(/^## Cite\n[\s\S]*?(?=^## )/m,''),'llms.txt','/llms.txt');
+  // llms-full.txt: page by page, as its footers divide it, leaving out the release log and each Cite block.
+  const full=readFileSync(new URL('llms-full.txt',DIST),'utf8').split(/^---\nMarkdown copy of (\S+), generated from the published page\..*$/m);
+  let nFull=0;
+  for(let i=0;i+1<full.length;i+=2){
+    const path=new URL(full[i+1]).pathname;
+    if(KEEP_PAGES.has(path)) continue;
+    scan(cutCiteMd(full[i]),'llms-full.txt '+path,path);nFull++;
+  }
+  assert.ok(nHtml>=100&&nMd>=100&&nFull>=50,`the update-label check read the pages (${nHtml} HTML, ${nMd} Markdown, ${nFull} llms-full sections)`);
+  assert.deepEqual(bad,[],'an update date or version label is printed outside the release log, a Cite block or the kept evidence and policy dates:\n'+bad.slice(0,20).join('\n'));
+  console.log(`PASS: no update date or version label — ${nHtml} HTML pages and ${nMd} Markdown copies in both languages, llms.txt and ${nFull} llms-full.txt sections; the release log, Cite blocks, evidence dates and /data-use/ policy dates kept`+
+    (pendingSeen.size?`; ${pendingSeen.size} deferred data-module phrase${pendingSeen.size>1?'s':''} still printed (entities.ts, files.ts, releases.ts).`:'.'));
+}
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

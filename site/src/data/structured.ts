@@ -32,6 +32,7 @@ import extension from './extension-update.json';
 import large from './large-source-update.json';
 import shared from './shared-representation-update.json';
 import reliable from './reliable-decisions-update.json';
+import later from './later-sessions-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -156,6 +157,12 @@ const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
   ...(core ? [{ file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt, metrics: ['balanced_accuracy'] }] : []),
 ];
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
+  // A decoder trained on an earlier session, tested on a later one: its own export only (WBCIC-SHU, the longitudinal
+  // RSVP source and Forenzo). does-pretraining-help links the page and prints none of its figures.
+  'later-sessions': { file: '/data/later-sessions-update.json', release: later.release_id, generated: later.generated_at,
+                      metrics: ['balanced_accuracy', 'accuracy', 'macro_f1', 'paired_difference_balanced_accuracy', 'auroc', 'average_precision', 'log_loss',
+                                'brier_score', 'expected_calibration_error', 'paired_difference_auroc', 'joint_source_sd_normalized_rmse',
+                                'paired_difference_normalized_rmse', 'raw_rmse', 'r_squared', 'pearson_correlation'] },
   // Since 2026-10-07: route 2 of the decision-research plan, its own export only. when-not-to-act's roadmap links
   // the page and prints no figure of it, so its entry below is unchanged.
   'shared-encoder': { file: '/data/shared-representation-update.json', release: shared.release_id, generated: shared.generated_at,
