@@ -14,6 +14,7 @@
  * export below, and the page refuses to build if the numbers stop supporting them.
  */
 import TopicLayout from '../../../components/TopicLayout.astro';
+import { elsewhere } from '../../../data/site';
 import Fig from '../../../components/Fig.astro';
 import BoasGaps from '../../../components/BoasGaps.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
@@ -24,6 +25,11 @@ import { R2, D, DELTA, P3_CUT, srFig, srPp, srLo, srRelease, qName, setupName, c
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
+const article = elsewhere.articles.find(a => a.page === '/topics/shared-encoder/');
+const articleCopy = {
+  en: ['A longer write-up of the motor-imagery results is on Hugging Face: ', 'Can one EEG encoder answer several questions? ↗'],
+  zh: ['', '运动想象部分结果的长文解读（英文，Hugging Face）↗'],
+}[locale];
 const zh = locale === 'zh';
 const tc = topicChrome[locale];
 type Part = string | FigValue;
@@ -575,5 +581,6 @@ const unitWord = (id: 'mi' | 'sl') => zh ? (id === 'mi' ? '窗口' : '数据帧'
     <h3 class="roadmap-h3">{copy.litH3}</h3>
     <ul class="rd-literature">{literature.map(x => <li lang="en"><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
     <p class="citation-note">{tc.dataSource} <a href="/data/shared-representation-update.json" download>shared-representation-update.json</a> · {tc.schema} {srRelease.schema}{tc.period}</p>
+    {article && <p class="citation-note" id="sr-article">{articleCopy[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{articleCopy[1]}</a></p>}
   </section>
 </TopicLayout>

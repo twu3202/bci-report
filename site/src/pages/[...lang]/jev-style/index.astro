@@ -29,6 +29,7 @@ const results = runs.map(r => 'results' in r ? r.results : '');
 if (results.join() !== '#reliable-decisions,/topics/shared-encoder/,/topics/questions-in-language/') throw new Error('jev-style: the routes link their results');
 const hrefOf = (r: string) => r.startsWith('#') ? `${hrefFor('/topics/when-not-to-act/', locale)}${r}` : hrefFor(r, locale);
 const article = elsewhere.articles.find(a => a.page === '/topics/when-not-to-act/');
+const article2 = elsewhere.articles.find(a => a.page === '/topics/shared-encoder/');
 const copy = {
   en: {
     docTitle: 'Jev-style questions on EEG: the evidence',
@@ -55,6 +56,7 @@ const copy = {
     ],
     roadmap: ['The plan, its literature and what each route set out to test: ', 'the research plan on When not to act →'],
     article: ['A longer write-up of the first route’s BETA results is on Hugging Face: ', 'When should an EEG decoder abstain? ↗'],
+    article2: ['and of the second route’s motor-imagery results: ', 'Can one EEG encoder answer several questions? ↗'],
   },
   zh: {
     docTitle: 'Jev 式提问用在脑电上：证据',
@@ -81,6 +83,7 @@ const copy = {
     ],
     roadmap: ['这个计划、它的文献，以及每条路线原本要检验什么：', '“何时不该执行”页上的研究计划 →'],
     article: ['', '第一条路线 BETA 部分结果的长文解读（英文，Hugging Face）↗'],
+    article2: ['', '第二条路线运动想象部分结果的长文解读（英文，Hugging Face）↗'],
   },
 }[locale];
 const structured = {
@@ -108,7 +111,7 @@ const structured = {
       <p class="route-results"><a href={hrefOf(results[i])}>{r.link}</a></p>
     </li>)}</ol>
     <p class="roadmap-p">{copy.roadmap[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.roadmap[1]}</a></p>
-    {article && <p class="citation-note" id="jev-article">{copy.article[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a></p>}
+    {article && <p class="citation-note" id="jev-article">{copy.article[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a>{article2 && <>{locale === 'zh' ? '；' : '; '}{copy.article2[0]}<a href={article2.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article2[1]}</a></>}</p>}
     <p class="citation-note" data-independence="true">{jevIndependence[locale]}</p>
   </section>
 </EntityLayout>

@@ -39,7 +39,7 @@ export const site = {
  * - `explorer`: a Space that reads the Hugging Face mirror at one pinned release
  *   and labels every answer with it; /api/ and llms.txt link it.
  * - `articles`: long-form write-ups, one line per article; `page` is the topic
- *   page that links it (/jev-style/ links the decision-research one as well).
+ *   page that links it (/jev-style/ links the decision-research ones as well).
  *   The link label is the page's own copy and carries no "Jev-style".
  */
 export const elsewhere = {
@@ -47,6 +47,8 @@ export const elsewhere = {
   articles: [
     { id: 'when-should-an-eeg-decoder-abstain', page: '/topics/when-not-to-act/', published: '2026-10-07',
       url: 'https://huggingface.co/blog/Twu31/when-should-an-eeg-decoder-abstain' },
+    { id: 'one-eeg-encoder-several-questions', page: '/topics/shared-encoder/', published: '2026-10-08',
+      url: 'https://huggingface.co/blog/Twu31/one-eeg-encoder-several-questions' },
   ],
 } as const;
 
