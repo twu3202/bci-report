@@ -25,7 +25,7 @@
 // The key is public by design: IndexNow verifies ownership by fetching
 // https://<host>/<key>.txt, which public/ ships.
 import { createHash } from 'node:crypto';
-import { spawn } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, writeFileSync, createWriteStream } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -110,7 +110,15 @@ if (!noDeploy) await new Promise((resolve, reject) => {
 // pages are checked at a time.
 const get = u => fetch(u, { headers: { 'cache-control': 'no-cache', 'accept-encoding': 'gzip, br' }, signal: AbortSignal.timeout(30_000) });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const bodyOf = async u => { try { const res = await get(u); return res.ok ? Buffer.from(await res.arrayBuffer()) : null; } catch { return null; } };
+// When Node's own request fails (seen on 2026-10-08: connect and body timeouts on
+// a link where curl was fine), the same URL is fetched once more with curl. The
+// bytes must still equal dist/ exactly; only the transport differs.
+const viaCurl = u => new Promise(resolve => execFile('curl', ['-sf', '--compressed', '--max-time', '40', '-H', 'cache-control: no-cache', u],
+  { encoding: 'buffer', maxBuffer: 64 << 20 }, (err, out) => resolve(err ? null : out)));
+const bodyOf = async u => {
+  try { const res = await get(u); if (res.ok) return Buffer.from(await res.arrayBuffer()); } catch { /* fall through to curl */ }
+  return viaCurl(u);
+};
 const mismatched = [];
 const queue = [...(changed.length ? changed : urls.slice(0, 3))];
 await Promise.all(Array.from({ length: 6 }, async () => {
