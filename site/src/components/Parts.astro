@@ -1,0 +1,12 @@
+---
+/**
+ * A sentence as the route-3 page writes it: words, and figures that carry data-fig (Fig.astro). Every figure in it is
+ * a leaf of a served file, re-read by check-workbench.mjs.
+ */
+import Fig from './Fig.astro';
+import type { Fig as FigValue } from '../data/entities';
+
+interface Props { p: (string | FigValue)[] }
+const { p } = Astro.props;
+---
+{p.map(x => typeof x === 'string' ? x : <Fig f={x}/>)}

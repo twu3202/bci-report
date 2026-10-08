@@ -1,0 +1,19 @@
+---
+/**
+ * The card that leads to /jev-style/, under the core matrix on the home page and at the head of the Questions hub.
+ * "Jev-style" never stands alone on the site (owner, 2026-10-08): the card carries the scope sentence beside the name,
+ * and the independence line. No figure.
+ */
+import { hrefFor, jevCardCopy, type Locale } from '../data/i18n';
+import { jevScope } from '../data/questions-in-language';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = jevCardCopy[locale];
+---
+<a class="jev-card" href={hrefFor('/jev-style/', locale)} data-jev-card="true">
+  <span class="jev-card-eyebrow">{c.eyebrow}</span>
+  <strong class="jev-card-title">{c.title}</strong>
+  <span class="jev-card-body">{jevScope[locale]}{locale === 'zh' ? '' : ' '}{c.body}</span>
+  <span class="jev-card-link">{c.link}</span>
+</a>

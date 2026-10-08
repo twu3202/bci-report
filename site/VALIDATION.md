@@ -812,6 +812,23 @@ The site's prose no longer states when it was updated or which version it is (ow
 every page, Markdown copy and llms file for update markers and internal version labels, leaving the release log, the
 Cite blocks, evidence dates and /data-use/'s policy dates.
 
+Route 3 of the decision-research plan, questions in language (owner approval of the results): check-workbench holds
+both route-3 files byte-identical in the source and the build; every one of the 140 entries' flags to its interval
+and the frozen margins (2 pp; log 1.25 for log R), R to exp(log R), and seen, reworded and unseen apart; every BOAS
+cell to at least 20 people with no per-person, per-fold, percentile or demographic key; the pre-run checks to pass or
+fail and counts. On /topics/questions-in-language/ every entry has one row, in a table of its own kind (seen, reworded
+and unseen never share one), printing its estimate, interval, both flags in words and its gate; English and Chinese
+print the same figures; the required disclosures (revisions 3 and 4 failed, revision 5 passed, the owner's override,
+the centring diagnostic not run, the direction counts, S0b-6, EA-1, the numeracy prediction not activated, 35 entries
+without multiplicity correction, the secondary results single-seed and declared likely inconclusive) stand with their
+counts; "unseen" says by whom; the result sections type no figure; every route-3 BOAS figure on any page lies inside
+an element carrying the three gaps, each BOAS table states its n, and the short answer, description and card print
+none. The BETA and BOAS groups and the CBraMod page carry the route-3 rows with their limitations. The /jev-style/ page
+carries the scope sentence as its dek, says the site is independent and not affiliated with the Jev authors, links the
+three routes, cites Yu & Yao, 2026 and types no figure; every "Jev-style" on the site stands in a section or card with
+its scope sentence, and "Yu et al." and "jev-eeg" appear nowhere. Data use carries the odd-median line. Mutation-tested
+on a copy of dist: each of 15 injected violations was caught.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

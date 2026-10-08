@@ -39,8 +39,9 @@ export const site = {
  * - `explorer`: a Space that reads the Hugging Face mirror at one pinned release
  *   and labels every answer with it; /api/ and llms.txt link it.
  * - `articles`: long-form write-ups, one line per article; `page` is the topic
- *   page that links it. The link label is the page's own copy, so a title that
- *   says "Jev-style" does not need the scope sentence beside the link.
+ *   page that links it (/jev-style/ links the decision-research one as well).
+ *   The link label is the page's own copy and carries no "Jev-style", so it
+ *   needs no scope sentence beside it.
  */
 export const elsewhere = {
   explorer: 'https://huggingface.co/spaces/Twu31/bci-report-explorer',

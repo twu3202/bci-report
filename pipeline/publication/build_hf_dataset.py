@@ -324,6 +324,39 @@ def protocol_table(snapshot):
     return '\n'.join(lines)
 
 
+# The Jev-style section: the scope sentence and the independence line are the route-3 export's own, read from the
+# served file, so the card says exactly what the site does. Links only; no figure, no date, no version label.
+JEV_PAGE = 'https://bci.report/jev-style/'
+JEV_ROUTES = [
+    ('Reliable decisions', 'when a decoder should decline to decide', 'https://bci.report/topics/when-not-to-act/#reliable-decisions'),
+    ('One model, several questions', 'one shared representation against separate models', 'https://bci.report/topics/shared-encoder/'),
+    ('Questions in language', 'questions asked in words, including ones the EEG head was never trained on', 'https://bci.report/topics/questions-in-language/'),
+]
+
+
+def jev_section():
+    """The card's "Jev-style evaluation" section, its scope sentence and independence line read from the route-3 export."""
+    route = json.loads((PUBLISHED/'questions-in-language-update.json').read_text())['results']['questions-in-language']['route']
+    scope, independence = route['jev_scope'], route['independence']
+    assert scope.endswith('This is not an integration with Jev and not a Jev model that reads EEG.'), 'Jev scope sentence'
+    assert 'independent and not affiliated with the Jev authors' in independence, 'independence line'
+    assert route['origin']['cite'].startswith('Yu & Yao, 2026 · Visual Jev'), 'Visual Jev cited as Yu & Yao, 2026'
+    routes = '\n'.join(f"- [{name}]({url}): {what}." for name, what, url in JEV_ROUTES)
+    return f"""## Jev-style evaluation
+
+{scope} {independence} The pattern comes from a vision paper:
+{route['origin']['cite']} ([arXiv:{route['origin']['arxiv']}]({route['origin']['url']})).
+
+BCI Report asks it on public EEG data in three routes, gathered on
+[Jev-style questions on EEG: the evidence]({JEV_PAGE}):
+
+{routes}
+
+Each route's page gives its figures with their intervals, its limits and the
+release they come from; the third is mostly a negative result for questions the
+EEG head was never trained on."""
+
+
 def card(snapshot, n_rows, topics, n_foundation=128):
     tracks = len(snapshot['tracks'])
     # Methods that actually produced a row, not the size of the model catalogue.
@@ -347,6 +380,8 @@ tags:
   - benchmark
   - neurotechnology
   - electroencephalography
+  - jev-style
+  - decision-models
 pretty_name: 'BCI Report: aggregate EEG decoding results'
 size_categories:
   - n<1K
@@ -372,6 +407,9 @@ configs:
 [Website](https://bci.report) · [中文](https://bci.report/zh/) · [Code](https://github.com/twu3202/bci-report) ·
 [Data use & privacy](https://bci.report/data-use/) · [Every dataset](https://bci.report/datasets/) ·
 [Every method](https://bci.report/methods/) · [Data API](https://bci.report/api/)
+
+[BCI Report Explorer](https://huggingface.co/spaces/Twu31/bci-report-explorer): browse these results, or query
+them through MCP tools, in a Space that reads one pinned release of this mirror and names it in every answer.
 
 {n_rows + n_topic_rows} reviewed measurements from public EEG datasets, each
 carrying the cohort, electrode count, evaluation mode, chance level and training
@@ -542,6 +580,8 @@ are not published.
 
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
+
+{jev_section()}
 
 ## What this does not contain
 

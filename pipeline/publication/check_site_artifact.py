@@ -23,6 +23,8 @@ import export_foundation_models_update as foundation_models
 import export_shared_representation_update as shared_representation
 import export_later_sessions_update as later_sessions
 import audit_later_sessions_export as later_sessions_audit
+import export_questions_in_language_update as questions_in_language
+import audit_questions_in_language_export as questions_in_language_audit
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -174,6 +176,27 @@ def check(root):
     if later_rederived:
         assert later_sessions_audit.audit() == later_audit, 'Later-sessions independent audit no longer reproduces'
     expected.add('later-sessions-update.json')
+
+    # And route 3 of the decision-research roadmap, questions in language: two served files (the results, and the
+    # wording lists with the partition and derangements), re-derived from their own manifest where the pinned inputs
+    # exist, and the independent audit re-run on the same bytes.
+    qil_rederived = questions_in_language.inputs_available()
+    if qil_rederived:
+        qil_payload, qil_wordings = questions_in_language.serialized_export()
+    else:
+        qil_payload = (root/'data/questions-in-language-update.json').read_bytes()
+        qil_wordings = (root/'data/questions-in-language-wordings.json').read_bytes()
+    qil_audit = json.loads(questions_in_language.EXPORT_AUDIT.read_text())
+    assert qil_audit['status'] == 'pass', 'Questions-in-language export review did not pass'
+    assert hashlib.sha256(qil_payload).hexdigest() == qil_audit['export_sha256'], 'Stale questions-in-language export audit'
+    assert hashlib.sha256(qil_wordings).hexdigest() == qil_audit['wordings_sha256'], 'Stale questions-in-language wordings audit'
+    assert (root/'data/questions-in-language-update.json').read_bytes() == qil_payload, 'Unreviewed questions-in-language download'
+    assert (root/'data/questions-in-language-wordings.json').read_bytes() == qil_wordings, 'Unreviewed questions-in-language wordings download'
+    assert all(p.read_bytes() == qil_payload for p in questions_in_language.OUTPUTS), 'Questions-in-language source/download drift'
+    assert all(p.read_bytes() == qil_wordings for p in questions_in_language.WORDING_OUTPUTS), 'Questions-in-language wordings source/download drift'
+    if qil_rederived:
+        assert questions_in_language_audit.audit() == qil_audit, 'Questions-in-language independent audit no longer reproduces'
+    expected |= {'questions-in-language-update.json', 'questions-in-language-wordings.json'}
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -225,6 +248,9 @@ def check(root):
                   ('later-sessions-update payload reproduced from its own manifest, and its independent audit re-run'
                    if later_rederived
                    else 'later-sessions-update payload matched to its audit hash (private inputs not present)'),
+                  ('questions-in-language-update payload and wordings reproduced from their own manifest, and their '
+                   'independent audit re-run' if qil_rederived
+                   else 'questions-in-language-update payload and wordings matched to their audit hashes (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

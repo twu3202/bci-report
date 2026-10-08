@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "release_id": "questions-in-language-update-20261008",
+  "export_sha256": "f320bf25de03e6905d0d9a2d640997d5ad7c70b4af585ed488569461e7c610b4",
+  "wordings_sha256": "70ad2e4c7089516b065955166e3e6d75c89416b8fa3b8600b79ec1e4fc65f0eb",
+  "manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+  "release_candidate_sha256": "9729fda20a9556b34ffb3117b81529aec5c014e01457035445c5c5127fa2d678",
+  "auditor": "pipeline/publication/audit_questions_in_language_export.py",
+  "independence": "A separate program from the export. It does not read the release candidate the export is built from: it reads the two served files, the review manifest and, by their pinned hashes, the consolidated aggregate, the two audited aggregates, the protocol, the stage-0 report and the numerical audits A2 and A4, builds its own table of what every figure must be, and shares no extraction code with the export.",
+  "included": [
+    "questions-in-language"
+  ],
+  "status_only": [],
+  "holds": [],
+  "figures_compared": 3236,
+  "figures_by_file": {
+    "questions-in-language-update.json": {
+      "figures": 3111,
+      "copied_exactly": 3089,
+      "recomputed": 22
+    },
+    "questions-in-language-wordings.json": {
+      "figures": 125,
+      "copied_exactly": 124,
+      "recomputed": 1
+    }
+  },
+  "primary_entries": 35,
+  "secondary_entries": 105,
+  "flags_and_rules_recomputed": 189,
+  "boas_cells": 82,
+  "smallest_boas_cell": 71,
+  "withheld_values_checked_absent": 5273,
+  "checks": [
+    "the two served copies of each file are byte-identical; both files name the manifest they were built from, and the results file the release candidate",
+    "every number and null in either file has an expected value derived here, and every expected value is in the file: no unaudited figure and no missing one",
+    "each primary entry equals the audited primary aggregate, which the consolidated aggregate cites unchanged; numerical audit A2 matched every flag, rule, sentence and count, and its own recomputed SSVEP values equal the published ones exactly",
+    "each secondary entry equals the audited secondary aggregate; audit A4 matched every flag, rule and count, and its only differences are the explained ones (D-1: EESM19 \"asleep\" read-offs at float64 saturation; D-2: two S2 sentences, wording only)",
+    "levels, contrasts, generalisation costs, read-offs, per-stage AUROC, log loss, S6, S8, S9 to S13, S12 and flip rates equal the audited aggregates; S12 sensor 0 is dry and 1 is wet",
+    "chance-corrected values, R from log R, the headroom floor (chance + 5 pp), the S9 harmonic means and the cell and entry counts are recomputed here",
+    "every difference flag, margin flag and route-sentence rule is recomputed from its interval and the frozen 2-pp margin (log 1.25 for log R)",
+    "pre-run checks: the canary outcomes and counts are the stage-0 report's and audit A4 reproduced them; the token-rule, numeracy, fit-check and shuffled-EEG counts are the stage-0 report's and the consolidated aggregate's; no check value of any kind reaches either file",
+    "every BOAS figure states its n, or belongs to a cell that does, and every BOAS cell pools at least 20 people",
+    "no S10 per-frequency or interior-only value reaches either file",
+    "the wording lists re-serialise to the hash the protocol and the stage-0 report record; the grid, the held-out partition, the S8 band, the NUM code, the derangements and the text encoders are the protocol's"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "aggregates, protocol, stage-0 report and numerical audits: by the hashes the manifest pins, cross-checked against the hashes the consolidated aggregate and the audits record",
+      "every figure: equal to its audited source or recomputed from it"
+    ],
+    "not_bound": [
+      "the release candidate's {source, value} references, the conformance audits' checks, the handoff's figures, the BOAS conditions and the rights records are checked by the export, not re-read here",
+      "prose in the served files (sentences, notes, disclosures) is checked by the export against its pinned sources and by pattern, not by this audit"
+    ]
+  }
+}

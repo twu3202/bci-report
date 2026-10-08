@@ -1,0 +1,36 @@
+---
+/**
+ * One route-3 entry as a table row (questions-in-language.ts): the comparison by name and by the export's codes, what
+ * is asked, the estimate with its 95% interval (pp for a difference of proportions, log R with R beside it, or a
+ * difference of AUROC), both flags in words with the margin, and the gate. `data-ql-entry` is the export's key, so
+ * check-workbench.mjs can pin each cell to its entry.
+ */
+import Fig from './Fig.astro';
+import { armName, contrast, differenceText, gateText, marginText, qlFig, type QlEntry } from '../data/questions-in-language';
+import { topicChrome, type Locale } from '../data/i18n';
+
+interface Props { e: QlEntry; locale: Locale }
+const { e, locale } = Astro.props;
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const c = contrast(e.label);
+const cap = (s: string) => zh ? s : s.charAt(0).toUpperCase() + s.slice(1);
+const name = c.y === 'read-off'
+  ? (zh ? `${armName(c.x, locale)}分类头，对比由它自己的答案读出` : `${cap(armName(c.x, locale))} head against the read-off from its own answers`)
+  : `${cap(armName(c.x, locale))} − ${armName(c.y, locale)}`;
+const codes = c.y === 'read-off' ? `${c.x} / read-off` : `${c.x} − ${c.y}`;
+const pp = e.unit === 'difference of proportions';
+const est = pp ? [qlFig(e.estimate, 'pp2'), qlFig(e.interval_95[0], 'sgn2'), qlFig(e.interval_95[1], 'pp2')]
+  : [qlFig(e.estimate, 'sgn3'), qlFig(e.interval_95[0], 'sgn3'), qlFig(e.interval_95[1], 'sgn3')];
+// The held-out wordings a rewording or a description entry resamples (a1 frames, a3 and unseen descriptions).
+const kinds = Object.values(e.resampled_wording_kinds);
+if (e.single_seed !== (e.seeds === 1)) throw new Error(`QlRow: ${e.key} single_seed against its seeds`);
+---
+<tr data-ql-entry={e.key} data-gate={e.gate.label}>
+  <th scope="row"><span lang="en">{e.id}</span> · {name}<small lang="en">{codes}</small></th>
+  <td>{c.asked[locale]}{c.x === 'TPL(a2)' && <small>{zh ? '只对这三个同义词成立：固定，不重采样' : 'for these three synonyms: fixed, not resampled'}</small>}{kinds.map(k => <small>{zh ? <>重采样 <Fig f={qlFig(k, 'count')}/> 条留出问法</> : <><Fig f={qlFig(k, 'count')}/> held-out wordings, resampled</>}</small>)}</td>
+  <td data-cell="estimate"><Fig f={est[0]} cls="metric"/><span class="interval">{tc.interval95} <Fig f={est[1]}/> {tc.to} <Fig f={est[2]}/></span>{e.r && <span class="interval" data-r="true">R <Fig f={qlFig(e.r.estimate, 'auc2')}/> (<Fig f={qlFig(e.r.interval_95[0], 'auc2')}/>–<Fig f={qlFig(e.r.interval_95[1], 'auc2')}/>)</span>}</td>
+  <td data-cell="difference" data-flag={e.difference}>{differenceText(e, c.x, c.y, locale)}</td>
+  <td data-cell="margin" data-flag={e.margin}>{marginText(e, c.x, locale)}</td>
+  <td data-cell="gate" data-flag={e.gate.label}>{gateText(e.gate, locale)}</td>
+</tr>

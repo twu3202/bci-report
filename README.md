@@ -99,7 +99,7 @@ What each file holds, loading examples and how to cite a release:
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Twelve questions sit alongside, each with its own protocol:
+Thirteen questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
@@ -111,7 +111,8 @@ Twelve questions sit alongside, each with its own protocol:
 [when not to act](https://bci.report/topics/when-not-to-act/) ·
 [sleep-stage balance](https://bci.report/topics/sleep-staging/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/) ·
-[one model, several questions](https://bci.report/topics/shared-encoder/)
+[one model, several questions](https://bci.report/topics/shared-encoder/) ·
+[questions asked in words](https://bci.report/topics/questions-in-language/)
 
 Every dataset and every method also has its own page, gathering each figure
 measured on it wherever it appears on the site:
@@ -129,13 +130,23 @@ page with its short answer, [llms-full.txt](https://bci.report/llms-full.txt)
 holds every English page in one file, and every page has a Markdown copy at
 `<page>/index.md`.
 
-**Jev-style decision models for EEG** — a research plan in three routes: can one
-EEG representation answer several explicit questions, and know when to abstain?
-It sits on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research),
-next to the measured idle-protocol trade-off it would build on. Two routes have
-been run: [reliable decisions](https://bci.report/topics/when-not-to-act/#reliable-decisions)
-(4 October) and [one model, several questions](https://bci.report/topics/shared-encoder/)
-(7 October); the third, questions in language, has not. Not an integration with Jev.
+### Jev-style evaluation
+
+"Jev-style" names an interface pattern: encode the signal once, then answer
+several explicit, typed questions about it. This is not an integration with Jev
+and not a Jev model that reads EEG. BCI Report is independent and not affiliated
+with the Jev authors; no contact with them and no endorsement by them is
+claimed. The pattern comes from a vision paper: Yu & Yao, 2026 · Visual Jev:
+Accurate and Efficient Decisions from Shared Visual Context
+([arXiv:2609.25845](https://arxiv.org/abs/2609.25845)).
+
+The research plan on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research)
+asks it in three routes, all run on public EEG data, and
+[Jev-style questions on EEG: the evidence](https://bci.report/jev-style/) gathers them:
+[reliable decisions](https://bci.report/topics/when-not-to-act/#reliable-decisions) ·
+[one model, several questions](https://bci.report/topics/shared-encoder/) ·
+[questions in language](https://bci.report/topics/questions-in-language/), mostly a
+negative result for questions the EEG head was never trained on.
 
 Every reviewed release, each download with its SHA-256, and a dated register of
 what was held back: [bci.report/releases](https://bci.report/releases/).

@@ -27,9 +27,16 @@ export const siteUpdates = [
     // group); one pointer on does-pretraining-help; the release log, the API page and data use. The same day the
     // site's prose stopped stating update dates and version labels (owner decision); like the "Research preview"
     // badge, that is a label about the site, not content, and is not counted here.
+    // Then route 3 of the decision-research roadmap, questions in language (same version): its page; when-not-to-act's
+    // roadmap, where route 3 is now run (its card lost the "Jev-style" kicker to the Jev-style card); the /jev-style/
+    // page that gathers the three routes, with its card under the core matrix and on the Questions hub. Data use
+    // gained the line on odd-numbered medians (Forenzo Main) and route 3's register entry (its five reused records, the
+    // text encoders, REVE Large's terms, the wordings, BOAS under D11). Route-3 groups reached the BETA and BOAS pages and,
+    // through their frozen-feature rows, the CBraMod page (already listed above).
     paths: ['/', '/topics/', '/topics/later-sessions/', '/topics/does-pretraining-help/',
             '/datasets/', '/datasets/wbcic-shu/', '/datasets/longitudinal-rsvp/', '/datasets/forenzo-continuous-tracking/',
-            '/methods/cbramod/', '/releases/', '/api/', '/data-use/'],
+            '/methods/cbramod/', '/releases/', '/api/', '/data-use/',
+            '/topics/questions-in-language/', '/topics/when-not-to-act/', '/jev-style/', '/datasets/beta/', '/datasets/boas/'],
   },
   {
     date: '2026-10-07',
@@ -135,7 +142,7 @@ export interface Release {
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
-    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions';
+    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage';
   files: string[];
   pages: string[];
   summary: Text;
@@ -150,6 +157,25 @@ export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 
   'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
 
 export const releases: Release[] = [
+  {
+    id: 'questions-in-language-update-20261008', date: '2026-10-08', payload: 'questionsInLanguage',
+    files: ['questions-in-language-update.json', 'questions-in-language-wordings.json'],
+    // Route 3 of the decision-research roadmap, in the same site version as the later-sessions question: its own
+    // question page, and the roadmap on when-not-to-act, where route 3 is run.
+    pages: ['/topics/questions-in-language/', '/topics/when-not-to-act/'],
+    summary: {
+      en: 'Route 3 of the decision-research roadmap, questions in language: can an EEG model be asked its questions in words, including ones it was never trained on? One small question-conditioned head over frozen features is asked each question by a question number, a label template or a natural-language description. SSVEP on BETA (a plain spectrum and frozen CBraMod features) and sleep on BOAS (frozen CBraMod features) are primary, three seeds each; EESM19, OpenBMI motor imagery, REVE-L features, a second text encoder, Chinese wordings, a negation probe, a contiguous held-out band of frequencies and Wearable-102 are secondary. Seen questions in their training wording, rewordings and questions the EEG head was never trained on are reported apart, never pooled into one zero-shot number, and every entry carries two flags: whether its interval excludes zero, and how it stands against a margin fixed before any result (2 pp for accuracy; a ratio of remaining error of 1.25 for the unseen sleep questions; the primary comparisons with the numeric code, the neighbour average and the shuffled templates are read for a difference only). “Jev-style” names the interface pattern the roadmap takes from a vision paper (Yu & Yao, 2026): encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG.',
+      zh: '决策研究路线图的第三条路线——用语言提问：能不能用文字向 EEG 模型提问，包括它从未训练过的问题？在冻结特征上训练一个以问题为条件的小分类头，每个问题分别用三种方式提出：题号、标签模板、自然语言描述。主分析是 BETA 上的 SSVEP（普通频谱与冻结的 CBraMod 特征）和 BOAS 上的睡眠（冻结的 CBraMod 特征），各 3 个随机种子；次要分析包括 EESM19、OpenBMI 运动想象、REVE-L 特征、另一个文本编码器、中文问法、否定探针、一段连续留出的频率，以及 Wearable-102。用训练时的问法问已见过的问题、改写后的问题、EEG 分类头从未训练过的问题，三者分开报告，从不合并成一个“零样本”数字；每个条目都带两个标记——区间是否排除零，以及相对于任何结果出来之前就定下的界值处在什么位置（准确率为 2 pp；未见过的睡眠问题为剩余错误之比 1.25；主分析中与数值编码、相邻平均和错配模板的比较只读差异）。“Jev-style”指路线图从一篇视觉论文（Yu & Yao, 2026）借来的接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。',
+    },
+    notes: [
+      { en: 'Mostly a negative, boundary result. On sleep, asking a seen question with a template or a description was equivalent to a question number within 2 pp; on SSVEP it cost accuracy with both kinds of features. A new sentence frame cost nothing measurable on sleep, while synonyms and new descriptions lowered accuracy on both datasets (on SSVEP with frozen CBraMod features the synonyms stayed within the margin). Questions the EEG head was never trained on were not answered well: in every wording, each unseen sleep question did worse than adding up the head’s own stage answers, and every comparison of an unseen flicker frequency with CCA, which needs no training, fell far short. Negated wordings were answered as if they asked for what they negate.',
+        zh: '主要是阴性的、划定边界的结果。在睡眠上，用标签模板或描述来问已见过的问题，与用题号提问在 2 pp 的界值内等效；在 SSVEP 上，两种特征下用语言提问都有准确率代价。在睡眠上换一个新句式没有可测的代价，同义词和新描述则在两个数据集上都降低了准确率（SSVEP 冻结 CBraMod 特征下的同义词仍在界值内）。EEG 分类头从未训练过的问题没有答好：无论哪种问法，每一个未见过的睡眠问题都不如把分类头自己的各期答案加起来；未见过的闪烁频率与无需训练的 CCA 的每一项比较，都远远落后。否定的问法被当成在问被否定的那一项本身。' },
+      { en: 'Before any result, the pre-run permutation canary failed twice (revisions 3 and 4; every failing cell was on BOAS, one of them below chance). The owner overrode revision 4’s “no further revision” and approved revision 5, which passed; revision 4’s centring diagnostic was not run, and both failed records are kept and disclosed. For the Chinese text encoder the SSVEP token rule was reported instead of stopping the run (decision S0b-6); an engineering amendment before the first fit (EA-1) changed no question, partition, wording, arm, metric, margin or gate; the declared numeracy prediction was not activated, because its premise did not hold. There are 35 pre-declared primary comparisons, not corrected for multiplicity, and most secondary results are single-seed and were declared likely inconclusive before the run.',
+        zh: '在任何结果出来之前，运行前的标签置换金丝雀检查失败了两次（修订 3 与修订 4；失败的格子全在 BOAS 上，其中一个低于随机水平）。所有者推翻了修订 4 写下的“不再修订”，批准了修订 5，修订 5 通过；修订 4 的按人中心化诊断没有运行，两次失败的记录都保留并披露。对于中文文本编码器，SSVEP 的分词规则改为报告而不停止运行（决定 S0b-6）；第一次拟合之前的一项工程修订（EA-1）没有改动任何问题、划分、问法、臂（ID、TPL、DESC 等各组）、指标、界值或门槛；预先声明的数感预测没有触发，因为它的前提不成立。主分析共 35 个预先声明的比较，没有做多重比较校正；次要分析大多只有 1 个随机种子，并在运行前就声明多半无法下结论。' },
+      { en: 'BOAS figures are published under the owner’s approval of 7 October 2026, extended to route 3 the same day (D11): with its three stated gaps and its attribution, participants pseudonymised in the public release, and every BOAS cell pooling at least 20 people; neither Bitbrain’s headband nor its automatic scoring is used or evaluated. Not published: per-person, per-night and per-fold values; the S10 per-frequency and interior-only breakdowns, which no independent audit covers; any value of a pre-run check, which is published as pass or fail and counts only; measured compute; and the handoff, the aggregates, the protocol and the four independent audits themselves, pinned by hash in the review manifest because they carry private storage paths. The wording lists, the held-out partition and the derangements of the shuffled control are published in their own file.',
+        zh: 'BOAS 的数值依据所有者 2026 年 10 月 7 日的批准发布，该批准于同日扩展到第三条路线（D11）：附三个已说明的缺口与署名，被试在公开发布中是假名化的，每个 BOAS 单元格至少汇总 20 名被试；Bitbrain 的头带及其自动分期既没有使用，也没有被评估。不发布：逐人、逐夜与逐折的数值；没有任何独立审计覆盖的 S10 按频率与仅内部频率的细分结果；运行前检查的任何数值（只以通过或失败及计数发布）；实测的计算量；以及交接文件、聚合文件、协议与四份独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。问法清单、留出频率的划分与打乱对照的错位排列以单独的文件发布。' },
+    ],
+  },
   {
     id: 'later-sessions-update-20261008', date: '2026-10-08', payload: 'laterSessions',
     files: ['later-sessions-update.json'],

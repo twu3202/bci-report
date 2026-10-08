@@ -33,6 +33,7 @@ import large from './large-source-update.json';
 import shared from './shared-representation-update.json';
 import reliable from './reliable-decisions-update.json';
 import later from './later-sessions-update.json';
+import language from './questions-in-language-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -167,6 +168,11 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
   // the page and prints no figure of it, so its entry below is unchanged.
   'shared-encoder': { file: '/data/shared-representation-update.json', release: shared.release_id, generated: shared.generated_at,
                       metrics: ['balanced_accuracy', 'paired_difference_balanced_accuracy', 'log_remaining_error_ratio', 'auroc'] },
+  // Route 3, questions in language: its export, and the wordings file it prints the count of (one release).
+  'questions-in-language': [{ file: '/data/questions-in-language-update.json', release: language.release_id, generated: language.generated_at,
+                              metrics: ['balanced_accuracy', 'paired_difference_balanced_accuracy', 'log_remaining_error_ratio', 'auroc',
+                                        'paired_difference_auroc', 'answer_flip_rate', 'log_loss'] },
+                            { file: '/data/questions-in-language-wordings.json', release: language.release_id, generated: language.generated_at, metrics: [] }],
   'sleep-staging': largeSourceExport(['accuracy', 'balanced_accuracy', 'macro_f1', 'cohen_kappa', 'recall', 'precision', 'f1']),
   'calibration-budget': largeSourceExport(['balanced_accuracy']),
   'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],

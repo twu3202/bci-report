@@ -25,7 +25,9 @@ abstract: >-
   foundation-model adaptation (head only, last block, LoRA), one shared
   representation answering several questions (fixed heads against
   question-conditioned heads and separate models, at matched data and compute),
-  pretraining controls and a clinical case/control comparison. No
+  questions asked in words to a small head over frozen EEG features (seen
+  questions, rewordings and questions it was never trained on kept apart, with
+  a negative result for the last), pretraining controls and a clinical case/control comparison. No
   raw EEG, no per-participant scores, no overall ranking.
 authors:
   - name: "BCI Report"
@@ -42,7 +44,7 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "later-sessions-update-20261008"
+version: "questions-in-language-update-20261008"
 date-released: "2026-10-08"
 keywords:
   - EEG

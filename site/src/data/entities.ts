@@ -30,6 +30,8 @@ import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
          ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
 import { conditionLabel, modelLabel } from './topics';
+import { block as qlBlock, contrast as qlContrast, armName as qlArm, differenceText as qlDifference, marginText as qlMargin,
+         gateText as qlGate, qlFig, type QlEntry } from './questions-in-language';
 import { modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
          fmResearchUse, fmSlugs, type FmModel, type FmRow, type FmSlug } from './foundation-models';
@@ -162,6 +164,11 @@ export interface ResultGroup {
    * evaluated and the credit, so a BOAS figure never stands without them on any page (dataset or method).
    */
   srNotes?: 'openbmi' | 'boas' | 'eesm19';
+  /**
+   * A route-3 group (2026-10-08): the dataset whose route-3 limitations print under its rows (ResultGroups.astro); on
+   * BOAS also the three stated gaps, the participants' wording, what is not evaluated and the credit (BoasGaps).
+   */
+  qlNotes?: 'beta' | 'boas';
 }
 
 export interface DatasetEntity {
@@ -1064,6 +1071,58 @@ function laterForenzoGroup(c: 'Main' | 'Transfer Learning', arm: 'historical_dec
   };
 }
 
+/* --- Questions in language: route 3 (questions-in-language-update.json) ------------------------------------ */
+
+const QLDIFF: L = { en: 'Paired difference, language arm minus reference (pp)', zh: '配对差值，语言问法减参照（pp）' };
+const QLLOGR: L = { en: 'log R, the head’s remaining error over the read-off’s', zh: 'log R：分类头与读出的剩余错误之比' };
+const QLAUC: L = { en: 'Paired difference in AUROC', zh: 'AUROC 的配对差值' };
+const QL_SECTION: Record<string, string> = { P1: 'seen', P2: 'seen', P3: 'unseen-sleep', P4: 'unseen-frequency', P5: 'unseen-sleep' };
+/** The reading beside an entry: the difference shown or not, the margin with it, the gate; an unseen entry says unseen by whom. */
+function qlReading(e: QlEntry): RowNote {
+  const c = qlContrast(e.label);
+  const parts = (locale: Locale): (string | Fig)[] => {
+    const zh = locale === 'zh', sep = zh ? '；' : '; ';
+    const low = (t: string) => zh ? t : t.replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase());
+    const unseen = e.kind === 'unseen' ? (zh ? 'EEG 分类头没有见过，但文本编码器读过这些词。' : 'Unseen by the EEG head, not by the text encoder. ') : '';
+    const r: (string | Fig)[] = e.r ? (zh ? ['R 为 ', qlFig(e.r.estimate, 'auc2'), '；'] : ['R ', qlFig(e.r.estimate, 'auc2'), '; ']) : [];
+    const diff = qlDifference(e, c.x, c.y, locale);
+    return [unseen, ...r, (e.r ? low(diff) : diff) + sep + low(qlMargin(e, c.x, locale)) + sep + low(qlGate(e.gate, locale)) + (zh ? '。' : '.')];
+  };
+  return { en: parts('en'), zh: parts('zh') };
+}
+/**
+ * Route 3 on one primary dataset (BETA or BOAS): every primary entry, with both flags, the margin and the gate, under
+ * the level it was measured at (a plain spectrum, or frozen CBraMod features). Seen, reworded and unseen entries are
+ * separate rows, never pooled; the secondary results, the levels and the pre-run checks stay on the topic page.
+ */
+function languageGroup(id: 'beta' | 'boas'): ResultGroup {
+  const blocks = id === 'beta' ? [qlBlock('P-ssvep-L0'), qlBlock('P-ssvep-L1')] : [qlBlock('P-sleep-L1')];
+  const rows: ResultRow[] = blocks.flatMap(b => b.entries.map(e => {
+    const c = qlContrast(e.label), who = b.level === 'L1' ? { method: 'CBraMod', methodSlug: 'cbramod' as MethodSlug }
+      : { method: 'Plain spectrum', label: { en: 'Plain spectrum (L0)', zh: '普通频谱（L0）' } };
+    const pp = e.unit === 'difference of proportions';
+    const value = pp ? qlFig(e.estimate, 'pp2') : qlFig(e.estimate, 'sgn3');
+    const interval: [Fig, Fig] = pp ? [qlFig(e.interval_95[0], 'sgn2'), qlFig(e.interval_95[1], 'pp2')] : [qlFig(e.interval_95[0], 'sgn3'), qlFig(e.interval_95[1], 'sgn3')];
+    const name = (locale: Locale) => c.y === 'read-off' ? (locale === 'zh' ? `${qlArm(c.x, locale)}，对比读出` : `${qlArm(c.x, locale)} against the read-off`)
+      : `${qlArm(c.x, locale)} − ${qlArm(c.y, locale)}`;
+    const codes = c.y === 'read-off' ? `${c.x} / read-off` : `${c.x} − ${c.y}`;
+    const seeds = (locale: Locale) => e.seeds === 3 ? (locale === 'zh' ? '三个随机种子' : 'three seeds') : (locale === 'zh' ? '一个随机种子' : 'one seed');
+    // On frozen CBraMod features the neighbour 3-way also involves stimulus phase (the handoff: never a frequency result alone).
+    const phase = b.domain === 'ssvep' && b.level === 'L1' && /neighbour 3-way/.test(e.label);
+    return { path: `/topics/questions-in-language/#${QL_SECTION[e.id]}`, ...who,
+      // a2 rests on three fixed synonyms: its rows hold for these three only (the handoff's wording).
+      condition: { en: `${e.id} · ${name('en')} (${codes}) · ${c.asked.en}${phase ? ' (frequency and stimulus phase)' : ''}${c.x === 'TPL(a2)' ? ', for these three synonyms' : ''} · ${seeds('en')}`,
+                   zh: `${e.id} · ${name('zh')}（${codes}）· ${c.asked.zh}${phase ? '（频率与刺激相位）' : ''}${c.x === 'TPL(a2)' ? '，只对这三个同义词成立' : ''} · ${seeds('zh')}` },
+      metric: pp ? QLDIFF : e.unit === 'log R' ? QLLOGR : QLAUC, value, interval, people: e.people, note: qlReading(e) };
+  }));
+  return {
+    id: 'questions-in-language',
+    title: id === 'beta' ? { en: 'Questions in language · SSVEP (route 3)', zh: '用语言提问 · SSVEP（第三条路线）' }
+                         : { en: 'Questions in language · sleep (route 3)', zh: '用语言提问 · 睡眠（第三条路线）' },
+    path: '/topics/questions-in-language/', rows, qlNotes: id,
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
@@ -1092,7 +1151,7 @@ const mob = [citation('nemar-nm000125-v1.0.2'), citation('nemar-nm000201-v1.0.2'
 export const datasets: DatasetEntity[] = [
   fromMvp('ds003810', { en: 'Motor imagery / rest', zh: '运动想象 / 静息' }, [reliableGroup('mi-rest')]),
   fromMvp('EEGMAT', { en: 'Mental arithmetic / rest', zh: '心算 / 静息' }, [adaptationGroup(), fmAdaptationGroup(), reliableGroup('arithmetic-rest')]),
-  fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }, [reliableGroup('beta-8ch')]),
+  fromMvp('BETA', { en: '40-target SSVEP', zh: '40 目标 SSVEP' }, [reliableGroup('beta-8ch'), languageGroup('beta')]),
   fromMvp('ds006593', { en: 'P300 target ERP', zh: 'P300 目标 ERP' }),
   fromMvp('TMNRED / ds005383', { en: 'Semantic target ERP', zh: '语义目标 ERP' }),
   fromMvp('EESM19 scalp subset', { en: 'Five-stage sleep', zh: '五期睡眠分期' }, [sharedEesm19Group()]),
@@ -1119,7 +1178,7 @@ export const datasets: DatasetEntity[] = [
   fromRights('dreem-dod', dreem, [dreemGroup('DOD-H'), dreemGroup('DOD-O')], { en: 'Five-stage sleep staging, healthy sleepers and people with obstructive sleep apnoea, kept apart', zh: '五期睡眠分期，健康被试与阻塞性睡眠呼吸暂停患者，分开分析' }),
   fromRights('openbmi', large.results['openbmi-cross-session-calibration'], [openbmiGroup(), sharedGroup('openbmi')], { en: 'Motor imagery: left or right hand across two sessions, and imagery or rest', zh: '运动想象：跨两次会话的左右手，以及想象还是静息' }),
   // Since 2026-10-07 (owner approval of its rights review, publishable with stated gaps): route 2's sleep source.
-  { ...fromRights('boas', SRD.boas, [sharedGroup('boas')], { en: 'Overnight sleep, six polysomnography EEG channels, human-consensus stages', zh: '整夜睡眠，6 个多导睡眠图 EEG 通道，人工共识分期' },
+  { ...fromRights('boas', SRD.boas, [sharedGroup('boas'), languageGroup('boas')], { en: 'Overnight sleep, six polysomnography EEG channels, human-consensus stages', zh: '整夜睡眠，6 个多导睡眠图 EEG 通道，人工共识分期' },
                   'BOAS · Bitbrain Open Access Sleep dataset'), rightsNote: 'boas' as const },
   // The large-source batch's later-session results (later-sessions-update.json): three sources new to the site.
   fromRights('wbcic-shu', later.datasets['wbcic-shu'], [laterWbcicGroup('2C'), laterWbcicGroup('3C')],

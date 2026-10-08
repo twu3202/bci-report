@@ -177,5 +177,53 @@ class CardRouteTwo(unittest.TestCase):
         self.assertIn('at floor for the fixed heads on EEGNet', self.r2)
 
 
+
+class CardJevStyle(unittest.TestCase):
+    """The "Jev-style evaluation" section (owner plan of 2026-10-07): the scope sentence and the independence line
+    the site prints, the vision paper as Yu & Yao, 2026, links to the evidence page and the three routes, the tags
+    "jev-style" and "decision-models" and never a jev-eeg name, one line to the Explorer Space, and no date."""
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        cls.card = card(snapshot, len(rows), topic_payload())
+        cls.text = ' '.join(cls.card.split())
+        start = cls.text.index('## Jev-style evaluation')
+        cls.section = cls.text[start:cls.text.index('## What this does not contain', start)]
+        cls.route = json.loads((PUBLISHED/'questions-in-language-update.json').read_text())['results']['questions-in-language']['route']
+
+    def test_scope_and_independence_beside_the_name(self):
+        self.assertIn(self.route['jev_scope'], self.section)
+        self.assertIn('This is not an integration with Jev and not a Jev model that reads EEG.', self.section)
+        self.assertIn('independent and not affiliated with the Jev authors', self.section)
+        self.assertIn('no contact with them and no endorsement by them is claimed', self.section)
+
+    def test_cites_yu_and_yao(self):
+        self.assertIn('Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context', self.section)
+        self.assertIn('https://arxiv.org/abs/2609.25845', self.section)
+        self.assertNotIn('Yu et al', self.card)
+
+    def test_links_the_evidence_page_and_the_three_routes(self):
+        for url in ('https://bci.report/jev-style/', 'https://bci.report/topics/when-not-to-act/#reliable-decisions',
+                    'https://bci.report/topics/shared-encoder/', 'https://bci.report/topics/questions-in-language/'):
+            self.assertIn(f'({url})', self.section)
+        self.assertIn('mostly a negative result', self.section)
+
+    def test_tags_and_no_jev_eeg_name(self):
+        head = self.card.split('---')[1]
+        self.assertIn('  - jev-style\n', head)
+        self.assertIn('  - decision-models\n', head)
+        self.assertNotRegex(self.card, r'(?i)jev-eeg')
+
+    def test_explorer_space_line(self):
+        self.assertEqual(self.card.count('https://huggingface.co/spaces/Twu31/bci-report-explorer'), 1)
+
+    def test_no_date_or_version_label_in_the_section(self):
+        self.assertNotRegex(self.section, r'20\d\d-\d\d-\d\d|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b|\bv\d+\b')
+        # Yu & Yao, 2026 is the citation year; the arXiv id is a link target.
+        self.assertNotRegex(self.section.replace('Yu & Yao, 2026', '').replace('2609.25845', ''), r'\d')
+
+
 if __name__ == '__main__':
     unittest.main()

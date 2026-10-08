@@ -24,6 +24,7 @@ import FooterElsewhere from '../../components/FooterElsewhere.astro';
 import TopicGroups from '../../components/TopicGroups.astro';
 import TransferMap from '../../components/TransferMap.astro';
 import FmHomeRow from '../../components/FmHomeRow.astro';
+import JevCard from '../../components/JevCard.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
 import { coreExposure, fmMatrixModels, fmModels, fmTermsSentence, fmProtocols, fmRelease, fmVersionsOf, fmResearchUse, fmRowsByProtocol, fmFileOf, FM_ANCHOR, type FmRow } from '../../data/foundation-models';
 import { fmText, fmZh } from '../../data/foundation-models-zh';
@@ -196,7 +197,8 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 })}</tr>)}</tbody></table></div>
 <p class="matrix-note"><span class="key"><i class="lead"></i>{h.keyLead}</span><span class="key"><i class="plain"></i>{h.keyBar}</span><span class="key"><i class="gap"></i>{h.keyGap}</span><a href="/data/experiments.json" download>{h.matrixDownload}</a></p></div>
 <p class="matrix-caveat" set:html={h.matrixCaveat}></p>
-<p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.added,fmPartly,counts.addedModels,counts.addedAblation)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a></p></section>
+<p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.added,fmPartly,counts.addedModels,counts.addedAblation)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a></p>
+<JevCard locale={locale}/></section>
 
 <section id="benchmarks" class="section"><div class="section-heading"><div><p class="eyebrow">{h.protocolsEyebrow}</p><h2>{h.protocolsH2}</h2></div></div>
 {h.payloadNote&&<p class="payload-note">{h.payloadNote}</p>}

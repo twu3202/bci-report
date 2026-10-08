@@ -1,0 +1,1971 @@
+{
+  "schema_version": "bci-report-questions-in-language-wordings-v1",
+  "release_id": "questions-in-language-update-20261008",
+  "generated_at": "2026-10-08",
+  "status": "aggregate_preview",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "scope": "The wordings route 3 asked its questions with, the held-out frequency partition and the declared derangements of the shuffled control, published with its results. Text only: no EEG, no score.",
+  "authoring": "stage 0, agents that see no data and no result, fixed brief; hashed into protocol.json before the first fit; published with results",
+  "note": "written at stage 0 by two blind agents from a fixed brief (wording-brief.md) before any score; not written by users and not tuned; published with the results (D5)",
+  "kinds": {
+    "frame": {
+      "arm": "TPL",
+      "train": 3,
+      "held_out": 12,
+      "test": "a1"
+    },
+    "label_name": {
+      "arm": "TPL",
+      "train": "1 canonical per predicate",
+      "held_out": "exactly 3 synonyms per predicate",
+      "test": "a2",
+      "index": "synonym j=1..3 of every predicate; reported individually and as mean; not resampled; sentences say 'for these three synonyms'",
+      "ssvep_fixed": [
+        "{f} hertz",
+        "{f} cycles per second",
+        "spelled-out number"
+      ],
+      "sleep": "authoring agent supplies exactly 3 per stage passing the leakage rules (format variants count); if impossible, stage 0 stops before any fit"
+    },
+    "description": {
+      "arm": "DESC",
+      "train": "2 per seen predicate (SSVEP: 2 description frames with {f})",
+      "held_out": "10 per seen predicate (SSVEP: 10 description frames)",
+      "test": "a3",
+      "held_out_author": "second independent agent, same brief, without seeing training descriptions"
+    },
+    "unseen_predicate_wordings": {
+      "sleep": "implicit and explicit names in the 3 training frames; 10 descriptions per unseen predicate",
+      "ssvep": "held-out f in the 3 training frames (TPL) and in the 2 training description frames (DESC)"
+    }
+  },
+  "leakage_rules": [
+    "forbidden phrases: every held-out label name, synonym and unseen-predicate name, case-insensitive whole-word regex, in every training text; explicit-composition wordings exempt",
+    "sub-phrase rule: no held-out or unseen name contains a training name as a contiguous whole-word sub-phrase unless declared explicit composition or S6 negation probe",
+    "seen sleep descriptions may not contain whole words asleep, NREM, non-REM, light, deep, not ('deep' only in N3 held-out synonyms); the W description may not describe sleep",
+    "SSVEP numbers: pattern (?<![\\d.]) + re.escape(F) + (?!\\d|\\.\\d), F in the pinned one-decimal format; no held-out frequency of a rotation in its training texts",
+    "SSVEP tokens: every tokenizer token of every held-out frequency string occurs in that rotation's training texts, per encoder",
+    "negated wordings only in S6, never in training",
+    "nearest training wording by cosine reported for every held-out wording (descriptive)"
+  ],
+  "leakage_checks_passed_before_the_first_fit": true,
+  "texts": 787,
+  "lists": {
+    "en/sleep": {
+      "frames_train": [
+        "The scorer marked this 30-second epoch as {label}.",
+        "Stage for this epoch of the overnight EEG: {label}.",
+        "In this stretch of the overnight recording, the person's state was {label}."
+      ],
+      "frames_heldout": [
+        "Hypnogram entry: {label}.",
+        "A human rater would call this half-minute of EEG {label}.",
+        "Here the brain activity corresponds to {label}.",
+        "Looking at these thirty seconds of signal, the stage is {label}.",
+        "Visual staging result: {label}.",
+        "The recording at this point reflects {label}.",
+        "An expert reviewing this page of the polysomnogram chose {label}.",
+        "Label given to this window of nighttime brain signals: {label}.",
+        "These EEG traces were classified as {label}.",
+        "The technician's mark for this segment reads {label}.",
+        "Category of this epoch according to the overnight scoring: {label}.",
+        "What the scalp electrodes picked up here is {label}."
+      ],
+      "canonical": {
+        "W": "wake",
+        "N1": "N1 sleep",
+        "N2": "N2 sleep",
+        "N3": "N3 sleep",
+        "REM": "REM sleep"
+      },
+      "synonyms": {
+        "W": [
+          "wakefulness",
+          "awake",
+          "stage W"
+        ],
+        "N1": [
+          "stage 1 sleep",
+          "sleep stage one",
+          "stage N1"
+        ],
+        "N2": [
+          "stage 2 sleep",
+          "sleep stage two",
+          "stage N2"
+        ],
+        "N3": [
+          "slow-wave sleep",
+          "deep sleep",
+          "stage N3"
+        ],
+        "REM": [
+          "stage R sleep",
+          "paradoxical sleep",
+          "dream sleep"
+        ]
+      },
+      "desc_train": {
+        "W": [
+          "The person is alert with eyes open, blinking and glancing around; the EEG is dominated by fast, low-voltage activity and muscle artifact.",
+          "Relaxed with eyes closed but fully alert, the person shows a clear alpha rhythm at the back of the head, along with blinks and frequent muscle activity."
+        ],
+        "N1": [
+          "The alpha rhythm fades and gives way to slower, low-amplitude waves of mixed frequency, and slow rolling eye motions may appear.",
+          "The person is just drifting off: muscle tone eases, sharp vertex waves can show up near the top of the head, and the background is low-voltage theta."
+        ],
+        "N2": [
+          "Sleep spindles, short bursts of rhythmic activity, appear on a theta background together with K-complexes, large biphasic waves.",
+          "A settled stage of sleep: mostly mixed-frequency theta, punctuated by K-complexes and brief spindle bursts, while the eyes stay still."
+        ],
+        "N3": [
+          "Large, slow delta waves of high amplitude fill much of the epoch, and the sleeper is very hard to rouse.",
+          "Big, slow delta waves dominate the trace, muscle tone is low and the eyes are still; this is the most restorative part of the night."
+        ],
+        "REM": [
+          "The EEG is low-voltage and mixed in frequency, the chin muscle goes almost silent, and the eyes dart in rapid bursts.",
+          "This is the dreaming part of the night: sawtooth waves appear, body muscles are nearly paralysed, and quick jerky eye shifts show in the eye channels."
+        ]
+      },
+      "desc_heldout": {
+        "W": [
+          "The person lies with eyes open, glancing around the room, and the recording is busy with fast, low-amplitude activity and frequent blinks.",
+          "Eyes are closed but the mind is alert; a steady rhythm ripples over the back of the head while the person lies still.",
+          "Muscle tension is high and the trace is full of movement artifacts as the person shifts, scratches and looks about.",
+          "The person is lying down reading or talking, fully attentive, with sharp blinks and glancing eye movements across the scene.",
+          "Someone resting with closed eyes and a clear head, showing a regular posterior rhythm that vanishes the moment they open their eyes.",
+          "Alert and responsive, the person could answer a question right away; the signal is mixed-frequency, quick and full of muscle activity.",
+          "Bright, attentive state: chin muscle tone is strong, blinks show up as large spikes at the front, and the background is quick and choppy.",
+          "The person is conscious and attentive to the surroundings, eyes moving freely, with brisk, irregular activity across the scalp.",
+          "The person chats with the technician, adjusts the pillow and looks at a phone, filling the trace with muscle and movement artifacts.",
+          "Sitting up and looking around, the person is fully aware of the room, and the EEG shows fast, low-voltage waves mixed with eye-movement spikes."
+        ],
+        "N1": [
+          "The person is drifting off: the steady back-of-head rhythm fades into slower, low-voltage waves, and the eyes roll slowly from side to side.",
+          "A transitional state at sleep onset, where the person might twitch or feel like falling and would easily be roused by a quiet sound.",
+          "Low-amplitude, mixed activity dominated by slower theta waves, with sharp waves peaking near the top of the head.",
+          "Eyelids heavy and thoughts wandering into odd images; if called by name the person would likely insist they had only been resting their eyes.",
+          "The brief doze that comes right after the room goes dark, with slow rolling eye movements and muscle tone a little below the alert level.",
+          "The alpha rhythm has dropped out and been replaced by a flatter, slower background, while spindles and big slow waves have yet to appear.",
+          "A fleeting doze between alert stretches, the kind of brief sleep a person often fails to register.",
+          "Hypnagogic state: loosely formed images and sudden muscle jerks, with the EEG slowing and losing its regular posterior rhythm.",
+          "The sleeper's breathing evens out and the eyes drift slowly under the lids while the brain waves become small and slow.",
+          "The doorway into sleep: activity is mostly theta, the chin relaxes a little, and a gentle noise would bring the person straight back."
+        ],
+        "N2": [
+          "The trace shows sleep spindles, short bursts of fast waxing and waning waves, along with sharp K-complexes on a theta background.",
+          "The person is soundly sleeping and unaware of the room, with still eyes and occasional large biphasic waves that stand out from the background.",
+          "Much of the night is spent in this stage: steady breathing, quiet eyes, and brain activity punctuated by brief spindle bursts.",
+          "Spindles appear over the central scalp, and a sudden noise tends to produce a large sharp wave while the person sleeps on.",
+          "Settled sleep in which the person ignores soft whispers, the eyes rest motionless, and the EEG carries spindles and occasional K-complexes.",
+          "Medium-depth sleep marked by isolated K-complexes and trains of spindles, with slow waves present but sparse.",
+          "The sleeper breathes regularly and lies still; brief rhythmic bursts near the crown of the head come and go repeatedly.",
+          "A stable stretch of sleep between the drowsy onset and the slow-wave phase, recognized by spindles and K-complexes.",
+          "Body and eyes quiet, muscle tone reduced, and the EEG showing spindle bursts riding on a background of mixed slower waves.",
+          "The person would take some effort to rouse; the signal mixes theta with occasional large sharp waves and spindles."
+        ],
+        "N3": [
+          "Large, slow delta waves fill much of the trace, and the person is very hard to rouse.",
+          "Slow-wave sleep: high-amplitude, very slow waves dominate, and breathing is slow and regular.",
+          "If roused now the person would be groggy and confused, as the brain is producing big rolling slow oscillations.",
+          "The most restorative part of the night, with tall slow waves, still eyes and minimal body movement.",
+          "The EEG is dominated by broad, high-voltage waves, especially over the forehead, while spindles are scarce.",
+          "Heavy, sound sleep early in the night, when sleepwalking or night terrors can occur and the signal is full of slow waves.",
+          "The sleeper is at the bottom of the sleep cycle: muscles relaxed, heart rate low and steady, and the brain swinging in slow, large waves.",
+          "Big slow waves crowd the epoch so densely that they take up most of its duration.",
+          "A state of profound unresponsiveness in which loud sounds may pass unheard and the cortex fires in slow synchronized waves.",
+          "Growth hormone release peaks in this phase, and the EEG looks like a series of slow swells of large amplitude."
+        ],
+        "REM": [
+          "The person is dreaming vividly; the eyes dart back and forth under closed lids and the body muscles are almost paralyzed.",
+          "The EEG looks low-voltage and mixed, much like an alert state, but chin muscle tone has dropped to its lowest level of the night.",
+          "Sawtooth waves appear over the central scalp while quick, jerky eye movements show up in the eye channels.",
+          "Paradoxical sleep: the brain is active and fast while the body lies limp, with occasional small muscle twitches.",
+          "Breathing and heart rate become irregular, the eyes flick around, and the sleeper is in the middle of a story-like dream.",
+          "A dreaming stage that grows longer toward morning, marked by bursts of eye movements and a near-total loss of muscle tone.",
+          "If woken now the person would likely recall a detailed dream; the trace shows small, desynchronized activity and darting eye movements.",
+          "Low-amplitude theta mixed with faster waves, a slack chin muscle, and clusters of sharp eye movements.",
+          "The body is held still by muscle atonia while the eyes make sudden darting movements, as the person acts out a dream only in their mind.",
+          "Active, dreaming sleep in which the cortex looks almost alert, though the person is cut off from the outside world and the limbs are limp."
+        ]
+      },
+      "unseen_desc": {
+        "asleep": [
+          "The person is asleep, in any stage from the first doze to dreaming sleep.",
+          "Sleep of any kind: spindles, slow waves, dreaming eye movements or drifting theta may be present, and the person is out of contact with the room.",
+          "The person has lost conscious awareness of the surroundings and is somewhere in the sleep cycle.",
+          "Any epoch in which the sleeper has crossed over from alertness into sleep, whether shallow, sound or dreaming.",
+          "Asleep: the alpha rhythm of the relaxed alert state has faded and been replaced by some kind of sleep pattern.",
+          "The person is sleeping, whether drifting off, sleeping soundly or dreaming.",
+          "Eyes closed and consciousness switched off; the brain shows whichever sleep pattern the cycle has reached.",
+          "Every sleep state counts here, from brief dozing and spindle sleep to slow-wave sleep and dreaming.",
+          "The sleeper would need to be roused before responding, and the EEG shows patterns typical of sleep.",
+          "Somewhere in the night's sleep, at any depth, with the person unaware of the outside world."
+        ],
+        "NREM": [
+          "Quiet sleep at any depth: the eyes stay still or roll slowly, some muscle tone is kept, and the EEG shows theta, spindles or slow waves.",
+          "Orthodox sleep, ranging from dozing off through spindle-rich sleep down to slow-wave sleep.",
+          "Synchronized sleep in which the cortex slows progressively, with spindles, K-complexes or delta waves depending on depth.",
+          "The person sleeps calmly with steady breathing and still eyes, anywhere from the sleep-onset doze to the slowest-wave sleep.",
+          "Sleep in which brain waves are slower and more synchronized than during alertness, and the body muscles keep their tone.",
+          "Any of the quiet sleep phases, where vivid dreaming is rare and the EEG is built of theta, spindles and slow waves.",
+          "Restful sleep with regular heart rate and breathing, covering the transitional doze, the spindle phase and slow-wave sleep.",
+          "The sleeper's eyes are calm and the muscles keep their tone, while the EEG is anywhere from drifting theta to large delta waves.",
+          "The sleep that fills most of the early night, from drifting off to the slowest, most synchronized waves.",
+          "Calm, synchronized sleep with steady autonomic rhythms, in which the brain idles anywhere from a shallow doze to strong slow-wave activity."
+        ],
+        "light": [
+          "Light sleep: the person has dozed off but could be roused easily, and the EEG shows theta waves and perhaps spindles.",
+          "The shallower part of sleep, covering the drift at sleep onset and the spindle-filled stretch that follows.",
+          "The person sleeps lightly, eyes still or slowly rolling, with small slow waves, vertex waves, spindles or K-complexes.",
+          "Sleep from which a soft sound or a touch would quickly bring the person back, with large slow waves still scarce.",
+          "Light sleep, where theta activity dominates and spindles may come and go while big delta waves are rare.",
+          "The early, easily disturbed phases of sleep, from the drowsy drift to the settled spindle stage.",
+          "A shallow sleep in which brain waves have slowed from the alert rhythm but stay well short of the large slow waves of the heaviest sleep.",
+          "The person is lightly sleeping, breathing evenly, with low-voltage mixed activity punctuated by occasional spindles or sharp waves.",
+          "Sleep at the shallow end of the scale, typical of naps and of the moments after someone drifts off.",
+          "Light sleep with relaxed muscles and quiet eyes; the EEG carries theta, spindles and occasional K-complexes, with slow waves sparse at most."
+        ]
+      },
+      "unseen_names": {
+        "asleep": {
+          "implicit": "asleep",
+          "explicit": "N1, N2, N3 or REM sleep"
+        },
+        "NREM": {
+          "implicit": null,
+          "explicit": "N1, N2 or N3 sleep"
+        },
+        "light": {
+          "implicit": "light sleep",
+          "explicit": "N1 or N2 sleep"
+        }
+      },
+      "negation_frames": [
+        "The scorer did not mark this 30-second epoch as {label}.",
+        "This epoch is not {label}.",
+        "Whatever this half-minute of EEG shows, it is not {label}.",
+        "The hypnogram does not show {label} at this point of the night.",
+        "This segment was scored as something other than {label}."
+      ]
+    },
+    "en/ssvep": {
+      "frames_train": [
+        "The person is attending the target flickering at {label}.",
+        "In this window, gaze is fixed on the stimulus that blinks at {label}.",
+        "The flicker this viewer was focusing on runs at {label}."
+      ],
+      "frames_heldout": [
+        "Focus of attention: the patch pulsing at {label}.",
+        "The selected flashing target has a rate of {label}.",
+        "This EEG was taken while the user looked at the {label} flicker.",
+        "Watched stimulus frequency: {label}.",
+        "The participant kept their eyes on the item that flashes at {label}.",
+        "Among all the flickering targets, the attended target oscillates at {label}.",
+        "Visual attention here is directed at the {label} stimulus.",
+        "The on-screen target being looked at changes brightness at {label}.",
+        "During this recording, the chosen target flickered at {label}.",
+        "The viewer's intended target repeats its flash at {label}.",
+        "Brain response recorded while staring at a blinker set to {label}.",
+        "Gaze target: the flashing square at {label}."
+      ],
+      "canonical": {
+        "8.0": "8.0 Hz",
+        "8.2": "8.2 Hz",
+        "8.4": "8.4 Hz",
+        "8.6": "8.6 Hz",
+        "8.8": "8.8 Hz",
+        "9.0": "9.0 Hz",
+        "9.2": "9.2 Hz",
+        "9.4": "9.4 Hz",
+        "9.6": "9.6 Hz",
+        "9.8": "9.8 Hz",
+        "10.0": "10.0 Hz",
+        "10.2": "10.2 Hz",
+        "10.4": "10.4 Hz",
+        "10.6": "10.6 Hz",
+        "10.8": "10.8 Hz",
+        "11.0": "11.0 Hz",
+        "11.2": "11.2 Hz",
+        "11.4": "11.4 Hz",
+        "11.6": "11.6 Hz",
+        "11.8": "11.8 Hz",
+        "12.0": "12.0 Hz",
+        "12.2": "12.2 Hz",
+        "12.4": "12.4 Hz",
+        "12.6": "12.6 Hz",
+        "12.8": "12.8 Hz",
+        "13.0": "13.0 Hz",
+        "13.2": "13.2 Hz",
+        "13.4": "13.4 Hz",
+        "13.6": "13.6 Hz",
+        "13.8": "13.8 Hz",
+        "14.0": "14.0 Hz",
+        "14.2": "14.2 Hz",
+        "14.4": "14.4 Hz",
+        "14.6": "14.6 Hz",
+        "14.8": "14.8 Hz",
+        "15.0": "15.0 Hz",
+        "15.2": "15.2 Hz",
+        "15.4": "15.4 Hz",
+        "15.6": "15.6 Hz",
+        "15.8": "15.8 Hz"
+      },
+      "synonyms": {
+        "8.0": [
+          "8.0 hertz",
+          "8.0 cycles per second",
+          "eight point zero hertz"
+        ],
+        "8.2": [
+          "8.2 hertz",
+          "8.2 cycles per second",
+          "eight point two hertz"
+        ],
+        "8.4": [
+          "8.4 hertz",
+          "8.4 cycles per second",
+          "eight point four hertz"
+        ],
+        "8.6": [
+          "8.6 hertz",
+          "8.6 cycles per second",
+          "eight point six hertz"
+        ],
+        "8.8": [
+          "8.8 hertz",
+          "8.8 cycles per second",
+          "eight point eight hertz"
+        ],
+        "9.0": [
+          "9.0 hertz",
+          "9.0 cycles per second",
+          "nine point zero hertz"
+        ],
+        "9.2": [
+          "9.2 hertz",
+          "9.2 cycles per second",
+          "nine point two hertz"
+        ],
+        "9.4": [
+          "9.4 hertz",
+          "9.4 cycles per second",
+          "nine point four hertz"
+        ],
+        "9.6": [
+          "9.6 hertz",
+          "9.6 cycles per second",
+          "nine point six hertz"
+        ],
+        "9.8": [
+          "9.8 hertz",
+          "9.8 cycles per second",
+          "nine point eight hertz"
+        ],
+        "10.0": [
+          "10.0 hertz",
+          "10.0 cycles per second",
+          "ten point zero hertz"
+        ],
+        "10.2": [
+          "10.2 hertz",
+          "10.2 cycles per second",
+          "ten point two hertz"
+        ],
+        "10.4": [
+          "10.4 hertz",
+          "10.4 cycles per second",
+          "ten point four hertz"
+        ],
+        "10.6": [
+          "10.6 hertz",
+          "10.6 cycles per second",
+          "ten point six hertz"
+        ],
+        "10.8": [
+          "10.8 hertz",
+          "10.8 cycles per second",
+          "ten point eight hertz"
+        ],
+        "11.0": [
+          "11.0 hertz",
+          "11.0 cycles per second",
+          "eleven point zero hertz"
+        ],
+        "11.2": [
+          "11.2 hertz",
+          "11.2 cycles per second",
+          "eleven point two hertz"
+        ],
+        "11.4": [
+          "11.4 hertz",
+          "11.4 cycles per second",
+          "eleven point four hertz"
+        ],
+        "11.6": [
+          "11.6 hertz",
+          "11.6 cycles per second",
+          "eleven point six hertz"
+        ],
+        "11.8": [
+          "11.8 hertz",
+          "11.8 cycles per second",
+          "eleven point eight hertz"
+        ],
+        "12.0": [
+          "12.0 hertz",
+          "12.0 cycles per second",
+          "twelve point zero hertz"
+        ],
+        "12.2": [
+          "12.2 hertz",
+          "12.2 cycles per second",
+          "twelve point two hertz"
+        ],
+        "12.4": [
+          "12.4 hertz",
+          "12.4 cycles per second",
+          "twelve point four hertz"
+        ],
+        "12.6": [
+          "12.6 hertz",
+          "12.6 cycles per second",
+          "twelve point six hertz"
+        ],
+        "12.8": [
+          "12.8 hertz",
+          "12.8 cycles per second",
+          "twelve point eight hertz"
+        ],
+        "13.0": [
+          "13.0 hertz",
+          "13.0 cycles per second",
+          "thirteen point zero hertz"
+        ],
+        "13.2": [
+          "13.2 hertz",
+          "13.2 cycles per second",
+          "thirteen point two hertz"
+        ],
+        "13.4": [
+          "13.4 hertz",
+          "13.4 cycles per second",
+          "thirteen point four hertz"
+        ],
+        "13.6": [
+          "13.6 hertz",
+          "13.6 cycles per second",
+          "thirteen point six hertz"
+        ],
+        "13.8": [
+          "13.8 hertz",
+          "13.8 cycles per second",
+          "thirteen point eight hertz"
+        ],
+        "14.0": [
+          "14.0 hertz",
+          "14.0 cycles per second",
+          "fourteen point zero hertz"
+        ],
+        "14.2": [
+          "14.2 hertz",
+          "14.2 cycles per second",
+          "fourteen point two hertz"
+        ],
+        "14.4": [
+          "14.4 hertz",
+          "14.4 cycles per second",
+          "fourteen point four hertz"
+        ],
+        "14.6": [
+          "14.6 hertz",
+          "14.6 cycles per second",
+          "fourteen point six hertz"
+        ],
+        "14.8": [
+          "14.8 hertz",
+          "14.8 cycles per second",
+          "fourteen point eight hertz"
+        ],
+        "15.0": [
+          "15.0 hertz",
+          "15.0 cycles per second",
+          "fifteen point zero hertz"
+        ],
+        "15.2": [
+          "15.2 hertz",
+          "15.2 cycles per second",
+          "fifteen point two hertz"
+        ],
+        "15.4": [
+          "15.4 hertz",
+          "15.4 cycles per second",
+          "fifteen point four hertz"
+        ],
+        "15.6": [
+          "15.6 hertz",
+          "15.6 cycles per second",
+          "fifteen point six hertz"
+        ],
+        "15.8": [
+          "15.8 hertz",
+          "15.8 cycles per second",
+          "fifteen point eight hertz"
+        ]
+      },
+      "descframes_train": [
+        "A screen target flashes {f} times each second, and the EEG over the back of the head follows that same rhythm.",
+        "Eyes fixed on a patch that brightens and dims at a rate of {f} per second; occipital activity locks onto this pace."
+      ],
+      "descframes_heldout": [
+        "The person fixes their gaze on the box that blinks at {f} Hz, and the occipital EEG takes on a rhythm at that same rate.",
+        "Watching a target that flashes {f} times per second; the visual cortex locks onto that flicker.",
+        "Attention is on the square pulsing at {f} hertz, so a sharp spectral peak shows up at that frequency over the back of the head.",
+        "The eyes are held on a stimulus that turns on and off {f} times each second, entraining the visual response to its pace.",
+        "A steady-state visual response at {f} Hz, produced while the person stares at the matching flickering key.",
+        "The person looks at the light whose brightness oscillates at {f} cycles per second, and the occipital brain waves beat in step with it.",
+        "Among many flickering keys on the screen, the person attends the key that flickers at {f} Hz.",
+        "The posterior EEG carries a strong oscillation at {f} Hz, phase-locked to the flicker of the target the person is looking at.",
+        "Focusing on the flashing cell with a frequency of {f} hertz, which drives the visual cortex at exactly that tempo.",
+        "The person's gaze rests on the stimulus repeating {f} times per second, and their EEG power concentrates at that rate."
+      ]
+    },
+    "en/mi": {
+      "frames_train": [
+        "In this window the participant was {label}.",
+        "Task during this EEG segment: {label}.",
+        "The person in this recording is {label}."
+      ],
+      "frames_heldout": [
+        "This brain-signal snippet was captured while the user was {label}.",
+        "Mental task in progress: {label}.",
+        "What the volunteer did here: {label}.",
+        "The EEG reflects someone {label}.",
+        "Instruction being followed at this point: {label}.",
+        "Over this short stretch, the subject kept {label}.",
+        "Condition for this trial segment: {label}.",
+        "The cue on the screen asked for {label}, and the person complied.",
+        "These scalp recordings come from a moment of {label}.",
+        "Labelled activity: {label}.",
+        "While these signals were recorded, the participant was engaged in {label}.",
+        "Recorded state of the user in this clip: {label}."
+      ],
+      "canonical": {
+        "left": "imagining moving the left hand",
+        "right": "imagining moving the right hand",
+        "rest": "resting"
+      },
+      "synonyms": {
+        "left": [
+          "left-hand motor imagery",
+          "mentally moving the left hand",
+          "picturing a left-hand motion"
+        ],
+        "right": [
+          "right-hand motor imagery",
+          "mentally moving the right hand",
+          "picturing a right-hand motion"
+        ],
+        "rest": [
+          "at rest",
+          "taking a break",
+          "staying idle"
+        ]
+      },
+      "desc_train": {
+        "left": [
+          "Sitting still, the person pictures squeezing the left fist while the real hand stays relaxed; mu and beta rhythms weaken over the right motor area.",
+          "After a cue, the subject mentally rehearses gripping with the left hand, keeping the actual arm at ease."
+        ],
+        "right": [
+          "Keeping the body still, the person imagines clenching the right fist, and sensorimotor rhythms drop over the left side of the head.",
+          "Prompted by a cue, the subject rehearses a grasp with the right hand in their mind while the real arm stays relaxed."
+        ],
+        "rest": [
+          "The person sits quietly, eyes on the screen, letting the mind idle and keeping the body relaxed.",
+          "A calm baseline: the subject stays still and at ease, and motor rhythms over both hemispheres stay strong."
+        ]
+      },
+      "desc_heldout": {
+        "left": [
+          "The person pictures squeezing a ball with the left hand while keeping the hand perfectly still.",
+          "Mentally rehearsing a left-hand grasp, which weakens the mu rhythm over the right side of the motor cortex.",
+          "Imagining the feeling of opening and closing the left fist, with the arm lying motionless on the table.",
+          "The person imagines reaching out with the left hand to pick up a cup, while every muscle stays relaxed.",
+          "Kinesthetic imagery of the left hand: the person feels the left fingers tapping, all in the mind.",
+          "Event-related desynchronization over the right sensorimotor area as the person imagines a movement of the left hand.",
+          "The person thinks about waving with the left hand, concentrating on how the motion would feel.",
+          "A cue on the screen points left, and the person responds by imagining a grip of the left hand.",
+          "Mentally clenching the left hand, which suppresses alpha and beta power over the hand area of the opposite hemisphere.",
+          "The person imagines turning a doorknob with the left hand, keeping the actual hands relaxed."
+        ],
+        "right": [
+          "The person imagines gripping a pen in the right hand and writing, while the hands stay still.",
+          "Picturing a right-hand fist, which reduces mu activity over the left motor cortex.",
+          "Mentally rehearsing flexing the right fingers, feeling the movement without performing it.",
+          "The person concentrates on the sensation of squeezing something with the right hand.",
+          "Imagined right-hand movement desynchronizes the sensorimotor rhythm over the left hemisphere.",
+          "Following a rightward cue, the person pictures the right hand pressing a button.",
+          "The person mentally throws a ball with the right hand, keeping the real arm relaxed on the armrest.",
+          "Motor imagery of the right hand: alpha and beta power drop over the hand area on the opposite side of the head.",
+          "Imagining tapping each finger of the right hand against the thumb, with the hand itself motionless.",
+          "The person imagines turning a key with the right hand, attending to how the wrist would rotate."
+        ],
+        "rest": [
+          "The person sits relaxed, watching the screen and letting the mind idle.",
+          "A calm baseline period with no imagined movement; motor rhythms stay strong over both hemispheres.",
+          "The person simply waits for the next cue, hands loose and thoughts unfocused.",
+          "Relaxed attention to a fixation cross, with sensorimotor rhythms at their baseline strength.",
+          "Neither hand is involved: the person stays at ease and keeps still.",
+          "An idle state in which the mu rhythm over the motor strip is undisturbed on both sides.",
+          "The person relaxes the whole body and breathes normally between trials.",
+          "Quietly looking at the screen with no mental task, arms on the armrests.",
+          "Balanced, symmetric motor-cortex activity while the person stays calm and inactive.",
+          "The person takes a mental pause, keeping the hands relaxed and imagining nothing in particular."
+        ]
+      },
+      "unseen_desc": {
+        "hand_movement": [
+          "The person imagines moving a hand, either the left or the right.",
+          "Motor imagery of a hand: the person pictures gripping or squeezing with one of their hands.",
+          "Imagining a hand movement, which weakens the mu rhythm over the motor cortex opposite the imagined hand.",
+          "The person mentally rehearses a hand action, such as clenching a fist, while keeping the arms still.",
+          "Kinesthetic imagery of either hand opening and closing, with event-related desynchronization over the corresponding hand area.",
+          "The person concentrates on the feeling of moving the fingers on one side, while the hands stay motionless.",
+          "Hand motor imagery on either side, producing a lateralized drop in alpha and beta power over sensorimotor cortex.",
+          "The person imagines reaching out and grasping with a hand, as cued on the screen.",
+          "Mentally performing a hand gesture with the left or right hand while the body stays relaxed.",
+          "The person is busy with hand motor imagery, picturing a squeeze of whichever hand the cue indicated."
+        ]
+      },
+      "unseen_names": {
+        "hand_movement": {
+          "implicit": "imagining a hand movement",
+          "explicit": null
+        }
+      }
+    },
+    "zh/sleep": {
+      "frames_train": [
+        "这段30秒的脑电被判读为{label}。",
+        "整夜脑电中这一帧的分期：{label}。",
+        "在整夜记录的这一段里，受试者的状态是{label}。"
+      ],
+      "frames_heldout": [
+        "睡眠图上这一格标的是{label}。",
+        "人工判读者会把这半分钟的脑电归为{label}。",
+        "此处的脑电活动对应{label}。",
+        "看这三十秒的信号，分期应为{label}。",
+        "目测分期结论：{label}。",
+        "这一时刻的记录反映出{label}。",
+        "专家审阅多导睡眠图的这一页后选择了{label}。",
+        "夜间脑电这一窗口的标签：{label}。",
+        "技师对这一段的标注写着{label}。",
+        "按整夜评分，这个帧属于{label}。",
+        "头皮电极在这里记录到的是{label}。",
+        "这些脑电波形被归类为{label}。"
+      ],
+      "canonical": {
+        "W": "清醒",
+        "N1": "N1期睡眠",
+        "N2": "N2期睡眠",
+        "N3": "N3期睡眠",
+        "REM": "REM期睡眠"
+      },
+      "synonyms": {
+        "W": [
+          "觉醒",
+          "醒着",
+          "W期"
+        ],
+        "N1": [
+          "睡眠1期",
+          "第一期睡眠",
+          "N1阶段"
+        ],
+        "N2": [
+          "睡眠2期",
+          "第二期睡眠",
+          "N2阶段"
+        ],
+        "N3": [
+          "慢波睡眠",
+          "深睡眠",
+          "N3阶段"
+        ],
+        "REM": [
+          "快速眼动睡眠",
+          "异相睡眠",
+          "R期睡眠"
+        ]
+      },
+      "desc_train": {
+        "W": [
+          "受试者睁着眼、神志清楚，会眨眼和四处张望；脑电以快速的低幅活动为主，夹杂肌电伪迹。",
+          "受试者闭眼放松但头脑清醒，枕部出现明显的α节律，同时伴有眨眼和频繁的肌电活动。"
+        ],
+        "N1": [
+          "α节律逐渐消退，被频率较慢、幅度较低的混合波取代，眼睛可能出现缓慢的来回转动。",
+          "受试者刚刚进入睡眠，肌张力开始放松，头顶附近可见尖锐的顶尖波，背景以低幅θ波为主。"
+        ],
+        "N2": [
+          "在θ背景上出现睡眠纺锤波（短暂的节律性爆发）和K复合波（大而双相的波）。",
+          "睡眠进入稳定阶段，脑电主要是混合频率的θ活动，时而穿插K复合波和短暂的纺锤波，眼睛保持静止。"
+        ],
+        "N3": [
+          "高幅、缓慢的δ波占据了这帧的大部分时间，此时很难把人唤醒。",
+          "大而缓慢的δ波主导整段记录，肌张力低，眼睛静止，这是夜间最能恢复体力的阶段。"
+        ],
+        "REM": [
+          "脑电呈低幅、混合频率，下颏肌电几乎消失，眼睛成串地快速跳动。",
+          "这是做梦的阶段：出现锯齿波，全身肌肉几乎瘫软，眼电通道中可见快速、急促的眼球转动。"
+        ]
+      },
+      "desc_heldout": {
+        "W": [
+          "眼睛睁开，四处张望，脑电以快速、低幅的活动为主，夹杂频繁的眨眼伪迹。",
+          "闭着眼但头脑灵敏，后脑勺上方出现规整的节律，睁眼后这种节律立刻消失。",
+          "肌肉紧张度高，人在挪动身体、挠痒、看手机，记录里满是动作伪迹。",
+          "人躺着看书或说话，反应敏捷，眼球随视线来回扫动。",
+          "意识清楚、注意力集中，被叫到名字会马上回应，信号快而杂乱。",
+          "下颏肌电很强，眨眼在额部留下大的尖峰，背景活动快速而零碎。",
+          "人正和技师聊天、调整枕头，肌电和运动伪迹布满整段记录。",
+          "闭目静坐，思路清晰，枕区可见平稳的规律波，抬眼时随即被阻断。",
+          "人坐起来活动，睁眼环顾房间，脑电呈高频低幅的混合波形。",
+          "警觉、反应灵敏的状态：眼睛自由转动，头皮各处是快速而起伏的活动。"
+        ],
+        "N1": [
+          "人正迷迷糊糊地入睡，枕部的规律节律逐渐消退，换成较慢的低幅波，眼球缓慢左右滚动。",
+          "入睡时的过渡状态，人可能突然抽动或有踩空感，轻微的声响就能把他唤回。",
+          "低幅混合频率活动，以θ波为主，头顶附近出现尖锐的顶尖波。",
+          "眼皮发沉，思绪飘向零散的画面；此时叫他，他多半会说自己只是闭眼休息。",
+          "熄灯后短暂的打盹，眼球缓慢游移，肌张力比警觉时略低。",
+          "α节律退去，背景转为平坦缓慢的θ活动，纺锤波与大慢波要稍后才登场。",
+          "两段警觉之间的短暂打盹，这种片刻的睡眠常常被本人忽略。",
+          "朦胧的入睡期：模糊的意象和突然的肌肉抽动，脑电逐渐变慢。",
+          "呼吸变得均匀，眼球在眼睑下缓缓漂移，脑电波变小变慢。",
+          "通往睡眠的门槛：活动以θ波为主，下颏稍稍放松，轻轻一点声音就能让人回过神来。"
+        ],
+        "N2": [
+          "记录中出现睡眠纺锤波——一阵阵渐强渐弱的快波，以及θ背景上的K复合波。",
+          "人已进入稳定睡眠，对周围的动静失去察觉，眼球静止，偶尔出现突出于背景的双相大波。",
+          "整夜很多时间处于这一阶段：呼吸平稳、眼睛安静，脑电间或夹着短暂的纺锤波。",
+          "中央区出现纺锤波，突然的声响可能诱发一个先负后正的大波，而人照样睡下去。",
+          "需要较大的声音才能把人唤起，眼球静止，脑电带有纺锤波和偶发的K复合波。",
+          "程度适中的睡眠，以孤立的K复合波和成串的纺锤波为标志，慢波零星可见。",
+          "睡者呼吸规律、安静平躺，头顶附近短暂的节律性爆发反复出现又消失。",
+          "介于入睡打盹和慢波阶段之间的一段稳定睡眠，以纺锤波和K复合波为特征。",
+          "身体和眼睛都很安静，肌张力下降，纺锤波爆发叠加在较慢的混合波背景上。",
+          "要费些力气才能唤起此人；信号中θ波与偶发的大尖波和纺锤波交织。"
+        ],
+        "N3": [
+          "大而慢的δ波占据了记录的大部分，人极难被唤起。",
+          "慢波睡眠：高幅的极慢波占主导，呼吸缓慢而规律。",
+          "此时把人叫起来，他会迷糊、反应迟钝，因为大脑正产生大幅度的缓慢振荡。",
+          "整夜最能恢复体力的阶段，慢波高耸，眼球静止，身体几乎静止。",
+          "脑电以宽大的高电压波为主，额部尤为明显，纺锤波很少。",
+          "前半夜酣沉的睡眠，梦游和夜惊多发生在此时，信号里充满慢波。",
+          "睡者处在睡眠周期的谷底：肌肉松弛，心率低而平稳，大脑以缓慢的大幅波摆动。",
+          "大慢波密集地挤满这段记录，占去其中大半时长。",
+          "对外界极其迟钝的状态，响亮的声音也可能被忽略，皮层以同步的慢波放电。",
+          "生长激素分泌在此阶段达到高峰，脑电看上去像一连串缓慢的巨大起伏。"
+        ],
+        "REM": [
+          "人正在做生动的梦，眼球在闭合的眼睑下来回急转，全身肌肉几乎瘫软。",
+          "脑电低幅混合，看起来很像警觉时，但下颏肌张力降到整夜最低。",
+          "中央区出现锯齿波，眼动导联记录到急促、跳动的眼球运动。",
+          "异相睡眠：大脑活跃而快速，身体却瘫软，偶有细小的肌肉抽动。",
+          "呼吸和心率变得紊乱，眼睛四处闪动，睡者正经历情节完整的梦。",
+          "越接近早晨越长的做梦阶段，伴有阵发性眼动和近乎完全的肌张力丧失。",
+          "此时唤起他，多半能讲出详细的梦境；记录显示低幅去同步活动和跳动的眼球运动。",
+          "低幅θ波夹杂较快的波，下颏肌肉松弛，眼球急促运动成簇出现。",
+          "身体因肌肉失张力而静止，眼睛却突然左右跳动，人只在脑海中演绎着梦境。",
+          "活跃的做梦睡眠，皮层看似接近警觉，但人与外界隔绝，四肢瘫软。"
+        ]
+      },
+      "unseen_desc": {
+        "asleep": [
+          "人睡着了，可能处于从刚入睡到做梦之间的任何睡眠阶段。",
+          "任何形式的睡眠：可能有纺锤波、慢波、做梦时的眼动或漂移的θ波，人已与周围失去联系。",
+          "人已失去对周围环境的意识，正处在睡眠周期的某个位置。",
+          "已从警觉跨入睡眠的任何时段，打盹、酣睡或做梦都算。",
+          "睡着状态：放松警觉时的α节律已经消退，取而代之的是某种睡眠波形。",
+          "人在睡觉，可能正在入睡、睡得正香，或者正在做梦。",
+          "双眼闭合，意识暂时关闭，大脑呈现睡眠周期当前阶段的波形。",
+          "所有睡眠状态都包括在内，从短暂打盹、纺锤波睡眠到慢波睡眠和做梦睡眠。",
+          "睡者需要先被唤起才能回应，脑电呈现睡眠特有的模式。",
+          "处于夜间睡眠的某个阶段，人对外界的动静失去了感知。"
+        ],
+        "NREM": [
+          "各个程度的安静睡眠：眼球静止或缓慢滚动，保留部分肌张力，脑电呈θ波、纺锤波或慢波。",
+          "正相睡眠，从入睡打盹经过纺锤波丰富的睡眠，一直到慢波睡眠。",
+          "同步化睡眠，皮层活动逐步变慢，随程度加重依次出现纺锤波、K复合波或δ波。",
+          "人睡得安稳，呼吸平稳、眼球静止，处于从入睡打盹到最慢波睡眠之间的任意位置。",
+          "脑电波比警觉时更慢、更同步，全身肌肉保持张力的睡眠。",
+          "各个安静的睡眠时相，生动的梦境少见，脑电由θ波、纺锤波和慢波构成。",
+          "心率和呼吸规律的平静睡眠，包括过渡性打盹、纺锤波阶段和慢波睡眠。",
+          "睡者眼动平静、肌肉保有张力，脑电介于漂移的θ波与巨大的δ波之间。",
+          "构成前半夜主体的睡眠，从刚刚入睡到最缓慢、最同步的脑波。",
+          "平静、同步的睡眠，自主神经节律稳定，大脑从轻度打盹一路过渡到强烈的慢波活动。"
+        ],
+        "light": [
+          "浅睡：人已打盹入睡，但很容易被唤起，脑电出现θ波，或许还有纺锤波。",
+          "睡眠中较浅的部分，包括入睡时的迷糊阶段和随后布满纺锤波的时段。",
+          "人睡得很浅，眼球静止或缓慢滚动，伴有小慢波、顶尖波、纺锤波或K复合波。",
+          "轻轻的声响或触碰就能很快把人唤回的睡眠，大慢波仍然稀少。",
+          "浅睡眠，以θ活动为主，纺锤波时隐时现，大的δ波罕见。",
+          "睡眠早期、容易被打扰的阶段，从迷糊入睡到稳定的纺锤波阶段。",
+          "较浅的睡眠，脑波已比警觉时减慢，但距离最沉睡眠的大慢波还很远。",
+          "人睡得很轻，呼吸均匀，低幅混合活动中偶尔夹着纺锤波或尖波。",
+          "处于睡眠浅端的状态，常见于小睡以及刚刚入睡的片刻。",
+          "浅睡，肌肉放松、眼睛安静，脑电带有θ波、纺锤波和偶发的K复合波，慢波至多零星可见。"
+        ]
+      },
+      "unseen_names": {
+        "asleep": {
+          "implicit": "睡着",
+          "explicit": "N1、N2、N3或REM期睡眠"
+        },
+        "NREM": {
+          "implicit": null,
+          "explicit": "N1、N2或N3期睡眠"
+        },
+        "light": {
+          "implicit": "浅睡眠",
+          "explicit": "N1或N2期睡眠"
+        }
+      },
+      "negation_frames": []
+    },
+    "zh/ssvep": {
+      "frames_train": [
+        "受试者正在注视以{label}闪烁的目标。",
+        "在这个窗口里，视线停留在按{label}闪动的刺激上。",
+        "观看者此刻关注的闪烁目标频率为{label}。"
+      ],
+      "frames_heldout": [
+        "注意力的焦点：以{label}跳动的色块。",
+        "被选中的闪烁目标，其频率是{label}。",
+        "这段脑电记录于用户盯着{label}闪光时。",
+        "所看刺激的频率：{label}。",
+        "参与者目光锁定在按{label}闪亮的那个项目上。",
+        "在所有闪烁目标里，被关注的那个以{label}明暗变化。",
+        "此时视觉注意指向{label}的刺激。",
+        "屏幕上被注视的目标以{label}改变亮度。",
+        "记录期间，所选目标按{label}闪烁。",
+        "观看者想选的目标以{label}反复闪亮。",
+        "这是凝视设为{label}的闪烁块时记录到的脑反应。",
+        "注视对象：以{label}闪动的方块。"
+      ],
+      "canonical": {
+        "8.0": "8.0 Hz",
+        "8.2": "8.2 Hz",
+        "8.4": "8.4 Hz",
+        "8.6": "8.6 Hz",
+        "8.8": "8.8 Hz",
+        "9.0": "9.0 Hz",
+        "9.2": "9.2 Hz",
+        "9.4": "9.4 Hz",
+        "9.6": "9.6 Hz",
+        "9.8": "9.8 Hz",
+        "10.0": "10.0 Hz",
+        "10.2": "10.2 Hz",
+        "10.4": "10.4 Hz",
+        "10.6": "10.6 Hz",
+        "10.8": "10.8 Hz",
+        "11.0": "11.0 Hz",
+        "11.2": "11.2 Hz",
+        "11.4": "11.4 Hz",
+        "11.6": "11.6 Hz",
+        "11.8": "11.8 Hz",
+        "12.0": "12.0 Hz",
+        "12.2": "12.2 Hz",
+        "12.4": "12.4 Hz",
+        "12.6": "12.6 Hz",
+        "12.8": "12.8 Hz",
+        "13.0": "13.0 Hz",
+        "13.2": "13.2 Hz",
+        "13.4": "13.4 Hz",
+        "13.6": "13.6 Hz",
+        "13.8": "13.8 Hz",
+        "14.0": "14.0 Hz",
+        "14.2": "14.2 Hz",
+        "14.4": "14.4 Hz",
+        "14.6": "14.6 Hz",
+        "14.8": "14.8 Hz",
+        "15.0": "15.0 Hz",
+        "15.2": "15.2 Hz",
+        "15.4": "15.4 Hz",
+        "15.6": "15.6 Hz",
+        "15.8": "15.8 Hz"
+      },
+      "synonyms": {
+        "8.0": [
+          "8.0赫兹",
+          "每秒8.0个周期",
+          "八点零赫兹"
+        ],
+        "8.2": [
+          "8.2赫兹",
+          "每秒8.2个周期",
+          "八点二赫兹"
+        ],
+        "8.4": [
+          "8.4赫兹",
+          "每秒8.4个周期",
+          "八点四赫兹"
+        ],
+        "8.6": [
+          "8.6赫兹",
+          "每秒8.6个周期",
+          "八点六赫兹"
+        ],
+        "8.8": [
+          "8.8赫兹",
+          "每秒8.8个周期",
+          "八点八赫兹"
+        ],
+        "9.0": [
+          "9.0赫兹",
+          "每秒9.0个周期",
+          "九点零赫兹"
+        ],
+        "9.2": [
+          "9.2赫兹",
+          "每秒9.2个周期",
+          "九点二赫兹"
+        ],
+        "9.4": [
+          "9.4赫兹",
+          "每秒9.4个周期",
+          "九点四赫兹"
+        ],
+        "9.6": [
+          "9.6赫兹",
+          "每秒9.6个周期",
+          "九点六赫兹"
+        ],
+        "9.8": [
+          "9.8赫兹",
+          "每秒9.8个周期",
+          "九点八赫兹"
+        ],
+        "10.0": [
+          "10.0赫兹",
+          "每秒10.0个周期",
+          "十点零赫兹"
+        ],
+        "10.2": [
+          "10.2赫兹",
+          "每秒10.2个周期",
+          "十点二赫兹"
+        ],
+        "10.4": [
+          "10.4赫兹",
+          "每秒10.4个周期",
+          "十点四赫兹"
+        ],
+        "10.6": [
+          "10.6赫兹",
+          "每秒10.6个周期",
+          "十点六赫兹"
+        ],
+        "10.8": [
+          "10.8赫兹",
+          "每秒10.8个周期",
+          "十点八赫兹"
+        ],
+        "11.0": [
+          "11.0赫兹",
+          "每秒11.0个周期",
+          "十一点零赫兹"
+        ],
+        "11.2": [
+          "11.2赫兹",
+          "每秒11.2个周期",
+          "十一点二赫兹"
+        ],
+        "11.4": [
+          "11.4赫兹",
+          "每秒11.4个周期",
+          "十一点四赫兹"
+        ],
+        "11.6": [
+          "11.6赫兹",
+          "每秒11.6个周期",
+          "十一点六赫兹"
+        ],
+        "11.8": [
+          "11.8赫兹",
+          "每秒11.8个周期",
+          "十一点八赫兹"
+        ],
+        "12.0": [
+          "12.0赫兹",
+          "每秒12.0个周期",
+          "十二点零赫兹"
+        ],
+        "12.2": [
+          "12.2赫兹",
+          "每秒12.2个周期",
+          "十二点二赫兹"
+        ],
+        "12.4": [
+          "12.4赫兹",
+          "每秒12.4个周期",
+          "十二点四赫兹"
+        ],
+        "12.6": [
+          "12.6赫兹",
+          "每秒12.6个周期",
+          "十二点六赫兹"
+        ],
+        "12.8": [
+          "12.8赫兹",
+          "每秒12.8个周期",
+          "十二点八赫兹"
+        ],
+        "13.0": [
+          "13.0赫兹",
+          "每秒13.0个周期",
+          "十三点零赫兹"
+        ],
+        "13.2": [
+          "13.2赫兹",
+          "每秒13.2个周期",
+          "十三点二赫兹"
+        ],
+        "13.4": [
+          "13.4赫兹",
+          "每秒13.4个周期",
+          "十三点四赫兹"
+        ],
+        "13.6": [
+          "13.6赫兹",
+          "每秒13.6个周期",
+          "十三点六赫兹"
+        ],
+        "13.8": [
+          "13.8赫兹",
+          "每秒13.8个周期",
+          "十三点八赫兹"
+        ],
+        "14.0": [
+          "14.0赫兹",
+          "每秒14.0个周期",
+          "十四点零赫兹"
+        ],
+        "14.2": [
+          "14.2赫兹",
+          "每秒14.2个周期",
+          "十四点二赫兹"
+        ],
+        "14.4": [
+          "14.4赫兹",
+          "每秒14.4个周期",
+          "十四点四赫兹"
+        ],
+        "14.6": [
+          "14.6赫兹",
+          "每秒14.6个周期",
+          "十四点六赫兹"
+        ],
+        "14.8": [
+          "14.8赫兹",
+          "每秒14.8个周期",
+          "十四点八赫兹"
+        ],
+        "15.0": [
+          "15.0赫兹",
+          "每秒15.0个周期",
+          "十五点零赫兹"
+        ],
+        "15.2": [
+          "15.2赫兹",
+          "每秒15.2个周期",
+          "十五点二赫兹"
+        ],
+        "15.4": [
+          "15.4赫兹",
+          "每秒15.4个周期",
+          "十五点四赫兹"
+        ],
+        "15.6": [
+          "15.6赫兹",
+          "每秒15.6个周期",
+          "十五点六赫兹"
+        ],
+        "15.8": [
+          "15.8赫兹",
+          "每秒15.8个周期",
+          "十五点八赫兹"
+        ]
+      },
+      "descframes_train": [
+        "屏幕上的目标每秒闪烁{f}次，枕区脑电随之出现同样节奏的振荡。",
+        "视线固定在以每秒{f}次的速度明暗交替的色块上，视觉皮层的活动与这个节拍保持同步。"
+      ],
+      "descframes_heldout": [
+        "受试者盯着以{f}赫兹闪烁的方块，枕区脑电随之出现同样频率的节律。",
+        "注视每秒闪烁{f}次的目标，视觉皮层紧紧跟随这种闪烁。",
+        "注意力集中在以{f} Hz跳动的方格上，后脑上方在该频率处出现尖锐的频谱峰。",
+        "眼睛停留在每秒明暗交替{f}次的刺激上，视觉反应被带入相同的节奏。",
+        "受试者凝视对应的闪烁按键时产生的{f} Hz稳态视觉响应。",
+        "受试者看着亮度以每秒{f}个周期变化的光点，枕叶脑电随它同步起伏。",
+        "屏幕上有许多闪烁的按键，受试者关注的是以{f}赫兹闪烁的那个。",
+        "后部脑电带有很强的{f} Hz振荡，与受试者所看目标的闪烁保持锁相。",
+        "专注于频率为{f}赫兹的闪烁格子，它恰好以这个节拍驱动视觉皮层。",
+        "受试者的视线落在每秒重复{f}次的刺激上，脑电功率集中在这个频率。"
+      ]
+    },
+    "zh/mi": {
+      "frames_train": [
+        "在这个窗口内，受试者正在{label}。",
+        "这段脑电对应的任务：{label}。",
+        "这段记录中的人处于{label}的状态。"
+      ],
+      "frames_heldout": [
+        "这段脑信号采集时，用户正在{label}。",
+        "进行中的心理任务：{label}。",
+        "志愿者在这里做的事：{label}。",
+        "脑电反映的是某人在{label}。",
+        "此刻遵循的指令：{label}。",
+        "在这短短的时间里，受试者持续{label}。",
+        "本试次片段的条件：{label}。",
+        "屏幕提示要求{label}，受试者照做了。",
+        "这些头皮记录来自{label}的时刻。",
+        "标注的活动：{label}。",
+        "记录这些信号时，参与者专注于{label}。",
+        "此片段中用户的标注状态：{label}。"
+      ],
+      "canonical": {
+        "left": "想象移动左手",
+        "right": "想象移动右手",
+        "rest": "静息"
+      },
+      "synonyms": {
+        "left": [
+          "在脑中移动左手",
+          "想象左手在动",
+          "设想左手正在移动"
+        ],
+        "right": [
+          "在脑中移动右手",
+          "想象右手在动",
+          "设想右手正在移动"
+        ],
+        "rest": [
+          "休息",
+          "歇息",
+          "安静放松"
+        ]
+      },
+      "desc_train": {
+        "left": [
+          "受试者保持身体静止，在脑中想象握紧左拳，真实的左手保持放松；右侧中央区的μ和β节律减弱。",
+          "看到提示后，受试者在心里反复演练用左手抓握，真实的手臂保持放松。"
+        ],
+        "right": [
+          "受试者身体保持静止，想象攥紧右拳，左侧中央区的感觉节律随之减弱。",
+          "提示出现后，受试者在脑海中演练用右手握拳，真实的右臂保持松弛。"
+        ],
+        "rest": [
+          "受试者安静地坐着，眼睛看着屏幕，身体放松，让头脑放空。",
+          "放松的基线状态：受试者保持静止、心情平和，双侧中央区的节律保持较强。"
+        ]
+      },
+      "desc_heldout": {
+        "left": [
+          "想象用左手捏一个球，但手保持完全静止。",
+          "在脑中演练左手抓握，右侧运动皮层上的μ节律随之减弱。",
+          "想象左拳张开又握紧的感觉，手臂平放在桌上静止。",
+          "想象伸出左手去拿杯子，全身肌肉保持放松。",
+          "左手的动觉想象：在心里感受左手手指一下下敲击。",
+          "受试者想象左手动作时，右侧感觉运动区出现事件相关去同步化。",
+          "受试者想象用左手挥手，专注于这个动作会带来的感觉。",
+          "屏幕上的提示指向左边，受试者随即想象左手握紧。",
+          "在心里攥紧左手，对侧半球手部区域的α和β功率下降。",
+          "想象用左手转动门把手，实际的双手保持放松。"
+        ],
+        "right": [
+          "想象右手握笔写字，双手实际保持静止。",
+          "在脑海中握紧右拳，左侧运动皮层的μ活动随之减弱。",
+          "在心里演练屈伸右手手指，只感受动作而实际保持静止。",
+          "受试者专注于用右手挤压东西的感觉。",
+          "想象的右手动作使左半球的感觉运动节律去同步化。",
+          "看到向右的提示后，受试者想象右手按下按钮。",
+          "在脑中用右手抛出一个球，真实的手臂松松地搁在扶手上。",
+          "右手运动想象：头部对侧手部区域的α与β功率降低。",
+          "想象右手各个手指依次与拇指相碰，手本身静止。",
+          "想象用右手转动钥匙，留意手腕将如何旋转。"
+        ],
+        "rest": [
+          "受试者放松地坐着，看着屏幕，让思绪自由放空。",
+          "平静的基线时段，未想象任何动作，双侧运动节律保持强劲。",
+          "受试者只是等待下一个提示，双手松弛，思绪散漫。",
+          "放松地注视十字准星，感觉运动节律维持在基线水平。",
+          "两只手都闲着：受试者安然静坐。",
+          "空闲状态，运动带上的μ节律在两侧都保持完整。",
+          "受试者在试次之间全身放松，正常呼吸。",
+          "安静地看着屏幕，脑中无任何任务，手臂搭在扶手上。",
+          "受试者保持平静、无所作为，运动皮层活动两侧对称、均衡。",
+          "受试者让大脑歇一歇，双手放松，什么也不特别去想。"
+        ]
+      },
+      "unseen_desc": {
+        "hand_movement": [
+          "受试者想象移动一只手，左手或右手均可。",
+          "手部运动想象：受试者在脑中想象用某只手抓握或挤压。",
+          "想象手部动作，与想象之手对侧的运动皮层μ节律减弱。",
+          "受试者在心里演练握拳之类的手部动作，同时双臂保持静止。",
+          "想象任意一只手张开又合拢的动觉，相应手部区域出现事件相关去同步化。",
+          "受试者专注于某一侧手指活动的感觉，双手实际保持静止。",
+          "任意一侧的手部运动想象，在感觉运动皮层产生偏侧化的α和β功率下降。",
+          "受试者按屏幕提示，想象用手伸出去抓东西。",
+          "受试者在脑中用左手或右手做一个手势，身体保持放松。",
+          "受试者正在做手部运动想象，想象提示所指的那只手用力一握。"
+        ]
+      },
+      "unseen_names": {
+        "hand_movement": {
+          "implicit": "想象手部动作",
+          "explicit": null
+        }
+      }
+    }
+  },
+  "frequency_grid_hz": [
+    8.0,
+    8.2,
+    8.4,
+    8.6,
+    8.8,
+    9.0,
+    9.2,
+    9.4,
+    9.6,
+    9.8,
+    10.0,
+    10.2,
+    10.4,
+    10.6,
+    10.8,
+    11.0,
+    11.2,
+    11.4,
+    11.6,
+    11.8,
+    12.0,
+    12.2,
+    12.4,
+    12.6,
+    12.8,
+    13.0,
+    13.2,
+    13.4,
+    13.6,
+    13.8,
+    14.0,
+    14.2,
+    14.4,
+    14.6,
+    14.8,
+    15.0,
+    15.2,
+    15.4,
+    15.6,
+    15.8
+  ],
+  "held_out_partition_hz": {
+    "rotation 0": [
+      8.2,
+      9.2,
+      10.4,
+      11.6,
+      12.6,
+      13.8,
+      14.4,
+      15.0
+    ],
+    "rotation 1": [
+      8.4,
+      9.0,
+      10.2,
+      11.0,
+      12.8,
+      13.6,
+      14.8,
+      15.4
+    ],
+    "rotation 2": [
+      8.0,
+      9.6,
+      10.8,
+      11.4,
+      12.2,
+      13.4,
+      14.2,
+      15.6
+    ],
+    "rotation 3": [
+      8.6,
+      9.8,
+      10.6,
+      11.2,
+      12.0,
+      13.2,
+      14.0,
+      15.8
+    ],
+    "rotation 4": [
+      8.8,
+      9.4,
+      10.0,
+      11.8,
+      12.4,
+      13.0,
+      14.6,
+      15.2
+    ]
+  },
+  "partition_constraints": [
+    "each set has every stimulus-phase class exactly twice (stored and corrected lists)",
+    "no two held-out frequencies adjacent on the grid",
+    "at most 2 per tenths digit and exactly 1 per integer band 8..15 per set",
+    "every tokenizer token of every held-out frequency string occurs in that rotation's training texts (per encoder)"
+  ],
+  "partition_why_not_uniform": "mod 4 aligned with phase (R1-1); mod 5 put one tenths digit per set, absent from training text (N1); any uniform 8-of-40 split has the digit problem",
+  "s8_held_out_band_hz": [
+    14.4,
+    14.6,
+    14.8,
+    15.0,
+    15.2,
+    15.4,
+    15.6,
+    15.8
+  ],
+  "derangements": {
+    "sleep_by_seed": {
+      "20261007": {
+        "W": "N1",
+        "N1": "N3",
+        "N2": "REM",
+        "N3": "W",
+        "REM": "N2"
+      },
+      "20261008": {
+        "W": "N1",
+        "N1": "N3",
+        "N2": "W",
+        "N3": "REM",
+        "REM": "N2"
+      },
+      "20261009": {
+        "W": "N1",
+        "N1": "REM",
+        "N2": "N3",
+        "N3": "W",
+        "REM": "N2"
+      }
+    },
+    "motor_imagery_by_seed": {
+      "20261007": {
+        "left": "right",
+        "right": "rest",
+        "rest": "left"
+      },
+      "20261008": {
+        "left": "rest",
+        "right": "left",
+        "rest": "right"
+      },
+      "20261009": {
+        "left": "right",
+        "right": "rest",
+        "rest": "left"
+      }
+    },
+    "ssvep_s10_by_rotation_and_seed_index": {
+      "0/0": {
+        "8.0": "14.8",
+        "8.4": "11.8",
+        "8.6": "13.0",
+        "8.8": "11.2",
+        "9.0": "15.6",
+        "9.4": "10.8",
+        "9.6": "11.0",
+        "9.8": "8.4",
+        "10.0": "14.6",
+        "10.2": "13.2",
+        "10.6": "12.2",
+        "10.8": "12.4",
+        "11.0": "8.8",
+        "11.2": "9.4",
+        "11.4": "10.2",
+        "11.8": "13.4",
+        "12.0": "10.0",
+        "12.2": "9.6",
+        "12.4": "14.2",
+        "12.8": "14.0",
+        "13.0": "15.2",
+        "13.2": "8.0",
+        "13.4": "15.8",
+        "13.6": "15.4",
+        "14.0": "10.6",
+        "14.2": "9.8",
+        "14.6": "8.6",
+        "14.8": "11.4",
+        "15.2": "9.0",
+        "15.4": "12.0",
+        "15.6": "12.8",
+        "15.8": "13.6"
+      },
+      "0/1": {
+        "8.0": "9.4",
+        "8.4": "9.6",
+        "8.6": "9.8",
+        "8.8": "11.4",
+        "9.0": "13.6",
+        "9.4": "11.8",
+        "9.6": "15.6",
+        "9.8": "13.2",
+        "10.0": "13.4",
+        "10.2": "14.0",
+        "10.6": "8.0",
+        "10.8": "15.4",
+        "11.0": "15.2",
+        "11.2": "13.0",
+        "11.4": "9.0",
+        "11.8": "14.2",
+        "12.0": "15.8",
+        "12.2": "10.2",
+        "12.4": "8.6",
+        "12.8": "14.6",
+        "13.0": "14.8",
+        "13.2": "10.0",
+        "13.4": "10.8",
+        "13.6": "11.2",
+        "14.0": "12.8",
+        "14.2": "12.4",
+        "14.6": "8.8",
+        "14.8": "11.0",
+        "15.2": "12.2",
+        "15.4": "8.4",
+        "15.6": "12.0",
+        "15.8": "10.6"
+      },
+      "0/2": {
+        "8.0": "14.8",
+        "8.4": "12.8",
+        "8.6": "15.2",
+        "8.8": "13.0",
+        "9.0": "10.2",
+        "9.4": "13.6",
+        "9.6": "15.6",
+        "9.8": "12.4",
+        "10.0": "11.8",
+        "10.2": "8.6",
+        "10.6": "8.4",
+        "10.8": "14.2",
+        "11.0": "8.0",
+        "11.2": "14.0",
+        "11.4": "13.2",
+        "11.8": "10.0",
+        "12.0": "14.6",
+        "12.2": "10.6",
+        "12.4": "9.6",
+        "12.8": "15.8",
+        "13.0": "9.4",
+        "13.2": "8.8",
+        "13.4": "9.8",
+        "13.6": "15.4",
+        "14.0": "12.0",
+        "14.2": "9.0",
+        "14.6": "12.2",
+        "14.8": "11.0",
+        "15.2": "11.2",
+        "15.4": "11.4",
+        "15.6": "10.8",
+        "15.8": "13.4"
+      },
+      "1/0": {
+        "8.0": "15.6",
+        "8.2": "12.2",
+        "8.6": "13.4",
+        "8.8": "11.4",
+        "9.2": "11.8",
+        "9.4": "11.6",
+        "9.6": "14.2",
+        "9.8": "13.2",
+        "10.0": "15.8",
+        "10.4": "12.4",
+        "10.6": "12.0",
+        "10.8": "13.8",
+        "11.2": "8.0",
+        "11.4": "9.8",
+        "11.6": "14.4",
+        "11.8": "14.0",
+        "12.0": "15.0",
+        "12.2": "10.0",
+        "12.4": "8.6",
+        "12.6": "14.6",
+        "13.0": "10.4",
+        "13.2": "9.2",
+        "13.4": "8.2",
+        "13.8": "10.8",
+        "14.0": "15.2",
+        "14.2": "11.2",
+        "14.4": "9.4",
+        "14.6": "9.6",
+        "15.0": "12.6",
+        "15.2": "13.0",
+        "15.6": "8.8",
+        "15.8": "10.6"
+      },
+      "1/1": {
+        "8.0": "12.2",
+        "8.2": "10.8",
+        "8.6": "11.6",
+        "8.8": "15.2",
+        "9.2": "11.2",
+        "9.4": "12.6",
+        "9.6": "13.0",
+        "9.8": "8.0",
+        "10.0": "14.0",
+        "10.4": "14.2",
+        "10.6": "13.8",
+        "10.8": "15.0",
+        "11.2": "8.8",
+        "11.4": "9.6",
+        "11.6": "13.4",
+        "11.8": "10.6",
+        "12.0": "15.6",
+        "12.2": "8.6",
+        "12.4": "14.4",
+        "12.6": "10.4",
+        "13.0": "8.2",
+        "13.2": "14.6",
+        "13.4": "15.8",
+        "13.8": "9.4",
+        "14.0": "12.4",
+        "14.2": "11.4",
+        "14.4": "9.2",
+        "14.6": "10.0",
+        "15.0": "9.8",
+        "15.2": "11.8",
+        "15.6": "13.2",
+        "15.8": "12.0"
+      },
+      "1/2": {
+        "8.0": "14.2",
+        "8.2": "13.4",
+        "8.6": "15.8",
+        "8.8": "12.0",
+        "9.2": "8.0",
+        "9.4": "11.6",
+        "9.6": "13.8",
+        "9.8": "11.2",
+        "10.0": "13.2",
+        "10.4": "12.6",
+        "10.6": "13.0",
+        "10.8": "9.2",
+        "11.2": "14.0",
+        "11.4": "8.6",
+        "11.6": "9.4",
+        "11.8": "10.6",
+        "12.0": "9.8",
+        "12.2": "15.0",
+        "12.4": "14.6",
+        "12.6": "10.4",
+        "13.0": "14.4",
+        "13.2": "10.0",
+        "13.4": "11.8",
+        "13.8": "15.2",
+        "14.0": "8.8",
+        "14.2": "9.6",
+        "14.4": "15.6",
+        "14.6": "10.8",
+        "15.0": "12.4",
+        "15.2": "8.2",
+        "15.6": "12.2",
+        "15.8": "11.4"
+      },
+      "2/0": {
+        "8.2": "10.6",
+        "8.4": "12.0",
+        "8.6": "11.0",
+        "8.8": "11.2",
+        "9.0": "13.8",
+        "9.2": "11.6",
+        "9.4": "11.8",
+        "9.8": "12.8",
+        "10.0": "15.2",
+        "10.2": "13.0",
+        "10.4": "14.4",
+        "10.6": "12.4",
+        "11.0": "13.6",
+        "11.2": "12.6",
+        "11.6": "8.8",
+        "11.8": "15.8",
+        "12.0": "10.0",
+        "12.4": "14.6",
+        "12.6": "15.4",
+        "12.8": "9.4",
+        "13.0": "8.4",
+        "13.2": "15.0",
+        "13.6": "14.8",
+        "13.8": "8.2",
+        "14.0": "8.6",
+        "14.4": "9.2",
+        "14.6": "10.2",
+        "14.8": "9.8",
+        "15.0": "9.0",
+        "15.2": "13.2",
+        "15.4": "14.0",
+        "15.8": "10.4"
+      },
+      "2/1": {
+        "8.2": "12.6",
+        "8.4": "10.4",
+        "8.6": "15.2",
+        "8.8": "11.0",
+        "9.0": "13.6",
+        "9.2": "14.6",
+        "9.4": "14.8",
+        "9.8": "12.0",
+        "10.0": "11.8",
+        "10.2": "12.8",
+        "10.4": "8.4",
+        "10.6": "8.2",
+        "11.0": "15.8",
+        "11.2": "15.0",
+        "11.6": "14.4",
+        "11.8": "13.8",
+        "12.0": "13.2",
+        "12.4": "15.4",
+        "12.6": "9.2",
+        "12.8": "14.0",
+        "13.0": "10.0",
+        "13.2": "9.4",
+        "13.6": "8.6",
+        "13.8": "12.4",
+        "14.0": "9.8",
+        "14.4": "10.6",
+        "14.6": "10.2",
+        "14.8": "8.8",
+        "15.0": "11.6",
+        "15.2": "9.0",
+        "15.4": "11.2",
+        "15.8": "13.0"
+      },
+      "2/2": {
+        "8.2": "11.8",
+        "8.4": "10.6",
+        "8.6": "11.6",
+        "8.8": "11.2",
+        "9.0": "14.6",
+        "9.2": "13.6",
+        "9.4": "12.8",
+        "9.8": "15.4",
+        "10.0": "14.0",
+        "10.2": "9.0",
+        "10.4": "12.0",
+        "10.6": "15.8",
+        "11.0": "13.8",
+        "11.2": "13.0",
+        "11.6": "15.0",
+        "11.8": "15.2",
+        "12.0": "8.4",
+        "12.4": "8.2",
+        "12.6": "14.8",
+        "12.8": "9.4",
+        "13.0": "11.0",
+        "13.2": "14.4",
+        "13.6": "12.4",
+        "13.8": "12.6",
+        "14.0": "8.8",
+        "14.4": "13.2",
+        "14.6": "8.6",
+        "14.8": "10.2",
+        "15.0": "9.8",
+        "15.2": "9.2",
+        "15.4": "10.0",
+        "15.8": "10.4"
+      },
+      "3/0": {
+        "8.0": "10.2",
+        "8.2": "15.2",
+        "8.4": "10.8",
+        "8.8": "15.4",
+        "9.0": "11.0",
+        "9.2": "10.4",
+        "9.4": "13.8",
+        "9.6": "15.6",
+        "10.0": "12.4",
+        "10.2": "13.0",
+        "10.4": "8.2",
+        "10.8": "14.4",
+        "11.0": "14.2",
+        "11.4": "13.6",
+        "11.6": "9.6",
+        "11.8": "13.4",
+        "12.2": "14.6",
+        "12.4": "8.8",
+        "12.6": "8.4",
+        "12.8": "9.2",
+        "13.0": "14.8",
+        "13.4": "15.0",
+        "13.6": "12.2",
+        "13.8": "11.4",
+        "14.2": "10.0",
+        "14.4": "8.0",
+        "14.6": "11.6",
+        "14.8": "12.8",
+        "15.0": "12.6",
+        "15.2": "9.4",
+        "15.4": "11.8",
+        "15.6": "9.0"
+      },
+      "3/1": {
+        "8.0": "14.4",
+        "8.2": "12.6",
+        "8.4": "11.6",
+        "8.8": "14.6",
+        "9.0": "10.2",
+        "9.2": "14.8",
+        "9.4": "15.4",
+        "9.6": "8.2",
+        "10.0": "8.4",
+        "10.2": "12.8",
+        "10.4": "8.0",
+        "10.8": "14.2",
+        "11.0": "13.8",
+        "11.4": "13.6",
+        "11.6": "9.0",
+        "11.8": "8.8",
+        "12.2": "11.0",
+        "12.4": "15.0",
+        "12.6": "11.4",
+        "12.8": "10.4",
+        "13.0": "9.4",
+        "13.4": "15.6",
+        "13.6": "12.4",
+        "13.8": "15.2",
+        "14.2": "12.2",
+        "14.4": "9.6",
+        "14.6": "10.0",
+        "14.8": "11.8",
+        "15.0": "10.8",
+        "15.2": "9.2",
+        "15.4": "13.0",
+        "15.6": "13.4"
+      },
+      "3/2": {
+        "8.0": "15.2",
+        "8.2": "13.0",
+        "8.4": "10.2",
+        "8.8": "15.4",
+        "9.0": "14.2",
+        "9.2": "13.8",
+        "9.4": "11.8",
+        "9.6": "14.6",
+        "10.0": "8.4",
+        "10.2": "14.4",
+        "10.4": "12.6",
+        "10.8": "9.4",
+        "11.0": "9.6",
+        "11.4": "15.6",
+        "11.6": "15.0",
+        "11.8": "10.4",
+        "12.2": "8.8",
+        "12.4": "9.2",
+        "12.6": "11.4",
+        "12.8": "14.8",
+        "13.0": "11.6",
+        "13.4": "10.0",
+        "13.6": "11.0",
+        "13.8": "12.4",
+        "14.2": "12.8",
+        "14.4": "12.2",
+        "14.6": "8.2",
+        "14.8": "10.8",
+        "15.0": "13.4",
+        "15.2": "9.0",
+        "15.4": "8.0",
+        "15.6": "13.6"
+      },
+      "4/0": {
+        "8.0": "14.2",
+        "8.2": "13.8",
+        "8.4": "13.4",
+        "8.6": "11.6",
+        "9.0": "15.8",
+        "9.2": "10.4",
+        "9.6": "13.2",
+        "9.8": "11.0",
+        "10.2": "11.4",
+        "10.4": "12.6",
+        "10.6": "8.0",
+        "10.8": "14.4",
+        "11.0": "9.2",
+        "11.2": "9.0",
+        "11.4": "9.6",
+        "11.6": "15.4",
+        "12.0": "10.6",
+        "12.2": "14.0",
+        "12.6": "10.2",
+        "12.8": "15.0",
+        "13.2": "8.4",
+        "13.4": "10.8",
+        "13.6": "14.8",
+        "13.8": "12.2",
+        "14.0": "8.6",
+        "14.2": "15.6",
+        "14.4": "8.2",
+        "14.8": "12.8",
+        "15.0": "13.6",
+        "15.4": "12.0",
+        "15.6": "9.8",
+        "15.8": "11.2"
+      },
+      "4/1": {
+        "8.0": "11.6",
+        "8.2": "11.4",
+        "8.4": "14.0",
+        "8.6": "14.2",
+        "9.0": "11.2",
+        "9.2": "15.6",
+        "9.6": "11.0",
+        "9.8": "14.8",
+        "10.2": "12.6",
+        "10.4": "15.8",
+        "10.6": "14.4",
+        "10.8": "8.6",
+        "11.0": "13.4",
+        "11.2": "13.8",
+        "11.4": "10.2",
+        "11.6": "13.2",
+        "12.0": "13.6",
+        "12.2": "15.0",
+        "12.6": "8.2",
+        "12.8": "10.6",
+        "13.2": "15.4",
+        "13.4": "12.0",
+        "13.6": "9.0",
+        "13.8": "9.2",
+        "14.0": "9.8",
+        "14.2": "10.8",
+        "14.4": "12.2",
+        "14.8": "9.6",
+        "15.0": "8.4",
+        "15.4": "12.8",
+        "15.6": "8.0",
+        "15.8": "10.4"
+      },
+      "4/2": {
+        "8.0": "13.8",
+        "8.2": "11.6",
+        "8.4": "13.6",
+        "8.6": "12.8",
+        "9.0": "12.0",
+        "9.2": "10.8",
+        "9.6": "11.4",
+        "9.8": "8.4",
+        "10.2": "15.6",
+        "10.4": "15.4",
+        "10.6": "8.2",
+        "10.8": "14.0",
+        "11.0": "9.0",
+        "11.2": "13.2",
+        "11.4": "9.6",
+        "11.6": "10.4",
+        "12.0": "10.2",
+        "12.2": "14.8",
+        "12.6": "11.0",
+        "12.8": "15.0",
+        "13.2": "14.4",
+        "13.4": "9.8",
+        "13.6": "10.6",
+        "13.8": "8.0",
+        "14.0": "9.2",
+        "14.2": "12.2",
+        "14.4": "15.8",
+        "14.8": "8.6",
+        "15.0": "11.2",
+        "15.4": "14.2",
+        "15.6": "12.6",
+        "15.8": "13.4"
+      }
+    },
+    "rules": {
+      "what": "TPL embeddings attached to the wrong seen predicates by declared derangements; unseen predicates get their true TPL embedding",
+      "role": "alignment control for TPL only",
+      "convention": "arm attaches to stage X the TPL embedding of stage sigma(X); a union query retrieves sigma^-1(U)",
+      "sleep": "first three in lexicographic order of the 16 derangements minimising union overlap (light 0, NREM 1; asleep always 3 of 4)",
+      "motor_imagery": "only the two 3-cycles exist; seeds 1 and 3 share one (stated in output)",
+      "ssvep_s10": "per (rotation, seed): rejection sampling from numpy Generator(PCG64(20261007 + 100*rotation + seed_index)); accept only if no predicate receives the embedding of a frequency within 1.0 Hz of its own",
+      "declared": "declared now, fixed at the freeze"
+    }
+  },
+  "num_code": {
+    "mean": 11.9,
+    "sd": 2.309,
+    "bump_sigma": 0.4,
+    "bump_centres": [
+      7.9,
+      8.3,
+      8.7,
+      9.1,
+      9.5,
+      9.9,
+      10.3,
+      10.7,
+      11.1,
+      11.5,
+      11.9,
+      12.3,
+      12.7,
+      13.1,
+      13.5,
+      13.9,
+      14.3,
+      14.7,
+      15.1,
+      15.5,
+      15.9,
+      16.3
+    ],
+    "dims": 23,
+    "support_tol": 1e-06
+  },
+  "text_encoders": {
+    "bge": {
+      "repo": "BAAI/bge-small-en-v1.5",
+      "commit": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "licence": "mit",
+      "pooling": "cls",
+      "parameters": 33360000
+    },
+    "minilm": {
+      "repo": "sentence-transformers/all-MiniLM-L6-v2",
+      "commit": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "licence": "apache-2.0",
+      "pooling": "mean",
+      "parameters": 22713216
+    },
+    "e5": {
+      "repo": "intfloat/multilingual-e5-small",
+      "commit": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "licence": "mit",
+      "pooling": "mean",
+      "parameters": 117653760
+    }
+  },
+  "text_encoders_note": "Frozen at pinned commits and never redistributed.",
+  "provenance": {
+    "manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+    "wording_lists_sha256": "b903f4f49138aefdba9385e82d5288f58eccc24ab228d9b45ab5bd53bf63912a"
+  }
+}

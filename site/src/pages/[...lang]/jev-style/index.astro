@@ -1,0 +1,109 @@
+---
+/**
+ * /jev-style/: "Jev-style questions on EEG: the evidence" (owner plan of 2026-10-07, approved for this version on
+ * 2026-10-08). One short page that gathers the three routes of the decision-research plan, each with one answer in
+ * words and a link to its results, so the name reaches readers with its scope beside it.
+ *
+ * Rules: the scope sentence stands beside the name (in the hero, as the dek); the page says the site is independent
+ * and not affiliated with the Jev authors, and claims no contact or endorsement; the vision paper is cited as
+ * "Yu & Yao, 2026"; no figure is typed here (the answers are words, and the figures are on each route's page, printed
+ * from their served files). check-workbench.mjs holds every one of these.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import { hrefFor, localeOf, localeParams, topicChrome } from '../../../data/i18n';
+import { jevIndependence, jevScope, visualJev } from '../../../data/questions-in-language';
+import { decisionRoadmap } from '../../../data/decision-research';
+import { elsewhere, site } from '../../../data/site';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const path = '/jev-style/';
+// The page names the three routes only once each has run, and links each to its results.
+const runs = decisionRoadmap.routes;
+if (runs.length !== 3 || !runs.every(r => r.runStatus === 'run')) throw new Error('jev-style: every route has been run');
+const results = runs.map(r => 'results' in r ? r.results : '');
+if (results.join() !== '#reliable-decisions,/topics/shared-encoder/,/topics/questions-in-language/') throw new Error('jev-style: the routes link their results');
+const hrefOf = (r: string) => r.startsWith('#') ? `${hrefFor('/topics/when-not-to-act/', locale)}${r}` : hrefFor(r, locale);
+const article = elsewhere.articles.find(a => a.page === '/topics/when-not-to-act/');
+const copy = {
+  en: {
+    docTitle: 'Jev-style questions on EEG: the evidence',
+    h1: 'Jev-style questions on EEG: the evidence',
+    description: `${jevScope.en} Three routes, each answered by BCI Report’s own runs on public EEG data. BCI Report is independent and not affiliated with the Jev authors.`,
+    eyebrow: 'Decision research · three routes',
+    independenceH2: 'Who is asking',
+    independence: jevIndependence.en,
+    origin: ['The pattern comes from a vision paper, ', '. In vision, one encoding of an image can serve many forced-choice questions. This site asks whether the same pattern holds up on EEG, with its own runs on public datasets. Nothing here uses or evaluates the Jev model.'],
+    routesEyebrow: 'Three routes',
+    routesH2: 'What each route found',
+    routesLede: 'Each answer is in words; the figures, their intervals and their limits are on each route’s own page.',
+    routes: [
+      { tag: 'First route', title: 'Reliable decisions', q: 'When should a decoder decline to decide?',
+        a: 'Rescoring the saved outputs of models this site already publishes: compare methods at matched coverage, not at a shared cut-off. At the same coverage, a learned reject option did not err less than calibrated confidence for any method, and a certified risk accepted nothing on one of the two protocols.',
+        link: 'The results, on When not to act →' },
+      { tag: 'Second route', title: 'One representation, several questions', q: 'Can one EEG model answer several questions as well as separate models?',
+        a: 'Fixed outputs on one shared encoder were cheaper than a head told which question it answers, but were not shown to do as well; telling the head the question, by an identifier, added nothing measurable.',
+        link: 'One model, several questions →' },
+      { tag: 'Third route', title: 'Questions in language', q: 'Can an EEG model answer questions asked in words?',
+        a: 'Only for questions it was trained on, and not on every dataset: in its training wording, a small head matched question numbers on seen sleep questions but lost accuracy on SSVEP; most rewordings of a seen question cost accuracy; and it did not answer questions it was never trained on. In a boundary probe, negated questions were answered as if they asked for what they negate.',
+        link: 'Questions in language →' },
+    ],
+    roadmap: ['The plan, its literature and what each route set out to test: ', 'the research plan on When not to act →'],
+    article: ['A longer write-up of the first route’s BETA results is on Hugging Face: ', 'When should an EEG decoder abstain? ↗'],
+  },
+  zh: {
+    docTitle: 'Jev 式提问用在脑电上：证据',
+    h1: 'Jev 式提问用在脑电上：证据',
+    description: `${jevScope.zh}三条路线，每一条都由 BCI Report 在公开 EEG 数据上自己的运行来回答。BCI Report 是独立项目，与 Jev 的作者没有关联。`,
+    eyebrow: '决策研究 · 三条路线',
+    independenceH2: '提问的是谁',
+    independence: jevIndependence.zh,
+    origin: ['这个范式来自一篇视觉论文：', '。在视觉领域，一张图像编码一次，就能回答多个强制选择的问题。本站用自己在公开数据集上的运行来检验：同样的范式在 EEG 上是否站得住。这里没有使用、也没有评估 Jev 模型。'],
+    routesEyebrow: '三条路线',
+    routesH2: '每条路线发现了什么',
+    routesLede: '每个回答都只用文字；数字、区间与局限都在各条路线自己的页面上。',
+    routes: [
+      { tag: '第一条路线', title: '可靠的决策', q: '解码器什么时候应该拒绝作出决定？',
+        a: '对本站已发布模型保存下来的输出重新评分：比较方法要在相同的覆盖率下比，而不是用同一个阈值。在相同的覆盖率下，没有哪种方法的可学习拒识选项比校准后的置信度错得更少；经认证的风险在两个协议之一上没有接受任何试次。',
+        link: '结果，见“何时不该执行” →' },
+      { tag: '第二条路线', title: '一份表征，多个问题', q: '一个 EEG 模型回答多个问题，能和分开的模型一样好吗？',
+        a: '一个共享编码器加固定输出，比“知道自己在回答哪个问题”的分类头更省，但没能证明做得一样好；用标识告诉分类头是哪个问题，本身没有可测的帮助。',
+        link: '一个模型，多个问题 →' },
+      { tag: '第三条路线', title: '用语言提问', q: 'EEG 模型能回答用文字提出的问题吗？',
+        a: '只对训练过的问题成立，而且不是在每个数据集上都成立：用训练时的问法提问时，小分类头在已见过的睡眠问题上与题号相当，在 SSVEP 上则损失了准确率；把已见过的问题改写后再问，大多有代价；对从未训练过的问题，它没有答好。在一个边界探针中，否定的问法被当成在问被否定的那一项本身。',
+        link: '用语言提问 →' },
+    ],
+    roadmap: ['这个计划、它的文献，以及每条路线原本要检验什么：', '“何时不该执行”页上的研究计划 →'],
+    article: ['', '第一条路线 BETA 部分结果的长文解读（英文，Hugging Face）↗'],
+  },
+}[locale];
+const structured = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: copy.docTitle,
+  url: new URL(path, site.origin).href, description: copy.description,
+  hasPart: runs.map((r, i) => ({ '@type': 'WebPage', name: copy.routes[i].q, url: new URL(hrefOf(results[i]), site.origin).href })),
+};
+---
+<EntityLayout locale={locale} path={path} active="topics"
+  documentTitle={copy.docTitle} h1={copy.h1} description={copy.description}
+  eyebrow={copy.eyebrow} dek={jevScope[locale]}
+  crumbs={[{ label: tc.home, href: hrefFor('/', locale) }, { label: tc.questions, href: hrefFor('/topics/', locale) }, { label: copy.h1 }]}
+  structured={structured}>
+  <section class="topic-section" id="independence" aria-labelledby="independence-heading">
+    <div class="topic-heading"><div><h2 id="independence-heading">{copy.independenceH2}</h2></div></div>
+    <p class="protocol-note" data-independence="true">{copy.independence}</p>
+    <p class="roadmap-p" data-origin="true">{copy.origin[0]}<cite lang="en"><a href={visualJev.url} target="_blank" rel="noreferrer">{visualJev.cite} ↗</a></cite>{copy.origin[1]}</p>
+  </section>
+  <section class="topic-section" id="routes" aria-labelledby="routes-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.routesEyebrow}</p><h2 id="routes-heading">{copy.routesH2}</h2></div><p>{copy.routesLede}</p></div>
+    <ol class="route-list">{copy.routes.map((r, i) => <li data-route={runs[i].id} data-route-status={runs[i].runStatus}>
+      <p class="eyebrow">{r.tag}</p>
+      <h3>{r.title}</h3>
+      <p><strong>{r.q}</strong> {r.a}</p>
+      <p class="route-results"><a href={hrefOf(results[i])}>{r.link}</a></p>
+    </li>)}</ol>
+    <p class="roadmap-p">{copy.roadmap[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.roadmap[1]}</a></p>
+    {article && <p class="citation-note" id="jev-article">{copy.article[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a></p>}
+  </section>
+</EntityLayout>

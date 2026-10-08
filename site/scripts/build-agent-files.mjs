@@ -263,6 +263,7 @@ There is no overall ranking: a figure is comparable only with others under the s
 
 ${line(one('/topics/'), one('/topics/').description)}
 ${topics.map(p => line(p, p.answerText || p.description)).join('\n')}
+${line(one('/jev-style/'), one('/jev-style/').description)}
 
 ## Datasets
 
@@ -303,7 +304,7 @@ ${line(one('/data-use/'), one('/data-use/').description)}
 writeFileSync(join(dist, 'llms.txt'), llms);
 
 // --- llms-full.txt: every English page in one file ------------------------------------------
-const full = [home, one('/topics/'), ...topics, one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), protocolsIndex, ...protocolPages, api, one('/releases/'), one('/data-use/')]
+const full = [home, one('/topics/'), ...topics, one('/jev-style/'), one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), protocolsIndex, ...protocolPages, api, one('/releases/'), one('/data-use/')]
   .map(p => p.md.trim()).join('\n\n');
 writeFileSync(join(dist, 'llms-full.txt'), `# BCI Report — full text\n\n> Every English page of ${origin} as Markdown, in the order of ${origin}/llms.txt.\n\n${full}\n`);
 

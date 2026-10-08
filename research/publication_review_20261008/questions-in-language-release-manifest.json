@@ -1,0 +1,116 @@
+{
+  "release_id": "questions-in-language-update-20261008",
+  "reviewed_at": "2026-10-08",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for route 3 of the decision-research roadmap on /topics/when-not-to-act/, questions in language (handoff revision 1, dated 2026-10-08). Its own manifest, beside the later-sessions one of the same date: it amends no earlier review and changes no released file. One small question-conditioned head over frozen features is asked each question by a question number (ID), by a label template (TPL) or by a natural-language description (DESC). Seen questions in their training wording, rewordings of seen questions and questions the EEG head was never trained on are separate results and never pooled. Primary: SSVEP on BETA (70 people; a plain spectrum and frozen CBraMod features) and sleep on BOAS (100 people; frozen CBraMod features), 3 seeds each, 35 pre-declared comparisons. Secondary, declared likely inconclusive where single-seed or on EESM19: EESM19, OpenBMI motor imagery, REVE-L features, a second text encoder, Chinese wordings, a negation probe, extrapolation to a contiguous band and Wearable-102. The interface pattern comes from a vision paper; route 3 is not an integration with Jev and not a Jev model that reads EEG. The website input is the release candidate. Every {source, value} block in it is re-resolved against the file it names; the consolidated aggregate, the two audited aggregates, the protocol, the stage-0 report, the two canary declarations, the BOAS scope extension, the handoff, the reference check and the four independent audits are pinned by SHA-256, opened and checked, never copied, because they carry private storage paths. The wording lists, the held-out partition and the derangements are the site's own text and are served in a second file.",
+  "approval": {
+    "date": "2026-10-08",
+    "decision": "aggregate_preview",
+    "basis": "The owner's approval in chat on 2026-10-08, \"Approve, same version\": route 3's results are published in the pending site version, the one that also adds the later-sessions question, and nothing is deployed before the owner's preview of the local build. The handoff and the release candidate were sealed as \"pending user approval\"; this record is that approval. BOAS figures are publishable under the owner's D11 of 2026-10-07, which extends the 2026-10-07 BOAS approval (route 2) to route 3's aggregate BOAS results under all its conditions.",
+    "candidateStatusAtSeal": "pending user approval",
+    "ownerDecisions": [
+      {"date": "2026-10-07", "id": "D11", "words": "D11 批准扩展", "decision": "The 2026-10-07 BOAS publication approval also covers route 3's aggregate BOAS results (the seen five-stage task under each wording, the unseen compositional questions, per-wording aggregates), under all its conditions.", "record": "boasScopeExtension"},
+      {"date": "2026-10-08", "id": "revision 4 and S0b-6", "words": "两个都批准，按方案二继续跑", "decision": "Revision 4 of the pre-run permutation canary replaces the failed revision 3 as the stopping rule, approved before any new fit; and decision S0b-6: for multilingual-e5-small the SSVEP token rule is reported, not a stop, for number pieces.", "record": "canaryDeclarations.revision4"},
+      {"date": "2026-10-08", "id": "revision 5", "words": "批准方案二", "decision": "Revision 5 of the pre-run permutation canary, approved after revision 4 failed, overriding revision 4's \"no further revision\"; revision 4's per-person centring diagnostic is not run.", "record": "canaryDeclarations.revision5"},
+      {"date": "2026-10-08", "id": "results", "words": "Approve, same version", "decision": "Route 3's results are approved for publication in the pending site version."}
+    ],
+    "decisionsOfThisReview": [
+      "The S10 per-frequency and interior-only BETA breakdowns are not published. They were computed at stage 3 and are not covered by an independent audit, so the release candidate's results.beta_by_cohort_and_frequency stays out and its figures are refused by key and by value. The five per-rotation TPL - CCA rows, which stage 2 produced and audit A4 recomputed, are published.",
+      "Every pre-run check is published as pass or fail and as counts: the three permutation canaries, the fit check, the shuffled-EEG scorer check and the triviality canaries. None of their values is published, for any dataset: they are fold-0 values, and the BOAS ones never left the private run root. The numeracy probe's Spearman correlations are published; they are computed from the wordings alone, at stage 0, before any EEG fit.",
+      "The secondary parts publish their entries with both flags, and the S6, S8, S9 to S11, S12 and S13 rows and the flip rates. Their descriptive blocks (the S1 to S5 and S8 levels, read-offs, per-stage AUROC and log loss) are not served.",
+      "Text is carried as the release candidate gives it, with declared edits only: the private decision log is named \"the decision log\" instead of by its file name, and a run-root folder (in the engineering amendment) and the project paths of the two canary declarations (in the owner's decisions) are dropped. The candidate's own builder wrote the run machine's host name out of its compute block, which is not published; that is the one difference from the aggregate the export allows. Release ids appear only in the files' identifiers; the text carries no update date and no version label.",
+      "The released rights records of BETA, EESM19, OpenBMI, Wearable-102 and BOAS are reused unchanged and checked against the released files; BOAS travels with its three gaps, its attribution and \"pseudonymised in the public release\"."
+    ]
+  },
+  "route": {
+    "id": "questions-in-language",
+    "runId": "decision-route3-v1/20261007",
+    "handoff": {"path": "research/decision_route3_20261007/Route 3 Questions in Language Website Handoff.md", "sha256": "df28571eaa4d829c97b91c6ffe5d5c8a46a5f59b89ba432145878aac2c4741f7"},
+    "releaseCandidate": {"path": "research/decision_route3_20261007/route3-website-release-candidate.json", "sha256": "9729fda20a9556b34ffb3117b81529aec5c014e01457035445c5c5127fa2d678"},
+    "aggregate": {"path": "research/decision_route3_20261007/aggregate.json", "sha256": "23ea63c226d5c504b3cfb79202bfbf9baff1b47260f446770b16bc7a8eb48295"},
+    "aggregatePrimary": {"path": "research/decision_route3_20261007/aggregate-primary.json", "sha256": "f0a9016ec0d3d71eda6e5ef56f4f0d806b7314d5d00c76696735f7d588af3799"},
+    "aggregateSecondary": {"path": "research/decision_route3_20261007/aggregate-secondary.json", "sha256": "d8d125c4bc1202efbbe2a673300ffa7a01b0d164ef88d9bca77bf36bbdfeb34e"},
+    "protocol": {"path": "research/decision_route3_20261007/protocol.json", "sha256": "922dc0848f58f379bd68f99a4c2d982253a9e7fa8693eed54466f0f9d368a223"},
+    "stage0Report": {"path": "research/decision_route3_20261007/stage0-report.json", "sha256": "04f6b1cfbf0b035117d23508b4d266c57c5d388af190c632131676ea538e3e49"},
+    "canaryDeclarations": {
+      "revision4": {"path": "research/decision_route3_20261007/revision-4-canary.md", "sha256": "e0d99c5db03aede03abe231182ffa496ba3f9e01ffae4a13760437a0c0f1209e"},
+      "revision5": {"path": "research/decision_route3_20261007/revision-5-canary.md", "sha256": "1adacefb78eb285541b80c25b967cfbd904322ca30ce182836a65f37c7062d3d"}
+    },
+    "boasScopeExtension": {"path": "research/decision_route3_20261007/boas-scope-extension-route3.md", "sha256": "34eddcf7b00aa23264cc76d118d3af65472c392ac7fbefa6b2d5e003a22303c9"},
+    "independentAudits": {
+      "primaryConformance": {"path": "research/decision_route3_20261007/audit-primary-conformance.json", "sha256": "36f3b1b37aeaceaf5a3d05fc0b7873c094f9f4bc289d5a28d47f06fab07801c4"},
+      "primaryNumeric": {"path": "research/decision_route3_20261007/audit-primary-numeric.json", "sha256": "e21e6ed5835faadd24fd464c493b414b7bbb7cb7dfdc29a7d71a4f0af472d01f"},
+      "secondaryConformance": {"path": "research/decision_route3_20261007/audit-secondary-conformance.json", "sha256": "8dc1934179f067a482beddb5a3b3849b2092a23ee933b07861f870ecd8569179"},
+      "secondaryNumeric": {"path": "research/decision_route3_20261007/audit-secondary-numeric.json", "sha256": "73c09588ffeda8bb56bf0c31db1c6251f500726a7886a0a09c1657a981d86068"}
+    },
+    "referenceCheck": {"path": "research/decision_route3_20261007/prior-art.md", "sha256": "79d5de01342b2ebe6c9d216d9b629ae33f5477700227af9eafb737f4f147bd99"}
+  },
+  "sources": [
+    {
+      "id": "beta", "name": "BETA", "role": "primary: SSVEP, 70 people, 3 seeds, 5 held-out-frequency rotations",
+      "released": {"file": "site/src/data/mvp.json", "track": "beta-8ch"},
+      "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+      "reviewedAt": "2026-09-20",
+      "publishedHere": "Cohort aggregates over the 70 people, with the published 2-s windows and participant folds: paired contrasts with their intervals and both flags, per-arm levels with chance-corrected values, generalisation costs, flip rates and the per-rotation TPL - CCA rows. No per-person, per-fold or per-frequency value."
+    },
+    {
+      "id": "boas", "name": "BOAS, the Bitbrain Open Access Sleep dataset", "role": "primary: sleep, 100 people, 3 seeds",
+      "released": {"file": "site/src/data/shared-representation-update.json", "result": "one-representation", "dataset": "boas"},
+      "license": "CC0-1.0", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://openneuro.org/datasets/ds005555/versions/1.1.3",
+      "attribution": "Eduardo López-Larraz, María Sierra-Torralba, Sergio Clemente, Galit Fierro, David Oriol, Javier Minguez, Luis Montesano and Jens G. Klinzing · The Bitbrain Open Access Sleep (BOAS) dataset, OpenNeuro ds005555, version 1.1.3 (2026), doi:10.18112/openneuro.ds005555.v1.1.3. Polysomnography EEG and the human-consensus stage labels only; the headband recordings and the publisher's automatic labels are not used.",
+      "reviewedAt": "2026-10-07",
+      "publishedHere": "Cohort aggregates only, each stating its n: 100 people, or 71 where the N3 stage needs at least five N3 windows per person (the per-stage AUROC for N3 and the \"not N3\" negation cell). No per-person, per-night, per-recording or per-fold value, no demographic, date or clock time; every pre-run check on BOAS as pass or fail and counts only. Read from route 2's frozen CBraMod and REVE-L features."
+    },
+    {
+      "id": "eesm19", "name": "EESM19", "role": "secondary (S1): sleep, 20 people, 3 seeds, declared likely inconclusive",
+      "released": {"file": "site/src/data/mvp.json", "track": "sleep-scalp"},
+      "license": "CC0-1.0 declared by upstream and mirror", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+      "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+      "reviewedAt": "2026-09-20",
+      "publishedHere": "Cohort aggregates over 20 people (S1, a replication of the primary sleep entries), each with its flags; declared likely inconclusive before the run."
+    },
+    {
+      "id": "openbmi", "name": "OpenBMI motor imagery", "role": "secondary (S2): motor imagery, 51 people, 3 seeds",
+      "released": {"file": "site/src/data/large-source-update.json", "result": "openbmi-cross-session-calibration"},
+      "license": "CC0-1.0", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://doi.org/10.5524/100542",
+      "attribution": "Min-Ho Lee, O-Yeon Kwon, Yong-Jeong Kim, Hong-Kyung Kim, Young-Eun Lee, John Williamson, Siamac Fazli and Seong-Whan Lee · EEG dataset and OpenBMI toolbox for three BCI paradigms: an investigation into BCI illiteracy, GigaScience (2019), giz002, doi:10.1093/gigascience/giz002. Data: Supporting data, GigaScience Database, doi:10.5524/100542.",
+      "reviewedAt": "2026-10-03",
+      "publishedHere": "Cohort aggregates over the published 51-person cohort (S2), each with its flags. Not gated by a triviality canary: none is declared for motor imagery."
+    },
+    {
+      "id": "wearable-ssvep-102", "name": "Wearable SSVEP BCI dataset (dry and wet electrodes)", "role": "secondary (S12): off-grid frequencies, 102 people, 3 seeds",
+      "released": {"file": "site/src/data/deployment-topics.json", "citation": "zhu2021-wearable102-author-snapshot-20260920"},
+      "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
+      "attribution": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces (Version 4) [Data set]. Figshare. https://doi.org/10.6084/m9.figshare.13560281.v4",
+      "paper": "Zhu, F., Jiang, L., Dong, G., Gao, X., & Wang, Y. (2021). An Open Dataset for Wearable SSVEP-Based Brain-Computer Interfaces. Sensors, 21(4), 1256. https://doi.org/10.3390/s21041256",
+      "reviewedAt": "2026-09-20",
+      "publishedHere": "Cohort aggregates over 102 people for each sensor type (S12), computed from the official Tsinghua author mirror acquired on 2026-09-20; no physical unit is claimed and no participant row is published."
+    }
+  ],
+  "references": [
+    {"id": "yu-yao-2026", "cite": "Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context", "arxiv": "2609.25845", "url": "https://arxiv.org/abs/2609.25845", "role": "the interface pattern the roadmap names; a vision paper", "checkedIn": "site/src/data/decision-research.ts"},
+    {"id": "film", "cite": "Perez et al., 2017 · FiLM: Visual Reasoning with a General Conditioning Layer", "url": "https://arxiv.org/abs/1709.07871", "role": "the conditioning layer of the head", "checkedIn": "site/src/pages/[...lang]/topics/shared-encoder.astro"},
+    {"id": "cca", "cite": "Lin, Zhang, Wu & Gao, 2006 · Frequency Recognition Based on CCA for SSVEP-Based BCIs, IEEE TBME 53:2610–2614", "url": "https://doi.org/10.1109/TBME.2006.886577", "role": "CCA, the training-free reference for unseen frequencies", "checkedIn": "research/decision_route3_20261007/prior-art.md"},
+    {"id": "fbcca", "cite": "Chen, Wang, Gao, Jung & Gao, 2015 · Filter bank CCA for implementing a high-speed SSVEP-based BCI, J. Neural Eng. 12:046008", "url": "https://doi.org/10.1088/1741-2560/12/4/046008", "role": "FBCCA, the second training-free reference (S11)", "checkedIn": "research/decision_route3_20261007/prior-art.md"},
+    {"id": "numeracy", "cite": "Wallace et al., 2019 · Do NLP Models Know Numbers? Probing Numeracy in Embeddings, EMNLP 2019", "url": "https://aclanthology.org/D19-1534/", "role": "numeracy in text embeddings (the declared numeracy prediction)", "checkedIn": "research/decision_route3_20261007/prior-art.md"},
+    {"id": "nevir", "cite": "Weller, Lawrie & Van Durme, 2024 · NevIR: Negation in Neural Information Retrieval, EACL 2024", "url": "https://aclanthology.org/2024.eacl-long.139/", "role": "negation in neural text representations (the S6 probe)", "checkedIn": "research/decision_route3_20261007/prior-art.md"},
+    {"id": "zero-shot", "cite": "Xian, Lampert, Schiele & Akata · Zero-Shot Learning — A Comprehensive Evaluation of the Good, the Bad and the Ugly, TPAMI", "url": "https://arxiv.org/abs/1707.00600", "role": "why unseen questions are reported apart from rewordings, never as one zero-shot number", "checkedIn": "research/decision_route3_20261007/prior-art.md"}
+  ],
+  "notPublished": [
+    "Per-person, per-night, per-recording and per-fold values of any kind, per-window scores and predictions, features, head weights, text-encoder files and fold assignments: none of them left the private run root.",
+    "The S10 per-frequency and interior-only BETA breakdowns the release candidate carries: computed at stage 3 and not covered by an independent audit. The per-rotation rows, which an independent audit recomputed, are published.",
+    "Values of the pre-run checks: the permutation canaries' cell values and per-cell direction counts, the fit check's fold-0 training scores, the shuffled-EEG scorer check's Monte-Carlo means and the triviality canaries' own scores. Each check is published as pass or fail and as counts; the BOAS ones never left the private run root.",
+    "The secondary parts' descriptive blocks (the S1 to S5 and S8 levels, read-offs, per-stage AUROC and log loss) and the nearest-training-wording cosines: kept in the release candidate, not served.",
+    "Demographics, recording dates and clock times, nights per person, and any image of a real recording.",
+    "Measured compute: GPU-hours, wall-clock times, waits for other users' jobs, per-step timings and the cost ledger, all measured on a shared GPU.",
+    "The text of the audits' discrepancy lists, which name private files; what must travel with the results is carried as the results' own labels and notes.",
+    "The handoff, the release candidate, the aggregates, the protocol, the stage-0 report, the canary declarations, the BOAS scope extension, the reference check and the four independent audits: pinned by SHA-256 in this manifest and checked, never copied, because they carry private storage paths."
+  ],
+  "holds": []
+}

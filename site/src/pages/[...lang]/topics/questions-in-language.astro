@@ -1,0 +1,948 @@
+---
+/**
+ * Route 3 of the decision-research plan, questions in language (owner approval of the results, 2026-10-08): can an EEG
+ * model answer questions asked in words? One small question-conditioned head over frozen features is asked each
+ * question by a question number, a label template or a description. Its own question in "Adapting models";
+ * when-not-to-act's roadmap marks the route run and links here, and /jev-style/ gathers the three routes.
+ *
+ * Every figure is a leaf of questions-in-language-update.json (the count of wordings, of questions-in-language-
+ * wordings.json), printed with data-fig (Fig.astro) and re-read by check-workbench.mjs. Rules (handoff and review
+ * manifest of 2026-10-08): seen questions in their training wording, rewordings and questions the EEG head was never
+ * trained on are separate rows, never pooled into one zero-shot number; every entry prints both flags, the margin with
+ * them; "unseen" travels with "unseen by the EEG head, not by the text encoder"; the pre-run checks are pass or fail
+ * and counts, the two failed canary revisions and the owner's override disclosed; every BOAS figure sits in an element
+ * marked data-boas that holds the three gaps, the credit and "pseudonymised in the public release" (BoasGaps.astro), so
+ * the short answer, the description and the card print none; secondary results sit in a collapsed panel, labelled
+ * single-seed and declared likely inconclusive where they were. The sentences that summarise a table are checked
+ * against the export below, and the page refuses to build if the numbers stop supporting them.
+ */
+import TopicLayout from '../../../components/TopicLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import Parts from '../../../components/Parts.astro';
+import BoasGaps from '../../../components/BoasGaps.astro';
+import QlRow from '../../../components/QlRow.astro';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { formatFig, type Fig as FigValue, type Fmt } from '../../../data/entities';
+import { R3, QL, QLW, DELTA, RATIO, block, entry, level, part, qlFig, qlwFig, qlRelease, qlwRelease, QL_DATASETS, QL_BOAS, qlText,
+         jevScope, visualJev, differenceText, marginText, type QlEntry, type QlLevel, type QlRow as QlRowT } from '../../../data/questions-in-language';
+import wordings from '../../../data/questions-in-language-wordings.json';
+import { fmModelById, fmTermsSentence } from '../../../data/foundation-models';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+type Part = string | FigValue;
+const f = (raw: number, fmt: Fmt = 'pct1') => qlFig(raw, fmt);
+const n = (raw: number) => qlFig(raw, 'count');
+const pp = (raw: number) => qlFig(raw, 'pp2');
+const s3 = (raw: number) => qlFig(raw, 'sgn3');
+const a3 = (raw: number) => qlFig(raw, 'auc3');
+const a2 = (raw: number) => qlFig(raw, 'auc2');
+const F = (x: FigValue) => formatFig(x);
+const ans = (x: FigValue) => `[[${F(x)}]]`;
+const to = ` ${tc.to} `;
+/** An entry's 95% interval as the tables print it: pp with the unit once, or a signed three-decimal value. */
+const iv = (e: { interval_95: [number, number]; unit: string }): Part[] => e.unit === 'difference of proportions'
+  ? [qlFig(e.interval_95[0], 'sgn2'), to, pp(e.interval_95[1])] : [s3(e.interval_95[0]), to, s3(e.interval_95[1])];
+const ivPct = (x: { interval_95: [number, number] }): Part[] => [f(x.interval_95[0]), '–', f(x.interval_95[1])];
+const ivA3 = (x: { interval_95: [number, number] }): Part[] => [a3(x.interval_95[0]), '–', a3(x.interval_95[1])];
+const ivR = (e: QlEntry): Part[] => [a2(e.r!.interval_95[0]), '–', a2(e.r!.interval_95[1])];
+
+// --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
+const need = (ok: boolean, what: string) => { if (!ok) throw new Error(`questions-in-language: the copy says ${what}`); };
+const B0 = block('P-ssvep-L0'), B1 = block('P-ssvep-L1'), BS = block('P-sleep-L1');
+need(B0.dataset === 'BETA' && B1.dataset === 'BETA' && BS.dataset === 'BOAS' && B0.level === 'L0' && B1.level === 'L1' && BS.level === 'L1',
+  'SSVEP on BETA at L0 and L1, sleep on BOAS at L1');
+need(B0.people === B1.people && [B0, B1, BS].every(b => b.seeds === 3), 'three seeds, the same BETA cohort at both levels');
+need(R3.primary.entries_count === 35 && blocks35(), '35 primary entries');
+function blocks35() { return [B0, B1, BS].reduce((s, b) => s + b.entries.length, 0) === R3.primary.entries_count; }
+const E = entry;
+const keys = (b: string, ix: number[]) => ix.map(i => E(`${b}/${i}`));
+const refNotMet = (e: QlEntry) => e.difference === 'difference: reference higher' && e.margin === 'margin not met';
+const equiv = (e: QlEntry) => e.difference === 'no difference shown' && e.margin === 'equivalent within the margin';
+// P1: on sleep equivalent; on SSVEP language cost accuracy at both levels.
+const [t0, d0] = keys('P-ssvep-L0', [0, 1]), [t1, d1] = keys('P-ssvep-L1', [0, 1]), [ts, ds] = keys('P-sleep-L1', [0, 1]);
+const p1 = [t0, d0, t1, d1, ts, ds];
+need(p1.every(e => e.id === 'P1') && [t0, d0, t1, d1].every(refNotMet) && equiv(ts) && equiv(ds), 'P1: SSVEP cost accuracy, margin not met; sleep equivalent');
+// P2: every BETA rewording cost accuracy, only the L1 synonyms within the margin; on sleep a new frame equivalent.
+const p2b = [...keys('P-ssvep-L0', [2, 3, 4]), ...keys('P-ssvep-L1', [2, 3, 4])], p2s = keys('P-sleep-L1', [2, 3, 4]);
+need([...p2b, ...p2s].every(e => e.id === 'P2' && e.kind === 'rewording'), 'P2 is rewording');
+need(p2b.filter((_, i) => i !== 4).every(refNotMet) && p2b[4].difference === 'difference: reference higher' && p2b[4].margin === 'equivalent within the margin'
+  && p2b[4].label.startsWith('TPL(a2)'), 'on BETA every rewording cost accuracy, only the L1 synonyms within the margin');
+need(equiv(p2s[0]) && refNotMet(p2s[1]) && refNotMet(p2s[2]) && p2s[0].label.startsWith('TPL(a1)') && p2s[1].label.startsWith('TPL(a2)') && p2s[2].label.startsWith('DESC(a3)'),
+  'sleep: a new frame equivalent, synonyms and descriptions a cost');
+const p2Worst = p2b.reduce((a, b) => (b.estimate < a.estimate ? b : a)), p2Least = p2b.reduce((a, b) => (b.estimate > a.estimate ? b : a));
+need(p2Least === p2b[4], 'the smallest BETA rewording cost is the L1 synonyms');
+// P3: every unseen sleep question fell short of the read-off, margin not met; R from NREM explicit to asleep implicit.
+const p3 = keys('P-sleep-L1', [5, 6, 7, 8, 9, 10, 11, 12]);
+need(p3.every(e => e.id === 'P3' && e.kind === 'unseen' && e.difference === 'difference: the read-off leaves less error' && e.margin === 'margin not met' && e.rule === 1 && !!e.r && e.r.interval_95[0] > 1),
+  'every unseen sleep question fell short of the read-off in all eight wordings');
+const rMin = p3.reduce((a, b) => (b.r!.estimate < a.r!.estimate ? b : a)), rMax = p3.reduce((a, b) => (b.r!.estimate > a.r!.estimate ? b : a));
+need(rMin.key === 'P-sleep-L1/7' && rMax.key === 'P-sleep-L1/5', 'R ran from N1, N2 or N3 sleep (explicit) to asleep (implicit)');
+// P5: SHUF higher on the implicit names, TPL higher on the explicit names; difference only.
+const [p5i, p5e] = keys('P-sleep-L1', [13, 14]);
+need(p5i.id === 'P5' && p5e.id === 'P5' && p5i.label.endsWith('implicit cells') && p5e.label.endsWith('explicit cells')
+  && p5i.difference === 'difference: reference higher' && p5e.difference === 'difference: language arm higher'
+  && [p5i, p5e].every(e => e.margin === 'not applicable (difference only)'), 'P5: the explicit names use the link, the implicit names were not shown to');
+// P4: far below CCA; worse than the neighbour average and the numeric code in the 8-way; neighbour 3-way against NUM: none at L0, higher at L1.
+const p4a = keys('P-ssvep-L0', [5, 6, 7, 8, 9]), p4b = keys('P-ssvep-L1', [5, 6, 7, 8, 9]);
+need([...p4a, ...p4b].every(e => e.id === 'P4' && e.kind === 'unseen'), 'P4 is unseen frequencies');
+for (const g of [p4a, p4b]) need(refNotMet(g[0]) && refNotMet(g[3]) && g[1].difference === 'difference: reference higher' && g[2].difference === 'difference: reference higher',
+  'at both levels: far below CCA, worse than the neighbour average and the numeric code in the 8-way');
+need(p4a[4].difference === 'no difference shown' && p4b[4].difference === 'difference: language arm higher', 'neighbour 3-way against NUM: no difference at L0, TPL higher at L1');
+// Levels the readings name.
+const L0 = (k: string) => level('P-ssvep-L0', k), L1 = (k: string) => level('P-ssvep-L1', k), LS = (k: string) => level('P-sleep-L1', k);
+need(L0('TPL u8').estimate < L0('CCA u8').estimate && L1('TPL u8').estimate < L0('CCA u8').estimate && L0('CCA u8').estimate === L1('CCA u8').estimate, 'CCA is the same at both levels and far above the head');
+need(L0('TPL u3').estimate < L0('TPL u3').chance!, 'the template head fell below the mean chance of the neighbour 3-way on a plain spectrum');
+const H = R3.pre_run_checks.gates.headroom;
+need(Math.abs(H['P-ssvep-L0'].estimate - L0('ID seen_ba').estimate) < 1e-12 && Math.abs(H['P-sleep-L1'].estimate - LS('ID seen_ba').estimate) < 1e-12, 'the headroom gate reads the ID level');
+const sleepSeen = ['ID', 'TPL', 'DESC', 'SHUF', 'B-sh'].map(a => LS(`${a} seen_ba`).estimate);
+need(Math.max(...sleepSeen) - Math.min(...sleepSeen) < 0.005, 'every sleep arm reached about the same seen balanced accuracy');
+const S15 = R3.descriptive['P-sleep-L1'].S15!;
+const auroc = (k: string) => LS(`${k} AUROC`);
+need(auroc('TPL unseen asleep implicit').estimate < 0.5 && auroc('TPL unseen light implicit').estimate < 0.5 && auroc('TPL unseen asleep implicit').interval_95[1] < 0.5
+  && auroc('TPL unseen light implicit').interval_95[1] < 0.5, 'the implicit names ranked windows in reverse');
+need(auroc('TPL unseen asleep explicit').estimate < S15['asleep prior-corrected read-off (TPL)'].estimate && auroc('TPL unseen light explicit').estimate < S15['light prior-corrected read-off (TPL)'].estimate,
+  'the explicit names stayed short of the read-off');
+// The pre-run checks.
+const C = R3.pre_run_checks.canaries, r3c = C.revision_3, r4c = C.revision_4, r5c = C.revision_5;
+need(!r3c.pass && !r4c.pass && r5c.pass && r5c.intervals_excluding_zero === 0 && r3c.intervals === r4c.intervals && r4c.intervals === r5c.intervals,
+  'revision 3 failed, revision 4 failed, revision 5 passed, on the same intervals');
+need(r4c.cells_excluding_chance.every(c => c.cell.startsWith('sleep/')) && r4c.cells_excluding_chance.some(c => c.side === 'below'), 'revision 4 failed on BOAS only, once below chance');
+need(r3c.cells_excluding_chance.length === 1 && r3c.cells_excluding_chance[0].cell === 'sleep/L1/SHUF unseen light explicit', 'revision 3 failed on one sleep cell');
+const dirs = r5c.single_head_intervals_excluding_exact_chance;
+need(dirs.above + dirs.below === dirs.total, 'the direction counts add up');
+need(/no further revision/.test(R3.pre_run_checks.owner_override) && /not run/.test(R3.pre_run_checks.centring_diagnostic), 'the owner override and the centring diagnostic not run');
+const NP = R3.pre_run_checks.numeracy_probe;
+const rho = ['bge/frame0', 'bge/frame1', 'bge/frame2'].map(k => NP.spearman_rho[k]);
+need(!NP.activated && rho.every(r => r >= 0.3) && NP.flag_anyway.L0.difference === 'difference: reference higher' && NP.flag_anyway.L1.difference === 'difference: reference higher',
+  'the numeracy prediction was not activated: every rho at or above 0.3, and NUM higher at both levels anyway');
+const S06 = R3.pre_run_checks.decision_s0b6.token_rule;
+need(S06.stops_the_run_for.join() === 'bge-small-en-v1.5,all-MiniLM-L6-v2' && S06.multilingual_e5_small.full_rule_passed === 0, 'S0b-6: the rule stops bge and MiniLM, and cannot hold for e5');
+const G = R3.pre_run_checks.gates;
+need(Object.values(G.headroom).every(h => h.pass) && G.readoff_floor.primary_cells === G.readoff_floor.primary_cells_passing && G.readoff_floor.secondary_cells === G.readoff_floor.secondary_cells_passing
+  && G.shuffled_eeg_scorer_check.pass && G.shuffled_eeg_scorer_check.cells === G.shuffled_eeg_scorer_check.cells_within_3_se, 'every gate passed');
+const fit = G.fit_check.by_domain_and_level;
+need(['ssvep/L0', 'ssvep/L1', 'ssvep/REVE'].every(k => fit[k].fallback_to_60_epochs && fit[k].training_epochs === 60)
+  && ['sleep/L1', 'sleep/REVE', 'eesm19/L1', 'mi/L1'].every(k => !fit[k].fallback_to_60_epochs && fit[k].training_epochs === 30)
+  && Object.values(fit).every(x => x.failed_fits === 0), 'the 60-epoch fallback on every SSVEP arm, 30 epochs elsewhere, no failed fit');
+const triv = G.triviality;
+need(triv.BETA.pass && triv.BOAS.pass && triv.EESM19.pass && /no declared canary/.test(triv['OpenBMI MI'].label!), 'the triviality canary passed on BETA, BOAS and EESM19, none declared for motor imagery');
+const A = R3.audits;
+need([A.primary_conformance, A.secondary_conformance].every(a => a.verdict === 'pass' && a.failed === 0) && A.primary_numeric.verdict === 'pass' && A.primary_numeric.mismatches === 0
+  && A.secondary_numeric.verdict === 'pass' && A.secondary_numeric.unexplained === 0, 'four independent audits passed');
+need(R3.secondary.expected_inconclusive.join() === 'every EESM19 entry,every single-seed S entry' && /no secondary entry reached the "inconclusive" flag combination/.test(R3.secondary.none_inconclusive),
+  'every EESM19 and single-seed entry declared likely inconclusive; none reached the flags');
+need(/not corrected for multiplicity/.test(R3.design.multiplicity), 'no multiplicity correction');
+need(R3.references[0].id === 'yu-yao-2026', 'the Visual Jev paper first');
+// REVE-L (secondary) is the v9 REVE Large checkpoint (route 3's protocol: the v9 features on BETA, route 2's on BOAS, both
+// from the v9 weights manifest). Its licence asks that the paper be cited and the model version named (the handoff).
+const REVE_L = fmModelById['reve-large'];
+need(!!REVE_L && !!REVE_L.revision && /name the model version|as REVE Base/.test(REVE_L.licenceNote + (fmModelById['reve-base']?.licenceNote ?? '')) && /arxiv\.org\/abs\//.test(REVE_L.paper),
+  'REVE Large, with its revision, its licence and its paper');
+const reveVersion = REVE_L.revision!.split(' @ ').at(-1)!;
+
+// --- The secondary parts, as the panel prints them. ----------------------------------------------------------
+const S = (id: string) => part(id);
+const entryParts = ['S1', 'S2', 'S3-ssvep', 'S4-ssvep-L0', 'S4-ssvep-L1', 'S5-ssvep-L0'].map(S);
+const boasEntryParts = ['S3-sleep', 'S4-sleep-L1', 'S5-sleep-L1'].map(S);
+for (const p of [...entryParts, ...boasEntryParts]) {
+  need(p.boas === (p.dataset === 'BOAS') && (p.entries ?? []).length > 0, `${p.part} carries its entries`);
+  need(p.part === 'S1' || p.part === 'S2' ? !p.single_seed : !!p.single_seed && !!p.declared_likely_inconclusive, `${p.part}: single seed and declared likely inconclusive`);
+}
+need(S('S1').declared_likely_inconclusive === true && S('S2').declared_likely_inconclusive === false, 'EESM19 declared likely inconclusive, OpenBMI not');
+const s2hand = E('secondary/S2/5');
+need(s2hand.difference === 'difference: the read-off leaves less error' && s2hand.margin === 'equivalent within the margin', 'imagining a hand movement: a difference, within the 1.25 margin');
+const S6 = S('S6'), S13 = S('S13-sleep'), S8 = [S('S8-L0'), S('S8-L1')], S12 = S('S12'), SX = [S('SSVEP-L0-secondary'), S('SSVEP-L1-secondary')];
+need(S6.boas && S13.boas && !S12.boas && S8.every(p => !p.boas && p.single_seed), 'the BOAS probes are S6 and S13; S8 is BETA, one seed');
+const negated = Object.entries(S6.cells!);
+need(negated.every(([, c]) => (c.negated_wording_auroc ?? c.auroc).estimate < 0.5 && (c.negated_wording_auroc ?? c.auroc).interval_95[1] < 0.5), 'every negated wording was answered as if it asked for X');
+need(Object.values(S13.rows!).every(r => 'difference' in r && r.difference === 'difference: the read-off leaves less error' && r.margin === 'margin not met'), 'held-out frames give the same P3 result');
+/** A row of a rows-type part: its two arms read from the export's own key. */
+const rowXY = (k: string, r: QlRowT) => {
+  if (r.unit === 'log R') return { x: 'TPL', y: 'read-off' };
+  if (/^rotation \d$/.test(k)) return { x: 'TPL', y: 'CCA' };
+  const m = k.replace(/^S\d+ /, '').match(/^(.+?) - (\S+?)(?: \(|$)/);
+  if (!m) throw new Error(`questions-in-language: no arms in "${k}"`);
+  return { x: m[1], y: m[2] };
+};
+const rowEst = (r: QlRowT): Part[] => r.unit === 'difference of proportions' ? [pp(r.estimate)] : [s3(r.estimate)];
+const flip = R3.secondary.flip_rates;
+const sx = (L: 0 | 1) => SX[L];
+const rot = (L: 0 | 1) => Object.entries(sx(L).per_rotation_tpl_minus_cca_8_way!);
+need(rot(0).length === 5 && rot(1).length === 5 && [...rot(0), ...rot(1)].every(([, r]) => refNotMetRow(r)), 'every rotation: TPL below CCA, margin not met');
+function refNotMetRow(r: QlRowT) { return r.difference === 'difference: reference higher' && r.margin === 'margin not met'; }
+const synonymKeys = [1, 2, 3].map(i => `TPL(a2, synonym ${i}) - TPL(train)`);
+const synonymOf = (b: string, k: string) => R3.descriptive[b].contrasts[k];
+const costRows = Object.keys(R3.descriptive['P-ssvep-L0'].generalisation_costs!);
+const costName = (k: string) => {
+  const m = k.match(/^(ID|TPL|DESC|SHUF|NUM|B-sh|CCA) (8|3)-way \(unseen\s+(NN )?- matched seen\)$/);
+  if (!m) throw new Error(`questions-in-language: a generalisation cost "${k}"`);
+  return zh ? `${m[1]}，${m[2]} 选 1${m[3] ? '（相邻读出）' : ''}` : `${m[1]}, ${m[2]}-way${m[3] ? ' (neighbour read-off)' : ''}`;
+};
+const levelRows: [string, string][] = [['TPL', 'u8'], ['DESC', 'u8'], ['SHUF', 'u8'], ['NUM', 'u8'], ['CCA', 'u8'], ['TPL', 'nn8'], ['ID', 'nn8'], ['B-sh', 'nn8'], ['TPL', 'u3'], ['NUM', 'u3'], ['CCA', 'u3']];
+const seenArms = ['ID', 'TPL', 'DESC', 'SHUF', 'NUM', 'B-sh', 'CCA'];
+const sleepArms = ['ID', 'TPL', 'DESC', 'SHUF', 'B-sh'];
+const LL = R3.descriptive['P-sleep-L1'].log_loss!;
+const perStage = R3.descriptive['P-sleep-L1'].seen_auroc_per_predicate!;
+const stages = ['W', 'N1', 'N2', 'N3', 'REM'];
+need(stages.every(s => ['ID', 'TPL', 'DESC'].every(a => perStage[`${a} ${s}`].people === perStage[`ID ${s}`].people)) && perStage['ID N3'].people < BS.people
+  && Math.min(...Object.values(perStage).map(x => x.people)) >= QL_BOAS.minimum_cell_people, 'per-stage AUROC: N3 pools fewer people, every cell at least 20');
+const unseenNames = wordings.lists['en/sleep'].unseen_names as Record<string, { implicit: string | null; explicit: string }>;
+const unions = ['asleep', 'NREM', 'light'] as const;
+const sleepFrames = wordings.lists['en/sleep'].frames_train;
+const sleepCanon = wordings.lists['en/sleep'].canonical as Record<string, string>;
+const sleepSyn = wordings.lists['en/sleep'].synonyms as Record<string, string[]>;
+const p3Rows: { q: string; w: 'implicit' | 'explicit' }[] = [{ q: 'asleep', w: 'implicit' }, { q: 'asleep', w: 'explicit' }, { q: 'NREM', w: 'explicit' }, { q: 'light', w: 'implicit' }, { q: 'light', w: 'explicit' }];
+const literature = R3.references;
+const encoders = Object.values(R3.design.text_encoders);
+const roleOf = { bge: { en: 'primary', zh: '主分析' }, minilm: { en: 'secondary, S4', zh: '次要分析，S4' }, e5: { en: 'Chinese wordings, S5', zh: '中文问法，S5' } } as const;
+const limits = R3.limitations.map(x => qlText(x, locale));
+const notRun = [...R3.not_run.map(x => [x.item, x.status]), ...R3.not_reported.map(x => [x.item, x.status])].map(([a, b]) => [qlText(a, locale), qlText(b, locale)]);
+
+// --- The copy. The short answer and the description print no BOAS figure (BOAS travels with its gaps, below). ---
+const ivAns = (e: QlEntry) => `${ans(qlFig(e.interval_95[0], 'sgn2'))} ${tc.to} ${ans(pp(e.interval_95[1]))}`;
+const u8 = L0('TPL u8'), cca8 = L0('CCA u8');
+const copy = {
+  en: {
+    description: `In its training wording, a small head on frozen EEG features matched question numbers on seen sleep questions but not on SSVEP (${F(pp(t0.estimate))} with templates on a plain spectrum, ${B0.people} people); rewordings mostly cost accuracy, and it did not answer unseen questions: CCA, with no training, did far better on unseen frequencies.`,
+    answer: `Only for questions it was trained on, and not on every dataset. A small head over frozen EEG features, asked a seen question with a label template or a description instead of a question number, was equivalent within the ${DELTA} pp margin on sleep (BOAS), but lost accuracy on SSVEP (BETA, ${ans(n(B0.people))} people): ${ans(pp(t0.estimate))} with templates on a plain spectrum (${ivAns(t0)}), the margin not met. Rewording a seen question cost accuracy too, except a new sentence frame on sleep. Questions the EEG head was never trained on were not answered usefully: every unseen sleep question did worse than adding up the head’s own stage answers, and on unseen flicker frequencies the head reached ${ans(f(u8.estimate))} on a plain spectrum where CCA, which needs no training, reached ${ans(f(cca8.estimate))} (chance ${ans(f(u8.chance!))}). Explicit wordings such as “N1 or N2 sleep” used the link between words and stages; the everyday names “asleep” and “light sleep” ranked windows backwards, and in a boundary probe negated questions were answered as if they asked for what they negate.`,
+    eyebrow: 'Questions in language · route 3 of the decision-research plan',
+    dek: 'One small head over frozen EEG features, asked each question by a question number, a label template or a natural-language description: SSVEP on BETA, sleep on BOAS. Seen questions, rewordings and questions the EEG head was never trained on are reported apart, never as one zero-shot number.',
+    designEyebrow: 'How the comparison works',
+    designH2: 'One head, three ways to ask',
+    designLede: 'The same small head answers every question; only the vector that tells it which question changes. Every test is on people the head never trained on.',
+    arms: [
+      ['ID', 'question number', 'a one-hot code for each question the head was trained on. It cannot ask anything new.'],
+      ['TPL', 'label template', 'a sentence frame filled with the label’s name, turned into a vector by a frozen text encoder.'],
+      ['DESC', 'description', 'a sentence that describes the state without naming it, turned into a vector the same way.'],
+      ['SHUF', 'shuffled templates', 'the template vectors attached to the wrong questions during training, by derangements declared in advance: a control for whether the head uses the link between a wording and its question.'],
+      ['NUM', 'numeric code', 'for SSVEP, the frequency given as numbers, not words: a control without text.'],
+      ['B-sh', 'one output per question', 'the same hidden layer with a fixed output per seen question, as in route 2; it cannot ask anything new either.'],
+      ['CCA', 'no training', 'for SSVEP, canonical correlation analysis, which needs no training and can name any frequency: the reference an unseen frequency is held to.'],
+    ] as [string, string, string][],
+    exampleFrame: 'A training frame for sleep, filled with a stage’s name:',
+    matching: 'SSVEP on BETA: a plain spectrum (L0) and frozen CBraMod features (L1). Sleep on BOAS: frozen CBraMod features (L1). Three training seeds each. The primary text encoder is bge-small-en-v1.5, frozen. The head is the same for every arm: standardised features, a small hidden layer adjusted by the question vector (FiLM), one output.',
+    kinds: 'Three kinds of result, never pooled into one zero-shot number: a seen question in the wording the head trained with; the same question reworded; and a question the head never trained on. “Unseen” always means unseen by the EEG head, not by the text encoder: the frozen encoder has read the words, and for SSVEP every token of a held-out frequency also occurs in that rotation’s training texts. Unseen sleep questions are combinations of seen stages; unseen SSVEP questions are flicker frequencies held out in five rotations.',
+    reading: `Each comparison is the language arm minus the reference, in percentage points (pp), with a 95% interval from resampling people, then training seeds, then held-out wordings. It gets two readings, both fixed before any fit. A difference is shown when the interval excludes zero. Against a margin of ±${DELTA} pp, it is equivalent when the whole interval lies inside, non-inferior when the bound against the language arm stays within the margin, and otherwise the margin is not met, which is not the same as a loss of ${DELTA} pp or more. For an unseen sleep question the comparison is R, the head’s remaining error (1 − AUROC) over that of the read-off from its own stage answers, with a margin of R < ${RATIO}. The check of whether the head uses the link between wording and stage, the template arm against the shuffled templates, is a difference of AUROC. Among the primary comparisons, those with the numeric code, the neighbour average and the shuffled templates are read for a difference only; the secondary tables print both readings as the run computed them.`,
+    multiplicity: (): Part[] => ['There are ', n(R3.primary.entries_count), ' pre-declared primary comparisons and no multiplicity correction, so at 95% about one in twenty comparisons with no true difference may show one by chance. Accuracy is averaged per person, then over people: it compares set-ups and is not a deployment error rate.'],
+    routeOf: ['This is route 3 of the research plan on ', 'When not to act', '. The plan takes its interface from a vision paper, '],
+    notLanguage: 'The head here is not a language model, and none of these results shows that EEG understands language.',
+    hubLink: 'Jev-style questions on EEG: the evidence →',
+    seenEyebrow: 'Primary · seen questions · BETA and BOAS',
+    seenH2: 'Seen questions: asked in words, and reworded',
+    seenLede: (): Part[] => ['Questions the head was trained on. On BETA, ', n(B0.people), ' people look at flickering targets; in each rotation the head trains on most of the frequencies and is asked about those (the 32-way task). On BOAS, ', n(BS.people), ' people, each half-minute epoch is scored into one of five stages at their natural mix, against the human consensus.'],
+    p1H3: 'In the training wording (P1)',
+    p1Label: 'TPL − ID on SSVEP, a plain spectrum, BETA, three seeds',
+    p1FindH3: 'Sleep: no measurable cost. SSVEP: a cost.',
+    p1Find: (): Part[] => [`On sleep, a template or a description instead of a question number was equivalent within ±${DELTA} pp: `, pp(ts.estimate), ' (', ...iv(ts), ') and ', pp(ds.estimate), ' (', ...iv(ds), '). On SSVEP it cost accuracy at both levels, and the margin was not met: templates ', pp(t0.estimate), ' on a plain spectrum and ', pp(t1.estimate), ' on frozen CBraMod features; descriptions ', pp(d0.estimate), ' and ', pp(d1.estimate), '.'],
+    p1Region: 'Seen questions in the training wording, paired comparisons, scrolls horizontally',
+    p1Caption: (): Part[] => ['Paired differences in balanced accuracy, language arm minus question number, in pp, with 95% intervals; BETA ', n(B0.people), ' people, BOAS ', n(BS.people), ' people, three seeds each.'],
+    sub: { 'P-ssvep-L0': 'SSVEP · BETA · a plain spectrum (L0)', 'P-ssvep-L1': 'SSVEP · BETA · frozen CBraMod features (L1)', 'P-sleep-L1': 'Sleep · BOAS · frozen CBraMod features (L1)' } as Record<string, string>,
+    colComparison: 'Comparison', colAsked: 'Question', colDiff: 'Difference, pp', colShown: 'Difference shown?', colMargin: `Margin, ±${DELTA} pp`, colGate: 'Gate',
+    colLogR: 'log R, with R', colMarginR: `Margin, R < ${RATIO}`, colDiffA: 'Difference, AUROC', colMarginNone: 'Margin', colDiffMixed: 'Difference: pp, log R or AUROC',
+    p1Reading: (): Part[] => ['The seen SSVEP task is hard for every head on these features: with question numbers the head reached ', f(L0('ID seen_ba').estimate), ' (', ...ivPct(L0('ID seen_ba')), ') on a plain spectrum and ', f(L1('ID seen_ba').estimate), ' on frozen CBraMod features, against a chance of ', f(L0('ID seen_ba').chance!), '; CCA, which needs no training, reached ', f(L0('CCA seen_ba').estimate), '. On sleep every arm reached about the same balanced accuracy, ', f(LS('ID seen_ba').estimate), ' with question numbers against a chance of ', f(LS('ID seen_ba').chance!), '. The levels below are descriptive: overlapping intervals are not ranked, and the paired differences above are the comparison.'],
+    levelsRegion: 'Seen balanced accuracy of each arm, scrolls horizontally',
+    betaLevelsCaption: (): Part[] => ['BETA, seen 32-way balanced accuracy (chance ', f(L0('ID seen_ba').chance!), '): the mean over ', n(B0.people), ' people with its 95% interval, and the chance-corrected value, (level − chance) / (1 − chance). Three seeds; CCA needs no training, so it has none.'],
+    colArm: 'Arm', colL0: 'A plain spectrum (L0)', colL1: 'Frozen CBraMod features (L1)', colCc: 'chance-corrected', colLevel: 'Balanced accuracy', colLogLoss: 'Log loss',
+    sleepLevelsCaption: (): Part[] => ['BOAS, seen five-stage balanced accuracy (chance ', f(LS('ID seen_ba').chance!), '), ', n(BS.people), ' people, three seeds, with the chance-corrected value and the log loss (mean binary cross-entropy, in nats). The shuffled-template arm’s seen score is read through its own derangement, and it has no log loss.'],
+    stageCaption: (): Part[] => ['BOAS, AUROC of each seen stage, with 95% intervals; three seeds. N3 pools the ', n(perStage['ID N3'].people), ' people with at least five N3 epochs; every other stage pools ', n(perStage['ID W'].people), '.'],
+    colStage: 'Stage', people: 'people',
+    p2H3: 'Reworded (P2)',
+    p2Lede: 'The same seen questions in wordings the head never trained with: a new sentence frame (a1, held-out frames resampled), a synonym of the label (a2: three per question, fixed, so these entries hold only for these three synonyms), or a new description (a3, held-out descriptions resampled). Reworded rows are never pooled with the unseen ones.',
+    p2Region: 'Reworded seen questions, paired comparisons, scrolls horizontally',
+    p2Caption: (): Part[] => ['Paired differences in balanced accuracy, reworded minus the training wording, in pp, with 95% intervals; BETA ', n(B0.people), ' people, BOAS ', n(BS.people), ' people, three seeds each.'],
+    p2Reading: (): Part[] => [`On sleep a new sentence frame cost nothing measurable: equivalent within ±${DELTA} pp (`, pp(p2s[0].estimate), ', ', ...iv(p2s[0]), '). The three synonyms per stage scored ', pp(p2s[1].estimate), ' (', ...iv(p2s[1]), ') and new descriptions ', pp(p2s[2].estimate), ' (', ...iv(p2s[2]), '), a wide interval, because descriptions differ a lot from one another. On BETA every rewording scored lower, from ', pp(p2Least.estimate), ' to ', pp(p2Worst.estimate), '; only the synonyms on frozen CBraMod features stayed within the margin.'],
+    synRegion: 'Each synonym against the training wording, scrolls horizontally',
+    synCaption: (): Part[] => ['Each synonym on its own against the training wording, in pp with 95% intervals (descriptive); BETA ', n(B0.people), ' people, BOAS ', n(BS.people), ' people. On SSVEP the third synonym spells the number out.'],
+    colSynonym: 'Synonym', synonymN: (i: number) => `Synonym ${i}`,
+    flipRegion: 'Answer flip rates, scrolls horizontally',
+    flipCaption: (): Part[] => ['Answer flip rate (descriptive): how often the head’s answer to the same window changes when only the wording changes; BETA ', n(flip['flip-ssvep-L0'].between_ID_seeds.people), ' people, BOAS ', n(flip['flip-sleep-L1'].between_ID_seeds.people), ' people. On SSVEP even another training seed of the question-number head changes most answers, because the seen task is near its floor, so flip rates there mostly show uncertainty.'],
+    flipCols: ['New frame', 'Synonym', 'Between training frames', 'New description', 'Between training descriptions', 'Between seeds of ID'],
+    flipRows: { 'flip-ssvep-L0': 'BETA · L0', 'flip-ssvep-L1': 'BETA · L1', 'flip-sleep-L1': 'BOAS · L1' } as Record<string, string>,
+    usEyebrow: 'Primary · unseen sleep questions · BOAS',
+    usH2: 'Sleep questions the EEG head was never trained on',
+    usLede: (): Part[] => ['Three questions the head never trained on, each a combination of the stages it did: asleep (N1, N2, N3 or REM), N1, N2 or N3 sleep, and light sleep (N1 or N2). Each was asked with templates, using an implicit name or an explicit one, and with new descriptions; ', n(BS.people), ' people, three seeds. Unseen by the EEG head, not by the text encoder: the encoder has read these words. Because each question is a combination, the head’s own stage answers can be added up into an answer, the read-off, which is what each wording is held to.'],
+    namesCaption: 'The names the template arm was asked with, as written before any score.',
+    colQuestion: 'Question', colImplicit: 'Implicit name', colExplicit: 'Explicit name', none: 'none',
+    p3H3: 'Can the head answer them? (P3)',
+    p3Label: 'R for “asleep” with its implicit name: the head’s remaining error over the read-off’s',
+    p3FindH3: 'Not answered: the read-off did better in every wording',
+    p3Find: (): Part[] => [`In all eight conditions the interval lay above R = 1, in the read-off’s favour, and none came within the ${RATIO} margin: R ran from `, a2(rMin.r!.estimate), ' (', ...ivR(rMin), '; N1, N2 or N3 sleep, explicit name) to ', a2(rMax.r!.estimate), ' (', ...ivR(rMax), '; asleep, implicit name).'],
+    p3Region: 'Unseen sleep questions against the read-off, scrolls horizontally',
+    p3Caption: (): Part[] => ['log R and R, the head’s remaining error (1 − AUROC) over the read-off’s, with 95% intervals; ', n(BS.people), ' people, three seeds. A positive log R, or R above 1, is against the language arm.'],
+    aurocRegion: 'AUROC of the template head and of the read-off, scrolls horizontally',
+    aurocCaption: (): Part[] => ['AUROC of the template head on each unseen question, and of the read-off from its own stage answers (prior-corrected), with 95% intervals; ', n(BS.people), ' people, three seeds. Descriptive. An AUROC below 0.5 ranks windows in reverse.'],
+    colHead: 'Template head', colReadoff: 'Read-off from its stage answers', colWording: 'Wording',
+    p3Reading: (): Part[] => ['The implicit names ranked windows in reverse: AUROC ', a3(auroc('TPL unseen asleep implicit').estimate), ' for “asleep” and ', a3(auroc('TPL unseen light implicit').estimate), ' for “light sleep”, below 0.5, so windows that really were asleep, or in light sleep, scored lower on these questions than the others. The explicit names did better (', a3(auroc('TPL unseen asleep explicit').estimate), ' and ', a3(auroc('TPL unseen light explicit').estimate), ') but stayed short of the read-off (', a3(S15['asleep prior-corrected read-off (TPL)'].estimate), ' and ', a3(S15['light prior-corrected read-off (TPL)'].estimate), '). Descriptions have no alignment control: the shuffled control is built from template vectors. Held-out sentence frames (S13, in the secondary panel) give the same result for all five template cells.'],
+    p5H3: 'Is the link between wording and stage used? (P5)',
+    p5Lede: 'The shuffled-template arm attaches the same template vectors to the wrong stages during training; the unseen questions keep their true vectors. If the head uses the link between a wording and its stage, the shuffled arm should do worse on them than the template arm.',
+    p5Region: 'Template arm against shuffled templates, scrolls horizontally',
+    p5Caption: (): Part[] => ['Template arm minus shuffled templates: AUROC on the unseen questions, averaged over the cells of each kind of name, with 95% intervals; ', n(BS.people), ' people, three seeds. Difference only: no margin was set.'],
+    shufRegion: 'AUROC of the template and shuffled arms, scrolls horizontally',
+    shufCaption: (): Part[] => ['AUROC on each unseen question, template arm and shuffled templates, with 95% intervals (descriptive); ', n(BS.people), ' people, three seeds.'],
+    colTpl: 'Template arm', colShuf: 'Shuffled templates',
+    p5Reading: (): Part[] => ['For explicit names, yes: attaching the templates to the wrong stages lowered the unseen AUROC, TPL − SHUF ', s3(p5e.estimate), ' (', ...iv(p5e), '). For the implicit names it was not shown: the shuffled templates scored higher, ', s3(p5i.estimate), ' (', ...iv(p5i), ').'],
+    ufEyebrow: 'Primary · unseen flicker frequencies · BETA',
+    ufH2: 'Flicker frequencies the EEG head was never trained on (P4)',
+    ufLede: (): Part[] => ['In each of five rotations, eight of BETA’s frequencies are held out: the head trains on the rest and is asked about the eight by stating the frequency in a template. ', n(B0.people), ' people, three seeds, at both levels. Unseen by the EEG head, not by the text encoder: every token of a held-out frequency also occurs in that rotation’s training texts, so only the combination is new. CCA answers the same question with no training at all.'],
+    p4Label: 'TPL − CCA, 8-way among unseen frequencies, a plain spectrum, BETA',
+    p4FindH3: 'Far below CCA, which needs no training',
+    p4Find: (): Part[] => ['In the 8-way among unseen frequencies the head reached ', f(u8.estimate), ' (', ...ivPct(u8), ') on a plain spectrum and ', f(L1('TPL u8').estimate), ' on frozen CBraMod features; CCA reached ', f(cca8.estimate), ', and chance is ', f(u8.chance!), '. The head also did worse than averaging its own answers for the two neighbouring seen frequencies, and worse than a numeric code of the frequency, at both levels.'],
+    p4Region: 'Unseen frequencies, paired comparisons, scrolls horizontally',
+    p4Caption: (): Part[] => ['Paired differences in accuracy, template head minus the reference, in pp, with 95% intervals; ', n(B0.people), ' people, three seeds. Comparisons with CCA carry the margin; with the neighbour average and the numeric code they are read for a difference only.'],
+    p4Reading: (): Part[] => ['In the neighbour 3-way the unseen frequency competes with the trained detectors of its two neighbours (seen bias, stated). On a plain spectrum the template head fell below the mean chance of that test, ', f(L0('TPL u3').estimate), ' against ', f(L0('TPL u3').chance!), ', and showed no difference against the numeric code. On frozen CBraMod features it beat the numeric code by ', pp(p4b[4].estimate), ', but those features keep the stimulus phase and neighbouring targets differ in phase, so that comparison tests frequency and phase together. The plain spectrum, which carries no phase, is the clean frequency test.'],
+    u8Region: 'Accuracy of each arm on the unseen frequencies, scrolls horizontally',
+    u8Caption: (): Part[] => ['Accuracy on the unseen frequencies (descriptive): u8, the 8-way among the held-out frequencies (chance ', f(u8.chance!), '); nn8, the read-off that averages the answers for the two neighbouring seen frequencies; u3, the neighbour 3-way (mean chance ', f(L0('TPL u3').chance!), ', a 2-way at the two grid edges). ', n(B0.people), ' people; three seeds, CCA none.'],
+    colMetric: 'Test',
+    costRegion: 'Generalisation cost, scrolls horizontally',
+    costCaption: (): Part[] => ['Generalisation cost (descriptive): accuracy on the unseen frequencies minus accuracy on matched seen ones, in pp with 95% intervals; ', n(B0.people), ' people.'],
+    colCost: 'Arm and test',
+    rotRegion: 'TPL − CCA by rotation, scrolls horizontally',
+    rotCaption: (): Part[] => ['TPL − CCA in the 8-way, rotation by rotation, in pp with 95% intervals (secondary, recomputed by an independent audit); ', n(B0.people), ' people, three seeds. No rotation carries the result alone.'],
+    colRotation: 'Rotation', rotation: (k: string) => k.replace('rotation', 'Rotation'),
+    perFreq: 'Per-frequency and interior-only breakdowns were computed after the audits, and no independent audit covers them, so they are not published.',
+    ckEyebrow: 'Before any result',
+    ckH2: 'The pre-run checks, and how one was changed',
+    ckLede: 'A check was changed after it failed, twice. Everything about that is here, with the other checks that had to pass before any result was read.',
+    canary: (): Part[] => ['A training-label permutation canary refits the heads on shuffled training labels and checks that test scores sit at chance: ', n(r5c.configurations), ' configurations on the first fold, ', n(r5c.intervals), ' intervals at ', f(r5c.level), '.'],
+    rev3: (): Part[] => ['Revision 3 failed: ', n(r3c.intervals_excluding_chance), ' of ', n(r3c.intervals), ' intervals excluded chance (sleep, frozen CBraMod features, the shuffled-template arm, unseen “light sleep” with its explicit name). Its labels had been permuted within each training person. The run stopped.'],
+    rev4: (): Part[] => ['Revision 4, approved by the owner before any new fit, permuted labels across all training windows. It failed too: ', n(r4c.intervals_excluding_chance), ' of ', n(r4c.intervals), ' intervals, all on BOAS, one of them below chance; every SSVEP interval included chance both times. Revision 4 said “no further revision”. The owner overrode that after seeing how it failed, and approved revision 5 before any new fit. Revision 4’s per-person centring diagnostic was not run: with labels permuted across all windows it no longer tests anything.'],
+    rev5: (): Part[] => ['Revision 5 passed: ', n(r5c.replicates), ' heads per configuration (', n(r5c.fits), ' fits), each metric compared with its exact per-person chance, and a two-level bootstrap over heads, then people; ', n(r5c.intervals_excluding_zero), ' of ', n(r5c.intervals), ' intervals excluded zero. Both failed records are kept.'],
+    directions: (): Part[] => ['Direction counts, descriptive: of ', n(r5c.single_head_tests), ' single-head intervals in revision 5, ', n(dirs.total), ' excluded the exact chance, ', n(dirs.above), ' above and ', n(dirs.below), ' below, and ', n(r5c.cells_with_single_head_failures_in_both_directions), ' cells failed in both directions. BOAS cells are published as pass or fail and counts only.'],
+    why: (): Part[] => ['Why they failed, the reading revision 5 was built to test: a head trained on shuffled labels is still a random function of sleep features that are strongly organised by stage, so on new people its scores lean one way for everyone, up or down. A person bootstrap measures the spread between people, not between heads, so its ', f(r5c.level), ' interval was too narrow for this question. The failures fit that reading: all were on BOAS, and one was below chance, which a leak cannot produce. It is not a proof that no leak exists: person-disjoint folds, no held-out label or wording in training and training-only scaling are asserted in the code, and both conformance audits check for leakage directly.'],
+    s0b6: (): Part[] => ['Decision S0b-6, approved by the owner: the SSVEP token rule says every token of a held-out frequency occurs in that rotation’s training texts. It stops the run for bge-small-en-v1.5 and all-MiniLM-L6-v2, and both passed in all ', n(S06.rotations_passed), ' rotations. It cannot hold for multilingual-e5-small, whose tokenizer keeps one-decimal number pieces as single tokens while the held-out number itself is barred from training texts; for that encoder the rule was reported instead of stopping the run, and every Chinese-wording unseen-frequency entry says the frequency is a new token.'],
+    ea1: 'Engineering amendment EA-1, before the first fit: in the contiguous extrapolation band (S8) the neighbour average is not defined and the neighbour 3-way is relabelled, because its competitors are themselves held-out questions; failed fits are marked per cell, and none failed; the secondary scoring can resume after an interruption. No question, partition, wording, arm, metric, margin or gate changed.',
+    numeracy: (): Part[] => ['The declared numeracy prediction was not activated. It said: if the primary text encoder orders frequencies poorly (Spearman ρ below 0.3 between frequency distance and embedding distance, for every training frame), the 8-way TPL − NUM flag will not read “TPL higher”. Its premise was false: ρ was ', a3(rho[0]), ', ', a3(rho[1]), ' and ', a3(rho[2]), ' for the three training frames of bge-small-en-v1.5, over ', n(NP.pairs), ' pairs. The flag reads “NUM higher” at both levels anyway; with the premise false, that is a description, not a confirmed prediction.'],
+    gatesH3: 'The gates',
+    gates: (): Part[][] => [
+      ['Headroom: the question-number head’s seen balanced accuracy must lie above chance + 5 pp and below 95%. It passed on all three primary blocks; the levels are in the tables above.'],
+      ['Triviality canary: a ridge classifier on per-channel mean and log-variance must not answer the seen task by itself. It passed on BETA (on the first fold’s ', n(triv.BETA.training_people!), ' training people) and on BOAS and EESM19 (carried from route 2); none is declared for motor imagery, so its gate reads “not run”.'],
+      ['Read-off floor: an unseen sleep cell counts only if the read-off’s AUROC interval lies above 0.55. ', n(G.readoff_floor.primary_cells_passing), ' of ', n(G.readoff_floor.primary_cells), ' primary and ', n(G.readoff_floor.secondary_cells_passing), ' of ', n(G.readoff_floor.secondary_cells), ' secondary cells passed.'],
+      ['Shuffled-EEG scorer check: each primary aggregate, recomputed with the test features shuffled within each person, must sit within three Monte-Carlo standard errors of chance. ', n(G.shuffled_eeg_scorer_check.cells_within_3_se), ' of ', n(G.shuffled_eeg_scorer_check.cells), ' cells did (', n(G.shuffled_eeg_scorer_check.ssvep_cells), ' SSVEP, ', n(G.shuffled_eeg_scorer_check.boas_cells), ' BOAS).'],
+      ['Fit check, on the first fold’s training rows: every conditioned SSVEP arm trained more than 5 pp below the one-output-per-question head, so the declared fallback of ', n(fit['ssvep/L0'].training_epochs), ' epochs applies to every SSVEP arm; sleep, EESM19 and motor imagery stay at ', n(fit['sleep/L1'].training_epochs), '. No fit failed.'],
+    ],
+    audits: (): Part[] => ['Four independent audits passed. They re-implement the definitions without importing the study’s scoring code: the conformance audit of the primary run passed ', n(A.primary_conformance.checks), ' checks with ', n(A.primary_conformance.failed), ' failed; the numerical audit of the primary made ', n(A.primary_numeric.comparisons), ' comparisons with ', n(A.primary_numeric.mismatches), ' mismatches; the conformance audit of the secondary run passed ', n(A.secondary_conformance.checks), ' checks with ', n(A.secondary_conformance.failed), ' failed; the numerical audit of the secondary made ', n(A.secondary_numeric.comparisons), ' comparisons, ', n(A.secondary_numeric.outside_tolerance), ' of them outside the tolerance, every one explained.'],
+    secEyebrow: 'Secondary · beyond the primary comparisons',
+    secH2: 'Secondary results',
+    secLede: 'Further datasets, features, a second text encoder, Chinese wordings and probes, none of them among the primary comparisons. One seed unless marked: a single seed carries no training-run variance. Every EESM19 and single-seed entry was declared likely inconclusive before the run, though none reached the “inconclusive” flags.',
+    secSummary: 'Show the secondary results',
+    partTitle: {
+      S1: (p: number): Part[] => ['S1 · EESM19 sleep, frozen CBraMod features · ', n(p), ' people, three seeds · declared likely inconclusive'],
+      S2: (p: number): Part[] => ['S2 · OpenBMI motor imagery, frozen CBraMod features · ', n(p), ' people, three seeds'],
+      'S3-ssvep': (p: number): Part[] => ['S3 · REVE-L features, BETA · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S4-ssvep-L0': (p: number): Part[] => ['S4 · text encoder all-MiniLM-L6-v2, BETA, a plain spectrum · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S4-ssvep-L1': (p: number): Part[] => ['S4 · text encoder all-MiniLM-L6-v2, BETA, frozen CBraMod features · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S5-ssvep-L0': (p: number): Part[] => ['S5 · Chinese wordings with multilingual-e5-small, BETA, a plain spectrum · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S3-sleep': (p: number): Part[] => ['S3 · REVE-L features, BOAS · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S4-sleep-L1': (p: number): Part[] => ['S4 · text encoder all-MiniLM-L6-v2, BOAS, frozen CBraMod features · ', n(p), ' people, one seed · declared likely inconclusive'],
+      'S5-sleep-L1': (p: number): Part[] => ['S5 · Chinese wordings with multilingual-e5-small, BOAS, frozen CBraMod features · ', n(p), ' people, one seed · declared likely inconclusive'],
+    } as Record<string, (p: number) => Part[]>,
+    partNote: {
+      S2: 'No triviality canary is declared for motor imagery, so its gate reads “not run” and excludes nothing. Motor imagery has only two three-cycles, so two of the three shuffled-template seeds share one derangement. The unseen “imagining a hand movement” came closest to its read-off: a difference, but within the ratio margin.',
+      'S3-ssvep': 'REVE-L features keep the stimulus phase, so their neighbour 3-way tests frequency and phase together.',
+      'S5-ssvep-L0': 'For this encoder each held-out frequency is a new token, not only a new combination of seen tokens (decision S0b-6).',
+    } as Record<string, string>,
+    secRegion: (t: string) => `${t}, scrolls horizontally`,
+    s8Title: (L: string, p: number): Part[] => [`S8 · extrapolation to a contiguous held-out band at the top of the grid, BETA ${L} · `, n(p), ' people, one seed · declared likely inconclusive'],
+    s8Note: 'In the band the neighbour 3-way competitors are themselves held-out questions, not trained detectors, and the neighbour average is not defined (EA-1). For bge-small-en-v1.5, many of these texts carry a number token never seen in training.',
+    notDefined: 'Not defined (EA-1)',
+    s12Title: (p: number): Part[] => ['S12 · Wearable-102, heads trained on all of BETA’s frequencies and asked about off-grid ones · ', n(p), ' people, three seeds'],
+    s12Note: 'The off-grid frequencies have two decimals, whose hundredths never occur in BETA’s training texts, so the text arms face new tokens; the numeric code is the clean comparison. Nine fits, three arms by three seeds, fixed before the freeze. Computed from the Tsinghua author mirror; no physical unit is claimed.',
+    sensor: { dry: 'Dry electrodes', wet: 'Wet electrodes' } as Record<string, string>,
+    sxTitle: (L: string, p: number): Part[] => [`S10, S11 and S13 · BETA ${L}: other arms against CCA and FBCCA, and held-out wordings · `, n(p), ' people, three seeds'],
+    sxLevelsTitle: (L: string): string => `S9 and S11 · BETA ${L}: accuracy on the seen and unseen frequencies in one test, and FBCCA (descriptive)`,
+    sxLevel: { seen_truth: 'Seen frequencies', unseen_truth: 'Unseen frequencies' } as Record<string, string>,
+    colRowSeen: 'Seen frequencies', colRowUnseen: 'Unseen frequencies',
+    fbcca: { seen_ba: 'FBCCA, seen 32-way', u8: 'FBCCA, unseen 8-way', u3: 'FBCCA, neighbour 3-way' } as Record<string, string>,
+    nnBsh: 'One-output head, neighbour read-off (nn8)',
+    s9Note: 'S9 asks about seen and unseen frequencies in one 40-way test; FBCCA, like CCA, needs no training. One seed for FBCCA.',
+    boasSecH3: 'Secondary results on BOAS',
+    s13Title: (p: number): Part[] => ['S13 · held-out sentence frames against the read-off, BOAS · ', n(p), ' people, three seeds'],
+    s6Title: 'S6 · negation probe, BOAS: a boundary probe, never a route sentence',
+    s6Caption: (): Part[] => ['AUROC of each negated wording against the truth of the negated question, beside the AUROC of 1 − p(X), the head’s own answer to X turned around; three seeds. “Non-REM sleep” is scored against the truth of “not REM”.'],
+    colNegated: 'Against the truth of the negated question', colOneMinus: 'AUROC of 1 − p(X)', colPeople: 'People',
+    s6Reading: 'Every negated wording was answered as if it asked for X itself: against the truth of the negated question its AUROC lay far below 0.5, while turning the head’s answer to X around would have answered it well. Writing more prompts does not supply signal-level ground truth.',
+    woEyebrow: 'Published with the results',
+    woH2: 'The wordings, the held-out frequencies and the shuffles',
+    wo: (): Part[] => ['All ', qlwFig(qlwRelease.texts, 'count'), ' texts the questions were asked with, in English and Chinese, for sleep, SSVEP and motor imagery: training and held-out sentence frames, label names and synonyms, descriptions, the names and descriptions of the unseen questions, and the negation frames. Two agents wrote them from a fixed brief before any score, the second writing every held-out description without seeing the first’s; they are not users’ wordings and were not tuned. The file also holds the leakage rules they passed, the held-out frequencies of every rotation and the extrapolation band, the declared derangements of the shuffled control, the numeric code of a frequency and the pinned text encoders. Text only, '],
+    woDownload: 'The wordings, as JSON ↓',
+    synTable: 'The sleep stages’ names in the training frames, and the three synonyms each was reworded with:',
+    colCanonical: 'Training name', colSynonyms: 'Synonyms (a2)',
+    limitsH2: 'What these results can and cannot say',
+    notRunH3: 'Not run, and not reported',
+    notPubH3: 'Not published',
+    notPub: ['Per-person, per-night, per-recording and per-fold values, per-window scores, features, head weights and fold assignments.',
+      'The per-frequency and interior-only SSVEP breakdowns: computed after the audits, which do not cover them.',
+      'The values of the pre-run checks, which are published as pass or fail and as counts.',
+      'Measured compute, timed on a shared GPU.',
+      'Demographics, recording dates and clock times, and any image of a real recording.'],
+    encodersH3: 'The text encoders',
+    encodersNote: 'Frozen at pinned commits and never redistributed.',
+    creditsH3: 'The recordings',
+    boasCreditNote: 'Published with three stated gaps, printed beside its results above.',
+    mirrorNote: 'Computed from the official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.',
+    featuresNote: ['Features: frozen ', 'CBraMod', ' (primary) and frozen ', 'REVE', ` Large @ ${reveVersion}, REVE-L (secondary).`],
+    litH3: 'Methods and sources these results draw on',
+    sourceLink: 'Source ↗', paperLink: 'Paper ↗',
+    dataSource2: 'Wordings:',
+  },
+  zh: {
+    description: `用训练时的问法提问时，冻结 EEG 特征上的小分类头在已见过的睡眠问题上与题号相当，在 SSVEP 上则不然（普通频谱上用标签模板为 ${F(pp(t0.estimate))}，${B0.people} 名被试）；改写后再问大多有代价；对它从未训练过的问题，它没有答好：在未见过的频率上，无需训练的 CCA 远胜于它。`,
+    answer: `只对训练过的问题成立，而且不是在每个数据集上都成立。冻结 EEG 特征上的一个小分类头，用标签模板或描述代替题号来问已见过的问题：在睡眠（BOAS）上与题号在 ${DELTA} pp（百分点）的界值内等效；在 SSVEP（BETA，${ans(n(B0.people))} 名被试）上则损失了准确率：普通频谱上用标签模板为 ${ans(pp(t0.estimate))}（${ivAns(t0)}），未达到界值。改写已见过的问题也有代价，只有睡眠上换一个新句式例外。EEG 分类头从未训练过的问题没有得到有用的回答：每一个未见过的睡眠问题，都不如把分类头自己的各期答案加起来；在未见过的闪烁频率上，分类头在普通频谱上只达到 ${ans(f(u8.estimate))}，而无需训练的 CCA 达到 ${ans(f(cca8.estimate))}（随机水平 ${ans(f(u8.chance!))}）。“N1 或 N2 期睡眠”这类显式问法用到了词与分期的对应关系；“睡着”“浅睡”这类日常名称把窗口的排序弄反了；在一个边界探针中，否定的问法则被当成在问被否定的那一项本身。`,
+    eyebrow: '用语言提问 · 决策研究计划的第三条路线',
+    dek: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或自然语言描述提出：SSVEP 用 BETA，睡眠用 BOAS。已见过的问题、改写后的问题、EEG 分类头从未训练过的问题分开报告，从不合并成一个“零样本”数字。',
+    designEyebrow: '比较方法',
+    designH2: '一个分类头，三种问法',
+    designLede: '所有问题都由同一个小分类头回答，变的只是告诉它“问的是哪个问题”的那个向量。每次测试都在分类头从未训练过的被试上进行。',
+    arms: [
+      ['ID', '题号', '每个训练过的问题一个独热编码。它提不出任何新问题。'],
+      ['TPL', '标签模板', '用标签名称填入一个句式，再由冻结的文本编码器转成向量。'],
+      ['DESC', '描述', '一句描述该状态、但不说出其名称的话，同样转成向量。'],
+      ['SHUF', '错配模板', '训练时按事先声明的错位排列，把模板向量接到错误的问题上：用来检验分类头是否用到了问法与问题之间的对应关系。'],
+      ['NUM', '数值编码', '对 SSVEP，用数值而不是文字给出频率：不含文本的对照。'],
+      ['B-sh', '每个问题一个输出', '同一个隐藏层，每个已见过的问题一个固定输出，与第二条路线相同；它同样提不出新问题。'],
+      ['CCA', '无需训练', '对 SSVEP，典型相关分析（CCA）不需要训练，任何频率都能回答：未见过的频率要对照的参照。'],
+    ] as [string, string, string][],
+    exampleFrame: '睡眠的一个训练句式，填入某一期的名称（英文原文）：',
+    matching: 'SSVEP 用 BETA：普通频谱（L0）和冻结的 CBraMod 特征（L1）。睡眠用 BOAS：冻结的 CBraMod 特征（L1）。各用三个训练随机种子。主文本编码器是冻结的 bge-small-en-v1.5。每种问法的分类头都相同：标准化的特征，接一个由问题向量调整的小隐藏层（FiLM），再接一个输出。',
+    kinds: '三类结果，从不合并成一个“零样本”数字：用训练时的问法问已见过的问题；把同一个问题改写后再问；问分类头从未训练过的问题。“未见过”始终指 EEG 分类头没有见过，而不是文本编码器没有见过：冻结的文本编码器读过这些词；对 SSVEP，每个留出频率的每个分词也都出现在该轮换的训练文本中。未见过的睡眠问题是已见分期的组合；未见过的 SSVEP 问题是在五种轮换中留出的闪烁频率。',
+    reading: `每项比较都是语言问法减去参照，单位为 pp，95% 区间依次对被试、训练随机种子和留出问法重采样得到。每项比较有两种读法，都在任何拟合之前定下。区间不含零，才算显示出差异。界值为 ±${DELTA} pp：整个区间都在界值内，算等效；对语言问法不利的那一端仍在界值内，算非劣；否则就是未达到界值——这并不等于损失了 ${DELTA} pp 或更多。对未见过的睡眠问题，比较的是 R：分类头剩余的错误（1 − AUROC）与由它自己的各期答案读出的剩余错误之比，界值为 R < ${RATIO}。检验分类头是否用到问法与分期对应关系的那项比较（模板组对比错配模板组），是 AUROC 的差值。主分析中，与数值编码、相邻平均和错配模板的比较只读差异；次要分析的表格按运行时的计算列出两种读法。`,
+    multiplicity: (): Part[] => ['主分析共有 ', n(R3.primary.entries_count), ' 项预先声明的比较，不做多重比较校正：在 95% 水平下，没有真实差异的比较里，约每二十项就可能有一项偶然显示出差异。准确率先逐人计算，再在被试之间平均：它用来比较设置，不是部署时的错误率。'],
+    routeOf: ['这是“', '何时不该执行', '”页上研究计划的第三条路线。这个计划的接口来自一篇视觉论文：'],
+    notLanguage: '这里的分类头不是语言模型，这些结果也不能说明 EEG 能理解语言。',
+    hubLink: 'Jev 式提问用在脑电上：证据 →',
+    seenEyebrow: '主分析 · 已见过的问题 · BETA 与 BOAS',
+    seenH2: '已见过的问题：用文字提问，以及改写后提问',
+    seenLede: (): Part[] => ['分类头训练过的问题。BETA：', n(B0.people), ' 名被试注视闪烁的目标；每种轮换中，分类头在大部分频率上训练，这里问的就是这些频率（32 选 1 任务）。BOAS：', n(BS.people), ' 名被试，每个半分钟的数据帧按人工共识分为五期之一，保持自然比例。'],
+    p1H3: '用训练时的问法（P1）',
+    p1Label: 'SSVEP 上的 TPL − ID，普通频谱，BETA，三个随机种子',
+    p1FindH3: '睡眠：没有可测的代价。SSVEP：有代价。',
+    p1Find: (): Part[] => [`在睡眠上，用标签模板或描述代替题号，与题号在 ±${DELTA} pp 内等效：`, pp(ts.estimate), '（', ...iv(ts), '）和 ', pp(ds.estimate), '（', ...iv(ds), '）。在 SSVEP 上，两个层级都有准确率代价，且未达到界值：标签模板在普通频谱上为 ', pp(t0.estimate), '，在冻结的 CBraMod 特征上为 ', pp(t1.estimate), '；描述分别为 ', pp(d0.estimate), ' 和 ', pp(d1.estimate), '。'],
+    p1Region: '用训练问法问已见过的问题，配对比较，可横向滚动',
+    p1Caption: (): Part[] => ['平衡准确率的配对差值，语言问法减去题号，单位 pp，附 95% 区间；BETA ', n(B0.people), ' 名被试，BOAS ', n(BS.people), ' 名被试，各三个随机种子。'],
+    sub: { 'P-ssvep-L0': 'SSVEP · BETA · 普通频谱（L0）', 'P-ssvep-L1': 'SSVEP · BETA · 冻结的 CBraMod 特征（L1）', 'P-sleep-L1': '睡眠 · BOAS · 冻结的 CBraMod 特征（L1）' } as Record<string, string>,
+    colComparison: '比较', colAsked: '问题', colDiff: '差值（pp）', colShown: '是否显示差异', colMargin: `界值 ±${DELTA} pp`, colGate: '门槛',
+    colLogR: 'log R（附 R）', colMarginR: `界值 R < ${RATIO}`, colDiffA: '差值（AUROC）', colMarginNone: '界值', colDiffMixed: '差值（pp、log R 或 AUROC）',
+    p1Reading: (): Part[] => ['在这些特征上，已见过的 SSVEP 任务对每个分类头都很难：用题号时，分类头在普通频谱上达到 ', f(L0('ID seen_ba').estimate), '（', ...ivPct(L0('ID seen_ba')), '），在冻结的 CBraMod 特征上为 ', f(L1('ID seen_ba').estimate), '，随机水平为 ', f(L0('ID seen_ba').chance!), '；无需训练的 CCA 达到 ', f(L0('CCA seen_ba').estimate), '。在睡眠上，各种问法的平衡准确率大致相同：用题号为 ', f(LS('ID seen_ba').estimate), '，随机水平为 ', f(LS('ID seen_ba').chance!), '。下面的水平只是描述性的：区间重叠时不排名，上面的配对差值才是比较。'],
+    levelsRegion: '各问法在已见过问题上的平衡准确率，可横向滚动',
+    betaLevelsCaption: (): Part[] => ['BETA，已见过的 32 选 1 平衡准确率（随机水平 ', f(L0('ID seen_ba').chance!), '）：', n(B0.people), ' 名被试的均值，附 95% 区间，以及校正随机水平后的数值（水平 − 随机水平）/（1 − 随机水平）。三个随机种子；CCA 不需要训练，所以没有随机种子。'],
+    colArm: '问法', colL0: '普通频谱（L0）', colL1: '冻结的 CBraMod 特征（L1）', colCc: '校正随机水平后', colLevel: '平衡准确率', colLogLoss: '对数损失',
+    sleepLevelsCaption: (): Part[] => ['BOAS，已见过的五期平衡准确率（随机水平 ', f(LS('ID seen_ba').chance!), '），', n(BS.people), ' 名被试，三个随机种子，附校正随机水平后的数值和对数损失（平均二元交叉熵，单位 nat）。错配模板在已见过问题上的得分按它自己的错位排列读出，没有对数损失。'],
+    stageCaption: (): Part[] => ['BOAS，每个已见分期的 AUROC，附 95% 区间；三个随机种子。N3 汇总了至少有五个 N3 数据帧的 ', n(perStage['ID N3'].people), ' 名被试；其他分期汇总 ', n(perStage['ID W'].people), ' 名。'],
+    colStage: '分期', people: '名被试',
+    p2H3: '改写之后（P2）',
+    p2Lede: '同样是已见过的问题，换成分类头训练时没用过的问法：新句式（a1，对留出的句式重采样）、标签的同义词（a2：每个问题三个，固定不变，所以这些条目只对这三个同义词成立），或新描述（a3，对留出的描述重采样）。改写的结果从不与未见问题的结果合并。',
+    p2Region: '改写后的已见问题，配对比较，可横向滚动',
+    p2Caption: (): Part[] => ['平衡准确率的配对差值，改写后减去训练问法，单位 pp，附 95% 区间；BETA ', n(B0.people), ' 名被试，BOAS ', n(BS.people), ' 名被试，各三个随机种子。'],
+    p2Reading: (): Part[] => [`在睡眠上，换一个新句式没有可测的代价：在 ±${DELTA} pp 内等效（`, pp(p2s[0].estimate), '，', ...iv(p2s[0]), '）。每期三个同义词的差值为 ', pp(p2s[1].estimate), '（', ...iv(p2s[1]), '），新描述为 ', pp(p2s[2].estimate), '（', ...iv(p2s[2]), '）——区间很宽，因为各条描述之间差别很大。在 BETA 上，每种改写都更低，差值从 ', pp(p2Least.estimate), ' 到 ', pp(p2Worst.estimate), '；只有冻结 CBraMod 特征上的同义词留在界值内。'],
+    synRegion: '每个同义词对比训练问法，可横向滚动',
+    synCaption: (): Part[] => ['每个同义词单独对比训练问法，单位 pp，附 95% 区间（描述性）；BETA ', n(B0.people), ' 名被试，BOAS ', n(BS.people), ' 名被试。在 SSVEP 上，第三个同义词把数字拼写成英文单词。'],
+    colSynonym: '同义词', synonymN: (i: number) => `同义词 ${i}`,
+    flipRegion: '答案翻转率，可横向滚动',
+    flipCaption: (): Part[] => ['答案翻转率（描述性）：只换问法时，分类头对同一个窗口的答案改变的频率；BETA ', n(flip['flip-ssvep-L0'].between_ID_seeds.people), ' 名被试，BOAS ', n(flip['flip-sleep-L1'].between_ID_seeds.people), ' 名被试。在 SSVEP 上，题号分类头只是换一个训练随机种子，大多数答案就会改变，因为已见任务接近下限，所以那里的翻转率主要反映不确定性。'],
+    flipCols: ['新句式', '同义词', '训练句式之间', '新描述', '训练描述之间', 'ID 的随机种子之间'],
+    flipRows: { 'flip-ssvep-L0': 'BETA · L0', 'flip-ssvep-L1': 'BETA · L1', 'flip-sleep-L1': 'BOAS · L1' } as Record<string, string>,
+    usEyebrow: '主分析 · 未见过的睡眠问题 · BOAS',
+    usH2: 'EEG 分类头从未训练过的睡眠问题',
+    usLede: (): Part[] => ['三个分类头从未训练过的问题，每个都是它训练过的分期的组合：睡着（N1、N2、N3 或 REM）、N1、N2 或 N3 期睡眠，以及浅睡（N1 或 N2）。每个问题都用模板提问（分别用隐式名称和显式名称），也用新描述提问；', n(BS.people), ' 名被试，三个随机种子。EEG 分类头没有见过，但文本编码器读过这些词。因为每个问题都是组合，分类头自己的各期答案可以加起来得到一个答案，也就是读出；每种问法都要与读出对照。'],
+    namesCaption: '模板组提问所用的名称，在任何评分之前写定（英文原文）。',
+    colQuestion: '问题', colImplicit: '隐式名称', colExplicit: '显式名称', none: '无',
+    p3H3: '分类头能回答它们吗？（P3）',
+    p3Label: '“睡着”用隐式名称时的 R：分类头剩余的错误与读出剩余错误之比',
+    p3FindH3: '没有答好：每种问法下，读出都更好',
+    p3Find: (): Part[] => [`在全部八种条件下，区间都高于 R = 1，对读出有利，没有一种进入 ${RATIO} 的界值：R 从 `, a2(rMin.r!.estimate), '（', ...ivR(rMin), '；N1、N2 或 N3 期睡眠，显式名称）到 ', a2(rMax.r!.estimate), '（', ...ivR(rMax), '；睡着，隐式名称）。'],
+    p3Region: '未见过的睡眠问题对比读出，可横向滚动',
+    p3Caption: (): Part[] => ['log R 与 R：分类头剩余的错误（1 − AUROC）与读出剩余错误之比，附 95% 区间；', n(BS.people), ' 名被试，三个随机种子。log R 为正、或 R 大于 1，对语言问法不利。'],
+    aurocRegion: '模板分类头与读出的 AUROC，可横向滚动',
+    aurocCaption: (): Part[] => ['模板分类头在每个未见问题上的 AUROC，以及由它自己的各期答案读出（先验校正后）的 AUROC，附 95% 区间；', n(BS.people), ' 名被试，三个随机种子。描述性。AUROC 低于 0.5 表示把窗口的排序弄反了。'],
+    colHead: '模板分类头', colReadoff: '由各期答案读出', colWording: '问法',
+    p3Reading: (): Part[] => ['隐式名称把窗口的排序弄反了：“睡着”的 AUROC 为 ', a3(auroc('TPL unseen asleep implicit').estimate), '，“浅睡”为 ', a3(auroc('TPL unseen light implicit').estimate), '，都低于 0.5，也就是说，真正处于睡眠或浅睡的窗口，在这些问题上的得分反而低于其他窗口。显式名称好一些（', a3(auroc('TPL unseen asleep explicit').estimate), ' 和 ', a3(auroc('TPL unseen light explicit').estimate), '），但仍不如读出（', a3(S15['asleep prior-corrected read-off (TPL)'].estimate), ' 和 ', a3(S15['light prior-corrected read-off (TPL)'].estimate), '）。描述没有对应关系的对照：错配对照是用模板向量构造的。留出的句式（S13，见次要结果）在全部五个模板格子上给出同样的结果。'],
+    p5H3: '分类头是否用到了问法与分期的对应关系？（P5）',
+    p5Lede: '错配模板组在训练时把同样的模板向量接到错误的分期上；未见问题保留各自真实的向量。如果分类头用到了问法与分期的对应关系，错配组在这些问题上应当不如模板组。',
+    p5Region: '模板组对比错配模板组，可横向滚动',
+    p5Caption: (): Part[] => ['模板组减去错配模板组：在未见问题上的 AUROC，按每类名称的格子取平均，附 95% 区间；', n(BS.people), ' 名被试，三个随机种子。只读差异：不设界值。'],
+    shufRegion: '模板组与错配模板组的 AUROC，可横向滚动',
+    shufCaption: (): Part[] => ['每个未见问题上的 AUROC，模板组与错配模板组，附 95% 区间（描述性）；', n(BS.people), ' 名被试，三个随机种子。'],
+    colTpl: '模板组', colShuf: '错配模板组',
+    p5Reading: (): Part[] => ['显式名称用到了：把模板接到错误的分期上，未见问题的 AUROC 降低，TPL − SHUF 为 ', s3(p5e.estimate), '（', ...iv(p5e), '）。隐式名称没有显示出用到：错配模板反而更高，', s3(p5i.estimate), '（', ...iv(p5i), '）。'],
+    ufEyebrow: '主分析 · 未见过的闪烁频率 · BETA',
+    ufH2: 'EEG 分类头从未训练过的闪烁频率（P4）',
+    ufLede: (): Part[] => ['在五种轮换中，每次留出 BETA 的八个频率：分类头在其余频率上训练，再用模板说出频率来问这八个。', n(B0.people), ' 名被试，三个随机种子，两个层级。EEG 分类头没有见过，但文本编码器读过这些词：每个留出频率的每个分词也都出现在该轮换的训练文本中，新的只是组合。CCA 完全不需要训练就能回答同样的问题。'],
+    p4Label: 'TPL − CCA，未见频率之间的 8 选 1，普通频谱，BETA',
+    p4FindH3: '远不如无需训练的 CCA',
+    p4Find: (): Part[] => ['在未见频率之间的 8 选 1 中，分类头在普通频谱上达到 ', f(u8.estimate), '（', ...ivPct(u8), '），在冻结的 CBraMod 特征上为 ', f(L1('TPL u8').estimate), '；CCA 达到 ', f(cca8.estimate), '，随机水平为 ', f(u8.chance!), '。在两个层级上，分类头也不如把它自己对相邻两个已见频率的答案取平均，也不如用数值编码表示频率。'],
+    p4Region: '未见过的频率，配对比较，可横向滚动',
+    p4Caption: (): Part[] => ['准确率的配对差值，模板分类头减去参照，单位 pp，附 95% 区间；', n(B0.people), ' 名被试，三个随机种子。与 CCA 的比较设界值；与相邻平均和数值编码的比较只读差异。'],
+    p4Reading: (): Part[] => ['在相邻 3 选 1 中，未见过的频率要与两侧相邻频率已训练好的检测器竞争（偏向已见问题，已说明）。在普通频谱上，模板分类头低于这项检验的平均随机水平：', f(L0('TPL u3').estimate), '，随机水平为 ', f(L0('TPL u3').chance!), '；与数值编码相比没有显示出差异。在冻结的 CBraMod 特征上，它比数值编码高 ', pp(p4b[4].estimate), '，但这些特征保留了刺激相位，而相邻目标的相位不同，所以这项比较同时检验频率和相位。不含相位的普通频谱才是干净的频率检验。'],
+    u8Region: '各问法在未见频率上的准确率，可横向滚动',
+    u8Caption: (): Part[] => ['在未见频率上的准确率（描述性）：u8，留出频率之间的 8 选 1（随机水平 ', f(u8.chance!), '）；nn8，把相邻两个已见频率的答案取平均的读出；u3，相邻 3 选 1（平均随机水平 ', f(L0('TPL u3').chance!), '，在频率网格两端为 2 选 1）。', n(B0.people), ' 名被试；三个随机种子，CCA 没有随机种子。'],
+    colMetric: '检验',
+    costRegion: '泛化代价，可横向滚动',
+    costCaption: (): Part[] => ['泛化代价（描述性）：未见频率上的准确率减去对应的已见频率上的准确率，单位 pp，附 95% 区间；', n(B0.people), ' 名被试。'],
+    colCost: '问法与检验',
+    rotRegion: '各轮换的 TPL − CCA，可横向滚动',
+    rotCaption: (): Part[] => ['8 选 1 中的 TPL − CCA，逐个轮换，单位 pp，附 95% 区间（次要，经独立审计重算）；', n(B0.people), ' 名被试，三个随机种子。结果不靠任何单个轮换撑起。'],
+    colRotation: '轮换', rotation: (k: string) => k.replace('rotation', '轮换'),
+    perFreq: '按频率和仅内部频率的细分是在审计之后计算的，没有任何独立审计覆盖它们，所以不发布。',
+    ckEyebrow: '任何结果之前',
+    ckH2: '运行前的检查，以及其中一项如何被修改',
+    ckLede: '有一项检查在失败之后被修改了，而且改了两次。相关情况全部列在这里，连同在读取任何结果之前必须通过的其他检查。',
+    canary: (): Part[] => ['标签置换金丝雀检查（canary）：把训练标签打乱后重新训练分类头，检查测试得分是否落在随机水平：在第一折上共 ', n(r5c.configurations), ' 个配置、', n(r5c.intervals), ' 个 ', f(r5c.level), ' 区间。'],
+    rev3: (): Part[] => ['修订 3 失败：', n(r3c.intervals), ' 个区间中有 ', n(r3c.intervals_excluding_chance), ' 个排除了随机水平（睡眠，冻结的 CBraMod 特征，错配模板组，未见问题“浅睡”的显式名称）。它的标签是在每个训练被试内部打乱的。运行因此停止。'],
+    rev4: (): Part[] => ['修订 4 由所有者在任何新拟合之前批准，改为在所有训练窗口之间打乱标签。它也失败了：', n(r4c.intervals), ' 个区间中有 ', n(r4c.intervals_excluding_chance), ' 个，全在 BOAS 上，其中一个低于随机水平；两次检查中，SSVEP 的每个区间都包含随机水平。修订 4 写明“不再修订”。所有者在看到它如何失败之后推翻了这一条，并在任何新拟合之前批准了修订 5。修订 4 的按人中心化诊断没有运行：标签在所有窗口之间打乱后，它已经检验不了任何东西。'],
+    rev5: (): Part[] => ['修订 5 通过：每个配置训练 ', n(r5c.replicates), ' 个分类头（共 ', n(r5c.fits), ' 次拟合），每个指标都与该被试精确的随机水平比较，并做两层 bootstrap，先对分类头、再对被试重采样；', n(r5c.intervals), ' 个区间中有 ', n(r5c.intervals_excluding_zero), ' 个排除了零。两次失败的记录都保留。'],
+    directions: (): Part[] => ['偏离方向的计数（描述性）：修订 5 中 ', n(r5c.single_head_tests), ' 个单分类头区间里，有 ', n(dirs.total), ' 个排除了精确的随机水平，', n(dirs.above), ' 个偏高、', n(dirs.below), ' 个偏低，另有 ', n(r5c.cells_with_single_head_failures_in_both_directions), ' 个格子两个方向都失败过。BOAS 的格子只以通过或失败及计数发布。'],
+    why: (): Part[] => ['为什么会失败——这正是修订 5 设计来检验的解释：用打乱的标签训练出的分类头，仍然是睡眠特征的某个随机函数，而这些特征按分期分得很开，所以它在新被试上的得分会整体偏向同一个方向，可能偏高也可能偏低。按被试的 bootstrap 只衡量被试之间的波动，不衡量分类头之间的波动，所以它的 ', f(r5c.level), ' 区间对这个问题来说太窄。失败的样子符合这个解释：全部发生在 BOAS 上，而且有一个低于随机水平，而泄漏不会造成这种结果。这不是“没有泄漏”的证明：被试不重叠的折、训练中没有留出的标签或问法、只在训练数据上拟合的标准化，都由代码中的断言保证，两份一致性审计也直接检查了泄漏。'],
+    s0b6: (): Part[] => ['决定 S0b-6，经所有者批准：SSVEP 的分词规则要求，每个留出频率的每个分词都出现在该轮换的训练文本中。对 bge-small-en-v1.5 和 all-MiniLM-L6-v2，违反这条规则就停止运行，两者在全部 ', n(S06.rotations_passed), ' 种轮换中都通过了。对 multilingual-e5-small，这条规则无法成立：它的分词器把一位小数的数字片段当成单个分词，而留出的数字本身不允许出现在训练文本中；对这个编码器，规则改为报告而不停止运行，每个中文问法的未见频率条目都注明该频率是一个新的分词。'],
+    ea1: '工程修订 EA-1，在第一次拟合之前：在连续的外推频段（S8）中，相邻平均没有定义，相邻 3 选 1 重新标注，因为它的竞争对手本身就是留出的问题；失败的拟合逐格标注（没有任何拟合失败）；次要评分可以在中断后接着运行。没有改动任何问题、划分、问法、臂（ID、TPL、DESC 等各组）、指标、界值或门槛。',
+    numeracy: (): Part[] => ['预先声明的数感预测没有触发。它说的是：如果主文本编码器对频率的排序很差（每个训练句式中，频率差与嵌入距离之间的 Spearman ρ 都低于 0.3），那么 8 选 1 的 TPL − NUM 差异标记就不会是“TPL 更高”。它的前提不成立：bge-small-en-v1.5 三个训练句式的 ρ 分别为 ', a3(rho[0]), '、', a3(rho[1]), ' 和 ', a3(rho[2]), '，基于 ', n(NP.pairs), ' 个频率对。尽管如此，两个层级上的标记都是“NUM 更高”；前提既然不成立，这只是描述，不是得到证实的预测。'],
+    gatesH3: '门槛',
+    gates: (): Part[][] => [
+      ['余量门槛：题号分类头在已见问题上的平衡准确率必须高于随机水平加 5 pp，且低于 95%。三个主分析组都通过了；具体水平见上面的表格。'],
+      ['捷径检查：只用各通道均值和对数方差的岭回归分类器，不能单独答出已见任务。BETA 通过了（在第一折的 ', n(triv.BETA.training_people!), ' 名训练被试上计算），BOAS 和 EESM19 也通过了（沿用第二条路线的结果）；运动想象没有声明这项检查，所以它的门槛写作“未运行”。'],
+      ['读出下限：只有当读出的 AUROC 区间高于 0.55 时，未见睡眠问题的格子才计入。主分析 ', n(G.readoff_floor.primary_cells), ' 个格子中通过 ', n(G.readoff_floor.primary_cells_passing), ' 个，次要分析 ', n(G.readoff_floor.secondary_cells), ' 个中通过 ', n(G.readoff_floor.secondary_cells_passing), ' 个。'],
+      ['打乱 EEG 的评分检查：把测试特征在每名被试内部打乱后重算每个主分析聚合值，结果必须落在随机水平的三个蒙特卡洛标准误之内。', n(G.shuffled_eeg_scorer_check.cells), ' 个格子中有 ', n(G.shuffled_eeg_scorer_check.cells_within_3_se), ' 个做到了（SSVEP ', n(G.shuffled_eeg_scorer_check.ssvep_cells), ' 个，BOAS ', n(G.shuffled_eeg_scorer_check.boas_cells), ' 个）。'],
+      ['拟合检查，在第一折的训练数据上：每个带条件的 SSVEP 问法，训练得分都比每个问题一个输出的分类头低 5 pp 以上，所以预先声明的回退方案适用于每个 SSVEP 问法，训练 ', n(fit['ssvep/L0'].training_epochs), ' 轮；睡眠、EESM19 和运动想象仍训练 ', n(fit['sleep/L1'].training_epochs), ' 轮。没有任何拟合失败。'],
+    ],
+    audits: (): Part[] => ['四份独立审计都通过了。它们不借用研究的评分代码，重新实现了各项定义：主分析的一致性审计通过 ', n(A.primary_conformance.checks), ' 项检查，失败 ', n(A.primary_conformance.failed), ' 项；主分析的数值审计做了 ', n(A.primary_numeric.comparisons), ' 次比较，不一致 ', n(A.primary_numeric.mismatches), ' 次；次要分析的一致性审计通过 ', n(A.secondary_conformance.checks), ' 项检查，失败 ', n(A.secondary_conformance.failed), ' 项；次要分析的数值审计做了 ', n(A.secondary_numeric.comparisons), ' 次比较，其中 ', n(A.secondary_numeric.outside_tolerance), ' 次超出容差，每一次都有解释。'],
+    secEyebrow: '次要 · 主分析比较之外',
+    secH2: '次要结果',
+    secLede: '更多的数据集、特征、另一个文本编码器、中文问法和探针，都不在主分析比较之内。未注明时只有一个随机种子：单个随机种子不含训练过程的随机波动。每个 EESM19 条目和单种子条目都在运行之前声明为多半无法下结论，不过没有一项落到“无法下结论”的标记组合上。',
+    secSummary: '展开次要结果',
+    partTitle: {
+      S1: (p: number): Part[] => ['S1 · EESM19 睡眠，冻结的 CBraMod 特征 · ', n(p), ' 名被试，三个随机种子 · 事先声明多半无法下结论'],
+      S2: (p: number): Part[] => ['S2 · OpenBMI 运动想象，冻结的 CBraMod 特征 · ', n(p), ' 名被试，三个随机种子'],
+      'S3-ssvep': (p: number): Part[] => ['S3 · REVE-L 特征，BETA · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S4-ssvep-L0': (p: number): Part[] => ['S4 · 文本编码器 all-MiniLM-L6-v2，BETA，普通频谱 · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S4-ssvep-L1': (p: number): Part[] => ['S4 · 文本编码器 all-MiniLM-L6-v2，BETA，冻结的 CBraMod 特征 · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S5-ssvep-L0': (p: number): Part[] => ['S5 · 中文问法，multilingual-e5-small，BETA，普通频谱 · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S3-sleep': (p: number): Part[] => ['S3 · REVE-L 特征，BOAS · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S4-sleep-L1': (p: number): Part[] => ['S4 · 文本编码器 all-MiniLM-L6-v2，BOAS，冻结的 CBraMod 特征 · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+      'S5-sleep-L1': (p: number): Part[] => ['S5 · 中文问法，multilingual-e5-small，BOAS，冻结的 CBraMod 特征 · ', n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+    } as Record<string, (p: number) => Part[]>,
+    partNote: {
+      S2: '运动想象没有声明捷径检查，所以它的门槛写作“未运行”，不排除任何条目。运动想象只有两种三元循环，所以错配模板组三个随机种子中有两个共用同一种错位排列。未见问题“想象手部动作”最接近它的读出：显示出差异，但在比值界值之内。',
+      'S3-ssvep': 'REVE-L 特征保留了刺激相位，所以它的相邻 3 选 1 同时检验频率和相位。',
+      'S5-ssvep-L0': '对这个编码器，每个留出频率都是一个新的分词，而不只是已见分词的新组合（决定 S0b-6）。',
+    } as Record<string, string>,
+    secRegion: (t: string) => `${t}，可横向滚动`,
+    s8Title: (L: string, p: number): Part[] => [`S8 · 外推到频率网格顶端一段连续的留出频段，BETA ${L} · `, n(p), ' 名被试，一个随机种子 · 事先声明多半无法下结论'],
+    s8Note: '在这个频段里，相邻 3 选 1 的竞争对手本身就是留出的问题，而不是训练好的检测器；相邻平均没有定义（EA-1）。对 bge-small-en-v1.5，这些文本中有许多带有训练中从未出现过的数字分词。',
+    notDefined: '没有定义（EA-1）',
+    s12Title: (p: number): Part[] => ['S12 · Wearable-102，分类头在 BETA 的全部频率上训练，再问网格之外的频率 · ', n(p), ' 名被试，三个随机种子'],
+    s12Note: '网格之外的频率有两位小数，百分位的分词从未出现在 BETA 的训练文本中，所以文本问法面对的是新的分词；数值编码才是干净的比较。共九次拟合（三种问法乘三个随机种子），在冻结之前定下。由清华大学作者镜像计算，不声称任何物理单位。',
+    sensor: { dry: '干电极', wet: '湿电极' } as Record<string, string>,
+    sxTitle: (L: string, p: number): Part[] => [`S10、S11 与 S13 · BETA ${L}：其他问法对比 CCA 和 FBCCA，以及留出问法 · `, n(p), ' 名被试，三个随机种子'],
+    sxLevelsTitle: (L: string): string => `S9 与 S11 · BETA ${L}：在同一项检验中已见与未见频率上的准确率，以及 FBCCA（描述性）`,
+    sxLevel: { seen_truth: '已见频率', unseen_truth: '未见频率' } as Record<string, string>,
+    colRowSeen: '已见频率', colRowUnseen: '未见频率',
+    fbcca: { seen_ba: 'FBCCA，已见 32 选 1', u8: 'FBCCA，未见 8 选 1', u3: 'FBCCA，相邻 3 选 1' } as Record<string, string>,
+    nnBsh: '每个问题一个输出的分类头，相邻读出（nn8）',
+    s9Note: 'S9 在一项 40 选 1 检验中同时问已见与未见频率；FBCCA 与 CCA 一样不需要训练。FBCCA 只有一个随机种子。',
+    boasSecH3: 'BOAS 上的次要结果',
+    s13Title: (p: number): Part[] => ['S13 · 留出的句式对比读出，BOAS · ', n(p), ' 名被试，三个随机种子'],
+    s6Title: 'S6 · 否定探针，BOAS：边界探针，从不写入路线结论',
+    s6Caption: (): Part[] => ['每个否定问法对被否定问题真值的 AUROC，旁边是 1 − p(X) 的 AUROC，也就是把分类头对 X 的回答反过来；三个随机种子。“非 REM 睡眠”按“不是 REM”的真值评分。'],
+    colNegated: '对被否定问题真值的 AUROC', colOneMinus: '1 − p(X) 的 AUROC', colPeople: '被试',
+    s6Reading: '每一个否定问法，都被当成在问 X 本身：它对被否定问题真值的 AUROC 远低于 0.5，而把分类头对 X 的回答反过来，本可以答得很好。多写提示词并不能提供信号层面的真值。',
+    woEyebrow: '随结果一并发布',
+    woH2: '问法、留出频率与错位排列',
+    wo: (): Part[] => ['提问所用的全部 ', qlwFig(qlwRelease.texts, 'count'), ' 条文本，英文与中文，涵盖睡眠、SSVEP 和运动想象：训练与留出的句式、标签名称与同义词、描述、未见问题的名称与描述，以及否定句式。两个代理在任何评分之前按固定说明写成，第二个代理在没有看到第一个代理文件的情况下写了全部留出描述；它们不是用户写的问法，也没有调优。文件中还有它们通过的防泄漏规则、每种轮换的留出频率与外推频段、错配对照预先声明的错位排列、频率的数值编码，以及固定版本的文本编码器。只有文本，'],
+    woDownload: '问法文件（JSON）↓',
+    synTable: '训练句式中各睡眠分期的名称，以及每个名称改写时所用的三个同义词（英文原文）：',
+    colCanonical: '训练名称', colSynonyms: '同义词（a2）',
+    limitsH2: '这些结果能说明什么、不能说明什么',
+    notRunH3: '没有运行与没有报告的内容',
+    notPubH3: '不发布的内容',
+    notPub: ['逐人、逐夜、逐条记录与逐折的数值，逐窗口得分，特征，分类头权重，以及交叉验证折的分配。',
+      'SSVEP 按频率与仅内部频率的细分：在审计之后计算，审计没有覆盖。',
+      '运行前检查的数值：这些检查只以通过或失败及计数发布。',
+      '实测的计算量：是在共享 GPU 上计时的。',
+      '人口学信息、记录日期与钟点，以及任何真实记录的图像。'],
+    encodersH3: '文本编码器',
+    encodersNote: '固定在指定的提交版本，冻结使用，从不再分发。',
+    creditsH3: '所用的记录',
+    boasCreditNote: '在说明三处缺口后发布，缺口与结果一起列在上文。',
+    mirrorNote: '基于 2026-09-20 获取的清华 BCI 实验室作者官方镜像快照计算；该镜像本身没有单独的 DOI 或版本号。',
+    featuresNote: ['特征：冻结的 ', 'CBraMod', '（主分析），以及冻结的 ', 'REVE', ` Large @ ${reveVersion}，即 REVE-L（次要分析）。`],
+    litH3: '这些结果所依据的方法与来源',
+    sourceLink: '来源 ↗', paperLink: '论文 ↗',
+    dataSource2: '问法：',
+  },
+}[locale];
+const card = topicCards[locale]['questions-in-language'];
+const sep = zh ? '：' : ': ';
+const nameOf = (a: string) => copy.arms.find(x => x[0] === a)?.[1] ?? a;
+const frameExample = sleepFrames[0].replace('{label}', sleepCanon.N2);
+const credits = (['beta', 'boas', 'eesm19', 'openbmi', 'wearable-ssvep-102'] as const).map(id => ({ id, ...QL_DATASETS[id] }));
+// The one record computed from an author mirror says so (the handoff: disclose the 2026-09-20 author mirror); the English is the export's.
+need(credits.filter(c => c.computed_from).map(c => c.id).join() === 'wearable-ssvep-102' && QL_DATASETS['wearable-ssvep-102'].computed_from === `Official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.`
+  && !!QL_DATASETS['wearable-ssvep-102'].paper?.includes('10.3390/s21041256'), 'Wearable-102: its Sensors paper and the author mirror it was computed from');
+const entryKeyOrder = (p: string) => (S(p).entries ?? []);
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/questions-in-language/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="questions-in-language"
+  dataFiles={[`/data/${QL}`, `/data/${QLW}`]}
+  answer={copy.answer}
+>
+  <section class="topic-section" id="design" aria-labelledby="design-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.designEyebrow}</p><h2 id="design-heading">{copy.designH2}</h2></div><p>{copy.designLede}</p></div>
+    <ul class="rd-rules sr-setups">{copy.arms.map(([id, name, what]) => <li data-arm={id}><strong><span lang="en">{id}</span> · {name}</strong>{sep}{what}</li>)}</ul>
+    <p class="roadmap-p">{copy.exampleFrame} <q lang="en">{frameExample}</q></p>
+    <p class="roadmap-p">{copy.matching}</p>
+    <p class="roadmap-p" data-kinds="true">{copy.kinds}</p>
+    <p class="roadmap-p">{copy.reading}</p>
+    <p class="protocol-note" id="multiplicity"><Parts p={copy.multiplicity()}/></p>
+    <p class="protocol-note" data-jev-scope="true">{copy.routeOf[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.routeOf[1]}</a>{copy.routeOf[2]}<a href={visualJev.url} target="_blank" rel="noreferrer" lang="en">{visualJev.cite} ↗</a>{zh ? '。' : '. '}{jevScope[locale]}{zh ? '' : ' '}{copy.notLanguage} <a href={hrefFor('/jev-style/', locale)}>{copy.hubLink}</a></p>
+  </section>
+
+  <section class="topic-section" id="seen" aria-labelledby="seen-heading" data-boas="true">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.seenEyebrow}</p><h2 id="seen-heading">{copy.seenH2}</h2></div><p><Parts p={copy.seenLede()}/></p></div>
+    <BoasGaps locale={locale}/>
+    <h3 class="roadmap-h3" id="p1">{copy.p1H3}</h3>
+    <div class="finding" data-finding="p1">
+      <div class="finding-number"><strong><Fig f={pp(t0.estimate)}/></strong><span>{copy.p1Label}</span></div>
+      <div class="finding-copy"><h3>{copy.p1FindH3}</h3><p><Parts p={copy.p1Find()}/></p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.p1Region}>
+      <table data-ql-table="p1">
+        <caption><Parts p={copy.p1Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th><th scope="col">{copy.colGate}</th></tr></thead>
+        <tbody>{[['P-ssvep-L0', [t0, d0]], ['P-ssvep-L1', [t1, d1]], ['P-sleep-L1', [ts, ds]]].map(([b, rows]) => <>
+          <tr class="subhead"><th colspan="6" scope="colgroup">{copy.sub[b as string]}</th></tr>
+          {(rows as QlEntry[]).map(e => <QlRow e={e} locale={locale}/>)}
+        </>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-reading="p1"><Parts p={copy.p1Reading()}/></p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.levelsRegion}>
+      <table data-ql-table="levels-beta">
+        <caption><Parts p={copy.betaLevelsCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colL0}</th><th scope="col">{copy.colCc}</th><th scope="col">{copy.colL1}</th><th scope="col">{copy.colCc}</th></tr></thead>
+        <tbody>{seenArms.map(a => <tr data-ql-level={`beta|${a}|seen_ba`}><th scope="row"><span lang="en">{a}</span><small>{nameOf(a)}</small></th>
+          {[L0, L1].map(L => { const x = L(`${a} seen_ba`); return <><td><Fig f={f(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(x)}/></span></td><td><Fig f={f(x.chance_corrected!.estimate)} cls="metric"/></td></>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.levelsRegion}>
+      <table data-ql-table="levels-boas">
+        <caption><Parts p={copy.sleepLevelsCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colLevel}</th><th scope="col">{copy.colCc}</th><th scope="col">{copy.colLogLoss}</th></tr></thead>
+        <tbody>{sleepArms.map(a => { const x = LS(`${a} seen_ba`), ll = LL[a]; return <tr data-ql-level={`boas|${a}|seen_ba`}><th scope="row"><span lang="en">{a}</span><small>{nameOf(a)}</small></th>
+          <td><Fig f={f(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(x)}/></span></td><td><Fig f={f(x.chance_corrected!.estimate)} cls="metric"/></td>
+          <td>{ll ? <><Fig f={f(ll.estimate, 'num3')} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(ll.interval_95[0], 'num3')}/>–<Fig f={f(ll.interval_95[1], 'num3')}/></span></> : <span data-null="true">—</span>}</td></tr>; })}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.levelsRegion}>
+      <table data-ql-table="stages-boas">
+        <caption><Parts p={copy.stageCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th>{stages.map(s => <th scope="col"><span lang="en">{s}</span><small><Fig f={n(perStage[`ID ${s}`].people)}/> {copy.people}</small></th>)}</tr></thead>
+        <tbody>{['ID', 'TPL', 'DESC'].map(a => <tr data-ql-level={`boas|${a}|stage-auroc`}><th scope="row"><span lang="en">{a}</span><small>{nameOf(a)}</small></th>{stages.map(s => { const x = perStage[`${a} ${s}`]; return <td><Fig f={a3(x.estimate)} cls="metric"/><span class="interval"><Parts p={ivA3(x)}/></span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+
+    <h3 class="roadmap-h3" id="p2">{copy.p2H3}</h3>
+    <p class="roadmap-p">{copy.p2Lede}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.p2Region}>
+      <table data-ql-table="p2">
+        <caption><Parts p={copy.p2Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th><th scope="col">{copy.colGate}</th></tr></thead>
+        <tbody>{[['P-ssvep-L0', p2b.slice(0, 3)], ['P-ssvep-L1', p2b.slice(3)], ['P-sleep-L1', p2s]].map(([b, rows]) => <>
+          <tr class="subhead"><th colspan="6" scope="colgroup">{copy.sub[b as string]}</th></tr>
+          {(rows as QlEntry[]).map(e => <QlRow e={e} locale={locale}/>)}
+        </>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-reading="p2"><Parts p={copy.p2Reading()}/></p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.synRegion}>
+      <table data-ql-table="synonyms">
+        <caption><Parts p={copy.synCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colSynonym}</th>{['P-ssvep-L0', 'P-ssvep-L1', 'P-sleep-L1'].map(b => <th scope="col">{copy.sub[b]}</th>)}</tr></thead>
+        <tbody>{synonymKeys.map((k, i) => <tr data-ql-synonym={i + 1}><th scope="row">{copy.synonymN(i + 1)}</th>{['P-ssvep-L0', 'P-ssvep-L1', 'P-sleep-L1'].map(b => { const x = synonymOf(b, k); return <td><Fig f={pp(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={qlFig(x.interval_95[0], 'sgn2')}/> {tc.to} <Fig f={pp(x.interval_95[1])}/></span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.flipRegion}>
+      <table data-ql-table="flips">
+        <caption><Parts p={copy.flipCaption()}/></caption>
+        <thead><tr><th scope="col"></th>{copy.flipCols.map(c => <th scope="col">{c}</th>)}</tr></thead>
+        <tbody>{Object.entries(flip).map(([k, x]) => <tr data-ql-flip={k}><th scope="row">{copy.flipRows[k]}</th>{[x.TPL.a1, x.TPL.a2, x.TPL.ref_training, x.DESC.a3, x.DESC.ref_training, x.between_ID_seeds].map(r => <td><Fig f={f(r.rate)} cls="metric"/></td>)}</tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" id="unseen-sleep" aria-labelledby="unseen-sleep-heading" data-boas="true">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.usEyebrow}</p><h2 id="unseen-sleep-heading">{copy.usH2}</h2></div><p><Parts p={copy.usLede()}/></p></div>
+    <BoasGaps locale={locale}/>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.namesCaption}>
+      <table data-ql-table="names">
+        <caption>{copy.namesCaption}</caption>
+        <thead><tr><th scope="col">{copy.colQuestion}</th><th scope="col">{copy.colImplicit}</th><th scope="col">{copy.colExplicit}</th></tr></thead>
+        <tbody>{unions.map(u => <tr><th scope="row">{u === 'asleep' ? (zh ? '睡着' : 'Asleep') : u === 'NREM' ? (zh ? 'N1、N2 或 N3 期睡眠' : 'N1, N2 or N3 sleep') : (zh ? '浅睡' : 'Light sleep')}</th>
+          <td>{unseenNames[u].implicit ? <q lang="en">{unseenNames[u].implicit}</q> : copy.none}</td><td><q lang="en">{unseenNames[u].explicit}</q></td></tr>)}</tbody>
+      </table>
+    </div>
+    <h3 class="roadmap-h3" id="p3">{copy.p3H3}</h3>
+    <div class="finding" data-finding="p3">
+      <div class="finding-number"><strong><Fig f={a2(rMax.r!.estimate)}/></strong><span>{copy.p3Label}</span></div>
+      <div class="finding-copy"><h3>{copy.p3FindH3}</h3><p><Parts p={copy.p3Find()}/></p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.p3Region}>
+      <table data-ql-table="p3">
+        <caption><Parts p={copy.p3Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colLogR}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMarginR}</th><th scope="col">{copy.colGate}</th></tr></thead>
+        <tbody>{p3.map(e => <QlRow e={e} locale={locale}/>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.aurocRegion}>
+      <table data-ql-table="p3-auroc">
+        <caption><Parts p={copy.aurocCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colQuestion}</th><th scope="col">{copy.colWording}</th><th scope="col">{copy.colHead}</th><th scope="col">{copy.colReadoff}</th></tr></thead>
+        <tbody>{p3Rows.map(({ q, w }) => { const h = auroc(`TPL unseen ${q} ${w}`), ro = S15[`${q} prior-corrected read-off (TPL)`]; return <tr data-ql-auroc={`${q}|${w}`}>
+          <th scope="row">{zh ? { asleep: '睡着', NREM: 'N1、N2 或 N3 期睡眠', light: '浅睡' }[q] : { asleep: 'Asleep', NREM: 'N1, N2 or N3 sleep', light: 'Light sleep' }[q]}</th><td>{w === 'implicit' ? (zh ? '隐式名称' : 'implicit name') : (zh ? '显式名称' : 'explicit name')}</td>
+          <td><Fig f={a3(h.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(h)}/></span></td><td><Fig f={a3(ro.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(ro)}/></span></td></tr>; })}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-reading="p3"><Parts p={copy.p3Reading()}/></p>
+    <h3 class="roadmap-h3" id="p5">{copy.p5H3}</h3>
+    <p class="roadmap-p">{copy.p5Lede}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.p5Region}>
+      <table data-ql-table="p5">
+        <caption><Parts p={copy.p5Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiffA}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMarginNone}</th><th scope="col">{copy.colGate}</th></tr></thead>
+        <tbody>{[p5i, p5e].map(e => <QlRow e={e} locale={locale}/>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.shufRegion}>
+      <table data-ql-table="p5-auroc">
+        <caption><Parts p={copy.shufCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colQuestion}</th><th scope="col">{copy.colWording}</th><th scope="col">{copy.colTpl}</th><th scope="col">{copy.colShuf}</th></tr></thead>
+        <tbody>{p3Rows.map(({ q, w }) => { const t = auroc(`TPL unseen ${q} ${w}`), s = auroc(`SHUF unseen ${q} ${w}`); return <tr data-ql-shuf={`${q}|${w}`}>
+          <th scope="row">{zh ? { asleep: '睡着', NREM: 'N1、N2 或 N3 期睡眠', light: '浅睡' }[q] : { asleep: 'Asleep', NREM: 'N1, N2 or N3 sleep', light: 'Light sleep' }[q]}</th><td>{w === 'implicit' ? (zh ? '隐式名称' : 'implicit name') : (zh ? '显式名称' : 'explicit name')}</td>
+          <td><Fig f={a3(t.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(t)}/></span></td><td><Fig f={a3(s.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(s)}/></span></td></tr>; })}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-reading="p5"><Parts p={copy.p5Reading()}/></p>
+  </section>
+
+  <section class="topic-section" id="unseen-frequency" aria-labelledby="unseen-frequency-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.ufEyebrow}</p><h2 id="unseen-frequency-heading">{copy.ufH2}</h2></div><p><Parts p={copy.ufLede()}/></p></div>
+    <div class="finding" data-finding="p4">
+      <div class="finding-number"><strong><Fig f={pp(p4a[0].estimate)}/></strong><span>{copy.p4Label}</span></div>
+      <div class="finding-copy"><h3>{copy.p4FindH3}</h3><p><Parts p={copy.p4Find()}/></p></div>
+    </div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.p4Region}>
+      <table data-ql-table="p4">
+        <caption><Parts p={copy.p4Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th><th scope="col">{copy.colGate}</th></tr></thead>
+        <tbody>{[['P-ssvep-L0', p4a], ['P-ssvep-L1', p4b]].map(([b, rows]) => <>
+          <tr class="subhead"><th colspan="6" scope="colgroup">{copy.sub[b as string]}</th></tr>
+          {(rows as QlEntry[]).map(e => <QlRow e={e} locale={locale}/>)}
+        </>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-reading="p4"><Parts p={copy.p4Reading()}/></p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.u8Region}>
+      <table data-ql-table="levels-unseen">
+        <caption><Parts p={copy.u8Caption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colMetric}</th><th scope="col">{copy.colL0}</th><th scope="col">{copy.colCc}</th><th scope="col">{copy.colL1}</th><th scope="col">{copy.colCc}</th></tr></thead>
+        <tbody>{levelRows.map(([a, m]) => <tr data-ql-level={`beta|${a}|${m}`}><th scope="row"><span lang="en">{a}</span><small>{nameOf(a)}</small></th><td><span lang="en">{m}</span></td>
+          {[L0, L1].map(L => { const x = L(`${a} ${m}`); return <><td><Fig f={f(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(x)}/></span></td><td><Fig f={f(x.chance_corrected!.estimate)} cls="metric"/></td></>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.costRegion}>
+      <table data-ql-table="costs">
+        <caption><Parts p={copy.costCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colCost}</th><th scope="col">{copy.colL0}</th><th scope="col">{copy.colL1}</th></tr></thead>
+        <tbody>{costRows.map(k => <tr data-ql-cost={k}><th scope="row">{costName(k)}</th>{['P-ssvep-L0', 'P-ssvep-L1'].map(b => { const x = R3.descriptive[b].generalisation_costs![k]; return <td><Fig f={pp(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={qlFig(x.interval_95[0], 'sgn2')}/> {tc.to} <Fig f={pp(x.interval_95[1])}/></span></td>; })}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.rotRegion}>
+      <table data-ql-table="rotations">
+        <caption><Parts p={copy.rotCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colRotation}</th><th scope="col">{copy.colL0}</th><th scope="col">{copy.colL1}</th></tr></thead>
+        <tbody>{rot(0).map(([k], i) => <tr data-ql-rotation={k}><th scope="row">{copy.rotation(k)}</th>{[rot(0)[i][1], rot(1)[i][1]].map(x => <td><Fig f={pp(x.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={qlFig(x.interval_95[0], 'sgn2')}/> {tc.to} <Fig f={pp(x.interval_95[1])}/></span></td>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-not-published="per-frequency">{copy.perFreq}</p>
+  </section>
+
+  <section class="topic-section" id="checks" aria-labelledby="checks-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.ckEyebrow}</p><h2 id="checks-heading">{copy.ckH2}</h2></div><p>{copy.ckLede}</p></div>
+    <div class="protocol-note" data-disclosure="canary">
+      <p><Parts p={copy.canary()}/></p>
+      <p data-disclosure="revision-3"><Parts p={copy.rev3()}/></p>
+      <p data-disclosure="revision-4"><Parts p={copy.rev4()}/></p>
+      <p data-disclosure="revision-5"><Parts p={copy.rev5()}/></p>
+      <p data-disclosure="directions"><Parts p={copy.directions()}/></p>
+    </div>
+    <p class="roadmap-p" data-disclosure="why"><Parts p={copy.why()}/></p>
+    <p class="roadmap-p" data-disclosure="s0b-6"><Parts p={copy.s0b6()}/></p>
+    <p class="roadmap-p" data-disclosure="ea-1">{copy.ea1}</p>
+    <p class="roadmap-p" data-disclosure="numeracy"><Parts p={copy.numeracy()}/></p>
+    <h3 class="roadmap-h3">{copy.gatesH3}</h3>
+    <ul class="rd-rules" data-gates="true">{copy.gates().map(g => <li><Parts p={g}/></li>)}</ul>
+    <p class="roadmap-p" data-audits="true"><Parts p={copy.audits()}/></p>
+  </section>
+
+  <section class="topic-section" id="secondary" aria-labelledby="secondary-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.secEyebrow}</p><h2 id="secondary-heading">{copy.secH2}</h2></div><p data-disclosure="secondary">{copy.secLede}</p></div>
+    <details class="rd-panel sr-panel">
+      <summary>{copy.secSummary}</summary>
+      {entryParts.map(p => <div class="ql-part" data-ql-part={p.part}>
+        <h3 class="roadmap-h3"><Parts p={copy.partTitle[p.part](p.entries![0].people)}/></h3>
+        {copy.partNote[p.part] && <p class="protocol-note">{copy.partNote[p.part]}</p>}
+        <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion(p.part)}>
+          <table data-ql-table={p.part}>
+            <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiffMixed}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMarginNone}</th><th scope="col">{copy.colGate}</th></tr></thead>
+            <tbody>{entryKeyOrder(p.part).map(e => <QlRow e={e} locale={locale}/>)}</tbody>
+          </table>
+        </div>
+      </div>)}
+      {S8.map((p, i) => <div class="ql-part" data-ql-part={p.part}>
+        <h3 class="roadmap-h3"><Parts p={copy.s8Title(i ? 'L1' : 'L0', (Object.values(p.rows!).find(r => 'estimate' in r) as QlRowT).people)}/></h3>
+        <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion(p.part)}>
+          <table data-ql-table={p.part}>
+            <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th></tr></thead>
+            <tbody>{Object.entries(p.rows!).map(([k, r]) => 'estimate' in r ? (() => { const { x, y } = rowXY(k, r); return <tr data-ql-row={`${p.part}|${k}`}>
+              <th scope="row"><span lang="en">{k}</span></th>
+              <td data-cell="estimate"><Parts p={rowEst(r)}/><span class="interval">{tc.interval95} <Parts p={iv(r)}/></span></td>
+              <td data-cell="difference" data-flag={r.difference}>{differenceText({ ...r, label: k }, x, y, locale)}</td>
+              <td data-cell="margin" data-flag={r.margin}>{marginText(r, x, locale)}</td></tr>; })()
+              : <tr data-ql-row={`${p.part}|${k}`}><th scope="row"><span lang="en">{k}</span></th><td colspan="3" data-null="true">{copy.notDefined}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </div>)}
+      <p class="protocol-note">{copy.s8Note}</p>
+      <div class="ql-part" data-ql-part="S12">
+        <h3 class="roadmap-h3"><Parts p={copy.s12Title(S12.by_sensor!.dry['TPL - CCA (12-way)'].people)}/></h3>
+        <p class="protocol-note">{copy.s12Note}</p>
+        <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion('S12')}>
+          <table data-ql-table="S12">
+            <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th></tr></thead>
+            <tbody>{Object.entries(S12.by_sensor!).map(([sensor, rows]) => <>
+              <tr class="subhead"><th colspan="4" scope="colgroup">{copy.sensor[sensor]}</th></tr>
+              {Object.entries(rows).map(([k, r]) => { const { x, y } = rowXY(k, r); return <tr data-ql-row={`S12|${sensor}|${k}`}>
+                <th scope="row"><span lang="en">{k}</span></th>
+                <td data-cell="estimate"><Parts p={rowEst(r)}/><span class="interval">{tc.interval95} <Parts p={iv(r)}/></span></td>
+                <td data-cell="difference" data-flag={r.difference}>{differenceText({ ...r, label: k }, x, y, locale)}</td>
+                <td data-cell="margin" data-flag={r.margin}>{marginText(r, x, locale)}</td></tr>; })}
+            </>)}</tbody>
+          </table>
+        </div>
+      </div>
+      {SX.map((p, i) => { const L = i ? 'L1' : 'L0', lv = p.levels as Record<string, any>; return <div class="ql-part" data-ql-part={p.part}>
+        <h3 class="roadmap-h3"><Parts p={copy.sxTitle(L, (Object.values(p.rows!)[0] as QlRowT).people)}/></h3>
+        <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion(p.part)}>
+          <table data-ql-table={p.part}>
+            <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colDiff}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMargin}</th></tr></thead>
+            <tbody>{Object.entries(p.rows!).map(([k, r]) => { const rr = r as QlRowT, { x, y } = rowXY(k, rr); return <tr data-ql-row={`${p.part}|${k}`}>
+              <th scope="row"><span lang="en">{k}</span></th>
+              <td data-cell="estimate"><Parts p={rowEst(rr)}/><span class="interval">{tc.interval95} <Parts p={iv(rr)}/></span></td>
+              <td data-cell="difference" data-flag={rr.difference}>{differenceText({ ...rr, label: k }, x, y, locale)}</td>
+              <td data-cell="margin" data-flag={rr.margin}>{marginText(rr, x, locale)}</td></tr>; })}</tbody>
+          </table>
+        </div>
+        <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.secRegion(`${p.part} levels`)}>
+          <table data-ql-table={`${p.part}-levels`}>
+            <caption>{copy.sxLevelsTitle(L)}</caption>
+            <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colRowSeen}</th><th scope="col">{copy.colRowUnseen}</th></tr></thead>
+            <tbody>{['S9 TPL', 'S9 DESC', 'S9 SHUF', 'S9 NUM'].map(k => <tr data-ql-row={`${p.part}|${k}`}><th scope="row"><span lang="en">{k}</span></th>
+              {(['seen_truth', 'unseen_truth'] as const).map(t => <td><Fig f={f(lv[k][t].estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(lv[k][t])}/></span></td>)}</tr>)}
+              <tr data-ql-row={`${p.part}|S10 NN(B-sh) (8-way)`}><th scope="row">{copy.nnBsh}</th><td colspan="2"><Fig f={f(lv['S10 NN(B-sh) (8-way)'].estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(lv['S10 NN(B-sh) (8-way)'])}/></span></td></tr>
+              {(['seen_ba', 'u8', 'u3'] as const).map(t => <tr data-ql-row={`${p.part}|S11 FBCCA ${t}`}><th scope="row">{copy.fbcca[t]}</th><td colspan="2"><Fig f={f(lv['S11 FBCCA levels'][t].estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivPct(lv['S11 FBCCA levels'][t])}/></span></td></tr>)}</tbody>
+          </table>
+        </div>
+      </div>; })}
+      <p class="protocol-note">{copy.s9Note}</p>
+
+      <div data-boas="true" data-domain="boas">
+        <h3 class="roadmap-h3">{copy.boasSecH3}</h3>
+        <BoasGaps locale={locale}/>
+        {boasEntryParts.map(p => <div class="ql-part" data-ql-part={p.part}>
+          <h3 class="roadmap-h3"><Parts p={copy.partTitle[p.part](p.entries![0].people)}/></h3>
+          <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion(p.part)}>
+            <table data-ql-table={p.part}>
+              <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colAsked}</th><th scope="col">{copy.colDiffMixed}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMarginNone}</th><th scope="col">{copy.colGate}</th></tr></thead>
+              <tbody>{entryKeyOrder(p.part).map(e => <QlRow e={e} locale={locale}/>)}</tbody>
+            </table>
+          </div>
+        </div>)}
+        <div class="ql-part" data-ql-part="S13-sleep">
+          <h3 class="roadmap-h3"><Parts p={copy.s13Title((Object.values(S13.rows!)[0] as QlRowT).people)}/></h3>
+          <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion('S13')}>
+            <table data-ql-table="S13-sleep">
+              <thead><tr><th scope="col">{copy.colComparison}</th><th scope="col">{copy.colLogR}</th><th scope="col">{copy.colShown}</th><th scope="col">{copy.colMarginR}</th></tr></thead>
+              <tbody>{Object.entries(S13.rows!).map(([k, r]) => { const rr = r as QlRowT; return <tr data-ql-row={`S13-sleep|${k}`}>
+                <th scope="row"><span lang="en">{k}</span></th>
+                <td data-cell="estimate"><Parts p={rowEst(rr)}/><span class="interval">{tc.interval95} <Parts p={iv(rr)}/></span></td>
+                <td data-cell="difference" data-flag={rr.difference}>{differenceText({ ...rr, label: k }, 'TPL', 'read-off', locale)}</td>
+                <td data-cell="margin" data-flag={rr.margin}>{marginText(rr, 'TPL', locale)}</td></tr>; })}</tbody>
+            </table>
+          </div>
+        </div>
+        <div class="ql-part" data-ql-part="S6">
+          <h3 class="roadmap-h3">{copy.s6Title}</h3>
+          <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secRegion('S6')}>
+            <table data-ql-table="S6">
+              <caption><Parts p={copy.s6Caption()}/></caption>
+              <thead><tr><th scope="col">{copy.colWording}</th><th scope="col">{copy.colNegated}</th><th scope="col">{copy.colOneMinus}</th><th scope="col">{copy.colPeople}</th></tr></thead>
+              <tbody>{negated.map(([k, c]) => { const a = c.negated_wording_auroc ?? c.auroc, b = c.one_minus_p_auroc ?? c.one_minus_p_REM_auroc; return <tr data-ql-row={`S6|${k}`}>
+                <th scope="row"><span lang="en">{k}</span></th>
+                <td><Fig f={a3(a.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(a)}/></span></td>
+                <td><Fig f={a3(b.estimate)} cls="metric"/><span class="interval">{tc.interval95} <Parts p={ivA3(b)}/></span></td>
+                <td><Fig f={n(a.people)} cls="metric"/></td></tr>; })}</tbody>
+            </table>
+          </div>
+          <p class="roadmap-p" data-reading="S6">{copy.s6Reading}</p>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <section class="topic-section" id="wordings" aria-labelledby="wordings-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.woEyebrow}</p><h2 id="wordings-heading">{copy.woH2}</h2></div></div>
+    <p class="roadmap-p" data-wordings="true"><Parts p={copy.wo()}/><a href={qlwRelease.licenseUrl} target="_blank" rel="noreferrer">{qlwRelease.license}</a>{zh ? '。' : '.'}</p>
+    <p class="roadmap-p"><a class="button" href={`/data/${QLW}`} download>{copy.woDownload}</a></p>
+    <p class="roadmap-p">{copy.synTable}</p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.synTable}>
+      <table data-ql-table="sleep-names">
+        <thead><tr><th scope="col">{copy.colStage}</th><th scope="col">{copy.colCanonical}</th><th scope="col">{copy.colSynonyms}</th></tr></thead>
+        <tbody>{stages.map(s => <tr><th scope="row"><span lang="en">{s}</span></th><td><q lang="en">{sleepCanon[s]}</q></td><td>{sleepSyn[s].map((w, i) => <>{i > 0 && (zh ? '、' : ', ')}<q lang="en">{w}</q></>)}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <ul class="rd-rules sr-limits" data-limits="true">{limits.map(x => <li>{x.text}{x.original && <span class="note-original" lang="en">{x.original}</span>}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notRunH3}</h3>
+    <ul class="rd-rules sr-not-run">{notRun.map(([a, b]) => <li><strong>{a.text}</strong>{sep}{b.text}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <ul class="rd-rules" data-not-published="true">{copy.notPub.map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.encodersH3}</h3>
+    <ul class="rd-rules" data-encoders="true">{Object.entries(R3.design.text_encoders).map(([id, x]) => <li><a href={`https://huggingface.co/${x.repo}`} target="_blank" rel="noreferrer" lang="en">{x.repo} ↗</a>{sep}{roleOf[id as 'bge'][locale]} · <span lang="en">{x.licence === 'mit' ? 'MIT' : x.licence === 'apache-2.0' ? 'Apache-2.0' : x.licence}</span> · <code>{x.commit.slice(0, 7)}</code></li>)}</ul>
+    <p class="citation-note">{copy.encodersNote}</p>
+    <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+    <div class="citation-list" id="credits">{credits.map(c => <article data-credit={c.id}>
+      <h3 lang="en">{c.name}</h3>
+      <p lang="en">{c.attribution}</p>
+      {c.paper && <p lang="en">{c.paper}</p>}
+      {c.computed_from && <p>{copy.mirrorNote}</p>}
+      {c.id === 'boas' && <p>{copy.boasCreditNote}</p>}
+      <p><a href={c.source} target="_blank" rel="noreferrer">{copy.sourceLink}</a> · <a href={c.licenseUrl} target="_blank" rel="noreferrer">{c.license}</a></p>
+    </article>)}</div>
+    <p class="citation-note">{copy.featuresNote[0]}<a href={hrefFor('/methods/cbramod/', locale)} lang="en">{copy.featuresNote[1]}</a>{copy.featuresNote[2]}<a href={hrefFor('/methods/reve/', locale)} lang="en">{copy.featuresNote[3]}</a>{copy.featuresNote[4]}</p>
+    <p class="citation-note" data-reve-terms="true">{fmTermsSentence([REVE_L], locale)} <a href={REVE_L.paper} target="_blank" rel="noreferrer" lang="en">REVE, {REVE_L.paper.replace(/^https:\/\/arxiv\.org\/abs\//, 'arXiv:')} ↗</a></p>
+    <h3 class="roadmap-h3">{copy.litH3}</h3>
+    <ul class="rd-literature">{literature.map(x => <li lang="en" data-ref={x.id}><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
+    <p class="citation-note">{tc.dataSource} <a href={`/data/${QL}`} download>{QL}</a> · {tc.schema} {qlRelease.schema}{tc.period}</p>
+    <p class="citation-note">{copy.dataSource2} <a href={`/data/${QLW}`} download>{QLW}</a> · {tc.schema} {qlwRelease.schema}{tc.period}</p>
+  </section>
+</TopicLayout>

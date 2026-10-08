@@ -11,6 +11,7 @@
 import EntityLayout from '../../../components/EntityLayout.astro';
 import TopicGroups from '../../../components/TopicGroups.astro';
 import TransferMap from '../../../components/TransferMap.astro';
+import JevCard from '../../../components/JevCard.astro';
 import { home, hrefFor, localeOf, localeParams, topicCards, topicChrome, topicsHubCopy } from '../../../data/i18n';
 import { topicPages } from '../../../data/topics';
 import { mapRows, mapStates } from '../../../data/transfer-map';
@@ -36,6 +37,7 @@ const structured = {
   <section class="topic-section topic-hub" aria-label={tc.questions}>
     <p class="protocol-note">{home[locale].topicsLede}</p>
     <TopicGroups locale={locale} level={2} readLabel={home[locale].readEvidence}/>
+    <JevCard locale={locale}/>
   </section>
   <section class="topic-section" id="transfer" aria-labelledby="transfer-heading">
     <div class="topic-heading"><div><p class="eyebrow">{c.mapEyebrow}</p><h2 id="transfer-heading">{c.mapH2}</h2></div></div>

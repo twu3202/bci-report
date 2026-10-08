@@ -7,6 +7,7 @@ import ScoreBar from '../../../components/ScoreBar.astro';
 import ReliableDecisions from '../../../components/ReliableDecisions.astro';
 import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
 import { decisionCopy, decisionRoadmap, decisionSources } from '../../../data/decision-research';
+import { jevScope } from '../../../data/questions-in-language';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 
 export const getStaticPaths = localeParams;
@@ -80,7 +81,7 @@ const copy = {
     description: `It depends on how often the decoder acts at all. In a cue-gated idle test with ${people} people, ${quiet.name} made ${quiet.falseActs} / ${idleN} false activations but detected ${quiet.commands} / ${cmdN} commands: a decoder that never acts never fires by mistake, so both numbers are read together.`,
     answer: `It depends on how often the decoder acts at all: one that never acts never fires by mistake, so its false activations mean something only beside the commands it caught. In a cue-gated idle test with [[${people}]] people, the quietest decoder, ${quiet.name}, made [[${quiet.falseActs} / ${idleN}]] false activations in idle trials but detected [[${quiet.commands} / ${cmdN}]] commands, and for [[${quiet.abstain}]] of those people its threshold rejected every command. In a separate test with [[${extPeople}]] other people, a CCA decoder with a threshold fixed on an earlier pilot accepted [[${ncAccepted}]] windows when a command was intended, and ${series(ncFalse, ', ', ' and ')} in three states where none was. A threshold fitted instead on [[${pRule.target_person_labels}]] of each person’s own windows accepted fewer non-control windows overall, and fewer in each state, but did not raise the share of commands both accepted and correct; the contrast cannot separate fitting the threshold to the person from simply having those labels. Both tests count per trial or per window rather than per hour: neither can say how often a decoder would fire by mistake over an hour of real rest.`,
     eyebrow: 'Abstention · reliable decisions · Jev-style research plan',
-    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. On two other protocols, the page then measures when a decoder should decline to decide: the first route of a Jev-style research plan, set out at the end.`,
+    dek: `On this site's idle protocol, ${quiet.name} made no false activation in ${idleN} idle trials — and detected ${quiet.commands} of ${cmdN} commands. ${quiet.abstain} of its ${people} people ended up with a threshold that rejects every command. On two other protocols, the page then measures when a decoder should decline to decide: the first route of a Jev-style research plan, set out at the end. ${jevScope.en}`,
     findingLabel: `${quiet.name}: idle false activations, ${people} people`,
     findingH3: `No false activation, and ${quiet.commands} ${noun(quiet.commands, 'command', 'commands')} in ${cmdN}`,
     findingP: `Thresholds are chosen on calibration data only, and a threshold may reject every command. For ${quiet.abstain} of ${people} people it did.`,
@@ -148,7 +149,7 @@ const copy = {
     description: `取决于解码器执行得有多频繁。在 ${people} 名被试的提示同步空闲测试中，${quiet.name} 的空闲误触发为 ${quiet.falseActs} / ${idleN}，但指令只检出 ${quiet.commands} / ${cmdN}：从不执行的解码器也就从不误触发，所以两个数字要放在一起读。`,
     answer: `取决于解码器执行得有多频繁：从不执行的解码器，也就从不误触发，所以误触发只有和它检出的指令放在一起读才有意义。在 [[${people}]] 名被试的提示同步空闲测试中，触发最少的解码器 ${quiet.name} 在空闲试次里的误触发为 [[${quiet.falseActs} / ${idleN}]]，但指令只检出 [[${quiet.commands} / ${cmdN}]]，并且有 [[${quiet.abstain}]] 名被试的阈值拒绝了全部指令。在另一组 [[${extPeople}]] 名被试的测试中，CCA 解码器使用在更早一个试点上固定的阈值，在有意发出指令时接受了 [[${ncAccepted}]] 个窗口，在无意发出指令的三种状态下分别误接受了 ${series(ncFalse, '、', ' 和 ')}。改用每名被试自己的 [[${pRule.target_person_labels}]] 个窗口拟合阈值后，被误接受的非控制窗口总体减少，每种状态下也都减少了，但被接受且正确的指令占比并没有提高；这项对比无法区分“按人拟合阈值”和“仅仅多了这些标签”各自的作用。两项测试都按试次或窗口计数，而不是按小时，所以说明不了在一个小时真实的休息中，解码器会误触发多少次。`,
     eyebrow: '拒识 · 可靠的决策 · Jev-style 研究计划',
-    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。本页随后在另外两个协议上测量解码器什么时候该拒绝作出决定——这是一个 Jev-style 研究计划的第一条路线，计划列在页末。`,
+    dek: `在本站的空闲协议上，${quiet.name} 在 ${idleN} 个空闲试次里没有一次误触发——同时在 ${cmdN} 条指令中只检出 ${quiet.commands} 条。它的 ${people} 名被试中有 ${quiet.abstain} 名最终用上了拒绝一切指令的阈值。本页随后在另外两个协议上测量解码器什么时候该拒绝作出决定——这是一个 Jev-style 研究计划的第一条路线，计划列在页末。${jevScope.zh}`,
     findingLabel: `${quiet.name}：空闲误触发，${people} 名被试`,
     findingH3: `没有误触发，${cmdN} 条指令只检出 ${quiet.commands} 条`,
     findingP: `阈值只用校准数据来选，而选出的阈值可能拒绝所有指令。${people} 名被试中有 ${quiet.abstain} 名正是如此。`,
@@ -319,6 +320,7 @@ const basis = idle.reviewBasis;
     <p class="protocol-note research-status">{plan.statusLine}</p>
     <p class="roadmap-p research-scope">{plan.scope}</p>
     <ol class="route-list">{plan.routes.map((r, i) => { const st = decisionRoadmap.routes[i]; return <li data-route={st.id} data-route-status={st.runStatus}><p class="eyebrow">{r.tag} · {r.status}</p><h3>{r.title}</h3><p>{r.body}</p>{st.runStatus === 'run' && r.runNote && <p class="route-run-note">{r.runNote}</p>}{r.boundary && <p class="route-boundary">{r.boundary}</p>}{st.runStatus === 'run' && r.resultsLink && <p class="route-results">{st.results.startsWith('#') ? <a href={hrefFor(`/topics/when-not-to-act/${st.results}`, locale)}>{r.resultsLink} ↑</a> : <a href={hrefFor(st.results, locale)}>{r.resultsLink} →</a>}</p>}</li>; })}</ol>
+    <p class="roadmap-p" data-jev-hub="true">{plan.hubLink[0]}<a href={hrefFor('/jev-style/', locale)}>{plan.hubLink[1]}</a></p>
     <h3 class="roadmap-sub">{plan.boundaryH3}</h3>
     <p class="roadmap-p">{plan.boundary}</p>
     <p class="roadmap-p">{plan.inputsNote}</p>

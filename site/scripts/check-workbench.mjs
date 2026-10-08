@@ -269,6 +269,8 @@ const topicPages=[
   ['shared-encoder','Can one EEG model answer several questions about the same data as well as separate models, and at what cost?'],
   // Owner decision: the large-source batch's later-session results (WBCIC-SHU, longitudinal RSVP, Forenzo).
   ['later-sessions','Does a decoder trained on an earlier session still work later?'],
+  // Owner approval of the results (2026-10-08): route 3 of the decision-research plan, questions in language.
+  ['questions-in-language','Can an EEG model answer questions asked in words?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
@@ -277,7 +279,8 @@ const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='screen-to-vr'?'context-update.json'
   :slug==='sleep-staging'?'large-source-update.json'
   :slug==='shared-encoder'?'shared-representation-update.json'
-  :slug==='later-sessions'?'later-sessions-update.json':'deployment-topics.json';
+  :slug==='later-sessions'?'later-sessions-update.json'
+  :slug==='questions-in-language'?'questions-in-language-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -379,7 +382,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？','questions-in-language':'EEG 模型能回答用文字提出的问题吗？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -620,11 +623,11 @@ for(const [label,path] of [['en',''],['zh','zh/']]){
 const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
 // The route-2 page (2026-10-07) carries contrasts in pp whose full-precision raw values, inside data-fig attributes
 // that the data-fig loop holds to the route-2 export, begin "0.230" and "0.231"; the later-sessions page's raw values
-// (a 35.4% interval bound, 0.0052730… and the like) contain them too. Those attributes are set aside here, and
-// everything printed, and every other attribute, is still read.
+// (a 35.4% interval bound, 0.0052730… and the like) contain them too, and so do the route-3 page's (2026-10-08). Those
+// attributes are set aside here, and everything printed, and every other attribute, is still read.
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
-    assert.ok(!pageOf(p).replace(/ data-fig="(?:shared-representation|later-sessions)-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+    assert.ok(!pageOf(p).replace(/ data-fig="(?:shared-representation|later-sessions|questions-in-language)-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
 
 // --- 2026-09-27 site update: when not to act, and the release log ----------
 // The abstention topic: every figure from the reviewed idle protocol, and a
@@ -647,16 +650,17 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(road.length>2000,label+': the roadmap section must render');
   // Since 2026-10-04 (owner approval) route 1 has been run; its results are their own section,
   // #reliable-decisions, before this one. Since 2026-10-07 (owner approval) route 2 has been run too; its
-  // results are their own question, /topics/shared-encoder/. The roadmap stays a plan: each route carries
-  // its own status, route 3 is not run, and nothing in the section is a figure.
+  // results are their own question, /topics/shared-encoder/. Since 2026-10-08 (owner approval of the results)
+  // route 3 as well: /topics/questions-in-language/. The roadmap stays a plan: each route carries its own status,
+  // and nothing in the section is a figure.
   assert.match(road,/data-status="plan"/,label+': the roadmap is a plan');
-  assert.match(road,/data-run-status="routes-1-2-run"/,label+': the roadmap says routes 1 and 2 have been run');
-  assert.match(road,label==='en'?/Status: the first two routes have been run\. The first route’s results are in the section above, the second’s on their own page\. The third route has not been run\./
-                                :/状态：前两条路线已经运行。第一条的结果见上一节，第二条的结果在单独的页面上；第三条路线尚未运行。/,label+': the roadmap states each route\'s status in words');
-  assert.doesNotMatch(road,/No experiment in this section has been run|本节中的实验都尚未运行|The other two routes have not been run|另外两条路线尚未运行/,label+': an old status line');
+  assert.match(road,/data-run-status="routes-1-2-3-run"/,label+': the roadmap says all three routes have been run');
+  assert.match(road,label==='en'?/Status: all three routes have been run\. The first route’s results are in the section above; the second’s and the third’s are on their own pages\./
+                                :/状态：三条路线都已运行。第一条的结果见上一节；第二条和第三条的结果各在单独的页面上。/,label+': the roadmap states each route\'s status in words');
+  assert.doesNotMatch(road,/No experiment in this section has been run|本节中的实验都尚未运行|The other two routes have not been run|另外两条路线尚未运行|The third route has not been run|第三条路线尚未运行|the first two routes have been run|前两条路线已经运行/,label+': an old status line');
   const routes=[...road.matchAll(/<li data-route="([^"]+)" data-route-status="([^"]+)">([\s\S]*?)<\/li>/g)];
-  assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','run'],['questions-in-language','not_run']],label+': one status per route, routes 1 and 2 run, route 3 not run');
-  const [r1,r2,...later]=routes.map(m=>m[3]);
+  assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','run'],['questions-in-language','run']],label+': one status per route, all three run');
+  const [r1,r2,r3]=routes.map(m=>m[3]);
   assert.match(r1,label==='en'?/<p class="eyebrow">First · Run · results above<\/p>/:/<p class="eyebrow">首先 · 已运行 · 结果见上一节<\/p>/,label+': route 1 says it was run');
   assert.ok(r1.includes(`href="${label==='zh'?'/zh':''}/topics/when-not-to-act/#reliable-decisions"`),label+': route 1 links its results');
   // The plan promised acceptance per class and reliability; the run published neither (review of 2026-10-05).
@@ -668,10 +672,14 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(r2.includes(`<p class="route-results"><a href="${label==='zh'?'/zh':''}/topics/shared-encoder/">`),label+': route 2 links its page');
   assert.match(r2,label==='en'?/<p class="route-run-note">Run on motor imagery \(OpenBMI\) and sleep \(BOAS, with EESM19 as a crude replication\)\. One secondary arm, CBraMod adapted by LoRA on sleep, ran after the other results were known; its design was fixed beforehand\.<\/p>/
                               :/<p class="route-run-note">在运动想象（OpenBMI）和睡眠（BOAS，EESM19 作粗略重复）上运行。有一项次要设置——在睡眠上用 LoRA 适配 CBraMod——是在其他结果已知之后才运行的；它的设计事先已定。<\/p>/,label+': route 2 says where it ran and that E2 sleep ran last');
-  for(const r of later){
-    assert.match(r,label==='en'?/<p class="eyebrow">Later · Not run<\/p>/:/<p class="eyebrow">之后 · 尚未运行<\/p>/,label+': route 3 is not run');
-    assert.doesNotMatch(r,/href=|route-results|reliable-decisions|shared-encoder/,label+': a route that has not run links no result');
-  }
+  // Route 3 (2026-10-08): run, its results on their own page, linked; its run note names where it ran and that the
+  // pre-run check was revised twice by the owner after failing, the second time over its own "no further revision".
+  assert.match(r3,label==='en'?/<p class="eyebrow">Later · Run · results on their own page<\/p>/:/<p class="eyebrow">之后 · 已运行 · 结果在单独的页面上<\/p>/,label+': route 3 says it was run');
+  assert.ok(r3.includes(`<p class="route-results"><a href="${label==='zh'?'/zh':''}/topics/questions-in-language/">`),label+': route 3 links its page');
+  assert.match(r3,label==='en'?/<p class="route-run-note">Run on SSVEP \(BETA\) and sleep \(BOAS\), with EESM19, OpenBMI motor imagery and Wearable-102 as secondary data\. The pre-run permutation check failed twice and the owner revised it each time, the second time overriding its own “no further revision”; both failures are disclosed with the results\.<\/p>/
+                              :/<p class="route-run-note">在 SSVEP（BETA）和睡眠（BOAS）上运行，EESM19、OpenBMI 运动想象和 Wearable-102 作为次要数据。运行前的置换检查失败了两次，所有者每次都对它作了修订，第二次推翻了它自己写下的“不再修订”；两次失败都与结果一起披露。<\/p>/,label+': route 3 says where it ran and that its pre-run check was revised twice');
+  // The three routes in one place (/jev-style/), linked from the roadmap, where the scope sentence stands.
+  assert.ok(road.includes(`<p class="roadmap-p" data-jev-hub="true">`)&&road.includes(`href="${label==='zh'?'/zh':''}/jev-style/"`),label+': the roadmap links the Jev-style page');
   assert.ok(html.indexOf('id="reliable-decisions"')>0&&html.indexOf('id="reliable-decisions"')<html.indexOf('id="decision-research"'),label+': the results section comes before the roadmap, outside its slice');
   // A plan carries no figure: no percentage, no decimal, no speed-up, no ms.
   // Visible text only: arXiv identifiers in link targets are not figures.
@@ -688,8 +696,8 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   // they are (one shared encoder: small EEGNets, CBraMod frozen or adapted; questions given by an identifier, never in
   // language). The review of 2026-10-07 had it name CBraMod too, not small encoders only.
   assert.match(html,label==='en'
-    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained models that share one encoder \(small EEGNets from scratch, and CBraMod frozen or adapted by LoRA\) and are given each question by an identifier, never in language; its results have their own page\./
-    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
+    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained models that share one encoder \(small EEGNets from scratch, and CBraMod frozen or adapted by LoRA\) and are given each question by an identifier, never in language; its results have their own page\. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; that head is not a language model either, and its results have their own page\./
+    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；这个分类头同样不是语言模型，它的结果也有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
   assert.doesNotMatch(html,/not a model BCI Report has trained|更不是本站训练出的模型/i,label+': the old scope said no model was trained');
   assert.doesNotMatch(html,/There are no results here yet|目前还没有任何结果/,label+': the old no-results scope sentence');
   assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
@@ -757,10 +765,23 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.doesNotMatch(sec,/47\.9%|97\.9%|83\.9%|58\.3%|16\.7%|68\.8%|8\.3%/,label+': an individual rate leaked');
 }
 
-// The published payload stays English. Chinese lives in the display layer only.
-for(const file of readdirSync(new URL(DIST+'data/',import.meta.url)))
-  assert.equal(/\p{Script=Han}/u.test(readFileSync(new URL(DIST+'data/'+file,import.meta.url),'utf8')),false,
-    'dist/data/'+file+': a download must not carry translated text');
+// The published payload stays English. Chinese lives in the display layer only. Route 3 (2026-10-08) is the one
+// exception, and only where its Chinese is data: the Chinese wordings the S5 heads were asked with (the wordings
+// file's zh lists), the owner's decisions quoted as given in chat, and the export's own Chinese key findings, failure
+// reading and BOAS gaps, which the pages do not print (they write their own, glossary-checked). Anything else in
+// either file must be English.
+const zhAllowed={
+  'questions-in-language-wordings.json':j=>{for(const k of Object.keys(j.lists))if(k.startsWith('zh/'))delete j.lists[k];},
+  'questions-in-language-update.json':j=>{const r=j.results['questions-in-language'];for(const k of r.key_findings)delete k.zh;delete r.pre_run_checks.why_they_failed.zh;
+    delete j.boas_conditions.gaps_zh;const pc=r.pre_run_checks,quote=/\("[^"]*\p{Script=Han}[^"]*"\)/gu;
+    pc.owner_override=pc.owner_override.replace(quote,'');for(const d of Object.values(pc.owner_decisions))d.decided=d.decided.replace(quote,'');
+    pc.decision_s0b6.decision=pc.decision_s0b6.decision.replace(quote,'');},
+};
+for(const file of readdirSync(new URL(DIST+'data/',import.meta.url))){
+  let text=readFileSync(new URL(DIST+'data/'+file,import.meta.url),'utf8');
+  if(zhAllowed[file]){const j=JSON.parse(text);zhAllowed[file](j);text=JSON.stringify(j);}
+  assert.equal(/\p{Script=Han}/u.test(text),false,'dist/data/'+file+': a download must not carry translated text');
+}
 assert.equal(existsSync(new URL(DIST+'zh/data-use/index.html',import.meta.url)),false,'/data-use/ stays English-only');
 for(const path of bilingual){
   assert.ok(sitemap.includes('<loc>https://bci.report/zh/'+path+'</loc>'),'sitemap must list zh/'+path);
@@ -2357,6 +2378,8 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     // The later-sessions card counts people only where the export does: WBCIC-SHU's two cohorts and the RSVP cohort.
     // Forenzo counts records, not proven unique people, so its count stays off the card.
     'later-sessions':{files:['later-sessions-update.json'],pins:[...Object.values(LTX.results['wbcic-cross-session-cpu'].cohorts).map(c=>c.people),LTX.results['rsvp-later-visits'].cohort.people]},
+    // Route 3 (2026-10-08): BETA's people only, as on route 2's card; no BOAS figure on a card. Wearable-102 is a name.
+    'questions-in-language':{files:['questions-in-language-update.json'],pins:[JSON.parse(readFileSync(new URL('data/questions-in-language-update.json',DIST),'utf8')).results['questions-in-language'].primary.blocks.find(b=>b.block==='P-ssvep-L0').people]},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -4673,6 +4696,339 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
   }
   assert.ok(pinned>300,'later-sessions: figures pinned to their cells ('+pinned+')');
   console.log(`PASS: later sessions — /topics/later-sessions/ in both languages: ${pinned} figures pinned to their cells from ${LTS}, the same figures in English and Chinese; WBCIC-SHU's two cohorts apart with priors and paired intervals; the RSVP subtitle word for word, three AUROC points with intervals and no curve, AP beside AUROC, delivered events null; Forenzo per cohort and arm in separate tables with mean, median, comparator and paired interval, coverage, nulls kept; required caveats present, forbidden readings only denied, no typed figure, holds figure-free, no Jev; one figure-free pointer from does-pretraining-help; Forenzo counted as records.`);
+}
+// --- Route 3, questions in language: the publication boundary (owner approval of the results, 2026-10-08) ---------
+// One JSON of results and one of wordings, each written by export_questions_in_language_update.py from a manifest
+// pinned by SHA-256 and checked by its own independent audit. Read from dist/ so a hand-edited build is caught. Pinned
+// here: both files served as reviewed; one result, no status-only source and no hold; 35 primary entries in three
+// blocks; every flag follows its interval and the frozen margins (2 pp; log 1.25 for log R), difference-only entries
+// carry no margin, R is exp(log R); seen, reworded and unseen entries are labelled apart; every BOAS figure pools at
+// least 20 people and no per-person, per-fold or percentile key is served; the pre-run checks are pass or fail and
+// counts, with the three canaries, the owner's override and the centring diagnostic not run; the S10 per-frequency
+// breakdowns are not served; the Jev scope and independence lines and Yu & Yao first among the references.
+{
+  const served=f=>readFileSync(new URL('data/'+f,DIST));
+  for(const f of ['questions-in-language-update.json','questions-in-language-wordings.json'])
+    assert.deepEqual(served(f),readFileSync(new URL('../src/data/'+f,import.meta.url)),'route 3: source and served '+f+' must be byte-identical');
+  const ql=JSON.parse(served('questions-in-language-update.json')),R=ql.results['questions-in-language'];
+  const qw=JSON.parse(served('questions-in-language-wordings.json'));
+  assert.deepEqual(Object.keys(ql.results),['questions-in-language'],'route 3: one result');
+  assert.deepEqual([ql.status_only,ql.holds],[[],[]],'route 3: no status-only source and no hold');
+  assert.ok(qw.release_id===ql.release_id&&ql.provenance.wordings_file==='questions-in-language-wordings.json'&&qw.license==='CC BY 4.0','route 3: the wordings file belongs to the same release, CC BY 4.0');
+  const blocks=R.primary.blocks;
+  assert.deepEqual(blocks.map(b=>[b.block,b.dataset,b.level,b.entries.length]),[['P-ssvep-L0','BETA','L0',10],['P-ssvep-L1','BETA','L1',10],['P-sleep-L1','BOAS','L1',15]],'route 3: three primary blocks');
+  assert.ok(R.primary.entries_count===35&&/^35 pre-declared comparisons, not corrected for multiplicity/.test(R.design.multiplicity),'route 3: 35 primary entries, no multiplicity correction');
+  const L125=Math.log(R.design.margins.p3_ratio),D=R.design.margins.delta_pp/100;
+  assert.ok(R.design.margins.delta_pp===2&&R.design.margins.p3_ratio===1.25,'route 3: the margins fixed at the freeze');
+  const entries=[...blocks.flatMap(b=>b.entries),...Object.values(R.secondary.parts).flatMap(p=>p.entries??[])];
+  assert.equal(entries.length,140,'route 3: 35 primary and 105 secondary entries');
+  const diffOnly=e=>/NN\(TPL\)|- NUM|SHUF unseen AUROC/.test(e.label);
+  for(const e of entries){
+    const [lo,hi]=e.interval_95,w='route 3: '+e.key;
+    assert.ok(lo<=e.estimate&&e.estimate<=hi,w+': the interval holds its point');
+    if(e.unit==='log R'){
+      assert.equal(e.difference,lo>0?'difference: the read-off leaves less error':hi<0?'difference: language arm higher':'no difference shown',w+': the flag follows the interval');
+      assert.equal(e.margin,-L125<lo&&hi<L125?'equivalent within the margin':hi<L125?'non-inferior':'margin not met',w+': the margin flag follows log 1.25');
+      assert.ok(Math.abs(Math.log(e.r.estimate)-e.estimate)<1e-9&&Math.abs(Math.log(e.r.interval_95[0])-lo)<1e-9&&Math.abs(Math.log(e.r.interval_95[1])-hi)<1e-9,w+': R is exp(log R)');
+    }else{
+      assert.equal(e.difference,hi<0?'difference: reference higher':lo>0?'difference: language arm higher':'no difference shown',w+': the flag follows the interval');
+      const tol=e.unit==='difference of AUROC'?null:D;
+      assert.equal(e.margin,diffOnly(e)||tol===null?'not applicable (difference only)':-tol<lo&&hi<tol?'equivalent within the margin':lo>-tol?'non-inferior':'margin not met',w+': the margin flag follows the 2-pp margin');
+    }
+    assert.ok(e.kind===({P1:'seen',P2:'rewording',P3:'unseen',P4:'unseen',P5:'unseen'})[e.id],w+': seen, reworded and unseen labelled apart');
+    assert.equal(e.single_seed,e.seeds===1,w+': single seed exactly where one seed was run');
+  }
+  for(const p of Object.values(R.secondary.parts).filter(p=>p.entries)) assert.ok(p.entries.every(e=>e.single_seed===!!p.single_seed),'route 3: '+p.part+' entries carry its seeds');
+  // BOAS: cohort aggregates of at least 20 people, n stated, no per-person, per-fold or percentile key.
+  const C=ql.boas_conditions;
+  assert.ok(C.minimum_cell_people===20&&C.smallest_cell_people===71&&C.participants==='pseudonymised in the public release'&&C.gaps.length===3&&C.owner_approval.extended_to_route_3,'route 3: BOAS conditions, D11');
+  const peopleIn=v=>Array.isArray(v)?v.flatMap(peopleIn):v&&typeof v==='object'?Object.entries(v).flatMap(([k,x])=>['people','included_people','training_people'].includes(k)&&Number.isInteger(x)?[x]:peopleIn(x)):[];
+  const boasTrees=[blocks[2],R.descriptive['P-sleep-L1'],R.secondary.flip_rates['flip-sleep-L1'],...Object.values(R.secondary.parts).filter(p=>p.boas)];
+  const boasPeople=peopleIn(boasTrees);
+  assert.ok(boasPeople.length>120&&Math.min(...boasPeople)===C.smallest_cell_people&&Math.min(...boasPeople)>=20,'route 3: every BOAS cell pools at least 20 people, and says how many');
+  assert.doesNotMatch(served('questions-in-language-update.json').toString(),/"(?:p[159]0(?:_pp)?|[^"]*percentile[^"]*|[^"]*per_person[^"]*|[^"]*per_fold[^"]*|[^"]*per_window[^"]*|demograph[^"]*|age|sex)":/i,'route 3: no per-person, per-fold, percentile or demographic key');
+  assert.ok(!('beta_by_cohort_and_frequency' in R.secondary)&&!JSON.stringify(R).includes('interior-only breakdown values'),'route 3: the unaudited S10 per-frequency breakdowns are not served');
+  // The pre-run checks: pass or fail and counts only.
+  const K=R.pre_run_checks.canaries;
+  assert.ok(!K.revision_3.pass&&!K.revision_4.pass&&K.revision_5.pass,'route 3: revision 3 failed, revision 4 failed, revision 5 passed');
+  assert.ok([...K.revision_3.cells_excluding_chance,...K.revision_4.cells_excluding_chance].every(c=>Object.keys(c).join()==='cell,side'),'route 3: a failed canary cell is named and its side given, never its value');
+  assert.ok(/not run/.test(R.pre_run_checks.centring_diagnostic)&&/no further revision/.test(R.pre_run_checks.owner_override)&&/S0b-6/.test(R.pre_run_checks.decision_s0b6.decision)&&/EA-1/.test(R.pre_run_checks.engineering_amendment_ea1.decision)&&R.pre_run_checks.numeracy_probe.activated===false,
+    'route 3: the owner override, the centring diagnostic not run, S0b-6, EA-1 and the numeracy prediction not activated');
+  assert.deepEqual(R.required_disclosures.map(d=>d.id),['revision-3-failed','revision-4-failed','revision-5-passed','owner-override','centring-diagnostic-not-run','revision-5-direction-counts','decision-s0b6','ea-1','numeracy-not-activated','multiplicity','secondary-single-seed-likely-inconclusive'],'route 3: the required disclosures');
+  // Jev: the scope sentence, the independence line, the vision paper as Yu & Yao, 2026.
+  assert.equal(R.route.jev_scope,'“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG.','route 3: the Jev scope sentence');
+  assert.match(R.route.independence,/independent and not affiliated with the Jev authors; no contact with them and no endorsement by them is claimed/,'route 3: the independence line');
+  assert.deepEqual([R.references[0].cite,R.references[0].url],['Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context','https://arxiv.org/abs/2609.25845'],'route 3: Visual Jev cited as Yu & Yao, 2026, first');
+  for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${ql.release_id}"`)&&pageOf(path).includes(ql.provenance.manifest_sha256),path+': the route-3 release and its manifest');
+}
+console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served as reviewed, one release; 35 primary entries in three blocks, 140 in all; every flag follows its interval and the frozen margins, difference-only entries without a margin, R = exp(log R); seen, reworded and unseen labelled apart; every BOAS cell at least 20 people, no per-person, per-fold, percentile or demographic key; S10 breakdowns not served; canaries pass or fail and counts, the override, centring diagnostic, S0b-6, EA-1 and numeracy disclosed; the Jev scope and independence lines; Yu & Yao, 2026 first.');
+
+// --- Route 3 on the site: /topics/questions-in-language/, its groups, and the Jev-style page -----------------------
+// The route's own question (owner approval of the results, 2026-10-08), its BETA and BOAS groups (and through them
+// the CBraMod page), the /jev-style/ page that gathers the three routes, and the cards that lead there. Every figure
+// is a data-fig re-read by the topic and entity loops above; pinned here: (1) every entry row prints its export's
+// estimate and interval, both flags in words and its gate, in a table of its own kind (seen, reworded and unseen never
+// share a table); (2) English and Chinese print the same figures; (3) the required disclosures are on the page in both
+// languages, with their counts; (4) "unseen" travels with "unseen by the EEG head, not by the text encoder"; (5) every
+// BOAS figure, on any page, lies in an element marked data-boas that holds the three gaps, the credit and
+// "pseudonymised", and each BOAS table states its n; the short answer, the description and the cards print none;
+// (6) the result sections type no figure of their own; (7) the secondary panel is collapsed and says, part by part,
+// one seed and declared likely inconclusive exactly where the export does; (8) the cite block names this release
+// alone and the Markdown copy carries every figure in order; (9) the Jev-style page: the scope sentence as its dek,
+// "independent" and "not affiliated with the Jev authors", the three routes each linked to its results, Yu & Yao,
+// 2026, the article link, and no figure at all; (10) "Jev-style" stands beside its scope sentence on every page and
+// in llms.txt; "Yu et al." and "jev-eeg" appear nowhere; (11) data use states the odd-median line, figure-free.
+{
+  const QLF='questions-in-language-update.json',QWF='questions-in-language-wordings.json';
+  const ql=JSON.parse(readFileSync(new URL('data/'+QLF,DIST),'utf8')),R=ql.results['questions-in-language'],qw=JSON.parse(readFileSync(new URL('data/'+QWF,DIST),'utf8'));
+  const DELTA=R.design.margins.delta_pp,RATIO=R.design.margins.p3_ratio;
+  const spanEnd=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let d=0,m;
+    while((m=re.exec(h))){d+=m[0].startsWith('</')?-1:1;if(!d)return m.index;}return h.length;};
+  const el=(h,sel,where)=>{const a=h.search(sel);assert.ok(a>=0,where+': '+sel+' renders');return h.slice(a,spanEnd(h,a));};
+  const vis=h=>decodeHtml(h.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  const esc=t=>String(t).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const has=(h,f,x,file=QLF)=>new RegExp(`data-fig="${esc(file)}\\|${f}\\|${esc(x)}"[^>]*>${esc(fmt[f](x))}<`).test(h);
+  const figAttrs=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]);
+  const blocks=R.primary.blocks,parts=R.secondary.parts;
+  const all=[...blocks.flatMap(b=>b.entries),...Object.values(parts).flatMap(p=>p.entries??[])];
+  // Words, written here independently of the page module (questions-in-language.ts).
+  const arms=e=>{const l=e.label;let m;
+    if((m=l.match(/^(TPL|DESC) - ID,/)))return [m[1],'ID'];if((m=l.match(/^(TPL\(a[12]\)|DESC\(a3\)) - (TPL|DESC)\(train\)/)))return [m[1],m[2]+'(train)'];
+    if((m=l.match(/^TPL - (CCA|NN\(TPL\)|NUM),/)))return ['TPL',m[1]];if((m=l.match(/^(TPL|DESC) \S+ \(/)))return [m[1],'read-off'];if(/^TPL - SHUF/.test(l))return ['TPL','SHUF'];
+    throw new Error('route 3: no arms in '+l);};
+  const diffWords=(e,zh)=>{const [x,y]=arms(e);return e.difference==='no difference shown'?(zh?'未显示差异':'No difference shown'):e.difference==='difference: the read-off leaves less error'?(zh?'读出剩余的错误更少':'Read-off leaves less error')
+    :`${e.difference==='difference: reference higher'?y:x}${zh?' 更高':' higher'}`;};
+  const marginWords=(e,zh)=>{const logr=e.unit==='log R',[x]=arms(e);return ({
+    'equivalent within the margin':logr?(zh?`在 ${RATIO} 的比值界值内等效`:`Equivalent within the ${RATIO} ratio margin`):(zh?`在 ±${DELTA} pp 内等效`:`Equivalent within ±${DELTA} pp`),
+    'non-inferior':logr?(zh?`${x} 非劣（比值界值 ${RATIO}）`:`${x} non-inferior at the ${RATIO} ratio`):(zh?`${x} 非劣（界值 ${DELTA} pp）`:`${x} non-inferior at ${DELTA} pp`),
+    'margin not met':logr?(zh?`未达到 ${RATIO} 的比值界值`:`${RATIO} ratio margin not met`):(zh?`未达到 ${DELTA} pp 界值`:`${DELTA} pp margin not met`),
+    'not applicable (difference only)':zh?'只读差异，不设界值':'Difference only: no margin'})[e.margin];};
+  const gateWords=(g,zh)=>g.label==='passes canary'?(zh?'通过捷径检查':'Passes the triviality canary'):g.label==='pass'?(zh?'通过余量门槛':'Headroom gate passed'):(zh?'本任务未声明捷径检查，未运行':'No canary declared for this task: not run');
+  const cellOf=(row,name)=>{const a=row.indexOf(`data-cell="${name}"`);assert.ok(a>0,'route 3: a row without its '+name+' cell');return row.slice(row.lastIndexOf('<td',a),row.indexOf('</td>',a));};
+  const flagOf=c=>decodeHtml((c.match(/data-flag="([^"]*)"/)||[])[1]??'');
+  const words=c=>decodeHtml(c.replace(/<[^>]+>/g,'')).trim();
+  // BOAS figures: leaves of the BOAS trees that no other part of the export carries.
+  const leavesIn=v=>{const out=new Set();const walk=x=>{if(typeof x==='number')out.add(x);else if(x&&typeof x==='object')Object.values(x).forEach(walk);};walk(v);return out;};
+  const boasTrees=[blocks[2],R.descriptive['P-sleep-L1'],R.secondary.flip_rates['flip-sleep-L1'],R.pre_run_checks.gates.headroom['P-sleep-L1'],...Object.values(parts).filter(p=>p.boas),ql.datasets.boas,ql.boas_conditions.smallest_cell_people];
+  const otherTrees=[blocks[0],blocks[1],R.descriptive['P-ssvep-L0'],R.descriptive['P-ssvep-L1'],R.secondary.flip_rates['flip-ssvep-L0'],R.secondary.flip_rates['flip-ssvep-L1'],
+    R.pre_run_checks.canaries,R.pre_run_checks.numeracy_probe,R.pre_run_checks.decision_s0b6,R.pre_run_checks.gates.headroom['P-ssvep-L0'],R.pre_run_checks.gates.headroom['P-ssvep-L1'],
+    R.pre_run_checks.gates.triviality,R.pre_run_checks.gates.readoff_floor,R.pre_run_checks.gates.fit_check,R.pre_run_checks.gates.shuffled_eeg_scorer_check,R.audits,R.primary.entries_count,
+    ...Object.values(parts).filter(p=>!p.boas),ql.datasets.beta,ql.datasets.eesm19,ql.datasets.openbmi,ql.datasets['wearable-ssvep-102']];
+  const other=leavesIn(otherTrees),boasOnly=new Set([...leavesIn(boasTrees)].filter(v=>!other.has(v)));
+  assert.ok(boasOnly.size>300&&boasOnly.has(100)&&boasOnly.has(71),'route 3: the BOAS-only figures, including its cohort of 100 and the 71 of N3');
+  // The same figures as printed: where no data-fig marks them (the short answer, the description, a card), their text.
+  const tokenSet=vals=>{const out=new Set();for(const v of vals)for(const k of ['pct1','pp2','sgn2','sgn3','auc3','auc2','num3','count'])for(const n of numbers(fmt[k](v)))out.add(n);return out;};
+  const otherTok=tokenSet(other),boasTok=new Set([...tokenSet(boasOnly)].filter(t=>!otherTok.has(t)));
+  const noBoas=(text,where)=>{for(const n of numbers(text))assert.ok(!boasTok.has(n),where+': "'+n+'" is a route-3 BOAS figure, printed where BOAS\'s gaps are not');};
+  const gapsIn=(blk,zh,where)=>{const t=decodeHtml(blk.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' '),C=ql.boas_conditions;
+    for(const [i,g] of C.gaps.entries()) assert.ok(t.includes(g)&&(!zh||t.includes(C.gaps_zh[i])),where+': the BOAS gap "'+g.slice(0,40)+'"'+(zh?' in Chinese with its English':''));
+    assert.ok(t.includes(zh?'被试在公开发布中是假名化的。':'Participants are pseudonymised in the public release.')&&t.includes(C.attribution)&&t.includes(C.not_an_evaluation_of),where+': the participants\' wording, what is not evaluated, the credit');};
+  let boasFigs=0;const boasPages=new Set();
+  for(const f of htmlPages){
+    const h=readFileSync(new URL(f,DIST),'utf8');
+    if(!h.includes(`data-fig="${QLF}|`)) continue;
+    const regions=[...h.matchAll(/<(\w+)\b[^>]*\sdata-boas="true"[^>]*>/g)].map(m=>[m.index,spanEnd(h,m.index)]).filter(([a,b])=>h.slice(a,b).includes('data-boas-gaps="true"'));
+    for(const m of h.matchAll(new RegExp(`data-fig="${QLF.replace(/\./g,'\\.')}\\|\\w+\\|([^"]+)"`,'g'))){
+      if(!boasOnly.has(Number(m[1]))) continue;
+      assert.ok(regions.some(([a,b])=>a<m.index&&m.index<b),f+': the route-3 BOAS figure '+m[1]+' lies outside every element that carries the three gaps');
+      boasFigs++;boasPages.add(f);
+    }
+    for(const [a,b] of regions) for(const [,blk] of h.slice(a,b).matchAll(/(<div class="protocol-note sr-boas-note" data-boas-gaps="true">[\s\S]*?<\/div>)/g)) gapsIn(blk,f.startsWith('zh/'),f);
+    // Each BOAS table states its n: a count of the BOAS cohort (or of the N3 subset) in the table or just above it.
+    for(const [a,b] of regions){const reg=h.slice(a,b);
+      for(const t of reg.matchAll(/<table\b[\s\S]*?<\/table>/g)){
+        if(![...t[0].matchAll(/data-fig="[^|"]+\|\w+\|([^"]+)"/g)].some(m=>boasOnly.has(Number(m[1])))) continue;
+        const ctx=reg.slice(Math.max(0,t.index-1500),t.index+t[0].length);
+        assert.ok(/\|count\|(?:100|71)"/.test(ctx)||/<td>(?:100|71)<\/td>/.test(t[0]),f+': a route-3 BOAS table states its n');
+      }}
+  }
+  assert.ok(boasFigs>500&&['topics/questions-in-language/index.html','zh/topics/questions-in-language/index.html','datasets/boas/index.html','methods/cbramod/index.html'].every(p=>boasPages.has(p)),
+    'route 3: BOAS figures read, each beside its gaps ('+boasFigs+' on '+boasPages.size+' pages, the topic, BOAS and CBraMod pages among them)');
+  let pinned=0;const figsOf={};
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'topics/questions-in-language/',where=path,html=pageOf(path);
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<nav class="topic-switcher"'));
+    figsOf[label]=figAttrs(main).sort();
+    assert.ok(figAttrs(main).length>1200&&figAttrs(main).every(a=>a.startsWith(QLF+'|')||a===`${QWF}|count|${qw.texts}`),where+': every figure is a leaf of the route-3 export (and the count of wordings)');
+    const order=['design','seen','unseen-sleep','unseen-frequency','checks','secondary','wordings','methods-and-limits'].map(id=>main.search(new RegExp(`<section\\b[^>]*\\sid="${id}"`)));
+    assert.ok(order.every((x,i)=>x>0&&(!i||x>order[i-1])),where+': design, seen, unseen sleep, unseen frequencies, checks, secondary, wordings, limits, in that order');
+    // (1) Every entry once, in a table of its own kind; its estimate, interval, flags in words and gate.
+    const rows=new Map([...main.matchAll(/<tr data-ql-entry="([^"]+)"[\s\S]*?<\/tr>/g)].map(m=>[m[1],m[0]]));
+    assert.equal(rows.size,all.length,where+': every route-3 entry has its row, once');
+    for(const e of all){
+      const row=rows.get(e.key),w=where+' '+e.key;assert.ok(row,w+': a row');
+      const est=cellOf(row,'estimate'),pp=e.unit==='difference of proportions';
+      assert.ok(pp?has(est,'pp2',e.estimate)&&has(est,'sgn2',e.interval_95[0])&&has(est,'pp2',e.interval_95[1]):has(est,'sgn3',e.estimate)&&has(est,'sgn3',e.interval_95[0])&&has(est,'sgn3',e.interval_95[1]),w+': the estimate and its interval');
+      if(e.r) assert.ok(has(est,'auc2',e.r.estimate)&&has(est,'auc2',e.r.interval_95[0])&&has(est,'auc2',e.r.interval_95[1]),w+': R and its interval beside log R');
+      const d=cellOf(row,'difference'),m=cellOf(row,'margin'),g=cellOf(row,'gate');
+      assert.ok(flagOf(d)===e.difference&&words(d)===diffWords(e,zh),w+': says "'+diffWords(e,zh)+'", not "'+words(d)+'"');
+      assert.ok(flagOf(m)===e.margin&&words(m)===marginWords(e,zh),w+': its margin flag with the margin');
+      assert.ok(flagOf(g)===e.gate.label&&words(g)===gateWords(e.gate,zh),w+': its gate');
+      pinned+=pp?3:3+(e.r?3:0);
+    }
+    for(const [t,id] of [['p1','P1'],['p2','P2'],['p3','P3'],['p4','P4'],['p5','P5']]){
+      const tab=el(main,new RegExp(`<table data-ql-table="${t}"`),where);
+      const keys=[...tab.matchAll(/data-ql-entry="([^"]+)"/g)].map(m=>m[1]);
+      assert.deepEqual(keys,blocks.flatMap(b=>b.entries).filter(e=>e.id===id).map(e=>e.key),where+': the '+id+' table holds the '+id+' entries alone: seen, reworded and unseen are never pooled');
+    }
+    // The short answer and the description: the three parts, and no BOAS figure.
+    const ans=el(main,/<section class="short-answer"/,where),answer=vis(ans),desc=decodeHtml(html.match(/<meta name="description" content="([^"]*)"/)[1]);
+    assert.ok(!ans.includes('data-fig'),where+': the short answer marks its figures as text');
+    noBoas(answer,where+' short answer');noBoas(desc,where+' description');
+    for(const page of [pfx,pfx+'topics/']){const h=pageOf(page);noBoas(vis(el(h,new RegExp(`<a class="topic-entry-card" href="${zh?'/zh':''}/topics/questions-in-language/"`),page+' card')),(page||'/')+' route-3 card');}
+    for(const s of zh?['只对训练过的问题成立','改写已见过的问题也有代价','EEG 分类头从未训练过的问题没有得到有用的回答','否定的问法']:['Only for questions it was trained on','Rewording a seen question cost accuracy too','Questions the EEG head was never trained on were not answered usefully','negated questions'])
+      assert.ok(answer.includes(s),where+': the short answer says "'+s+'"');
+    // (3) The required disclosures, with their counts.
+    const K=R.pre_run_checks.canaries,dirs=K.revision_5.single_head_intervals_excluding_exact_chance;
+    const disc=id=>el(main,new RegExp(`<[a-z]+ [^>]*data-disclosure="${id}"`),where+' '+id);
+    assert.ok(has(disc('revision-3'),'count',K.revision_3.intervals_excluding_chance)&&has(disc('revision-3'),'count',K.revision_3.intervals)&&vis(disc('revision-3')).includes(zh?'修订 3 失败':'Revision 3 failed'),where+': revision 3 failed, with its count');
+    assert.ok(has(disc('revision-4'),'count',K.revision_4.intervals_excluding_chance)&&vis(disc('revision-4')).includes(zh?'它也失败了':'It failed too')&&vis(disc('revision-4')).includes(zh?'“不再修订”':'“no further revision”')
+      &&vis(disc('revision-4')).includes(zh?'所有者在看到它如何失败之后推翻了这一条':'The owner overrode that after seeing how it failed')&&vis(disc('revision-4')).includes(zh?'按人中心化诊断没有运行':'centring diagnostic was not run'),where+': revision 4 failed, the owner\'s override, the centring diagnostic not run');
+    assert.ok(has(disc('revision-5'),'count',K.revision_5.intervals_excluding_zero)&&has(disc('revision-5'),'count',K.revision_5.replicates)&&has(disc('revision-5'),'count',K.revision_5.fits)&&vis(disc('revision-5')).includes(zh?'修订 5 通过':'Revision 5 passed'),where+': revision 5 passed');
+    for(const v of [K.revision_5.single_head_tests,dirs.total,dirs.above,dirs.below,K.revision_5.cells_with_single_head_failures_in_both_directions]) assert.ok(has(disc('directions'),'count',v),where+': the direction counts, '+v);
+    assert.ok(vis(disc('directions')).includes(zh?'BOAS 的格子只以通过或失败及计数发布':'BOAS cells are published as pass or fail and counts only'),where+': BOAS canary cells as counts only');
+    assert.ok(vis(disc('s0b-6')).includes(zh?'决定 S0b-6':'Decision S0b-6')&&vis(disc('ea-1')).includes(zh?'工程修订 EA-1':'Engineering amendment EA-1'),where+': S0b-6 and EA-1');
+    assert.ok(vis(disc('numeracy')).includes(zh?'预先声明的数感预测没有触发':'The declared numeracy prediction was not activated')&&R.pre_run_checks.numeracy_probe.spearman_rho['bge/frame0']&&has(disc('numeracy'),'auc3',R.pre_run_checks.numeracy_probe.spearman_rho['bge/frame0']),where+': the numeracy prediction, not activated, with its rho');
+    const mult=el(main,/<p class="protocol-note" id="multiplicity"/,where);
+    assert.ok(has(mult,'count',R.primary.entries_count)&&vis(mult).includes(zh?'不做多重比较校正':'no multiplicity correction'),where+': 35 primary comparisons, no multiplicity correction');
+    assert.ok(vis(disc('secondary')).includes(zh?'在运行之前声明为多半无法下结论':'declared likely inconclusive before the run')&&vis(disc('secondary')).includes(zh?'单个随机种子不含训练过程的随机波动':'a single seed carries no training-run variance'),where+': secondary results single-seed and declared likely inconclusive');
+    // (4) Unseen by whom.
+    for(const id of ['unseen-sleep','unseen-frequency']) assert.ok(vis(el(main,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where).slice(0,4000)).includes(zh?'EEG 分类头没有见过，但文本编码器读过这些词':'Unseen by the EEG head, not by the text encoder'),where+': #'+id+' says unseen by whom');
+    assert.ok(vis(el(main,/<p class="roadmap-p" data-kinds="true"/,where)).includes(zh?'“未见过”始终指 EEG 分类头没有见过，而不是文本编码器没有见过':'“Unseen” always means unseen by the EEG head, not by the text encoder'),where+': the design says what unseen means');
+    // (6) The result sections type no figure: what is left are design labels (margins, thresholds, revision, rotation
+    // and synonym numbers, the 95% level), never a result.
+    const allowed=new Set(['0','1','2','3','4','5','0.3','0.5','0.55','1.25','95%']);
+    for(const id of ['seen','unseen-sleep','unseen-frequency','checks','secondary']){
+      let sec=el(main,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where).replace(/<span data-fig="[^"]*"[^>]*>[^<]*<\/span>/g,' ').replace(/<q\b[\s\S]*?<\/q>/g,' ').replace(/<div class="protocol-note sr-boas-note"[\s\S]*?<\/div>/g,' ');
+      let t=vis(sec).replace(/bge-small-en-v1\.5|all-MiniLM-L6-v2|multilingual-e5-small|Wearable-102/g,' ').replace(/\b[A-Za-z]+\(?[A-Za-z]*\d+[A-Za-z]*\)?(?:-\d+)?/g,' ').replace(/\d+-way|\d+ 选 1/g,' ');
+      const typed=[...t.matchAll(/\d[\d,]*(?:\.\d+)?%?/g)].map(m=>m[0].replace(/,$/,'')).filter(x=>!allowed.has(x));
+      assert.deepEqual(typed,[],where+': #'+id+' types a figure outside the export');
+    }
+    // (7) The secondary panel: collapsed; each part says one seed and declared likely inconclusive exactly where the export does.
+    const sec=el(main,/<section\b[^>]*\sid="secondary"/,where);
+    assert.ok(/<details class="rd-panel sr-panel">/.test(sec),where+': the secondary panel is collapsed');
+    for(const p of Object.values(parts).filter(p=>p.entries)){
+      const t=vis(el(sec,new RegExp(`<div class="ql-part" data-ql-part="${p.part}"`),where).match(/<h3[^>]*>[\s\S]*?<\/h3>/)[0]);
+      assert.equal(t.includes(zh?'一个随机种子':'one seed'),!!p.single_seed,where+': '+p.part+' says one seed exactly where it is');
+      assert.equal(t.includes(zh?'事先声明多半无法下结论':'declared likely inconclusive'),!!p.declared_likely_inconclusive,where+': '+p.part+' says declared likely inconclusive exactly where it was');
+      assert.ok(has(el(sec,new RegExp(`<div class="ql-part" data-ql-part="${p.part}"`),where),'count',p.entries[0].people),where+': '+p.part+' states its n');
+    }
+    for(const p of ['S6','S13-sleep','S3-sleep','S4-sleep-L1','S5-sleep-L1']) assert.ok(el(sec,/<div data-boas="true" data-domain="boas"/,where).includes(`data-ql-part="${p}"`),where+': '+p+' sits in the BOAS region');
+    // The limits, in the page's language, each Chinese with its English.
+    const lim=el(main,/<ul class="rd-rules sr-limits" data-limits="true"/,where);
+    assert.equal((lim.match(/<li>/g)||[]).length,R.limitations.length,where+': every required limitation');
+    for(const x of R.limitations) assert.ok(decodeHtml(lim).includes(x),where+': the limitation "'+x.slice(0,50)+'"'+(zh?' beside its Chinese':''));
+    // Credits, encoders, references; the wordings file; the data-source notes name files and schemas, no date.
+    const lm=el(main,/<section\b[^>]*\sid="methods-and-limits"/,where);
+    for(const id of ['beta','boas','eesm19','openbmi','wearable-ssvep-102']) assert.ok(decodeHtml(lm).includes(ql.datasets[id].attribution)&&lm.includes(`href="${ql.datasets[id].licenseUrl}"`),where+': credits '+id);
+    for(const x of Object.values(R.design.text_encoders)) assert.ok(lm.includes(`href="https://huggingface.co/${x.repo}"`)&&lm.includes(x.commit.slice(0,7)),where+': the text encoder '+x.repo);
+    // Wearable-102: its Sensors paper beside the Figshare v4 record, and the author mirror it was computed from (the handoff).
+    {const wc=el(lm,/<article data-credit="wearable-ssvep-102"/,where);
+     assert.ok(wc.includes('10.3390/s21041256')&&wc.includes('10.6084/m9.figshare.13560281.v4')&&vis(wc).includes(zh?'清华 BCI 实验室作者官方镜像快照':'Tsinghua BCI Lab author mirror snapshot'),where+': Wearable-102 cites its Sensors paper and the Figshare v4 record, and names the author mirror');}
+    // REVE-L: the licence asks that the paper be cited and the model version named (the handoff; foundation-models.ts).
+    {const rt=el(lm,/<p class="citation-note" data-reve-terms="true"/,where);
+     assert.ok(rt.includes('href="https://arxiv.org/abs/2510.21585"')&&vis(rt).includes('REVE Large @ 317531c7')&&vis(rt).includes(zh?'REVE 负责任使用许可 v1.0':'REVE Responsible Use License v1.0')&&vis(lm).includes(zh?'Large @ 317531c7，即 REVE-L':'Large @ 317531c7, REVE-L'),where+': REVE-L names its version, its licence and its paper');}
+    assert.deepEqual([...lm.matchAll(/<li lang="en" data-ref="([^"]+)"><a href="([^"]+)"/g)].map(m=>[m[1],m[2]]),R.references.map(r=>[r.id,r.url]),where+': the references, Yu & Yao first');
+    assert.ok(has(main,'count',qw.texts,QWF)&&main.includes(`href="/data/${QWF}" download`),where+': the wordings, counted and downloadable');
+    const notes=[...lm.matchAll(/<p class="citation-note">((?:Data source:|数据来源：|Wordings:|问法：)[\s\S]*?)<\/p>/g)].map(m=>vis(m[1]));
+    assert.deepEqual(notes,[`${zh?'数据来源：':'Data source:'} ${QLF} · schema ${ql.schema_version}${zh?'。':'.'}`,`${zh?'问法：':'Wordings:'} ${QWF} · schema ${qw.schema_version}${zh?'。':'.'}`],where+': the data-source notes name the files and schemas, and no date');
+    // (8) The cite block names this release alone; the Markdown copy carries every figure in order.
+    assert.equal(html.slice(html.indexOf('<section class="cite-page"')).match(/data-releases="([^"]+)"/)[1],ql.release_id,where+': the cite block names this release alone');
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');let at=0;
+    for(const [,t] of main.slice(main.indexOf('<section class="short-answer"')).matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)){const k=md.indexOf(decodeHtml(t),at);assert.ok(k>=0,where+'index.md: the figure "'+t+'" after offset '+at);at=k+t.length;}
+    // The Jev origin: the scope sentence beside the name, and the page is not called a language model.
+    const jev=el(main,/<p class="protocol-note" data-jev-scope="true"/,where);
+    assert.ok(vis(jev).includes(zh?'这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':'This is not an integration with Jev and not a Jev model that reads EEG.')&&jev.includes('href="https://arxiv.org/abs/2609.25845"')&&jev.includes(`href="${zh?'/zh':''}/jev-style/"`),where+': the Jev origin with its scope, the paper and the Jev-style page');
+  }
+  // (2) The same figures in both languages.
+  assert.deepEqual(figsOf.zh,figsOf.en,'questions-in-language: the Chinese page prints exactly the English page\'s figures');
+  // The groups: BETA and BOAS, every primary entry of each, read on the topic page; BOAS's inside its gaps.
+  for(const pfx of ['','zh/']){
+    for(const [ds,b] of [['beta',[0,1]],['boas',[2]]]){
+      const h=pageOf(pfx+'datasets/'+ds+'/'),g=el(h,/<section class="entity-group" id="g-questions-in-language"/,pfx+'datasets/'+ds);
+      assert.equal(/data-boas="true"/.test(g.slice(0,g.indexOf('>'))),ds==='boas',pfx+'datasets/'+ds+': the route-3 group is marked data-boas exactly on BOAS');
+      assert.equal((g.match(/<tbody>[\s\S]*?<\/tbody>/)[0].match(/<tr>/g)||[]).length,b.reduce((s,i)=>s+blocks[i].entries.length,0),pfx+'datasets/'+ds+': every primary entry of the dataset');
+      assert.ok(g.includes(`data-ql-limits="${ds}"`)&&g.includes(`href="/${pfx}topics/questions-in-language/`),pfx+'datasets/'+ds+': the route-3 limitations, and the topic page linked');
+      // The two failed canary revisions and the owner's override travel wherever route-3 results appear (the handoff).
+      {const lim=decodeHtml(el(g,/<p class="protocol-note ql-limits-note"/,pfx+'datasets/'+ds).replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ');
+       assert.ok(lim.includes(pfx?'运行前的标签置换金丝雀检查失败了两次':'The pre-run permutation canary failed twice')&&lim.includes(pfx?'推翻了修订 4 写下的“不再修订”':'overrode revision 4\'s "no further revision"'),pfx+'datasets/'+ds+': the route-3 group discloses the two failed canaries and the owner\'s override');}
+      for(const e of b.flatMap(i=>blocks[i].entries)) assert.ok(g.includes(`|${e.estimate}"`),pfx+'datasets/'+ds+': '+e.key);
+    }
+    const cb=pageOf(pfx+'methods/cbramod/');
+    for(const id of ['g-beta-questions-in-language','g-boas-questions-in-language']) assert.ok(cb.includes(`id="${id}"`),pfx+'methods/cbramod/: the route-3 group '+id);
+  }
+  // (9) The Jev-style page.
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'jev-style/',html=pageOf(path),where=path;
+    const main=html.slice(html.indexOf('<main'),html.indexOf('</main>'));
+    assert.ok(html.includes(`<h1>${zh?'Jev 式提问用在脑电上：证据':'Jev-style questions on EEG: the evidence'}</h1>`)&&html.includes(`<title>${zh?'Jev 式提问用在脑电上：证据':'Jev-style questions on EEG: the evidence'} · BCI Report</title>`),where+': its title');
+    const dek=vis(el(main,/<p class="topic-dek"/,where));
+    assert.equal(dek,zh?'“Jev-style”（Jev 式）指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':R.route.jev_scope,where+': the scope sentence stands under the name');
+    const ind=vis(el(main,/<p class="protocol-note" data-independence="true"/,where));
+    assert.ok(zh?ind.includes('独立项目')&&ind.includes('与 Jev 的作者没有关联'):ind.includes('independent')&&ind.includes('not affiliated with the Jev authors'),where+': independent, not affiliated with the Jev authors');
+    assert.match(ind,zh?/不声称与他们有过联系，也不声称得到他们的认可/:/no contact with them and no endorsement by them is claimed/,where+': no contact or endorsement claimed');
+    assert.ok(main.includes('href="https://arxiv.org/abs/2609.25845"')&&decodeHtml(main).includes('Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context'),where+': Visual Jev, cited as Yu & Yao, 2026');
+    const routes=[...main.matchAll(/<li data-route="([^"]+)" data-route-status="([^"]+)">([\s\S]*?)<\/li>/g)];
+    assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','run'],['questions-in-language','run']],where+': the three routes, each run');
+    const hrefs=routes.map(m=>m[3].match(/<p class="route-results"><a href="([^"]+)"/)[1]);
+    assert.deepEqual(hrefs,[`/${pfx}topics/when-not-to-act/#reliable-decisions`,`/${pfx}topics/shared-encoder/`,`/${pfx}topics/questions-in-language/`].map(h=>h.replace('//','/')),where+': each route links its results');
+    assert.ok(main.includes('href="https://huggingface.co/blog/Twu31/when-should-an-eeg-decoder-abstain"')&&/<p class="citation-note" id="jev-article">/.test(main),where+': the article, low-key');
+    assert.ok(!main.includes('data-fig')&&!/\d/.test(vis(main.replace(/<cite\b[\s\S]*?<\/cite>/g,' ').replace(/<nav class="breadcrumbs"[\s\S]*?<\/nav>/,' '))),where+': the page types no figure');
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${pfx}jev-style/</loc>`),where+': sitemap');
+    assert.ok(html.includes('hreflang="zh-Hans" href="https://bci.report/zh/jev-style/"')&&html.includes('hreflang="en" href="https://bci.report/jev-style/"'),where+': reciprocal hreflang');
+    assert.doesNotMatch(html,/\sstyle="|<style[\s>]|\son(?:click|load|error|change|submit)=/,where+': the CSP forbids inline style and handlers');
+    assert.ok(distFiles.includes(path+'index.md'),where+': its Markdown copy');
+    if(zh){const t=chineseOnly(html);for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(t,bad),where+': "'+bad+'" is a rejected rendering — use "'+good+'"');}
+  }
+  assert.ok(llms.includes('https://bci.report/jev-style/index.md'),'llms.txt: the Jev-style page');
+  // The cards that lead there: under the core matrix and on the Questions hub, the scope sentence and the independence line inside.
+  for(const [page,zh] of [['',false],['zh/',true],['topics/',false],['zh/topics/',true]]){
+    const h=pageOf(page),card=el(h,/<a class="jev-card"/,page||'/');
+    assert.ok(card.includes(`href="${zh?'/zh':''}/jev-style/"`)&&vis(card).includes(zh?'这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':'This is not an integration with Jev and not a Jev model that reads EEG.')&&vis(card).includes(zh?'与 Jev 的作者没有关联':'not affiliated with the Jev authors')&&!/\d/.test(vis(card)),(page||'/')+': the Jev-style card, its scope and independence, no figure');
+    if(page===''||page==='zh/'){const ov=el(h,/<section id="overview"/,page||'/');assert.ok(ov.includes('class="jev-card"')&&ov.indexOf('class="jev-card"')>ov.indexOf('class="matrix-frame"'),(page||'/')+': the card sits under the core matrix');}
+  }
+  // (10) "Jev-style" stands beside its scope sentence: on every page, the innermost section or card holding a mention
+  // holds the sentence too (the page's main, for the breadcrumb); in llms.txt, the same line does.
+  const scopeMark=/This is not an integration with Jev and not a Jev model that reads EEG|这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型/;
+  let mentions=0;
+  for(const f of htmlPages){
+    const raw=readFileSync(new URL(f,DIST),'utf8'),body=raw.slice(raw.indexOf('<body')).replace(/<script\b[\s\S]*?<\/script>/g,s=>' '.repeat(s.length)).replace(/<section class="cite-page"[\s\S]*?<\/section>/,s=>' '.repeat(s.length));
+    // A card is a box of its own; an inline link is read with the section around it.
+    const opens=[...body.matchAll(/<(?:section|main)\b[^>]*>|<a class="[^"]*card[^"]*"[^>]*>/g)].map(m=>[m.index,spanEnd(body,m.index)]);
+    for(const m of body.matchAll(/Jev-style|Jev 式/g)){
+      // A mention inside a tag's attribute (a title or aria-label) is read with its element's text.
+      const box=opens.filter(([a,b])=>a<m.index&&m.index<b).sort((x,y)=>(x[1]-x[0])-(y[1]-y[0]))[0];
+      assert.ok(box&&scopeMark.test(decodeHtml(body.slice(box[0],box[1]).replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ')),f+': "Jev-style" stands without its scope sentence in its section — “…'+vis(body.slice(Math.max(0,m.index-120),m.index+60))+'…”');
+      mentions++;
+    }
+  }
+  for(const line of llms.split('\n').filter(l=>/Jev-style|Jev 式/.test(l))) assert.match(line,scopeMark,'llms.txt: "Jev-style" without its scope sentence on its line');
+  assert.ok(mentions>=20,'route 3: the Jev-style mentions read ('+mentions+')');
+  // "Yu et al." for Visual Jev, and a "jev-eeg" name, nowhere: not in the built site, the README, the citation files or the HF card's builder.
+  const repoText=['../../README.md','../../CITATION.cff','../../.zenodo.json','../../pipeline/publication/build_hf_dataset.py'].map(p=>readFileSync(new URL(p,import.meta.url),'utf8'));
+  for(const f of distFiles.filter(f=>/\.(?:html|md|txt|xml)$/.test(f))) assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Yu et al\.|jev-eeg/i,f+': "Yu et al." or a jev-eeg name');
+  for(const t of repoText) assert.doesNotMatch(t,/Yu et al\.|jev-eeg/i,'the README, the citation files or the HF card builder: "Yu et al." or a jev-eeg name');
+  // (11) Data use: a median over an odd number of records is one record's value, mirroring the four-person note; no figure.
+  const du=pageOf('data-use/'),om=el(du,/<p id="odd-medians"/,'data-use');
+  assert.ok(du.indexOf('id="odd-medians"')>du.indexOf('id="small-cohorts"')&&du.slice(du.indexOf('id="small-cohorts"'),du.indexOf('id="odd-medians"')).indexOf('</section>')<0,'data-use: the odd-median line sits with the small-cohort note');
+  for(const s of ['A median over an odd number of records is one record\'s value.','Forenzo','Main cohort','It does not identify anyone','not proven to be distinct people']) assert.ok(vis(om).includes(s),'data-use: the odd-median line says "'+s+'"');
+  assert.ok(!/\d/.test(vis(om)),'data-use: the odd-median line types no figure');
+  // (12) Data use registers route 3: the five reused records, each with what route 3 publishes; the three text encoders,
+  // pinned and never redistributed; REVE Large's version, licence and paper; the wordings as the site's own CC BY 4.0
+  // text; BOAS under D11, pointing at its gaps; the release.
+  {const at=du.indexOf('<section id="sources-questions-in-language">'),sq=du.slice(at,du.indexOf('</section>',at)),t=vis(sq);
+   assert.ok(at>0&&at<du.indexOf('id="small-cohorts"'),'data-use: the route-3 register entry, before what stays local');
+   assert.deepEqual([...sq.matchAll(/<tr data-ql-source="([^"]+)">/g)].map(m=>m[1]),['beta','boas','eesm19','openbmi','wearable-ssvep-102'],'data-use: one route-3 rights row per dataset');
+   for(const [id,d] of Object.entries(ql.datasets)){const a=sq.indexOf(`<tr data-ql-source="${id}">`),row=decodeHtml(sq.slice(a,sq.indexOf('</tr>',a)));
+     assert.ok(row.includes(d.attribution)&&row.includes(d.published_here)&&row.includes(`href="${d.licenseUrl}"`)&&row.includes(`href="${d.source}"`)&&(!d.paper||row.includes(d.paper)),'data-use: '+id+' prints its record and what route 3 publishes on it');}
+   for(const x of Object.values(R.design.text_encoders)) assert.ok(sq.includes(`href="https://huggingface.co/${x.repo}"`)&&sq.includes(x.commit),'data-use: the text encoder '+x.repo+' and its commit');
+   assert.ok(t.includes('frozen at pinned commits and never redistributed')&&t.includes('MIT')&&t.includes('Apache-2.0'),'data-use: the text encoders\' licences, never redistributed');
+   assert.ok(t.includes('brain-bzh/reve-large @ 317531c7')&&t.includes('REVE Responsible Use License v1.0')&&sq.includes('href="https://arxiv.org/abs/2510.21585"'),'data-use: REVE Large\'s version, licence and paper');
+   assert.ok(t.includes('this site’s own text')&&sq.includes(`href="/data/${QWF}"`)&&sq.includes(`href="${qw.licenseUrl}"`)&&qw.license==='CC BY 4.0','data-use: the wordings, the site\'s own text under CC BY 4.0');
+   assert.ok(/^D11\b/.test(ql.boas_conditions.owner_approval.extended_to_route_3)&&t.includes('owner decision D11')&&sq.includes('href="#boas-gaps"')&&t.includes('pseudonymised in the public release')&&t.includes(ql.boas_conditions.not_an_evaluation_of),'data-use: BOAS under D11, with its gaps');
+   assert.ok(sq.includes(`href="/releases/#${ql.release_id}"`),'data-use: the route-3 entry links its release');
+   assert.ok(!/Jev/.test(t),'data-use: the register names no Jev');}
+  console.log(`PASS: 2026-10-08 route 3 on the site — /topics/questions-in-language/ in both languages: ${all.length} entries, each in its own kind of table with ${pinned} figures pinned, both flags in words and its gate, the same figures in English and Chinese; the required disclosures with their counts; unseen by whom; ${boasFigs} BOAS figures beside their gaps on ${boasPages.size} pages, each BOAS table with its n, none in the short answer or description; no typed figure in the result sections; the secondary panel collapsed, one seed and declared likely inconclusive where the export says; every limitation, credit, encoder and reference; BETA and BOAS groups and the CBraMod page; the Jev-style page with its scope, independence, three linked routes, Yu & Yao, 2026, the article and no figure; its cards; ${mentions} "Jev-style" mentions each beside the scope sentence; no "Yu et al." or jev-eeg; the odd-median line and the route-3 register entry on data use.`);
 }
 // --- No update date and no version label in the site's text (owner decision 2026-10-08) ---------------------------
 // The site does not say when it was updated or which version it is: the release log does. Every built page, in both

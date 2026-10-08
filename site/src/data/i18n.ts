@@ -125,6 +125,10 @@ export const translatedPaths = [
   '/topics/shared-encoder/',
   // A decoder trained on an earlier session, tested on a later one.
   '/topics/later-sessions/',
+  // Route 3 of the decision-research plan, questions in language (owner approval of the results).
+  '/topics/questions-in-language/',
+  // The three routes in one place, with the scope of "Jev-style" and the site's independence.
+  '/jev-style/',
   '/releases/',
   '/api/',
 ] as const;
@@ -395,7 +399,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions and clinical groups.`,
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions, questions asked in words and clinical groups.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -536,7 +540,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题，以及临床分组的证据。`,
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题、用文字提问，以及临床分组的证据。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -744,7 +748,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining and one model for several questions; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
+    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining, one model for several questions and questions asked in words; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
     dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -753,11 +757,31 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练与一个模型回答多个问题；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练、一个模型回答多个问题与用文字提问；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
     dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
     sources: '被试数取自已审核的下载文件：',
+  },
+} satisfies Record<Locale, unknown>;
+
+/**
+ * The Jev-style card (JevCard.astro): under the core matrix on the home page and on the Questions hub, leading to
+ * /jev-style/. The scope sentence it prints beside the name is the route-3 export's (questions-in-language.ts
+ * `jevScope`); no figure here.
+ */
+export const jevCardCopy = {
+  en: {
+    eyebrow: 'Decision research · three routes',
+    title: 'Jev-style questions on EEG: the evidence',
+    body: 'Three routes, each answered by this site’s own runs on public EEG data. BCI Report is independent and not affiliated with the Jev authors.',
+    link: 'Read the evidence →',
+  },
+  zh: {
+    eyebrow: '决策研究 · 三条路线',
+    title: 'Jev 式提问用在脑电上：证据',
+    body: '三条路线，每一条都由本站在公开 EEG 数据上自己的运行来回答。BCI Report 是独立项目，与 Jev 的作者没有关联。',
+    link: '查看证据 →',
   },
 } satisfies Record<Locale, unknown>;
 
@@ -770,7 +794,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: 'Transfer',
       lede: 'Does a decoder still work when the sensor, the display, the electrode layout, the body’s movement or the session changes?' },
     adapting: { title: 'Adapting models',
-      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, and whether one model can answer several questions.' },
+      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, whether one model can answer several questions, and whether it can be asked them in words.' },
     reliability: { title: 'Reliability & clinical',
       lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG can and cannot say about a clinical group.' },
   },
@@ -778,7 +802,7 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: '迁移',
       lede: '换了传感器、显示设备、电极布局或记录会话，或者人在运动时，解码器还管用吗？' },
     adapting: { title: '调整模型',
-      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助，以及一个模型能不能回答多个问题。' },
+      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助、一个模型能不能回答多个问题，以及能不能用文字向它提问。' },
     reliability: { title: '可靠性与临床',
       lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
   },
@@ -834,9 +858,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'New people, next day: which part of a pretrained model should you update?',
       summary: 'LaBraM on new people, same task, zero labels from the test person: head only, last block or LoRA, printed beside the core matrix’s frozen readout. Plus: the next-day experiment, run and held.',
       detail: 'EEGMAT, 36 people · three update rules · next day: held' },
-    'when-not-to-act': { kicker: 'Abstention · Jev-style', title: 'When not to act',
+    // "Jev-style" left this card on 2026-10-08 (owner rule: every "Jev-style" stands beside its scope sentence); the
+    // Jev-style card under the core matrix and the /jev-style/ page carry the name with it.
+    'when-not-to-act': { kicker: 'Abstention · decision research', title: 'When not to act',
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
-      summary: 'Command detection and false activation, read together; when a decoder should decline to decide, measured on two protocols; and the Jev-style research plan that measurement opens.',
+      summary: 'Command detection and false activation, read together; when a decoder should decline to decide, measured on two protocols; and the research plan on decisions that measurement opens, with its three routes.',
       detail: 'Idle, 4-person pilot · non-control, 20 people · reliable decisions, 36 and 70 people' },
     // Since 2026-10-03 (owner decision): Dreem, two cohorts kept apart.
     'sleep-staging': { kicker: 'Sleep staging · simple baselines', title: 'Sleep-stage balance',
@@ -857,6 +883,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Can one EEG model answer several questions about the same data as well as separate models, and at what cost?',
       summary: 'One shared encoder with a fixed output per question, against a head told which question it is answering and against a separate model per question, at matched data and compute — with what each costs.',
       detail: 'Motor imagery, OpenBMI, 51 people · sleep, BOAS · EESM19, crude' },
+    // Route 3 (owner approval of the results, 2026-10-08). No BOAS figure on the card, as on route 2's: the home page and
+    // the hub do not carry BOAS's three stated gaps, so the card names BOAS and prints BETA's cohort only.
+    'questions-in-language': { kicker: 'Questions in language · route 3', title: 'Questions in language',
+      question: 'Can an EEG model answer questions asked in words?',
+      summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: seen questions, rewordings and questions it was never trained on, kept apart — and a negative result for the last.',
+      detail: 'SSVEP, BETA, 70 people · sleep, BOAS · secondary: EESM19, OpenBMI, Wearable-102' },
   },
   zh: {
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
@@ -887,9 +919,9 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '新被试、第二天：预训练模型该更新哪一部分？',
       summary: '新被试、同一任务、不使用测试被试的任何标签：LaBraM 只训分类头、最后一个 Transformer 块还是 LoRA，与核心矩阵中冻结编码器的结果并排给出。另有：次日实验，已运行，暂缓发布。',
       detail: 'EEGMAT，36 名被试 · 三种更新方式 · 次日：暂缓' },
-    'when-not-to-act': { kicker: '拒识 · Jev-style', title: '何时不该执行',
+    'when-not-to-act': { kicker: '拒识 · 决策研究', title: '何时不该执行',
       question: '没有人下指令时，EEG 解码器误触发有多频繁？',
-      summary: '把指令检出与误触发放在一起读；在两个协议上测量解码器什么时候该拒绝作出决定；以及这项测量所开启的 Jev-style（一次编码、回答多个问题）研究计划。',
+      summary: '把指令检出与误触发放在一起读；在两个协议上测量解码器什么时候该拒绝作出决定；以及这项测量所开启的决策研究计划和它的三条路线。',
       detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 可靠的决策，36 与 70 名被试' },
     'sleep-staging': { kicker: '睡眠分期 · 简单基线', title: '睡眠分期的失衡',
       question: '为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？',
@@ -907,6 +939,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？',
       summary: '一个共享编码器、每个问题配一个固定输出，对比“知道自己在回答哪个问题”的分类头，以及每个问题单独一个模型，数据量与计算量保持一致——并给出每种设置的代价。',
       detail: '运动想象，OpenBMI，51 名被试 · 睡眠，BOAS · EESM19，粗略重复' },
+    'questions-in-language': { kicker: '用语言提问 · 第三条路线', title: '用语言提问',
+      question: 'EEG 模型能回答用文字提出的问题吗？',
+      summary: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或描述提出：已见过的问题、改写后的问题和它从未训练过的问题分开列出——最后一类是阴性结果。',
+      detail: 'SSVEP，BETA，70 名被试 · 睡眠，BOAS · 次要：EESM19、OpenBMI、Wearable-102' },
   },
 };
 
@@ -934,6 +970,7 @@ export const topicQuestionPhrases: Record<string, string> = {
   'clinical-groups': '静息态 EEG 能把|帕金森病患者|和对照组|区分开吗？',
   'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
   'shared-encoder': '一个 EEG 模型|回答同一份|数据上的|多个问题，|能和分开的模型|一样好吗，|代价又是多少？',
+  'questions-in-language': 'EEG 模型|能回答|用文字提出的|问题吗？',
 };
 
 /** The h1 of a topic page as phrases, to be joined with <wbr>. */
