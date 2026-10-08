@@ -31,6 +31,8 @@ import export_large_source_update as large_source_export
 import export_reliable_decisions_update as reliable_export
 import export_foundation_models_update as foundation_export
 import export_shared_representation_update as shared_export
+import export_later_sessions_update as later_export
+import export_questions_in_language_update as questions_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -168,6 +170,68 @@ def shared_payload():
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
+
+
+def later_payload():
+    """The later-sessions export (WBCIC-SHU, longitudinal RSVP, Forenzo), refused unless it matches its own review audit."""
+    raw = (PUBLISHED/'later-sessions-update.json').read_bytes()
+    audit = json.loads(later_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Later-sessions export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Later-sessions payload is not the reviewed one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def questions_payload():
+    """Route 3 (questions in language) and its wording lists, refused unless both match their own review audit."""
+    raw = (PUBLISHED/'questions-in-language-update.json').read_bytes()
+    wordings = (PUBLISHED/'questions-in-language-wordings.json').read_bytes()
+    audit = json.loads(questions_export.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', 'Questions-in-language export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], 'Questions-in-language payload is not the reviewed one'
+    assert hashlib.sha256(wordings).hexdigest() == audit['wordings_sha256'], 'Questions-in-language wordings are not the reviewed ones'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, wordings, payload
+
+
+def later_paragraph():
+    """The card's later-sessions paragraph: what the file holds, with the cohort sizes read from it."""
+    r = later_payload()[1]['results']
+    assert set(r) == {'wbcic-cross-session-cpu', 'wbcic-frozen-cbramod', 'rsvp-later-visits', 'forenzo-continuous-control'}, sorted(r)
+    return """`later-sessions-update.json`: does a decoder trained on a person's earlier
+session still work later, with no labels from the later session? Motor imagery
+on WBCIC-SHU from session 1 to session 3 (a relative-spectral ridge baseline and
+frozen CBraMod features with a ridge readout; the two-class and three-class
+cohorts are kept apart); RSVP target detection at the publisher's nominal Day 7,
+Day 80 and Day 200 visits (AUROC with average precision beside it, since targets
+are about 2.5% of events); and continuous cursor tracking on Forenzo & He, kept
+as a negative result: the fixed ridge had higher overall error than a constant
+source-mean comparator on every admitted record, with means, medians and the
+upper tail all published. Same-person session transfer, offline; not online
+control and not a ranking."""
+
+
+def questions_paragraph():
+    """The card's route-3 paragraph; the BOAS gaps and credit are read from the served export."""
+    raw, _, payload = questions_payload()
+    c = payload['boas_conditions']
+    return f"""`questions-in-language-update.json` and `questions-in-language-wordings.json`:
+route 3 of the decision-research roadmap, **questions in language**. One small
+head over frozen EEG features, asked each question by a question number, a label
+template or a natural-language description, on SSVEP (BETA) and sleep (BOAS).
+Seen questions in their training wording, rewordings and questions the EEG head
+was never trained on are separate results, never pooled into one zero-shot
+number. In short: words matched question numbers on seen sleep questions but
+cost accuracy on SSVEP; most rewordings cost accuracy; questions the head was
+never trained on were not answered usefully; negation, a boundary probe, was not
+understood. 35 pre-declared comparisons, no multiplicity correction; the
+pre-run permutation checks, including two that failed before the owner-approved
+third passed, are disclosed in the file. The wordings file holds the full
+wording lists, the held-out partition and the derangements (the site's own
+text, CC BY 4.0). **BOAS is published with three stated gaps**:
+{' '.join(c['gaps'])} Participants are {c['participants']}. BOAS: {c['attribution']}"""
 
 
 def shared_paragraph():
@@ -580,6 +644,10 @@ are not published.
 
 {shared_paragraph()}
 
+{later_paragraph()}
+
+{questions_paragraph()}
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -757,6 +825,11 @@ def build(output):
         writer.writerows(foundation_rows)
     raw_shared, _ = shared_payload()
     (output/'shared-representation-update.json').write_bytes(raw_shared)
+    raw_later, _ = later_payload()
+    (output/'later-sessions-update.json').write_bytes(raw_later)
+    raw_questions, raw_wordings, _ = questions_payload()
+    (output/'questions-in-language-update.json').write_bytes(raw_questions)
+    (output/'questions-in-language-wordings.json').write_bytes(raw_wordings)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
