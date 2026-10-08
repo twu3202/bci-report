@@ -24,9 +24,10 @@ import QlRow from '../../../components/QlRow.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import { formatFig, type Fig as FigValue, type Fmt } from '../../../data/entities';
 import { R3, QL, QLW, DELTA, RATIO, block, entry, level, part, qlFig, qlwFig, qlRelease, qlwRelease, QL_DATASETS, QL_BOAS, qlText,
-         jevScope, visualJev, differenceText, marginText, type QlEntry, type QlLevel, type QlRow as QlRowT } from '../../../data/questions-in-language';
+         visualJev, differenceText, marginText, type QlEntry, type QlLevel, type QlRow as QlRowT } from '../../../data/questions-in-language';
 import wordings from '../../../data/questions-in-language-wordings.json';
 import { fmModelById, fmTermsSentence } from '../../../data/foundation-models';
+import { jevStyle } from '../../../data/decision-research';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -227,7 +228,9 @@ const copy = {
     kinds: 'Three kinds of result, never pooled into one zero-shot number: a seen question in the wording the head trained with; the same question reworded; and a question the head never trained on. “Unseen” always means unseen by the EEG head, not by the text encoder: the frozen encoder has read the words, and for SSVEP every token of a held-out frequency also occurs in that rotation’s training texts. Unseen sleep questions are combinations of seen stages; unseen SSVEP questions are flicker frequencies held out in five rotations.',
     reading: `Each comparison is the language arm minus the reference, in percentage points (pp), with a 95% interval from resampling people, then training seeds, then held-out wordings. It gets two readings, both fixed before any fit. A difference is shown when the interval excludes zero. Against a margin of ±${DELTA} pp, it is equivalent when the whole interval lies inside, non-inferior when the bound against the language arm stays within the margin, and otherwise the margin is not met, which is not the same as a loss of ${DELTA} pp or more. For an unseen sleep question the comparison is R, the head’s remaining error (1 − AUROC) over that of the read-off from its own stage answers, with a margin of R < ${RATIO}. The check of whether the head uses the link between wording and stage, the template arm against the shuffled templates, is a difference of AUROC. Among the primary comparisons, those with the numeric code, the neighbour average and the shuffled templates are read for a difference only; the secondary tables print both readings as the run computed them.`,
     multiplicity: (): Part[] => ['There are ', n(R3.primary.entries_count), ' pre-declared primary comparisons and no multiplicity correction, so at 95% about one in twenty comparisons with no true difference may show one by chance. Accuracy is averaged per person, then over people: it compares set-ups and is not a deployment error rate.'],
-    routeOf: ['This is route 3 of the research plan on ', 'When not to act', '. The plan takes its interface from a vision paper, '],
+    routeOf: ['This is route 3 of the research plan on ', 'When not to act', '. '],
+    originOf: [' The plan started from a vision paper, ', ', which applies that idea to images.'],
+    hubLead: 'All three routes: ',
     notLanguage: 'The head here is not a language model, and none of these results shows that EEG understands language.',
     hubLink: 'Jev-style questions on EEG: the evidence →',
     seenEyebrow: 'Primary · seen questions · BETA and BOAS',
@@ -410,7 +413,9 @@ const copy = {
     kinds: '三类结果，从不合并成一个“零样本”数字：用训练时的问法问已见过的问题；把同一个问题改写后再问；问分类头从未训练过的问题。“未见过”始终指 EEG 分类头没有见过，而不是文本编码器没有见过：冻结的文本编码器读过这些词；对 SSVEP，每个留出频率的每个分词也都出现在该轮换的训练文本中。未见过的睡眠问题是已见分期的组合；未见过的 SSVEP 问题是在五种轮换中留出的闪烁频率。',
     reading: `每项比较都是语言问法减去参照，单位为 pp，95% 区间依次对被试、训练随机种子和留出问法重采样得到。每项比较有两种读法，都在任何拟合之前定下。区间不含零，才算显示出差异。界值为 ±${DELTA} pp：整个区间都在界值内，算等效；对语言问法不利的那一端仍在界值内，算非劣；否则就是未达到界值——这并不等于损失了 ${DELTA} pp 或更多。对未见过的睡眠问题，比较的是 R：分类头剩余的错误（1 − AUROC）与由它自己的各期答案读出的剩余错误之比，界值为 R < ${RATIO}。检验分类头是否用到问法与分期对应关系的那项比较（模板组对比错配模板组），是 AUROC 的差值。主分析中，与数值编码、相邻平均和错配模板的比较只读差异；次要分析的表格按运行时的计算列出两种读法。`,
     multiplicity: (): Part[] => ['主分析共有 ', n(R3.primary.entries_count), ' 项预先声明的比较，不做多重比较校正：在 95% 水平下，没有真实差异的比较里，约每二十项就可能有一项偶然显示出差异。准确率先逐人计算，再在被试之间平均：它用来比较设置，不是部署时的错误率。'],
-    routeOf: ['这是“', '何时不该执行', '”页上研究计划的第三条路线。这个计划的接口来自一篇视觉论文：'],
+    routeOf: ['这是“', '何时不该执行', '”页上研究计划的第三条路线。'],
+    originOf: ['这个计划从一篇视觉论文出发：', '，它把同样的思路用在图像上。'],
+    hubLead: '三条路线汇总：',
     notLanguage: '这里的分类头不是语言模型，这些结果也不能说明 EEG 能理解语言。',
     hubLink: 'Jev 式提问用在脑电上：证据 →',
     seenEyebrow: '主分析 · 已见过的问题 · BETA 与 BOAS',
@@ -601,7 +606,7 @@ const entryKeyOrder = (p: string) => (S(p).entries ?? []);
     <p class="roadmap-p" data-kinds="true">{copy.kinds}</p>
     <p class="roadmap-p">{copy.reading}</p>
     <p class="protocol-note" id="multiplicity"><Parts p={copy.multiplicity()}/></p>
-    <p class="protocol-note" data-jev-scope="true">{copy.routeOf[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.routeOf[1]}</a>{copy.routeOf[2]}<a href={visualJev.url} target="_blank" rel="noreferrer" lang="en">{visualJev.cite} ↗</a>{zh ? '。' : '. '}{jevScope[locale]}{zh ? '' : ' '}{copy.notLanguage} <a href={hrefFor('/jev-style/', locale)}>{copy.hubLink}</a></p>
+    <p class="protocol-note" data-jev-style="true">{copy.routeOf[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.routeOf[1]}</a>{copy.routeOf[2]}{jevStyle[locale]}{copy.originOf[0]}<a href={visualJev.url} target="_blank" rel="noreferrer" lang="en">{visualJev.cite} ↗</a>{copy.originOf[1]}{zh ? '' : ' '}{copy.hubLead}<a href={hrefFor('/jev-style/', locale)}>{copy.hubLink}</a></p>
   </section>
 
   <section class="topic-section" id="seen" aria-labelledby="seen-heading" data-boas="true">
@@ -921,7 +926,7 @@ const entryKeyOrder = (p: string) => (S(p).entries ?? []);
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
-    <ul class="rd-rules sr-limits" data-limits="true">{limits.map(x => <li>{x.text}{x.original && <span class="note-original" lang="en">{x.original}</span>}</li>)}</ul>
+    <ul class="rd-rules sr-limits" data-limits="true">{limits.map(x => <li>{x.text}{x.original && <span class="note-original" lang="en">{x.original}</span>}</li>)}<li data-site-limit="not-a-language-model">{copy.notLanguage}</li></ul>
     <h3 class="roadmap-h3">{copy.notRunH3}</h3>
     <ul class="rd-rules sr-not-run">{notRun.map(([a, b]) => <li><strong>{a.text}</strong>{sep}{b.text}</li>)}</ul>
     <h3 class="roadmap-h3">{copy.notPubH3}</h3>

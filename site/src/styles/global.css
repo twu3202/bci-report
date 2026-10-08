@@ -542,8 +542,8 @@ td .flag{margin-top:6px}
   font-size:.8125rem;color:var(--muted);background:var(--soft);
   border-left:3px solid var(--rule);
 }
-/* The Jev-style card (JevCard.astro): under the core matrix on the home page and on the Questions hub. Its scope
-   sentence sits in the card, beside the name. */
+/* The Jev-style card (JevCard.astro): under the core matrix on the home page and on the Questions hub. It carries
+   the definition of "Jev-style" beside the name. */
 .jev-card{display:flex;flex-direction:column;gap:6px;margin:22px 0 0;padding:16px 18px;max-width:820px;
   border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel);color:inherit}
 .jev-card:hover{background:var(--wash);color:inherit}

@@ -40,8 +40,7 @@ export const site = {
  *   and labels every answer with it; /api/ and llms.txt link it.
  * - `articles`: long-form write-ups, one line per article; `page` is the topic
  *   page that links it (/jev-style/ links the decision-research one as well).
- *   The link label is the page's own copy and carries no "Jev-style", so it
- *   needs no scope sentence beside it.
+ *   The link label is the page's own copy and carries no "Jev-style".
  */
 export const elsewhere = {
   explorer: 'https://huggingface.co/spaces/Twu31/bci-report-explorer',

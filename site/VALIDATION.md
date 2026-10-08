@@ -583,6 +583,20 @@ script's render, and the built CSS rule. Mutation-tested on a copy of `dist/` (t
 client script's source too, restored afterwards): each of 5 injected violations was
 caught.
 
+No endorsement, once per page (2026-10-08). The method pages of the v9 families said
+"No model’s authors endorse these results" in every result group's weights terms, seven
+to nine times a page. A method page now says it once, in its checkpoints-and-terms
+section, opening the line that no weights, adapted weights or LoRA deltas were kept or
+shared; its result groups keep each licence by name, REVE by version and the link to
+the protocol page's full list, and each checkpoint keeps its weights licence, licence
+note (REVE's terms, LUNA's CC BY-ND terms with its own no-endorsement clause), rights
+review and paper. Pinned: the group terms on a method page without the sentence, the
+terms section with it, and the sentence exactly once in the page and in its Markdown
+copy; the protocol pages, the home page, does-pretraining-help and fewer-electrodes say
+it exactly once, in their licence entry. The dataset pages keep it in each v9 group's
+terms (twice on BETA and EEGMAT). Mutation-tested on the built REVE page: the sentence
+put back into one group's terms was caught.
+
 The v9 caveats on the protocol pages (same review). Each `#foundation-v9` lede gave the
 grouping rule, but not the multiplicity caveat the topics carry: on every protocol with
 intervals it now says each interval is a descriptive participant bootstrap with no
@@ -824,10 +838,24 @@ without multiplicity correction, the secondary results single-seed and declared 
 counts; "unseen" says by whom; the result sections type no figure; every route-3 BOAS figure on any page lies inside
 an element carrying the three gaps, each BOAS table states its n, and the short answer, description and card print
 none. The BETA and BOAS groups and the CBraMod page carry the route-3 rows with their limitations. The /jev-style/ page
-carries the scope sentence as its dek, says the site is independent and not affiliated with the Jev authors, links the
-three routes, cites Yu & Yao, 2026 and types no figure; every "Jev-style" on the site stands in a section or card with
-its scope sentence, and "Yu et al." and "jev-eeg" appear nowhere. Data use carries the odd-median line. Mutation-tested
-on a copy of dist: each of 15 injected violations was caught.
+opens by saying what Jev is (TypeSafe AI's decision model, its launch post linked) and what "Jev-style" means here,
+then that the plan started from the Visual Jev paper (Yu & Yao, 2026), which applies the idea to images; it links the
+three routes, types no figure, and ends with its one neutral independence line. Since the owner's tone rules of
+2026-10-08, every page that says "Jev-style" defines it exactly once (HTML and Markdown copy; each llms.txt line that
+names it, too); no page, copy, feed, llms file, README or HF card builder carries non-affiliation, "no contact",
+"no endorsement" or "not an integration with Jev" wording; no sentence that names the vision paper says Jev or its
+pattern comes from it; route 3's "not a language model" sentence is one of its limits, not part of its introduction;
+"Yu et al." and "jev-eeg" appear nowhere. The route-3 results file follows the same rules: by six text
+edits declared in its manifest (owner feedback, 2026-10-08) its route block carries the site's one definition of
+"Jev-style" in both languages, Jev's source (TypeSafe's launch post) and the sentence that the plan started from
+Visual Jev, which applies the idea to images, and no scope or independence line; check-workbench pins that block
+and scans both route-3 files, string by string, for defensive or wrong-origin wording, and the export's independent
+audit undoes the declared edits and requires the sealed export's bytes, so no figure, flag or other text changed.
+Data use carries the odd-median line. Mutation-tested on a copy of dist: each
+of 15 injected violations was caught, and each of 13 injected violations of the 2026-10-08 rules (a non-affiliation,
+"no endorsement" or scope line back on a page or copy, a second or a missing definition, a wrong origin in English or
+Chinese, the independence line moved or repeated, the language-model sentence back in the introduction, "Yu et al.")
+was caught.
 
 ## What is NOT checked
 

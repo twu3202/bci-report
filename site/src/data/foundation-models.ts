@@ -154,9 +154,11 @@ const LICENCE_ZH: Record<string, string> = { 'REVE Responsible Use License v1.0'
 /**
  * The weights terms of the checkpoints a dataset or method group prints, in one sentence (review of 2026-10-05:
  * licence notes travel with the rows): each licence with the families under it, REVE's versions, what the
- * no-derivatives and non-commercial licences mean here, and that no model's authors endorse the results.
+ * no-derivatives and non-commercial licences mean here, and that no model's authors endorse the results. A method
+ * page says that last part once, in its terms section (2026-10-08), so its groups leave it out (`endorsement`).
  */
-export function fmTermsSentence(models: FmModel[], locale: 'en' | 'zh'): string {
+export const fmNoEndorsement = { en: 'No model’s authors endorse these results.', zh: '任何模型的作者都没有为这些结果背书。' } as const;
+export function fmTermsSentence(models: FmModel[], locale: 'en' | 'zh', endorsement = true): string {
   const zh = locale === 'zh';
   const byLicence = new Map<string, FmModel[]>();
   for (const m of models) byLicence.set(fmLicenceName(m), [...(byLicence.get(fmLicenceName(m)) ?? []), m]);
@@ -169,8 +171,8 @@ export function fmTermsSentence(models: FmModel[], locale: 'en' | 'zh'): string 
       ? `${list(families)} 采用 ${LICENCE_ZH[licence] ?? licence}${versions ? `（模型版本：${versions}）` : ''}${nd ? '，不分享修改后的权重' : ''}${nc ? '，仅限非商业用途' : ''}`
       : `${list(families)} under ${/License/.test(licence) ? 'the ' : ''}${licence}${versions ? ` (model versions: ${versions})` : ''}${nd ? ', with no modified weights shared' : ''}${nc ? ', non-commercial' : ''}`;
   });
-  return zh ? `权重条款：${parts.join('；')}。任何模型的作者都没有为这些结果背书。`
-            : `Weights terms: ${parts.join('; ')}. No model’s authors endorse these results.`;
+  const tail = endorsement ? (zh ? fmNoEndorsement.zh : ` ${fmNoEndorsement.en}`) : '';
+  return zh ? `权重条款：${parts.join('；')}。${tail}` : `Weights terms: ${parts.join('; ')}.${tail}`;
 }
 
 /* --- Pretraining exposure: the owner's sourced statement --------------------------------- */

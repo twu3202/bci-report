@@ -16,7 +16,11 @@ and the two numerical audits; it builds its own table of what every figure must 
 - every BOAS figure states its n and pools at least 20 people; no S10 per-frequency or interior-only value and no
   pre-run check value reaches either file;
 - the wording lists re-serialise to the hash the protocol and the stage-0 report record, and the partition, grid,
-  derangements and NUM code are the protocol's; the two served copies of each file are byte-identical.
+  derangements and NUM code are the protocol's; the two served copies of each file are byte-identical;
+- text: the served files are the sealed export (built and audited on 2026-10-08, before the owner's feedback of the
+  same day, and pinned by hash in the manifest) except for the manifest's declared text edits. Each declared edit is
+  text only and is what is served; undone, with the sealed manifest's hash put back in provenance, both files are the
+  sealed bytes. Any other change of text, key, flag or figure is refused.
 
     python3 pipeline/publication/audit_questions_in_language_export.py
 """
@@ -518,6 +522,85 @@ def withheld(agg, s0):
     return out
 
 
+def serialised(doc):
+    return (json.dumps(doc, indent=2, ensure_ascii=False) + '\n').encode()
+
+
+def strings_only(value):
+    if isinstance(value, dict):
+        return bool(value) and all(strings_only(v) for v in value.values())
+    if isinstance(value, list):
+        return bool(value) and all(strings_only(v) for v in value)
+    return isinstance(value, str)
+
+
+def field(doc, pointer):
+    """The object a JSON pointer's last token names a field of, and the field's name."""
+    check(isinstance(pointer, str) and pointer.startswith('/'), f'{pointer!r}: not a JSON pointer')
+    tokens = pointer.split('/')[1:]
+    node = doc
+    for tok in tokens[:-1]:
+        if isinstance(node, list):
+            check(tok.isdigit() and int(tok) < len(node), f'{pointer}: does not resolve')
+            node = node[int(tok)]
+        else:
+            check(isinstance(node, dict) and tok in node, f'{pointer}: does not resolve')
+            node = node[tok]
+    check(isinstance(node, dict), f'{pointer}: not a field of an object')
+    return node, tokens[-1]
+
+
+def declared_text_edits(manifest, manifest_sha, served, served_w):
+    """The served files are the sealed export except for the manifest's declared text edits, and nothing else.
+
+    Each edit is text only (every leaf a string) and is what the served file holds: a replaced or added field equals its
+    declared text, a removed field is gone. Undone (added fields dropped, replaced text put back, removed fields restored
+    at the end of their object in the declared order), and with the sealed manifest's hash put back in provenance, the
+    results file must be the sealed results bytes and the wordings file the sealed wordings bytes."""
+    record = manifest.get('declaredTextEdits')
+    check(isinstance(record, dict) and isinstance(record.get('edits'), list) and record['edits'],
+          'the manifest declares no text edits')
+    sealed = record['sealedExport']
+    edits = record['edits']
+    doc, w = json.loads(served), json.loads(served_w)
+    paths = [e.get('path') for e in edits]
+    check(len(set(paths)) == len(paths), 'a field is edited twice')
+    for e in edits:
+        op, path = e.get('op'), e.get('path')
+        check(op in ('replace', 'remove', 'add') and set(e) == {'op', 'path'} | {
+            'replace': {'before', 'after'}, 'remove': {'before'}, 'add': {'after'}}.get(op, set()),
+            f'{path}: not a replace, remove or add with its text')
+        check(all(strings_only(e[k]) for k in ('before', 'after') if k in e), f'{path}: a declared edit that is not text')
+        check(isinstance(path, str) and path.startswith('/results/questions-in-language/'),
+              f'{path}: a declared edit outside the result')
+        parent, key = field(doc, path)
+        if op == 'remove':
+            check(key not in parent, f'{path}: a declared removal is still served')
+        else:
+            check(key in parent and parent[key] == e['after'], f'{path}: the served text is not the declared edit')
+    for op in ('add', 'replace', 'remove'):          # undo, in this order, so restored fields keep the sealed order
+        for e in edits:
+            if e['op'] != op:
+                continue
+            parent, key = field(doc, e['path'])
+            if op == 'add':
+                del parent[key]
+            else:
+                parent[key] = e['before']
+    for d in (doc, w):
+        check(d['provenance']['manifest_sha256'] == manifest_sha, 'a served file names another manifest')
+        d['provenance']['manifest_sha256'] = sealed['manifestSha256']
+    check(digest(serialised(doc)) == sealed['resultsSha256'],
+          'the results file differs from the sealed export by more than the declared text edits (an undeclared change)')
+    check(digest(serialised(w)) == sealed['wordingsSha256'],
+          'the wordings file differs from the sealed export (an undeclared change)')
+    return {'edits': len(edits), 'replaced': sum(e['op'] == 'replace' for e in edits),
+            'removed': sum(e['op'] == 'remove' for e in edits), 'added': sum(e['op'] == 'add' for e in edits),
+            'sealed_results_sha256': sealed['resultsSha256'], 'sealed_wordings_sha256': sealed['wordingsSha256'],
+            'sealed_manifest_sha256': sealed['manifestSha256'],
+            'undone_equals_sealed_bytes': True}
+
+
 def audit():
     manifest_bytes = MANIFEST.read_bytes()
     manifest = json.loads(manifest_bytes)
@@ -597,6 +680,9 @@ def audit():
     check(not leaked, f'a withheld value reached a served file: {sorted(leaked)[:3]}')
     n_withheld = len(withheld(agg, s0))
 
+    # Text: the sealed export, changed by the declared text edits and by nothing else.
+    text_edits = declared_text_edits(manifest, manifest_sha, served[0], served_w[0])
+
     primary_n = sum(len(b['entries']) for b in payload['results']['questions-in-language']['primary']['blocks'])
     secondary_n = sum(len(p.get('entries', [])) for p in payload['results']['questions-in-language']['secondary']['parts'].values())
     return {
@@ -618,6 +704,7 @@ def audit():
         'flags_and_rules_recomputed': n_flags,
         'boas_cells': len(boas_n), 'smallest_boas_cell': min(boas_n),
         'withheld_values_checked_absent': n_withheld,
+        'declared_text_edits': text_edits,
         'checks': [
             'the two served copies of each file are byte-identical; both files name the manifest they were built '
             'from, and the results file the release candidate',
@@ -644,18 +731,25 @@ def audit():
             'the wording lists re-serialise to the hash the protocol and the stage-0 report record; the grid, the '
             'held-out partition, the S8 band, the NUM code, the derangements and the text encoders are the '
             'protocol\'s',
+            'text: each of the manifest\'s declared text edits (the owner\'s feedback of 2026-10-08) is text only and is '
+            'what the results file serves; undone, with the sealed manifest\'s hash put back in provenance, the results '
+            'file and the wordings file are byte for byte the sealed export the manifest pins, so no other text, key, '
+            'flag or figure differs from it',
         ],
         'audit_bindings': {
             'bound': [
                 'aggregates, protocol, stage-0 report and numerical audits: by the hashes the manifest pins, '
                 'cross-checked against the hashes the consolidated aggregate and the audits record',
                 'every figure: equal to its audited source or recomputed from it',
+                'every text and key: the sealed export\'s (by its hash in the manifest), except the declared text '
+                'edits',
             ],
             'not_bound': [
                 'the release candidate\'s {source, value} references, the conformance audits\' checks, the handoff\'s '
                 'figures, the BOAS conditions and the rights records are checked by the export, not re-read here',
                 'prose in the served files (sentences, notes, disclosures) is checked by the export against its pinned '
-                'sources and by pattern, not by this audit',
+                'sources and by pattern; this audit binds it to the sealed export and the declared edits, not to those '
+                'sources',
             ],
         },
     }

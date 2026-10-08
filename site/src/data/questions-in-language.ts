@@ -18,6 +18,7 @@
 import ql from './questions-in-language-update.json';
 import qlw from './questions-in-language-wordings.json';
 import type { Locale } from './i18n';
+import { jevStyle, typesafeJev } from './decision-research';
 import type { Fig, Fmt } from './entities';
 
 export const QL = 'questions-in-language-update.json';
@@ -50,7 +51,8 @@ export type QlPart = {
 };
 
 const R = ql.results['questions-in-language'] as unknown as {
-  route: { jev_scope: string; independence: string; origin: { cite: string; url: string }; boundary: string; site_text: string };
+  route: { jev_style: { en: string; zh: string }; jev_source: { company: string; url: string }; origin: { cite: string; url: string; note: string };
+           boundary: string; site_text: string };
   design: { margins: { delta_pp: number; p3_ratio: number }; multiplicity: string; expected_inconclusive: string[];
             text_encoders: Record<'bge' | 'minilm' | 'e5', { repo: string; commit: string; licence: string }> };
   primary: { entries_count: number; blocks: QlBlock[]; family_sentences: Record<string, { summary_allowed: boolean; rule: number | null; entries: string[] }> };
@@ -304,23 +306,17 @@ export function qlText(en: string, locale: Locale): { text: string; original?: s
 }
 
 /**
- * The scope sentence that travels with every "Jev-style" on the site (owner, 2026-10-08), and the independence line
- * the hub page states. Both are the export's English; the Chinese is the roadmap's (decision-research.ts).
+ * The vision paper the decision-research plan started from, as the export's references list it. Since the owner's
+ * feedback of 2026-10-08 the export carries, by declared text edits, the site's own definition of "Jev-style"
+ * (`route.jev_style`, decision-research.ts `jevStyle`) and Jev's source (`route.jev_source`, `typesafeJev`) in place of
+ * the sealed build's scope and independence lines; the build fails if the two drift apart.
  */
-export const jevScope: T = {
-  en: R.route.jev_scope,
-  zh: '“Jev-style”（Jev 式）指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。',
-};
-export const jevIndependence: T = {
-  en: R.route.independence,
-  zh: 'BCI Report 是独立项目，与 Jev 的作者没有关联；本站不声称与他们有过联系，也不声称得到他们的认可。',
-};
-if (!/^“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it\. This is not an integration with Jev and not a Jev model that reads EEG\.$/.test(jevScope.en))
-  throw new Error('questions-in-language.ts: the export\'s Jev scope sentence changed');
-if (!/independent and not affiliated with the Jev authors/.test(jevIndependence.en)) throw new Error('questions-in-language.ts: the export\'s independence line changed');
 export const visualJev = R.references.find(r => r.id === 'yu-yao-2026')!;
 if (visualJev.cite !== 'Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context' || visualJev.url !== 'https://arxiv.org/abs/2609.25845')
   throw new Error('questions-in-language.ts: the Visual Jev reference is cited as Yu & Yao, 2026');
+if (R.route.jev_style.en !== jevStyle.en || R.route.jev_style.zh !== jevStyle.zh
+    || R.route.jev_source.company !== typesafeJev.company || R.route.jev_source.url !== typesafeJev.url)
+  throw new Error('questions-in-language.ts: the export\'s definition of "Jev-style" or Jev\'s source is not the site\'s');
 
 /**
  * What a route-3 group on a dataset or method page carries under its rows: the export's limitations that bear on every

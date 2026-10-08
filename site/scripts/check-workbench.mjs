@@ -11,6 +11,13 @@ const EN_SHOWN={'not run by design: LUNA Large is frozen probes only in the v9 s
 // The built site under test. SITE_DIST points the checks at another build
 // (e.g. `astro build --outDir <dir>`) without touching dist/.
 const DIST=process.env.SITE_DIST?pathToFileURL(resolve(process.env.SITE_DIST)+'/').href:new URL('../dist/',import.meta.url).href;
+// What "Jev-style" means here: the one definition each page that uses the name carries, once (owner, 2026-10-08).
+// Written here independently of decision-research.ts `jevStyle`; the page, its Markdown copy and llms.txt are read.
+const JEV_STYLE={en:'“Jev-style” here means the interface of a decision model like TypeSafe’s Jev, applied to EEG: encode the recording once, then answer several explicit, typed questions about it, each with a probability.',
+  zh:'“Jev-style”（Jev 式）在这里指把 TypeSafe 的 Jev 这类决策模型的接口用在 EEG 上：一段记录只编码一次，再回答关于它的多个明确的、规定输出类型的问题，每个回答都带一个概率。'};
+// The one independence line, allowed only at the end of /jev-style/.
+const JEV_INDEPENDENCE={en:'BCI Report is an independent project; it does not use or evaluate TypeSafe’s Jev or the Visual Jev model.',
+  zh:'BCI Report 是独立项目；无论是 TypeSafe 的 Jev，还是 Visual Jev 模型，本站都没有使用或评估。'};
 const data=JSON.parse(readFileSync(new URL('../src/data/mvp.json',import.meta.url),'utf8'));
 const topics=JSON.parse(readFileSync(new URL('../src/data/deployment-topics.json',import.meta.url),'utf8'));
 class Element {
@@ -678,7 +685,7 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(r3.includes(`<p class="route-results"><a href="${label==='zh'?'/zh':''}/topics/questions-in-language/">`),label+': route 3 links its page');
   assert.match(r3,label==='en'?/<p class="route-run-note">Run on SSVEP \(BETA\) and sleep \(BOAS\), with EESM19, OpenBMI motor imagery and Wearable-102 as secondary data\. The pre-run permutation check failed twice and the owner revised it each time, the second time overriding its own “no further revision”; both failures are disclosed with the results\.<\/p>/
                               :/<p class="route-run-note">在 SSVEP（BETA）和睡眠（BOAS）上运行，EESM19、OpenBMI 运动想象和 Wearable-102 作为次要数据。运行前的置换检查失败了两次，所有者每次都对它作了修订，第二次推翻了它自己写下的“不再修订”；两次失败都与结果一起披露。<\/p>/,label+': route 3 says where it ran and that its pre-run check was revised twice');
-  // The three routes in one place (/jev-style/), linked from the roadmap, where the scope sentence stands.
+  // The three routes in one place (/jev-style/), linked from the roadmap, where the definition stands.
   assert.ok(road.includes(`<p class="roadmap-p" data-jev-hub="true">`)&&road.includes(`href="${label==='zh'?'/zh':''}/jev-style/"`),label+': the roadmap links the Jev-style page');
   assert.ok(html.indexOf('id="reliable-decisions"')>0&&html.indexOf('id="reliable-decisions"')<html.indexOf('id="decision-research"'),label+': the results section comes before the roadmap, outside its slice');
   // A plan carries no figure: no percentage, no decimal, no speed-up, no ms.
@@ -688,19 +695,23 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(!road.includes('data-fig'),label+': the roadmap prints no data figure');
   // Wording that would read as done, for routes that are not.
   assert.doesNotMatch(road,/calibrated policy|measured uncertainty|经过校准的策略|经过评测的不确定性|we (?:have )?(?:trained|measured|built)/i,label+': the roadmap must not read as completed work');
-  // "Jev-style" is prominent by the maintainer's choice (heading, title, card).
-  // Wherever it is, the page says what it is not: no Jev integration, no Jev
-  // model that reads EEG, and that route 1's results need no such model.
+  // "Jev-style" is prominent by the maintainer's choice (heading, title, card). Since 2026-10-08 (owner) the page
+  // defines it once, positively, where the plan is set out: the scope paragraph opens with the definition, and
+  // nothing beside the name says what it is not. Route 2's summary still names what it trained (one shared encoder:
+  // small EEGNets, CBraMod frozen or adapted; questions given by an identifier, never in language), as the review of
+  // 2026-10-07 had it.
   assert.match(road,/<h2[^>]*>Jev-style/,label+': the roadmap heading names the research track');
-  // Since 2026-10-07 route 2 trained models of its own, so the scope no longer says none was trained; it says what
-  // they are (one shared encoder: small EEGNets, CBraMod frozen or adapted; questions given by an identifier, never in
-  // language). The review of 2026-10-07 had it name CBraMod too, not small encoders only.
-  assert.match(html,label==='en'
-    ?/This is not an integration with Jev and not a Jev model that reads EEG\. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes\. The second trained models that share one encoder \(small EEGNets from scratch, and CBraMod frozen or adapted by LoRA\) and are given each question by an identifier, never in language; its results have their own page\. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; that head is not a language model either, and its results have their own page\./
-    :/这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；这个分类头同样不是语言模型，它的结果也有单独的页面。/,label+': the Jev scope sentence must stand beside the name');
+  {const scope=road.match(/<p class="roadmap-p research-scope">([\s\S]*?)<\/p>/)[1];
+   assert.ok(scope.startsWith(JEV_STYLE[label]),label+': the scope paragraph opens with the definition of "Jev-style"');
+   assert.equal(scope.slice(JEV_STYLE[label].length),label==='en'
+    ?' The first route needs no new model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language; its results have their own page. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; its results have their own page.'
+    :'第一条路线不需要新模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；它的结果也有单独的页面。',label+': the scope paragraph, after the definition, says what each route ran');}
+  // The Visual Jev card: the plan started from it, and it applies the idea to images; it is not where Jev comes from.
+  {const card=road.slice(road.indexOf('href="https://arxiv.org/abs/2609.25845"'));
+   assert.ok(card.includes(label==='en'?'the same encode-once, answer-many idea, applied to images. This plan started from it.':'同样是“编码一次、回答多个问题”的思路，用在图像上。本计划正是从这篇论文出发的。'),label+': the Visual Jev card says the plan started from it');}
   assert.doesNotMatch(html,/not a model BCI Report has trained|更不是本站训练出的模型/i,label+': the old scope said no model was trained');
   assert.doesNotMatch(html,/There are no results here yet|目前还没有任何结果/,label+': the old no-results scope sentence');
-  assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the scope sentence comes before the routes');
+  assert.ok(road.indexOf('research-scope')<road.indexOf('route-list'),label+': the definition comes before the routes');
 }
 // A source on hold in any review manifest is not named on any page until the
 // hold is lifted — the rule Alpha Waves and the YSU pilot were held under. Read
@@ -768,12 +779,13 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 // The published payload stays English. Chinese lives in the display layer only. Route 3 (2026-10-08) is the one
 // exception, and only where its Chinese is data: the Chinese wordings the S5 heads were asked with (the wordings
 // file's zh lists), the owner's decisions quoted as given in chat, and the export's own Chinese key findings, failure
-// reading and BOAS gaps, which the pages do not print (they write their own, glossary-checked). Anything else in
-// either file must be English.
+// reading and BOAS gaps, which the pages do not print (they write their own, glossary-checked); and the site's one
+// definition of "Jev-style" in both its languages (route.jev_style, the owner's text edit of the same date). Anything
+// else in either file must be English.
 const zhAllowed={
   'questions-in-language-wordings.json':j=>{for(const k of Object.keys(j.lists))if(k.startsWith('zh/'))delete j.lists[k];},
   'questions-in-language-update.json':j=>{const r=j.results['questions-in-language'];for(const k of r.key_findings)delete k.zh;delete r.pre_run_checks.why_they_failed.zh;
-    delete j.boas_conditions.gaps_zh;const pc=r.pre_run_checks,quote=/\("[^"]*\p{Script=Han}[^"]*"\)/gu;
+    delete j.boas_conditions.gaps_zh;delete r.route.jev_style.zh;const pc=r.pre_run_checks,quote=/\("[^"]*\p{Script=Han}[^"]*"\)/gu;
     pc.owner_override=pc.owner_override.replace(quote,'');for(const d of Object.values(pc.owner_decisions))d.decided=d.decided.replace(quote,'');
     pc.decision_s0b6.decision=pc.decision_s0b6.decision.replace(quote,'');},
 };
@@ -794,6 +806,10 @@ for(const path of bilingual){
 // evidence below, so it can never be the only place a number is stated. The
 // FAQPage markup must say exactly what the page says.
 const visible=html=>html.replace(/<head>[\s\S]*?<\/head>/,'').replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ');
+// "No model's authors endorse these results": a page that says it says it once, in its licence or terms section
+// (2026-10-08). Counted in the page's visible text, in either language.
+const ENDORSE={en:'No model’s authors endorse these results',zh:'任何模型的作者都没有为这些结果背书'};
+const endorseCount=html=>{const v=visible(html);return v.split(ENDORSE.en).length-1+v.split(ENDORSE.zh).length-1;};
 const numbers=s=>[...s.matchAll(/\d[\d,]*(?:\.\d+)?/g)].map(m=>m[0]);
 // CHECK_ONLY=<slug> narrows this block to one page while others are being written.
 for(const [slug,q] of topicPages.filter(([s])=>!process.env.CHECK_ONLY||s===process.env.CHECK_ONLY)) for(const [label,path,question] of [['en','topics/'+slug+'/',q],['zh','zh/topics/'+slug+'/',zhTitles[slug]]]){
@@ -3407,18 +3423,20 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // each REVE checkpoint's revision from the export, wherever its licence entry is printed.
   const reveVersions=F.models.filter(m=>SLUG[m.id]==='reve').map(m=>`${m.name} @ ${m.revision.split(' @ ').at(-1)}`).join(' · ');
   assert.ok(/REVE Base @ [0-9a-f]{8} · REVE Large @ [0-9a-f]{8}/.test(reveVersions)&&/name the model version/.test(F.models.find(m=>m.id==='reve-base').licence_note),'REVE: its licence asks for the version, and the export names both');
-  const endorse={en:'No model’s authors endorse these results',zh:'任何模型的作者都没有为这些结果背书'};
+  const endorse=ENDORSE;
   const licName=m=>m.weights_licence.replace(/\s*[(;].*$/,'');
   // A v9 group's weights terms: each licence of the checkpoints in its rows, REVE's versions where REVE is there,
-  // no endorsement, and a link to the protocol page's full list, which must exist.
-  const termsOk=(grp,label,prefix,where)=>{
+  // and a link to the protocol page's full list, which must exist. No endorsement: on a dataset page in each group's
+  // terms; on a method page not there (endorseHere false), because the page says it once, in its terms section.
+  const termsOk=(grp,label,prefix,where,endorseHere=true)=>{
     const m=grp.match(/<p class="protocol-note fm-terms-note" data-fm-terms="([^"]+)">([\s\S]*?)<\/p>/);
     assert.ok(m,where+': the group prints the weights terms of its rows');
     const ms=F.models.filter(x=>grp.includes(`>${e(x.name)}</a>`));
     assert.ok(ms.length,where+': the group has v9 rows');
     for(const x of ms) assert.ok(m[2].includes(label==='zh'&&/^REVE /.test(licName(x))?'REVE 负责任使用许可 v1.0':licName(x)),where+': the terms name '+x.name+'\'s licence ('+licName(x)+')');
     if(ms.some(x=>SLUG[x.id]==='reve')) assert.ok(m[2].includes(ms.filter(x=>SLUG[x.id]==='reve').map(x=>`${x.name} @ ${x.revision.split(' @ ').at(-1)}`).join(' · ')),where+': REVE named by version');
-    assert.ok(m[2].includes(endorse[label])&&m[2].includes(`href="/${prefix}protocols/${m[1]}/#v9-licences"`)&&pageOf(prefix+'protocols/'+m[1]+'/').includes('id="v9-licences"'),where+': no endorsement, and the full list linked');
+    assert.equal(m[2].includes(endorse[label]),endorseHere,where+(endorseHere?': no endorsement, in the group\'s terms':': no endorsement sentence in the group\'s terms (the page says it once, in its terms section)'));
+    assert.ok(m[2].includes(`href="/${prefix}protocols/${m[1]}/#v9-licences"`)&&pageOf(prefix+'protocols/'+m[1]+'/').includes('id="v9-licences"'),where+': the full list linked');
   };
   // ZUNA 1.1's research-use sentence on every one of its rows in a group, and on no other row.
   const zunaRowsOk=(grp,label,where,adapt)=>{
@@ -3502,7 +3520,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       }
       {const rl=lic.slice(lic.indexOf('<li data-licence="reve">'),lic.indexOf('</li>',lic.indexOf('<li data-licence="reve">')));
        assert.ok(rl.includes(reveVersions),where+': the REVE licence entry names the model versions');
-       assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+endorse[label]),where+': no author endorses these results, under the licences');}
+       assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+endorse[label]),where+': no author endorses these results, under the licences');
+       assert.equal(endorseCount(html),1,where+': no endorsement, once per page, in the licence section');}
       // The released limitation keeps its words; where it calls pretraining overlap unknown, a dated pointer follows it.
       {const lim=html.indexOf('<p class="protocol-limitation"'),ptr=html.indexOf('<p class="protocol-note fm-limitation-pointer">');
        if(/pretraining overlap unknown/.test(t.limitation)) assert.ok(ptr>lim&&ptr<html.indexOf('id="steps"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('href="#pretraining-exposure"')&&html.slice(ptr,html.indexOf('</p>',ptr)).includes('2026-10-04'),where+': a dated pointer beside "pretraining overlap unknown"');
@@ -3679,7 +3698,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
      assert.ok(t0>0&&t0>home.indexOf('id="download-fm"')&&t0<home.indexOf('id="ablation-panel"'),label+': the weights terms sit under the v9 rows, before the ablation panel');
      for(const x of F.models) assert.ok(terms.includes(label==='zh'&&/^REVE /.test(licName(x))?'REVE 负责任使用许可 v1.0':licName(x)),label+': the home terms name '+x.name+'\'s licence');
      assert.ok(terms.includes(F.models.filter(x=>SLUG[x.id]==='reve').map(x=>`${x.name} @ ${x.revision.split(' @ ').at(-1)}`).join(' · ')),label+': the home terms name REVE by version');
-     assert.ok(terms.includes(endorse[label])&&terms.includes(`id="fm-terms-link" href="/${label==='zh'?'zh/':''}protocols/${data.tracks[0].id}/#v9-licences"`),label+': no endorsement, and the full list linked');}
+     assert.ok(terms.includes(endorse[label])&&terms.includes(`id="fm-terms-link" href="/${label==='zh'?'zh/':''}protocols/${data.tracks[0].id}/#v9-licences"`),label+': no endorsement, and the full list linked');
+     assert.equal(endorseCount(home),1,label+': no endorsement, once on the home page, in the weights terms');}
     // "On the same eight protocols", with the encoder that ran on fewer named and counted (BrainOmni Base: six).
     for(const m of matrix){const ran=F.frozen_probe.filter(c=>c.model===m.id&&c.status==='complete').length;
       if(ran<data.tracks.length) assert.ok(added.includes(label==='en'?`${e(m.name)} on ${['zero','one','two','three','four','five','six','seven'][ran]} of them`:`${e(m.name)} 只在其中 ${ran} 个上运行`),label+': the snapshot note says '+m.name+' ran on '+ran+' protocols');}
@@ -3747,10 +3767,17 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     const adapted=ms.filter(m=>m.adaptation==='run');
     assert.equal(html.includes('id="g-eegmat-eegmat-v9-adaptation"'),adapted.length>0,path+': the EEGMAT adaptation group where the model was adapted');
     for(const g of [...html.matchAll(/<section class="entity-group" id="(g-[^"]+-(?:foundation-v9|v9-adaptation))">([\s\S]*?)<\/section>/g)].filter(g=>g[2].includes('<tbody>'))){
-      termsOk(g[2],label,prefix,path+' '+g[1]);
+      termsOk(g[2],label,prefix,path+' '+g[1],false);
       if(s==='zuna') zunaRowsOk(g[2],label,path+' '+g[1],g[1].endsWith('v9-adaptation'));
     }
     const cp=html.slice(html.indexOf('<section class="topic-section" id="checkpoints"'),html.indexOf('</section>',html.indexOf('id="checkpoints"')));
+    // No model's authors endorse these results: once per page (HTML and Markdown copy), in the checkpoints-and-terms
+    // section, beside the obligation that no weights, adapted weights or LoRA deltas were kept or shared (2026-10-08).
+    {const lede=cp.match(/<p class="fm-no-endorsement">([^<]*)<\/p>/);
+     assert.ok(lede&&lede[1]===(label==='zh'?endorse.zh+'。没有保留或分享任何权重、适配后的权重或 LoRA 增量。':endorse.en+'. No weights, adapted weights or LoRA deltas were kept or shared.'),path+': the terms section says no endorsement and no weights shared');
+     assert.equal(endorseCount(html),1,path+': "'+endorse[label]+'" once per page, in the terms section');
+     const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+     assert.equal(md.split(endorse.en).length-1+md.split(endorse.zh).length-1,1,path+'index.md: no endorsement, once');}
     for(const m of ms){
       const a=cp.indexOf(`<article class="fm-checkpoint" data-checkpoint="${m.id}">`),art=cp.slice(a,cp.indexOf('</article>',a)),w=path+' '+m.id;
       assert.ok(a>=0,w+': its checkpoint entry');
@@ -4066,6 +4093,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       for(const re of zh?[/不是上限/,/未调参、训练 5 轮/,/没有计入交叉验证带来的相关性/,/多重比较校正/,/从不排名/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/ZUNA 1\.1 没有公开清单/,/EEGMamba 的清单读自其官方代码，把握程度为中等/,/作者都没有为这些结果背书/,/LoRA 增量/,/共享 GPU/]
                        :[/not a ceiling/,/untuned five-epoch recipe/,/ignore cross-validation dependence/,/no multiplicity correction/,/Grouped, never ranked/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/ZUNA 1\.1 publishes none/,/EEGMamba’s list is read from its official code, with medium confidence/,/No model’s authors endorse these results/,/LoRA deltas/,/shared GPU/])
         assert.match(visible(lim),re,w+': the limitation '+re);
+      assert.equal(endorseCount(html),1,w+': no endorsement, once per page, in the limits\' licence entry');
       for(const k of ['mi-rest','p300-target','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
       // Licences: one entry per family printed, with its weights licence, note and paper.
       const lic=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose fm-licences">'),sec.indexOf('</ul>',sec.indexOf('fm-licences')));
@@ -4152,7 +4180,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
         if(m.licence_note.replace(/\.$/,'')!==m.weights_licence) assert.ok(li.includes(e(zh?Z[m.licence_note]:m.licence_note)),w+': '+f+' licence note');
       }
       assert.ok(lic.slice(lic.indexOf('<li data-licence="reve">'),lic.indexOf('</li>',lic.indexOf('<li data-licence="reve">'))).includes(reveVersions),w+': the REVE licence entry names the model versions');
-      assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+(zh?'任何模型的作者都没有为这些结果背书':'No model’s authors endorse these results')),w+': no author endorses these results');
+      assert.ok(sec.includes('<p class="protocol-note fm-no-endorsement">'+(zh?ENDORSE.zh:ENDORSE.en)),w+': no author endorses these results, under the licences');
+      assert.equal(endorseCount(html),1,w+': no endorsement, once per page, in the licence section');
     }
     // model-adaptation: a pointer to the table, no figure; its own claims are pinned above.
     {
@@ -4705,7 +4734,10 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
 // carry no margin, R is exp(log R); seen, reworded and unseen entries are labelled apart; every BOAS figure pools at
 // least 20 people and no per-person, per-fold or percentile key is served; the pre-run checks are pass or fail and
 // counts, with the three canaries, the owner's override and the centring diagnostic not run; the S10 per-frequency
-// breakdowns are not served; the Jev scope and independence lines and Yu & Yao first among the references.
+// breakdowns are not served; Yu & Yao first among the references. Since the owner's feedback of 2026-10-08 the route
+// block carries, by the export's declared text edits (recorded in the manifest, checked by the export audit against
+// the sealed export), the site's one definition of "Jev-style", Jev's source (TypeSafe's launch post) and the
+// sentence that the plan started from Visual Jev, which applies the idea to images; no scope or independence line.
 {
   const served=f=>readFileSync(new URL('data/'+f,DIST));
   for(const f of ['questions-in-language-update.json','questions-in-language-wordings.json'])
@@ -4755,13 +4787,16 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
   assert.ok(/not run/.test(R.pre_run_checks.centring_diagnostic)&&/no further revision/.test(R.pre_run_checks.owner_override)&&/S0b-6/.test(R.pre_run_checks.decision_s0b6.decision)&&/EA-1/.test(R.pre_run_checks.engineering_amendment_ea1.decision)&&R.pre_run_checks.numeracy_probe.activated===false,
     'route 3: the owner override, the centring diagnostic not run, S0b-6, EA-1 and the numeracy prediction not activated');
   assert.deepEqual(R.required_disclosures.map(d=>d.id),['revision-3-failed','revision-4-failed','revision-5-passed','owner-override','centring-diagnostic-not-run','revision-5-direction-counts','decision-s0b6','ea-1','numeracy-not-activated','multiplicity','secondary-single-seed-likely-inconclusive'],'route 3: the required disclosures');
-  // Jev: the scope sentence, the independence line, the vision paper as Yu & Yao, 2026.
-  assert.equal(R.route.jev_scope,'“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG.','route 3: the Jev scope sentence');
-  assert.match(R.route.independence,/independent and not affiliated with the Jev authors; no contact with them and no endorsement by them is claimed/,'route 3: the independence line');
+  // The vision paper as Yu & Yao, 2026, first among the references.
   assert.deepEqual([R.references[0].cite,R.references[0].url],['Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context','https://arxiv.org/abs/2609.25845'],'route 3: Visual Jev cited as Yu & Yao, 2026, first');
+  // The route block after the owner's feedback of 2026-10-08: the site's definition, Jev's source, where the plan started.
+  assert.deepEqual(Object.keys(R.route),['site_text','boundary','origin','jev_style','jev_source'],'route 3: the route block, with no scope or independence line');
+  assert.deepEqual(R.route.jev_style,JEV_STYLE,'route 3: the served file carries the site\'s one definition of "Jev-style"');
+  assert.deepEqual(R.route.jev_source,{company:'TypeSafe AI',url:'https://typesafe.ai/blog/introducing-system-one-models-and-jev'},'route 3: Jev\'s source, TypeSafe\'s launch post');
+  assert.ok(R.route.origin.note.startsWith('The decision-research plan started from Visual Jev')&&R.route.origin.note.includes('applies the same encode-once, answer-many idea to images'),'route 3: the plan started from Visual Jev, which applies the idea to images');
   for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${ql.release_id}"`)&&pageOf(path).includes(ql.provenance.manifest_sha256),path+': the route-3 release and its manifest');
 }
-console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served as reviewed, one release; 35 primary entries in three blocks, 140 in all; every flag follows its interval and the frozen margins, difference-only entries without a margin, R = exp(log R); seen, reworded and unseen labelled apart; every BOAS cell at least 20 people, no per-person, per-fold, percentile or demographic key; S10 breakdowns not served; canaries pass or fail and counts, the override, centring diagnostic, S0b-6, EA-1 and numeracy disclosed; the Jev scope and independence lines; Yu & Yao, 2026 first.');
+console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served as reviewed, one release; 35 primary entries in three blocks, 140 in all; every flag follows its interval and the frozen margins, difference-only entries without a margin, R = exp(log R); seen, reworded and unseen labelled apart; every BOAS cell at least 20 people, no per-person, per-fold, percentile or demographic key; S10 breakdowns not served; canaries pass or fail and counts, the override, centring diagnostic, S0b-6, EA-1 and numeracy disclosed; Yu & Yao, 2026 first; the route block carries the site\'s definition of "Jev-style", Jev\'s source and where the plan started, and no scope or independence line.');
 
 // --- Route 3 on the site: /topics/questions-in-language/, its groups, and the Jev-style page -----------------------
 // The route's own question (owner approval of the results, 2026-10-08), its BETA and BOAS groups (and through them
@@ -4774,10 +4809,14 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
 // "pseudonymised", and each BOAS table states its n; the short answer, the description and the cards print none;
 // (6) the result sections type no figure of their own; (7) the secondary panel is collapsed and says, part by part,
 // one seed and declared likely inconclusive exactly where the export does; (8) the cite block names this release
-// alone and the Markdown copy carries every figure in order; (9) the Jev-style page: the scope sentence as its dek,
-// "independent" and "not affiliated with the Jev authors", the three routes each linked to its results, Yu & Yao,
-// 2026, the article link, and no figure at all; (10) "Jev-style" stands beside its scope sentence on every page and
-// in llms.txt; "Yu et al." and "jev-eeg" appear nowhere; (11) data use states the odd-median line, figure-free.
+// alone and the Markdown copy carries every figure in order; (9) the Jev-style page: it opens by saying what Jev is
+// (TypeSafe AI's decision model, its launch post linked) and what "Jev-style" means here, then that the plan started
+// from the Visual Jev paper (Yu & Yao, 2026), which applies the idea to images; the three routes each linked to its
+// results, the article link, no figure at all, and its one independence line last; (10) the tone rules of 2026-10-08
+// (owner): every page that says "Jev-style" defines it exactly once, in its HTML and its Markdown copy, and so does
+// each line of llms.txt that names it; no non-affiliation, "no contact", "no endorsement" or "not an integration with
+// Jev" wording anywhere but that one line; no sentence says Jev or its pattern comes from the vision paper;
+// "Yu et al." and "jev-eeg" appear nowhere; (11) data use states the odd-median line, figure-free.
 {
   const QLF='questions-in-language-update.json',QWF='questions-in-language-wordings.json';
   const ql=JSON.parse(readFileSync(new URL('data/'+QLF,DIST),'utf8')),R=ql.results['questions-in-language'],qw=JSON.parse(readFileSync(new URL('data/'+QWF,DIST),'utf8'));
@@ -4936,9 +4975,14 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     assert.equal(html.slice(html.indexOf('<section class="cite-page"')).match(/data-releases="([^"]+)"/)[1],ql.release_id,where+': the cite block names this release alone');
     const md=readFileSync(new URL(path+'index.md',DIST),'utf8');let at=0;
     for(const [,t] of main.slice(main.indexOf('<section class="short-answer"')).matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)){const k=md.indexOf(decodeHtml(t),at);assert.ok(k>=0,where+'index.md: the figure "'+t+'" after offset '+at);at=k+t.length;}
-    // The Jev origin: the scope sentence beside the name, and the page is not called a language model.
-    const jev=el(main,/<p class="protocol-note" data-jev-scope="true"/,where);
-    assert.ok(vis(jev).includes(zh?'这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':'This is not an integration with Jev and not a Jev model that reads EEG.')&&jev.includes('href="https://arxiv.org/abs/2609.25845"')&&jev.includes(`href="${zh?'/zh':''}/jev-style/"`),where+': the Jev origin with its scope, the paper and the Jev-style page');
+    // The route in its plan: the definition of "Jev-style", the vision paper the plan started from (which applies the
+    // idea to images), and the Jev-style page. That the head is not a language model is a limit (owner, 2026-10-08):
+    // it stands in the limits list, not in this note.
+    const jev=el(main,/<p class="protocol-note" data-jev-style="true"/,where),jt=vis(jev);
+    assert.ok(jt.includes(JEV_STYLE[label])&&jt.includes(zh?'这个计划从一篇视觉论文出发':'The plan started from a vision paper')&&jt.includes(zh?'它把同样的思路用在图像上':'which applies that idea to images')
+      &&jev.includes('href="https://arxiv.org/abs/2609.25845"')&&jev.includes(`href="${zh?'/zh':''}/jev-style/"`),where+': the route in its plan: the definition, the paper it started from, the Jev-style page');
+    const notLm=zh?'这里的分类头不是语言模型，这些结果也不能说明 EEG 能理解语言。':'The head here is not a language model, and none of these results shows that EEG understands language.';
+    assert.ok(!jt.includes(notLm)&&vis(main).split(notLm).length===2&&vis(el(lim,/<li data-site-limit="not-a-language-model">/,where))===notLm,where+': "not a language model" is one limit, in the limits list, and not in the introduction');
   }
   // (2) The same figures in both languages.
   assert.deepEqual(figsOf.zh,figsOf.en,'questions-in-language: the Chinese page prints exactly the English page\'s figures');
@@ -4962,12 +5006,23 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     const zh=label==='zh',path=pfx+'jev-style/',html=pageOf(path),where=path;
     const main=html.slice(html.indexOf('<main'),html.indexOf('</main>'));
     assert.ok(html.includes(`<h1>${zh?'Jev 式提问用在脑电上：证据':'Jev-style questions on EEG: the evidence'}</h1>`)&&html.includes(`<title>${zh?'Jev 式提问用在脑电上：证据':'Jev-style questions on EEG: the evidence'} · BCI Report</title>`),where+': its title');
+    // The opening: what Jev is, with TypeSafe's launch post; what "Jev-style" means here; then the paper the plan
+    // started from, which applies the idea to images. The dek does not repeat the definition.
     const dek=vis(el(main,/<p class="topic-dek"/,where));
-    assert.equal(dek,zh?'“Jev-style”（Jev 式）指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':R.route.jev_scope,where+': the scope sentence stands under the name');
-    const ind=vis(el(main,/<p class="protocol-note" data-independence="true"/,where));
-    assert.ok(zh?ind.includes('独立项目')&&ind.includes('与 Jev 的作者没有关联'):ind.includes('independent')&&ind.includes('not affiliated with the Jev authors'),where+': independent, not affiliated with the Jev authors');
-    assert.match(ind,zh?/不声称与他们有过联系，也不声称得到他们的认可/:/no contact with them and no endorsement by them is claimed/,where+': no contact or endorsement claimed');
-    assert.ok(main.includes('href="https://arxiv.org/abs/2609.25845"')&&decodeHtml(main).includes('Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context'),where+': Visual Jev, cited as Yu & Yao, 2026');
+    assert.equal(dek,zh?'三条路线，每一条都由 BCI Report 在公开 EEG 数据上自己的运行来回答。':'Three routes, each answered by BCI Report’s own runs on public EEG data.',where+': the dek');
+    const name=el(main,/<section class="topic-section" id="the-name"/,where);
+    assert.ok(main.indexOf('id="the-name"')<main.indexOf('id="routes"'),where+': the opening comes before the routes');
+    const jp=el(name,/<p class="roadmap-p" data-jev="true"/,where),jt=vis(jp);
+    assert.ok(jt.startsWith(zh?'Jev 是 TypeSafe AI 推出的决策模型':'Jev is TypeSafe AI’s decision model')&&jp.includes('href="https://typesafe.ai/blog/introducing-system-one-models-and-jev"')&&jt.endsWith(JEV_STYLE[label])&&(!zh||/Jev 是 <a\b/.test(jp)),where+': what Jev is, with its launch post (spaced from the Chinese), then what "Jev-style" means here');
+    const og=el(name,/<p class="roadmap-p" data-origin="true"/,where),ot=vis(og);
+    assert.ok(ot.startsWith(zh?'本站的决策研究计划从一篇视觉论文出发':'This site’s decision-research plan started from a vision paper')&&ot.includes(zh?'它把同样“编码一次、回答多个问题”的思路用在图像上':'which applies the same encode-once, answer-many idea to images')
+      &&og.includes('href="https://arxiv.org/abs/2609.25845"')&&decodeHtml(og).includes('Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context'),where+': the plan started from Visual Jev, cited as Yu & Yao, 2026, which applies the idea to images');
+    // The one independence line: neutral, and the last paragraph of the page's content, after the routes and the article.
+    const ip=el(main,/<p class="citation-note" data-independence="true"/,where);
+    assert.equal(vis(ip),JEV_INDEPENDENCE[label],where+': the independence line');
+    assert.equal(vis(main).split(JEV_INDEPENDENCE[label]).length,2,where+': the independence line is said once');
+    const afterInd=main.slice(main.indexOf('data-independence="true"'));
+    assert.ok(main.indexOf('data-independence="true"')>main.indexOf('id="jev-article"')&&!/<p\b|<section\b|<h[1-6]\b|<li\b/.test(afterInd.slice(afterInd.indexOf('</p>'))),where+': the independence line closes the page');
     const routes=[...main.matchAll(/<li data-route="([^"]+)" data-route-status="([^"]+)">([\s\S]*?)<\/li>/g)];
     assert.deepEqual(routes.map(m=>[m[1],m[2]]),[['reliable-decisions','run'],['one-representation','run'],['questions-in-language','run']],where+': the three routes, each run');
     const hrefs=routes.map(m=>m[3].match(/<p class="route-results"><a href="([^"]+)"/)[1]);
@@ -4981,33 +5036,55 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     if(zh){const t=chineseOnly(html);for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(t,bad),where+': "'+bad+'" is a rejected rendering — use "'+good+'"');}
   }
   assert.ok(llms.includes('https://bci.report/jev-style/index.md'),'llms.txt: the Jev-style page');
-  // The cards that lead there: under the core matrix and on the Questions hub, the scope sentence and the independence line inside.
+  // The cards that lead there: under the core matrix and on the Questions hub, each with the definition and nothing defensive.
   for(const [page,zh] of [['',false],['zh/',true],['topics/',false],['zh/topics/',true]]){
     const h=pageOf(page),card=el(h,/<a class="jev-card"/,page||'/');
-    assert.ok(card.includes(`href="${zh?'/zh':''}/jev-style/"`)&&vis(card).includes(zh?'这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。':'This is not an integration with Jev and not a Jev model that reads EEG.')&&vis(card).includes(zh?'与 Jev 的作者没有关联':'not affiliated with the Jev authors')&&!/\d/.test(vis(card)),(page||'/')+': the Jev-style card, its scope and independence, no figure');
+    assert.ok(card.includes(`href="${zh?'/zh':''}/jev-style/"`)&&vis(card).includes(JEV_STYLE[zh?'zh':'en'])&&!/\d/.test(vis(card)),(page||'/')+': the Jev-style card, its definition, no figure');
     if(page===''||page==='zh/'){const ov=el(h,/<section id="overview"/,page||'/');assert.ok(ov.includes('class="jev-card"')&&ov.indexOf('class="jev-card"')>ov.indexOf('class="matrix-frame"'),(page||'/')+': the card sits under the core matrix');}
   }
-  // (10) "Jev-style" stands beside its scope sentence: on every page, the innermost section or card holding a mention
-  // holds the sentence too (the page's main, for the breadcrumb); in llms.txt, the same line does.
-  const scopeMark=/This is not an integration with Jev and not a Jev model that reads EEG|这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型/;
+  // (10) The tone rules (owner, 2026-10-08). Every page that says "Jev-style" (or "Jev 式") anywhere in its body,
+  // attributes included, defines it exactly once in its visible text, and so does its Markdown copy; a page that does
+  // not name it does not define it. In llms.txt, each line that names it defines it once.
+  const JEV_NAME=/Jev-style|Jev 式/;
+  const defCount=s=>s.split(JEV_STYLE.en).length-1+s.split(JEV_STYLE.zh).length-1;
   let mentions=0;
   for(const f of htmlPages){
-    const raw=readFileSync(new URL(f,DIST),'utf8'),body=raw.slice(raw.indexOf('<body')).replace(/<script\b[\s\S]*?<\/script>/g,s=>' '.repeat(s.length)).replace(/<section class="cite-page"[\s\S]*?<\/section>/,s=>' '.repeat(s.length));
-    // A card is a box of its own; an inline link is read with the section around it.
-    const opens=[...body.matchAll(/<(?:section|main)\b[^>]*>|<a class="[^"]*card[^"]*"[^>]*>/g)].map(m=>[m.index,spanEnd(body,m.index)]);
-    for(const m of body.matchAll(/Jev-style|Jev 式/g)){
-      // A mention inside a tag's attribute (a title or aria-label) is read with its element's text.
-      const box=opens.filter(([a,b])=>a<m.index&&m.index<b).sort((x,y)=>(x[1]-x[0])-(y[1]-y[0]))[0];
-      assert.ok(box&&scopeMark.test(decodeHtml(body.slice(box[0],box[1]).replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ')),f+': "Jev-style" stands without its scope sentence in its section — “…'+vis(body.slice(Math.max(0,m.index-120),m.index+60))+'…”');
-      mentions++;
-    }
+    const raw=readFileSync(new URL(f,DIST),'utf8'),body=raw.slice(raw.indexOf('<body')).replace(/<script\b[\s\S]*?<\/script>/g,' ');
+    const named=JEV_NAME.test(body),n=defCount(decodeHtml(body.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' '));
+    assert.equal(n,named?1:0,f+': "Jev-style" '+(named?'is named, so it is defined once':'is not named, so it is not defined')+' ('+n+' definitions)');
+    if(named) mentions++;
+    const md=f.replace(/index\.html$/,'index.md');
+    if(distFiles.includes(md)){const m=readFileSync(new URL(md,DIST),'utf8');assert.equal(defCount(m.replace(/\s+/g,' ')),JEV_NAME.test(m)?1:0,md+': "Jev-style" defined once where named');}
   }
-  for(const line of llms.split('\n').filter(l=>/Jev-style|Jev 式/.test(l))) assert.match(line,scopeMark,'llms.txt: "Jev-style" without its scope sentence on its line');
-  assert.ok(mentions>=20,'route 3: the Jev-style mentions read ('+mentions+')');
+  for(const line of llms.split('\n').filter(l=>JEV_NAME.test(l))) assert.equal(defCount(line),1,'llms.txt: a line names "Jev-style" without its one definition');
+  assert.ok(mentions>=12,'route 3: the pages that name "Jev-style" read ('+mentions+')');
+  // Nothing defensive beside the name: no non-affiliation, "no contact", "no endorsement" (of or by anyone tied to
+  // Jev), "not an integration with Jev" or "not a Jev model" wording, in either language, on any built page, its
+  // Markdown copy, llms.txt, llms-full.txt, the feed, the README or the HF card builder; the one exception is the
+  // independence line at the end of /jev-style/, which says none of these.
+  const defensive=[/not affiliated|unaffiliated|no affiliation/i,/\bno contact\b/i,/endorse[^.。]*\b(?:Jev|TypeSafe|Yu|Yao)\b|\b(?:Jev|TypeSafe)\b[^.。]*endorse/i,/not an integration with Jev|not a Jev model|Jev model that reads EEG/i,
+    /没有接入 Jev|能读 EEG 的 Jev 模型|与 Jev 的作者|(?:Jev|TypeSafe)[^。]*(?:没有关联|有过联系|认可|背书)|(?:没有关联|有过联系|认可|背书)[^。]*(?:Jev|TypeSafe)/];
+  const textFiles=distFiles.filter(f=>/\.(?:html|md|txt|xml)$/.test(f)).map(f=>[f,readFileSync(new URL(f,DIST),'utf8')]);
+  const repoText=['../../README.md','../../CITATION.cff','../../.zenodo.json','../../pipeline/publication/build_hf_dataset.py'].map(p=>[p.replace('../../',''),readFileSync(new URL(p,import.meta.url),'utf8')]);
+  for(const [f,s] of [...textFiles,...repoText]) for(const re of defensive) assert.doesNotMatch(s,re,f+': defensive wording beside "Jev-style" ('+re+')');
+  for(const pfx of ['','zh/']) assert.equal((pageOf(pfx+'jev-style/').match(/data-independence="true"/g)||[]).length,1,pfx+'jev-style/: one independence line');
+  for(const [f,s] of textFiles.filter(([f])=>!/^(?:zh\/)?jev-style\/index\.(?:html|md)$/.test(f)&&f!=='llms-full.txt'))
+    assert.ok(!s.includes(JEV_INDEPENDENCE.en)&&!s.includes(JEV_INDEPENDENCE.zh),f+': the independence line belongs at the end of /jev-style/ only');
+  // Jev is TypeSafe AI's; the Visual Jev paper applies the idea to images and is where the plan started. No sentence
+  // that names the paper says Jev, its pattern or its interface comes, is taken or borrowed from it, or was
+  // introduced, coined or prompted by it. Sentences are read with the paper's title collapsed to "Visual Jev".
+  const paper=/Visual Jev|vision paper|视觉论文|Yu & Yao/;
+  const origin=/\b(?:comes?|came) from\b|\btak(?:es|en|ing)\b[^.]{0,60}\bfrom\b|\bborrow|\boriginat|\bintroduc|\bcoin(?:s|ed)\b|\binvent|\bprompted\b|\bsource of\b|来自|借来|源自|源于|提出了? ?Jev|促成/;
+  const sentences=s=>decodeHtml(s.replace(/<script\b[\s\S]*?<\/script>/g,' ').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').replace(/Visual Jev: Accurate and Efficient Decisions from Shared Visual Context/g,'Visual Jev').split(/(?<=[.。!?！？])\s*/);
+  for(const [f,s] of [...textFiles,...repoText]) for(const x of sentences(s)) if(paper.test(x)) assert.doesNotMatch(x,origin,f+': a sentence attributes Jev or its pattern to the vision paper — “'+x.slice(0,160)+'”');
+  // The two route-3 served files, string by string, under the same two rules.
+  {const strs=v=>Array.isArray(v)?v.flatMap(strs):v&&typeof v==='object'?Object.values(v).flatMap(strs):typeof v==='string'?[v]:[];
+   for(const [f,doc] of [[QLF,ql],[QWF,qw]]) for(const s of strs(doc)){
+     for(const re of defensive) assert.doesNotMatch(s,re,f+': defensive wording beside Jev ('+re+')');
+     for(const x of sentences(s)) if(paper.test(x)) assert.doesNotMatch(x,origin,f+': a sentence attributes Jev or its pattern to the vision paper — “'+x.slice(0,160)+'”');}}
   // "Yu et al." for Visual Jev, and a "jev-eeg" name, nowhere: not in the built site, the README, the citation files or the HF card's builder.
-  const repoText=['../../README.md','../../CITATION.cff','../../.zenodo.json','../../pipeline/publication/build_hf_dataset.py'].map(p=>readFileSync(new URL(p,import.meta.url),'utf8'));
-  for(const f of distFiles.filter(f=>/\.(?:html|md|txt|xml)$/.test(f))) assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Yu et al\.|jev-eeg/i,f+': "Yu et al." or a jev-eeg name');
-  for(const t of repoText) assert.doesNotMatch(t,/Yu et al\.|jev-eeg/i,'the README, the citation files or the HF card builder: "Yu et al." or a jev-eeg name');
+  for(const [f,s] of textFiles) assert.doesNotMatch(s,/Yu et al\.|jev-eeg/i,f+': "Yu et al." or a jev-eeg name');
+  for(const [f,s] of repoText) assert.doesNotMatch(s,/Yu et al\.|jev-eeg/i,f+': "Yu et al." or a jev-eeg name');
   // (11) Data use: a median over an odd number of records is one record's value, mirroring the four-person note; no figure.
   const du=pageOf('data-use/'),om=el(du,/<p id="odd-medians"/,'data-use');
   assert.ok(du.indexOf('id="odd-medians"')>du.indexOf('id="small-cohorts"')&&du.slice(du.indexOf('id="small-cohorts"'),du.indexOf('id="odd-medians"')).indexOf('</section>')<0,'data-use: the odd-median line sits with the small-cohort note');
@@ -5028,7 +5105,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
    assert.ok(/^D11\b/.test(ql.boas_conditions.owner_approval.extended_to_route_3)&&t.includes('owner decision D11')&&sq.includes('href="#boas-gaps"')&&t.includes('pseudonymised in the public release')&&t.includes(ql.boas_conditions.not_an_evaluation_of),'data-use: BOAS under D11, with its gaps');
    assert.ok(sq.includes(`href="/releases/#${ql.release_id}"`),'data-use: the route-3 entry links its release');
    assert.ok(!/Jev/.test(t),'data-use: the register names no Jev');}
-  console.log(`PASS: 2026-10-08 route 3 on the site — /topics/questions-in-language/ in both languages: ${all.length} entries, each in its own kind of table with ${pinned} figures pinned, both flags in words and its gate, the same figures in English and Chinese; the required disclosures with their counts; unseen by whom; ${boasFigs} BOAS figures beside their gaps on ${boasPages.size} pages, each BOAS table with its n, none in the short answer or description; no typed figure in the result sections; the secondary panel collapsed, one seed and declared likely inconclusive where the export says; every limitation, credit, encoder and reference; BETA and BOAS groups and the CBraMod page; the Jev-style page with its scope, independence, three linked routes, Yu & Yao, 2026, the article and no figure; its cards; ${mentions} "Jev-style" mentions each beside the scope sentence; no "Yu et al." or jev-eeg; the odd-median line and the route-3 register entry on data use.`);
+  console.log(`PASS: 2026-10-08 route 3 on the site — /topics/questions-in-language/ in both languages: ${all.length} entries, each in its own kind of table with ${pinned} figures pinned, both flags in words and its gate, the same figures in English and Chinese; the required disclosures with their counts; unseen by whom; ${boasFigs} BOAS figures beside their gaps on ${boasPages.size} pages, each BOAS table with its n, none in the short answer or description; no typed figure in the result sections; the secondary panel collapsed, one seed and declared likely inconclusive where the export says; every limitation, credit, encoder and reference; BETA and BOAS groups and the CBraMod page; the Jev-style page opening with what Jev is and what "Jev-style" means, the plan's start in Yu & Yao, 2026, three linked routes, the article, no figure and its one independence line last; its cards; ${mentions} pages naming "Jev-style", each defining it once (HTML, Markdown, llms.txt); no defensive wording and no sentence giving Jev's origin to the vision paper, on the pages or in the two route-3 served files; "not a language model" among route 3's limits; no "Yu et al." or jev-eeg; the odd-median line and the route-3 register entry on data use.`);
 }
 // --- No update date and no version label in the site's text (owner decision 2026-10-08) ---------------------------
 // The site does not say when it was updated or which version it is: the release log does. Every built page, in both

@@ -324,9 +324,13 @@ def protocol_table(snapshot):
     return '\n'.join(lines)
 
 
-# The Jev-style section: the scope sentence and the independence line are the route-3 export's own, read from the
-# served file, so the card says exactly what the site does. Links only; no figure, no date, no version label.
+# The Jev-style section: what "Jev-style" means, in the site's own sentence (site/src/data/decision-research.ts
+# `jevStyle`, with TypeSafe's launch post linked), and the paper the plan started from, cited as the route-3 export cites
+# it. Nothing about what it is not (owner, 2026-10-08). Links only; no figure, no date, no version label.
 JEV_PAGE = 'https://bci.report/jev-style/'
+TYPESAFE_JEV = 'https://typesafe.ai/blog/introducing-system-one-models-and-jev'
+JEV_STYLE = ('“Jev-style” here means the interface of a decision model like [TypeSafe’s Jev]({url}), applied to EEG: '
+             'encode the recording once, then answer several explicit, typed questions about it, each with a probability.')
 JEV_ROUTES = [
     ('Reliable decisions', 'when a decoder should decline to decide', 'https://bci.report/topics/when-not-to-act/#reliable-decisions'),
     ('One model, several questions', 'one shared representation against separate models', 'https://bci.report/topics/shared-encoder/'),
@@ -335,20 +339,18 @@ JEV_ROUTES = [
 
 
 def jev_section():
-    """The card's "Jev-style evaluation" section, its scope sentence and independence line read from the route-3 export."""
-    route = json.loads((PUBLISHED/'questions-in-language-update.json').read_text())['results']['questions-in-language']['route']
-    scope, independence = route['jev_scope'], route['independence']
-    assert scope.endswith('This is not an integration with Jev and not a Jev model that reads EEG.'), 'Jev scope sentence'
-    assert 'independent and not affiliated with the Jev authors' in independence, 'independence line'
-    assert route['origin']['cite'].startswith('Yu & Yao, 2026 · Visual Jev'), 'Visual Jev cited as Yu & Yao, 2026'
+    """The card's "Jev-style evaluation" section: the site's definition, and the vision paper as the route-3 export cites it."""
+    origin = json.loads((PUBLISHED/'questions-in-language-update.json').read_text())['results']['questions-in-language']['route']['origin']
+    assert origin['cite'].startswith('Yu & Yao, 2026 · Visual Jev'), 'Visual Jev cited as Yu & Yao, 2026'
     routes = '\n'.join(f"- [{name}]({url}): {what}." for name, what, url in JEV_ROUTES)
     return f"""## Jev-style evaluation
 
-{scope} {independence} The pattern comes from a vision paper:
-{route['origin']['cite']} ([arXiv:{route['origin']['arxiv']}]({route['origin']['url']})).
+{JEV_STYLE.format(url=TYPESAFE_JEV)} The research plan started from a vision paper
+that applies the same idea to images: {origin['cite']}
+([arXiv:{origin['arxiv']}]({origin['url']})).
 
-BCI Report asks it on public EEG data in three routes, gathered on
-[Jev-style questions on EEG: the evidence]({JEV_PAGE}):
+BCI Report asks whether this holds up on public EEG data in three routes,
+gathered on [Jev-style questions on EEG: the evidence]({JEV_PAGE}):
 
 {routes}
 

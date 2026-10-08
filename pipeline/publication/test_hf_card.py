@@ -179,9 +179,11 @@ class CardRouteTwo(unittest.TestCase):
 
 
 class CardJevStyle(unittest.TestCase):
-    """The "Jev-style evaluation" section (owner plan of 2026-10-07): the scope sentence and the independence line
-    the site prints, the vision paper as Yu & Yao, 2026, links to the evidence page and the three routes, the tags
-    "jev-style" and "decision-models" and never a jev-eeg name, one line to the Explorer Space, and no date."""
+    """The "Jev-style evaluation" section (owner plan of 2026-10-07, tone of 2026-10-08): the site's one definition of
+    "Jev-style" with TypeSafe's launch post linked, and nothing about what it is not; the plan started from the vision
+    paper, cited as Yu & Yao, 2026, and never said to be where Jev comes from; links to the evidence page and the three
+    routes, the tags "jev-style" and "decision-models" and never a jev-eeg name, one line to the Explorer Space, and no
+    date."""
 
     @classmethod
     def setUpClass(cls):
@@ -191,13 +193,20 @@ class CardJevStyle(unittest.TestCase):
         cls.text = ' '.join(cls.card.split())
         start = cls.text.index('## Jev-style evaluation')
         cls.section = cls.text[start:cls.text.index('## What this does not contain', start)]
-        cls.route = json.loads((PUBLISHED/'questions-in-language-update.json').read_text())['results']['questions-in-language']['route']
+        site = (PROJECT/'site/src/data/decision-research.ts').read_text()
+        cls.site_definition = re.search(r"export const jevStyle = \{\n  en: '([^']+)'", site).group(1)
 
-    def test_scope_and_independence_beside_the_name(self):
-        self.assertIn(self.route['jev_scope'], self.section)
-        self.assertIn('This is not an integration with Jev and not a Jev model that reads EEG.', self.section)
-        self.assertIn('independent and not affiliated with the Jev authors', self.section)
-        self.assertIn('no contact with them and no endorsement by them is claimed', self.section)
+    def test_the_sites_definition_beside_the_name(self):
+        self.assertIn('[TypeSafe’s Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev)', self.section)
+        plain = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', self.section)
+        self.assertIn(self.site_definition, plain)
+        self.assertEqual(plain.count('“Jev-style” here means'), 1)
+
+    def test_nothing_defensive_and_no_wrong_origin(self):
+        for phrase in ('affiliated', 'endorse', 'no contact', 'not an integration with Jev', 'not a Jev model',
+                       'comes from a vision paper', 'pattern comes from', 'takes its interface from'):
+            self.assertNotIn(phrase, self.section)
+        self.assertIn('The research plan started from a vision paper that applies the same idea to images', self.section)
 
     def test_cites_yu_and_yao(self):
         self.assertIn('Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context', self.section)

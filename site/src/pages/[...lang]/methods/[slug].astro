@@ -35,7 +35,9 @@ const files = [...new Set(m.groups.flatMap(g => [...(g.chance ? [g.chance] : [])
 const measured = m.groups.filter(g => g.rows.length);
 const measuredOn = [...new Map(measured.map(g => [g.dataset.slug, g.dataset])).values()];
 const protocolsOn = [...new Set(measured.map(g => g.path.match(/^\/protocols\/([^/#]+)\//)?.[1]).filter((x): x is string => !!x))];
-// v9 families: each checkpoint as the release records it, and the exposure table.
+// v9 families: each checkpoint as the release records it, and the exposure table. Its section carries the weights
+// terms and says once, for the page, that no model's authors endorse these results; the result groups above it name
+// each licence and REVE's versions and link the protocol page's full list, without repeating that (2026-10-08).
 const checkpoints = isFmSlug(m.slug) ? fmModels.filter(x => x.slug === m.slug) : [];
 const say = (en: string) => fmText(en, locale);
 // Pretraining exposure, by dataset: the v9 families, and LaBraM and CBraMod (owner decision 2026-10-04).
@@ -82,11 +84,11 @@ const structured = {
   </section>}
   <section class="topic-section" aria-labelledby="results-heading">
     <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.methodResultsLede}</p></div>
-    <ResultGroups locale={locale} groups={m.groups} showMethod={true}/>
+    <ResultGroups locale={locale} groups={m.groups} showMethod={true} fmEndorsement={checkpoints.length === 0}/>
     <p class="citation-note"><a href={hrefFor('/methods/', locale)}>{c.allMethods}</a> · <a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
   {checkpoints.length > 0 && <section class="topic-section" id="checkpoints" aria-labelledby="checkpoints-heading">
-    <div class="topic-heading"><div><h2 id="checkpoints-heading">{c.checkpointsH2}</h2></div><p>{c.checkpointsLede}</p></div>
+    <div class="topic-heading"><div><h2 id="checkpoints-heading">{c.checkpointsH2}</h2></div><p class="fm-no-endorsement">{c.checkpointsLede}</p></div>
     {checkpoints.map(x => {
       // A licence note that only restates the licence's name ("MIT.") is not printed twice.
       const restates = x.licenceNote.replace(/\.$/, '') === x.weightsLicence;

@@ -20,12 +20,14 @@
  * purpose, so that none of them can be read as ours.
  *
  * Origin: a research handoff of 2026-09-27 proposing a "Jev-style" EEG decision
- * model — an interface pattern from a vision paper (last card). The maintainer
- * chose to put the name in the section heading and the page title, for reach.
- * Wherever it is prominent, `scope` says what it is not: not an integration
- * with Jev, not an EEG-capable Jev model, no result. check-workbench.mjs
- * requires that sentence on the page. Sources were checked against their arXiv
- * and PMLR records on 2026-09-27.
+ * model. Jev is TypeSafe AI's decision model (`typesafeJev`); the plan started
+ * from a vision paper, Visual Jev (Yu & Yao, 2026; last card), which applies the
+ * same encode-once, answer-many idea to images. The paper did not introduce Jev,
+ * and no page says the pattern comes from it. The maintainer chose to put the
+ * name in the section heading and the page title, for reach; `scope` opens with
+ * `jevStyle`, the one definition each page that names "Jev-style" carries
+ * (owner, 2026-10-08). Sources were checked against their arXiv and PMLR
+ * records on 2026-09-27.
  */
 export const decisionRoadmap = {
   status: 'plan',
@@ -52,6 +54,24 @@ export const decisionSources = {
   jev: { cite: 'Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context', url: 'https://arxiv.org/abs/2609.25845' },
 } as const;
 
+/** Jev itself: TypeSafe AI's decision model, named on /jev-style/ with its launch post. */
+export const typesafeJev = { company: 'TypeSafe AI', url: 'https://typesafe.ai/blog/introducing-system-one-models-and-jev' } as const;
+
+/**
+ * What "Jev-style" means on this site, stated once on every page that uses the name (owner, 2026-10-08): the
+ * interface of a decision model like Jev, applied to EEG. Positive, and nothing beside it about what it is not.
+ */
+export const jevStyle = {
+  en: '“Jev-style” here means the interface of a decision model like TypeSafe’s Jev, applied to EEG: encode the recording once, then answer several explicit, typed questions about it, each with a probability.',
+  zh: '“Jev-style”（Jev 式）在这里指把 TypeSafe 的 Jev 这类决策模型的接口用在 EEG 上：一段记录只编码一次，再回答关于它的多个明确的、规定输出类型的问题，每个回答都带一个概率。',
+} as const;
+
+/** The one independence line, printed only at the end of /jev-style/, the page that names the company. */
+export const jevIndependence = {
+  en: 'BCI Report is an independent project; it does not use or evaluate TypeSafe’s Jev or the Visual Jev model.',
+  zh: 'BCI Report 是独立项目；无论是 TypeSafe 的 Jev，还是 Visual Jev 模型，本站都没有使用或评估。',
+} as const;
+
 type SourceId = keyof typeof decisionSources;
 type Route = { tag: string; status: string; title: string; body: string; boundary?: string; resultsLink?: string; runNote?: string };
 type Finding = [SourceId, string, string];
@@ -59,7 +79,7 @@ type Finding = [SourceId, string, string];
 interface RoadmapCopy {
   eyebrow: string; h2: string; scope: string; lede: string; statusLine: string;
   routes: Route[];
-  /** The three routes with one answer each, on /jev-style/ (the scope sentence stands in this section). */
+  /** The three routes with one answer each, on /jev-style/ (the definition opens this section, in `scope`). */
   hubLink: [string, string];
   boundaryH3: string; boundary: string; inputsNote: string;
   litH3: string; litLede: string; shows: string; limit: string;
@@ -71,7 +91,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   en: {
     eyebrow: 'Research plan · three routes run',
     h2: 'Jev-style decision models for EEG',
-    scope: '“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG. The first route needs no such model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language; its results have their own page. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; that head is not a language model either, and its results have their own page.',
+    scope: `${jevStyle.en} The first route needs no new model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language; its results have their own page. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; its results have their own page.`,
     lede: 'A decoder has more choices than a class label: it can act, wait for more evidence, or ask for calibration.',
     statusLine: 'Status: all three routes have been run. The first route’s results are in the section above; the second’s and the third’s are on their own pages.',
     routes: [
@@ -104,7 +124,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
       ['neurolm', 'EEG tokens fed to a language model, with instruction tuning, support several EEG tasks in one model.', 'Instruction-style EEG models already exist. A multi-task result is not evidence that arbitrary questions generalise.'],
       ['unimind', 'A language-model-based EEG model can select task-aware queries to decode several tasks.', 'Its queries are internal tokens, not criteria a user writes.'],
       ['elm', 'EEG aligned with clinical reports enables zero-shot classification and retrieval in the authors’ clinical evaluations.', 'Hospital EEG and clinical phenotypes. Nothing yet about wearable devices, few channels or arbitrary concepts.'],
-      ['jev', 'In vision, one encoding of an image can serve many forced-choice questions run as a batch — the “Jev-style” interface that prompted this plan.', 'Its own typed-head control gave no consistent accuracy advantage, and its training gains stayed within the task families it was trained on. Its speed-ups are vision results, not EEG ones.'],
+      ['jev', 'In vision, one encoding of an image and its context can serve several independent forced-choice questions run as a batch: the same encode-once, answer-many idea, applied to images. This plan started from it.', 'Its own typed-head control gave no consistent accuracy advantage, and its training gains were concentrated on the task families represented in training. Its speed-ups are vision results, not EEG ones.'],
     ],
     relatedH3: 'Where this connects',
     related: [
@@ -116,7 +136,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
   zh: {
     eyebrow: '研究计划 · 三条路线已运行',
     h2: 'Jev-style 的 EEG 决策模型',
-    scope: '“Jev-style”指一种接口范式：信号只编码一次，再回答关于它的多个明确的、规定输出类型的问题。这里既没有接入 Jev，也不是能读 EEG 的 Jev 模型。第一条路线用不到这样的模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；这个分类头同样不是语言模型，它的结果也有单独的页面。',
+    scope: `${jevStyle.zh}第一条路线不需要新模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；它的结果也有单独的页面。`,
     lede: '解码器能做的选择不止一个类别标签：它可以执行，可以等待更多证据，也可以请求校准。',
     statusLine: '状态：三条路线都已运行。第一条的结果见上一节；第二条和第三条的结果各在单独的页面上。',
     routes: [
@@ -146,7 +166,7 @@ export const decisionCopy: Record<'en' | 'zh', RoadmapCopy> = {
       ['neurolm', '把 EEG token 输入语言模型并做指令微调，可以在一个模型里支持多项 EEG 任务。', '指令式 EEG 模型已经存在。多任务结果不能证明任意问题都能泛化。'],
       ['unimind', '基于语言模型的 EEG 模型可以选择与任务相关的查询，用来解码多项任务。', '这些查询是模型内部的 token，不是使用者写下的判据。'],
       ['elm', '在作者的临床评测中，与临床报告对齐的 EEG 支持零样本分类和检索。', '医院 EEG 与临床表型。对可穿戴设备、少通道或任意概念，目前还说明不了什么。'],
-      ['jev', '在视觉领域，一张图像编码一次，就能批量回答多个强制选择的问题——这就是促成本计划的“Jev-style”接口。', '它自己设置的对照——换成输出类型固定的分类头——没有带来一致的准确率提升；训练带来的提升也集中在训练中见过的任务类型上。它的加速是视觉结果，不是 EEG 结果。'],
+      ['jev', '在视觉领域，一张图像及其上下文编码一次，就能批量回答多个相互独立的强制选择问题：同样是“编码一次、回答多个问题”的思路，用在图像上。本计划正是从这篇论文出发的。', '它自己设置的对照——换成输出类型固定的分类头——没有带来一致的准确率提升；训练带来的提升也集中在训练中见过的任务类型上。它的加速是视觉结果，不是 EEG 结果。'],
     ],
     relatedH3: '与现有内容的联系',
     related: [

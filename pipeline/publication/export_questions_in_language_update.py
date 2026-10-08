@@ -7,8 +7,11 @@ head was never trained on are three separate results, never pooled into one zero
 (70 people; a plain spectrum, L0, and frozen CBraMod features, L1) and sleep on BOAS (100 people; frozen CBraMod
 features), three seeds each, 35 pre-declared comparisons. Secondary, single-seed or on EESM19 and declared likely
 inconclusive: EESM19, OpenBMI motor imagery, REVE-L features, a second text encoder, Chinese wordings, a negation
-probe, extrapolation to a contiguous band and Wearable-102. The interface pattern comes from a vision paper (Yu & Yao,
-2026); route 3 is not an integration with Jev and not a Jev model that reads EEG.
+probe, extrapolation to a contiguous band and Wearable-102. The decision-research plan started from a vision paper
+(Yu & Yao, 2026) that applies an encode-once, answer-many idea to images; Jev itself is TypeSafe AI's decision model.
+After the owner's feedback of 2026-10-08 the route's Jev wording is changed by declared text edits (OWNER_EDITS, recorded
+in the manifest with the reason): the served file carries the site's one definition of "Jev-style", Jev's source and
+that neutral sentence, and no scope or independence line. Nothing else differs from the sealed build.
 
 Its own publication boundary, as with every batch. The website input is the release candidate. Every
 {source, value} block in it is re-resolved against the pinned file it names, nested blocks included; the wording
@@ -29,12 +32,16 @@ What this export refuses:
   block's, an unseen sentence without "unseen by the EEG head, not by the text encoder", a figure the pinned handoff
   does not state, and a disclosure the pages must carry that the file does not;
 - private paths and hosts, the private decision log's file name, an update date or a version label in the text, a
-  citation of the vision paper other than "Yu & Yao, 2026", and a mention of Jev without its scope sentence.
+  citation of the vision paper other than "Yu & Yao, 2026";
+- defensive wording beside Jev (non-affiliation, "no contact", "no endorsement", "not an integration with Jev"), a
+  sentence that gives Jev or its pattern to the vision paper, and a mention of Jev anywhere but the site's definition,
+  Jev's source, the Visual Jev citation and the sentence that the plan started from it.
 
     python3 pipeline/publication/export_questions_in_language_update.py
 """
 from __future__ import annotations
 
+import copy
 import json
 import math
 import re
@@ -65,10 +72,56 @@ PRIMARY_COUNT = 35
 SECONDARY_ENTRY_COUNT = 105
 UNSEEN = 'unseen by the EEG head, not by the text encoder'
 VISUAL_JEV = 'Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context'
-JEV_SCOPE = ('“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed '
-             'questions about it. This is not an integration with Jev and not a Jev model that reads EEG.')
-INDEPENDENCE = ('BCI Report is independent and not affiliated with the Jev authors; no contact with them and no '
-                'endorsement by them is claimed.')
+# The sealed build's Jev wording, as built and independently audited on 2026-10-08 before the owner's feedback of the
+# same day. Kept only as what the declared text edits below replace or remove; never served.
+SEALED_JEV_SCOPE = ('“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, '
+                    'typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG.')
+SEALED_INDEPENDENCE = ('BCI Report is independent and not affiliated with the Jev authors; no contact with them and no '
+                       'endorsement by them is claimed.')
+SEALED_ORIGIN_NOTE = ('an interface pattern from a vision paper; route 3 is not an integration with Jev and not a Jev '
+                      'model that reads EEG')                  # the release candidate's route_origin.note
+SEALED_ROLE = 'the interface pattern the roadmap names; a vision paper'   # the manifest's reference role
+# What the served file carries instead (owner, 2026-10-08): the site's one definition of "Jev-style" (bound below to
+# site/src/data/decision-research.ts `jevStyle`), Jev's own source (`typesafeJev`), and where the plan started.
+SITE_DEFINITION = PROJECT / 'site/src/data/decision-research.ts'
+JEV_STYLE = {
+    'en': ('“Jev-style” here means the interface of a decision model like TypeSafe’s Jev, applied to EEG: encode the '
+           'recording once, then answer several explicit, typed questions about it, each with a probability.'),
+    'zh': ('“Jev-style”（Jev 式）在这里指把 TypeSafe 的 Jev 这类决策模型的接口用在 EEG 上：一段记录只编码一次，再回答关于'
+           '它的多个明确的、规定输出类型的问题，每个回答都带一个概率。'),
+}
+TYPESAFE_JEV = {'company': 'TypeSafe AI', 'url': 'https://typesafe.ai/blog/introducing-system-one-models-and-jev'}
+ORIGIN_NOTE = ('The decision-research plan started from Visual Jev (Yu & Yao, 2026), which applies the same '
+               'encode-once, answer-many idea to images.')
+REFERENCE_ROLE = ('the vision paper the decision-research plan started from; it applies the same encode-once, '
+                  'answer-many idea to images')
+# The owner's feedback of 2026-10-08, as declared text edits on the served results file (JSON pointers), applied to
+# the sealed build in this order: each replace and remove must find exactly the text it names, an added field must
+# not be there yet, and the manifest's declaredTextEdits must record exactly these. Nothing else is changed: no
+# figure, flag, rule, n, interval or wording, and nothing in the wordings file.
+_ROUTE = f'/results/{ROUTE}'
+OWNER_EDITS = (
+    ('replace', f'{_ROUTE}/route/origin/note', SEALED_ORIGIN_NOTE, ORIGIN_NOTE),
+    ('remove', f'{_ROUTE}/route/jev_scope', SEALED_JEV_SCOPE, None),
+    ('remove', f'{_ROUTE}/route/independence', SEALED_INDEPENDENCE, None),
+    ('add', f'{_ROUTE}/route/jev_style', None, JEV_STYLE),
+    ('add', f'{_ROUTE}/route/jev_source', None, TYPESAFE_JEV),
+    ('replace', f'{_ROUTE}/references/0/role', SEALED_ROLE, REFERENCE_ROLE),
+)
+# Where Jev may be named in the served text, and what may not stand beside it (check-workbench's tone rules of the
+# same date, for the pages): non-affiliation, "no contact", "no endorsement" and "not an integration" wording, in either
+# language; and no sentence that names the vision paper says Jev or its pattern comes, is taken or borrowed from it,
+# or was introduced, coined or prompted by it.
+JEV_TEXTS = {JEV_STYLE['en'], JEV_STYLE['zh'], TYPESAFE_JEV['url'], ORIGIN_NOTE}
+DEFENSIVE = (re.compile(r'not affiliated|unaffiliated|no affiliation', re.IGNORECASE),
+             re.compile(r'\bno contact\b', re.IGNORECASE),
+             re.compile(r'endorse[^.。]*\b(?:Jev|TypeSafe|Yu|Yao)\b|\b(?:Jev|TypeSafe)\b[^.。]*endorse', re.IGNORECASE),
+             re.compile(r'not an integration with Jev|not a Jev model|Jev model that reads EEG', re.IGNORECASE),
+             re.compile(r'没有接入 Jev|能读 EEG 的 Jev 模型|与 Jev 的作者|(?:Jev|TypeSafe)[^。]*(?:没有关联|有过联系|认可|背书)'
+                        r'|(?:没有关联|有过联系|认可|背书)[^。]*(?:Jev|TypeSafe)'))
+PAPER = re.compile(r'Visual Jev|vision paper|视觉论文|Yu & Yao')
+WRONG_ORIGIN = re.compile(r'\b(?:comes?|came) from\b|\btak(?:es|en|ing)\b[^.]{0,60}\bfrom\b|\bborrow|\boriginat|'
+                          r'\bintroduc|\bcoin(?:s|ed)\b|\binvent|\bprompted\b|\bsource of\b|来自|借来|源自|源于|提出了? ?Jev|促成')
 
 # The pinned files the candidate's {source, value} blocks name, and the manifest key that pins each.
 PINNED = {
@@ -1065,7 +1118,8 @@ def all_keys(value):
 
 
 def scrub_check(value, trail='$'):
-    """Refused keys and fragments; private paths, hosts and file names; the date rule; Jev only with its scope."""
+    """Refused keys and fragments; private paths, hosts and file names; the date rule; Jev only where the site names it,
+    nothing defensive beside it, and the vision paper never given as Jev's origin."""
     if isinstance(value, dict):
         require(not (isinstance(value.get('source'), str) and '.json#' in value['source']),
                 f'{trail}: a traced block of the release candidate reached the export')
@@ -1081,8 +1135,13 @@ def scrub_check(value, trail='$'):
         require('anonymous' not in value.lower() and 'anonymised' not in value.lower(), f'{trail}: say pseudonymised')
         require('Yu et al' not in value, f'{trail}: the vision paper is "Yu & Yao, 2026"')
         if 'jev' in value.lower():
-            require('not an integration with Jev' in value or value.startswith(VISUAL_JEV)
-                    or 'not affiliated with the Jev authors' in value, f'{trail}: Jev without its scope sentence')
+            require(value in JEV_TEXTS or value.startswith(VISUAL_JEV),
+                    f'{trail}: Jev named outside the site\'s definition, its source and the Visual Jev citation')
+        for pattern in DEFENSIVE:
+            require(not pattern.search(value), f'{trail}: defensive wording beside Jev ({pattern.pattern[:40]})')
+        for sentence in re.split(r'(?<=[.。!?！？])\s*', value.replace(VISUAL_JEV, 'Visual Jev')):
+            require(not (PAPER.search(sentence) and WRONG_ORIGIN.search(sentence)),
+                    f'{trail}: a sentence gives Jev or its pattern to the vision paper')
         if trail not in IDENTIFIER_TRAILS:
             # As check-workbench reads the pages: links are not text, and a Figshare record's "v3" is its version.
             text = re.sub(r'Figshare(?: record)?(?: \d+)? v\d+', ' ', re.sub(r'https?://\S+', ' ', value))
@@ -1258,6 +1317,67 @@ def limitations(handoff, boundaries):
     return items
 
 
+# ---------------------------------------------------------------------------- the owner's declared text edits
+def edit_records():
+    """OWNER_EDITS as the manifest records them: a replace and a remove name the text they change, an add its field."""
+    out = []
+    for op, pointer, before, after in OWNER_EDITS:
+        rec = {'op': op, 'path': pointer}
+        if op != 'add':
+            rec['before'] = before
+        if op != 'remove':
+            rec['after'] = after
+        out.append(rec)
+    return out
+
+
+def text_only(value):
+    """Every leaf is a string: a text edit carries no figure, flag value, count or null."""
+    if isinstance(value, dict):
+        return bool(value) and all(text_only(v) for v in value.values())
+    if isinstance(value, list):
+        return bool(value) and all(text_only(v) for v in value)
+    return isinstance(value, str)
+
+
+def parent_of(doc, pointer):
+    """The object a JSON pointer's last token is a field of, and that field's name."""
+    tokens = pointer.split('/')[1:]
+    node = doc
+    for tok in tokens[:-1]:
+        node = node[int(tok)] if isinstance(node, list) else node[tok]
+    require(isinstance(node, dict), f'{pointer}: not a field of an object')
+    return node, tokens[-1]
+
+
+def owner_edits(payload, manifest):
+    """The owner's feedback of 2026-10-08, as declared text edits on the sealed build (pattern of CANDIDATE_SCRUBS):
+    the manifest records exactly OWNER_EDITS and why; the definition and the source are the ones the site prints; each
+    replace and remove finds exactly the sealed text it names, and an added field is new."""
+    record = manifest.get('declaredTextEdits')
+    require(isinstance(record, dict) and record.get('date') == '2026-10-08'
+            and 'owner feedback' in record.get('reason', '').lower(),
+            'the manifest does not record the owner\'s text edits and why')
+    require(record.get('edits') == edit_records(), 'the manifest records other text edits than this export declares')
+    site = SITE_DEFINITION.read_text()
+    require(all(f"{k}: '{v}'," in site for k, v in JEV_STYLE.items())
+            and f"company: '{TYPESAFE_JEV['company']}', url: '{TYPESAFE_JEV['url']}'" in site,
+            'the definition of "Jev-style" or Jev\'s source is not the one the site prints')
+    for op, pointer, before, after in OWNER_EDITS:
+        require(op in ('replace', 'remove', 'add') and all(text_only(x) for x in (before, after) if x is not None),
+                f'{pointer}: a text edit that is not text')
+        parent, key = parent_of(payload, pointer)
+        if op == 'add':
+            require(key not in parent, f'{pointer}: the field the edit adds is already there')
+            parent[key] = copy.deepcopy(after)
+            continue
+        require(parent.get(key) == before, f'{pointer}: the declared text edit does not apply (not the sealed text)')
+        if op == 'remove':
+            del parent[key]
+        else:
+            parent[key] = after
+
+
 # ---------------------------------------------------------------------------- the build
 def build(manifest_bytes):
     manifest = json.loads(manifest_bytes)
@@ -1312,7 +1432,7 @@ def build(manifest_bytes):
         'route': {'site_text': design_route['site_text'], 'boundary': design_route['boundary'],
                   'origin': {'cite': VISUAL_JEV, 'url': candidate['route_origin']['url'], 'arxiv': '2609.25845',
                              'note': candidate['route_origin']['note']},
-                  'jev_scope': JEV_SCOPE, 'independence': INDEPENDENCE},
+                  'jev_scope': SEALED_JEV_SCOPE, 'independence': SEALED_INDEPENDENCE},   # the sealed build; OWNER_EDITS
         'design': {
             'unseen_definition': inner(agg['design']['unseen_definition'], 'unseen definition'),
             'question_forms': {k: {'vector': a['e_q'] or 'none: one output per seen question',
@@ -1391,6 +1511,7 @@ def build(manifest_bytes):
     payload['results'][ROUTE] = edited(result, used)     # the declared edits, wherever the carried text has them
     wordings = wordings_payload(manifest, sha(manifest_bytes), agg, lists, lists_sha, used)
     require(used == set(range(len(EDITS))), f'a declared text edit did not apply: {sorted(set(range(len(EDITS))) - used)}')
+    owner_edits(payload, manifest)                       # the owner's text edits of 2026-10-08, declared
     for p in (payload, wordings):
         scrub_check(p)
         validate_public(p)

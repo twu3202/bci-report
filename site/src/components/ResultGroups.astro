@@ -18,8 +18,10 @@ import BoasGaps from './BoasGaps.astro';
 import { groupLimits, groupRule } from '../data/shared-encoder';
 import { qlGroupLimits } from '../data/questions-in-language';
 
-interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean }
-const { locale, groups, showMethod = true } = Astro.props;
+// fmEndorsement: whether each v9 group's weights terms end with "No model's authors endorse these results". A method
+// page passes false: it states that once, in its checkpoints-and-terms section (2026-10-08).
+interface Props { locale: Locale; groups: (ResultGroup & { dataset?: DatasetEntity })[]; showMethod?: boolean; fmEndorsement?: boolean }
+const { locale, groups, showMethod = true, fmEndorsement = true } = Astro.props;
 const c = entityCopy[locale];
 const attr = (f: Fig) => `${f.src}|${f.fmt}|${f.raw}`;
 const pageLabel = (path: string) => {
@@ -79,7 +81,7 @@ const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
           ))}</tbody>
         </table>
       </div>}
-      {g.fmTerms && g.rows.length > 0 && <p class="protocol-note fm-terms-note" data-fm-terms={g.fmTerms}>{fmTermsSentence(fmModels.filter(m => g.rows.some(r => r.method === m.name)), locale)} <a href={`${hrefFor(`/protocols/${g.fmTerms}/`, locale)}#v9-licences`}>{locale === 'zh' ? '全部权重许可与条款 →' : 'Every weights licence and its terms →'}</a></p>}
+      {g.fmTerms && g.rows.length > 0 && <p class="protocol-note fm-terms-note" data-fm-terms={g.fmTerms}>{fmTermsSentence(fmModels.filter(m => g.rows.some(r => r.method === m.name)), locale, fmEndorsement)} <a href={`${hrefFor(`/protocols/${g.fmTerms}/`, locale)}#v9-licences`}>{locale === 'zh' ? '全部权重许可与条款 →' : 'Every weights licence and its terms →'}</a></p>}
       {g.rdLimits && <p class="protocol-note rd-limits-note" data-rd-limits={g.rdLimits}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{rdLimits(g.rdLimits, locale).map((x, i) => <>{i > 0 && locale === 'en' && ' '}{urlParts(x).map((part, j) => j % 2 ? <a href={part} target="_blank" rel="noreferrer">{part}</a> : part)}</>)}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#rd-limits`}>{locale === 'zh' ? '第一条路线的全部局限 →' : 'Every limitation of route 1 →'}</a></p>}
       {g.srNotes === 'boas' && g.rows.length > 0 && <BoasGaps locale={locale}/>}
       {g.srNotes && g.rows.length > 0 && <p class="protocol-note sr-limits-note" data-sr-limits={g.srNotes}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{groupLimits(g.srNotes, locale).map((parts, i) => <>{i > 0 && locale === 'en' && ' '}{parts.map(p => typeof p === 'string' ? p : <span data-fig={attr(p)} class="fig">{formatFig(p)}</span>)}</>)}{locale === 'en' && ' '}{groupRule[locale]}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/shared-encoder/', locale)}#methods-and-limits`}>{locale === 'zh' ? '第二条路线的全部局限 →' : 'Every limitation of route 2 →'}</a></p>}

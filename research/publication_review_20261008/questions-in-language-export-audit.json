@@ -1,9 +1,9 @@
 {
   "status": "pass",
   "release_id": "questions-in-language-update-20261008",
-  "export_sha256": "f320bf25de03e6905d0d9a2d640997d5ad7c70b4af585ed488569461e7c610b4",
-  "wordings_sha256": "70ad2e4c7089516b065955166e3e6d75c89416b8fa3b8600b79ec1e4fc65f0eb",
-  "manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+  "export_sha256": "2583b5958c24e02898929c354e16653e50e33704aaaee37927e158f9d72d01dd",
+  "wordings_sha256": "fb8451a84f2d1d8a6a451e2669503656beb86f28edf9f02d73107ff5a9482529",
+  "manifest_sha256": "c85dbadaab3d08b9ae079015e664cec4ed7e16438c6e1ca00689c1ef341ade5e",
   "release_candidate_sha256": "9729fda20a9556b34ffb3117b81529aec5c014e01457035445c5c5127fa2d678",
   "auditor": "pipeline/publication/audit_questions_in_language_export.py",
   "independence": "A separate program from the export. It does not read the release candidate the export is built from: it reads the two served files, the review manifest and, by their pinned hashes, the consolidated aggregate, the two audited aggregates, the protocol, the stage-0 report and the numerical audits A2 and A4, builds its own table of what every figure must be, and shares no extraction code with the export.",
@@ -31,6 +31,16 @@
   "boas_cells": 82,
   "smallest_boas_cell": 71,
   "withheld_values_checked_absent": 5273,
+  "declared_text_edits": {
+    "edits": 6,
+    "replaced": 2,
+    "removed": 2,
+    "added": 2,
+    "sealed_results_sha256": "f320bf25de03e6905d0d9a2d640997d5ad7c70b4af585ed488569461e7c610b4",
+    "sealed_wordings_sha256": "70ad2e4c7089516b065955166e3e6d75c89416b8fa3b8600b79ec1e4fc65f0eb",
+    "sealed_manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+    "undone_equals_sealed_bytes": true
+  },
   "checks": [
     "the two served copies of each file are byte-identical; both files name the manifest they were built from, and the results file the release candidate",
     "every number and null in either file has an expected value derived here, and every expected value is in the file: no unaudited figure and no missing one",
@@ -42,16 +52,18 @@
     "pre-run checks: the canary outcomes and counts are the stage-0 report's and audit A4 reproduced them; the token-rule, numeracy, fit-check and shuffled-EEG counts are the stage-0 report's and the consolidated aggregate's; no check value of any kind reaches either file",
     "every BOAS figure states its n, or belongs to a cell that does, and every BOAS cell pools at least 20 people",
     "no S10 per-frequency or interior-only value reaches either file",
-    "the wording lists re-serialise to the hash the protocol and the stage-0 report record; the grid, the held-out partition, the S8 band, the NUM code, the derangements and the text encoders are the protocol's"
+    "the wording lists re-serialise to the hash the protocol and the stage-0 report record; the grid, the held-out partition, the S8 band, the NUM code, the derangements and the text encoders are the protocol's",
+    "text: each of the manifest's declared text edits (the owner's feedback of 2026-10-08) is text only and is what the results file serves; undone, with the sealed manifest's hash put back in provenance, the results file and the wordings file are byte for byte the sealed export the manifest pins, so no other text, key, flag or figure differs from it"
   ],
   "audit_bindings": {
     "bound": [
       "aggregates, protocol, stage-0 report and numerical audits: by the hashes the manifest pins, cross-checked against the hashes the consolidated aggregate and the audits record",
-      "every figure: equal to its audited source or recomputed from it"
+      "every figure: equal to its audited source or recomputed from it",
+      "every text and key: the sealed export's (by its hash in the manifest), except the declared text edits"
     ],
     "not_bound": [
       "the release candidate's {source, value} references, the conformance audits' checks, the handoff's figures, the BOAS conditions and the rights records are checked by the export, not re-read here",
-      "prose in the served files (sentences, notes, disclosures) is checked by the export against its pinned sources and by pattern, not by this audit"
+      "prose in the served files (sentences, notes, disclosures) is checked by the export against its pinned sources and by pattern; this audit binds it to the sealed export and the declared edits, not to those sources"
     ]
   }
 }

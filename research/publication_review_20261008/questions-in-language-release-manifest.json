@@ -2,7 +2,7 @@
   "release_id": "questions-in-language-update-20261008",
   "reviewed_at": "2026-10-08",
   "reviewer": "publishing session",
-  "scope": "Editorial decisions for route 3 of the decision-research roadmap on /topics/when-not-to-act/, questions in language (handoff revision 1, dated 2026-10-08). Its own manifest, beside the later-sessions one of the same date: it amends no earlier review and changes no released file. One small question-conditioned head over frozen features is asked each question by a question number (ID), by a label template (TPL) or by a natural-language description (DESC). Seen questions in their training wording, rewordings of seen questions and questions the EEG head was never trained on are separate results and never pooled. Primary: SSVEP on BETA (70 people; a plain spectrum and frozen CBraMod features) and sleep on BOAS (100 people; frozen CBraMod features), 3 seeds each, 35 pre-declared comparisons. Secondary, declared likely inconclusive where single-seed or on EESM19: EESM19, OpenBMI motor imagery, REVE-L features, a second text encoder, Chinese wordings, a negation probe, extrapolation to a contiguous band and Wearable-102. The interface pattern comes from a vision paper; route 3 is not an integration with Jev and not a Jev model that reads EEG. The website input is the release candidate. Every {source, value} block in it is re-resolved against the file it names; the consolidated aggregate, the two audited aggregates, the protocol, the stage-0 report, the two canary declarations, the BOAS scope extension, the handoff, the reference check and the four independent audits are pinned by SHA-256, opened and checked, never copied, because they carry private storage paths. The wording lists, the held-out partition and the derangements are the site's own text and are served in a second file.",
+  "scope": "Editorial decisions for route 3 of the decision-research roadmap on /topics/when-not-to-act/, questions in language (handoff revision 1, dated 2026-10-08). Its own manifest, beside the later-sessions one of the same date: it amends no earlier review and changes no released file. One small question-conditioned head over frozen features is asked each question by a question number (ID), by a label template (TPL) or by a natural-language description (DESC). Seen questions in their training wording, rewordings of seen questions and questions the EEG head was never trained on are separate results and never pooled. Primary: SSVEP on BETA (70 people; a plain spectrum and frozen CBraMod features) and sleep on BOAS (100 people; frozen CBraMod features), 3 seeds each, 35 pre-declared comparisons. Secondary, declared likely inconclusive where single-seed or on EESM19: EESM19, OpenBMI motor imagery, REVE-L features, a second text encoder, Chinese wordings, a negation probe, extrapolation to a contiguous band and Wearable-102. The decision-research plan started from a vision paper, Visual Jev (Yu & Yao, 2026), which applies the same encode-once, answer-many idea to images; Jev itself is TypeSafe AI's decision model (see declaredTextEdits). The website input is the release candidate. Every {source, value} block in it is re-resolved against the file it names; the consolidated aggregate, the two audited aggregates, the protocol, the stage-0 report, the two canary declarations, the BOAS scope extension, the handoff, the reference check and the four independent audits are pinned by SHA-256, opened and checked, never copied, because they carry private storage paths. The wording lists, the held-out partition and the derangements are the site's own text and are served in a second file.",
   "approval": {
     "date": "2026-10-08",
     "decision": "aggregate_preview",
@@ -112,5 +112,57 @@
     "The text of the audits' discrepancy lists, which name private files; what must travel with the results is carried as the results' own labels and notes.",
     "The handoff, the release candidate, the aggregates, the protocol, the stage-0 report, the canary declarations, the BOAS scope extension, the reference check and the four independent audits: pinned by SHA-256 in this manifest and checked, never copied, because they carry private storage paths."
   ],
-  "holds": []
+  "holds": [],
+  "declaredTextEdits": {
+    "date": "2026-10-08",
+    "reason": "Owner feedback, 2026-10-08: the site's Jev copy was too defensive and named the wrong origin. Jev is TypeSafe AI's decision model (its launch post, https://typesafe.ai/blog/introducing-system-one-models-and-jev). Visual Jev (Yu & Yao, 2026, arXiv:2609.25845) is a later vision paper that applies the same encode-once, answer-many idea to images; this site's plan started from it. The served results file therefore carries the site's one definition of \"Jev-style\" in English and Chinese (site/src/data/decision-research.ts jevStyle), Jev's source (typesafeJev) and that neutral sentence, in place of the sealed build's scope sentence, its \"interface pattern from a vision paper\" note and its reference role. The independence line is not served: the site prints it once, at the end of /jev-style/.",
+    "rule": "Each edit names a field of questions-in-language-update.json by JSON pointer and is text only. replace: the sealed text is replaced; remove: the field is dropped; add: the field is appended to its object, in this order. No figure, flag, rule, n, interval or wording changes, and the wordings file is not edited. The export applies exactly these edits to its sealed build (OWNER_EDITS) and refuses if one does not find its sealed text; the independent audit undoes them, puts back the sealed manifest's hash in provenance and requires the sealed bytes of both files.",
+    "sealedExport": {
+      "note": "The two served files as built and independently audited on 2026-10-08, before the owner's feedback, from this manifest as it then was; never deployed.",
+      "resultsSha256": "f320bf25de03e6905d0d9a2d640997d5ad7c70b4af585ed488569461e7c610b4",
+      "wordingsSha256": "70ad2e4c7089516b065955166e3e6d75c89416b8fa3b8600b79ec1e4fc65f0eb",
+      "manifestSha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba"
+    },
+    "alsoAmended": "This manifest's own scope sentence, which said the interface pattern comes from a vision paper and that route 3 is not an integration with Jev, now says where the plan started. It is not served.",
+    "edits": [
+      {
+        "op": "replace",
+        "path": "/results/questions-in-language/route/origin/note",
+        "before": "an interface pattern from a vision paper; route 3 is not an integration with Jev and not a Jev model that reads EEG",
+        "after": "The decision-research plan started from Visual Jev (Yu & Yao, 2026), which applies the same encode-once, answer-many idea to images."
+      },
+      {
+        "op": "remove",
+        "path": "/results/questions-in-language/route/jev_scope",
+        "before": "“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG."
+      },
+      {
+        "op": "remove",
+        "path": "/results/questions-in-language/route/independence",
+        "before": "BCI Report is independent and not affiliated with the Jev authors; no contact with them and no endorsement by them is claimed."
+      },
+      {
+        "op": "add",
+        "path": "/results/questions-in-language/route/jev_style",
+        "after": {
+          "en": "“Jev-style” here means the interface of a decision model like TypeSafe’s Jev, applied to EEG: encode the recording once, then answer several explicit, typed questions about it, each with a probability.",
+          "zh": "“Jev-style”（Jev 式）在这里指把 TypeSafe 的 Jev 这类决策模型的接口用在 EEG 上：一段记录只编码一次，再回答关于它的多个明确的、规定输出类型的问题，每个回答都带一个概率。"
+        }
+      },
+      {
+        "op": "add",
+        "path": "/results/questions-in-language/route/jev_source",
+        "after": {
+          "company": "TypeSafe AI",
+          "url": "https://typesafe.ai/blog/introducing-system-one-models-and-jev"
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/results/questions-in-language/references/0/role",
+        "before": "the interface pattern the roadmap names; a vision paper",
+        "after": "the vision paper the decision-research plan started from; it applies the same encode-once, answer-many idea to images"
+      }
+    ]
+  }
 }

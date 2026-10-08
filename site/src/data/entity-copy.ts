@@ -69,7 +69,7 @@ export const entityCopy = {
     protocolsOn: 'Protocols:',
     // v9 method pages (2026-10-04): what was run, and on what terms.
     checkpointsH2: 'Checkpoints, inputs and terms',
-    checkpointsLede: 'No weights, adapted weights or LoRA deltas were kept or shared, and no endorsement by the model’s authors is implied.',
+    checkpointsLede: 'No model’s authors endorse these results. No weights, adapted weights or LoRA deltas were kept or shared.',
     dtRevision: 'Revision', dtSha: 'Checkpoint SHA-256', dtParams: 'Encoder parameters', dtPaper: 'Paper',
     dtWeights: 'Weights licence', dtTerms: 'Licence note', dtRights: 'Rights review', dtFootnote: 'Row footnote', dtNotes: 'Notes',
     dtAdaptation: 'EEGMAT adaptation', dtPanel: 'Panel',
@@ -150,7 +150,7 @@ export const entityCopy = {
     measuredOn: '测量所用数据集：',
     protocolsOn: '协议：',
     checkpointsH2: '检查点、输入与条款',
-    checkpointsLede: '没有保留或分享任何权重、适配后的权重或 LoRA 增量，也不代表模型作者的认可。',
+    checkpointsLede: '任何模型的作者都没有为这些结果背书。没有保留或分享任何权重、适配后的权重或 LoRA 增量。',
     dtRevision: '版本', dtSha: '检查点 SHA-256', dtParams: '编码器参数量', dtPaper: '论文',
     dtWeights: '权重许可', dtTerms: '许可说明', dtRights: '权利审查', dtFootnote: '各行脚注', dtNotes: '说明',
     dtAdaptation: 'EEGMAT 适配', dtPanel: '所在面板',

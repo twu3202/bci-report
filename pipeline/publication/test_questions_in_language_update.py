@@ -287,10 +287,18 @@ class QuestionsInLanguageBoundary(unittest.TestCase):
         for text in ('/Users/someone/x', '/mnt/bigdata/run', 'on trx50', 'Gal4 mirror', 'see DECISIONS.md S0b-6',
                      'RUN_ROOT/stage1', 'stage2/primary.private.json', 'anonymous participants', 'Yu et al., 2026',
                      'a Jev model', 'updated 8 October 2026', 'Added 2026-10-08: x', 'since 2026-10-01',
-                     'run on 2026-10-04', 'the v9 rows', 'in this update', 'sub-07'):
+                     'run on 2026-10-04', 'the v9 rows', 'in this update', 'sub-07',
+                     # the sealed build's Jev wording, and defensive or wrong-origin text of any kind (owner, 2026-10-08)
+                     ex.SEALED_JEV_SCOPE, ex.SEALED_INDEPENDENCE, ex.SEALED_ORIGIN_NOTE,
+                     'BCI Report is not affiliated with TypeSafe.', 'We had no contact with the authors.',
+                     'TypeSafe does not endorse these results.', 'This is not an integration with Jev.',
+                     'The pattern comes from a vision paper (Yu & Yao, 2026).',
+                     'The interface is taken directly from Visual Jev.', 'Visual Jev introduced the pattern.',
+                     '本站与 TypeSafe 没有关联。', '这个模式来自一篇视觉论文。'):
             with self.assertRaises(ValueError, msg=text):
                 ex.scrub_check({'results': {'x': {'note': text}}})
-        for text in (ex.JEV_SCOPE, ex.VISUAL_JEV, ex.INDEPENDENCE, 'Figshare 12264401 v3; mirror',
+        for text in (ex.JEV_STYLE['en'], ex.JEV_STYLE['zh'], ex.VISUAL_JEV, ex.TYPESAFE_JEV['url'], ex.ORIGIN_NOTE,
+                     ex.REFERENCE_ROLE, 'Figshare 12264401 v3; mirror',
                      'OpenNeuro ds005555, version 1.1.3', 'bge-small-en-v1.5', 'revision 5 passed',
                      'the owner overrode that on 2026-10-08', 'added to the release in version 1.1.1 (May 2025)'):
             ex.scrub_check({'results': {'x': {'note': text}}})
@@ -353,17 +361,108 @@ class QuestionsInLanguageBoundary(unittest.TestCase):
         self.assertTrue(all(p['declared_likely_inconclusive'] for p in r['secondary']['parts'].values()
                             if p.get('single_seed') is True))
 
-    def test_jev_appears_only_with_its_scope(self):
-        r = self.payload['results'][R]
-        self.assertEqual(r['route']['origin']['cite'], ex.VISUAL_JEV)
-        self.assertIn('not an integration with Jev and not a Jev model that reads EEG', r['route']['jev_scope'])
-        self.assertIn('not affiliated with the Jev authors', r['route']['independence'])
-        for trail, text in ex.strings(self.payload):
-            if 'jev' in text.lower():
-                self.assertTrue('not an integration with Jev' in text or text.startswith(ex.VISUAL_JEV)
-                                or 'not affiliated with the Jev authors' in text, trail)
-        self.assertNotIn('Yu et al', json.dumps(self.payload))
-        self.assertNotIn('jev-eeg', json.dumps(self.payload).lower())
+    # ------------------------------------------------------------------ Jev (owner feedback, 2026-10-08)
+    def test_no_defensive_or_wrong_origin_text_in_the_served_files(self):
+        """Read from the served bytes, with patterns written here (check-workbench's tone rules for the pages), not
+        the export's: no scope sentence, no independence line, nothing defensive beside Jev, and no sentence that gives
+        Jev or its pattern to the vision paper."""
+        defensive = [r'not affiliated|unaffiliated|no affiliation', r'\bno contact\b',
+                     r'endorse[^.。]*\b(?:Jev|TypeSafe|Yu|Yao)\b|\b(?:Jev|TypeSafe)\b[^.。]*endorse',
+                     r'not an integration|not a Jev model|Jev model that reads EEG|independent and not',
+                     r'没有接入 Jev|能读 EEG 的 Jev 模型|与 Jev 的作者|(?:Jev|TypeSafe)[^。]*(?:没有关联|有过联系|认可|背书)'
+                     r'|(?:没有关联|有过联系|认可|背书)[^。]*(?:Jev|TypeSafe)']
+        paper = r'Visual Jev|vision paper|视觉论文|Yu & Yao'
+        origin = (r'\b(?:comes?|came) from\b|\btak(?:es|en|ing)\b[^.]{0,60}\bfrom\b|\bborrow|\boriginat|\bintroduc|'
+                  r'\bcoin(?:s|ed)\b|\binvent|\bprompted\b|\bsource of\b|\bpattern the roadmap names\b|'
+                  r'interface pattern from|来自|借来|源自|源于|提出了? ?Jev|促成')
+        site = (ex.PROJECT / 'site/src/data/decision-research.ts').read_text()
+        m = re.search(r"export const jevStyle = \{\s*en: '([^']+)',\s*zh: '([^']+)',", site)
+        source = re.search(r"export const typesafeJev = \{ company: '([^']+)', url: '([^']+)' \}", site)
+        self.assertTrue(m and source, 'the site\'s definition and source')
+        for path in ex.OUTPUTS + ex.WORDING_OUTPUTS:
+            doc = json.loads(path.read_bytes())
+            for trail, text in ex.strings(doc):
+                for pattern in defensive:
+                    self.assertIsNone(re.search(pattern, text, re.IGNORECASE), f'{path.name} {trail}: {pattern}')
+                flat = text.replace(ex.VISUAL_JEV, 'Visual Jev')
+                for sentence in re.split(r'(?<=[.。!?！？])\s*', flat):
+                    if re.search(paper, sentence):
+                        self.assertIsNone(re.search(origin, sentence), f'{path.name} {trail}: “{sentence}”')
+                if 'jev' in text.lower():      # Jev only in the definition, its source, and the Visual Jev lines
+                    self.assertTrue(text in (m.group(1), m.group(2), source.group(2)) or text.startswith(ex.VISUAL_JEV)
+                                    or text.startswith('The decision-research plan started from Visual Jev'), trail)
+        served = json.loads(ex.OUTPUTS[1].read_bytes())
+        route = served['results'][R]['route']
+        self.assertEqual(list(route), ['site_text', 'boundary', 'origin', 'jev_style', 'jev_source'])
+        self.assertEqual(route['jev_style'], {'en': m.group(1), 'zh': m.group(2)}, 'the site\'s one definition')
+        self.assertEqual(route['jev_source'], {'company': source.group(1), 'url': source.group(2)})
+        self.assertEqual(route['jev_source']['url'], 'https://typesafe.ai/blog/introducing-system-one-models-and-jev')
+        self.assertEqual(route['origin'], {'cite': ex.VISUAL_JEV, 'url': 'https://arxiv.org/abs/2609.25845',
+                                           'arxiv': '2609.25845', 'note': ex.ORIGIN_NOTE})
+        self.assertIn('started from Visual Jev', route['origin']['note'])
+        self.assertIn('applies the same encode-once, answer-many idea to images', route['origin']['note'])
+        self.assertEqual(served['results'][R]['references'][0]['role'], ex.REFERENCE_ROLE)
+        body = ex.OUTPUTS[1].read_text()
+        for gone in ('jev_scope', '"independence": "BCI Report', 'not affiliated', 'no endorsement', 'Yu et al',
+                     'interface pattern', 'jev-eeg'):
+            self.assertNotIn(gone, body)
+        self.assertEqual(self.payload['results'], served['results'], 'the build is what is served')
+
+    def test_the_declared_text_edits(self):
+        record = MANIFEST['declaredTextEdits']
+        self.assertEqual(record['date'], '2026-10-08')
+        self.assertIn('Owner feedback, 2026-10-08', record['reason'])
+        for phrase in ('TypeSafe AI', 'https://typesafe.ai/blog/introducing-system-one-models-and-jev',
+                       'arXiv:2609.25845', 'started from it', 'jevStyle', 'end of /jev-style/'):
+            self.assertIn(phrase, record['reason'])
+        self.assertEqual(record['sealedExport'], {
+            'note': record['sealedExport']['note'],
+            'resultsSha256': 'f320bf25de03e6905d0d9a2d640997d5ad7c70b4af585ed488569461e7c610b4',
+            'wordingsSha256': '70ad2e4c7089516b065955166e3e6d75c89416b8fa3b8600b79ec1e4fc65f0eb',
+            'manifestSha256': '27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba'})
+        # Exactly these six, in this order, and the manifest records exactly what the export applies.
+        p = f'/results/{R}'
+        self.assertEqual([(e['op'], e['path']) for e in record['edits']],
+                         [('replace', f'{p}/route/origin/note'), ('remove', f'{p}/route/jev_scope'),
+                          ('remove', f'{p}/route/independence'), ('add', f'{p}/route/jev_style'),
+                          ('add', f'{p}/route/jev_source'), ('replace', f'{p}/references/0/role')])
+        self.assertEqual(record['edits'], ex.edit_records())
+        self.assertEqual([e.get('before') for e in record['edits']],
+                         [ex.SEALED_ORIGIN_NOTE, ex.SEALED_JEV_SCOPE, ex.SEALED_INDEPENDENCE, None, None, ex.SEALED_ROLE])
+        self.assertEqual(load(ROUTE['releaseCandidate'])['route_origin']['note'], ex.SEALED_ORIGIN_NOTE)
+        self.assertEqual(MANIFEST['references'][0]['role'], ex.SEALED_ROLE)
+        self.assertTrue(all(ex.text_only(e[k]) for e in record['edits'] for k in ('before', 'after') if k in e))
+        # The audit record: six edits, undone to the sealed bytes of both files.
+        audit = json.loads(ex.EXPORT_AUDIT.read_text())['declared_text_edits']
+        self.assertEqual((audit['edits'], audit['replaced'], audit['removed'], audit['added'],
+                          audit['undone_equals_sealed_bytes']), (6, 2, 2, 2, True))
+
+    def test_the_export_refuses_an_undeclared_or_unmatched_text_edit(self):
+        manifest = copy.deepcopy(MANIFEST)              # the record differs from what the export applies
+        manifest['declaredTextEdits']['edits'][0]['after'] += ' More.'
+        with self.assertRaisesRegex(ValueError, 'records other text edits'):
+            build(manifest)
+        manifest = copy.deepcopy(MANIFEST)
+        manifest['declaredTextEdits']['edits'].pop()
+        with self.assertRaisesRegex(ValueError, 'records other text edits'):
+            build(manifest)
+        manifest = copy.deepcopy(MANIFEST)
+        del manifest['declaredTextEdits']
+        with self.assertRaisesRegex(ValueError, 'does not record the owner'):
+            build(manifest)
+        manifest = copy.deepcopy(MANIFEST)              # a reference role that is not the sealed one
+        manifest['references'][0]['role'] = 'the vision paper'
+        with self.assertRaisesRegex(ValueError, 'does not apply'):
+            build(manifest)
+
+        def note(c):                                     # a candidate note that is not the sealed one
+            c['route_origin']['note'] = 'a vision paper'
+        with self.assertRaisesRegex(ValueError, 'does not apply'):
+            build(self.forged(note))
+        with mock.patch.object(ex, 'JEV_STYLE', {'en': ex.JEV_STYLE['en'] + ' x', 'zh': ex.JEV_STYLE['zh']}), \
+                self.assertRaisesRegex(ValueError, 'not the one the site prints'):
+            ex.owner_edits({}, {'declaredTextEdits': {'date': '2026-10-08', 'reason': 'Owner feedback',
+                                                      'edits': ex.edit_records()}})
 
     def test_boas_travels_with_its_conditions(self):
         b = self.payload['boas_conditions']
@@ -431,6 +530,64 @@ class QuestionsInLanguageBoundary(unittest.TestCase):
             p['results'][R]['descriptive']['P-ssvep-L0']['levels']['TPL u8']['estimate'] = value
         with self.served(edit), self.assertRaises(au.AuditFailure):
             au.audit()
+
+    # ------------------------------------------------------------------ the audit and the declared text edits
+    def test_the_audit_accepts_exactly_the_declared_text_edits(self):
+        result = au.audit()['declared_text_edits']
+        self.assertEqual((result['edits'], result['undone_equals_sealed_bytes']), (6, True))
+        with self.served(lambda p: None):                # the served bytes, re-serialised: still the sealed export
+            au.audit()
+
+    def test_the_audit_rejects_an_undeclared_text_change(self):
+        r = lambda p: p['results'][R]
+        changes = {
+            'a limitation reworded': lambda p: r(p)['limitations'].__setitem__(0, r(p)['limitations'][0] + ' Also.'),
+            'a route sentence reworded': lambda p: r(p)['primary']['blocks'][0]['entries'][0].update(
+                sentence=r(p)['primary']['blocks'][0]['entries'][0]['sentence'] + ' Clearly.'),
+            'the independence line back': lambda p: r(p)['route'].update(independence=ex.SEALED_INDEPENDENCE),
+            'a scope sentence beside the definition': lambda p: r(p)['route']['jev_style'].update(
+                note='This is not an integration with Jev.'),
+            'a dataset attribution': lambda p: p['datasets']['beta'].update(attribution='BETA.'),
+            'a boolean flipped': lambda p: r(p)['pre_run_checks']['numeracy_probe'].update(activated=True),
+            'a key renamed': lambda p: r(p)['route'].update(origin={'cite': r(p)['route']['origin']['cite'],
+                                                                     'url': r(p)['route']['origin']['url'],
+                                                                     'arxiv_id': '2609.25845',
+                                                                     'note': r(p)['route']['origin']['note']}),
+            'the release candidate\'s hash': lambda p: p['provenance'].update(release_candidate_sha256='0' * 64),
+        }
+        for what, change in changes.items():
+            with self.subTest(what), self.served(change), self.assertRaisesRegex(au.AuditFailure, 'release candidate|'
+                                                                                 'undeclared change|declared'):
+                au.audit()
+        # A declared edit that is not what is served: the sealed text back, or the new text changed.
+        for change in (lambda p: r(p)['route']['origin'].update(note=ex.SEALED_ORIGIN_NOTE),
+                       lambda p: r(p)['route']['jev_style'].update(en=ex.JEV_STYLE['en'].replace('once', 'twice')),
+                       lambda p: r(p)['references'][0].update(role=ex.SEALED_ROLE)):
+            with self.served(change), self.assertRaisesRegex(au.AuditFailure, 'not the declared edit'):
+                au.audit()
+        with self.served(lambda p: r(p)['route'].update(jev_scope=ex.SEALED_JEV_SCOPE)), \
+                self.assertRaisesRegex(au.AuditFailure, 'declared removal is still served'):
+            au.audit()
+
+    def test_the_audit_refuses_a_declared_edit_that_is_not_text(self):
+        """A manifest that declares a figure as a "text edit", or an edit outside the result, is refused even with
+        the served file built to match it."""
+        for bad in ({'op': 'replace', 'path': f'/results/{R}/primary/entries_count', 'before': 35, 'after': 36},
+                    {'op': 'replace', 'path': '/scope', 'before': 'x', 'after': 'y'},
+                    {'op': 'add', 'path': f'/results/{R}/route/extra', 'after': {'n': 1}}):
+            manifest = copy.deepcopy(MANIFEST)
+            manifest['declaredTextEdits']['edits'].append(bad)
+            data = json.dumps(manifest, ensure_ascii=False).encode()
+            path = Path(self.tmp.name) / 'manifest.json'
+            path.write_bytes(data)
+            w = json.loads(ex.WORDING_OUTPUTS[0].read_bytes())
+            w['provenance']['manifest_sha256'] = digest(data)
+            wpath = Path(self.tmp.name) / 'wordings.json'
+            wpath.write_bytes((json.dumps(w, indent=2, ensure_ascii=False) + '\n').encode())
+            with mock.patch.object(au, 'MANIFEST', path), mock.patch.object(au, 'SERVED_WORDINGS', (wpath, wpath)), \
+                    self.served(lambda p: p['provenance'].update(manifest_sha256=digest(data))), \
+                    self.assertRaisesRegex(au.AuditFailure, 'not text|outside the result'):
+                au.audit()
 
 
 if __name__ == '__main__':

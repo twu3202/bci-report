@@ -2,17 +2,19 @@
 /**
  * /jev-style/: "Jev-style questions on EEG: the evidence" (owner plan of 2026-10-07, approved for this version on
  * 2026-10-08). One short page that gathers the three routes of the decision-research plan, each with one answer in
- * words and a link to its results, so the name reaches readers with its scope beside it.
+ * words and a link to its results.
  *
- * Rules: the scope sentence stands beside the name (in the hero, as the dek); the page says the site is independent
- * and not affiliated with the Jev authors, and claims no contact or endorsement; the vision paper is cited as
- * "Yu & Yao, 2026"; no figure is typed here (the answers are words, and the figures are on each route's page, printed
- * from their served files). check-workbench.mjs holds every one of these.
+ * It opens by saying what Jev is (TypeSafe AI's decision model, with its launch post) and what "Jev-style" means
+ * here (decision-research.ts `jevStyle`, stated once), then that the plan started from the Visual Jev paper, which
+ * applies the same idea to images: the paper did not introduce Jev (owner, 2026-10-08). Its one independence line
+ * closes the page; no other page carries one. The paper is cited as "Yu & Yao, 2026"; no figure is typed here (the
+ * answers are words, and the figures are on each route's page, printed from their served files). check-workbench.mjs
+ * holds every one of these.
  */
 import EntityLayout from '../../../components/EntityLayout.astro';
 import { hrefFor, localeOf, localeParams, topicChrome } from '../../../data/i18n';
-import { jevIndependence, jevScope, visualJev } from '../../../data/questions-in-language';
-import { decisionRoadmap } from '../../../data/decision-research';
+import { visualJev } from '../../../data/questions-in-language';
+import { decisionRoadmap, jevIndependence, jevStyle, typesafeJev } from '../../../data/decision-research';
 import { elsewhere, site } from '../../../data/site';
 
 export const getStaticPaths = localeParams;
@@ -31,11 +33,12 @@ const copy = {
   en: {
     docTitle: 'Jev-style questions on EEG: the evidence',
     h1: 'Jev-style questions on EEG: the evidence',
-    description: `${jevScope.en} Three routes, each answered by BCI Report’s own runs on public EEG data. BCI Report is independent and not affiliated with the Jev authors.`,
+    description: `${jevStyle.en} Three routes, each answered by BCI Report’s own runs on public EEG data.`,
     eyebrow: 'Decision research · three routes',
-    independenceH2: 'Who is asking',
-    independence: jevIndependence.en,
-    origin: ['The pattern comes from a vision paper, ', '. In vision, one encoding of an image can serve many forced-choice questions. This site asks whether the same pattern holds up on EEG, with its own runs on public datasets. Nothing here uses or evaluates the Jev model.'],
+    dek: 'Three routes, each answered by BCI Report’s own runs on public EEG data.',
+    nameH2: 'What the name means',
+    jev: ['Jev is ', 'TypeSafe AI’s decision model', '. Software sends it the state of an application and typed questions; it returns typed decisions, such as a choice from a fixed set, a score or a yes or no, each with a probability or a confidence, instead of generating text.'],
+    origin: ['This site’s decision-research plan started from a vision paper, ', ', which applies the same encode-once, answer-many idea to images: one encoding of an image and its context serves several independent forced-choice questions. The three routes below ask whether that holds up on EEG, with this site’s own runs on public datasets.'],
     routesEyebrow: 'Three routes',
     routesH2: 'What each route found',
     routesLede: 'Each answer is in words; the figures, their intervals and their limits are on each route’s own page.',
@@ -47,7 +50,7 @@ const copy = {
         a: 'Fixed outputs on one shared encoder were cheaper than a head told which question it answers, but were not shown to do as well; telling the head the question, by an identifier, added nothing measurable.',
         link: 'One model, several questions →' },
       { tag: 'Third route', title: 'Questions in language', q: 'Can an EEG model answer questions asked in words?',
-        a: 'Only for questions it was trained on, and not on every dataset: in its training wording, a small head matched question numbers on seen sleep questions but lost accuracy on SSVEP; most rewordings of a seen question cost accuracy; and it did not answer questions it was never trained on. In a boundary probe, negated questions were answered as if they asked for what they negate.',
+        a: 'Only for questions it was trained on, and not on every dataset: in its training wording, a small head matched question numbers on seen sleep questions but lost accuracy on SSVEP; most rewordings of a seen question cost accuracy; and questions it was never trained on were not answered usefully. In a boundary probe, negated questions were answered as if they asked for what they negate.',
         link: 'Questions in language →' },
     ],
     roadmap: ['The plan, its literature and what each route set out to test: ', 'the research plan on When not to act →'],
@@ -56,11 +59,12 @@ const copy = {
   zh: {
     docTitle: 'Jev 式提问用在脑电上：证据',
     h1: 'Jev 式提问用在脑电上：证据',
-    description: `${jevScope.zh}三条路线，每一条都由 BCI Report 在公开 EEG 数据上自己的运行来回答。BCI Report 是独立项目，与 Jev 的作者没有关联。`,
+    description: `${jevStyle.zh}三条路线，每一条都由 BCI Report 在公开 EEG 数据上自己的运行来回答。`,
     eyebrow: '决策研究 · 三条路线',
-    independenceH2: '提问的是谁',
-    independence: jevIndependence.zh,
-    origin: ['这个范式来自一篇视觉论文：', '。在视觉领域，一张图像编码一次，就能回答多个强制选择的问题。本站用自己在公开数据集上的运行来检验：同样的范式在 EEG 上是否站得住。这里没有使用、也没有评估 Jev 模型。'],
+    dek: '三条路线，每一条都由 BCI Report 在公开 EEG 数据上自己的运行来回答。',
+    nameH2: '这个名字指什么',
+    jev: ['Jev 是 ', 'TypeSafe AI 推出的决策模型', '：软件把应用状态和规定输出类型的问题发给它；它不生成文字，而是返回规定类型的决定（从固定选项中选出的一项、一个分数或一个是/否判断），每个决定都带有概率或置信度。'],
+    origin: ['本站的决策研究计划从一篇视觉论文出发：', '。它把同样“编码一次、回答多个问题”的思路用在图像上：一张图像及其上下文只编码一次，就能回答多个相互独立的强制选择问题。下面三条路线用本站自己在公开数据集上的运行来检验：这个思路在 EEG 上是否站得住。'],
     routesEyebrow: '三条路线',
     routesH2: '每条路线发现了什么',
     routesLede: '每个回答都只用文字；数字、区间与局限都在各条路线自己的页面上。',
@@ -87,12 +91,12 @@ const structured = {
 ---
 <EntityLayout locale={locale} path={path} active="topics"
   documentTitle={copy.docTitle} h1={copy.h1} description={copy.description}
-  eyebrow={copy.eyebrow} dek={jevScope[locale]}
+  eyebrow={copy.eyebrow} dek={copy.dek}
   crumbs={[{ label: tc.home, href: hrefFor('/', locale) }, { label: tc.questions, href: hrefFor('/topics/', locale) }, { label: copy.h1 }]}
   structured={structured}>
-  <section class="topic-section" id="independence" aria-labelledby="independence-heading">
-    <div class="topic-heading"><div><h2 id="independence-heading">{copy.independenceH2}</h2></div></div>
-    <p class="protocol-note" data-independence="true">{copy.independence}</p>
+  <section class="topic-section" id="the-name" aria-labelledby="name-heading">
+    <div class="topic-heading"><div><h2 id="name-heading">{copy.nameH2}</h2></div></div>
+    <p class="roadmap-p" data-jev="true">{copy.jev[0]}<a href={typesafeJev.url} target="_blank" rel="noreferrer" hreflang="en">{copy.jev[1]} ↗</a>{copy.jev[2]}{zh ? '' : ' '}{jevStyle[locale]}</p>
     <p class="roadmap-p" data-origin="true">{copy.origin[0]}<cite lang="en"><a href={visualJev.url} target="_blank" rel="noreferrer">{visualJev.cite} ↗</a></cite>{copy.origin[1]}</p>
   </section>
   <section class="topic-section" id="routes" aria-labelledby="routes-heading">
@@ -105,5 +109,6 @@ const structured = {
     </li>)}</ol>
     <p class="roadmap-p">{copy.roadmap[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.roadmap[1]}</a></p>
     {article && <p class="citation-note" id="jev-article">{copy.article[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a></p>}
+    <p class="citation-note" data-independence="true">{jevIndependence[locale]}</p>
   </section>
 </EntityLayout>

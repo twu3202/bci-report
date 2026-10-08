@@ -127,7 +127,7 @@ export const translatedPaths = [
   '/topics/later-sessions/',
   // Route 3 of the decision-research plan, questions in language (owner approval of the results).
   '/topics/questions-in-language/',
-  // The three routes in one place, with the scope of "Jev-style" and the site's independence.
+  // The three routes in one place, with what "Jev-style" means here.
   '/jev-style/',
   '/releases/',
   '/api/',
@@ -767,20 +767,20 @@ export const topicsHubCopy = {
 
 /**
  * The Jev-style card (JevCard.astro): under the core matrix on the home page and on the Questions hub, leading to
- * /jev-style/. The scope sentence it prints beside the name is the route-3 export's (questions-in-language.ts
- * `jevScope`); no figure here.
+ * /jev-style/. It prints the definition of "Jev-style" (decision-research.ts `jevStyle`) before this body; no figure
+ * here.
  */
 export const jevCardCopy = {
   en: {
     eyebrow: 'Decision research · three routes',
     title: 'Jev-style questions on EEG: the evidence',
-    body: 'Three routes, each answered by this site’s own runs on public EEG data. BCI Report is independent and not affiliated with the Jev authors.',
+    body: 'Three routes, each answered by this site’s own runs on public EEG data.',
     link: 'Read the evidence →',
   },
   zh: {
     eyebrow: '决策研究 · 三条路线',
     title: 'Jev 式提问用在脑电上：证据',
-    body: '三条路线，每一条都由本站在公开 EEG 数据上自己的运行来回答。BCI Report 是独立项目，与 Jev 的作者没有关联。',
+    body: '三条路线，每一条都由本站在公开 EEG 数据上自己的运行来回答。',
     link: '查看证据 →',
   },
 } satisfies Record<Locale, unknown>;
@@ -858,8 +858,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'New people, next day: which part of a pretrained model should you update?',
       summary: 'LaBraM on new people, same task, zero labels from the test person: head only, last block or LoRA, printed beside the core matrix’s frozen readout. Plus: the next-day experiment, run and held.',
       detail: 'EEGMAT, 36 people · three update rules · next day: held' },
-    // "Jev-style" left this card on 2026-10-08 (owner rule: every "Jev-style" stands beside its scope sentence); the
-    // Jev-style card under the core matrix and the /jev-style/ page carry the name with it.
+    // "Jev-style" left this card on 2026-10-08; the Jev-style card under the core matrix and the /jev-style/ page
+    // carry the name, each with its definition.
     'when-not-to-act': { kicker: 'Abstention · decision research', title: 'When not to act',
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
       summary: 'Command detection and false activation, read together; when a decoder should decline to decide, measured on two protocols; and the research plan on decisions that measurement opens, with its three routes.',

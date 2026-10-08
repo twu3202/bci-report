@@ -18,10 +18,16 @@
           "cite": "Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context",
           "url": "https://arxiv.org/abs/2609.25845",
           "arxiv": "2609.25845",
-          "note": "an interface pattern from a vision paper; route 3 is not an integration with Jev and not a Jev model that reads EEG"
+          "note": "The decision-research plan started from Visual Jev (Yu & Yao, 2026), which applies the same encode-once, answer-many idea to images."
         },
-        "jev_scope": "“Jev-style” names an interface pattern: encode the signal once, then answer several explicit, typed questions about it. This is not an integration with Jev and not a Jev model that reads EEG.",
-        "independence": "BCI Report is independent and not affiliated with the Jev authors; no contact with them and no endorsement by them is claimed."
+        "jev_style": {
+          "en": "“Jev-style” here means the interface of a decision model like TypeSafe’s Jev, applied to EEG: encode the recording once, then answer several explicit, typed questions about it, each with a probability.",
+          "zh": "“Jev-style”（Jev 式）在这里指把 TypeSafe 的 Jev 这类决策模型的接口用在 EEG 上：一段记录只编码一次，再回答关于它的多个明确的、规定输出类型的问题，每个回答都带一个概率。"
+        },
+        "jev_source": {
+          "company": "TypeSafe AI",
+          "url": "https://typesafe.ai/blog/introducing-system-one-models-and-jev"
+        }
       },
       "design": {
         "unseen_definition": "Unseen by the EEG head: no training row carries the concept's label, rows whose label is that concept are not used for training, scaling or batch sampling, and its name, synonyms and wordings appear in no training text. The frozen text encoder has read the words. For SSVEP, every text token of a held-out frequency occurs in that rotation's training texts, so only the combination is new.",
@@ -9445,7 +9451,7 @@
           "id": "yu-yao-2026",
           "cite": "Yu & Yao, 2026 · Visual Jev: Accurate and Efficient Decisions from Shared Visual Context",
           "url": "https://arxiv.org/abs/2609.25845",
-          "role": "the interface pattern the roadmap names; a vision paper"
+          "role": "the vision paper the decision-research plan started from; it applies the same encode-once, answer-many idea to images"
         },
         {
           "id": "film",
@@ -9628,7 +9634,7 @@
     "The handoff, the release candidate, the aggregates, the protocol, the stage-0 report, the canary declarations, the BOAS scope extension, the reference check and the four independent audits: pinned by SHA-256 in this manifest and checked, never copied, because they carry private storage paths."
   ],
   "provenance": {
-    "manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+    "manifest_sha256": "c85dbadaab3d08b9ae079015e664cec4ed7e16438c6e1ca00689c1ef341ade5e",
     "release_candidate_sha256": "9729fda20a9556b34ffb3117b81529aec5c014e01457035445c5c5127fa2d678",
     "wording_lists_sha256": "b903f4f49138aefdba9385e82d5288f58eccc24ab228d9b45ab5bd53bf63912a",
     "wordings_file": "questions-in-language-wordings.json",

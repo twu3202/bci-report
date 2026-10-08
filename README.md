@@ -132,16 +132,16 @@ holds every English page in one file, and every page has a Markdown copy at
 
 ### Jev-style evaluation
 
-"Jev-style" names an interface pattern: encode the signal once, then answer
-several explicit, typed questions about it. This is not an integration with Jev
-and not a Jev model that reads EEG. BCI Report is independent and not affiliated
-with the Jev authors; no contact with them and no endorsement by them is
-claimed. The pattern comes from a vision paper: Yu & Yao, 2026 · Visual Jev:
+"Jev-style" here means the interface of a decision model like
+[TypeSafe's Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev),
+applied to EEG: encode the recording once, then answer several explicit, typed
+questions about it, each with a probability. The research plan started from a
+vision paper that applies the same idea to images: Yu & Yao, 2026 · Visual Jev:
 Accurate and Efficient Decisions from Shared Visual Context
 ([arXiv:2609.25845](https://arxiv.org/abs/2609.25845)).
 
-The research plan on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research)
-asks it in three routes, all run on public EEG data, and
+The plan, set out on [when not to act](https://bci.report/topics/when-not-to-act/#decision-research),
+asks whether this holds up on EEG in three routes, all run on public data, and
 [Jev-style questions on EEG: the evidence](https://bci.report/jev-style/) gathers them:
 [reliable decisions](https://bci.report/topics/when-not-to-act/#reliable-decisions) ·
 [one model, several questions](https://bci.report/topics/shared-encoder/) ·

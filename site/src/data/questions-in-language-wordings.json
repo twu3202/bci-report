@@ -1965,7 +1965,7 @@
   },
   "text_encoders_note": "Frozen at pinned commits and never redistributed.",
   "provenance": {
-    "manifest_sha256": "27d9c391c7362d5305b29fe8163a0870e912dc0443f5451b6fc5ead24cdc6eba",
+    "manifest_sha256": "c85dbadaab3d08b9ae079015e664cec4ed7e16438c6e1ca00689c1ef341ade5e",
     "wording_lists_sha256": "b903f4f49138aefdba9385e82d5288f58eccc24ab228d9b45ab5bd53bf63912a"
   }
 }
