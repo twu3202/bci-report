@@ -90,9 +90,51 @@
  *   institutions                 Chinese institutions by their standard Chinese
  *                                names (清华大学, 天津大学, 燕山大学); others as
  *                                they name themselves
+ *   pilot (study)                试点            试点研究 for the page
+ *   configuration (of a pipeline) 配置           "58 通道配置"
+ *   fNIRS                        fNIRS           stays; 功能性近红外光谱 glossed at first use
+ *   intracortical spiking        皮层内神经元放电 "intracortical" alone: 皮层内
+ *   macaque                      猕猴
+ *   functional ultrasound        功能超声
+ *   inner speech                 内部言语        not 内心独白, 默读
+ *   source-defined subject field 按数据源定义的被试字段  not proven distinct people
+ *   nominal participant folder   标称被试文件夹  REFED's two folders
+ *   digital rail (of a recorder) 数字量程边界    "停在数字量程边界上的平直通道"
+ *   mask-aware (analysis)        掩码感知        the missingness mask: 缺失掩码
+ *   released coded label         已发布的编码标签  not 字符 or 字形: glyph identity is unverified
+ *   ethics approval / consent    伦理批准 / 知情同意  "没有找到……声明", never 未经伦理批准
+ *   executed movement            实际动作        against 运动想象
+ *   comparator                   对照            "训练集先验对照"
+ *   source (training) data       训练集 / 训练数据  "只在训练数据上拟合的标准化"; not 源数据, which reads
+ *                                                as raw data (数据源 is the provider)
  */
 import { site } from './site';
 import directoryZh from './directory-zh.json';
+import { bingoReleased, handwritingReleased } from './pilot-switch';
+
+/**
+ * The pilot-studies card's summary, from what each publication switch releases (pilot-switch.ts): the released pilots
+ * in page order, the last joined by "and", then the held ones, if any, named as held for their rights reviews.
+ */
+function pilotSummary(zh: boolean): string {
+  const parts = zh
+    ? ['同一队列中注入的矫形器错误事件，其中包括冻结的 EEG 基础模型与匹配的经典特征的比较',
+       ...(bingoReleased ? ['希腊语与英语的内部言语，结果接近随机水平'] : []),
+       ...(handwritingReleased ? ['一个手写数据集中停在数字量程边界上的平直通道，屏蔽之后 EEG 仅略高于随机水平'] : []),
+       '一个情绪数据集上的存储片段核查，简单对照的误差都比 EEG 小']
+    : ['injected orthosis errors in one cohort, including a frozen EEG foundation model against matched classical features',
+       ...(bingoReleased ? ['inner speech in Greek and English, near its chance level'] : []),
+       ...(handwritingReleased ? ['flat channels in a handwriting dataset, where masked EEG sits just above chance'] : []),
+       'a stored-clip check on an emotion dataset, where simple controls have smaller errors than EEG'];
+  const held = [...(bingoReleased ? [] : [zh ? '内部言语' : 'inner speech']), ...(handwritingReleased ? [] : [zh ? '手写' : 'handwriting'])];
+  if (zh) {
+    const tail = held.length === 2 ? `；另有${held.join('与')}两项，因权利审查暂缓` : held.length ? `；以及第四项（${held[0]}），因权利审查暂缓` : '';
+    return `几项小规模试点，彼此不排名：${held.length ? parts.join('；') : `${parts.slice(0, -1).join('；')}；以及${parts[parts.length - 1]}`}${tail}。`;
+  }
+  const tail = held.length === 2 ? `; and two more, on ${held.join(' and on ')}, held for their rights reviews`
+    : held.length ? `; and a fourth, on ${held[0]}, held for its rights review` : '';
+  return `Small pilots, none ranked: ${held.length ? parts.join('; ') : `${parts.slice(0, -1).join('; ')}; and ${parts[parts.length - 1]}`}${tail}.`;
+}
 
 export const locales = ['en', 'zh'] as const;
 export type Locale = (typeof locales)[number];
@@ -129,6 +171,9 @@ export const translatedPaths = [
   '/topics/questions-in-language/',
   // The three routes in one place, with what "Jev-style" means here.
   '/jev-style/',
+  // Beyond scalp EEG (fNIRS, macaque intracortical spiking) and the pilot studies, one site version (owner decisions).
+  '/topics/beyond-scalp-eeg/',
+  '/topics/pilot-studies/',
   '/releases/',
   '/api/',
 ] as const;
@@ -340,6 +385,8 @@ export const modelStatus = zhLabel({
   'Access unverified': '访问未核实',
   'Research candidate': '研究候选',
   'Rights review pending': '权利审查中',
+  // Display-only status (directory-status.ts): EEGPT, one pilot comparison published (owner decision).
+  'One pilot comparison published': '已发布一项试点比较',
 });
 
 export const datasetStatus = zhLabel({
@@ -399,7 +446,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions, questions asked in words and clinical groups.`,
+      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions, questions asked in words, clinical groups, signals other than scalp EEG (human fNIRS and one macaque’s intracortical spiking) and small pilot studies.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -534,13 +581,13 @@ export const home = {
     title: '公开 EEG 模型评测',
     description:
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
-      'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发。',
+      'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发；另有首批 fNIRS 与皮层内神经元放电基线。',
     eyebrow: '公开 EEG 评测',
     h1: '每一个 EEG 分数，都附带产生它的协议。',
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题、用文字提问，以及临床分组的证据。`,
+      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题、用文字提问、临床分组、头皮 EEG 之外的信号（人类 fNIRS 与一只猕猴的皮层内神经元放电），以及小规模试点研究的证据。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -748,7 +795,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published EEG results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining, one model for several questions and questions asked in words; when not to act; sleep staging; clinical groups. With a map of which kinds of transfer have been measured.',
+    description: 'Every question BCI Report answers from its published results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining, one model for several questions and questions asked in words; when not to act; sleep staging; clinical groups; signals other than scalp EEG, fNIRS and one macaque’s intracortical spiking; small pilot studies, outside every ranking. With a map of which kinds of transfer have been measured.',
     dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -757,7 +804,7 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的 EEG 结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练、一个模型回答多个问题与用文字提问；何时不该执行；睡眠分期；临床分组。另附一张地图，说明哪些迁移已经测量过。',
+    description: 'BCI Report 根据已发布的结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练、一个模型回答多个问题与用文字提问；何时不该执行；睡眠分期；临床分组；头皮 EEG 之外的信号——fNIRS 与一只猕猴的皮层内神经元放电；不进入任何排名的小规模试点研究。另附一张地图，说明哪些迁移已经测量过。',
     dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
@@ -786,8 +833,10 @@ export const jevCardCopy = {
 } satisfies Record<Locale, unknown>;
 
 /**
- * The three groups the questions are listed under (topics.ts `topicGroups`), on
- * the home page, the Questions hub and each topic's switcher. No figure here.
+ * The groups the questions are listed under (topics.ts `topicGroups`), on the
+ * home page, the Questions hub and each topic's switcher. No figure here.
+ * `beyond` (owner decision 1, 2026-10-12) holds the two pages of that version:
+ * signals other than scalp EEG, and the pilot studies.
  */
 export const topicGroupLabels: Record<Locale, Record<string, { title: string; lede: string }>> = {
   en: {
@@ -797,6 +846,8 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
       lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, whether one model can answer several questions, and whether it can be asked them in words.' },
     reliability: { title: 'Reliability & clinical',
       lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG can and cannot say about a clinical group.' },
+    beyond: { title: 'Other signals & pilots',
+      lede: 'What a simple baseline shows on signals other than scalp EEG, in people and in one macaque, and what small pilot studies can and cannot show.' },
   },
   zh: {
     transfer: { title: '迁移',
@@ -805,6 +856,8 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
       lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助、一个模型能不能回答多个问题，以及能不能用文字向它提问。' },
     reliability: { title: '可靠性与临床',
       lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
+    beyond: { title: '其他信号与试点',
+      lede: '简单基线在头皮 EEG 之外的信号上（人类与一只猕猴）能说明什么，以及小规模试点研究能说明什么、不能说明什么。' },
   },
 };
 
@@ -889,6 +942,21 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Can an EEG model answer questions asked in words?',
       summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: seen questions, rewordings and questions it was never trained on, kept apart — and a negative result for the last.',
       detail: 'SSVEP, BETA, 70 people · sleep, BOAS · secondary: EESM19, OpenBMI, Wearable-102' },
+    // Owner decisions: the non-scalp batch and the paired-biosignal pilots, one site version. Written with the
+    // registrations so the dataset pages and the release log can name the pages they are read on; the pages' own
+    // stage refines the copy. Species and modality stay on the card; nothing is ranked.
+    // The page (topics/beyond-scalp-eeg.astro) asks it as a question about simple baselines, "signals" rather than
+    // "brain signals": the fNIRS result does not exclude systemic effects, so the title claims no brain origin.
+    'beyond-scalp-eeg': { kicker: 'Other signals · human and macaque', title: 'Beyond scalp EEG',
+      question: 'Do simple baselines work on signals other than scalp EEG?',
+      summary: 'Each signal read on its own: fNIRS telling right-hand, left-hand and foot tapping apart in people the classifier never saw; finger velocity from one macaque’s motor-cortex spiking, where a ridge decoder lowers the squared error but not the absolute error; and a numerical check of fNIRS recordings that says nothing about their quality. Intracortical handwriting and functional ultrasound are prepared, not scored.',
+      detail: 'fNIRS, 30 people · intracortical spiking, 1 macaque · fNIRS coverage, 12 people' },
+    'pilot-studies': { kicker: 'Pilot studies · small cohorts', title: 'Pilot studies',
+      question: 'What can a small pilot show, and what can it not?',
+      // BINGO and the handwriting analysis follow their publication switches (pilot-switch.ts); REFED's cohort is its two
+      // nominal folders, its clips beside them.
+      summary: pilotSummary(false),
+      detail: `Orthosis, 8 people · ${bingoReleased ? 'inner speech, BINGO, 17 subject fields · ' : ''}${handwritingReleased ? 'handwriting, 5 people · ' : ''}REFED, 2 nominal folders, 30 clips` },
   },
   zh: {
     'dry-vs-wet': { kicker: '传感器迁移', title: '干电极与湿电极',
@@ -943,6 +1011,14 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'EEG 模型能回答用文字提出的问题吗？',
       summary: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或描述提出：已见过的问题、改写后的问题和它从未训练过的问题分开列出——最后一类是阴性结果。',
       detail: 'SSVEP，BETA，70 名被试 · 睡眠，BOAS · 次要：EESM19、OpenBMI、Wearable-102' },
+    'beyond-scalp-eeg': { kicker: '其他信号 · 人类与猕猴', title: '头皮 EEG 之外',
+      question: '在头皮 EEG 之外的信号上，简单基线管用吗？',
+      summary: '每种信号单独阅读：用 fNIRS 在分类器从未见过的人身上区分右手、左手手指敲击与脚部敲击；从一只猕猴运动皮层的神经元放电中解码手指速度——岭回归降低了平方误差，却没有降低绝对误差；以及对 fNIRS 记录的数值核查，它说明不了这些记录的质量。皮层内手写与功能超声已完成准备，尚未评分。',
+      detail: 'fNIRS，30 名被试 · 皮层内神经元放电，1 只猕猴 · fNIRS 数值覆盖，12 名被试' },
+    'pilot-studies': { kicker: '试点研究 · 小样本', title: '试点研究',
+      question: '一个小规模试点能说明什么、不能说明什么？',
+      summary: pilotSummary(true),
+      detail: `Orthosis，8 名被试 · ${bingoReleased ? '内部言语，BINGO，17 个被试字段 · ' : ''}${handwritingReleased ? '手写，5 名被试 · ' : ''}REFED，2 个标称被试文件夹，30 个片段` },
   },
 };
 
@@ -971,6 +1047,8 @@ export const topicQuestionPhrases: Record<string, string> = {
   'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
   'shared-encoder': '一个 EEG 模型|回答同一份|数据上的|多个问题，|能和分开的模型|一样好吗，|代价又是多少？',
   'questions-in-language': 'EEG 模型|能回答|用文字提出的|问题吗？',
+  'beyond-scalp-eeg': '在头皮 EEG 之外的|信号上，|简单基线|管用吗？',
+  'pilot-studies': '一个小规模试点|能说明什么、|不能说明什么？',
 };
 
 /** The h1 of a topic page as phrases, to be joined with <wbr>. */

@@ -34,6 +34,8 @@ import shared from './shared-representation-update.json';
 import reliable from './reliable-decisions-update.json';
 import later from './later-sessions-update.json';
 import language from './questions-in-language-update.json';
+import beyond from './beyond-scalp-update.json';
+import pilot from './pilot-studies-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -102,7 +104,7 @@ export function homeDataset() {
     identifier: archive.conceptUrl,
     datePublished: releases.at(-1)!.date,
     dateModified: latestRelease.date,
-    measurementTechnique: 'Electroencephalography',
+    measurementTechnique: HOME_TECHNIQUE,
     keywords: ['EEG', 'brain-computer interface', 'benchmark', 'motor imagery', 'SSVEP',
                'P300', 'sleep staging', 'electroencephalography', 'EEG foundation models',
                'dry electrodes', 'calibration'],
@@ -158,6 +160,15 @@ const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
   ...(core ? [{ file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt, metrics: ['balanced_accuracy'] }] : []),
 ];
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
+  // Beyond scalp EEG (owner decision, 2026-10-12): its own export only — human fNIRS, one macaque's intracortical
+  // spiking and an fNIRS coverage check, each its own species, signal and metric; two sources status only.
+  'beyond-scalp-eeg': { file: '/data/beyond-scalp-update.json', release: beyond.release_id, generated: beyond.generated_at,
+                        metrics: ['balanced_accuracy', 'class_recall', 'r_squared', 'rmse', 'mae', 'optical_value_counts'] },
+  // The pilot studies (owner decision, 2026-10-12): its own export only, every pilot outside every leaderboard and
+  // model ranking. EEGPT's directory card on /methods/ links the Orthosis section and prints none of its figures.
+  'pilot-studies': { file: '/data/pilot-studies-update.json', release: pilot.release_id, generated: pilot.generated_at,
+                     metrics: ['balanced_accuracy', 'auroc', 'average_precision', 'paired_difference_balanced_accuracy',
+                               'top3_accuracy', 'equal_axis_mae'] },
   // A decoder trained on an earlier session, tested on a later one: its own export only (WBCIC-SHU, the longitudinal
   // RSVP source and Forenzo). does-pretraining-help links the page and prints none of its figures.
   'later-sessions': { file: '/data/later-sessions-update.json', release: later.release_id, generated: later.generated_at,
@@ -224,6 +235,16 @@ export function topicFiles(id: string): string[] {
   return [...new Set([...(topic ? ['/data/deployment-topics.json'] : []), ...later.map(l => l.file)])];
 }
 
+/**
+ * What a topic measured, where it is not EEG alone (2026-10-12): beyond-scalp-eeg reads fNIRS and intracortical
+ * spiking, never scalp EEG. Every other topic is EEG.
+ */
+const TOPIC_TECHNIQUE: Record<string, string[]> = {
+  'beyond-scalp-eeg': ['Functional near-infrared spectroscopy', 'Intracortical microelectrode array recording'],
+};
+/** Every technique a released figure was measured with: the home Dataset's distribution carries them all. */
+const HOME_TECHNIQUE = ['Electroencephalography', ...new Set(Object.values(TOPIC_TECHNIQUE).flat())];
+
 export function topicDataset(id: string, name: string, description: string, path: string) {
   const topic = deployment.topics.find(t => t.id === id);
   const tracks = new Set(topic?.tracks ?? []);
@@ -242,8 +263,8 @@ export function topicDataset(id: string, name: string, description: string, path
     isAccessibleForFree: true,
     version: topic ? deployment.release_id : later[0].release,
     dateModified: dates.sort().at(-1)!.slice(0, 10),
-    measurementTechnique: 'Electroencephalography',
-    keywords: ['EEG', 'brain-computer interface', 'benchmark', id],
+    measurementTechnique: TOPIC_TECHNIQUE[id] ?? 'Electroencephalography',
+    keywords: [...(TOPIC_TECHNIQUE[id] ? ['fNIRS', 'intracortical recording'] : ['EEG']), 'brain-computer interface', 'benchmark', id],
     variableMeasured: [...new Set([...rows.map(r => r.metric), ...later.flatMap(l => l.metrics)])],
     isPartOf: { '@type': 'Dataset', name: `${site.name}: aggregate EEG decoding results`, url: abs('/') },
     distribution: files,

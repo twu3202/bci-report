@@ -18,7 +18,8 @@ export const site = {
   releaseId: 'research-preview-20260920',
   description:
     'Public EEG decoding results reported with their protocol: motor imagery, SSVEP with 4 and 8 electrodes, ' +
-    'P300 and semantic ERP, cognitive load, sleep staging, and idle false activations.',
+    'P300 and semantic ERP, cognitive load, sleep staging, and idle false activations; also first fNIRS and ' +
+    'intracortical-spiking baselines.',
   /**
    * The project's other public homes. They link to the site; these let the site
    * link back — JSON-LD `sameAs`, the footers, /api/ and llms.txt all read them.

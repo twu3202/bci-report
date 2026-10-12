@@ -17,6 +17,8 @@ interface DirectoryCopy {
   releasedStatus: (status: string) => string;
   /** After the released licence on a card whose status was overridden: the licence line is the code's, as released. */
   codeAsReleased: string;
+  /** The same, where the released licence line names more than the code (EEGPT: code and checkpoint). */
+  licenceAsReleased: string;
   overrideSource: string;
   /** Before a v9 model's weights licence note (2026-10-04). */
   weights: string;
@@ -40,6 +42,7 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     reviewed: (date) => `Rights reviewed ${date}`,
     releasedStatus: (status) => `Released status: ${status}.`,
     codeAsReleased: ' (code, as released)',
+    licenceAsReleased: ' (as released)',
     overrideSource: 'Source ↗',
     weights: 'Weights:',
     noLicence: 'Not evaluated: no licence reviewed',
@@ -64,6 +67,7 @@ export const directoryCopy: Record<Locale, DirectoryCopy> = {
     reviewed: (date) => `权利审查于 ${date}`,
     releasedStatus: (status) => `发布时的状态：${status}。`,
     codeAsReleased: '（代码，发布时）',
+    licenceAsReleased: '（发布时）',
     overrideSource: '来源 ↗',
     weights: '权重：',
     noLicence: '未评测：未审查许可',

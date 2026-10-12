@@ -857,6 +857,108 @@ of 15 injected violations was caught, and each of 13 injected violations of the 
 Chinese, the independence line moved or repeated, the language-model sentence back in the introduction, "Yu et al.")
 was caught.
 
+Two batches of one site version (owner decisions of 2026-10-12), each with its own served file, review manifest and
+independent export audit under `research/publication_review_20261012/`: `beyond-scalp-update.json` (human fNIRS on
+Bak et al., one macaque's intracortical spiking on MC_RTT, an fNIRS coverage check on ds007420; FALCON H2 and Rabut et
+al. status only; the ds007420 classifier held) and `pilot-studies-update.json` (the Orthosis cohort in three
+configurations counted once, including frozen EEGPT against matched classical features; BINGO; the handwriting
+analysis, released by the owner's decision with its rights gap stated; REFED). `check_site_artifact.py` re-derives each file from its manifest, holds the
+manifest to the audit's hash and re-runs the independent audit; `build_hf_dataset.py` ships each file only when its
+bytes and manifest are the audited ones, and `test_hf_card.py` pins the two card paragraphs (credit, licence, required
+caveats, BINGO and the handwriting dataset as the owner decided, EEGPT's weights never called Apache-2.0, no date,
+version label or Jev, the BINGO data management plan nowhere). check-workbench pins the registrations: both releases
+with their manifests and their holds; /data-use/ with every source of both batches, BINGO's rights as they stand (no
+licence stated, consent from the project's deliverable D3.1 version 3.0 for its NATO-alphabet recordings, no
+ethics-approval reference), the handwriting dataset's gap stated in full exactly once (no ethics-approval or
+informed-consent statement was found, on the dataset card or in a participating team's challenge paper, arXiv
+2608.03176v2, linked; the organisers' paper listed as forthcoming; to be rechecked when it appears), named as an owner
+decision on stated gaps like BOAS's and BINGO's, with BNCI2015-001's hold unchanged for its licence review, MC_RTT's
+animal-care statement in place of consent, the EEGPT change and the small-cohort note for one animal, two folders and
+five and eight people (the handwriting mask-only interval withheld, and why); a dataset page in both languages for each source with results, its figures leaves of its file, and none
+for a status-only or held source; the Orthosis groups each saying they are one cohort counted once, the EEGPT
+comparison with its caveats beside it, BINGO's documented preprocessing beside its result, the handwriting group's
+caveats beside its figures and, beside its credit, a short pointer to the gap stated on /data-use/ (never the full
+statement again), MC_RTT's one animal beside its figures; no Jev on those pages; BINGO's data management plan cited nowhere in the build. EEGPT's directory card
+and its /methods/#eegpt entry carry a display-layer override (directory-status.ts), as REVE Base's does: one pilot
+comparison published and linked, the core-matrix scores unpublished pending a separate review, the checkpoint licence
+unresolved, no weights distributed, Apache-2.0 the code's alone; the released status stays beside it and
+experiments.json keeps its bytes. The two topic pages carry their own checks.
+
+The beyond-scalp question, `/topics/beyond-scalp-eeg/` ("Do simple baselines work on signals other than scalp EEG?",
+under a fourth group, "Other signals & pilots", which the pilot studies share): from `beyond-scalp-update.json`, human
+fNIRS on Bak et al. (a person left out at a time, against the training prior), one macaque's motor-cortex spiking on
+MC_RTT (finger velocity within one session, against the training mean) and the ds007420 coverage counts; FALCON H2 and
+Rabut et al. as counts of what was prepared, and the ds007420 classifier held. check-workbench pins every figure to its
+table cell, chart row, card or reading from the export (Bak's classifier with its interval and the prior without one,
+class recall, chance drawn on every chart row; MC_RTT's five metrics for both arms, its "better" column as the export's
+flags, so MAE names the training mean, R² drawn against zero and each error against the comparator, no interval; the
+ds007420 counts and gates), the same figures in both languages, the export's label, species and signal and a dataset-page
+link in every result section, the handoff's required caveats in both languages and beside their numbers, forbidden
+readings (leaderboard, ranking, state of the art, online, real-time or closed-loop control, clinical, zero-shot, a
+brain-only or neural origin, an official NLB score, a pooled score) only inside a denial, no typed figure in a result
+section, the prepared sources printing counts only and the hold no figure, no update wording or version label, no Jev,
+every credit with its licence and its consent statement (MC_RTT's animal care, consent not applicable), the card's
+counts and Bak's single entry in the transfer map. Mutation-tested on a copy of dist: each of 15 injected violations
+was caught.
+
+The pilot studies, `/topics/pilot-studies/` ("What can a small pilot show, and what can it not?", in the same group):
+from `pilot-studies-update.json`, the Orthosis error events as one cohort of eight people in three labelled
+configurations counted once (the 64-channel classical baseline against its direction/time confound probe, the class
+prior and the permutation controls; the same baseline on the 58 channels EEGPT supports; frozen EEGPT against those
+matched classical features, with the paired difference), BINGO's inner speech across people and languages (a negative
+result near the prior, with the project's documented preprocessing beside it and the project's own figure labelled as
+theirs), the handwriting analysis (five people of a reused development cohort, four released coded labels: mask-aware
+relative EEG against the missingness mask, elapsed time and trial order, both together and the training majority, with
+the majority line drawn at chance on a labelled axis; the three paired contrasts, the elapsed-time one crossing zero;
+label-shuffle means with observed ranges; the availability counts and histogram, the overlapping flags not summed; the
+earlier analysis of the same people as context, not a second cohort; the mask-only control's interval withheld, because
+at five people its bounds would show individual scores, and those bounds checked absent from the served file and the
+page; its rights gap in full once in the credits and as a short pointer beside the result), REFED's stored-clip
+diagnostic, and four arms status only. check-workbench pins every figure to its chart row, table cell, finding or
+count from the export (each interval beside its figure, chance, zero or the global mean drawn as the dashed line on
+every row, permutation and shuffle ranges printed and never drawn, no interval on REFED), the same figures in both
+languages, species, signal, the locally-executed label and a
+dataset-page link in every released section, the handoffs' required caveats in both languages and the bounding ones
+beside their numbers, forbidden readings (leaderboard, ranking, state of the art, online or real-time control,
+clinical, zero-shot, a neural or brain-only origin, subjective recognition, handwriting recognition, superiority,
+equivalence, a pooled score) only inside a denial, with a heading, cell or caption ending a sentence, no typed figure in a result section, the held
+analysis and the status-only arms figure-free, no update wording or version label, no Jev, the EEGPT credit's licence
+line (Apache-2.0 the code's alone, the checkpoint's licence unresolved, no weights distributed) and the weights never
+called Apache-2.0, every credit with its licence and its consent statement as the export words it, the card's counts,
+the map's entries (Orthosis and the handwriting analysis with their n; BINGO's two without, as subject fields are not
+proven people) and does-pretraining-help's one figure-free pointer. Mutation-tested on a copy of dist: each of 18
+injected violations was caught, and each of 15 more for the handwriting analysis (a withheld bound printed, an
+interval drawn for the mask-only control, the crosses-zero note or the majority line on one row dropped, a changed or
+typed figure, a figure dropped from the Chinese page, the rights gap stated twice on /data-use/ or in full on the
+dataset page, the BNCI2015-001 sentence, the pointer beside the result or the challenge-paper link dropped, a
+figure-free "handwriting recognition" claim, a version label, the map entry's n dropped). The recognition claim first
+passed, because the denial check read "recognise" but not "recognition"; it now reads both.
+
+The pilot studies' publication switches: BINGO (owner decision 3) and the handwriting analysis (owner decision of
+2026-10-12, released with its rights gap stated). One manifest field per source, `sources[<id>].publication` in
+`research/publication_review_20261012/pilot-studies-release-manifest.json`, makes the export publish that source's
+aggregates (`released`) or hold them (`status_only`). Every consumer reads the export's flags through
+`src/data/pilot-switch.ts`: the pilot-studies page (the source's section or, held, a figure-free hold block linked to
+its register row), the dataset page (none while held), the holds register and release note (`releases.ts`), the file
+description (`files.ts`), the card (`i18n.ts`), the transfer map, `/data-use/` and the Hugging Face card;
+check-workbench pins each source's figures and its dataset page's rights note while released, and while held asserts
+that no figure, dataset page or map entry of it exists and that its hold is registered.
+`test_pilot_studies_update.py::HeldSiteBuild` builds the payload with each one held in turn, builds a scratch copy of
+the site from it, rewrites the scratch `.zenodo.json` and runs check-workbench there (nothing outside the scratch copy
+is written). Holding either for real is therefore: flip its field, run
+`python3 pipeline/publication/export_pilot_studies_update.py`, `npm run build`, `node scripts/write-zenodo-metadata.mjs`,
+check-workbench, then check_site_artifact.
+
+The handwriting dataset's rights record (owner decision of 2026-10-12): the export reads the pinned dataset card
+(no ethics or consent statement) and a participating team's challenge paper, arXiv:2608.03176v2, pinned as abstract
+page, HTML, PDF and the PDF's `pdftotext -layout` text (which the tests reproduce byte for byte), all git-ignored under
+`research/publication_review_20261012/evidence/handwriting/`. It refuses the build unless that paper is the version
+named, says what the manifest quotes (the competition's name; twenty labelled training and ten unseen test
+participants), carries no ethics, consent, review-board or dataset-licence statement, and lists the organisers' paper
+as forthcoming; the served file then carries where a statement was looked for, the gap, the owner's decision and when
+it is to be rechecked. The handwriting result withholds the mask-only control's interval (its bounds, at five people,
+would show individual scores): the export and the independent audit both check those bounds absent.
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

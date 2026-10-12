@@ -46,8 +46,9 @@ export function zenodoMetadata(dist) {
     title,
     creators: [{ name: author }],
     description:
-      '<p>Cohort-level EEG decoding results, each published with the protocol that produced it: cohort, ' +
-      'electrode count, evaluation split, chance level, interval and known limitations. No raw EEG, no ' +
+      '<p>Cohort-level EEG decoding results, plus first fNIRS and intracortical-spiking baselines, each published ' +
+      'with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and ' +
+      'known limitations. No raw recordings, no ' +
       'per-participant scores, no model weights and no overall ranking.</p>' +
       `<p>The site, with every figure in context: <a href="${home.url}">${home.url}</a>. ` +
       'The release log, with the SHA-256 of every file: ' +

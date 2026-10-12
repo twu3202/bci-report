@@ -33,6 +33,8 @@ import export_foundation_models_update as foundation_export
 import export_shared_representation_update as shared_export
 import export_later_sessions_update as later_export
 import export_questions_in_language_update as questions_export
+import export_beyond_scalp_update as beyond_export
+import export_pilot_studies_update as pilot_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -194,6 +196,139 @@ def questions_payload():
     payload = json.loads(raw)
     validate_public(payload)
     return raw, wordings, payload
+
+
+def reviewed_payload(name, module, label):
+    """A served file refused unless its bytes and its manifest are the ones its own export audit passed."""
+    raw = (PUBLISHED/name).read_bytes()
+    audit = json.loads(module.EXPORT_AUDIT.read_text())
+    assert audit['status'] == 'pass', f'{label} export review did not pass'
+    assert hashlib.sha256(raw).hexdigest() == audit['export_sha256'], f'{label} payload is not the reviewed one'
+    assert hashlib.sha256(module.MANIFEST.read_bytes()).hexdigest() == audit['manifest_sha256'], f'{label} manifest is not the audited one'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return raw, payload
+
+
+def beyond_payload():
+    """The results beyond scalp EEG (human fNIRS, macaque intracortical spiking, an fNIRS coverage check)."""
+    return reviewed_payload('beyond-scalp-update.json', beyond_export, 'Beyond-scalp')
+
+
+def pilot_payload():
+    """The pilot studies (Orthosis in three configurations of one cohort, BINGO, the handwriting analysis, REFED)."""
+    return reviewed_payload('pilot-studies-update.json', pilot_export, 'Pilot-studies')
+
+
+def credit(rights):
+    """A served credit line as the card prints it: the people and the record, without the site's own closing line."""
+    return rights['attribution'].split(' Derived analysis by BCI Report')[0]
+
+
+def beyond_paragraph():
+    """The card's beyond-scalp paragraph: cohorts, species and the gates read from the served file, with credit and licence."""
+    p = beyond_payload()[1]
+    r, d = p['results'], p['datasets']
+    assert set(r) == {'bak-fnirs-loso', 'nlb-mc-rtt-velocity', 'ds007420-optical-coverage'}, sorted(r)
+    assert {s['id'] for s in p['status_only']} == {'falcon-h2-preparation', 'rabut-fus-preparation'}
+    bak, nlb, opt = r['bak-fnirs-loso'], r['nlb-mc-rtt-velocity'], r['ds007420-optical-coverage']
+    assert nlb['cohort']['animals'] == 1 and nlb['comparison']['ridge_better']['mae_m_per_s'] is False
+    assert opt['gates']['classifier'] == 'held'
+    assert d['nlb-mc-rtt']['consent_and_ethics']['subjects'] == 'animal'
+    licences = '; '.join(f"{d[k]['rights']['name'].split(' · ')[0]}: {d[k]['rights']['license']}" for k in d)
+    credits = ' · '.join(credit(d[k]['rights']) for k in d)
+    return f"""`beyond-scalp-update.json`: what can be measured and decoded **beyond scalp
+EEG**? Each entry is its own species, signal and metric: none is compared with
+scalp EEG, none joins the `results` table, and they share no ranking. Human fNIRS
+(Bak et al., {bak['cohort']['people']} people): right-hand, left-hand and foot tapping classified by a
+fixed shrinkage LDA in a person left out of training, against a training prior;
+**executed movement, not motor imagery**, offline, and systemic or motion effects
+are not excluded. One macaque's motor-cortex spiking (MC_RTT, prepared for the
+Neural Latents Benchmark): finger velocity decoded by a ridge on held-out trials
+of the same session, against the training mean, on five metrics, including the
+one on which the ridge is worse. **With one animal every figure is that
+animal's**, no interval is reported, and it is not an official Neural Latents
+Benchmark score. A numerical coverage check of human fNIRS recordings (ds007420,
+{opt['cohort']['people']} people): counts only, and **no classifier score**, because the task codes
+have no verified lookup and the event durations disagree. FALCON H2 (human
+intracortical handwriting) and Rabut et al. (human functional ultrasound) are
+prepared, not scored. MC_RTT is animal data, collected under procedures approved
+by institutional animal care and use committees; the human sources' ethics and
+consent statements are in the file. Licences, from each repository's record:
+{licences}. Credit: {credits}"""
+
+
+def pilot_paragraph():
+    """The card's pilot-studies paragraph. Cohorts, the EEGPT terms, BINGO's rights and the handwriting dataset's stated
+    gap are read from the served file, and the BINGO and handwriting sentences follow their publication switches."""
+    p = pilot_payload()[1]
+    r, d = p['results'], p['datasets']
+    o, fm, refed = r['orthosis-64ch-classical'], r['orthosis-eegpt-vs-58ch'], r['refed-stored-clip']
+    m = fm['model']
+    assert m['weights_licence'] is None and m['weights_distributed'] is False and m['code_licence'] == 'Apache-2.0'
+    assert fm['paired']['interval_excludes_zero'] is False
+    c = o['cohort']
+    if d['bingo-imagined-speech']['publication'] == 'released':
+        b = r['bingo-cross-language']
+        assert b['delivered_signal']['verified_against_file'] is False and b['contrast']['interval_excludes_zero'] is False
+        bingo = f"""BINGO Greek and English inner speech ({b['cohort']['source_fields']} subject fields as the source
+defines them): a fixed spectral baseline near its 15-class prior in every
+direction, within and across languages, **a negative result for this baseline
+only**. The source states no licence; consent is as the project's public
+deliverable D3.1 (version 3.0) reports it, for its NATO-alphabet recordings in
+the same laboratory, and no ethics-approval reference is published. The project
+documents artifact cleaning (ASR, FORCe) on the continuous recordings before trials were cut
+(D3.1, version 2.0), not re-verified against the file. """
+    else:
+        bingo = 'A BINGO inner-speech pilot is held for its rights, with no figure. '
+    if d['eeg-fnirs-handwriting']['publication'] == 'released':
+        h, hce = r['handwriting-mask-aware'], d['eeg-fnirs-handwriting']['consent_and_ethics']
+        assert h['arms']['mask_only']['balanced_accuracy']['interval_95'] is None
+        assert h['contrasts']['relative_eeg_minus_time_only']['interval_excludes_zero'] is False
+        assert all(h['contrasts'][k]['interval_excludes_zero'] is True for k in ('relative_eeg_minus_mask_only', 'relative_eeg_minus_mask_plus_time'))
+        assert hce['gap'].startswith('No ethics-approval or informed-consent statement was found.') and hce['basis'].startswith('owner decision')
+        handwriting = f"""A mask-aware EEG analysis of a handwriting competition
+dataset ({h['cohort']['people']} people, four released coded labels): with channels that sit flat at
+a digital rail masked, relative EEG is just above the training-majority control
+and above the missingness-mask and mask-plus-time controls, and **not
+separated from elapsed time and trial order**; a data-quality and methods case
+study on a reused development cohort, **not handwriting recognition**. No
+ethics-approval or informed-consent statement was found, on the dataset card or
+in a participating team's challenge paper; the aggregates are published with
+that gap stated, by the owner's decision. """
+    else:
+        handwriting = 'A mask-aware EEG analysis of a handwriting dataset is held for its rights review, with no figure. '
+    licences = '; '.join(f"{v['rights']['name'].split(' (')[0]}: {v['rights']['license']}" for k, v in d.items()
+                         if v['publication'] == 'released')
+    credits = ' · '.join(credit(v['rights']) for v in d.values() if v['publication'] == 'released')
+    return f"""`pilot-studies-update.json`: **small pilots, outside every leaderboard and
+model ranking**. The Orthosis error-detection dataset ({c['people']} people, {c['runs']} runs,
+{c['events']:,} recorded device events: one cohort, counted once) in three
+configurations: a 64-channel classical EEG baseline, the same baseline on the 58
+channels EEGPT supports, and frozen EEGPT with the same supervised probe against
+those matched classical features, whose paired interval spans zero: **neither
+arm is shown to be better, and the two are not shown to be equivalent**. The
+labels are recorded injected device events, not subjective error recognition,
+and movement, muscle or device artifacts may contribute; the EEGPT probe is trained on the other people's labels
+(not zero-shot), and overlap with EEGPT's pretraining data is not excluded.
+EEGPT's code licence, {m['code_licence']}, covers {m['code_licence_scope']}; its checkpoint licence is
+unresolved, **no original or converted weights are distributed**, and its
+core-matrix scores are not published. {bingo}{handwriting}REFED
+({refed['cohort']['nominal_folders']} nominal participant folders, {refed['cohort']['clips']} stored clips): a computational
+diagnostic in which source-only controls have smaller errors than EEG, with no
+interval and no physiological or population claim. Further arms are status
+only, with no figure. Licences: {licences}. Credit: {credits}"""
+
+
+def pilot_small_cohort():
+    """The handwriting analysis's five people, in the card's small-cohort paragraph, while its switch releases it."""
+    d = pilot_payload()[1]['datasets']['eeg-fnirs-handwriting']
+    if d['publication'] != 'released':
+        return ''
+    return """ The handwriting
+analysis has five people: its intervals are percentiles of resampled
+five-person means, not one person's score, and its mask-only control's interval
+is not published, because its bounds would show individual people's scores."""
 
 
 def later_paragraph():
@@ -648,6 +783,10 @@ are not published.
 
 {questions_paragraph()}
 
+{beyond_paragraph()}
+
+{pilot_paragraph()}
+
 {models} of {catalogued} catalogued methods have been scored. A method with no
 row has not been run, which is not the same as having failed.
 
@@ -710,6 +849,12 @@ information is published that would let anyone line them up.
 
 Treat "aggregate" as a description of what is published, not as a claim that it
 cannot be inverted.
+
+The same holds for the smallest cohorts in the later files. MC_RTT is one
+macaque, so every figure about it is that animal's own. REFED's errors pool two
+nominal participant folders, and no per-folder value is published, because one
+folder's value and the mean would give away the other. The Orthosis pilot has
+eight people, and no per-person value, minimum or range is published.{pilot_small_cohort()}
 
 ## Protocols
 
@@ -830,6 +975,10 @@ def build(output):
     raw_questions, raw_wordings, _ = questions_payload()
     (output/'questions-in-language-update.json').write_bytes(raw_questions)
     (output/'questions-in-language-wordings.json').write_bytes(raw_wordings)
+    raw_beyond, _ = beyond_payload()
+    (output/'beyond-scalp-update.json').write_bytes(raw_beyond)
+    raw_pilot, _ = pilot_payload()
+    (output/'pilot-studies-update.json').write_bytes(raw_pilot)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

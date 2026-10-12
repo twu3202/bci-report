@@ -27,8 +27,14 @@ abstract: >-
   question-conditioned heads and separate models, at matched data and compute),
   questions asked in words to a small head over frozen EEG features (seen
   questions, rewordings and questions it was never trained on kept apart, with
-  a negative result for the last), pretraining controls and a clinical case/control comparison. No
-  raw EEG, no per-participant scores, no overall ranking.
+  a negative result for the last), pretraining controls and a clinical case/control comparison. Beside
+  them, measurements beyond scalp EEG (human fNIRS and one macaque's
+  intracortical spiking, each kept apart from EEG and from the other), and
+  small pilots outside every leaderboard (one cohort's injected orthosis errors,
+  including a frozen EEGPT comparison with no weights distributed; inner speech
+  across people and languages; usable channels in a handwriting recording; and
+  a stored-clip emotion diagnostic). No raw recordings, no per-participant
+  scores, no overall ranking.
 authors:
   - name: "BCI Report"
     website: "https://bci.report"
@@ -44,8 +50,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "questions-in-language-update-20261008"
-date-released: "2026-10-08"
+version: "pilot-studies-update-20261012"
+date-released: "2026-10-12"
 keywords:
   - EEG
   - electroencephalography
@@ -58,3 +64,4 @@ keywords:
   - sleep staging
   - EEG foundation models
   - LoRA
+  - fNIRS

@@ -44,10 +44,10 @@ const params = (n: number | null | undefined) =>
       <h3 lang="en">{methodPage(m.name) ? <a href={methodPage(m.name)!}>{m.name}</a> : m.name}</h3>
       <p class="parameter">{v9 ? <Fig f={v9.params} cls="fig"/> : params(m.parameters)} <span>{d.parameters}</span></p>
       <p lang={dir(m.note).lang}>{dir(m.note).text}</p>
-      {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span> {s.override.note[locale] ?? s.override.note.en} <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></p>}
+      {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span> {s.override.note[locale] ?? s.override.note.en}{s.override.source && <> <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></>}{s.override.page && <> <a href={hrefFor(s.override.page.path, locale)} data-override-page="true">{s.override.page.label[locale] ?? s.override.page.label.en}</a></>}</p>}
       {weights && <p class="status-override fm-weights"><span>{d.weights}</span> {weights.text}{weights.original && <span class="note-original" lang="en">{weights.original}</span>}</p>}
       <p class="status-checked"><time datetime={s.checked}>{s.override ? d.statusChecked(s.checked) : d.statusAsReleased(s.checked)}</time></p>
-      <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{s.override && d.codeAsReleased}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
+      <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{s.override && (s.override.licenceLine === 'code' ? d.codeAsReleased : d.licenceAsReleased)}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
     </article>;
   })}{fmDirectory.map(e => {
     const page = e.slug ? hrefFor(`/methods/${e.slug}/`, locale) : null;

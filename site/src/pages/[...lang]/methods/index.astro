@@ -1,7 +1,7 @@
 ---
 import EntityLayout from '../../../components/EntityLayout.astro';
 import data from '../../../data/mvp.json';
-import { methods, unmeasuredModels } from '../../../data/entities';
+import { methods, tr, unmeasuredModels } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
 import { familyLabel, hrefFor, localeOf, localeParams, modelStatus } from '../../../data/i18n';
 import { site } from '../../../data/site';
@@ -49,7 +49,7 @@ const structured = {
   </section>
   <section class="topic-section" aria-labelledby="unmeasured">
     <div class="topic-heading"><div><h2 id="unmeasured">{c.methodsUnmeasured}</h2></div><p>{c.methodsUnmeasuredLede}</p></div>
-    <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}{m.released && <> ({c.releasedAs(modelStatus(m.released, locale), m.checked!)})</>}</li>)}</ul>
+    <ul class="entity-links">{unmeasured.map(m => <li id={m.anchor}>{m.url ? <a href={m.url} target="_blank" rel="noreferrer" lang="en">{m.name} ↗</a> : <span lang="en">{m.name}</span>} · {familyLabel(m.family, locale)} · {modelStatus(m.status, locale)}{m.released && <> ({c.releasedAs(modelStatus(m.released, locale), m.checked!)})</>}{m.page && <> · <a href={hrefFor(m.page.path, locale)}>{tr(m.page.label, locale)}</a></>}</li>)}</ul>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
   <ModelDirectory locale={locale} />

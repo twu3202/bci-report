@@ -53,6 +53,8 @@
 .method-grid-wide article{border-top:2px solid var(--rule);padding:15px 2px}
 .method-grid-wide h3{margin-bottom:5px}
 .method-grid-wide p{font-size:.84rem}
+/* A prepared, unscored source (beyond-scalp-eeg): its status, what was prepared and what bounds it, as paragraphs. */
+.method-grid-wide .status-entry p+p{margin-top:8px}
 .citation-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 /* Citations carry bare DOI URLs with no break opportunity. At 320px one pushed
    its card 29px past the page, on the English pages as well as the Chinese —
@@ -70,7 +72,8 @@
 .cite-page code{font-family:var(--mono);font-size:.78rem}
 .cite-page a{color:var(--accent)}
 /* Grouped as on the home page and the hub: one column per group, its topics stacked. */
-.topic-switcher>.switcher-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+/* One column per group (topics.ts topicGroups: four since 2026-10-12). */
+.topic-switcher>.switcher-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .switcher-group{min-width:0}
 .switcher-group>p{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:650;color:var(--muted);margin-bottom:6px}
 .switcher-group>div{display:grid;grid-template-columns:minmax(0,1fr);border:1px solid var(--line);border-width:1px 0 0 1px}
@@ -182,6 +185,8 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
 .ip-ticks{position:relative;height:1.1rem;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
 .ip-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
 .ip-ticks .t0{left:0;transform:none}.ip-ticks .t1{left:25%}.ip-ticks .t2{left:50%}.ip-ticks .t3{left:75%}.ip-ticks .t4{left:100%;transform:translateX(-100%)}
+/* An axis label, where a plot names what its axis measures (IntervalPlot `axisLabel`). */
+.ip-axis .ip-label{font-size:.7rem;color:var(--muted);text-align:right}
 .interval-plot figcaption{font-size:.76rem;color:var(--muted);margin-top:10px}
 .interval-plot figcaption strong{color:var(--ink);font-weight:620}
 @media(max-width:560px){
@@ -191,6 +196,7 @@ code.hash{font-family:var(--mono);font-size:.72rem;color:var(--ink);overflow-wra
   .ip-row{grid-template-columns:minmax(0,1fr) 96px;gap:4px 10px}
   .ip-label{grid-column:1/-1}
   .ip-axis .ip-label{display:none}
+  .ip-axis .ip-label:not(:empty){display:block;text-align:left}
 }
 
 /* Dataset and method pages. */

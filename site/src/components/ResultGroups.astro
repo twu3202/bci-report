@@ -76,11 +76,12 @@ const urlParts = (s: string) => s.split(/(https:\/\/[!-'*-~]*[A-Za-z0-9\/])/);
                 : <span data-fig={attr(r.value)} class="metric">{formatFig(r.value)}</span>}
                 {r.interval && <span class="interval"><span data-fig={attr(r.interval[0])}>{formatFig(r.interval[0])}</span>–<span data-fig={attr(r.interval[1])}>{formatFig(r.interval[1])}</span></span>}
                 {r.note && <small class="row-note">{r.note[locale].map(p => typeof p === 'string' ? p : <span data-fig={attr(p)} class="fig">{formatFig(p)}</span>)}</small>}</td>
-              <td>{r.records ? <><span data-fig={attr(r.records)}>{formatFig(r.records)}</span>{c.records}</> : r.people ? r.people : c.noPeople}</td>
+              <td>{r.records ? <><span data-fig={attr(r.records)}>{formatFig(r.records)}</span>{c.records}</> : r.counted ? <><span data-fig={attr(r.counted.n)}>{formatFig(r.counted.n)}</span>{tr(r.counted.what, locale)}</> : r.people ? r.people : c.noPeople}</td>
             </tr>
           ))}</tbody>
         </table>
       </div>}
+      {g.notes && g.rows.length > 0 && g.notes.map(n => <p class="protocol-note group-note">{n[locale].map(p => typeof p === 'string' ? p : <span data-fig={attr(p)} class="fig">{formatFig(p)}</span>)}</p>)}
       {g.fmTerms && g.rows.length > 0 && <p class="protocol-note fm-terms-note" data-fm-terms={g.fmTerms}>{fmTermsSentence(fmModels.filter(m => g.rows.some(r => r.method === m.name)), locale, fmEndorsement)} <a href={`${hrefFor(`/protocols/${g.fmTerms}/`, locale)}#v9-licences`}>{locale === 'zh' ? '全部权重许可与条款 →' : 'Every weights licence and its terms →'}</a></p>}
       {g.rdLimits && <p class="protocol-note rd-limits-note" data-rd-limits={g.rdLimits}><strong>{locale === 'zh' ? '这些数字说明不了什么：' : 'What these figures cannot say:'}</strong>{locale === 'en' && ' '}{rdLimits(g.rdLimits, locale).map((x, i) => <>{i > 0 && locale === 'en' && ' '}{urlParts(x).map((part, j) => j % 2 ? <a href={part} target="_blank" rel="noreferrer">{part}</a> : part)}</>)}{locale === 'en' && ' '}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#rd-limits`}>{locale === 'zh' ? '第一条路线的全部局限 →' : 'Every limitation of route 1 →'}</a></p>}
       {g.srNotes === 'boas' && g.rows.length > 0 && <BoasGaps locale={locale}/>}

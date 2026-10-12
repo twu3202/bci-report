@@ -25,6 +25,10 @@ import export_later_sessions_update as later_sessions
 import audit_later_sessions_export as later_sessions_audit
 import export_questions_in_language_update as questions_in_language
 import audit_questions_in_language_export as questions_in_language_audit
+import export_beyond_scalp_update as beyond_scalp
+import audit_beyond_scalp_export as beyond_scalp_audit
+import export_pilot_studies_update as pilot_studies
+import audit_pilot_studies_export as pilot_studies_audit
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -197,6 +201,36 @@ def check(root):
     if qil_rederived:
         assert questions_in_language_audit.audit() == qil_audit, 'Questions-in-language independent audit no longer reproduces'
     expected |= {'questions-in-language-update.json', 'questions-in-language-wordings.json'}
+
+    # And the two batches of one site version (owner decisions, 2026-10-12): the results beyond scalp EEG (human
+    # fNIRS, macaque intracortical spiking, an fNIRS coverage check) and the pilot studies (Orthosis in three
+    # configurations of one cohort, BINGO, the handwriting analysis, REFED). Each is re-derived from its own
+    # manifest where the pinned inputs exist, and its independent audit re-run on the same bytes.
+    beyond_rederived = beyond_scalp.inputs_available()
+    beyond_payload = (beyond_scalp.serialized_export() if beyond_rederived
+                      else (root/'data/beyond-scalp-update.json').read_bytes())
+    beyond_audit = json.loads(beyond_scalp.EXPORT_AUDIT.read_text())
+    assert beyond_audit['status'] == 'pass', 'Beyond-scalp export review did not pass'
+    assert hashlib.sha256(beyond_payload).hexdigest() == beyond_audit['export_sha256'], 'Stale beyond-scalp export audit'
+    assert hashlib.sha256(beyond_scalp.MANIFEST.read_bytes()).hexdigest() == beyond_audit['manifest_sha256'], 'Beyond-scalp manifest is not the audited one'
+    assert (root/'data/beyond-scalp-update.json').read_bytes() == beyond_payload, 'Unreviewed beyond-scalp download'
+    assert all(p.read_bytes() == beyond_payload for p in beyond_scalp.OUTPUTS), 'Beyond-scalp source/download drift'
+    if beyond_rederived:
+        assert beyond_scalp_audit.audit() == beyond_audit, 'Beyond-scalp independent audit no longer reproduces'
+    expected.add('beyond-scalp-update.json')
+
+    pilot_rederived = pilot_studies.inputs_available()
+    pilot_payload = (pilot_studies.serialized_export() if pilot_rederived
+                     else (root/'data/pilot-studies-update.json').read_bytes())
+    pilot_audit = json.loads(pilot_studies.EXPORT_AUDIT.read_text())
+    assert pilot_audit['status'] == 'pass', 'Pilot-studies export review did not pass'
+    assert hashlib.sha256(pilot_payload).hexdigest() == pilot_audit['export_sha256'], 'Stale pilot-studies export audit'
+    assert hashlib.sha256(pilot_studies.MANIFEST.read_bytes()).hexdigest() == pilot_audit['manifest_sha256'], 'Pilot-studies manifest is not the audited one'
+    assert (root/'data/pilot-studies-update.json').read_bytes() == pilot_payload, 'Unreviewed pilot-studies download'
+    assert all(p.read_bytes() == pilot_payload for p in pilot_studies.OUTPUTS), 'Pilot-studies source/download drift'
+    if pilot_rederived:
+        assert pilot_studies_audit.audit() == pilot_audit, 'Pilot-studies independent audit no longer reproduces'
+    expected.add('pilot-studies-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -251,6 +285,12 @@ def check(root):
                   ('questions-in-language-update payload and wordings reproduced from their own manifest, and their '
                    'independent audit re-run' if qil_rederived
                    else 'questions-in-language-update payload and wordings matched to their audit hashes (private inputs not present)'),
+                  ('beyond-scalp-update payload reproduced from its own manifest, and its independent audit re-run'
+                   if beyond_rederived
+                   else 'beyond-scalp-update payload matched to its audit hash (private inputs not present)'),
+                  ('pilot-studies-update payload reproduced from its own manifest, and its independent audit re-run'
+                   if pilot_rederived
+                   else 'pilot-studies-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

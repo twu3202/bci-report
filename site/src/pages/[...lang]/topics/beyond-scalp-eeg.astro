@@ -1,0 +1,592 @@
+---
+/**
+ * Do simple baselines work on signals other than scalp EEG? (owner decision 1, 2026-10-12): the non-scalp batch, each
+ * result its own species, signal and metric — human fNIRS on Bak et al.'s executed finger and foot tapping, a person
+ * left out at a time; one macaque's motor-cortex spiking on MC_RTT, finger velocity within one session; and a numerical
+ * coverage check of the ds007420 fNIRS recordings. FALCON H2 and Rabut et al.'s functional ultrasound are prepared and
+ * not scored, and the ds007420 classifier is held. In "Other signals & pilots", with the pilot studies.
+ *
+ * Every figure is a leaf of beyond-scalp-update.json, printed with data-fig (Fig.astro) and re-read by
+ * check-workbench.mjs. Rules, from the handoff, its review and the manifest: aggregates only; each section names its
+ * species, signal, cohort, split, observation window, comparator and metric; nothing pooled, nothing ranked, nothing
+ * compared with scalp EEG; locally executed experiments, never paper-reported scores; MC_RTT's worse MAE beside its
+ * better RMSE, and never an official Neural Latents Benchmark score; coverage counts never read as quality; the
+ * prepared sources print counts of what was prepared and no score; the hold prints nothing. The sentences that
+ * summarise the export are checked against it below, and the page refuses to build if the numbers stop supporting them.
+ */
+import beyond from '../../../data/beyond-scalp-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import Parts from '../../../components/Parts.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { BEYOND_ANCHOR, BEYOND_PATH, formatFig, wideFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
+import { holds } from '../../../data/releases';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+// The space between two sentences or a sentence and its link: none in Chinese, after a full-width mark.
+const sp = zh ? '' : ' ';
+type Part = string | FigValue;
+const BSF = 'beyond-scalp-update.json';
+const f = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: BSF });
+const n = (raw: number) => f(raw, 'count');
+const w = (raw: number) => f(raw, wideFmt(raw));
+const F = (x: FigValue) => formatFig(x);
+const ans = (x: FigValue) => `[[${F(x)}]]`;
+const R = beyond.results;
+const bak = R['bak-fnirs-loso'], nlb = R['nlb-mc-rtt-velocity'], opt = R['ds007420-optical-coverage'];
+const D = beyond.datasets as Record<string, any>;
+const statusOf = (id: string) => {
+  const x = beyond.status_only.find(s => s.id === id);
+  if (!x) throw new Error(`beyond-scalp-eeg: no status-only entry ${id}`);
+  return x as any;
+};
+const falcon = statusOf('falcon-h2-preparation'), fus = statusOf('rabut-fus-preparation');
+const hold = holds.find(h => h.id === 'ds007420-classifier');
+const exportHold = beyond.holds.find(h => h.id === 'ds007420-classifier');
+
+// --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
+const need = (ok: boolean, what: string) => { if (!ok) throw new Error(`beyond-scalp-eeg: the copy says ${what}`); };
+const says = (text: string, ...xs: string[]) => xs.forEach(x => need(text.includes(x), `"${x}" (the export says otherwise)`));
+need(BEYOND_PATH === '/topics/beyond-scalp-eeg/' && BEYOND_ANCHOR.bak === 'bak-fnirs' && BEYOND_ANCHOR.nlb === 'mc-rtt' && BEYOND_ANCHOR.ds007420 === 'ds007420'
+  && BEYOND_ANCHOR.falcon === 'falcon-h2' && BEYOND_ANCHOR.fus === 'rabut-fus' && BEYOND_ANCHOR.statusOnly === 'status-only', 'the anchors the dataset pages link to');
+need(beyond.release_id === 'beyond-scalp-update-20261012' && beyond.schema_version === 'bci-report-beyond-scalp-update-v1', 'this release and schema');
+need(Object.keys(R).join() === 'bak-fnirs-loso,nlb-mc-rtt-velocity,ds007420-optical-coverage', 'three results');
+need(beyond.status_only.map(s => s.id).join() === 'falcon-h2-preparation,rabut-fus-preparation' && beyond.status_only.every(s => s.scores_published === false), 'two prepared sources, no score');
+need(!!hold && !hold.closed && !!exportHold && hold.href === `${BEYOND_PATH}#${BEYOND_ANCHOR.ds007420}`, 'the ds007420 classifier is an open hold, linked to its section');
+// Bak et al.: human fNIRS, three executed movements, every person held out once against the training prior.
+const B = bak.cohort, BD = bak.design, BS = bak.signal, BA = bak.arms, BU = bak.uncertainty;
+need(bak.species === 'human' && bak.modality === 'fNIRS' && bak.task.classes.length === 3 && bak.task.kind.includes('executed movement') && bak.task.kind.includes('not motor imagery'), 'human fNIRS, three executed movements, not motor imagery');
+need(B.trials === B.people * B.trials_each_person && B.trials_each_person === 3 * B.trials_each_class_each_person, 'the trial counts add up');
+need(BD.folds === B.people && BD.training_people === B.people - 1 && BD.training_trials === B.trials - B.trials_each_person && BD.test_trials === B.trials_each_person, 'every person held out once, trained on everyone else');
+need(BS.channels === 40 && BS.observation_window_s === 15 && BS.feature_windows_s.every(([a, b]) => b - a === 5) && BS.feature_windows_s.at(-1)![1] === BS.observation_window_s
+  && BS.features === BS.channels * BS.feature_windows_s.length && BS.baseline_window_s[0] === -1 && BS.baseline_window_s[1] === 0, 'three 5 s windows over the first 15 s, against the second before onset');
+says(BS.channel_note, 'twenty oxy- and twenty deoxyhemoglobin');
+says(bak.measured_quantity, 'mM·cm as delivered, not absolute concentrations');
+says(bak.models.shrinkage_lda, 'training people only', 'no channel, feature or hyperparameter search', 'lsqr solver, automatic shrinkage, empirical training priors');
+says(bak.models.source_prior, 'predicts right-hand tapping every time');
+need(bak.primary_metric.chance_level === 1 / 3 && BA.source_prior.balanced_accuracy.mean === bak.primary_metric.chance_level, 'the training prior sits on chance, one in three');
+need(BA.source_prior.class_recall.right_hand === 1 && BA.source_prior.class_recall.left_hand === 0 && BA.source_prior.class_recall.foot === 0, 'the prior predicts right-hand tapping every time');
+need(BA.shrinkage_lda.balanced_accuracy.interval_excludes_chance && BA.shrinkage_lda.balanced_accuracy.interval_95[0] > bak.primary_metric.chance_level, 'the interval lies wholly above chance');
+need(BU.draws === 2000 && BU.seed === 20261011, 'two thousand draws, one seed');
+says(BU.scope, 'not a refit bootstrap', 'not an independent clinical confidence interval');
+says(BU.comparator, 'every person gets the same score');
+says(bak.limitations.join(' '), 'upstream preprocessing may use future samples', 'Task-correlated systemic or motion effects are not excluded', 'neither a brain-only signal nor cortical localization', 'the supplied files carry no probe coordinates', "does not reproduce the authors' within-person scores");
+says(bak.independent_audit.checked, 'every input file hash', 'whole-person folds', 'recomputed without the frozen scoring code');
+says(bak.independent_audit.not_checked, 'features were not regenerated', 'classifier was not refit');
+need(bak.independent_audit.status === 'pass' && bak.label === 'Locally executed experiment · offline · leave one whole person out', 'the Bak label as the export words it');
+// MC_RTT: one macaque, one session, interleaved stored trials; the ridge against the training mean, worse on MAE.
+const N = nlb.cohort, NS = nlb.signal, NA = nlb.arms, NC = nlb.comparison.ridge_better;
+need(N.animals === 1 && N.sessions === 1 && nlb.species.startsWith('macaque') && nlb.modality === 'intracortical spiking', 'one macaque, one session, intracortical spiking');
+need(NC.r2_uniform_average && NC.r2_x && NC.r2_y && NC.rmse_m_per_s && NC.mae_m_per_s === false, 'the ridge is better on R² and RMSE and worse on MAE');
+need(NA.ridge.r2_uniform_average > NA.training_mean.r2_uniform_average && NA.ridge.rmse_m_per_s < NA.training_mean.rmse_m_per_s && NA.ridge.mae_m_per_s > NA.training_mean.mae_m_per_s, 'the directions the flags state');
+need(NS.rows_excluded === 0 && nlb.coverage.scored_share === 1 && nlb.coverage.validation_rows_scored === NS.validation_rows, 'no row excluded, every validation row scored');
+need(NS.training_rows === N.training_trials * NS.retained_bins_each_trial && NS.validation_rows === N.validation_trials * NS.retained_bins_each_trial, 'the rows are the retained bins of each stored trial');
+need(NS.neural_support_ms === NS.bin_ms * (NS.smoothing_bins + NS.history_lags - 1) && NS.features === N.input_neurons * NS.history_lags, 'the history support and the feature count');
+need(nlb.uncertainty.kind === 'none reported', 'no interval is reported');
+says(nlb.uncertainty.reason, 'temporally correlated samples from one animal in one session, not independent subjects');
+says(nlb.label, 'not an official Neural Latents Benchmark score');
+says(nlb.design.split, 'interleaved within the one session', 'the test file was not opened');
+says(nlb.design.neurons, 'held-in neurons only', 'held-out neurons are not inputs');
+says(nlb.signal.context, 'trailing spike-count history only, reset at every trial and observation gap');
+says(nlb.models.ridge, 'alpha 10, Cholesky solver, with intercept', 'training-constant features dropped', 'no hyperparameter search');
+says(nlb.models.training_mean, 'predicts the training rows\' mean velocity for every validation row');
+says(nlb.limitations.join(' '), 'no cross-day, cross-animal or human evidence', "every figure is that animal's", 'not co-smoothing and not a latent-model comparison', 'derived offline from finger position', 'not a real-time or closed-loop controller');
+says(nlb.independent_audit.checked, 'reconstructed independently of the code that produced it', 'normal equations');
+says(nlb.independent_audit.not_checked, 'the stored velocity itself');
+says(D['nlb-mc-rtt'].rights.task, 'targets on an 8 x 8 grid', 'primary motor cortex');
+need(D['nlb-mc-rtt'].consent_and_ethics.subjects === 'animal' && D['nlb-mc-rtt'].consent_and_ethics.informed_consent.applicable === false, 'animal data: informed consent does not apply');
+// ds007420: every optical value finite and positive, no constant channel; counts only, the classifier held.
+const O = opt.cohort, K = opt.counts, G = opt.gates;
+need(opt.species === 'human' && opt.modality === 'fNIRS' && O.recordings_excluded === 0 && O.recording_channels === O.recordings * O.channels_each_recording
+  && K.optical_values === O.channels_each_recording * O.optical_time_points, 'every channel at every time point of every recording, none excluded');
+need(K.finite === K.optical_values && K.positive === K.optical_values && K.zero === 0 && K.negative === 0 && K.nonfinite === 0 && K.constant_channels === 0
+  && opt.shares.finite === 1 && opt.shares.positive === 1, 'every value finite and positive, no constant channel');
+need(G.classifier === 'held' && G.task_code_lookup_verified === false && G.event_duration_s.events_table !== G.event_duration_s.optical_files && G.event_duration_s.optical_files !== G.event_duration_s.cited_paper, 'the classifier is held: no verified task-code lookup, durations that disagree');
+says(opt.limitations.join(' '), 'not signal-to-noise, scalp coupling, saturation, motion', 'cannot establish signal quality', 'optical coverage does not repair them');
+says(opt.definitions, 'with no tolerance');
+says(D.ds007420.rights.task, 'Resting state, left- and right-hand ball squeezing and instructed head and face movements');
+says(opt.independent_audit.not_checked, 'raw-signal pass was not repeated');
+need(opt.label === 'Locally executed check · label-independent · counts only', 'the ds007420 label as the export words it');
+// The prepared sources: counts of what was prepared, and the facts that bound them.
+const P2 = falcon.preparation, P3 = fus.preparation;
+need(P2.participants === 1 && P2.minival_trials_also_in_calibration === P2.minival_trials && P2.training_candidate_trials === P2.held_in_calibration_trials - P2.minival_trials
+  && P2.ctc_classes_with_blank === P2.symbols + 1, 'one participant; every minival trial inside the calibration data; the cleaned set; the blank');
+says(falcon.reason, 'no model has been fitted');
+says(falcon.facts.join(' '), 'exposed, not blinded', 'not be the official FALCON cross-day score', 'not independent evaluation data');
+need(P3.participants === 1 && P3.runs === P3.drawing_runs + P3.guitar_runs + P3.mixed_speech_reading_runs && P3.frames === P3.rest_frames + P3.activity_frames
+  && P3.guitar_runs === 1 && P3.mixed_speech_reading_runs === 1, 'one person, nine runs, the frames split into rest and activity');
+says(fus.reason, 'no Doppler value has been read and no decoder has been fitted');
+says(fus.facts.join(' '), 'One person, not nine participants', 'no verified individual meaning', 'nominal block durations', 'not pooled into one task');
+need(D['rabut-fus'].rights.license === 'CC BY-NC 4.0' && D['falcon-h2'].rights.license === 'CC BY 4.0', 'the prepared sources\' licences');
+// The version identifiers the sections print, each the export's own.
+const VERSION = { bak: 'doi:10.6084/m9.figshare.9783755.v2', nlb: 'DANDI 000129 · 0.241017.1444', ds007420: 'OpenNeuro ds007420 · 1.0.5', falcon: 'DANDI 000950 · 0.241029.1403', fus: 'doi:10.22002/f3y3k-em558' };
+need(D['bak-fnirs'].rights.source.endsWith('10.6084/m9.figshare.9783755.v2') && D['nlb-mc-rtt'].rights.source.endsWith('dandi.000129/0.241017.1444')
+  && D.ds007420.rights.source.endsWith('openneuro.ds007420.v1.0.5') && D['falcon-h2'].rights.source.endsWith('dandi.000950/0.241029.1403')
+  && D['rabut-fus'].rights.source.endsWith('10.22002/f3y3k-em558'), 'the dataset versions');
+need(D['bak-fnirs'].rights.license === 'CC BY 4.0' && D['nlb-mc-rtt'].rights.license === 'CC BY 4.0' && D.ds007420.rights.license === 'CC0-1.0', 'the licences');
+// Each source's paper, as its rights record names it.
+const PAPER: Record<string, string | null> = {
+  'bak-fnirs': 'https://doi.org/10.3390/electronics8121486', 'nlb-mc-rtt': 'https://arxiv.org/abs/2109.04463',
+  ds007420: 'https://doi.org/10.1117/1.NPh.10.2.025007', 'falcon-h2': null, 'rabut-fus': 'https://doi.org/10.1126/scitranslmed.adj3143',
+};
+for (const [id, url] of Object.entries(PAPER)) if (url) need(D[id].rights.reviewBasis.includes(url) || D[id].rights.attribution.includes(url.replace('https://doi.org/', '')), `${id}'s paper`);
+
+// --- What the charts draw. ---------------------------------------------------------------------------------------
+const lda = BA.shrinkage_lda.balanced_accuracy, prior = BA.source_prior.balanced_accuracy;
+const chance = bak.primary_metric.chance_level;
+const r2Keys = ['r2_uniform_average', 'r2_x', 'r2_y'] as const;
+const r2Domain: [number, number] = [-0.1, 0.3], errDomain: [number, number] = [0, 0.08];
+for (const arm of [NA.ridge, NA.training_mean]) {
+  for (const k of r2Keys) need(arm[k] > r2Domain[0] && arm[k] < r2Domain[1], 'every R² fits its axis, −0.1 to 0.3');
+  for (const k of ['rmse_m_per_s', 'mae_m_per_s'] as const) need(arm[k] > errDomain[0] && arm[k] < errDomain[1], 'every error fits its axis, 0 to 0.08 m/s');
+}
+
+// --- Names, in both languages. ------------------------------------------------------------------------------------
+const armName = {
+  lda: zh ? '收缩 LDA' : 'Shrinkage LDA',
+  prior: zh ? '训练集先验（对照）' : 'Training prior (comparator)',
+  ridge: zh ? '基于放电计数历史的岭回归' : 'Ridge on spike-count history',
+  mean: zh ? '训练集均值（对照）' : 'Training mean (comparator)',
+};
+const r2Name = { r2_uniform_average: zh ? 'x 与 y 的均值' : 'mean of x and y', r2_x: 'x', r2_y: 'y' };
+const metricName = {
+  r2_uniform_average: zh ? 'R²，x 与 y 的均值' : 'R², mean of x and y', r2_x: zh ? 'R²，x' : 'R², x', r2_y: zh ? 'R²，y' : 'R², y',
+  rmse_m_per_s: zh ? 'RMSE（m/s）' : 'RMSE (m/s)', mae_m_per_s: zh ? 'MAE（m/s）' : 'MAE (m/s)',
+};
+const metricNote = {
+  r2_uniform_average: zh ? '无单位；越高越好' : 'unitless; higher is better', r2_x: zh ? '无单位；越高越好' : 'unitless; higher is better', r2_y: zh ? '无单位；越高越好' : 'unitless; higher is better',
+  rmse_m_per_s: zh ? '均方根误差；越低越好' : 'root-mean-square error; lower is better', mae_m_per_s: zh ? '平均绝对误差；越低越好' : 'mean absolute error; lower is better',
+};
+const nlbMetrics = ['r2_uniform_average', 'r2_x', 'r2_y', 'rmse_m_per_s', 'mae_m_per_s'] as const;
+
+const copy = {
+  en: {
+    description: `Partly. Human fNIRS: ${F(f(lda.mean))} participant-macro balanced accuracy for executed tapping in people left out of training, against ${F(f(prior.mean))} for the training prior. One macaque’s spiking, within one session: R² ${F(w(NA.ridge.r2_uniform_average))}, a lower RMSE but a higher MAE than the training mean. An fNIRS coverage check says nothing about signal quality.`,
+    answer: `Partly, and each result stands on its own. On human fNIRS, a fixed shrinkage LDA told right-hand, left-hand and foot tapping apart in people it never saw: with each of ${ans(n(B.people))} people left out in turn, its participant-macro balanced accuracy was ${ans(f(lda.mean))} (descriptive 95% interval ${ans(f(lda.interval_95[0]))} to ${ans(f(lda.interval_95[1]))}), well above the training prior’s ${ans(f(prior.mean))}. These were executed movements, not motor imagery, and systemic or motion effects are not excluded. On one macaque’s motor-cortex spiking, a ridge decoder recovered part of the finger velocity on held-out trials of the same session: R² ${ans(w(NA.ridge.r2_uniform_average))} against ${ans(w(NA.training_mean.r2_uniform_average))} for the training mean, and a lower root-mean-square error, but a higher mean absolute error (${ans(w(NA.ridge.mae_m_per_s))} against ${ans(w(NA.training_mean.mae_m_per_s))} m/s). It is not an official Neural Latents Benchmark score. On a second fNIRS dataset, all ${ans(n(K.optical_values))} optical values are finite and positive: numerical coverage, which says nothing about signal quality or decoding.`,
+    eyebrow: 'Other signals · human fNIRS and macaque intracortical spiking',
+    dek: 'Three locally executed analyses, each with its own species, signal and metric. Human fNIRS: executed finger and foot tapping, classified in a person left out of training. One macaque’s motor-cortex spiking: finger velocity, decoded within one session. Human fNIRS recordings: a numerical check of every optical value. Two more sources are prepared, not scored.',
+    // Bak
+    bakEyebrow: 'Human · fNIRS · executed movement · Bak et al.',
+    bakH2: 'fNIRS: which movement did a person the classifier never saw make?',
+    bakLabel: bak.label,
+    bakLede: (): Part[] => [n(B.people), ' people each tapped the fingers of the right hand, the fingers of the left hand or a foot when cued: executed movement, not motor imagery. That is ', n(B.trials), ' trials, ', n(B.trials_each_person), ' per person and ', n(B.trials_each_class_each_person), ' of each class. The signals are the supplied oxy- and deoxyhemoglobin series, ', n(BS.channels), ' channels in mM·cm as delivered, not absolute concentrations. Each person is held out once: a fixed classifier is fitted on the other ', n(BD.training_people), ' people’s ', n(BD.training_trials), ' trials and predicts all ', n(BD.test_trials), ' of the held-out person’s, from the first ', n(BS.observation_window_s), ' s after each task onset. The comparator is the training prior, which predicts the most frequent training class every time.'],
+    bakPlotCaption: 'Participant-macro balanced accuracy for a person left out of training.',
+    bakPlotLegend: 'Dot: the mean over people, each weighted equally; line: the classifier’s descriptive 95% interval; dashed line: chance, one in three. The training prior has no interval, because every person gets the same score.',
+    bakRegion: 'Bak et al. fNIRS, balanced accuracy and class recall, scrolls horizontally',
+    bakCaption: (): Part[] => ['Participant-macro balanced accuracy: each held-out person’s mean of the three class recalls, averaged over the ', n(B.people), ' people with equal weight; chance is ', f(chance), '. Class recall is computed over all held-out trials of every person together, the same number in each class: a secondary point estimate, without an interval.'],
+    colDecoder: 'Decoder',
+    colBa: 'Balanced accuracy',
+    colRecall: { right_hand: 'Recall · right hand', left_hand: 'Recall · left hand', foot: 'Recall · foot' },
+    ldaNote: 'standardization and shrinkage LDA, fitted on the training people only',
+    priorNote: 'predicts right-hand tapping every time: the classes are balanced, and ties go to the fixed class order',
+    noInterval: 'no interval: every person gets the same score',
+    bakFindLabel: (): Part[] => ['Shrinkage LDA, participant-macro balanced accuracy, ', n(B.people), ' people each held out once; the training prior scores ', f(prior.mean)],
+    bakFindH3: 'Well above the training prior, in people the classifier never saw',
+    bakFindP: (): Part[] => ['Its descriptive interval, ', f(lda.interval_95[0]), ' to ', f(lda.interval_95[1]), ', lies wholly above chance. The interval resamples the fixed participant scores, ', n(BU.draws), ' draws: it describes variation between people given the fitted folds, and because the folds share training people it is not a refit bootstrap and not an independent clinical confidence interval.'],
+    bakLimits: 'It shows neither online control nor a device’s response time, because the supplied series’ upstream preprocessing may use future samples. Nor does it show a brain-only signal or cortical localization: task-correlated systemic or motion effects are not excluded, and the supplied files carry no probe coordinates. The protocol is this site’s own: it does not reproduce the authors’ within-person scores.',
+    bakSource: 'Data: Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong,',
+    bakAudit: 'Independently audited: every input file hash, the marker-to-label order, whole-person folds, training-only scaling, the comparator’s tie rule and prediction alignment checked, and the class recalls, the mean and the interval recomputed without the frozen scoring code. The features were not regenerated from the raw channels, and the classifier was not refit.',
+    // MC_RTT
+    nlbEyebrow: 'Macaque · intracortical spiking · MC_RTT (Neural Latents Benchmark)',
+    nlbH2: 'Spikes: how much finger velocity does a linear decoder recover within one session?',
+    nlbLabel: nlb.label,
+    nlbLede: (): Part[] => ['One rhesus macaque made self-paced reaches to targets on a grid while an electrode array in primary motor cortex recorded sorted units, in one session. A fixed ridge decoder reads the spike counts of the ', n(N.input_neurons), ' held-in neurons (the benchmark’s ', n(N.unused_neurons), ' held-out neurons are not inputs) in ', n(NS.bin_ms), ' ms bins, with ', n(NS.neural_support_ms), ' ms of trailing history, and predicts the x/y finger velocity ', n(NS.target_lag_ms), ' ms later. It is fitted on the session’s stored ', n(N.training_trials), ' training trials and scored on its ', n(N.validation_trials), ' validation trials, interleaved with them in time: ', n(NS.training_rows), ' and ', n(NS.validation_rows), ' rows, none excluded. The comparator is the training mean: the training rows’ mean velocity, predicted for every row.'],
+    r2Caption: 'R² on the validation trials, for x, y and their mean: the ridge against the training mean.',
+    r2Legend: 'Dot: the value; dashed line: an R² of zero. Higher is better. No interval is drawn, because none is reported for one animal in one session.',
+    rmseCaption: 'RMSE on the validation trials, in m/s: lower is better.',
+    rmseLegend: 'Dot: the value; dashed line: the training mean’s RMSE. No interval is reported.',
+    maeCaption: 'MAE on the validation trials, in m/s: lower is better, and here the ridge is worse.',
+    maeLegend: 'Dot: the value; dashed line: the training mean’s MAE. No interval is reported.',
+    rowR2: (arm: string, k: typeof r2Keys[number]) => `${arm} · ${r2Name[k]}`,
+    nlbRegion: 'MC_RTT, every published metric for the ridge and the training mean, scrolls horizontally',
+    nlbCaption: (): Part[] => ['Every published metric on the ', n(NS.validation_rows), ' validation rows, with the arm that is better on it. R² is unitless; RMSE and MAE are in m/s.'],
+    colMetric: 'Metric',
+    colRidge: 'Ridge on spike-count history',
+    colMean: 'Training mean (comparator)',
+    colBetter: 'Better on this metric',
+    betterRidge: 'The ridge',
+    betterMean: 'The training mean: the ridge’s error is larger',
+    nlbFindLabel: (): Part[] => ['R², mean of x and y, ridge on spike-count history; the training mean scores ', w(NA.training_mean.r2_uniform_average)],
+    nlbFindH3: 'A lower squared error, but a higher absolute error',
+    nlbFindP: (): Part[] => ['The ridge lowers the root-mean-square error from ', w(NA.training_mean.rmse_m_per_s), ' to ', w(NA.ridge.rmse_m_per_s), ' m/s, but its mean absolute error is higher, ', w(NA.ridge.mae_m_per_s), ' against ', w(NA.training_mean.mae_m_per_s), ' m/s: it is not better on every metric, and both directions are shown. No interval is reported: the validation rows are temporally correlated samples from one animal in one session, not independent subjects.'],
+    nlbLimits: 'One macaque and one session, with training and validation trials interleaved: no cross-day, cross-animal or human evidence, and with one animal every figure is that animal’s. A separate supervised diagnostic on the stored trials: not an official Neural Latents Benchmark score, not co-smoothing and not a latent-model comparison. The velocity labels were derived offline from finger position, and averaging within each bin differs from the benchmark’s own resampling. Offline: not a real-time or closed-loop controller.',
+    nlbSource: 'Data: Joseph E. O’Doherty, Mariana M. B. Cardoso, Joseph G. Makin and Philip N. Sabes (Sabes Lab, UCSF), prepared for the Neural Latents Benchmark,',
+    nlbAnimal: 'Animal data: collected under procedures approved by institutional animal care and use committees; informed consent does not apply.',
+    nlbAudit: 'Independently audited: every feature and target row reconstructed independently of the code that produced it, the ridge coefficients checked against the normal equations, and the training-only normalization, prediction alignment and every metric recomputed. The stored velocity itself, which the dataset derives offline from finger position, was not checked.',
+    // ds007420
+    optEyebrow: 'Human · fNIRS · ds007420 · counts only',
+    optH2: 'Optical recordings: are the values numerically usable?',
+    optLabel: opt.label,
+    optLede: (): Part[] => [n(O.people), ' people, ', n(O.recordings), ' recordings of resting state, left- and right-hand ball squeezing and instructed head and face movements, each with ', n(O.channels_each_recording), ' optical channels: raw intensity at ', n(opt.wavelengths_nm[0]), ' and ', n(opt.wavelengths_nm[1]), ' nm for each source–detector pair. Every optical value of every recording was checked without labels: is it finite, is it positive, and is any channel exactly constant?'],
+    optCards: [
+      { h: 'Optical values checked', v: (): Part[] => [n(K.optical_values)], p: (): Part[] => ['Every channel at each of the ', n(O.optical_time_points), ' time points of the ', n(O.recordings), ' recordings: ', n(O.recording_channels), ' recording-channels, no recording excluded.'] },
+      { h: 'Finite and positive', v: (): Part[] => [n(K.positive)], p: (): Part[] => ['Finite: ', n(K.finite), ', ', f(opt.shares.finite), '. Positive: ', f(opt.shares.positive), '. The denominator is every optical value.'] },
+      { h: 'Zero · negative · non-finite', v: (): Part[] => [n(K.zero), ' · ', n(K.negative), ' · ', n(K.nonfinite)], p: (): Part[] => ['And ', n(K.constant_channels), ' exactly constant channels: none whose samples are all finite and exactly equal, with no tolerance.'] },
+    ],
+    optLimits: 'Coverage counts only. They say nothing about signal-to-noise, scalp coupling, saturation, motion, wavelength-pair integrity, physiological plausibility, neural origin, task validity or decoding: positive, non-constant values alone cannot establish signal quality.',
+    optGates: (): Part[] => ['The classifier is held, so no score exists. The numeric task codes have no verified lookup to hands or movements, and the event durations disagree: ', n(G.event_duration_s.events_table), ' s in the events table, ', n(G.event_duration_s.optical_files), ' s in the optical files and ', n(G.event_duration_s.cited_paper), ' s in the cited paper. The ', n(G.auxiliary_clock_hold_recordings), ' recordings held for their unverified auxiliary motion-sensor clocks stay held: optical coverage does not repair them.'],
+    optSource: 'Data: Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao,',
+    optAudit: 'Independently audited: every channel count reconciled against the recording totals and the aggregate, and the code and its synthetic tests reviewed. The raw-signal pass was not repeated.',
+    // Not yet evaluated
+    soEyebrow: 'Status only · no score',
+    soH2: 'Not yet evaluated',
+    soLede: 'Two more sources are prepared for a decoder and not scored, and the ds007420 classifier is held. The counts below describe what was prepared from the public files; none is a result.',
+    falconMeta: 'Human, one participant · intracortical spiking · attempted handwriting of cued sentences, across recording days',
+    falconState: 'Prepared, not scored.',
+    falconPrep: (): Part[] => ['No model has been fitted. The public release has ', n(P2.files), ' files over ', n(P2.recording_dates), ' recording dates, with ', n(P2.channels), ' channels; its held-in calibration split has ', n(P2.held_in_calibration_trials), ' trials. All ', n(P2.minival_trials), ' public minival trials were found inside those calibration trials, so a leakage-safe diagnostic must first remove them from training. That leaves ', n(P2.training_candidate_trials), ' training trials, which carry ', n(P2.symbols), ' symbols (', n(P2.ctc_classes_with_blank), ' classes for a CTC decoder, with the blank). The ', n(P2.held_out_calibration_trials), ' held-out calibration trials are inputs for few-shot recalibration, not independent evaluation data.'],
+    falconFacts: 'The minival trials were inspected to find the overlap, so a later diagnostic on them would be exposed, not blinded, and would not be the official FALCON cross-day score.',
+    fusMeta: 'Human, one participant · functional ultrasound through an acoustically transparent cranial window · drawing, guitar playing, and speech or reading, against rest',
+    fusState: 'Prepared, not analyzed.',
+    fusPrep: (): Part[] => ['Frame labels, timestamps and image axes are verified; no Doppler value has been read and no decoder has been fitted. Prepared: ', n(P3.runs), ' runs of one person, not of nine participants — ', n(P3.drawing_runs), ' drawing, ', n(P3.guitar_runs), ' guitar and ', n(P3.mixed_speech_reading_runs), ' mixed speech and reading — with ', n(P3.frames), ' frames, ', n(P3.rest_frames), ' at rest and ', n(P3.activity_frames), ' during activity.'],
+    fusFacts: 'Only rest against activity is verified; the speech and reading codes of the mixed run have no verified individual meaning. Measured timestamps are used, because the nominal block durations in the run labels disagree with the measured frame timing. Drawing, guitar and speech or reading are different paradigms and are not pooled into one task. The data are licensed for non-commercial use only.',
+    holdLink: 'Its row in the holds register →',
+    // Methods and limits
+    limitsH2: 'What these results can and cannot say',
+    methodsH3: 'How each result was produced',
+    methods: (): [string, Part[]][] => [
+      ['Human fNIRS, Bak et al.', ['The supplied ', n(BS.channels), ' hemodynamic series. For each trial, the channel mean in three consecutive ', n(5), ' s windows from task onset to ', n(BS.observation_window_s), ' s, each minus the mean of the second before onset: ', n(BS.features), ' features, with no filtering beyond the supplied series. Standardization and shrinkage LDA (lsqr solver, automatic shrinkage, empirical training priors) fitted on the training people only, with no channel, feature or hyperparameter search; ', n(BD.folds), ' folds, each leaving one whole person out.']],
+      ['Macaque spiking, MC_RTT', ['Spike counts of the held-in neurons in ', n(NS.bin_ms), ' ms bins, smoothed over ', n(NS.smoothing_bins), ' trailing bins, with ', n(NS.history_lags), ' history lags: ', n(NS.features), ' features, reset at every trial and observation gap. The target is the mean stored x/y finger velocity in a bin ', n(NS.target_lag_ms), ' ms ahead, ', n(NS.retained_bins_each_trial), ' bins kept from each ', n(N.trial_ms), ' ms trial. Standardization fitted on the training rows, then ridge regression (alpha 10, Cholesky solver, with intercept), training-constant features dropped, no hyperparameter search. Only the training file is used, with its stored training and validation trials; the test file was not opened.']],
+      ['Human fNIRS coverage, ds007420', ['Every optical value of the ', n(O.recordings), ' recordings read once, without labels or events. Shares use every optical value as the denominator; a constant channel is one whose samples are all finite and exactly equal, with no tolerance.']],
+    ],
+    intervalsH3: 'What the interval covers',
+    intervals: (): Part[] => ['Only the fNIRS result has an interval: a descriptive 95% percentile interval from ', n(BU.draws), ' resamples, with replacement, of the ', n(B.people), ' fixed participant scores. It describes variation between people given the fitted folds; because the folds share training people, it is not a refit bootstrap and not an independent clinical confidence interval. The MC_RTT figures have none, because its validation rows are correlated samples from one animal in one session, and the ds007420 figures are counts.'],
+    limitsH3: 'Limits that hold for all three',
+    limits: [
+      'Locally executed experiments, not scores reported in a paper or on a benchmark leaderboard. Each protocol is this site’s own and reproduces no author’s benchmark.',
+      'Nothing pooled, nothing ranked. The species, signals, tasks and metrics differ, so the three results share no scale and no ranking; none is compared with a scalp-EEG result, and none joins the eight-protocol core matrix.',
+      'Offline only: no online or closed-loop control, device, clinical or deployment claim.',
+      'Fixed before scoring: no channel, feature or hyperparameter search, and no score here was used to choose a setting.',
+      'Audit scope. Each result passed an independent audit; the fNIRS features were not regenerated from the raw channels and its classifier was not refit, MC_RTT’s stored velocity was not re-derived, and the ds007420 raw-signal pass was not repeated.',
+    ],
+    notPubH3: 'Not published here',
+    notPub: 'Per-person, per-recording, per-channel, per-trial, per-fold and per-row values of any kind; the confusion matrices; participant, recording, file and session identifiers and recording dates; signals, features, predictions, model coefficients, normalization statistics, cue texts, labels, timestamps and images; measured compute; demographics; and any score for FALCON H2, the functional-ultrasound recordings or a ds007420 classifier, none of which exists. Why so little is published for one animal and for small cohorts:',
+    smallCohorts: 'small cohorts, on the data-use page →',
+    creditsH3: 'Credits, licences, and consent or animal care',
+    consentH: 'Ethics and consent, as the source states them:',
+    animalH: 'Animal care, as the Neural Latents Benchmark paper states it:',
+    consentNA: 'Informed consent: not applicable, animal data.',
+    archiveNote: 'Read from an Internet Archive capture of the publisher’s article page, because the publisher refused automated requests.',
+    recordLink: 'Dataset record ↗', paperLink: 'Paper ↗', readFrom: 'Statement read from ↗', readFromPaper: 'statement read from the paper', datasetPage: 'Dataset page →', creditsLink: 'Credit, licence and consent ↓',
+    derived: 'Derived analyses by BCI Report, aggregates only; not endorsed by the data’s authors, and no raw data are redistributed.',
+    relatedH2: 'Related questions',
+    related: [
+      { text: 'Small EEG pilots, some on datasets that also record fNIRS or muscle activity, whose evaluation is listed there as status only: ', href: '/topics/pilot-studies/', link: topicCards.en['pilot-studies'].question },
+      { text: 'Electrodes in the ear rather than on the scalp, against a full scalp montage: ', href: '/topics/fewer-electrodes/', link: topicCards.en['fewer-electrodes'].question },
+      { text: 'Continuous cursor tracking decoded from scalp EEG across sessions of the same person, a different signal, task and metric: ', href: '/topics/later-sessions/#forenzo', link: 'Continuous cursor tracking, a negative result' },
+    ],
+  },
+  zh: {
+    description: `部分管用。人类 fNIRS：对训练时留出的被试区分实际敲击动作，按被试平均的平衡准确率为 ${F(f(lda.mean))}，训练集先验为 ${F(f(prior.mean))}。一只猕猴的神经元放电，同一次会话内：R² 为 ${F(w(NA.ridge.r2_uniform_average))}，RMSE 低于训练集均值，MAE 却更高。fNIRS 数值覆盖核查说明不了信号质量。`,
+    answer: `部分管用，而且每项结果都要单独看。人类 fNIRS（功能性近红外光谱）上，固定的收缩 LDA 能在它从未见过的人身上区分右手、左手手指敲击与脚部敲击：${ans(n(B.people))} 名被试轮流留出，按被试平均的平衡准确率为 ${ans(f(lda.mean))}（描述性 95% 区间 ${ans(f(lda.interval_95[0]))} 至 ${ans(f(lda.interval_95[1]))}），远高于训练集先验的 ${ans(f(prior.mean))}。这些是实际动作，不是运动想象，也没有排除全身性生理或运动的影响。一只猕猴运动皮层的神经元放电上，岭回归在同一次会话的留出试次上恢复了手指速度的一部分：R² 为 ${ans(w(NA.ridge.r2_uniform_average))}，训练集均值为 ${ans(w(NA.training_mean.r2_uniform_average))}；它的均方根误差更低，平均绝对误差却更高（${ans(w(NA.ridge.mae_m_per_s))} 对 ${ans(w(NA.training_mean.mae_m_per_s))} m/s）。这不是 Neural Latents Benchmark 的官方分数。另一个 fNIRS 数据集的全部 ${ans(n(K.optical_values))} 个光学数值都有限且为正：这只是数值覆盖，说明不了信号质量，也说明不了能否解码。`,
+    eyebrow: '其他信号 · 人类 fNIRS 与猕猴皮层内神经元放电',
+    dek: '三项由本站在本地运行的分析，各有各的物种、信号与指标。人类 fNIRS（功能性近红外光谱）：对训练时留出的被试，区分实际的手指与脚部敲击动作。一只猕猴运动皮层的神经元放电：在同一次会话内解码手指速度。人类 fNIRS 记录：对每个光学数值做数值核查。另有两个数据源已完成准备，尚未评分。',
+    bakEyebrow: '人类 · fNIRS · 实际动作 · Bak 等人',
+    bakH2: 'fNIRS：分类器从未见过的人，做的是哪种动作？',
+    bakLabel: '本站在本地运行的实验 · 离线 · 每次留出一名完整的被试',
+    bakLede: (): Part[] => [n(B.people), ' 名被试在提示下分别敲击右手手指、左手手指或脚：这是实际动作，不是运动想象。共 ', n(B.trials), ' 个试次，每人 ', n(B.trials_each_person), ' 个，其中每类 ', n(B.trials_each_class_each_person), ' 个。信号是数据集提供的氧合与脱氧血红蛋白序列，共 ', n(BS.channels), ' 个通道，单位是数据提供时的 mM·cm，不是绝对浓度。每名被试各留出一次：固定的分类器用其余 ', n(BD.training_people), ' 名被试的 ', n(BD.training_trials), ' 个试次拟合，再预测留出被试的全部 ', n(BD.test_trials), ' 个试次，取每次任务开始后的前 ', n(BS.observation_window_s), ' 秒。对照是训练集先验：每次都预测训练试次中最常见的类别。'],
+    bakPlotCaption: '训练时留出的被试上，按被试平均的平衡准确率。',
+    bakPlotLegend: '点为各被试等权平均的均值，横线为分类器的描述性 95% 区间，虚线为随机水平，即三分之一。训练集先验没有区间，因为每名被试的分数都相同。',
+    bakRegion: 'Bak 等人 fNIRS：平衡准确率与各类别召回率，可横向滚动',
+    bakCaption: (): Part[] => ['按被试平均的平衡准确率：每名留出被试三个类别召回率的均值，再对 ', n(B.people), ' 名被试等权平均；随机水平为 ', f(chance), '。各类别召回率把所有被试的全部留出试次合在一起计算，每类试次数相同：这是次要的点估计，没有区间。'],
+    colDecoder: '解码器',
+    colBa: '平衡准确率',
+    colRecall: { right_hand: '召回率 · 右手', left_hand: '召回率 · 左手', foot: '召回率 · 脚' },
+    ldaNote: '标准化 + 收缩 LDA，只在训练被试上拟合',
+    priorNote: '每次都预测右手敲击：各类别数量相同，并列时按固定的类别顺序取第一个',
+    noInterval: '没有区间：每名被试的分数都相同',
+    bakFindLabel: (): Part[] => ['收缩 LDA，按被试平均的平衡准确率，', n(B.people), ' 名被试各留出一次；训练集先验为 ', f(prior.mean)],
+    bakFindH3: '在分类器从未见过的人身上，远高于训练集先验',
+    bakFindP: (): Part[] => ['它的描述性区间为 ', f(lda.interval_95[0]), ' 至 ', f(lda.interval_95[1]), '，整个落在随机水平之上。这个区间是对固定的逐人分数重抽样 ', n(BU.draws), ' 次得到的：它描述的是在已拟合的各折给定时被试之间的差异；由于各折共用训练被试，它不是重新拟合的 bootstrap，也不是独立的临床置信区间。'],
+    bakLimits: '它既不能说明在线控制或设备的响应时间（数据集提供的序列在上游预处理中可能用到了未来的采样点），也不能说明信号只来自大脑或皮层定位：没有排除与任务相关的全身性生理或运动影响，而且数据集提供的文件里没有探头坐标。这是本站自己的协议：不复现作者的被试内分数。',
+    bakSource: '数据：',
+    bakAudit: '经过独立审计：核对了每个输入文件的哈希、标记与标签的对应顺序、以整人为单位的折、只在训练数据上拟合的缩放、对照的并列规则与预测的对齐，并在不使用冻结评分代码的情况下重新计算了各类别召回率、均值与区间。没有从原始通道重新生成特征，也没有重新拟合分类器。',
+    nlbEyebrow: '猕猴 · 皮层内神经元放电 · MC_RTT（Neural Latents Benchmark）',
+    nlbH2: '神经元放电：在同一次会话内，线性解码器能恢复多少手指速度？',
+    nlbLabel: '本站在本地运行的实验 · 离线 · 一只猕猴、一次会话 · 不是 Neural Latents Benchmark 的官方分数',
+    nlbLede: (): Part[] => ['一只恒河猴在一次会话中自主伸手够向网格上的目标，植入初级运动皮层的电极阵列记录了经过分选的神经元单元。固定的岭回归解码器读取 ', n(N.input_neurons), ' 个 held-in 神经元（基准划定的 ', n(N.unused_neurons), ' 个 held-out 神经元不作为输入）在 ', n(NS.bin_ms), ' ms 时间窗内的放电计数，带 ', n(NS.neural_support_ms), ' ms 的历史，预测 ', n(NS.target_lag_ms), ' ms 之后的手指 x/y 速度。它在这次会话存储的 ', n(N.training_trials), ' 个训练试次上拟合，在 ', n(N.validation_trials), ' 个验证试次上评分，验证试次与训练试次在时间上相互交错：分别为 ', n(NS.training_rows), ' 行与 ', n(NS.validation_rows), ' 行，没有排除任何一行。对照是训练集均值：对每一行都预测训练数据行的平均速度。'],
+    r2Caption: '验证试次上的 R²（x、y 及两者的均值）：岭回归与训练集均值对照。',
+    r2Legend: '点为数值，虚线为 R² 等于零。越高越好。图中没有区间，因为一只动物、一次会话的结果不报告区间。',
+    rmseCaption: '验证试次上的 RMSE，单位 m/s：越低越好。',
+    rmseLegend: '点为数值，虚线为训练集均值的 RMSE。不报告区间。',
+    maeCaption: '验证试次上的 MAE，单位 m/s：越低越好，而这里岭回归更差。',
+    maeLegend: '点为数值，虚线为训练集均值的 MAE。不报告区间。',
+    rowR2: (arm: string, k: typeof r2Keys[number]) => `${arm} · ${r2Name[k]}`,
+    nlbRegion: 'MC_RTT：岭回归与训练集均值的全部已发布指标，可横向滚动',
+    nlbCaption: (): Part[] => [n(NS.validation_rows), ' 个验证数据行上的全部已发布指标，以及在每个指标上更好的一方。R² 无单位；RMSE 与 MAE 的单位是 m/s。'],
+    colMetric: '指标',
+    colRidge: '基于放电计数历史的岭回归',
+    colMean: '训练集均值（对照）',
+    colBetter: '在这个指标上更好的',
+    betterRidge: '岭回归',
+    betterMean: '训练集均值：岭回归的误差更大',
+    nlbFindLabel: (): Part[] => ['R²，x 与 y 的均值，基于放电计数历史的岭回归；训练集均值为 ', w(NA.training_mean.r2_uniform_average)],
+    nlbFindH3: '平方误差更低，绝对误差却更高',
+    nlbFindP: (): Part[] => ['岭回归把均方根误差从 ', w(NA.training_mean.rmse_m_per_s), ' 降到 ', w(NA.ridge.rmse_m_per_s), ' m/s，但它的平均绝对误差更高，为 ', w(NA.ridge.mae_m_per_s), '，训练集均值为 ', w(NA.training_mean.mae_m_per_s), ' m/s：它并不是在每个指标上都更好，两个方向都列在这里。不报告区间：验证数据行是同一只动物、同一次会话中时间上相关的样本，不是独立的个体。'],
+    nlbLimits: '一只猕猴、一次会话，训练试次与验证试次相互交错：不涉及跨天、跨动物或人类方面的证据；只有一只动物，每个数字都是这只动物的。这是在存储试次上另做的有监督诊断：不是 Neural Latents Benchmark 的官方分数，不是 co-smoothing，也不是潜变量模型之间的比较。速度标签是离线由手指位置推导的，每个时间窗内的平均方式也与基准自己的重采样不同。离线分析：不是实时或闭环控制器。',
+    nlbSource: '数据：',
+    nlbAnimal: '动物数据：在各机构动物护理与使用委员会批准的程序下采集；不涉及知情同意。',
+    nlbAudit: '经过独立审计：每一行特征与目标都独立于实现方重新构建，岭回归系数用正规方程核对，并重新计算了只在训练数据上拟合的归一化、预测的对齐与每个指标。没有核对存储的速度本身，它是数据集离线由手指位置推导的。',
+    optEyebrow: '人类 · fNIRS · ds007420 · 只有计数',
+    optH2: '光学记录：这些数值在数值上可用吗？',
+    optLabel: '本站在本地运行的核查 · 不依赖标签 · 只有计数',
+    optLede: (): Part[] => [n(O.people), ' 名被试、', n(O.recordings), ' 段记录，内容为静息态、左右手握球以及按指示做的头部与面部动作，每段记录 ', n(O.channels_each_recording), ' 个光学通道：每对光源–探测器在 ', n(opt.wavelengths_nm[0]), ' 与 ', n(opt.wavelengths_nm[1]), ' nm 两个波长下的原始光强。在不使用标签的情况下检查了每段记录的每个光学数值：是否有限、是否为正，以及有没有完全恒定的通道。'],
+    optCards: [
+      { h: '检查的光学数值', v: (): Part[] => [n(K.optical_values)], p: (): Part[] => ['每个通道在 ', n(O.recordings), ' 段记录合计 ', n(O.optical_time_points), ' 个时间点上的数值：共 ', n(O.recording_channels), ' 个“记录 × 通道”，没有排除任何记录。'] },
+      { h: '有限且为正', v: (): Part[] => [n(K.positive)], p: (): Part[] => ['有限：', n(K.finite), '，占 ', f(opt.shares.finite), '。为正：占 ', f(opt.shares.positive), '。分母是全部光学数值。'] },
+      { h: '零 · 负值 · 非有限值', v: (): Part[] => [n(K.zero), ' · ', n(K.negative), ' · ', n(K.nonfinite)], p: (): Part[] => ['完全恒定的通道有 ', n(K.constant_channels), ' 个：没有哪个通道的采样全部有限且完全相等（不设容差）。'] },
+    ],
+    optLimits: '只是覆盖计数。它们说明不了信噪比、头皮耦合、饱和、运动、波长配对的完整性、生理上的合理性、神经起源、任务有效性或能否解码：仅凭数值为正、通道不恒定，不能确立信号质量。',
+    optGates: (): Part[] => ['分类器处于暂缓状态，所以没有任何分数。数字任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长也互相矛盾：事件表中为 ', n(G.event_duration_s.events_table), ' 秒，光学数据文件中为 ', n(G.event_duration_s.optical_files), ' 秒，所引论文中为 ', n(G.event_duration_s.cited_paper), ' 秒。因辅助运动传感器时钟未经核实而暂缓的 ', n(G.auxiliary_clock_hold_recordings), ' 段记录仍然暂缓：光学数值覆盖不能弥补它们。'],
+    optSource: '数据：',
+    optAudit: '经过独立审计：每个通道计数都与记录总数和合计值对上，代码及其合成数据测试也经过审查。没有重做对原始信号的那一遍计算。',
+    soEyebrow: '只发状态 · 没有分数',
+    soH2: '尚未评测',
+    soLede: '另有两个数据源已为解码做好准备、尚未评分，ds007420 的分类器处于暂缓状态。下面的计数描述的是从公开文件中准备了什么，都不是结果。',
+    falconMeta: '人类，一名被试 · 皮层内神经元放电 · 跨记录日按提示尝试书写句子',
+    falconState: '已完成准备，尚未评分。',
+    falconPrep: (): Part[] => ['还没有拟合任何模型。公开发布的数据共 ', n(P2.files), ' 个文件、', n(P2.recording_dates), ' 个记录日，', n(P2.channels), ' 个通道；其中 held-in 校准部分有 ', n(P2.held_in_calibration_trials), ' 个试次。公开的 ', n(P2.minival_trials), ' 个 minival 试次全部出现在这些校准试次之中，所以一个不泄漏的诊断必须先把它们从训练数据中去掉。剩下 ', n(P2.training_candidate_trials), ' 个训练试次，涵盖 ', n(P2.symbols), ' 个符号（CTC 解码器加上空白符共 ', n(P2.ctc_classes_with_blank), ' 类）。另外 ', n(P2.held_out_calibration_trials), ' 个留出的校准试次是少样本重新校准的输入，不是独立的评估数据。'],
+    falconFacts: '为了找出重叠，已经查看过这些 minival 试次，所以之后在它们上面做的诊断不是盲测，也不会是 FALCON 官方的跨天分数。',
+    fusMeta: '人类，一名被试 · 透过声学透明颅骨植入窗的功能超声 · 画画、弹吉他、说话或阅读，与静息对比',
+    fusState: '已完成准备，尚未分析。',
+    fusPrep: (): Part[] => ['帧标签、时间戳与图像坐标轴都已核实；还没有读取任何多普勒数值，也没有拟合任何解码器。已准备：同一个人的 ', n(P3.runs), ' 个 run，不是九名被试——其中画画 ', n(P3.drawing_runs), ' 个、弹吉他 ', n(P3.guitar_runs), ' 个、说话与阅读混合 ', n(P3.mixed_speech_reading_runs), ' 个——共 ', n(P3.frames), ' 帧，静息 ', n(P3.rest_frames), ' 帧，活动 ', n(P3.activity_frames), ' 帧。'],
+    fusFacts: '只核实了静息与活动的区分；混合 run 中说话与阅读的编码各自是什么意思，还没有核实。使用实测的时间戳，因为 run 标签中的标称组块时长与实测的帧时间不一致。画画、弹吉他与说话或阅读是不同的范式，不合并成一个任务。这些数据只许可非商业使用。',
+    holdLink: '它在暂缓登记表中的条目 →',
+    limitsH2: '这些结果能说明什么，不能说明什么',
+    methodsH3: '每项结果是怎样得到的',
+    methods: (): [string, Part[]][] => [
+      ['人类 fNIRS，Bak 等人', ['数据集提供的 ', n(BS.channels), ' 条血流动力学序列。每个试次从任务开始到 ', n(BS.observation_window_s), ' 秒，取三个连续的 ', n(5), ' 秒时间窗内的通道均值，各减去任务开始前一秒的均值：共 ', n(BS.features), ' 个特征，在数据集提供的序列之外不做任何滤波。标准化与收缩 LDA（lsqr 求解器、自动收缩、训练集经验先验）只在训练被试上拟合，不搜索通道、特征或超参数；共 ', n(BD.folds), ' 折，每折留出一名完整的被试。']],
+      ['猕猴神经元放电，MC_RTT', ['held-in 神经元在 ', n(NS.bin_ms), ' ms 时间窗内的放电计数，在包括当前在内的此前 ', n(NS.smoothing_bins), ' 个时间窗上平滑（只用过去的数据），取 ', n(NS.history_lags), ' 个历史滞后：共 ', n(NS.features), ' 个特征，在每个试次与每段观测间隙处重置。目标是 ', n(NS.target_lag_ms), ' ms 之后那个时间窗内存储的手指 x/y 速度均值，每个 ', n(N.trial_ms), ' ms 的试次保留 ', n(NS.retained_bins_each_trial), ' 个时间窗。标准化只在训练数据行上拟合，之后是岭回归（alpha 为 10，Cholesky 求解器，带截距），去掉在训练数据中恒定的特征，不做超参搜索。只使用训练文件及其存储的训练与验证试次；没有打开测试文件。']],
+      ['人类 fNIRS 数值覆盖，ds007420', ['在不使用标签或事件的情况下，把 ', n(O.recordings), ' 段记录的每个光学数值读一遍。占比的分母是全部光学数值；恒定通道指采样全部有限且完全相等的通道，不设容差。']],
+    ],
+    intervalsH3: '区间覆盖了什么',
+    intervals: (): Part[] => ['只有 fNIRS 的结果有区间：对 ', n(B.people), ' 个固定的逐人分数有放回地重抽样 ', n(BU.draws), ' 次得到的描述性 95% 百分位区间。它描述的是在已拟合的各折给定时被试之间的差异；由于各折共用训练被试，它不是重新拟合的 bootstrap，也不是独立的临床置信区间。MC_RTT 的数字没有区间，因为验证数据行是同一只动物、同一次会话中相关的样本；ds007420 的数字是计数。'],
+    limitsH3: '三项结果共同的局限',
+    limits: [
+      '这些是本站在本地运行的实验，不是论文或基准排行榜上报告的分数。每个协议都是本站自己的，不复现任何作者的基准。',
+      '不合并，不排名。物种、信号、任务与指标各不相同，所以三项结果没有共同的尺度，也没有排名；都不与头皮 EEG 的结果比较，也都不进入八个协议的核心矩阵。',
+      '只有离线结果：不涉及在线或闭环控制、设备、临床或部署方面的结论。',
+      '在评分之前固定：不搜索通道、特征或超参数，这里的任何分数都没有用来选择设置。',
+      '审计范围。每项结果都通过了独立审计；fNIRS 的特征没有从原始通道重新生成，分类器也没有重新拟合；MC_RTT 存储的速度没有重新推导；ds007420 对原始信号的那一遍计算没有重做。',
+    ],
+    notPubH3: '这里不发布的内容',
+    notPub: '任何逐人、逐段记录、逐通道、逐试次、逐折与逐行的数值；混淆矩阵；被试、记录、文件与会话的标识以及记录日期；信号、特征、预测、模型系数、归一化统计量、提示文本、标签、时间戳与图像；实测的计算量；人口学信息；以及 FALCON H2、功能超声记录或 ds007420 分类器的任何分数——它们都不存在。为什么一只动物和小样本只能发布这么少：',
+    smallCohorts: '见数据使用页面上的小样本说明（英文）→',
+    creditsH3: '署名、许可，以及知情同意或动物护理',
+    consentH: '数据源陈述的伦理与知情同意：',
+    animalH: 'Neural Latents Benchmark 论文陈述的动物护理：',
+    consentNA: '知情同意：不适用，动物数据。',
+    archiveNote: '读自出版方文章页面在互联网档案馆的存档，因为出版方拒绝了自动化请求。',
+    recordLink: '数据集记录 ↗', paperLink: '论文 ↗', readFrom: '声明读自 ↗', readFromPaper: '声明读自该论文', datasetPage: '数据集页面 →', creditsLink: '署名、许可与知情同意 ↓',
+    derived: '以上均为 BCI Report 的衍生分析，只发布聚合结果；不代表数据作者的认可，也不再分发任何原始数据。',
+    relatedH2: '相关问题',
+    related: [
+      { text: '小规模的 EEG 试点研究，其中一些数据集同时记录了 fNIRS 或肌电，这些信号的评测在那里只列状态：', href: '/topics/pilot-studies/', link: topicCards.zh['pilot-studies'].question },
+      { text: '耳道内而不是头皮上的电极，与完整的头皮电极对比：', href: '/topics/fewer-electrodes/', link: topicCards.zh['fewer-electrodes'].question },
+      { text: '从头皮 EEG 解码同一个人跨会话的连续光标追踪，信号、任务与指标都不同：', href: '/topics/later-sessions/#forenzo', link: '连续光标追踪，一个阴性结果' },
+    ],
+  },
+}[locale];
+
+// The consent, ethics and animal-care sentences: the export's English, and its Chinese here, held to the export's wording.
+const consentZh: Record<string, [string, string, string, string]> = {
+  'bak-fnirs': ['Approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01); the experiments followed the criteria of the Declaration of Helsinki.',
+    'The participants\' written consent, approved by that board, was submitted before data recording.',
+    '经高丽大学机构审查委员会批准（KUIRB-2019-0254-01）；实验遵循《赫尔辛基宣言》的准则。',
+    '被试在数据记录之前提交了经该委员会批准的书面知情同意。'],
+  'nlb-mc-rtt': ['Collected under procedures and experiments approved by the Institutional Animal Care and Use Committees at the respective institutions; MC_RTT was collected in the Sabes Lab at UCSF.',
+    'Not applicable: animal data, no human participant.',
+    '在各相关机构的动物护理与使用委员会批准的程序与实验下采集；MC_RTT 采集于 UCSF 的 Sabes 实验室。',
+    '不适用：动物数据，没有人类被试。'],
+  ds007420: ['Approved by the Institutional Review Board of Boston University (Protocol #4502, as the dataset description records it).',
+    'All participants provided written informed consent to take part in the study.',
+    '经波士顿大学机构审查委员会批准（数据集描述记录的方案编号为 #4502）。',
+    '所有被试都签署了参加本研究的书面知情同意。'],
+  'falcon-h2': ['Permission from the Institutional Review Boards of Stanford University (protocol #20804); the BrainGate2 pilot trial ran under FDA Investigational Device Exemption #G090003 (ClinicalTrials.gov NCT00912041).',
+    'The participant gave informed consent and was enrolled in the BrainGate2 trial.',
+    '获得斯坦福大学机构审查委员会的许可（方案编号 #20804）；BrainGate2 先导试验在美国 FDA 研究用器械豁免 #G090003 下开展（ClinicalTrials.gov NCT00912041）。',
+    '该被试给予了知情同意，并入组 BrainGate2 试验。'],
+  'rabut-fus': ['Approved by the Institutional Review Boards of the University of Southern California, Caltech (IR19-0902) and Rancho Los Amigos National Rehabilitation Hospital.',
+    'The participant\'s consent was obtained.',
+    '经南加州大学、加州理工学院（IR19-0902）与 Rancho Los Amigos 国家康复医院的机构审查委员会批准。',
+    '已获得该被试的同意。'],
+};
+const credits = (['bak-fnirs', 'nlb-mc-rtt', 'ds007420', 'falcon-h2', 'rabut-fus'] as const).map(id => {
+  const d = D[id], e = d.consent_and_ethics, r = d.rights, z = consentZh[id];
+  need(e.ethics_approval.stated && e.ethics_approval.statement === z[0] && e.informed_consent.statement === z[1], `the ${id} consent and ethics sentences`);
+  need(id === 'nlb-mc-rtt' ? e.subjects === 'animal' && e.informed_consent.stated === false : e.subjects === 'human' && e.informed_consent.stated === true, `${id}: who the subjects are`);
+  const readFrom = (e.read_from as string).split(' ')[0];
+  need(/^https:\/\//.test(readFrom), `${id}: the statement's source is a link`);
+  // Bak: the publisher refused automated requests, so the statement was read from the archived page its rights record names.
+  const archive = id === 'bak-fnirs' ? r.reviewBasis.find((u: string) => u.startsWith('https://web.archive.org/')) : null;
+  if (id === 'bak-fnirs') need(!!archive && /Internet Archive capture/.test(e.read_from) && /HTTP 403/.test(e.read_from), 'Bak\'s statement came from the archived article page');
+  const from = archive ?? readFrom;
+  return { id, r, e, paper: PAPER[id], readFrom: from === PAPER[id] ? null : from, archive: !!archive, animal: e.subjects === 'animal',
+    ethics: zh ? z[2] : e.ethics_approval.statement, consent: zh ? z[3] : e.informed_consent.statement };
+});
+const card = topicCards[locale]['beyond-scalp-eeg'];
+const dataset = (slug: string) => hrefFor(`/datasets/${slug}/`, locale);
+// The page's own credits, as a full path: the Markdown copy drops in-page jump links.
+const creditsHref = `${hrefFor(BEYOND_PATH, locale)}#credits`;
+const sourceLine = (text: string, names: string | null, version: string, licence: string, licenceUrl: string, slug: string | null) => ({ text, names, version, licence, licenceUrl, slug });
+const sources = {
+  bak: sourceLine(copy.bakSource, zh ? 'Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong' : null, VERSION.bak, D['bak-fnirs'].rights.license, D['bak-fnirs'].rights.licenseUrl, 'bak-fnirs'),
+  nlb: sourceLine(copy.nlbSource, zh ? 'Joseph E. O’Doherty, Mariana M. B. Cardoso, Joseph G. Makin and Philip N. Sabes (Sabes Lab, UCSF), prepared for the Neural Latents Benchmark' : null, VERSION.nlb, D['nlb-mc-rtt'].rights.license, D['nlb-mc-rtt'].rights.licenseUrl, 'nlb-mc-rtt'),
+  opt: sourceLine(copy.optSource, zh ? 'Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao' : null, VERSION.ds007420, 'CC0', D.ds007420.rights.licenseUrl, 'ds007420'),
+};
+for (const [k, who] of [['bak', 'Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong'], ['nlb', 'Joseph E. O\'Doherty, Mariana M. B. Cardoso, Joseph G. Makin and Philip N. Sabes'], ['opt', 'Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao']] as const)
+  need(D[{ bak: 'bak-fnirs', nlb: 'nlb-mc-rtt', opt: 'ds007420' }[k]].rights.attribution.includes(who), `the ${k} source line names the dataset's authors`);
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/beyond-scalp-eeg/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="beyond-scalp-eeg"
+  answer={copy.answer}
+  dataFiles={['/data/beyond-scalp-update.json']}
+>
+  <section class="topic-section" id="bak-fnirs" aria-labelledby="bak-heading" data-beyond="bak">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.bakEyebrow}</p><h2 id="bak-heading">{copy.bakH2}</h2><p class="topic-subtitle" data-subtitle="bak">{copy.bakLabel}{zh && <span class="note-original" lang="en">{bak.label}</span>}</p></div><p><Parts p={copy.bakLede()}/></p></div>
+    <IntervalPlot
+      id="bak-balanced-accuracy"
+      caption={copy.bakPlotCaption}
+      legend={copy.bakPlotLegend}
+      domain={[0, 1]}
+      ticks={['0%', '25%', '50%', '75%', '100%']}
+      reference={chance}
+      rows={[
+        { label: armName.lda, value: lda.mean, interval: lda.interval_95 as [number, number], fig: f(lda.mean),
+          noteParts: [`${tc.interval95} `, f(lda.interval_95[0]), '–', f(lda.interval_95[1])], tone: 'rust' },
+        { label: armName.prior, value: prior.mean, fig: f(prior.mean), note: copy.noInterval, tone: 'ink' },
+      ]}
+    />
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.bakRegion}>
+      <table data-beyond-table="bak">
+        <caption><Parts p={copy.bakCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colDecoder}</th><th scope="col">{copy.colBa}</th>{(['right_hand', 'left_hand', 'foot'] as const).map(c => <th scope="col">{copy.colRecall[c]}</th>)}</tr></thead>
+        <tbody>
+          <tr data-beyond-row="shrinkage_lda"><th scope="row">{armName.lda}<small>{copy.ldaNote}</small></th>
+            <td data-cell="ba"><Fig f={f(lda.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(lda.interval_95[0])}/>–<Fig f={f(lda.interval_95[1])}/></span></td>
+            {(['right_hand', 'left_hand', 'foot'] as const).map(c => <td data-cell={`recall-${c}`}><Fig f={f(BA.shrinkage_lda.class_recall[c])} cls="metric"/></td>)}</tr>
+          <tr data-beyond-row="source_prior"><th scope="row">{armName.prior}<small>{copy.priorNote}</small></th>
+            <td data-cell="ba"><Fig f={f(prior.mean)} cls="metric"/><span class="interval">{copy.noInterval}</span></td>
+            {(['right_hand', 'left_hand', 'foot'] as const).map(c => <td data-cell={`recall-${c}`}><Fig f={f(BA.source_prior.class_recall[c])} cls="metric"/></td>)}</tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="bak">
+      <div class="finding-number"><strong><Fig f={f(lda.mean)}/></strong><span><Parts p={copy.bakFindLabel()}/></span></div>
+      <div class="finding-copy"><h3>{copy.bakFindH3}</h3><p><Parts p={copy.bakFindP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-beyond-note="bak-limits">{copy.bakLimits}</p>
+    <p class="citation-note" data-beyond-note="bak-source">{sources.bak.text}{sources.bak.names ? <><span lang="en">{sources.bak.names}</span>，</> : ' '}<code>{sources.bak.version}</code>{zh ? '，' : ', '}<a href={sources.bak.licenceUrl} target="_blank" rel="noreferrer">{sources.bak.licence}</a>{tc.period}{sp}<a href={dataset('bak-fnirs')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+    <p class="citation-note" data-beyond-note="bak-audit">{copy.bakAudit}</p>
+  </section>
+
+  <section class="topic-section" id="mc-rtt" aria-labelledby="nlb-heading" data-beyond="nlb">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.nlbEyebrow}</p><h2 id="nlb-heading">{copy.nlbH2}</h2><p class="topic-subtitle" data-subtitle="nlb">{copy.nlbLabel}{zh && <span class="note-original" lang="en">{nlb.label}</span>}</p></div><p><Parts p={copy.nlbLede()}/></p></div>
+    <IntervalPlot
+      id="mc-rtt-r2"
+      caption={copy.r2Caption}
+      legend={copy.r2Legend}
+      domain={r2Domain}
+      ticks={['−0.1', '0', '0.1', '0.2', '0.3']}
+      reference={0}
+      rows={[
+        ...r2Keys.map(k => ({ label: copy.rowR2(armName.ridge, k), value: NA.ridge[k], fig: w(NA.ridge[k]), tone: 'rust' as const })),
+        ...r2Keys.map(k => ({ label: copy.rowR2(armName.mean, k), value: NA.training_mean[k], fig: w(NA.training_mean[k]), tone: 'ink' as const })),
+      ]}
+    />
+    {(['rmse_m_per_s', 'mae_m_per_s'] as const).map(k => <IntervalPlot
+      id={k === 'rmse_m_per_s' ? 'mc-rtt-rmse' : 'mc-rtt-mae'}
+      caption={k === 'rmse_m_per_s' ? copy.rmseCaption : copy.maeCaption}
+      legend={k === 'rmse_m_per_s' ? copy.rmseLegend : copy.maeLegend}
+      domain={errDomain}
+      ticks={['0', '0.02', '0.04', '0.06', '0.08']}
+      reference={NA.training_mean[k]}
+      rows={[
+        { label: armName.ridge, value: NA.ridge[k], fig: w(NA.ridge[k]), tone: 'rust' },
+        { label: armName.mean, value: NA.training_mean[k], fig: w(NA.training_mean[k]), tone: 'ink' },
+      ]}
+    />)}
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.nlbRegion}>
+      <table data-beyond-table="nlb">
+        <caption><Parts p={copy.nlbCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colMetric}</th><th scope="col">{copy.colRidge}</th><th scope="col">{copy.colMean}</th><th scope="col">{copy.colBetter}</th></tr></thead>
+        <tbody>{nlbMetrics.map(k => <tr data-beyond-row={k}>
+          <th scope="row">{metricName[k]}<small>{metricNote[k]}</small></th>
+          <td data-cell="ridge"><Fig f={w(NA.ridge[k])} cls="metric"/></td>
+          <td data-cell="training_mean"><Fig f={w(NA.training_mean[k])} cls="metric"/></td>
+          <td data-cell="better" data-ridge-better={String(NC[k])}>{NC[k] ? copy.betterRidge : copy.betterMean}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="nlb">
+      <div class="finding-number"><strong><Fig f={w(NA.ridge.r2_uniform_average)}/></strong><span><Parts p={copy.nlbFindLabel()}/></span></div>
+      <div class="finding-copy"><h3>{copy.nlbFindH3}</h3><p><Parts p={copy.nlbFindP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-beyond-note="nlb-limits">{copy.nlbLimits}</p>
+    <p class="citation-note" data-beyond-note="nlb-source">{sources.nlb.text}{sources.nlb.names ? <><span lang="en">{sources.nlb.names}</span>，</> : ' '}<code>{sources.nlb.version}</code>{zh ? '，' : ', '}<a href={sources.nlb.licenceUrl} target="_blank" rel="noreferrer">{sources.nlb.licence}</a>{tc.period}{sp}{copy.nlbAnimal}{sp}<a href={dataset('nlb-mc-rtt')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+    <p class="citation-note" data-beyond-note="nlb-audit">{copy.nlbAudit}</p>
+  </section>
+
+  <section class="topic-section" id="ds007420" aria-labelledby="opt-heading" data-beyond="ds007420">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.optEyebrow}</p><h2 id="opt-heading">{copy.optH2}</h2><p class="topic-subtitle" data-subtitle="ds007420">{copy.optLabel}{zh && <span class="note-original" lang="en">{opt.label}</span>}</p></div><p><Parts p={copy.optLede()}/></p></div>
+    <div class="evidence-grid" data-beyond-cards="ds007420">{copy.optCards.map(x => <article class="evidence-card"><p class="eyebrow">{x.h}</p><div class="reading"><Parts p={x.v()}/></div><p><Parts p={x.p()}/></p></article>)}</div>
+    <p class="protocol-note" data-beyond-note="ds007420-limits">{copy.optLimits}</p>
+    <p class="roadmap-p" data-beyond-note="ds007420-gates"><Parts p={copy.optGates()}/></p>
+    <p class="citation-note" data-beyond-note="ds007420-source">{sources.opt.text}{sources.opt.names ? <><span lang="en">{sources.opt.names}</span>，</> : ' '}<code>{sources.opt.version}</code>{zh ? '，' : ', '}<a href={sources.opt.licenceUrl} target="_blank" rel="noreferrer">{sources.opt.licence}</a>{tc.period}{sp}<a href={dataset('ds007420')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+    <p class="citation-note" data-beyond-note="ds007420-audit">{copy.optAudit}</p>
+  </section>
+
+  <section class="topic-section" id="status-only" aria-labelledby="status-heading" data-beyond="status-only">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.soEyebrow}</p><h2 id="status-heading">{copy.soH2}</h2></div><p>{copy.soLede}</p></div>
+    <div class="method-grid-wide">
+      <article class="status-entry" id="falcon-h2" data-beyond-status="falcon-h2">
+        <h3 lang="en">{falcon.name}</h3>
+        <p><strong>{copy.falconState}</strong>{sp}{copy.falconMeta}{tc.period}{sp}<code>{VERSION.falcon}</code>{zh ? '，' : ', '}<a href={D['falcon-h2'].rights.licenseUrl} target="_blank" rel="noreferrer">{D['falcon-h2'].rights.license}</a>{tc.period}</p>
+        <p><Parts p={copy.falconPrep()}/></p>
+        <p>{copy.falconFacts}</p>
+      </article>
+      <article class="status-entry" id="rabut-fus" data-beyond-status="rabut-fus">
+        <h3 lang="en">{fus.name}</h3>
+        <p><strong>{copy.fusState}</strong>{sp}{copy.fusMeta}{tc.period}{sp}<code>{VERSION.fus}</code>{zh ? '，' : ', '}<a href={D['rabut-fus'].rights.licenseUrl} target="_blank" rel="noreferrer">{D['rabut-fus'].rights.license}</a>{tc.period}</p>
+        <p><Parts p={copy.fusPrep()}/></p>
+        <p>{copy.fusFacts}</p>
+      </article>
+    </div>
+    <p class="protocol-note" id="ds007420-classifier" data-beyond-hold="ds007420-classifier"><strong>{hold!.item[locale]} · {hold!.state[locale]}{tc.period}</strong>{sp}{hold!.outcome[locale]}{sp}<a href={hrefFor(`/releases/#hold-${hold!.id}`, locale)}>{copy.holdLink}</a></p>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <h3 class="roadmap-h3">{copy.methodsH3}</h3>
+    <div class="method-grid-wide" data-beyond-note="methods">{copy.methods().map(([h, p]) => <article><h3>{h}</h3><p><Parts p={p}/></p></article>)}</div>
+    <h3 class="roadmap-h3">{copy.intervalsH3}</h3>
+    <p class="roadmap-p" data-beyond-note="intervals"><Parts p={copy.intervals()}/></p>
+    <h3 class="roadmap-h3">{copy.limitsH3}</h3>
+    <ul class="rd-rules" data-beyond-note="limits">{copy.limits.map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <p class="roadmap-p" data-beyond-note="not-published">{copy.notPub}{sp}<a href="/data-use/#small-cohorts-pilots">{copy.smallCohorts}</a></p>
+    <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+    <div class="citation-list" id="credits">{credits.map(x => <article data-credit={x.id}>
+      <h3 lang="en">{x.r.name}</h3>
+      <p lang="en">{x.r.attribution}</p>
+      <p data-consent={x.id}><strong>{x.animal ? copy.animalH : copy.consentH}</strong>{zh ? '' : ' '}{x.ethics}{zh ? '' : ' '}{x.animal ? copy.consentNA : x.consent}{x.archive && <>{zh ? '' : ' '}{copy.archiveNote}</>}{zh && <span class="note-original" lang="en">{x.e.ethics_approval.statement} {x.e.informed_consent.statement}</span>}</p>
+      <p><a href={x.r.source} target="_blank" rel="noreferrer">{copy.recordLink}</a>{x.paper && <> · <a href={x.paper} target="_blank" rel="noreferrer">{copy.paperLink}</a></>} · <a href={x.r.licenseUrl} target="_blank" rel="noreferrer">{x.r.license}</a>{x.readFrom ? <> · <a href={x.readFrom} target="_blank" rel="noreferrer">{copy.readFrom}</a></> : <> · {copy.readFromPaper}</>}</p>
+    </article>)}</div>
+    <p class="citation-note">{copy.derived}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/beyond-scalp-update.json" download>beyond-scalp-update.json</a> · {tc.schema} {beyond.schema_version}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="related" aria-labelledby="related-heading">
+    <div class="topic-heading"><div><h2 id="related-heading">{copy.relatedH2}</h2></div></div>
+    <ul class="rd-rules" data-beyond-note="related">{copy.related.map(x => <li>{x.text}<a href={hrefFor(x.href, locale)}>{x.link}</a>{/[?？]$/.test(x.link) ? '' : zh ? '。' : '.'}</li>)}</ul>
+  </section>
+</TopicLayout>

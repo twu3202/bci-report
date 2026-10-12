@@ -1,0 +1,1044 @@
+---
+/**
+ * What can a small pilot show, and what can it not? (owner decisions 1 and 2, 2026-10-12): four small pilots, each
+ * its own dataset, task and metric, none ranked — the Orthosis error events (one cohort of eight people in three
+ * configurations, counted once: the 64-channel classical baseline, the same baseline on the 58 channels EEGPT
+ * supports, and frozen EEGPT against those matched classical features); BINGO's inner speech in Greek and English
+ * across people and across languages (a negative result near the prior); a mask-aware EEG analysis of a handwriting
+ * competition dataset, five people, a data-quality and methods case study published by the owner's decision with its
+ * rights gap stated (no ethics-approval or informed-consent statement was found); and a stored-clip computational
+ * diagnostic on REFED. In "Other signals &
+ * pilots", after the beyond-scalp page. EEGPT's directory card on /methods/ links #orthosis (directory-status.ts).
+ *
+ * Every figure is a leaf of pilot-studies-update.json, printed with data-fig (Fig.astro) and re-read by
+ * check-workbench.mjs. Rules, from the handoffs, their approval records and the manifest: aggregates only; the three
+ * Orthosis results are one cohort, never counted twice and never new coverage, both configurations labelled and the
+ * 64-channel result kept; the EEGPT comparison with its paired interval, which spans zero (neither arm shown better,
+ * not equivalence, not a verdict on foundation models), beside its caveats (the same people, the 64-channel scores
+ * seen first, pretraining overlap not excluded, a supervised probe, recorded device events); BINGO's near-prior result
+ * as one baseline's negative result, its delivered preprocessing beside it as the project states it (not re-verified),
+ * the project's own figure labelled as theirs; REFED's controls and the lookup lesson, two nominal folders, no
+ * interval; the handwriting analysis with its controls, paired contrasts, availability counts and the earlier analysis
+ * as context, its mask-only interval withheld (at five people its bounds would show individual scores), its rights gap
+ * stated in full once, in the credits, and pointed to beside the result; a held pilot and the status-only arms print no
+ * figure. Nothing pooled, nothing ranked, no per-person value. The sentences that summarise the export are checked against it below, and the page refuses to
+ * build if the numbers stop supporting them.
+ */
+import pilot from '../../../data/pilot-studies-update.json';
+import TopicLayout from '../../../components/TopicLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import Parts from '../../../components/Parts.astro';
+import IntervalPlot from '../../../components/IntervalPlot.astro';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { BINGO_RIGHTS_ZH, PILOT_ANCHOR, PILOT_PATH, formatFig, ppFmt, sgnFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
+import { BINGO_HOLD, HANDWRITING_HOLD, bingoReleased, handwritingReleased } from '../../../data/pilot-switch';
+import { EEGPT_PILOT_PATH } from '../../../data/directory-status';
+import { holds } from '../../../data/releases';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+// The space between two sentences or a sentence and its link: none in Chinese, after a full-width mark.
+const sp = zh ? '' : ' ';
+type Part = string | FigValue;
+const PSF = 'pilot-studies-update.json';
+const f = (raw: number, fmt: Fmt = 'pct1'): FigValue => ({ raw, fmt, src: PSF });
+// The handwriting figures print two decimals, as the handoff states them: its arms differ by hundredths near 25%.
+const f2 = (raw: number) => f(raw, 'pct2');
+const p2 = (raw: number) => f(raw, 'pp2');
+const s2 = (raw: number) => f(raw, 'sgn2');
+const n = (raw: number) => f(raw, 'count');
+const a3 = (raw: number) => f(raw, 'auc3');
+const m3 = (raw: number) => f(raw, 'num3');
+const sec = (raw: number) => f(raw, 's1');
+const pp = (raw: number) => f(raw, ppFmt(raw));
+const sg = (raw: number) => f(raw, sgnFmt(raw));
+const F = (x: FigValue) => formatFig(x);
+const ans = (x: FigValue) => `[[${F(x)}]]`;
+const R = pilot.results;
+const o64 = R['orthosis-64ch-classical'], o58 = R['orthosis-58ch-classical'], oep = R['orthosis-eegpt-vs-58ch'];
+// BINGO and the handwriting analysis follow their publication switches (pilot-switch.ts): held, the export carries no
+// result for one, and its section prints its hold.
+const bingo = (R as Record<string, any>)['bingo-cross-language'], refed = R['refed-stored-clip'];
+const hw = (R as Record<string, any>)['handwriting-mask-aware'];
+const D = pilot.datasets as Record<string, any>;
+const hold = holds.find(h => h.id === HANDWRITING_HOLD);
+const exportHold = (pilot.holds as { id: string }[]).find(h => h.id === HANDWRITING_HOLD);
+
+// --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
+const need = (ok: boolean, what: string) => { if (!ok) throw new Error(`pilot-studies: the copy says ${what}`); };
+const says = (text: string, ...xs: string[]) => xs.forEach(x => need(text.includes(x), `"${x}" (the export says otherwise)`));
+const same = (a: number, b: number) => Math.abs(a - b) < 1e-12;
+const within = (x: number, iv: number[]) => iv[0] <= x && x <= iv[1];
+need(PILOT_PATH === '/topics/pilot-studies/' && PILOT_ANCHOR.orthosis === 'orthosis' && PILOT_ANCHOR.bingo === 'bingo' && PILOT_ANCHOR.handwriting === 'handwriting'
+  && PILOT_ANCHOR.refed === 'refed' && PILOT_ANCHOR.statusOnly === 'status-only' && EEGPT_PILOT_PATH === `${PILOT_PATH}#${PILOT_ANCHOR.orthosis}`, 'the anchors the dataset pages and EEGPT\'s directory card link to');
+need(pilot.release_id === 'pilot-studies-update-20261012' && pilot.schema_version === 'bci-report-pilot-studies-update-v1', 'this release and schema');
+need(Object.keys(R).join() === ['orthosis-64ch-classical', 'orthosis-58ch-classical', 'orthosis-eegpt-vs-58ch', ...(bingoReleased ? ['bingo-cross-language'] : []),
+  ...(handwritingReleased ? ['handwriting-mask-aware'] : []), 'refed-stored-clip'].join(), 'the results the two switches release, in page order');
+need(Object.values(R).every(r => r.leaderboard === false), 'no result joins a leaderboard');
+// The handwriting analysis (owner decision, 2026-10-12): released with its rights gap stated; its switch holds it again.
+need((D['eeg-fnirs-handwriting'].publication === 'released') === handwritingReleased && pilot.pilots.find(p => p.id === 'handwriting')?.publication === (handwritingReleased ? 'released' : 'status_only')
+  && (handwritingReleased ? !hold && !exportHold : !!hold && !hold.closed && !!exportHold && hold.href === `${PILOT_PATH}#${PILOT_ANCHOR.handwriting}`),
+  handwritingReleased ? 'the handwriting analysis is released, with no hold' : 'the handwriting analysis is held, its hold open and linked to its section');
+need(['orthosis-error-detection', 'refed'].every(id => D[id].publication === 'released'), 'Orthosis and REFED are released');
+// How many pilots and findings the page reports, and which pilots a switch holds.
+const nPilots = 2 + Number(bingoReleased) + Number(handwritingReleased), nFindings = nPilots + 1;
+const heldPilots = [...(bingoReleased ? [] : ['bingo']), ...(handwritingReleased ? [] : ['handwriting'])];
+const bHold = holds.find(h => h.id === BINGO_HOLD), bExportHold = pilot.holds.find(h => h.id === BINGO_HOLD);
+need((D['bingo-imagined-speech'].publication === 'released') === bingoReleased && pilot.pilots.find(p => p.id === 'bingo')?.publication === (bingoReleased ? 'released' : 'status_only')
+  && (bingoReleased ? !bHold && !bExportHold : !!bHold && !bHold.closed && !!bExportHold && bHold.href === `${PILOT_PATH}#${PILOT_ANCHOR.bingo}`),
+  bingoReleased ? 'BINGO is released, with no hold' : 'BINGO is held, its hold open and linked to its section');
+need(pilot.status_only.map(s => s.id).join() === 'orthosis-emg-tinymyo-fusion,handwriting-fnirs-fusion,refed-physiological-fusion,meditation-eeg-phase', 'four status-only arms');
+
+// Orthosis: one cohort, three configurations, counted once.
+const C = o64.cohort;
+for (const r of [o58, oep]) need(r.same_cohort_as === o64.id && (['people', 'runs', 'events', 'standard_events', 'error_events'] as const).every(k => r.cohort[k] === C[k]), 'the same cohort in all three configurations');
+need(C.events === C.standard_events + C.error_events && C.people === 8 && o64.chance_level === 0.5, 'eight people, the events add up, chance is one half');
+says(C.counted_once, 'one cohort, never counted twice');
+need(o64.signal.eeg_channels === 64 && o58.signal.eeg_channels === 58 && oep.signal.eeg_channels === 58 && o64.configuration.label === '64-channel configuration' && o58.configuration.label === '58-channel configuration'
+  && oep.configuration.label === '58-channel configuration', 'the two configurations, as the export names them');
+need(o58.configuration.omitted_channels.length === o64.signal.eeg_channels - o58.signal.eeg_channels, 'six channels left out');
+says(o58.configuration.rule, 'fixed before scoring', 'no substitution or score-based selection');
+const E64 = o64.arms.eeg.balanced_accuracy, CF64 = o64.arms.confound.balanced_accuracy, PR64 = o64.arms.prior.balanced_accuracy, P64 = o64.permutation_control.balanced_accuracy;
+need(E64.interval_95[0] > CF64.interval_95[1] && E64.interval_95[0] > PR64.mean && E64.interval_95[0] > P64.observed_range[1], 'the 64-channel interval lies above the confound probe, the prior and every permutation replicate');
+need(PR64.mean === o64.chance_level && o64.arms.majority.balanced_accuracy.mean === o64.chance_level, 'the prior and the majority sit on chance');
+const EMC = o64.eeg_minus_confound;
+need(EMC.balanced_accuracy_difference.interval_95 === null && EMC.people_with_eeg_above_confound === EMC.people && EMC.people === C.people, 'no interval for EEG minus the confound; EEG above it for every person');
+const C58 = o58.arms.classical58.balanced_accuracy, P58 = o58.permutation_control.balanced_accuracy;
+need(C58.interval_95[0] > o58.arms.confound.balanced_accuracy.interval_95[1] && C58.interval_95[0] > P58.observed_range[1], 'the 58-channel baseline is above its controls too');
+for (const m of ['balanced_accuracy', 'auroc', 'average_precision'] as const)
+  need(same(oep.arms.classical58[m].mean, o58.arms.classical58[m].mean) && oep.arms.classical58[m].interval_95.every((x, i) => same(x, o58.arms.classical58[m].interval_95[i])), 'the comparison\'s classical rows are the 58-channel configuration\'s');
+need(oep.classical_rows_same_as === o58.id && same(oep.permutation_control.classical58.balanced_accuracy_mean, P58.balanced_accuracy_mean), 'the same classical rows and permutations');
+const EP = oep.arms.eegpt2048.balanced_accuracy, PD = oep.paired.balanced_accuracy_difference;
+need(oep.paired.interval_excludes_zero === false && PD.interval_95[0] < 0 && PD.interval_95[1] > 0 && PD.mean < 0 && EP.mean < oep.arms.classical58.balanced_accuracy.mean, 'EEGPT is slightly below and the paired interval spans zero');
+need(oep.paired.people === C.people && oep.encoder === 'frozen' && oep.fine_tuning === false && oep.lora === false, 'a frozen encoder on the same people');
+says(oep.transfer, 'supervised', 'not zero-shot');
+need(oep.pretraining_exposure.status === 'not established', 'pretraining overlap is not excluded');
+says(oep.prior_exposure, '64-channel classical scores were seen before this comparison was frozen');
+says(oep.reading, 'neither equivalence nor a general inferiority of EEG foundation models');
+const M = oep.model;
+need(M.name === 'EEGPT' && M.code_licence === 'Apache-2.0' && M.weights_licence === null && M.weights_distributed === false, 'EEGPT\'s code licence, its unresolved weights licence, no weights distributed');
+says(M.code_licence_scope, 'source code only');
+says(M.weights_licence_status, 'unresolved');
+says(M.weights_note, 'no original or converted weights are distributed');
+need(oep.encoder_input.channels === 58 && oep.encoder_input.sampling_hz === 256 && oep.signal.sampling_hz === 500, 'the encoder\'s native input');
+says(oep.method.encoder, 'microvolts divided by 1000', 'the encoder frozen');
+says(o64.method.filter, '1–30 Hz', 'uses no future samples');
+says(o64.method.probe, 'C=1', 'no tuning');
+says(oep.arms.eegpt2048.description, 'two temporal patches', 'no LoRA or fine-tuning');
+says(o64.method.eligibility, 'does not depend on whether the person responded correctly');
+const RC = o64.response_clean_subset;
+need(RC.events === RC.error_events + RC.standard_events && RC.people_with_both_classes < C.people, 'the response-clean subset, counts only');
+says(RC.status, 'counts only');
+says(o64.limitations.join(' '), 'movement, muscle and device-injection artifacts may contribute', 'does not isolate a neural origin', 'not a reproduction of the authors’ competition score');
+says(o64.uncertainty.kind, '10,000 person-level bootstrap draws');
+says(oep.uncertainty.paired, 'matched per-person differences');
+says(o64.independent_audit.not_checked, 'no model was refitted');
+says(oep.independent_audit.not_checked, 'encoder features were not re-extracted');
+
+// BINGO: four directions near the prior, the contrast spanning zero; the project's preprocessing as it states it.
+const BC = bingo?.cohort, chance15 = bingo?.chance.balanced_accuracy, chance3 = bingo?.chance.top3_accuracy, dirs: any[] = bingo?.directions ?? [];
+const C3 = bingo?.contrast, DS = bingo?.delivered_signal, PRJ = bingo?.project_reported, TL = bingo?.protocol.timeline_seconds;
+if (bingoReleased) {
+  need(bingo.classes === 15 && same(chance15, 1 / 15) && same(chance3, 3 / 15) && BC.trials === BC.source_fields * (BC.trials_per_held_out_field.greek + BC.trials_per_held_out_field.english), 'fifteen classes; the trials add up');
+  need(BC.trials_per_held_out_field.greek === bingo.protocol.nouns * BC.trials_per_noun_and_language && BC.training_rows === (BC.source_fields - 1) * BC.trials_per_held_out_field.greek, 'trained on one language of the other fields');
+  says(BC.counting_unit, 'source-defined subject fields', 'not independently certified');
+  need(dirs.map(d => d.id).join() === 'train_gr_test_gr,train_gr_test_eng,train_eng_test_eng,train_eng_test_gr' && dirs.every(d => within(chance15, d.balanced_accuracy.interval_95)), 'four directions, every interval holding the prior');
+  need(C3.interval_excludes_zero === false && C3.balanced_accuracy_difference.interval_95[0] < 0 && C3.balanced_accuracy_difference.interval_95[1] > 0
+    && Object.values(C3.by_training_language).every(c => c.balanced_accuracy_difference.interval_95[0] < 0 && c.balanced_accuracy_difference.interval_95[1] > 0), 'the contrast spans zero, for either training language too');
+  says(bingo.reading, 'does not show that inner speech cannot be decoded by other methods');
+  says(bingo.uncertainty.kind, 'approximate descriptive', '10,000 field bootstrap draws');
+  says(bingo.uncertainty.conditional_on, 'not calibrated population confidence intervals');
+  need(DS.verified_against_file === false, 'the delivered preprocessing was not re-verified against the file');
+  says(DS.statement, 'from 1 to 145 Hz', 'notch filtering at 50 Hz and its harmonics', 'Artifact Subspace Reconstruction (ASR)', 'FORCe removal of ocular and muscle artifacts', 'before any trial was cut');
+  says(DS.source, 'D3.1, version 2.0', 'https://bingo-project.gr/download/397');
+  says(PRJ.kind, 'reported by the BINGO project', 'not run here', 'not comparable');
+  says(PRJ.source, 'D3.1, version 3.0', 'https://bingo-project.gr/download/402');
+  says(PRJ.dataset, 'NATO-alphabet');
+  says(PRJ.evaluation, 'EEGNet', 'leave-one-subject-out');
+  need(PRJ.classes === 26 && same(PRJ.chance_level, 1 / PRJ.classes) && PRJ.mean_accuracy_percent.toFixed(2) === (PRJ.chance_level * 100).toFixed(2), 'the project reports chance, one in twenty-six');
+  need(TL.fixation_inner_speech_onset === bingo.signal.window_seconds[0] && TL.end === bingo.signal.window_seconds[1] && bingo.protocol.repetitions_per_noun === BC.trials_per_noun_and_language, 'the inner-speech window is the protocol\'s');
+  says(bingo.protocol.source, 'version 2.0');
+  says(bingo.cohort.incomplete_field, 'one incomplete field excluded', 'no exclusion depended on a score');
+  says(bingo.method.inputs, 'four relative bands partition 1–30 Hz', 'no guessed voltage calibration, montage interpolation or re-referencing');
+  says(bingo.method.model, 'fixed alpha 1');
+  says(bingo.limitations.join(' '), 'does not certify causal or online processing, brain-only signal origin');
+  says(bingo.independent_audit.not_checked, 'raw file was not re-extracted');
+}
+
+// Handwriting: five people, four coded labels; relative EEG just above chance, above both mask controls, not separated
+// from the clock; the mask-only interval withheld; the availability counts; the earlier analysis as context.
+const HC = hw?.cohort, HA = hw?.arms, HK = hw?.contrasts, HV = hw?.availability, HE = hw?.earlier_analysis, HS = hw?.label_shuffle?.representations;
+const HR = D['eeg-fnirs-handwriting'].consent_and_ethics;
+if (handwritingReleased) {
+  need(HC.people === 5 && HC.classes === 4 && HC.trials === HC.events - HC.quarantined_events && same(hw.chance_level, 1 / HC.classes), 'five people, four coded labels; the trials add up');
+  says(hw.task, 'not handwriting recognition');
+  says(HC.reuse, 'not a new or independent cohort');
+  says(HC.official_test, 'were not used');
+  need(HA.majority.balanced_accuracy.mean === hw.chance_level && HA.majority.balanced_accuracy.interval_95.every((x: number) => x === hw.chance_level), 'the majority control scores chance for every person');
+  need(HA.mask_only.balanced_accuracy.interval_95 === null && /individual people’s scores/.test(HA.mask_only.interval_note), 'the mask-only interval is withheld, and why');
+  need(['relative_eeg', 'time_only', 'mask_plus_time'].every(k => HA[k].balanced_accuracy.interval_95.length === 2), 'the other arms carry their intervals');
+  need(HA.relative_eeg.balanced_accuracy.interval_95[0] > hw.chance_level, 'the relative-EEG interval lies above chance');
+  const tk = HK.relative_eeg_minus_time_only.balanced_accuracy_difference.interval_95;
+  need(HK.relative_eeg_minus_mask_only.interval_excludes_zero && HK.relative_eeg_minus_mask_plus_time.interval_excludes_zero && !HK.relative_eeg_minus_time_only.interval_excludes_zero && tk[0] < 0 && tk[1] > 0,
+    'above both mask controls, and the elapsed-time contrast crosses zero');
+  need(Object.keys(HS).join() === 'relative_eeg,mask_only,time_only,mask_plus_time' && Object.values(HS).every((x: any) => x.replicates === 5), 'five shuffles for each representation');
+  says(hw.label_shuffle.design, 'not a full permutation significance test');
+  const bins = HV.trials_by_available_channels as { channels: number; trials: number }[];
+  need(bins.reduce((a, x) => a + x.trials, 0) === HC.trials && HV.available_channels_per_trial.fewest === bins[0].channels && HV.available_channels_per_trial.most === bins[bins.length - 1].channels
+    && HV.channel_trials === HC.trials * HV.channels_recorded, 'the availability histogram covers every scored trial');
+  need(HV.flags.upper_rail === 0 && HV.flags.nonfinite === 0 && HV.flags.invalid_denominator === 0, 'no upper-rail, non-finite or invalid-denominator flag');
+  says(HV.flags_note, 'must not be summed');
+  says(HV.available_means, 'not certified clean physiological EEG');
+  says(HV.scope, 'selected cohort only');
+  says(HE.relation, 'not a second cohort');
+  says(HE.not_attributable, 'cannot be attributed to masking', 'no best model is selected');
+  need(HE.quality_findings.windows_with_a_rail_sample === HE.quality_findings.windows && HE.quality_findings.windows === HC.trials, 'every earlier window had a rail sample');
+  says(hw.uncertainty.kind, '10,000 fixed-seed person-bootstrap draws');
+  says(hw.uncertainty.conditional_on, 'not calibrated population confidence intervals');
+  need(hw.independent_audit.largest_refit_difference === 0 && hw.independent_audit.refitted_shuffle_models === 0, 'the audit refitted the true-label models exactly, and no shuffle model');
+  says(hw.independent_audit.not_checked, 'raw samples were not reread');
+  need(HR.ethics_approval.stated === false && HR.informed_consent.stated === false && /^owner decision/.test(HR.basis) && HR.searched.length === 3
+    && HR.gap.startsWith('No ethics-approval or informed-consent statement was found.'), 'the handwriting rights: no statement found, where it was looked for, the owner\'s decision');
+}
+
+// REFED: EEG Ridge has the largest error in both conditions; the lookup lesson; two nominal folders, no interval.
+const RF = refed.cohort, [shared, joint] = refed.conditions;
+need(RF.nominal_folders === 2 && RF.clips === RF.nominal_folders * RF.videos && shared.id === 'shared_videos_held_folder' && joint.id === 'held_folder_and_videos', 'two folders, the same videos, two conditions');
+for (const c of [shared, joint]) {
+  const A = c.arms;
+  need(A.eeg_ridge.equal_axis_mae > Math.max(A.source_global_mean.equal_axis_mae, A.source_video_lookup.equal_axis_mae, A.duration_video_id_ridge.equal_axis_mae) && c.clips_scored === RF.clips, `EEG Ridge has the largest error (${c.id})`);
+}
+need(shared.arms.source_video_lookup.equal_axis_mae < Math.min(shared.arms.source_global_mean.equal_axis_mae, shared.arms.duration_video_id_ridge.equal_axis_mae) && shared.lookup_matched_videos === RF.clips,
+  'with shared videos the lookup has the smallest error');
+need(joint.arms.source_video_lookup.equal_axis_mae === joint.arms.source_global_mean.equal_axis_mae && joint.lookup_matched_videos === 0, 'held out together, the lookup finds no video and equals the global mean');
+need(refed.metric.lower_is_better && refed.uncertainty.kind.startsWith('none'), 'lower is better; no interval');
+says(refed.target.scale, 'from 1 to 255');
+says(refed.target.meaning, 'not SAM scores');
+says(refed.controls_lesson, 'does not establish a mechanism');
+says(refed.limitations.join(' '), 'exceed the stored arrays by two seconds', 'not untouched targets', 'key-index proxy, not established presentation order');
+need(refed.quality.clips_or_channels_removed === 0 && refed.quality.channel_clip_rows === RF.clips * o64.signal.eeg_channels, 'every clip passed the numerical checks');
+says(refed.quality.note, 'numerical eligibility only');
+says(refed.method.inputs, '[1,4)', '[30,45) Hz', 'each divided by that channel’s [1,45) Hz total');
+says(refed.method.model, 'Ridge with fixed alpha 1', 'unclipped');
+says(refed.independent_audit.not_checked, 'no model was refitted');
+
+// --- What the charts draw: every value and interval inside its axis. ----------------------------------------
+const baDomain: [number, number] = [0.4, 0.8], ppDomain: [number, number] = [-0.1, 0.1];
+const bDomain: [number, number] = [0.03, 0.11], cDomain: [number, number] = [-0.02, 0.02], mDomain: [number, number] = [0, 120];
+const inside = (d: [number, number], ...xs: number[]) => xs.every(x => x > d[0] && x < d[1]);
+need(inside(baDomain, E64.mean, ...E64.interval_95, CF64.mean, ...CF64.interval_95, P64.balanced_accuracy_mean, EP.mean, ...EP.interval_95, C58.mean, ...C58.interval_95,
+  oep.permutation_control.eegpt2048.balanced_accuracy_mean), 'every Orthosis balanced accuracy fits its axis, 40% to 80%');
+need(inside(ppDomain, PD.mean, ...PD.interval_95), 'the paired difference fits its axis, ±10 pp');
+need(dirs.every(d => inside(bDomain, d.balanced_accuracy.mean, ...d.balanced_accuracy.interval_95)), 'every BINGO direction fits its axis, 3% to 11%');
+if (bingoReleased) need(inside(cDomain, C3.balanced_accuracy_difference.mean, ...C3.balanced_accuracy_difference.interval_95,
+  ...Object.values(C3.by_training_language).flatMap((c: any) => [c.balanced_accuracy_difference.mean, ...c.balanced_accuracy_difference.interval_95])), 'every BINGO contrast fits its axis, ±2 pp');
+need([shared, joint].every(c => Object.values(c.arms).every(a => inside(mDomain, a.equal_axis_mae))), 'every REFED error fits its axis, 0 to 120');
+const hDomain: [number, number] = [0.22, 0.3], hcDomain: [number, number] = [-0.04, 0.04];
+const HARMS = ['relative_eeg', 'mask_only', 'time_only', 'mask_plus_time', 'majority'] as const;
+const HCONTRASTS = ['relative_eeg_minus_mask_only', 'relative_eeg_minus_time_only', 'relative_eeg_minus_mask_plus_time'] as const;
+if (handwritingReleased) {
+  need(inside(hDomain, hw.chance_level, ...['relative_eeg', 'mask_only', 'time_only', 'mask_plus_time', 'majority'].map(k => HA[k].balanced_accuracy.mean),
+    ...['relative_eeg', 'time_only', 'mask_plus_time'].flatMap(k => HA[k].balanced_accuracy.interval_95)), 'every handwriting balanced accuracy fits its axis, 22% to 30%');
+  need(Object.values(HK).every((c: any) => inside(hcDomain, c.balanced_accuracy_difference.mean, ...c.balanced_accuracy_difference.interval_95)), 'every handwriting contrast fits its axis, ±4 pp');
+}
+
+// --- Names, in both languages. ------------------------------------------------------------------------------------
+const arm = {
+  eeg64: zh ? '固定 EEG 特征 + 逻辑回归，64 通道' : 'Fixed EEG features + logistic regression, 64 channels',
+  c58: zh ? '固定 EEG 特征 + 逻辑回归，58 通道' : 'Fixed EEG features + logistic regression, 58 channels',
+  eegpt: zh ? '冻结的 EEGPT + 同一分类头，58 通道' : 'Frozen EEGPT + the same probe, 58 channels',
+  confound: zh ? '方向/时间混杂探针（不用 EEG）' : 'Direction/time confound probe (no EEG)',
+  majority: zh ? '训练集多数类' : 'Training majority',
+  prior: zh ? '训练集类别先验' : 'Training class prior',
+  perm: zh ? '标签置换对照' : 'Label-permutation control',
+};
+const dirName: Record<string, { en: string; zh: string }> = {
+  train_gr_test_gr: { en: 'Greek → Greek', zh: '希腊语 → 希腊语' }, train_gr_test_eng: { en: 'Greek → English', zh: '希腊语 → 英语' },
+  train_eng_test_eng: { en: 'English → English', zh: '英语 → 英语' }, train_eng_test_gr: { en: 'English → Greek', zh: '英语 → 希腊语' },
+};
+for (const d of dirs) need(d.label === dirName[d.id].en, `the BINGO direction ${d.id} as the export names it`);
+const refedArm: Record<string, { en: string; zh: string }> = {
+  eeg_ridge: { en: 'EEG Ridge (relative band power)', zh: 'EEG 岭回归（相对频带功率）' },
+  source_global_mean: { en: 'Source global mean', zh: '训练集总体均值' },
+  source_video_lookup: { en: 'Source video lookup', zh: '训练集按视频编号查表' },
+  duration_video_id_ridge: { en: 'Duration / numeric-video-ID Ridge', zh: '时长 / 数字视频编号岭回归' },
+};
+for (const c of [shared, joint]) for (const [k, a] of Object.entries(c.arms)) need(a.label === refedArm[k].en.replace(' (relative band power)', ''), `the REFED arm ${k} as the export names it`);
+const ivOf = (x: { interval_95: number[] }) => (x.interval_95[0] === x.interval_95[1] ? null : x.interval_95);
+const bmin = Math.min(...dirs.map(d => d.balanced_accuracy.mean)), bmax = Math.max(...dirs.map(d => d.balanced_accuracy.mean));
+const tmin = Math.min(...dirs.map(d => d.top3_accuracy.mean)), tmax = Math.max(...dirs.map(d => d.top3_accuracy.mean));
+const bminDir = dirs.find(d => d.balanced_accuracy.mean === bmin)!, bmaxDir = dirs.find(d => d.balanced_accuracy.mean === bmax)!;
+const SA = shared.arms, JA = joint.arms;
+const doc = D['bingo-imagined-speech'].documentation;
+need(doc[0].url === 'https://bingo-project.gr/download/397' && doc[1].url === 'https://bingo-project.gr/download/402', 'the two public deliverables');
+
+const copy = {
+  en: {
+    // BINGO's sentences follow its publication switch (pilot-switch.ts); held, its section prints only its hold.
+    description: `Four pilots, none ranked${heldPilots.length === 2 ? '; two held for rights review' : heldPilots.length ? '; one held for rights review' : ''}. Orthosis (${F(n(C.people))} people): EEG ${F(f(E64.mean))} balanced accuracy on device errors, artifacts may contribute; frozen EEGPT vs matched features: ${F(pp(PD.mean))}, interval spans zero.${bingoReleased ? ` BINGO: near its ${F(f(chance15))} prior.` : ''}${handwritingReleased ? ` Handwriting: masked EEG ${F(f2(HA.relative_eeg.balanced_accuracy.mean))} vs ${F(f2(hw.chance_level))} chance, not separated from a time control.` : ''} REFED: controls beat EEG.`,
+    answer: `${['', '', '', 'Three', 'Four', 'Five'][nFindings]} findings from ${['', '', 'two', 'three', 'four'][nPilots]} pilots, none ranked. Orthosis device errors: fixed EEG features reach ${ans(f(E64.mean))} balanced accuracy in a person left out of training (95% interval ${ans(f(E64.interval_95[0]))} to ${ans(f(E64.interval_95[1]))}), against ${ans(f(CF64.mean))} for a confound probe; the labels are recorded device events, so movement or device artifacts may contribute. Frozen EEGPT against matched classical features on the same eight people: ${ans(pp(PD.mean))} (interval ${ans(sg(PD.interval_95[0]))} to ${ans(pp(PD.interval_95[1]))}): the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent.${bingoReleased ? ` Inner speech in Greek and English (BINGO): every direction stays near the ${ans(f(chance15))} prior, within and across languages.` : ''}${handwritingReleased ? ` Handwriting, ${ans(n(HC.people))} people: with flat and rail-touching channels masked, relative EEG reaches ${ans(f2(HA.relative_eeg.balanced_accuracy.mean))} balanced accuracy on four coded labels against ${ans(f2(hw.chance_level))} for the majority control, above the missingness-mask controls but not separated from elapsed time and trial order: a data-quality case study, not handwriting recognition.` : ''} REFED emotion clips: EEG band power has a larger error than every control that uses no EEG, and when videos are shared, looking up the same video’s rating has the smallest.${heldPilots.length === 2 ? ' Two more pilots, on inner speech in Greek and English and on handwriting, are held for their rights reviews.' : heldPilots.length ? ` Another pilot, on ${heldPilots[0] === 'bingo' ? 'inner speech in Greek and English' : 'handwriting'}, is held for its rights review.` : ''}`,
+    eyebrow: 'Pilot studies · small cohorts, not ranked',
+    dek: `Four small pilots, each its own dataset, task and metric. Injected orthosis errors in one cohort of eight people, including frozen EEGPT against matched classical features; inner speech in Greek and English, across people and languages${bingoReleased ? '' : ', held for its rights review'}; ${handwritingReleased ? 'channels flat at a digital rail in an imagined-handwriting dataset, and what the EEG left over can show' : 'a handwriting analysis held for its rights review'}; and a stored-clip check on an emotion dataset.`,
+    // Orthosis
+    oEyebrow: 'Human · scalp EEG · recorded orthosis device events · Kueper et al.',
+    oH2: 'Orthosis errors: can EEG flag an injected device error in a person left out of training?',
+    oLabel: 'Locally executed experiment · offline · one cohort in three configurations, counted once',
+    oLede: (): Part[] => [n(C.people), ' people wore an active orthosis that moved the right arm in elbow flexion and extension, and errors were injected into some of its movements. The task tells the recorded error events from standard ones, in the ', n(o64.signal.window_seconds[0]), '–', sec(o64.signal.window_seconds[1]), ' after each event: ', n(C.events), ' events in ', n(C.runs), ' runs, ', n(C.error_events), ' errors and ', n(C.standard_events), ' standard. Each person is held out whole, and a fixed probe fitted on the others scores them; results are averaged over the ', n(C.people), ' people with equal weight. Three configurations of this one cohort are published, and it is counted once.'],
+    o64H3: (): Part[] => ['The ', n(o64.signal.eeg_channels), '-channel classical baseline'],
+    o64Caption: 'Balanced accuracy for a person left out of training, 64-channel configuration.',
+    o64Legend: 'Dot: the mean over the eight people, each weighted equally; line: the 95% person-bootstrap interval; dashed line: chance. The class prior scores chance for everyone, so it has no interval. The permutation control is drawn at the mean of its replicates; the range in its label is not an interval.',
+    priorNote: 'a constant probability: chance for every person',
+    permNote: (p: { replicates: number; observed_range: number[] }): Part[] => ['mean of ', n(p.replicates), ' replicates, which ranged from ', f(p.observed_range[0]), ' to ', f(p.observed_range[1]), ': not an interval'],
+    o64FindLabel: (): Part[] => ['Fixed EEG features + logistic regression, ', n(o64.signal.eeg_channels), ' channels: balanced accuracy for a person left out of training. The confound probe scores ', f(CF64.mean), ', the class prior ', f(PR64.mean), '.'],
+    o64FindH3: 'Above every control, in people the probe was not trained on',
+    o64FindP: (): Part[] => ['Its 95% interval, ', f(E64.interval_95[0]), ' to ', f(E64.interval_95[1]), ', lies above the confound probe’s interval, the class prior and every permutation replicate. Matched person by person, EEG minus the confound probe is ', f(EMC.balanced_accuracy_difference.mean, 'pp1'), ', with no interval computed; EEG was above the probe for ', n(EMC.people_with_eeg_above_confound), ' of ', n(EMC.people), ' people.'],
+    o64Limits: 'The labels are recorded device events, and the result does not show that a person recognised the error: movement, muscle and device-injection artifacts may contribute, and beating a probe of movement direction and timing does not isolate a neural origin. Eight people limit what the interval can say, and this reanalysis does not reproduce the authors’ competition score.',
+    oepH3: (): Part[] => ['Frozen EEGPT against the same baseline on ', n(o58.signal.eeg_channels), ' channels'],
+    o58P: (): Part[] => ['EEGPT supports ', n(o58.signal.eeg_channels), ' of the ', n(o64.signal.eeg_channels), ' channels; the other six (', o58.configuration.omitted_channels.join(', '), ') are left out, fixed before scoring. On those channels the same classical baseline scores ', f(C58.mean), ' (95% interval ', f(C58.interval_95[0]), ' to ', f(C58.interval_95[1]), '), also above its confound probe, the prior and every permutation replicate: a second configuration of the same people, not a replication, and no conclusion about how many channels are needed follows. Frozen EEGPT then replaces the classical features: the encoder’s weights stay unchanged, and its outputs feed the same probe, with the same people, folds and permutations.'],
+    oepCaption: 'Balanced accuracy for a person left out of training, 58-channel configuration: frozen EEGPT against the matched classical features.',
+    oepLegend: 'Dot: the mean over the eight people; line: the 95% person-bootstrap interval; dashed line: chance. The two arms share the same people, folds and probe.',
+    pairCaption: 'The paired difference, frozen EEGPT minus the matched classical features, in percentage points.',
+    pairLegend: 'Dot: the mean of the eight people’s differences; line: its 95% person-bootstrap interval, which resamples each person’s difference; dashed line: no difference.',
+    pairLabel: 'Frozen EEGPT minus matched classical features',
+    oepFindLabel: (): Part[] => ['Frozen EEGPT minus the matched classical features, balanced accuracy, paired over the same ', n(oep.paired.people), ' people; 95% interval ', sg(PD.interval_95[0]), ' to ', pp(PD.interval_95[1])],
+    oepFindH3: 'Neither shown better, nor shown equivalent',
+    oepFindP: (): Part[] => ['Frozen EEGPT scores ', f(EP.mean), ' (', f(EP.interval_95[0]), ' to ', f(EP.interval_95[1]), ') and the matched classical features ', f(C58.mean), '. The paired interval spans zero: neither arm is shown to be better, and the two are not shown to be equivalent. One short-window setup on eight people is not a verdict on EEG foundation models in general.'],
+    oepLimits: 'The same eight people as the 64-channel result: not additional coverage. The 64-channel scores were seen before this comparison was frozen, so it is a prospective diagnostic, not a blind confirmation. The probe is trained on the other seven people’s labels: supervised transfer, not zero-shot. Overlap between this dataset and EEGPT’s pretraining data has not been excluded, and the montage, filtering, reference and half-second window differ from its pretraining. The labels are recorded device events, so movement, muscle and device artifacts may contribute here too.',
+    oRegion: 'Orthosis, every published metric of the three configurations, scrolls horizontally',
+    oCaption: (): Part[] => ['Every published metric of the three configurations, each the mean over the ', n(C.people), ' people with its 95% interval where it has one. Errors are ', f(C.error_share), ' of the events, so average precision is read against a constant guess’s ', a3(o64.arms.prior.average_precision.mean), '. AUROC and average precision are secondary metrics.'],
+    colArm: 'Arm', colBa: 'Balanced accuracy', colAuroc: 'AUROC', colAp: 'Average precision', colPerm: 'Label-permutation control',
+    sub64: '64-channel configuration', sub58: '58-channel configuration · the same people and folds',
+    constant: 'the same for every person', noPerm: '—',
+    rcP: (): Part[] => ['A response-clean subset is published as counts only: ', n(RC.events), ' events, ', n(RC.error_events), ' errors and ', n(RC.standard_events), ' standard events, with ', n(RC.people_with_both_classes), ' people having both classes. Its scores stay out of every comparison.'],
+    oSource: 'Data: Niklas Kueper, Kartik Chari, Judith Bütefür, Julia Habenicht, Tobias Rossol, Su Kyoung Kim, Marc Tabie, Frank Kirchner and Elsa Andrea Kirchner,',
+    oAudit: 'Independently audited: every score and interval of the three configurations recomputed from the sealed predictions, and for the comparison, refits of the main and confound probes reproduced the sealed probabilities exactly. The encoder features were not re-extracted, and not every permutation probe was refitted.',
+    // BINGO
+    bEyebrow: 'Human · scalp EEG · inner speech in Greek and English · BINGO project',
+    bH2: 'Inner speech: can imagined words be decoded across people and across languages?',
+    bLabel: 'Locally executed experiment · offline · a subject field left out at a time · a negative result',
+    bLede: (): Part[] => [n(BC.source_fields), ' subject fields, as the source defines them (not proven to be distinct people), each said ', n(bingo.protocol.nouns), ' matched nouns silently, in Greek and in English, ', n(BC.trials_per_noun_and_language), ' times per noun and language: ', n(BC.trials), ' trials. A fixed spectral baseline — relative band power from ', n(bingo.signal.channels), ' channels at ', n(bingo.signal.sampling_hz), ' Hz, and a ridge classifier — is trained on one language of the other fields (', n(BC.training_rows), ' trials) and tested on the held-out field in the same language and in the other, from the ', sec(bingo.signal.window_seconds[1]), ' after the fixation cross. Both languages of the held-out field stay out of every fit. Chance is the prior of one in fifteen, ', f(chance15), '.'],
+    bCaption: 'Balanced accuracy for a subject field left out of training, by training and test language.',
+    bLegend: 'Dot: the mean over the held-out fields, each weighted equally; line: its approximate descriptive 95% interval; dashed line: the prior, one in fifteen. Rust: within a language; green: across languages.',
+    within: 'within a language', across: 'across languages',
+    bRegion: 'BINGO, balanced accuracy, top-3 accuracy and the controls in each direction, scrolls horizontally',
+    bTabCaption: (): Part[] => ['Means over the ', n(BC.source_fields), ' held-out fields, each weighted equally, with approximate descriptive 95% intervals. The prior is ', f(chance15), ' for balanced accuracy and ', f(chance3), ' for top-3 accuracy. The shuffle column gives the mean of ', n(dirs[0].controls.label_shuffle.balanced_accuracy.replicates), ' training-label shuffles and the lowest and highest replicate means: an observed range, not an interval.'],
+    colDir: 'Training → test language', colTop3: 'Top-3 accuracy', colOrder: 'Order-only control', colHf: 'High-frequency ratio control', colShuffle: 'Training-label shuffles',
+    shuffleRange: (r: number[]): Part[] => ['range ', f(r[0]), ' to ', f(r[1])],
+    shuffleRange2: (r: number[]): Part[] => ['range ', f2(r[0]), ' to ', f2(r[1])],
+    cCaption: 'Across languages minus within, balanced accuracy, in percentage points.',
+    cLegend: 'Dot: the mean over the held-out fields; line: its approximate descriptive 95% interval; dashed line: no difference.',
+    cRows: { mean: 'Mean over both training languages', greek: 'Trained on Greek: English minus Greek', english: 'Trained on English: Greek minus English' },
+    bFindLabel: (): Part[] => ['Across languages minus within, balanced accuracy, the mean over both training languages; 95% interval ', sg(C3.balanced_accuracy_difference.interval_95[0]), ' to ', pp(C3.balanced_accuracy_difference.interval_95[1])],
+    bFindH3: 'Near the prior in all four directions',
+    bFindP: (): Part[] => ['Balanced accuracy runs from ', f(bmin), ' (', dirName[bminDir.id].en, ') to ', f(bmax), ' (', dirName[bmaxDir.id].en, '), and every interval holds the prior of ', f(chance15), '; top-3 accuracy runs from ', f(tmin), ' to ', f(tmax), ', against its prior of ', f(chance3), '. The contrast’s interval spans zero: no superiority or equivalence between languages, and no significance test. A negative result for one fixed baseline in this setting: it does not show that inner speech cannot be decoded by other methods.'],
+    bDelivered: 'Delivered signals, from the project’s deliverable',
+    bDeliveredEnd: 'As the project states it; not re-verified against the delivered file.',
+    bProjectH: 'Reported by the BINGO project, not run here.',
+    bProject: (): Part[] => ['On its other dataset, NATO-alphabet inner speech with ', n(PRJ.classes), ' words, the project’s own leave-one-subject-out evaluation of EEGNet reports a mean accuracy of ', f(PRJ.mean_accuracy_percent, 'pct2raw'), ' against a chance level of ', f(PRJ.chance_level, 'pct2'), ': at chance for people the model was not trained on. A different dataset, model and metric, so it is not comparable with the results above.'],
+    bLimits: 'The subject fields are the source’s operational groups; whether they are distinct people, and how recordings group across days, was not independently certified. Physical amplitude units, the named montage and the display latency are not established, and the window, though verified against the stored time vectors, does not certify causal or online processing or a brain-only origin of the signal. No foundation model or deep model was evaluated.',
+    bSource: 'Data: the BINGO (Brain Imagined-Speech Communication) project, CERTH,',
+    bDatasets: 'datasets page ↗', bDoc: 'documentation:',
+    bNoLicence: 'No licence is stated by the source.',
+    bAudit: 'Independently audited: every sealed prediction, aggregate, interval and contrast checked; the main and control models refitted with no difference, and the shuffle models reconstructed rather than refitted. The raw file was not re-extracted: the audit used cached features with verified lineage.',
+    // BINGO, held by its switch: the design in words, no figure, and its hold.
+    bHeldEyebrow: 'Human · scalp EEG · inner speech in Greek and English · held',
+    bHeldLede: 'Each subject field of the BINGO project’s cross-language dataset, as the source defines it, said matched nouns silently, in Greek and in English. A fixed spectral baseline was trained on one language of the other fields and tested on a held-out field in the same language and in the other.',
+    bHeldNoPage: 'No dataset page while it is held.',
+    // Handwriting: the section while its switch releases it, then the held form.
+    hEyebrow: 'Human · scalp EEG · imagined handwriting, four released coded labels · competition dataset',
+    hH2: 'Handwriting: how much of a recording with flat or rail-touching channels is usable?',
+    hLabel: 'Locally executed experiment · offline · a person left out at a time · a data-quality and methods case study',
+    hLedeR: (): Part[] => [n(HC.people), ' people from the competition’s training split, with all ', n(HC.sessions), ' of their sessions: ', n(HC.events), ' events, of which ', n(HC.trials), ' are scored; ', n(HC.quarantined_events),
+      ' events whose labels contradict each other stay quarantined. Each trial carries one of ', n(HC.classes), ' released coded labels; which character or trajectory each label stands for is not established, so this is not handwriting recognition. Many of the recorded channels sit flat at the lower digital rail declared in the file header. The mask-aware analysis scores each trial only on the channels that pass a fixed availability rule, and sets that EEG against three controls that see no EEG: which channels are missing, the elapsed time and trial order, and both together. Each person is held out whole and scored by a model fitted on the other four; results are averaged over the ',
+      n(HC.people), ' people with equal weight.'],
+    hCaption: 'Balanced accuracy for a person left out of training, four coded labels.',
+    hLegend: 'Dot: the mean over the five people, each weighted equally; line: the descriptive 95% person-bootstrap interval; dashed line: the training-majority control, which scores chance for every person. The mask-only control has no interval: with five people, its bounds would show individual people’s scores.',
+    hArm: { relative_eeg: 'Mask-aware relative EEG', mask_only: 'Missingness mask only', time_only: 'Elapsed time / trial order', mask_plus_time: 'Mask + time', majority: 'Training majority' } as Record<string, string>,
+    noEeg: 'no EEG', ivWithheld: 'interval not published', chanceAll: 'chance for every person',
+    hcCaption: 'The paired difference, mask-aware relative EEG minus each control, in percentage points.',
+    hcLegend: 'Dot: the mean of the five people’s differences; line: its descriptive 95% person-bootstrap interval, which resamples each person’s difference; dashed line: no difference.',
+    hcRow: { relative_eeg_minus_mask_only: 'Minus the missingness mask', relative_eeg_minus_time_only: 'Minus elapsed time / trial order', relative_eeg_minus_mask_plus_time: 'Minus mask + time' } as Record<string, string>,
+    crossesZero: 'crosses zero',
+    hRegion: 'Handwriting, balanced accuracy of each arm and its training-label shuffles, scrolls horizontally',
+    hTabCaption: (): Part[] => ['Means over the ', n(HC.people), ' held-out people, each weighted equally, with descriptive 95% intervals where they are published. The shuffle column gives the mean of ', n(HS.relative_eeg.replicates),
+      ' training-label shuffles, which keep each person’s and session’s labels together, and the lowest and highest replicate means: an observed range, not an interval, and a sensitivity check, not a significance test.'],
+    colShuffleH: 'Training-label shuffles',
+    hFindLabel: (): Part[] => ['Mask-aware relative EEG: balanced accuracy for a person left out of training. The training-majority control scores ', f2(HA.majority.balanced_accuracy.mean), '.'],
+    hFindH3: 'Just above chance, and not separated from elapsed time and trial order',
+    hFindP: (): Part[] => ['Its interval, ', f2(HA.relative_eeg.balanced_accuracy.interval_95[0]), ' to ', f2(HA.relative_eeg.balanced_accuracy.interval_95[1]), ', lies above the majority control. Paired person by person, relative EEG minus the missingness mask is ',
+      p2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.mean), ' (', s2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.interval_95[0]), ' to ', p2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.interval_95[1]),
+      ') and minus mask + time ', p2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.mean), ' (', s2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.interval_95[0]), ' to ', p2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.interval_95[1]),
+      '); minus elapsed time and trial order it is ', p2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.mean), ', and that interval, ', s2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.interval_95[0]), ' to ', p2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.interval_95[1]),
+      ', crosses zero. Modest descriptive performance on four coded labels.'],
+    hAvailH3: 'What the masks leave',
+    hAvailP: (): Part[] => ['Every scored trial keeps between ', n(HV.available_channels_per_trial.fewest), ' and ', n(HV.available_channels_per_trial.most), ' of the ', n(HV.channels_recorded),
+      ' recorded EEG channels under the fixed availability rule — not constant, not touching either digital rail, numerically valid — so the recordings are not unusable as a whole. “Available” is that numerical rule, not certified clean EEG, and why the other channels sit at the rail is not known. Across ',
+      n(HV.channel_trials), ' channel-trials, ', n(HV.flags.constant), ' carry the constant flag and ', n(HV.flags.lower_rail), ' the lower-rail flag; the two flags overlap, so they are not summed. No upper-rail, non-finite or invalid-denominator flag occurred. These counts describe the five people analysed, not the whole dataset.'],
+    hAvailCaption: (): Part[] => ['Scored trials by how many of the ', n(HV.channels_recorded), ' recorded EEG channels are available.'],
+    colAvail: 'Available channels', colTrials: 'Trials',
+    hAvailRegion: 'Handwriting, scored trials by the number of available channels, scrolls horizontally',
+    hEarlier: (): Part[] => ['An earlier analysis of the same ', n(HC.people), ' people and ', n(HC.trials), ' trials, with every channel on a common-average reference and log band power, scored ', f2(HE.arms.logistic.balanced_accuracy.mean),
+      ' with logistic regression and ', f2(HE.arms.shrinkage_lda.balanced_accuracy.mean), ' with shrinkage LDA. Its checks found a sample at a digital rail in ', n(HE.quality_findings.windows_with_a_rail_sample), ' of ', n(HE.quality_findings.windows),
+      ' windows, and in ', n(HE.quality_findings.inspected_windows), ' windows inspected afterwards, ', n(HE.quality_findings.rail_flat_channel_windows), ' of ', n(HE.quality_findings.channel_windows),
+      ' channel-windows flat at the lower rail. It is the context for the mask-aware analysis, not a second cohort. Masking, referencing and the spectral representation changed together, so the difference between the two analyses cannot be attributed to masking, and no best model is chosen from them.'],
+    hLimits: 'These five people were the development cohort of the earlier analysis, whose scores were seen before this design: a quality-informed diagnostic, not independent confirmation, and no population inference. The official ten-person test data were not used. The optical species, units and the clock between the two modalities are unresolved, so no fNIRS or fusion conclusion follows, and there is no online, physiological-origin, competition-standing or medical claim.',
+    hRightsPointer: 'No ethics-approval or informed-consent statement was found; the aggregates are published with that gap stated, by the owner’s decision.',
+    hAudit: (): Part[] => ['Independently audited: all ', n(hw.independent_audit.reconstructed_models), ' stored models reconstructed and the ', n(hw.independent_audit.refitted_models),
+      ' true-label models refitted, with no discrepancy. The shuffle models were not refitted, the raw samples were not reread and the features were not re-extracted.'],
+    holdLink: 'Its row in the holds register →',
+    hHeldEyebrow: 'Human · scalp EEG · imagined handwriting · held',
+    hHeldLede: 'Some EEG channels of this handwriting dataset are flat or sit at the digital rail declared in the file header. A mask-aware analysis scores each trial only on the channels that pass a fixed availability rule, against controls that see only which channels are missing, only the elapsed time, or both. An earlier analysis of the same recordings is its context, not a second cohort.',
+    hSource: 'Data:',
+    hDeclared: 'as declared on the dataset card, gated.',
+    hHeldNoPage: 'No dataset page while it is held.',
+    // REFED
+    rEyebrow: 'Human · scalp EEG, stored clips · self-reported emotion · REFED',
+    rH2: 'Emotion ratings: what does a stimulus-identity control reveal?',
+    rLabel: 'Locally executed computational diagnostic · offline · two nominal folders · no interval',
+    rLede: (): Part[] => [n(RF.nominal_folders), ' nominal participant folders watched the same ', n(RF.videos), ' videos: ', n(RF.clips), ' stored EEG clips, not as many independent people. For each clip the target is the mean of its stored valence and arousal ratings on the published raw scale from 1 to 255: descriptive self-report means, not SAM scores. Four fixed arms are scored by equal-axis mean absolute error, lower being better: EEG Ridge on relative band power at every channel position, and three controls that use no EEG — the training clips’ mean, the training target of the same video, and a ridge on stored duration and the numeric video ID. Two conditions: a folder held out with the videos shared (', n(shared.folds), ' folds), and a folder held out together with ', n(joint.held_clips_per_fold), ' of the videos it is tested on (', n(joint.folds), ' folds).'],
+    rCaption: { shared: 'Equal-axis mean absolute error with the videos shared and a folder held out, raw label units: lower is better.', joint: 'Equal-axis mean absolute error with a folder and its test videos held out together, raw label units: lower is better.' },
+    rLegend: 'Dot: the error over all clips of the condition; dashed line: the source global mean’s error. No interval: two nominal folders support no population inference.',
+    rRegion: 'REFED, equal-axis mean absolute error of the four arms in both conditions, scrolls horizontally',
+    rTabCaption: (): Part[] => ['Equal-axis mean absolute error over the ', n(RF.clips), ' clips of each condition, in raw label units; lower is better. In the second condition the lookup finds a matching video for ', n(joint.lookup_matched_videos), ' of ', n(joint.clips_scored), ' clips, so it falls back to the global mean.'],
+    colShared: 'Shared videos, a folder held out', colJoint: 'Folder and videos held out together', control: 'uses no EEG',
+    rFindLabel: (): Part[] => ['EEG Ridge, equal-axis mean absolute error with the videos shared; the same-video lookup scores ', m3(SA.source_video_lookup.equal_axis_mae), ', the global mean ', m3(SA.source_global_mean.equal_axis_mae)],
+    rFindH3: 'EEG band power has the largest error in both conditions',
+    rFindP: (): Part[] => ['Held out together with the videos, EEG Ridge’s error is ', m3(JA.eeg_ridge.equal_axis_mae), ' against ', m3(JA.source_global_mean.equal_axis_mae), ' for the global mean. With shared videos, looking up the same video’s training target has the smallest error: a familiar stimulus carries the prediction through its identity, which is what that control is there to show. Held out together, the lookup has no matching video and equals the global mean. This illustrates the confound; it does not establish a mechanism.'],
+    rLimits: 'Two nominal folders sharing their video keys: the clips are not independent people, so no interval or significance test is reported, and no population, cross-day or physiological claim follows. The rating arrays had been inspected and their means computed before this design, so these are not untouched targets. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved: published video durations exceed the stored arrays by two seconds, and pairing whole arrays establishes no precise alignment. The numeric video ID is a key index, not an established presentation order.',
+    rSource: 'Data: Xiaojun Ning, Jing Wang, Zhiyang Feng, Tianzuo Xin, Shuo Zhang, Shaoqi Zhang, Zheng Lian, Yi Ding, Youfang Lin and Ziyu Jia,',
+    rGated: 'gated.',
+    rAudit: 'Independently audited: the sealed predictions reconstructed exactly, every metric recomputed independently and every preparation record verified. No raw signal or original annotation was reread, and no model was refitted.',
+    // Not yet evaluated
+    soEyebrow: 'Status only · no figure',
+    soH2: 'Not yet evaluated',
+    soLede: 'These analyses have not been run: the evidence a valid evaluation needs is missing, and none of them is a result.',
+    // Methods and limits
+    limitsH2: 'What these pilots can and cannot say',
+    methodsH3: 'How each result was produced',
+    methods: (): [string, Part[]][] => [
+      ['Orthosis, classical features', ['The ', n(o64.signal.eeg_channels), ' EEG channels at ', n(o64.signal.sampling_hz), ' Hz with the declared header scaling, the recorded reference kept and the acceleration channels left out; continuous forward-only 1–30 Hz filtering that uses no future samples; the complete ', n(o64.signal.window_seconds[0]), '–', sec(o64.signal.window_seconds[1]), ' window (', n(o64.signal.window_samples), ' samples) after each event. ', n(o64.configuration.values_per_event), ' fixed amplitude and log band-power values per event (', n(o58.configuration.values_per_event), ' on the ', n(o58.signal.eeg_channels), ' channels), a training-only standardization and a balanced L2 logistic regression with C = 1, no tuning. Main-task runs only: ', n(C.exclusions.baseline_runs), ' baseline runs, ', n(C.exclusions.targets_without_following_movement), ' targets without a following movement and ', n(C.exclusions.windows_crossing_boundary), ' window crossing a boundary are left out, none depending on whether the person responded correctly. Every prediction was sealed before a separate scorer read the held-out labels.']],
+      ['Orthosis, frozen EEGPT', ['The frozen ', n(M.encoder_parameters), '-parameter EEGPT target encoder at its native input of ', n(oep.encoder_input.channels), ' channels by ', n(oep.encoder_input.samples), ' samples: the same filtered window, resampled from ', n(oep.signal.sampling_hz), ' to ', n(oep.encoder_input.sampling_hz), ' Hz, microvolts divided by 1,000; its summary tokens, averaged over two temporal patches, feed the same probe. The encoder’s weights are unchanged: no fine-tuning and no LoRA. Across the ', n(oep.fits.folds), ' folds, ', n(oep.fits.fitted_probes), ' probes were fitted.']],
+      ...(bingoReleased ? [['BINGO, inner speech', ['Per trial and channel, max-absolute scaling and demeaning, then Hann periodograms; four relative bands partition 1–30 Hz across the ', n(bingo.signal.channels), ' channels in source order, ', n(bingo.signal.values_per_trial), ' values per trial, with no voltage calibration, montage interpolation or re-referencing. A source-only standardization and a ridge classifier with fixed alpha 1. Controls: an order-only control, a high-frequency ratio control, the class prior and ', n(dirs[0].controls.label_shuffle.balanced_accuracy.replicates), ' training-label shuffles per direction; all ', n(bingo.fits.sealed_checkpoints), ' prediction checkpoints were sealed before scoring. One incomplete field is left out by a complete-record rule set before scoring. The protocol, from the project’s D3.1, version 2.0: the word is shown at ', sec(TL.word_shown), ', removed for a countdown at ', sec(TL.word_removed_countdown), ', and the fixation cross at ', sec(TL.fixation_inner_speech_onset), ' starts inner speech until ', sec(TL.end), '; ', n(bingo.protocol.nouns), ' nouns, ', n(bingo.protocol.repetitions_per_noun), ' repetitions each, in fully randomized order.']]] as [string, Part[]][] : []),
+      ...(handwritingReleased ? [['Handwriting, mask-aware EEG', ['A fixed window 0.5–4.5 seconds after the released EEG-relative onset (4,000 samples at 1,000 Hz), read from the ', n(HV.channels_recorded), ' header-identified EEG channels only; the EOG, HECG and annotation channels and the optical samples are left out. Labels are the released event codes 200 to 203, mapped to 0 to 3. Before any transform, a channel-window is masked if it is constant, touches either header-declared digital rail or is not finite; the available channels are demeaned one by one, with no common-average reference and no interpolation. Welch spectra (1,000-sample Hann window, 500 overlap) give five half-open bands from 1 to 45 Hz, each divided by the sum of the five: 295 channel-major values per trial, zero where a channel is unavailable. Source-only standardization and a balanced multinomial logistic regression with C = 1, no tuning. The controls fit the same model on the availability bits and the available-channel fraction, on four elapsed-time and trial-order features, and on both. All 125 checkpoints, for 120 model fits and five majority controls, were sealed before a separate scorer read the held-out labels.']]] as [string, Part[]][] : []),
+      ['REFED, stored clips', ['Five relative Welch band powers between 1 and 45 Hz, each divided by the channel’s total, at every channel position, with no channel selection or re-referencing; source-only standardization and Ridge with fixed alpha 1, no tuning, and predictions left unclipped. Every clip passed the numerical checks (', n(refed.quality.channel_clip_rows), ' channel–clip rows, ', n(refed.quality.clips_or_channels_removed), ' removed): finite, non-constant values and valid spectral denominators, which is numerical eligibility, not signal quality.']],
+    ],
+    intervalsH3: 'What the intervals cover',
+    intervals: ['Orthosis: pointwise 95% percentile intervals from 10,000 person-level bootstrap draws, conditional on the sealed predictions; with eight people they are wide, and the paired interval resamples each person’s difference rather than comparing two separate intervals.',
+      ...(bingoReleased ? ['BINGO: approximate descriptive intervals from 10,000 field bootstrap draws over overlapping leave-one-field-out fits; they omit refit variability and are not calibrated population confidence intervals.'] : []),
+      ...(handwritingReleased ? ['Handwriting: descriptive 2.5–97.5% intervals from 10,000 fixed-seed person-bootstrap draws over the five people, conditional on the already fitted overlapping folds; they are not calibrated population confidence intervals and not evidence of superiority. Each bound is a percentile of resampled five-person means, not one person’s score; the mask-only control’s interval is not published, because its bounds would show individual people’s scores.'] : []),
+      'REFED: none, because two nominal folders support no population inference.',
+      bingoReleased || handwritingReleased ? 'The permutation and shuffle ranges are the lowest and highest replicate means, not intervals, and those controls are diagnostics, not significance tests.' : 'The permutation ranges are the lowest and highest replicate means, not intervals, and that control is a diagnostic, not a significance test.'].join(' '),
+    limitsH3: heldPilots.length ? 'Limits that hold for every published pilot' : 'Limits that hold for all four',
+    limits: [
+      'Small pilots, not ranked: each answers its own question on its own dataset, task and metric, and no result is set against another or against the core matrix.',
+      'Nothing pooled: the three Orthosis results are one cohort, counted once, and no figure combines datasets, configurations, languages or conditions.',
+      bingoReleased ? 'Reanalyses executed locally by this site, not results reported by the datasets’ authors; the BINGO project’s own figure is printed as theirs, apart from ours.' : 'Reanalyses executed locally by this site, not results reported by the datasets’ authors.',
+      'Offline only: no online, real-time, clinical or deployment claim.',
+      'Fixed before scoring: no channel, feature or hyperparameter search, no score used to choose a setting, and every prediction sealed before scoring.',
+      `Audit scope. Each result passed an independent audit; the Orthosis encoder features were not re-extracted, ${bingoReleased ? 'the BINGO raw file was not re-read, ' : ''}${handwritingReleased ? 'the handwriting shuffle models were not refitted, ' : ''}and no REFED model was refitted.`,
+    ],
+    notPubH3: 'Not published here',
+    notPub: `Per-person, per-field, per-folder, per-clip and per-record values of any kind, including per-person minima, maxima and per-fold scores; the response-clean subset’s scores; individual permutation and shuffle replicates; confusion matrices${handwritingReleased ? ' and per-class recall; the handwriting mask-only control’s interval' : ''}; identifiers, labels, features, predictions, fitted parameters and checkpoints; EEGPT weights, original or converted; measured compute; ${heldPilots.length ? `demographics; and every figure of the held ${heldPilots.length === 2 ? 'BINGO and handwriting analyses' : `${heldPilots[0] === 'bingo' ? 'BINGO' : 'handwriting'} analysis`}` : 'and demographics'}. Why cohorts this small publish so little:`,
+    smallCohorts: 'small cohorts, on the data-use page →',
+    creditsH3: 'Credits, licences, and consent',
+    consentH: 'Ethics and consent, as the source states them:',
+    ethicsLabel: 'Ethics approval:', consentLabel: 'Informed consent:',
+    recordLink: 'Dataset record ↗', paperLink: 'Paper ↗', readFrom: 'Statement read from ↗', datasetPage: 'Dataset page →', creditsLink: 'Credit, licence and consent ↓',
+    gapH: 'Ethics and consent:', challengePaperLink: 'A participating team’s challenge paper ↗',
+    noLicence: 'No licence stated',
+    eegptH: 'EEGPT, the model in the Orthosis comparison',
+    eegptP: 'Paper:',
+    eegptCode: 'code:', eegptAt: 'at', eegptCkpt: 'checkpoint', eegptSha: 'SHA-256',
+    eegptLicence: 'Apache-2.0 covers the repository’s source code only; the checkpoint’s own licence is unresolved, and no original or converted weights are distributed.',
+    derived: 'Derived analyses by BCI Report, aggregates only; not endorsed by the data’s authors, and no raw data are redistributed.',
+    relatedH2: 'Related questions',
+    related: [
+      { text: 'Signals other than scalp EEG, human fNIRS and one macaque’s intracortical spiking, each read on its own: ', href: '/topics/beyond-scalp-eeg/', link: topicCards.en['beyond-scalp-eeg'].question },
+      { text: 'Frozen foundation-model encoders against matched randomly initialized ones, and further checkpoints in one frozen recipe: ', href: '/topics/does-pretraining-help/', link: topicCards.en['does-pretraining-help'].question },
+      { text: 'Its entry in the model directory, with its licence status: ', href: '/methods/#eegpt', link: 'EEGPT' },
+    ],
+  },
+  zh: {
+    description: `四项小规模试点，彼此不排名${heldPilots.length === 2 ? '，其中两项因权利审查暂缓' : heldPilots.length ? '，其中一项因权利审查暂缓' : ''}。Orthosis：对 ${F(n(C.people))} 名被试逐一留出，固定的 EEG 特征区分记录下来的设备错误事件，平衡准确率为 ${F(f(E64.mean))}，运动或设备伪迹可能起作用；冻结的 EEGPT 减匹配的经典特征为 ${F(pp(PD.mean))}，区间跨过零。${bingoReleased ? `BINGO 内部言语接近 ${F(f(chance15))} 的先验。` : ''}${handwritingReleased ? `手写：屏蔽平直通道后，EEG 为 ${F(f2(HA.relative_eeg.balanced_accuracy.mean))}，随机水平为 ${F(f2(hw.chance_level))}，与时间对照没有区分开。` : ''}REFED 上，简单对照的误差比 EEG 频带功率小。`,
+    answer: `${['', '', '两', '三', '四'][nPilots]}项试点、${['', '', '', '三', '四', '五'][nFindings]}项结果，彼此不排名。Orthosis 设备错误：固定的 EEG 特征在训练时留出的被试身上，平衡准确率为 ${ans(f(E64.mean))}（95% 区间 ${ans(f(E64.interval_95[0]))} 至 ${ans(f(E64.interval_95[1]))}），混杂探针为 ${ans(f(CF64.mean))}；标签是记录下来的设备事件，运动或设备伪迹都可能起作用。同样八名被试上，冻结的 EEGPT 与匹配的经典特征相差 ${ans(pp(PD.mean))}（pp 即百分点；区间 ${ans(sg(PD.interval_95[0]))} 至 ${ans(pp(PD.interval_95[1]))}）：区间跨过零，既不能说明哪一方更好，也不能说明两者等效。${bingoReleased ? `希腊语与英语的内部言语（BINGO）：每个方向都接近 ${ans(f(chance15))} 的先验，语言内与跨语言都是如此。` : ''}${handwritingReleased ? `手写，${ans(n(HC.people))} 名被试：屏蔽平直或触及量程边界的通道之后，相对频带功率 EEG 在四个编码标签上的平衡准确率为 ${ans(f2(HA.relative_eeg.balanced_accuracy.mean))}，训练集多数类对照为 ${ans(f2(hw.chance_level))}；它高于两个含缺失掩码的对照（只看缺失掩码、掩码 + 时间），但与经过时间与试次顺序的对照没有区分开：这是一项数据质量案例研究，不是手写识别。` : ''}REFED 情绪片段：EEG 频带功率的误差比每个不用 EEG 的对照都大；共享视频时，按同一视频查表的误差最小。${heldPilots.length === 2 ? '另有希腊语与英语的内部言语、手写两项试点，因权利审查暂缓。' : heldPilots.length ? `另有${heldPilots[0] === 'bingo' ? '希腊语与英语的内部言语' : '手写'}一项试点，因权利审查暂缓。` : ''}`,
+    eyebrow: '试点研究 · 小样本，不排名',
+    dek: `四项小规模试点，各有各的数据集、任务与指标。同一个八人队列中注入的矫形器错误，其中包括冻结的 EEGPT 与匹配的经典特征的比较；希腊语与英语的内部言语，跨被试、跨语言${bingoReleased ? '' : '，因权利审查暂缓'}；${handwritingReleased ? '一个想象书写数据集中停在数字量程边界上的平直通道，以及剩下的 EEG 能说明什么' : '因权利审查暂缓的手写分析'}；以及一个情绪数据集上的存储片段核查。`,
+    oEyebrow: '人类 · 头皮 EEG · 记录下来的矫形器设备事件 · Kueper 等人',
+    oH2: '矫形器错误：在训练时留出的被试身上，EEG 能检出注入的设备错误吗？',
+    oLabel: '本站在本地运行的实验 · 离线 · 同一个队列的三种配置，只计一次',
+    oLede: (): Part[] => [n(C.people), ' 名被试佩戴主动矫形器，由它带动右臂做肘关节屈伸，其中部分动作被注入了错误。任务是在每个事件之后的 ', n(o64.signal.window_seconds[0]), '–', sec(o64.signal.window_seconds[1]), ' 内，把记录下来的错误事件与标准事件区分开：共 ', n(C.events), ' 个事件、', n(C.runs), ' 个 run，其中错误 ', n(C.error_events), ' 个、标准事件 ', n(C.standard_events), ' 个。每名被试整体留出，由在其他被试上拟合的固定分类头为其评分；结果对 ', n(C.people), ' 名被试等权平均。这一个队列以三种配置发布，只计一次。'],
+    o64H3: (): Part[] => [n(o64.signal.eeg_channels), ' 通道经典基线'],
+    o64Caption: '训练时留出的被试上的平衡准确率，64 通道配置。',
+    o64Legend: '点为八名被试等权平均的均值，横线为 95% 被试 bootstrap 区间，虚线为随机水平。类别先验对每名被试的得分都等于随机水平，所以没有区间。标签置换对照画在各次重复的均值处；标签里的范围不是区间。',
+    priorNote: '常数概率：对每名被试都等于随机水平',
+    permNote: (p: { replicates: number; observed_range: number[] }): Part[] => [n(p.replicates), ' 次重复的均值，各次均值从 ', f(p.observed_range[0]), ' 到 ', f(p.observed_range[1]), '：不是区间'],
+    o64FindLabel: (): Part[] => ['固定 EEG 特征 + 逻辑回归，', n(o64.signal.eeg_channels), ' 通道：训练时留出的被试上的平衡准确率。混杂探针为 ', f(CF64.mean), '，类别先验为 ', f(PR64.mean), '。'],
+    o64FindH3: '在分类头没有训练过的被试身上，高于每一个对照',
+    o64FindP: (): Part[] => ['它的 95% 区间为 ', f(E64.interval_95[0]), ' 至 ', f(E64.interval_95[1]), '，整个高于混杂探针的区间、类别先验和每一次标签置换的结果。逐人匹配时，EEG 减混杂探针为 ', f(EMC.balanced_accuracy_difference.mean, 'pp1'), '，没有计算区间；', n(EMC.people), ' 名被试中有 ', n(EMC.people_with_eeg_above_confound), ' 名的 EEG 高于该探针。'],
+    o64Limits: '标签是记录下来的设备事件，这个结果并不说明被试识别出了错误：运动、肌电与设备注入的伪迹都可能起作用，胜过一个只看运动方向与时间的探针，也不能把来源归到神经活动。八名被试限制了区间能说明的东西；这是本站的重新分析，不复现作者的竞赛分数。',
+    oepH3: (): Part[] => ['冻结的 EEGPT 与同一基线在 ', n(o58.signal.eeg_channels), ' 个通道上的比较'],
+    o58P: (): Part[] => ['EEGPT 支持 ', n(o64.signal.eeg_channels), ' 个通道中的 ', n(o58.signal.eeg_channels), ' 个；其余六个（', o58.configuration.omitted_channels.join('、'), '）不用，在评分前就已固定。在这些通道上，同一个经典基线的得分为 ', f(C58.mean), '（95% 区间 ', f(C58.interval_95[0]), ' 至 ', f(C58.interval_95[1]), '），同样高于它的混杂探针、先验和每一次标签置换的结果：这是同一批被试的第二种配置，不是重复验证，也不能由此得出需要多少通道的结论。然后用冻结的 EEGPT 替换经典特征：编码器的权重不变，它的输出送入同一个分类头，被试、折与标签置换都相同。'],
+    oepCaption: '训练时留出的被试上的平衡准确率，58 通道配置：冻结的 EEGPT 与匹配的经典特征。',
+    oepLegend: '点为八名被试的均值，横线为 95% 被试 bootstrap 区间，虚线为随机水平。两组使用相同的被试、折与分类头。',
+    pairCaption: '配对差值：冻结的 EEGPT 减匹配的经典特征，单位 pp。',
+    pairLegend: '点为八名被试差值的均值，横线为它的 95% 被试 bootstrap 区间（对每名被试的差值重抽样），虚线为没有差异。',
+    pairLabel: '冻结的 EEGPT 减匹配的经典特征',
+    oepFindLabel: (): Part[] => ['冻结的 EEGPT 减匹配的经典特征，平衡准确率，在同样 ', n(oep.paired.people), ' 名被试上配对；95% 区间 ', sg(PD.interval_95[0]), ' 至 ', pp(PD.interval_95[1])],
+    oepFindH3: '未显示哪一方更好，也未显示两者等效',
+    oepFindP: (): Part[] => ['冻结的 EEGPT 得分为 ', f(EP.mean), '（', f(EP.interval_95[0]), ' 至 ', f(EP.interval_95[1]), '），匹配的经典特征为 ', f(C58.mean), '。配对区间跨过零：既不能说明哪一方更好，也不能说明两者等效。八名被试、一种短时间窗的设置，不是对 EEG 基础模型整体的评判。'],
+    oepLimits: '与 64 通道结果是同样八名被试：不增加覆盖。冻结这项比较之前，64 通道的分数已经看过，所以它是前瞻性的诊断，不是盲法确认。分类头用其余七名被试的标签训练：这是有监督迁移，不是零样本。没有排除这个数据集出现在 EEGPT 预训练数据中的可能，电极布局、滤波、参考与半秒的时间窗也都与它的预训练不同。标签是记录下来的设备事件，所以运动、肌电与设备伪迹在这里同样可能起作用。',
+    oRegion: 'Orthosis：三种配置的全部已发布指标，可横向滚动',
+    oCaption: (): Part[] => ['三种配置的全部已发布指标，均为 ', n(C.people), ' 名被试的均值，有区间时附 95% 区间。错误占事件的 ', f(C.error_share), '，所以平均精确率要对照常数猜测的 ', a3(o64.arms.prior.average_precision.mean), ' 来读。AUROC 与平均精确率是次要指标。'],
+    colArm: '方法', colBa: '平衡准确率', colAuroc: 'AUROC', colAp: '平均精确率', colPerm: '标签置换对照',
+    sub64: '64 通道配置', sub58: '58 通道配置 · 相同的被试与折',
+    constant: '对每名被试都相同', noPerm: '—',
+    rcP: (): Part[] => ['“响应干净”子集只发布计数：', n(RC.events), ' 个事件，其中错误 ', n(RC.error_events), ' 个、标准事件 ', n(RC.standard_events), ' 个，两类都有的被试只有 ', n(RC.people_with_both_classes), ' 名。它的分数不进入任何比较。'],
+    oSource: '数据：',
+    oAudit: '经过独立审计：三种配置的每个分数与区间都由封存的预测重新计算；对这项比较，主分类头与混杂探针的重新拟合精确复现了封存的概率。没有重新提取编码器特征，也没有重新拟合每一个标签置换分类头。',
+    bEyebrow: '人类 · 头皮 EEG · 希腊语与英语的内部言语 · BINGO 项目',
+    bH2: '内部言语：想象中说出的词，能跨被试、跨语言解码吗？',
+    bLabel: '本站在本地运行的实验 · 离线 · 每次留出一个被试字段 · 阴性结果',
+    bLede: (): Part[] => [n(BC.source_fields), ' 个按数据源定义的被试字段（不能证明是不同的人），各自用希腊语和英语默念 ', n(bingo.protocol.nouns), ' 个相互对应的名词，每个名词每种语言 ', n(BC.trials_per_noun_and_language), ' 次：共 ', n(BC.trials), ' 个试次。固定的频谱基线——取 ', n(bingo.signal.channels), ' 个通道、', n(bingo.signal.sampling_hz), ' Hz 下的相对频带功率，用岭分类器——在其余字段的一种语言上训练（', n(BC.training_rows), ' 个试次），再在留出字段的同一种语言和另一种语言上测试，取注视十字出现后的 ', sec(bingo.signal.window_seconds[1]), '。留出字段的两种语言都不参与任何拟合。随机水平是十五分之一的先验，即 ', f(chance15), '。'],
+    bCaption: '训练时留出的被试字段上的平衡准确率，按训练语言与测试语言列出。',
+    bLegend: '点为各留出字段等权平均的均值，横线为近似的描述性 95% 区间，虚线为先验，即十五分之一。棕色：语言内；绿色：跨语言。',
+    within: '语言内', across: '跨语言',
+    bRegion: 'BINGO：每个方向的平衡准确率、top-3 准确率与对照，可横向滚动',
+    bTabCaption: (): Part[] => [n(BC.source_fields), ' 个留出字段的等权均值，附近似的描述性 95% 区间。平衡准确率的先验为 ', f(chance15), '，top-3 准确率的先验为 ', f(chance3), '。打乱标签一栏给出 ', n(dirs[0].controls.label_shuffle.balanced_accuracy.replicates), ' 次训练标签打乱的均值，以及各次均值的最低值与最高值：这是观察到的范围，不是区间。'],
+    colDir: '训练语言 → 测试语言', colTop3: 'top-3 准确率', colOrder: '只用顺序的对照', colHf: '高频比值对照', colShuffle: '打乱训练标签',
+    shuffleRange: (r: number[]): Part[] => ['范围 ', f(r[0]), ' 至 ', f(r[1])],
+    shuffleRange2: (r: number[]): Part[] => ['范围 ', f2(r[0]), ' 至 ', f2(r[1])],
+    cCaption: '跨语言减语言内的平衡准确率，单位 pp。',
+    cLegend: '点为各留出字段的均值，横线为近似的描述性 95% 区间，虚线为没有差异。',
+    cRows: { mean: '两种训练语言的均值', greek: '用希腊语训练：英语减希腊语', english: '用英语训练：希腊语减英语' },
+    bFindLabel: (): Part[] => ['跨语言减语言内的平衡准确率，两种训练语言的均值；95% 区间 ', sg(C3.balanced_accuracy_difference.interval_95[0]), ' 至 ', pp(C3.balanced_accuracy_difference.interval_95[1])],
+    bFindH3: '四个方向都接近先验',
+    bFindP: (): Part[] => ['四个方向的平衡准确率从 ', f(bmin), '（', dirName[bminDir.id].zh, '）到 ', f(bmax), '（', dirName[bmaxDir.id].zh, '），每个区间都包含 ', f(chance15), ' 的先验；top-3 准确率从 ', f(tmin), ' 到 ', f(tmax), '，其先验为 ', f(chance3), '。这个对比的区间跨过零：不能说明两种语言孰优孰劣，也不能说明二者等效，也没有做显著性检验。这是一个固定基线在这种设置下的阴性结果：并不说明其他方法也解码不了内部言语。'],
+    bDelivered: '交付的信号，出自项目交付文件',
+    bDeliveredEnd: '以上按项目的表述，没有对照交付的数据文件重新核实。',
+    bProjectH: 'BINGO 项目报告的结果，不是本站运行的。',
+    bProject: (): Part[] => ['在项目的另一个数据集（NATO 字母表的内部言语，', n(PRJ.classes), ' 个词）上，项目自己用 EEGNet 做“每次留出一名被试”的评测，报告的平均准确率为 ', f(PRJ.mean_accuracy_percent, 'pct2raw'), '，随机水平为 ', f(PRJ.chance_level, 'pct2'), '：对模型没有训练过的人，结果处于随机水平。数据集、模型与指标都不同，所以不能与上面的结果比较。'],
+    bLimits: '被试字段是数据源的操作性分组；它们是否对应不同的人、记录如何跨天分组，都没有经过独立核实。物理幅值单位、具名的电极布局与显示延迟都没有确立；时间窗虽然对照存储的时间向量核实过，但这既不能证明处理是因果的或可以在线进行，也不能证明信号只来自大脑。没有评测基础模型或深度模型。',
+    bSource: '数据：',
+    bDatasets: '数据集页面 ↗', bDoc: '文档：',
+    bNoLicence: '数据源没有说明许可。',
+    bAudit: '经过独立审计：核对了每个封存的预测、汇总、区间与对比；主模型与对照模型重新拟合后没有任何差异，打乱标签的模型是重建而不是重新拟合的。没有重新提取原始文件：审计使用的是谱系经过核实的缓存特征。',
+    bHeldEyebrow: '人类 · 头皮 EEG · 希腊语与英语的内部言语 · 暂缓',
+    bHeldLede: 'BINGO 项目跨语言数据集中，每个按数据源定义的被试字段都用希腊语和英语默念相互对应的名词。一个固定的频谱基线在其余字段的一种语言上训练，再在留出字段的同一种语言和另一种语言上测试。',
+    bHeldNoPage: '暂缓期间没有数据集页面。',
+    hEyebrow: '人类 · 头皮 EEG · 想象书写，四个已发布的编码标签 · 竞赛数据集',
+    hH2: '手写：通道平直或触及量程边界时，记录还有多少可用？',
+    hLabel: '本站在本地运行的实验 · 离线 · 每次留出一名被试 · 一项数据质量与方法案例研究',
+    hLedeR: (): Part[] => [n(HC.people), ' 名被试来自竞赛的训练集，包括他们全部 ', n(HC.sessions), ' 个会话：共 ', n(HC.events), ' 个事件，其中 ', n(HC.trials), ' 个参与评分；另有 ', n(HC.quarantined_events),
+      ' 个标签相互矛盾的事件被隔离。每个试次带有 ', n(HC.classes), ' 个已发布的编码标签之一；每个标签对应哪个字符或哪条书写轨迹都没有确立，所以这不是手写识别。记录中许多通道停在文件头声明的数字量程下边界上，呈一条平线。掩码感知分析对每个试次只使用通过固定可用性规则的通道，并把这样的 EEG 与三个不用 EEG 的对照比较：只看哪些通道缺失、只看经过的时间与试次顺序，以及两者都看。每名被试整体留出，由在其余四名被试上拟合的模型评分；结果对 ',
+      n(HC.people), ' 名被试等权平均。'],
+    hCaption: '训练时留出的被试上的平衡准确率，四个编码标签。',
+    hLegend: '点为五名被试等权平均的均值，横线为描述性的 95% 被试 bootstrap 区间，虚线为训练集多数类对照，它对每名被试的得分都等于随机水平。只看缺失掩码的对照没有区间：只有五名被试，它的区间端点能反推出个人的分数。',
+    hArm: { relative_eeg: '掩码感知的相对频带功率 EEG', mask_only: '只看缺失掩码', time_only: '经过时间 / 试次顺序', mask_plus_time: '掩码 + 时间', majority: '训练集多数类' } as Record<string, string>,
+    noEeg: '不用 EEG', ivWithheld: '区间不发布', chanceAll: '对每名被试都等于随机水平',
+    hcCaption: '配对差值：掩码感知的相对频带功率 EEG 减各个对照，单位 pp。',
+    hcLegend: '点为五名被试差值的均值，横线为它描述性的 95% 被试 bootstrap 区间（对每名被试的差值重抽样），虚线为没有差异。',
+    hcRow: { relative_eeg_minus_mask_only: '减只看缺失掩码', relative_eeg_minus_time_only: '减经过时间 / 试次顺序', relative_eeg_minus_mask_plus_time: '减掩码 + 时间' } as Record<string, string>,
+    crossesZero: '跨过零',
+    hRegion: '手写：每种方法的平衡准确率及其打乱训练标签的结果，可横向滚动',
+    hTabCaption: (): Part[] => [n(HC.people), ' 名留出被试的等权均值；发布了区间的，附描述性 95% 区间。打乱标签一栏给出 ', n(HS.relative_eeg.replicates),
+      ' 次训练标签打乱（每名被试、每个会话的标签保持在一起）的均值，以及各次均值的最低值与最高值：这是观察到的范围，不是区间；它是敏感性核查，不是显著性检验。'],
+    colShuffleH: '打乱训练标签',
+    hFindLabel: (): Part[] => ['掩码感知的相对频带功率 EEG：训练时留出的被试上的平衡准确率。训练集多数类对照为 ', f2(HA.majority.balanced_accuracy.mean), '。'],
+    hFindH3: '仅略高于随机水平，与经过时间和试次顺序的对照没有区分开',
+    hFindP: (): Part[] => ['它的区间为 ', f2(HA.relative_eeg.balanced_accuracy.interval_95[0]), ' 至 ', f2(HA.relative_eeg.balanced_accuracy.interval_95[1]), '，整个高于多数类对照。逐人配对时，相对频带功率 EEG 减只看缺失掩码的对照为 ',
+      p2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.mean), '（', s2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.interval_95[0]), ' 至 ', p2(HK.relative_eeg_minus_mask_only.balanced_accuracy_difference.interval_95[1]),
+      '），减掩码 + 时间的对照为 ', p2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.mean), '（', s2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.interval_95[0]), ' 至 ', p2(HK.relative_eeg_minus_mask_plus_time.balanced_accuracy_difference.interval_95[1]),
+      '）；减经过时间与试次顺序的对照为 ', p2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.mean), '，这个区间（', s2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.interval_95[0]), ' 至 ', p2(HK.relative_eeg_minus_time_only.balanced_accuracy_difference.interval_95[1]),
+      '）跨过零。在四个编码标签上，这只是有限的描述性表现。'],
+    hAvailH3: '掩码之后还剩下什么',
+    hAvailP: (): Part[] => ['按固定的可用性规则——不恒定、不触及任一数字量程边界、数值有效——每个参与评分的试次都保留 ', n(HV.available_channels_per_trial.fewest), ' 至 ', n(HV.available_channels_per_trial.most), ' 个通道（共记录 ', n(HV.channels_recorded),
+      ' 个 EEG 通道），所以这些记录并非整体不可用。“可用”只是这条数值规则，不代表经过认证的干净 EEG；其余通道为什么停在量程边界上，目前并不清楚。在 ',
+      n(HV.channel_trials), ' 个“通道 × 试次”中，', n(HV.flags.constant), ' 个带有恒定标记，', n(HV.flags.lower_rail), ' 个带有量程下边界标记；两种标记相互重叠，所以不能相加。没有出现量程上边界、非有限值或分母无效的标记。这些计数只描述被分析的五名被试，不代表整个数据集。'],
+    hAvailCaption: (): Part[] => ['按可用通道数（共记录 ', n(HV.channels_recorded), ' 个 EEG 通道）统计的评分试次。'],
+    colAvail: '可用通道数', colTrials: '试次数',
+    hAvailRegion: '手写：按可用通道数统计的评分试次，可横向滚动',
+    hEarlier: (): Part[] => ['较早的一次分析用的是同样 ', n(HC.people), ' 名被试、', n(HC.trials), ' 个试次，所有通道做共平均参考，取对数频带功率：逻辑回归为 ', f2(HE.arms.logistic.balanced_accuracy.mean),
+      '，收缩 LDA 为 ', f2(HE.arms.shrinkage_lda.balanced_accuracy.mean), '。它的检查发现，', n(HE.quality_findings.windows), ' 个时间窗中有 ', n(HE.quality_findings.windows_with_a_rail_sample),
+      ' 个含有触及数字量程边界的采样点；事后检查的 ', n(HE.quality_findings.inspected_windows), ' 个时间窗里，', n(HE.quality_findings.channel_windows), ' 个“通道 × 时间窗”中有 ', n(HE.quality_findings.rail_flat_channel_windows),
+      ' 个平直地停在量程下边界上。它是掩码感知分析的背景，不是第二个队列。掩码、参考方式与频谱表示是一起改变的，所以两次分析之间的差别不能归因于掩码，也不从中挑选最好的模型。'],
+    hLimits: '这五名被试正是较早那次分析的开发队列，那次的分数在这个设计之前已经看过：这是参考了质量检查的诊断，不是独立确认，也不能作群体层面的推断。没有使用官方的十人测试数据。光学信号的种类、单位以及两种模态之间的时钟都还没有确定，所以得不出任何 fNIRS 或融合方面的结论，也不作在线、生理来源、竞赛名次或医学方面的声明。',
+    hRightsPointer: '没有找到伦理批准或知情同意声明；聚合结果依据所有者的决定发布，并说明这一缺口。',
+    hAudit: (): Part[] => ['经过独立审计：全部 ', n(hw.independent_audit.reconstructed_models), ' 个存储的模型都被重建，', n(hw.independent_audit.refitted_models),
+      ' 个真实标签模型被重新拟合，没有任何差异。打乱标签的模型没有重新拟合，原始采样点没有重新读取，特征也没有重新提取。'],
+    holdLink: '它在暂缓登记册中的条目 →',
+    hHeldEyebrow: '人类 · 头皮 EEG · 想象书写 · 暂缓',
+    hHeldLede: '这个手写数据集里有些 EEG 通道是平直的，或者停在文件头声明的数字量程边界上。掩码感知分析对每个试次只使用通过固定可用性规则的通道，并与三种对照比较：只看哪些通道缺失、只看经过的时间，或两者都看。同一批记录上较早的一次分析是它的背景，不是第二个队列。',
+    hSource: '数据：',
+    hDeclared: '按数据集卡片的声明，访问需申请。',
+    hHeldNoPage: '暂缓期间没有数据集页面。',
+    rEyebrow: '人类 · 头皮 EEG，存储片段 · 自评情绪 · REFED',
+    rH2: '情绪评分：刺激身份对照揭示了什么？',
+    rLabel: '本站在本地运行的计算诊断 · 离线 · 两个标称被试文件夹 · 没有区间',
+    rLede: (): Part[] => [n(RF.nominal_folders), ' 个标称被试文件夹观看同样的 ', n(RF.videos), ' 段视频：共 ', n(RF.clips), ' 个存储的 EEG 片段，并不是同样多的独立个体。每个片段的目标值，是它存储的效价与唤醒度评分在已发布原始标度（1 到 255）上的均值：这是描述性的自评均值，不是 SAM 评分。四种固定方法都用两轴等权平均绝对误差评分，越低越好：基于每个通道位置相对频带功率的 EEG 岭回归，以及三个不用 EEG 的对照——训练片段的均值、同一视频的训练目标，以及基于存储时长与数字视频编号的岭回归。两种条件：共享视频、留出一个文件夹（', n(shared.folds), ' 折），以及把一个文件夹与它所测试的 ', n(joint.held_clips_per_fold), ' 段视频一起留出（', n(joint.folds), ' 折）。'],
+    rCaption: { shared: '共享视频、留出一个文件夹时的两轴等权平均绝对误差，原始标签单位：越低越好。', joint: '文件夹与其测试视频一起留出时的两轴等权平均绝对误差，原始标签单位：越低越好。' },
+    rLegend: '点为该条件下全部片段的误差，虚线为训练集总体均值的误差。没有区间：两个标称文件夹不支持任何群体层面的推断。',
+    rRegion: 'REFED：两种条件下四种方法的两轴等权平均绝对误差，可横向滚动',
+    rTabCaption: (): Part[] => ['每种条件下 ', n(RF.clips), ' 个片段的两轴等权平均绝对误差，单位为原始标签单位；越低越好。第二种条件下，查表在 ', n(joint.clips_scored), ' 个片段中为 ', n(joint.lookup_matched_videos), ' 个找到对应的视频，所以退回到总体均值。'],
+    colShared: '共享视频，留出一个文件夹', colJoint: '文件夹与视频一起留出', control: '不用 EEG',
+    rFindLabel: (): Part[] => ['EEG 岭回归，共享视频时的两轴等权平均绝对误差；按同一视频查表为 ', m3(SA.source_video_lookup.equal_axis_mae), '，总体均值为 ', m3(SA.source_global_mean.equal_axis_mae)],
+    rFindH3: '两种条件下，EEG 频带功率的误差都最大',
+    rFindP: (): Part[] => ['与视频一起留出时，EEG 岭回归的误差为 ', m3(JA.eeg_ridge.equal_axis_mae), '，总体均值为 ', m3(JA.source_global_mean.equal_axis_mae), '。共享视频时，按同一视频查找训练目标的误差最小：熟悉的刺激凭它的身份就能带来预测，这个对照正是为了揭示这一点。两者一起留出时，查表找不到对应的视频，结果等于总体均值。这说明了混杂的存在，但不能确立其机制。'],
+    rLimits: '两个标称文件夹共享同样的视频编号：这些片段不是独立的个体，所以不报告区间或显著性检验，也不能得出群体、跨天或生理方面的结论。在这个设计之前，评分数组已经查看过、其均值也已算出，所以这些不是未经接触的目标值。存储的 EEG 单位、EEG 与评分之间的时钟以及裁剪的端点都没有确定：已发布的视频时长比存储的数组长两秒，整段数组的配对并不能确立精确的对齐。数字视频编号只是键索引，不是已确立的呈现顺序。',
+    rSource: '数据：',
+    rGated: '访问需申请。',
+    rAudit: '经过独立审计：封存的预测被精确重建，每个指标都独立重新计算，每条准备记录都经过核对。没有重新读取原始信号或原始标注，也没有重新拟合任何模型。',
+    soEyebrow: '只发状态 · 没有数字',
+    soH2: '尚未评测',
+    soLede: '这些分析都没有运行：有效评测所需的证据还不具备，它们都不是结果。',
+    limitsH2: '这些试点能说明什么，不能说明什么',
+    methodsH3: '每项结果是怎样得到的',
+    methods: (): [string, Part[]][] => [
+      ['Orthosis，经典特征', ['', n(o64.signal.eeg_channels), ' 个 EEG 通道、', n(o64.signal.sampling_hz), ' Hz，使用文件头声明的缩放，保留记录时的参考，去掉加速度通道；连续的只向前 1–30 Hz 滤波，不使用未来的采样点；取每个事件之后完整的 ', n(o64.signal.window_seconds[0]), '–', sec(o64.signal.window_seconds[1]), ' 时间窗（', n(o64.signal.window_samples), ' 个采样点）。每个事件 ', n(o64.configuration.values_per_event), ' 个固定的幅值与对数频带功率值（', n(o58.signal.eeg_channels), ' 个通道上为 ', n(o58.configuration.values_per_event), ' 个），只在训练数据上拟合的标准化，以及 C = 1 的类别平衡 L2 逻辑回归，不调参。只用主任务 run：去掉 ', n(C.exclusions.baseline_runs), ' 个基线 run、', n(C.exclusions.targets_without_following_movement), ' 个之后没有动作的目标，以及 ', n(C.exclusions.windows_crossing_boundary), ' 个跨越边界的时间窗，都不取决于被试是否做出了正确反应。每个预测都在另一个评分程序读取留出标签之前封存。']],
+      ['Orthosis，冻结的 EEGPT', ['冻结的 EEGPT 目标编码器，', n(M.encoder_parameters), ' 个参数，使用其原生输入：', n(oep.encoder_input.channels), ' 个通道 × ', n(oep.encoder_input.samples), ' 个采样点。同一个滤波后的时间窗从 ', n(oep.signal.sampling_hz), ' Hz 重采样到 ', n(oep.encoder_input.sampling_hz), ' Hz，微伏值除以 1,000；它的汇总 token 在两个时间片上平均后，送入同一个分类头。编码器的权重不变：没有微调，也没有 LoRA。', n(oep.fits.folds), ' 折共拟合了 ', n(oep.fits.fitted_probes), ' 个分类头。']],
+      ...(bingoReleased ? [['BINGO，内部言语', ['每个试次、每个通道先做最大绝对值缩放与去均值，再计算 Hann 周期图；四个相对频带划分 1–30 Hz，覆盖按数据源顺序的 ', n(bingo.signal.channels), ' 个通道，每个试次 ', n(bingo.signal.values_per_trial), ' 个值，不猜测电压校准，不做电极布局插值或重参考。只在训练数据上拟合的标准化，以及 alpha 固定为 1 的岭分类器。对照：只用顺序的对照、高频比值对照、类别先验，以及每个方向 ', n(dirs[0].controls.label_shuffle.balanced_accuracy.replicates), ' 次训练标签打乱；全部 ', n(bingo.fits.sealed_checkpoints), ' 个预测检查点都在评分前封存。一个不完整的字段按评分前设定的完整记录规则排除。协议来自项目交付文件 D3.1（2.0 版）：词在 ', sec(TL.word_shown), ' 出现，在 ', sec(TL.word_removed_countdown), ' 消失并开始倒计时，注视十字在 ', sec(TL.fixation_inner_speech_onset), ' 出现、内部言语开始，持续到 ', sec(TL.end), '；共 ', n(bingo.protocol.nouns), ' 个名词，每个重复 ', n(bingo.protocol.repetitions_per_noun), ' 次，完全随机排序。']]] as [string, Part[]][] : []),
+      ...(handwritingReleased ? [['手写，掩码感知 EEG', ['取已发布的、相对于 EEG 的起始点之后 0.5–4.5 秒的固定时间窗（1,000 Hz 下 4,000 个采样点），只读取文件头标明的 ', n(HV.channels_recorded), ' 个 EEG 通道；EOG、HECG 与注释通道以及光学采样都不用。标签是已发布的事件编码 200 至 203，映射为 0 至 3。在任何变换之前，凡是恒定、触及文件头声明的任一数字量程边界或数值非有限的“通道 × 时间窗”都被掩码；可用通道逐个去均值，不做共平均参考，也不插值。Welch 频谱（1,000 点 Hann 窗，重叠 500 点）给出 1 到 45 Hz 之间的五个左闭右开频带，各除以五个频带功率之和：每个试次按通道排列共 295 个值，通道不可用处填零。只在训练数据上拟合的标准化，以及 C = 1 的类别平衡多项逻辑回归，不调参。三个对照用同一个模型，分别拟合可用性比特与可用通道比例、四个经过时间与试次顺序特征，以及两者合在一起。全部 125 个检查点（120 次模型拟合与五个多数类对照）都在另一个评分程序读取留出标签之前封存。']]] as [string, Part[]][] : []),
+      ['REFED，存储片段', ['1 到 45 Hz 之间的五个相对 Welch 频带功率，各除以该通道的总功率，覆盖每个通道位置，不选通道，也不重参考；只在训练数据上拟合的标准化，以及 alpha 固定为 1 的岭回归，不调参，预测值不截断。每个片段都通过了数值检查（', n(refed.quality.channel_clip_rows), ' 个“通道 × 片段”，去掉 ', n(refed.quality.clips_or_channels_removed), ' 个）：数值有限、不恒定，频谱分母有效——这只是数值上的合格，不代表信号质量。']],
+    ],
+    intervalsH3: '区间覆盖了什么',
+    intervals: ['Orthosis：由 10,000 次被试层面 bootstrap 抽样得到的逐点 95% 百分位区间，以封存的预测为条件；只有八名被试，区间较宽；配对区间对每名被试的差值重抽样，而不是比较两个各自的区间。',
+      ...(bingoReleased ? ['BINGO：在彼此重叠的“每次留出一个字段”的拟合上，由 10,000 次字段 bootstrap 抽样得到的近似描述性区间；它们不包含重新拟合带来的变异，也不是校准过的群体置信区间。'] : []),
+      ...(handwritingReleased ? ['手写：对五名被试做 10,000 次固定随机种子的被试 bootstrap 抽样，得到描述性的 2.5–97.5% 区间，以已经拟合好的、彼此重叠的折为条件；它们不是校准过的群体置信区间，也不是孰优孰劣的证据。每个端点都是重抽样得到的五人均值的一个百分位数，不是某一名被试的分数；只看缺失掩码的对照不发布区间，因为它的区间端点能反推出个人的分数。'] : []),
+      'REFED：没有区间，因为两个标称文件夹不支持任何群体层面的推断。',
+      bingoReleased || handwritingReleased ? '标签置换与打乱的范围是各次重复均值的最低值与最高值，不是区间；这些对照是诊断，不是显著性检验。' : '标签置换的范围是各次重复均值的最低值与最高值，不是区间；这个对照是诊断，不是显著性检验。'].join(''),
+    limitsH3: heldPilots.length ? '各项已发布试点共同的局限' : '四项试点共同的局限',
+    limits: [
+      '小规模试点，不排名：每项都在自己的数据集、任务与指标上回答自己的问题，不与其他结果或核心矩阵相比较。',
+      '不合并：Orthosis 的三项结果是同一个队列，只计一次；没有任何数字把数据集、配置、语言或条件合在一起。',
+      bingoReleased ? '这些是本站在本地运行的重新分析，不是数据作者报告的结果；BINGO 项目自己的数字按其原样列出，与本站的结果分开。' : '这些是本站在本地运行的重新分析，不是数据作者报告的结果。',
+      '只有离线结果：不涉及在线、实时、临床或部署方面的结论。',
+      '在评分之前固定：不搜索通道、特征或超参数，没有任何分数用来选择设置，每个预测都在评分前封存。',
+      `审计范围。每项结果都通过了独立审计；Orthosis 的编码器特征没有重新提取，${bingoReleased ? 'BINGO 的原始文件没有重新读取，' : ''}${handwritingReleased ? '手写分析中打乱标签的模型没有重新拟合，' : ''}REFED 的模型没有重新拟合。`,
+    ],
+    notPubH3: '这里不发布的内容',
+    notPub: `任何逐人、逐字段、逐文件夹、逐片段与逐记录的数值，包括逐人的最小值、最大值与逐折分数；“响应干净”子集的分数；单次标签置换与打乱的结果；混淆矩阵${handwritingReleased ? '与各类别召回率；手写分析中只看缺失掩码的对照的区间' : ''}；标识、标签、特征、预测、拟合参数与检查点；EEGPT 的权重，无论原始的还是转换后的；实测的计算量；人口学信息${heldPilots.length ? `；以及暂缓的${heldPilots.length === 2 ? ' BINGO 与手写分析' : heldPilots[0] === 'bingo' ? ' BINGO 分析' : '手写分析'}的任何数字` : ''}。为什么这么小的队列只能发布这么少：`,
+    smallCohorts: '见数据使用页面上的小样本说明（英文）→',
+    creditsH3: '署名、许可与知情同意',
+    consentH: '数据源陈述的伦理与知情同意：',
+    ethicsLabel: '伦理批准：', consentLabel: '知情同意：',
+    recordLink: '数据集记录 ↗', paperLink: '论文 ↗', readFrom: '声明读自 ↗', datasetPage: '数据集页面 →', creditsLink: '署名、许可与知情同意 ↓',
+    gapH: '伦理与知情同意：', challengePaperLink: '一支参赛队伍的挑战赛论文 ↗',
+    noLicence: '未说明许可',
+    eegptH: 'EEGPT：Orthosis 比较中的模型',
+    eegptP: '论文：',
+    eegptCode: '代码：', eegptAt: ' 版本 ', eegptCkpt: '检查点：', eegptSha: 'SHA-256：',
+    eegptLicence: 'Apache-2.0 只涵盖代码仓库中的源代码；检查点本身的许可尚未厘清，不分发任何原始或转换后的权重。',
+    derived: '以上均为 BCI Report 的衍生分析，只发布聚合结果；不代表数据作者的认可，也不再分发任何原始数据。',
+    relatedH2: '相关问题',
+    related: [
+      { text: '头皮 EEG 之外的信号，人类 fNIRS 与一只猕猴的皮层内神经元放电，每种信号单独阅读：', href: '/topics/beyond-scalp-eeg/', link: topicCards.zh['beyond-scalp-eeg'].question },
+      { text: '冻结的基础模型编码器与匹配的随机初始化编码器的比较，以及按同一冻结方案评测的更多检查点：', href: '/topics/does-pretraining-help/', link: topicCards.zh['does-pretraining-help'].question },
+      { text: '它在模型目录中的条目，以及其许可状态：', href: '/methods/#eegpt', link: 'EEGPT' },
+    ],
+  },
+}[locale];
+
+// The delivered-signal statement: the export's English, and its Chinese here, held to the export's wording.
+const deliveredZh = '项目说明，它发布的两个数据集采用相同的预处理：1–145 Hz 带通滤波，50 Hz 及其谐波处的陷波滤波，伪迹子空间重构（ASR），用 FORCe 去除眼动与肌电伪迹，然后切分为试次。因此，这里分析的信号在切分任何试次之前，已经在连续记录上做过去伪迹处理。';
+// The status-only arms and the consent, ethics and licence sentences: the export's English, and its Chinese here.
+const statusZh: Record<string, [string, string, string, string, string]> = {
+  'orthosis-emg-tinymyo-fusion': ['No EMG, TinyMyo or EEG–EMG fusion result exists for the Orthosis dataset.',
+    'The exact clock anchors between the EMG sample rows and the EEG events, the latency and end points, and the meaning and units of the exported columns are not established. A nominal sampling rate alone does not establish the labels.',
+    'Orthosis 错误检测数据集：EMG 与 EEG–EMG 配对分析',
+    'Orthosis 数据集没有任何 EMG、TinyMyo 或 EEG–EMG 融合结果。',
+    'EMG 采样行与 EEG 事件之间的精确时钟锚点、延迟与端点，以及导出列的含义与单位，都还没有确立。仅凭标称采样率不能确立标签。'],
+  'handwriting-fnirs-fusion': ['No fNIRS or EEG–fNIRS fusion result exists for the handwriting dataset.',
+    'The optical species and column meanings, their units and a verified clock between the two modalities are not established.',
+    'EEG-fNIRS 手写数据集：光学信号与融合分析',
+    '手写数据集没有任何 fNIRS 或 EEG–fNIRS 融合结果。',
+    '光学信号的种类与各列的含义、它们的单位，以及两种模态之间经过核实的时钟，都还没有确立。'],
+  'refed-physiological-fusion': ['No physiological or precisely aligned fusion evaluation exists for REFED beyond the stored-clip computational diagnostic.',
+    'Physical calibration, the crop boundaries, the mapping of the six optical components and paired timing are not established.',
+    'REFED：生理信号、逐点与融合分析',
+    '除存储片段计算诊断之外，REFED 没有任何生理信号评测或精确对齐的融合评测。',
+    '物理校准、裁剪边界、六个光学分量的对应关系以及配对时序，都还没有确立。'],
+  'meditation-eeg-phase': ['No meditation EEG phase prediction or paired analysis exists.',
+    'An explicit association between events and records, and clock anchors, are missing. One inspected record has a constant marker column, and that finding is not generalised to the other records. In this dataset RR means heartbeat RR intervals, not respiratory rate.',
+    '同步多模态冥想与静息数据集（Zenodo）：EEG 阶段标签与配对分析',
+    '没有任何冥想 EEG 阶段预测或配对分析。',
+    '缺少事件与记录之间的明确对应关系，也缺少时钟锚点。检查过的一段记录，其标记列是常数，这一发现不推广到其他记录。在这个数据集中，RR 指心跳的 RR 间期，不是呼吸频率。'],
+};
+const statusEntries = pilot.status_only.map(s => {
+  const z = statusZh[s.id];
+  need(!!z && s.statement === z[0] && s.reason === z[1], `the status-only arm ${s.id} as the export words it`);
+  return { id: s.id, scope: zh ? z[2] : s.scope, statement: zh ? z[3] : s.statement, reason: zh ? z[4] : s.reason, en: `${s.statement} ${s.reason}` };
+});
+need(/\d/.test(statusEntries.map(s => s.statement + s.reason).join(' ')) === false, 'the status-only arms carry no figure');
+// [English ethics, English consent, Chinese ethics, Chinese consent]; a null statement is the export's note.
+const consentZh: Record<string, [string, string, string, string]> = {
+  'orthosis-error-detection': ['Approved by the Ethics Committee of the Department of Computer Science and Applied Cognitive Science of the Faculty of Engineering at the University of Duisburg-Essen; no approval number is given.',
+    'The participants gave written informed consent and were told they could stop at any time.',
+    '经杜伊斯堡-埃森大学工学院计算机科学与应用认知科学系伦理委员会批准；未给出批准编号。',
+    '被试签署了书面知情同意，并被告知可以随时停止。'],
+  'bingo-imagined-speech': ['No ethics-approval reference is published by the source.',
+    'The project’s public deliverable D3.1, version 3.0, states that each participant signed a consent form before the sessions. It says so for the project’s 20-participant NATO-alphabet dataset, recorded in the same CERTH laboratory; the cross-language dataset’s own documentation, D3.1 version 2.0, has no ethics or consent statement.',
+    BINGO_RIGHTS_ZH.ethics, BINGO_RIGHTS_ZH.consent],
+  'eeg-fnirs-handwriting': ['No ethics-approval statement was found: the dataset card has none, and a participating team’s challenge paper has none.',
+    'No informed-consent statement was found: the dataset card has none, and a participating team’s challenge paper has none.',
+    '没有找到伦理批准声明：数据集卡片上没有，一支参赛队伍的挑战赛论文中也没有。',
+    '没有找到知情同意声明：数据集卡片上没有，一支参赛队伍的挑战赛论文中也没有。'],
+  refed: ['Approved by the local Institutional Review Board; the paper’s datasheet names the approval IRB-CASIA.',
+    'All participants gave informed consent to the recording of their physiological signals and rating scales, and agreed that the data would be used only for non-commercial scientific research.',
+    '经当地机构审查委员会批准；论文的数据表（datasheet）注明批准为 IRB-CASIA。',
+    '所有被试都同意记录其生理信号与评分量表，并同意这些数据只用于非商业的科学研究。'],
+};
+// The handwriting dataset's rights gap (owner decision, 2026-10-12), stated in full once on this page, in its credit:
+// the export's English, and its Chinese here, held to the export's wording.
+const gapZh = '没有找到伦理批准或知情同意声明。数据集卡片上没有；一支参赛队伍的挑战赛论文中也没有，该文指出这项竞赛是 ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge；组织方的论文在该文中标注为即将发表。聚合结果依据所有者的决定发布，并说明这一缺口；待组织方的论文发表后重新核查。';
+const GAP_EN = 'No ethics-approval or informed-consent statement was found. The dataset card has none; a participating team’s challenge paper, which identifies the competition as the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge, has none; and the organisers’ paper is listed there as forthcoming. The aggregates are published with this gap stated, by the owner’s decision, to be rechecked when the organisers’ paper appears.';
+need(HR.gap === GAP_EN, 'the handwriting gap as the export words it');
+const challengePaper = (HR.searched as { source: string; url?: string; title?: string }[]).find(x => x.source === 'a participating team’s challenge paper')!;
+need(challengePaper?.url === 'https://arxiv.org/abs/2608.03176v2', 'the challenge paper read for the handwriting gap');
+// Each source's paper or documentation, as its rights record names it.
+const PAPER: Record<string, string | null> = {
+  'orthosis-error-detection': 'https://doi.org/10.3389/fnhum.2024.1304311', 'bingo-imagined-speech': null, 'eeg-fnirs-handwriting': null,
+  refed: 'https://papers.neurips.cc/paper_files/paper/2025/file/2bf0ed7c35d9d84128e7f7c72ab76402-Paper-Datasets_and_Benchmarks_Track.pdf',
+};
+const credits = (['orthosis-error-detection', 'bingo-imagined-speech', 'eeg-fnirs-handwriting', 'refed'] as const).map(id => {
+  const d = D[id], e = d.consent_and_ethics, r = d.rights, z = consentZh[id];
+  const eth = e.ethics_approval.stated ? e.ethics_approval.statement : e.ethics_approval.note;
+  const con = e.informed_consent.stated ? e.informed_consent.statement : e.informed_consent.note;
+  need(eth === z[0] && con === z[1], `the ${id} consent and ethics sentences`);
+  if (PAPER[id]) need(r.reviewBasis.includes(PAPER[id]), `${id}'s paper is its rights record's`);
+  const readFrom = ((e.read_from as string).match(/https:\/\/[^\s),]+/) ?? [''])[0];
+  need(/^https:\/\//.test(readFrom), `${id}: the statement's source is a link`);
+  return { id, r, e, paper: PAPER[id], readFrom, held: d.publication !== 'released', ethics: zh ? z[2] : eth, consent: zh ? z[3] : con, en: `${eth} ${con}`,
+    gap: e.gap ? (zh ? gapZh : e.gap as string) : null, gapEn: e.gap as string | undefined,
+    licence: r.license === 'No licence stated' ? copy.noLicence : r.license, licenceLink: r.licenseUrl !== r.source };
+});
+need(D['bingo-imagined-speech'].rights.license === 'No licence stated' && D['orthosis-error-detection'].rights.license === 'CC BY 4.0'
+  && D.refed.rights.license === 'CC BY-NC-SA 4.0' && D['eeg-fnirs-handwriting'].rights.license === 'CC BY-NC-SA 4.0', 'the licences');
+need(D['bingo-imagined-speech'].consent_and_ethics.informed_consent.scope.includes('not for the cross-language dataset'), 'BINGO\'s consent statement is scoped to the project\'s other dataset');
+// The version identifiers the sections print, each the export's own.
+const VERSION = { orthosis: 'doi:10.5281/zenodo.8345429', handwriting: 'revision 4036680b5fb0015472d55589da2f34c5a87a3c10', refed: 'REFED2025/REFED-dataset · revision 0298355c2823946ac5800b2ec12a082bf2dcd01b' };
+need(D['orthosis-error-detection'].rights.source.endsWith('10.5281/zenodo.8345429') && D['eeg-fnirs-handwriting'].rights.version.includes('4036680b5fb0015472d55589da2f34c5a87a3c10')
+  && D.refed.rights.version.includes('0298355c2823946ac5800b2ec12a082bf2dcd01b'), 'the dataset versions');
+for (const [id, who] of [['orthosis-error-detection', 'Niklas Kueper, Kartik Chari, Judith Bütefür, Julia Habenicht, Tobias Rossol, Su Kyoung Kim, Marc Tabie, Frank Kirchner and Elsa Andrea Kirchner'],
+  ['refed', 'Xiaojun Ning, Jing Wang, Zhiyang Feng, Tianzuo Xin, Shuo Zhang, Shaoqi Zhang, Zheng Lian, Yi Ding, Youfang Lin and Ziyu Jia'], ['bingo-imagined-speech', 'BINGO (Brain Imagined-Speech Communication) project, CERTH']] as const)
+  need(D[id].rights.attribution.includes(who), `the ${id} source line names the dataset's authors`);
+const names = { orthosis: 'Niklas Kueper, Kartik Chari, Judith Bütefür, Julia Habenicht, Tobias Rossol, Su Kyoung Kim, Marc Tabie, Frank Kirchner and Elsa Andrea Kirchner',
+  refed: 'Xiaojun Ning, Jing Wang, Zhiyang Feng, Tianzuo Xin, Shuo Zhang, Shaoqi Zhang, Zheng Lian, Yi Ding, Youfang Lin and Ziyu Jia',
+  bingo: 'BINGO (Brain Imagined-Speech Communication), CERTH', handwriting: 'lasfk on Hugging Face · EEG-fNIRS-based Handwriting Trajectory Dataset' };
+need(D['eeg-fnirs-handwriting'].rights.attribution.startsWith(names.handwriting), 'the handwriting source line as its rights record words it');
+const card = topicCards[locale]['pilot-studies'];
+const dataset = (slug: string) => hrefFor(`/datasets/${slug}/`, locale);
+// The page's own credits, as a full path: the Markdown copy drops in-page jump links.
+const creditsHref = `${hrefFor(PILOT_PATH, locale)}#credits`;
+const ivText = zh ? ' 至 ' : ' to ';
+// One table cell: the figure, and its interval where it has one.
+const cellParts = (x: { mean: number; interval_95: number[] }, fmt: Fmt) => ({ v: f(x.mean, fmt), iv: ivOf(x) ? [f(x.interval_95[0], fmt), f(x.interval_95[1], fmt)] : null });
+const oRows = [
+  { sub: copy.sub64 },
+  { key: 'eeg64', label: arm.eeg64, a: o64.arms.eeg, perm: o64.permutation_control.balanced_accuracy },
+  { key: 'confound64', label: arm.confound, a: o64.arms.confound },
+  { key: 'majority64', label: arm.majority, a: o64.arms.majority },
+  { key: 'prior64', label: arm.prior, a: o64.arms.prior },
+  { sub: copy.sub58 },
+  { key: 'classical58', label: arm.c58, a: o58.arms.classical58, perm: o58.permutation_control.balanced_accuracy },
+  { key: 'eegpt58', label: arm.eegpt, a: oep.arms.eegpt2048, perm: oep.permutation_control.eegpt2048 },
+  { key: 'confound58', label: arm.confound, a: oep.arms.confound },
+  { key: 'majority58', label: arm.majority, a: oep.arms.majority },
+  { key: 'prior58', label: arm.prior, a: oep.arms.prior },
+] as const;
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/pilot-studies/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="pilot-studies"
+  answer={copy.answer}
+  dataFiles={['/data/pilot-studies-update.json']}
+>
+  <section class="topic-section" id="orthosis" aria-labelledby="orthosis-heading" data-pilot="orthosis">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.oEyebrow}</p><h2 id="orthosis-heading">{copy.oH2}</h2><p class="topic-subtitle" data-subtitle="orthosis">{copy.oLabel}</p></div><p><Parts p={copy.oLede()}/></p></div>
+    <h3 class="roadmap-h3" id="orthosis-64ch"><Parts p={copy.o64H3()}/></h3>
+    <IntervalPlot
+      id="orthosis-64ch-balanced-accuracy"
+      caption={copy.o64Caption}
+      legend={copy.o64Legend}
+      domain={baDomain}
+      ticks={['40%', '50%', '60%', '70%', '80%']}
+      reference={o64.chance_level}
+      rows={[
+        { label: arm.eeg64, value: E64.mean, interval: E64.interval_95 as [number, number], fig: f(E64.mean), noteParts: [`${tc.interval95} `, f(E64.interval_95[0]), '–', f(E64.interval_95[1])], tone: 'rust' },
+        { label: arm.confound, value: CF64.mean, interval: CF64.interval_95 as [number, number], fig: f(CF64.mean), noteParts: [`${tc.interval95} `, f(CF64.interval_95[0]), '–', f(CF64.interval_95[1])], tone: 'ink' },
+        { label: arm.prior, value: PR64.mean, fig: f(PR64.mean), note: copy.priorNote, tone: 'ink' },
+        { label: arm.perm, value: P64.balanced_accuracy_mean, fig: f(P64.balanced_accuracy_mean), noteParts: copy.permNote(P64), tone: 'muted' },
+      ]}
+    />
+    <div class="finding" data-finding="orthosis-64ch">
+      <div class="finding-number"><strong><Fig f={f(E64.mean)}/></strong><span><Parts p={copy.o64FindLabel()}/></span></div>
+      <div class="finding-copy"><h3>{copy.o64FindH3}</h3><p><Parts p={copy.o64FindP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-pilot-note="orthosis-64ch-limits">{copy.o64Limits}</p>
+    <h3 class="roadmap-h3" id="orthosis-eegpt"><Parts p={copy.oepH3()}/></h3>
+    <p class="roadmap-p" data-pilot-note="orthosis-58ch"><Parts p={copy.o58P()}/></p>
+    <IntervalPlot
+      id="orthosis-eegpt-balanced-accuracy"
+      caption={copy.oepCaption}
+      legend={copy.oepLegend}
+      domain={baDomain}
+      ticks={['40%', '50%', '60%', '70%', '80%']}
+      reference={oep.chance_level}
+      rows={[
+        { label: arm.eegpt, value: EP.mean, interval: EP.interval_95 as [number, number], fig: f(EP.mean), noteParts: [`${tc.interval95} `, f(EP.interval_95[0]), '–', f(EP.interval_95[1])], tone: 'olive' },
+        { label: arm.c58, value: oep.arms.classical58.balanced_accuracy.mean, interval: oep.arms.classical58.balanced_accuracy.interval_95 as [number, number], fig: f(oep.arms.classical58.balanced_accuracy.mean),
+          noteParts: [`${tc.interval95} `, f(oep.arms.classical58.balanced_accuracy.interval_95[0]), '–', f(oep.arms.classical58.balanced_accuracy.interval_95[1])], tone: 'rust' },
+        { label: arm.confound, value: oep.arms.confound.balanced_accuracy.mean, interval: oep.arms.confound.balanced_accuracy.interval_95 as [number, number], fig: f(oep.arms.confound.balanced_accuracy.mean),
+          noteParts: [`${tc.interval95} `, f(oep.arms.confound.balanced_accuracy.interval_95[0]), '–', f(oep.arms.confound.balanced_accuracy.interval_95[1])], tone: 'ink' },
+        { label: arm.prior, value: oep.arms.prior.balanced_accuracy.mean, fig: f(oep.arms.prior.balanced_accuracy.mean), note: copy.priorNote, tone: 'ink' },
+      ]}
+    />
+    <IntervalPlot
+      id="orthosis-eegpt-paired"
+      caption={copy.pairCaption}
+      legend={copy.pairLegend}
+      domain={ppDomain}
+      ticks={['−10', '−5', '0', '+5', '+10 pp']}
+      reference={0}
+      rows={[
+        { label: copy.pairLabel, value: PD.mean, interval: PD.interval_95 as [number, number], fig: pp(PD.mean), noteParts: [`${tc.interval95} `, sg(PD.interval_95[0]), ivText, pp(PD.interval_95[1])], tone: 'olive' },
+      ]}
+    />
+    <div class="finding" data-finding="orthosis-eegpt">
+      <div class="finding-number"><strong><Fig f={pp(PD.mean)}/></strong><span><Parts p={copy.oepFindLabel()}/></span></div>
+      <div class="finding-copy"><h3>{copy.oepFindH3}</h3><p><Parts p={copy.oepFindP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-pilot-note="orthosis-eegpt-limits">{copy.oepLimits}</p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.oRegion}>
+      <table data-pilot-table="orthosis">
+        <caption><Parts p={copy.oCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colAuroc}</th><th scope="col">{copy.colAp}</th><th scope="col">{copy.colPerm}</th></tr></thead>
+        <tbody>{oRows.map(row => 'sub' in row
+          ? <tr class="subhead"><th scope="colgroup" colspan="5">{row.sub}</th></tr>
+          : <tr data-pilot-row={row.key}><th scope="row">{row.label}</th>
+            {([['ba', 'balanced_accuracy', 'pct1'], ['auroc', 'auroc', 'auc3'], ['ap', 'average_precision', 'auc3']] as const).map(([cell, m, fmt]) => {
+              const c = cellParts(row.a[m], fmt);
+              return <td data-cell={cell}><Fig f={c.v} cls="metric"/>{c.iv ? <span class="interval">{tc.interval95} <Fig f={c.iv[0]}/>–<Fig f={c.iv[1]}/></span> : <span class="interval">{copy.constant}</span>}</td>;
+            })}
+            <td data-cell="perm">{'perm' in row && row.perm ? <><Fig f={f(row.perm.balanced_accuracy_mean)} cls="metric"/><span class="interval"><Parts p={copy.shuffleRange(row.perm.observed_range)}/></span></> : copy.noPerm}</td>
+          </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-pilot-note="orthosis-response-clean"><Parts p={copy.rcP()}/></p>
+    <p class="citation-note" data-pilot-note="orthosis-source">{copy.oSource}{zh ? <><span lang="en">{names.orthosis}</span>，</> : ' '}<code>{VERSION.orthosis}</code>{zh ? '，' : ', '}<a href={D['orthosis-error-detection'].rights.licenseUrl} target="_blank" rel="noreferrer">{D['orthosis-error-detection'].rights.license}</a>{tc.period}{sp}<a href={dataset('orthosis-error-detection')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+    <p class="citation-note" data-pilot-note="orthosis-audit">{copy.oAudit}</p>
+  </section>
+
+  {bingoReleased ? <>
+    <section class="topic-section" id="bingo" aria-labelledby="bingo-heading" data-pilot="bingo">
+      <div class="topic-heading"><div><p class="eyebrow">{copy.bEyebrow}</p><h2 id="bingo-heading">{copy.bH2}</h2><p class="topic-subtitle" data-subtitle="bingo">{copy.bLabel}</p></div><p><Parts p={copy.bLede()}/></p></div>
+      <IntervalPlot
+        id="bingo-balanced-accuracy"
+        caption={copy.bCaption}
+        legend={copy.bLegend}
+        domain={bDomain}
+        ticks={['3%', '5%', '7%', '9%', '11%']}
+        reference={chance15}
+        rows={dirs.map(d => ({ label: dirName[d.id][locale], value: d.balanced_accuracy.mean, interval: d.balanced_accuracy.interval_95 as [number, number], fig: f(d.balanced_accuracy.mean),
+          noteParts: [`${d.kind === 'within-language' ? copy.within : copy.across} · ${tc.interval95} `, f(d.balanced_accuracy.interval_95[0]), '–', f(d.balanced_accuracy.interval_95[1])],
+          tone: d.kind === 'within-language' ? 'rust' as const : 'olive' as const }))}
+      />
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.bRegion}>
+        <table data-pilot-table="bingo">
+          <caption><Parts p={copy.bTabCaption()}/></caption>
+          <thead><tr><th scope="col">{copy.colDir}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colTop3}</th><th scope="col">{copy.colOrder}</th><th scope="col">{copy.colHf}</th><th scope="col">{copy.colShuffle}</th></tr></thead>
+          <tbody>{dirs.map(d => <tr data-pilot-row={d.id}>
+            <th scope="row">{dirName[d.id][locale]}<small>{d.kind === 'within-language' ? copy.within : copy.across}</small></th>
+            {([['ba', d.balanced_accuracy], ['top3', d.top3_accuracy], ['order', d.controls.order_only.balanced_accuracy], ['hf', d.controls.high_frequency_ratio.balanced_accuracy]] as const).map(([cell, x]) =>
+              <td data-cell={cell}><Fig f={f(x.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={f(x.interval_95[0])}/>–<Fig f={f(x.interval_95[1])}/></span></td>)}
+            <td data-cell="shuffle"><Fig f={f(d.controls.label_shuffle.balanced_accuracy.balanced_accuracy_mean)} cls="metric"/><span class="interval"><Parts p={copy.shuffleRange(d.controls.label_shuffle.balanced_accuracy.observed_range)}/></span></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <IntervalPlot
+        id="bingo-contrast"
+        caption={copy.cCaption}
+        legend={copy.cLegend}
+        domain={cDomain}
+        ticks={['−2', '−1', '0', '+1', '+2 pp']}
+        reference={0}
+        rows={[
+          { label: copy.cRows.mean, value: C3.balanced_accuracy_difference.mean, interval: C3.balanced_accuracy_difference.interval_95 as [number, number], fig: pp(C3.balanced_accuracy_difference.mean),
+            noteParts: [`${tc.interval95} `, sg(C3.balanced_accuracy_difference.interval_95[0]), ivText, pp(C3.balanced_accuracy_difference.interval_95[1])], tone: 'olive' },
+          ...(['greek', 'english'] as const).map(k => {
+            const x = C3.by_training_language[k].balanced_accuracy_difference;
+            return { label: copy.cRows[k], value: x.mean, interval: x.interval_95 as [number, number], fig: pp(x.mean), noteParts: [`${tc.interval95} `, sg(x.interval_95[0]), ivText, pp(x.interval_95[1])], tone: 'muted' as const };
+          }),
+        ]}
+      />
+      <div class="finding" data-finding="bingo">
+        <div class="finding-number"><strong><Fig f={pp(C3.balanced_accuracy_difference.mean)}/></strong><span><Parts p={copy.bFindLabel()}/></span></div>
+        <div class="finding-copy"><h3>{copy.bFindH3}</h3><p><Parts p={copy.bFindP()}/></p></div>
+      </div>
+      <p class="protocol-note" data-pilot-note="bingo-delivered"><strong>{copy.bDelivered} <a href={doc[0].url} target="_blank" rel="noreferrer" lang="en">{doc[0].title} ↗</a>{zh ? '：' : ':'}</strong>{sp}{zh ? deliveredZh : DS.statement}{sp}{copy.bDeliveredEnd}{zh && <span class="note-original" lang="en">{DS.statement}</span>}</p>
+      <p class="protocol-note" data-pilot-note="bingo-limits">{copy.bLimits}</p>
+      <p class="roadmap-p" data-pilot-note="bingo-project-reported"><strong>{copy.bProjectH}</strong>{sp}<Parts p={copy.bProject()}/>{sp}<a href={doc[1].url} target="_blank" rel="noreferrer" lang="en">{doc[1].title} ↗</a></p>
+      <p class="citation-note" data-pilot-note="bingo-source">{copy.bSource}{zh ? <><span lang="en">{names.bingo}</span>，</> : ' '}<a href={D['bingo-imagined-speech'].rights.source} target="_blank" rel="noreferrer">{copy.bDatasets}</a> · {copy.bDoc} <a href={doc[0].url} target="_blank" rel="noreferrer" lang="en">{doc[0].title} ↗</a>{tc.period}{sp}{copy.bNoLicence}{sp}<a href={dataset('bingo-imagined-speech')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+      <p class="citation-note" data-pilot-note="bingo-audit">{copy.bAudit}</p>
+    </section>
+  </> : <>
+    <section class="topic-section" id="bingo" aria-labelledby="bingo-heading" data-pilot="bingo" data-held="true">
+      <div class="topic-heading"><div><p class="eyebrow">{copy.bHeldEyebrow}</p><h2 id="bingo-heading">{copy.bH2}</h2></div><p>{copy.bHeldLede}</p></div>
+      <p class="protocol-note" id={BINGO_HOLD} data-pilot-hold={BINGO_HOLD}><strong>{bHold!.item[locale]} · {bHold!.state[locale]}{tc.period}</strong>{sp}{bHold!.outcome[locale]}{sp}<a href={hrefFor(`/releases/#hold-${bHold!.id}`, locale)}>{copy.holdLink}</a></p>
+      <p class="citation-note" data-pilot-note="bingo-source">{copy.bSource}{zh ? <><span lang="en">{names.bingo}</span>，</> : ' '}<a href={D['bingo-imagined-speech'].rights.source} target="_blank" rel="noreferrer">{copy.bDatasets}</a> · {copy.bDoc} <a href={doc[0].url} target="_blank" rel="noreferrer" lang="en">{doc[0].title} ↗</a>{tc.period}{sp}{copy.bNoLicence}{sp}{copy.bHeldNoPage} <a href={creditsHref}>{copy.creditsLink}</a></p>
+    </section>
+  </>}
+
+  {handwritingReleased ? <>
+    <section class="topic-section" id="handwriting" aria-labelledby="handwriting-heading" data-pilot="handwriting">
+      <div class="topic-heading"><div><p class="eyebrow">{copy.hEyebrow}</p><h2 id="handwriting-heading">{copy.hH2}</h2><p class="topic-subtitle" data-subtitle="handwriting">{copy.hLabel}</p></div><p><Parts p={copy.hLedeR()}/></p></div>
+      <IntervalPlot
+        id="handwriting-balanced-accuracy"
+        caption={copy.hCaption}
+        legend={copy.hLegend}
+        domain={hDomain}
+        ticks={['22%', '24%', '26%', '28%', '30%']}
+        reference={hw.chance_level}
+        axisLabel={copy.colBa}
+        rows={HARMS.map(k => {
+          const b = HA[k].balanced_accuracy, iv = b.interval_95 as [number, number] | null, live = !!iv && iv[0] !== iv[1];
+          return { label: copy.hArm[k], value: b.mean, interval: live ? iv : null, fig: f2(b.mean),
+            ...(live ? { noteParts: [`${k === 'relative_eeg' ? '' : `${copy.noEeg} · `}${tc.interval95} `, f2(iv![0]), '–', f2(iv![1])] } : { note: k === 'majority' ? copy.chanceAll : `${copy.noEeg} · ${copy.ivWithheld}` }),
+            tone: k === 'relative_eeg' ? 'rust' as const : 'ink' as const };
+        })}
+      />
+      <IntervalPlot
+        id="handwriting-paired"
+        caption={copy.hcCaption}
+        legend={copy.hcLegend}
+        domain={hcDomain}
+        ticks={['−4', '−2', '0', '+2', '+4 pp']}
+        reference={0}
+        axisLabel={zh ? '配对差值' : 'Paired difference'}
+        rows={HCONTRASTS.map(k => {
+          const c = HK[k], d = c.balanced_accuracy_difference;
+          return { label: copy.hcRow[k], value: d.mean, interval: d.interval_95 as [number, number], fig: p2(d.mean),
+            noteParts: [`${tc.interval95} `, s2(d.interval_95[0]), ivText, p2(d.interval_95[1]), ...(c.interval_excludes_zero ? [] : [` · ${copy.crossesZero}`])],
+            tone: c.interval_excludes_zero ? 'olive' as const : 'muted' as const };
+        })}
+      />
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.hRegion}>
+        <table data-pilot-table="handwriting">
+          <caption><Parts p={copy.hTabCaption()}/></caption>
+          <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colBa}</th><th scope="col">{copy.colShuffleH}</th></tr></thead>
+          <tbody>{HARMS.map(k => { const b = HA[k].balanced_accuracy, iv = b.interval_95 as number[] | null, sh = (HS as Record<string, any>)[k]; return <tr data-pilot-row={k}>
+            <th scope="row">{copy.hArm[k]}{k !== 'relative_eeg' && <small>{copy.noEeg}</small>}</th>
+            <td data-cell="ba"><Fig f={f2(b.mean)} cls="metric"/>{iv && iv[0] !== iv[1] ? <span class="interval">{tc.interval95} <Fig f={f2(iv[0])}/>–<Fig f={f2(iv[1])}/></span> : <span class="interval">{k === 'majority' ? copy.chanceAll : copy.ivWithheld}</span>}</td>
+            <td data-cell="shuffle">{sh ? <><Fig f={f2(sh.balanced_accuracy_mean)} cls="metric"/><span class="interval"><Parts p={copy.shuffleRange2(sh.observed_range)}/></span></> : copy.noPerm}</td>
+          </tr>; })}</tbody>
+        </table>
+      </div>
+      <div class="finding" data-finding="handwriting">
+        <div class="finding-number"><strong><Fig f={f2(HA.relative_eeg.balanced_accuracy.mean)}/></strong><span><Parts p={copy.hFindLabel()}/></span></div>
+        <div class="finding-copy"><h3>{copy.hFindH3}</h3><p><Parts p={copy.hFindP()}/></p></div>
+      </div>
+      <h3 class="roadmap-h3" id="handwriting-availability">{copy.hAvailH3}</h3>
+      <p class="roadmap-p" data-pilot-note="handwriting-availability"><Parts p={copy.hAvailP()}/></p>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.hAvailRegion}>
+        <table data-pilot-table="handwriting-availability">
+          <caption><Parts p={copy.hAvailCaption()}/></caption>
+          <thead><tr><th scope="col">{copy.colAvail}</th><th scope="col">{copy.colTrials}</th></tr></thead>
+          <tbody>{(HV.trials_by_available_channels as { channels: number; trials: number }[]).map(x => <tr data-pilot-row={`channels-${x.channels}`}>
+            <th scope="row"><Fig f={n(x.channels)}/></th><td data-cell="trials"><Fig f={n(x.trials)} cls="metric"/></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <p class="roadmap-p" data-pilot-note="handwriting-earlier"><Parts p={copy.hEarlier()}/></p>
+      <p class="protocol-note" data-pilot-note="handwriting-limits">{copy.hLimits}</p>
+      <p class="citation-note" data-pilot-note="handwriting-source">{copy.hSource}{sp}<a href={D['eeg-fnirs-handwriting'].rights.source} target="_blank" rel="noreferrer" lang="en">{names.handwriting} ↗</a>{zh ? '，' : ', '}<code>{VERSION.handwriting}</code>{zh ? '，' : ', '}<a href={D['eeg-fnirs-handwriting'].rights.licenseUrl} target="_blank" rel="noreferrer">{D['eeg-fnirs-handwriting'].rights.license}</a>{zh ? '，' : ' '}{copy.hDeclared}{sp}<span data-pilot-note="handwriting-rights-pointer">{copy.hRightsPointer}</span>{sp}<a href={dataset('eeg-fnirs-handwriting')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+      <p class="citation-note" data-pilot-note="handwriting-audit"><Parts p={copy.hAudit()}/></p>
+    </section>
+  </> : <>
+    <section class="topic-section" id="handwriting" aria-labelledby="handwriting-heading" data-pilot="handwriting" data-held="true">
+      <div class="topic-heading"><div><p class="eyebrow">{copy.hHeldEyebrow}</p><h2 id="handwriting-heading">{copy.hH2}</h2></div><p>{copy.hHeldLede}</p></div>
+      <p class="protocol-note" id={HANDWRITING_HOLD} data-pilot-hold={HANDWRITING_HOLD}><strong>{hold!.item[locale]} · {hold!.state[locale]}{tc.period}</strong>{sp}{hold!.outcome[locale]}{sp}<a href={hrefFor(`/releases/#hold-${hold!.id}`, locale)}>{copy.holdLink}</a></p>
+      <p class="citation-note" data-pilot-note="handwriting-source">{copy.hSource}{sp}<a href={D['eeg-fnirs-handwriting'].rights.source} target="_blank" rel="noreferrer" lang="en">{names.handwriting} ↗</a>{zh ? '，' : ', '}<code>{VERSION.handwriting}</code>{zh ? '，' : ', '}<a href={D['eeg-fnirs-handwriting'].rights.licenseUrl} target="_blank" rel="noreferrer">{D['eeg-fnirs-handwriting'].rights.license}</a>{zh ? '，' : ' '}{copy.hDeclared}{sp}{copy.hHeldNoPage} <a href={creditsHref}>{copy.creditsLink}</a></p>
+    </section>
+  </>}
+
+  <section class="topic-section" id="refed" aria-labelledby="refed-heading" data-pilot="refed">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.rEyebrow}</p><h2 id="refed-heading">{copy.rH2}</h2><p class="topic-subtitle" data-subtitle="refed">{copy.rLabel}</p></div><p><Parts p={copy.rLede()}/></p></div>
+    {([['shared', shared], ['joint', joint]] as const).map(([k, c]) => <IntervalPlot
+      id={`refed-${k}`}
+      caption={copy.rCaption[k]}
+      legend={copy.rLegend}
+      domain={mDomain}
+      ticks={['0', '30', '60', '90', '120']}
+      reference={c.arms.source_global_mean.equal_axis_mae}
+      rows={(['eeg_ridge', 'source_global_mean', 'source_video_lookup', 'duration_video_id_ridge'] as const).map(a => ({
+        label: refedArm[a][locale], value: c.arms[a].equal_axis_mae, fig: m3(c.arms[a].equal_axis_mae), note: a === 'eeg_ridge' ? undefined : copy.control, tone: a === 'eeg_ridge' ? 'rust' as const : 'ink' as const }))}
+    />)}
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.rRegion}>
+      <table data-pilot-table="refed">
+        <caption><Parts p={copy.rTabCaption()}/></caption>
+        <thead><tr><th scope="col">{copy.colArm}</th><th scope="col">{copy.colShared}</th><th scope="col">{copy.colJoint}</th></tr></thead>
+        <tbody>{(['eeg_ridge', 'source_global_mean', 'source_video_lookup', 'duration_video_id_ridge'] as const).map(a => <tr data-pilot-row={a}>
+          <th scope="row">{refedArm[a][locale]}{a !== 'eeg_ridge' && <small>{copy.control}</small>}</th>
+          <td data-cell="shared"><Fig f={m3(SA[a].equal_axis_mae)} cls="metric"/></td>
+          <td data-cell="joint"><Fig f={m3(JA[a].equal_axis_mae)} cls="metric"/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <div class="finding" data-finding="refed">
+      <div class="finding-number"><strong><Fig f={m3(SA.eeg_ridge.equal_axis_mae)}/></strong><span><Parts p={copy.rFindLabel()}/></span></div>
+      <div class="finding-copy"><h3>{copy.rFindH3}</h3><p><Parts p={copy.rFindP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-pilot-note="refed-limits">{copy.rLimits}</p>
+    <p class="citation-note" data-pilot-note="refed-source">{copy.rSource}{zh ? <><span lang="en">{names.refed}</span>，</> : ' '}<code>{VERSION.refed}</code>{zh ? '，' : ', '}<a href={D.refed.rights.licenseUrl} target="_blank" rel="noreferrer">{D.refed.rights.license}</a>{zh ? '，' : ', '}{copy.rGated}{sp}<a href={dataset('refed')}>{copy.datasetPage}</a> · <a href={creditsHref}>{copy.creditsLink}</a></p>
+    <p class="citation-note" data-pilot-note="refed-audit">{copy.rAudit}</p>
+  </section>
+
+  <section class="topic-section" id="status-only" aria-labelledby="status-heading" data-pilot="status-only">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.soEyebrow}</p><h2 id="status-heading">{copy.soH2}</h2></div><p>{copy.soLede}</p></div>
+    <div class="method-grid-wide">{statusEntries.map(s => <article class="status-entry" id={s.id} data-pilot-status={s.id}>
+      <h3>{s.scope}</h3>
+      <p><strong>{s.statement}</strong></p>
+      <p>{s.reason}{zh && <span class="note-original" lang="en">{s.en}</span>}</p>
+    </article>)}</div>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <h3 class="roadmap-h3">{copy.methodsH3}</h3>
+    <div class="method-grid-wide" data-pilot-note="methods">{copy.methods().map(([h, p]) => <article><h3>{h}</h3><p><Parts p={p}/></p></article>)}</div>
+    <h3 class="roadmap-h3">{copy.intervalsH3}</h3>
+    <p class="roadmap-p" data-pilot-note="intervals">{copy.intervals}</p>
+    <h3 class="roadmap-h3">{copy.limitsH3}</h3>
+    <ul class="rd-rules" data-pilot-note="limits">{copy.limits.map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <p class="roadmap-p" data-pilot-note="not-published">{copy.notPub}{sp}<a href="/data-use/#small-cohorts-pilots">{copy.smallCohorts}</a></p>
+    <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+    <div class="citation-list" id="credits">
+      {credits.map(x => <article data-credit={x.id}>
+        <h3 lang="en">{x.r.name}</h3>
+        <p lang="en">{x.r.attribution}</p>
+        {x.gap
+          ? <p data-consent={x.id} id="handwriting-rights"><strong>{copy.gapH}</strong>{sp}{x.gap}{zh && <span class="note-original" lang="en">{x.gapEn}</span>}</p>
+          : <p data-consent={x.id}><strong>{copy.consentH}</strong>{sp}{copy.ethicsLabel}{zh ? '' : ' '}{x.ethics}{sp}{copy.consentLabel}{zh ? '' : ' '}{x.consent}{zh && <span class="note-original" lang="en">{x.en}</span>}</p>}
+        <p><a href={x.r.source} target="_blank" rel="noreferrer">{copy.recordLink}</a>{x.paper && <> · <a href={x.paper} target="_blank" rel="noreferrer">{copy.paperLink}</a></>}{x.gap && <> · <a href={challengePaper.url} target="_blank" rel="noreferrer">{copy.challengePaperLink}</a></>}{x.id === 'bingo-imagined-speech' && doc.map(dd => <> · <a href={dd.url} target="_blank" rel="noreferrer" lang="en">{dd.title} ↗</a></>)} · {x.licenceLink ? <a href={x.r.licenseUrl} target="_blank" rel="noreferrer">{x.licence}</a> : x.licence}{x.readFrom !== x.paper && !doc.some(dd => dd.url === x.readFrom) && x.readFrom !== x.r.source ? <> · <a href={x.readFrom} target="_blank" rel="noreferrer">{copy.readFrom}</a></> : ''}</p>
+      </article>)}
+      <article data-credit="eegpt">
+        <h3>{copy.eegptH}</h3>
+        <p>{copy.eegptP}{sp}<a href={M.paper} target="_blank" rel="noreferrer" lang="en">{M.paper_title} ↗</a>{zh ? '；' : '; '}{copy.eegptCode}{sp}<a href={M.repository} target="_blank" rel="noreferrer">{M.repository.replace('https://github.com/', '')} ↗</a>{sp}{copy.eegptAt}{sp}<code>{M.source_revision}</code>{zh ? '；' : '; '}{copy.eegptCkpt}{sp}<code>{M.checkpoint.file}</code>{zh ? '，' : ', '}{copy.eegptSha}{sp}<code>{M.checkpoint.sha256}</code>{tc.period}</p>
+        <p data-pilot-note="eegpt-licence">{copy.eegptLicence}</p>
+      </article>
+    </div>
+    <p class="citation-note">{copy.derived}</p>
+    <p class="citation-note">{tc.dataSource} <a href="/data/pilot-studies-update.json" download>pilot-studies-update.json</a> · {tc.schema} {pilot.schema_version}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="related" aria-labelledby="related-heading">
+    <div class="topic-heading"><div><h2 id="related-heading">{copy.relatedH2}</h2></div></div>
+    <ul class="rd-rules" data-pilot-note="related">{copy.related.map(x => <li>{x.text}<a href={hrefFor(x.href, locale)}>{x.link}</a>{/[?？]$/.test(x.link) ? '' : zh ? '。' : '.'}</li>)}</ul>
+  </section>
+</TopicLayout>

@@ -178,6 +178,83 @@ class CardRouteTwo(unittest.TestCase):
 
 
 
+class CardBeyondScalpAndPilots(unittest.TestCase):
+    """The two paragraphs of the 2026-10-12 site version (owner decisions): what each file holds, its credit and
+    licence and its required caveats, read from the served export; no update date, version label or Jev; EEGPT's
+    weights never called Apache-2.0; and the BINGO data management plan, internal evidence only, never cited."""
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        cls.card = card(snapshot, len(rows), topic_payload())
+        text = ' '.join(cls.card.split())
+        start = text.index('`beyond-scalp-update.json`')
+        cls.beyond = text[start:text.index('`pilot-studies-update.json`', start)]
+        start = text.index('`pilot-studies-update.json`')
+        cls.pilot = text[start:text.index('catalogued methods have been scored', start)]
+        cls.bs = json.loads((PUBLISHED/'beyond-scalp-update.json').read_text())
+        cls.ps = json.loads((PUBLISHED/'pilot-studies-update.json').read_text())
+
+    def test_credit_and_licence_from_the_served_file(self):
+        for d in self.bs['datasets'].values():
+            self.assertIn(d['rights']['license'], self.beyond)
+            self.assertIn(' '.join(d['rights']['attribution'].split(' Derived analysis by BCI Report')[0].split()), self.beyond)
+        for d in self.ps['datasets'].values():
+            if d['publication'] == 'released':
+                self.assertIn(' '.join(d['rights']['attribution'].split(' Derived analysis by BCI Report')[0].split()), self.pilot)
+        self.assertIn('Neural Latents Benchmark', self.beyond)
+
+    def test_required_caveats(self):
+        for phrase in ('executed movement, not motor imagery', 'With one animal every figure is that animal', 'not an official Neural Latents',
+                       'no classifier score', 'prepared, not scored', 'animal care and use committees'):
+            self.assertIn(phrase, self.beyond)
+        for phrase in ('outside every leaderboard', 'one cohort, counted once', 'neither arm is shown to be better, and the two are not shown to be equivalent',
+                       'not subjective error recognition', 'not zero-shot', 'not excluded', 'no original or converted weights are distributed',
+                       'core-matrix scores are not published'):
+            self.assertIn(phrase, self.pilot)
+        c = self.ps['results']['orthosis-64ch-classical']['cohort']
+        self.assertIn(f"({c['people']} people, {c['runs']} runs, {c['events']:,} recorded device events", self.pilot)
+
+    def test_eegpt_weights_are_never_apache(self):
+        self.assertIn('covers the repository’s source code only', self.pilot)
+        self.assertNotRegex(self.pilot, r'(?i)(?:weights|checkpoint)[^.;]{0,40}Apache|Apache[^.;]{0,40}(?:weights|checkpoint)')
+
+    def test_handwriting_as_the_owner_decided(self):
+        if self.ps['datasets']['eeg-fnirs-handwriting']['publication'] != 'released':
+            self.assertIn('handwriting dataset is held for its rights review, with no figure', self.pilot)
+            return
+        # Two controls carry the missingness mask, one of them with time as well; relative EEG is above both.
+        for phrase in ('(5 people, four released coded labels)', 'above the missingness-mask and mask-plus-time controls',
+                       'not separated from elapsed time and trial order', 'not handwriting recognition',
+                       'No ethics-approval or informed-consent statement was found, on the dataset card or in a participating team\'s challenge paper',
+                       'published with that gap stated, by the owner\'s decision'):
+            self.assertIn(phrase, self.pilot)
+        small = ' '.join(self.card.split())
+        self.assertIn('its mask-only control\'s interval is not published, because its bounds would show individual people\'s scores', small)
+        # The full statement belongs to the site's credits and data-use page; the card points to the gap once.
+        self.assertEqual(self.pilot.count('No ethics-approval or informed-consent statement was found'), 1)
+        self.assertNotIn('rechecked', self.pilot)
+        self.assertNotIn('controls that see only which channels are missing', self.pilot)
+
+    def test_bingo_as_the_owner_decided(self):
+        if self.ps['datasets']['bingo-imagined-speech']['publication'] != 'released':
+            self.assertIn('held for its rights, with no figure', self.pilot)
+            return
+        for phrase in ('The source states no licence', 'D3.1 (version 3.0)', 'NATO-alphabet recordings in the same laboratory',
+                       'no ethics-approval reference is published', 'ASR, FORCe', 'not re-verified against the file'):
+            self.assertIn(phrase, self.pilot)
+
+    def test_no_dmp_no_date_no_version_label_no_jev(self):
+        for section in (self.beyond, self.pilot):
+            self.assertNotRegex(section, r'(?i)D1\.2|data management plan|download/374|confidential')
+            self.assertNotRegex(section, r'\b20\d\d-\d\d-\d\d\b|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b')
+            # A file name is not prose: `beyond-scalp-update.json` names the file.
+            self.assertNotRegex(re.sub(r'`[^`]+`', '', section), r'(?<![./\w-])v\d+\b|\b(?:updated?|added|new)\b')
+            self.assertNotIn('Jev', section)
+        self.assertNotRegex(self.card, r'(?i)D1\.2|data management plan|download/374')
+
+
 class CardJevStyle(unittest.TestCase):
     """The "Jev-style evaluation" section (owner plan of 2026-10-07, tone of 2026-10-08): the site's one definition of
     "Jev-style" with TypeSafe's launch post linked, and nothing about what it is not; the plan started from the vision

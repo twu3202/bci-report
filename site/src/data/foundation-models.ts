@@ -364,7 +364,8 @@ const ids = (...xs: string[]) => xs.map(id => {
 /**
  * One card per entry the export's directory suggestions name, except REVE Base,
  * which keeps its released card with a display-layer override
- * (directory-status.ts), and EEGPT, unchanged. The notes are site-written from the
+ * (directory-status.ts), and EEGPT, which keeps its released card (with its own display-layer override for the
+ * pilot comparison published on 2026-10-12, directory-status.ts). The notes are site-written from the
  * export's facts; the statuses are the export's.
  */
 export const fmDirectory: FmDirectoryEntry[] = [
@@ -412,5 +413,8 @@ export const reveBaseDirectory: { status: string; note: string; replaces: string
   const s = V9.directory_status.find((x: any) => x.name === 'REVE Base');
   return { status: s.suggested_status, note: s.note, replaces: s.replaces };
 })();
-/** EEGPT stays as released. */
+/**
+ * The foundation-model export leaves EEGPT unchanged. Its shown status is a display-layer override since 2026-10-12
+ * (directory-status.ts): one pilot comparison published, from the pilot-studies release, not from this export.
+ */
 export const eegptUnchanged: boolean = /^unchanged/.test(suggested('EEGPT'));

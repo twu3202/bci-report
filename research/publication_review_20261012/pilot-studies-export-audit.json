@@ -1,0 +1,73 @@
+{
+  "status": "pass",
+  "release_id": "pilot-studies-update-20261012",
+  "export_sha256": "c93a344b7111b2335565b4a2819c0f4be6a93ba8d6970a8fd4fcb0cf9caf2bca",
+  "manifest_sha256": "89dcd9295ad0a85abea68deb180fcbed25165d4f523d5e02b402937eeb512c29",
+  "auditor": "pipeline/publication/audit_pilot_studies_export.py",
+  "independence": "A separate program from the export. It reads the served bytes, the review manifest, the six pinned approved exports and the approval or finalization record that names each one, plus the pinned handoffs and BINGO deliverables for the few counts no export carries; it builds its own table of what every figure must be and shares no extraction code with the export.",
+  "source_export_sha256": {
+    "orthosis-64ch-classical": "c0aeaabdfe530679a5c825447bdb78e5c7c9c9528d199aa35c7b4b1d7c31afa4",
+    "orthosis-58ch-classical": "9ee443d5424ea7a40b86d3dfb3bb5d15a5e53e5ad7ad9e80c618abc0c213b4d7",
+    "orthosis-eegpt-vs-58ch": "201ac453a0f3985b727aca340dc0f6f69261c0e8425db81b90c39b4b99101591",
+    "bingo-cross-language": "df3dd3ce0acb218411f2d48c502f0e0795b1b58e85a97f3975a2de7d8ed43a0a",
+    "handwriting-mask-aware": "caccae63e5cacfed7199c13f977c1740b36634a427c96342d5871ecade10ddbe",
+    "refed-stored-clip": "f9ecab0bf86303f1ed5e437e15519540898057d5b5e75296081fc2cba084b613"
+  },
+  "included": [
+    "orthosis-64ch-classical",
+    "orthosis-58ch-classical",
+    "orthosis-eegpt-vs-58ch",
+    "bingo-cross-language",
+    "handwriting-mask-aware",
+    "refed-stored-clip"
+  ],
+  "held_sources": [],
+  "status_only": [
+    "orthosis-emg-tinymyo-fusion",
+    "handwriting-fnirs-fusion",
+    "refed-physiological-fusion",
+    "meditation-eeg-phase"
+  ],
+  "holds": [],
+  "figures_compared": 426,
+  "figures_by_result": {
+    "orthosis-64ch-classical": 65,
+    "orthosis-58ch-classical": 54,
+    "orthosis-eegpt-vs-58ch": 82,
+    "bingo-cross-language": 111,
+    "handwriting-mask-aware": 84,
+    "refed-stored-clip": 27
+  },
+  "copied_exactly": 403,
+  "recomputed": 17,
+  "nulls_kept": 6,
+  "interval_flags_recomputed": 5,
+  "per_person_values_checked_absent": 39,
+  "held_values_checked_absent": 0,
+  "figures_from_text_only": [
+    "Orthosis exclusions (8 baseline runs, 82 targets without a following movement, 1 window crossing a boundary): the pinned Orthosis baseline handoff",
+    "BINGO window samples, trials per language per held-out field, trials per noun and language, training rows, fit and checkpoint counts and reconstructed models: the pinned BINGO handoff",
+    "BINGO protocol timeline, nouns and repetitions: D3.1 version 2.0 (pinned text); the project-reported subject-independent accuracy and vocabulary: D3.1 version 3.0 (pinned text)",
+    "handwriting channels recorded and channel-trials: the pinned mask-aware handoff"
+  ],
+  "checks": [
+    "each export is the pinned file and the one its own approval, handoff check or finalization record names; the served file names the same hashes for the released sources and the manifest it was built from; the two served copies are byte-identical",
+    "every number and null in the served file has an expected value derived here from the exports, and every expected value is in the file: no unaudited figure and no missing one",
+    "copied figures equal the source export exactly, type included; chance levels, the Orthosis error share, shuffle means (with their observed ranges as the extremes of the replicates) and the handwriting channel-trial count are recomputed here",
+    "the classical and control rows of the EEGPT comparison equal the separately approved 58-channel classical export, row for row",
+    "nulls stay null: the Orthosis matched-difference interval (none computed), the handwriting mask-only control’s interval (withheld), the EEGPT weights licence, and consent or ethics statements a source does not make",
+    "every interval_excludes_zero flag follows from its interval",
+    "no Orthosis per-person value (the matched EEG-minus-confound range and the three-person response-clean scores) reaches the file, nor the bounds of the handwriting mask-only control’s withheld interval",
+    "a source the manifest holds has no result, and none of its export’s figures appears in the file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "source export bytes: pinned in the manifest, named by each source’s own approval record, named in the served file",
+      "every figure: equal to its export leaf, or recomputed from export leaves, or read from the pinned text listed under figures_from_text_only"
+    ],
+    "not_bound": [
+      "the QA records, release decisions and independent result audits behind each export are verified by the export (their verdicts and hash chains), not re-read here",
+      "rights evidence (licence records, consent quotes) and prose in the served file are checked by the export, not by this audit"
+    ]
+  }
+}

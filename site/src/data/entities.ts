@@ -26,13 +26,15 @@ import extension from './extension-update.json';
 import large from './large-source-update.json';
 import reliable from './reliable-decisions-update.json';
 import later from './later-sessions-update.json';
+import pilot from './pilot-studies-update.json';
+import beyond from './beyond-scalp-update.json';
 import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
          ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
 import { conditionLabel, modelLabel } from './topics';
 import { block as qlBlock, contrast as qlContrast, armName as qlArm, differenceText as qlDifference, marginText as qlMargin,
          gateText as qlGate, qlFig, type QlEntry } from './questions-in-language';
-import { modelDirectoryStatus } from './directory-status';
+import { EEGPT_PILOT_PATH, modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
          fmResearchUse, fmSlugs, type FmModel, type FmRow, type FmSlug } from './foundation-models';
 import { fmZh } from './foundation-models-zh';
@@ -57,6 +59,8 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * `ppr2` and `sgr2` (route 2, 2026-10-07) print a value that is already in percentage points (the route-2 export's
  * `estimate_pp`, `interval_95_pp`) with two decimals, so the 2-pp margin's boundary is visible (+1.98 is not +2.0);
  * `ms2` prints a time in seconds as milliseconds to two decimals (the route-2 ledger's step times, indicative).
+ * `s1` prints a time in seconds; a time before an event (the BINGO trial timeline on the pilot-studies page) takes a
+ * true minus sign, as every other signed format does.
  */
 export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2'
   | 'ppr2' | 'sgr2' | 'ms2' | 'int0' | 'sig3';
@@ -91,7 +95,7 @@ export function formatFig(f: Fig): string {
     case 'auc2': return f.raw.toFixed(2);
     case 'num3': return minus(f.raw.toFixed(3));
     case 'count': return f.raw.toLocaleString('en-US');
-    case 's1': return `${f.raw.toFixed(1)} s`;
+    case 's1': return `${minus(f.raw.toFixed(1))} s`;
     case 'm2': return `${(f.raw / 1e6).toFixed(2)}M`;
     case 'ppr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)} pp`;
     case 'sgr2': return `${f.raw === 0 ? '' : f.raw > 0 ? '+' : '−'}${Math.abs(f.raw).toFixed(2)}`;
@@ -130,6 +134,12 @@ export interface ResultRow {
    * people column as records, in place of `people`, which is then 0.
    */
   records?: Fig;
+  /**
+   * A count of something other than people, printed in the people column in place of `people` (then 0), with what it
+   * counts (2026-10-12): one macaque (animal data), BINGO's subject fields as the source defines them, REFED's
+   * nominal participant folders.
+   */
+  counted?: { n: Fig; what: L };
   /** What the figure may and may not be read as, printed beside it. */
   note?: RowNote;
 }
@@ -169,6 +179,11 @@ export interface ResultGroup {
    * BOAS also the three stated gaps, the participants' wording, what is not evaluated and the credit (BoasGaps).
    */
   qlNotes?: 'beta' | 'boas';
+  /**
+   * The group's caveats, printed under its rows (2026-10-12: the pilot studies and the results beyond scalp EEG):
+   * what the figures above cannot be read as, beside them, once. Figures in a note are leaves like any other.
+   */
+  notes?: RowNote[];
 }
 
 export interface DatasetEntity {
@@ -182,9 +197,17 @@ export interface DatasetEntity {
   groups: ResultGroup[];
   /**
    * A source whose register entry prints its consent and ethics statements beside its credit (BOAS, 2026-10-07:
-   * the ethics committee and reference, written consent, and that its three gaps are stated with every figure).
+   * the ethics committee and reference, written consent, and that its three gaps are stated with every figure;
+   * BINGO, 2026-10-12: no ethics-approval reference, and the project's consent statement for its other dataset; the
+   * handwriting dataset, 2026-10-12: a short pointer to its stated gap, which the data-use page states in full).
    */
-  rightsNote?: 'boas';
+  rightsNote?: 'boas' | 'bingo' | 'handwriting';
+  /**
+   * What was measured, for the page's Dataset markup, where it is not EEG (2026-10-12: fNIRS, intracortical spiking).
+   */
+  technique?: string;
+  /** The signal a non-EEG dataset's page title names (2026-10-12): "fNIRS", "intracortical spiking". */
+  signal?: L;
 }
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
@@ -1071,6 +1094,386 @@ function laterForenzoGroup(c: 'Main' | 'Transfer Learning', arm: 'historical_dec
   };
 }
 
+/* --- Pilot studies (pilot-studies-update.json) ----------------------------------------------------------------- */
+
+/**
+ * The topic page these groups are read on, and its sections: the page must carry these anchors, and its topic card
+ * must exist in i18n.ts (a group's "Read on" link takes the card's title). Every pilot stays outside every
+ * leaderboard and model ranking, so no group here is ever read beside a matrix row.
+ */
+export const PILOT_PATH = '/topics/pilot-studies/';
+export const PILOT_ANCHOR = { orthosis: 'orthosis', bingo: 'bingo', refed: 'refed', handwriting: 'handwriting', statusOnly: 'status-only' } as const;
+if (EEGPT_PILOT_PATH !== `${PILOT_PATH}#${PILOT_ANCHOR.orthosis}`)
+  throw new Error('entities.ts: EEGPT\'s directory link and the Orthosis section of the pilot-studies page disagree');
+const PS = 'pilot-studies-update.json';
+const ps = pilot.results as Record<string, any>;
+const psDataset = (id: string) => (pilot.datasets as Record<string, any>)[id];
+/** A pilot source gets a dataset page only while its export publishes it, with its results present. */
+const psReleased = (id: string) => psDataset(id)?.publication === 'released' && psDataset(id).results.every((r: string) => ps[r]);
+const AP: L = { en: 'Average precision', zh: '平均精确率' };
+/** A percentage-point interval: the unit once, after the upper bound ("−4.0–+3.2 pp"). */
+const ppInterval = (iv: number[], src: string): [Fig, Fig] => [fig(iv[0], sgnFmt(iv[0]), src), fig(iv[1], ppFmt(iv[1]), src)];
+const ORTH_ARM: Record<string, L> = {
+  eeg: { en: 'Fixed EEG features + logistic regression · 64 channels', zh: '固定 EEG 特征 + 逻辑回归 · 64 通道' },
+  classical58: { en: 'Fixed EEG features + logistic regression · 58 channels', zh: '固定 EEG 特征 + 逻辑回归 · 58 通道' },
+  eegpt2048: { en: 'EEGPT · frozen encoder + the same supervised probe · 58 channels', zh: 'EEGPT · 冻结编码器 + 同一有监督分类头 · 58 通道' },
+  confound: { en: 'Direction/time confound probe (no EEG)', zh: '方向/时间混杂探针（不用 EEG）' },
+  prior: { en: 'Training class prior', zh: '训练集类别先验' },
+  permutation: { en: 'Permutation control: training labels shuffled within person and run', zh: '标签置换对照：在每名被试、每个 run 内打乱训练标签' },
+};
+const ORTH_CONDITION: L = { en: 'A person left out of training · 0–0.5 s after each recorded device event', zh: '留出一名被试 · 每个记录下来的设备事件后 0–0.5 秒' };
+/** A permutation control: its mean, with the replicate means' lowest and highest beside it, labelled a range. */
+function orthPermutation(pc: any, arm: string, path: string, people: number): ResultRow {
+  return { path, method: ORTH_ARM.permutation.en, label: { en: `${ORTH_ARM.permutation.en} · ${ORTH_ARM[arm].en}`, zh: `${ORTH_ARM.permutation.zh} · ${ORTH_ARM[arm].zh}` },
+    comparator: true, condition: ORTH_CONDITION, metric: BA, value: fig(pc.balanced_accuracy_mean, 'pct1', PS), people,
+    note: { en: ['The mean of ', fig(pc.replicates, 'count', PS), ' replicates, whose means ranged from ', fig(pc.observed_range[0], 'pct1', PS), ' to ', fig(pc.observed_range[1], 'pct1', PS), ': an observed range, not a confidence interval.'],
+            zh: [fig(pc.replicates, 'count', PS), ' 次重复的均值；各次均值从 ', fig(pc.observed_range[0], 'pct1', PS), ' 到 ', fig(pc.observed_range[1], 'pct1', PS), '：这是观察到的范围，不是置信区间。'] } };
+}
+/** One arm's balanced accuracy, AUROC and average precision; the interval is printed only where it is not a point. */
+function orthArmRows(a: any, arm: string, path: string, people: number, comparator = false): ResultRow[] {
+  const iv = (x: { interval_95: number[] }, f: Fmt) => x.interval_95[0] === x.interval_95[1] ? undefined : pair(x.interval_95, f, PS);
+  const base = { path, method: ORTH_ARM[arm].en, label: ORTH_ARM[arm], condition: ORTH_CONDITION, people, ...(comparator ? { comparator } : {}) };
+  return [
+    { ...base, metric: BA, value: fig(a.balanced_accuracy.mean, 'pct1', PS), interval: iv(a.balanced_accuracy, 'pct1') },
+    ...(comparator ? [] : [
+      { ...base, metric: AUROC, value: fig(a.auroc.mean, 'auc3', PS), interval: iv(a.auroc, 'auc3') },
+      { ...base, metric: AP, value: fig(a.average_precision.mean, 'auc3', PS), interval: iv(a.average_precision, 'auc3') },
+    ]),
+  ];
+}
+/** The cohort line every Orthosis group carries: one cohort, three configurations, counted once. */
+function orthCohortNote(r: any): RowNote {
+  const c = r.cohort;
+  return {
+    en: ['One cohort — ', fig(c.people, 'count', PS), ' people, ', fig(c.runs, 'count', PS), ' runs, ', fig(c.events, 'count', PS), ' recorded device events, ', fig(c.error_events, 'count', PS),
+         ' of them injected errors — published as three configurations and counted once. The labels are recorded device events: the results do not show that a person recognised an error, and movement, muscle or device artifacts may contribute. Errors are a minority of events, so average precision is read against that share. Outside every leaderboard and model ranking.'],
+    zh: ['同一个队列——', fig(c.people, 'count', PS), ' 名被试、', fig(c.runs, 'count', PS), ' 个 run、', fig(c.events, 'count', PS), ' 个记录下来的设备事件，其中 ', fig(c.error_events, 'count', PS),
+         ' 个是注入的错误——以三种配置发布，只计一次。标签是记录下来的设备事件：这些结果不说明被试识别出了错误，运动、肌电或设备伪迹都可能起作用。错误只占事件的少数，所以平均精确率要对照这个比例来读。不进入任何排行榜或模型排名。'],
+  };
+}
+/** Orthosis, the 64-channel classical baseline: the first configuration of the cohort. */
+function orthosis64Group(): ResultGroup {
+  const r = ps['orthosis-64ch-classical'], path = `${PILOT_PATH}#${PILOT_ANCHOR.orthosis}`, n = r.cohort.people, d = r.eeg_minus_confound;
+  const rs = r.response_clean_subset;
+  return {
+    id: 'pilot-orthosis-64ch', path, chance: fig(r.chance_level, 'pct1', PS),
+    title: { en: 'Pilot studies · orthosis error events, the 64-channel classical baseline', zh: '试点研究 · 矫形器错误事件，64 通道经典基线' },
+    rows: [
+      ...orthArmRows(r.arms.eeg, 'eeg', path, n),
+      ...orthArmRows(r.arms.confound, 'confound', path, n, true),
+      ...orthArmRows(r.arms.prior, 'prior', path, n, true),
+      { path, method: ORTH_ARM.eeg.en, label: ORTH_ARM.eeg, condition: { en: 'Minus the confound probe, matched person by person', zh: '减混杂探针，逐人匹配' }, metric: DIFF,
+        value: fig(d.balanced_accuracy_difference.mean, 'pp1', PS), people: n,
+        note: { en: ['No interval was computed for this difference. EEG was above the confound probe for ', fig(d.people_with_eeg_above_confound, 'count', PS), ' of ', fig(d.people, 'count', PS), ' people.'],
+                zh: ['这个差值没有计算区间。EEG 高于混杂探针的被试有 ', fig(d.people_with_eeg_above_confound, 'count', PS), ' 人（共 ', fig(d.people, 'count', PS), ' 人）。'] } },
+      orthPermutation(r.permutation_control.balanced_accuracy, 'eeg', path, n),
+    ],
+    notes: [orthCohortNote(r), {
+      en: ['A response-clean subset is counts only: ', fig(rs.events, 'count', PS), ' events, ', fig(rs.error_events, 'count', PS), ' errors and ', fig(rs.standard_events, 'count', PS), ' standard events, with ',
+           fig(rs.people_with_both_classes, 'count', PS), ' people having both classes, so its scores are not published.'],
+      zh: ['“响应干净”子集只给计数：', fig(rs.events, 'count', PS), ' 个事件，其中 ', fig(rs.error_events, 'count', PS), ' 个错误、', fig(rs.standard_events, 'count', PS), ' 个标准事件，两类都有的被试只有 ',
+           fig(rs.people_with_both_classes, 'count', PS), ' 人，所以不发布它的分数。'],
+    }],
+  };
+}
+/** Orthosis, the matched 58-channel classical configuration of the same cohort. */
+function orthosis58Group(): ResultGroup {
+  const r = ps['orthosis-58ch-classical'], path = `${PILOT_PATH}#${PILOT_ANCHOR.orthosis}`, n = r.cohort.people;
+  return {
+    id: 'pilot-orthosis-58ch', path, chance: fig(r.chance_level, 'pct1', PS),
+    title: { en: 'Pilot studies · orthosis error events, the matched 58-channel classical configuration (the same cohort)', zh: '试点研究 · 矫形器错误事件，匹配的 58 通道经典配置（同一队列）' },
+    rows: [
+      ...orthArmRows(r.arms.classical58, 'classical58', path, n),
+      ...orthArmRows(r.arms.confound, 'confound', path, n, true),
+      orthPermutation(r.permutation_control.balanced_accuracy, 'classical58', path, n),
+    ],
+    notes: [{
+      en: ['The same cohort, labels and caveats as the 64-channel baseline above, counted once. The 58 channels are the ones EEGPT supports, fixed before scoring. A second configuration of the same people, not a replication: the 64-channel scores were seen before it was frozen, and no conclusion about how many channels are needed follows.'],
+      zh: ['与上面的 64 通道基线是同一个队列、同样的标签与局限，只计一次。这 58 个通道是 EEGPT 支持的通道，在评分前就已固定。这是同一批被试的第二种配置，不是重复验证：冻结这个配置之前，64 通道的分数已经看过；也不能由此得出需要多少通道的结论。'],
+    }],
+  };
+}
+/** Orthosis, frozen EEGPT against the matched classical features: the same people, channels, folds and probe. */
+function orthosisEegptGroup(): ResultGroup {
+  const r = ps['orthosis-eegpt-vs-58ch'], path = `${PILOT_PATH}#${PILOT_ANCHOR.orthosis}`, n = r.cohort.people, p = r.paired;
+  if (p.interval_excludes_zero !== false) throw new Error('entities.ts: the EEGPT note says its paired interval spans zero');
+  return {
+    id: 'pilot-orthosis-eegpt', path, chance: fig(r.chance_level, 'pct1', PS),
+    title: { en: 'Pilot studies · orthosis error events, frozen EEGPT against the matched classical features (58 channels, the same cohort)', zh: '试点研究 · 矫形器错误事件，冻结的 EEGPT 与匹配的经典特征比较（58 通道，同一队列）' },
+    rows: [
+      ...orthArmRows(r.arms.eegpt2048, 'eegpt2048', path, n),
+      ...orthArmRows(r.arms.classical58, 'classical58', path, n).slice(0, 1),
+      { path, method: ORTH_ARM.eegpt2048.en, label: ORTH_ARM.eegpt2048, condition: { en: 'Minus the matched classical features, the same people and folds', zh: '减匹配的经典特征，相同被试与折' }, metric: DIFF,
+        value: fig(p.balanced_accuracy_difference.mean, ppFmt(p.balanced_accuracy_difference.mean), PS), interval: ppInterval(p.balanced_accuracy_difference.interval_95, PS), people: n,
+        note: { en: ['The paired interval spans zero: neither arm is shown to be better, and the two are not shown to be equivalent.'],
+                zh: ['配对区间跨过零：既不能说明哪一方更好，也不能说明两者等效。'] } },
+      orthPermutation(r.permutation_control.eegpt2048, 'eegpt2048', path, n),
+    ],
+    notes: [{
+      en: ['The same cohort, channels, folds and probe as the 58-channel configuration above, counted once. Supervised transfer: the frozen encoder’s outputs feed a probe trained on the other people’s labels, not zero-shot. Overlap between this dataset and EEGPT’s pretraining data has not been excluded, and the 64-channel classical scores were seen before this comparison was frozen. EEGPT’s checkpoint licence is unresolved and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. Not evidence about EEG foundation models in general.'],
+      zh: ['与上面的 58 通道配置是同一个队列、同样的通道、折与分类头，只计一次。这是有监督迁移：冻结编码器的输出送入用其他被试标签训练的分类头，不是零样本。没有排除这个数据集出现在 EEGPT 预训练数据中的可能；冻结这项比较之前，64 通道经典基线的分数已经看过。EEGPT 检查点的许可尚未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。这不是关于 EEG 基础模型整体的证据。'],
+    }],
+  };
+}
+
+/**
+ * BINGO's rights, exactly as they stand (owner decision 3, 2026-10-12), for its dataset page: the export's English
+ * statements, their Chinese here, and the public deliverable they are read from. The data management plan is never
+ * cited. Read only while the switch releases BINGO (no dataset page exists otherwise).
+ */
+export const BINGO_RIGHTS_ZH = {
+  ethics: '数据源没有公布任何伦理批准的出处或编号。',
+  consent: '项目的公开交付文件 D3.1（3.0 版）写明，每名被试在参加实验之前签署了知情同意书。这句话针对的是该项目在同一个 CERTH 实验室记录的、20 名被试的 NATO 字母表数据集；跨语言数据集自己的文档 D3.1（2.0 版）没有伦理或知情同意声明。',
+};
+export function bingoRights() {
+  const d = psDataset('bingo-imagined-speech'), e = d.consent_and_ethics;
+  const readFrom = (e.read_from as string).match(/https:\/\/[^\s),]+/)?.[0];
+  if (e.ethics_approval.stated !== false || e.informed_consent.stated !== true || !e.informed_consent.scope.includes('not for the cross-language dataset')
+      || readFrom !== 'https://bingo-project.gr/download/402' || d.rights.license !== 'No licence stated' || !/^owner decision/.test(e.basis))
+    throw new Error('entities.ts: BINGO\'s rights as the export states them (no ethics reference; consent stated for the project\'s other dataset; no licence)');
+  return {
+    ethics: { en: e.ethics_approval.note as string, zh: BINGO_RIGHTS_ZH.ethics },
+    consent: { en: e.informed_consent.statement as string, zh: BINGO_RIGHTS_ZH.consent },
+    readFrom, readFromTitle: d.documentation.find((x: { url: string }) => x.url === readFrom).title as string,
+  };
+}
+
+/** BINGO: one fixed spectral baseline across people, within and across Greek and English. A negative result. */
+function bingoGroup(): ResultGroup {
+  const r = ps['bingo-cross-language'], path = `${PILOT_PATH}#${PILOT_ANCHOR.bingo}`, c = r.contrast, ds = r.delivered_signal;
+  if (c.interval_excludes_zero !== false || ds.verified_against_file !== false)
+    throw new Error('entities.ts: the BINGO notes say the contrast spans zero and the preprocessing was not re-verified');
+  const counted = { n: fig(r.cohort.source_fields, 'count', PS), what: { en: ' subject fields as the source defines them, not proven distinct people', zh: ' 个按数据源定义的被试字段，不能证明是不同的人' } };
+  const lang: Record<string, string> = { Greek: '希腊语', English: '英语' };
+  const label: L = { en: 'Relative band power + ridge classifier', zh: '相对频带功率 + 岭分类器' };
+  const rows: ResultRow[] = r.directions.map((d: any) => ({
+    path, method: label.en, label, counted, people: 0,
+    condition: { en: `Trained on ${d.train_language}, tested on ${d.test_language} · a subject field left out`, zh: `用${lang[d.train_language]}训练、在${lang[d.test_language]}上测试 · 留出一个被试字段` },
+    metric: BA, value: fig(d.balanced_accuracy.mean, 'pct1', PS), interval: pair(d.balanced_accuracy.interval_95, 'pct1', PS),
+    note: { en: ['Top-3 accuracy ', fig(d.top3_accuracy.mean, 'pct1', PS), ', against its prior of ', fig(r.chance.top3_accuracy, 'pct1', PS), '.'],
+            zh: ['top-3 准确率 ', fig(d.top3_accuracy.mean, 'pct1', PS), '，其先验为 ', fig(r.chance.top3_accuracy, 'pct1', PS), '。'] },
+  }));
+  rows.push({ path, method: label.en, label, counted, people: 0,
+    condition: { en: 'Across languages minus within, the mean over both training languages', zh: '跨语言减语言内，两种训练语言的均值' }, metric: DIFF,
+    value: fig(c.balanced_accuracy_difference.mean, ppFmt(c.balanced_accuracy_difference.mean), PS), interval: ppInterval(c.balanced_accuracy_difference.interval_95, PS),
+    note: { en: ['The interval spans zero: no superiority or equivalence between languages, and no significance test.'],
+            zh: ['区间跨过零：不能说明两种语言孰优孰劣，也不能说明二者等效，也没有做显著性检验。'] } });
+  return {
+    id: 'pilot-bingo', path, chance: fig(r.chance.balanced_accuracy, 'pct1', PS),
+    title: { en: 'Pilot studies · inner speech in Greek and English, across people and across languages (a negative result)', zh: '试点研究 · 希腊语与英语的内部言语，跨被试、跨语言（阴性结果）' },
+    rows,
+    notes: [{
+      en: ['Every direction is close to the 15-class prior. A negative result for this one baseline in this setting: it does not show that inner speech cannot be decoded by other methods. The intervals are approximate and descriptive, from overlapping leave-one-field-out fits. Outside every leaderboard and model ranking.'],
+      zh: ['每个方向都接近 15 类的先验。这是这一个基线在这种设置下的阴性结果：并不说明其他方法也解码不了内部言语。区间是近似的描述性区间，来自彼此重叠的“每次留出一个被试字段”的拟合。不进入任何排行榜或模型排名。'],
+    }, {
+      en: ['Delivered signals, as the project describes them (BINGO deliverable D3.1, version 2.0): the same preprocessing for both of its released datasets — band-pass and notch filtering, Artifact Subspace Reconstruction (ASR) and FORCe removal of ocular and muscle artifacts — and then segmentation into trials. The signals analysed here were therefore artifact-cleaned on the continuous recordings before any trial was cut. As the project states it; not re-verified against the delivered file.'],
+      zh: ['交付的信号，按项目自己的描述（BINGO 交付文件 D3.1，2.0 版）：项目发布的两个数据集采用相同的预处理——带通与陷波滤波、伪迹子空间重构（ASR）与 FORCe 去除眼动和肌电伪迹——然后才切分为试次。因此，这里分析的信号在切分任何试次之前，已经在连续记录上做过去伪迹处理。以上按项目的表述，没有对照交付的数据文件重新核实。'],
+    }],
+  };
+}
+
+/**
+ * The handwriting dataset's rights (owner decision, 2026-10-12): no ethics-approval or informed-consent statement was
+ * found, and the aggregates are published with that gap stated. The data-use page and the pilot-studies credits state
+ * it in full; the dataset page carries this short pointer, read from the export.
+ */
+export function handwritingRights() {
+  const d = psDataset('eeg-fnirs-handwriting'), e = d.consent_and_ethics;
+  if (d.publication !== 'released' || e.ethics_approval.stated !== false || e.informed_consent.stated !== false || !/^owner decision/.test(e.basis)
+      || !e.gap.startsWith('No ethics-approval or informed-consent statement was found.') || !e.searched?.some((x: { url?: string }) => x.url === 'https://arxiv.org/abs/2608.03176v2'))
+    throw new Error('entities.ts: the handwriting rights as the export states them (no statement found, the challenge paper read, the owner\'s decision)');
+  return {
+    pointer: {
+      en: 'No ethics-approval or informed-consent statement was found, on the dataset card or in a participating team’s challenge paper; the aggregates are published with that gap stated, by the owner’s decision.',
+      zh: '在数据集卡片和一支参赛队伍的挑战赛论文中，都没有找到伦理批准或知情同意声明；聚合结果依据所有者的决定发布，并说明这一缺口。',
+    },
+  };
+}
+
+/** The handwriting dataset: mask-aware relative EEG against three controls that see no EEG, five people. */
+function handwritingGroup(): ResultGroup {
+  const r = ps['handwriting-mask-aware'], path = `${PILOT_PATH}#${PILOT_ANCHOR.handwriting}`, n = r.cohort.people, A = r.arms, K = r.contrasts;
+  if (A.mask_only.balanced_accuracy.interval_95 !== null || K.relative_eeg_minus_time_only.interval_excludes_zero !== false
+      || !K.relative_eeg_minus_mask_only.interval_excludes_zero || !K.relative_eeg_minus_mask_plus_time.interval_excludes_zero)
+    throw new Error('entities.ts: the handwriting notes say the mask-only interval is withheld and only the time contrast crosses zero');
+  const p2 = (raw: number) => fig(raw, 'pct2', PS);
+  const iv2 = (iv: number[] | null) => (iv && iv[0] !== iv[1] ? [p2(iv[0]), p2(iv[1])] as [Fig, Fig] : undefined);
+  const condition: L = { en: 'A person left out of training · four released coded labels', zh: '留出一名被试 · 四个已发布的编码标签' };
+  const ARM: Record<string, L> = {
+    relative_eeg: { en: 'Mask-aware relative EEG + logistic regression', zh: '掩码感知的相对频带功率 EEG + 逻辑回归' },
+    mask_only: { en: 'Missingness mask only (no EEG)', zh: '只看缺失掩码（不用 EEG）' },
+    time_only: { en: 'Elapsed time / trial order (no EEG)', zh: '经过时间 / 试次顺序（不用 EEG）' },
+    mask_plus_time: { en: 'Mask + time (no EEG)', zh: '掩码 + 时间（不用 EEG）' },
+    majority: { en: 'Training majority', zh: '训练集多数类' },
+  };
+  const rows: ResultRow[] = (['relative_eeg', 'mask_only', 'time_only', 'mask_plus_time', 'majority'] as const).map(k => ({
+    path, method: ARM[k].en, label: ARM[k], condition, metric: BA, people: n, ...(k === 'relative_eeg' ? {} : { comparator: true }),
+    value: p2(A[k].balanced_accuracy.mean), interval: iv2(A[k].balanced_accuracy.interval_95),
+    ...(k === 'mask_only' ? { note: { en: ['Interval not published: with five people, its bounds would show individual people’s scores.'], zh: ['不发布区间：只有五名被试，区间端点能反推出个人的分数。'] } }
+      : k === 'majority' ? { note: { en: ['Chance for every person, by construction.'], zh: ['对每名被试都等于随机水平，这是由构造决定的。'] } } : {}),
+  }));
+  const VS: Record<string, L> = {
+    relative_eeg_minus_mask_only: { en: 'Minus the missingness mask only, the same people', zh: '减只看缺失掩码的对照，相同被试' },
+    relative_eeg_minus_time_only: { en: 'Minus elapsed time / trial order, the same people', zh: '减经过时间 / 试次顺序的对照，相同被试' },
+    relative_eeg_minus_mask_plus_time: { en: 'Minus mask + time, the same people', zh: '减掩码 + 时间的对照，相同被试' },
+  };
+  for (const k of Object.keys(VS)) {
+    const d = K[k].balanced_accuracy_difference;
+    rows.push({ path, method: ARM.relative_eeg.en, label: ARM.relative_eeg, condition: VS[k], metric: DIFF, people: n,
+      value: fig(d.mean, 'pp2', PS), interval: [fig(d.interval_95[0], 'sgn2', PS), fig(d.interval_95[1], 'pp2', PS)],
+      ...(K[k].interval_excludes_zero ? {} : { note: { en: ['The interval crosses zero: not separated from this control.'], zh: ['区间跨过零：与这个对照没有区分开。'] } }) });
+  }
+  const sh = r.label_shuffle.representations.relative_eeg;
+  rows.push({ path, method: ARM.relative_eeg.en, label: { en: `Training-label shuffles · ${ARM.relative_eeg.en}`, zh: `打乱训练标签 · ${ARM.relative_eeg.zh}` }, comparator: true,
+    condition, metric: BA, value: p2(sh.balanced_accuracy_mean), people: n,
+    note: { en: ['The mean of ', fig(sh.replicates, 'count', PS), ' shuffles, whose means ranged from ', p2(sh.observed_range[0]), ' to ', p2(sh.observed_range[1]), ': an observed range, not a confidence interval.'],
+            zh: [fig(sh.replicates, 'count', PS), ' 次打乱的均值；各次均值从 ', p2(sh.observed_range[0]), ' 到 ', p2(sh.observed_range[1]), '：这是观察到的范围，不是置信区间。'] } });
+  const av = r.availability, c = r.cohort;
+  return {
+    id: 'pilot-handwriting', path, chance: p2(r.chance_level),
+    title: { en: 'Pilot studies · mask-aware EEG on an imagined-handwriting dataset, a data-quality and methods case study', zh: '试点研究 · 想象书写数据集上的掩码感知 EEG，一项数据质量与方法案例研究' },
+    rows,
+    notes: [{
+      en: [fig(c.people, 'count', PS), ' people and ',
+           fig(c.trials, 'count', PS), ' trials from a reused development cohort, whose earlier scores were seen before this design: a quality-informed diagnostic, not independent confirmation. Every trial keeps ', fig(av.available_channels_per_trial.fewest, 'count', PS), ' to ', fig(av.available_channels_per_trial.most, 'count', PS), ' of ',
+           fig(av.channels_recorded, 'count', PS), ' recorded channels under a fixed numerical availability rule, which is not certified clean EEG. Four released coded labels, not verified characters or trajectories: not handwriting recognition. The intervals are descriptive, resampling the five people over overlapping folds, not population confidence intervals. The official test data were not used. No fNIRS, fusion, online, physiological-origin, competition-standing or medical claim; outside every leaderboard.'],
+      zh: [fig(c.people, 'count', PS), ' 名被试、',
+           fig(c.trials, 'count', PS), ' 个试次，来自重复使用的开发队列；较早那次分析在这个队列上的分数，在这个设计之前已经看过：这是参考了质量检查的诊断，不是独立确认。按固定的数值可用性规则，每个试次保留 ', fig(av.available_channels_per_trial.fewest, 'count', PS), ' 至 ', fig(av.available_channels_per_trial.most, 'count', PS), ' 个通道（共记录 ',
+           fig(av.channels_recorded, 'count', PS), ' 个），这并不代表经过认证的干净 EEG。四个已发布的编码标签，对应的字符或书写轨迹都没有核实：这不是手写识别。区间是描述性的，在彼此重叠的折上对五名被试重抽样，不是群体置信区间。没有使用官方测试数据。不作任何 fNIRS、融合、在线、生理来源、竞赛名次或医学方面的声明；不进入任何排行榜。'],
+    }],
+  };
+}
+
+/** REFED: a stored-clip computational diagnostic, EEG against three source-only controls in two conditions. */
+function refedGroup(): ResultGroup {
+  const r = ps['refed-stored-clip'], path = `${PILOT_PATH}#${PILOT_ANCHOR.refed}`;
+  const counted = { n: fig(r.cohort.nominal_folders, 'count', PS), what: { en: ' nominal participant folders', zh: ' 个标称被试文件夹' } };
+  const MAE: L = { en: 'Equal-axis mean absolute error, raw self-report scale (lower is better)', zh: '两轴等权平均绝对误差，原始自评标度（越低越好）' };
+  const ARM: Record<string, L & { comparator?: boolean }> = {
+    eeg_ridge: { en: 'EEG Ridge (relative band power)', zh: 'EEG 岭回归（相对频带功率）' },
+    source_global_mean: { en: 'Source global mean', zh: '训练集总体均值' },
+    source_video_lookup: { en: 'Source video lookup', zh: '训练集按视频编号查表' },
+    duration_video_id_ridge: { en: 'Duration / numeric-video-ID ridge', zh: '时长 / 数字视频编号岭回归' },
+  };
+  const COND: Record<string, L> = {
+    shared_videos_held_folder: { en: 'Shared videos, a folder held out (familiar stimuli)', zh: '共享视频，留出一个文件夹（刺激是熟悉的）' },
+    held_folder_and_videos: { en: 'Folder and video IDs held out together', zh: '文件夹与视频编号一起留出' },
+  };
+  const rows: ResultRow[] = r.conditions.flatMap((cd: any) => Object.entries(cd.arms).map(([id, a]: [string, any]) => ({
+    path, method: ARM[id].en, label: { en: ARM[id].en, zh: ARM[id].zh }, counted, people: 0,
+    ...(a.kind === 'control' ? { comparator: true } : {}),
+    condition: COND[cd.id], metric: MAE, value: fig(a.equal_axis_mae, 'num3', PS),
+  })));
+  if (rows.length !== 8 || rows.some(x => !x.condition)) throw new Error('entities.ts: REFED has two conditions of four arms');
+  return {
+    id: 'pilot-refed', path,
+    title: { en: 'Pilot studies · REFED stored clips, a computational diagnostic', zh: '试点研究 · REFED 存储片段，一项计算诊断' },
+    rows,
+    notes: [{
+      en: [fig(r.cohort.nominal_folders, 'count', PS), ' nominal participant folders with the same ', fig(r.cohort.videos, 'count', PS), ' videos: ', fig(r.cohort.clips, 'count', PS),
+           ' clips, not as many independent people, so no interval or significance test is reported. EEG Ridge has a larger error than every source-only control in both conditions. With shared videos, the same-video lookup has the smallest error, because familiar stimuli carry the prediction; held out together, it has no matching video and equals the global mean. Targets are the mean of each clip’s stored valence and arousal labels on the published raw scale, not SAM scores. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved, and the rating means were seen before this design. No physiological, neural or population claim; outside every leaderboard.'],
+      zh: [fig(r.cohort.nominal_folders, 'count', PS), ' 个标称被试文件夹，观看同样的 ', fig(r.cohort.videos, 'count', PS), ' 段视频：共 ', fig(r.cohort.clips, 'count', PS),
+           ' 个片段，并不是同样多的独立个体，所以不报告区间或显著性检验。两种条件下，EEG 岭回归的误差都比每个不用 EEG、只用训练集信息的对照大。共享视频时，按同一视频查表的误差最小，因为熟悉的刺激本身就能带来预测；两者一起留出时，它找不到对应的视频，结果等于总体均值。目标值是每个片段存储的效价与唤醒度标签在已发布原始标度上的均值，不是 SAM 评分。存储的 EEG 单位、EEG 与评分之间的时钟以及裁剪的端点都没有确定，评分均值在这个设计之前就已看过。不作任何生理、神经或群体层面的声明；不进入任何排行榜。'],
+    }],
+  };
+}
+
+/* --- Beyond scalp EEG (beyond-scalp-update.json) ------------------------------------------------------------- */
+
+/** The topic page these groups are read on, and its sections (the page must carry these anchors). */
+export const BEYOND_PATH = '/topics/beyond-scalp-eeg/';
+export const BEYOND_ANCHOR = { bak: 'bak-fnirs', nlb: 'mc-rtt', ds007420: 'ds007420', falcon: 'falcon-h2', fus: 'rabut-fus', statusOnly: 'status-only' } as const;
+const BS = 'beyond-scalp-update.json';
+const bs = beyond.results as Record<string, any>;
+/** A source gets a dataset page only while the export carries its results (a held consent record removes them). */
+const bsReleased = (id: string) => {
+  const d = (beyond.datasets as Record<string, any>)[id];
+  return !!d && d.results.length > 0 && d.results.every((r: string) => bs[r]);
+};
+
+/** Bak et al.: human fNIRS, three executed movements, a person left out at a time. */
+function bakGroup(): ResultGroup {
+  const r = bs['bak-fnirs-loso'], a = r.arms, path = `${BEYOND_PATH}#${BEYOND_ANCHOR.bak}`, n = r.cohort.people, rec = a.shrinkage_lda.class_recall;
+  if (r.species !== 'human' || r.modality !== 'fNIRS' || !a.shrinkage_lda.balanced_accuracy.interval_excludes_chance)
+    throw new Error('entities.ts: the Bak group is human fNIRS with its interval above chance');
+  const condition: L = { en: 'A person left out of training · executed tapping, not motor imagery', zh: '留出一名被试 · 实际敲击动作，不是运动想象' };
+  return {
+    id: 'beyond-bak-fnirs', path, chance: fig(r.primary_metric.chance_level, 'pct1', BS),
+    title: { en: 'Beyond scalp EEG · human fNIRS, right-hand, left-hand and foot tapping', zh: '头皮 EEG 之外 · 人类 fNIRS，右手、左手手指敲击与脚部敲击' },
+    rows: [
+      { path, method: 'Shrinkage LDA', label: { en: 'Standardization + shrinkage LDA', zh: '标准化 + 收缩 LDA' }, condition, metric: BA,
+        value: fig(a.shrinkage_lda.balanced_accuracy.mean, 'pct1', BS), interval: pair(a.shrinkage_lda.balanced_accuracy.interval_95, 'pct1', BS), people: n,
+        note: { en: ['Each person’s balanced accuracy, averaged with equal weight. Class recall over all held-out trials: right hand ', fig(rec.right_hand, 'pct1', BS), ', left hand ', fig(rec.left_hand, 'pct1', BS), ', foot ', fig(rec.foot, 'pct1', BS),
+                     '. The interval resamples the fixed participant scores (', fig(r.uncertainty.draws, 'count', BS), ' draws): not a refit bootstrap and not a clinical confidence interval.'],
+                zh: ['每名被试的平衡准确率，按等权平均。所有留出试次上的各类别召回率：右手 ', fig(rec.right_hand, 'pct1', BS), '，左手 ', fig(rec.left_hand, 'pct1', BS), '，脚 ', fig(rec.foot, 'pct1', BS),
+                     '。区间是对固定的逐人分数重抽样得到的（', fig(r.uncertainty.draws, 'count', BS), ' 次）：不是重新拟合的 bootstrap，也不是临床意义上的置信区间。'] } },
+      { path, method: 'Training prior', label: { en: 'Training prior', zh: '训练集先验' }, comparator: true, condition, metric: BA,
+        value: fig(a.source_prior.balanced_accuracy.mean, 'pct1', BS), people: n,
+        note: { en: ['Predicts the same class every time: no interval, because every person gets the same score.'], zh: ['每次都预测同一个类别：没有区间，因为每名被试的分数都相同。'] } },
+    ],
+    notes: [{
+      en: ['Offline, from the supplied oxy- and deoxyhemoglobin series over a window after each task onset. Task-correlated systemic or motion effects are not excluded, so this shows neither a brain-only signal nor cortical localisation. This site’s own protocol: it does not reproduce the authors’ within-person scores, and it is not compared with any scalp EEG result.'],
+      zh: ['离线分析，基于数据集提供的氧合与脱氧血红蛋白序列，取每次任务开始后的一个时间窗。没有排除与任务相关的全身性生理或运动影响，所以既不能说明信号只来自大脑，也不能说明皮层定位。这是本站自己的协议：不复现作者的被试内分数，也不与任何头皮 EEG 结果比较。'],
+    }],
+  };
+}
+
+/** MC_RTT: one macaque, one session, finger velocity from motor-cortex spiking; the ridge against the training mean. */
+function nlbGroup(): ResultGroup {
+  const r = bs['nlb-mc-rtt-velocity'], a = r.arms, path = `${BEYOND_PATH}#${BEYOND_ANCHOR.nlb}`, better = r.comparison.ridge_better;
+  if (r.cohort.animals !== 1 || better.mae_m_per_s !== false) throw new Error('entities.ts: the MC_RTT group is one animal, with the ridge worse on MAE');
+  const counted = { n: fig(r.cohort.animals, 'count', BS), what: { en: ' macaque (animal data)', zh: ' 只猕猴（动物数据）' } };
+  const condition: L = { en: 'Held-out trials of the same session · x/y finger velocity', zh: '同一次会话的留出试次 · 手指 x/y 速度' };
+  const METRIC: Record<string, L> = {
+    r2_uniform_average: { en: 'R², mean of x and y (higher is better)', zh: 'R²，x 与 y 的均值（越高越好）' },
+    r2_x: { en: 'R², x (higher is better)', zh: 'R²，x（越高越好）' },
+    r2_y: { en: 'R², y (higher is better)', zh: 'R²，y（越高越好）' },
+    rmse_m_per_s: { en: 'RMSE in m/s (lower is better)', zh: 'RMSE，m/s（越低越好）' },
+    mae_m_per_s: { en: 'MAE in m/s (lower is better)', zh: 'MAE，m/s（越低越好）' },
+  };
+  const ARM: Record<string, L> = { ridge: { en: 'Ridge on spike-count history', zh: '基于放电计数历史的岭回归' }, training_mean: { en: 'Training mean', zh: '训练集均值' } };
+  const rows: ResultRow[] = Object.keys(METRIC).flatMap(k => (['ridge', 'training_mean'] as const).map(arm => ({
+    path, method: ARM[arm].en, label: ARM[arm], ...(arm === 'training_mean' ? { comparator: true } : {}), condition, metric: METRIC[k],
+    // Near-zero R² of the comparator prints with three significant digits, never as −0.000 (wideFmt).
+    value: fig(a[arm][k], wideFmt(a[arm][k]), BS), people: 0, counted,
+    ...(arm === 'ridge' && !better[k] ? { note: { en: ['The ridge is worse than the training mean on this metric.'], zh: ['在这个指标上，岭回归比训练集均值差。'] } } : {}),
+  })));
+  return {
+    id: 'beyond-mc-rtt', path,
+    title: { en: 'Beyond scalp EEG · one macaque’s motor-cortex spiking, finger velocity within one session', zh: '头皮 EEG 之外 · 一只猕猴运动皮层的神经元放电，同一次会话内的手指速度' },
+    rows,
+    notes: [{
+      en: ['One macaque in one session, with training and validation trials interleaved: with one animal every figure is that animal’s, and no interval is reported, because the validation rows are correlated samples, not independent subjects. Not an official Neural Latents Benchmark score and not co-smoothing; offline, with no real-time or closed-loop claim, and no cross-day, cross-animal or human claim.'],
+      zh: ['一只猕猴、一次会话，训练试次与验证试次在会话内交错：只有一只动物，每个数字都是这只动物的；不报告区间，因为验证数据行是相关的样本，不是独立的个体。这不是 Neural Latents Benchmark 的官方分数，也不是 co-smoothing；离线分析，不作实时或闭环控制方面的声明，也不涉及跨天、跨动物或人类。'],
+    }],
+  };
+}
+
+/** ds007420: a label-independent numerical check of the optical values. Counts only; its classifier is held. */
+function opticalGroup(): ResultGroup {
+  const r = bs['ds007420-optical-coverage'], path = `${BEYOND_PATH}#${BEYOND_ANCHOR.ds007420}`, n = r.cohort.people, k = r.counts, g = r.gates;
+  if (g.classifier !== 'held' || g.task_code_lookup_verified !== false) throw new Error('entities.ts: the ds007420 note says its classifier is held');
+  const method = 'Numerical coverage check', label: L = { en: 'Numerical coverage check (no model)', zh: '数值覆盖核查（不是模型）' };
+  const condition: L = { en: 'Every optical value of every recording', zh: '每段记录的每个光学数值' };
+  return {
+    id: 'beyond-ds007420', path,
+    title: { en: 'Beyond scalp EEG · human fNIRS recordings, numerical coverage (counts, not a score)', zh: '头皮 EEG 之外 · 人类 fNIRS 记录的数值覆盖（计数，不是分数）' },
+    rows: [
+      { path, method, label, condition, metric: { en: 'Finite and positive values', zh: '有限且为正的数值' }, value: fig(k.positive, 'count', BS), of: fig(k.optical_values, 'count', BS), people: n,
+        note: { en: ['Across ', fig(r.cohort.recordings, 'count', BS), ' recordings and ', fig(r.cohort.recording_channels, 'count', BS), ' recording-channels; ', fig(k.nonfinite, 'count', BS), ' non-finite, ', fig(k.zero, 'count', BS), ' zero and ', fig(k.negative, 'count', BS), ' negative values.'],
+                zh: ['共 ', fig(r.cohort.recordings, 'count', BS), ' 段记录、', fig(r.cohort.recording_channels, 'count', BS), ' 个记录通道；非有限值 ', fig(k.nonfinite, 'count', BS), ' 个，零值 ', fig(k.zero, 'count', BS), ' 个，负值 ', fig(k.negative, 'count', BS), ' 个。'] } },
+      { path, method, label, condition: { en: 'Every channel of every recording', zh: '每段记录的每个通道' }, metric: { en: 'Exactly constant channels', zh: '完全恒定的通道' },
+        value: fig(k.constant_channels, 'count', BS), of: fig(r.cohort.recording_channels, 'count', BS), people: n },
+    ],
+    notes: [{
+      en: ['Counts only: they say nothing about signal quality, neural origin or decoding. No classifier score exists: the task codes have no verified lookup to hands or movements, and the event durations disagree — ', fig(g.event_duration_s.events_table, 's1', BS), ' in the events table, ',
+           fig(g.event_duration_s.optical_files, 's1', BS), ' in the optical files, ', fig(g.event_duration_s.cited_paper, 's1', BS), ' in the cited paper.'],
+      zh: ['只有计数：说明不了信号质量、神经来源或解码。没有任何分类器分数：任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长也互相矛盾——事件表中为 ', fig(g.event_duration_s.events_table, 's1', BS), '，光学数据文件中为 ',
+           fig(g.event_duration_s.optical_files, 's1', BS), '，所引论文中为 ', fig(g.event_duration_s.cited_paper, 's1', BS), '。'],
+    }],
+  };
+}
+
 /* --- Questions in language: route 3 (questions-in-language-update.json) ------------------------------------ */
 
 const QLDIFF: L = { en: 'Paired difference, language arm minus reference (pp)', zh: '配对差值，语言问法减参照（pp）' };
@@ -1191,6 +1594,34 @@ export const datasets: DatasetEntity[] = [
                'historical_decoder_velocity_imitation', 'constructed_raw_target_displacement_proxy'] as const).map(a => laterForenzoGroup(c, a))),
              { en: 'Continuous cursor tracking with a noninvasive BCI, across sessions', zh: '无创 BCI 的连续光标追踪，跨会话' },
              'Forenzo & He continuous-tracking EEG-BCI dataset'),
+  // The pilot-studies batch (pilot-studies-update.json, owner decisions of 2026-10-12): small pilots outside every
+  // leaderboard. A source has a page only while its export publishes it, so the BINGO and handwriting switches can hold
+  // them without rework.
+  ...(psReleased('orthosis-error-detection') ? [fromRights('orthosis-error-detection', psDataset('orthosis-error-detection'),
+      [orthosis64Group(), orthosis58Group(), orthosisEegptGroup()],
+      { en: 'Injected orthosis device errors against standard device events, EEG only: one cohort in three configurations', zh: '注入的矫形器设备错误与标准设备事件，仅用 EEG：同一队列的三种配置' },
+      'Orthosis error-detection dataset (Kueper et al. 2024)')] : []),
+  ...(psReleased('bingo-imagined-speech') ? [{ ...fromRights('bingo-imagined-speech', psDataset('bingo-imagined-speech'), [bingoGroup()],
+      { en: 'Inner speech of 15 matched nouns in Greek and in English, across people and languages', zh: '希腊语与英语 15 个匹配名词的内部言语，跨被试、跨语言' },
+      'BINGO cross-linguistic inner-speech dataset'), rightsNote: 'bingo' as const }] : []),
+  ...(psReleased('eeg-fnirs-handwriting') ? [{ ...fromRights('eeg-fnirs-handwriting', psDataset('eeg-fnirs-handwriting'), [handwritingGroup()],
+      { en: 'Four released coded labels in an imagined-handwriting competition dataset, EEG only: a data-quality and methods case study', zh: '想象书写竞赛数据集中的四个已发布编码标签，仅用 EEG：一项数据质量与方法案例研究' },
+      'EEG-fNIRS-based Handwriting Trajectory Dataset'), rightsNote: 'handwriting' as const }] : []),
+  ...(psReleased('refed') ? [fromRights('refed', psDataset('refed'), [refedGroup()],
+      { en: 'Self-reported valence and arousal while watching videos: a stored-clip diagnostic', zh: '观看视频时自评的效价与唤醒度：一项存储片段诊断' },
+      'REFED emotion dataset (EEG-fNIRS)')] : []),
+  // The beyond-scalp batch (beyond-scalp-update.json): human fNIRS, one macaque's intracortical spiking and an fNIRS
+  // coverage check, each its own species, signal and metric. FALCON H2 and Rabut et al. are status only: no page.
+  ...(bsReleased('bak-fnirs') ? [{ ...fromRights('bak-fnirs', (beyond.datasets as any)['bak-fnirs'], [bakGroup()],
+      { en: 'Human fNIRS: right-hand, left-hand and foot tapping, a person left out at a time', zh: '人类 fNIRS：右手、左手手指敲击与脚部敲击，每次留出一名被试' },
+      'Bak et al. fNIRS finger- and foot-tapping dataset'), technique: 'Functional near-infrared spectroscopy', signal: { en: 'fNIRS', zh: 'fNIRS ' } }] : []),
+  ...(bsReleased('nlb-mc-rtt') ? [{ ...fromRights('nlb-mc-rtt', (beyond.datasets as any)['nlb-mc-rtt'], [nlbGroup()],
+      { en: 'One macaque’s motor-cortex spiking during self-paced reaching: finger velocity', zh: '一只猕猴自主伸手时运动皮层的神经元放电：手指速度' },
+      'MC_RTT (Neural Latents Benchmark)'), technique: 'Intracortical microelectrode array recording',
+    signal: { en: 'intracortical spiking', zh: '皮层内神经元放电' } }] : []),
+  ...(bsReleased('ds007420') ? [{ ...fromRights('ds007420', (beyond.datasets as any)['ds007420'], [opticalGroup()],
+      { en: 'Human fNIRS recordings: a numerical coverage check, no decoding', zh: '人类 fNIRS 记录：数值覆盖核查，不做解码' },
+      'OpenNeuro ds007420 · multi-distance fNIRS'), technique: 'Functional near-infrared spectroscopy', signal: { en: 'fNIRS', zh: 'fNIRS ' } }] : []),
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));
@@ -1227,16 +1658,19 @@ export const methods: MethodEntity[] = methodSlugs.map(slug => {
 export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as Record<MethodSlug, MethodEntity>;
 
 /**
- * Models listed in the directory that have no published result here, and why (status as
+ * Models listed in the directory that have no result in the core matrix or beside it, and why (status as
  * shown, directory-status.ts). REVE Base left this list on 2026-10-04 (evaluated in v9);
- * MIRepNet and EEG-DINO joined it as catalogue-only entries.
+ * MIRepNet and EEG-DINO joined it as catalogue-only entries. EEGPT stays (owner decision 2026-10-12): its one
+ * published comparison is a pilot outside every leaderboard, so its entry links that pilot (`page`) and gets no
+ * method page, and its core-matrix scores remain unpublished.
  */
-export const unmeasuredModels: { name: string; family: string; status: string; url?: string; released?: string; checked?: string }[] = [
+export const unmeasuredModels: { name: string; family: string; status: string; url?: string; released?: string; checked?: string;
+                                 page?: { path: string; label: L } }[] = [
   ...data.models.map(m => ({ m, shown: modelDirectoryStatus(m) })).filter(({ shown }) => !shown.status.startsWith('Evaluated'))
     .map(({ m, shown }) =>
       // An overridden status keeps the released one and its check date beside it.
       ({ name: m.name, family: m.family, status: shown.status, url: m.url ?? undefined,
-         released: shown.override?.released, checked: shown.override?.checked })),
+         released: shown.override?.released, checked: shown.override?.checked, page: shown.override?.page })),
   ...fmDirectory.filter(e => !e.models.length).map(e => ({ name: e.name, family: 'foundation', status: e.status })),
 ];
 

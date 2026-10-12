@@ -255,7 +255,7 @@ if (!umbrella?.version || !umbrella?.dateModified || !umbrella?.identifier || !r
 
 const llms = `# BCI Report
 
-> Public EEG decoding results, each reported with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and known limits. A personal, noncommercial research project; aggregate results only, never raw EEG or per-person scores.
+> Public EEG decoding results, plus first fNIRS and intracortical-spiking baselines, each reported with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and known limits. A personal, noncommercial research project; aggregate results only, never raw recordings or per-person scores.
 
 There is no overall ranking: a figure is comparable only with others under the same protocol. Every page states its cohort size and caveats next to the number, and every number is copied from a reviewed download listed below. Each link here is a Markdown copy; drop \`index.md\` for the HTML page. Chinese versions of every page except /data-use/ live under ${origin}/zh/.
 

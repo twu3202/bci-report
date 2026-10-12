@@ -1,0 +1,518 @@
+{
+  "release_id": "beyond-scalp-update-20261012",
+  "reviewed_at": "2026-10-12",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the non-scalp batch (handoff dated 11 October 2026 and its review), published on one page about measurements beyond scalp EEG. Its own manifest: it amends no earlier review and changes no released file. Three locally executed analyses are published as aggregates: a fixed hemodynamic classifier on the Bak 2019 fNIRS dataset (30 people, leave one whole person out), a fixed ridge decoder of finger velocity from intracortical spiking on MC_RTT (one macaque, one session, the stored training and validation trials), and a label-independent numerical coverage check of the ds007420 optical recordings (counts only). Two sources are status only, prepared and not scored: FALCON H2 human intracortical handwriting and the human functional ultrasound runs of Rabut et al. The ds007420 classifier is a hold. Species, modalities, tasks and metrics are never pooled and share no ranking; nothing joins the eight-protocol matrix; every result is this site's own experiment, not a score copied from a paper. The handoff, its review, the protocols, the preparation and freeze reviews and the independent result audits are pinned by SHA-256 and checked by the export, never copied, because they carry private storage paths. The rights evidence was read by this session from each source's official record and paper and is kept under evidence/beyond-scalp/.",
+  "approval": {
+    "date": "2026-10-12",
+    "decision": "aggregate_preview",
+    "basis": "The owner's request in chat on 2026-10-12: prepare the next site version from the handoff index and the files added to the project. Relayed by the workflow with it: two topic pages, one of them for the non-scalp batch (beyond scalp EEG), each with a home card and dataset pages per the site's convention; aggregate results only; a local build for the owner's preview before anything is deployed. The batch's own independent result audits make each aggregate release-eligible; this record is the publishing review on top of them, not a replacement.",
+    "decisionsOfThisReview": [
+      "MC_RTT is one macaque. The site publishes no score from a single person (the Stieger one-person pilot is status only for that reason); that rule protects people and does not carry over to a published animal dataset released under CC BY 4.0 and collected under institutional animal-care approval. The five validation metrics of the ridge and of the training-mean comparator are published, with the statement that every figure is that one animal's.",
+      "MC_RTT: all five metrics are published for both arms, including the mean absolute error on which the ridge is worse than the training mean. No interval is published: the validation rows are correlated samples from one animal and one session, and the analysis reports none.",
+      "Bak 2019: the participant-macro balanced accuracy with its descriptive participant-bootstrap interval, and the class recalls over all held-out predictions, are published for the classifier; the source prior's balanced accuracy and class recalls are published without an interval, because its interval is degenerate (it equals the mean). The pooled confusion matrices are not published.",
+      "Bak 2019 consent and ethics: the publisher's article page (mdpi.com) returned HTTP 403 Access Denied to this session's plain requests and to the fetch tool, and nothing was bypassed. The statement was read from the Internet Archive's capture of that article page dated 2023-07-31 (raw capture, pinned here; its citation_doi is the paper's DOI). This is flagged for the owner's preview. Setting this source's decision to \"hold\" publishes the standby hold kept below under the same id instead of its figures, without other changes.",
+      "ds007420: only whole-dataset counts of the label-independent numerical check are published; they are coverage measurements, not signal quality, neural origin, task validity or decoding evidence. The classifier is a hold.",
+      "FALCON H2 and Rabut fUS are status only: the preparation counts the handoff states are published (trials, files, symbols; runs and frames), and no score exists for either. Each has one human participant: a score from either would be that one person's, and publishing one would need its own decision.",
+      "The species and the modality are named on every entry. Human fNIRS, macaque intracortical spiking, human intracortical spiking and human functional ultrasound are separate measured quantities and are never ranked against each other or against scalp EEG."
+    ]
+  },
+  "notPublished": [
+    "Per-person, per-recording, per-channel, per-trial, per-fold and per-row values of any kind; the confusion matrices of the Bak classifier and comparator; participant, recording, file and session identifiers; recording dates.",
+    "Signals, features, predictions, model coefficients, normalization statistics, cue texts, label arrays, timestamps and images.",
+    "Measured compute and storage: stage runtimes, the acquisition totals and the free-space observations of the handoff. They are server measurements, not model throughput.",
+    "The handoff, its review, the protocols, the preparation and freeze reviews, the result audits and the readiness notes themselves: each is pinned by SHA-256 in this manifest and its pass or binding is checked by the export. They carry private storage paths and server names and are not copied.",
+    "Demographic tables from the original publications: ages, sex, handedness, diagnosis and the like.",
+    "Any score for FALCON H2, Rabut fUS or a ds007420 classifier: none exists. The batch's other candidate sources and the model strategy and next experiments of the handoff are not published."
+  ],
+  "holds": [
+    {
+      "id": "ds007420-classifier",
+      "statement": "No classifier score exists or is published for ds007420.",
+      "reason": "The numeric task codes have no verified lookup to hands or movements, the event durations disagree between the events table, the optical files and the cited paper, and the auxiliary sensor-clock holds stand; the optical coverage check does not repair any of them.",
+      "scope": "ds007420 decoding of any kind. Its optical coverage counts are published."
+    }
+  ],
+  "standbyHolds": [
+    {
+      "id": "bak-fnirs-loso",
+      "statement": "No Bak fNIRS result is published while its consent and ethics record is under the owner's review.",
+      "reason": "The statement was read from an Internet Archive capture of the publisher's article page, because the publisher refused this session's requests.",
+      "scope": "The Bak fNIRS result only; its dataset record stays listed."
+    }
+  ],
+  "datasets": [
+    {
+      "id": "bak-fnirs",
+      "name": "Bak 2019 fNIRS dataset · unilateral finger and foot tapping",
+      "species": "human",
+      "modality": "fNIRS",
+      "task": "Three-class executed movement: right-hand finger tapping, left-hand finger tapping and foot tapping; evaluated by leaving one whole person out",
+      "source": "https://doi.org/10.6084/m9.figshare.9783755.v2",
+      "version": "figshare record 9783755, version 2 (doi:10.6084/m9.figshare.9783755.v2, posted 2019-12-05), one archive, read from the figshare API on 2026-10-12. All 30 participants are used, with the supplied oxy- and deoxyhemoglobin series.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong · Open Access fNIRS Dataset for Classification of Unilateral Finger- and Foot-Tapping, figshare, doi:10.6084/m9.figshare.9783755.v2, CC BY 4.0. Paper: Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong, Open-Access fNIRS Dataset for Classification of Unilateral Finger- and Foot-Tapping, Electronics 8(12), 1486 (2019), doi:10.3390/electronics8121486. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The data paper states that the participants' written consent, approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01), was submitted before data recording, and that the experiments followed the Declaration of Helsinki. Published here: the participant-macro balanced accuracy of a fixed classifier and of a training-prior comparator over the 30 people, the classifier's descriptive participant-bootstrap interval, and class recalls over all held-out predictions. No per-person value, participant identifier, confusion matrix or demographic is published.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/9783755/versions/2",
+        "https://doi.org/10.3390/electronics8121486",
+        "https://web.archive.org/web/20230731121639/https://www.mdpi.com/2079-9292/8/12/1486/htm"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/figshare-9783755-v2.json",
+        "sha256": "a1b23961984015ffbe378d6c8a4346edaef282f226a35ae6d410aa5382c2c995",
+        "kind": "figshare",
+        "retrievedFrom": "https://api.figshare.com/v2/articles/9783755/versions/2",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "subjects": "human",
+        "source": "https://doi.org/10.3390/electronics8121486",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/beyond-scalp/wayback-20230731121639-mdpi-electronics-8-12-1486-htm.html",
+          "sha256": "0e5cb91b0808728b477bcd5e4244c100a5443d7bc966ac9eb059e4a4c1ff6da2",
+          "kind": "html",
+          "retrievedFrom": "https://web.archive.org/web/20230731121639id_/https://www.mdpi.com/2079-9292/8/12/1486/htm",
+          "retrievedAt": "2026-10-12",
+          "identifies": [
+            "<meta name=\"citation_doi\" content=\"10.3390/electronics8121486\">"
+          ]
+        },
+        "paperDoi": "10.3390/electronics8121486",
+        "section": "Section 2.1, Participants",
+        "ethics": "Approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01); the experiments followed the criteria of the Declaration of Helsinki.",
+        "consent": "The participants' written consent, approved by that board, was submitted before data recording.",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01)"
+          },
+          {
+            "statement": "consent",
+            "text": "Written consent from the participants"
+          }
+        ],
+        "readNote": "the Internet Archive capture of the publisher's article page dated 2023-07-31; the publisher returned HTTP 403 to this session"
+      },
+      "verification": [
+        "Licence: the figshare API record of version 2 (pinned here) names CC BY 4.0 with its URL, the DOI 10.6084/m9.figshare.9783755.v2, the four authors and one archive.",
+        "Consent and ethics: the paper's Section 2.1, read from the Internet Archive raw capture of the publisher's article page (pinned here; its citation_doi meta tag is 10.3390/electronics8121486). www.mdpi.com returned HTTP 403 Access Denied to this session's plain request and to the fetch tool on 2026-10-12; no other route to the publisher was tried. The page also states that the article is distributed under CC BY 4.0; the paper is cited, not reproduced.",
+        "The paper describes 30 volunteers and executed (not imagined) finger and foot tapping, 25 trials per class per person, which the batch's label audit confirmed against all 30 files."
+      ]
+    },
+    {
+      "id": "nlb-mc-rtt",
+      "name": "MC_RTT · macaque motor cortex during self-paced reaching (Neural Latents Benchmark)",
+      "species": "macaque (Macaca mulatta)",
+      "modality": "intracortical spiking",
+      "task": "Self-paced reaching to targets on an 8 x 8 grid; finger velocity decoded from sorted spiking activity in primary motor cortex, one animal in one session",
+      "source": "https://doi.org/10.48324/dandi.000129/0.241017.1444",
+      "version": "DANDI 000129, version 0.241017.1444 (doi:10.48324/dandi.000129/0.241017.1444, published 2024-10-17), read from the DANDI API on 2026-10-12. Only the training file is used, with its stored training and validation trials; the test file is not opened.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "O'Doherty, Joseph (2024) MC_RTT: macaque motor cortex spiking activity during self-paced reaching (Version 0.241017.1444) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000129/0.241017.1444, CC BY 4.0. Recorded by Joseph E. O'Doherty, Mariana M. B. Cardoso, Joseph G. Makin and Philip N. Sabes in the Sabes Lab at UCSF (Nonhuman Primate Reaching with Multichannel Sensorimotor Cortex Electrophysiology, Zenodo, doi:10.5281/zenodo.3854034; procedure: Makin et al., Journal of Neural Engineering 15(2), 026010 (2018), doi:10.1088/1741-2552/aa9e95). Prepared for the Neural Latents Benchmark: Felix Pei, Joel Ye et al., Neural Latents Benchmark '21: Evaluating latent variable models of neural population activity, NeurIPS 2021 Track on Datasets and Benchmarks, arXiv:2109.04463. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "Animal data: one rhesus macaque. The Neural Latents Benchmark paper states that all its datasets were collected under procedures approved by the Institutional Animal Care and Use Committees at the respective institutions, and that MC_RTT was collected in the Sabes Lab at UCSF. No human took part, so informed consent does not apply. Published here: five validation metrics of a fixed ridge decoder and of a training-mean comparator, with trial, neuron and row counts. With one animal, every figure is that animal's own. No coefficient, prediction or per-trial value is published.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://api.dandiarchive.org/api/dandisets/000129/versions/0.241017.1444/",
+        "https://zenodo.org/api/records/3854034",
+        "https://arxiv.org/abs/2109.04463"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/dandi-000129-0.241017.1444.json",
+        "sha256": "39f25ce27c51b62bbbdbc9ce4eedb8098ef589de251f681ce6f1d572a5257096",
+        "kind": "dandi",
+        "retrievedFrom": "https://api.dandiarchive.org/api/dandisets/000129/versions/0.241017.1444/",
+        "retrievedAt": "2026-10-12"
+      },
+      "sourceRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/zenodo-3854034.json",
+        "sha256": "270181509908e98ce404bc3e03c6eb748748c2310f934ea18af2ff031231dd25",
+        "kind": "zenodo",
+        "retrievedFrom": "https://zenodo.org/api/records/3854034",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "subjects": "animal",
+        "source": "https://arxiv.org/abs/2109.04463",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/beyond-scalp/arxiv-2109.04463v4-neural-latents-benchmark.txt",
+          "sha256": "07d6fafa9b91b0c6fedbeb85351e59539e053e06710dd2ab9ec30156a88ded96",
+          "kind": "text",
+          "retrievedFrom": "https://arxiv.org/pdf/2109.04463v4",
+          "retrievedAt": "2026-10-12",
+          "extractedFrom": {
+            "path": "research/publication_review_20261012/evidence/beyond-scalp/arxiv-2109.04463v4-neural-latents-benchmark.pdf",
+            "sha256": "bca1be0d92347da7f3dd7817d96f9355ac9ca945f15a96d5e3a8e5a4273d8e22"
+          },
+          "identifies": [
+            "Neural Latents Benchmark",
+            "MC_RTT",
+            "NeurIPS 2021) Track on Datasets and Benchmarks"
+          ]
+        },
+        "paperId": "arXiv:2109.04463",
+        "section": "Ethical considerations; Appendix, MC_RTT, Source",
+        "animalCare": "Collected under procedures and experiments approved by the Institutional Animal Care and Use Committees at the respective institutions; MC_RTT was collected in the Sabes Lab at UCSF.",
+        "consent": "Not applicable: animal data, no human participant.",
+        "quotes": [
+          {
+            "statement": "animal_care",
+            "text": "approved by the Institutional Animal Care and Use Committees at the respective institutions"
+          },
+          {
+            "statement": "source",
+            "text": "This dataset was collected by Joseph E. O’Doherty from the Sabes Lab at UCSF"
+          }
+        ]
+      },
+      "verification": [
+        "Licence: the DANDI API record of version 0.241017.1444 (pinned here) names spdx:CC-BY-4.0, one subject of the species Rhesus monkey, open access and the citation used in the attribution. Its ethicsApproval field is empty.",
+        "The Zenodo record the DANDI record cites as describing the data (pinned here) lists the four recording authors and CC BY 4.0, and carries no animal-care statement.",
+        "Animal care: the Neural Latents Benchmark paper (arXiv:2109.04463 version 4, pinned here as the PDF and its extracted text) states the IACUC basis for all its datasets and names the Sabes Lab at UCSF as the source of MC_RTT. The primary procedure paper (Makin et al. 2018) is not open access and was not read.",
+        "MC_RTT is the training and validation material of the Neural Latents Benchmark; the result here is a separate supervised diagnostic, not an official benchmark score."
+      ]
+    },
+    {
+      "id": "ds007420",
+      "name": "ds007420 · multi-distance fNIRS during ball squeezing and motion-artifact tasks",
+      "species": "human",
+      "modality": "fNIRS",
+      "task": "Resting state, left- and right-hand ball squeezing and instructed head and face movements; used here only for a label-independent numerical check of the optical values",
+      "source": "https://doi.org/10.18112/openneuro.ds007420.v1.0.5",
+      "version": "OpenNeuro ds007420, version 1.0.5 (doi:10.18112/openneuro.ds007420.v1.0.5); its dataset_description.json and README read from the OpenNeuro dataset mirror at tag 1.0.5 on 2026-10-12. All 60 recordings of the 12 participants.",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao · Open-access Multi-Distance fNIRS Dataset Generated During Ball-Squeezing and Motion-Artifact Induction Tasks, OpenNeuro, doi:10.18112/openneuro.ds007420.v1.0.5, CC0. The dataset asks to acknowledge: Gao, Y., Rogers, D., von Lühmann, A., Ortega-Martinez, A., Boas, D.A., & Yücel, M.A. (2023). Short-separation regression incorporated diffuse optical tomography image reconstruction modeling for high-density functional near-infrared spectroscopy. Neurophotonics, 10(2), 025007. https://doi.org/10.1117/1.NPh.10.2.025007. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The dataset description names the Institutional Review Board of Boston University (Protocol #4502), and the associated paper states that the study protocol was approved by that board and that all participants provided written informed consent. Published here: whole-dataset counts from a label-independent numerical check of the optical values. No decoding score, per-recording or per-channel value, participant identifier or demographic is published.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/dataset_description.json",
+        "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/README.md",
+        "https://europepmc.org/article/PMC/PMC10203730"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/openneuro-ds007420-1.0.5-dataset_description.json",
+        "sha256": "5be2a3080712af04dede4f090f2a32324c9c920a0bd9362521b270a1caeb4839",
+        "kind": "bids",
+        "retrievedFrom": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/dataset_description.json",
+        "retrievedAt": "2026-10-12"
+      },
+      "readmeRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/openneuro-ds007420-1.0.5-README.md",
+        "sha256": "f5f6ad542700365b5f3ed25f753767044d228d35b7fc820531c2bcb717ff95c9",
+        "kind": "text",
+        "retrievedFrom": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/README.md",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "subjects": "human",
+        "source": "https://europepmc.org/article/PMC/PMC10203730",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/beyond-scalp/europepmc-PMC10203730.xml",
+          "sha256": "c3ba5c5572c01b814a93fe76acb72f64914417927e833fde20c10a609ee12503",
+          "kind": "jats",
+          "retrievedFrom": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10203730/fullTextXML",
+          "retrievedAt": "2026-10-12",
+          "identifies": [
+            "<article-id pub-id-type=\"doi\">10.1117/1.NPh.10.2.025007</article-id>"
+          ]
+        },
+        "paperDoi": "10.1117/1.NPh.10.2.025007",
+        "section": "Section 3.2, Experimental Study Design",
+        "ethics": "Approved by the Institutional Review Board of Boston University (Protocol #4502, as the dataset description records it).",
+        "consent": "All participants provided written informed consent to take part in the study.",
+        "ethicsRecordText": "the Institutional Review Board of Boston University (Protocol #4502)",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "Study protocol was approved by the Institutional Review Board of Boston University"
+          },
+          {
+            "statement": "consent",
+            "text": "All participants provided written informed consent to take part in this study"
+          }
+        ]
+      },
+      "verification": [
+        "Licence: the dataset_description.json of version 1.0.5 (pinned here) declares License CC0, the DOI doi:10.18112/openneuro.ds007420.v1.0.5, the five authors, the publication to acknowledge and the EthicsApprovals entry quoted above; the README of the same tag repeats CC0 and 12 healthy adults.",
+        "Consent and ethics: the paper's Section 3.2, read from the Europe PMC full text of PMC10203730 (pinned here). The paper reports 11 resting recordings where this dataset version has 12; the dataset version is followed for counts, and the paper only for consent and ethics."
+      ]
+    },
+    {
+      "id": "falcon-h2",
+      "name": "FALCON H2 · human intracortical handwriting",
+      "species": "human",
+      "modality": "intracortical spiking",
+      "task": "Attempted handwriting of cued sentences by one participant, across recording days; prepared for a decoder, not scored",
+      "source": "https://doi.org/10.48324/dandi.000950/0.241029.1403",
+      "version": "DANDI 000950, version 0.241029.1403 (doi:10.48324/dandi.000950/0.241029.1403, published 2024-10-29), read from the DANDI API on 2026-10-12. The public files only; the challenge's private evaluation data are not part of the release.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Fan, Chaofei; Hahn, Nick; Kamdar, Foram; Avansino, Donald; Wilson, Guy; Hochberg, Leigh; Shenoy, Krishna V; Henderson, Jaime; Willett, Frank (2024) FALCON Benchmark H2: Human Handwriting iBCI (Version 0.241029.1403) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000950/0.241029.1403, CC BY 4.0. Described in: Plug-and-Play Stability for Intracortical Brain-Computer Interfaces: A One-Year Demonstration of Seamless Brain-to-Text Communication, NeurIPS 2023. Part of the FALCON benchmark. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The dataset description states that the participant gave informed consent and was enrolled in the BrainGate2 pilot clinical trial (ClinicalTrials.gov NCT00912041) under an FDA Investigational Device Exemption, with permission from the Institutional Review Boards of Stanford University (protocol #20804). Published here: status only, with trial, file and symbol counts from the preparation audit. No score exists; no neural value, cue text, recording date or participant detail is published.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/dandi-000950-0.241029.1403.json",
+        "sha256": "d0f7497d24af7732d02da766012b85c1d6bfd30aba478d8de18d1e70334db1f7",
+        "kind": "dandi",
+        "retrievedFrom": "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "subjects": "human",
+        "source": "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/beyond-scalp/dandi-000950-0.241029.1403.json",
+          "sha256": "d0f7497d24af7732d02da766012b85c1d6bfd30aba478d8de18d1e70334db1f7",
+          "kind": "dandi",
+          "retrievedFrom": "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/",
+          "retrievedAt": "2026-10-12",
+          "identifies": [
+            "10.48324/dandi.000950/0.241029.1403",
+            "FALCON Benchmark H2"
+          ]
+        },
+        "section": "DANDI record description and ethicsApproval field",
+        "ethics": "Permission from the Institutional Review Boards of Stanford University (protocol #20804); the BrainGate2 pilot trial ran under FDA Investigational Device Exemption #G090003 (ClinicalTrials.gov NCT00912041).",
+        "consent": "The participant gave informed consent and was enrolled in the BrainGate2 trial.",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "Permission was also granted by the Institutional Review Boards of Stanford University (protocol #20804)"
+          },
+          {
+            "statement": "consent",
+            "text": "gave informed consent and was enrolled in the BrainGate2 Neural Interface System clinical trial"
+          }
+        ]
+      },
+      "verification": [
+        "Licence: the DANDI API record of version 0.241029.1403 (pinned here) names spdx:CC-BY-4.0 and open access; its species is Homo sapiens.",
+        "Consent and ethics: the same record's description and its three ethicsApproval entries (the trial registration, the device exemption and the Stanford IRB protocol). The participant code the description uses is not published."
+      ]
+    },
+    {
+      "id": "rabut-fus",
+      "name": "Rabut et al. human functional ultrasound through a cranial window",
+      "species": "human",
+      "modality": "functional ultrasound imaging",
+      "task": "Functional ultrasound through an acoustically transparent cranial implant: drawing, guitar playing and speech or reading blocks against rest, one participant; prepared, not analyzed",
+      "source": "https://doi.org/10.22002/f3y3k-em558",
+      "version": "CaltechData record f3y3k-em558, version 1.0.0 (doi:10.22002/f3y3k-em558, published 2024-02-11), read from the CaltechData API on 2026-10-12. Only the human runs; the rodent and in-vitro data are not used.",
+      "license": "CC BY-NC 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "attribution": "Claire Rabut, Sumner Norman, Whitney Griggs, Kay Jann, Jonathan Russin, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro · Dataset for: A window to the brain: ultrasound imaging of human neural activity through an acoustically transparent cranial prosthetic, CaltechData, doi:10.22002/f3y3k-em558, CC BY-NC 4.0. Paper: Claire Rabut, Sumner L. Norman, Whitney S. Griggs, Jonathan J. Russin, Kay Jann, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro, Functional ultrasound imaging of human brain activity through an acoustically transparent cranial window, Science Translational Medicine 16, eadj3143 (2024), doi:10.1126/scitranslmed.adj3143. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The paper states that all procedures of the human study were approved by the Institutional Review Boards of the University of Southern California, Caltech (IR19-0902) and Rancho Los Amigos National Rehabilitation Hospital, and that the participant's consent was obtained. Published here: status only, with run and frame counts from the label audit. No image, score or participant detail is published. The dataset licence is noncommercial.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://data.caltech.edu/api/records/f3y3k-em558",
+        "https://www.vis.caltech.edu/documents/28341/scitranslmed.adj3143.pdf"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/beyond-scalp/caltechdata-f3y3k-em558.json",
+        "sha256": "60bcaebb0e365f5489756ec25f13e794786fe9e111e28120ef8bcca190c8f401",
+        "kind": "caltechdata",
+        "retrievedFrom": "https://data.caltech.edu/api/records/f3y3k-em558",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "subjects": "human",
+        "source": "https://www.vis.caltech.edu/documents/28341/scitranslmed.adj3143.pdf",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/beyond-scalp/vis-caltech-28341-scitranslmed.adj3143.txt",
+          "sha256": "ec536a606b222e53a4ae400e91b509d86a8dc18384270a65192843a88a47c6fa",
+          "kind": "text",
+          "retrievedFrom": "https://www.vis.caltech.edu/documents/28341/scitranslmed.adj3143.pdf",
+          "retrievedAt": "2026-10-12",
+          "extractedFrom": {
+            "path": "research/publication_review_20261012/evidence/beyond-scalp/vis-caltech-28341-scitranslmed.adj3143.pdf",
+            "sha256": "c6a0251b0476214e05378e9ebcdf43a38f3d291fab1a64e35ea45bcf2408705b"
+          },
+          "identifies": [
+            "10.1126/scitranslmed.adj3143",
+            "Rabut et al., Sci. Transl. Med. 16, eadj3143 (2024)"
+          ]
+        },
+        "paperDoi": "10.1126/scitranslmed.adj3143",
+        "section": "Materials and methods: Study design; Human participant",
+        "ethics": "Approved by the Institutional Review Boards of the University of Southern California, Caltech (IR19-0902) and Rancho Los Amigos National Rehabilitation Hospital.",
+        "consent": "The participant's consent was obtained.",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "approved by the Institutional Review Boards of the University of Southern California"
+          },
+          {
+            "statement": "consent",
+            "text": "We recruited and obtained consent"
+          }
+        ]
+      },
+      "verification": [
+        "Licence: the CaltechData API record (pinned here) names cc-by-nc-4.0 for version 1.0.0, public record and files, no active embargo; the nine personal creators are those of the attribution. The batch's label-verification note records the authors' analysis code as separately licensed GPL-3.0; that code is not used or redistributed here.",
+        "Consent and ethics: the final paper as posted by the Andersen lab at Caltech (pinned here as the PDF and its extracted text). The paper's demographic description of the participant is not published."
+      ]
+    }
+  ],
+  "batch": {
+    "handoff": {
+      "path": "research/non_scalp_expansion_20261010/Non-Scalp Baseline Results and Website Handoff.md",
+      "sha256": "be4f779596200315b42d79d153b5ab57f68166d276c3ac2b1432f18123c96f32"
+    },
+    "handoffReview": {
+      "path": "research/non_scalp_expansion_20261010/review/Non-Scalp Handoff Review.md",
+      "sha256": "360387565caff20743784cb5ba48cc1b119428f3a68203599e2d7bb50f87cbbf"
+    },
+    "handoffValidation": {
+      "path": "research/non_scalp_expansion_20261010/review/baseline-handoff-validation.json",
+      "sha256": "4f9262718d3893d2d038e9e9d00e824daeded08b42247f41d08a5a150ba836ce"
+    },
+    "analysisStage": {
+      "path": "research/non_scalp_expansion_20261010/state/analysis-stage.json",
+      "sha256": "20e8863103a9354636b12b3aff6dd936dc2470450540122077a22d3b9b0f7c20"
+    },
+    "verification": [
+      "The handoff validation record names the handoff's exact SHA-256, and the handoff review approves it for aggregate-only website preparation, with its wording correction applied at the parent closeout.",
+      "The analysis-stage record lists the three audited results, their audits and the two prepared-only sources, and agrees with the audits figure for figure."
+    ]
+  },
+  "sources": [
+    {
+      "id": "bak-fnirs-loso",
+      "dataset": "bak-fnirs",
+      "decision": "aggregate_preview",
+      "protocol": {
+        "path": "research/non_scalp_expansion_20261010/protocols/bak-fnirs-loso-v1.json",
+        "sha256": "3a01978f987e8e2d520315edcd72f5ba63b9b1397926ad9a8e650e63ae40d085"
+      },
+      "protocolReview": {
+        "path": "research/non_scalp_expansion_20261010/review/bak-baseline/Protocol Review.md",
+        "sha256": "70b3035da8a6522cea3395edb97cddf71443244deb44c8c76fe2305ad5c1c1f8"
+      },
+      "freezeReview": {
+        "path": "research/non_scalp_expansion_20261010/review/bak-baseline/freeze-review.json",
+        "sha256": "d74a9d48552362bef6e566a4b4b88642cf0a48de33ebe64ed45c4d21265b2bdf"
+      },
+      "implementation": {
+        "path": "research/non_scalp_expansion_20261010/code/bak_baseline.py",
+        "sha256": "825602f798a36f3db5c7f3b39a7f875b2cb61622af58ff55e3f071c9172ddad2"
+      },
+      "resultAudit": {
+        "path": "research/non_scalp_expansion_20261010/review/bak-baseline/result-audit.json",
+        "sha256": "8afe64f0d8fcdc459754c94983e85bb4bab92102865dc459d3af32e7dfd1f416"
+      },
+      "resultAuditNote": {
+        "path": "research/non_scalp_expansion_20261010/review/bak-baseline/Result Audit.md",
+        "sha256": "2444ab55e3876a54d373a038ccbd2144243eacca6ad8159b38018a5053aba0af"
+      },
+      "verification": [
+        "The result audit names the protocol, the implementation and the freeze review by SHA-256; all three are the pinned bytes, and the freeze review approved the same protocol and implementation before scoring.",
+        "Every figure published is the result audit's, which recomputed confusion tables, recalls and the bootstrap independently of the frozen scoring code; the handoff and the audit note state the same figures."
+      ]
+    },
+    {
+      "id": "nlb-mc-rtt-velocity",
+      "dataset": "nlb-mc-rtt",
+      "decision": "aggregate_preview",
+      "protocol": {
+        "path": "research/non_scalp_expansion_20261010/protocols/nlb-velocity-baseline-draft.json",
+        "sha256": "4cd5de91ac6120c3484da8bb93c2255dba8a9dde56714de4414f1c6efcf401b9"
+      },
+      "readinessNote": {
+        "path": "research/non_scalp_expansion_20261010/notes/NLB Label and Baseline Readiness.md",
+        "sha256": "5a84b31394a646195d6b20ec84daa61a59bb088a64910b403db5d9dc662bd480"
+      },
+      "preparationReview": {
+        "path": "research/non_scalp_expansion_20261010/review/nlb-baseline/preparation-review.json",
+        "sha256": "017ec45e42f7c796eb6f78738a36006dae7c09de1f0122a59d20cca8abe64aca"
+      },
+      "freezeReview": {
+        "path": "research/non_scalp_expansion_20261010/review/nlb-baseline/freeze-review.json",
+        "sha256": "c2bc49b46b2f2110eca3706487dbb4fb7455dab2d005e6420ab23b69bc5b3655"
+      },
+      "implementation": {
+        "path": "research/non_scalp_expansion_20261010/code/nlb_velocity_baseline.py",
+        "sha256": "a454a2e4d817f10f4da70420a16b1401c57d3d51d6266121461f5a14cafab3a6"
+      },
+      "auditor": {
+        "path": "research/non_scalp_expansion_20261010/code/audit_nlb_velocity_result.py",
+        "sha256": "4506814a140e638a0544aae2b596f29dbfd2514ea4cb1a9e36ac1ef2b06bb2a6"
+      },
+      "resultAudit": {
+        "path": "research/non_scalp_expansion_20261010/review/nlb-baseline/result-audit.json",
+        "sha256": "d929f8d7812ba37f6745ce260155de6e2908c79c695e249eb28c917074dfd7d2"
+      },
+      "verification": [
+        "The protocol file's historical name says draft; the preparation and freeze reviews bind its exact SHA-256 and the implementation's, so the executed specification is the pinned one.",
+        "The result audit names its auditor program by SHA-256 (pinned here); it reconstructed every feature and target row, checked the ridge normal equations and recomputed the metrics; every figure published is the audit's."
+      ]
+    },
+    {
+      "id": "ds007420-optical-coverage",
+      "dataset": "ds007420",
+      "decision": "aggregate_preview",
+      "readiness": {
+        "path": "research/non_scalp_expansion_20261010/protocols/ds007420-readiness.json",
+        "sha256": "ab81135e357e9dae852c4fc9816cd468fd61157cf910b6200a9f2cd6ea078eed"
+      },
+      "resultAudit": {
+        "path": "research/non_scalp_expansion_20261010/review/ds007420-optical-result-audit.json",
+        "sha256": "ddfb28926904fe23a7d21dc9ab34f796d79c6bb3ce8cdf926a7bf92b6280afd9"
+      },
+      "qualityNote": {
+        "path": "research/non_scalp_expansion_20261010/notes/ds007420 Optical Quality Findings.md",
+        "sha256": "ece0319c4485414ff7036c810c17b8a60684b790acff43a4a073c50f31de8897"
+      },
+      "labelNote": {
+        "path": "research/non_scalp_expansion_20261010/notes/ds007420 Label and Analysis Readiness.md",
+        "sha256": "165e325adaa0571e40c4316c06cea5caf1d9a5d9fac242a58a3bba66ed8bd261"
+      },
+      "verification": [
+        "The audit reconciled every channel count against recording totals and the aggregate; it did not repeat the raw-signal pass. The counts published are the audit's; the participant count, channels per recording and time points come from the pinned readiness record, and their product is the audited number of values."
+      ]
+    },
+    {
+      "id": "falcon-h2-preparation",
+      "dataset": "falcon-h2",
+      "decision": "status_only",
+      "readiness": {
+        "path": "research/non_scalp_expansion_20261010/protocols/h2-readiness.json",
+        "sha256": "afd08345b983855f815b7d6229a5ad666bb60c2f5c26c5b990eae0ab3233a10d"
+      },
+      "labelNote": {
+        "path": "research/non_scalp_expansion_20261010/notes/H2 Label and Analysis Readiness.md",
+        "sha256": "ff4ee3215f53036cc92683752c64b67101bde12bc2b73d765ffaa99741caafae"
+      },
+      "verification": [
+        "Preparation only: the readiness record states that no model was fitted and nothing was scored. The counts published are the readiness record's, and the analysis-stage record and the handoff state the same."
+      ]
+    },
+    {
+      "id": "rabut-fus-preparation",
+      "dataset": "rabut-fus",
+      "decision": "status_only",
+      "readiness": {
+        "path": "research/non_scalp_expansion_20261010/protocols/rabut-readiness.json",
+        "sha256": "900bedca961be217f40cff2e5a3e6dba638c9622a2d5a87239151e0d309961ae"
+      },
+      "labelNote": {
+        "path": "research/non_scalp_expansion_20261010/notes/Rabut Human Label Verification.md",
+        "sha256": "5015f5b8aaa66b8ca603f7413d4e32228fc69db8885a4f2ff3e4b8bae5b0dec1"
+      },
+      "verification": [
+        "Preparation only: no Doppler value was read, nothing was fitted or scored. The run and frame counts are the analysis-stage record's, and the label-verification note and the handoff state the same."
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@
       "name": "BCI Report"
     }
   ],
-  "description": "<p>Cohort-level EEG decoding results, each published with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and known limitations. No raw EEG, no per-participant scores, no model weights and no overall ranking.</p><p>The site, with every figure in context: <a href=\"https://bci.report/\">https://bci.report/</a>. The release log, with the SHA-256 of every file: <a href=\"https://bci.report/releases/\">https://bci.report/releases/</a>.</p><p>Cite BCI Report and the release you used (this archive’s version is the release id), and the upstream dataset each figure was computed on: every dataset page gives its credit, <a href=\"https://bci.report/datasets/\">https://bci.report/datasets/</a>.</p>",
+  "description": "<p>Cohort-level EEG decoding results, plus first fNIRS and intracortical-spiking baselines, each published with the protocol that produced it: cohort, electrode count, evaluation split, chance level, interval and known limitations. No raw recordings, no per-participant scores, no model weights and no overall ranking.</p><p>The site, with every figure in context: <a href=\"https://bci.report/\">https://bci.report/</a>. The release log, with the SHA-256 of every file: <a href=\"https://bci.report/releases/\">https://bci.report/releases/</a>.</p><p>Cite BCI Report and the release you used (this archive’s version is the release id), and the upstream dataset each figure was computed on: every dataset page gives its credit, <a href=\"https://bci.report/datasets/\">https://bci.report/datasets/</a>.</p>",
   "access_right": "open",
   "license": "cc-by-4.0",
   "notes": "The aggregate results in this archive are CC BY 4.0 (LICENSE-DATA): measurements this project produced. The code is under the MIT License (LICENSE). The EEG recordings the results were computed from are not included and keep their own licences and terms.",
@@ -21,7 +21,8 @@
     "motor imagery",
     "sleep staging",
     "EEG foundation models",
-    "LoRA"
+    "LoRA",
+    "fNIRS"
   ],
   "language": "eng",
   "related_identifiers": [
@@ -33,6 +34,10 @@
       "identifier": "https://huggingface.co/datasets/Twu31/bci-report",
       "relation": "isVariantFormOf",
       "resource_type": "dataset"
+    },
+    {
+      "identifier": "https://bingo-project.gr/datasets/",
+      "relation": "isDerivedFrom"
     },
     {
       "identifier": "https://doi.org/10.1038/s41597-021-01094-4",
@@ -79,6 +84,10 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://doi.org/10.18112/openneuro.ds007420.v1.0.5",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://doi.org/10.25452/figshare.plus.22671172.v5",
       "relation": "isDerivedFrom"
     },
@@ -87,11 +96,19 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://doi.org/10.48324/dandi.000129/0.241017.1444",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://doi.org/10.5281/zenodo.2605110",
       "relation": "isDerivedFrom"
     },
     {
       "identifier": "https://doi.org/10.5281/zenodo.2605205",
+      "relation": "isDerivedFrom"
+    },
+    {
+      "identifier": "https://doi.org/10.5281/zenodo.8345429",
       "relation": "isDerivedFrom"
     },
     {
@@ -107,11 +124,23 @@
       "relation": "isDerivedFrom"
     },
     {
+      "identifier": "https://doi.org/10.6084/m9.figshare.9783755.v2",
+      "relation": "isDerivedFrom"
+    },
+    {
       "identifier": "https://figshare.com/articles/dataset/An_Open_Dataset_for_Wearable_SSVEP-Based_Brain-Computer_Interfaces/13560281",
       "relation": "isDerivedFrom"
     },
     {
       "identifier": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+      "relation": "isDerivedFrom"
+    },
+    {
+      "identifier": "https://huggingface.co/datasets/REFED2025/REFED-dataset",
+      "relation": "isDerivedFrom"
+    },
+    {
+      "identifier": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
       "relation": "isDerivedFrom"
     },
     {

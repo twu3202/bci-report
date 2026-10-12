@@ -43,12 +43,14 @@ interface Props {
   ticks: [string, string, string, string, string];
   /** A dashed line: chance level, or zero for a difference. */
   reference?: number;
+  /** What the axis measures, printed under the row labels beside the ticks (the pilot studies' handwriting charts). */
+  axisLabel?: string;
   caption: string;
   /** Reading key: what the dot, the line and the dashed line are. */
   legend: string;
   id?: string;
 }
-const { rows, domain, ticks, reference, caption, legend, id } = Astro.props;
+const { rows, domain, ticks, reference, caption, legend, id, axisLabel } = Astro.props;
 const [lo, hi] = domain;
 const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).toFixed(2);
 ---
@@ -69,7 +71,7 @@ const x = (v: number) => (Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 100).
       </div>
     ))}
     <div class="ip-row ip-axis" aria-hidden="true">
-      <div class="ip-label"></div>
+      <div class="ip-label">{axisLabel}</div>
       <div class="ip-ticks">{ticks.map((t, i) => <span class={`t${i}`}>{t}</span>)}</div>
       <div class="ip-value"></div>
     </div>

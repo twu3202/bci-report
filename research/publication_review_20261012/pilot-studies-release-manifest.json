@@ -1,0 +1,598 @@
+{
+  "release_id": "pilot-studies-update-20261012",
+  "reviewed_at": "2026-10-12",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the paired-biosignal batch’s completed pilots (handoff index status checked 2026-10-12), published together on one topic page of small pilots that stay outside every leaderboard and model ranking. Its own manifest: it amends no earlier review and changes no released file. Orthosis (Zenodo 8345429): one cohort of 8 people, 83 runs and 2,407 events, published as three results — the 64-channel classical baseline, the matched 58-channel classical configuration and frozen EEGPT against that matched configuration — counted once. BINGO (Greek and English inner speech): a cross-person, cross-language spectral-ridge pilot near its prior. Handwriting (EEG-fNIRS competition dataset, EEG only): the mask-aware analysis, published as aggregates by the owner’s decision with its rights gap stated: no ethics-approval or informed-consent statement was found. REFED: the stored-clip computational diagnostic. Status only, with no figure: Orthosis EMG, TinyMyo and EEG–EMG fusion; handwriting fNIRS and fusion; REFED physiological and fusion evaluation; the meditation dataset. The website inputs are the approved aggregate export JSONs only; the handoffs, approvals, QA records and independent audits they cite are pinned by SHA-256 and checked by the export, never copied, because they carry private storage paths. Rights evidence was read by this session from each source’s official record and is kept under evidence/ (git-ignored), pinned here.",
+  "approval": {
+    "date": "2026-10-12",
+    "decision": "aggregate_preview",
+    "basis": "The owner’s request in chat on 2026-10-12, relayed by the workflow: prepare the next site version from the handoff index and the new project files. Owner decisions relayed with it: a pilot-studies topic page with a home card, all four pilots outside leaderboards and rankings; publish the Orthosis frozen-EEGPT versus matched 58-channel comparison from its approved export, with the EEGPT checkpoint licence unresolved and no weights distributed; publish BINGO’s aggregates with its rights stated exactly (working default, confirmed at preview), as a single switch; local build only, preview before any deployment. A later owner decision of the same day, relayed by the workflow: publish the handwriting aggregates and state the gap honestly — no ethics-approval or informed-consent statement was found. Each source’s own final approval record approves its aggregate export; this record is the publishing review on top of those, not a replacement for them.",
+    "decisionsOfThisReview": [
+      "Orthosis: the three results are one cohort (8 people, 83 runs, 2,407 events) and are never added to coverage. The 64-channel result stays; the 58-channel configuration and the EEGPT comparison are labelled as configurations of it. The 58-channel rows in the EEGPT export must equal the separately approved classical export exactly.",
+      "Orthosis: the response-clean subset is published as counts only (451 events, 446 errors, 5 standards, 3 people with both classes), as a caveat. Its scores are not published: with three people its bootstrap bounds can be one person’s value.",
+      "Orthosis 64-channel: the matched EEG-minus-confound mean is published without an interval (none was computed). Its range is the per-person extremes and is not published; how many of the 8 people had EEG above the confound follows from the audited all-positive flag.",
+      "Permutation and label-shuffle controls (Orthosis, BINGO, handwriting): the mean and the observed range (lowest and highest replicate mean) are published, labelled as ranges, not intervals. Individual replicates are not.",
+      "EEGPT: the aggregate comparison is published under the 2026-10-12 parent approval and the finalization that binds the approved export. Its code licence (Apache-2.0) covers the repository’s source code only; the checkpoint’s licence is unresolved and no original or converted weights are distributed. Core-matrix EEGPT outputs were not opened, and the core-matrix held cells are unchanged.",
+      "BINGO (owner decision 3, working default to be confirmed at preview): published with its rights as they stand — no licence stated by the source; consent from the project’s public deliverable D3.1 version 3.0, stated for its NATO-alphabet recordings in the same CERTH laboratory; no ethics-approval reference published. sources[bingo-cross-language].publication is the switch: status_only holds it without rework. The documented preprocessing (ASR, FORCe) is printed beside the result, attributed to D3.1 version 2.0, not re-verified against the file.",
+      "Handwriting (owner decision, 2026-10-12): the mask-aware analysis is published as aggregates with its rights gap stated. No ethics-approval or informed-consent statement was found: the dataset card declares CC BY-NC-SA 4.0 and gated access and has none; a participating team’s challenge paper (arXiv:2608.03176v2), which identifies the competition as the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge, has none and states no dataset licence; and the organisers’ paper it cites is listed there as forthcoming and was not found published (checked 2026-10-12). The gap is stated once in full in the page credits and on /data-use/, with a short pointer beside the result, and is to be rechecked when the organisers’ paper appears. Like BOAS (7 October) and BINGO (this review), it is an owner decision on stated gaps; BNCI2015-001’s hold of 2026-09-20 is unchanged, because its review turns on its CC BY-NC-ND catalogue licence as well. sources[handwriting-mask-aware].publication remains the switch: status_only holds it again without rework. The earlier analysis is context only and never a second cohort.",
+      "Handwriting, five people: the means, the descriptive person-bootstrap intervals of the relative-EEG, elapsed-time and mask-plus-time arms, the three paired contrasts, the label-shuffle means with observed ranges, the availability histogram over trials and the cohort counts are published. The mask-only control’s interval is not: at five people its bounds would show individual people’s scores. The training-majority control scores chance for every person by construction, as Orthosis’s prior does. No other bound is one person’s score: each is a percentile of resampled five-person means.",
+      "REFED: the export’s “pending parent handoff approval” status is resolved by the handoff check, which binds the same handoff, export and result-audit hashes. Only the primary equal-axis mean absolute error is published; per-axis errors and RMSE stay out.",
+      "BINGO: the project’s own subject-independent result on its NATO-alphabet dataset (D3.1 version 3.0) is published as the project’s result, labelled and kept apart from ours."
+    ]
+  },
+  "handoffIndex": {
+    "path": "research/paired_biosignal_pilots_20261011/Website Update Handoff Index.md",
+    "sha256": "ad56f3d5cae71277d8de17f01e4dfad81c0635851e420d40dac4da19a504cf45"
+  },
+  "remainingGates": {
+    "path": "research/paired_biosignal_pilots_20261011/state/remaining-scientific-gates.json",
+    "sha256": "517e005b0a12e909627952212f6682632038cef8645dc73b94ffccb9f46d9b8b"
+  },
+  "notPublished": [
+    "Per-person, per-field, per-folder, per-clip and per-record values of any kind: the Orthosis matched EEG-minus-confound range, every per-person minimum and maximum, per-fold scores. How many people or fields did better is published where an audited flag implies it; which ones is not.",
+    "The Orthosis response-clean subset scores (only its counts are published), and every secondary paired difference.",
+    "The individual permutation and label-shuffle replicates: their mean and observed range are published.",
+    "BINGO mean confusion matrices and per-replicate shuffle intervals; handwriting pooled metrics, per-class recall and confusion matrices, and the mask-only control’s bootstrap interval, whose bounds would show individual people’s scores; REFED per-axis errors, RMSE and combined RMSE.",
+    "Participant, field, folder, session, clip, video, file and run identifiers, labels, targets, features, embeddings, predictions, fitted parameters and checkpoints, and every source file. EEGPT weights, original or converted, are not distributed.",
+    "Measured compute: wall times, memory and process counts from every handoff and audit.",
+    "Demographics from the source publications.",
+    "The handoffs, approval and finalization records, QA records, release decisions and independent audits themselves: each is pinned by SHA-256 in this manifest and its verdict and binding are checked by the export. They carry private storage paths and are not copied. Candidate exports named *-candidate.json were not opened."
+  ],
+  "statusOnly": [
+    {
+      "id": "orthosis-emg-tinymyo-fusion",
+      "statement": "No EMG, TinyMyo or EEG–EMG fusion result exists for the Orthosis dataset.",
+      "reason": "The exact clock anchors between the EMG sample rows and the EEG events, the latency and end points, and the meaning and units of the exported columns are not established. A nominal sampling rate alone does not establish the labels.",
+      "scope": "Orthosis error-detection dataset: EMG and paired EEG–EMG analyses"
+    },
+    {
+      "id": "handwriting-fnirs-fusion",
+      "statement": "No fNIRS or EEG–fNIRS fusion result exists for the handwriting dataset.",
+      "reason": "The optical species and column meanings, their units and a verified clock between the two modalities are not established.",
+      "scope": "EEG-fNIRS handwriting dataset: optical and fused analyses"
+    },
+    {
+      "id": "refed-physiological-fusion",
+      "statement": "No physiological or precisely aligned fusion evaluation exists for REFED beyond the stored-clip computational diagnostic.",
+      "reason": "Physical calibration, the crop boundaries, the mapping of the six optical components and paired timing are not established.",
+      "scope": "REFED: physiological, pointwise and fused analyses"
+    },
+    {
+      "id": "meditation-eeg-phase",
+      "statement": "No meditation EEG phase prediction or paired analysis exists.",
+      "reason": "An explicit association between events and records, and clock anchors, are missing. One inspected record has a constant marker column, and that finding is not generalised to the other records. In this dataset RR means heartbeat RR intervals, not respiratory rate.",
+      "scope": "Synchronized multimodal meditation and rest dataset (Zenodo): EEG phase labels and paired analyses"
+    }
+  ],
+  "datasets": [
+    {
+      "id": "orthosis-error-detection",
+      "name": "Orthosis error-detection EEG and EMG dataset (Kueper et al. 2024)",
+      "task": "Recorded injected orthosis device errors against standard device events, while an active orthosis moved the right arm in elbow flexion and extension; EEG only here",
+      "source": "https://doi.org/10.5281/zenodo.8345429",
+      "version": "Zenodo record 8345429 (doi:10.5281/zenodo.8345429), the third and latest version of concept record 7951043: the complete EEG and EMG dataset, read from the Zenodo API on 2026-10-12. EEG only is used: 64 channels at 500 Hz from 8 people.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Niklas Kueper, Kartik Chari, Judith Bütefür, Julia Habenicht, Tobias Rossol, Su Kyoung Kim, Marc Tabie, Frank Kirchner and Elsa Andrea Kirchner · EEG and EMG dataset for the detection of errors introduced by an active orthosis device (IJCAI’23 CC6 Competition), Zenodo, doi:10.5281/zenodo.8345429, CC BY 4.0. Paper: Niklas Kueper et al., EEG and EMG dataset for the detection of errors introduced by an active orthosis device, Frontiers in Human Neuroscience 18 (2024), doi:10.3389/fnhum.2024.1304311. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The data paper states that the study was approved by the Ethics Committee of the Department of Computer Science and Applied Cognitive Science of the Faculty of Engineering at the University of Duisburg-Essen, with no approval number given, and that the participants gave written informed consent. Published here: means over the 8 people with person-bootstrap intervals for three configurations of one cohort, the paired EEGPT-minus-classical difference with its interval, permutation-control means with their observed ranges, and cohort counts. No per-person value, participant or run identifier, response-clean subset score or demographic is published.",
+      "heldStatement": "Nothing is published from this source.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://zenodo.org/api/records/8345429",
+        "https://doi.org/10.3389/fnhum.2024.1304311",
+        "https://europepmc.org/article/PMC/PMC10839100"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/orthosis/zenodo-8345429.json",
+        "sha256": "ff965cc83666a7145b82825c3bd5d93a5fc6965997cbf99d7d4af419ea0967c9",
+        "kind": "zenodo_api",
+        "retrievedFrom": "https://zenodo.org/api/records/8345429",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "source": "https://europepmc.org/article/PMC/PMC10839100",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/orthosis/europepmc-PMC10839100.xml",
+          "sha256": "614367530bbbb14c74a943f4a56852cf89f1c893f271343c644f4cfb50bdeae1",
+          "kind": "europepmc_xml",
+          "retrievedFrom": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10839100/fullTextXML",
+          "retrievedAt": "2026-10-12"
+        },
+        "paperDoi": "10.3389/fnhum.2024.1304311",
+        "section": "Ethics statement; Methods, Participants",
+        "ethics": "Approved by the Ethics Committee of the Department of Computer Science and Applied Cognitive Science of the Faculty of Engineering at the University of Duisburg-Essen; no approval number is given.",
+        "consent": "The participants gave written informed consent and were told they could stop at any time.",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "The studies involving humans were approved by Ethics Committee"
+          },
+          {
+            "statement": "consent",
+            "text": "The participants provided their written informed consent to participate in this study"
+          }
+        ],
+        "names": [
+          "Department of Computer Science and Applied Cognitive Science",
+          "University of Duisburg-Essen"
+        ]
+      },
+      "verification": [
+        "Licence: the Zenodo API record of 8345429 (pinned here) names cc-by-4.0, the DOI 10.5281/zenodo.8345429, open access and the nine creators, and its version relation marks it the latest of concept record 7951043; its description asks users to cite the Frontiers paper.",
+        "Consent and ethics: the paper’s ethics statement and Participants section, read from the Europe PMC full text of PMC10839100 (pinned here); the short quotes and the committee’s name are checked against the pinned text by the export.",
+        "The handoffs’ acquisition record names CC-BY-4.0 for the same record; this review read the licence from Zenodo itself."
+      ]
+    },
+    {
+      "id": "bingo-imagined-speech",
+      "name": "BINGO cross-linguistic inner-speech EEG dataset (Greek and English)",
+      "task": "Inner speech of 15 matched nouns in Greek and in English, 15-class word classification on people the model was not trained on, within and across the two languages",
+      "source": "https://bingo-project.gr/datasets/",
+      "version": "Dataset 2, cross-linguistic inner speech elicitation, on the BINGO project’s datasets page (read on 2026-10-12; its access link leads to a sign-in, and the file analysed was supplied by the site owner, who confirmed this page as its source). Documented by the project’s public deliverable D3.1, version 2.0, linked from that page. 17 complete source-defined subject fields, 19 channels at 300 Hz.",
+      "license": "No licence stated",
+      "licenseUrl": "https://bingo-project.gr/datasets/",
+      "attribution": "BINGO (Brain Imagined-Speech Communication) project, CERTH · cross-linguistic inner-speech EEG dataset, https://bingo-project.gr/datasets/; no licence is stated by the source. Documentation: Fotis P. Kalaganis, Kostas Georgiadis, Maria Kyrou, Spiros Nikolopoulos and Ioannis Kompatsiaris, D3.1 – The BINGO Benchmarking Framework, version 2.0, public deliverable (2025), https://bingo-project.gr/download/397. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The source states no licence, and the cross-language dataset’s own documentation has no ethics-approval or consent statement. The project’s public deliverable D3.1, version 3.0, reports that participants signed a consent form; it says so for the project’s NATO-alphabet recordings in the same CERTH laboratory. No ethics-approval reference is published. Aggregates are published on that basis by the owner’s decision. Published here: means over the 17 source-defined subject fields with descriptive intervals, the cross-language contrast, controls and counts. No per-field value, field identifier, confusion matrix, prediction or source file is published, and no right to redistribute the data is implied.",
+      "heldStatement": "Nothing is published from this source. It states no licence, and the consent basis available is the project’s statement for its other dataset, recorded in the same laboratory.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://bingo-project.gr/datasets/",
+        "https://bingo-project.gr/download/397",
+        "https://bingo-project.gr/download/402"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/bingo/bingo-project-datasets-page.html",
+        "sha256": "8c5c03e04d86d1ec79d14b76bd8652e387974c2a73f46506d2263b430e5f883c",
+        "kind": "bingo_datasets_page",
+        "retrievedFrom": "https://bingo-project.gr/datasets/",
+        "retrievedAt": "2026-10-12"
+      },
+      "sourceDocuments": {
+        "deliverablesPage": {
+          "path": "research/publication_review_20261012/evidence/bingo/bingo-project-deliverables-page.html",
+          "sha256": "80c8e097a8990687e357c0fae07f3dcded26f3f209e2370413fa67438c9d5fb7",
+          "retrievedFrom": "https://bingo-project.gr/deliverables/",
+          "retrievedAt": "2026-10-12"
+        },
+        "datasetDocumentation": {
+          "title": "D3.1 – The BINGO Benchmarking Framework, version 2.0",
+          "url": "https://bingo-project.gr/download/397",
+          "dissemination": "Public (PU)",
+          "pdf": {
+            "path": "research/publication_review_20261012/evidence/bingo/D3.1_BINGO_BenchmarkingFramework_v2.pdf",
+            "sha256": "2da1aeb65d4ad0d82594e7672f34b0d2b51b321ad726baeae4808387b34ff4f4"
+          },
+          "text": {
+            "path": "research/publication_review_20261012/evidence/bingo/D3.1_BINGO_BenchmarkingFramework_v2.txt",
+            "sha256": "758376c7dd4afb7ace78c2250959516db7e3f78f07271464a430daf07f882fcd"
+          }
+        },
+        "consentDocument": {
+          "title": "D3.1 – The BINGO Benchmarking Framework, version 3.0",
+          "url": "https://bingo-project.gr/download/402",
+          "dissemination": "Public (PU)",
+          "pdf": {
+            "path": "research/publication_review_20261012/evidence/bingo/D3.1_BINGO_BenchmarkingFramework_v3.pdf",
+            "sha256": "e18ad0629ff70f337e0a3e716eca2409fdf803f79a67cd6b0cfd318647f054b5"
+          },
+          "text": {
+            "path": "research/publication_review_20261012/evidence/bingo/D3.1_BINGO_BenchmarkingFramework_v3.txt",
+            "sha256": "0af851975d876e0b2ccd693b6599d9aa7157e397e2dc25a2bc2b577d267207d4"
+          }
+        }
+      },
+      "consentEthics": {
+        "status": "owner_decision",
+        "source": "https://bingo-project.gr/download/402",
+        "section": "Section 2, BINGO dataset",
+        "ethics": null,
+        "ethicsNote": "No ethics-approval reference is published by the source.",
+        "consent": "The project’s public deliverable D3.1, version 3.0, states that each participant signed a consent form before the sessions. It says so for the project’s 20-participant NATO-alphabet dataset, recorded in the same CERTH laboratory; the cross-language dataset’s own documentation, D3.1 version 2.0, has no ethics or consent statement.",
+        "consentScope": "stated for the project’s NATO-alphabet dataset, not for the cross-language dataset",
+        "quotes": [
+          {
+            "statement": "consent",
+            "text": "After signing a consent form, each participant attended three experimental sessions"
+          }
+        ],
+        "ownerDecision": "Owner decision 3, 2026-10-12, relayed by the workflow: publish BINGO’s aggregates with its rights stated exactly; working default, confirmed at preview."
+      },
+      "verification": [
+        "Licence: the datasets page (pinned here) offers dataset 2 through an access link and links D3.1 version 2.0; its text carries no licence, terms, ethics or consent statement.",
+        "The two deliverables pinned here are byte-identical to the project’s own downloads: D3.1 version 2.0 at /download/397 and D3.1 version 3.0 at /download/402, fetched on 2026-10-12. Each text file is the pdftotext -layout extraction of its PDF and reproduces byte for byte.",
+        "Consent: D3.1 version 3.0 (Public), section 2, read on 2026-10-12; the quote is checked against the pinned text by the export. D3.1 version 2.0 has no consent, ethics or licence statement, also checked.",
+        "Preprocessing and protocol: D3.1 version 2.0, sections on the cross-linguistic protocol and on pre-processing and denoising; the statements are checked against the pinned text by the export."
+      ]
+    },
+    {
+      "id": "eeg-fnirs-handwriting",
+      "name": "EEG-fNIRS-based Handwriting Trajectory Dataset (Hugging Face)",
+      "task": "Four released coded labels in an imagined-handwriting competition dataset (the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge, as a participating team’s paper identifies it); EEG only here",
+      "source": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+      "version": "Revision 4036680b5fb0015472d55589da2f34c5a87a3c10, read from the Hugging Face API on 2026-10-12; gated: its files require accepting the uploader’s conditions. Five training participants, all nine sessions each.",
+      "license": "CC BY-NC-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "lasfk on Hugging Face · EEG-fNIRS-based Handwriting Trajectory Dataset, revision 4036680b5fb0015472d55589da2f34c5a87a3c10, CC BY-NC-SA 4.0 as declared on the dataset card, gated access. Derived analysis by BCI Report; not endorsed by the uploader.",
+      "privacyReview": "No ethics-approval or informed-consent statement was found; the aggregates are published with that gap stated, by the owner’s decision. Published here: means over the 5 people with descriptive person-bootstrap intervals (none for the mask-only control, whose bounds would show individual people’s scores), three paired contrasts, label-shuffle means with observed ranges, the channel-availability distribution over trials and cohort counts. No per-person value, identifier, label, prediction or source file is published, and no right to redistribute the data is implied.",
+      "heldStatement": "Nothing is published from this source. The dataset card declares a non-commercial share-alike licence and gated access, but no ethics-approval or informed-consent statement was found, on the card or in a participating team’s challenge paper, so no figure is published until that basis is established.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://huggingface.co/api/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset/revision/4036680b5fb0015472d55589da2f34c5a87a3c10",
+        "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+        "https://arxiv.org/abs/2608.03176v2"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/handwriting/hf-api-lasfk-handwriting-4036680b.json",
+        "sha256": "daf1d5f2b83ff150442cfe348962d6c3655892bc48d71f7e84f2fce37aaea065",
+        "kind": "huggingface_api",
+        "retrievedFrom": "https://huggingface.co/api/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset/revision/4036680b5fb0015472d55589da2f34c5a87a3c10",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "not_stated",
+        "source": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+        "record": {
+          "path": "research/publication_review_20261012/evidence/handwriting/hf-dataset-page-lasfk-handwriting.html",
+          "sha256": "5885e1a8078c398e603d9ad35e1fcddc33247ee5e1a36c6b180427957a0be52a",
+          "kind": "html_page",
+          "retrievedFrom": "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+          "retrievedAt": "2026-10-12"
+        },
+        "ethics": null,
+        "ethicsNote": "No ethics-approval statement was found: the dataset card has none, and a participating team’s challenge paper has none.",
+        "consent": null,
+        "consentNote": "No informed-consent statement was found: the dataset card has none, and a participating team’s challenge paper has none.",
+        "challengePaper": {
+          "title": "FRED: Frequency-Decorrelated Temporal Ensembles for EEG–fNIRS Imagined-Handwriting Decoding",
+          "authors": "Xiao Fan, Hongbin Guo, Yubo Han and Yi Zhang (Xidian University)",
+          "arxiv": "2608.03176v2",
+          "url": "https://arxiv.org/abs/2608.03176v2",
+          "competition": "the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge",
+          "abstractPage": {
+            "path": "research/publication_review_20261012/evidence/handwriting/arxiv-2608.03176v2-abs.html",
+            "sha256": "bd1b97de396623127713589b811575bd1f9f2c939a64b07474561eb2115f9817",
+            "kind": "html_page",
+            "retrievedFrom": "https://arxiv.org/abs/2608.03176v2",
+            "retrievedAt": "2026-10-12"
+          },
+          "html": {
+            "path": "research/publication_review_20261012/evidence/handwriting/arxiv-2608.03176v2.html",
+            "sha256": "43aa0aa47030afa9d89237ff3595a6f12ddbaf544ed3b5bf71ca6eed072b895a",
+            "kind": "html_page",
+            "retrievedFrom": "https://arxiv.org/html/2608.03176v2",
+            "retrievedAt": "2026-10-12"
+          },
+          "pdf": {
+            "path": "research/publication_review_20261012/evidence/handwriting/arxiv-2608.03176v2.pdf",
+            "sha256": "7fd3b0294f145e63939cf5afa66ad5db74cb919089cfa00752e9cb3a39c32307",
+            "retrievedFrom": "https://arxiv.org/pdf/2608.03176v2",
+            "retrievedAt": "2026-10-12"
+          },
+          "text": {
+            "path": "research/publication_review_20261012/evidence/handwriting/arxiv-2608.03176v2.txt",
+            "sha256": "26904db493e5767033a91cb818484a5e5c9452cd4b3dbaac7ac2ab207f2bb28d",
+            "kind": "pdf_text"
+          },
+          "quotes": [
+            {
+              "statement": "competition",
+              "text": "The ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge instantiates this setting"
+            },
+            {
+              "statement": "split",
+              "text": "twenty labelled training participants, and ten unseen test participants"
+            }
+          ],
+          "organisersPaper": {
+            "title": "Multimodal brain–computer interface grand challenge: EEG–fNIRS-based handwriting-trajectory classification",
+            "citation": "B. Chen, Z. Jia, R. Mark, J. Wang, T. Jiang, H. Huang, X. Zhou and J. Ma, “Multimodal brain–computer interface grand challenge: EEG–fNIRS-based handwriting-trajectory classification”, Proceedings of the ACM International Conference on Multimedia (2026)",
+            "status": "listed as forthcoming in the challenge paper; not found published when checked on 2026-10-12"
+          }
+        },
+        "gap": "No ethics-approval or informed-consent statement was found. The dataset card has none; a participating team’s challenge paper, which identifies the competition as the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge, has none; and the organisers’ paper is listed there as forthcoming. The aggregates are published with this gap stated, by the owner’s decision, to be rechecked when the organisers’ paper appears.",
+        "ownerDecision": "Owner decision, 2026-10-12, relayed by the workflow: publish the handwriting aggregates and state the gap honestly: no ethics-approval or informed-consent statement was found.",
+        "recheck": "when the organisers’ paper appears"
+      },
+      "verification": [
+        "Licence: the Hugging Face API record at the pinned revision (pinned here) names cc-by-nc-sa-4.0 in its card data and gated access; the raw card file itself needs an accepted gate (HTTP 401 without it), so the card was read as the dataset page renders it publicly.",
+        "Consent and ethics, the card: the rendered card (pinned here) has sections Overview, Files, Data Split, Labels, Important Notes, Recommended Usage and Example Submission File; it names no organisers and no paper, refers to “the competition” without a link, splits twenty training subjects from ten test subjects, and has no ethics or consent statement. Checked on 2026-10-12.",
+        "Consent and ethics, the challenge paper: arXiv:2608.03176v2 (abstract page, HTML and PDF pinned here, with the pdftotext -layout extraction of the PDF, which reproduces byte for byte), read in full on 2026-10-12. It identifies the competition as the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge, with twenty labelled training and ten unseen test participants and four classes, which matches the card’s split; it describes the challenge data as 27-channel EEG (its own EEG input sampled at 125 Hz) and four-channel fNIRS, not the 59 header-identified EEG channels at 1,000 Hz analysed here. It has no ethics, consent or dataset-licence statement (the HTML’s licence line is arXiv’s licence for the paper itself). The quotes and the absences are checked against the pinned text by the export.",
+        "The organisers’ paper the challenge paper cites (Chen et al., Proceedings of the ACM International Conference on Multimedia, 2026) is marked forthcoming there; a web search on 2026-10-12 found no published version.",
+        "Owner decision of 2026-10-12: published with this gap stated, to be rechecked when the organisers’ paper appears. BNCI2015-001, held on 2026-09-20 because its catalogue licence is CC BY-NC-ND and its description names no ethics approval, stays held: its review is separate."
+      ]
+    },
+    {
+      "id": "refed",
+      "name": "REFED: real-time dynamic labelled EEG-fNIRS emotion dataset (Ning et al. 2025)",
+      "task": "Continuous self-reported valence and arousal while watching videos; here a whole-clip mean-target regression diagnostic on stored EEG clips",
+      "source": "https://huggingface.co/datasets/REFED2025/REFED-dataset",
+      "version": "Hugging Face revision 0298355c2823946ac5800b2ec12a082bf2dcd01b, read from the Hugging Face API on 2026-10-12; gated: users agree to non-commercial use under CC BY-NC-SA and not to cause harm to human subjects. Two nominal participant folders with the same 15 videos: 30 stored EEG clips.",
+      "license": "CC BY-NC-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "Xiaojun Ning, Jing Wang, Zhiyang Feng, Tianzuo Xin, Shuo Zhang, Shaoqi Zhang, Zheng Lian, Yi Ding, Youfang Lin and Ziyu Jia · REFED: A Subject Real-time Dynamic Labeled EEG-fNIRS Synchronized Recorded Emotion Dataset, NeurIPS 2025 Datasets and Benchmarks Track. Data: REFED2025/REFED-dataset on Hugging Face, revision 0298355c2823946ac5800b2ec12a082bf2dcd01b, CC BY-NC-SA 4.0, gated. Derived analysis by BCI Report; not endorsed by the authors.",
+      "privacyReview": "The paper states that the local Institutional Review Board approved the study (its datasheet names IRB-CASIA) and that all participants gave informed consent to the recording of their physiological signals and ratings, for non-commercial research use. Published here: equal-axis mean absolute errors over the 30 stored clips for four fixed arms in two conditions, counts and the method. No per-folder, per-clip or per-video value, target, prediction or demographic is published.",
+      "heldStatement": "Nothing is published from this source.",
+      "reviewedAt": "2026-10-12",
+      "reviewBasis": [
+        "https://huggingface.co/api/datasets/REFED2025/REFED-dataset/revision/0298355c2823946ac5800b2ec12a082bf2dcd01b",
+        "https://papers.neurips.cc/paper_files/paper/2025/file/2bf0ed7c35d9d84128e7f7c72ab76402-Paper-Datasets_and_Benchmarks_Track.pdf"
+      ],
+      "licenseRecord": {
+        "path": "research/publication_review_20261012/evidence/refed/hf-api-refed-0298355c.json",
+        "sha256": "1d9825d65b53066da170e2b08e96962af2d283f5cbfe60337bb3951d1ed27c5c",
+        "kind": "huggingface_api",
+        "retrievedFrom": "https://huggingface.co/api/datasets/REFED2025/REFED-dataset/revision/0298355c2823946ac5800b2ec12a082bf2dcd01b",
+        "retrievedAt": "2026-10-12"
+      },
+      "consentEthics": {
+        "status": "stated",
+        "source": "https://papers.neurips.cc/paper_files/paper/2025/file/2bf0ed7c35d9d84128e7f7c72ab76402-Paper-Datasets_and_Benchmarks_Track.pdf",
+        "document": {
+          "path": "research/paired_biosignal_pilots_20261011/metadata/REFED_Subject_Real_time_Dynamic_Labeled_EEG_fNIRS_2025.pdf",
+          "sha256": "f656f10271c953bb00db1036a310fc4c82eb0afebdbeaa61d18fec21e1e32ce8"
+        },
+        "record": {
+          "path": "research/publication_review_20261012/evidence/refed/refed-neurips-2025-paper.txt",
+          "sha256": "cf29d1dac779389c108d72a79d704453d8aa6b9fea0bd4de87485d23b88a6f19",
+          "kind": "pdf_text",
+          "retrievedFrom": "pdftotext -layout of the pinned PDF",
+          "retrievedAt": "2026-10-12"
+        },
+        "paperTitle": "REFED: A Subject Real-time Dynamic Labeled EEG-fNIRS Synchronized Recorded Emotion Dataset",
+        "section": "Section 5, Ethical Considerations and Dataset Accessibility; datasheet; Appendix C",
+        "ethics": "Approved by the local Institutional Review Board; the paper’s datasheet names the approval IRB-CASIA.",
+        "consent": "All participants gave informed consent to the recording of their physiological signals and rating scales, and agreed that the data would be used only for non-commercial scientific research.",
+        "quotes": [
+          {
+            "statement": "ethics",
+            "text": "approved by the local Institutional Review Board"
+          },
+          {
+            "statement": "consent",
+            "text": "All participants provided informed consent for the recording of their physiological signals"
+          }
+        ],
+        "names": [
+          "IRB-CASIA"
+        ]
+      },
+      "verification": [
+        "Licence: the Hugging Face API record at the pinned revision (pinned here) names cc-by-nc-sa-4.0, gated access and the gate’s terms: agreement to use the dataset under CC BY-NC-SA for non-commercial use only and not to harm human subjects.",
+        "Consent and ethics: the NeurIPS 2025 paper, fetched from papers.neurips.cc on 2026-10-12, is byte-identical to the PDF the analysis session saved (pinned here); its text is the pdftotext -layout extraction, pinned too, and the quotes are checked against it by the export."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "orthosis-64ch-classical",
+      "dataset": "orthosis-error-detection",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/Orthosis EEG Baseline Website Update Handoff.md",
+        "sha256": "f0cd6c41628767072d56a86e1def2b5ef1328b3ab285b4134d6c0d3b7a2c45fa"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/orthosis-eeg-baseline-v1.json",
+        "sha256": "c0aeaabdfe530679a5c825447bdb78e5c7c9c9528d199aa35c7b4b1d7c31afa4"
+      },
+      "approval": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eeg-handoff-check.json",
+        "sha256": "a1810295f069193f967d38f756a874efd95413c37723b1a3fd531605c4c3ca6f"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eeg-result-audit.json",
+        "sha256": "27020dac236c3da7364b812221828c29889a6c28c65bfb75f4d4df0f4d88d31a"
+      },
+      "verification": [
+        "The handoff check approves the handoff and the export by these exact hashes, with no corrections.",
+        "The export’s primary rows, permutation series and matched EEG-minus-confound summary equal the independent result audit’s, and its scores hash is the audit’s.",
+        "Exclusion counts (8 baseline runs, 82 targets without a following movement, 1 window crossing a boundary) are stated only in the handoff, which is pinned for them."
+      ]
+    },
+    {
+      "id": "orthosis-58ch-classical",
+      "dataset": "orthosis-error-detection",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/Orthosis Frozen EEGPT Evaluation and Website Handoff.md",
+        "sha256": "fd5a89fb604bfc648326e2eb4719f51f2928d1e1c35eca263d9d1f3c3d411c0b"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/orthosis-matched58-classical-v1.json",
+        "sha256": "9ee443d5424ea7a40b86d3dfb3bb5d15a5e53e5ad7ad9e80c618abc0c213b4d7"
+      },
+      "approval": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eegpt-handoff-parent-approval.json",
+        "sha256": "a9cb77940ba092462fda420f8a93a651d844470099cc2b8e502c7134274b6210"
+      },
+      "releaseQa": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eegpt-handoff-release-qa.json",
+        "sha256": "1ad357c79d037e6f5be65704ff8e8c6dc8fe801a75727f37c70364697995da76"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eegpt-realdata-v1-result-audit.json",
+        "sha256": "e8430529dcef5f7a5d2224b0aea602784020189d44acfdede85c974d75f097d5"
+      },
+      "verification": [
+        "The parent approval binds this export (9ee443d5…), the handoff, the release QA and the independent result audit by hash; the release QA passed every check on the same hashes.",
+        "Every one of the export’s twelve rows equals the independent result audit’s row, and its permutation series equals the audit’s classical series.",
+        "The handoff’s private EEGPT paragraphs were superseded on 2026-10-12 by the EEGPT aggregate release; this source publishes the classical configuration only."
+      ]
+    },
+    {
+      "id": "orthosis-eegpt-vs-58ch",
+      "dataset": "orthosis-error-detection",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/EEGPT Aggregate Release Addendum.md",
+        "sha256": "1e169c7055f494e007e02de7eb0b55f5189ce3c7a3401f1a916eda174f05ffbd"
+      },
+      "decisionDocument": {
+        "path": "research/paired_biosignal_pilots_20261011/EEGPT Publication Decision and Dataset Gate Progress.md",
+        "sha256": "3e477c57b8edd0628ce35d6758f913620ac5fdcd6a15241d41e6f19250aa2a22"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/orthosis-eegpt-matched58-comparison-v1-approved.json",
+        "sha256": "201ac453a0f3985b727aca340dc0f6f69261c0e8425db81b90c39b4b99101591"
+      },
+      "auditedCandidate": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/orthosis-eegpt-matched58-comparison-v1.json",
+        "sha256": "e35032cc80d09ea7b4fa41c4266335f21380fe7ee3e3dc0abda947cd6f14b240"
+      },
+      "finalization": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-approved-export-finalization-20261012.json",
+        "sha256": "c2bde0658e7a04a27c6d05051dbf77f2889d7e157e4ca91b7ea8dff6651f24ec"
+      },
+      "parentApproval": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-release-parent-approval-20261012.json",
+        "sha256": "6fcece9c5160e49d7096af5fd1a4c43d0677c1b4db14691e642447086b911dbf"
+      },
+      "payloadQa": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-release-payload-qa-20261012.json",
+        "sha256": "a67ad71c2da686f59dcd83c5e86a2ffce0408342d24f16f713e48ef7e07335cd"
+      },
+      "releaseDecision": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-release-decision-20261012.json",
+        "sha256": "aa5a21096cfa77bd6e911e9085cdae63eaab4e9177d6829d5e5003393a464e7d"
+      },
+      "reassessment": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-publication-reassessment-20261012.json",
+        "sha256": "42fd8e695677cef56a3103d90b0ef55ce075ff4a5e2270ae88455bc64ddd5ce7"
+      },
+      "checkpointTerms": {
+        "path": "research/paired_biosignal_pilots_20261011/review/eegpt-checkpoint-terms-20261012.json",
+        "sha256": "09c6a143e0958b2504095a0b03ede905cf5759bd40375db7f6956f479e3698be"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/orthosis-eegpt-realdata-v1-result-audit.json",
+        "sha256": "e8430529dcef5f7a5d2224b0aea602784020189d44acfdede85c974d75f097d5"
+      },
+      "codeLicence": {
+        "path": "research/publication_review_20261012/evidence/pilot-models/EEGPT-repository-LICENSE-a0e0a8fad729.txt",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "retrievedFrom": "https://raw.githubusercontent.com/BINE022/EEGPT/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/LICENSE",
+        "retrievedAt": "2026-10-12"
+      },
+      "verification": [
+        "The finalization binds the approved export (201ac453…) to the audited payload (e35032cc…), the payload QA and the parent approval, and names the three administrative fields that differ; the export checks that exactly those three differ.",
+        "The parent approval binds the audited payload, the addendum, the QA, the release decision, the reassessment, the result audit, the earlier handoff and the 58-channel classical export by hash, and approves aggregate-only release with weights unresolved and not redistributable.",
+        "The fifteen rows and the paired difference equal the independent result audit; the four 58-channel and control arms equal the separately approved classical export exactly.",
+        "Code licence: the repository LICENSE at the pinned source revision, fetched on 2026-10-12, is Apache License 2.0 and byte-identical to the LICENSE the checkpoint-terms review recorded. It covers the repository code; the checkpoint’s own terms could not be read and are unresolved.",
+        "The auditedCandidate file is opened only to check the finalization’s three-field claim; it is not a *-candidate.json file and no figure is taken from it."
+      ]
+    },
+    {
+      "id": "bingo-cross-language",
+      "dataset": "bingo-imagined-speech",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "publicationSwitch": "released or status_only; owner decision 3, working default released, to be confirmed at preview",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/BINGO Cross-Language Pilot Website Handoff.md",
+        "sha256": "f14e02948f0e5a2f2638afc58ff874af6aef7374608769938520e89b8ea1e9cf"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/bingo-dimensionless-transfer-v1-approved.json",
+        "sha256": "df3dd3ce0acb218411f2d48c502f0e0795b1b58e85a97f3975a2de7d8ed43a0a"
+      },
+      "finalization": {
+        "path": "research/paired_biosignal_pilots_20261011/review/bingo-dimensionless-transfer-v1-release-finalization.json",
+        "sha256": "3e32f62be31a0f5381f644dd907c79ce31a594f5a1399687368211ba372be15e"
+      },
+      "payloadQa": {
+        "path": "research/paired_biosignal_pilots_20261011/review/bingo-dimensionless-transfer-v1-payload-qa.json",
+        "sha256": "93196860067017690412cff44c25d52895939cb390abe8c82b5d61d535b0b35c"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/bingo-dimensionless-transfer-v1-result-audit.json",
+        "sha256": "959c5096b2631dd0a14748490e4b004dd41db71462856904f7f3964b7f9f40b9"
+      },
+      "provenanceDecision": {
+        "path": "research/paired_biosignal_pilots_20261011/review/bingo-user-provenance-and-private-analysis-decision-20261012.json",
+        "sha256": "55fa4e14d91682543273881d946fa491d36ad24b3b010b376248cf1aab586de5"
+      },
+      "verification": [
+        "The finalization binds the approved export, the handoff, the payload QA and the independent result audit by hash and records that the numbers are unchanged from the QA’d payload.",
+        "The export names the same QA and audit, the payload QA names the same audit and provenance decision, and the QA’s confirmed two-decimal display values are recomputed by the export.",
+        "Counts no export carries (150 trials per language per held-out field, 2,400 training rows, the fit and checkpoint counts) are read from the pinned handoff."
+      ]
+    },
+    {
+      "id": "handwriting-mask-aware",
+      "dataset": "eeg-fnirs-handwriting",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "publicationSwitch": "released or status_only; released by the owner’s decision of 2026-10-12 with its rights gap stated; status_only holds it again without rework",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/Handwriting Mask-Aware EEG v2 Website Handoff.md",
+        "sha256": "5e7403c7c0297dc0935c6dabd5dba6c6d53e01aa12640c4bc600127db63b5c71"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/handwriting-mask-aware-v2-approved.json",
+        "sha256": "caccae63e5cacfed7199c13f977c1740b36634a427c96342d5871ecade10ddbe"
+      },
+      "finalization": {
+        "path": "research/paired_biosignal_pilots_20261011/review/handwriting-mask-aware-v2-release-finalization.json",
+        "sha256": "bd7938bb2ce27db7aeca7e13910347c5e5755f2fe333394ed56201db04f8e05d"
+      },
+      "payloadQa": {
+        "path": "research/paired_biosignal_pilots_20261011/review/handwriting-mask-aware-v2-payload-qa.json",
+        "sha256": "305ee3bc5e5e7d8b724c7e67787390271ff8f08ac47c254f7e66ee2d4f3638cf"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/handwriting-mask-aware-v2-result-audit.json",
+        "sha256": "c70715bbb133644a3cb219b76b2e4f630c4f0b7894bf58583dd62c45c43b6172"
+      },
+      "earlierHandoff": {
+        "path": "research/paired_biosignal_pilots_20261011/Handwriting EEG Pilot Website Update Handoff.md",
+        "sha256": "d8195fb50a9c994303697a9d594bffef7ce95c06dba7ccebae0acd3f67c877dc"
+      },
+      "earlierExport": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/handwriting-eeg-baseline-v1.json",
+        "sha256": "952f2a6f711bcba5dfe5367b6c2f1cce0e9485309b24f5e2a88e6bb070f4062b"
+      },
+      "earlierCheck": {
+        "path": "research/paired_biosignal_pilots_20261011/review/handwriting-eeg-handoff-check.json",
+        "sha256": "49aeba0af9c76fc6584a5ece87a857e20a28b43dccb5bad9571d2c887caa1749"
+      },
+      "earlierAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/handwriting-eeg-result-audit.json",
+        "sha256": "0199c7970feeda1cca9a43868a145f7f7ff3c72de56d0a63961d5388ac630627"
+      },
+      "verification": [
+        "The finalization binds the approved export and the final handoff, the payload QA and the independent result audit by hash; numerical results unchanged; official test signals and labels unused.",
+        "The earlier analysis’s handoff check binds its handoff, export and result audit by hash; it is context only, the same five people, never a second cohort."
+      ]
+    },
+    {
+      "id": "refed-stored-clip",
+      "dataset": "refed",
+      "decision": "aggregate_preview",
+      "publication": "released",
+      "handoff": {
+        "path": "research/paired_biosignal_pilots_20261011/REFED Stored-Clip Diagnostic Website Update Handoff.md",
+        "sha256": "4b773dab7ce69f8a5da8d8f44e7f157a70a0e833a2576408fbe5459866650343"
+      },
+      "export": {
+        "path": "research/paired_biosignal_pilots_20261011/exports/refed-stored-clip-regression-v1.json",
+        "sha256": "f9ecab0bf86303f1ed5e437e15519540898057d5b5e75296081fc2cba084b613"
+      },
+      "approval": {
+        "path": "research/paired_biosignal_pilots_20261011/review/refed-stored-clip-regression-handoff-check.json",
+        "sha256": "a2163fad1bafe78f3d6208fe981f5b6c4e4aa22d4d46a8b5340055b149d3534f"
+      },
+      "resultAudit": {
+        "path": "research/paired_biosignal_pilots_20261011/review/refed-stored-clip-regression-result-audit.json",
+        "sha256": "87b7ac61240820071d5b7735784ee94de2abdd395cb77c363b7dcd0e7159cf83"
+      },
+      "verification": [
+        "The handoff check binds the handoff, the export (f9ecab0b…) and the result audit by hash and states that it satisfies the export’s parent-approval requirement.",
+        "The result audit names the same export bytes and independently recomputed the pooled metrics, which the export compares with the published errors."
+      ]
+    }
+  ]
+}

@@ -356,6 +356,106 @@
     "https://doi.org/10.1093/pnasnexus/pgae145",
     "https://api.figshare.com/v2/articles/25360300/versions/1"
    ]
+  },
+  "orthosis-error-detection": {
+   "aliases": [
+    "EEG and EMG dataset for the detection of errors introduced by an active orthosis device",
+    "IJCAI'23 CC6 IntEr-HRI competition dataset",
+    "Zenodo 8345429",
+    "Kueper et al. (2024)"
+   ],
+   "summary_en": "The EEG and EMG dataset for the detection of errors introduced by an active orthosis device (Zenodo 8345429) holds recordings from eight healthy subjects whose right arm an active orthosis moved in elbow flexion and extension; during some movements an error was deliberately introduced, and the orthosis briefly moved the opposite way. EEG was recorded with a 64-channel system at 500 Hz, alongside eight-channel EMG. Prepared for the IJCAI 2023 competition CC6 (IntEr-HRI) and released in three versions, the third the complete dataset, by Niklas Kueper and colleagues (DFKI and the University of Duisburg-Essen) under CC BY 4.0; described in Frontiers in Human Neuroscience (2024). Only the EEG is used here.",
+   "summary_zh": "EEG and EMG dataset for the detection of errors introduced by an active orthosis device（Zenodo 8345429）收录 8 名健康被试的记录：主动矫形器带动被试右臂做肘关节屈伸，部分动作中会有意引入错误，矫形器随即短暂地朝相反方向运动。EEG 用 64 通道系统以 500 Hz 记录，同时记录 8 通道 EMG。数据为 IJCAI 2023 竞赛 CC6（IntEr-HRI）准备，分三个版本发布，第三版是完整数据集；由 DFKI 与 University of Duisburg-Essen 的 Niklas Kueper 等人以 CC BY 4.0 发布，并在 Frontiers in Human Neuroscience（2024）中描述。这里只用到 EEG。",
+   "facts_sources": [
+    "https://doi.org/10.5281/zenodo.8345429",
+    "https://doi.org/10.3389/fnhum.2024.1304311",
+    "https://zenodo.org/api/records/8345429"
+   ]
+  },
+  "bingo-imagined-speech": {
+   "aliases": [
+    "BINGO (Brain Imagined-Speech Communication)",
+    "BINGO cross-linguistic inner speech elicitation dataset",
+    "BINGO Dataset 2",
+    "D3.1 – The BINGO Benchmarking Framework"
+   ],
+   "summary_en": "The cross-linguistic inner-speech dataset of the BINGO (Brain Imagined-Speech Communication) project at CERTH is one of the two EEG datasets the project releases on its website. On each trial a participant saw one of 15 matched nouns, in Greek or in English, held it in memory through a countdown, and then said it silently during a 1.5-second inner-speech window; each item was repeated ten times, in fully randomised order. The project's public deliverable D3.1 describes the protocol and states that the same preprocessing, including artifact removal, was applied to both released datasets. The source states no licence. Only its complete subject records are used here.",
+   "summary_zh": "BINGO（Brain Imagined-Speech Communication）项目（CERTH）的跨语言内部言语数据集，是该项目在网站上发布的两个 EEG 数据集之一。每个试次中，被试看到 15 个经过匹配的名词之一（希腊语或英语），在倒计时期间把它保持在记忆中，然后在 1.5 秒的内部言语时间窗内默念；每个词重复 10 次，顺序完全随机。项目的公开交付文件 D3.1 描述了实验协议，并说明两个已发布的数据集采用相同的预处理，其中包括伪迹去除。数据源没有说明许可。这里只用到其中完整的被试记录。",
+   "facts_sources": [
+    "https://bingo-project.gr/datasets/",
+    "https://bingo-project.gr/download/397"
+   ]
+  },
+  "eeg-fnirs-handwriting": {
+   "aliases": [
+    "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge"
+   ],
+   "summary_en": "The EEG-fNIRS-based Handwriting Trajectory Dataset is the data release of an imagined-handwriting competition, posted on Hugging Face by the account lasfk: raw EEG and fNIRS recordings with trial tables, twenty labelled training participants and ten test participants, and four class labels mapped from released event codes. The card names no organisers and no paper; a participating team's challenge paper identifies the competition as the ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge. The card declares CC BY-NC-SA 4.0, behind a gate. Only the EEG of five training participants is used here, and the official test data are not.",
+   "summary_zh": "EEG-fNIRS-based Handwriting Trajectory Dataset 是一项想象书写竞赛的数据发布，由账户 lasfk 发布在 Hugging Face 上：原始 EEG 与 fNIRS 记录及试次表，20 名带标签的训练被试与 10 名测试被试，以及由已发布的事件编码映射而来的四个类别标签。数据集卡片没有写明组织方，也没有给出论文；一支参赛队伍的挑战赛论文指出，这项竞赛是 ACM MM 2026 Multimodal Brain-Computer Interface Grand Challenge。卡片声明的许可是 CC BY-NC-SA 4.0，访问需申请。这里只用到其中五名训练被试的 EEG，没有使用官方测试数据。",
+   "facts_sources": [
+    "https://huggingface.co/datasets/lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "https://arxiv.org/abs/2608.03176v2"
+   ]
+  },
+  "refed": {
+   "aliases": [
+    "REFED",
+    "A Subject Real-time Dynamic Labeled EEG-fNIRS Synchronized Recorded Emotion Dataset",
+    "REFED2025/REFED-dataset",
+    "Ning et al. (2025)"
+   ],
+   "summary_en": "REFED (A Subject Real-time Dynamic Labeled EEG-fNIRS Synchronized Recorded Emotion Dataset) holds simultaneously recorded EEG and fNIRS from 32 healthy participants watching 15 emotion-eliciting video clips, with valence and arousal annotated continuously, in real time, by the participants themselves. Released on Hugging Face by Xiaojun Ning, Ziyu Jia and colleagues under CC BY-NC-SA 4.0, behind a gate that asks users to agree to non-commercial use and to cause no harm to human subjects, and described at NeurIPS 2025 (Datasets and Benchmarks Track). Only stored EEG clips from two nominal participant folders are used here.",
+   "summary_zh": "REFED（A Subject Real-time Dynamic Labeled EEG-fNIRS Synchronized Recorded Emotion Dataset）收录 32 名健康被试观看 15 段诱发情绪的视频时同步记录的 EEG 与 fNIRS，效价与唤醒度由被试本人实时、连续地标注。由 Xiaojun Ning、Ziyu Jia 等人以 CC BY-NC-SA 4.0 发布在 Hugging Face 上，访问需申请并同意仅作非商业用途、不对人类被试造成伤害；数据集在 NeurIPS 2025（Datasets and Benchmarks Track）上描述。这里只用到两个标称被试文件夹中存储的 EEG 片段。",
+   "facts_sources": [
+    "https://huggingface.co/datasets/REFED2025/REFED-dataset",
+    "https://papers.neurips.cc/paper_files/paper/2025/file/2bf0ed7c35d9d84128e7f7c72ab76402-Paper-Datasets_and_Benchmarks_Track.pdf"
+   ]
+  },
+  "bak-fnirs": {
+   "aliases": [
+    "Open Access fNIRS Dataset for Classification of Unilateral Finger- and Foot-Tapping",
+    "figshare 9783755",
+    "fNIRS dataset for ternary classification",
+    "Bak et al. (2019)"
+   ],
+   "summary_en": "The open-access fNIRS dataset for classification of unilateral finger- and foot-tapping (figshare 9783755) holds functional near-infrared spectroscopy from 30 volunteers performing right-hand finger tapping, left-hand finger tapping and foot tapping, 25 trials of each, recorded with a three-wavelength multichannel system (LIGHTNIRS, Shimadzu) with eight sources and eight detectors placed around C3 and C4. Released by Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong (Korea University and Wonkwang University) under CC BY 4.0 and described in Electronics (2019). The supplied oxy- and deoxyhemoglobin series of all 30 participants are used here.",
+   "summary_zh": "单侧手指与脚部敲击分类的开放获取 fNIRS 数据集（figshare 9783755）收录 30 名被试的功能性近红外光谱（fNIRS）记录：任务为右手手指敲击、左手手指敲击与脚部敲击，每种 25 个试次；记录设备为三波长多通道系统（LIGHTNIRS，Shimadzu），8 个光源与 8 个探测器分布在 C3 与 C4 周围。由 Korea University 与 Wonkwang University 的 Sujin Bak、Jinwoo Park、Jaeyoung Shin 与 Jichai Jeong 以 CC BY 4.0 发布，并在 Electronics（2019）中描述。这里使用全部 30 名被试的氧合与脱氧血红蛋白序列。",
+   "facts_sources": [
+    "https://doi.org/10.6084/m9.figshare.9783755.v2",
+    "https://doi.org/10.3390/electronics8121486",
+    "https://api.figshare.com/v2/articles/9783755/versions/2"
+   ]
+  },
+  "nlb-mc-rtt": {
+   "aliases": [
+    "MC_RTT",
+    "Neural Latents Benchmark MC_RTT",
+    "DANDI 000129",
+    "macaque motor cortex spiking activity during self-paced reaching",
+    "O'Doherty et al. random target task"
+   ],
+   "summary_en": "MC_RTT (DANDI 000129) holds sorted spiking activity and behaviour from one rhesus macaque making self-paced reaches between targets drawn at random from an 8 × 8 grid, with no gaps or pre-movement delays, recorded by an electrode array implanted in primary motor cortex, together with finger, cursor and target position. Recorded by Joseph O'Doherty and colleagues in the Sabes Lab at UCSF, prepared for the Neural Latents Benchmark (Pei et al., 2021) and released on DANDI under CC BY 4.0. Only its stored training and validation trials are used here; its test file is not opened.",
+   "summary_zh": "MC_RTT（DANDI 000129）收录一只恒河猴自主节奏伸手够取目标时已分选的神经元放电与行为数据：目标从 8 × 8 网格中随机选取，两次伸手之间没有间隔，也没有动作前的延迟；放电由植入初级运动皮层的电极阵列记录，同时记录手指、光标与目标的位置。数据由 UCSF Sabes Lab 的 Joseph O'Doherty 等人记录，为 Neural Latents Benchmark（Pei et al., 2021）整理，以 CC BY 4.0 发布在 DANDI 上。这里只用到其中存储的训练与验证试次，没有打开测试文件。",
+   "facts_sources": [
+    "https://doi.org/10.48324/dandi.000129/0.241017.1444",
+    "https://arxiv.org/abs/2109.04463",
+    "https://doi.org/10.5281/zenodo.3854034"
+   ]
+  },
+  "ds007420": {
+   "aliases": [
+    "ds007420",
+    "Open-access Multi-Distance fNIRS Dataset Generated During Ball-Squeezing and Motion-Artifact Induction Tasks",
+    "Zhou et al. multi-distance fNIRS"
+   ],
+   "summary_en": "OpenNeuro ds007420 holds multi-distance, high-density fNIRS over the motor cortex from 12 healthy adults during a resting-state task, ball squeezing with both hands, and a motion-artifact task of six instructed movements (head tilts, raised eyebrows and saying “hello”), with accelerometer recordings. Released in BIDS format by Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao under CC0; the dataset asks users to acknowledge Gao et al., Neurophotonics (2023). Only a label-independent numerical check of its optical values is run here.",
+   "summary_zh": "OpenNeuro ds007420 收录 12 名健康成年被试运动皮层上方的多距离、高密度 fNIRS 记录：任务包括静息态、双手捏球，以及由 6 种指令动作（头部倾斜、扬眉、说“hello”）诱发运动伪迹的任务，并附加速度计记录。由 Shibo Zhou、De’Ja Rogers、David A. Boas、Meryem A. Yücel 与 Yuanyuan Gao 以 BIDS 格式、CC0 许可发布；数据集请使用者致谢 Gao 等人发表在 Neurophotonics（2023）上的论文。这里只对其光学数值做与标签无关的数值核查。",
+   "facts_sources": [
+    "https://doi.org/10.18112/openneuro.ds007420.v1.0.5",
+    "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/dataset_description.json",
+    "https://europepmc.org/article/PMC/PMC10203730"
+   ]
   }
  },
  "methods": {

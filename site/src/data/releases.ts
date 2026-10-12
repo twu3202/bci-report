@@ -14,12 +14,34 @@
  * carries the date of the newest update that changed it; keeping the history
  * stops a later update from rolling an earlier page's date back.
  */
+import { BINGO_HOLD, HANDWRITING_HOLD, bingoReleased, handwritingReleased } from './pilot-switch';
+
+// The pilots a switch holds (pilot-switch.ts), named as the release text names them; none while every switch releases.
+const pilotsHeld = [...(bingoReleased ? [] : ['bingo']), ...(handwritingReleased ? [] : ['handwriting'])];
+
 const protocols = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target', 'semantic-target', 'sleep-scalp'];
 // Every method page: the core methods' gained the Measured-on line on 2026-10-04, the v9 models' were
 // first published then. Listed here because entities.ts imports this module (no cycle).
 const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda', 'cca', 'fbcca', 'etrca',
   'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna'];
 export const siteUpdates = [
+  {
+    date: '2026-10-12',
+    // Two new questions in one version (owner decisions): beyond-scalp-eeg (fNIRS, macaque intracortical spiking, an
+    // fNIRS coverage check; two sources prepared, not scored) and pilot-studies (Orthosis in three configurations of
+    // one cohort, BINGO, the handwriting analysis, REFED; BINGO's and the handwriting dataset's pages only while their switches
+    // release them). Their pages, their cards on the home page and the Questions hub;
+    // the new dataset pages and the dataset index; /methods/, where EEGPT's directory card and its anchor say one
+    // pilot comparison is published (directory-status.ts) and the not-in-the-matrix list says what it lists; the new
+    // holds (the ds007420 classifier, and a pilot only while its switch holds it) on the home page and in the register;
+    // the release log, the API page and data use.
+    // does-pretraining-help gained one low-key pointer to the EEGPT comparison of the pilot studies (no figure).
+    paths: ['/', '/topics/', '/topics/beyond-scalp-eeg/', '/topics/pilot-studies/', '/topics/does-pretraining-help/',
+            '/datasets/', '/datasets/bak-fnirs/', '/datasets/nlb-mc-rtt/', '/datasets/ds007420/',
+            '/datasets/orthosis-error-detection/', ...(bingoReleased ? ['/datasets/bingo-imagined-speech/'] : []),
+            ...(handwritingReleased ? ['/datasets/eeg-fnirs-handwriting/'] : []), '/datasets/refed/',
+            '/methods/', '/releases/', '/api/', '/data-use/'],
+  },
   {
     date: '2026-10-08',
     // The later-sessions question (owner decision): its page; its card on the home page and the Questions hub, with
@@ -142,7 +164,8 @@ export interface Release {
   date: string;
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
-    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage';
+    | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage'
+    | 'beyondScalp' | 'pilotStudies';
   files: string[];
   pages: string[];
   summary: Text;
@@ -157,6 +180,55 @@ export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 
   'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
 
 export const releases: Release[] = [
+  {
+    id: 'pilot-studies-update-20261012', date: '2026-10-12', payload: 'pilotStudies',
+    files: ['pilot-studies-update.json'],
+    // Its own question page; /methods/ carries EEGPT's changed directory status (directory-status.ts), whose one
+    // published figure set is this batch's Orthosis comparison.
+    pages: ['/topics/pilot-studies/', '/methods/'],
+    summary: {
+      en: `Small pilots on four sources, each from its own approved aggregate export, all kept outside every leaderboard and model ranking. The Orthosis error-detection dataset (8 people, 83 runs, 2,407 recorded device events: one cohort, counted once) in three results: a 64-channel classical EEG baseline, the same baseline on the 58 channels EEGPT supports, and frozen EEGPT with the same fixed supervised probe against those matched classical features.${bingoReleased ? ' BINGO’s Greek and English inner speech (17 source-defined subject fields): a fixed spectral baseline across people and across languages, a negative result near its 15-class prior.' : ''}${handwritingReleased ? ' A mask-aware EEG analysis of an imagined-handwriting competition dataset (5 people, four released coded labels): with channels that sit flat at a digital rail masked, relative EEG is slightly above the training-majority control and above the missingness-mask and mask-plus-time controls, and not separated from elapsed time and trial order; a data-quality and methods case study, not handwriting recognition.' : ''} REFED (two nominal participant folders, 30 stored clips): a computational diagnostic in which simple source-only controls have smaller errors than EEG band power. ${pilotsHeld.length === 2 ? 'Two pilots are built and audited but held for their rights reviews, with no figure: BINGO’s Greek and English inner speech, and a mask-aware EEG analysis of a handwriting dataset. ' : pilotsHeld.length ? `${pilotsHeld[0] === 'bingo' ? 'BINGO’s Greek and English inner-speech pilot' : 'A mask-aware EEG analysis of a handwriting dataset'} is built and audited but held for its rights review. ` : ''}Nothing is pooled across datasets, configurations or conditions.`,
+      zh: `四个数据源上的小规模试点，每项都来自各自已批准的聚合导出文件，全部不进入任何排行榜或模型排名。Orthosis 错误检测数据集（8 名被试、83 个 run、2,407 个记录下来的设备事件：同一个队列，只计一次）给出三项结果：64 通道经典 EEG 基线、同一基线在 EEGPT 支持的 58 个通道上的配置，以及冻结的 EEGPT 加同样固定的有监督分类头、与这组匹配的经典特征的比较。${bingoReleased ? 'BINGO 的希腊语与英语内部言语（17 个按数据源定义的被试字段）：一个固定的频谱基线跨被试、跨语言的结果，是接近 15 类先验的阴性结果。' : ''}${handwritingReleased ? '一个想象书写竞赛数据集上的掩码感知 EEG 分析（5 名被试，四个已发布的编码标签）：屏蔽停在数字量程边界上的平直通道之后，相对频带功率 EEG 略高于训练集多数类对照，也高于只看缺失掩码的对照与掩码 + 时间的对照，但与经过时间与试次顺序的对照没有区分开；这是一项数据质量与方法案例研究，不是手写识别。' : ''}REFED（两个标称被试文件夹，30 个存储片段）：一项计算诊断，其中简单的、不用 EEG、只用训练集信息的对照，误差都比 EEG 频带功率小。${pilotsHeld.length === 2 ? '有两项试点已完成并通过审计，但因权利审查暂缓，不发布任何数字：BINGO 的希腊语与英语内部言语，以及手写数据集上的掩码感知 EEG 分析。' : pilotsHeld.length ? `${pilotsHeld[0] === 'bingo' ? 'BINGO 的希腊语与英语内部言语试点' : '手写数据集上的掩码感知 EEG 分析'}已完成并通过审计，但因权利审查暂缓。` : ''}不跨数据集、配置或条件合并。`,
+    },
+    notes: [
+      { en: 'EEGPT: the comparison is published from its approved export, after an independent check of that exact file. The earlier hold on EEGPT aggregate scores was this project’s own conservative choice, not a publisher’s rule; this pilot comparison is the only EEGPT figure published. The core-matrix EEGPT scores remain unpublished pending a separate review, the checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The paired interval spans zero, so neither arm is shown to be better, and the two are not shown to be equivalent. The probe is trained on the other seven people’s labels (supervised transfer, not zero-shot), and overlap with EEGPT’s pretraining data has not been excluded.',
+        zh: 'EEGPT：这项比较依据经批准的导出文件发布，发布前对这份文件做过独立核查。此前暂不发布 EEGPT 聚合分数，是本项目自己的保守选择，不是发布者的规定；这项试点比较是唯一发布的 EEGPT 数字。核心矩阵中的 EEGPT 分数仍不发布，有待另行审查；检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。配对区间跨过零，所以既不能说明哪一方更好，也不能说明两者等效。分类头用另外 7 名被试的标签训练（有监督迁移，不是零样本），也没有排除这个数据集出现在 EEGPT 预训练数据中的可能。' },
+      // BINGO follows its publication switch (pilot-switch.ts): its rights note while released, its hold while held.
+      ...(bingoReleased ? [
+        { en: 'BINGO: the source states no licence. Consent is as the project’s public deliverable D3.1 (version 3.0) reports it: signed consent forms, stated for the project’s NATO-alphabet recordings in the same CERTH laboratory; the cross-language dataset’s own documentation has no ethics or consent statement, and no ethics-approval reference is published. The aggregates are published on that basis by the owner’s decision. The project documents artifact cleaning (ASR and FORCe) on the continuous recordings before trials were cut; that statement is printed beside the result, attributed to D3.1 (version 2.0), and was not re-verified against the file. The project’s own result on its NATO-alphabet dataset is printed as reported by the project, not run here.',
+          zh: 'BINGO：数据源没有说明许可。知情同意按项目公开交付文件 D3.1（3.0 版）的表述：被试签署了知情同意书，但这句话针对的是该项目在同一个 CERTH 实验室记录的 NATO 字母表数据集；跨语言数据集自己的文档没有伦理或知情同意声明，也没有公布伦理批件编号。聚合结果依据所有者的决定，在此基础上发布。项目说明在切分试次之前，已在连续记录上用 ASR 与 FORCe 去除了伪迹；这句话印在结果旁边，注明出自 D3.1（2.0 版），没有对照数据文件重新核实。项目自己在 NATO 字母表数据集上的结果，按项目报告的原样列出，不是本站运行的。' },
+      ] : [
+        { en: 'BINGO: run and independently audited, and held by its publication switch, so no figure or dataset page is published. The source states no licence, the cross-language dataset’s own documentation has no ethics or consent statement, the only consent statement available is the project’s, for its NATO-alphabet recordings in the same CERTH laboratory, and no ethics-approval reference is published.',
+          zh: 'BINGO：已运行并通过独立审计，由它的发布开关暂缓，所以不发布任何数字，也没有数据集页面。数据源没有说明许可；跨语言数据集自己的文档没有伦理或知情同意声明；能找到的知情同意声明只有项目针对同一个 CERTH 实验室所记录的 NATO 字母表数据集的那一句；也没有公布伦理批件编号。' },
+      ]),
+      // The handwriting analysis follows its switch too: its rights line while released, its hold while held.
+      ...(handwritingReleased ? [
+        { en: 'Handwriting: published by the owner’s decision with its rights gap stated. No ethics-approval or informed-consent statement was found, on the dataset card or in a participating team’s challenge paper, and the organisers’ paper is listed as forthcoming; to be rechecked when it appears. The earlier analysis of the same five people is printed as context, not as a second cohort.',
+          zh: '手写：依据所有者的决定发布，并说明其权利缺口。在数据集卡片和一支参赛队伍的挑战赛论文中都没有找到伦理批准或知情同意声明，组织方的论文标注为即将发表；待其发表后重新核查。对同样五名被试较早的一次分析作为背景列出，不是第二个队列。' },
+      ] : [
+        { en: 'Handwriting: run and independently audited, and held by its publication switch, so no figure or dataset page is published. No ethics-approval or informed-consent statement was found, on the dataset card or in a participating team’s challenge paper.',
+          zh: '手写：已运行并通过独立审计，由它的发布开关暂缓，所以不发布任何数字，也没有数据集页面。在数据集卡片和一支参赛队伍的挑战赛论文中都没有找到伦理批准或知情同意声明。' },
+      ]),
+      { en: `Not published: per-person, per-field, per-folder, per-clip and per-record values; the Orthosis response-clean subset’s scores (its counts are published); individual permutation and label-shuffle replicates (their mean and observed range are published); confusion matrices; ${pilotsHeld.length ? `every figure of the held ${pilotsHeld.length === 2 ? 'BINGO and handwriting analyses' : `${pilotsHeld[0] === 'bingo' ? 'BINGO' : 'handwriting'} analysis`}; ` : ''}${handwritingReleased ? 'the handwriting mask-only control’s interval, because with five people its bounds would show individual people’s scores; ' : ''}and the handoffs, approval records and independent audits themselves, pinned by hash in the review manifest because they carry private storage paths. Status only, with no figure: Orthosis EMG, TinyMyo and EEG–EMG fusion; handwriting fNIRS and fusion; REFED physiological and fusion evaluation; and a meditation dataset, in which RR means heartbeat RR intervals, not respiratory rate.`,
+        zh: `不发布：逐人、逐字段、逐文件夹、逐片段与逐记录的数值；Orthosis“响应干净”子集的分数（只发布它的计数）；单次标签置换与标签打乱的结果（发布其均值与观察到的范围）；混淆矩阵；${pilotsHeld.length ? `暂缓的${pilotsHeld.length === 2 ? ' BINGO 与手写分析' : pilotsHeld[0] === 'bingo' ? ' BINGO 分析' : '手写分析'}的任何数字；` : ''}${handwritingReleased ? '手写分析中只看缺失掩码的对照的区间（只有五名被试，区间端点能反推出个人的分数）；' : ''}以及交接文件、批准记录与独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。只列状态、没有任何数字的：Orthosis 的 EMG、TinyMyo 与 EEG–EMG 融合；手写数据集的 fNIRS 与融合；REFED 的生理信号与融合评测；以及一个冥想数据集——其中 RR 指心跳的 RR 间期，不是呼吸频率。` },
+    ],
+  },
+  {
+    id: 'beyond-scalp-update-20261012', date: '2026-10-12', payload: 'beyondScalp',
+    files: ['beyond-scalp-update.json'],
+    // Its own question page, in the same site version as the pilot studies.
+    pages: ['/topics/beyond-scalp-eeg/'],
+    summary: {
+      en: 'Locally executed analyses beyond scalp EEG, each its own species, signal and metric: none is compared with scalp EEG, none joins the core matrix, and they share no ranking. Human fNIRS (Bak et al., 30 people): executed right-hand, left-hand and foot tapping classified by a fixed shrinkage LDA in a person left out of training, against a training-prior comparator. One macaque’s motor-cortex spiking (MC_RTT, prepared for the Neural Latents Benchmark; one session): x/y finger velocity decoded by a fixed ridge on held-out trials of the same session, against the training mean, on five metrics, including the one on which the ridge is worse. A numerical coverage check of human fNIRS recordings (ds007420, 12 people, 60 recordings): counts only, no decoding. Two sources are prepared and not scored: FALCON H2 human intracortical handwriting and Rabut et al. human functional ultrasound.',
+      zh: '在头皮 EEG 之外由本站在本地运行的分析，每项都有各自的物种、信号与指标：都不与头皮 EEG 比较，都不进入核心矩阵，彼此也不排名。人类 fNIRS（Bak 等人，30 名被试）：用固定的收缩 LDA，对训练时留出的被试区分右手、左手手指敲击与脚部敲击这三种实际动作，与训练集先验对照比较。一只猕猴运动皮层的神经元放电（MC_RTT，为 Neural Latents Benchmark 整理的数据；一次会话）：用固定的岭回归在同一次会话的留出试次上解码手指的 x/y 速度，与训练集均值对照比较，共五个指标，其中包括岭回归更差的那一个。人类 fNIRS 记录的数值覆盖核查（ds007420，12 名被试，60 段记录）：只有计数，没有解码。另有两个数据源已完成准备、尚未评分：FALCON H2 人类皮层内手写，以及 Rabut 等人的人类功能超声。',
+    },
+    notes: [
+      { en: 'Bak: the participant-macro balanced accuracy is well above the training prior, with a descriptive interval that resamples fixed participant scores (not a refit bootstrap). Executed movement, not motor imagery; offline over a 15-second window, and systemic or motion effects are not excluded. MC_RTT: not an official Neural Latents Benchmark score; with one animal every figure is that animal’s, and no interval is reported. ds007420: coverage counts say nothing about signal quality, and no classifier score exists, because its task codes have no verified lookup and its event durations disagree.',
+        zh: 'Bak：按被试平均的平衡准确率远高于训练集先验，描述性区间是对固定的逐人分数重抽样得到的（不是重新拟合的 bootstrap）。任务是实际动作，不是运动想象；离线分析，时间窗为 15 秒，也没有排除全身性生理或运动的影响。MC_RTT：不是 Neural Latents Benchmark 的官方分数；只有一只动物，每个数字都是这只动物的，也不报告区间。ds007420：覆盖计数说明不了信号质量；没有任何分类器分数，因为它的任务编码没有经过核实的对照表，事件时长的几处记录也互相矛盾。' },
+      { en: 'Licences, from each repository’s record: Bak CC BY 4.0, MC_RTT CC BY 4.0, ds007420 CC0, FALCON H2 CC BY 4.0, Rabut et al. CC BY-NC 4.0 (non-commercial). Bak’s ethics and consent statement was read from an Internet Archive capture of the publisher’s article page, because the publisher refused automated requests. MC_RTT is animal data collected under procedures approved by institutional animal care and use committees, so informed consent does not apply. Not published: per-person, per-recording, per-channel, per-trial and per-row values; confusion matrices; signals, features, predictions and coefficients; measured compute; demographics; and the handoff, reviews and independent audits themselves, pinned by hash in the review manifest because they carry private storage paths.',
+        zh: '许可来自各自数据仓库的记录：Bak 为 CC BY 4.0，MC_RTT 为 CC BY 4.0，ds007420 为 CC0，FALCON H2 为 CC BY 4.0，Rabut 等人的数据为 CC BY-NC 4.0（非商业）。Bak 的伦理与知情同意声明读自出版方文章页面在互联网档案馆的存档，因为出版方拒绝了自动化请求。MC_RTT 是动物数据，在各机构动物护理与使用委员会批准的程序下采集，因此不涉及知情同意。不发布：逐人、逐段记录、逐通道、逐试次与逐行的数值；混淆矩阵；信号、特征、预测与模型系数；实测的计算量；人口学信息；以及交接文件、审核记录与独立审计文件本身——它们含有私有存储路径，只在审核清单中以哈希固定。' },
+    ],
+  },
   {
     id: 'questions-in-language-update-20261008', date: '2026-10-08', payload: 'questionsInLanguage',
     files: ['questions-in-language-update.json', 'questions-in-language-wordings.json'],
@@ -406,6 +478,37 @@ export interface Hold {
 
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
+  // BINGO, while its publication switch holds it (pilot-switch.ts): the export's hold record, with no figure.
+  ...(bingoReleased ? [] : [{
+    id: BINGO_HOLD,
+    item: { en: 'BINGO inner-speech dataset · cross-language baseline', zh: 'BINGO 内部言语数据集 · 跨语言基线' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: '2026-10-12', closed: null,
+    outcome: { en: 'Run and independently audited. The source states no licence, the cross-language dataset’s own documentation has no ethics or consent statement, and the only consent statement available is the project’s, for its other dataset recorded in the same laboratory, so no figure is published.',
+               zh: '已运行并通过独立审计。数据源没有说明许可，跨语言数据集自己的文档没有伦理或知情同意声明，能找到的知情同意声明只有项目针对同一实验室记录的另一个数据集的那一句，所以不发布任何数字。' },
+    href: '/topics/pilot-studies/#bingo',
+  } satisfies Hold]),
+  // The handwriting analysis, while its publication switch holds it (pilot-switch.ts): the export's hold record, with no
+  // figure. Released by the owner's decision of 2026-10-12 with its rights gap stated, so it is not in the register.
+  ...(handwritingReleased ? [] : [{
+    id: HANDWRITING_HOLD,
+    item: { en: 'EEG-fNIRS handwriting dataset · mask-aware EEG', zh: 'EEG-fNIRS 手写数据集 · 掩码感知 EEG' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: '2026-10-12', closed: null,
+    outcome: { en: 'Run and independently audited. The dataset card declares a non-commercial share-alike licence and gated access, but no ethics-approval or informed-consent statement was found, on the card or in a participating team’s challenge paper, so no figure is published until that basis is established.',
+               zh: '已运行并通过独立审计。数据集卡片声明的是非商业、相同方式共享的许可，访问需申请，但无论在卡片上还是在一支参赛队伍的挑战赛论文中，都没有找到伦理批准或知情同意声明，所以在这一依据确立之前不发布任何数字。' },
+    href: '/topics/pilot-studies/#handwriting',
+  } satisfies Hold]),
+  // The beyond-scalp batch (beyond-scalp-update.json `holds`): decoding of any kind on ds007420; its coverage counts are published.
+  {
+    id: 'ds007420-classifier',
+    item: { en: 'ds007420 · fNIRS classifier', zh: 'ds007420 · fNIRS 分类器' },
+    state: { en: 'No score', zh: '没有分数' },
+    opened: '2026-10-12', closed: null,
+    outcome: { en: 'Its numeric task codes have no verified lookup to hands or movements, and its event durations disagree between the events table, the optical files and the cited paper, so no classifier was scored. Its optical coverage counts are published.',
+               zh: '它的数字任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长在事件表、光学数据文件与所引论文之间也互相矛盾，所以没有对任何分类器评分。它的光学数值覆盖计数已发布。' },
+    href: '/topics/beyond-scalp-eeg/#ds007420',
+  },
   {
     id: 'dreem-amplitude-sensitive-models',
     item: { en: 'Dreem sleep cohorts · neural-network and foundation models', zh: 'Dreem 睡眠队列 · 神经网络与基础模型' },

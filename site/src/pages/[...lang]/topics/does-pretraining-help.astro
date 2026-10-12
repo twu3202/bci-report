@@ -95,6 +95,7 @@ const copy = {
     ],
     exposureSources: (date: string) => `Pretraining lists, checked ${date}:`,
     laterPointer: ['Frozen CBraMod with a ridge readout is also read in another setting, a later session of the same person on WBCIC-SHU, with no random-initialization control there: ', ''] as const,
+    pilotPointer: ['Frozen EEGPT with a supervised probe is read against matched classical features in one small pilot, on recorded orthosis device errors, with no random-initialization control there: ', ''] as const,
     miTitle: 'MI / rest · OpenNeuro ds003810 v2.0.2',
     wlTitle: 'Mental workload · EEGMAT 1.0.0',
     physionetRecord: 'PhysioNet record ↗',
@@ -142,6 +143,7 @@ const copy = {
     ],
     exposureSources: (date: string) => `预训练数据清单（${date} 核查）：`,
     laterPointer: ['冻结 CBraMod 加岭回归分类头还在另一种情形下评测过：同一被试较晚的一次会话（WBCIC-SHU），那里没有随机初始化对照。见「', '」。'] as const,
+    pilotPointer: ['冻结的 EEGPT 加有监督分类头，在一项小规模试点中与匹配的经典特征做过比较（记录下来的矫形器设备事件），那里没有随机初始化对照。见「', '」。'] as const,
     miTitle: '运动想象 / 静息 · OpenNeuro ds003810 v2.0.2',
     wlTitle: '脑力负荷 · EEGMAT 1.0.0',
     physionetRecord: 'PhysioNet 记录 ↗',
@@ -223,6 +225,8 @@ const exposure = [...lb.urls.map(url => ({ label: 'LaBraM', url })), ...cb.urls.
     <p class="citation-note fm-core-exposure">{copy.exposureSources(checked)} {exposure.map((x, i) => <>{i > 0 && ' · '}<a href={x.url} target="_blank" rel="noreferrer" lang="en">{x.label} ↗</a></>)}</p>
     {/* One low-key pointer (owner decision): frozen CBraMod read in another setting, with no figure of it here. */}
     <p class="citation-note" data-later-pointer="true">{copy.laterPointer[0]}<a href={hrefFor('/topics/later-sessions/#wbcic-shu', locale)}>{topicCards[locale]['later-sessions'].question}</a>{copy.laterPointer[1]}</p>
+    {/* One low-key pointer (owner decision 1, 2026-10-12): frozen EEGPT in the pilot studies, with no figure of it here. */}
+    <p class="citation-note" data-pilot-pointer="true">{copy.pilotPointer[0]}<a href={hrefFor('/topics/pilot-studies/#orthosis', locale)}>{topicCards[locale]['pilot-studies'].question}</a>{copy.pilotPointer[1]}</p>
     <div class="citation-list">
       <article><h3>{copy.miTitle}</h3><p lang="en">Peterson et al. · CC0-1.0.</p><p><a href="https://doi.org/10.18112/openneuro.ds003810.v2.0.2" target="_blank" rel="noreferrer">{tc.datasetRecord}</a></p></article>
       <article><h3>{copy.wlTitle}</h3><p lang="en">Zyma et al. · Open Data Commons Attribution License 1.0.</p><p><a href="https://physionet.org/content/eegmat/1.0.0/" target="_blank" rel="noreferrer">{copy.physionetRecord}</a></p></article>

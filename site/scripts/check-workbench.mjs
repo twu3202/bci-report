@@ -278,6 +278,11 @@ const topicPages=[
   ['later-sessions','Does a decoder trained on an earlier session still work later?'],
   // Owner approval of the results (2026-10-08): route 3 of the decision-research plan, questions in language.
   ['questions-in-language','Can an EEG model answer questions asked in words?'],
+  // Owner decision 1 (2026-10-12): signals other than scalp EEG — human fNIRS, one macaque's intracortical spiking.
+  ['beyond-scalp-eeg','Do simple baselines work on signals other than scalp EEG?'],
+  // Owner decision 1 (2026-10-12): four small pilots, none ranked (Orthosis, BINGO, handwriting, REFED; BINGO and the
+  // handwriting analysis each behind its own publication switch).
+  ['pilot-studies','What can a small pilot show, and what can it not?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
@@ -287,7 +292,9 @@ const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='sleep-staging'?'large-source-update.json'
   :slug==='shared-encoder'?'shared-representation-update.json'
   :slug==='later-sessions'?'later-sessions-update.json'
-  :slug==='questions-in-language'?'questions-in-language-update.json':'deployment-topics.json';
+  :slug==='questions-in-language'?'questions-in-language-update.json'
+  :slug==='beyond-scalp-eeg'?'beyond-scalp-update.json'
+  :slug==='pilot-studies'?'pilot-studies-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -299,6 +306,19 @@ for(const [slug,title] of topicPages){
 const sitemap=readFileSync(new URL(DIST+'sitemap.xml',import.meta.url),'utf8');
 // The later-sessions export, as served (its own block near the end reads it in full).
 const LTX=JSON.parse(readFileSync(new URL('data/later-sessions-update.json',DIST),'utf8'));
+// The beyond-scalp export, as served (its own block at the end reads it in full).
+const BSX=JSON.parse(readFileSync(new URL('data/beyond-scalp-update.json',DIST),'utf8'));
+// The pilot-studies export, as served (its own block at the end reads it in full).
+const PSX=JSON.parse(readFileSync(new URL('data/pilot-studies-update.json',DIST),'utf8'));
+// BINGO's publication switch (owner decision 3): released, its result, dataset page and figures are pinned; held, none
+// of them may exist, and its hold is pinned instead (pilot-switch.ts on the site side).
+const BINGO_ON=PSX.datasets['bingo-imagined-speech'].publication==='released';
+assert.equal(BINGO_ON,'bingo-cross-language' in PSX.results,'pilot-studies: BINGO is released with its result, or held without it');
+assert.equal(!BINGO_ON,PSX.holds.some(h=>h.id==='bingo-cross-language-rights'),'pilot-studies: BINGO held has its hold, released has none');
+// The handwriting analysis's switch (owner decision, 2026-10-12: released with its rights gap stated) works the same way.
+const HW_ON=PSX.datasets['eeg-fnirs-handwriting'].publication==='released';
+assert.equal(HW_ON,'handwriting-mask-aware' in PSX.results,'pilot-studies: the handwriting analysis is released with its result, or held without it');
+assert.equal(!HW_ON,PSX.holds.some(h=>h.id==='handwriting-mask-aware-rights'),'pilot-studies: the handwriting analysis held has its hold, released has none');
 for(const [slug] of topicPages)
   assert.ok(sitemap.includes('https://bci.report/topics/'+slug+'/'),slug+': sitemap entry is required');
 const motionPage=readFileSync(new URL(DIST+'topics/on-the-move/index.html',import.meta.url),'utf8');
@@ -389,7 +409,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？','questions-in-language':'EEG 模型能回答用文字提出的问题吗？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？','questions-in-language':'EEG 模型能回答用文字提出的问题吗？','beyond-scalp-eeg':'在头皮 EEG 之外的信号上，简单基线管用吗？','pilot-studies':'一个小规模试点能说明什么、不能说明什么？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -448,6 +468,8 @@ const rejected={
   '三种子':'三个随机种子 (三种子 also parses as 三种·子, three kinds)',
   '导 EEG':'通道 EEG (多导睡眠图 stays)','个百分点':'pp, with 百分点 named once on the page','个 epoch':'轮 (训练 5 轮)',
   '冻结的编码器':'冻结编码器','最后一个 block':'最后一个 Transformer 块',
+  // A model's "source" data are its training data; 源数据 reads as raw or original data, and 数据源 is the provider.
+  '源数据':'训练集 / 训练数据 (source = the training data); 数据源 for the provider',
   // Descriptive method labels: modelLabel(model, locale) prints the Chinese.
   'Author-style CCA':'CCA（按原作者设置）','Single-band eTRCA':'单频带 eTRCA','Uniform random':'均匀随机',
 };
@@ -863,7 +885,7 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   sgn1:r=>(r>=0?'+':'−')+Math.abs(r*100).toFixed(1),sgn3:r=>(r>=0?'+':'−')+Math.abs(r).toFixed(3),
   // A second decimal where one would read as zero (review of 2026-10-05): −0.03 pp, a bound of +0.02, a coverage of 0.05%.
   pp2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2)+' pp',sgn2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2),pct2:r=>(r*100).toFixed(2)+'%',
-  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1)+' s',
+  auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1).replace(/^-/,'−')+' s',
   m2:r=>(r/1e6).toFixed(2)+'M',
   // Route 2 (2026-10-07): values already in percentage points, two decimals; a step time in seconds as milliseconds.
   ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms',
@@ -1907,7 +1929,9 @@ console.log('PASS: protocol pages — both languages, every method with a score,
   const original=en=>'<span class="note-original" lang="en">'+e(en)+'</span>';
   for(const m of data.models){
     assert.ok(directory.includes('<p>'+e(dirZh[m.note])+'</p>')&&!directory.includes(e(m.note)),'zh: model note in Chinese alone: '+m.note.slice(0,40));
-    if(dirZh[m.license]) assert.ok(directory.includes(e(dirZh[m.license])+original(m.license)),'zh: model licence note with its English: '+m.license.slice(0,40));
+    // A card with a display-layer status override (directory-status.ts) marks its licence line "as released" right after
+    // the Chinese it qualifies, before the English original (a block line of its own).
+    if(dirZh[m.license]) assert.ok(['','（发布时）','（代码，发布时）'].some(mark=>directory.includes(e(dirZh[m.license])+mark+original(m.license))),'zh: model licence note with its English: '+m.license.slice(0,40));
   }
   let originals=0;
   for(const d of data.datasets){
@@ -2361,7 +2385,7 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   // The Questions hub and the home page list every topic once, under the three groups, in both languages.
   for(const page of ['','topics/','zh/','zh/topics/']){
     const html=pageOf(page);
-    for(const g of ['transfer','adapting','reliability']) assert.ok(html.includes(`id="group-${g}"`),(page||'/')+': group '+g);
+    for(const g of ['transfer','adapting','reliability','beyond']) assert.ok(html.includes(`id="group-${g}"`),(page||'/')+': group '+g);
     const cards=[...html.matchAll(/<a class="topic-entry-card" href="(?:\/zh)?\/topics\/([^/]+)\/"/g)].map(m=>m[1]);
     assert.deepEqual([...cards].sort(),topicPages.map(([s])=>s).sort(),(page||'/')+': every topic card exactly once');
   }
@@ -2396,6 +2420,12 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     'later-sessions':{files:['later-sessions-update.json'],pins:[...Object.values(LTX.results['wbcic-cross-session-cpu'].cohorts).map(c=>c.people),LTX.results['rsvp-later-visits'].cohort.people]},
     // Route 3 (2026-10-08): BETA's people only, as on route 2's card; no BOAS figure on a card. Wearable-102 is a name.
     'questions-in-language':{files:['questions-in-language-update.json'],pins:[JSON.parse(readFileSync(new URL('data/questions-in-language-update.json',DIST),'utf8')).results['questions-in-language'].primary.blocks.find(b=>b.block==='P-ssvep-L0').people]},
+    // Beyond scalp EEG (2026-10-12): Bak's people and ds007420's people; the one macaque is a word-sized 1, which no pin needs.
+    'beyond-scalp-eeg':{files:['beyond-scalp-update.json'],pins:[BSX.results['bak-fnirs-loso'].cohort.people,BSX.results['ds007420-optical-coverage'].cohort.people]},
+    // The pilot studies (2026-10-12): Orthosis's people (one cohort, counted once), BINGO's subject fields and the
+    // handwriting analysis's people while each is released, and REFED's two nominal folders with its clips beside them.
+    'pilot-studies':{files:['pilot-studies-update.json'],pins:[PSX.results['orthosis-64ch-classical'].cohort.people,...(BINGO_ON?[PSX.results['bingo-cross-language'].cohort.source_fields]:[]),
+      ...(HW_ON?[PSX.results['handwriting-mask-aware'].cohort.people]:[]),PSX.results['refed-stored-clip'].cohort.nominal_folders,PSX.results['refed-stored-clip'].cohort.clips]},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -2426,7 +2456,14 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     // The later-sessions question: WBCIC-SHU's two cohorts, largest first, and the RSVP cohort. Forenzo prints no n
     // (records, not proven unique people), which the map loop below holds as a pin of nothing.
     'session:wbcic':Object.values(LTX.results['wbcic-cross-session-cpu'].cohorts).map(c=>c.people).sort((a,b)=>b-a),
-    'session:rsvp':[LTX.results['rsvp-later-visits'].cohort.people]};
+    'session:rsvp':[LTX.results['rsvp-later-visits'].cohort.people],
+    // Beyond scalp EEG (2026-10-12): Bak et al.'s fNIRS, every person held out once; nothing else of that batch is a transfer.
+    'person:bak-fnirs':[BSX.results['bak-fnirs-loso'].cohort.people],
+    // The pilot studies (2026-10-12): Orthosis's one cohort, every person held out once. BINGO's two entries print no n
+    // (source-defined subject fields, not proven people), which the map loop holds as pins of nothing. The handwriting
+    // analysis holds each of its five people out once while its switch releases it.
+    'person:orthosis':[PSX.results['orthosis-64ch-classical'].cohort.people],
+    ...(HW_ON?{'person:handwriting':[PSX.results['handwriting-mask-aware'].cohort.people]}:{})};
   for(const page of ['','zh/','topics/','zh/topics/']){
     const html=pageOf(page),table=html.slice(html.indexOf('<table class="tmap"'),html.indexOf('</table>',html.indexOf('<table class="tmap"')));
     assert.ok(table.length>500,(page||'/')+': the transfer-coverage map renders');
@@ -2453,7 +2490,7 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     const keys=new Set([...table.matchAll(/<li data-map="([^"]+)">/g)].map(m=>m[1]));
     for(const key of Object.keys(mapPins)) assert.ok(keys.has(key),(page||'/')+': pinned map entry '+key+' must render');
     // An entry that changes two things at once says so in the compact map too.
-    for(const key of ['session:mobile-erp','context:mobile-erp','context:image-rate','person:dry-vs-wet','sensor:dry-vs-wet','person:mobile-ssvep']){
+    for(const key of ['session:mobile-erp','context:mobile-erp','context:image-rate','person:dry-vs-wet','sensor:dry-vs-wet','person:mobile-ssvep',...(BINGO_ON?['context:bingo-language']:[])]){
       const li=table.slice(table.indexOf(`<li data-map="${key}">`),table.indexOf('</li>',table.indexOf(`<li data-map="${key}">`)));
       assert.match(li,/class="tmap-tag tmap-with">(?:also changes: |同时变化：)/,(page||'/')+' '+key+': names what else changes');
     }
@@ -2495,7 +2532,8 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
   }
   // The moved sections: every model card, every register row, every field note, with the status-checked date.
   // Since 2026-10-04 the directory also carries the v9 entries the export suggests (REVE Base keeps its
-  // released card; EEGPT is unchanged; "MIRepNet, EEG-DINO" are two catalogue-only cards).
+  // released card; EEGPT keeps its released card, with its own display-layer override since 2026-10-12; "MIRepNet,
+  // EEG-DINO" are two catalogue-only cards).
   const fmDir=JSON.parse(readFileSync(new URL('../src/data/foundation-models-update.json',import.meta.url),'utf8')).results['foundation-models-v9'].directory_status;
   const fmCards=fmDir.filter(x=>!['REVE Base','EEGPT'].includes(x.name)).flatMap(x=>/, /.test(x.name)&&!/\(/.test(x.name)?x.name.split(', '):[x.name]);
   for(const page of ['methods/','zh/methods/']){
@@ -3732,7 +3770,25 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     assert.match(card('ZUNA 1.1'),label==='en'?/research use only, not for diagnosis or clinical use/:/仅供研究使用，不可用于诊断或临床/,where+': ZUNA 1.1\'s research-use sentence');
     assert.match(card('LUNA (Base, Large)'),label==='en'?/no implied endorsement by the LUNA authors/:/不代表 LUNA 作者的认可/,where+': LUNA\'s no-endorsement note');
     assert.match(card('ERP-FM Base'),label==='en'?/non-commercial/:/非商业/,where+': ERP-FM is non-commercial');
-    assert.match(card('EEGPT'),label==='en'?/<span class="status">Rights review pending<\/span>/:/<span class="status">权利审查中<\/span>/,where+': EEGPT is unchanged');
+    // EEGPT (owner decision 2026-10-12): a display-layer override, as REVE Base's. The released card keeps its words,
+    // with the released status beside the new one, the pilot comparison linked, the core-matrix scores unpublished,
+    // the checkpoint licence unresolved, no weights distributed, and Apache-2.0 the code's alone; no figure of the
+    // pilot on the card. experiments.json keeps its bytes.
+    {const c=card('EEGPT'),ee=data.models.find(m=>m.name==='EEGPT'),w=where+' EEGPT';
+     assert.equal(ee.status,'Rights review pending',w+': the released status is unchanged in experiments.json');
+     assert.match(c,label==='en'?/<span class="status">One pilot comparison published<\/span>/:/<span class="status">已发布一项试点比较<\/span>/,w+': the status shown is the override');
+     assert.ok(c.includes(label==='en'?'Released status: Rights review pending.':'发布时的状态：权利审查中。'),w+': the released status beside it');
+     assert.ok(c.includes(`href="/${prefix}topics/pilot-studies/#orthosis" data-override-page="true"`),w+': the pilot comparison linked');
+     assert.ok(c.includes('<time datetime="2026-10-12">'),w+': when the status was checked');
+     for(const re of label==='en'?[/core-matrix EEGPT scores remain unpublished, pending a separate review/,/checkpoint’s licence remains unresolved/,/no original or converted weights are distributed/,/Apache-2\.0 covers the repository’s code only/]
+                                 :[/核心矩阵中的 EEGPT 分数仍不发布，有待另行审查/,/检查点的许可仍未厘清/,/不分发任何原始或转换后的权重/,/Apache-2\.0 只涵盖代码仓库中的代码/])
+       assert.match(c,re,w+': '+re.source);
+     assert.doesNotMatch(c.replace(/<span class="note-original"[^>]*>[^<]*<\/span>/g,''),/(?:weights|checkpoint|权重|检查点)[^.。;；]{0,40}Apache|Apache[^.。;；]{0,30}(?:weights|权重)/i,w+': the weights are never called Apache-2.0');
+     assert.ok(!c.includes('data-fig')&&!/\d+\.\d\s?%/.test(c),w+': the card prints no figure of the pilot');}
+    {const li=html.slice(html.indexOf('<li id="eegpt">'),html.indexOf('</li>',html.indexOf('<li id="eegpt">')));
+     assert.ok(li.includes(label==='en'?'One pilot comparison published':'已发布一项试点比较')&&li.includes(`href="/${prefix}topics/pilot-studies/#orthosis"`),where+': the #eegpt anchor says the pilot is published and links it');
+     assert.ok(!li.includes('data-fig')&&!/\d+\.\d\s?%/.test(li),where+': the #eegpt entry prints no figure');
+     assert.ok(!html.includes(`href="/${prefix}methods/eegpt/"`),where+': EEGPT keeps its anchor, not a method page');}
     const un=html.slice(html.indexOf('id="unmeasured"'),html.indexOf('</ul>',html.indexOf('id="unmeasured"')));
     for(const [id,n] of [['mirepnet','MIRepNet'],['eeg-dino','EEG-DINO']]) assert.ok(un.includes(`<li id="${id}"><span lang="en">${n}</span>`)&&un.includes(label==='en'?'Catalogue only (not evaluated)':'仅列入目录（未评测）'),where+': '+n+' is catalogue only');
     assert.ok(!un.includes('REVE Base'),where+': REVE Base is evaluated, not unmeasured');
@@ -3860,9 +3916,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
   }
   // The EESM19 page changed again on 2026-10-07 (route 2's group), so it carries that date now; does-pretraining-help
-  // on 2026-10-08 (its pointer to the later-sessions question).
+  // on 2026-10-08 (its pointer to the later-sessions question) and 2026-10-12 (its pointer to the pilot studies' EEGPT
+  // comparison); the methods hub on 2026-10-12 (EEGPT's card and entry, one pilot comparison published).
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
-    const d=p==='datasets/eesm19/'?'2026-10-07':p==='topics/does-pretraining-help/'?'2026-10-08':'2026-10-04';
+    const d=p==='datasets/eesm19/'?'2026-10-07':p==='topics/does-pretraining-help/'||p==='methods/'?'2026-10-12':'2026-10-04';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
@@ -4204,10 +4261,12 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     if(!prefix){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.length>500&&!/stays? the highest|best published non-foundation|was pretrained on/.test(fe),'releases.xml: the v9 entry ranks no overlapping rows and claims no corpus');}
   }
-  // The Questions hub changed again on 2026-10-07 (route 2's card) and 2026-10-08 (the later-sessions card), and
-  // does-pretraining-help on 2026-10-08 (its pointer to the later-sessions question), so they carry that date now.
+  // The Questions hub changed again on 2026-10-07 (route 2's card), 2026-10-08 (the later-sessions card) and
+  // 2026-10-12 (the beyond-scalp and pilot-studies cards), and does-pretraining-help on 2026-10-08 (its pointer to the
+  // later-sessions question) and 2026-10-12 (its pointer to the pilot studies' EEGPT comparison), so they carry those
+  // dates now.
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
-    const d=p==='topics/'||p==='topics/does-pretraining-help/'?'2026-10-08':'2026-10-04';
+    const d=p==='topics/'||p==='topics/does-pretraining-help/'?'2026-10-12':'2026-10-04';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
@@ -5203,5 +5262,653 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   assert.deepEqual(bad,[],'an update date or version label is printed outside the release log, a Cite block or the kept evidence and policy dates:\n'+bad.slice(0,20).join('\n'));
   console.log(`PASS: no update date or version label — ${nHtml} HTML pages and ${nMd} Markdown copies in both languages, llms.txt and ${nFull} llms-full.txt sections; the release log, Cite blocks, evidence dates and /data-use/ policy dates kept`+
     (pendingSeen.size?`; ${pendingSeen.size} deferred data-module phrase${pendingSeen.size>1?'s':''} still printed (entities.ts, files.ts, releases.ts).`:'.'));
+}
+// --- 2026-10-12: beyond scalp EEG and the pilot studies, registered (owner decisions) ---------------------------
+// Two batches of one site version, each its own served file, manifest and independent audit. What the shared registers
+// must carry: both releases with their manifests and the two holds; /data-use/ with every source, BINGO's rights as
+// they stand, the macaque's animal-care statement and the EEGPT change; a dataset page for each source with results
+// and none for a status-only or held one; the internal data management plan of BINGO nowhere. The two topic pages
+// carry their own block.
+{
+  const BSF='beyond-scalp-update.json',PSF='pilot-studies-update.json';
+  const bsx=JSON.parse(readFileSync(new URL('data/'+BSF,DIST),'utf8')),psx=JSON.parse(readFileSync(new URL('data/'+PSF,DIST),'utf8'));
+  // Releases and holds.
+  for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
+    const html=pageOf(path);
+    for(const x of [bsx,psx]) assert.ok(html.includes(`id="${x.release_id}"`)&&html.includes(x.provenance.manifest_sha256),label+': release '+x.release_id+' with its manifest');
+    for(const h of [...bsx.holds,...psx.holds]) assert.ok(html.includes(`<tr id="hold-${h.id}"`),label+': hold '+h.id+' in the register');
+  }
+  // Data use: every source of both batches, with what is published on it.
+  const du=pageOf('data-use/'),sec=id=>du.slice(du.indexOf(`<section id="${id}"`),du.indexOf('</section>',du.indexOf(`<section id="${id}"`)));
+  const bsSec=sec('sources-beyond-scalp'),psSec=sec('sources-pilot-studies');
+  assert.deepEqual([...bsSec.matchAll(/data-beyond-source="([^"]+)"/g)].map(m=>m[1]),Object.keys(bsx.datasets),'data use: every beyond-scalp source');
+  assert.deepEqual([...psSec.matchAll(/data-pilot-source="([^"]+)"/g)].map(m=>m[1]),Object.keys(psx.datasets),'data use: every pilot source');
+  for(const [id,d] of Object.entries(psx.datasets)) if(d.publication!=='released')
+    assert.ok(psSec.slice(psSec.indexOf(`data-pilot-source="${id}"`)).includes('Held — no figure'),'data use: '+id+' is held, with no figure');
+  // A version label as prose; a DOI's ".v2" is part of the identifier.
+  for(const s of [bsSec,psSec]) assert.ok(!/(?<![./\w-])v\d+\b|\bnew to this site\b|\bin this update\b/i.test(visible(s)),'data use: no version label or update wording in the new sections');
+  const animal=du.slice(du.indexOf('id="mc-rtt-animal-care"'),du.indexOf('</p>',du.indexOf('id="mc-rtt-animal-care"')));
+  assert.ok(/Institutional Animal Care and Use Committees/.test(animal)&&/Informed consent: Not applicable/.test(animal)&&/Neural Latents Benchmark/.test(animal),'data use: MC_RTT carries an animal-care statement, not a consent statement');
+  const bingo=psx.datasets['bingo-imagined-speech'],br=du.slice(du.indexOf('id="bingo-rights"'),du.indexOf('</p>',du.indexOf('id="bingo-rights"')));
+  if(bingo.publication==='released'){
+    for(const s of ['states no licence, terms, ethics or consent','has no ethics or consent statement','After signing a consent form, each participant attended three experimental sessions',
+                    'NATO-alphabet dataset, recorded in the same CERTH laboratory, not about the cross-language dataset','No ethics-approval reference is published','https://bingo-project.gr/download/397','https://bingo-project.gr/download/402'])
+      assert.ok(unent(br).includes(s),'data use: BINGO, as owner decision 3 states it: '+s);
+  } else assert.ok(br.includes('BINGO, held'),'data use: BINGO held');
+  // The handwriting dataset (owner decision, 2026-10-12): its gap stated in full, once, with the challenge paper it was
+  // read in, the decision named as one on stated gaps like BOAS's and BINGO's, and BNCI2015-001's hold unchanged.
+  const hwd=psx.datasets['eeg-fnirs-handwriting'],hr=unent(du.slice(du.indexOf('id="handwriting-rights"'),du.indexOf('</p>',du.indexOf('id="handwriting-rights"'))));
+  if(hwd.publication==='released'){
+    for(const s of [hwd.consent_and_ethics.gap,'href="https://arxiv.org/abs/2608.03176v2"','Like BOAS and BINGO, this is an owner decision on stated gaps','the BNCI2015-001 hold is unchanged','CC BY-NC-ND','no right to reuse the data is implied'])
+      assert.ok(hr.includes(s),'data use: the handwriting gap, as the owner decided it: '+s.slice(0,60));
+    assert.equal((unent(du).match(/No ethics-approval or informed-consent statement was found\. The dataset card has none/g)||[]).length,1,'data use: the handwriting gap is stated in full once');
+  } else assert.ok(hr.includes('The handwriting dataset, held'),'data use: the handwriting analysis held');
+  const ee=du.slice(du.indexOf('id="eegpt"'),du.indexOf('</p>',du.indexOf('id="eegpt"')));
+  for(const s of ['this project’s own conservative choice, not a publisher’s rule','the core-matrix EEGPT scores remain unpublished, pending a separate review','covers the repository’s source code only','No original or converted weights are distributed'])
+    assert.ok(ee.includes(s),'data use: the EEGPT change — '+s);
+  assert.doesNotMatch(visible(ee),/(?:weights|checkpoint)[^.;]{0,40}is Apache|weights[^.;]{0,20}Apache-2\.0/i,'data use: the EEGPT weights are never called Apache-2.0');
+  assert.ok(du.includes('id="small-cohorts-pilots"')&&(HW_ON?/One animal, two folders, five and eight people/:/One animal, two folders, eight people/).test(du),'data use: the small-cohort note covers one animal, two folders and the pilots\' people');
+  if(HW_ON){const sc=unent(du.slice(du.indexOf('id="small-cohorts-pilots"'),du.indexOf('</p>',du.indexOf('id="small-cohorts-pilots"'))));
+    assert.ok(sc.includes('The handwriting analysis has five people')&&sc.includes('not one person’s score')&&sc.includes('so that interval is not published'),'data use: the five-person handwriting analysis, and why its mask-only interval is withheld');}
+  // Dataset pages: one for each source with results, in both languages; none for a status-only or held source.
+  const withResults=[...Object.entries(bsx.datasets),...Object.entries(psx.datasets)].filter(([,d])=>d.results.length&&(d.publication??'released')==='released').map(([id])=>id);
+  const without=[...Object.entries(bsx.datasets),...Object.entries(psx.datasets)].filter(([id])=>!withResults.includes(id)).map(([id])=>id);
+  assert.deepEqual(without.sort(),[...(BINGO_ON?[]:['bingo-imagined-speech']),...(HW_ON?[]:['eeg-fnirs-handwriting']),'falcon-h2','rabut-fus'],'the status-only and held sources of the two batches');
+  for(const id of withResults) for(const pre of ['','zh/']){
+    const html=pageOf(pre+'datasets/'+id+'/'),file=Object.keys(bsx.datasets).includes(id)?BSF:PSF;
+    assert.ok(html.length>0&&html.includes(`data-fig="${file}|`),pre+id+': a dataset page with figures from '+file);
+    assert.ok(!/\bJev\b/.test(visible(html)),pre+id+': no Jev on the page');
+  }
+  for(const id of without) assert.ok(!existsSync(new URL('datasets/'+id+'/index.html',DIST)),id+': a status-only or held source has no dataset page');
+  {const o=pageOf('datasets/orthosis-error-detection/'),n=pageOf('datasets/nlb-mc-rtt/');
+   assert.equal((visible(o).match(/counted once/g)||[]).length,3,'Orthosis: each configuration says it is the one cohort, counted once');
+   assert.ok(/neither arm is shown to be better, and the two are not shown to be equivalent/.test(o)&&/no original or converted weights are distributed/.test(o),'Orthosis: the EEGPT comparison carries its caveats beside it');
+   assert.ok(/with one animal every figure is that animal’s/.test(n)&&n.includes('macaque (animal data)'),'MC_RTT: one animal, said beside its figures');
+   // A licensed source's page computes "under the licence above"; one whose source states no licence says so instead.
+   assert.ok(o.includes('data-redistribution="licence"')&&o.includes('under the licence above'),'Orthosis: computed under its licence');
+   if(BINGO_ON){
+     const b=pageOf('datasets/bingo-imagined-speech/');
+     assert.ok(/not re-verified against the delivered file/.test(b)&&/Artifact Subspace Reconstruction \(ASR\) and FORCe/.test(b)&&/D3\.1, version 2\.0/.test(b),'BINGO: the delivered preprocessing beside the result, attributed and unverified');
+     // BINGO's rights exactly as they stand, beside its credit, in both languages (owner decision 3): no licence to compute
+     // under, no ethics-approval reference, and the project's consent statement scoped to its other dataset.
+     const ce=psx.datasets['bingo-imagined-speech'].consent_and_ethics;
+     for(const [pre,zh] of [['',false],['zh/',true]]){
+       const h=pageOf(pre+'datasets/bingo-imagined-speech/'),w=pre+'datasets/bingo-imagined-speech/';
+       const src=h.slice(h.indexOf('id="source-heading"'),h.indexOf('</section>',h.indexOf('id="source-heading"')));
+       const rn=src.slice(src.indexOf('<article data-rights-note="bingo">'),src.indexOf('</article>',src.indexOf('<article data-rights-note="bingo">')));
+       assert.ok(src.includes('<article data-rights-note="bingo">'),w+': BINGO\'s ethics and consent beside its credit');
+       assert.ok(unent(rn).includes(zh?'数据源陈述的伦理与知情同意':'Ethics and consent, as the source states them')&&unent(rn).includes(ce.ethics_approval.note)&&unent(rn).includes(ce.informed_consent.statement)
+         &&rn.includes('href="https://bingo-project.gr/download/402"')&&rn.includes('href="/data-use/#bingo-rights"')&&unent(rn).includes(zh?'所有者决定在此基础上发布这些聚合结果。':'The owner decided to publish these aggregates on that basis.'),w+': the ethics note, the consent statement with its scope, D3.1 version 3.0 and the owner\'s basis');
+       if(zh) assert.ok(unent(rn).includes('数据源没有公布任何伦理批准的出处或编号。')&&unent(rn).includes('这句话针对的是该项目在同一个 CERTH 实验室记录的'),w+': the Chinese statements beside the English');
+       assert.ok(unent(src).includes(zh?'BCI Report 不转发任何记录。这些是 BCI Report 计算的聚合测量，数据源没有说明许可；这并不意味着可以再使用这些数据。'
+         :'BCI Report does not redistribute any recording. These are aggregate measurements computed by BCI Report from data whose source states no licence; no right to reuse the data is implied.')
+         &&!src.includes(zh?'在上述许可下计算':'under the licence above')&&src.includes('data-licence="none"'),w+': no licence to compute under, said as such');
+       assert.doesNotMatch(src,/download\/374|Data Management Plan/i,w+': the data management plan is not cited');
+     }
+   }}
+  if(HW_ON){
+    // The handwriting dataset page: its result group with the caveats beside it, and beside its credit a short pointer to
+    // the gap the data-use page states in full — not the full statement again.
+    for(const [pre,zh] of [['',false],['zh/',true]]){
+      const h=pageOf(pre+'datasets/eeg-fnirs-handwriting/'),w=pre+'datasets/eeg-fnirs-handwriting/',v=unent(visible(h));
+      const src=h.slice(h.indexOf('id="source-heading"'),h.indexOf('</section>',h.indexOf('id="source-heading"')));
+      const rn=unent(src.slice(src.indexOf('<article data-rights-note="handwriting">'),src.indexOf('</article>',src.indexOf('<article data-rights-note="handwriting">'))));
+      assert.ok(src.includes('<article data-rights-note="handwriting">')&&src.includes('href="/data-use/#handwriting-rights"')
+        &&rn.includes(zh?'都没有找到伦理批准或知情同意声明':'No ethics-approval or informed-consent statement was found, on the dataset card or in a participating team’s challenge paper'),w+': a short pointer to the gap beside the credit');
+      assert.ok(!v.includes('to be rechecked when the organisers’ paper appears')&&!v.includes('待组织方的论文发表后重新核查'),w+': the full statement is not repeated on the dataset page');
+      for(const s of zh?['不发布区间：只有五名被试，区间端点能反推出个人的分数。','区间跨过零：与这个对照没有区分开。','这不是手写识别','不是独立确认','不代表经过认证的干净 EEG']
+                       :['Interval not published: with five people, its bounds would show individual people’s scores.','The interval crosses zero: not separated from this control.','not handwriting recognition','not independent confirmation','not certified clean EEG'])
+        assert.ok(v.includes(s),w+': beside the figures: '+s);
+      assert.ok(h.includes('data-redistribution="licence"'),w+': computed under its declared licence');
+    }
+  }
+  // BINGO's data management plan is pinned for the record and is never cited or linked (owner decision 3).
+  for(const f of distFiles.filter(f=>/\.(?:html|md|txt|xml|json)$/.test(f)))
+    assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/download\/374|Data Management Plan|D1\.2[^\d]/i,f+': BINGO’s data management plan is cited');
+  console.log(`PASS: beyond scalp EEG and the pilot studies, registered — both releases with their manifests and ${bsx.holds.length+psx.holds.length} holds; data use with all ${Object.keys(bsx.datasets).length+Object.keys(psx.datasets).length} sources, BINGO's rights as they stand, the handwriting dataset's gap stated in full once with BNCI2015-001's hold unchanged, MC_RTT's animal-care statement and the EEGPT change; ${withResults.length} dataset pages in both languages and none for ${without.join(', ')}; BINGO's data management plan cited nowhere.`);
+}
+// --- Beyond scalp EEG, the page (owner decision 1, 2026-10-12) ---------------------------------------------------
+// /topics/beyond-scalp-eeg/: do simple baselines work on signals other than scalp EEG? Three results from
+// beyond-scalp-update.json, each its own species, signal and metric — human fNIRS on Bak et al.'s executed tapping (a
+// person left out at a time, against the training prior), one macaque's motor-cortex spiking on MC_RTT (finger velocity
+// within one session, against the training mean, worse on MAE) and a numerical coverage check of the ds007420 fNIRS
+// recordings — and, status only, FALCON H2 and Rabut et al.'s functional ultrasound, with the ds007420 classifier held.
+// The topic data-fig loop re-reads every figure from the export; pinned here: (1) each table cell, chart row, card and
+// reading carries the export's own figure in its own place, the comparator and the interval in the same view, chance or
+// the comparator drawn as the dashed line and no curve; MC_RTT's "better" column follows the export's flags, so its MAE
+// says the training mean; (2) English and Chinese print the same figures; (3) the handoff's required caveats, beside
+// their numbers, in both languages; (4) leaderboards, rankings, state of the art, online, real-time or closed-loop
+// control, clinical use, zero-shot, a brain-only or neural origin, an official NLB score and a pooled score appear only
+// in a denial, and Jev nowhere; (5) no figure is typed in a result section, so no per-person value can enter outside
+// the export, and nothing beyond the export's aggregates; (6) the prepared sources print counts only, the hold no
+// figure; (7) no update date or version label; the cite block names this release alone; the Markdown copy carries every
+// figure in order; (8) species, modality and the locally-executed label in every result section, each linking its
+// dataset page; the card under "Other signals & pilots" counts people as the export does; the map's one entry is Bak's.
+{
+  const BS='beyond-scalp-update.json',R=BSX.results,bak=R['bak-fnirs-loso'],nlb=R['nlb-mc-rtt-velocity'],opt=R['ds007420-optical-coverage'];
+  const wide=x=>Math.abs(x)>=1000?'int0':x!==0&&Math.abs(x)<0.01?'sig3':'num3';
+  const has=(h,f,x)=>new RegExp(`data-fig="${BS.replace(/\./g,'\\.')}\\|${f}\\|${String(x).replace(/[.+-]/g,'\\$&')}"[^>]*>${fmt[f](x).replace(/[.+]/g,'\\$&')}<`).test(h);
+  const figAttrs=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]);
+  const spanEnd=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let d=0,m;
+    while((m=re.exec(h))){d+=m[0].startsWith('</')?-1:1;if(!d)return m.index;}return h.length;};
+  const el=(h,sel,where)=>{const a=h.search(sel);assert.ok(a>=0,where+': '+sel+' renders');return h.slice(a,spanEnd(h,a));};
+  const vis=h=>decodeHtml(h.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  const plotRows=h=>[...h.matchAll(/<div class="ip-row">([\s\S]*?<div class="ip-value">[\s\S]*?<\/div>)/g)].map(m=>m[1]);
+  const xOf=(dom,v)=>(Math.max(0,Math.min(1,(v-dom[0])/(dom[1]-dom[0])))*100).toFixed(2);
+  assert.equal(BSX.release_id,'beyond-scalp-update-20261012','beyond-scalp: the release');
+  let pinned=0;
+  const pages={};
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'topics/beyond-scalp-eeg/',where=path,html=pageOf(path);
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"'));
+    const own=main.slice(0,main.indexOf('<nav class="topic-switcher"'));
+    pages[label]=main;
+    // (1) Every figure is a leaf of this export, and nothing else is cited.
+    assert.ok(figAttrs(main).length>100&&figAttrs(main).every(a=>a.startsWith(BS+'|')),where+': every figure is a leaf of '+BS+' ('+figAttrs(main).length+')');
+    const cite=html.slice(html.indexOf('<section class="cite-page"'));
+    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],BSX.release_id,where+': the cite block names this release alone');
+    assert.ok(html.includes('href="/data/'+BS+'"')&&/^(?:Data source:|数据来源：) beyond-scalp-update\.json · schema bci-report-beyond-scalp-update-v1[.。]$/.test(vis(el(own,/<p class="citation-note">(?:Data source:|数据来源：)/,where))),where+': the data-source note names the file and its schema, and no date');
+    // (8) Each result section names its species and signal, says it is a locally executed experiment, and links its dataset page.
+    for(const [id,eyebrow,slug,lab] of [['bak-fnirs',zh?/人类 · fNIRS/:/Human · fNIRS/,'bak-fnirs',bak.label],['mc-rtt',zh?/猕猴 · 皮层内神经元放电/:/Macaque · intracortical spiking/,'nlb-mc-rtt',nlb.label],['ds007420',zh?/人类 · fNIRS/:/Human · fNIRS/,'ds007420',opt.label]]){
+      const sec=el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where);
+      assert.match(vis(el(sec,/<p class="eyebrow">/,where)),eyebrow,where+': #'+id+' names its species and signal');
+      const sub=el(sec,/<p class="topic-subtitle"/,where);
+      assert.ok(zh?sub.includes('<span class="note-original" lang="en">'+lab+'</span>')&&/本站在本地运行/.test(vis(sub)):vis(sub)===lab,where+': #'+id+' carries the export\'s label "'+lab+'"'+(zh?' beside its Chinese':''));
+      assert.ok(sec.includes(`href="/${pfx}datasets/${slug}/"`),where+': #'+id+' links its dataset page');
+    }
+    // (1) Bak et al.: the classifier with its interval, the training prior on chance, class recall; the chart draws chance.
+    const bs=el(own,/<section\b[^>]*\sid="bak-fnirs"/,where),A=bak.arms,L=A.shrinkage_lda,P=A.source_prior,C=bak.cohort,D=bak.design;
+    const btab=el(bs,/<table data-beyond-table="bak"/,where);
+    const lr=el(btab,/<tr data-beyond-row="shrinkage_lda"/,where),pr=el(btab,/<tr data-beyond-row="source_prior"/,where);
+    assert.ok(has(el(lr,/<td data-cell="ba"/,where),'pct1',L.balanced_accuracy.mean)&&has(lr,'pct1',L.balanced_accuracy.interval_95[0])&&has(lr,'pct1',L.balanced_accuracy.interval_95[1]),where+': the classifier\'s balanced accuracy with its interval');pinned+=3;
+    assert.ok(has(el(pr,/<td data-cell="ba"/,where),'pct1',P.balanced_accuracy.mean)&&figAttrs(el(pr,/<td data-cell="ba"/,where)).length===1,where+': the training prior, with no interval');pinned++;
+    for(const c of ['right_hand','left_hand','foot']){
+      assert.ok(has(el(lr,new RegExp(`<td data-cell="recall-${c}"`),where),'pct1',L.class_recall[c])&&has(el(pr,new RegExp(`<td data-cell="recall-${c}"`),where),'pct1',P.class_recall[c]),where+': class recall, '+c);pinned+=2;}
+    assert.ok(has(el(btab,/<caption/,where),'pct1',bak.primary_metric.chance_level)&&has(el(btab,/<caption/,where),'count',C.people),where+': chance and the people, in the caption');
+    const bplot=el(bs,/<figure class="interval-plot" id="bak-balanced-accuracy"/,where),brows=plotRows(bplot);
+    assert.equal(brows.length,2,where+': the Bak chart draws the classifier and the comparator');
+    assert.ok(has(brows[0],'pct1',L.balanced_accuracy.mean)&&has(brows[0],'pct1',L.balanced_accuracy.interval_95[0])&&has(brows[0],'pct1',L.balanced_accuracy.interval_95[1])&&brows[0].includes('class="ip-ci"'),where+': the classifier\'s point and interval bar');
+    assert.ok(has(brows[1],'pct1',P.balanced_accuracy.mean)&&!brows[1].includes('class="ip-ci"'),where+': the prior\'s point, no interval');pinned+=4;
+    const refs=(h,x)=>(h.match(new RegExp(`class="ip-ref" x1="${x}"`,'g'))||[]).length;
+    assert.ok(refs(bplot,xOf([0,1],bak.primary_metric.chance_level))===brows.length&&!/<path|<polyline|<polygon/.test(bplot),where+': chance drawn as the dashed line on every row, no fitted curve');
+    for(const v of [C.people,C.trials,C.trials_each_person,C.trials_each_class_each_person,bak.signal.channels,D.training_people,D.training_trials,D.test_trials,bak.signal.observation_window_s])
+      assert.ok(has(bs,'count',v),where+': the Bak cohort, split and window, '+v);
+    const bf=el(bs,/<div class="finding" data-finding="bak"/,where);
+    assert.ok(has(bf,'pct1',L.balanced_accuracy.mean)&&has(bf,'pct1',P.balanced_accuracy.mean)&&has(bf,'pct1',L.balanced_accuracy.interval_95[0])&&has(bf,'pct1',L.balanced_accuracy.interval_95[1])&&has(bf,'count',bak.uncertainty.draws),where+': the finding with its comparator, interval and draws');pinned+=5;
+    // (1) MC_RTT: every metric for both arms, the "better" column as the export's flags, the charts with the comparator drawn.
+    const ns=el(own,/<section\b[^>]*\sid="mc-rtt"/,where),NA=nlb.arms,NB=nlb.comparison.ridge_better;
+    const ntab=el(ns,/<table data-beyond-table="nlb"/,where);
+    for(const k of ['r2_uniform_average','r2_x','r2_y','rmse_m_per_s','mae_m_per_s']){
+      const row=el(ntab,new RegExp(`<tr data-beyond-row="${k}"`),where+' '+k);
+      assert.ok(has(el(row,/<td data-cell="ridge"/,where),wide(NA.ridge[k]),NA.ridge[k])&&has(el(row,/<td data-cell="training_mean"/,where),wide(NA.training_mean[k]),NA.training_mean[k]),where+': MC_RTT '+k+', both arms');pinned+=2;
+      const b=el(row,/<td data-cell="better"/,where);
+      assert.ok(b.includes(`data-ridge-better="${NB[k]}"`)&&(NB[k]?/^(?:The ridge|岭回归)$/.test(vis(b)):/^(?:The training mean|训练集均值)/.test(vis(b))),where+': MC_RTT '+k+' names the better arm as the export flags it');
+    }
+    assert.equal(NB.mae_m_per_s,false,'beyond-scalp: the ridge is worse on MAE');
+    const r2=el(ns,/<figure class="interval-plot" id="mc-rtt-r2"/,where),r2rows=plotRows(r2);
+    assert.equal(r2rows.length,6,where+': the R² chart draws x, y and their mean for both arms');
+    ['r2_uniform_average','r2_x','r2_y'].forEach((k,i)=>{assert.ok(has(r2rows[i],wide(NA.ridge[k]),NA.ridge[k])&&has(r2rows[i+3],wide(NA.training_mean[k]),NA.training_mean[k]),where+': R² chart '+k);pinned+=2;});
+    assert.ok(refs(r2,xOf([-0.1,0.3],0))===r2rows.length&&!r2.includes('class="ip-ci"')&&!/<path|<polyline|<polygon/.test(r2),where+': the R² chart draws zero on every row, no interval and no curve');
+    for(const [id,k] of [['mc-rtt-rmse','rmse_m_per_s'],['mc-rtt-mae','mae_m_per_s']]){
+      const fg=el(ns,new RegExp(`<figure class="interval-plot" id="${id}"`),where),rows=plotRows(fg);
+      assert.ok(rows.length===2&&has(rows[0],wide(NA.ridge[k]),NA.ridge[k])&&has(rows[1],wide(NA.training_mean[k]),NA.training_mean[k]),where+': '+k+' chart, ridge and training mean');pinned+=2;
+      assert.ok(refs(fg,xOf([0,0.08],NA.training_mean[k]))===rows.length&&!fg.includes('class="ip-ci"')&&!/<path|<polyline|<polygon/.test(fg)&&/m\/s/.test(vis(el(fg,/<figcaption/,where))),where+': '+k+' chart draws the comparator on every row, in m/s, with no interval');
+    }
+    const nf=el(ns,/<div class="finding" data-finding="nlb"/,where);
+    for(const [a,k] of [['ridge','r2_uniform_average'],['training_mean','r2_uniform_average'],['ridge','rmse_m_per_s'],['training_mean','rmse_m_per_s'],['ridge','mae_m_per_s'],['training_mean','mae_m_per_s']])
+      {assert.ok(has(nf,wide(NA[a][k]),NA[a][k]),where+': the MC_RTT finding states '+a+' '+k+', both directions');pinned++;}
+    const NC=nlb.cohort,NS=nlb.signal;
+    for(const v of [NC.input_neurons,NC.unused_neurons,NC.training_trials,NC.validation_trials,NS.training_rows,NS.validation_rows,NS.bin_ms,NS.target_lag_ms,NS.neural_support_ms])
+      assert.ok(has(ns,'count',v),where+': the MC_RTT cohort, split and window, '+v);
+    // (1) ds007420: counts only, the gates kept.
+    const os=el(own,/<section\b[^>]*\sid="ds007420"/,where),K=opt.counts,G=opt.gates;
+    const cards=el(os,/<div class="evidence-grid" data-beyond-cards="ds007420"/,where);
+    for(const [f,v] of [['count',K.optical_values],['count',K.finite],['count',K.positive],['count',K.zero],['count',K.negative],['count',K.nonfinite],['count',K.constant_channels],['pct1',opt.shares.finite],['pct1',opt.shares.positive],
+                        ['count',opt.cohort.recording_channels],['count',opt.cohort.optical_time_points]])
+      {assert.ok(has(cards,f,v),where+': ds007420 count '+v);pinned++;}
+    const gates=el(os,/<p class="roadmap-p" data-beyond-note="ds007420-gates"/,where);
+    for(const v of [G.event_duration_s.events_table,G.event_duration_s.optical_files,G.event_duration_s.cited_paper,G.auxiliary_clock_hold_recordings]) assert.ok(has(gates,'count',v),where+': a ds007420 gate, '+v);
+    assert.ok(!/<figure class="interval-plot"/.test(os)&&!/\d\.\d|%/.test(vis(os.replace(/<code>[\s\S]*?<\/code>/g,' ')).replace(/100\.0%/g,'')),where+': ds007420 prints counts and shares, no score');
+    // (6) The prepared sources print counts only; the hold prints nothing.
+    const so=el(own,/<section\b[^>]*\sid="status-only"/,where);
+    for(const [id,x] of [['falcon-h2',BSX.status_only.find(s=>s.id==='falcon-h2-preparation')],['rabut-fus',BSX.status_only.find(s=>s.id==='rabut-fus-preparation')]]){
+      const a=el(so,new RegExp(`<article class="status-entry" id="${id}"`),where+' '+id);
+      assert.equal(x.scores_published,false,id+': no score published');
+      for(const v of Object.values(x.preparation).filter(v=>v>1)) assert.ok(has(a,'count',v),where+': '+id+' prepared count '+v);
+      assert.ok(figAttrs(a).every(t=>t.split('|')[1]==='count')&&!/%|\d\.\d/.test(vis(a.replace(/<code>[\s\S]*?<\/code>/g,' ').replace(/<a [^>]*>CC BY(?:-NC)? 4\.0<\/a>/g,' '))),where+': '+id+' prints counts, no score');
+      assert.match(vis(a),zh?/尚未(?:评分|分析)/:/Prepared, not (?:scored|analyzed)/,where+': '+id+' says it is not scored');
+    }
+    const hd=el(so,/<p class="protocol-note" id="ds007420-classifier"/,where);
+    assert.ok(!hd.includes('data-fig')&&!/\d/.test(vis(hd).replace(/ds007420/g,''))&&hd.includes(`href="/${pfx}releases/#hold-ds007420-classifier"`),where+': the held classifier prints no figure and links its register row');
+    // (5) No figure typed in a result section: every number there is a data-fig leaf, an axis tick, an identifier or a label.
+    const allowed=new Set(['95%','4.0']);
+    for(const id of ['bak-fnirs','mc-rtt','ds007420','status-only']){
+      const sec=el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where).replace(/<span data-fig="[^"]*"[^>]*>[^<]*<\/span>/g,' ')
+        .replace(/<div class="ip-row ip-axis"[\s\S]*?<\/div>\s*<div class="ip-value"><\/div>\s*<\/div>/g,' ').replace(/<code>[\s\S]*?<\/code>/g,' ').replace(/\s(?:id|href|data-[\w-]+)="[^"]*"/g,'');
+      const typed=[...vis(sec).replace(/[A-Za-z]+\d+/g,' ').matchAll(/\d[\d,]*(?:\.\d+)?%?/g)].map(m=>m[0].replace(/,$/,'')).filter(t=>!allowed.has(t));
+      assert.deepEqual(typed,[],where+': #'+id+' types a figure outside the export');
+    }
+    // (3) The handoff's required caveats, in each language.
+    const page=vis(own);
+    for(const s of zh?['这是实际动作，不是运动想象','不是重新拟合的 bootstrap','不是独立的临床置信区间','没有排除与任务相关的全身性生理或运动影响','信号只来自大脑或皮层定位','不复现作者的被试内分数','可能用到了未来的采样点',
+                       '一只猕猴、一次会话','每个数字都是这只动物的','不是 Neural Latents Benchmark 的官方分数','不是 co-smoothing','它并不是在每个指标上都更好','不是独立的个体','速度标签是离线由手指位置推导的','不是实时或闭环控制器',
+                       '说明不了信噪比','不能确立信号质量','没有经过核实的','光学数值覆盖不能弥补它们','不是九名被试','不是盲测','不是独立的评估数据','不合并成一个任务','只许可非商业使用',
+                       '不合并，不排名','都不与头皮 EEG 的结果比较','都不进入八个协议的核心矩阵','不是论文或基准排行榜上报告的分数']
+                    :['executed movement, not motor imagery','not a refit bootstrap','not an independent clinical confidence interval','task-correlated systemic or motion effects are not excluded','a brain-only signal or cortical localization','does not reproduce the authors’ within-person scores','may use future samples',
+                       'One macaque and one session','every figure is that animal’s','not an official Neural Latents Benchmark score','not co-smoothing','it is not better on every metric','not independent subjects','derived offline from finger position','not a real-time or closed-loop controller',
+                       'say nothing about signal-to-noise','cannot establish signal quality','no verified lookup','optical coverage does not repair them','not of nine participants','exposed, not blinded','not independent evaluation data','not pooled into one task','non-commercial use only',
+                       'Nothing pooled, nothing ranked','none is compared with a scalp-EEG result','none joins the eight-protocol core matrix','not scores reported in a paper or on a benchmark leaderboard'])
+      assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
+    // Each bounding caveat sits beside its number, in the section of that number.
+    for(const [id,s] of zh?[['bak-fnirs','不是运动想象'],['bak-fnirs','不是重新拟合的 bootstrap'],['mc-rtt','不是 Neural Latents Benchmark 的官方分数'],['mc-rtt','平均绝对误差'],['ds007420','不能确立信号质量']]
+                          :[['bak-fnirs','not motor imagery'],['bak-fnirs','not a refit bootstrap'],['mc-rtt','not an official Neural Latents Benchmark score'],['mc-rtt','mean absolute error is higher'],['ds007420','cannot establish signal quality']])
+      assert.ok(vis(el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where)).includes(s),where+': "'+s+'" beside the #'+id+' figures');
+    // (4) Forbidden readings appear only as denials (the credits quote the sources' own statements, and are left out); Jev nowhere.
+    const ownWords=vis(own.replace(/<div class="citation-list" id="credits">[\s\S]*?<\/article>\s*<\/div>/,' '));
+    const sentences=ownWords.split(/(?<=[.;:?])\s+|(?<=[。；：？])/);
+    const forbidden=zh?/排行榜|排名|最先进|在线控制|在线或闭环|实时|闭环|临床|零样本|只来自大脑|神经起源|官方分数|合并|总分|最好|最佳/
+      :/leaderboard|\brank(?:ing|ed|s)?\b|state[- ]of[- ]the[- ]art|\bSOTA\b|online(?: or closed-loop)?[- ]control|real[- ]time|closed[- ]loop|clinical|zero[- ]shot|brain[- ]only|neural[- ]only|neural origin|official (?:Neural Latents Benchmark|NLB) score|\bpool(?:s|ed|ing)?\b|overall score|single score|\bbest\b/i;
+    const denial=zh?/不|没|无|从不|并非|未|非/:/\b(?:not|no|never|nor|none|nothing|neither|without)\b/i;
+    let denied=0;
+    for(const t of sentences) if(forbidden.test(t)){assert.match(t,denial,where+': "'+t.slice(0,140)+'" reads as a claim it may only deny');denied++;}
+    assert.ok(denied>=6,where+': the denials were read ('+denied+')');
+    const ownMd=readFileSync(new URL(path+'index.md',DIST),'utf8').split(/^(?:Keep exploring|继续探索)$/m)[0];
+    assert.ok(own.length>20000&&ownMd.length>8000,where+': the page\'s own content read');
+    assert.doesNotMatch(own+ownMd,/\bJev\b/,where+': the page does not mention Jev');
+    // (7) No update date or version label in the page's own words (a DOI's ".v2" and a dataset version in <code> are identifiers).
+    const words=vis(own.replace(/<code>[\s\S]*?<\/code>/g,' ')).replace(/https?:\/\/\S+|doi:\S+/g,' ');
+    assert.doesNotMatch(words,zh?/新增|本次更新|这次更新|最新|新发布|更新于|(?<![\w.\/#-])v\d+\b/:/\b(?:new|newly|added|updated|this update|this release adds)\b|(?<![\w.\/#-])v\d+\b|generated (?:on )?20\d\d/i,where+': no update wording or version label');
+    // (8) The short answer: the three readings, each with what bounds it.
+    const ans=vis(el(own,/<section class="short-answer"/,where));
+    for(const s of zh?['部分管用','不是运动想象','训练集先验','一只猕猴','同一次会话','平均绝对误差却更高','不是 Neural Latents Benchmark 的官方分数','说明不了信号质量']
+                    :['Partly','not motor imagery','training prior','one macaque','same session','higher mean absolute error','not an official Neural Latents Benchmark score','says nothing about signal quality'])
+      assert.ok(ans.includes(s),where+': the short answer says "'+s+'"');
+    // Credits: each source's licence, ethics and consent (MC_RTT: animal care, consent not applicable), linked.
+    const cr=el(own,/<div class="citation-list" id="credits"/,where);
+    for(const [id,d] of Object.entries(BSX.datasets)){
+      const a=el(cr,new RegExp(`<article data-credit="${id}"`),where+' credit '+id);
+      assert.ok(decodeHtml(a).includes(d.rights.attribution)&&a.includes(`href="${d.rights.licenseUrl}"`)&&a.includes(`href="${d.rights.source}"`),where+': '+id+' credit, licence and record');
+      const c=vis(el(a,/<p data-consent=/,where));
+      assert.ok(c.includes(zh?(d.consent_and_ethics.subjects==='animal'?'动物护理':'伦理与知情同意'):(d.consent_and_ethics.subjects==='animal'?'Animal care':'Ethics and consent')),where+': '+id+' states '+(d.consent_and_ethics.subjects==='animal'?'animal care':'ethics and consent'));
+      if(zh) assert.ok(c.includes(d.consent_and_ethics.ethics_approval.statement),where+': '+id+' keeps the English statement beside its Chinese');
+      else assert.ok(c.includes(d.consent_and_ethics.ethics_approval.statement)&&(d.consent_and_ethics.subjects==='animal'?/Informed consent: not applicable/.test(c):c.includes(d.consent_and_ethics.informed_consent.statement)),where+': '+id+' ethics and consent as the export states them');
+    }
+    // (7) The Markdown copy carries every figure, in order.
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    let at=0;
+    for(const [,t] of main.slice(main.indexOf('<section class="short-answer"')).matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)){
+      const k=md.indexOf(decodeHtml(t),at);assert.ok(k>=0,where+'index.md: the figure "'+t+'" after offset '+at);at=k+t.length;}
+  }
+  // (2) The same figures in both languages.
+  const ms=h=>figAttrs(h).sort();
+  assert.deepEqual(ms(pages.zh),ms(pages.en),'beyond-scalp-eeg: the Chinese page prints exactly the English page\'s figures');
+  // The card sits under "Other signals & pilots" and counts the people the export counts; the map's one entry is Bak's.
+  for(const pfx of ['','zh/']) for(const page of [pfx,pfx+'topics/']){
+    const h=pageOf(page),grp=el(h,/<div class="topic-group" id="group-beyond"/,page);
+    const card=el(grp,new RegExp(`<a class="topic-entry-card" href="${pfx?'/zh':''}/topics/beyond-scalp-eeg/"`),page+' card');
+    const nums=[...vis(card.replace(/<span class="topic-number"[^>]*>\d+<\/span>/,'')).matchAll(/\d+/g)].map(m=>Number(m[0]));
+    assert.deepEqual(nums,[bak.cohort.people,nlb.cohort.animals,opt.cohort.people],page+': the beyond-scalp card counts Bak\'s people, the one macaque and ds007420\'s people');
+    const map=el(h,/<table class="tmap"/,page);
+    const keys=[...map.matchAll(/<li data-map="([^"]+)">[\s\S]*?<\/li>/g)].filter(m=>m[0].includes('beyond-scalp-eeg')).map(m=>m[1]);
+    assert.deepEqual(keys,['person:bak-fnirs'],page+': the map\'s one beyond-scalp entry is Bak\'s new-person fNIRS');
+    assert.ok(el(map,/<li data-map="person:bak-fnirs"/,page).includes('beyond-scalp-eeg/#bak-fnirs'),page+': the Bak map entry links its section');
+  }
+  assert.ok(pinned>100,'beyond-scalp: figures pinned to their cells ('+pinned+')');
+  console.log(`PASS: beyond scalp EEG — /topics/beyond-scalp-eeg/ in both languages: ${pinned} figures pinned to their cells from ${BS}, the same figures in English and Chinese; Bak's classifier with its interval against the training prior on chance, class recall beside; MC_RTT's five metrics for both arms, the better arm as the export flags it (the training mean on MAE), R² against zero and each error against the comparator, no interval; ds007420 counts and its gates, no score; the prepared sources as counts and the held classifier figure-free; species, signal and the locally-executed label in every section; required caveats beside their numbers, forbidden readings only denied, no typed figure, no update wording or version label, no Jev; every credit with its licence and consent, MC_RTT's animal care; the card under Other signals & pilots and Bak's one map entry.`);
+}
+// --- Pilot studies, the page (owner decisions 1 and 2, 2026-10-12) ----------------------------------------------
+// /topics/pilot-studies/: what can a small pilot show, and what can it not? Four pilots from pilot-studies-update.json,
+// each its own dataset, task and metric, none ranked — the Orthosis error events (one cohort of eight people in three
+// configurations, counted once: the 64-channel classical baseline, the same baseline on the 58 channels EEGPT supports,
+// and frozen EEGPT against those matched classical features, with the paired difference); BINGO's inner speech in Greek
+// and English across people and languages (a negative result near the prior); the handwriting analysis (five people,
+// released with its rights gap stated, its mask-only interval withheld; held, figure-free, when its switch holds it); and
+// REFED's stored-clip diagnostic — and, status only, four arms with no evaluation. The topic data-fig loop re-reads every
+// figure from the export; pinned here: (1) each chart row, table cell, finding and count carries the export's own figure
+// in its own place, the comparator and the interval in the same view, chance, zero or the comparator drawn as the dashed
+// line and no curve, permutation ranges never drawn as intervals; (2) English and Chinese print the same figures; (3)
+// the handoffs' required caveats in both languages, the bounding ones beside their numbers; (4) leaderboards,
+// rankings, state of the art, online or real-time control, clinical use, zero-shot, a neural or brain-only origin,
+// subjective recognition, superiority, equivalence and a pooled score appear only in a denial, and Jev nowhere; (5) no
+// figure typed in a result section, so no per-person value can enter outside the export; (6) a held pilot and the
+// status-only arms print no figure; (7) no update date or version label, the cite block names this
+// release alone, the Markdown copy carries every figure in order; (8) the EEGPT credit never calls the weights Apache-2.0;
+// BINGO's preprocessing beside its result, attributed and unverified, and the project's own figure labelled as theirs;
+// the card under "Other signals & pilots" counts what the export counts; the map's three entries; does-pretraining-help's
+// one pointer, with no figure.
+{
+  const PS='pilot-studies-update.json',R=PSX.results,o64=R['orthosis-64ch-classical'],o58=R['orthosis-58ch-classical'],oep=R['orthosis-eegpt-vs-58ch'];
+  const bg=R['bingo-cross-language'],rf=R['refed-stored-clip'],C=o64.cohort;
+  const has=(h,f,x)=>new RegExp(`data-fig="${PS.replace(/\./g,'\\.')}\\|${f}\\|${String(x).replace(/[.+-]/g,'\\$&')}"[^>]*>${fmt[f](x).replace(/[.+]/g,'\\$&')}<`).test(h);
+  const ppf=x=>Math.abs(x*100)<0.05?'pp2':'pp1',sgf=x=>Math.abs(x*100)<0.05?'sgn2':'sgn1';
+  const figAttrs=h=>[...h.matchAll(/data-fig="([^"]+)"/g)].map(m=>m[1]);
+  const spanEnd=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let d=0,m;
+    while((m=re.exec(h))){d+=m[0].startsWith('</')?-1:1;if(!d)return m.index;}return h.length;};
+  const el=(h,sel,where)=>{const a=h.search(sel);assert.ok(a>=0,where+': '+sel+' renders');return h.slice(a,spanEnd(h,a));};
+  const vis=h=>decodeHtml(h.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  const plotRows=h=>[...h.matchAll(/<div class="ip-row">([\s\S]*?<div class="ip-value">[\s\S]*?<\/div>)/g)].map(m=>m[1]);
+  const xOf=(dom,v)=>(Math.max(0,Math.min(1,(v-dom[0])/(dom[1]-dom[0])))*100).toFixed(2);
+  const refs=(h,x)=>(h.match(new RegExp(`class="ip-ref" x1="${x}"`,'g'))||[]).length;
+  const noCurve=h=>!/<path|<polyline|<polygon/.test(h);
+  const ivOk=(h,f,iv)=>has(h,f,iv[0])&&has(h,f,iv[1]);
+  assert.equal(PSX.release_id,'pilot-studies-update-20261012','pilot-studies: the release');
+  const hw=R['handwriting-mask-aware'];
+  let pinned=0;
+  const pages={};
+  for(const [label,pfx] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=pfx+'topics/pilot-studies/',where=path,html=pageOf(path);
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"'));
+    const own=main.slice(0,main.indexOf('<nav class="topic-switcher"'));
+    pages[label]=main;
+    const sec=id=>el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where);
+    // (1) Every figure is a leaf of this export, and nothing else is cited.
+    assert.ok(figAttrs(main).length>(BINGO_ON?200:150)&&figAttrs(main).every(a=>a.startsWith(PS+'|')),where+': every figure is a leaf of '+PS+' ('+figAttrs(main).length+')');
+    const cite=html.slice(html.indexOf('<section class="cite-page"'));
+    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],PSX.release_id,where+': the cite block names this release alone');
+    assert.ok(html.includes('href="/data/'+PS+'"')&&/^(?:Data source:|数据来源：) pilot-studies-update\.json · schema bci-report-pilot-studies-update-v1[.。]$/.test(vis(el(own,/<p class="citation-note">(?:Data source:|数据来源：)/,where))),where+': the data-source note names the file and its schema, and no date');
+    // (8) Each released section names its species and signal, says it is executed locally, and links its dataset page;
+    // the held one links none.
+    for(const [id,slug] of [['orthosis','orthosis-error-detection'],...(BINGO_ON?[['bingo','bingo-imagined-speech']]:[]),...(HW_ON?[['handwriting','eeg-fnirs-handwriting']]:[]),['refed','refed']]){
+      const s=sec(id);
+      assert.match(vis(el(s,/<p class="eyebrow">/,where)),zh?/^人类 · 头皮 EEG/:/^Human · scalp EEG/,where+': #'+id+' names its species and signal');
+      assert.match(vis(el(s,/<p class="topic-subtitle"/,where)),zh?/^本站在本地运行的/:/^Locally executed /,where+': #'+id+' says it is executed locally');
+      assert.ok(s.includes(`href="/${pfx}datasets/${slug}/"`),where+': #'+id+' links its dataset page');
+    }
+    // (1) Orthosis, the 64-channel baseline: the chart draws the EEG arm with its interval against the confound probe,
+    // the prior on chance and the permutation mean, whose range is printed, never drawn.
+    const os=sec('orthosis'),A=o64.arms,P=o64.permutation_control.balanced_accuracy;
+    for(const v of [C.people,C.runs,C.events,C.error_events,C.standard_events]) assert.ok(has(el(os,/<div class="topic-heading">/,where),'count',v),where+': the Orthosis cohort, '+v);
+    const p64=el(os,/<figure class="interval-plot" id="orthosis-64ch-balanced-accuracy"/,where),r64=plotRows(p64);
+    assert.equal(r64.length,4,where+': the 64-channel chart draws EEG, the confound probe, the prior and the permutation control');
+    assert.ok(has(r64[0],'pct1',A.eeg.balanced_accuracy.mean)&&ivOk(r64[0],'pct1',A.eeg.balanced_accuracy.interval_95)&&r64[0].includes('class="ip-ci"'),where+': the 64-channel EEG point and interval');
+    assert.ok(has(r64[1],'pct1',A.confound.balanced_accuracy.mean)&&ivOk(r64[1],'pct1',A.confound.balanced_accuracy.interval_95)&&r64[1].includes('class="ip-ci"'),where+': the confound probe with its interval');
+    assert.ok(has(r64[2],'pct1',A.prior.balanced_accuracy.mean)&&!r64[2].includes('class="ip-ci"'),where+': the prior, no interval');
+    assert.ok(has(r64[3],'pct1',P.balanced_accuracy_mean)&&has(r64[3],'count',P.replicates)&&ivOk(r64[3],'pct1',P.observed_range)&&!r64[3].includes('class="ip-ci"'),where+': the permutation mean, its range printed and not drawn');pinned+=10;
+    assert.ok(refs(p64,xOf([0.4,0.8],o64.chance_level))===r64.length&&noCurve(p64),where+': chance on every row of the 64-channel chart, no curve');
+    const f64=el(os,/<div class="finding" data-finding="orthosis-64ch"/,where),D=o64.eeg_minus_confound;
+    assert.ok(has(f64,'pct1',A.eeg.balanced_accuracy.mean)&&has(f64,'pct1',A.confound.balanced_accuracy.mean)&&has(f64,'pct1',A.prior.balanced_accuracy.mean)&&ivOk(f64,'pct1',A.eeg.balanced_accuracy.interval_95)
+      &&has(f64,'pp1',D.balanced_accuracy_difference.mean)&&has(f64,'count',D.people_with_eeg_above_confound)&&has(f64,'count',D.people),where+': the 64-channel finding with its comparators, interval and the matched difference');pinned+=8;
+    assert.equal(D.balanced_accuracy_difference.interval_95,null,'pilot-studies: no interval for EEG minus the confound');
+    // (1) The 58-channel configuration and frozen EEGPT: both arms with intervals on the same axis, the paired difference
+    // on its own axis against zero, the finding with both arms and the paired interval.
+    const n58=el(os,/<p class="roadmap-p" data-pilot-note="orthosis-58ch"/,where),C58=o58.arms.classical58.balanced_accuracy;
+    assert.ok(has(n58,'pct1',C58.mean)&&ivOk(n58,'pct1',C58.interval_95)&&has(n58,'count',o58.signal.eeg_channels)&&has(n58,'count',o64.signal.eeg_channels)
+      &&o58.configuration.omitted_channels.every(c=>vis(n58).includes(c)),where+': the 58-channel configuration, its score and the six channels left out');pinned+=3;
+    const pe=el(os,/<figure class="interval-plot" id="orthosis-eegpt-balanced-accuracy"/,where),re=plotRows(pe),E=oep.arms;
+    assert.equal(re.length,4,where+': the EEGPT chart draws EEGPT, the matched classical features, the confound probe and the prior');
+    [['eegpt2048',true],['classical58',true],['confound',true],['prior',false]].forEach(([k,ci],i)=>{
+      assert.ok(has(re[i],'pct1',E[k].balanced_accuracy.mean)&&(!ci||ivOk(re[i],'pct1',E[k].balanced_accuracy.interval_95))&&re[i].includes('class="ip-ci"')===ci,where+': EEGPT chart row '+k);pinned+=ci?3:1;});
+    assert.ok(refs(pe,xOf([0.4,0.8],oep.chance_level))===re.length&&noCurve(pe),where+': chance on every row of the EEGPT chart, no curve');
+    const PD=oep.paired.balanced_accuracy_difference,pd=el(os,/<figure class="interval-plot" id="orthosis-eegpt-paired"/,where),rd=plotRows(pd);
+    assert.ok(rd.length===1&&has(rd[0],ppf(PD.mean),PD.mean)&&has(rd[0],sgf(PD.interval_95[0]),PD.interval_95[0])&&has(rd[0],ppf(PD.interval_95[1]),PD.interval_95[1])&&rd[0].includes('class="ip-ci"'),where+': the paired difference with its interval');pinned+=3;
+    assert.ok(PD.interval_95[0]<0&&PD.interval_95[1]>0&&oep.paired.interval_excludes_zero===false&&refs(pd,xOf([-0.1,0.1],0))===1&&noCurve(pd),where+': the paired interval spans zero, drawn against zero');
+    const fe=el(os,/<div class="finding" data-finding="orthosis-eegpt"/,where);
+    assert.ok(has(fe,ppf(PD.mean),PD.mean)&&has(fe,sgf(PD.interval_95[0]),PD.interval_95[0])&&has(fe,ppf(PD.interval_95[1]),PD.interval_95[1])&&has(fe,'pct1',E.eegpt2048.balanced_accuracy.mean)
+      &&ivOk(fe,'pct1',E.eegpt2048.balanced_accuracy.interval_95)&&has(fe,'pct1',E.classical58.balanced_accuracy.mean)&&has(fe,'count',oep.paired.people),where+': the EEGPT finding, both arms and the paired interval');pinned+=7;
+    // (1) The table: every arm of the three configurations, every metric with its interval where it is not a point,
+    // the permutation means with their ranges on the three EEG rows.
+    const ot=el(os,/<table data-pilot-table="orthosis"/,where);
+    const tableRows={eeg64:[o64.arms.eeg,P],confound64:[o64.arms.confound],majority64:[o64.arms.majority],prior64:[o64.arms.prior],
+      classical58:[o58.arms.classical58,o58.permutation_control.balanced_accuracy],eegpt58:[E.eegpt2048,oep.permutation_control.eegpt2048],confound58:[E.confound],majority58:[E.majority],prior58:[E.prior]};
+    assert.deepEqual([...ot.matchAll(/<tr data-pilot-row="([^"]+)"/g)].map(m=>m[1]),Object.keys(tableRows),where+': the Orthosis table rows, the two configurations in order');
+    assert.equal((ot.match(/<tr class="subhead">/g)||[]).length,2,where+': the two configurations are labelled');
+    for(const [k,[a,perm]] of Object.entries(tableRows)){
+      const row=el(ot,new RegExp(`<tr data-pilot-row="${k}"`),where+' '+k);
+      for(const [cell,m,f] of [['ba','balanced_accuracy','pct1'],['auroc','auroc','auc3'],['ap','average_precision','auc3']]){
+        const c=el(row,new RegExp(`<td data-cell="${cell}"`),where),iv=a[m].interval_95;
+        assert.ok(has(c,f,a[m].mean)&&(iv[0]===iv[1]?figAttrs(c).length===1:ivOk(c,f,iv)),where+': Orthosis '+k+' '+m);pinned+=iv[0]===iv[1]?1:3;
+      }
+      const pc=el(row,/<td data-cell="perm"/,where);
+      assert.ok(perm?has(pc,'pct1',perm.balanced_accuracy_mean)&&ivOk(pc,'pct1',perm.observed_range):figAttrs(pc).length===0,where+': Orthosis '+k+' permutation');pinned+=perm?3:0;
+    }
+    assert.ok(has(el(ot,/<caption/,where),'pct1',C.error_share)&&has(el(ot,/<caption/,where),'auc3',o64.arms.prior.average_precision.mean),where+': average precision read against the error share');
+    const rc=el(os,/<p class="roadmap-p" data-pilot-note="orthosis-response-clean"/,where),RC=o64.response_clean_subset;
+    assert.ok([RC.events,RC.error_events,RC.standard_events,RC.people_with_both_classes].every(v=>has(rc,'count',v))&&figAttrs(rc).every(a=>a.split('|')[1]==='count'),where+': the response-clean subset, counts only');
+    if(BINGO_ON){
+      // (1) BINGO: four directions with intervals against the prior; the table with top-3 and the controls; the contrast.
+      const bs=sec('bingo'),BC=bg.cohort;
+      for(const v of [BC.source_fields,BC.trials,BC.training_rows,BC.trials_per_noun_and_language,bg.protocol.nouns,bg.signal.channels,bg.signal.sampling_hz])
+        assert.ok(has(el(bs,/<div class="topic-heading">/,where),'count',v),where+': the BINGO cohort, '+v);
+      const bp=el(bs,/<figure class="interval-plot" id="bingo-balanced-accuracy"/,where),br=plotRows(bp);
+      assert.equal(br.length,4,where+': the BINGO chart draws the four directions');
+      bg.directions.forEach((d,i)=>{assert.ok(has(br[i],'pct1',d.balanced_accuracy.mean)&&ivOk(br[i],'pct1',d.balanced_accuracy.interval_95)&&br[i].includes('class="ip-ci"'),where+': BINGO '+d.id);pinned+=3;});
+      assert.ok(refs(bp,xOf([0.03,0.11],bg.chance.balanced_accuracy))===4&&noCurve(bp),where+': the prior on every BINGO row, no curve');
+      const bt=el(bs,/<table data-pilot-table="bingo"/,where);
+      for(const d of bg.directions){
+        const row=el(bt,new RegExp(`<tr data-pilot-row="${d.id}"`),where+' '+d.id);
+        for(const [cell,x] of [['ba',d.balanced_accuracy],['top3',d.top3_accuracy],['order',d.controls.order_only.balanced_accuracy],['hf',d.controls.high_frequency_ratio.balanced_accuracy]])
+          {assert.ok(has(el(row,new RegExp(`<td data-cell="${cell}"`),where),'pct1',x.mean)&&ivOk(el(row,new RegExp(`<td data-cell="${cell}"`),where),'pct1',x.interval_95),where+': BINGO '+d.id+' '+cell);pinned+=3;}
+        const sh=d.controls.label_shuffle.balanced_accuracy,sc=el(row,/<td data-cell="shuffle"/,where);
+        assert.ok(has(sc,'pct1',sh.balanced_accuracy_mean)&&ivOk(sc,'pct1',sh.observed_range),where+': BINGO '+d.id+' shuffles');pinned+=3;
+      }
+      assert.ok(has(el(bt,/<caption/,where),'pct1',bg.chance.balanced_accuracy)&&has(el(bt,/<caption/,where),'pct1',bg.chance.top3_accuracy),where+': both priors in the BINGO caption');
+      const cp=el(bs,/<figure class="interval-plot" id="bingo-contrast"/,where),crow=plotRows(cp),K=bg.contrast;
+      const contrasts=[K.balanced_accuracy_difference,K.by_training_language.greek.balanced_accuracy_difference,K.by_training_language.english.balanced_accuracy_difference];
+      assert.equal(crow.length,3,where+': the contrast chart draws the mean and both training languages');
+      contrasts.forEach((x,i)=>{assert.ok(has(crow[i],ppf(x.mean),x.mean)&&has(crow[i],sgf(x.interval_95[0]),x.interval_95[0])&&has(crow[i],ppf(x.interval_95[1]),x.interval_95[1])&&x.interval_95[0]<0&&x.interval_95[1]>0,where+': contrast '+i+', spanning zero');pinned+=3;});
+      assert.ok(refs(cp,xOf([-0.02,0.02],0))===3&&noCurve(cp),where+': zero on every contrast row');
+      const bf=el(bs,/<div class="finding" data-finding="bingo"/,where),bas=bg.directions.map(d=>d.balanced_accuracy.mean),t3=bg.directions.map(d=>d.top3_accuracy.mean);
+      assert.ok(has(bf,ppf(K.balanced_accuracy_difference.mean),K.balanced_accuracy_difference.mean)&&has(bf,sgf(K.balanced_accuracy_difference.interval_95[0]),K.balanced_accuracy_difference.interval_95[0])
+        &&has(bf,'pct1',Math.min(...bas))&&has(bf,'pct1',Math.max(...bas))&&has(bf,'pct1',Math.min(...t3))&&has(bf,'pct1',Math.max(...t3))&&has(bf,'pct1',bg.chance.balanced_accuracy)&&has(bf,'pct1',bg.chance.top3_accuracy),where+': the BINGO finding');pinned+=8;
+      assert.ok(bg.directions.every(d=>d.balanced_accuracy.interval_95[0]<=bg.chance.balanced_accuracy&&bg.chance.balanced_accuracy<=d.balanced_accuracy.interval_95[1]),'pilot-studies: every BINGO interval holds the prior, as the finding says');
+      // BINGO's delivered preprocessing beside its result, attributed to D3.1 version 2.0 and unverified; the project's
+      // own figure labelled as theirs, with its own source.
+      const dn=el(bs,/<p class="protocol-note" data-pilot-note="bingo-delivered"/,where);
+      assert.ok(decodeHtml(dn).includes(bg.delivered_signal.statement)&&dn.includes('href="https://bingo-project.gr/download/397"')&&vis(dn).includes(zh?'没有对照交付的数据文件重新核实':'not re-verified against the delivered file')
+        &&bg.delivered_signal.verified_against_file===false,where+': the delivered preprocessing as the project states it, attributed, not re-verified');
+      const pj=el(bs,/<p class="roadmap-p" data-pilot-note="bingo-project-reported"/,where),PR=bg.project_reported;
+      assert.ok(vis(pj).startsWith(zh?'BINGO 项目报告的结果，不是本站运行的。':'Reported by the BINGO project, not run here.')&&has(pj,'pct2raw',PR.mean_accuracy_percent)&&has(pj,'pct2',PR.chance_level)&&has(pj,'count',PR.classes)
+        &&pj.includes('href="https://bingo-project.gr/download/402"'),where+': the project\'s own result, labelled as theirs, with its source');pinned+=3;
+    } else {
+      // Held by its switch: the section states the design in words and links its register row, with no figure, no
+      // number, no dataset page and none of the result's own wording.
+      const bs=sec('bingo'),bd=el(bs,new RegExp('<p class="protocol-note" id="bingo-cross-language-rights"'),where);
+      assert.ok(bs.includes('data-held="true"')&&!bs.includes('data-fig')&&!/\d/.test(vis(el(bs,/<div class="topic-heading">/,where)))&&!/\d/.test(vis(bd))
+        &&bd.includes(`href="/${pfx}releases/#hold-bingo-cross-language-rights"`),where+': the held BINGO pilot prints no figure and links its register row');
+      assert.ok(!html.includes('/datasets/bingo-imagined-speech/'),where+': a held BINGO has no dataset page to link');
+      assert.doesNotMatch(vis(own),zh?/接近随机水平|阴性结果|项目报告的结果/:/near (?:the|its) prior|negative result|Reported by the BINGO project/,where+': none of the held BINGO result\'s wording');
+    }
+    // (1) REFED: four arms in each condition against the global mean, no interval; the table; the finding.
+    const rs=sec('refed'),[shc,joc]=rf.conditions;
+    for(const v of [rf.cohort.nominal_folders,rf.cohort.videos,rf.cohort.clips,shc.folds,joc.folds,joc.held_clips_per_fold]) assert.ok(has(el(rs,/<div class="topic-heading">/,where),'count',v),where+': the REFED cohort and design, '+v);
+    const arms=['eeg_ridge','source_global_mean','source_video_lookup','duration_video_id_ridge'];
+    for(const [id,c] of [['refed-shared',shc],['refed-joint',joc]]){
+      const fg=el(rs,new RegExp(`<figure class="interval-plot" id="${id}"`),where),rows=plotRows(fg);
+      assert.ok(rows.length===4&&arms.every((a,i)=>has(rows[i],'num3',c.arms[a].equal_axis_mae))&&!fg.includes('class="ip-ci"'),where+': '+id+', four arms, no interval');pinned+=4;
+      assert.ok(refs(fg,xOf([0,120],c.arms.source_global_mean.equal_axis_mae))===4&&noCurve(fg),where+': '+id+' draws the global mean on every row');
+      assert.ok(arms.slice(1).every(a=>c.arms.eeg_ridge.equal_axis_mae>c.arms[a].equal_axis_mae),'pilot-studies: EEG Ridge has the largest error, '+c.id);
+    }
+    const rt=el(rs,/<table data-pilot-table="refed"/,where);
+    for(const a of arms){const row=el(rt,new RegExp(`<tr data-pilot-row="${a}"`),where);
+      assert.ok(has(el(row,/<td data-cell="shared"/,where),'num3',shc.arms[a].equal_axis_mae)&&has(el(row,/<td data-cell="joint"/,where),'num3',joc.arms[a].equal_axis_mae),where+': REFED '+a);pinned+=2;}
+    const rfd=el(rs,/<div class="finding" data-finding="refed"/,where);
+    assert.ok([shc.arms.eeg_ridge,shc.arms.source_video_lookup,shc.arms.source_global_mean,joc.arms.eeg_ridge,joc.arms.source_global_mean].every(a=>has(rfd,'num3',a.equal_axis_mae)),where+': the REFED finding, both conditions');pinned+=5;
+    assert.ok(!/95%/.test(vis(rs))&&!rs.includes('class="ip-ci"')&&figAttrs(rs).every(a=>['num3','count'].includes(a.split('|')[1])),where+': REFED prints errors and counts, no interval');
+    const hs=sec('handwriting');
+    if(HW_ON){
+      // (1) Handwriting (owner decision, 2026-10-12): five arms against the majority line at chance, the mask-only arm
+      // without an interval; the three paired contrasts against zero, the elapsed-time one crossing it; the table with the
+      // shuffle means and their ranges; the finding; the availability counts and histogram; the earlier analysis as context.
+      const HC=hw.cohort,HA=hw.arms,HK=hw.contrasts,HV=hw.availability,HE=hw.earlier_analysis,HS=hw.label_shuffle.representations;
+      for(const v of [HC.people,HC.sessions,HC.events,HC.trials,HC.quarantined_events,HC.classes]) assert.ok(has(el(hs,/<div class="topic-heading">/,where),'count',v),where+': the handwriting cohort, '+v);
+      const arms=['relative_eeg','mask_only','time_only','mask_plus_time','majority'];
+      const hp=el(hs,/<figure class="interval-plot" id="handwriting-balanced-accuracy"/,where),hr=plotRows(hp);
+      assert.equal(hr.length,5,where+': the handwriting chart draws relative EEG and its four controls');
+      arms.forEach((k,i)=>{const b=HA[k].balanced_accuracy,ci=['relative_eeg','time_only','mask_plus_time'].includes(k);
+        assert.ok(has(hr[i],'pct2',b.mean)&&(!ci||ivOk(hr[i],'pct2',b.interval_95))&&hr[i].includes('class="ip-ci"')===ci,where+': handwriting chart row '+k);pinned+=ci?3:1;});
+      assert.equal(HA.mask_only.balanced_accuracy.interval_95,null,'pilot-studies: the mask-only interval is withheld');
+      assert.ok(vis(hr[1]).includes(zh?'区间不发布':'interval not published')&&vis(hr[4]).includes(zh?'对每名被试都等于随机水平':'chance for every person'),where+': the mask-only row says its interval is not published; the majority row, chance for everyone');
+      assert.ok(refs(hp,xOf([0.22,0.3],hw.chance_level))===5&&noCurve(hp)&&hp.includes(zh?'>平衡准确率</div>':'>Balanced accuracy</div>'),where+': the majority line at chance on every row, no curve, a labelled axis');
+      const hcp=el(hs,/<figure class="interval-plot" id="handwriting-paired"/,where),hcr=plotRows(hcp),ks=['relative_eeg_minus_mask_only','relative_eeg_minus_time_only','relative_eeg_minus_mask_plus_time'];
+      ks.forEach((k,i)=>{const d=HK[k].balanced_accuracy_difference;
+        assert.ok(has(hcr[i],'pp2',d.mean)&&has(hcr[i],'sgn2',d.interval_95[0])&&has(hcr[i],'pp2',d.interval_95[1])&&hcr[i].includes('class="ip-ci"')
+          &&vis(hcr[i]).includes(zh?'跨过零':'crosses zero')===!HK[k].interval_excludes_zero,where+': handwriting contrast '+k);pinned+=3;});
+      assert.ok(!HK.relative_eeg_minus_time_only.interval_excludes_zero&&HK.relative_eeg_minus_mask_only.interval_excludes_zero&&HK.relative_eeg_minus_mask_plus_time.interval_excludes_zero,'pilot-studies: only the elapsed-time contrast crosses zero');
+      assert.ok(refs(hcp,xOf([-0.04,0.04],0))===3&&noCurve(hcp)&&hcr.length===3,where+': zero on every handwriting contrast row');
+      const ht=el(hs,/<table data-pilot-table="handwriting"/,where);
+      assert.deepEqual([...ht.matchAll(/<tr data-pilot-row="([^"]+)"/g)].map(m=>m[1]),arms,where+': the handwriting table rows');
+      for(const k of arms){const row=el(ht,new RegExp(`<tr data-pilot-row="${k}"`),where),b=HA[k].balanced_accuracy,ba=el(row,/<td data-cell="ba"/,where),sc=el(row,/<td data-cell="shuffle"/,where);
+        const live=b.interval_95&&b.interval_95[0]!==b.interval_95[1];
+        assert.ok(has(ba,'pct2',b.mean)&&(live?ivOk(ba,'pct2',b.interval_95):figAttrs(ba).length===1),where+': handwriting '+k+' balanced accuracy');pinned+=live?3:1;
+        assert.ok(HS[k]?has(sc,'pct2',HS[k].balanced_accuracy_mean)&&ivOk(sc,'pct2',HS[k].observed_range):figAttrs(sc).length===0,where+': handwriting '+k+' shuffles');pinned+=HS[k]?3:0;}
+      const hf=el(hs,/<div class="finding" data-finding="handwriting"/,where);
+      assert.ok(has(hf,'pct2',HA.relative_eeg.balanced_accuracy.mean)&&ivOk(hf,'pct2',HA.relative_eeg.balanced_accuracy.interval_95)&&has(hf,'pct2',HA.majority.balanced_accuracy.mean)
+        &&ks.every(k=>{const d=HK[k].balanced_accuracy_difference;return has(hf,'pp2',d.mean)&&has(hf,'sgn2',d.interval_95[0])&&has(hf,'pp2',d.interval_95[1]);}),where+': the handwriting finding, its interval, chance and the three contrasts');pinned+=13;
+      const av=el(hs,/<p class="roadmap-p" data-pilot-note="handwriting-availability"/,where);
+      assert.ok([HV.available_channels_per_trial.fewest,HV.available_channels_per_trial.most,HV.channels_recorded,HV.channel_trials,HV.flags.constant,HV.flags.lower_rail].every(v=>has(av,'count',v))
+        &&vis(av).includes(zh?'两种标记相互重叠，所以不能相加':'the two flags overlap, so they are not summed')&&vis(av).includes(zh?'不代表经过认证的干净 EEG':'not certified clean EEG'),where+': availability counts, the overlapping flags not added, availability not certified clean EEG');pinned+=6;
+      const at=el(hs,/<table data-pilot-table="handwriting-availability"/,where);
+      for(const x of HV.trials_by_available_channels){const row=el(at,new RegExp(`<tr data-pilot-row="channels-${x.channels}"`),where);
+        assert.ok(has(row,'count',x.channels)&&has(row,'count',x.trials),where+': '+x.trials+' trials with '+x.channels+' available channels');pinned+=2;}
+      const ea=el(hs,/<p class="roadmap-p" data-pilot-note="handwriting-earlier"/,where),Q=HE.quality_findings;
+      assert.ok(has(ea,'pct2',HE.arms.logistic.balanced_accuracy.mean)&&has(ea,'pct2',HE.arms.shrinkage_lda.balanced_accuracy.mean)&&[Q.windows,Q.windows_with_a_rail_sample,Q.inspected_windows,Q.channel_windows,Q.rail_flat_channel_windows].every(v=>has(ea,'count',v))
+        &&vis(ea).includes(zh?'不是第二个队列':'not a second cohort')&&vis(ea).includes(zh?'不能归因于掩码':'cannot be attributed to masking'),where+': the earlier analysis as context, its difference not attributable to masking');pinned+=7;
+      const hsrc=el(hs,/<p class="citation-note" data-pilot-note="handwriting-source"/,where);
+      assert.ok(vis(hsrc).includes(zh?'没有找到伦理批准或知情同意声明；聚合结果依据所有者的决定发布，并说明这一缺口。':'No ethics-approval or informed-consent statement was found; the aggregates are published with that gap stated, by the owner’s decision.')
+        &&hsrc.includes(`href="/${pfx}datasets/eeg-fnirs-handwriting/"`)&&hsrc.includes('#credits"'),where+': beside the result, a short pointer to the rights gap, the dataset page and the credits');
+      const hau=el(hs,/<p class="citation-note" data-pilot-note="handwriting-audit"/,where);
+      assert.ok(has(hau,'count',hw.independent_audit.reconstructed_models)&&has(hau,'count',hw.independent_audit.refitted_models),where+': the handwriting audit scope');pinned+=2;
+      // The withheld bounds appear nowhere, in any format; the pooled metrics and per-class recall are not printed.
+      assert.ok(!/24\.98%|24\.979|24\.97%/.test(vis(own)),where+': the mask-only control\'s withheld bounds');
+    } else {
+      // (6) Held by its switch: the section states the design in words and links its register row, with no figure.
+      const hd=el(hs,/<p class="protocol-note" id="handwriting-mask-aware-rights"/,where);
+      assert.ok(hs.includes('data-held="true"')&&!hs.includes('data-fig')&&!/\d/.test(vis(hd))&&hd.includes(`href="/${pfx}releases/#hold-handwriting-mask-aware-rights"`),where+': the held handwriting analysis prints no figure and links its register row');
+      assert.ok(!hs.includes('/datasets/eeg-fnirs-handwriting/'),where+': a held source has no dataset page to link');
+      assert.doesNotMatch(vis(own),/26\.8|27–38|1,618|24\.99|\+1\.8\d? pp/,where+': no figure of the held handwriting analysis');
+    }
+    const so=sec('status-only'),soIds=[...so.matchAll(/<article class="status-entry" id="([^"]+)"/g)].map(m=>m[1]);
+    assert.deepEqual(soIds,PSX.status_only.map(s=>s.id),where+': every status-only arm');
+    assert.ok(!so.includes('data-fig')&&!/\d/.test(vis(so)),where+': the status-only arms print no figure');
+    assert.ok(vis(so).includes(zh?'RR 指心跳的 RR 间期，不是呼吸频率':'RR means heartbeat RR intervals, not respiratory rate'),where+': RR is the heartbeat interval');
+    // (5) No figure typed in a result section: every number there is a data-fig leaf, an axis tick, an identifier, the
+    // name of a configuration, a metric or a document, or a figure the source states in its own words beside its credit.
+    const allowed=new Set(['95%','4.0']);
+    const named=s=>s.replace(/\b(?:64|58)(?:-channel| channels?)\b/g,' ').replace(/(?:64|58) ?个?通道/g,' ').replace(/top-3/gi,' ')
+      .replace(/D3\.1(?:,? version [23]\.0|（[23]\.0 版）)?/g,' ').replace(/version [23]\.0/g,' ')
+      .replace(/from 1 to 145 Hz|1–145 Hz|(?:at )?50 Hz/g,' ').replace(/from 1 to 255|1 到 255/g,' ');
+    for(const id of ['orthosis','bingo','handwriting','refed','status-only']){
+      const s=sec(id).replace(/<span data-fig="[^"]*"[^>]*>[^<]*<\/span>/g,' ')
+        .replace(/<div class="ip-row ip-axis"[\s\S]*?<\/div>\s*<div class="ip-value"><\/div>\s*<\/div>/g,' ').replace(/<code>[\s\S]*?<\/code>/g,' ').replace(/\s(?:id|href|data-[\w-]+)="[^"]*"/g,'');
+      const typed=[...named(vis(s)).replace(/[A-Za-z]+\d+/g,' ').matchAll(/\d[\d,]*(?:\.\d+)?%?/g)].map(m=>m[0].replace(/,$/,'')).filter(t=>!allowed.has(t));
+      assert.deepEqual(typed,[],where+': #'+id+' types a figure outside the export');
+    }
+    // (3) The handoffs' required caveats, in each language.
+    const page=vis(own);
+    for(const s of zh?['只计一次','这个结果并不说明被试识别出了错误','运动、肌电与设备注入的伪迹都可能起作用','也不能把来源归到神经活动','不是重复验证','也不能由此得出需要多少通道的结论',
+                       '既不能说明哪一方更好，也不能说明两者等效','不是对 EEG 基础模型整体的评判','不增加覆盖','冻结这项比较之前，64 通道的分数已经看过','这是有监督迁移，不是零样本',
+                       '没有排除这个数据集出现在 EEGPT 预训练数据中的可能','运动、肌电与设备伪迹在这里同样可能起作用','它的分数不进入任何比较','标签里的范围不是区间',
+                       ...(BINGO_ON?['不能证明是不同的人','每个区间都包含','不能说明两种语言孰优孰劣，也不能说明二者等效，也没有做显著性检验','并不说明其他方法也解码不了内部言语','没有对照交付的数据文件重新核实',
+                       '伪迹子空间重构（ASR）','FORCe','BINGO 项目报告的结果，不是本站运行的。','不能与上面的结果比较','这既不能证明处理是因果的或可以在线进行，也不能证明信号只来自大脑']:[]),
+                       ...(HW_ON?['这不是手写识别','不代表经过认证的干净 EEG','两种标记相互重叠，所以不能相加','不是独立确认','没有使用官方的十人测试数据','不能归因于掩码','不是第二个队列','跨过零',
+                         '不是校准过的群体置信区间','它的区间端点能反推出个人的分数','不是某一名被试的分数','得不出任何 fNIRS 或融合方面的结论','也不作在线、生理来源、竞赛名次或医学方面的声明']
+                         :['在这一依据确立之前不发布任何数字','不是第二个队列']),
+                       '并不是同样多的独立个体','不是 SAM 评分','所以不报告区间或显著性检验','但不能确立其机制','不是未经接触的目标值','已发布的视频时长比存储的数组长两秒','不是已确立的呈现顺序',
+                       '小规模试点，不排名','不合并','不是数据作者报告的结果','不涉及在线、实时、临床或部署方面的结论',
+                       'Apache-2.0 只涵盖代码仓库中的源代码','检查点本身的许可尚未厘清','不分发任何原始或转换后的权重']
+                    :['counted once','does not show that a person recognised the error','movement, muscle and device-injection artifacts may contribute','does not isolate a neural origin','not a replication','no conclusion about how many channels are needed follows',
+                       'neither arm is shown to be better, and the two are not shown to be equivalent','not a verdict on EEG foundation models in general','not additional coverage','The 64-channel scores were seen before this comparison was frozen','supervised transfer, not zero-shot',
+                       'Overlap between this dataset and EEGPT’s pretraining data has not been excluded','movement, muscle and device artifacts may contribute here too','Its scores stay out of every comparison','the range in its label is not an interval',
+                       ...(BINGO_ON?['not proven to be distinct people','every interval holds the prior','no superiority or equivalence between languages, and no significance test','it does not show that inner speech cannot be decoded by other methods','not re-verified against the delivered file',
+                       'Artifact Subspace Reconstruction (ASR)','FORCe','Reported by the BINGO project, not run here.','not comparable with the results above','does not certify causal or online processing or a brain-only origin']:[]),
+                       ...(HW_ON?['so this is not handwriting recognition','not certified clean EEG','the two flags overlap, so they are not summed','not independent confirmation','The official ten-person test data were not used',
+                         'cannot be attributed to masking','not a second cohort','crosses zero','not calibrated population confidence intervals','its bounds would show individual people’s scores','not one person’s score',
+                         'no fNIRS or fusion conclusion follows','no online, physiological-origin, competition-standing or medical claim']
+                         :['no figure is published until that basis is established','not a second cohort']),
+                       'not as many independent people','not SAM scores','no interval or significance test is reported','it does not establish a mechanism','not untouched targets','exceed the stored arrays by two seconds','not an established presentation order',
+                       'Small pilots, not ranked','Nothing pooled','not results reported by the datasets’ authors','no online, real-time, clinical or deployment claim',
+                       'Apache-2.0 covers the repository’s source code only','the checkpoint’s own licence is unresolved','no original or converted weights are distributed'])
+      assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
+    // Each bounding caveat sits beside its number, in the section of that number.
+    for(const [id,s] of (zh?[['orthosis','也不能说明两者等效'],['orthosis','不是零样本'],['orthosis','预训练数据中的可能'],['orthosis','64 通道的分数已经看过'],['orthosis','不增加覆盖'],['orthosis','设备注入的伪迹都可能起作用'],
+                             ['bingo','没有对照交付的数据文件重新核实'],['bingo','并不说明其他方法也解码不了内部言语'],['bingo','不是本站运行的'],['bingo','不能证明是不同的人'],['refed','并不是同样多的独立个体'],['refed','但不能确立其机制'],['refed','不是 SAM 评分'],
+                             ['handwriting','这不是手写识别'],['handwriting','不是独立确认'],['handwriting','不能归因于掩码'],['handwriting','跨过零'],['handwriting','区间端点能反推出个人的分数'],['handwriting','没有找到伦理批准或知情同意声明']]
+                          :[['orthosis','not shown to be equivalent'],['orthosis','not zero-shot'],['orthosis','pretraining data has not been excluded'],['orthosis','seen before this comparison was frozen'],['orthosis','not additional coverage'],['orthosis','device-injection artifacts may contribute'],
+                             ['bingo','not re-verified against the delivered file'],['bingo','does not show that inner speech cannot be decoded'],['bingo','not run here'],['bingo','not proven to be distinct people'],['refed','not as many independent people'],['refed','does not establish a mechanism'],['refed','not SAM scores'],
+                             ['handwriting','not handwriting recognition'],['handwriting','not independent confirmation'],['handwriting','cannot be attributed to masking'],['handwriting','crosses zero'],['handwriting','its bounds would show individual people’s scores'],['handwriting','No ethics-approval or informed-consent statement was found']]).filter(([id])=>(BINGO_ON||id!=='bingo')&&(HW_ON||id!=='handwriting')))
+      assert.ok(vis(sec(id)).includes(s),where+': "'+s+'" beside the #'+id+' figures');
+    // (4) Forbidden readings appear only as denials (the credits quote the sources' own statements, and are left out); Jev nowhere.
+    // A heading, cell, caption or label ends a sentence too, so a denial in one cannot excuse a claim in the next.
+    const ownWords=vis(own.replace(/<div class="citation-list" id="credits">[\s\S]*?<\/article>\s*<\/div>/,' ').replace(/<\/(?:h[1-6]|p|li|th|td|caption|figcaption|small|div)>/g,' ¶ '));
+    assert.ok(!ownWords.includes(zh?'Apache-2.0 只涵盖':'Apache-2.0 covers'),where+': the credits were left out of the denial check');
+    const sentences=ownWords.split(/¶|(?<=[.;:?])\s+|(?<=[。；：？])/).map(t=>t.trim()).filter(Boolean);
+    // "Handwriting recognition" is a reading the handwriting analysis may only deny (2026-10-12), so "recognition" is read too.
+    const forbidden=zh?/排行榜|排名|最先进|在线|实时|闭环|临床|零样本|只来自大脑|神经起源|合并|总分|最好|最佳|优于|等效|识别出|手写识别/
+      :/leaderboard|\brank(?:ing|ed|s)?\b|state[- ]of[- ]the[- ]art|\bSOTA\b|\bonline\b|real[- ]time|closed[- ]loop|clinical|zero[- ]shot|brain[- ]only|neural[- ]only|neural origin|isolated neural|\bpool(?:s|ed|ing)?\b|overall score|single score|\bbest\b|outperform|superior|equivalen|recogni(?:[sz]|tion)/i;
+    const denial=zh?/不|没|无|从不|并非|未|非/:/\b(?:not|no|never|nor|none|nothing|neither|without)\b/i;
+    let denied=0;
+    for(const t of sentences) if(forbidden.test(t)){assert.match(t,denial,where+': "'+t.slice(0,140)+'" reads as a claim it may only deny');denied++;}
+    assert.ok(denied>=8,where+': the denials were read ('+denied+')');
+    const ownMd=readFileSync(new URL(path+'index.md',DIST),'utf8').split(/^(?:Keep exploring|继续探索)$/m)[0];
+    assert.ok(own.length>30000&&ownMd.length>12000,where+': the page\'s own content read');
+    assert.doesNotMatch(own+ownMd,/\bJev\b/,where+': the page does not mention Jev');
+    // (8) The EEGPT credit: the code licence covers the code only, the checkpoint's licence is unresolved, no weights are
+    // distributed; the weights are never called Apache-2.0 anywhere on the page.
+    const ec=vis(el(own,/<article data-credit="eegpt"/,where));
+    assert.ok(ec.includes(zh?'Apache-2.0 只涵盖代码仓库中的源代码；检查点本身的许可尚未厘清，不分发任何原始或转换后的权重。':'Apache-2.0 covers the repository’s source code only; the checkpoint’s own licence is unresolved, and no original or converted weights are distributed.')
+      &&ec.includes(oep.model.checkpoint.sha256)&&ec.includes(oep.model.source_revision),where+': the EEGPT credit, its licence line and the checkpoint it identifies');
+    assert.equal(oep.model.weights_licence,null,'pilot-studies: the EEGPT weights licence is unresolved');
+    assert.doesNotMatch(vis(own),/(?:weights|checkpoint)[^.;。；]{0,40}(?:is|为|是) Apache|weights[^.;。；]{0,20}Apache-2\.0|权重[^。；]{0,20}Apache/i,where+': the EEGPT weights are never called Apache-2.0');
+    // (7) No update date or version label in the page's own words (a dataset revision or a schema name is an identifier).
+    const words=vis(own.replace(/<code>[\s\S]*?<\/code>/g,' ')).replace(/https?:\/\/\S+|doi:\S+/g,' ');
+    assert.doesNotMatch(words,zh?/新增|本次更新|这次更新|最新|新发布|更新于|(?<![\w.\/#-])v\d+\b/:/\b(?:new|newly|added|updated|this update|this release adds)\b|(?<![\w.\/#-])v\d+\b|generated (?:on )?20\d\d/i,where+': no update wording or version label');
+    // (8) The short answer: four findings, each with what bounds it.
+    const ans=vis(el(own,/<section class="short-answer"/,where));
+    const nP=2+Number(BINGO_ON)+Number(HW_ON),held=2-Number(BINGO_ON)-Number(HW_ON);
+    for(const s of zh?[`${['','','两','三','四'][nP]}项试点、${['','','','三','四','五'][nP+1]}项结果，彼此不排名`,'训练时留出的被试','混杂探针','记录下来的设备事件','同样八名被试','区间跨过零','也不能说明两者等效',...(BINGO_ON?['先验']:[]),'误差比每个不用 EEG 的对照都大',
+                       ...(HW_ON?['与经过时间与试次顺序的对照没有区分开','不是手写识别']:[]),...(held?['因权利审查暂缓']:[]),'百分点']
+                    :[`${['','','','Three','Four','Five'][nP+1]} findings from ${['','','two','three','four'][nP]} pilots, none ranked`,'left out of training','confound probe','recorded device events','the same eight people','the interval spans zero','not shown to be equivalent',...(BINGO_ON?['prior']:[]),'larger error than every control that uses no EEG',
+                       ...(HW_ON?['not separated from elapsed time and trial order','not handwriting recognition']:[]),...(held===2?['held for their rights reviews']:held?['held for its rights review']:[])])
+      assert.ok(ans.includes(s),where+': the short answer says "'+s+'"');
+    if(!held) assert.ok(!/rights review|权利审查/.test(ans),where+': the short answer names no hold while every pilot is released');
+    assert.doesNotMatch(ans,zh?/哪一方都没有优势/:/no advantage either way/,where+': the short answer states no absence of an advantage as a finding');
+    for(const x of [fmt.pct1(A.eeg.balanced_accuracy.mean),fmt.pct1(A.confound.balanced_accuracy.mean),fmt[ppf(PD.mean)](PD.mean),...(BINGO_ON?[fmt.pct1(bg.chance.balanced_accuracy)]:[]),
+                    ...(HW_ON?[fmt.pct2(hw.arms.relative_eeg.balanced_accuracy.mean),fmt.pct2(hw.chance_level)]:[])])
+      assert.ok(ans.includes(x),where+': the short answer gives '+x);
+    // Credits: each source's licence, ethics and consent as the export states them, linked; BINGO's documentation.
+    const cr=el(own,/<div class="citation-list" id="credits"/,where);
+    for(const [id,d] of Object.entries(PSX.datasets)){
+      const a=el(cr,new RegExp(`<article data-credit="${id}"`),where+' credit '+id),e=d.consent_and_ethics;
+      assert.ok(decodeHtml(a).includes(d.rights.attribution)&&a.includes(`href="${d.rights.source}"`)&&(d.rights.licenseUrl===d.rights.source||a.includes(`href="${d.rights.licenseUrl}"`)),where+': '+id+' credit, licence and record');
+      const c=decodeHtml(el(a,/<p data-consent=/,where));
+      // The handwriting dataset's gap is one statement, in full, here and on data use; the others give each statement.
+      if(e.gap) assert.ok(c.includes(e.gap)&&a.includes('href="https://arxiv.org/abs/2608.03176v2"')&&(!zh||c.includes('没有找到伦理批准或知情同意声明。数据集卡片上没有')),where+': '+id+' its gap in full, with the challenge paper linked'+(zh?', in English beside the Chinese':''));
+      else for(const k of ['ethics_approval','informed_consent']) assert.ok(c.includes(e[k].stated?e[k].statement:e[k].note),where+': '+id+' '+k+' as the export states it'+(zh?', in English beside the Chinese':''));
+    }
+    const bc=el(cr,/<article data-credit="bingo-imagined-speech"/,where);
+    assert.ok(PSX.datasets['bingo-imagined-speech'].documentation.every(x=>bc.includes(`href="${x.url}"`))&&vis(bc).includes(zh?'未说明许可':'No licence stated'),where+': BINGO with both public deliverables and no licence');
+    // (7) The Markdown copy carries every figure, in order.
+    const md=readFileSync(new URL(path+'index.md',DIST),'utf8');
+    let at=0;
+    for(const [,t] of main.slice(main.indexOf('<section class="short-answer"')).matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)){
+      const k=md.indexOf(decodeHtml(t),at);assert.ok(k>=0,where+'index.md: the figure "'+t+'" after offset '+at);at=k+t.length;}
+  }
+  // (2) The same figures in both languages.
+  const ms=h=>figAttrs(h).sort();
+  assert.deepEqual(ms(pages.zh),ms(pages.en),'pilot-studies: the Chinese page prints exactly the English page\'s figures');
+  // The card sits under "Other signals & pilots" and counts what the export counts; the map's three entries, BINGO's
+  // with no n; does-pretraining-help's one pointer, with no figure and no citation of this release.
+  for(const pfx of ['','zh/']) for(const page of [pfx,pfx+'topics/']){
+    const h=pageOf(page),grp=el(h,/<div class="topic-group" id="group-beyond"/,page);
+    const card=el(grp,new RegExp(`<a class="topic-entry-card" href="${pfx?'/zh':''}/topics/pilot-studies/"`),page+' card');
+    const nums=[...vis(card.replace(/<span class="topic-number"[^>]*>\d+<\/span>/,'')).matchAll(/\d+/g)].map(m=>Number(m[0]));
+    assert.deepEqual(nums,[C.people,...(BINGO_ON?[bg.cohort.source_fields]:[]),...(HW_ON?[hw.cohort.people]:[]),rf.cohort.nominal_folders,rf.cohort.clips],page+': the pilot card counts Orthosis\'s people, BINGO\'s fields and the handwriting analysis\'s people while each is released, and REFED\'s two folders with their clips');
+    const map=el(h,/<table class="tmap"/,page);
+    const keys=[...map.matchAll(/<li data-map="([^"]+)">[\s\S]*?<\/li>/g)].filter(m=>m[0].includes('pilot-studies')).map(m=>m[1]);
+    assert.deepEqual(keys,['person:orthosis',...(BINGO_ON?['person:bingo']:[]),...(HW_ON?['person:handwriting']:[]),...(BINGO_ON?['context:bingo-language']:[])],page+': the map\'s pilot entries');
+    if(HW_ON) assert.ok(el(map,/<li data-map="person:handwriting"/,page).includes('pilot-studies/#handwriting'),page+': the handwriting map entry links its section');
+    assert.ok(el(map,/<li data-map="person:orthosis"/,page).includes('pilot-studies/#orthosis'),page+': the Orthosis map entry links its section');
+    for(const k of BINGO_ON?['person:bingo','context:bingo-language']:[]){const li=el(map,new RegExp(`<li data-map="${k}"`),page);
+      assert.ok(!li.includes('data-fig')&&!li.includes('tmap-n')&&li.includes('pilot-studies/#bingo'),page+': '+k+' links its section and prints no n');}
+  }
+  for(const pfx of ['','zh/']){
+    const h=pageOf(pfx+'topics/does-pretraining-help/'),w=pfx+'topics/does-pretraining-help/';
+    const body=h.slice(h.indexOf('<main'),h.indexOf('<nav class="topic-switcher"'));
+    assert.equal((body.match(/href="(?:\/zh)?\/topics\/pilot-studies\/[^"]*"/g)||[]).length,1,w+': one low-key pointer to the pilot studies (the switcher aside)');
+    assert.ok(body.includes(`<p class="citation-note" data-pilot-pointer="true">`)&&body.includes(`href="/${pfx}topics/pilot-studies/#orthosis"`),w+': the pointer is a citation note to the Orthosis section');
+    assert.ok(!h.includes('data-fig="'+PS)&&!h.slice(h.indexOf('<section class="cite-page"')).includes(PSX.release_id),w+': the pointer prints no figure and cites nothing of this release');
+  }
+  assert.ok(pinned>200,'pilot-studies: figures pinned to their cells ('+pinned+')');
+  console.log(`PASS: pilot studies — /topics/pilot-studies/ in both languages: ${pinned} figures pinned to their cells from ${PS}, the same figures in English and Chinese; Orthosis as one cohort in three labelled configurations, the 64-channel baseline against its confound probe, prior and permutation range, frozen EEGPT against the matched classical features with the paired interval spanning zero, every metric in the table; BINGO's four directions against the prior, its controls and contrast, the delivered preprocessing beside it unverified and the project's own figure labelled as theirs; ${HW_ON?'the handwriting analysis\'s five arms against the majority line at chance, the mask-only interval withheld and its bounds absent, the three paired contrasts with the elapsed-time one crossing zero, the availability counts and histogram, the earlier analysis as context, and a short pointer to its rights gap beside the result;':'the held handwriting analysis figure-free;'} REFED's four arms in both conditions against the global mean, no interval; the status-only arms figure-free; required caveats beside their numbers, forbidden readings only denied, no typed figure, no update wording or version label, no Jev, the EEGPT weights never Apache-2.0; every credit with its licence and consent; the card under Other signals & pilots, ${1+2*Number(BINGO_ON)+Number(HW_ON)} map entries, one pointer from does-pretraining-help.`);
 }
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

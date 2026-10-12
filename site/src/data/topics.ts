@@ -100,9 +100,10 @@ export interface DeploymentData {
 /**
  * The groups the questions are listed under, in order: on the home page, on the
  * Questions hub (/topics/) and in each topic page's switcher. Labels are in
- * i18n.ts (topicGroupLabels).
+ * i18n.ts (topicGroupLabels). `beyond` (owner decision 1, 2026-10-12): signals
+ * other than scalp EEG and the pilot studies.
  */
-export const topicGroups = ['transfer', 'adapting', 'reliability'] as const;
+export const topicGroups = ['transfer', 'adapting', 'reliability', 'beyond'] as const;
 export type TopicGroup = typeof topicGroups[number];
 
 /**
@@ -130,6 +131,12 @@ export const topicPages = [
   // Since 2026-10-03 (owner decision): Dreem sleep staging, two simple baselines.
   { slug: 'sleep-staging', group: 'reliability' },
   { slug: 'clinical-groups', group: 'reliability' },
+  // Owner decision 1 (2026-10-12): signals other than scalp EEG — human fNIRS, one macaque's intracortical spiking and
+  // an fNIRS coverage check — in its own group with the pilot studies of the same version, which follow it here.
+  { slug: 'beyond-scalp-eeg', group: 'beyond' },
+  // Owner decision 1 (2026-10-12): four small pilots, none ranked — Orthosis error events in one cohort (with frozen
+  // EEGPT against matched classical features), BINGO inner speech, the handwriting analysis, REFED stored clips.
+  { slug: 'pilot-studies', group: 'beyond' },
 ] as const satisfies readonly { slug: string; group: TopicGroup }[];
 
 /** The topics in one group, in order, each with its position in the whole list. */

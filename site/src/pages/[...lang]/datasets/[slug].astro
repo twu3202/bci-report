@@ -2,7 +2,7 @@
 import EntityLayout from '../../../components/EntityLayout.astro';
 import ResultGroups from '../../../components/ResultGroups.astro';
 import profiles from '../../../data/entity-profiles.json';
-import { datasets, methodLabel, tr, type DatasetEntity } from '../../../data/entities';
+import { bingoRights, datasets, handwritingRights, methodLabel, tr, type DatasetEntity } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
 import { directoryText, hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
 import { site } from '../../../data/site';
@@ -38,23 +38,33 @@ const abs = (p: string) => new URL(p, site.origin).href;
 // rights record gives them; its three stated gaps travel with its figures, in the result group above.
 const zh = locale === 'zh';
 const rights = d.rightsNote === 'boas' ? { ...boasStatements(), conditions: boasConditions(locale) } : null;
+// BINGO (owner decision 3, 2026-10-12): its rights exactly as they stand — no ethics-approval reference, and the
+// project's consent statement, which is about its other dataset — beside its credit, read from the export.
+const bingo = d.rightsNote === 'bingo' ? bingoRights() : null;
+// The handwriting dataset (owner decision, 2026-10-12): published with its rights gap stated. The data-use page states
+// it in full; here, beside the credit, a short pointer to it.
+const handwriting = d.rightsNote === 'handwriting' ? handwritingRights() : null;
+// A source that states no licence has none to link or to compute under.
+const noLicence = d.license === 'No licence stated';
+// A dataset that is not EEG names its own signal in its title (2026-10-12).
+const signal = d.signal ? tr(d.signal, locale) : undefined;
 const structured = {
   '@context': 'https://schema.org', '@type': 'Dataset',
   name: `${site.name}: results on ${d.name}`,
-  description: c.datasetDescription(d.name, d.task.en, listed(methodNames)),
+  description: c.datasetDescription(d.name, d.task.en, listed(methodNames), d.signal?.en),
   url: abs(path), license: 'https://creativecommons.org/licenses/by/4.0/', isAccessibleForFree: true,
   creator,
-  isBasedOn: d.sources, citation: requested ? [d.attribution, requested.text] : d.attribution, measurementTechnique: 'Electroencephalography',
-  keywords: ['EEG', 'brain-computer interface', d.name, ...(profile?.aliases ?? [])],
+  isBasedOn: d.sources, citation: requested ? [d.attribution, requested.text] : d.attribution, measurementTechnique: d.technique ?? 'Electroencephalography',
+  keywords: [d.technique ?? 'EEG', 'brain-computer interface', d.name, ...(profile?.aliases ?? [])],
   variableMeasured: [...new Set(d.groups.flatMap(g => g.rows.map(r => r.metric.en)))],
   distribution: files.map(f => ({ '@type': 'DataDownload', encodingFormat: f.endsWith('.csv') ? 'text/csv' : 'application/json', contentUrl: abs(`/data/${f}`) })),
 };
 ---
 <EntityLayout
   locale={locale} path={path} active="datasets"
-  documentTitle={c.datasetTitle(d.name)}
-  h1={c.datasetH1(d.name)} name={d.name}
-  description={c.datasetDescription(d.name, tr(d.task, locale), listed(methodLabels))}
+  documentTitle={c.datasetTitle(d.name, signal)}
+  h1={c.datasetH1(d.name, signal)} name={d.name}
+  description={c.datasetDescription(d.name, tr(d.task, locale), listed(methodLabels), signal)}
   eyebrow={tr(d.task, locale)}
   dek={profile ? (locale === 'zh' ? profile.summary_zh : profile.summary_en) : c.datasetsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: d.name, en: true }]}
@@ -79,14 +89,24 @@ const structured = {
       <h3 lang="en">{d.name}</h3>
       <p><strong>{c.attribution}</strong> <span lang="en">{d.attribution}</span></p>
       {requested && <p><strong>{c.requestedCitation}</strong> <span lang="en">{requested.text}</span> <a href={requested.url} target="_blank" rel="noreferrer">doi ↗</a> · <a href={requested.basis} target="_blank" rel="noreferrer">{c.requestedBasis}</a></p>}
-      <p>{d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>}{licence.original && <> <span class="note-original-inline" lang="en">({licence.original})</span></>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
-      <p>{c.notRedistributed}</p>
+      <p>{noLicence ? <span data-licence="none">{c.noLicence}</span> : d.licenseUrl ? <a href={d.licenseUrl} target="_blank" rel="noreferrer" lang={licence.lang}>{licence.text} ↗</a> : <span lang={licence.lang}>{licence.text}</span>}{!noLicence && licence.original && <> <span class="note-original-inline" lang="en">({licence.original})</span></>} · {d.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{i === 0 ? c.record : `${new URL(u).hostname} ↗`}</a></>)}</p>
+      <p data-redistribution={noLicence ? 'no-licence' : 'licence'}>{noLicence ? c.notRedistributedNoLicence : c.notRedistributed}</p>
     </article>
     {rights && <article data-rights-note="boas">
       <h3>{zh ? '发布者陈述的伦理与知情同意' : 'Ethics and consent, as the publisher states them'}</h3>
       {[rights.ethics, rights.consent].map(en => { const t = srText(en, locale); return <p>{t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</p>; })}
       <p>{zh ? `所有者于 ${rights.conditions.approvedOn} 批准以“说明缺口后发布”的方式发布 BOAS 的队列汇总结果；三处缺口与上面的每一组结果一起列出。${rights.conditions.participants}`
              : `The owner approved publishing BOAS cohort aggregates with stated gaps on ${rights.conditions.approvedOn}; the three gaps are printed with the results above. ${rights.conditions.participants}`}</p>
+    </article>}
+    {bingo && <article data-rights-note="bingo">
+      <h3>{c.bingoRightsH}</h3>
+      <p>{c.bingoEthics}{zh ? '' : ' '}{tr(bingo.ethics, locale)}{zh && <span class="note-original" lang="en">{bingo.ethics.en}</span>}</p>
+      <p>{c.bingoConsent}{zh ? '' : ' '}{tr(bingo.consent, locale)}{zh && <span class="note-original" lang="en">{bingo.consent.en}</span>}</p>
+      <p>{c.bingoBasis}{zh ? '' : ' '}{c.bingoReadFrom}{zh ? '' : ' '}<a href={bingo.readFrom} target="_blank" rel="noreferrer" lang="en">{bingo.readFromTitle} ↗</a>{zh ? '。' : '.'} <a href="/data-use/#bingo-rights">{c.bingoDataUse}</a></p>
+    </article>}
+    {handwriting && <article data-rights-note="handwriting">
+      <h3>{c.handwritingRightsH}</h3>
+      <p>{tr(handwriting.pointer, locale)}{zh && <span class="note-original" lang="en">{handwriting.pointer.en}</span>} <a href="/data-use/#handwriting-rights">{c.handwritingDataUse}</a></p>
     </article>}</div>
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
   </section>

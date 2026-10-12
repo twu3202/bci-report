@@ -1,0 +1,633 @@
+{
+  "schema_version": "bci-report-beyond-scalp-update-v1",
+  "release_id": "beyond-scalp-update-20261012",
+  "generated_at": "2026-10-12",
+  "status": "aggregate_preview",
+  "question": "What can be measured and decoded beyond scalp EEG?",
+  "metric_units": "balanced accuracy, class recall, chance levels and shares are proportions in [0,1]; R² is unitless; RMSE and MAE are in m/s; sampling rates in Hz, windows and lags in seconds or milliseconds as named; counts of people, animals, trials, rows, recordings, channels, values, runs and frames are whole numbers",
+  "scope": "Locally executed analyses and prepared sources beyond scalp EEG, each its own species, modality and measured quantity: human fNIRS classification of executed movements, macaque intracortical decoding of finger velocity, a numerical coverage check of human fNIRS recordings, and two sources prepared but not scored (human intracortical handwriting, human functional ultrasound). They share no metric and no ranking, none is compared with scalp EEG, and nothing joins the eight-protocol matrix. Every figure is this site's own experiment, not a score reported in a paper.",
+  "results": {
+    "bak-fnirs-loso": {
+      "id": "bak-fnirs-loso",
+      "dataset": "bak-fnirs",
+      "title": "Human fNIRS: executed finger and foot tapping, a held-out person",
+      "question": "Can a fixed hemodynamic classifier trained on other people tell which movement a held-out person made?",
+      "label": "Locally executed experiment · offline · leave one whole person out",
+      "kind": "decoding result",
+      "evidence": "a locally executed experiment, not a score reported in a paper",
+      "species": "human",
+      "modality": "fNIRS",
+      "measured_quantity": "the supplied oxy- and deoxyhemoglobin series, in mM·cm as delivered, not absolute concentrations",
+      "task": {
+        "classes": [
+          "right-hand finger tapping",
+          "left-hand finger tapping",
+          "foot tapping"
+        ],
+        "kind": "executed movement, cued; not motor imagery"
+      },
+      "cohort": {
+        "people": 30,
+        "trials": 2250,
+        "trials_each_person": 75,
+        "trials_each_class_each_person": 25
+      },
+      "design": {
+        "split": "leave one person out: each fold fits on the other people and predicts every trial of the held-out person; every person is held out once",
+        "folds": 30,
+        "training_people": 29,
+        "training_trials": 2175,
+        "test_trials": 75
+      },
+      "signal": {
+        "channels": 40,
+        "channel_note": "twenty oxy- and twenty deoxyhemoglobin series; the supplied files carry no probe coordinates",
+        "sampling_rate_hz": 13.333333333333334,
+        "baseline_window_s": [
+          -1,
+          0
+        ],
+        "feature_windows_s": [
+          [
+            0,
+            5
+          ],
+          [
+            5,
+            10
+          ],
+          [
+            10,
+            15
+          ]
+        ],
+        "observation_window_s": 15,
+        "features": 120,
+        "processing": "each window's channel mean minus the one-second pre-onset mean; no filtering applied beyond the supplied series, whose upstream preprocessing may use future samples"
+      },
+      "models": {
+        "shrinkage_lda": "standardization and shrinkage LDA (lsqr solver, automatic shrinkage, empirical training priors) fitted on the training people only; no channel, feature or hyperparameter search",
+        "source_prior": "the most frequent class among the training trials, ties broken by the fixed class order; with balanced classes it predicts right-hand tapping every time"
+      },
+      "primary_metric": {
+        "id": "participant_macro_balanced_accuracy",
+        "name": "Participant-macro balanced accuracy",
+        "definition": "each held-out person's balanced accuracy (the mean of the three class recalls), averaged over the people with equal weight",
+        "unit": "proportion in [0,1]",
+        "chance_level": 0.3333333333333333
+      },
+      "arms": {
+        "shrinkage_lda": {
+          "label": "Shrinkage LDA",
+          "balanced_accuracy": {
+            "mean": 0.6684444444444444,
+            "interval_95": [
+              0.606211111111111,
+              0.7293444444444444
+            ],
+            "interval_excludes_chance": true
+          },
+          "class_recall": {
+            "right_hand": 0.692,
+            "left_hand": 0.636,
+            "foot": 0.6773333333333333
+          }
+        },
+        "source_prior": {
+          "label": "Training prior (comparator)",
+          "balanced_accuracy": {
+            "mean": 0.3333333333333333
+          },
+          "class_recall": {
+            "right_hand": 1.0,
+            "left_hand": 0.0,
+            "foot": 0.0
+          }
+        }
+      },
+      "class_recall_note": "the recall of each class over all held-out predictions, every person together (the same number of trials in each class); a secondary point estimate without an interval",
+      "uncertainty": {
+        "kind": "descriptive 95% percentile interval: the fixed participant scores resampled with replacement, 2,000 draws",
+        "draws": 2000,
+        "seed": 20261011,
+        "scope": "It describes variation between people given the fitted folds. The folds share training people, so it is not a refit bootstrap and not an independent clinical confidence interval.",
+        "comparator": "The training prior has no interval: every person gets the same score."
+      },
+      "reading": "For a held-out person, the fixed classifier separated right-hand, left-hand and foot tapping well above the training prior, and its descriptive interval lies wholly above chance. This is offline classification of supplied hemodynamic series over a 15-second window after each task onset.",
+      "limitations": [
+        "Offline, from the supplied hemodynamic series with a 15-second observation window; the upstream preprocessing may use future samples. Neither online control nor device response time is shown.",
+        "Executed movement, not motor imagery; no clinical or device-effectiveness claim.",
+        "One supplied cohort of 30 people. Task-correlated systemic or motion effects are not excluded, so the result establishes neither a brain-only signal nor cortical localization; the supplied files carry no probe coordinates.",
+        "The interval resamples fixed participant scores from overlapping leave-one-out training sets: not a refit bootstrap, not an independent clinical confidence interval.",
+        "The protocol is this site's own; it does not reproduce the authors' within-person scores."
+      ],
+      "claims_not_supported": [
+        "not motor imagery",
+        "no online or real-time control claim",
+        "no clinical or device-effectiveness claim",
+        "no cortical localization or brain-versus-systemic-signal claim",
+        "not a reproduction of the authors' scores"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "people": 30,
+        "checked": "every input file hash, the marker-to-label order, whole-person folds, training-only scaling, the comparator's tie rule and prediction alignment; the confusion tables, class recalls, primary mean and bootstrap recomputed without the frozen scoring code",
+        "not_checked": "the features were not regenerated from the raw channels and the classifier was not refit"
+      }
+    },
+    "nlb-mc-rtt-velocity": {
+      "id": "nlb-mc-rtt-velocity",
+      "dataset": "nlb-mc-rtt",
+      "title": "Macaque intracortical spiking: finger velocity within one session",
+      "question": "How much of a monkey's finger velocity does a fixed linear decoder recover from motor-cortex spiking, on held-out trials of the same session?",
+      "label": "Locally executed experiment · offline · one macaque, one session · not an official Neural Latents Benchmark score",
+      "kind": "decoding result",
+      "evidence": "a locally executed experiment, not a score reported in a paper or on the benchmark leaderboard",
+      "species": "macaque (Macaca mulatta), one animal",
+      "modality": "intracortical spiking",
+      "measured_quantity": "spike counts of sorted units recorded by an electrode array in primary motor cortex; the decoded quantity is x/y finger velocity",
+      "cohort": {
+        "animals": 1,
+        "sessions": 1,
+        "training_trials": 810,
+        "validation_trials": 270,
+        "trial_ms": 600,
+        "input_neurons": 98,
+        "unused_neurons": 32
+      },
+      "design": {
+        "split": "the dataset's stored training and validation trials, interleaved within the one session; no random row split, and the test file was not opened",
+        "neurons": "the held-in neurons only; the benchmark's held-out neurons are not inputs"
+      },
+      "signal": {
+        "bin_ms": 20,
+        "smoothing_bins": 3,
+        "history_lags": 6,
+        "neural_support_ms": 160,
+        "features": 588,
+        "context": "trailing spike-count history only, reset at every trial and observation gap",
+        "target": "the mean stored x/y finger velocity within a bin shifted by the target lag, in m/s",
+        "target_lag_ms": 140,
+        "retained_bins_each_trial": 16,
+        "training_rows": 12960,
+        "validation_rows": 4320,
+        "rows_excluded": 0
+      },
+      "models": {
+        "ridge": "standardization fitted on the training rows, then ridge regression (alpha 10, Cholesky solver, with intercept); training-constant features dropped; no hyperparameter search",
+        "training_mean": "predicts the training rows' mean velocity for every validation row"
+      },
+      "metrics": {
+        "r2_uniform_average": {
+          "name": "R², uniform mean of x and y",
+          "unit": "unitless",
+          "higher_is_better": true
+        },
+        "r2_x": {
+          "name": "R², x",
+          "unit": "unitless",
+          "higher_is_better": true
+        },
+        "r2_y": {
+          "name": "R², y",
+          "unit": "unitless",
+          "higher_is_better": true
+        },
+        "rmse_m_per_s": {
+          "name": "RMSE",
+          "unit": "m/s",
+          "higher_is_better": false
+        },
+        "mae_m_per_s": {
+          "name": "MAE",
+          "unit": "m/s",
+          "higher_is_better": false
+        }
+      },
+      "arms": {
+        "ridge": {
+          "label": "Ridge on spike-count history",
+          "r2_uniform_average": 0.24035518551907353,
+          "r2_x": 0.20247361387902718,
+          "r2_y": 0.2782367571591199,
+          "rmse_m_per_s": 0.05606505299844752,
+          "mae_m_per_s": 0.038441271193430805
+        },
+        "training_mean": {
+          "label": "Training mean (comparator)",
+          "r2_uniform_average": -0.001749825535548477,
+          "r2_x": -0.00010384314623834712,
+          "r2_y": -0.003395807924858607,
+          "rmse_m_per_s": 0.06426848701005561,
+          "mae_m_per_s": 0.03275838331882226
+        }
+      },
+      "comparison": {
+        "ridge_better": {
+          "r2_uniform_average": true,
+          "r2_x": true,
+          "r2_y": true,
+          "rmse_m_per_s": true,
+          "mae_m_per_s": false
+        },
+        "note": "The ridge improves R² and the root-mean-square error but has a larger mean absolute error than the training mean: it is not an unconditional winner, and both directions are shown."
+      },
+      "coverage": {
+        "validation_rows_scored": 4320,
+        "scored_share": 1.0
+      },
+      "uncertainty": {
+        "kind": "none reported",
+        "reason": "The validation rows are temporally correlated samples from one animal in one session, not independent subjects; no population interval is computed."
+      },
+      "reading": "On held-out trials of the same session, the ridge recovers part of the variance of finger velocity where the training mean recovers none, and it lowers the root-mean-square error; its mean absolute error is higher than the training mean's.",
+      "limitations": [
+        "One macaque and one recording session, with training and validation trials interleaved within it: no cross-day, cross-animal or human evidence. With one animal, every figure is that animal's.",
+        "A separate supervised diagnostic on the stored training and validation trials: not an official Neural Latents Benchmark score, not co-smoothing and not a latent-model comparison.",
+        "The velocity labels were derived offline from finger position, and the box average over each bin differs from the benchmark's own resampling, so equality with the benchmark's velocity score is not claimed.",
+        "Offline: not a real-time or closed-loop controller demonstration.",
+        "The validation rows are temporally correlated samples, not independent subjects."
+      ],
+      "claims_not_supported": [
+        "not an official Neural Latents Benchmark score and not co-smoothing",
+        "no cross-day, cross-animal or human claim",
+        "no real-time or closed-loop control claim",
+        "the ridge is not better on every metric"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "rows_reconstructed": 17280,
+        "checked": "every feature and target row reconstructed independently of the code that produced it; the ridge coefficients checked against the normal equations; training-only normalization, prediction alignment and every metric recomputed",
+        "not_checked": "the stored velocity itself, which the dataset derives offline from finger position"
+      }
+    },
+    "ds007420-optical-coverage": {
+      "id": "ds007420-optical-coverage",
+      "dataset": "ds007420",
+      "title": "Human fNIRS recordings: are the optical values numerically usable?",
+      "question": "Are the optical values of every recording finite and positive, with no exactly constant channel?",
+      "label": "Locally executed check · label-independent · counts only",
+      "kind": "numerical coverage check",
+      "evidence": "a locally executed check, not a score and not a result reported in a paper",
+      "species": "human",
+      "modality": "fNIRS",
+      "measured_quantity": "raw optical intensity at two wavelengths for each source–detector pair",
+      "wavelengths_nm": [
+        760,
+        850
+      ],
+      "cohort": {
+        "people": 12,
+        "recordings": 60,
+        "recordings_excluded": 0,
+        "channels_each_recording": 200,
+        "recording_channels": 12000,
+        "optical_time_points": 242513
+      },
+      "counts": {
+        "optical_values": 48502600,
+        "finite": 48502600,
+        "positive": 48502600,
+        "zero": 0,
+        "negative": 0,
+        "nonfinite": 0,
+        "constant_channels": 0
+      },
+      "shares": {
+        "finite": 1.0,
+        "positive": 1.0
+      },
+      "definitions": "Shares use every optical value as the denominator. A constant channel is one whose samples are all finite and exactly equal, with no tolerance.",
+      "reading": "Every optical value of every recording is finite and positive, and no channel is exactly constant. That is basic numerical coverage, a precondition for further optical processing.",
+      "gates": {
+        "task_code_lookup_verified": false,
+        "event_duration_s": {
+          "events_table": 1,
+          "optical_files": 10,
+          "cited_paper": 5
+        },
+        "auxiliary_clock_hold_recordings": 17,
+        "classifier": "held"
+      },
+      "limitations": [
+        "Coverage counts only: not signal-to-noise, scalp coupling, saturation, motion, wavelength-pair integrity, physiological plausibility, neural origin, task validity or decoding evidence. Positive, non-constant values alone cannot establish signal quality.",
+        "No classifier score exists. The numeric task codes have no verified lookup to hands or movements, and the event durations disagree between the events table, the optical files and the cited paper.",
+        "The auxiliary motion-sensor clocks are unverified and their holds stand: optical coverage does not repair them."
+      ],
+      "claims_not_supported": [
+        "no signal quality, neural origin or activation claim",
+        "no decoding score"
+      ],
+      "independent_audit": {
+        "status": "pass",
+        "recordings": 60,
+        "checked": "every channel count reconciled against the recording totals and the aggregate; the code and its synthetic tests reviewed",
+        "not_checked": "the raw-signal pass was not repeated"
+      }
+    }
+  },
+  "status_only": [
+    {
+      "id": "falcon-h2-preparation",
+      "dataset": "falcon-h2",
+      "name": "FALCON H2 · human intracortical handwriting",
+      "status": "status_only",
+      "scores_published": false,
+      "species": "human, one participant",
+      "modality": "intracortical spiking",
+      "reason": "Prepared, not scored: no model has been fitted. The label audit found every public minival trial inside the calibration data, so a leakage-safe diagnostic must first remove those trials from training.",
+      "preparation": {
+        "participants": 1,
+        "recording_dates": 26,
+        "files": 47,
+        "channels": 192,
+        "held_in_calibration_trials": 671,
+        "minival_trials": 42,
+        "minival_trials_also_in_calibration": 42,
+        "training_candidate_trials": 629,
+        "held_out_calibration_trials": 15,
+        "symbols": 31,
+        "ctc_classes_with_blank": 32
+      },
+      "facts": [
+        "The public minival trials were inspected to find the overlap, so a later diagnostic on them would be exposed, not blinded, and would not be the official FALCON cross-day score.",
+        "The held-out calibration trials are inputs for few-shot recalibration, not independent evaluation data.",
+        "The cleaned training trials alone carry the symbol set; a CTC decoder adds one class for the blank."
+      ],
+      "rights": {
+        "source": "https://doi.org/10.48324/dandi.000950/0.241029.1403",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Fan, Chaofei; Hahn, Nick; Kamdar, Foram; Avansino, Donald; Wilson, Guy; Hochberg, Leigh; Shenoy, Krishna V; Henderson, Jaime; Willett, Frank (2024) FALCON Benchmark H2: Human Handwriting iBCI (Version 0.241029.1403) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000950/0.241029.1403, CC BY 4.0. Described in: Plug-and-Play Stability for Intracortical Brain-Computer Interfaces: A One-Year Demonstration of Seamless Brain-to-Text Communication, NeurIPS 2023. Part of the FALCON benchmark. Derived analysis by BCI Report; not endorsed by the authors."
+      }
+    },
+    {
+      "id": "rabut-fus-preparation",
+      "dataset": "rabut-fus",
+      "name": "Rabut et al. · human functional ultrasound through a cranial window",
+      "status": "status_only",
+      "scores_published": false,
+      "species": "human, one participant",
+      "modality": "functional ultrasound imaging",
+      "reason": "Prepared, not analyzed: frame labels, timestamps and image axes are verified; no Doppler value has been read and no decoder has been fitted.",
+      "preparation": {
+        "participants": 1,
+        "runs": 9,
+        "drawing_runs": 7,
+        "guitar_runs": 1,
+        "mixed_speech_reading_runs": 1,
+        "frames": 2880,
+        "rest_frames": 1800,
+        "activity_frames": 1080
+      },
+      "facts": [
+        "One person, not nine participants: the runs are repeated recordings of one participant.",
+        "Only rest versus activity (zero versus nonzero labels) is verified; the speech and reading codes of the mixed run have no verified individual meaning.",
+        "Measured timestamps are used: the nominal block durations in the run labels disagree with the measured frame timing.",
+        "Drawing, guitar and speech or reading are different paradigms and are not pooled into one task."
+      ],
+      "rights": {
+        "source": "https://doi.org/10.22002/f3y3k-em558",
+        "license": "CC BY-NC 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+        "attribution": "Claire Rabut, Sumner Norman, Whitney Griggs, Kay Jann, Jonathan Russin, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro · Dataset for: A window to the brain: ultrasound imaging of human neural activity through an acoustically transparent cranial prosthetic, CaltechData, doi:10.22002/f3y3k-em558, CC BY-NC 4.0. Paper: Claire Rabut, Sumner L. Norman, Whitney S. Griggs, Jonathan J. Russin, Kay Jann, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro, Functional ultrasound imaging of human brain activity through an acoustically transparent cranial window, Science Translational Medicine 16, eadj3143 (2024), doi:10.1126/scitranslmed.adj3143. Derived analysis by BCI Report; not endorsed by the authors."
+      }
+    }
+  ],
+  "datasets": {
+    "bak-fnirs": {
+      "rights": {
+        "name": "Bak 2019 fNIRS dataset · unilateral finger and foot tapping",
+        "task": "Three-class executed movement: right-hand finger tapping, left-hand finger tapping and foot tapping; evaluated by leaving one whole person out",
+        "source": "https://doi.org/10.6084/m9.figshare.9783755.v2",
+        "version": "figshare record 9783755, version 2 (doi:10.6084/m9.figshare.9783755.v2, posted 2019-12-05), one archive, read from the figshare API on 2026-10-12. All 30 participants are used, with the supplied oxy- and deoxyhemoglobin series.",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong · Open Access fNIRS Dataset for Classification of Unilateral Finger- and Foot-Tapping, figshare, doi:10.6084/m9.figshare.9783755.v2, CC BY 4.0. Paper: Sujin Bak, Jinwoo Park, Jaeyoung Shin and Jichai Jeong, Open-Access fNIRS Dataset for Classification of Unilateral Finger- and Foot-Tapping, Electronics 8(12), 1486 (2019), doi:10.3390/electronics8121486. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The data paper states that the participants' written consent, approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01), was submitted before data recording, and that the experiments followed the Declaration of Helsinki. Published here: the participant-macro balanced accuracy of a fixed classifier and of a training-prior comparator over the 30 people, the classifier's descriptive participant-bootstrap interval, and class recalls over all held-out predictions. No per-person value, participant identifier, confusion matrix or demographic is published.",
+        "reviewedAt": "2026-10-12",
+        "reviewBasis": [
+          "https://api.figshare.com/v2/articles/9783755/versions/2",
+          "https://doi.org/10.3390/electronics8121486",
+          "https://web.archive.org/web/20230731121639/https://www.mdpi.com/2079-9292/8/12/1486/htm"
+        ]
+      },
+      "species": "human",
+      "modality": "fNIRS",
+      "consent_and_ethics": {
+        "subjects": "human",
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01); the experiments followed the criteria of the Declaration of Helsinki.",
+          "quote": "approved by the Korea University Institutional Review Board (KUIRB-2019-0254-01)"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "The participants' written consent, approved by that board, was submitted before data recording.",
+          "quote": "Written consent from the participants"
+        },
+        "read_from": "https://doi.org/10.3390/electronics8121486 (Section 2.1, Participants), read 2026-10-12 from the Internet Archive capture of the publisher's article page dated 2023-07-31; the publisher returned HTTP 403 to this session"
+      },
+      "results": [
+        "bak-fnirs-loso"
+      ],
+      "status_only": [],
+      "held": []
+    },
+    "nlb-mc-rtt": {
+      "rights": {
+        "name": "MC_RTT · macaque motor cortex during self-paced reaching (Neural Latents Benchmark)",
+        "task": "Self-paced reaching to targets on an 8 x 8 grid; finger velocity decoded from sorted spiking activity in primary motor cortex, one animal in one session",
+        "source": "https://doi.org/10.48324/dandi.000129/0.241017.1444",
+        "version": "DANDI 000129, version 0.241017.1444 (doi:10.48324/dandi.000129/0.241017.1444, published 2024-10-17), read from the DANDI API on 2026-10-12. Only the training file is used, with its stored training and validation trials; the test file is not opened.",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "O'Doherty, Joseph (2024) MC_RTT: macaque motor cortex spiking activity during self-paced reaching (Version 0.241017.1444) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000129/0.241017.1444, CC BY 4.0. Recorded by Joseph E. O'Doherty, Mariana M. B. Cardoso, Joseph G. Makin and Philip N. Sabes in the Sabes Lab at UCSF (Nonhuman Primate Reaching with Multichannel Sensorimotor Cortex Electrophysiology, Zenodo, doi:10.5281/zenodo.3854034; procedure: Makin et al., Journal of Neural Engineering 15(2), 026010 (2018), doi:10.1088/1741-2552/aa9e95). Prepared for the Neural Latents Benchmark: Felix Pei, Joel Ye et al., Neural Latents Benchmark '21: Evaluating latent variable models of neural population activity, NeurIPS 2021 Track on Datasets and Benchmarks, arXiv:2109.04463. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "Animal data: one rhesus macaque. The Neural Latents Benchmark paper states that all its datasets were collected under procedures approved by the Institutional Animal Care and Use Committees at the respective institutions, and that MC_RTT was collected in the Sabes Lab at UCSF. No human took part, so informed consent does not apply. Published here: five validation metrics of a fixed ridge decoder and of a training-mean comparator, with trial, neuron and row counts. With one animal, every figure is that animal's own. No coefficient, prediction or per-trial value is published.",
+        "reviewedAt": "2026-10-12",
+        "reviewBasis": [
+          "https://api.dandiarchive.org/api/dandisets/000129/versions/0.241017.1444/",
+          "https://zenodo.org/api/records/3854034",
+          "https://arxiv.org/abs/2109.04463"
+        ]
+      },
+      "species": "macaque (Macaca mulatta)",
+      "modality": "intracortical spiking",
+      "consent_and_ethics": {
+        "subjects": "animal",
+        "ethics_approval": {
+          "stated": true,
+          "kind": "institutional animal care and use committee",
+          "statement": "Collected under procedures and experiments approved by the Institutional Animal Care and Use Committees at the respective institutions; MC_RTT was collected in the Sabes Lab at UCSF.",
+          "quote": "approved by the Institutional Animal Care and Use Committees at the respective institutions"
+        },
+        "informed_consent": {
+          "stated": false,
+          "applicable": false,
+          "statement": "Not applicable: animal data, no human participant."
+        },
+        "read_from": "https://arxiv.org/abs/2109.04463 (Ethical considerations; Appendix, MC_RTT, Source), read 2026-10-12"
+      },
+      "results": [
+        "nlb-mc-rtt-velocity"
+      ],
+      "status_only": [],
+      "held": []
+    },
+    "ds007420": {
+      "rights": {
+        "name": "ds007420 · multi-distance fNIRS during ball squeezing and motion-artifact tasks",
+        "task": "Resting state, left- and right-hand ball squeezing and instructed head and face movements; used here only for a label-independent numerical check of the optical values",
+        "source": "https://doi.org/10.18112/openneuro.ds007420.v1.0.5",
+        "version": "OpenNeuro ds007420, version 1.0.5 (doi:10.18112/openneuro.ds007420.v1.0.5); its dataset_description.json and README read from the OpenNeuro dataset mirror at tag 1.0.5 on 2026-10-12. All 60 recordings of the 12 participants.",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Shibo Zhou, De’Ja Rogers, David A. Boas, Meryem A. Yücel and Yuanyuan Gao · Open-access Multi-Distance fNIRS Dataset Generated During Ball-Squeezing and Motion-Artifact Induction Tasks, OpenNeuro, doi:10.18112/openneuro.ds007420.v1.0.5, CC0. The dataset asks to acknowledge: Gao, Y., Rogers, D., von Lühmann, A., Ortega-Martinez, A., Boas, D.A., & Yücel, M.A. (2023). Short-separation regression incorporated diffuse optical tomography image reconstruction modeling for high-density functional near-infrared spectroscopy. Neurophotonics, 10(2), 025007. https://doi.org/10.1117/1.NPh.10.2.025007. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The dataset description names the Institutional Review Board of Boston University (Protocol #4502), and the associated paper states that the study protocol was approved by that board and that all participants provided written informed consent. Published here: whole-dataset counts from a label-independent numerical check of the optical values. No decoding score, per-recording or per-channel value, participant identifier or demographic is published.",
+        "reviewedAt": "2026-10-12",
+        "reviewBasis": [
+          "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/dataset_description.json",
+          "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/README.md",
+          "https://europepmc.org/article/PMC/PMC10203730"
+        ]
+      },
+      "species": "human",
+      "modality": "fNIRS",
+      "consent_and_ethics": {
+        "subjects": "human",
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Institutional Review Board of Boston University (Protocol #4502, as the dataset description records it).",
+          "quote": "Study protocol was approved by the Institutional Review Board of Boston University"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "All participants provided written informed consent to take part in the study.",
+          "quote": "All participants provided written informed consent to take part in this study"
+        },
+        "read_from": "https://europepmc.org/article/PMC/PMC10203730 (Section 3.2, Experimental Study Design), read 2026-10-12"
+      },
+      "results": [
+        "ds007420-optical-coverage"
+      ],
+      "status_only": [],
+      "held": []
+    },
+    "falcon-h2": {
+      "rights": {
+        "name": "FALCON H2 · human intracortical handwriting",
+        "task": "Attempted handwriting of cued sentences by one participant, across recording days; prepared for a decoder, not scored",
+        "source": "https://doi.org/10.48324/dandi.000950/0.241029.1403",
+        "version": "DANDI 000950, version 0.241029.1403 (doi:10.48324/dandi.000950/0.241029.1403, published 2024-10-29), read from the DANDI API on 2026-10-12. The public files only; the challenge's private evaluation data are not part of the release.",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Fan, Chaofei; Hahn, Nick; Kamdar, Foram; Avansino, Donald; Wilson, Guy; Hochberg, Leigh; Shenoy, Krishna V; Henderson, Jaime; Willett, Frank (2024) FALCON Benchmark H2: Human Handwriting iBCI (Version 0.241029.1403) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000950/0.241029.1403, CC BY 4.0. Described in: Plug-and-Play Stability for Intracortical Brain-Computer Interfaces: A One-Year Demonstration of Seamless Brain-to-Text Communication, NeurIPS 2023. Part of the FALCON benchmark. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The dataset description states that the participant gave informed consent and was enrolled in the BrainGate2 pilot clinical trial (ClinicalTrials.gov NCT00912041) under an FDA Investigational Device Exemption, with permission from the Institutional Review Boards of Stanford University (protocol #20804). Published here: status only, with trial, file and symbol counts from the preparation audit. No score exists; no neural value, cue text, recording date or participant detail is published.",
+        "reviewedAt": "2026-10-12",
+        "reviewBasis": [
+          "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/"
+        ]
+      },
+      "species": "human",
+      "modality": "intracortical spiking",
+      "consent_and_ethics": {
+        "subjects": "human",
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Permission from the Institutional Review Boards of Stanford University (protocol #20804); the BrainGate2 pilot trial ran under FDA Investigational Device Exemption #G090003 (ClinicalTrials.gov NCT00912041).",
+          "quote": "Permission was also granted by the Institutional Review Boards of Stanford University (protocol #20804)"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "The participant gave informed consent and was enrolled in the BrainGate2 trial.",
+          "quote": "gave informed consent and was enrolled in the BrainGate2 Neural Interface System clinical trial"
+        },
+        "read_from": "https://api.dandiarchive.org/api/dandisets/000950/versions/0.241029.1403/ (DANDI record description and ethicsApproval field), read 2026-10-12"
+      },
+      "results": [],
+      "status_only": [
+        "falcon-h2-preparation"
+      ],
+      "held": []
+    },
+    "rabut-fus": {
+      "rights": {
+        "name": "Rabut et al. human functional ultrasound through a cranial window",
+        "task": "Functional ultrasound through an acoustically transparent cranial implant: drawing, guitar playing and speech or reading blocks against rest, one participant; prepared, not analyzed",
+        "source": "https://doi.org/10.22002/f3y3k-em558",
+        "version": "CaltechData record f3y3k-em558, version 1.0.0 (doi:10.22002/f3y3k-em558, published 2024-02-11), read from the CaltechData API on 2026-10-12. Only the human runs; the rodent and in-vitro data are not used.",
+        "license": "CC BY-NC 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+        "attribution": "Claire Rabut, Sumner Norman, Whitney Griggs, Kay Jann, Jonathan Russin, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro · Dataset for: A window to the brain: ultrasound imaging of human neural activity through an acoustically transparent cranial prosthetic, CaltechData, doi:10.22002/f3y3k-em558, CC BY-NC 4.0. Paper: Claire Rabut, Sumner L. Norman, Whitney S. Griggs, Jonathan J. Russin, Kay Jann, Vasileios Christopoulos, Charles Liu, Richard A. Andersen and Mikhail G. Shapiro, Functional ultrasound imaging of human brain activity through an acoustically transparent cranial window, Science Translational Medicine 16, eadj3143 (2024), doi:10.1126/scitranslmed.adj3143. Derived analysis by BCI Report; not endorsed by the authors.",
+        "privacyReview": "The paper states that all procedures of the human study were approved by the Institutional Review Boards of the University of Southern California, Caltech (IR19-0902) and Rancho Los Amigos National Rehabilitation Hospital, and that the participant's consent was obtained. Published here: status only, with run and frame counts from the label audit. No image, score or participant detail is published. The dataset licence is noncommercial.",
+        "reviewedAt": "2026-10-12",
+        "reviewBasis": [
+          "https://data.caltech.edu/api/records/f3y3k-em558",
+          "https://www.vis.caltech.edu/documents/28341/scitranslmed.adj3143.pdf"
+        ]
+      },
+      "species": "human",
+      "modality": "functional ultrasound imaging",
+      "consent_and_ethics": {
+        "subjects": "human",
+        "ethics_approval": {
+          "stated": true,
+          "statement": "Approved by the Institutional Review Boards of the University of Southern California, Caltech (IR19-0902) and Rancho Los Amigos National Rehabilitation Hospital.",
+          "quote": "approved by the Institutional Review Boards of the University of Southern California"
+        },
+        "informed_consent": {
+          "stated": true,
+          "statement": "The participant's consent was obtained.",
+          "quote": "We recruited and obtained consent"
+        },
+        "read_from": "https://www.vis.caltech.edu/documents/28341/scitranslmed.adj3143.pdf (Materials and methods: Study design; Human participant), read 2026-10-12"
+      },
+      "results": [],
+      "status_only": [
+        "rabut-fus-preparation"
+      ],
+      "held": []
+    }
+  },
+  "holds": [
+    {
+      "id": "ds007420-classifier",
+      "statement": "No classifier score exists or is published for ds007420.",
+      "reason": "The numeric task codes have no verified lookup to hands or movements, the event durations disagree between the events table, the optical files and the cited paper, and the auxiliary sensor-clock holds stand; the optical coverage check does not repair any of them.",
+      "scope": "ds007420 decoding of any kind. Its optical coverage counts are published."
+    }
+  ],
+  "not_published": [
+    "Per-person, per-recording, per-channel, per-trial, per-fold and per-row values of any kind; the confusion matrices of the Bak classifier and comparator; participant, recording, file and session identifiers; recording dates.",
+    "Signals, features, predictions, model coefficients, normalization statistics, cue texts, label arrays, timestamps and images.",
+    "Measured compute and storage: stage runtimes, the acquisition totals and the free-space observations of the handoff. They are server measurements, not model throughput.",
+    "The handoff, its review, the protocols, the preparation and freeze reviews, the result audits and the readiness notes themselves: each is pinned by SHA-256 in this manifest and its pass or binding is checked by the export. They carry private storage paths and server names and are not copied.",
+    "Demographic tables from the original publications: ages, sex, handedness, diagnosis and the like.",
+    "Any score for FALCON H2, Rabut fUS or a ds007420 classifier: none exists. The batch's other candidate sources and the model strategy and next experiments of the handoff are not published."
+  ],
+  "provenance": {
+    "manifest_sha256": "ae02c2115414c0ca61cf5c72a748a004f0f2854570570e56935515922de2070f",
+    "included": [
+      "bak-fnirs-loso",
+      "nlb-mc-rtt-velocity",
+      "ds007420-optical-coverage"
+    ],
+    "status_only": [
+      "falcon-h2-preparation",
+      "rabut-fus-preparation"
+    ],
+    "holds": [
+      "ds007420-classifier"
+    ],
+    "source_audit_sha256": {
+      "bak-fnirs-loso": "8afe64f0d8fcdc459754c94983e85bb4bab92102865dc459d3af32e7dfd1f416",
+      "nlb-mc-rtt-velocity": "d929f8d7812ba37f6745ce260155de6e2908c79c695e249eb28c917074dfd7d2",
+      "ds007420-optical-coverage": "ddfb28926904fe23a7d21dc9ab34f796d79c6bb3ce8cdf926a7bf92b6280afd9"
+    },
+    "source_readiness_sha256": {
+      "falcon-h2-preparation": "afd08345b983855f815b7d6229a5ad666bb60c2f5c26c5b990eae0ab3233a10d",
+      "rabut-fus-preparation": "900bedca961be217f40cff2e5a3e6dba638c9622a2d5a87239151e0d309961ae"
+    },
+    "handoff_sha256": "be4f779596200315b42d79d153b5ab57f68166d276c3ac2b1432f18123c96f32"
+  }
+}

@@ -85,6 +85,9 @@ research/decision_route1_20261004/
 research/fm_eval_v9_20261004/
 research/site_text_polish_20261006/
 research/decision_route2_20261006/
+research/non_scalp_expansion_20261010/
+research/dataset_gap_review_20261011/
+research/paired_biosignal_pilots_20261011/
 
 # IndexNow submission state and the last deploy log (site/scripts/deploy.mjs). Local only.
 site/.indexnow-state.json

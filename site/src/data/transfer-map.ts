@@ -34,7 +34,10 @@ import adaptation from './adaptation-update.json';
 import extension from './extension-update.json';
 import large from './large-source-update.json';
 import later from './later-sessions-update.json';
+import beyond from './beyond-scalp-update.json';
+import pilot from './pilot-studies-update.json';
 import { holds } from './releases';
+import { bingoReleased, handwritingReleased } from './pilot-switch';
 import { FM_JSON, fmAdaptation, fmAdaptationMeta, fmProtocols } from './foundation-models';
 import type { Fig, L } from './entities';
 
@@ -68,7 +71,8 @@ export interface MapRow {
 
 const DEP = 'deployment-topics.json', EVI = 'evidence-update.json', CLI = 'clinical-update.json',
       CTX = 'context-update.json', ADA = 'adaptation-update.json', EXT = 'extension-update.json',
-      LSU = 'large-source-update.json', LTS = 'later-sessions-update.json';
+      LSU = 'large-source-update.json', LTS = 'later-sessions-update.json', BSU = 'beyond-scalp-update.json',
+      PSU = 'pilot-studies-update.json';
 const count = (raw: number, src: string): Fig => ({ raw, fmt: 'count', src });
 
 /** The cohort sizes behind a deployment track (one regime, if given), largest first. */
@@ -108,6 +112,29 @@ const wbcicCohorts = Object.values(later.results['wbcic-cross-session-cpu'].coho
 const rsvpPeople = later.results['rsvp-later-visits'].cohort.people;
 if (later.results['forenzo-continuous-control'].coverage.counting_unit !== 'cohort records, not proven unique people')
   throw new Error('transfer-map.ts: the Forenzo entry prints no n because its export counts records, not people');
+// Beyond scalp EEG (owner decision 1, 2026-10-12): Bak et al.'s fNIRS is new-person evidence — each person held out
+// once, the classifier fitted on everyone else — so it sits in the person row, named as fNIRS, never beside an EEG
+// figure. MC_RTT splits trials within one session (no transfer) and ds007420 is a coverage check, so neither appears.
+const bak = beyond.results['bak-fnirs-loso'];
+if (bak.species !== 'human' || bak.modality !== 'fNIRS' || bak.design.folds !== bak.cohort.people || bak.design.training_people !== bak.cohort.people - 1)
+  throw new Error('transfer-map.ts: the Bak entry is human fNIRS with every person held out once');
+// The pilot studies (owner decision 1, 2026-10-12). Orthosis holds each person out once, in all three configurations
+// of its one cohort, so it is one new-person entry with the cohort counted once. BINGO holds a subject field out with
+// both its languages, and trains in one language and tests in the other: a person entry, and a context entry where the
+// language and the person change together; it counts source-defined fields, not proven people, so neither prints an n.
+// REFED's two nominal folders are a computational diagnostic about stimulus identity, not transfer evidence: no entry.
+// BINGO's two entries follow its publication switch (pilot-switch.ts): held, the map shows neither. The handwriting
+// analysis holds each of its five people out once, so it is a person entry with its n while its switch releases it.
+const orthosis = pilot.results['orthosis-64ch-classical'], bingoX = (pilot.results as Record<string, any>)['bingo-cross-language'];
+const handX = (pilot.results as Record<string, any>)['handwriting-mask-aware'];
+if (handwritingReleased && (!handX.cohort.split.startsWith('five leave-one-person-out folds') || handX.cohort.people !== 5))
+  throw new Error('transfer-map.ts: the handwriting entry holds each of its five people out once');
+if (!orthosis.cohort.split.startsWith('leave one whole person out') || !orthosis.cohort.counted_once.includes('one cohort')
+    || !['orthosis-58ch-classical', 'orthosis-eegpt-vs-58ch'].every(id => pilot.results[id as 'orthosis-58ch-classical'].cohort.people === orthosis.cohort.people))
+  throw new Error('transfer-map.ts: the Orthosis entry is one cohort, every person held out once');
+if (bingoReleased && (!bingoX.task.includes('each source field is held out whole') || !bingoX.cohort.counting_unit.startsWith('source-defined subject fields')
+    || !bingoX.directions.some((d: { kind: string }) => d.kind === 'cross-language')))
+  throw new Error('transfer-map.ts: the BINGO entries hold a subject field out, count fields, and cross languages');
 
 // The core matrix's new-person protocols are the ones its payload labels so.
 if (!data.tracks.some(t => t.short === 'Transfer to a new person'))
@@ -145,6 +172,17 @@ export const mapRows: MapRow[] = [
         { key: 'person:sleep-staging', label: { en: 'Sleep staging · Dreem, two cohorts', zh: '睡眠分期 · Dreem，两个队列' }, href: '/topics/sleep-staging/',
           n: dreemCohorts.map(n => count(n, LSU)),
           note: { en: 'Each night held out once and scored by a model fitted on other people’s nights of the same cohort; the two cohorts are separate experiments.', zh: '每一晚各留出一次，由同一队列中其他人的夜晚拟合的模型评分；两个队列是两项独立实验。' } },
+        { key: 'person:bak-fnirs', label: { en: 'fNIRS, executed tapping · Bak et al.', zh: 'fNIRS，实际敲击动作 · Bak 等人' }, href: '/topics/beyond-scalp-eeg/#bak-fnirs',
+          n: [count(bak.cohort.people, BSU)],
+          note: { en: 'Human fNIRS, not EEG: each person held out once and classified by a model fitted on everyone else.', zh: '人类 fNIRS，不是 EEG：每名被试各留出一次，由用其余所有人拟合的模型分类。' } },
+        { key: 'person:orthosis', label: { en: 'Orthosis device errors · EEG pilot', zh: '矫形器设备错误 · EEG 试点' }, href: '/topics/pilot-studies/#orthosis',
+          n: [count(orthosis.cohort.people, PSU)],
+          note: { en: 'Each person held out once, with a probe fitted on the other seven: classical features on two channel sets and frozen EEGPT, one cohort counted once.', zh: '每名被试各留出一次，分类头用其余七名被试拟合：两组通道上的经典特征与冻结的 EEGPT，同一个队列只计一次。' } },
+        ...(bingoReleased ? [{ key: 'person:bingo', label: { en: 'Inner speech, Greek and English · BINGO', zh: '内部言语，希腊语与英语 · BINGO' }, href: '/topics/pilot-studies/#bingo',
+          note: { en: 'A negative result near chance, a subject field left out at a time. Counted in subject fields as the source defines them, not proven distinct people, so no n is shown.', zh: '阴性结果，接近随机水平，每次留出一个被试字段。按数据源定义的被试字段计数，不能证明是不同的人，所以不标 n。' } }] : []),
+        ...(handwritingReleased ? [{ key: 'person:handwriting', label: { en: 'Imagined handwriting, four coded labels · EEG pilot', zh: '想象书写，四个编码标签 · EEG 试点' }, href: '/topics/pilot-studies/#handwriting',
+          n: [count(handX.cohort.people, PSU)],
+          note: { en: 'Each person held out once, with a model fitted on the other four: a reused development cohort and a data-quality case study, just above chance.', zh: '每名被试各留出一次，模型用其余四名被试拟合：重复使用的开发队列，一项数据质量案例研究，结果仅略高于随机水平。' } }] : []),
       ],
       status: [],
       held: [
@@ -222,7 +260,7 @@ export const mapRows: MapRow[] = [
   {
     id: 'context',
     axis: { en: 'Context', zh: '场景' },
-    gloss: { en: 'Another display, movement, or image rate', zh: '换显示设备、身体运动或图像速率' },
+    gloss: { en: 'Another display, movement, image rate or language', zh: '换显示设备、身体运动、图像速率或语言' },
     cells: {
       measured: [
         { key: 'context:screen-to-vr', label: { en: 'Screen ⇄ VR, P300', zh: '屏幕 ⇄ VR，P300' }, href: '/topics/screen-to-vr/',
@@ -237,6 +275,8 @@ export const mapRows: MapRow[] = [
         { key: 'context:image-rate', label: { en: 'Image rate, P300', zh: '图像速率，P300' }, href: '/topics/screen-to-vr/#image-rate',
           n: [count(ltrsvp.cohort.people, EXT)], with: { en: 'recording', zh: '记录' },
           note: { en: 'Trained on one recording at one rate, tested on a different recording: rate and recording change together.', zh: '在一种速率的一段记录上训练、在另一段记录上测试：速率与记录一起变化。' } },
+        ...(bingoReleased ? [{ key: 'context:bingo-language', label: { en: 'Greek ⇄ English inner speech', zh: '希腊语 ⇄ 英语内部言语' }, href: '/topics/pilot-studies/#bingo', with: { en: 'person', zh: '被试' },
+          note: { en: 'Trained in one language and tested in the other, on a subject field left out: the language and the person change together. A negative result near chance.', zh: '用一种语言训练、在另一种语言上测试，测试的是留出的被试字段：语言与被试一起变化。阴性结果，接近随机水平。' } }] : []),
       ],
       status: [],
       held: [],

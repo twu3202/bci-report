@@ -15,6 +15,8 @@ import foundation from '../../data/foundation-models-update.json';
 import shared from '../../data/shared-representation-update.json';
 import later from '../../data/later-sessions-update.json';
 import language from '../../data/questions-in-language-update.json';
+import beyond from '../../data/beyond-scalp-update.json';
+import pilot from '../../data/pilot-studies-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
 import ShareImage from '../../components/ShareImage.astro';
@@ -55,9 +57,11 @@ const manifestOf: Record<string, string | undefined> = {
   sharedRepresentation: shared.provenance.manifest_sha256,
   laterSessions: later.provenance.manifest_sha256,
   questionsInLanguage: language.provenance.manifest_sha256,
+  beyondScalp: beyond.provenance.manifest_sha256,
+  pilotStudies: pilot.provenance.manifest_sha256,
   deployment: undefined, mvp: undefined,
 };
-const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id, extension: extension.release_id, largeSource: large.release_id, reliableDecisions: reliable.release_id, foundationModels: foundation.release_id, sharedRepresentation: shared.release_id, laterSessions: later.release_id, questionsInLanguage: language.release_id };
+const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id, extension: extension.release_id, largeSource: large.release_id, reliableDecisions: reliable.release_id, foundationModels: foundation.release_id, sharedRepresentation: shared.release_id, laterSessions: later.release_id, questionsInLanguage: language.release_id , beyondScalp: beyond.release_id, pilotStudies: pilot.release_id };
 for (const r of releases)
   if (idOf[r.payload] !== r.id) throw new Error(`releases.ts: ${r.id} does not match its payload (${idOf[r.payload]})`);
 

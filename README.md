@@ -99,7 +99,7 @@ What each file holds, loading examples and how to cite a release:
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Thirteen questions sit alongside, each with its own protocol:
+Fifteen questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
@@ -112,7 +112,9 @@ Thirteen questions sit alongside, each with its own protocol:
 [sleep-stage balance](https://bci.report/topics/sleep-staging/) ·
 [does pretraining help](https://bci.report/topics/does-pretraining-help/) ·
 [one model, several questions](https://bci.report/topics/shared-encoder/) ·
-[questions asked in words](https://bci.report/topics/questions-in-language/)
+[questions asked in words](https://bci.report/topics/questions-in-language/) ·
+[beyond scalp EEG](https://bci.report/topics/beyond-scalp-eeg/) ·
+[what a small pilot can show](https://bci.report/topics/pilot-studies/)
 
 Every dataset and every method also has its own page, gathering each figure
 measured on it wherever it appears on the site:
