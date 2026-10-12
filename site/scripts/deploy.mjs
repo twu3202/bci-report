@@ -132,8 +132,10 @@ await Promise.all(Array.from({ length: 6 }, async () => {
     if (!ok) mismatched.push(u);
   }
 }));
-const keyRes = await get(`${origin}/${keyFile}`).catch(() => null);
-const keyLive = !!keyRes && keyRes.ok && (await keyRes.text().catch(() => '')).trim() === key;
+// The key file goes through the same curl fallback: on 2026-10-12 one transient
+// failure here stopped a verified deploy before IndexNow.
+const keyBody = await bodyOf(`${origin}/${keyFile}`);
+const keyLive = !!keyBody && keyBody.toString('utf8').trim() === key;
 if (mismatched.length) die(`production does not match dist/ for:\n  ${mismatched.join('\n  ')}\nNothing was submitted to IndexNow.`);
 console.log(`deploy: production matches dist/ for ${changed.length || 3} checked page(s).`);
 
