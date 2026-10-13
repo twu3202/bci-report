@@ -1662,7 +1662,7 @@ export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as
  * shown, directory-status.ts). REVE Base left this list on 2026-10-04 (evaluated in v9);
  * MIRepNet and EEG-DINO joined it as catalogue-only entries. EEGPT stays (owner decision 2026-10-12): its one
  * published comparison is a pilot outside every leaderboard, so its entry links that pilot (`page`) and gets no
- * method page, and its core-matrix scores remain unpublished.
+ * method page, and its core-matrix scores are not on the site's pages (some are in the repository's audit records).
  */
 export const unmeasuredModels: { name: string; family: string; status: string; url?: string; released?: string; checked?: string;
                                  page?: { path: string; label: L } }[] = [

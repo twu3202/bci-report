@@ -85,8 +85,8 @@ export const modelStatusOverrides: Record<string, StatusOverride> = {
   // EEGPT. Released as "Rights review pending" with no score: its checkpoint licence was unresolved, and the hold on
   // its aggregate scores was this project's own conservative choice, not a publisher's rule. On 2026-10-12 the owner
   // decided to publish one pilot comparison (pilot-studies-update.json, orthosis-eegpt-vs-58ch), under the approval
-  // records that bind its export. The core-matrix EEGPT scores stay unpublished, pending a separate review, and the
-  // held core-matrix cells are unchanged; the checkpoint licence stays unresolved and no weights are distributed.
+  // records that bind its export. The core-matrix EEGPT scores are not on the site's pages (some have been in audit records in the
+  // public repository since 2026-09-20; corrected on 2026-10-12), and the held core-matrix cells are unchanged; the checkpoint licence stays unresolved and no weights are distributed.
   // The released status and note stay on the card beside this one; experiments.json keeps its bytes.
   'EEGPT': {
     released: 'Rights review pending',
@@ -94,8 +94,8 @@ export const modelStatusOverrides: Record<string, StatusOverride> = {
     checked: pilot.generated_at,
     page: { path: EEGPT_PILOT_PATH, label: { en: 'The pilot comparison →', zh: '这项试点比较 →' } },
     note: {
-      en: `One pilot comparison is published: frozen EEGPT with a fixed supervised probe against matched 58-channel classical features on the ${eegptPilot.cohort.people} people of the Orthosis error-detection dataset, outside every leaderboard and ranking. The core-matrix EEGPT scores remain unpublished, pending a separate review. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The note above is the released one.`,
-      zh: `已发布一项试点比较：在 Orthosis 错误检测数据集的 ${eegptPilot.cohort.people} 名被试上，冻结的 EEGPT 加固定的有监督分类头，与匹配的 58 通道经典特征相比较；它不进入任何排行榜或排名。核心矩阵中的 EEGPT 分数仍不发布，有待另行审查。检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。上面的备注译自发布时的原文。`,
+      en: `One pilot comparison is published: frozen EEGPT with a fixed supervised probe against matched 58-channel classical features on the ${eegptPilot.cohort.people} people of the Orthosis error-detection dataset, outside every leaderboard and ranking. The core-matrix EEGPT scores are not on the site’s pages; some of them are in audit records in the public repository. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The note above is the released one.`,
+      zh: `已发布一项试点比较：在 Orthosis 错误检测数据集的 ${eegptPilot.cohort.people} 名被试上，冻结的 EEGPT 加固定的有监督分类头，与匹配的 58 通道经典特征相比较；它不进入任何排行榜或排名。核心矩阵中的 EEGPT 分数没有出现在网站页面上，其中一部分在公开代码仓库的审计记录里。检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。上面的备注译自发布时的原文。`,
     },
   },
 };

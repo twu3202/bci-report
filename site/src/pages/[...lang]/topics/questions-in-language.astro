@@ -28,6 +28,7 @@ import { R3, QL, QLW, DELTA, RATIO, block, entry, level, part, qlFig, qlwFig, ql
 import wordings from '../../../data/questions-in-language-wordings.json';
 import { fmModelById, fmTermsSentence } from '../../../data/foundation-models';
 import { jevStyle } from '../../../data/decision-research';
+import { elsewhere } from '../../../data/site';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -205,6 +206,11 @@ const notRun = [...R3.not_run.map(x => [x.item, x.status]), ...R3.not_reported.m
 // --- The copy. The short answer and the description print no BOAS figure (BOAS travels with its gaps, below). ---
 const ivAns = (e: QlEntry) => `${ans(qlFig(e.interval_95[0], 'sgn2'))} ${tc.to} ${ans(pp(e.interval_95[1]))}`;
 const u8 = L0('TPL u8'), cca8 = L0('CCA u8');
+const article = elsewhere.articles.find(a => a.page === '/topics/questions-in-language/');
+const articleCopy = {
+  en: ['A longer write-up of the BETA results is in Towards AI: ', 'Can an EEG decoder answer a question it was never trained on? ↗'],
+  zh: ['', 'BETA 部分结果的长文解读（英文，Towards AI）↗'],
+}[locale];
 const copy = {
   en: {
     description: `In its training wording, a small head on frozen EEG features matched question numbers on seen sleep questions but not on SSVEP (${F(pp(t0.estimate))} with templates on a plain spectrum, ${B0.people} people); rewordings mostly cost accuracy, and it did not answer unseen questions: CCA, with no training, did far better on unseen frequencies.`,
@@ -949,5 +955,6 @@ const entryKeyOrder = (p: string) => (S(p).entries ?? []);
     <ul class="rd-literature">{literature.map(x => <li lang="en" data-ref={x.id}><a href={x.url} target="_blank" rel="noreferrer">{x.cite} ↗</a></li>)}</ul>
     <p class="citation-note">{tc.dataSource} <a href={`/data/${QL}`} download>{QL}</a> · {tc.schema} {qlRelease.schema}{tc.period}</p>
     <p class="citation-note">{copy.dataSource2} <a href={`/data/${QLW}`} download>{QLW}</a> · {tc.schema} {qlwRelease.schema}{tc.period}</p>
+    {article && <p class="citation-note" id="ql-article">{articleCopy[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{articleCopy[1]}</a></p>}
   </section>
 </TopicLayout>

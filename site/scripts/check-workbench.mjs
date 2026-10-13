@@ -3780,8 +3780,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
      assert.ok(c.includes(label==='en'?'Released status: Rights review pending.':'发布时的状态：权利审查中。'),w+': the released status beside it');
      assert.ok(c.includes(`href="/${prefix}topics/pilot-studies/#orthosis" data-override-page="true"`),w+': the pilot comparison linked');
      assert.ok(c.includes('<time datetime="2026-10-12">'),w+': when the status was checked');
-     for(const re of label==='en'?[/core-matrix EEGPT scores remain unpublished, pending a separate review/,/checkpoint’s licence remains unresolved/,/no original or converted weights are distributed/,/Apache-2\.0 covers the repository’s code only/]
-                                 :[/核心矩阵中的 EEGPT 分数仍不发布，有待另行审查/,/检查点的许可仍未厘清/,/不分发任何原始或转换后的权重/,/Apache-2\.0 只涵盖代码仓库中的代码/])
+     for(const re of label==='en'?[/core-matrix EEGPT scores are not on the site’s pages; some of them are in audit records in the public repository/,/checkpoint’s licence remains unresolved/,/no original or converted weights are distributed/,/Apache-2\.0 covers the repository’s code only/]
+                                 :[/核心矩阵中的 EEGPT 分数没有出现在网站页面上，其中一部分在公开代码仓库的审计记录里/,/检查点的许可仍未厘清/,/不分发任何原始或转换后的权重/,/Apache-2\.0 只涵盖代码仓库中的代码/])
        assert.match(c,re,w+': '+re.source);
      assert.doesNotMatch(c.replace(/<span class="note-original"[^>]*>[^<]*<\/span>/g,''),/(?:weights|checkpoint|权重|检查点)[^.。;；]{0,40}Apache|Apache[^.。;；]{0,30}(?:weights|权重)/i,w+': the weights are never called Apache-2.0');
      assert.ok(!c.includes('data-fig')&&!/\d+\.\d\s?%/.test(c),w+': the card prints no figure of the pilot');}
@@ -5304,7 +5304,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     assert.equal((unent(du).match(/No ethics-approval or informed-consent statement was found\. The dataset card has none/g)||[]).length,1,'data use: the handwriting gap is stated in full once');
   } else assert.ok(hr.includes('The handwriting dataset, held'),'data use: the handwriting analysis held');
   const ee=du.slice(du.indexOf('id="eegpt"'),du.indexOf('</p>',du.indexOf('id="eegpt"')));
-  for(const s of ['this project’s own conservative choice, not a publisher’s rule','the core-matrix EEGPT scores remain unpublished, pending a separate review','covers the repository’s source code only','No original or converted weights are distributed'])
+  for(const s of ['this project’s own conservative choice, not a publisher’s rule','The core-matrix EEGPT scores are not on the site’s pages, but some of them have been in audit records in the public repository','this paragraph first said the comparison was the only EEGPT figure published','covers the repository’s source code only','No original or converted weights are distributed'])
     assert.ok(ee.includes(s),'data use: the EEGPT change — '+s);
   assert.doesNotMatch(visible(ee),/(?:weights|checkpoint)[^.;]{0,40}is Apache|weights[^.;]{0,20}Apache-2\.0/i,'data use: the EEGPT weights are never called Apache-2.0');
   assert.ok(du.includes('id="small-cohorts-pilots"')&&(HW_ON?/One animal, two folders, five and eight people/:/One animal, two folders, eight people/).test(du),'data use: the small-cohort note covers one animal, two folders and the pilots\' people');

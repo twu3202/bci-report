@@ -211,7 +211,7 @@ class CardBeyondScalpAndPilots(unittest.TestCase):
             self.assertIn(phrase, self.beyond)
         for phrase in ('outside every leaderboard', 'one cohort, counted once', 'neither arm is shown to be better, and the two are not shown to be equivalent',
                        'not subjective error recognition', 'not zero-shot', 'not excluded', 'no original or converted weights are distributed',
-                       'core-matrix scores are not published'):
+                       'core-matrix scores are not in this dataset\'s files'):
             self.assertIn(phrase, self.pilot)
         c = self.ps['results']['orthosis-64ch-classical']['cohort']
         self.assertIn(f"({c['people']} people, {c['runs']} runs, {c['events']:,} recorded device events", self.pilot)

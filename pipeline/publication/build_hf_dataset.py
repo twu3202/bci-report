@@ -313,7 +313,7 @@ and movement, muscle or device artifacts may contribute; the EEGPT probe is trai
 (not zero-shot), and overlap with EEGPT's pretraining data is not excluded.
 EEGPT's code licence, {m['code_licence']}, covers {m['code_licence_scope']}; its checkpoint licence is
 unresolved, **no original or converted weights are distributed**, and its
-core-matrix scores are not published. {bingo}{handwriting}REFED
+core-matrix scores are not in this dataset's files. {bingo}{handwriting}REFED
 ({refed['cohort']['nominal_folders']} nominal participant folders, {refed['cohort']['clips']} stored clips): a computational
 diagnostic in which source-only controls have smaller errors than EEG, with no
 interval and no physiological or population claim. Further arms are status
