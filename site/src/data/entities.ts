@@ -38,6 +38,7 @@ import { EEGPT_PILOT_PATH, modelDirectoryStatus } from './directory-status';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, fmAdaptation, fmAdaptationMeta, fmDirectory, fmModelById, fmPageNames, fmRowsByProtocol, fmSlugOf,
          fmResearchUse, fmSlugs, type FmModel, type FmRow, type FmSlug } from './foundation-models';
 import { fmZh } from './foundation-models-zh';
+import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptAttributionRows, eegptCells, eegptModel, eegptText, footnotesOf } from './eegpt-core';
 import { entityCopy } from './entity-copy';
 import { TOPIC_PRINTS } from './foundation-topics';
 
@@ -61,9 +62,11 @@ export const isEnglishOnly = (l: L, locale: Locale) => locale === 'zh' && !l.zh;
  * `ms2` prints a time in seconds as milliseconds to two decimals (the route-2 ledger's step times, indicative).
  * `s1` prints a time in seconds; a time before an event (the BINGO trial timeline on the pilot-studies page) takes a
  * true minus sign, as every other signed format does.
+ * `gap2` (EEGPT on the core matrix, 2026-10-13) prints the distance between two non-overlapping intervals, a value
+ * already in percentage points and never signed, with two decimals: the export's `gap_pp` ("0.10 pp").
  */
 export type Fmt = 'pct1' | 'pct1raw' | 'pct2raw' | 'pct2' | 'pp1' | 'pp2' | 'sgn1' | 'sgn2' | 'sgn3' | 'auc3' | 'auc2' | 'num3' | 'count' | 's1' | 'm2'
-  | 'ppr2' | 'sgr2' | 'ms2' | 'int0' | 'sig3';
+  | 'ppr2' | 'sgr2' | 'ms2' | 'int0' | 'sig3' | 'gap2';
 /** A published figure: the raw leaf, the served file it is a leaf of, and how it prints. */
 export interface Fig { raw: number; fmt: Fmt; src: string }
 /** A difference in percentage points, and an interval's lower bound: a second decimal where one would print ±0.0. */
@@ -102,6 +105,7 @@ export function formatFig(f: Fig): string {
     case 'ms2': return `${(f.raw * 1000).toFixed(2)} ms`;
     case 'int0': return minus(Math.round(f.raw).toLocaleString('en-US'));
     case 'sig3': return minus(f.raw.toPrecision(3));
+    case 'gap2': return `${f.raw.toFixed(2)} pp`;
   }
 }
 
@@ -164,6 +168,12 @@ export interface ResultGroup {
    */
   fmTerms?: string;
   /**
+   * An EEGPT group (2026-10-13): the protocol whose EEGPT section states its checkpoint's terms. A page prints the
+   * terms once, under the first EEGPT group, and links that section (ResultGroups.astro); a method page that states
+   * them with the model skips them (`skipNotes: ['eegpt-terms']`).
+   */
+  eegptTerms?: string;
+  /**
    * A route-1 group (review of 2026-10-05): the protocol whose boundary, with the route's limitations that bear on every
    * figure in the group, is printed under its rows from the export (reliable-decisions-limits.ts), linking the rest.
    */
@@ -184,6 +194,13 @@ export interface ResultGroup {
    * what the figures above cannot be read as, beside them, once. Figures in a note are leaves like any other.
    */
   notes?: RowNote[];
+  /**
+   * An id for each note, where the same note bears on several groups of one page (EEGPT's footnotes, 2026-10-13: the
+   * row's two on every protocol, the Tsinghua context on both BETA protocols). A page prints a note with an id once,
+   * under the first of its groups that carries it (ResultGroups.astro); a method page that states some of them with
+   * the model leaves those out of its groups.
+   */
+  noteIds?: string[];
 }
 
 export interface DatasetEntity {
@@ -222,22 +239,23 @@ const pair = (iv: number[] | null | undefined, fmt: Fmt, src: string): [Fig, Fig
 
 const coreMethodSlugs = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda',
                          'cca', 'fbcca', 'etrca'] as const;
-// The v9 foundation models (2026-10-04): one page per model family (foundation-models.ts).
-export const methodSlugs = [...coreMethodSlugs, ...fmSlugs] as const;
-export type MethodSlug = typeof coreMethodSlugs[number] | FmSlug;
+// The v9 foundation models (2026-10-04): one page per model family (foundation-models.ts). EEGPT (2026-10-13): its
+// core-matrix cells and attribution rows from its own release (eegpt-core.ts), on a page like theirs.
+export const methodSlugs = [...coreMethodSlugs, ...fmSlugs, EEGPT_SLUG] as const;
+export type MethodSlug = typeof coreMethodSlugs[number] | FmSlug | typeof EEGPT_SLUG;
 export const isFmSlug = (slug: string): slug is FmSlug => (fmSlugs as readonly string[]).includes(slug);
 /** Model ids as the payloads write them → the method page they belong to. */
 const METHOD_OF: Record<string, MethodSlug> = {
   eegnet: 'eegnet', labram: 'labram', cbramod: 'cbramod', shallowfbcspnet: 'shallowfbcspnet',
   deep4net: 'deep4net', 'csp-lda': 'csp-lda', cca: 'cca', 'author-cca': 'cca', fbcca: 'fbcca',
-  'ensemble-trca': 'etrca',
+  'ensemble-trca': 'etrca', eegpt: EEGPT_SLUG,
 };
 /** The method page a payload model id belongs to, if it has one (a v9 checkpoint: its family's page). */
 export const methodSlugOf = (id: string): MethodSlug | undefined => METHOD_OF[id] ?? fmSlugOf(id);
 export const methodNames: Record<MethodSlug, string> = {
   eegnet: 'EEGNet', labram: 'LaBraM', cbramod: 'CBraMod', shallowfbcspnet: 'ShallowFBCSPNet',
   deep4net: 'Deep4Net', 'csp-lda': 'CSP+LDA', cca: 'CCA', fbcca: 'FBCCA', etrca: 'eTRCA',
-  ...fmPageNames,
+  ...fmPageNames, [EEGPT_SLUG]: 'EEGPT',
 };
 
 /* --- Labels ------------------------------------------------------------------- */
@@ -355,6 +373,41 @@ function fmGroups(datasetName: string): ResultGroup[] {
   });
 }
 
+/* --- EEGPT (eegpt-core-update.json, 2026-10-13) ---------------------------------------------------------- */
+
+// EEGPT's row of a core protocol: a group of its own beside the core-matrix and further-encoder groups, never merged
+// into either, read with the protocol page's EEGPT section. Figures are the export's percent blocks, in the core rows'
+// units. Each footnote sits under the group of a cell it bears on, once a page (`noteIds`): the cell's own first, then
+// the row's two. The group id ends in `-eegpt`, not in a track id, as the v9 groups' do.
+const eegptNote = (en: string): RowNote => ({ en: [en], zh: [eegptText(en, 'zh').text] });
+function eegptGroups(datasetName: string): ResultGroup[] {
+  return data.tracks.filter(t => t.dataset === datasetName).map(t => {
+    const c = eegptCells[t.id];
+    if (!c) throw new Error(`entities.ts: no EEGPT cell for ${t.id}`);
+    const path = `/protocols/${t.id}/#${EEGPT_ANCHOR}`;
+    const mode = fmModeLabel(t.type === 'tradeoff' ? eegptModel.idleMode : eegptModel.mode);
+    const base = { path, method: 'EEGPT', methodSlug: EEGPT_SLUG as MethodSlug, condition: mode, people: c.people.raw };
+    const flag: RowNote | undefined = c.chanceFlag === 'at-or-below' ? { en: ['At or below chance.'], zh: ['不高于随机水平。'] }
+      : c.chanceFlag === 'interval-reaches' ? { en: ['The interval reaches chance.'], zh: ['区间触及随机水平。'] } : undefined;
+    const rows: ResultRow[] = c.idle ? [
+      { ...base, metric: { en: 'Commands detected ≤3 s', zh: '检出的指令 ≤3 秒' }, value: c.idle.detected, of: c.idle.commandTrials,
+        note: { en: [c.idle.abstain, ' of ', c.people, ' people always abstained.'], zh: [c.idle.abstain, ' 名始终拒识（共 ', c.people, ' 名被试）。'] } },
+      { ...base, metric: { en: 'Idle false activations', zh: '空闲误触发' }, value: c.idle.falseActivations, of: c.idle.idleTrials },
+      // The window metrics its idle footnote speaks of, as the further encoders' rows define them: cohort means, no interval.
+      { ...base, metric: { en: 'Window balanced accuracy', zh: '窗口平衡准确率' }, value: c.idle.windowBa },
+      { ...base, metric: { en: 'Window AUROC', zh: '窗口 AUROC' }, value: c.idle.windowAuroc },
+    ] : [{ ...base, metric: BA, value: c.primary!, interval: c.interval, note: flag }];
+    const notes = footnotesOf(t.id);
+    const core = trackTitles[t.id];
+    return {
+      id: `${t.id}-${EEGPT_ANCHOR}`,
+      title: { en: core.en.replace('Core matrix · ', 'EEGPT, frozen encoder · '), zh: core.zh!.replace('核心矩阵 · ', 'EEGPT（冻结编码器）· ') },
+      path, rows, chance: c.chance, eegptTerms: t.id,
+      notes: notes.map(f => eegptNote(f.text)), noteIds: notes.map(f => f.id),
+    };
+  });
+}
+
 /**
  * The v9 EEGMAT adaptation (2026-10-04): nine encoders, the 1 October recipe unchanged,
  * a trained head on the frozen encoder against rank-4 LoRA, three seeds. One fixed
@@ -439,15 +492,17 @@ function depCondition(r: DepRow): L {
   }
 }
 
-function depRow(r: DepRow): ResultRow {
+// `src`: the file the row is a leaf of. EEGPT's attribution rows (2026-10-13) are written in these fields in its own
+// release, and sit beside the published LaBraM and CBraMod rows of the same track and dataset.
+function depRow(r: DepRow, src: string = DEP): ResultRow {
   const auc = r.metric === 'participant_mean_roc_auc';
   return {
     path: DEP_TRACK[r.track].path, method: modelLabel(r.model, 'en'), label: lbl(modelLabel(r.model, 'en'), modelLabel(r.model, 'zh')),
     methodSlug: METHOD_OF[r.model],
     comparator: r.model === 'random-uniform' || r.model === 'same-frequency-power',
     condition: depCondition(r), metric: auc ? ROC_AUC : BA,
-    value: fig(r.value, auc ? 'auc3' : 'pct1', DEP),
-    interval: pair(r.confidence_interval_95, auc ? 'auc3' : 'pct1', DEP),
+    value: fig(r.value, auc ? 'auc3' : 'pct1', src),
+    interval: pair(r.confidence_interval_95, auc ? 'auc3' : 'pct1', src),
     people: r.participants,
   };
 }
@@ -456,9 +511,13 @@ function depGroups(slug: string): ResultGroup[] {
   const tracks = [...new Set(deployment.rows.filter(r => DEP_SLUG[r.dataset_id] === slug).map(r => r.track))];
   return tracks.map(track => ({
     id: track, title: DEP_TRACK[track].title, path: DEP_TRACK[track].path.split('#')[0],
-    rows: deployment.rows.filter(r => r.track === track && DEP_SLUG[r.dataset_id] === slug).map(depRow),
+    rows: [...deployment.rows.filter(r => r.track === track && DEP_SLUG[r.dataset_id] === slug).map(r => depRow(r)),
+           ...eegptAttributionRows.filter(r => r.track === track && DEP_SLUG[r.dataset_id] === slug).map(r => depRow(r as DepRow, EEGPT_JSON))],
   }));
 }
+for (const r of eegptAttributionRows)
+  if (!DEP_TRACK[r.track] || !DEP_SLUG[r.dataset_id] || r.model !== 'eegpt')
+    throw new Error(`entities.ts: EEGPT's attribution row ${r.id} has no published group to sit in`);
 
 /* --- Later batches ------------------------------------------------------------------ */
 
@@ -1351,8 +1410,9 @@ function refedGroup(): ResultGroup {
   const MAE: L = { en: 'Equal-axis mean absolute error, raw self-report scale (lower is better)', zh: '两轴等权平均绝对误差，原始自评标度（越低越好）' };
   const ARM: Record<string, L & { comparator?: boolean }> = {
     eeg_ridge: { en: 'EEG Ridge (relative band power)', zh: 'EEG 岭回归（相对频带功率）' },
-    source_global_mean: { en: 'Source global mean', zh: '训练集总体均值' },
-    source_video_lookup: { en: 'Source video lookup', zh: '训练集按视频编号查表' },
+    // Named for what each control is, as the pilot-studies page names them (2026-10-13); the export's arm names stay.
+    source_global_mean: { en: 'Training-set mean', zh: '训练集总体均值' },
+    source_video_lookup: { en: 'Same-video training lookup', zh: '训练集按视频编号查表' },
     duration_video_id_ridge: { en: 'Duration / numeric-video-ID ridge', zh: '时长 / 数字视频编号岭回归' },
   };
   const COND: Record<string, L> = {
@@ -1371,7 +1431,7 @@ function refedGroup(): ResultGroup {
     rows,
     notes: [{
       en: [fig(r.cohort.nominal_folders, 'count', PS), ' nominal participant folders with the same ', fig(r.cohort.videos, 'count', PS), ' videos: ', fig(r.cohort.clips, 'count', PS),
-           ' clips, not as many independent people, so no interval or significance test is reported. EEG Ridge has a larger error than every source-only control in both conditions. With shared videos, the same-video lookup has the smallest error, because familiar stimuli carry the prediction; held out together, it has no matching video and equals the global mean. Targets are the mean of each clip’s stored valence and arousal labels on the published raw scale, not SAM scores. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved, and the rating means were seen before this design. No physiological, neural or population claim; outside every leaderboard.'],
+           ' clips, not as many independent people, so no interval or significance test is reported. EEG Ridge has a larger error than every source-only control in both conditions. With shared videos, the same-video lookup has the smallest error, because familiar stimuli carry the prediction; held out together, it has no matching video and equals the training-set mean. Targets are the mean of each clip’s stored valence and arousal labels on the published raw scale, not SAM scores. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved, and the rating means were seen before this design. No physiological, neural or population claim; outside every leaderboard.'],
       zh: [fig(r.cohort.nominal_folders, 'count', PS), ' 个标称被试文件夹，观看同样的 ', fig(r.cohort.videos, 'count', PS), ' 段视频：共 ', fig(r.cohort.clips, 'count', PS),
            ' 个片段，并不是同样多的独立个体，所以不报告区间或显著性检验。两种条件下，EEG 岭回归的误差都比每个不用 EEG、只用训练集信息的对照大。共享视频时，按同一视频查表的误差最小，因为熟悉的刺激本身就能带来预测；两者一起留出时，它找不到对应的视频，结果等于总体均值。目标值是每个片段存储的效价与唤醒度标签在已发布原始标度上的均值，不是 SAM 评分。存储的 EEG 单位、EEG 与评分之间的时钟以及裁剪的端点都没有确定，评分均值在这个设计之前就已看过。不作任何生理、神经或群体层面的声明；不进入任何排行榜。'],
     }],
@@ -1538,7 +1598,7 @@ function fromMvp(name: string, task: L, later: ResultGroup[] = []): DatasetEntit
   return {
     slug, name: d.name, task, license: d.license, licenseUrl: d.licenseUrl ?? undefined,
     attribution: d.attribution, sources: [d.source].filter(Boolean) as string[],
-    groups: [...mvpGroups(name), ...fmGroups(name), ...depGroups(slug), ...later],
+    groups: [...mvpGroups(name), ...fmGroups(name), ...eegptGroups(name), ...depGroups(slug), ...later],
   };
 }
 
@@ -1660,9 +1720,9 @@ export const methodBySlug = Object.fromEntries(methods.map(m => [m.slug, m])) as
 /**
  * Models listed in the directory that have no result in the core matrix or beside it, and why (status as
  * shown, directory-status.ts). REVE Base left this list on 2026-10-04 (evaluated in v9);
- * MIRepNet and EEG-DINO joined it as catalogue-only entries. EEGPT stays (owner decision 2026-10-12): its one
- * published comparison is a pilot outside every leaderboard, so its entry links that pilot (`page`) and gets no
- * method page, and its core-matrix scores are not on the site's pages (some are in the repository's audit records).
+ * MIRepNet and EEG-DINO joined it as catalogue-only entries. EEGPT left it on 2026-10-13: its core-matrix cells are
+ * published beside the matrix (eegpt-core.ts), with a method page that links its pilot comparison. An entry with a
+ * result elsewhere on the site would link it (`page`); none has one now.
  */
 export const unmeasuredModels: { name: string; family: string; status: string; url?: string; released?: string; checked?: string;
                                  page?: { path: string; label: L } }[] = [
@@ -1700,7 +1760,7 @@ const PROTOCOL_ROWS_PRINTED: Record<string, ProtocolRead[]> = {
   'model-adaptation': [{ track: matrixReference.track_id, methods: [matrixReference.model] }],
   ...Object.fromEntries(Object.entries(TOPIC_PRINTS).map(([slug, prints]) => [slug, prints.map(p => ({
     track: p.track, anchor: p.anchor,
-    methods: p.core ? p.core.map(id => coreName(p.track, id)) : (p.models ?? []).map(id => fmModelById[id].name),
+    methods: p.core ? p.core.map(id => coreName(p.track, id)) : p.eegpt ? ['EEGPT'] : (p.models ?? []).map(id => fmModelById[id].name),
   }))])),
 };
 

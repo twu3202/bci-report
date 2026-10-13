@@ -58,6 +58,10 @@ const S={
       fmAblationReference:'matrix row above',fmSource:'source ↗',fmMethod:'Model page →',fmCsv:'Foundation-encoder rows · CSV ↓',
       fmExposureLabel:'Pretraining exposure: ',fmFootnote:'Row footnote: ',fmLicence:'Weights licence: ',fmVersion:'Model version: ',
       fmFrozen:'Frozen probe: the published recipe with only the encoder swapped. Grouped by family, never ranked.',
+      eegptGroup:'EEGPT, frozen · the same runs as the published LaBraM and CBraMod rows',eegptGroupIdle:'EEGPT, frozen · the same run as the published LaBraM row',eegptGroupLink:'Its row with its footnotes →',
+      eegptFootnotes:'Footnotes: ',eegptJson:'EEGPT’s cells · JSON ↓',
+      eegptFrozen:'Frozen probe: the same runs as the published LaBraM and CBraMod rows, with only the encoder swapped. Never ranked.',
+      eegptFrozenIdle:'Frozen probe: the same run as the published LaBraM row, with only the encoder swapped. Never ranked.',
       stop:'. ',coreExposureLead:'Checked 2026-10-04 — LaBraM and CBraMod: ',coreExposureTail:'That is what the authors’ lists show, not proof that these recordings were never seen; the sentence above is the released one, which predates the check.'},
   zh:{subjects:' 名被试',rights:'聚合研究结果',secondaryUp:'次指标 ↑',secondaryDown:'次指标 ↓',
       empty:'该协议下没有这一类别的已评测模型。请换一个类别。',noResults:'无可显示的结果',
@@ -91,6 +95,10 @@ const S={
       fmAblationReference:'即上表中的那一行',fmSource:'来源 ↗',fmMethod:'模型页面 →',fmCsv:'基础模型编码器各行 · CSV ↓',
       fmExposureLabel:'是否出现在预训练数据中：',fmFootnote:'该行脚注：',fmLicence:'权重许可：',fmVersion:'模型版本：',
       fmFrozen:'冻结探针：沿用已发布的方案，只替换编码器。按模型类别分组，从不排名。',
+      eegptGroup:'EEGPT（冻结）· 与已发布的 LaBraM、CBraMod 各行出自同一批运行',eegptGroupIdle:'EEGPT（冻结）· 与已发布的 LaBraM 一行出自同一次运行',eegptGroupLink:'这一行及其脚注 →',
+      eegptFootnotes:'脚注：',eegptJson:'EEGPT 各单元格 · JSON ↓',
+      eegptFrozen:'冻结探针：与已发布的 LaBraM、CBraMod 各行出自同一批运行，只替换编码器。从不排名。',
+      eegptFrozenIdle:'冻结探针：与已发布的 LaBraM 一行出自同一次运行，只替换编码器。从不排名。',
       stop:'。',coreExposureLead:'2026-10-04 核查——LaBraM 与 CBraMod：',coreExposureTail:'这是作者清单所显示的情况，并不证明这些记录从未被模型见过；上面那句话是发布时的原文，早于这次核查。'},
 }[LANG];
 const metric=(label:string)=>S.metric[label]??label;
@@ -105,7 +113,8 @@ type FmRow={id:string;name:string;panel:string;href:string;mode:string;channels:
   x:number|null;chanceFlag:'at-or-below'|'interval-reaches'|null;status:string;reason:string|null;reasonOriginal:string|null;exposure:string;exposureText:string;exposureSource:string|null;
   footnote:string;footnoteOriginal:string|null;notes:string;notesOriginal:string|null;version:string|null;licence:string;licenceOriginal:string|null;researchUse:boolean;
   idle:{detected:number;commandTrials:number;falseActivations:number;idleTrials:number;abstain:number}|null};
-type FmData={release:string;tracks:Record<string,{file:string;protocolHref:string;rows:FmRow[];coreExposure?:{text:string;urls:string[]}}>};
+/* EEGPT (2026-10-13): one row per protocol in the same fields, from its own release (`eegpt`), after the group. */
+type FmData={release:string;eegpt?:{release:string;file:string};tracks:Record<string,{file:string;protocolHref:string;rows:FmRow[];eegpt?:FmRow;coreExposure?:{text:string;urls:string[]}}>};
 const fmData:FmData=(()=>{try{return JSON.parse(document.querySelector('#fm-rows')?.textContent||'');}catch{return {release:'',tracks:{}};}})();
 const fmOf=(id:string)=>fmData.tracks[id]??{file:'',protocolHref:'',rows:[]};
 /* Two tracks carry a JSON fragment in their release text ('… v3 · {"mirror": …,
@@ -214,9 +223,9 @@ function fmChance(r:FmRow){
 }
 const fmBadge=(r:FmRow)=>r.exposure==='exposed'?'<span class="flag fm-badge" data-exposure="exposed">'+S.fmExposed+'</span>'
   :r.exposure==='unknown'?'<span class="flag fm-badge" data-exposure="unknown">'+S.fmUnknown+'</span>':'';
-function fmRowHtml(r:FmRow,reference=false){
+function fmRowHtml(r:FmRow,reference=false,eegpt=false){
   const tradeoff=track.type==='tradeoff',i=r.idle;
-  const name='<td><button class="model-name" data-model="fm:'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small>'+
+  const name='<td><button class="model-name" data-model="'+(eegpt?'eegpt:':'fm:')+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small>'+
     (reference?'<small>'+S.fmAblationReference+'</small>':'')+(r.researchUse?'<small class="fm-research-use">'+S.fmResearchUse+'</small>':'')+'</td>';
   const cells=r.status!=='complete'||r.y===null||r.x===null
     ?'<td colspan="2" class="fm-not-run"><strong>'+S.fmNotRun+'</strong><small>'+esc(r.reason??'')+'</small>'+fmBadge(r)+'</td>'
@@ -225,7 +234,14 @@ function fmRowHtml(r:FmRow,reference=false){
        '<td><strong>'+pct(r.x)+'</strong><small>'+S.fmIdle(i.falseActivations,i.idleTrials)+'</small></td>'
       :'<td><strong>'+pct(r.y)+'</strong><small>'+(r.interval?S.fmInterval(r.interval[0].toFixed(1),r.interval[1].toFixed(1)):'')+'</small>'+fmChance(r)+fmBadge(r)+'</td>'+
        '<td><strong>'+r.x.toFixed(3)+'</strong><small>'+S.fmF1+'</small></td>';
-  return '<tr class="fm-row" data-fm="'+esc(r.id)+'">'+name+cells+'<td><small>'+S.fmNotPublished+'</small></td></tr>';
+  return '<tr class="'+(eegpt?'fm-row eegpt-row':'fm-row')+'" data-fm="'+esc(r.id)+'">'+name+cells+'<td><small>'+S.fmNotPublished+'</small></td></tr>';
+}
+/* EEGPT's row, from its own release, after the further encoders' group: the family filter applies, as to them. */
+function visibleEegpt(){const f=$<HTMLSelectElement>('#family-filter').value,r=fmOf(track.id).eegpt;return r&&(f==='all'||f==='foundation')?[r]:[];}
+function eegptGroupHtml(e:FmRow[]){
+  if(!e.length)return '';
+  // On idle only the LaBraM row shares EEGPT's run (the CBraMod idle row is from another run, as its footnote says).
+  return '<tr class="fm-group eegpt-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">'+esc(track.type==='tradeoff'?S.eegptGroupIdle:S.eegptGroup)+' <a href="'+esc(fmOf(track.id).protocolHref)+'#eegpt">'+S.eegptGroupLink+'</a></span></th></tr>'+e.map(r=>fmRowHtml(r,false,true)).join('');
 }
 function fmGroupHtml(fm:FmRow[]){
   if(!fm.length)return '';
@@ -247,13 +263,13 @@ syncTabs();
 $('#secondary-sort').textContent=track.type==='tradeoff'?S.secondaryUp:S.secondaryDown;
 $('#metric-y-heading').textContent=metric(track.yLabel);$('#metric-x-heading').textContent=metric(track.xLabel);
 $<HTMLAnchorElement>('#download-results').href='/data/'+track.id+'-results.csv';
-const fm=visibleFm();
-$('#result-rows').innerHTML=rows.length||fm.length?rows.map(r=>'<tr><td><button class="model-name" data-model="'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small></td><td><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small>'+chanceFlag(r)+seedFlag(r)+'</td><td><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small>'+abstainFlag(r)+'</td><td>'+r.seconds.toFixed(1)+'s</td></tr>').join('')+fmGroupHtml(fm):'<tr><td colspan="4" class="empty">'+S.empty+'</td></tr>';
+const fm=visibleFm(),eg=visibleEegpt();
+$('#result-rows').innerHTML=rows.length||fm.length||eg.length?rows.map(r=>'<tr><td><button class="model-name" data-model="'+esc(r.id)+'">'+esc(r.name)+' ↗</button><small'+EN+'>'+esc(r.mode)+' · '+r.channels+' ch</small></td><td><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small>'+chanceFlag(r)+seedFlag(r)+'</td><td><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small>'+abstainFlag(r)+'</td><td>'+r.seconds.toFixed(1)+'s</td></tr>').join('')+fmGroupHtml(fm)+eegptGroupHtml(eg):'<tr><td colspan="4" class="empty">'+S.empty+'</td></tr>';
 $('#ablation-rows').innerHTML=ablationHtml();
 $<HTMLAnchorElement>('#download-fm').href='/data/'+fmOf(track.id).file;
 $<HTMLAnchorElement>('#fm-terms-link').href=fmOf(track.id).protocolHref+'#v9-licences';
 draw([...rows.map(r=>({name:r.name,y:r.y,x:r.x,interval:(r as Partial<{interval:number[]|null}>).interval??null})),
-      ...fm.filter(r=>r.y!==null&&r.x!==null).map(r=>({name:r.name,y:r.y as number,x:r.x as number,interval:r.interval}))],rows.length);
+      ...[...fm,...eg].filter(r=>r.y!==null&&r.x!==null).map(r=>({name:r.name,y:r.y as number,x:r.x as number,interval:r.interval}))],rows.length);
 hint();
 }
 /* Only advertise horizontal scrolling when there is something to reach. */
@@ -341,6 +357,22 @@ function fmDialog(r:FmRow){
     '<p class="detail-note">'+S.fmFrozen+'</p>'+
     '<a class="button" href="'+esc(t.protocolHref)+'#foundation-v9">'+S.fmGroupLink+'</a> <a class="button" href="'+esc(r.href)+'">'+S.fmMethod+'</a> <a class="button" href="/data/'+esc(t.file)+'" download>'+S.fmCsv+'</a>');
 }
+/* EEGPT's dialog: its figures, the exposure statement with its source, its footnotes, the weights terms, and where its
+   whole row is printed (the protocol page's EEGPT section, its method page, its release's JSON). */
+function eegptDialog(r:FmRow){
+  const t=fmOf(track.id),i=r.idle,tradeoff=track.type==='tradeoff';
+  const orig=(o:string|null)=>o?'<span class="note-original" lang="en">'+esc(o)+'</span>':'';
+  show(r.name+' · '+titleOf(track),
+    '<p><span'+EN+'>'+esc(r.mode)+'</span> · '+r.channels+' ch'+(r.subjects?' · '+r.subjects+S.participants:'')+'</p>'+
+    '<div class="detail-metrics"><div><small>'+esc(metric(track.yLabel))+'</small><strong>'+pct(r.y as number)+'</strong><small>'+(tradeoff&&i?S.fmDetected(i.detected,i.commandTrials):r.interval?S.fmInterval(r.interval[0].toFixed(1),r.interval[1].toFixed(1)):'')+'</small></div>'+
+    '<div><small>'+esc(metric(track.xLabel))+'</small><strong>'+(tradeoff?pct(r.x as number):(r.x as number).toFixed(3))+'</strong><small>'+(tradeoff&&i?S.fmIdle(i.falseActivations,i.idleTrials):S.fmF1)+'</small></div></div>'+fmChance(r)+
+    '<p class="detail-note">'+S.fmExposureLabel+esc(r.exposureText)+(r.exposureSource?' <a href="'+esc(r.exposureSource)+'" target="_blank" rel="noreferrer">'+S.fmSource+'</a>':'')+'</p>'+
+    '<p class="detail-note">'+S.eegptFootnotes+esc(r.footnote)+orig(r.footnoteOriginal)+'</p>'+
+    '<p class="detail-note">'+S.fmLicence+esc(r.licence)+orig(r.licenceOriginal)+'</p>'+
+    (r.notes?'<p class="detail-note"'+(r.notesOriginal||LANG==='zh'?'':' lang="en"')+'>'+esc(r.notes)+orig(r.notesOriginal)+'</p>':'')+
+    '<p class="detail-note">'+(tradeoff?S.eegptFrozenIdle:S.eegptFrozen)+'</p>'+
+    '<a class="button" href="'+esc(t.protocolHref)+'#eegpt">'+S.eegptGroupLink+'</a> <a class="button" href="'+esc(r.href)+'">'+S.fmMethod+'</a> <a class="button" href="/data/'+esc(fmData.eegpt?.file??'')+'" download>'+S.eegptJson+'</a>');
+}
 /* LaBraM and CBraMod: the owner's sourced exposure statement (2026-10-04), beside
    the released sentence, which stays as released. */
 function coreExposureNote(){
@@ -351,6 +383,7 @@ function coreExposureNote(){
 $('#result-rows').addEventListener('click',e=>{const button=(e.target as HTMLElement).closest<HTMLElement>('[data-model]');if(!button)return;
 const fmId=button.dataset.model?.startsWith('fm:')?button.dataset.model.slice(3):null;
 if(fmId!==null){const f=fmOf(track.id).rows.find(x=>x.id===fmId);if(f)fmDialog(f);return;}
+if(button.dataset.model?.startsWith('eegpt:')){const f=fmOf(track.id).eegpt;if(f)eegptDialog(f);return;}
 const r=track.rows.find(r=>r.id===button.dataset.model)!;show(r.name+' · '+titleOf(track),
 '<p><span'+EN+'>'+esc(r.mode)+'</span> · '+r.channels+' ch · '+r.subjects+S.participants+'</p><div class="detail-metrics"><div><small>'+esc(metric(track.yLabel))+'</small><strong>'+pct(r.y)+'</strong><small'+EN+'>'+esc(r.yDetail)+'</small></div><div><small>'+esc(metric(track.xLabel))+'</small><strong>'+xValue(r)+'</strong><small'+EN+'>'+esc(r.xDetail)+'</small></div></div><p lang="en">'+esc(r.note)+'</p>'+
 (r.abstain!==null?'<p class="detail-note">'+S.abstainNote(r.subjects,r.abstain)+'</p>':'')+
@@ -361,4 +394,5 @@ $('#close-dialog').addEventListener('click',()=>dialog.close());dialog.addEventL
 render();
 const context=(document as Document & {modelContext?:{registerTool:(tool:object,options:object)=>unknown}}).modelContext;
 if(context?.registerTool){const lifecycle=new AbortController();window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});try{void Promise.resolve(context.registerTool({name:'configure_eeg_comparison',title:'Configure EEG comparison',description:'Change the visible evaluation track and model family, and return the measured comparison. Does not train models or alter scores.',inputSchema:{type:'object',properties:{trackId:{type:'string',enum:data.tracks.map(t=>t.id)},family:{type:'string',enum:['all','foundation','small','classical']}},required:['trackId'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input:unknown){if(!input||typeof input!=='object')throw new Error('Expected an object');const value=input as Record<string,unknown>;if(Object.keys(value).some(k=>!['trackId','family'].includes(k))||typeof value.trackId!=='string'||!data.tracks.some(t=>t.id===value.trackId)||value.family!==undefined&&!['all','foundation','small','classical'].includes(String(value.family)))throw new Error('Invalid track or model family');$<HTMLSelectElement>('#family-filter').value=String(value.family??'all');selectTrack(value.trackId);return {trackId:track.id,status:track.status,models:[...visibleRows().map(r=>({name:r.name,primaryMetric:r.y,secondaryMetric:r.x})),
-...visibleFm().map(r=>({name:r.name,primaryMetric:r.y,secondaryMetric:r.x,status:r.status==='complete'?'complete':'not run',release:fmData.release,pretrainingExposure:r.exposureText}))],limitation:track.limitation};}}, {signal:lifecycle.signal})).catch(()=>{});}catch{/* Unsupported experimental API leaves the regular controls usable. */}}
+...visibleFm().map(r=>({name:r.name,primaryMetric:r.y,secondaryMetric:r.x,status:r.status==='complete'?'complete':'not run',release:fmData.release,pretrainingExposure:r.exposureText})),
+...visibleEegpt().map(r=>({name:r.name,primaryMetric:r.y,secondaryMetric:r.x,status:'complete',release:fmData.eegpt?.release??'',pretrainingExposure:r.exposureText}))],limitation:track.limitation};}}, {signal:lifecycle.signal})).catch(()=>{});}catch{/* Unsupported experimental API leaves the regular controls usable. */}}

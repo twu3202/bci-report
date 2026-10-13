@@ -28,6 +28,7 @@ import JevCard from '../../components/JevCard.astro';
 import { datasets as datasetEntities, methods as methodEntities } from '../../data/entities';
 import { coreExposure, fmMatrixModels, fmModels, fmTermsSentence, fmProtocols, fmRelease, fmVersionsOf, fmResearchUse, fmRowsByProtocol, fmFileOf, FM_ANCHOR, type FmRow } from '../../data/foundation-models';
 import { fmText, fmZh } from '../../data/foundation-models-zh';
+import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptCells, eegptExposureTable, eegptModel, eegptProtocols, eegptRelease, eegptText, footnotesOf } from '../../data/eegpt-core';
 import '../../styles/global.css';
 import '../../styles/matrix.css';
 import '../../styles/generated.css';
@@ -113,8 +114,11 @@ const fill=(t:typeof tracks[number],y:number)=>{
   return Math.max(0,Math.min(100,(y-c)/(100-c)*100));
 };
 const datasetCount=new Set(tracks.map(t=>t.dataset)).size;
+// The frozen encoders beside the matrix: the further encoders' matrix checkpoints and, since 2026-10-13, EEGPT, from
+// its own release, on the same eight protocols. Counted, never summed with the core methods.
+if(eegptProtocols.length!==tracks.length||!tracks.every(t=>eegptCells[t.id])) throw new Error('index.astro: EEGPT has a cell on every core protocol');
 const counts={methods:matrixRows.length,protocols:data.coverage.displayedProtocols,datasets:datasetCount,
-              comparisons:data.coverage.displayedComparisons,added:fmMatrixModels.length,
+              comparisons:data.coverage.displayedComparisons,added:fmMatrixModels.length+1,further:fmMatrixModels.length,
               // The models the matrix checkpoints belong to (REVE Base and Large count apart, as the release does), and the masking ablation's siblings.
               addedModels:new Set(fmMatrixModels.map(m=>m.exposureKey)).size,addedAblation:fmModels.length-fmMatrixModels.length};
 // A matrix encoder not run on every protocol is named with how many it ran on (BrainOmni Base: six of eight).
@@ -143,8 +147,25 @@ const fmJsonRow=(r:FmRow)=>({id:r.model.id,name:r.model.name,panel:r.model.panel
   idle:r.idle?{detected:r.idle.detected.raw,commandTrials:r.idle.commandTrials.raw,falseActivations:r.idle.falseActivations.raw,idleTrials:r.idle.idleTrials.raw,
                abstain:r.idle.abstain.raw}:null});
 const core=coreExposure('labram');
-const fmPayload={release:fmRelease.id,tracks:Object.fromEntries(tracks.map(t=>[t.id,{
-  file:fmFileOf(t.id),protocolHref:hrefFor(`/protocols/${t.id}/`,locale),rows:fmRowsByProtocol[t.id].map(fmJsonRow),
+// EEGPT's row (2026-10-13), in the same fields as a further encoder's, from its own release: figures at the precision
+// printed (the export's percent block), its footnotes and terms in the page's language, the English beside them.
+const eSay=(en:string)=>eegptText(en,locale);
+const eJoin=(xs:string[])=>xs.map(x=>eSay(x).text).join(locale==='zh'?'':' ');
+const eegptJsonRow=(t:typeof tracks[number])=>{
+  const c=eegptCells[t.id],x=eegptExposureTable().find(r=>r.protocols.includes(t.id))!,fns=footnotesOf(t.id).map(f=>f.text);
+  return {id:'eegpt',name:eegptModel.name,panel:'eegpt',href:hrefFor(`/methods/${EEGPT_SLUG}/`,locale),mode:t.type==='tradeoff'?eegptModel.idleMode:eegptModel.mode,
+    channels:c.channels.raw,subjects:c.people.raw,y:at(c.idle?c.idle.detection.raw:c.primary!.raw,1),
+    interval:c.interval?[at(c.interval[0].raw,1)!,at(c.interval[1].raw,1)!]:null,x:at(c.idle?c.idle.falseActivation.raw:c.macroF1!.raw,c.idle?1:3),
+    chanceFlag:c.chanceFlag,status:'complete',reason:null,reasonOriginal:null,
+    exposure:c.exposure.status,exposureText:eSay(c.exposure.statement).text,exposureSource:x.urls[0]??null,
+    footnote:eJoin(fns),footnoteOriginal:locale==='en'?null:fns.join(' '),
+    notes:eSay(eegptModel.weightsNote).text,notesOriginal:eSay(eegptModel.weightsNote).original??null,version:null,
+    licence:eSay(eegptModel.weightsLicenceStatus).text,licenceOriginal:eSay(eegptModel.weightsLicenceStatus).original??null,researchUse:false,
+    idle:c.idle?{detected:c.idle.detected.raw,commandTrials:c.idle.commandTrials.raw,falseActivations:c.idle.falseActivations.raw,idleTrials:c.idle.idleTrials.raw,
+                 abstain:c.idle.abstain.raw}:null};
+};
+const fmPayload={release:fmRelease.id,eegpt:{release:eegptRelease.id,file:EEGPT_JSON},tracks:Object.fromEntries(tracks.map(t=>[t.id,{
+  file:fmFileOf(t.id),protocolHref:hrefFor(`/protocols/${t.id}/`,locale),rows:fmRowsByProtocol[t.id].map(fmJsonRow),eegpt:eegptJsonRow(t),
   coreExposure:{text:locale==='en'?core.statement:fmZh[core.statement],urls:[...new Set([...coreExposure('labram').urls,...coreExposure('cbramod').urls])]}}]))};
 // "</" cannot close the data block: every "<" is escaped.
 const fmJson=JSON.stringify(fmPayload).replace(/</g,'\\u003c');
@@ -197,7 +218,7 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 })}</tr>)}</tbody></table></div>
 <p class="matrix-note"><span class="key"><i class="lead"></i>{h.keyLead}</span><span class="key"><i class="plain"></i>{h.keyBar}</span><span class="key"><i class="gap"></i>{h.keyGap}</span><a href="/data/experiments.json" download>{h.matrixDownload}</a></p></div>
 <p class="matrix-caveat" set:html={h.matrixCaveat}></p>
-<p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.added,fmPartly,counts.addedModels,counts.addedAblation)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a></p>
+<p class="matrix-added" data-release={fmRelease.id}>{h.matrixAdded(counts.further,fmPartly,counts.addedModels,counts.addedAblation)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.matrixAddedLink}</a> <span data-eegpt-release={eegptRelease.id}>{h.matrixAddedEegpt}</span> <a href={`${fm0.protocolHref}#${EEGPT_ANCHOR}`}>{h.matrixAddedEegptLink}</a></p>
 <JevCard locale={locale}/></section>
 
 <section id="benchmarks" class="section"><div class="section-heading"><div><p class="eyebrow">{h.protocolsEyebrow}</p><h2>{h.protocolsH2}</h2></div></div>
@@ -205,9 +226,10 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <div class="track-tabs" id="track-tabs" role="tablist" aria-label={h.tabsLabel} data-active={track.id}>{tracks.map(t=><button class="track-tab" type="button" role="tab" id={'tab-'+t.id} aria-controls="track-panel" data-track={t.id} aria-selected={t.id===track.id?'true':'false'} tabindex={t.id===track.id?0:-1}><strong>{tt(t.title)}</strong><small>{t.dataset} · {h.tabParticipants(t.subjects)}</small></button>)}</div>
 <div id="track-panel" role="tabpanel" aria-labelledby={'tab-'+track.id}><div class="context"><div><h2 id="track-title" lang={payloadLang}>{track.subtitle}</h2><p id="track-meta">{track.dataset} · {track.subjects} {h.subjects} · <span lang={payloadLang}>{track.observations} · {track.exposure}</span></p></div><button class="button" id="open-protocol">{h.viewProtocol}</button></div>
 <div class="results-panel"><div class="table-panel"><div class="toolbar"><div><p class="eyebrow">{h.measuredHere}</p><h3>{h.atAGlance}</h3></div><div class="controls"><label>{h.familyControl}<select id="family-filter"><option value="all">{h.allFamilies}</option><option value="foundation">{familyLabel('foundation',locale)}</option><option value="small">{familyLabel('small',locale)}</option><option value="classical">{familyLabel('classical',locale)}</option></select></label><label>{h.sortControl}<select id="sort-results"><option value="name">{h.sortName}</option><option value="y-desc">{h.sortPrimary}</option><option id="secondary-sort" value="x-asc">{h.sortSecondary}</option></select></label><a id="download-results" class="button" href={'/data/'+track.id+'-results.csv'} download>{h.csv}</a></div></div>
-<div class="scroll" tabindex="0" role="region" aria-label={h.tableRegion}><table><thead><tr><th>{h.colModel}</th><th id="metric-y-heading">{ml(track.yLabel)}</th><th id="metric-x-heading">{ml(track.xLabel)}</th><th>{h.colCompute}</th></tr></thead><tbody id="result-rows">{track.rows.map(r=><tr><td><button class="model-name" data-model={r.id}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small></td><td><strong>{r.y.toFixed(1)}%</strong><small lang={payloadLang}>{r.yDetail}</small>{chanceNote(r)&&<span class="flag">{chanceNote(r)}</span>}{seedNote(r.name)&&<span class="flag seed">{seedNote(r.name)}</span>}</td><td><strong>{track.type==='tradeoff'?r.x.toFixed(1)+'%':r.x.toFixed(3)}</strong><small lang={payloadLang}>{r.xDetail}</small></td><td>{r.seconds.toFixed(1)}s</td></tr>)}{fmMatrix0.length>0&&<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">{h.fmGroup(fmMatrix0.length,fmMatrix0.filter(r=>r.status!=='complete').length)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.fmGroupLink}</a></span></th></tr>}{fmMatrix0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'}/>)}</tbody></table></div><p class="scroll-hint" id="scroll-hint">{h.scrollHint}</p>
-<p class="fm-download"><a id="download-fm" href={'/data/'+fm0.file} download>{h.fmCsv}</a></p>
+<div class="scroll" tabindex="0" role="region" aria-label={h.tableRegion}><table><thead><tr><th>{h.colModel}</th><th id="metric-y-heading">{ml(track.yLabel)}</th><th id="metric-x-heading">{ml(track.xLabel)}</th><th>{h.colCompute}</th></tr></thead><tbody id="result-rows">{track.rows.map(r=><tr><td><button class="model-name" data-model={r.id}>{r.name} ↗</button><small lang={payloadLang}>{r.mode} · {r.channels} ch</small></td><td><strong>{r.y.toFixed(1)}%</strong><small lang={payloadLang}>{r.yDetail}</small>{chanceNote(r)&&<span class="flag">{chanceNote(r)}</span>}{seedNote(r.name)&&<span class="flag seed">{seedNote(r.name)}</span>}</td><td><strong>{track.type==='tradeoff'?r.x.toFixed(1)+'%':r.x.toFixed(3)}</strong><small lang={payloadLang}>{r.xDetail}</small></td><td>{r.seconds.toFixed(1)}s</td></tr>)}{fmMatrix0.length>0&&<tr class="fm-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">{h.fmGroup(fmMatrix0.length,fmMatrix0.filter(r=>r.status!=='complete').length)} <a href={`${fm0.protocolHref}#${FM_ANCHOR}`}>{h.fmGroupLink}</a></span></th></tr>}{fmMatrix0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'}/>)}<tr class="fm-group eegpt-group"><th colspan="4" scope="colgroup"><span class="fm-group-label">{track.type==='tradeoff'?h.eegptGroupIdle:h.eegptGroup} <a href={`${fm0.protocolHref}#${EEGPT_ANCHOR}`}>{h.eegptGroupLink}</a></span></th></tr><FmHomeRow r={fm0.eegpt} h={h} payloadLang={payloadLang} chance={fmChance(fm0.eegpt)} tradeoff={track.type==='tradeoff'} eegpt={true}/></tbody></table></div><p class="scroll-hint" id="scroll-hint">{h.scrollHint}</p>
+<p class="fm-download"><a id="download-fm" href={'/data/'+fm0.file} download>{h.fmCsv}</a> · <a id="download-eegpt" href={'/data/'+EEGPT_JSON} download>{h.eegptJson}</a></p>
 <p class="fm-terms-home" id="fm-terms">{fmTermsSentence(fmModels,locale)} <a id="fm-terms-link" href={`${fm0.protocolHref}#v9-licences`}>{h.fmTermsLink}</a></p>
+<p class="fm-terms-home eegpt-terms-home" id="eegpt-terms">{h.eegptTerms} <a id="eegpt-terms-link" href={`${fm0.protocolHref}#eegpt-terms`}>{h.eegptTermsLink}</a></p>
 <details class="fm-ablation-home" id="ablation-panel"><summary>{h.fmAblation}</summary><p>{h.fmAblationLede}</p><div class="scroll" tabindex="0" role="region" aria-label={h.fmAblation}><table><tbody id="ablation-rows">{fmAblation0.map(r=><FmHomeRow r={r} h={h} payloadLang={payloadLang} chance={fmChance(r)} tradeoff={track.type==='tradeoff'} reference={r.panel==='matrix'}/>)}</tbody></table></div></details>
 <p class="caption">{h.tableCaption}</p></div>
 <aside><p class="eyebrow">{h.visualEyebrow}</p><h3 id="chart-title">{h.chartTitle}</h3><div id="result-chart" class="chart"></div><ol id="chart-legend" class="legend"></ol><p id="chart-note"></p></aside></div>

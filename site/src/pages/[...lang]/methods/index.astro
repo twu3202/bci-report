@@ -14,7 +14,7 @@ const locale = localeOf(Astro.params.lang);
 const c = entityCopy[locale];
 const paged = new Set(methods.map(m => m.name));
 const otherEvaluated = data.models.filter(m => m.status === 'Evaluated' && !methods.some(x => x.name === m.name || (x.slug === 'cca' && m.name === 'Standard CCA')));
-// An anchor per unmeasured model, so /methods/#eegpt can be linked. It carries
+// An anchor per unmeasured model, so /methods/#mirepnet can be linked. It carries
 // a name and a status, never a number.
 const unmeasured = unmeasuredModels.filter(m => !paged.has(m.name))
   .map(m => ({ ...m, anchor: m.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') }));

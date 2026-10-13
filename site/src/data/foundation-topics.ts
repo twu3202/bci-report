@@ -31,6 +31,7 @@ import fmJson from './foundation-models-update.json';
 import { FM_ADAPTATION_ANCHOR, FM_ANCHOR, FM_JSON, fmAblation, fmAdaptation, fmAdaptationContext, fmMatrixModels,
          fmModelById, fmRowsByProtocol, type FmAdaptation, type FmModel, type FmRow } from './foundation-models';
 import type { Fig, Fmt } from './entities';
+import { EEGPT_ANCHOR, eegptCells, eegptComparisons, eegptVs, type EegptCell } from './eegpt-core';
 
 const V9 = (fmJson as any).results['foundation-models-v9'];
 const MVP = 'experiments.json';
@@ -235,6 +236,45 @@ export const cca4ReleasedOverlapping = montagePublished.filter(p => p.id !== 'cc
   && overlaps([p.r4.interval[0].raw, p.r4.interval[1].raw], [cca4.interval[0].raw, cca4.interval[1].raw]));
 if (!cca4ReleasedOverlapping.length) throw new Error('foundation-topics.ts: the page names a released row overlapping CCA at four electrodes; none does');
 
+/* --- EEGPT beside them (eegpt-core-update.json, 2026-10-13) ------------------------------------------------------- */
+
+/**
+ * EEGPT's row in the sleep, BETA and montage tables: its cell from its own release, read against the same three
+ * published rows as the further encoders' (LaBraM, CBraMod and the published non-foundation row with the highest point
+ * estimate) by its export's relations, which eegpt-core.ts re-derives from the intervals. Its figures stay leaves of
+ * eegpt-core-update.json; nothing here is computed but the montage overlap, by the same rule as the released rows'.
+ */
+export interface EegptTopicRow { track: string; cell: EegptCell; vs: VsPublished }
+export function eegptTopicRow(track: string): EegptTopicRow {
+  const cell = eegptCells[track];
+  if (!cell?.primary || !cell.interval) throw new Error(`foundation-topics.ts: no EEGPT cell with an interval on ${track}`);
+  const v9 = vsPublished(fmMatrixModels[0].id, track);
+  return { track, cell, vs: { labram: eegptVs(track, 'labram').relation, cbramod: eegptVs(track, 'cbramod').relation,
+                              best: eegptVs(track, v9.bestRow).relation, bestRow: v9.bestRow, bestName: v9.bestName } };
+}
+export const eegptSleep = eegptTopicRow(SLEEP);
+export const eegptBeta = eegptTopicRow(BETA8);
+/** Above every published sleep row, as the page says, with its narrowest gap (the export's smallest_gap). */
+export const eegptSleepAboveAll: boolean = eegptComparisons[SLEEP].rows.every(r => r.relation === 'above');
+export const eegptSleepGap = eegptComparisons[SLEEP].smallest!;
+if (!eegptSleepAboveAll || eegptSleepGap.row !== sleepBest.id)
+  throw new Error('foundation-topics.ts: the sleep paragraph says EEGPT lies above every published row, nearest spectral ridge; the export no longer says so');
+/** Sleep is the only protocol where a new row clears the best published non-foundation row: EEGPT's cells too. */
+for (const [track, c] of Object.entries(eegptComparisons)) if (track !== SLEEP) {
+  const best = vsPublished(fmMatrixModels[0].id, track).bestRow;
+  if (c.rows.find(r => r.row === best)!.relation === 'above')
+    throw new Error(`foundation-topics.ts: EEGPT clears the best published row on ${track}; the sleep sentence says only sleep has such a row`);
+}
+/** No new row above standard CCA on BETA, at either montage, and at four electrodes EEGPT's interval does not reach it. */
+if (eegptBeta.vs.best === 'above' || eegptBeta.vs.bestRow !== 'cca' || eegptVs(BETA4, 'cca').relation !== 'below')
+  throw new Error('foundation-topics.ts: the pages say no new row lies above standard CCA on BETA and name the rows overlapping it at four electrodes; EEGPT no longer fits');
+/** EEGPT at eight and four electrodes and on six-channel sleep, with whether its two BETA intervals overlap (the released rows' rule). */
+export const eegptMontage = (() => {
+  const cell8 = eegptCells[BETA8], cell4 = eegptCells[BETA4], sleep = eegptCells[SLEEP];
+  const iv = (c: EegptCell): [number, number] => [c.interval![0].raw, c.interval![1].raw];
+  return { cell8, cell4, sleep, overlap: overlaps(iv(cell8), iv(cell4)) };
+})();
+
 /* --- What each topic prints, for its "Measured on" line ----------------------------------- */
 
 /**
@@ -242,7 +282,7 @@ if (!cca4ReleasedOverlapping.length) throw new Error('foundation-topics.ts: the 
  * anchor and checkpoint id) a topic prints. A v9 matrix row is read with the
  * protocol page's v9 section; an adaptation arm with its EEGMAT section.
  */
-export interface TopicPrint { track: string; anchor?: string; core?: string[]; models?: string[] }
+export interface TopicPrint { track: string; anchor?: string; core?: string[]; models?: string[]; eegpt?: boolean }
 const allMatrix = fmMatrixModels.map(m => m.id);
 export const TOPIC_PRINTS: Record<string, TopicPrint[]> = {
   'does-pretraining-help': [
@@ -254,12 +294,15 @@ export const TOPIC_PRINTS: Record<string, TopicPrint[]> = {
     { track: ADAPT_TRACK, anchor: FM_ADAPTATION_ANCHOR, models: fmAdaptation.map(a => a.model.id) },
     { track: ADAPT_TRACK, anchor: FM_ANCHOR, models: fmAdaptation.map(a => a.model.id) },
     ...SCORED_TRACKS.map(track => ({ track, anchor: FM_ANCHOR, models: ['reve-base', 'reve-large', ...fmAblation.checkpoints] })),
+    // EEGPT's sleep and BETA rows (2026-10-13), read with each protocol page's EEGPT section.
+    ...[SLEEP, BETA8].map(track => ({ track, anchor: EEGPT_ANCHOR, eegpt: true })),
   ],
   'fewer-electrodes': [
     { track: BETA8, core: montagePublished.map(r => r.id) },
     { track: BETA4, core: montagePublished.map(r => r.id) },
     { track: SLEEP, core: montagePublished.filter(r => r.sleep).map(r => r.id) },
     ...[BETA8, BETA4, SLEEP].map(track => ({ track, anchor: FM_ANCHOR, models: allMatrix })),
+    ...[BETA8, BETA4, SLEEP].map(track => ({ track, anchor: EEGPT_ANCHOR, eegpt: true })),
   ],
 };
 for (const prints of Object.values(TOPIC_PRINTS)) for (const p of prints) for (const id of p.models ?? [])

@@ -1,0 +1,46 @@
+{
+  "status": "pass",
+  "release_id": "eegpt-core-update-20261013",
+  "export_sha256": "8563862b961a226636d1349ec62f5bfd4fe922bda326c27fbcf7557e2d277a26",
+  "manifest_sha256": "21e27baaebe9af009a9555a5b1a64e367246b14df00413ab0d9159c183b60ffc",
+  "auditor": "pipeline/publication/audit_eegpt_core_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins, and takes the accuracy cells from the run audits’ own recomputations (the export reads the run summaries), idle’s counts from its audit’s recomputed aggregate and its window metrics from the independent second recomputation, and every derived figure from its own arithmetic on those.",
+  "protocols": [
+    "mi-rest",
+    "idle",
+    "beta-8ch",
+    "beta-4ch",
+    "arithmetic-rest",
+    "p300-target",
+    "semantic-target",
+    "sleep-scalp"
+  ],
+  "figures_compared": 327,
+  "copied_exactly": 50,
+  "recomputed": 251,
+  "nulls_kept": 26,
+  "withheld_values_checked_absent": 24,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every run file is the one whose SHA-256 its core track publishes (summary, audit, dataset protocol)",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "accuracy cells equal the run audits’ recomputed metrics and every other recorded copy: the run summary, the batch state, the public BETA summary and the review’s read-only verification",
+    "idle counts equal the run audit’s recomputed aggregate; its window metrics equal the independent recomputation, and the AUROC is a whole number of window pairs",
+    "chance flags, percent blocks and every comparison gap and relation against the published rows are recomputed here",
+    "attribution rows and contrasts: values from the public audit, random-initialisation means and differences recomputed from its packages, strings equal to the published LaBraM and CBraMod rows",
+    "footnote facts from the pinned runner, encoder source, pretraining script, protocols and paper",
+    "rights blocks are the released core tracks’ records; the checkpoint is the one the reassessment names",
+    "no per-person value, per-seed random-initialisation score or duration-group summary, and no private host, volume or path, in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "run summaries, audits and dataset protocols: pinned in the manifest and equal to the SHA-256 the released core tracks publish",
+      "public BETA summary and attribution audit: pinned in the manifest and named in the served provenance",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves"
+    ],
+    "not_bound": [
+      "the per-file seals of the saved predictions are verified by the review’s read-only check, whose record is pinned; this audit does not open the saved predictions",
+      "prose, the exposure evidence text and the release record are checked by the export, not by this audit"
+    ]
+  }
+}

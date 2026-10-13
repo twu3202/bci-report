@@ -23,8 +23,26 @@ const protocols = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest',
 // Every method page: the core methods' gained the Measured-on line on 2026-10-04, the v9 models' were
 // first published then. Listed here because entities.ts imports this module (no cycle).
 const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net', 'csp-lda', 'cca', 'fbcca', 'etrca',
-  'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna'];
+  'reve', 'luna', 'brainomni', 'codebrain', 'eegmamba', 'st-eegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna', 'eegpt'];
+// The seven core datasets' pages, which carry a group per core protocol (EEGPT's since 2026-10-13).
+const coreDatasetPages = ['ds003810', 'eegmat', 'beta', 'ds006593', 'tmnred', 'eesm19', 'ds005342'].map(slug => `/datasets/${slug}/`);
 export const siteUpdates = [
+  {
+    date: '2026-10-13',
+    // EEGPT on the core matrix (owner decisions of 2026-10-12 and 2026-10-13): its frozen row beside the core matrix
+    // on every protocol page and the protocols index, the home page's per-protocol table and masthead count, and the
+    // two questions that read the further encoders (does-pretraining-help also gains EEGPT's attribution rows,
+    // fewer-electrodes its BETA eight-to-four and six-channel sleep rows); its group on each core dataset page (and the
+    // dataset index's group counts); its own method page, and the model directory, where its card is evaluated and it
+    // leaves the not-in-the-matrix list; the pilot-studies page's link to that method page; the release log, the API
+    // page and data use. The same day, before this release: one line on questions-in-language and on /jev-style/
+    // linking the route-3 write-up. With it: the does-pretraining-help card on the Questions hub (three encoders,
+    // EEGPT on sleep), and REFED's two source-only controls named for what they are on the pilot-studies page and on
+    // REFED's dataset page (display only).
+    paths: ['/', '/topics/', '/protocols/', ...protocols.map(id => `/protocols/${id}/`), '/datasets/', ...coreDatasetPages,
+            '/datasets/refed/', '/methods/', '/methods/eegpt/', '/topics/does-pretraining-help/', '/topics/fewer-electrodes/',
+            '/topics/pilot-studies/', '/topics/questions-in-language/', '/jev-style/', '/releases/', '/api/', '/data-use/'],
+  },
   {
     date: '2026-10-12',
     // Two new questions in one version (owner decisions): beyond-scalp-eeg (fNIRS, macaque intracortical spiking, an
@@ -165,7 +183,7 @@ export interface Release {
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
     | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage'
-    | 'beyondScalp' | 'pilotStudies';
+    | 'beyondScalp' | 'pilotStudies' | 'eegptCore';
   files: string[];
   pages: string[];
   summary: Text;
@@ -181,6 +199,28 @@ export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 
 
 export const releases: Release[] = [
   {
+    id: 'eegpt-core-update-20261013', date: '2026-10-13', payload: 'eegptCore',
+    files: ['eegpt-core-update.json'],
+    // A frozen row beside the core matrix, placed as the further foundation encoders' rows are: every protocol page and
+    // the home page's per-protocol table; EEGPT's method page and its directory card on /methods/; its attribution rows
+    // beside LaBraM's and CBraMod's on does-pretraining-help, and its BETA and sleep rows on fewer-electrodes.
+    pages: ['/', '/protocols/', '/methods/', '/topics/does-pretraining-help/', '/topics/fewer-electrodes/'],
+    summary: {
+      en: 'EEGPT on the core matrix: its eight core-matrix cells, computed in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped, published as computed, without a re-run, as a frozen row beside the core matrix, where the further foundation encoders sit. On seven protocols, balanced accuracy with its participant-bootstrap interval, macro F1 and the chance level; on the idle protocol, counts (idle false activations, commands detected within 3 s, people who always abstained) with the window balanced accuracy and AUROC, and no interval. Beside the published LaBraM and CBraMod rows, EEGPT’s pretraining-attribution rows on mi-rest and EEGMAT: the pretrained encoder against the mean of three random initialisations, under a fixed and a train-selected readout, with paired intervals. Grouped by family, never ranked: EEGPT is above or below a published row only where their 95% intervals do not overlap, and the gap between the intervals is given in percentage points. Each cell says whether its dataset is in EEGPT’s published pretraining list, checked on 12 October 2026 with the source (none of the seven core datasets is), and each footnote sits beside the cells it bears on.',
+      zh: '核心矩阵旁边的 EEGPT：它在 8 个核心协议上的单元格，与已发布的 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行，只替换了编码器，按当时算出的结果原样发布，没有重新运行；作为冻结编码器的一行放在核心矩阵旁边，与更多基础模型编码器的位置相同。7 个协议上给出平衡准确率及其被试 bootstrap 区间、宏平均 F1 与随机水平；空闲协议上给出计数（空闲误触发、3 秒内检出的指令、始终拒识的被试人数）以及窗口平衡准确率与 AUROC，不给区间。在已发布的 LaBraM 与 CBraMod 各行旁边，给出 EEGPT 在 mi-rest 与 EEGMAT 上的预训练归因各行：预训练编码器对比三个随机初始化编码器的均值，分别用固定分类头与训练集内选定的分类头，附配对区间。按模型类别分组，从不排名：只有 95% 区间不重叠时，才说 EEGPT 高于或低于某个已发布的行，并以百分点给出两个区间之间的差距。每个单元格都注明该数据集是否在 EEGPT 作者公开的预训练数据清单中（2026 年 10 月 12 日核查，附来源；7 个核心数据集都不在其中），每条脚注都放在它所涉及的单元格旁边。',
+    },
+    notes: [
+      { en: 'Several gaps are narrow. On sleep staging EEGPT’s interval lies above every core-matrix row’s, the nearest by 0.10 pp; on P300 it lies above LaBraM’s by 0.28 pp, on the semantic target above the spectral ridge’s by 0.78 pp, and on BETA with four channels above LaBraM’s by 0.90 pp. On BETA, EEGPT lies below standard CCA, which needs no training, at both channel counts. The idle row comes from the same run as the published LaBraM idle row; the published CBraMod idle row comes from another run, so a comparison with it is across runs. Pretraining attribution: on both datasets and under both readouts the pretrained encoder scored above the mean of its random initialisations, with paired intervals above zero; a frozen-encoder result conditional on these splits, readouts and initialisations, not a model ranking.',
+        zh: '有几处差距很窄。在睡眠分期上，EEGPT 的区间高于核心矩阵每一行的区间，最近的只差 0.10 pp；在 P300 上高于 LaBraM 0.28 pp，在语义目标上高于 spectral ridge 0.78 pp，在 4 通道 BETA 上高于 LaBraM 0.90 pp。在 BETA 上，两种通道数下 EEGPT 都低于无需训练的标准 CCA。空闲行与已发布的 LaBraM 空闲行出自同一次运行；已发布的 CBraMod 空闲行来自另一次运行，所以与它的比较是跨运行的。预训练归因：两个数据集、两种分类头下，预训练编码器的得分都高于其随机初始化的均值，配对区间都在零以上；这是以这些数据划分、分类头与初始化为条件的冻结编码器结果，不是模型排名。' },
+      { en: 'Owner decisions of 12 and 13 October 2026: publish EEGPT’s eight core-matrix cells as computed, without a re-run, as a frozen row beside the core matrix, and its pretraining-attribution rows beside the published LaBraM and CBraMod rows. The rights reasoning is the pilot comparison’s of 12 October: independently computed aggregate results are a separate output from the weights; no publisher prohibition was found; the checkpoint’s licence is unresolved; no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. No author endorsement is implied. Four of the eight cells (mi-rest, EEGMAT and both BETA protocols) and EEGPT’s attribution controls have been in audit records in the public repository since 20 September 2026; the public attribution audit still labels the four EEGPT contrasts “hold-unresolved-weight-license”, as it did then, and keeps its bytes. With this release they are published.',
+        zh: '所有者 2026 年 10 月 12 日与 13 日的决定：把 EEGPT 在 8 个核心协议上的单元格按当时算出的结果原样发布，不重新运行，作为冻结编码器的一行放在核心矩阵旁边；把它的预训练归因各行放在已发布的 LaBraM 与 CBraMod 各行旁边。权利方面的理由与 10 月 12 日那项试点比较相同：独立计算的聚合结果是与权重分开的产出；没有找到发布者的禁止规定；检查点的许可仍未厘清；不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。不代表作者的认可。8 个单元格中的 4 个（mi-rest、EEGMAT 和两个 BETA 协议）以及 EEGPT 的预训练归因对照，自 2026 年 9 月 20 日起就在公开代码仓库的审计记录里；公开的归因审计文件至今仍把 EEGPT 的四个对比标为“hold-unresolved-weight-license”，那是当时的标记，文件保持原有字节。这些结果随本次发布正式公开。' },
+      { en: 'How EEGPT differs from EEG-DINO: EEG-DINO stays catalogue-only by the owner’s decision of 4 October 2026 — its upstream weights carry no licence, and it was neither downloaded nor run. EEGPT was evaluated in the same runs as the published rows and was held only because its checkpoint’s licence could not be read, a hold the reassessment of 12 October found to be this project’s own choice. EEG-DINO is not re-reviewed by this decision.',
+        zh: 'EEGPT 与 EEG-DINO 的区别：EEG-DINO 按所有者 2026 年 10 月 4 日的决定仍只列入目录——它的上游权重没有附带许可，本站也从未下载或运行它。EEGPT 则与已发布的各行在同一批运行中评测过，暂缓发布只是因为读不到检查点的许可；10 月 12 日的重新评估认定，这一暂缓是本项目自己的选择。本次决定不重新审查 EEG-DINO。' },
+      { en: 'Not published: per-trial, per-person, per-fold and per-class values, features, fitted heads, idle thresholds and calibration grids, and how many people had a negative attribution difference; the per-seed scores of the three random initialisations (their mean is published, as for LaBraM and CBraMod); BETA’s duration-group summaries; timings, devices and memory; EEGPT results outside the eight core protocols; the checkpoint and its tensor conversion, whose SHA-256 identifies them and grants nothing; and the run summaries, protocols, independent audits and verification records themselves, pinned by hash in the release manifest because they carry private storage paths. Nothing was re-run: experiments.json, deployment-topics.json and the further-encoder files keep their bytes.',
+        zh: '不发布：逐试次、逐人、逐折与逐类别的数值，特征、拟合好的分类头、空闲阈值与校准网格，以及归因差值为负的人数；三个随机初始化各自的分数（与 LaBraM、CBraMod 一样，只发布均值）；BETA 按记录时长分组的汇总；耗时、设备与显存；EEGPT 在 8 个核心协议之外的结果；检查点及其张量转换文件——其 SHA-256 只用于标识，不授予任何权利；以及运行汇总、协议、独立审计与核查记录本身——它们含有私有存储路径，只在发布清单中以哈希固定。没有重新运行任何东西：experiments.json、deployment-topics.json 与更多基础模型编码器的文件保持原有字节。' },
+    ],
+  },
+  {
     id: 'pilot-studies-update-20261012', date: '2026-10-12', payload: 'pilotStudies',
     files: ['pilot-studies-update.json'],
     // Its own question page; /methods/ carries EEGPT's changed directory status (directory-status.ts), whose one
@@ -191,8 +231,8 @@ export const releases: Release[] = [
       zh: `四个数据源上的小规模试点，每项都来自各自已批准的聚合导出文件，全部不进入任何排行榜或模型排名。Orthosis 错误检测数据集（8 名被试、83 个 run、2,407 个记录下来的设备事件：同一个队列，只计一次）给出三项结果：64 通道经典 EEG 基线、同一基线在 EEGPT 支持的 58 个通道上的配置，以及冻结的 EEGPT 加同样固定的有监督分类头、与这组匹配的经典特征的比较。${bingoReleased ? 'BINGO 的希腊语与英语内部言语（17 个按数据源定义的被试字段）：一个固定的频谱基线跨被试、跨语言的结果，是接近 15 类先验的阴性结果。' : ''}${handwritingReleased ? '一个想象书写竞赛数据集上的掩码感知 EEG 分析（5 名被试，四个已发布的编码标签）：屏蔽停在数字量程边界上的平直通道之后，相对频带功率 EEG 略高于训练集多数类对照，也高于只看缺失掩码的对照与掩码 + 时间的对照，但与经过时间与试次顺序的对照没有区分开；这是一项数据质量与方法案例研究，不是手写识别。' : ''}REFED（两个标称被试文件夹，30 个存储片段）：一项计算诊断，其中简单的、不用 EEG、只用训练集信息的对照，误差都比 EEG 频带功率小。${pilotsHeld.length === 2 ? '有两项试点已完成并通过审计，但因权利审查暂缓，不发布任何数字：BINGO 的希腊语与英语内部言语，以及手写数据集上的掩码感知 EEG 分析。' : pilotsHeld.length ? `${pilotsHeld[0] === 'bingo' ? 'BINGO 的希腊语与英语内部言语试点' : '手写数据集上的掩码感知 EEG 分析'}已完成并通过审计，但因权利审查暂缓。` : ''}不跨数据集、配置或条件合并。`,
     },
     notes: [
-      { en: 'EEGPT: the comparison is published from its approved export, after an independent check of that exact file. The earlier hold on EEGPT aggregate scores was this project’s own conservative choice, not a publisher’s rule; this pilot comparison is the first EEGPT result on the site’s pages. The core-matrix EEGPT scores are not on the site’s pages, but some of them (mi-rest, EEGMAT and both BETA protocols, with EEGPT’s pretraining-attribution controls on mi-rest and EEGMAT) have been in audit records in the public repository since 20 September 2026. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The paired interval spans zero, so neither arm is shown to be better, and the two are not shown to be equivalent. The probe is trained on the other seven people’s labels (supervised transfer, not zero-shot), and overlap with EEGPT’s pretraining data has not been excluded. Corrected the same day: this note first said the pilot comparison was the only EEGPT figure published.',
-        zh: 'EEGPT：这项比较依据经批准的导出文件发布，发布前对这份文件做过独立核查。此前暂不发布 EEGPT 聚合分数，是本项目自己的保守选择，不是发布者的规定；这项试点比较是网站页面上第一个 EEGPT 结果。核心矩阵中的 EEGPT 分数没有出现在网站页面上，但其中一部分（mi-rest、EEGMAT 和两个 BETA 协议，以及 EEGPT 在 mi-rest 与 EEGMAT 上的预训练归因对照）自 2026 年 9 月 20 日起就在公开代码仓库的审计记录里。检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。配对区间跨过零，所以既不能说明哪一方更好，也不能说明两者等效。分类头用另外 7 名被试的标签训练（有监督迁移，不是零样本），也没有排除这个数据集出现在 EEGPT 预训练数据中的可能。同日更正：本说明最初写的是，这项试点比较是唯一发布的 EEGPT 数字。' },
+      { en: 'EEGPT: the comparison is published from its approved export, after an independent check of that exact file. The earlier hold on EEGPT aggregate scores was this project’s own conservative choice, not a publisher’s rule; this pilot comparison is the first EEGPT result on the site’s pages. The core-matrix EEGPT scores are not on the site’s pages, but some of them (mi-rest, EEGMAT and both BETA protocols, with EEGPT’s pretraining-attribution controls on mi-rest and EEGMAT) have been in audit records in the public repository since 20 September 2026. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The paired interval spans zero, so neither arm is shown to be better, and the two are not shown to be equivalent. The probe is trained on the other seven people’s labels (supervised transfer, not zero-shot), and overlap with EEGPT’s pretraining data has not been excluded. Corrected the same day: this note first said the pilot comparison was the only EEGPT figure published. The core-matrix cells followed on 13 October 2026, in eegpt-core-update-20261013.',
+        zh: 'EEGPT：这项比较依据经批准的导出文件发布，发布前对这份文件做过独立核查。此前暂不发布 EEGPT 聚合分数，是本项目自己的保守选择，不是发布者的规定；这项试点比较是网站页面上第一个 EEGPT 结果。核心矩阵中的 EEGPT 分数没有出现在网站页面上，但其中一部分（mi-rest、EEGMAT 和两个 BETA 协议，以及 EEGPT 在 mi-rest 与 EEGMAT 上的预训练归因对照）自 2026 年 9 月 20 日起就在公开代码仓库的审计记录里。检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。配对区间跨过零，所以既不能说明哪一方更好，也不能说明两者等效。分类头用另外 7 名被试的标签训练（有监督迁移，不是零样本），也没有排除这个数据集出现在 EEGPT 预训练数据中的可能。同日更正：本说明最初写的是，这项试点比较是唯一发布的 EEGPT 数字。核心矩阵中的单元格已于 2026 年 10 月 13 日随 eegpt-core-update-20261013 发布。' },
       // BINGO follows its publication switch (pilot-switch.ts): its rights note while released, its hold while held.
       ...(bingoReleased ? [
         { en: 'BINGO: the source states no licence. Consent is as the project’s public deliverable D3.1 (version 3.0) reports it: signed consent forms, stated for the project’s NATO-alphabet recordings in the same CERTH laboratory; the cross-language dataset’s own documentation has no ethics or consent statement, and no ethics-approval reference is published. The aggregates are published on that basis by the owner’s decision. The project documents artifact cleaning (ASR and FORCe) on the continuous recordings before trials were cut; that statement is printed beside the result, attributed to D3.1 (version 2.0), and was not re-verified against the file. The project’s own result on its NATO-alphabet dataset is printed as reported by the project, not run here.',

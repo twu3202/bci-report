@@ -44,6 +44,7 @@ import { topicPages } from './topics';
 import { topicCards } from './i18n';
 import { datasets as datasetEntities } from './entities';
 import { FM_JSON, fmFileOf, fmMatrixModels, fmRelease } from './foundation-models';
+import { EEGPT_JSON, eegptModel, eegptRelease } from './eegpt-core';
 
 /** The aggregate results carry the licence the Hugging Face mirror declares. */
 const LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
@@ -159,6 +160,10 @@ const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
   ...protocols.map(p => ({ file: `/data/${fmFileOf(p)}`, release: fmRelease.id, generated: fmRelease.date, metrics: ['balanced_accuracy'] })),
   ...(core ? [{ file: '/data/experiments.json', release: data.releaseId, generated: data.generatedAt, metrics: ['balanced_accuracy'] }] : []),
 ];
+// EEGPT on the core matrix (2026-10-13): its own export, whose attribution rows does-pretraining-help prints beside the
+// published LaBraM and CBraMod rows (and whose frozen cells the protocol pages print).
+const eegptExport: LaterExport = { file: `/data/${EEGPT_JSON}`, release: eegptRelease.id, generated: eegptRelease.date,
+                                   metrics: ['balanced_accuracy', 'participant_mean_balanced_accuracy'] };
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
   // Beyond scalp EEG (owner decision, 2026-10-12): its own export only — human fNIRS, one macaque's intracortical
   // spiking and an fNIRS coverage check, each its own species, signal and metric; two sources status only.
@@ -188,14 +193,16 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
   'calibration-budget': largeSourceExport(['balanced_accuracy']),
   'screen-to-vr': [contextExport(['balanced_accuracy', 'auroc']), extensionExport(['balanced_accuracy', 'auroc'])],
   // Since 2026-10-04 also BETA at eight and four electrodes and the six-channel sleep column for the
-  // v9 encoders (their CSVs, and the export's four-minus-eight comparison), beside the released rows.
+  // v9 encoders (their CSVs, and the export's four-minus-eight comparison), beside the released rows; since
+  // 2026-10-13 EEGPT's row there too, from its own export.
   'fewer-electrodes': [{ file: '/data/evidence-update.json', release: evidence.release_id,
                          generated: evidence.generated_at,
                          metrics: ['person_mean_balanced_accuracy', 'macro_f1'] },
-                       ...fmExports(['beta-8ch', 'beta-4ch', 'sleep-scalp'], true)],
+                       ...fmExports(['beta-8ch', 'beta-4ch', 'sleep-scalp'], true), eegptExport],
   // Since 2026-10-04: the v9 frozen encoders on sleep, BETA and EEGMAT, REVE Base against Large and the
-  // masking ablation (every scored core protocol's CSV), with the released rows they are read against.
-  'does-pretraining-help': fmExports(['mi-rest', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target', 'semantic-target', 'sleep-scalp'], true),
+  // masking ablation (every scored core protocol's CSV), with the released rows they are read against. Since
+  // 2026-10-13 also EEGPT's attribution rows, beside the published LaBraM and CBraMod rows, and its sleep and BETA rows.
+  'does-pretraining-help': [...fmExports(['mi-rest', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target', 'semantic-target', 'sleep-scalp'], true), eegptExport],
   'on-the-move': [{ file: '/data/evidence-update.json', release: evidence.release_id,
                     generated: evidence.generated_at,
                     metrics: ['signed_correlation_r', 'predictive_r_squared'] },
@@ -288,11 +295,11 @@ export function protocolDataset(t: typeof data.tracks[number], description: stri
     creator,
     isAccessibleForFree: true,
     version: data.releaseId,
-    // The page changed when the v9 rows joined it (2026-10-04); the core release keeps its version.
-    dateModified: fmRelease.date,
+    // The page changed when the v9 rows joined it (2026-10-04) and EEGPT's row (2026-10-13); the core release keeps its version.
+    dateModified: eegptRelease.date,
     measurementTechnique: 'Electroencephalography',
     keywords: ['EEG', 'brain-computer interface', 'benchmark', t.title, t.dataset, ...t.rows.map(r => r.name),
-               ...fmMatrixModels.map(m => m.name)],
+               ...fmMatrixModels.map(m => m.name), eegptModel.name],
     variableMeasured: [t.yLabel, t.xLabel],
     isBasedOn: t.source,
     // A citation the source asks for that the released credit line lacks (releases.ts).
@@ -301,8 +308,9 @@ export function protocolDataset(t: typeof data.tracks[number], description: stri
     distribution: [
       download(`/data/${t.id}-results.csv`, 'text/csv'),
       download(`/data/${t.id}-protocol.json`, 'application/json'),
-      // The v9 foundation-model rows the page prints beside the core table (2026-10-04).
+      // The v9 foundation-model rows the page prints beside the core table (2026-10-04), and EEGPT's (2026-10-13).
       download(`/data/${fmFileOf(t.id)}`, 'text/csv'),
+      download(`/data/${EEGPT_JSON}`, 'application/json'),
     ],
   };
 }

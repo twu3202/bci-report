@@ -7,20 +7,25 @@ import { type DeploymentData, type DeploymentRow, datasetLabel, intervalPct, int
 import { chrome, hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import { coreExposure } from '../../../data/foundation-models';
 import { formatFig } from '../../../data/entities';
-import { betaBest, sleepAboveAll, sleepBest, SLEEP } from '../../../data/foundation-topics';
+import { betaBest, eegptSleepGap, sleepAboveAll, sleepBest, SLEEP } from '../../../data/foundation-topics';
 import PretrainingV9 from '../../../components/PretrainingV9.astro';
 import mvp from '../../../data/mvp.json';
+import { EEGPT_JSON, eegptAttributionContrasts, eegptAttributionRows, eegptExposureTable, eegptFootnoteById, eegptText } from '../../../data/eegpt-core';
+import eegptCore from '../../../data/eegpt-core-update.json';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
 const tc = topicChrome[locale];
 
 const data = rawData as unknown as DeploymentData;
-const fixed = data.rows.filter(row => row.track === 'pretraining-attribution-fixed');
-const selected = data.rows.filter(row => row.track === 'pretraining-attribution-selected');
-const contrasts = data.paired_contrasts.filter(row => row.track.startsWith('pretraining-attribution-'));
+// EEGPT's attribution rows and contrasts (eegpt-core-update.json, 2026-10-13), in the published fields, beside
+// LaBraM's and CBraMod's; deployment-topics.json keeps its bytes.
+const attribution = [...data.rows, ...(eegptAttributionRows as DeploymentRow[])];
+const fixed = attribution.filter(row => row.track === 'pretraining-attribution-fixed');
+const selected = attribution.filter(row => row.track === 'pretraining-attribution-selected');
+const contrasts = [...data.paired_contrasts, ...(eegptAttributionContrasts as typeof data.paired_contrasts)].filter(row => row.track.startsWith('pretraining-attribution-'));
 const controls = data.rows.filter(row => row.track === 'fixed-classical-control');
-const models = ['labram','cbramod'];
+const models = ['labram','cbramod','eegpt'];
 const datasets = ['ds003810','physionet-eegmat-1.0.0'];
 const score = (rows: DeploymentRow[], model: string, dataset: string, initialization: string) => rows.find(row => row.model === model && row.dataset_id === dataset && row.initialization === initialization)!;
 const contrast = (track: string, model: string, dataset: string) => contrasts.find(row => row.track === track && row.model === model && row.dataset_id === dataset)!;
@@ -33,13 +38,29 @@ const cbWl = contrast(fixedTrack, 'cbramod', 'physionet-eegmat-1.0.0');
 const lbWl = contrast(fixedTrack, 'labram', 'physionet-eegmat-1.0.0');
 const lbMi = contrast(fixedTrack, 'labram', 'ds003810');
 const lbMiSel = contrast(selectedTrack, 'labram', 'ds003810');
+const egMi = contrast(fixedTrack, 'eegpt', 'ds003810'), egWl = contrast(fixedTrack, 'eegpt', 'physionet-eegmat-1.0.0');
 const nMi = lbMi.participants, nWl = lbWl.participants;
 const d2 = (row: { difference: number }) => pp(row.difference, 2);
 // The answer describes these intervals in words; fail the build if the export stops saying so.
 const [lbMiLo, lbMiHi] = lbMi.paired_participant_bootstrap_95;
 if (!(lbMiLo < 0 && lbMiHi > 0) || !(lbMiSel.paired_participant_bootstrap_95[1] < 0)
-    || ![cbMi, cbWl, lbWl].every(row => row.paired_participant_bootstrap_95[0] > 0))
+    || ![cbMi, cbWl, lbWl, egMi, egWl].every(row => row.paired_participant_bootstrap_95[0] > 0))
   throw new Error('does-pretraining-help: the short answer no longer matches the paired intervals in the export');
+// The dek says EEGPT, like CBraMod, gains under both readouts on both tasks.
+if (!contrasts.filter(row => ['cbramod', 'eegpt'].includes(row.model)).every(row => row.paired_participant_bootstrap_95[0] > 0))
+  throw new Error('does-pretraining-help: the dek says CBraMod and EEGPT gain under both readouts on both tasks; the exports no longer say so');
+if (egMi.participants !== nMi || egWl.participants !== nWl) throw new Error('does-pretraining-help: EEGPT\'s contrasts are on other cohorts');
+// EEGPT's pretraining lists (checked on the date its export states), and its footnotes that bear on these rows: its
+// fixed-head pretrained rows are its core-matrix cells on these two protocols, so the row's footnotes and ds003810's
+// sampling-rate note sit beside them, once on the page (its BETA notes sit beside its BETA row below).
+const egExposure = (eegptCore as any).pretraining_exposure;
+const egUrls = [...new Set(eegptExposureTable().filter(x => x.protocols.some(p => p === 'mi-rest' || p === 'arithmetic-rest')).flatMap(x => x.urls))]
+  .filter(u => !/doi\.org\/10\.18112|physionet\.org/.test(u));
+if (!/same predictions/.test((eegptCore as any).pretraining_attribution.method.equal_to_core_cells)
+    || score(fixed, 'eegpt', 'ds003810', 'pretrained').value !== (eegptCore as any).cells.find((c: any) => c.protocol === 'mi-rest').balanced_accuracy
+    || score(fixed, 'eegpt', 'physionet-eegmat-1.0.0', 'pretrained').value !== (eegptCore as any).cells.find((c: any) => c.protocol === 'arithmetic-rest').balanced_accuracy)
+  throw new Error('does-pretraining-help: the note says EEGPT\'s fixed-head pretrained rows are its core-matrix cells; the export no longer says so');
+const egNotes = ['shorter-than-pretraining', 'fixed-readout', 'source-rate'].map(id => eegptText(eegptFootnoteById[id].text, locale));
 // The v9 frozen encoders (2026-10-04), as the short answer summarises them: the new rows above every
 // released sleep row, in the export's order, and the two released rows they are read against.
 const v9Above = sleepAboveAll.map(r => r.cell);
@@ -47,19 +68,21 @@ const v9Names = (zh: boolean) => v9Above.map(r => r.model.name).reduce((s, n, i,
 const v9Figs = v9Above.map(r => `[[${formatFig(r.primary!)}]]`).join(locale === 'zh' ? '、' : ', ');
 const v9Sleep = mvp.tracks.find(t => t.id === SLEEP)!.subjects;
 const v9Best = formatFig(sleepBest.ba), v9Cca = formatFig(betaBest.ba);
+// EEGPT on sleep: above every published row, the nearest by the export's smallest gap (foundation-topics.ts guards it).
+const egSleepGap = formatFig(eegptSleepGap.gap);
 const span = 0.12;
 // Axis in percentage points; the unit is in the legend, so the ticks fit a phone-width strip.
 const ticks = [-span, -span / 2, 0, span / 2, span].map(v => v === 0 ? '0' : pp(v, 0).replace(' pp', '')) as [string, string, string, string, string];
 
 const copy = {
   en: {
-    description: `Sometimes. Frozen pretrained CBraMod beat random initialization on MI/rest (${d2(cbMi)}) and mental workload (${d2(cbWl)}); LaBraM on workload only. Of sixteen further encoder checkpoints, ${v9Above.length === 3 ? 'three' : v9Above.length} lie above every published sleep-staging row; none lies above training-free CCA on BETA.`,
-    answer: `Sometimes, depending on the encoder and the task: with frozen encoders and the fixed readout, pretrained CBraMod beat the mean of its three random initializations by [[${d2(cbMi)}]] of balanced accuracy on MI/rest ([[${nMi}]] people) and by [[${d2(cbWl)}]] on mental workload ([[${nWl}]] people), and pretrained LaBraM beat its own by [[${d2(lbWl)}]] on mental workload, each with a paired 95% interval above zero. On MI/rest, LaBraM's difference was [[${d2(lbMi)}]] (interval crosses zero), and [[${d2(lbMiSel)}]] under the train-selected readout (interval wholly below zero). Neither benchmark is in LaBraM's or CBraMod's published pretraining list (checked 2026-10-04) — what the authors' lists show, not proof that the recordings were never seen — and the comparison does not establish a benefit on other tasks or adaptation budgets. Eleven further foundation models swapped into the same frozen recipe answer a narrower question, with no random-initialization control: on sleep staging ([[${v9Sleep}]] people) ${v9Names(false)} (${v9Figs}) lie above every published row, spectral ridge at [[${v9Best}]] included; on BETA none lies above training-free CCA ([[${v9Cca}]]); and on EEGMAT the frozen readouts and LoRA put the encoders in different orders, so none is ranked.`,
+    description: `Sometimes. Frozen pretrained CBraMod and EEGPT beat random initialization on MI/rest (${d2(cbMi)}, ${d2(egMi)}) and mental workload (${d2(cbWl)}, ${d2(egWl)}); LaBraM on workload only. Of sixteen further encoder checkpoints, ${v9Above.length === 3 ? 'three' : v9Above.length} lie above every published sleep-staging row; none lies above training-free CCA on BETA.`,
+    answer: `Sometimes, depending on the encoder and the task: with frozen encoders and the fixed readout, pretrained CBraMod beat the mean of its three random initializations by [[${d2(cbMi)}]] of balanced accuracy on MI/rest ([[${nMi}]] people) and by [[${d2(cbWl)}]] on mental workload ([[${nWl}]] people), pretrained EEGPT beat its own by [[${d2(egMi)}]] and [[${d2(egWl)}]] on the same two tasks, and pretrained LaBraM beat its own by [[${d2(lbWl)}]] on mental workload, each with a paired 95% interval above zero. On MI/rest, LaBraM's difference was [[${d2(lbMi)}]] (interval crosses zero), and [[${d2(lbMiSel)}]] under the train-selected readout (interval wholly below zero). Neither benchmark is in LaBraM's, CBraMod's or EEGPT's published pretraining list (checked 2026-10-04, EEGPT's ${egExposure.checked_on}) — what the authors' lists show, not proof that the recordings were never seen — and the comparison does not establish a benefit on other tasks or adaptation budgets. Eleven further foundation models swapped into the same frozen recipe answer a narrower question, with no random-initialization control: on sleep staging ([[${v9Sleep}]] people) ${v9Names(false)} (${v9Figs}) lie above every published row, spectral ridge at [[${v9Best}]] included, as does EEGPT, whose interval clears spectral ridge's by only [[${egSleepGap}]]; on BETA none lies above training-free CCA ([[${v9Cca}]]); and on EEGMAT the frozen readouts and LoRA put the encoders in different orders, so none is ranked.`,
     plotCaption: `Pretrained minus random: MI/rest, ${nMi} people; mental workload, ${nWl} people.`,
     plotLegend: 'Difference in participant-mean balanced accuracy, in percentage points (pp): pretrained encoder minus the mean of three random initializations, same frozen architecture and splits. Dot: the difference; line: paired participant bootstrap 95% interval, printed under each label; dashed line: zero, no difference. Dark rows use the fixed readout, rust rows the train-selected readout.',
     readout: { fixed: 'Fixed readout', selected: 'Train-selected readout' },
     eyebrow: 'Representation controls · matched frozen encoders',
-    dek: 'Sometimes. CBraMod gains under both readout settings on both tasks; LaBraM gains on mental workload and does not on MI/rest. The page also carries eleven further foundation models in the same frozen recipe: a narrower question, with no random-initialization control.',
+    dek: 'Sometimes. CBraMod and EEGPT gain under both readout settings on both tasks; LaBraM gains on mental workload and does not on MI/rest. The page also carries eleven further foundation models in the same frozen recipe: a narrower question, with no random-initialization control.',
     settings: { fixed: 'Fixed head · alpha 100', selected: 'Train-selected head · alpha 100 / 10,000 / 1' },
     contrastEyebrow: 'Paired attribution contrasts',
     contrastH2: 'Pretrained minus random, same readout',
@@ -91,9 +114,12 @@ const copy = {
       ['Fixed versus selected heads', 'The primary head fixes ridge alpha at 100. The sensitivity setting selects among 100, 10,000 and 1 using inner training participants only.'],
       ['Three seeds, one cohort', 'The random baseline averages three encoder initializations. The participant bootstrap does not include unrestricted retraining uncertainty.'],
       ['Task-specific evidence', 'MI/rest contains 10 participants and 1,200 trials; mental workload contains 36 participants and 2,160 trials.'],
-      ['Exposure: the authors’ lists, not a proof', 'Neither ds003810 nor EEGMAT is in LaBraM’s or CBraMod’s published pretraining list, checked on 4 October 2026 (sources below). That is what the authors’ lists show, not proof that these recordings were never seen.'],
+      ['Exposure: the authors’ lists, not a proof', 'Neither ds003810 nor EEGMAT is in LaBraM’s or CBraMod’s published pretraining list, checked on 4 October 2026, or in EEGPT’s, checked on 12 October 2026 (sources below). That is what the authors’ lists show, not proof that these recordings were never seen.'],
     ],
     exposureSources: (date: string) => `Pretraining lists, checked ${date}:`,
+    egExposureSources: (date: string) => `EEGPT’s, checked ${date}:`,
+    egNoteLead: 'EEGPT’s rows: its pretrained rows under the fixed head are its core-matrix cells on these two protocols, the same predictions, so the notes on those cells hold here.',
+    egSource: 'EEGPT’s rows:',
     laterPointer: ['Frozen CBraMod with a ridge readout is also read in another setting, a later session of the same person on WBCIC-SHU, with no random-initialization control there: ', ''] as const,
     pilotPointer: ['Frozen EEGPT with a supervised probe is read against matched classical features in one small pilot, on recorded orthosis device errors, with no random-initialization control there: ', ''] as const,
     miTitle: 'MI / rest · OpenNeuro ds003810 v2.0.2',
@@ -101,13 +127,13 @@ const copy = {
     physionetRecord: 'PhysioNet record ↗',
   },
   zh: {
-    description: `有时有用。冻结编码器下，预训练 CBraMod 在运动想象/静息（${d2(cbMi)}）和脑力负荷（${d2(cbWl)}）上都优于随机初始化；LaBraM 只在脑力负荷上如此。另外 16 个编码器检查点中，有 ${v9Above.length} 个高于睡眠分期上所有已发布的行；在 BETA 上没有一个高于免训练的 CCA。`,
-    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（百分点；运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这三项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这两个基准数据集都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中（2026-10-04 核查）——这是作者清单所显示的情况，并不证明这些记录从未被模型见过；这项比较也不能证明预训练在其他任务或其他适配预算下同样有益。另外 11 个基础模型换进同样的冻结方案，回答的是一个更窄的问题，也没有随机初始化对照：在睡眠分期上（[[${v9Sleep}]] 名被试），${v9Names(true)}（${v9Figs}）高于所有已发布的行，包括 spectral ridge 的 [[${v9Best}]]；在 BETA 上，没有一个高于免训练的 CCA（[[${v9Cca}]]）；在 EEGMAT 上，冻结读出与 LoRA 给出的编码器顺序不一致，所以不排名。`,
+    description: `有时有用。冻结编码器下，预训练 CBraMod 与 EEGPT 在运动想象/静息（${d2(cbMi)}、${d2(egMi)}）和脑力负荷（${d2(cbWl)}、${d2(egWl)}）上都优于随机初始化；LaBraM 只在脑力负荷上如此。另外 16 个编码器检查点中，有 ${v9Above.length} 个高于睡眠分期上所有已发布的行；在 BETA 上没有一个高于免训练的 CCA。`,
+    answer: `有时有用，取决于编码器和任务：在编码器冻结、固定分类头的设置下，预训练 CBraMod 的平衡准确率比三次随机初始化的均值高 [[${d2(cbMi)}]]（百分点；运动想象/静息，[[${nMi}]] 名被试）和 [[${d2(cbWl)}]]（脑力负荷，[[${nWl}]] 名被试），预训练 EEGPT 在这两项任务上比它自己的随机初始化分别高 [[${d2(egMi)}]] 和 [[${d2(egWl)}]]，预训练 LaBraM 在脑力负荷上高 [[${d2(lbWl)}]]，这五项的配对 95% 区间都在零以上。在运动想象/静息上，LaBraM 的差值为 [[${d2(lbMi)}]]，区间跨过零；换成训练集内选定分类头时为 [[${d2(lbMiSel)}]]，区间整体低于零。这两个基准数据集都不在 LaBraM、CBraMod 或 EEGPT 作者公开的预训练数据清单中（2026-10-04 核查；EEGPT 的清单于 ${egExposure.checked_on} 核查）——这是作者清单所显示的情况，并不证明这些记录从未被模型见过；这项比较也不能证明预训练在其他任务或其他适配预算下同样有益。另外 11 个基础模型换进同样的冻结方案，回答的是一个更窄的问题，也没有随机初始化对照：在睡眠分期上（[[${v9Sleep}]] 名被试），${v9Names(true)}（${v9Figs}）高于所有已发布的行，包括 spectral ridge 的 [[${v9Best}]]；EEGPT 也是如此，但它区间的下限只比 spectral ridge 区间的上限高 [[${egSleepGap}]]；在 BETA 上，没有一个高于免训练的 CCA（[[${v9Cca}]]）；在 EEGMAT 上，冻结读出与 LoRA 给出的编码器顺序不一致，所以不排名。`,
     plotCaption: `预训练减随机初始化：运动想象/静息 ${nMi} 名被试，脑力负荷 ${nWl} 名被试。`,
     plotLegend: '被试平均平衡准确率之差，单位为百分点（pp）：预训练编码器减三次随机初始化的均值，架构冻结、数据划分相同。点为差值，横线为被试配对 bootstrap 95% 区间（数值见各行标签下方），虚线为零（没有差别）。深色行为固定分类头，锈色行为训练集内选定分类头。',
     readout: { fixed: '固定分类头', selected: '训练集内选定分类头' },
     eyebrow: '表征对照 · 匹配的冻结编码器',
-    dek: '有时有用。CBraMod 在两个任务、两种分类头设置下都有提升；LaBraM 在脑力负荷上有提升，在运动想象/静息上没有。本页还列出另外 11 个按同样冻结方案评测的基础模型：这是一个更窄的问题，没有随机初始化对照。',
+    dek: '有时有用。CBraMod 与 EEGPT 在两个任务、两种分类头设置下都有提升；LaBraM 在脑力负荷上有提升，在运动想象/静息上没有。本页还列出另外 11 个按同样冻结方案评测的基础模型：这是一个更窄的问题，没有随机初始化对照。',
     settings: { fixed: '固定分类头 · alpha 100', selected: '训练集内选定分类头 · alpha 100 / 10,000 / 1' },
     contrastEyebrow: '预训练贡献的配对对比',
     contrastH2: '预训练减随机初始化，分类头条件保持一致',
@@ -139,9 +165,12 @@ const copy = {
       ['固定分类头与选定分类头', '主分析把岭回归 alpha 固定为 100。敏感性分析只用内层训练被试，在 100、10,000 和 1 之间选择。'],
       ['三个种子，一个队列', '随机基线是三次编码器随机初始化的平均。被试 bootstrap 不包含完全重新训练带来的不确定性。'],
       ['证据只对具体任务成立', '运动想象/静息有 10 名被试、1,200 个试次；脑力负荷有 36 名被试、2,160 个试次。'],
-      ['是否出现在预训练数据中：看作者的清单，不是证明', 'ds003810 与 EEGMAT 都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中，于 2026 年 10 月 4 日核查（来源见下）。这是作者清单所显示的情况，并不证明这些记录从未被模型见过。'],
+      ['是否出现在预训练数据中：看作者的清单，不是证明', 'ds003810 与 EEGMAT 都不在 LaBraM 或 CBraMod 作者公开的预训练数据清单中（2026 年 10 月 4 日核查），也不在 EEGPT 作者的清单中（2026 年 10 月 12 日核查；来源见下）。这是作者清单所显示的情况，并不证明这些记录从未被模型见过。'],
     ],
     exposureSources: (date: string) => `预训练数据清单（${date} 核查）：`,
+    egExposureSources: (date: string) => `EEGPT 的清单（${date} 核查）：`,
+    egNoteLead: 'EEGPT 的各行：它在固定分类头下的预训练各行，就是它在这两个协议上的核心矩阵单元格（同一批预测），所以那些单元格的说明在这里同样成立。',
+    egSource: 'EEGPT 的各行：',
     laterPointer: ['冻结 CBraMod 加岭回归分类头还在另一种情形下评测过：同一被试较晚的一次会话（WBCIC-SHU），那里没有随机初始化对照。见「', '」。'] as const,
     pilotPointer: ['冻结的 EEGPT 加有监督分类头，在一项小规模试点中与匹配的经典特征做过比较（记录下来的矫形器设备事件），那里没有随机初始化对照。见「', '」。'] as const,
     miTitle: '运动想象 / 静息 · OpenNeuro ds003810 v2.0.2',
@@ -202,6 +231,8 @@ const exposure = [...lb.urls.map(url => ({ label: 'LaBraM', url })), ...cb.urls.
         return <tr><th scope="row">{modelLabel(model, locale)}<small>{datasetLabel(dataset, locale)}</small></th><td><span class="metric">{pct(pretrained.value)}</span></td><td><span class="metric">{pct(random.value)}</span><small>{copy.threeInits}</small></td><td><span class="metric">{pp(delta.difference,2)}</span><span class="interval">{ipp(delta.paired_participant_bootstrap_95)}</span></td></tr>;
       }))}</tbody></table>
     </div>)}
+    {/* EEGPT's notes, beside its rows, once on the page (2026-10-13). */}
+    <p class="citation-note eegpt-notes" data-eegpt-notes="attribution">{copy.egNoteLead}{locale === 'zh' ? '' : ' '}{egNotes.map((t, i) => <>{i > 0 && locale !== 'zh' && ' '}<span>{t.text}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</>)}</p>
     <div class="evidence-grid">{datasets.map(dataset => {
       const row = control(dataset);
       return <article class="evidence-card"><p class="eyebrow">{copy.controlEyebrow}</p><div class="reading">{pct(row.value)}</div><ScoreBar value={row.value} label={copy.baLabel(pct(row.value))} tone="ink"/><p>{modelLabel(row.model, locale)} · {datasetLabel(dataset, locale)}</p><small>{tc.interval95} {intervalPct(row.confidence_interval_95)}</small></article>;
@@ -222,7 +253,7 @@ const exposure = [...lb.urls.map(url => ({ label: 'LaBraM', url })), ...cb.urls.
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     {/* The owner's sourced exposure statement (2026-10-04): the authors' lists, linked. */}
-    <p class="citation-note fm-core-exposure">{copy.exposureSources(checked)} {exposure.map((x, i) => <>{i > 0 && ' · '}<a href={x.url} target="_blank" rel="noreferrer" lang="en">{x.label} ↗</a></>)}</p>
+    <p class="citation-note fm-core-exposure">{copy.exposureSources(checked)} {exposure.map((x, i) => <>{i > 0 && ' · '}<a href={x.url} target="_blank" rel="noreferrer" lang="en">{x.label} ↗</a></>)} · {copy.egExposureSources(egExposure.checked_on)} {egUrls.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer" lang={locale === 'zh' && /github\.com/.test(u) ? undefined : 'en'}>{/github\.com/.test(u) ? (locale === 'zh' ? 'EEGPT 代码仓库 ↗' : 'EEGPT repository ↗') : 'EEGPT ↗'}</a></>)}</p>
     {/* One low-key pointer (owner decision): frozen CBraMod read in another setting, with no figure of it here. */}
     <p class="citation-note" data-later-pointer="true">{copy.laterPointer[0]}<a href={hrefFor('/topics/later-sessions/#wbcic-shu', locale)}>{topicCards[locale]['later-sessions'].question}</a>{copy.laterPointer[1]}</p>
     {/* One low-key pointer (owner decision 1, 2026-10-12): frozen EEGPT in the pilot studies, with no figure of it here. */}
@@ -232,5 +263,6 @@ const exposure = [...lb.urls.map(url => ({ label: 'LaBraM', url })), ...cb.urls.
       <article><h3>{copy.wlTitle}</h3><p lang="en">Zyma et al. · Open Data Commons Attribution License 1.0.</p><p><a href="https://physionet.org/content/eegmat/1.0.0/" target="_blank" rel="noreferrer">{copy.physionetRecord}</a></p></article>
     </div>
     <p class="citation-note">{tc.dataSource} <a href="/data/deployment-topics.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {data.schema_version}{tc.period}</p>
+    <p class="citation-note">{copy.egSource} <a href={`/data/${EEGPT_JSON}`} download>{EEGPT_JSON}</a> · {tc.schema} {(eegptCore as any).schema_version}{tc.period}</p>
   </section>
 </TopicLayout>

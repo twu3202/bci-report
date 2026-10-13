@@ -29,6 +29,8 @@ import export_beyond_scalp_update as beyond_scalp
 import audit_beyond_scalp_export as beyond_scalp_audit
 import export_pilot_studies_update as pilot_studies
 import audit_pilot_studies_export as pilot_studies_audit
+import export_eegpt_core_update as eegpt_core
+import audit_eegpt_core_export as eegpt_core_audit
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
@@ -231,6 +233,23 @@ def check(root):
     if pilot_rederived:
         assert pilot_studies_audit.audit() == pilot_audit, 'Pilot-studies independent audit no longer reproduces'
     expected.add('pilot-studies-update.json')
+
+    # EEGPT's eight core-matrix cells and its pretraining-attribution rows (owner decisions, 2026-10-12 and
+    # 2026-10-13): a frozen row beside the core matrix, from the same runs as the published LaBraM rows (and, except
+    # on idle, CBraMod's), re-derived from its own manifest where the pinned run records exist, and its independent
+    # audit re-run on the same bytes.
+    eegpt_rederived = eegpt_core.inputs_available()
+    eegpt_payload = (eegpt_core.serialized_export() if eegpt_rederived
+                     else (root/'data/eegpt-core-update.json').read_bytes())
+    eegpt_audit = json.loads(eegpt_core.EXPORT_AUDIT.read_text())
+    assert eegpt_audit['status'] == 'pass', 'EEGPT core export review did not pass'
+    assert hashlib.sha256(eegpt_payload).hexdigest() == eegpt_audit['export_sha256'], 'Stale EEGPT core export audit'
+    assert hashlib.sha256(eegpt_core.MANIFEST.read_bytes()).hexdigest() == eegpt_audit['manifest_sha256'], 'EEGPT core manifest is not the audited one'
+    assert (root/'data/eegpt-core-update.json').read_bytes() == eegpt_payload, 'Unreviewed EEGPT core download'
+    assert all(p.read_bytes() == eegpt_payload for p in eegpt_core.OUTPUTS), 'EEGPT core source/download drift'
+    if eegpt_rederived:
+        assert eegpt_core_audit.audit() == eegpt_audit, 'EEGPT core independent audit no longer reproduces'
+    expected.add('eegpt-core-update.json')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -291,6 +310,9 @@ def check(root):
                   ('pilot-studies-update payload reproduced from its own manifest, and its independent audit re-run'
                    if pilot_rederived
                    else 'pilot-studies-update payload matched to its audit hash (private inputs not present)'),
+                  ('eegpt-core-update payload reproduced from its own manifest, and its independent audit re-run'
+                   if eegpt_rederived
+                   else 'eegpt-core-update payload matched to its audit hash (private inputs not present)'),
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

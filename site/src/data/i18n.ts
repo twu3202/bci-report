@@ -107,6 +107,8 @@
  *   comparator                   对照            "训练集先验对照"
  *   source (training) data       训练集 / 训练数据  "只在训练数据上拟合的标准化"; not 源数据, which reads
  *                                                as raw data (数据源 is the provider)
+ *   patch (transformer input)    片段            glossed 片段（patch） at first use on a page
+ *   summary token                汇总 token
  */
 import { site } from './site';
 import directoryZh from './directory-zh.json';
@@ -385,7 +387,8 @@ export const modelStatus = zhLabel({
   'Access unverified': '访问未核实',
   'Research candidate': '研究候选',
   'Rights review pending': '权利审查中',
-  // Display-only status (directory-status.ts): EEGPT, one pilot comparison published (owner decision).
+  // Display-only status (directory-status.ts): EEGPT from 2026-10-12 to 2026-10-13, one pilot comparison published (owner
+  // decision); since 2026-10-13 it is shown as evaluated, from the EEGPT core release.
   'One pilot comparison published': '已发布一项试点比较',
 });
 
@@ -547,6 +550,16 @@ export const home = {
     fmCsv: 'Foundation-encoder rows · CSV ↓',
     fmTermsLink: 'Every weights licence and its terms →',
     fmAbstained: (a: number, n: number) => `${a} of ${n} participants always abstained`,
+    // EEGPT (2026-10-13): a frozen row of its own release, after the further encoders' group. workbench.ts carries the
+    // same strings; check-workbench.mjs compares the first paint with its render.
+    matrixAddedEegpt: 'Beside them sits EEGPT, from the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped, and not ranked against the snapshot either.',
+    matrixAddedEegptLink: 'EEGPT’s row on the first protocol →',
+    eegptGroup: 'EEGPT, frozen · the same runs as the published LaBraM and CBraMod rows',
+    eegptGroupIdle: 'EEGPT, frozen · the same run as the published LaBraM row',
+    eegptGroupLink: 'Its row with its footnotes →',
+    eegptTerms: 'EEGPT: the checkpoint’s licence is unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only.',
+    eegptTermsLink: 'Its licence and terms →',
+    eegptJson: 'EEGPT’s cells · JSON ↓',
     // The directory band: one card per hub, each with a count read from the
     // module that builds it (entities.ts, releases.ts, files.ts).
     directoryEyebrow: 'Directory',
@@ -674,6 +687,14 @@ export const home = {
     fmCsv: '基础模型编码器各行 · CSV ↓',
     fmTermsLink: '全部权重许可与条款 →',
     fmAbstained: (a: number, n: number) => `${n} 名被试中有 ${a} 名始终拒识`,
+    matrixAddedEegpt: '它们旁边还有 EEGPT，与已发布的 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行，只替换了编码器；它同样不与这个快照排名。',
+    matrixAddedEegptLink: '第一个协议上的 EEGPT 一行 →',
+    eegptGroup: 'EEGPT（冻结）· 与已发布的 LaBraM、CBraMod 各行出自同一批运行',
+    eegptGroupIdle: 'EEGPT（冻结）· 与已发布的 LaBraM 一行出自同一次运行',
+    eegptGroupLink: '这一行及其脚注 →',
+    eegptTerms: 'EEGPT：检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。',
+    eegptTermsLink: '它的许可与条款 →',
+    eegptJson: 'EEGPT 各单元格 · JSON ↓',
     directoryEyebrow: '目录',
     directoryH2: '其余内容，按类别查找',
     directory: {
@@ -928,8 +949,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '149 people · one site · balanced accuracy' },
     'does-pretraining-help': { kicker: 'Representation controls', title: 'Does pretraining help?',
       question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
-      summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings. Plus further foundation models in the same frozen recipe: three checkpoints above every published row on sleep staging, none above training-free CCA on BETA.',
-      detail: 'Two tasks · two encoders · three random initializations · 16 further checkpoints' },
+      summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings. Plus further foundation models in the same frozen recipe: three checkpoints and, narrowly, EEGPT above every published row on sleep staging, none above training-free CCA on BETA.',
+      detail: 'Two tasks · three encoders · three random initializations · 16 further checkpoints' },
     // Since 2026-10-07 (owner approval): route 2. No BOAS figure on the card: the home page and the hub do not
     // carry BOAS's three stated gaps, so the card names the dataset and prints OpenBMI's cohort only.
     'shared-encoder': { kicker: 'Shared encoder · route 2', title: 'One model, several questions',
@@ -1001,8 +1022,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '149 名被试 · 单中心 · 平衡准确率' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
       question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
-      summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。另有更多基础模型按同样的冻结方案评测：睡眠分期上有 3 个检查点高于所有已发布的行，BETA 上没有一个高于免训练的 CCA。',
-      detail: '两个任务 · 两种编码器 · 三次随机初始化 · 另外 16 个检查点' },
+      summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。另有更多基础模型按同样的冻结方案评测：睡眠分期上有 3 个检查点和 EEGPT（差距很窄）高于所有已发布的行，BETA 上没有一个高于免训练的 CCA。',
+      detail: '两个任务 · 三种编码器 · 三次随机初始化 · 另外 16 个检查点' },
     'shared-encoder': { kicker: '共享编码器 · 第二条路线', title: '一个模型，多个问题',
       question: '一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？',
       summary: '一个共享编码器、每个问题配一个固定输出，对比“知道自己在回答哪个问题”的分类头，以及每个问题单独一个模型，数据量与计算量保持一致——并给出每种设置的代价。',

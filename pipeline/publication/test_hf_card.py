@@ -191,8 +191,8 @@ class CardBeyondScalpAndPilots(unittest.TestCase):
         text = ' '.join(cls.card.split())
         start = text.index('`beyond-scalp-update.json`')
         cls.beyond = text[start:text.index('`pilot-studies-update.json`', start)]
-        start = text.index('`pilot-studies-update.json`')
-        cls.pilot = text[start:text.index('catalogued methods have been scored', start)]
+        start = text.index('`pilot-studies-update.json`:')
+        cls.pilot = text[start:text.index('`eegpt-core-update.json`:', start)]
         cls.bs = json.loads((PUBLISHED/'beyond-scalp-update.json').read_text())
         cls.ps = json.loads((PUBLISHED/'pilot-studies-update.json').read_text())
 
@@ -211,7 +211,7 @@ class CardBeyondScalpAndPilots(unittest.TestCase):
             self.assertIn(phrase, self.beyond)
         for phrase in ('outside every leaderboard', 'one cohort, counted once', 'neither arm is shown to be better, and the two are not shown to be equivalent',
                        'not subjective error recognition', 'not zero-shot', 'not excluded', 'no original or converted weights are distributed',
-                       'core-matrix scores are not in this dataset\'s files'):
+                       'core-matrix cells are in `eegpt-core-update.json`, below'):
             self.assertIn(phrase, self.pilot)
         c = self.ps['results']['orthosis-64ch-classical']['cohort']
         self.assertIn(f"({c['people']} people, {c['runs']} runs, {c['events']:,} recorded device events", self.pilot)
@@ -253,6 +253,62 @@ class CardBeyondScalpAndPilots(unittest.TestCase):
             self.assertNotRegex(re.sub(r'`[^`]+`', '', section), r'(?<![./\w-])v\d+\b|\b(?:updated?|added|new)\b')
             self.assertNotIn('Jev', section)
         self.assertNotRegex(self.card, r'(?i)D1\.2|data management plan|download/374')
+
+
+class CardEegptCore(unittest.TestCase):
+    """The EEGPT paragraph (owner decisions of 2026-10-12 and 2026-10-13): what the file holds, read from the served
+    export; the reading rule, never a ranking; the footnotes that travel with the cells; the sourced exposure statement,
+    never a proof; the weights never called Apache-2.0 and none distributed; the pilot outside every leaderboard; no
+    update date, version label or Jev; and the file ships beside the others."""
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        cls.card = card(snapshot, len(rows), topic_payload())
+        text = ' '.join(cls.card.split())
+        start = text.index('`eegpt-core-update.json`:')
+        cls.eegpt = text[start:text.index('catalogued methods have been scored', start)]
+        cls.ec = json.loads((PUBLISHED/'eegpt-core-update.json').read_text())
+
+    def test_what_the_file_holds(self):
+        cells = {c['protocol']: c for c in self.ec['cells']}
+        for phrase in ('EEGPT beside the core matrix', 'same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped',
+                       'published as computed, without a re-run', f"Its {len(cells)} core-matrix cells", f"({cells['idle']['people']} people)",
+                       'pretraining-attribution rows on mi-rest and EEGMAT', 'mean of three random initialisations'):
+            self.assertIn(phrase, self.eegpt)
+
+    def test_reading_rule_and_caveats(self):
+        for phrase in ('Kept apart from `results`, and not a ranking', 'only where their 95% intervals do not overlap',
+                       'several of those gaps are narrow', 'four 0.25-second patches with no padding', 'never trained in pretraining',
+                       'shorter than EEGPT\'s 4-second pretraining window', 'not the authors\' learnable spatial filter',
+                       'not proof that a recording was never seen', 'Tsinghua benchmark', 'stays outside every leaderboard'):
+            self.assertIn(phrase, self.eegpt)
+        self.assertNotRegex(self.eegpt, r'(?i)\b(?:best|winner|state of the art|outperform\w*|beats?)\b')
+
+    def test_weights_are_never_apache_and_none_distributed(self):
+        self.assertIn('covers the repository’s source code only', self.eegpt)
+
+    def test_scored_count_includes_methods_scored_outside_results(self):
+        # EEGPT and REVE Base have rows, in their own exports: the next sentence must not say they were not run.
+        text = ' '.join(self.card.split())
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        core = len({r['name'] for t in snapshot['tracks'] for r in t['rows']})
+        self.assertIn(f"{core + 2} of {len(snapshot['models'])} catalogued methods have been scored ({core} in `results.csv`; "
+                      'EEGPT in `eegpt-core-update.json` and REVE Base in `foundation-models-update.json`)', text)
+        self.assertIn('A catalogued method with no row in any file has not been run', text)
+        self.assertIn('no original or converted weights are distributed', self.eegpt)
+        self.assertIn('no author endorsement is implied', self.eegpt)
+        self.assertNotRegex(self.eegpt, r'(?i)(?:weights|checkpoint)[^.;]{0,40}Apache|Apache[^.;]{0,40}(?:weights|checkpoint)')
+
+    def test_no_date_no_version_label_no_jev(self):
+        self.assertNotRegex(self.eegpt, r'\b20\d\d-\d\d-\d\d\b|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b')
+        self.assertNotRegex(re.sub(r'`[^`]+`', '', self.eegpt), r'(?<![./\w-])v\d+\b|\b(?:updated?|added|new)\b')
+        self.assertNotIn('Jev', self.eegpt)
+
+    def test_the_exposure_bullet_names_eegpt(self):
+        text = ' '.join(self.card.split())
+        self.assertIn('nor for EEGPT (checked 12 October 2026; in `eegpt-core-update.json`)', text)
 
 
 class CardJevStyle(unittest.TestCase):

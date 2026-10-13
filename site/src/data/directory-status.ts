@@ -15,6 +15,7 @@
 import data from './mvp.json';
 import pilot from './pilot-studies-update.json';
 import { releases } from './releases';
+import { EEGPT_SLUG, eegptDirectory, eegptPilot, eegptRelease } from './eegpt-core';
 import type { L } from './entities';
 
 type Model = typeof data.models[number];
@@ -28,8 +29,8 @@ export interface StatusOverride {
   /** An external record that shows the change (REVE Base: its Hugging Face card). */
   source?: string;
   /**
-   * A page of this site that shows the change (EEGPT: the pilot comparison it is now published in): a locale-free
-   * path with its anchor, which the topic page must carry, and the link's words.
+   * A page of this site that shows the change beyond the card's own method page (EEGPT: its pilot comparison, outside
+   * every leaderboard): a locale-free path with its anchor, which the topic page must carry, and the link's words.
    */
   page?: { path: string; label: L };
   /** What the source reported, in the words the note uses. */
@@ -45,23 +46,24 @@ export interface StatusOverride {
 const reve = { licence: 'REVE Responsible Use License v1.0', accepted: '2026-10-04' };
 
 /**
- * EEGPT's one published figure set: the Orthosis comparison of the pilot-studies release, frozen EEGPT against
- * matched 58-channel classical features. The override below says so only while the served export does: the result is
- * there, released, outside every leaderboard, with the checkpoint's licence unresolved, no weights distributed and
- * Apache-2.0 scoped to the repository's code. Anything else fails the build, so the directory cannot claim a
- * published comparison the release does not carry.
+ * EEGPT's pilot comparison: the Orthosis comparison of the pilot-studies release, frozen EEGPT against matched
+ * 58-channel classical features, outside every leaderboard. The card and the method page link it only while the served
+ * export carries it so: released, the model's checkpoint licence unresolved, no weights distributed, Apache-2.0 scoped
+ * to the repository's code. Anything else fails the build.
  */
 export const EEGPT_PILOT_PATH = '/topics/pilot-studies/#orthosis';
-const eegptPilot = (() => {
-  const r = (pilot.results as Record<string, any>)['orthosis-eegpt-vs-58ch'];
+(() => {
+  const r = (pilot.results as Record<string, any>)[eegptPilot.result];
   const ds = (pilot.datasets as Record<string, any>)[r?.dataset];
   const m = r?.model;
-  if (!r || r.model_family !== 'foundation' || r.leaderboard !== false || ds?.publication !== 'released'
-      || m?.name !== 'EEGPT' || m.weights_licence !== null || m.weights_distributed !== false
+  if (eegptPilot.file !== 'pilot-studies-update.json' || !r || r.model_family !== 'foundation' || r.leaderboard !== false
+      || ds?.publication !== 'released' || m?.name !== 'EEGPT' || m.weights_licence !== null || m.weights_distributed !== false
       || m.code_licence !== 'Apache-2.0' || !/source code only/.test(m.code_licence_scope))
-    throw new Error('directory-status.ts: the EEGPT pilot comparison is not released as the override describes it');
-  return r;
+    throw new Error('directory-status.ts: the EEGPT pilot comparison is not released as the card describes it');
 })();
+/** EEGPT's method page, which the card's name links (entities.ts gives it one from the EEGPT core release). */
+export const EEGPT_METHOD_PATH = `/methods/${EEGPT_SLUG}/`;
+
 export const modelStatusOverrides: Record<string, StatusOverride> = {
   // REVE Base. Released as "Access gated"; from 2026-10-02 to 2026-10-04 shown as
   // "Licence review pending" (Hugging Face reported the weights ungated under the REVE
@@ -84,18 +86,21 @@ export const modelStatusOverrides: Record<string, StatusOverride> = {
   },
   // EEGPT. Released as "Rights review pending" with no score: its checkpoint licence was unresolved, and the hold on
   // its aggregate scores was this project's own conservative choice, not a publisher's rule. On 2026-10-12 the owner
-  // decided to publish one pilot comparison (pilot-studies-update.json, orthosis-eegpt-vs-58ch), under the approval
-  // records that bind its export. The core-matrix EEGPT scores are not on the site's pages (some have been in audit records in the
-  // public repository since 2026-09-20; corrected on 2026-10-12), and the held core-matrix cells are unchanged; the checkpoint licence stays unresolved and no weights are distributed.
-  // The released status and note stay on the card beside this one; experiments.json keeps its bytes.
+  // published one pilot comparison (pilot-studies-update.json, orthosis-eegpt-vs-58ch), shown here as "One pilot
+  // comparison published"; on 2026-10-12 and 2026-10-13 the owner decided to publish its eight core-matrix cells,
+  // computed in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, and its
+  // pretraining-attribution rows (eegpt-core-update.json, release eegpt-core-update-20261013). So it is shown as evaluated, with the export's note,
+  // and the released status beside it; the checkpoint licence stays unresolved and no weights are distributed.
+  // experiments.json keeps its bytes.
   'EEGPT': {
-    released: 'Rights review pending',
-    status: 'One pilot comparison published',
-    checked: pilot.generated_at,
+    released: eegptDirectory.released,
+    status: eegptDirectory.status,
+    checked: eegptRelease.date,
     page: { path: EEGPT_PILOT_PATH, label: { en: 'The pilot comparison →', zh: '这项试点比较 →' } },
+    // The released note above it says no score is published; this one says what now is, and where.
     note: {
-      en: `One pilot comparison is published: frozen EEGPT with a fixed supervised probe against matched 58-channel classical features on the ${eegptPilot.cohort.people} people of the Orthosis error-detection dataset, outside every leaderboard and ranking. The core-matrix EEGPT scores are not on the site’s pages; some of them are in audit records in the public repository. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only. The note above is the released one.`,
-      zh: `已发布一项试点比较：在 Orthosis 错误检测数据集的 ${eegptPilot.cohort.people} 名被试上，冻结的 EEGPT 加固定的有监督分类头，与匹配的 58 通道经典特征相比较；它不进入任何排行榜或排名。核心矩阵中的 EEGPT 分数没有出现在网站页面上，其中一部分在公开代码仓库的审计记录里。检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。上面的备注译自发布时的原文。`,
+      en: `${eegptDirectory.note.en} Its core-matrix cells and pretraining-attribution rows are published on its page; the cells also sit beside the core matrix on every protocol page. The note above is the released one.`,
+      zh: `${eegptDirectory.note.zh}它在核心矩阵上的单元格与预训练归因各行已发布在它自己的页面上；这些单元格也列在每个协议页的核心矩阵旁边。上面的备注译自发布时的原文。`,
     },
   },
 };

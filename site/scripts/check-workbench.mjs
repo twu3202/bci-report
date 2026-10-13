@@ -53,9 +53,10 @@ assert.equal(tool.name,'configure_eeg_comparison');
 assert.equal(tool.annotations.readOnlyHint,false);
 for(const t of data.tracks){
   const output=tool.execute({trackId:t.id,family:'all'});
-  // The released rows, then the v9 matrix rows (2026-10-04), each named with its release.
-  assert.equal(output.models.length,t.rows.length+fmMatrixOf(t.id).length);
-  assert.ok(output.models.slice(t.rows.length).every(m=>m.release==='foundation-models-update-20261004'),t.id+': the tool names the v9 rows\' release');
+  // The released rows, then the v9 matrix rows (2026-10-04), then EEGPT's row (2026-10-13), each named with its release.
+  assert.equal(output.models.length,t.rows.length+fmMatrixOf(t.id).length+1);
+  assert.ok(output.models.slice(t.rows.length,-1).every(m=>m.release==='foundation-models-update-20261004'),t.id+': the tool names the v9 rows\' release');
+  assert.ok(output.models.at(-1).name==='EEGPT'&&output.models.at(-1).release==='eegpt-core-update-20261013'&&output.models.at(-1).status==='complete',t.id+': the tool names EEGPT\'s row and its release');
   assert.equal(get('#download-results').href,'/data/'+t.id+'-results.csv');
   assert.equal(get('#track-tabs').attributes['data-active'],t.id);
   assert.equal(get('#track-panel').attributes['aria-labelledby'],'tab-'+t.id);
@@ -310,6 +311,11 @@ const LTX=JSON.parse(readFileSync(new URL('data/later-sessions-update.json',DIST
 const BSX=JSON.parse(readFileSync(new URL('data/beyond-scalp-update.json',DIST),'utf8'));
 // The pilot-studies export, as served (its own block at the end reads it in full).
 const PSX=JSON.parse(readFileSync(new URL('data/pilot-studies-update.json',DIST),'utf8'));
+// The EEGPT core export (2026-10-13), as served: its directory card, method page, dataset groups and data-use record.
+const EGX=JSON.parse(readFileSync(new URL('data/eegpt-core-update.json',DIST),'utf8'));
+// Its translation table, evaluated from its source (type-only import and `export` removed), as foundation-models-zh.ts is.
+const EZ=(()=>{const c={};vm.runInNewContext(stripTypeScriptTypes(readFileSync(new URL('../src/data/eegpt-core-zh.ts',import.meta.url),'utf8'))
+  .replace(/^import[^\n]*\n/gm,'').replace(/^export /gm,'')+'\nthis.eegptZh=eegptZh;',c);return c.eegptZh;})();
 // BINGO's publication switch (owner decision 3): released, its result, dataset page and figures are pinned; held, none
 // of them may exist, and its hold is pinned instead (pilot-switch.ts on the site side).
 const BINGO_ON=PSX.datasets['bingo-imagined-speech'].publication==='released';
@@ -891,10 +897,13 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms',
   // The later-sessions page: values spanning many decades — a whole number with thousands separators, or three
   // significant digits where three decimals would print a non-zero value as 0.000 (entities.ts wideFmt).
-  int0:r=>Math.round(r).toLocaleString('en-US').replace(/^-/,'−'),sig3:r=>r.toPrecision(3).replace(/^-/,'−')};
+  int0:r=>Math.round(r).toLocaleString('en-US').replace(/^-/,'−'),sig3:r=>r.toPrecision(3).replace(/^-/,'−'),
+  // EEGPT on the core matrix (2026-10-13): the gap between two non-overlapping intervals, already in percentage points,
+  // never signed (entities.ts gap2).
+  gap2:r=>r.toFixed(2)+' pp'};
 // The token checks of the earlier batches read every format but these: their pages print none, and a later
 // format applied to their values would only widen what those checks accept.
-const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2','int0','sig3'].includes(k)).map(([,g])=>g);
+const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2','int0','sig3','gap2'].includes(k)).map(([,g])=>g);
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
 // sitemap and llms.txt. Their own checks follow in the protocol block.
@@ -1749,9 +1758,10 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
     for(const [label,html] of [['en',en],['zh',zh]]){
       const where=(label==='zh'?'zh/':'')+path;
       // Only this protocol's own downloads back its figures.
-      // Since 2026-10-04 also its v9 CSV (the new rows), and on arithmetic-rest the v9 JSON (the EEGMAT adaptation).
+      // Since 2026-10-04 also its v9 CSV (the new rows), and on arithmetic-rest the v9 JSON (the EEGMAT adaptation); since
+      // 2026-10-13 EEGPT's export (its row, in its own section).
       assert.deepEqual([...new Set([...html.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]))].sort(),
-        [csv,pj,'foundation-models-'+t.id+'.csv',...(t.id==='arithmetic-rest'?['foundation-models-update.json']:[])].sort(),where+': figures must cite this protocol\'s CSV and JSON, and its v9 files');
+        [csv,pj,'foundation-models-'+t.id+'.csv','eegpt-core-update.json',...(t.id==='arithmetic-rest'?['foundation-models-update.json']:[])].sort(),where+': figures must cite this protocol\'s CSV and JSON, its v9 files and EEGPT\'s export');
       // Every method with a score, with every figure of its row.
       const t0=html.indexOf('class="protocol-results"'),body=html.slice(t0,html.indexOf('</tbody>',t0));
       assert.ok(t0>0,where+': the results table must render');
@@ -1870,7 +1880,8 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
     // Dataset markup, on the English page only: this protocol's CSV and JSON, part of the core matrix.
     const ld=JSON.parse(en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
     assert.equal(ld['@type'],'Dataset',path+': Dataset markup');
-    assert.deepEqual(ld.distribution.map(d=>d.contentUrl).sort(),[`https://bci.report/data/${csv}`,`https://bci.report/data/${pj}`,`https://bci.report/data/foundation-models-${t.id}.csv`].sort(),path+': distribution is the protocol\'s CSV and JSON, and its v9 CSV');
+    // Since 2026-10-13 also EEGPT's export, whose frozen row the page prints beside the core table.
+    assert.deepEqual(ld.distribution.map(d=>d.contentUrl).sort(),[`https://bci.report/data/${csv}`,`https://bci.report/data/${pj}`,`https://bci.report/data/foundation-models-${t.id}.csv`,'https://bci.report/data/eegpt-core-update.json'].sort(),path+': distribution is the protocol\'s CSV and JSON, its v9 CSV and EEGPT\'s export');
     assert.equal(ld.url,'https://bci.report/'+path,path+': markup url');
     assert.equal(ld.isPartOf.url,'https://bci.report/',path+': part of the core-matrix Dataset');
     assert.ok(ld.variableMeasured.includes(t.yLabel)&&ld.variableMeasured.includes(t.xLabel),path+': both metrics');
@@ -1980,8 +1991,12 @@ console.log('PASS: protocol pages — both languages, every method with a score,
     const core={protocols:data.coverage.displayedProtocols,datasets:new Set(data.tracks.map(t=>t.dataset)).size,
       comparisons:data.coverage.displayedComparisons,methods:new Set(data.tracks.flatMap(t=>t.rows.map(r=>r.name))).size};
     const v9=JSON.parse(readFileSync(new URL('data/foundation-models-update.json',DIST),'utf8'));
-    const enc=v9.results['foundation-models-v9'].models.filter(m=>m.panel==='matrix').length;
-    assert.ok(core.protocols===8&&core.datasets===7&&core.methods===9&&enc===13,'the masthead counts: 8 protocols, 7 datasets, 9 core methods, 13 v9 matrix encoders');
+    // The frozen encoders beside the matrix: the v9 matrix checkpoints and, since 2026-10-13, EEGPT (its own export,
+    // a cell on every core protocol).
+    const egx=JSON.parse(readFileSync(new URL('data/eegpt-core-update.json',DIST),'utf8'));
+    assert.deepEqual(egx.cells.map(c=>c.protocol).sort(),data.tracks.map(t=>t.id).sort(),'EEGPT: a cell on every core protocol');
+    const enc=v9.results['foundation-models-v9'].models.filter(m=>m.panel==='matrix').length+1;
+    assert.ok(core.protocols===8&&core.datasets===7&&core.methods===9&&enc===14,'the masthead counts: 8 protocols, 7 datasets, 9 core methods, 13 v9 matrix encoders and EEGPT');
     for(const [path,zh] of [['',false],['zh/',true]]){
       const html=read(path),mast=html.slice(html.indexOf('<section class="masthead">'),html.indexOf('</section>',html.indexOf('<section class="masthead">')));
       const lede=(mast.match(/<p class="lede">([\s\S]*?)<\/p>/)||[,''])[1].replace(/&#39;/g,"'").replace(/&amp;/g,'&');
@@ -1995,7 +2010,7 @@ console.log('PASS: protocol pages — both languages, every method with a score,
       assert.deepEqual([...mast.matchAll(/<dd>(\d+)<\/dd>/g)].map(m=>Number(m[1])),[core.protocols,core.datasets,core.comparisons,core.methods],(path||'/')+': the stat rail is the core matrix\'s four counts, in order');
       const added=mast.match(/<\/dl>\s*<p class="stat-added">([\s\S]*?)<\/p>/);
       assert.ok(added&&added[1].includes(`<span data-count="encoders">${enc}</span>`)&&added[1].includes(`href="${zh?'/zh':''}/protocols/"`)&&!/v9|第九轮/.test(added[1]),
-        (path||'/')+': the line under the rail counts the v9 matrix encoders ('+enc+') and links the protocols');
+        (path||'/')+': the line under the rail counts the v9 matrix encoders and EEGPT ('+enc+') and links the protocols');
       // It sits under 'Methods 9': no leading '+', which invited reading 9 + 13 (review of 2026-10-06).
       const addedText=added?added[1].replace(/<[^>]+>/g,'').replace(/&#43;|&plus;/g,'+').replace(/&amp;/g,'&').trim():'';
       assert.ok(!/^[+＋]/.test(addedText),(path||'/')+': the line under the rail must not open with "+", which reads as a sum with the methods above it');
@@ -2249,6 +2264,12 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
           pointing.get(slug).add('/'+prefix+'datasets/'+MVPS[t.dataset]+'/');
           if(kind==='core'){assert.ok(t.rows.some(r=>r.id===id),slug+': '+track+' has no released row '+id);if(CORE_PAGE[id])pointing.get(slug).add('/'+prefix+'methods/'+CORE_PAGE[id]+'/');}
           else {assert.ok(FMS.models.some(m=>m.id===id),slug+': no v9 checkpoint '+id);pointing.get(slug).add('/'+prefix+'methods/'+FAMILY(id)+'/');}
+        }
+        // Since 2026-10-13 EEGPT's rows (data-eegpt-topic="<track>"): its dataset's page and its own method page.
+        for(const [,track] of html.matchAll(/data-eegpt-topic="([^"]+)"/g)){
+          const t=data.tracks.find(x=>x.id===track);
+          assert.ok(t,slug+': an EEGPT row names '+track+', which is not a core protocol');
+          pointing.get(slug).add('/'+prefix+'datasets/'+MVPS[t.dataset]+'/');pointing.get(slug).add('/'+prefix+'methods/eegpt/');
         }
       }
     }
@@ -3770,25 +3791,33 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     assert.match(card('ZUNA 1.1'),label==='en'?/research use only, not for diagnosis or clinical use/:/仅供研究使用，不可用于诊断或临床/,where+': ZUNA 1.1\'s research-use sentence');
     assert.match(card('LUNA (Base, Large)'),label==='en'?/no implied endorsement by the LUNA authors/:/不代表 LUNA 作者的认可/,where+': LUNA\'s no-endorsement note');
     assert.match(card('ERP-FM Base'),label==='en'?/non-commercial/:/非商业/,where+': ERP-FM is non-commercial');
-    // EEGPT (owner decision 2026-10-12): a display-layer override, as REVE Base's. The released card keeps its words,
-    // with the released status beside the new one, the pilot comparison linked, the core-matrix scores unpublished,
-    // the checkpoint licence unresolved, no weights distributed, and Apache-2.0 the code's alone; no figure of the
-    // pilot on the card. experiments.json keeps its bytes.
+    // EEGPT (owner decisions of 2026-10-12 and 2026-10-13): a display-layer override, as REVE Base's. The released card
+    // keeps its words, with the released status beside the new one: evaluated, the export's note (the eight core
+    // protocols in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, one pilot comparison outside every
+    // leaderboard), the checkpoint licence unresolved, no weights distributed and Apache-2.0 the code's alone; its name
+    // links its method page and the note links the pilot comparison; no figure but the released parameter count.
+    // experiments.json keeps its bytes.
     {const c=card('EEGPT'),ee=data.models.find(m=>m.name==='EEGPT'),w=where+' EEGPT';
      assert.equal(ee.status,'Rights review pending',w+': the released status is unchanged in experiments.json');
-     assert.match(c,label==='en'?/<span class="status">One pilot comparison published<\/span>/:/<span class="status">已发布一项试点比较<\/span>/,w+': the status shown is the override');
+     assert.equal(EGX.directory_status.released_status,ee.status,w+': the export names the released status it overrides');
+     assert.match(c,label==='en'?/<span class="status ready">Evaluated<\/span>/:/<span class="status ready">已评测<\/span>/,w+': the status shown is the override');
      assert.ok(c.includes(label==='en'?'Released status: Rights review pending.':'发布时的状态：权利审查中。'),w+': the released status beside it');
+     assert.ok(c.includes(`<h3 lang="en"><a href="/${prefix}methods/eegpt/">EEGPT</a></h3>`),w+': its name links its method page');
      assert.ok(c.includes(`href="/${prefix}topics/pilot-studies/#orthosis" data-override-page="true"`),w+': the pilot comparison linked');
-     assert.ok(c.includes('<time datetime="2026-10-12">'),w+': when the status was checked');
-     for(const re of label==='en'?[/core-matrix EEGPT scores are not on the site’s pages; some of them are in audit records in the public repository/,/checkpoint’s licence remains unresolved/,/no original or converted weights are distributed/,/Apache-2\.0 covers the repository’s code only/]
-                                 :[/核心矩阵中的 EEGPT 分数没有出现在网站页面上，其中一部分在公开代码仓库的审计记录里/,/检查点的许可仍未厘清/,/不分发任何原始或转换后的权重/,/Apache-2\.0 只涵盖代码仓库中的代码/])
+     assert.ok(c.includes(`<time datetime="${EGX.generated_at}">`),w+': when the status was checked');
+     assert.ok(c.includes(label==='en'?e(EGX.directory_status.note):'作为冻结编码器在八个核心协议上评测'),w+': the export\'s note');
+     // The released note above says no score is published: the override says what now is, and where.
+     assert.ok(c.includes(label==='en'?'Its core-matrix cells and pretraining-attribution rows are published on its page; the cells also sit beside the core matrix on every protocol page.'
+                                     :'它在核心矩阵上的单元格与预训练归因各行已发布在它自己的页面上；这些单元格也列在每个协议页的核心矩阵旁边。'),w+': the card says the cells are now published');
+     for(const re of label==='en'?[/in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows/,/one pilot comparison outside every leaderboard/,/checkpoint’s licence remains unresolved/,/no original or converted weights are distributed/,/Apache-2\.0 covers the repository’s code only/]
+                                 :[/与已发布的 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行/,/不进入任何排行榜的试点比较/,/检查点的许可仍未厘清/,/不分发任何原始或转换后的权重/,/Apache-2\.0 只涵盖代码仓库中的代码/])
        assert.match(c,re,w+': '+re.source);
+     assert.doesNotMatch(c,label==='en'?/not on the site’s pages|One pilot comparison published/:/没有出现在网站页面上|已发布一项试点比较/,w+': no stale status');
      assert.doesNotMatch(c.replace(/<span class="note-original"[^>]*>[^<]*<\/span>/g,''),/(?:weights|checkpoint|权重|检查点)[^.。;；]{0,40}Apache|Apache[^.。;；]{0,30}(?:weights|权重)/i,w+': the weights are never called Apache-2.0');
-     assert.ok(!c.includes('data-fig')&&!/\d+\.\d\s?%/.test(c),w+': the card prints no figure of the pilot');}
-    {const li=html.slice(html.indexOf('<li id="eegpt">'),html.indexOf('</li>',html.indexOf('<li id="eegpt">')));
-     assert.ok(li.includes(label==='en'?'One pilot comparison published':'已发布一项试点比较')&&li.includes(`href="/${prefix}topics/pilot-studies/#orthosis"`),where+': the #eegpt anchor says the pilot is published and links it');
-     assert.ok(!li.includes('data-fig')&&!/\d+\.\d\s?%/.test(li),where+': the #eegpt entry prints no figure');
-     assert.ok(!html.includes(`href="/${prefix}methods/eegpt/"`),where+': EEGPT keeps its anchor, not a method page');}
+     assert.ok(!c.includes('data-fig')&&!/\d+\.\d\s?%/.test(c),w+': the card prints no score');}
+    // EEGPT left the not-in-the-matrix list (2026-10-13): it has a method page, which the methods table lists.
+    assert.ok(!html.includes('<li id="eegpt">')&&!html.includes('href="#eegpt"'),where+': EEGPT is no longer an unmeasured entry');
+    assert.ok(html.slice(html.indexOf('id="with-pages"'),html.indexOf('</table>',html.indexOf('id="with-pages"'))).includes(`href="/${prefix}methods/eegpt/"`),where+': EEGPT\'s page is listed');
     const un=html.slice(html.indexOf('id="unmeasured"'),html.indexOf('</ul>',html.indexOf('id="unmeasured"')));
     for(const [id,n] of [['mirepnet','MIRepNet'],['eeg-dino','EEG-DINO']]) assert.ok(un.includes(`<li id="${id}"><span lang="en">${n}</span>`)&&un.includes(label==='en'?'Catalogue only (not evaluated)':'仅列入目录（未评测）'),where+': '+n+' is catalogue only');
     assert.ok(!un.includes('REVE Base'),where+': REVE Base is evaluated, not unmeasured');
@@ -3890,7 +3919,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // 6. LaBraM and CBraMod on the topic pages and data use: the sourced statement, never "unresolved".
   for(const [slug,models] of [['does-pretraining-help',['labram','cbramod']],['model-adaptation',['labram']]]) for(const [label,prefix] of [['en',''],['zh','zh/']]){
     const path=prefix+'topics/'+slug+'/',html=pageOf(path);
-    assert.doesNotMatch(visible(html),label==='en'?/unresolved|not certified|unseen during pretraining/i:/尚不能确定这些基准|无法证实|重叠尚不清楚|未曾出现/,path+': the old exposure wording is gone');
+    // EEGPT's weights terms (2026-10-13) say its checkpoint's licence is unresolved: a licence, not an exposure statement.
+    assert.doesNotMatch(visible(html.replace(/<p class="protocol-note eegpt-terms-note">[\s\S]*?<\/p>/g,'')),label==='en'?/unresolved|not certified|unseen during pretraining/i:/尚不能确定这些基准|无法证实|重叠尚不清楚|未曾出现/,path+': the old exposure wording is gone');
     assert.ok(visible(html).includes(label==='en'?'published pretraining list':'公开的预训练数据清单'),path+': the authors\' published list');
     assert.ok(visible(html).includes(label==='en'?'not proof that':'并不证明'),path+': which is not a proof');
     const note=html.slice(html.indexOf('fm-core-exposure'),html.indexOf('</p>',html.indexOf('fm-core-exposure')));
@@ -3915,11 +3945,13 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     if(label==='en'){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
   }
-  // The EESM19 page changed again on 2026-10-07 (route 2's group), so it carries that date now; does-pretraining-help
-  // on 2026-10-08 (its pointer to the later-sessions question) and 2026-10-12 (its pointer to the pilot studies' EEGPT
-  // comparison); the methods hub on 2026-10-12 (EEGPT's card and entry, one pilot comparison published).
+  // The EESM19 page changed again on 2026-10-07 (route 2's group), does-pretraining-help on 2026-10-08 (its pointer to
+  // the later-sessions question) and 2026-10-12 (its pointer to the pilot studies' EEGPT comparison), the methods hub on
+  // 2026-10-12 (EEGPT's card and entry, one pilot comparison published); and on 2026-10-13 EEGPT's row reached every
+  // protocol page and the protocols index, the seven core dataset pages, the methods hub (its card evaluated, its new
+  // page) and does-pretraining-help (its attribution rows). REVE's and LaBraM's method pages keep 2026-10-04.
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
-    const d=p==='datasets/eesm19/'?'2026-10-07':p==='topics/does-pretraining-help/'||p==='methods/'?'2026-10-12':'2026-10-04';
+    const d=p==='methods/reve/'||p==='methods/labram/'?'2026-10-04':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
@@ -3935,7 +3967,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
 // the export's; chance flags by the core rule; exposure badges and ZUNA 1.1's research-use sentence; every claim
 // the prose makes is the one the export supports; no ranking word and no exposure claim beyond the lists.
 {
-  const REL='foundation-models-update-20261004', FMJ='foundation-models-update.json';
+  const REL='foundation-models-update-20261004', FMJ='foundation-models-update.json', EGJ='eegpt-core-update.json';
   const FX=JSON.parse(readFileSync(new URL('data/'+FMJ,DIST),'utf8')),F=FX.results['foundation-models-v9'],C=F.comparisons;
   const MVPJ=JSON.parse(readFileSync(new URL('data/experiments.json',DIST),'utf8'));
   const csvOf=p=>{const [h,...b]=csvRows(readFileSync(new URL('data/foundation-models-'+p+'.csv',DIST),'utf8')).filter(r=>r.length>1);return b.map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));};
@@ -3963,7 +3995,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   const tok=new Set();
   const addVal=v=>{for(const g of fmtEarlier)for(const n of numbers(g(v)))tok.add(n);};
   const walk=v=>{if(typeof v==='number')addVal(v);else if(typeof v==='string')numbers(v).forEach(n=>tok.add(n));else if(v&&typeof v==='object')Object.values(v).forEach(walk);};
-  walk(FX);walk(MVPJ);walk(Z);
+  // EEGPT's export (2026-10-13): its rows sit in these sections beside the further encoders'.
+  walk(FX);walk(MVPJ);walk(Z);walk(EGX);walk(EZ);
   for(const p of scored.concat('idle')) for(const r of csvOf(p)) for(const v of Object.values(r)){if(v.trim()!==''&&Number.isFinite(Number(v)))addVal(Number(v));else numbers(v).forEach(n=>tok.add(n));}
   const figureLike=t=>[...t.matchAll(/\d+\.\d+|\d{1,3}(?:,\d{3})+/g)].map(m=>m[0]);
   // The extent of every element carrying an attribute: [start, end, value].
@@ -3984,11 +4017,19 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       assert.ok(sec.includes(`data-release="${REL}"`),w+': names its release');
       const figs=figsIn(sec);
       assert.ok(figs.length>40,w+': prints its figures ('+figs.length+')');
-      assert.ok(figs.every(f=>f.file===FMJ||/^foundation-models-[a-z0-9-]+\.csv$/.test(f.file)||f.file==='experiments.json'),w+': every figure from the v9 JSON, a v9 CSV or experiments.json');
+      // Since 2026-10-13 also EEGPT's export: its rows beside the further encoders', each on an element naming its protocol.
+      assert.ok(figs.every(f=>f.file===FMJ||/^foundation-models-[a-z0-9-]+\.csv$/.test(f.file)||f.file==='experiments.json'||f.file===EGJ),w+': every figure from the v9 JSON, a v9 CSV, experiments.json or EEGPT\'s export');
       // A protocol's row figure sits on an element naming that protocol and the row.
-      const fmX=extents(sec,'data-fm-topic'),coreX=extents(sec,'data-core-topic');
+      const fmX=extents(sec,'data-fm-topic'),coreX=extents(sec,'data-core-topic'),egX=extents(sec,'data-eegpt-topic');
       for(const f of figs){
         if(f.file===FMJ) continue;
+        if(f.file===EGJ){
+          const hit=egX.filter(([s,t])=>s<=f.at&&f.at<=t);
+          assert.ok(hit.length,w+': '+EGJ+' '+f.raw+' is printed on no EEGPT row that names its protocol');
+          const track=hit.at(-1)[2],c=EGX.cells.find(x=>x.protocol===track),cmp=EGX.comparisons.protocols.find(x=>x.protocol===track);
+          assert.ok([c.percent.balanced_accuracy,...c.percent.interval_95,...(cmp?cmp.rows.map(r=>r.gap_pp):[])].includes(f.raw),w+': '+f.raw+' is not a value of EEGPT\'s '+track+' cell');
+          continue;
+        }
         const hit=(f.file==='experiments.json'?coreX:fmX).filter(([s,t])=>s<=f.at&&f.at<=t);
         assert.ok(hit.length,w+': '+f.file+' '+f.raw+' is printed on no row that names its protocol');
         const [track,rid]=hit.at(-1)[2].split('|');
@@ -4020,7 +4061,9 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       let flagged=0;
       for(const m of sec.matchAll(/data-fig="([^|"]+)\|(pct1raw|pct1)\|([^"]+)"[^>]*>[^<]*<\/span><span class="interval"><span data-fig="[^|"]+\|\w+\|([^"]+)"[^>]*>[^<]*<\/span>–<span data-fig="[^"]+">[^<]*<\/span><\/span>((?:<span class="flag">[^<]*<\/span>)?)/g)){
         const [,file,f,y,lo,flagHtml]=m;
-        const chance=file===FMJ?F.eegmat_adaptation.chance_level:file==='experiments.json'?null:Number(csvOf(file.replace(/^foundation-models-|\.csv$/g,'')).find(r=>r.chance_level_percent!=='').chance_level_percent);
+        const egTrack=file===EGJ?egX.filter(([s,t])=>s<=m.index&&m.index<=t).at(-1)[2]:null;
+        const chance=file===FMJ?F.eegmat_adaptation.chance_level:file===EGJ?EGX.cells.find(x=>x.protocol===egTrack).percent.chance_level
+          :file==='experiments.json'?null:Number(csvOf(file.replace(/^foundation-models-|\.csv$/g,'')).find(r=>r.chance_level_percent!=='').chance_level_percent);
         const track=file==='experiments.json'?(()=>{const x=coreX.filter(([s,t])=>s<=m.index&&m.index<=t).at(-1);return x[2].split('|')[0];})():null;
         const c=chance??(track&&MVPJ.tracks.find(t=>t.id===track).chanceLevel);
         const want=flagOf(Number(y),Number(lo),c);
@@ -4070,10 +4113,18 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       }
       const aboveAll=matrix.filter(id=>relOf(id,'sleep-scalp').every(r=>r==='above'));
       assert.deepEqual(aboveAll,['reve-large','steegformer-base','steegformer-large'],'the handoff\'s sleep result: three encoders above every published row');
-      const claim=sec.match(/<p class="roadmap-p" data-claim="sleep-above-all" data-models="([^"]+)">([\s\S]*?)<\/p>/);
-      assert.ok(claim&&claim[1]===aboveAll.join(' '),w+': the sleep sentence names exactly the rows above all three published rows');
-      for(const id of aboveAll) assert.ok(claim[2].includes('>'+e(name(id))+'<'),w+': the sleep sentence names '+name(id));
-      assert.match(sec,zh?new RegExp(`睡眠分期：${aboveAll.length} 个新编码器高于所有已发布的行`):new RegExp(`Sleep staging: ${['zero','one','two','three','four'][aboveAll.length]} new encoders above every published row`),w+': the sleep heading counts them');
+      // Since 2026-10-13 EEGPT's sleep cell too: above every published row by its export's relations, the nearest by its
+      // smallest gap, said plainly with that gap beside its interval's lower end; the heading counts it with them.
+      const egSleep=EGX.comparisons.protocols.find(x=>x.protocol==='sleep-scalp'),egAbove=egSleep.rows.every(r=>r.relation==='above');
+      const claim=sec.match(/<p class="roadmap-p" data-claim="sleep-above-all" data-models="([^"]+)" data-eegpt="([^"]+)">([\s\S]*?)<\/p>/);
+      assert.ok(claim&&claim[1]===aboveAll.join(' ')&&claim[2]===(egAbove?'above-all':'no'),w+': the sleep sentence names exactly the rows above all three published rows, and EEGPT where it is above every one');
+      for(const id of aboveAll) assert.ok(claim[3].includes('>'+e(name(id))+'<'),w+': the sleep sentence names '+name(id));
+      {const sp=claim[3].match(/<span data-eegpt-topic="sleep-scalp">([\s\S]*?)<\/span>(?=[^<]*(?:<\/p>|$))/)||claim[3].match(/<span data-eegpt-topic="sleep-scalp">([\s\S]*)/);
+       const c=EGX.cells.find(x=>x.protocol==='sleep-scalp');
+       assert.ok(egAbove&&egSleep.smallest_gap.row==='spectral-ridge'&&sp&&sp[1].includes(`data-fig="${EGJ}|pct1raw|${c.percent.interval_95[0]}"`)&&sp[1].includes(`data-fig="${EGJ}|gap2|${egSleep.smallest_gap.gap_pp}"`)
+         &&visible(sp[1]).includes(zh?'差距很窄':'by a narrow margin'),w+': EEGPT on sleep, its interval\'s lower end and the narrow gap to spectral ridge, said plainly');}
+      const nAbove=aboveAll.length+(egAbove?1:0);
+      assert.match(sec,zh?new RegExp(`睡眠分期：${nAbove} 个新编码器高于所有已发布的行`):new RegExp(`Sleep staging: ${['zero','one','two','three','four','five'][nAbove]} new encoders above every published row`),w+': the sleep heading counts them, EEGPT included');
       // "above every published row": EEGNet's too, from the intervals; and sleep is the only protocol where any new row clears the best.
       for(const id of aboveAll) for(const r of MVPJ.tracks.find(t=>t.id==='sleep-scalp').rows) assert.ok(Number(cell('sleep-scalp',id).descriptive_interval_low_percent)>r.interval[1],w+': '+id+' lies above the released '+r.name+' sleep row');
       assert.equal(C.vs_published_rows.filter(x=>x.protocol!=='sleep-scalp'&&x.best_non_foundation.relation==='above').length,0,'no new row clears the best published row outside sleep');
@@ -4223,8 +4274,9 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       // small cohorts with descriptive intervals and no multiplicity correction, balanced designs as method comparisons,
       // new people on the same task and setup only, windows shorter than the pretraining contexts.
       const lim=sec.slice(sec.indexOf('<div class="method-grid-wide fm-limits">'),sec.indexOf('</div>',sec.indexOf('<div class="method-grid-wide fm-limits">')));
-      for(const re of zh?[/小队列，描述性区间/,/没有计入交叉验证带来的相关性/,/没有做多重比较校正/,/冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/通常比它预训练时的上下文更短/,/EEGMamba 的清单读自其官方代码（论文全文没有读过），把握程度为中等/]
-                       :[/Small cohorts, descriptive intervals/,/ignores cross-validation dependence/,/no multiplicity correction/,/with 126 frozen cells an occasional non-overlap is expected by chance/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/shorter than its pretraining context/,/EEGMamba’s list is read from its official code \(its paper was not read\), with medium confidence/])
+      // Since 2026-10-13 the multiplicity count names EEGPT's eight cells beside the further encoders' 126.
+      for(const re of zh?[/小队列，描述性区间/,/没有计入交叉验证带来的相关性/,/没有做多重比较校正/,/更多编码器的冻结单元格共有 126 个，EEGPT 另有 8 个，偶尔出现不重叠，本身就在随机误差的预料之中/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/通常比它预训练时的上下文更短/,/EEGMamba 的清单读自其官方代码（论文全文没有读过），把握程度为中等/]
+                       :[/Small cohorts, descriptive intervals/,/ignores cross-validation dependence/,/no multiplicity correction/,/with 126 frozen cells from the further encoders and EEGPT’s eight more an occasional non-overlap is expected by chance/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/shorter than its pretraining context/,/EEGMamba’s list is read from its official code \(its paper was not read\), with medium confidence/])
         assert.match(visible(lim),re,w+': the limitation '+re);
       for(const k of ['beta-8ch','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
       // Licence notes travel with the rows: one entry per family printed, REVE by version, no endorsement.
@@ -4264,9 +4316,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // The Questions hub changed again on 2026-10-07 (route 2's card), 2026-10-08 (the later-sessions card) and
   // 2026-10-12 (the beyond-scalp and pilot-studies cards), and does-pretraining-help on 2026-10-08 (its pointer to the
   // later-sessions question) and 2026-10-12 (its pointer to the pilot studies' EEGPT comparison), so they carry those
-  // dates now.
+  // dates now; on 2026-10-13 EEGPT's rows reached the two further-encoder questions, and the Questions hub's
+  // does-pretraining-help card counts three encoders and names EEGPT on sleep.
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
-    const d=p==='topics/'||p==='topics/does-pretraining-help/'?'2026-10-12':'2026-10-04';
+    const d=p==='topics/model-adaptation/'?'2026-10-04':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
@@ -4311,6 +4364,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     copyCarries(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
     copyCarries(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
     for(const t of data.tracks) copyCarries(pfx+'protocols/'+t.id+'/','foundation-v9',pfx+'protocols/'+t.id);
+    // EEGPT's section on every protocol page (2026-10-13): its row's figures, its gaps, in order, as often as printed.
+    for(const t of data.tracks) copyCarries(pfx+'protocols/'+t.id+'/','eegpt',pfx+'protocols/'+t.id+' EEGPT');
     // Route 2 (2026-10-07): every section of its question that prints a figure.
     for(const id of ['motor-imagery','sleep','eesm19','secondary','methods-and-limits']) copyCarries(pfx+'topics/shared-encoder/',id,pfx+'shared-encoder');
     // Every route-1, v9 and route-2 group on the dataset and method pages.
@@ -4404,6 +4459,22 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       assert.equal(items.length,page.length,where+': as many row footnotes as the page');
       page.forEach((f,i)=>assert.ok(itemIs(items[i],'- ',f),where+': row footnote '+(i+1)+' is the page\'s, verbatim, not "'+items[i].slice(0,100)+'"'));
       footnotes+=page.length;
+      // EEGPT's footnotes to its row (2026-10-13), in the copy verbatim, in the page's order; in Chinese with the English.
+      {const eo=sectionHtml(html,'eegpt').match(/<h3 class="roadmap-h3" id="eegpt-footnotes">([^<]*)<\/h3>\s*<ol class="fm-footnotes eegpt-footnotes">([\s\S]*?)<\/ol>/);
+       assert.ok(eo,path+': EEGPT\'s footnotes');
+       // The lede names the run EEGPT shares: on idle LaBraM's alone (its footnote says CBraMod's idle row is another run's).
+       {const lede=sectionHtml(html,'eegpt').match(/<h2 id="eegpt-heading">[^<]*<\/h2><\/div><p>([^<]*)<\/p>/);
+        const want=t.type==='tradeoff'?(zh?'EEGPT 与上面已发布的 LaBraM 一行出自同一次运行，':'EEGPT ran in the same run as the published LaBraM row above, ')
+                                      :(zh?'EEGPT 与上面已发布的 LaBraM、CBraMod 各行出自同一批运行，':'EEGPT ran in the same runs as the published LaBraM and CBraMod rows above, ');
+        assert.ok(lede&&decodeHtml(lede[1]).startsWith(want),path+': the EEGPT lede names the run it shares');}
+       const fns=[...eo[2].matchAll(/<li id="fn-eegpt-[^"]+" data-footnote="[^"]+"><span>([^<]*)<\/span>(?:<span class="note-original" lang="en">([^<]*)<\/span>)?<\/li>/g)]
+         .map(m=>m[2]===undefined?{text:decodeHtml(m[1])}:{text:decodeHtml(m[1]),original:decodeHtml(m[2])});
+       const ep=mdSection(mdSection(md,norm(sectionHtml(html,'eegpt').match(/<h2 id="eegpt-heading">([^<]*)<\/h2>/)[1]),2),norm(eo[1]),3);
+       assert.ok(ep,where+': the copy has EEGPT\'s "'+eo[1]+'"');
+       const its=ep.split('\n').filter(l=>l.startsWith('- '));
+       assert.equal(its.length,fns.length,where+': as many EEGPT footnotes as the page');
+       fns.forEach((f,i)=>assert.ok(itemIs(its[i],'- ',f),where+': EEGPT footnote '+(i+1)+' is the page\'s, verbatim'));
+       footnotes+=fns.length;}
     }
     for(const f of htmlPages.filter(f=>f.startsWith(pfx+'methods/')&&(zh||!f.startsWith('zh/')))){
       const html=readFileSync(new URL(f,DIST),'utf8');if(!html.includes('id="checkpoints"'))continue;
@@ -4413,6 +4484,20 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       const arts=[...sec.matchAll(/<article class="fm-checkpoint" data-checkpoint="([^"]+)">([\s\S]*?)<\/article>/g)];
       assert.ok(arts.length>0,path+': its checkpoints');
       for(const [,id,art] of arts){
+        // EEGPT's page (2026-10-13): its one entry, from its own release; its row footnote term carries both row footnotes.
+        if(id==='eegpt'){
+          const name=decodeHtml(art.match(/<h3 lang="en">([^<]*)<\/h3>/)[1]);
+          assert.equal(name,EGX.model.name,path+': eegpt is the EEGPT export\'s model');
+          const sub=mdSection(part,name,3);assert.ok(sub,where+': the checkpoint '+name);
+          const items=sub.split('\n').filter(l=>l.startsWith('- ')),pairs=[...art.matchAll(/<div><dt>([^<]*)<\/dt><dd>([\s\S]*?)<\/dd><\/div>/g)];
+          assert.equal(items.length,pairs.length,where+' '+name+': every term the page prints');
+          pairs.forEach(([,dt,dd],i)=>{assert.equal(squash(items[i]),squash('- '+dt+': '+blockText(dd)),where+' '+name+': "'+decodeHtml(dt)+'" as the page prints it');terms++;});
+          const fn=items.filter(l=>l.startsWith('- '+(zh?'各行脚注':'Row footnote')+': '));
+          assert.equal(fn.length,1,where+' '+name+': one row-footnote term');
+          for(const f of EGX.footnotes.filter(f=>f.placement==='row'))
+            assert.ok(squash(fn[0]).includes(squash(zh?EZ[f.text]+f.text:f.text)),where+' '+name+': the row footnote "'+f.id+'", verbatim'+(zh?', with the English':''));
+          footnotes++;continue;
+        }
         const m=FMX.models.find(x=>x.id===id),name=decodeHtml(art.match(/<h3 lang="en">([^<]*)<\/h3>/)[1]);
         assert.ok(m&&m.name===name,path+': '+id+' is the export\'s '+name);
         const sub=mdSection(part,name,3);assert.ok(sub,where+': the checkpoint '+name);
@@ -4485,6 +4570,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     parasCarried(pfx+'topics/when-not-to-act/','reliable-decisions',pfx+'when-not-to-act');
     parasCarried(pfx+'topics/does-pretraining-help/','v9-encoders',pfx+'does-pretraining-help');
     parasCarried(pfx+'topics/fewer-electrodes/','v9-montage',pfx+'fewer-electrodes');
+    // EEGPT's section on every protocol page: every paragraph as printed, its exposure key and corpus among them.
+    for(const t of data.tracks) parasCarried(pfx+'protocols/'+t.id+'/','eegpt',pfx+'protocols/'+t.id+' EEGPT');
     for(const id of ['design','motor-imagery','sleep','eesm19','secondary','methods-and-limits']) parasCarried(pfx+'topics/shared-encoder/',id,pfx+'shared-encoder');
   }
   // Review of 2026-10-07: the copies of every BOAS region carry its conditions. The checks above read figures, and
@@ -5304,8 +5391,12 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     assert.equal((unent(du).match(/No ethics-approval or informed-consent statement was found\. The dataset card has none/g)||[]).length,1,'data use: the handwriting gap is stated in full once');
   } else assert.ok(hr.includes('The handwriting dataset, held'),'data use: the handwriting analysis held');
   const ee=du.slice(du.indexOf('id="eegpt"'),du.indexOf('</p>',du.indexOf('id="eegpt"')));
-  for(const s of ['this project’s own conservative choice, not a publisher’s rule','The core-matrix EEGPT scores are not on the site’s pages, but some of them have been in audit records in the public repository','this paragraph first said the comparison was the only EEGPT figure published','covers the repository’s source code only','No original or converted weights are distributed'])
+  // Since 2026-10-13 the paragraph points to the core release below (#eegpt-core) instead of saying the core-matrix
+  // scores are not on the site's pages; its 2026-10-12 correction stays. The link names its section, so the Markdown
+  // copy, which drops in-page jump links, keeps it.
+  for(const s of ['this project’s own conservative choice, not a publisher’s rule','its core-matrix cells and pretraining-attribution rows followed on 13 October 2026, in the section <a href="/data-use/#eegpt-core">EEGPT on the core matrix</a> below','Some of them had been in audit records in the public repository','this paragraph first said the comparison was the only EEGPT figure published','covers the repository’s source code only','No original or converted weights are distributed'])
     assert.ok(ee.includes(s),'data use: the EEGPT change — '+s);
+  assert.doesNotMatch(ee,/are not on the site’s pages|whether they are published is a separate decision/,'data use: no stale EEGPT status');
   assert.doesNotMatch(visible(ee),/(?:weights|checkpoint)[^.;]{0,40}is Apache|weights[^.;]{0,20}Apache-2\.0/i,'data use: the EEGPT weights are never called Apache-2.0');
   assert.ok(du.includes('id="small-cohorts-pilots"')&&(HW_ON?/One animal, two folders, five and eight people/:/One animal, two folders, eight people/).test(du),'data use: the small-cohort note covers one animal, two folders and the pilots\' people');
   if(HW_ON){const sc=unent(du.slice(du.indexOf('id="small-cohorts-pilots"'),du.indexOf('</p>',du.indexOf('id="small-cohorts-pilots"'))));
@@ -5910,5 +6001,420 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   }
   assert.ok(pinned>200,'pilot-studies: figures pinned to their cells ('+pinned+')');
   console.log(`PASS: pilot studies — /topics/pilot-studies/ in both languages: ${pinned} figures pinned to their cells from ${PS}, the same figures in English and Chinese; Orthosis as one cohort in three labelled configurations, the 64-channel baseline against its confound probe, prior and permutation range, frozen EEGPT against the matched classical features with the paired interval spanning zero, every metric in the table; BINGO's four directions against the prior, its controls and contrast, the delivered preprocessing beside it unverified and the project's own figure labelled as theirs; ${HW_ON?'the handwriting analysis\'s five arms against the majority line at chance, the mask-only interval withheld and its bounds absent, the three paired contrasts with the elapsed-time one crossing zero, the availability counts and histogram, the earlier analysis as context, and a short pointer to its rights gap beside the result;':'the held handwriting analysis figure-free;'} REFED's four arms in both conditions against the global mean, no interval; the status-only arms figure-free; required caveats beside their numbers, forbidden readings only denied, no typed figure, no update wording or version label, no Jev, the EEGPT weights never Apache-2.0; every credit with its licence and consent; the card under Other signals & pilots, ${1+2*Number(BINGO_ON)+Number(HW_ON)} map entries, one pointer from does-pretraining-help.`);
+}
+// --- 2026-10-13 EEGPT on the core matrix: the registrations ------------------------------------------------------------
+// EEGPT's eight core-matrix cells and its pretraining-attribution rows (eegpt-core-update.json; owner decisions of
+// 2026-10-12 and 2026-10-13), registered as the further encoders are: (1) the translation table, every key a sentence of
+// the export carrying exactly its numbers, in Chinese, with no rejected rendering; (2) the release entry, with the
+// owner's record, the EEG-DINO distinction and the public audit's old label; (3) /data-use/: the record, every core
+// protocol's rights record with what this release publishes on it, the terms (never Apache weights) and what is not
+// published, read from the export; (4) EEGPT's method page in both languages: a group per core protocol read with the
+// protocol page's EEGPT section, every figure a percent leaf of the export, each footnote printed once on the page, its
+// attribution rows, the checkpoint and its terms, no endorsement once, the exposure table with its sources, the pilot
+// comparison linked; (5) the seven core dataset pages: EEGPT's group after the further encoders', each of its footnotes
+// once a page, and its attribution rows inside the published attribution groups. The protocol pages, the home page and
+// the topics that print the row carry their own checks.
+{
+  const EJ='eegpt-core-update.json',REL=EGX.release_id;
+  const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const MVPSLUG={ds003810:'ds003810',EEGMAT:'eegmat','EESM19 scalp subset':'eesm19',BETA:'beta','TMNRED / ds005383':'tmnred',ds006593:'ds006593',ds005342:'ds005342'};
+  const cells=Object.fromEntries(EGX.cells.map(c=>[c.protocol,c]));
+  const fig=(f,raw)=>`data-fig="${EJ}|${f}|${raw}"`;
+  const count=(hay,needle)=>hay.split(needle).length-1;
+  const inLangText=(en,zh)=>zh?EZ[en]:en;
+  const groupOf=(html,gid)=>{const a=html.indexOf(`id="${gid}"`);return a<0?'':html.slice(a,html.indexOf('</section>',a));};
+  const bodyRows=grp=>{const tb=grp.indexOf('<tbody>');return tb<0?0:(grp.slice(tb,grp.indexOf('</tbody>',tb)).match(/<tr>/g)||[]).length;};
+  const apacheWeights=/(?:weights|checkpoint|权重|检查点)[^.。;；]{0,40}(?:is|为|是) Apache|weights[^.。;；]{0,20}Apache-2\.0|权重[^。；]{0,20}Apache/i;
+  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?|state of the art)\b/i,zh:/最佳|最好的|胜出|排名第|最先进/};
+  assert.ok(EGX.schema_version==='bci-report-eegpt-core-update-v1'&&REL==='eegpt-core-update-20261013','EEGPT: the release and schema');
+  assert.ok(EGX.model.weights_licence===null&&EGX.model.weights_distributed===false&&EGX.model.code_licence==='Apache-2.0'&&EGX.pilot_comparison.leaderboard===false,'EEGPT: the terms the pages print');
+  // (1) The translation table.
+  {
+    const strings=new Set();const walk=v=>{if(typeof v==='string')strings.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(walk);};walk(EGX);
+    // A number, with its thousands separators; a list's comma ("PO5, PO6") is not part of it.
+    const digits=t=>[...t.matchAll(/\d+(?:,\d{3})*(?:\.\d+)?/g)].map(m=>m[0]).sort();
+    for(const [en,zh] of Object.entries(EZ)){
+      assert.ok(strings.has(en),'eegpt-core-zh.ts: "'+en.slice(0,50)+'" matches no text in the EEGPT export');
+      assert.deepEqual(digits(zh),digits(en),'eegpt-core-zh.ts: the Chinese for "'+en.slice(0,50)+'" must carry exactly its numbers');
+      assert.ok(/\p{Script=Han}/u.test(zh),'eegpt-core-zh.ts: "'+en.slice(0,50)+'" has no Chinese');
+      for(const [bad,good] of Object.entries(rejected)) assert.ok(!hasRejected(zh,bad),`eegpt-core-zh.ts: "${bad}" is a rejected rendering — use "${good}"`);
+    }
+    for(const t of [...EGX.footnotes.map(f=>f.text),EGX.model.weights_licence_status,EGX.model.code_licence_scope,EGX.model.weights_note,EGX.model.rights_review,
+                    EGX.model.input,EGX.model.pooling,EGX.pretraining_exposure.model.corpus,EGX.pretraining_exposure.statement,EGX.directory_status.note])
+      assert.ok(EZ[t],'eegpt-core-zh.ts: no Chinese for "'+t.slice(0,50)+'"');
+  }
+  // (2) The release entry.
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const rel=pageOf(prefix+'releases/'),a=rel.indexOf(`id="${REL}"`),entry=rel.slice(a,rel.indexOf('</article>',a)),w=prefix+'releases/ '+REL;
+    assert.ok(a>0&&entry.includes(`<time datetime="${EGX.generated_at}">`)&&entry.includes(`href="/data/${EJ}"`)&&entry.includes(EGX.provenance.manifest_sha256),w+': the entry, its date, file and manifest');
+    for(const p of ['protocols','methods']) assert.ok(entry.includes(`href="/${prefix}${p}/"`),w+': names the '+p+' hub');
+    assert.ok(entry.includes(label==='en'?'How EEGPT differs from EEG-DINO':'EEGPT 与 EEG-DINO 的区别')&&entry.includes('hold-unresolved-weight-license'),w+': the EEG-DINO distinction and the public audit\'s old label');
+    assert.ok(entry.includes(label==='en'?'Owner decisions of 12 and 13 October 2026':'所有者 2026 年 10 月 12 日与 13 日的决定'),w+': the owner\'s record');
+    // The narrow gaps the note names are the export's own (comparisons, at two decimals), with the relations it states.
+    {const rowsOf=p=>EGX.comparisons.protocols.find(x=>x.protocol===p).rows,sl=rowsOf('sleep-scalp');
+     assert.ok(sl.every(r=>r.relation==='above'),w+': on sleep EEGPT lies above every core-matrix row, as the note says');
+     const near=sl.reduce((a,b)=>b.gap_pp<a.gap_pp?b:a);
+     assert.equal(near.row,'spectral-ridge',w+': the nearest sleep row is spectral ridge');
+     for(const g of [near,rowsOf('p300-target').find(r=>r.row==='labram'),rowsOf('semantic-target').find(r=>r.row==='spectral-ridge'),rowsOf('beta-4ch').find(r=>r.row==='labram')]){
+       assert.equal(g.relation,'above',w+': EEGPT above '+g.name);
+       assert.ok(entry.includes(g.gap_pp.toFixed(2)+' pp'),w+': the note gives the export\'s gap of '+g.gap_pp.toFixed(2)+' pp to '+g.name);}}
+    assert.doesNotMatch(visible(entry),apacheWeights,w+': the weights are never called Apache-2.0');
+    assert.doesNotMatch(visible(label==='zh'?chineseOnly(entry):entry),ranking[label],w+': no ranking word');
+  }
+  // (3) Data use.
+  {
+    const du=pageOf('data-use/'),a=du.indexOf('<section id="eegpt-core">'),sec=du.slice(a,du.indexOf('</section>',a)),r=EGX.release_record;
+    assert.ok(a>du.indexOf('id="sources-pilot-studies"'),'data use: EEGPT on the core matrix, after the pilot studies');
+    for(const t of [r.decision,r.rights,r.eeg_dino,r.attribution_audit_label.split(' (')[0].replace('The public attribution audit',''),EGX.model.weights_licence_status])
+      assert.ok(sec.includes(e(t)),'data use: EEGPT — "'+t.slice(0,60)+'"');
+    // The release's rights reasoning says what Apache-2.0 covers; the model's terms say it once, not again after it.
+    assert.ok(r.rights.includes('Apache-2.0 covers the repository’s code only'),'data use: the rights reasoning names the code licence\'s scope');
+    assert.equal(count(visible(sec),/Apache-2\.0/g),1,'data use: Apache-2.0 named once in the EEGPT section');
+    assert.ok(sec.includes('research/deployment_validation_20260920/attribution-independent-audit.json')&&sec.includes('<code>research-preview-20260920</code>')&&sec.includes(`href="/releases/#${REL}"`),'data use: the public audit named, the first release and this one linked');
+    const rows=[...sec.matchAll(/<tr data-eegpt-source="([^"]+)">([\s\S]*?)<\/tr>/g)];
+    assert.deepEqual(rows.map(m=>m[1]),EGX.protocols.map(p=>p.id),'data use: one rights record per core protocol, in order');
+    for(const [,id,tr] of rows){const p=EGX.protocols.find(x=>x.id===id);
+      assert.ok(tr.includes(e(p.rights.published_here))&&tr.includes(`href="${e(p.rights.licenseUrl)}"`)&&tr.includes(`href="/protocols/${id}/#eegpt"`),'data use: '+id+'\'s record, licence and what is published');}
+    const items=[...sec.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m=>decodeHtml(m[1]));
+    assert.deepEqual(items,EGX.not_published,'data use: what is not published, as the export lists it');
+    assert.doesNotMatch(visible(sec),apacheWeights,'data use: the EEGPT weights are never called Apache-2.0');
+    assert.equal(count(du,'id="eegpt-core"'),1,'data use: one EEGPT core section');
+  }
+  // (4) The method page.
+  const footnoteGroup=Object.fromEntries(EGX.footnotes.map(f=>[f.id,f.protocols[0]]));
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=prefix+'methods/eegpt/',html=pageOf(path),body=zh?chineseOnly(html):html;
+    assert.ok(!html.includes('eegpt-terms-note'),path+': its terms are stated with the model, not again under a group');
+    for(const t of data.tracks){
+      const c=cells[t.id],grp=groupOf(html,`g-${MVPSLUG[t.dataset]}-${t.id}-eegpt`),w=path+' '+t.id;
+      assert.ok(grp&&grp.includes(`href="/${prefix}protocols/${t.id}/#eegpt"`),w+': the group, read with the protocol page\'s EEGPT section');
+      if(c.protocol==='idle'){
+        assert.equal(bodyRows(grp),4,w+': detections, false activations and the two window metrics');
+        for(const [f,v] of [['count',c.commands_detected],['count',c.command_trials],['count',c.idle_false_activations],['count',c.idle_trials],['count',c.always_abstain_people],
+                            ['pct1raw',c.percent.window_balanced_accuracy],['auc3',c.window_auroc]]) assert.ok(grp.includes(fig(f,v)),w+': '+f+' '+v);
+      } else {
+        assert.equal(bodyRows(grp),1,w+': one row');
+        for(const v of [c.percent.balanced_accuracy,...c.percent.interval_95,c.percent.chance_level]) assert.ok(grp.includes(fig('pct1raw',v)),w+': '+v+' from the percent block');
+      }
+    }
+    // Each footnote once on the page: a cell footnote under the group of its first protocol, the row's two and the BETA
+    // context with the model (checkpoints and exposure).
+    for(const f of EGX.footnotes){
+      const t=e(inLangText(f.text,zh));
+      assert.equal(count(body,t),1,path+': the footnote '+f.id+' once');
+      const inGroups=f.placement==='cell'&&f.id!=='tsinghua-benchmark-context';
+      if(inGroups){const t0=data.tracks.find(x=>x.id===footnoteGroup[f.id]);assert.ok(groupOf(html,`g-${MVPSLUG[t0.dataset]}-${t0.id}-eegpt`).includes(t),path+': '+f.id+' beside its cells');}
+      else assert.ok(html.slice(html.indexOf('id="checkpoints"')).includes(t),path+': '+f.id+' with the model');
+    }
+    // The attribution rows, as EEGPT's own groups on its page.
+    for(const r of EGX.pretraining_attribution.rows){
+      const ds=r.dataset_id==='ds003810'?'ds003810':'eegmat',grp=groupOf(html,`g-${ds}-${r.track}`);
+      assert.ok(grp.includes(fig('pct1',r.value))&&grp.includes(`href="/${prefix}topics/does-pretraining-help/"`),path+': the attribution row '+r.id);
+    }
+    // The checkpoint and its terms, no endorsement once, the pilot linked.
+    const cp=html.slice(html.indexOf('<section class="topic-section" id="checkpoints"'),html.indexOf('</section>',html.indexOf('id="checkpoints"')));
+    assert.ok(cp.includes('<article class="fm-checkpoint" data-checkpoint="eegpt">')&&cp.includes(fig('m2',EGX.model.encoder_parameters))
+      &&cp.includes(EGX.model.source_revision)&&cp.includes(EGX.model.checkpoint.sha256)&&cp.includes(e(EGX.model.checkpoint.file)),path+': the checkpoint, its revision and hash');
+    for(const t of [EGX.model.weights_licence_status,EGX.model.code_licence_scope,EGX.model.weights_note,EGX.model.rights_review,EGX.model.input,EGX.model.pooling]){
+      // The code licence prints with its scope: "Apache-2.0 (the repository's source code only)".
+      const en=t===EGX.model.code_licence_scope?`${EGX.model.code_licence} (${t})`:t;
+      assert.ok(cp.includes(e(inLangText(t,zh)))&&(!zh||cp.includes(`<span class="note-original" lang="en">${e(en)}</span>`)),path+': "'+t.slice(0,40)+'"'+(zh?', with the English':''));}
+    assert.ok(cp.includes(`href="/${prefix}topics/pilot-studies/#orthosis" data-eegpt-pilot="true"`),path+': the pilot comparison linked');
+    assert.equal(endorseCount(html),1,path+': no endorsement, once');
+    assert.doesNotMatch(visible(html.replace(/<span class="note-original"[^>]*>[^<]*<\/span>/g,'')),apacheWeights,path+': the weights are never called Apache-2.0');
+    const main=body.slice(body.indexOf('id="results-heading"'),body.indexOf('<section class="cite-page"'));
+    assert.doesNotMatch(visible(main),ranking[label],path+': no ranking word');
+    // The exposure table: seven datasets, the statement and its sources; corpus and context below it.
+    const xs=html.slice(html.indexOf('id="pretraining-exposure"'),html.indexOf('</section>',html.indexOf('id="pretraining-exposure"')));
+    assert.ok(xs.includes(label==='en'?`checked on ${EGX.pretraining_exposure.checked_on}`:`于 ${EGX.pretraining_exposure.checked_on} 核查`),path+': when the exposure was checked');
+    const trs=[...xs.matchAll(/<tr data-exposure="([^"]+)">([\s\S]*?)<\/tr>/g)];
+    assert.equal(trs.length,EGX.pretraining_exposure.cells.length,path+': seven datasets');
+    for(const c of EGX.pretraining_exposure.cells){
+      const tr=trs.find(x=>c.protocols.every(p=>x[2].includes(`protocols/${p}/"`)));
+      assert.ok(tr&&tr[1]===c.status&&tr[2].includes(e(inLangText(c.statement,zh))),path+': '+c.dataset+': the statement');
+      assert.deepEqual([...tr[2].slice(tr[2].lastIndexOf('<td>')).matchAll(/href="([^"]+)"/g)].map(x=>decodeHtml(x[1])),c.urls,path+': '+c.dataset+': its sources');
+    }
+    assert.ok(xs.includes(e(inLangText(EGX.pretraining_exposure.model.corpus,zh))),path+': the pretraining corpus');
+  }
+  // (5) The seven core dataset pages.
+  for(const [label,prefix] of [['en',''],['zh','zh/']]) for(const ds of [...new Set(data.tracks.map(t=>MVPSLUG[t.dataset]))]){
+    const zh=label==='zh',path=prefix+'datasets/'+ds+'/',html=pageOf(path),body=zh?chineseOnly(html):html;
+    const tracks=data.tracks.filter(t=>MVPSLUG[t.dataset]===ds);
+    for(const t of tracks){
+      const a=html.indexOf(`id="g-${t.id}-eegpt"`),grp=groupOf(html,`g-${t.id}-eegpt`);
+      assert.ok(a>html.indexOf(`id="g-${t.id}-foundation-v9"`)&&grp.includes(`href="/${prefix}protocols/${t.id}/#eegpt"`),path+': the '+t.id+' EEGPT group follows the further encoders\' and links the EEGPT section');
+      assert.equal(bodyRows(grp),t.id==='idle'?4:1,path+': '+t.id+' rows');
+    }
+    for(const id of [...new Set(tracks.flatMap(t=>cells[t.id].footnotes))])
+      assert.equal(count(body,e(inLangText(EGX.footnotes.find(f=>f.id===id).text,zh))),1,path+': the footnote '+id+' once on the page');
+    // The checkpoint's terms beside its figures, as on every other page that prints them: once, under its first group.
+    {const terms=[...html.matchAll(/<p class="protocol-note eegpt-terms-note" data-eegpt-terms="([^"]+)">([\s\S]*?)<\/p>/g)];
+     assert.equal(terms.length,1,path+': EEGPT\'s terms once on the page');
+     assert.ok(terms[0][1]===tracks[0].id&&groupOf(html,`g-${tracks[0].id}-eegpt`).includes(terms[0][0]),path+': under its first EEGPT group');
+     assert.ok(terms[0][2].includes(zh?'EEGPT：检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。'
+                                     :'EEGPT: the checkpoint’s licence is unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only.')
+               &&terms[0][2].includes(`href="/${prefix}protocols/${tracks[0].id}/#eegpt-terms"`),path+': the terms, linking the protocol page\'s list');}
+    for(const r of EGX.pretraining_attribution.rows.filter(r=>(r.dataset_id==='ds003810'?'ds003810':'eegmat')===ds)){
+      const grp=groupOf(html,`g-${r.track}`);
+      assert.ok(grp.includes(fig('pct1',r.value))&&grp.includes('data-fig="deployment-topics.json|')&&grp.includes(`href="/data/${EJ}"`),path+': EEGPT\'s '+r.track+' row inside the published group');
+    }
+  }
+  console.log(`PASS: EEGPT on the core matrix, registered — ${Object.keys(EZ).length} translated sentences of ${EJ}, each a sentence of the export with its numbers; the release entry with the owner's record, the EEG-DINO distinction and the public audit's old label; /data-use/ with the record, ${EGX.protocols.length} rights records and what is not published; the method page in both languages with ${data.tracks.length} groups read with the protocol pages' EEGPT section, every figure a percent leaf, each of ${EGX.footnotes.length} footnotes once, ${EGX.pretraining_attribution.rows.length} attribution rows, the checkpoint and its terms, the exposure table and the pilot linked; the core dataset pages with EEGPT's groups and its attribution rows beside the published ones; the weights never Apache-2.0, no ranking word.`);
+}
+// --- 2026-10-13 EEGPT on the core matrix: the protocol pages, the home page and the topics ------------------------------
+// EEGPT's frozen row where the further encoders' rows are (eegpt-core-update.json): (1) each protocol page's own EEGPT
+// section, after the further encoders', every figure a leaf of the export in its cell's units, the chance flag by the
+// core rule, its exposure statement and source, each footnote beside the row and printed once on the page, its
+// relation to every published row with the gap between the intervals, re-derived here from the released intervals, its
+// terms (never Apache weights) and its release; (2) the protocols index links each section; (3) the home page counts it
+// among the frozen encoders, embeds its row in the same fields as the further encoders', renders it after their group
+// (first paint = the script's render, family filter, chart, dialog, tool), states its terms and never ranks it; (4)
+// does-pretraining-help: its attribution rows and contrasts beside LaBraM's and CBraMod's, the short answer, dek and
+// card as far as those rows go, its footnotes once, its sources; its sleep and BETA rows in the further-encoder tables
+// with its export's relations and gaps; fewer-electrodes: its BETA and sleep row, the overlap by the released rows'
+// rule, its footnotes once; (5) no page but the release log still says its core-matrix scores are unpublished or shows
+// the pilot-only status; the same figures in English and Chinese; no ranking word.
+{
+  const EJ='eegpt-core-update.json',REL=EGX.release_id;
+  const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const fig=(f,raw)=>`data-fig="${EJ}|${f}|${raw}"`;
+  const count=(hay,needle)=>hay.split(needle).length-1;
+  const inLang=(en,zh)=>zh?EZ[en]:en;
+  const cells=Object.fromEntries(EGX.cells.map(c=>[c.protocol,c]));
+  const cmpOf=p=>EGX.comparisons.protocols.find(x=>x.protocol===p);
+  const fnText=id=>EGX.footnotes.find(f=>f.id===id).text;
+  const exposureOf=p=>EGX.pretraining_exposure.cells.find(c=>c.protocols.includes(p));
+  const figsIn=h=>[...h.matchAll(/data-fig="([^|"]+)\|(\w+)\|([^"]+)"/g)].map(m=>({file:m[1],fmt:m[2],raw:Number(m[3])}));
+  const apacheWeights=/(?:weights|checkpoint|权重|检查点)[^.。;；]{0,40}(?:is|为|是) Apache|weights[^.。;；]{0,20}Apache-2\.0|权重[^。；]{0,20}Apache/i;
+  const ranking={en:/\b(?:best|top|winner|leader|outperform\w*|beats?|state of the art|ranks?)\b|\branked\b(?<!never ranked)(?<!not ranked)/i,zh:/最佳|最好的|胜出|排名第|最先进/};
+  const notProof={en:/\bnot exposed\b|\bproven\b|\bno overlap\b/i,zh:/已证明|证明没有|没有重叠/};
+  const noOriginals=h=>h.replace(/<span class="note-original"[^>]*>[^<]*<\/span>/g,'');
+  // A cell's footnotes in print order: its own (cell placement), then the row's, as eegpt-core.ts footnotesOf orders them.
+  const fnOrder=p=>{const ids=cells[p].footnotes,pl=id=>EGX.footnotes.find(f=>f.id===id).placement;return [...ids.filter(id=>pl(id)==='cell'),...ids.filter(id=>pl(id)==='row')];};
+  // The released rows' intervals: the relation and the gap EEGPT's export states, re-derived here (non-overlap rule).
+  const relationOf=(p,row)=>{const t=data.tracks.find(x=>x.id===p),r=t.rows.find(x=>x.id===row),[lo,hi]=cells[p].percent.interval_95;
+    return lo>r.interval[1]?{rel:'above',gap:lo-r.interval[1]}:hi<r.interval[0]?{rel:'below',gap:r.interval[0]-hi}:{rel:'overlap',gap:null};};
+  let protocolFigs=0;
+
+  // (1) The protocol pages.
+  for(const t of data.tracks){
+    const c=cells[t.id],tradeoff=t.type==='tradeoff',x=exposureOf(t.id);
+    for(const [label,prefix] of [['en',''],['zh','zh/']]){
+      const zh=label==='zh',path=prefix+'protocols/'+t.id+'/',html=pageOf(path),w=path+'#eegpt';
+      const a=html.indexOf('<section class="topic-section fm-section eegpt-section" id="eegpt"'),sec=html.slice(a,html.indexOf('</section>',a));
+      assert.ok(a>html.indexOf('<section class="topic-section fm-section" id="foundation-v9"')&&a<html.indexOf('id="methods-and-limits"'),w+': EEGPT\'s section follows the further encoders\', before the limits');
+      assert.ok(sec.includes(`data-release="${REL}"`)&&sec.includes(`href="/data/${EJ}" download`)&&sec.includes(`href="/${prefix}releases/#${REL}"`)&&sec.includes(`href="/${prefix}methods/eegpt/"`),w+': its release, its JSON and its method page');
+      const rows=[...sec.matchAll(/<tr data-eegpt-row="([^"]+)" data-exposure="([^"]+)">([\s\S]*?)<\/tr>/g)];
+      assert.equal(rows.length,1,w+': one EEGPT row');
+      const [,rid,xs,row]=rows[0];
+      assert.ok(rid===t.id&&xs===c.exposure.status&&c.exposure.status===x.status,w+': the row names its protocol and its exposure status');
+      const figs=figsIn(row);
+      assert.ok(figs.every(f=>f.file===EJ),w+': every figure of the row from EEGPT\'s export');
+      const expected=tradeoff?[c.percent.command_detection,c.commands_detected,c.command_trials,c.always_abstain_people,c.people,c.percent.idle_false_activation,
+                               c.idle_false_activations,c.idle_trials,c.percent.window_balanced_accuracy,c.window_auroc,c.channels,c.people]
+                             :[c.percent.balanced_accuracy,...c.percent.interval_95,c.macro_f1,c.channels,c.people];
+      assert.deepEqual(figs.map(f=>f.raw),expected,w+': the row is the export\'s cell, column by column, in the core rows\' units');
+      protocolFigs+=figs.length;
+      if(!tradeoff){
+        const ch=c.percent.chance_level,y=c.percent.balanced_accuracy,lo=c.percent.interval_95[0];
+        assert.ok(ch===t.chanceLevel&&c.at_or_below_chance===(y<=ch)&&c.interval_includes_chance===(lo<=ch),w+': the export\'s chance flags are the core rule\'s');
+        const fb=zh?'不高于随机水平':'At or below chance level',fr=zh?'区间触及随机水平':'Interval reaches chance level';
+        assert.equal(row.includes(fb),y<=ch,w+': at or below chance flagged where it is');
+        assert.equal(row.includes(fr),y>ch&&lo<=ch,w+': an interval reaching chance flagged where it does');
+        // The plot: the released rows with an interval, then EEGPT.
+        assert.equal((sec.match(/<div class="ip-row">/g)||[]).length,t.rows.filter(r=>r.interval).length+1,w+': the plot shows the released rows and EEGPT');
+      } else assert.ok(row.includes('class="flag"><span data-fig')===(c.always_abstain_people>0),w+': people who always abstained are flagged');
+      assert.ok(row.includes('<small>'+e(inLang(c.exposure.statement,zh))+'</small>')&&row.includes(`href="${e(x.urls[0])}"`)&&!row.includes('fm-badge'),w+': the sourced exposure statement and its source, no badge');
+      // The footnotes beside the row, each once on the page; on the Chinese page with the English beside it.
+      const ol=sec.match(/<ol class="fm-footnotes eegpt-footnotes">([\s\S]*?)<\/ol>/);
+      assert.ok(ol,w+': the row\'s footnotes');
+      const lis=[...ol[1].matchAll(/<li id="fn-eegpt-([^"]+)" data-footnote="([^"]+)"><span>([^<]*)<\/span>(?:<span class="note-original" lang="en">([^<]*)<\/span>)?<\/li>/g)];
+      assert.deepEqual(lis.map(m=>m[2]),fnOrder(t.id),w+': the cell\'s footnotes, its own first, then the row\'s');
+      for(const [,,id,text,orig] of lis){
+        assert.equal(decodeHtml(text),inLang(fnText(id),zh),w+': the footnote '+id+' as the export states it');
+        if(zh) assert.equal(decodeHtml(orig??''),fnText(id),w+': the footnote '+id+' with its English');
+      }
+      for(const f of EGX.footnotes) assert.equal(count(zh?chineseOnly(html):html,e(inLang(f.text,zh))),cells[t.id].footnotes.includes(f.id)?1:0,w+': the footnote '+f.id+' once on the page, where it bears');
+      // Against the published rows: the export's relation and gap for each, the same as the released intervals give.
+      const vs=[...sec.matchAll(/<li data-vs="([^"]+)" data-relation="([^"]+)">([\s\S]*?)<\/li>/g)];
+      if(tradeoff) assert.equal(vs.length,0,w+': no relation on the idle protocol, which has no interval');
+      else {
+        const cm=cmpOf(t.id);
+        assert.deepEqual(vs.map(m=>m[1]),t.rows.map(r=>r.id),w+': every published row, in the matrix order');
+        for(const [,id,rel,li] of vs){
+          const r=cm.rows.find(x=>x.row===id),d=relationOf(t.id,id);
+          assert.ok(rel===r.relation&&rel===d.rel,w+': '+id+' '+rel+', as the export and the intervals say');
+          if(d.gap===null) assert.ok(r.gap_pp===null&&!li.includes('data-fig'),w+': '+id+' overlaps, with no gap');
+          else {assert.ok(Math.abs(r.gap_pp-d.gap)<1e-9&&li.includes(fig('gap2',r.gap_pp)),w+': '+id+' the gap between the intervals, '+r.gap_pp+' pp');protocolFigs++;}
+        }
+      }
+      // The terms: the code licence with its scope, the checkpoint's licence unresolved, nothing distributed.
+      const terms=sec.slice(sec.indexOf('<ul class="entity-links protocol-prose eegpt-terms">'),sec.indexOf('</ul>',sec.indexOf('eegpt-terms">')));
+      for(const s of [EGX.model.weights_licence_status,EGX.model.weights_note,EGX.model.rights_review,EGX.model.code_licence_scope])
+        assert.ok(terms.includes(e(inLang(s,zh)))&&(!zh||terms.includes(e(s))),w+': the term "'+s.slice(0,40)+'"'+(zh?', with its English':''));
+      assert.doesNotMatch(visible(noOriginals(sec)),apacheWeights,w+': the weights are never called Apache-2.0');
+      assert.ok(sec.includes(e(inLang(EGX.pretraining_exposure.model.corpus,zh)))&&sec.includes(zh?`于 ${EGX.pretraining_exposure.checked_on} 核查`:`checked on ${EGX.pretraining_exposure.checked_on}`),w+': the corpus, and when the list was checked');
+      const vis=visible(zh?chineseOnly(sec):sec);
+      assert.doesNotMatch(vis,ranking[label],w+': no ranking word');
+      assert.doesNotMatch(vis,notProof[label],w+': no exposure claim beyond the authors\' list');
+      assert.ok(vis.includes(zh?'从不排名':'never ranked'),w+': grouped, never ranked');
+      // The released "pretraining exposure" paragraph points here too.
+      const ce=html.slice(html.indexOf('<p class="roadmap-p fm-core-exposure">'),html.indexOf('</p>',html.indexOf('<p class="roadmap-p fm-core-exposure">')));
+      assert.ok(ce.includes('href="#eegpt"'),w+': the exposure paragraph of the limits points to EEGPT\'s section');
+    }
+  }
+  // (2) The protocols index.
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const index=pageOf(prefix+'protocols/');
+    for(const t of data.tracks){
+      const tr=index.slice(index.indexOf(`<tr data-protocol="${t.id}">`),index.indexOf('</tr>',index.indexOf(`<tr data-protocol="${t.id}">`)));
+      assert.ok(tr.includes(`<small class="fm-count eegpt-count"><a href="/${prefix}protocols/${t.id}/#eegpt">${label==='en'?'+ EEGPT, frozen →':'另有 EEGPT（冻结）→'}</a></small>`),prefix+'protocols/: '+t.id+' links EEGPT\'s section');
+    }
+  }
+  // (3) The home page.
+  const round=(v,d)=>Number(Number(v).toFixed(d));
+  for(const label of ['en','zh']){
+    const zh=label==='zh',pfx=zh?'zh/':'',home=pageOf(pfx),J=JSON.parse(fmEmbedded(label));
+    assert.deepEqual(J.eegpt,{release:REL,file:EJ},label+': the embedded rows name EEGPT\'s release and file');
+    for(const t of data.tracks){
+      const c=cells[t.id],r=J.tracks[t.id].eegpt,tr=t.type==='tradeoff',w=label+' home '+t.id+' EEGPT';
+      assert.ok(r&&r.id==='eegpt'&&r.name===EGX.model.name&&r.panel==='eegpt'&&r.href===`/${pfx}methods/eegpt/`&&r.status==='complete',w+': identity');
+      assert.deepEqual([r.mode,r.channels,r.subjects],[tr?EGX.model.idle_mode:EGX.model.mode,c.channels,c.people],w+': mode, channels and people');
+      assert.deepEqual([r.y,r.x,r.interval],tr?[round(c.percent.command_detection,1),round(c.percent.idle_false_activation,1),null]
+                                              :[round(c.percent.balanced_accuracy,1),round(c.macro_f1,3),c.percent.interval_95.map(v=>round(v,1))],w+': figures at the precision printed');
+      assert.equal(r.chanceFlag,tr?null:c.at_or_below_chance?'at-or-below':c.interval_includes_chance?'interval-reaches':null,w+': the chance flag');
+      assert.deepEqual([r.exposure,r.exposureText,r.exposureSource],[c.exposure.status,inLang(c.exposure.statement,zh),exposureOf(t.id).urls[0]],w+': exposure');
+      assert.equal(r.footnote,fnOrder(t.id).map(id=>inLang(fnText(id),zh)).join(zh?'':' '),w+': its footnotes in the page\'s language');
+      assert.equal(r.licence,inLang(EGX.model.weights_licence_status,zh),w+': the checkpoint\'s licence status');
+      if(tr) assert.deepEqual(r.idle,{detected:c.commands_detected,commandTrials:c.command_trials,falseActivations:c.idle_false_activations,idleTrials:c.idle_trials,abstain:c.always_abstain_people},w+': idle counts');
+    }
+    // The script's render: after the further encoders' group, its own group and row; the family filter; the dialog.
+    const els=new Map(),g=s=>{if(!els.has(s))els.set(s,new Element());return els.get(s);};
+    g('#family-filter').value='all';g('#sort-results').value='name';g('#fm-rows').textContent=fmEmbedded(label);
+    const reg=[];
+    vm.runInNewContext(stripTypeScriptTypes(source),{data,document:{querySelector:g,querySelectorAll:()=>[],documentElement:{lang:zh?'zh-Hans':'en'},modelContext:{registerTool:x=>reg.push(x)}},window:{addEventListener(){}},AbortController,Promise,console});
+    // On idle only the LaBraM row shares EEGPT's run (the CBraMod idle row is from another run): the label says so there.
+    const headOf=t=>t.type==='tradeoff'?(zh?'EEGPT（冻结）· 与已发布的 LaBraM 一行出自同一次运行':'EEGPT, frozen · the same run as the published LaBraM row')
+                                       :(zh?'EEGPT（冻结）· 与已发布的 LaBraM、CBraMod 各行出自同一批运行':'EEGPT, frozen · the same runs as the published LaBraM and CBraMod rows');
+    const frozenOf=t=>t.type==='tradeoff'?(zh?'冻结探针：与已发布的 LaBraM 一行出自同一次运行，只替换编码器。从不排名。':'Frozen probe: the same run as the published LaBraM row, with only the encoder swapped. Never ranked.')
+                                         :(zh?'冻结探针：与已发布的 LaBraM、CBraMod 各行出自同一批运行，只替换编码器。从不排名。':'Frozen probe: the same runs as the published LaBraM and CBraMod rows, with only the encoder swapped. Never ranked.');
+    for(const t of data.tracks){
+      const head=headOf(t);
+      g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});
+      const html=g('#result-rows').innerHTML,w=label+' home '+t.id+' EEGPT',J=JSON.parse(fmEmbedded(label)).tracks[t.id].eegpt;
+      const gi=html.indexOf('<tr class="fm-group eegpt-group">'),ri=html.indexOf('<tr class="fm-row eegpt-row" data-fm="eegpt">');
+      assert.ok(gi>html.lastIndexOf('<tr class="fm-row" data-fm="')&&ri>gi,w+': its group and row follow the further encoders\'');
+      assert.ok(html.slice(gi,ri).includes(e(head)+` <a href="/${zh?'zh/':''}protocols/${t.id}/#eegpt">`),w+': the group names the same runs and links the protocol page\'s EEGPT section');
+      const row=html.slice(ri,html.indexOf('</tr>',ri));
+      assert.ok(row.includes('<strong>'+J.y.toFixed(1)+'%</strong>')&&row.includes('data-model="eegpt:eegpt"'),w+': its figure and its dialog key');
+      if(t.type!=='tradeoff'&&J.chanceFlag) assert.ok(row.includes('<span class="flag">'),w+': chance flag');
+      assert.ok(!row.includes('fm-badge'),w+': not in its authors\' list, no badge');
+      // The first paint is the script's render (the further encoders' check reads it from their group on).
+      if(t.id===data.tracks[0].id){const s0=home.indexOf('<tbody id="result-rows">'),st=home.slice(s0,home.indexOf('</tbody>',s0));
+        assert.ok(st.includes('<tr class="fm-group eegpt-group">')&&st.includes('<tr class="fm-row eegpt-row" data-fm="eegpt">'),label+': the first paint carries EEGPT\'s group and row');}
+      g('#result-rows').events.click({target:{closest:()=>({dataset:{model:'eegpt:eegpt'}})}});
+      const dlg=g('#dialog-body').innerHTML;
+      for(const s of [J.exposureText,J.licence,...fnOrder(t.id).map(id=>inLang(fnText(id),zh))]) assert.ok(dlg.includes(e(s)),w+': the dialog carries "'+s.slice(0,40)+'"');
+      assert.ok(dlg.includes('<p class="detail-note">'+frozenOf(t)+'</p>'),w+': the dialog names the run it shares');
+      assert.ok(dlg.includes(`href="/${zh?'zh/':''}protocols/${t.id}/#eegpt"`)&&dlg.includes(`href="/${zh?'zh/':''}methods/eegpt/"`)&&dlg.includes(`href="/data/${EJ}" download`)&&g('#detail-dialog').open,w+': the dialog links its section, its page and its JSON');
+      assert.ok(!/\bv9\b|第九轮|新增|\b[Aa]dded\b/.test(visible(dlg)),w+': no version label in the dialog');
+      assert.doesNotMatch(visible(noOriginals(dlg)),apacheWeights,w+': the weights are never called Apache-2.0');
+      g('#close-dialog').events.click();
+    }
+    g('#family-filter').value='small';g('#family-filter').events.change();
+    assert.ok(!g('#result-rows').innerHTML.includes('eegpt-row'),label+': the family filter hides EEGPT with the other foundation rows');
+    g('#family-filter').value='all';g('#family-filter').events.change();
+    // The note under the snapshot, the terms and the downloads.
+    const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
+    assert.ok(added.includes(`<span data-eegpt-release="${REL}">`)&&added.includes(`href="/${pfx}protocols/${data.tracks[0].id}/#eegpt"`)
+      &&added.includes(zh?'它同样不与这个快照排名':'not ranked against the snapshot either'),label+': the snapshot note names EEGPT, its release, not ranked, and links its row');
+    const terms=home.slice(home.indexOf('<p class="fm-terms-home eegpt-terms-home" id="eegpt-terms">'),home.indexOf('</p>',home.indexOf('id="eegpt-terms"')));
+    assert.ok(terms.includes(zh?'检查点的许可仍未厘清':'the checkpoint’s licence is unresolved')&&terms.includes(zh?'不分发任何原始或转换后的权重':'no original or converted weights are distributed')
+      &&terms.includes(`href="/${pfx}protocols/${data.tracks[0].id}/#eegpt-terms"`),label+': EEGPT\'s terms under the rows, linked');
+    assert.doesNotMatch(visible(terms),apacheWeights,label+': the weights are never called Apache-2.0');
+    assert.ok(home.includes(`<a id="download-eegpt" href="/data/${EJ}" download>`),label+': EEGPT\'s JSON linked beside the further encoders\' CSV');
+    assert.equal(endorseCount(home),1,label+': no endorsement, once on the home page');
+  }
+  {const en=JSON.parse(fmEmbedded('en')),zh=JSON.parse(fmEmbedded('zh'));
+   for(const t of data.tracks) assert.deepEqual(['y','x','interval','channels','subjects','idle'].map(k=>zh.tracks[t.id].eegpt[k]),['y','x','interval','channels','subjects','idle'].map(k=>en.tracks[t.id].eegpt[k]),t.id+': the same EEGPT figures in both languages on the home page');}
+
+  // (4) The topics.
+  const pp=v=>`${v>=0?'+':'−'}${Math.abs(v*100).toFixed(2)} pp`,pct=v=>`${(v*100).toFixed(1)}%`;
+  const PA=EGX.pretraining_attribution,ctr=(track,ds)=>PA.paired_contrasts.find(x=>x.track===track&&x.dataset_id===ds),rowOf=(track,ds,init)=>PA.rows.find(x=>x.track===track&&x.dataset_id===ds&&x.initialization===init);
+  const DS=['ds003810','physionet-eegmat-1.0.0'],TR=['pretraining-attribution-fixed','pretraining-attribution-selected'];
+  const ipp=(i,zh)=>`${i[0]>=0?'+':'−'}${Math.abs(i[0]*100).toFixed(2)} ${zh?'至':'to'} ${i[1]>=0?'+':'−'}${Math.abs(i[1]*100).toFixed(2)} pp`;
+  const attrTokens={};
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=prefix+'topics/does-pretraining-help/',html=pageOf(path),w=path,body=zh?chineseOnly(html):html;
+    // Every contrast and score of EEGPT's attribution rows, beside LaBraM's and CBraMod's in the same tables.
+    for(const ds of DS) for(const track of TR){
+      const x=ctr(track,ds);
+      assert.ok(x&&x.paired_participant_bootstrap_95[0]>0,w+': EEGPT\'s '+track+' contrast on '+ds+' lies above zero, as the dek says');
+      assert.ok(html.includes(`<span class="metric">${pp(x.difference)}</span><span class="interval">${ipp(x.paired_participant_bootstrap_95,zh)}</span>`),w+': the contrast '+track+'/'+ds+' with its paired interval');
+      for(const init of ['pretrained','constructor-random-mean']) assert.ok(html.includes(`<span class="metric">${pct(rowOf(track,ds,init).value)}</span>`),w+': the '+init+' score '+track+'/'+ds);
+    }
+    const tables=[...html.matchAll(/<tr><th scope="row">EEGPT<small>([^<]*)<\/small><\/th>([\s\S]*?)<\/tr>/g)];
+    assert.equal(tables.length,6,w+': EEGPT in the contrast table and both score tables, on both tasks');
+    attrTokens[label]=tables.map(m=>numbers(m[2].replace(/<[^>]+>/g,' ')).join(' '));
+    // The short answer, the dek and the description as far as these rows go: EEGPT's two fixed-readout contrasts.
+    const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
+    for(const ds of DS) assert.ok(ans.includes(pp(ctr(TR[0],ds).difference)),w+': the short answer gives EEGPT\'s '+ds+' contrast');
+    assert.ok(ans.includes(EGX.pretraining_exposure.checked_on),w+': the short answer dates EEGPT\'s list');
+    const sg=cmpOf('sleep-scalp').smallest_gap;
+    assert.ok(ans.includes(fmt.gap2(sg.gap_pp))&&ans.includes(zh?'EEGPT 也是如此':'as does EEGPT'),w+': the short answer says EEGPT clears every published sleep row, with its narrow gap');
+    assert.ok(visible(html).includes(zh?'CBraMod 与 EEGPT 在两个任务、两种分类头设置下都有提升':'CBraMod and EEGPT gain under both readout settings on both tasks'),w+': the dek');
+    const desc=html.match(/<meta name="description" content="([^"]*)"/)[1];
+    for(const ds of DS) assert.ok(decodeHtml(desc).includes(pp(ctr(TR[0],ds).difference)),w+': the description gives EEGPT\'s '+ds+' contrast');
+    // EEGPT's notes: the row's and ds003810's beside its attribution rows, the BETA ones beside its BETA row; each once.
+    const an=html.slice(html.indexOf('data-eegpt-notes="attribution"'),html.indexOf('</p>',html.indexOf('data-eegpt-notes="attribution"')));
+    for(const id of ['shorter-than-pretraining','fixed-readout','source-rate']) assert.ok(an.includes(e(inLang(fnText(id),zh))),w+': '+id+' beside the attribution rows');
+    const bn=html.slice(html.indexOf('data-eegpt-notes="beta-8ch"'),html.indexOf('</p>',html.indexOf('data-eegpt-notes="beta-8ch"')));
+    for(const id of ['untrained-channel-embeddings','tsinghua-benchmark-context']) assert.ok(bn.includes(e(inLang(fnText(id),zh))),w+': '+id+' beside the BETA row');
+    for(const f of EGX.footnotes) assert.equal(count(body,e(inLang(f.text,zh))),['one-second-patch-grid','idle-run'].includes(f.id)?0:1,w+': the footnote '+f.id+(['one-second-patch-grid','idle-run'].includes(f.id)?' not here':' once'));
+    // Its sources and its JSON.
+    const ce=html.slice(html.indexOf('fm-core-exposure'),html.indexOf('</p>',html.indexOf('fm-core-exposure')));
+    assert.ok(ce.includes(EGX.pretraining_exposure.checked_on)&&ce.includes(`href="${EGX.model.paper_pdf}"`),w+': EEGPT\'s pretraining list, dated and linked');
+    assert.ok(html.includes(`href="/data/${EJ}" download`),w+': EEGPT\'s JSON linked');
+    // The further-encoder tables: EEGPT's sleep and BETA rows, its export's relations and gaps.
+    for(const [track,best] of [['sleep-scalp','spectral-ridge'],['beta-8ch','cca']]){
+      const m=html.match(new RegExp(`<tr data-eegpt-topic="${track}" data-eegpt-rel="([^"]+)">([\\s\\S]*?)<\\/tr>`));
+      assert.ok(m,w+': EEGPT\'s '+track+' row in the further-encoder table');
+      const c=cells[track],cm=cmpOf(track),rel=['labram','cbramod',best].map(id=>cm.rows.find(r=>r.row===id));
+      assert.equal(m[1],rel.map(r=>r.relation).join(' '),w+': '+track+' relations are the export\'s');
+      assert.deepEqual(figsIn(m[2]).map(f=>f.raw),[c.percent.balanced_accuracy,...c.percent.interval_95,...rel.filter(r=>r.gap_pp!==null).map(r=>r.gap_pp)],w+': '+track+' its cell and the gap beside each relation');
+      assert.ok(!m[0].includes('data-rel='),w+': '+track+' not highlighted with the further encoders\' above-all rows');
+    }
+    assert.doesNotMatch(visible(noOriginals(html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"')))),apacheWeights,w+': the weights are never called Apache-2.0');
+  }
+  assert.deepEqual(attrTokens.zh,attrTokens.en,'does-pretraining-help: EEGPT\'s attribution figures the same in both languages');
+  for(const [label,prefix] of [['en',''],['zh','zh/']]){
+    const zh=label==='zh',path=prefix+'topics/fewer-electrodes/',html=pageOf(path),w=path,body=zh?chineseOnly(html):html;
+    const m=html.match(/<tr data-montage-row="eegpt" data-eegpt-montage="true" data-overlap="(true|false)">([\s\S]*?)<\/tr>/);
+    assert.ok(m,w+': EEGPT\'s montage row');
+    const [b8,b4,sl]=['beta-8ch','beta-4ch','sleep-scalp'].map(p=>cells[p]);
+    assert.equal(m[1],String(b8.percent.interval_95[0]<=b4.percent.interval_95[1]&&b4.percent.interval_95[0]<=b8.percent.interval_95[1]),w+': whether its two BETA intervals overlap, by the released rows\' rule');
+    assert.deepEqual(figsIn(m[2]).map(f=>f.raw),[b8,b4,sl].flatMap(c=>[c.percent.balanced_accuracy,...c.percent.interval_95]),w+': its BETA and sleep cells');
+    assert.ok(!/ pp</.test(m[2]),w+': no eight-to-four difference its export does not state');
+    for(const p of ['beta-4ch']) assert.equal(cmpOf(p).rows.find(r=>r.row==='cca').relation,'below',w+': EEGPT is below standard CCA at four electrodes, as "no new encoder lies above it" and the overlap list say');
+    const notes=html.slice(html.indexOf('data-eegpt-notes="montage"'),html.indexOf('</p>',html.indexOf('data-eegpt-notes="montage"')));
+    for(const id of ['untrained-channel-embeddings','tsinghua-benchmark-context','shorter-than-pretraining','fixed-readout']) assert.ok(notes.includes(e(inLang(fnText(id),zh))),w+': '+id+' beside the row');
+    for(const f of EGX.footnotes) assert.equal(count(body,e(inLang(f.text,zh))),['one-second-patch-grid','idle-run','source-rate'].includes(f.id)?0:1,w+': the footnote '+f.id+' at most once');
+    assert.ok(html.includes(`href="/data/${EJ}" download`)&&html.includes(`href="/${prefix}releases/#${REL}"`),w+': EEGPT\'s JSON and release linked');
+    assert.doesNotMatch(visible(noOriginals(html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"')))),apacheWeights,w+': the weights are never called Apache-2.0');
+  }
+  // The card on the home page and the Questions hub: three encoders, EEGPT named on sleep.
+  for(const page of ['','zh/','topics/','zh/topics/']){
+    const html=pageOf(page),zh=page.startsWith('zh/'),a=html.search(/<a class="topic-entry-card" href="(?:\/zh)?\/topics\/does-pretraining-help\/"/),card=html.slice(a,html.indexOf('</a>',a));
+    assert.ok(card.includes(zh?'三种编码器':'three encoders')&&card.includes('EEGPT'),(page||'/')+': the does-pretraining-help card counts three encoders and names EEGPT');
+  }
+  // (5) The status, everywhere but the release log: no page says EEGPT's core-matrix scores are unpublished, and no page
+  // shows the pilot-only status the directory carried before this release.
+  for(const f of htmlPages.filter(f=>!/^(?:zh\/)?releases\//.test(f))){
+    const v=visible(readFileSync(new URL(f,DIST),'utf8'));
+    assert.ok(!/EEGPT scores are not on the site|core-matrix EEGPT scores are not|whether they are published is a separate decision|One pilot comparison published|核心矩阵中的 EEGPT 分数没有出现在网站页面上|已发布一项试点比较/.test(v),f+': no stale EEGPT status');
+  }
+  assert.ok(!JSON.stringify(EGX).match(/"(?:per_person|per_participant|per_subject|per_fold|per_trial|subject_scores|participant_scores)[^"]*":/),'EEGPT: the export carries no per-person, per-fold or per-trial field');
+  assert.ok(protocolFigs>=8*2*6,'EEGPT: the protocol rows were read ('+protocolFigs+')');
+  console.log(`PASS: EEGPT on the core matrix, on the pages — its own section on every protocol page in both languages (${protocolFigs} figures pinned to its export, each cell column by column in the core rows' units, the chance flags, the sourced exposure and its source, each footnote beside the row and once on the page, every published row's relation and gap re-derived from the released intervals, its terms with the weights never Apache-2.0, its release, JSON and method page); the protocols index links each; the home page counts it among the frozen encoders, embeds and renders its row after the further encoders' group (family filter, chart, dialog with its footnotes and terms, the tool naming its release), names it in the snapshot note with its terms, never ranked; does-pretraining-help carries its attribution rows and contrasts beside LaBraM's and CBraMod's, the short answer, dek, description and card as far as those rows go, its footnotes once and its sources, and its sleep and BETA rows with its export's relations and gaps; fewer-electrodes its BETA and sleep row with the overlap by the released rows' rule and its footnotes once; the same figures in English and Chinese; no stale status outside the release log; no per-person field.`);
 }
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

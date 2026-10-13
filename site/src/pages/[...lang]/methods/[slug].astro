@@ -4,8 +4,10 @@ import ResultGroups from '../../../components/ResultGroups.astro';
 import profiles from '../../../data/entity-profiles.json';
 import Fig from '../../../components/Fig.astro';
 import { isFmSlug, methods, type MethodEntity } from '../../../data/entities';
-import { exposureTable, fmExposure, fmModels, fmResearchUse, type ExposureRow } from '../../../data/foundation-models';
+import { exposureTable, fmExposure, fmModels, fmNoEndorsement, fmResearchUse, type ExposureRow } from '../../../data/foundation-models';
 import { fmText, fmZh } from '../../../data/foundation-models-zh';
+import { EEGPT_SLUG, eegptExposure, eegptExposureTable, eegptFootnoteById, eegptModel, eegptRowFootnotes, eegptText, eegptZh } from '../../../data/eegpt-core';
+import { EEGPT_PILOT_PATH } from '../../../data/directory-status';
 import { protocolById } from '../../../data/protocols';
 import { trackTitle } from '../../../data/i18n';
 import { entityCopy } from '../../../data/entity-copy';
@@ -40,19 +42,26 @@ const protocolsOn = [...new Set(measured.map(g => g.path.match(/^\/protocols\/([
 // each licence and REVE's versions and link the protocol page's full list, without repeating that (2026-10-08).
 const checkpoints = isFmSlug(m.slug) ? fmModels.filter(x => x.slug === m.slug) : [];
 const say = (en: string) => fmText(en, locale);
-// Pretraining exposure, by dataset: the v9 families, and LaBraM and CBraMod (owner decision 2026-10-04).
-// Checkpoints of a family share one table where every cell agrees.
+// EEGPT (2026-10-13): its own release's terms, footnotes and exposure cells (eegpt-core.ts). Its row footnotes and the
+// BETA context are stated once, here with the model, so its result groups leave them out; so are its checkpoint's
+// terms, which the dataset pages print under their first EEGPT group.
+const eegpt = m.slug === EEGPT_SLUG;
+const sayE = (en: string) => eegptText(en, locale);
+const eegptSkip = eegpt ? [...eegptRowFootnotes.map(f => f.id), 'tsinghua-benchmark-context', 'eegpt-terms'] : [];
+// Pretraining exposure, by dataset: the v9 families, and LaBraM and CBraMod (owner decision 2026-10-04), and EEGPT
+// (checked 2026-10-12, in the same formula). Checkpoints of a family share one table where every cell agrees.
 const exposureKeys = checkpoints.length ? [...new Set(checkpoints.map(x => x.exposureKey))] : (['labram', 'cbramod'].includes(m.slug) ? [m.slug] : []);
 const same = (a: ExposureRow[], b: ExposureRow[]) => JSON.stringify(a) === JSON.stringify(b);
-const exposureTables: { names: string[]; rows: ExposureRow[] }[] = [];
+const exposureTables: { names: string[]; rows: ExposureRow[] }[] = eegpt ? [{ names: [m.name], rows: eegptExposureTable() }] : [];
 for (const key of exposureKeys) {
   const rows = exposureTable(key), names = checkpoints.length ? checkpoints.filter(x => x.exposureKey === key).map(x => x.name) : [m.name];
   const match = exposureTables.find(t => same(t.rows, rows));
   if (match) match.names.push(...names); else exposureTables.push({ names, rows });
 }
-// The exposure table's caveats that name this model.
+const exposureChecked = eegpt ? eegptExposure.checkedOn : fmExposure.checkedOn;
+// The exposure table's caveats that name this model; for EEGPT, its pretraining corpus and the BETA context.
 const caveats = exposureKeys.length ? fmExposure.caveats.filter(c => c.includes(m.name)) : [];
-const statement = (r: ExposureRow) => locale === 'en' ? r.statement : fmZh[r.statement];
+const statement = (r: ExposureRow) => locale === 'en' ? r.statement : (fmZh[r.statement] ?? eegptZh[r.statement]);
 const structured = {
   '@context': 'https://schema.org', '@type': 'WebPage', url: new URL(path, site.origin).href,
   name: c.methodTitle(m.name), description: c.methodDescription(m.name, datasetNames.join(', ')),
@@ -84,7 +93,7 @@ const structured = {
   </section>}
   <section class="topic-section" aria-labelledby="results-heading">
     <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.methodResultsLede}</p></div>
-    <ResultGroups locale={locale} groups={m.groups} showMethod={true} fmEndorsement={checkpoints.length === 0}/>
+    <ResultGroups locale={locale} groups={m.groups} showMethod={true} fmEndorsement={checkpoints.length === 0} skipNotes={eegptSkip}/>
     <p class="citation-note"><a href={hrefFor('/methods/', locale)}>{c.allMethods}</a> · <a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a></p>
   </section>
   {checkpoints.length > 0 && <section class="topic-section" id="checkpoints" aria-labelledby="checkpoints-heading">
@@ -109,8 +118,29 @@ const structured = {
       </article>;
     })}
   </section>}
+  {eegpt && <section class="topic-section" id="checkpoints" aria-labelledby="checkpoints-heading">
+    <div class="topic-heading"><div><h2 id="checkpoints-heading">{c.checkpointsH2}</h2></div><p class="fm-no-endorsement">{fmNoEndorsement[locale]}</p></div>
+    {(() => {
+      // The code's licence first, then the checkpoint's: the weights are never read as Apache-2.0.
+      const terms = [[c.dtCode, { text: `${eegptModel.codeLicence}${locale === 'zh' ? '（' : ' ('}${sayE(eegptModel.codeLicenceScope).text}${locale === 'zh' ? '）' : ')'}`, original: locale === 'zh' ? `${eegptModel.codeLicence} (${eegptModel.codeLicenceScope})` : undefined }],
+        [c.dtWeights, sayE(eegptModel.weightsLicenceStatus)], [c.dtWeightsNote, sayE(eegptModel.weightsNote)], [c.dtRights, sayE(eegptModel.rightsReview)], [c.dtInput, sayE(eegptModel.input)], [c.dtPooling, sayE(eegptModel.pooling)]] as [string, { text: string; original?: string }][];
+      return <article class="fm-checkpoint" data-checkpoint="eegpt">
+        <h3 lang="en">{eegptModel.name}</h3>
+        <dl class="protocol-facts">
+          <div><dt>{c.dtPanel}</dt><dd>{c.panelMatrix}</dd></div>
+          <div><dt>{c.dtParams}</dt><dd><Fig f={eegptModel.params} cls="fig"/></dd></div>
+          <div><dt>{c.dtRevision}</dt><dd><code>{`${eegptModel.repository.replace('https://github.com/', '')} @ ${eegptModel.revision}`}</code></dd></div>
+          <div><dt>{c.dtSha}</dt><dd><code>{eegptModel.checkpointFile}</code> <code class="hash">{eegptModel.checkpointSha}</code></dd></div>
+          <div><dt>{c.dtPaper}</dt><dd><a href={eegptModel.paper} target="_blank" rel="noreferrer" lang="en">{eegptModel.paperTitle} ({eegptModel.paperVenue}) ↗</a></dd></div>
+          {terms.map(([dt, t]) => <div><dt>{dt}</dt><dd>{t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</dd></div>)}
+          <div><dt>{c.dtFootnote}</dt><dd>{eegptRowFootnotes.map(f => { const t = sayE(f.text); return <span class="fm-note" data-note={f.id}>{t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</span>; })}</dd></div>
+          <div><dt>{c.dtPilot}</dt><dd><a href={hrefFor(EEGPT_PILOT_PATH, locale)} data-eegpt-pilot="true">{c.pilotLink}</a></dd></div>
+        </dl>
+      </article>;
+    })()}
+  </section>}
   {exposureTables.length > 0 && <section class="topic-section" id="pretraining-exposure" aria-labelledby="exposure-heading">
-    <div class="topic-heading"><div><h2 id="exposure-heading">{c.exposureH2}</h2></div><p>{c.exposureLede(fmExposure.checkedOn)}</p></div>
+    <div class="topic-heading"><div><h2 id="exposure-heading">{c.exposureH2}</h2></div><p>{c.exposureLede(exposureChecked)}</p></div>
     {exposureTables.map(t => <>
       {(exposureTables.length > 1 || checkpoints.length > 1) && <h3 class="roadmap-h3" lang="en">{t.names.join(' · ')}</h3>}
       <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.exposureRegion(t.names.join(' · '))}>
@@ -126,5 +156,7 @@ const structured = {
       </div>
     </>)}
     {caveats.map(x => { const t = say(x); return <p class="citation-note"><strong>{c.exposureCaveat}</strong> {t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</p>; })}
+    {eegpt && [[c.exposureCorpus, eegptModel.corpus, undefined], [c.exposureCaveat, eegptFootnoteById['tsinghua-benchmark-context'].text, 'tsinghua-benchmark-context']].map(([label, en, id]) => {
+      const t = sayE(en!); return <p class="citation-note" data-note={id}><strong>{label}</strong> {t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</p>; })}
   </section>}
 </EntityLayout>

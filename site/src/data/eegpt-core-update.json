@@ -1,0 +1,1775 @@
+{
+  "schema_version": "bci-report-eegpt-core-update-v1",
+  "release_id": "eegpt-core-update-20261013",
+  "generated_at": "2026-10-13",
+  "status": "aggregate_preview",
+  "title": "EEGPT on the core matrix",
+  "placement": "a frozen row beside the core matrix on every protocol page, with the foundation encoders and never ranked; never merged into experiments.json",
+  "metric_units": "balanced accuracy, its interval, macro F1, chance levels, the idle window balanced accuracy and AUROC and the attribution scores and differences are proportions in [0,1]; each percent block gives the same figures × 100, rounded to 12 decimals, in the units of the core rows; comparison gaps are percentage points; counts of people, trials, classes, channels and idle trials are whole numbers; null means not computed, never zero",
+  "scope": "EEGPT’s eight core-matrix cells, from the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped, and its pretraining-attribution rows on mi-rest and EEGMAT. The cells are the runs’ recorded aggregates, checked read-only against the saved predictions; nothing was re-run. The pilot comparison on the Orthosis dataset is a separate result and stays outside every leaderboard.",
+  "model": {
+    "id": "eegpt",
+    "name": "EEGPT",
+    "method_slug": "eegpt",
+    "family": "foundation",
+    "paper": "https://doi.org/10.52202/079017-1239",
+    "paper_pdf": "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+    "paper_title": "EEGPT: Pretrained Transformer for Universal and Reliable Representation of EEG Signals",
+    "paper_venue": "NeurIPS 2024",
+    "repository": "https://github.com/BINE022/EEGPT",
+    "source_revision": "a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705",
+    "checkpoint": {
+      "file": "eegpt_mcae_58chs_4s_large4E.ckpt",
+      "sha256": "9d63ebc80bba1ad5e3277df4eecfa05d2745e6243a12ff743c4c0a93930dfac0",
+      "link": "https://figshare.com/s/e37df4f8a907a866df4b",
+      "tensor_conversion_sha256": "9ce130abd9f66cd6141b15918c35760da62ffc86b90f611cdf7b4cf4cb0585df"
+    },
+    "encoder_parameters": 25287168,
+    "architecture": {
+      "patch_samples": 64,
+      "patch_seconds": 0.25,
+      "encoder_sampling_hz": 256,
+      "embed_dim": 512,
+      "depth": 8,
+      "heads": 8,
+      "summary_tokens": 4,
+      "pooled_dimension": 2048
+    },
+    "input": "the published 250 Hz microvolt windows, resampled to 256 Hz and divided by 1,000 (millivolts); only the recorded channels, each as its channel token (T3, T4, T5 and T6 named T7, T8, P7 and P8); no interpolation, padding, zero-filled channels or average reference",
+    "pooling": "the four summary tokens averaged over time patches and concatenated: 2,048 values per window",
+    "mode": "Frozen encoder + ridge head",
+    "idle_mode": "Frozen encoder + linear head",
+    "pretraining": {
+      "datasets": [
+        "PhysioMI",
+        "HGD",
+        "TSU",
+        "SEED",
+        "M3CV"
+      ],
+      "electrodes": 58,
+      "channel_dictionary": 62,
+      "window_seconds": 4,
+      "sampling_hz": 256,
+      "reference": "average",
+      "units": "mV"
+    },
+    "code_licence": "Apache-2.0",
+    "code_licence_scope": "the repository’s source code only",
+    "weights_licence": null,
+    "weights_licence_status": "unresolved: the checkpoint’s own licence and terms could not be read from its hosting record, and the repository’s code licence is not evidence that it covers the weights",
+    "weights_distributed": false,
+    "weights_note": "no original or converted weights are distributed; the hashes identify the checkpoint used and grant nothing",
+    "endorsement": "none implied",
+    "rights_review": "Published by the owner’s decision, aggregate results only, as the pilot comparison is. The checkpoint’s licence could not be read; no publisher prohibition on independently computed aggregate results was found; no original or converted weights are distributed."
+  },
+  "design": {
+    "frozen_probe": "EEGPT ran in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped: the same published 250 Hz microvolt windows (1 s or 2 s; sleep as 15 two-second segments whose outputs are averaged), the same participant-disjoint folds, the same heads (ridge, alpha 100, on standardised training-fold values, class-balanced except on BETA; idle: a per-person logistic head with a calibration-only rule and a two-in-a-row trigger) and the same scoring code. The encoder was frozen, and only recorded channels were fed.",
+    "interval": "Descriptive 95% participant bootstrap of the equal-participant mean, from each run itself (10,000 draws; seed 20260919, BETA 20260912). It ignores cross-validation dependence and carries no multiplicity correction.",
+    "reading_rule": "Rows are grouped by family, never ranked. EEGPT is called above or below a published row only when their marginal 95% intervals do not overlap, and the gap between the intervals is given; several gaps are narrow.",
+    "chance": "An interval that includes the protocol’s chance level is flagged on its cell; idle has no chance level.",
+    "no_rerun": "Nothing was re-run for this release: no encoder was loaded, no head refitted and no GPU used. The cells are the runs’ recorded aggregates, recomputed read-only from the saved predictions and equal to every recorded copy."
+  },
+  "protocols": [
+    {
+      "id": "mi-rest",
+      "title": "Motor imagery & rest",
+      "dataset": "ds003810",
+      "type": "accuracy",
+      "protocol_id": "parallel-fixed-subject-folds-v1/ds003810",
+      "people": 10,
+      "channels": 15,
+      "window_seconds": 2,
+      "chance_level": 0.5,
+      "core_files": [
+        "mi-rest-results.csv",
+        "mi-rest-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda",
+        "audit_sha256": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2",
+        "protocol_sha256": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+        "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "ds003810",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "idle",
+      "title": "Idle & command",
+      "dataset": "ds005342",
+      "type": "tradeoff",
+      "protocol_id": "ds005342-sitting-cue-gated-pilot-v1",
+      "people": 4,
+      "channels": 17,
+      "window_seconds": 2,
+      "chance_level": null,
+      "core_files": [
+        "idle-results.csv",
+        "idle-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "csp-lda",
+          "labram",
+          "eegnet",
+          "shallowfbcspnet"
+        ],
+        "summary_sha256": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05",
+        "audit_sha256": "ce2474c547f5f11c256752b0a07466beb5b6928da34bb39783aaa4647973d2e4",
+        "protocol_sha256": "a1dcb0a919e290ad71b639b5e7935650399d025782972dc0c9b31706acc8dea7",
+        "independent_audit": "pass",
+        "other_run_rows": [
+          "cbramod",
+          "deep4net"
+        ]
+      },
+      "rights": {
+        "source": "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+        "version": "OpenNeuro snapshot 1.0.3 · 30bb3b67d76ce007b822fed801e496fafe5598a0",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "OpenNeuro ds005342 contributors · version 1.0.3, doi:10.18112/openneuro.ds005342.v1.0.3; associated study doi:10.3389/fninf.2022.961089. Original author credits are retained at the linked source.",
+        "privacyReview": "README reports voluntary signed consent and Universidad Antonio Nariño ethics approval. participants.tsv links pseudonymous IDs to exact age, sex, handedness, and academic major. The current evaluated subset has only four people.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds005342.v1.0.3",
+          "https://eegdash.org/api/dataset/eegdash.dataset.DS005342.html",
+          "https://doi.org/10.3389/fninf.2022.961089"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "ds005342",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: test-trial counts of idle false activations and commands detected within 3 s, how many people always abstained, and the cohort-mean window balanced accuracy and AUROC; no interval; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "beta-8ch",
+      "title": "SSVEP · 8 channels",
+      "dataset": "BETA",
+      "type": "accuracy",
+      "protocol_id": "beta-ssvep-2s-posterior4and8-subject7fold-v1/posterior8",
+      "people": 70,
+      "channels": 8,
+      "window_seconds": 2,
+      "chance_level": 0.025,
+      "core_files": [
+        "beta-8ch-results.csv",
+        "beta-8ch-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "audit_sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+        "protocol_sha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+        "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+          "https://doi.org/10.3389/fnins.2020.00627"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "BETA",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "beta-4ch",
+      "title": "SSVEP · 4 channels",
+      "dataset": "BETA",
+      "type": "accuracy",
+      "protocol_id": "beta-ssvep-2s-posterior4and8-subject7fold-v1/posterior4",
+      "people": 70,
+      "channels": 4,
+      "window_seconds": 2,
+      "chance_level": 0.025,
+      "core_files": [
+        "beta-4ch-results.csv",
+        "beta-4ch-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+        "audit_sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+        "protocol_sha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+        "version": "Hugging Face mirror of BETA database, Figshare record 12264401 v3 · {\"mirror\": \"d4290c0200db8a104e0f557349dc49f90ba79506\", \"upstream\": \"Figshare version 3, 2022-06-15\"}",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Bingchuan Liu et al. · BETA: A Large Benchmark Database Toward SSVEP-BCI Application (2020), doi:10.3389/fnins.2020.00627. Figshare 12264401 v3; mirror Bingchuan/BETA.",
+        "privacyReview": "Paper reports Tsinghua University ethics approval 20190002 and written consent; parents consented for participants under 16. Ages span 9-64. Only cohort aggregates should be shown.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://figshare.com/articles/dataset/The_BETA_database/12264401",
+          "https://doi.org/10.3389/fnins.2020.00627"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "BETA",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "arithmetic-rest",
+      "title": "Arithmetic & rest",
+      "dataset": "EEGMAT",
+      "type": "accuracy",
+      "protocol_id": "parallel-fixed-subject-folds-v1/physionet-eegmat-1.0.0",
+      "people": 36,
+      "channels": 19,
+      "window_seconds": 2,
+      "chance_level": 0.5,
+      "core_files": [
+        "arithmetic-rest-results.csv",
+        "arithmetic-rest-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b",
+        "audit_sha256": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292",
+        "protocol_sha256": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://physionet.org/content/eegmat/1.0.0/",
+        "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+        "license": "Open Data Commons Attribution License 1.0",
+        "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+        "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+        "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://physionet.org/content/eegmat/1.0.0/",
+          "https://www.mdpi.com/2306-5729/4/1/14",
+          "https://opendatacommons.org/licenses/by/1-0/"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "EEGMAT",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "p300-target",
+      "title": "P300 target ERP",
+      "dataset": "ds006593",
+      "type": "accuracy",
+      "protocol_id": "parallel-fixed-subject-folds-v1/ds006593",
+      "people": 21,
+      "channels": 19,
+      "window_seconds": 1,
+      "chance_level": 0.5,
+      "core_files": [
+        "p300-target-results.csv",
+        "p300-target-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "a63a7ba5bbd6dd7865ae260b707c2db896136646a910d96516fa5c862e1146c0",
+        "audit_sha256": "30762120c57bede9f47d2e96637656e8948fca458016f7f2e3a39f951a357716",
+        "protocol_sha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "version": "OpenNeuro snapshot 1.0.0 · b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "OpenNeuro ds006593 contributors · version 1.0.0, doi:10.18112/openneuro.ds006593.v1.0.0; original author credits retained at the linked source.",
+        "privacyReview": "Dataset metadata/README report IRB approval #10-05-2022 and written informed consent. Participant metadata contains pseudonymous IDs and study descriptors without demographic fields. Eye-tracking and raw signals remain off-site.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+          "https://nemar.org/dataset/on006593"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "ds006593",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "semantic-target",
+      "title": "Semantic target ERP",
+      "dataset": "TMNRED / ds005383",
+      "type": "accuracy",
+      "protocol_id": "parallel-fixed-subject-folds-v1/ds005383",
+      "people": 30,
+      "channels": 30,
+      "window_seconds": 1,
+      "chance_level": 0.5,
+      "core_files": [
+        "semantic-target-results.csv",
+        "semantic-target-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243",
+        "audit_sha256": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4",
+        "protocol_sha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+        "version": "OpenNeuro snapshot 1.0.0 · ad78f3db430e636595b1b1c08417492f3067a25e",
+        "license": "OpenNeuro metadata says CC0; accompanying publication/GitHub says CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Yanru Bai, Qi Tang et al. · TMNRED, A Chinese Language EEG Dataset for Fuzzy Semantic Target Identification in Natural Reading Environments (2025), doi:10.1038/s41597-025-05036-2. OpenNeuro ds005383 v1.0.0.",
+        "privacyReview": "Paper reports Tianjin University ethics approval TJUE-2024-402, written consent, deidentification, and explicit participant permission for open sharing. Local participants.tsv appears column-shifted/malformed, so it must not feed public metadata.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds005383.v1.0.0",
+          "https://www.nature.com/articles/s41597-025-05036-2"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "TMNRED / ds005383",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      }
+    },
+    {
+      "id": "sleep-scalp",
+      "title": "Sleep staging",
+      "dataset": "EESM19 scalp subset",
+      "type": "accuracy",
+      "protocol_id": "parallel-fixed-subject-folds-v1/eesm19-scalp-sleep",
+      "people": 20,
+      "channels": 6,
+      "window_seconds": 30,
+      "chance_level": 0.2,
+      "core_files": [
+        "sleep-scalp-results.csv",
+        "sleep-scalp-protocol.json"
+      ],
+      "run": {
+        "same_run_as": [
+          "labram",
+          "cbramod"
+        ],
+        "summary_sha256": "b7c784c17d6b33c16ffca5df42d3fd8f3d7bf14960675a7278089c4903886567",
+        "audit_sha256": "e6cbf1b199bf2902b9c46e4575ebfa8aff47952625df3d71a1d720b11cc27291",
+        "protocol_sha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff",
+        "independent_audit": "pass"
+      },
+      "rights": {
+        "source": "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+        "version": "Hugging Face processed mirror of OpenNeuro ds005185 1.0.2 · {\"mirror\": \"fb045012b58a0b755f9fedf5931dff9b64a9797f\", \"upstream\": \"0857858f7a2ba1582930f23eca3ec56f90a96da9\"}",
+        "license": "CC0-1.0 declared by upstream and mirror",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Kaare B. Mikkelsen et al. · Accurate whole-night sleep monitoring with dry-contact ear-EEG (2019), doi:10.1038/s41598-019-53115-3; OpenNeuro ds005185 v1.0.2. Processed mirror: Zachary1150/EESM19-Processed.",
+        "privacyReview": "Paper reports Central Denmark Region ethics approval 1-10-72-413-17, Danish Medicines Agency approval 2017111085, registration, and written consent. Upstream includes exact age/sex plus sleep diaries, questionnaires, actigraphy, and timing; none should be exposed. Amended 2026-09-22: the 2025 data descriptor covering EESM19 and EESM23 (Mikkelsen et al., Scientific Data 12, 301, doi:10.1038/s41597-025-04579-8) states that publication was not mentioned in the informed consent form; before release, the GDPR office of Region Midt judged the data fully anonymized. Consent therefore covered the study, and the public release rests on that anonymization judgment.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds005185.v1.0.2",
+          "https://www.nature.com/articles/s41598-019-53115-3",
+          "https://doi.org/10.1038/s41597-025-04579-8"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only",
+        "name": "EESM19 scalp subset",
+        "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for EEGPT: the cohort balanced accuracy with its participant-bootstrap interval, macro F1 and the cohort size; no per-person, per-fold or per-trial value."
+      },
+      "segments": {
+        "count": 15,
+        "each_seconds": 2
+      }
+    }
+  ],
+  "cells": [
+    {
+      "model": "eegpt",
+      "protocol": "mi-rest",
+      "status": "complete",
+      "balanced_accuracy": 0.5833333333333333,
+      "interval_95": [
+        0.5491666666666666,
+        0.6174999999999999
+      ],
+      "macro_f1": 0.5546560267679855,
+      "people": 10,
+      "trials": 1200,
+      "classes": 2,
+      "channels": 15,
+      "chance_level": 0.5,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260919,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 58.333333333333,
+        "interval_95": [
+          54.916666666667,
+          61.75
+        ],
+        "chance_level": 50.0
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "shorter-than-pretraining",
+        "fixed-readout",
+        "source-rate"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "idle",
+      "status": "complete",
+      "people": 4,
+      "channels": 17,
+      "idle_false_activations": 2,
+      "idle_trials": 60,
+      "commands_detected": 7,
+      "command_trials": 60,
+      "always_abstain_people": 1,
+      "window_balanced_accuracy": 0.5722222222222222,
+      "window_auroc": 0.7803703703703704,
+      "interval": null,
+      "percent": {
+        "idle_false_activation": 3.333333333333,
+        "command_detection": 11.666666666667,
+        "window_balanced_accuracy": 57.222222222222
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "shorter-than-pretraining",
+        "fixed-readout",
+        "idle-run"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "beta-8ch",
+      "status": "complete",
+      "balanced_accuracy": 0.20267857142857146,
+      "interval_95": [
+        0.18169419642857143,
+        0.22598214285714285
+      ],
+      "macro_f1": 0.16916589853196437,
+      "people": 70,
+      "trials": 11200,
+      "classes": 40,
+      "channels": 8,
+      "chance_level": 0.025,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260912,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 20.267857142857,
+        "interval_95": [
+          18.169419642857,
+          22.598214285714
+        ],
+        "chance_level": 2.5
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "untrained-channel-embeddings",
+        "tsinghua-benchmark-context",
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "beta-4ch",
+      "status": "complete",
+      "balanced_accuracy": 0.17312499999999997,
+      "interval_95": [
+        0.15535714285714286,
+        0.19169866071428568
+      ],
+      "macro_f1": 0.14364825832953287,
+      "people": 70,
+      "trials": 11200,
+      "classes": 40,
+      "channels": 4,
+      "chance_level": 0.025,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260912,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 17.3125,
+        "interval_95": [
+          15.535714285714,
+          19.169866071429
+        ],
+        "chance_level": 2.5
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "tsinghua-benchmark-context",
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "arithmetic-rest",
+      "status": "complete",
+      "balanced_accuracy": 0.6569444444444443,
+      "interval_95": [
+        0.6092592592592593,
+        0.7032407407407407
+      ],
+      "macro_f1": 0.6366993882881866,
+      "people": 36,
+      "trials": 2160,
+      "classes": 2,
+      "channels": 19,
+      "chance_level": 0.5,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260919,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 65.694444444444,
+        "interval_95": [
+          60.925925925926,
+          70.324074074074
+        ],
+        "chance_level": 50.0
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "p300-target",
+      "status": "complete",
+      "balanced_accuracy": 0.5404761904761906,
+      "interval_95": [
+        0.5146825396825396,
+        0.5658730158730159
+      ],
+      "macro_f1": 0.5278707351627234,
+      "people": 21,
+      "trials": 2520,
+      "classes": 2,
+      "channels": 19,
+      "chance_level": 0.5,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260919,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 54.047619047619,
+        "interval_95": [
+          51.468253968254,
+          56.587301587302
+        ],
+        "chance_level": 50.0
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "one-second-patch-grid",
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "semantic-target",
+      "status": "complete",
+      "balanced_accuracy": 0.5458333333333333,
+      "interval_95": [
+        0.5330555555555556,
+        0.5586111111111111
+      ],
+      "macro_f1": 0.540297889330536,
+      "people": 30,
+      "trials": 3600,
+      "classes": 2,
+      "channels": 30,
+      "chance_level": 0.5,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260919,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 54.583333333333,
+        "interval_95": [
+          53.305555555556,
+          55.861111111111
+        ],
+        "chance_level": 50.0
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "one-second-patch-grid",
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    },
+    {
+      "model": "eegpt",
+      "protocol": "sleep-scalp",
+      "status": "complete",
+      "balanced_accuracy": 0.7553333333333334,
+      "interval_95": [
+        0.7390000000000001,
+        0.7710000000000001
+      ],
+      "macro_f1": 0.747834350000345,
+      "people": 20,
+      "trials": 3000,
+      "classes": 5,
+      "channels": 6,
+      "chance_level": 0.2,
+      "interval_includes_chance": false,
+      "at_or_below_chance": false,
+      "interval": {
+        "kind": "participant bootstrap of the equal-participant mean",
+        "level": 0.95,
+        "draws": 10000,
+        "seed": 20260919,
+        "scope": "descriptive: it ignores cross-validation dependence and carries no multiplicity correction"
+      },
+      "percent": {
+        "balanced_accuracy": 75.533333333333,
+        "interval_95": [
+          73.9,
+          77.1
+        ],
+        "chance_level": 20.0
+      },
+      "exposure": {
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)"
+      },
+      "footnotes": [
+        "shorter-than-pretraining",
+        "fixed-readout"
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "id": "one-second-patch-grid",
+      "protocols": [
+        "p300-target",
+        "semantic-target"
+      ],
+      "placement": "cell",
+      "text": "On the P300 and semantic targets, one-second windows ran as four real 0.25-second patches: the patch grid was set to four after the encoder was built, with no padding. EEGPT’s encoder treats each time patch on its own, so this is numerically the same as building it for 256-sample inputs, as the Orthosis pilot built it for its 128-sample windows.",
+      "facts": {
+        "window_seconds": 1,
+        "patches": 4,
+        "patch_samples": 64,
+        "encoder_sampling_hz": 256,
+        "padding": false,
+        "equivalent_input_samples": 256,
+        "pilot_input_samples": 128
+      }
+    },
+    {
+      "id": "untrained-channel-embeddings",
+      "protocols": [
+        "beta-8ch"
+      ],
+      "placement": "cell",
+      "text": "PO5 and PO6 use channel embeddings that EEGPT’s pretraining never trained: they are two of the four names in its 62-name channel dictionary (AF7, AF8, PO5, PO6) that its 58-electrode pretraining montage leaves out. The other six channels here, and all four of the 4-channel subset, use trained embeddings.",
+      "facts": {
+        "dictionary_names": 62,
+        "pretraining_electrodes": 58,
+        "unused_in_pretraining": [
+          "AF7",
+          "AF8",
+          "PO5",
+          "PO6"
+        ],
+        "channels_affected": [
+          "PO5",
+          "PO6"
+        ]
+      }
+    },
+    {
+      "id": "tsinghua-benchmark-context",
+      "protocols": [
+        "beta-8ch",
+        "beta-4ch"
+      ],
+      "placement": "cell",
+      "text": "For context: BETA is not in EEGPT’s published pretraining list, but the Tsinghua 40-target SSVEP benchmark (Wang et al., 2017) is, as TSU. BETA’s authors describe BETA as an extension of that benchmark, from the same group with the same 40-target layout and its own recordings; whether anyone took part in both is not stated.",
+      "facts": {
+        "in_pretraining_list": "TSU",
+        "benchmark": "Wang et al. 2017, doi:10.1109/TNSRE.2016.2627556",
+        "beta_paper": "https://doi.org/10.3389/fnins.2020.00627",
+        "exposure_status_unchanged": true
+      }
+    },
+    {
+      "id": "shorter-than-pretraining",
+      "protocols": [
+        "mi-rest",
+        "idle",
+        "beta-8ch",
+        "beta-4ch",
+        "arithmetic-rest",
+        "p300-target",
+        "semantic-target",
+        "sleep-scalp"
+      ],
+      "placement": "row",
+      "text": "Every core window is shorter than EEGPT’s 4-second pretraining window: 1 or 2 seconds, and sleep as fifteen 2-second segments. The encoder computes each 0.25-second patch the same way at any length; a shorter window gives fewer patches to average.",
+      "facts": {
+        "pretraining_window_seconds": 4,
+        "core_window_seconds": [
+          1,
+          2
+        ],
+        "sleep_segments": 15,
+        "sleep_segment_seconds": 2,
+        "patch_seconds": 0.25
+      }
+    },
+    {
+      "id": "fixed-readout",
+      "protocols": [
+        "mi-rest",
+        "idle",
+        "beta-8ch",
+        "beta-4ch",
+        "arithmetic-rest",
+        "p300-target",
+        "semantic-target",
+        "sleep-scalp"
+      ],
+      "placement": "row",
+      "text": "The readout is the site’s fixed probe on the frozen summary tokens, as for the published LaBraM and CBraMod rows: ridge (alpha 100) on 2,048 pooled values, and on idle a per-person logistic head. It is not the authors’ downstream probe, a learnable spatial filter with a linear head, and the windows are fed without the average reference EEGPT was pretrained with.",
+      "facts": {
+        "ridge_alpha": 100,
+        "pooled_dimension": 2048,
+        "idle_logistic_c": 0.1,
+        "average_reference": false
+      }
+    },
+    {
+      "id": "source-rate",
+      "protocols": [
+        "mi-rest"
+      ],
+      "placement": "cell",
+      "text": "ds003810 is recorded at 125 Hz; its windows reach the encoder upsampled to 256 Hz, so they carry nothing above 62.5 Hz.",
+      "facts": {
+        "source_sampling_hz": 125,
+        "canonical_sampling_hz": 250,
+        "encoder_sampling_hz": 256,
+        "highest_frequency_hz": 62.5
+      }
+    },
+    {
+      "id": "idle-run",
+      "protocols": [
+        "idle"
+      ],
+      "placement": "cell",
+      "text": "Same run as the published LaBraM idle row; the published CBraMod idle row comes from another run, so a comparison with it is across runs. The window balanced accuracy and AUROC were computed from this run’s saved probabilities with the definitions of the further foundation-encoder rows; the run itself recorded the counts.",
+      "facts": {
+        "same_run_rows": [
+          "csp-lda",
+          "labram",
+          "eegnet",
+          "shallowfbcspnet"
+        ],
+        "other_run_rows": [
+          "cbramod",
+          "deep4net"
+        ]
+      }
+    }
+  ],
+  "comparisons": {
+    "rule": "Above or below only when the marginal 95% intervals do not overlap; otherwise overlap. The gap is the distance between the two intervals in percentage points (from the percent figures, rounded to 12 decimals). Descriptive: the same people under two encoders are not tested pairwise here.",
+    "published_reference_release": "research-preview-20260920",
+    "protocols": [
+      {
+        "protocol": "mi-rest",
+        "rows": [
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "csp-lda",
+            "name": "CSP+LDA",
+            "family": "classical",
+            "relation": "above",
+            "gap_pp": 4.666666666667
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "below",
+            "gap_pp": 3.247916666667
+          }
+        ],
+        "relations": {
+          "above": [
+            "csp-lda"
+          ],
+          "below": [
+            "eegnet"
+          ],
+          "overlap": [
+            "spectral-ridge",
+            "labram",
+            "cbramod"
+          ]
+        },
+        "smallest_gap": {
+          "row": "eegnet",
+          "gap_pp": 3.247916666667
+        }
+      },
+      {
+        "protocol": "beta-8ch",
+        "rows": [
+          {
+            "row": "cca",
+            "name": "Standard CCA",
+            "family": "classical",
+            "relation": "below",
+            "gap_pp": 34.642410714286
+          },
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "below",
+            "gap_pp": 22.9640625
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "above",
+            "gap_pp": 5.972767857143
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "below",
+            "gap_pp": 7.241071428572
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "below",
+            "gap_pp": 27.544642857143
+          }
+        ],
+        "relations": {
+          "above": [
+            "labram"
+          ],
+          "below": [
+            "cca",
+            "spectral-ridge",
+            "cbramod",
+            "eegnet"
+          ],
+          "overlap": []
+        },
+        "smallest_gap": {
+          "row": "labram",
+          "gap_pp": 5.972767857143
+        }
+      },
+      {
+        "protocol": "beta-4ch",
+        "rows": [
+          {
+            "row": "cca",
+            "name": "Standard CCA",
+            "family": "classical",
+            "relation": "below",
+            "gap_pp": 32.624776785714
+          },
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "below",
+            "gap_pp": 23.892633928571
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "above",
+            "gap_pp": 0.9015625
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "below",
+            "gap_pp": 4.910491071428
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "below",
+            "gap_pp": 19.472991071428
+          }
+        ],
+        "relations": {
+          "above": [
+            "labram"
+          ],
+          "below": [
+            "cca",
+            "spectral-ridge",
+            "cbramod",
+            "eegnet"
+          ],
+          "overlap": []
+        },
+        "smallest_gap": {
+          "row": "labram",
+          "gap_pp": 0.9015625
+        }
+      },
+      {
+        "protocol": "arithmetic-rest",
+        "rows": [
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "above",
+            "gap_pp": 1.990740740741
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "overlap",
+            "gap_pp": null
+          }
+        ],
+        "relations": {
+          "above": [
+            "spectral-ridge"
+          ],
+          "below": [],
+          "overlap": [
+            "labram",
+            "cbramod",
+            "eegnet"
+          ]
+        },
+        "smallest_gap": {
+          "row": "spectral-ridge",
+          "gap_pp": 1.990740740741
+        }
+      },
+      {
+        "protocol": "p300-target",
+        "rows": [
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "temporal-ridge",
+            "name": "Temporal ridge",
+            "family": "classical",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "above",
+            "gap_pp": 0.277777777778
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "overlap",
+            "gap_pp": null
+          }
+        ],
+        "relations": {
+          "above": [
+            "labram"
+          ],
+          "below": [],
+          "overlap": [
+            "spectral-ridge",
+            "temporal-ridge",
+            "cbramod",
+            "eegnet"
+          ]
+        },
+        "smallest_gap": {
+          "row": "labram",
+          "gap_pp": 0.277777777778
+        }
+      },
+      {
+        "protocol": "semantic-target",
+        "rows": [
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "above",
+            "gap_pp": 0.777777777778
+          },
+          {
+            "row": "temporal-ridge",
+            "name": "Temporal ridge",
+            "family": "classical",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "overlap",
+            "gap_pp": null
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "below",
+            "gap_pp": 3.055555555556
+          }
+        ],
+        "relations": {
+          "above": [
+            "spectral-ridge"
+          ],
+          "below": [
+            "eegnet"
+          ],
+          "overlap": [
+            "temporal-ridge",
+            "labram",
+            "cbramod"
+          ]
+        },
+        "smallest_gap": {
+          "row": "spectral-ridge",
+          "gap_pp": 0.777777777778
+        }
+      },
+      {
+        "protocol": "sleep-scalp",
+        "rows": [
+          {
+            "row": "spectral-ridge",
+            "name": "Spectral ridge",
+            "family": "classical",
+            "relation": "above",
+            "gap_pp": 0.1
+          },
+          {
+            "row": "labram",
+            "name": "LaBraM",
+            "family": "foundation",
+            "relation": "above",
+            "gap_pp": 0.666666666667
+          },
+          {
+            "row": "cbramod",
+            "name": "CBraMod",
+            "family": "foundation",
+            "relation": "above",
+            "gap_pp": 0.166666666667
+          },
+          {
+            "row": "eegnet",
+            "name": "EEGNet",
+            "family": "small",
+            "relation": "above",
+            "gap_pp": 15.6
+          }
+        ],
+        "relations": {
+          "above": [
+            "spectral-ridge",
+            "labram",
+            "cbramod",
+            "eegnet"
+          ],
+          "below": [],
+          "overlap": []
+        },
+        "smallest_gap": {
+          "row": "spectral-ridge",
+          "gap_pp": 0.1
+        }
+      }
+    ],
+    "smallest_gap": "Among the rows EEGPT is above or below, the one whose interval is nearest, with that gap: how narrow the clearest call on the protocol is. Not an order of rows.",
+    "idle": "No interval on the idle protocol, so no relation is called; its counts sit beside the published rows, of which LaBraM is from the same run."
+  },
+  "pretraining_exposure": {
+    "checked_on": "2026-10-12",
+    "definition": "'exposed' means the same recordings, or a superset or derivative of them, were in the model's self-supervised pretraining data. Use of a dataset for downstream fine-tuning or probing by the model's own authors is recorded separately as author_downstream_use and is not counted as exposure.",
+    "status_vocabulary": {
+      "exposed": "A primary source names the dataset (or a superset/derivative) in the pretraining corpus.",
+      "not_exposed": "A primary source enumerates the pretraining corpus (paper, official code or dataset card) and the dataset is absent, or the source explicitly excludes it.",
+      "unknown": "The primary sources do not enumerate the corpus closely enough to decide; 'lean' gives the direction and the reason."
+    },
+    "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+    "wording_rule": "Owner decision, 2026-10-04: a model's exposure is stated as what its authors' published pretraining list shows, checked on a date and linked to the source; never as proven absence of overlap. Recording-level audits were not done: exposure is decided per dataset. A cell's confidence rates how closely its source enumerates the corpus, not how certain it is that the recordings were never seen.",
+    "model": {
+      "key": "eegpt",
+      "name": "EEGPT",
+      "corpus": "Five public datasets, as the paper’s Table 1 lists them: PhysioMI (PhysioNet motor imagery and execution), HGD, TSU (the Tsinghua 40-target SSVEP benchmark), SEED and M3CV; 58 electrodes, 256 Hz, millivolts, average reference, 4-second windows.",
+      "corpus_listing": "enumerated in paper Table 1 and App. C.1 (public datasets only); repository listings are subsets",
+      "author_downstream_use": "BCIC-2A, BCIC-2B, Sleep-EDFx, KaggleERN, PhysioNetP300, TUAB, TUEV (none is a core dataset)",
+      "primary_sources": [
+        "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+        "https://doi.org/10.52202/079017-1239",
+        "https://github.com/BINE022/EEGPT/tree/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/datasets/pretrain",
+        "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain"
+      ]
+    },
+    "cells": [
+      {
+        "dataset": "ds003810",
+        "protocols": [
+          "mi-rest"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.18112/openneuro.ds003810.v2.0.2"
+        ]
+      },
+      {
+        "dataset": "eegmat",
+        "protocols": [
+          "arithmetic-rest"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://physionet.org/content/eegmat/1.0.0/"
+        ]
+      },
+      {
+        "dataset": "ds006593",
+        "protocols": [
+          "p300-target"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.18112/openneuro.ds006593.v1.0.0"
+        ]
+      },
+      {
+        "dataset": "ds005383",
+        "protocols": [
+          "semantic-target"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.18112/openneuro.ds005383.v1.0.0"
+        ]
+      },
+      {
+        "dataset": "eesm19",
+        "protocols": [
+          "sleep-scalp"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.18112/openneuro.ds005185.v1.0.2"
+        ]
+      },
+      {
+        "dataset": "beta",
+        "protocols": [
+          "beta-8ch",
+          "beta-4ch"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.3389/fnins.2020.00627"
+        ]
+      },
+      {
+        "dataset": "ds005342",
+        "protocols": [
+          "idle"
+        ],
+        "status": "not_exposed",
+        "confidence": "high",
+        "statement": "not in the authors' published pretraining list (checked 2026-10-12)",
+        "basis": "corpus enumerated; absent",
+        "evidence": "Not among the five pretraining datasets enumerated in the paper (Table 1; App. C.1: PhysioMI, HGD, TSU, SEED, M3CV) or in the official repository's pretraining readme/script (pinned a0e0a8f and main ea7282f). The paper names only public datasets; no in-house source.",
+        "urls": [
+          "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+          "https://github.com/BINE022/EEGPT/tree/ea7282f698c406cd423ccbedbe9960853761144c/datasets/pretrain",
+          "https://doi.org/10.18112/openneuro.ds005342.v1.0.3"
+        ]
+      }
+    ],
+    "counts": {
+      "exposed": 0,
+      "not_exposed": 7,
+      "unknown": 0
+    },
+    "context": {
+      "beta-8ch": "tsinghua-benchmark-context",
+      "beta-4ch": "tsinghua-benchmark-context"
+    }
+  },
+  "pretraining_attribution": {
+    "topic": "does-pretraining-help",
+    "beside": "the published LaBraM and CBraMod rows of deployment-topics.json, which keeps its bytes",
+    "fields": "the row and paired-contrast fields of deployment-topics.json",
+    "rows": [
+      {
+        "id": "pretraining-attribution-fixed-eegpt-ds003810-pretrained",
+        "track": "pretraining-attribution-fixed",
+        "protocol_id": "pretraining-attribution-v1",
+        "dataset_id": "ds003810",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.5833333333333333,
+        "confidence_interval_95": null,
+        "participants": 10,
+        "trials": 1200,
+        "initialization": "pretrained",
+        "encoder_seed_count": 1,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "fixed alpha100"
+      },
+      {
+        "id": "pretraining-attribution-fixed-eegpt-ds003810-random-mean",
+        "track": "pretraining-attribution-fixed",
+        "protocol_id": "pretraining-attribution-v1",
+        "dataset_id": "ds003810",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.5408333333333333,
+        "confidence_interval_95": null,
+        "participants": 10,
+        "trials": 1200,
+        "initialization": "constructor-random-mean",
+        "encoder_seed_count": 3,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "fixed alpha100"
+      },
+      {
+        "id": "pretraining-attribution-selected-eegpt-ds003810-pretrained",
+        "track": "pretraining-attribution-selected",
+        "protocol_id": "frozen-head-sensitivity-v1",
+        "dataset_id": "ds003810",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.57,
+        "confidence_interval_95": null,
+        "participants": 10,
+        "trials": 1200,
+        "initialization": "pretrained",
+        "encoder_seed_count": 1,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "inner participant validation over alpha100/10000/1"
+      },
+      {
+        "id": "pretraining-attribution-selected-eegpt-ds003810-random-mean",
+        "track": "pretraining-attribution-selected",
+        "protocol_id": "frozen-head-sensitivity-v1",
+        "dataset_id": "ds003810",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.5308333333333334,
+        "confidence_interval_95": null,
+        "participants": 10,
+        "trials": 1200,
+        "initialization": "constructor-random-mean",
+        "encoder_seed_count": 3,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "inner participant validation over alpha100/10000/1"
+      },
+      {
+        "id": "pretraining-attribution-fixed-eegpt-physionet-eegmat-1.0.0-pretrained",
+        "track": "pretraining-attribution-fixed",
+        "protocol_id": "pretraining-attribution-v1",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.6569444444444443,
+        "confidence_interval_95": null,
+        "participants": 36,
+        "trials": 2160,
+        "initialization": "pretrained",
+        "encoder_seed_count": 1,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "fixed alpha100"
+      },
+      {
+        "id": "pretraining-attribution-fixed-eegpt-physionet-eegmat-1.0.0-random-mean",
+        "track": "pretraining-attribution-fixed",
+        "protocol_id": "pretraining-attribution-v1",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.5924382716049383,
+        "confidence_interval_95": null,
+        "participants": 36,
+        "trials": 2160,
+        "initialization": "constructor-random-mean",
+        "encoder_seed_count": 3,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "fixed alpha100"
+      },
+      {
+        "id": "pretraining-attribution-selected-eegpt-physionet-eegmat-1.0.0-pretrained",
+        "track": "pretraining-attribution-selected",
+        "protocol_id": "frozen-head-sensitivity-v1",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.6597222222222221,
+        "confidence_interval_95": null,
+        "participants": 36,
+        "trials": 2160,
+        "initialization": "pretrained",
+        "encoder_seed_count": 1,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "inner participant validation over alpha100/10000/1"
+      },
+      {
+        "id": "pretraining-attribution-selected-eegpt-physionet-eegmat-1.0.0-random-mean",
+        "track": "pretraining-attribution-selected",
+        "protocol_id": "frozen-head-sensitivity-v1",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "model": "eegpt",
+        "metric": "participant_mean_balanced_accuracy",
+        "value": 0.5859567901234568,
+        "confidence_interval_95": null,
+        "participants": 36,
+        "trials": 2160,
+        "initialization": "constructor-random-mean",
+        "encoder_seed_count": 3,
+        "training_regime": "frozen_encoder_participant_disjoint_ridge",
+        "head_selection": "inner participant validation over alpha100/10000/1"
+      }
+    ],
+    "paired_contrasts": [
+      {
+        "track": "pretraining-attribution-fixed",
+        "model": "eegpt",
+        "dataset_id": "ds003810",
+        "participants": 10,
+        "comparison": "pretrained minus mean of three constructor-random encoders",
+        "difference": 0.04249999999999998,
+        "paired_participant_bootstrap_95": [
+          0.007499999999999962,
+          0.07444444444444442
+        ],
+        "unit": "absolute balanced-accuracy difference",
+        "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+      },
+      {
+        "track": "pretraining-attribution-selected",
+        "model": "eegpt",
+        "dataset_id": "ds003810",
+        "participants": 10,
+        "comparison": "pretrained minus mean of three constructor-random encoders",
+        "difference": 0.03916666666666664,
+        "paired_participant_bootstrap_95": [
+          0.007222222222222197,
+          0.07083333333333332
+        ],
+        "unit": "absolute balanced-accuracy difference",
+        "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+      },
+      {
+        "track": "pretraining-attribution-fixed",
+        "model": "eegpt",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "participants": 36,
+        "comparison": "pretrained minus mean of three constructor-random encoders",
+        "difference": 0.06450617283950616,
+        "paired_participant_bootstrap_95": [
+          0.026080246913580234,
+          0.10586419753086418
+        ],
+        "unit": "absolute balanced-accuracy difference",
+        "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+      },
+      {
+        "track": "pretraining-attribution-selected",
+        "model": "eegpt",
+        "dataset_id": "physionet-eegmat-1.0.0",
+        "participants": 36,
+        "comparison": "pretrained minus mean of three constructor-random encoders",
+        "difference": 0.07376543209876542,
+        "paired_participant_bootstrap_95": [
+          0.0439776234567901,
+          0.10401234567901234
+        ],
+        "unit": "absolute balanced-accuracy difference",
+        "interpretation": "Frozen-adapter result conditional on these splits, architecture, readout and random initializations. Not a universal model rank or proof of unseen pretraining data."
+      }
+    ],
+    "method": {
+      "comparison": "the pretrained encoder against three constructor-random initialisations of the same architecture, each read out with the same head on the same folds",
+      "random_initialisation_seeds": [
+        20260919,
+        20260920,
+        20260921
+      ],
+      "heads": {
+        "fixed": "ridge, alpha 100",
+        "selected": "inner participant validation over alpha100/10000/1"
+      },
+      "bootstrap": {
+        "draws": 10000,
+        "seed": 20260920,
+        "unit": "participant",
+        "statistic": "the mean over participants of the pretrained score minus the mean of the three random-initialisation scores"
+      },
+      "equal_to_core_cells": "The fixed-head pretrained rows are the core-matrix EEGPT cells of mi-rest and arithmetic-rest: the same predictions."
+    },
+    "interpretation_limits": [
+      "Fixed-readout primary and train-only selected-readout sensitivity must both be visible; do not choose the better test score.",
+      "Participant bootstrap is descriptive and conditional, not independent retraining uncertainty or multiplicity-adjusted inference.",
+      "Constructor-random mean comes from3initializations, not3independent cohorts."
+    ]
+  },
+  "directory_status": {
+    "name": "EEGPT",
+    "suggested_status": "Evaluated",
+    "released_status": "Rights review pending",
+    "note": "Evaluated as a frozen encoder on the eight core protocols, in the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, and in one pilot comparison outside every leaderboard. The checkpoint’s licence remains unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only."
+  },
+  "pilot_comparison": {
+    "file": "pilot-studies-update.json",
+    "result": "orthosis-eegpt-vs-58ch",
+    "leaderboard": false,
+    "same_checkpoint": true
+  },
+  "release_record": {
+    "date": "2026-10-13",
+    "decided": [
+      "2026-10-12",
+      "2026-10-13"
+    ],
+    "decision": "Publish EEGPT’s eight core-matrix cells as computed, without a re-run, as a frozen row beside the core matrix, and its pretraining-attribution rows beside the published LaBraM and CBraMod rows.",
+    "rights": "Same reasoning as the 2026-10-12 pilot decision: independently computed aggregate results are a separate output from the weights; no publisher prohibition was found; the checkpoint’s licence is unresolved; no original or converted weights are distributed; Apache-2.0 covers the repository’s code only.",
+    "eeg_dino": "EEG-DINO stays catalogue-only by the owner’s decision of 2026-10-04: its upstream weights carry no licence, and it was neither downloaded nor run. EEGPT differs: it was evaluated in the same runs as the published rows and was held only because its checkpoint’s licence could not be read, a hold the 2026-10-12 reassessment found to be this project’s own choice. EEG-DINO is not re-reviewed by this decision.",
+    "attribution_audit_label": "The public attribution audit still labels the four EEGPT contrasts “hold-unresolved-weight-license”: that label records 2026-09-20. With this release they are published. The file keeps its bytes.",
+    "repository_records": "Four of the eight cells (mi-rest, EEGMAT, BETA with 8 and with 4 channels) and EEGPT’s attribution controls have been in audit records in the public repository since 2026-09-20; this release puts them on the site’s pages with the other four cells.",
+    "repository_protocols": [
+      "mi-rest",
+      "arithmetic-rest",
+      "beta-8ch",
+      "beta-4ch"
+    ]
+  },
+  "required_limitations": [
+    "One fixed recipe: the frozen encoder with the site’s fixed readout, the same as for the published LaBraM and CBraMod rows, not the authors’ downstream probe. Scores are not EEGPT’s ceiling.",
+    "Small cohorts (motor imagery 10 people, P300 21, sleep 20, idle 4); intervals are descriptive participant bootstraps that ignore cross-validation dependence and carry no multiplicity correction.",
+    "Rows are grouped by family, never ranked. EEGPT is above or below a published row only where the marginal intervals do not overlap, and several of those gaps are narrow; each is given in percentage points.",
+    "Balanced or class-matched designs (P300, semantic target, motor imagery against rest, sampled sleep epochs) are method comparisons, not detection, false-alarm or latency estimates for real use.",
+    "New people, same task and recording setup only: not cross-day, cross-device or cross-dataset evidence; no deployment or clinical claim.",
+    "Pretraining exposure, as the authors’ published pretraining list shows it (checked 2026-10-12): none of the seven core datasets is in it. A dataset absent from a list is not proof that its recordings were never seen; BETA’s relation to the Tsinghua benchmark in that list is stated beside the BETA cells.",
+    "Idle is four people, reported as counts and cohort-mean window metrics with no interval; the cue-gated replay is not natural continuous idle.",
+    "No author endorsement is implied. The checkpoint’s licence is unresolved; no original or converted weights are distributed, and Apache-2.0 covers the repository’s code only."
+  ],
+  "audits": {
+    "runs": [
+      {
+        "protocols": [
+          "mi-rest"
+        ],
+        "status": "pass",
+        "sha256": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2",
+        "head_replay_max_error": 0.0
+      },
+      {
+        "protocols": [
+          "idle"
+        ],
+        "status": "pass",
+        "sha256": "ce2474c547f5f11c256752b0a07466beb5b6928da34bb39783aaa4647973d2e4",
+        "head_replay_max_error": null
+      },
+      {
+        "protocols": [
+          "beta-8ch",
+          "beta-4ch"
+        ],
+        "status": "pass",
+        "sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950",
+        "head_replay_max_error": null
+      },
+      {
+        "protocols": [
+          "arithmetic-rest"
+        ],
+        "status": "pass",
+        "sha256": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292",
+        "head_replay_max_error": 0.0
+      },
+      {
+        "protocols": [
+          "p300-target"
+        ],
+        "status": "pass",
+        "sha256": "30762120c57bede9f47d2e96637656e8948fca458016f7f2e3a39f951a357716",
+        "head_replay_max_error": 4.884981308350689e-15
+      },
+      {
+        "protocols": [
+          "semantic-target"
+        ],
+        "status": "pass",
+        "sha256": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4",
+        "head_replay_max_error": 6.661338147750939e-15
+      },
+      {
+        "protocols": [
+          "sleep-scalp"
+        ],
+        "status": "pass",
+        "sha256": "e6cbf1b199bf2902b9c46e4575ebfa8aff47952625df3d71a1d720b11cc27291",
+        "head_replay_max_error": 1.2323475573339238e-14
+      }
+    ],
+    "saved_heads_replayed": "In each parallel-batch run audit and the idle run audit, and for both BETA cells and every attribution package in the read-only check of the review, the saved heads applied to the saved values reproduce the saved scores to floating-point precision.",
+    "review_read_only_check": {
+      "items": 28,
+      "passed": 28
+    },
+    "independent_recomputation": "A second program, sharing no code with the first, recomputed BETA 4-channel, the EEGMAT attribution contrasts and the idle cell from the saved files: no disagreement."
+  },
+  "not_published": [
+    "Per-trial predictions and scores, per-person, per-fold and per-class metrics, features, fitted heads, idle thresholds and calibration grids, and every identifier. How many people had a negative attribution difference is not published either.",
+    "The per-seed balanced accuracies of the three constructor-random encoders and their spread: as for LaBraM and CBraMod, only their mean is published.",
+    "BETA’s descriptive duration-group summaries (S1–15 against S16–70): the published BETA rows show none.",
+    "The idle sensitivity counts of the review (how many windows or pairs lie near a threshold), its pooled AUROC, which is not the protocol’s definition, and the Monte Carlo spreads of the independent recomputation.",
+    "Timings, devices, memory and software environments.",
+    "EEGPT results outside the eight core protocols (BNCI2014-001 and the other parallel-batch datasets).",
+    "The checkpoint and its tensor conversion: no original or converted weights are distributed; their SHA-256 identifies them and grants nothing.",
+    "The run summaries, protocols and independent audits, the batch state and the review’s verification records themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because they carry private storage paths."
+  ],
+  "provenance": {
+    "manifest_sha256": "21e27baaebe9af009a9555a5b1a64e367246b14df00413ab0d9159c183b60ffc",
+    "run_summary_sha256": {
+      "mi-rest": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda",
+      "idle": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05",
+      "beta-8ch": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+      "beta-4ch": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6",
+      "arithmetic-rest": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b",
+      "p300-target": "a63a7ba5bbd6dd7865ae260b707c2db896136646a910d96516fa5c862e1146c0",
+      "semantic-target": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243",
+      "sleep-scalp": "b7c784c17d6b33c16ffca5df42d3fd8f3d7bf14960675a7278089c4903886567"
+    },
+    "public_records_sha256": {
+      "beta_summary": "20e3779fe428e17f035bed852903e934969f9450da2f7602fb4b76317b2ebe04",
+      "attribution_audit": "ef995e7deaf7a5a185cbf3c80ba2c3d829c92c4dd32e3a993549a9f1774877f7"
+    },
+    "released_files_unchanged": [
+      "experiments.json",
+      "deployment-topics.json",
+      "foundation-models-update.json",
+      "pilot-studies-update.json"
+    ]
+  }
+}

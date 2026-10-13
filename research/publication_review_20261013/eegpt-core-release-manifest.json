@@ -1,0 +1,332 @@
+{
+ "release_id": "eegpt-core-update-20261013",
+ "reviewed_at": "2026-10-13",
+ "reviewer": "publishing session",
+ "scope": "Editorial decisions for EEGPT’s eight core-matrix cells, computed in the same runs as the published rows and never shown on the site’s pages, and for its pretraining-attribution rows (pretrained against constructor-random initialisations on mi-rest, ds003810, and on EEGMAT). Its own manifest: it amends no earlier review and changes no released file. experiments.json, the protocol files, the core results CSVs, deployment-topics.json, foundation-models-update.json and pilot-studies-update.json keep their bytes; the new row sits beside the core matrix in its own file, eegpt-core-update.json, and the attribution rows beside the published LaBraM and CBraMod rows. Every figure is read from a pinned aggregate file: the run summaries, run protocols and independent audits whose SHA-256 the core tracks already publish (copied byte for byte from the run root into evidence/, git-ignored, because they carry private storage paths), the public BETA summary and attribution audit, the idle run’s summary and audit, and the read-only verification records of the core review of 12–13 October 2026. Nothing was re-run: EEGPT was not loaded, no feature was extracted, no head was refitted and no GPU was used.",
+ "approval": {
+  "date": "2026-10-13",
+  "decision": "aggregate_preview",
+  "basis": "The owner’s decisions in chat on 2026-10-12 and 2026-10-13, relayed by the workflow: option A of the core-review memo (publish the eight cells computed in the existing runs, no re-run); include EEGPT’s pretraining-attribution rows beside the published LaBraM and CBraMod rows on /topics/does-pretraining-help/; verify by a read-only check of the saved predictions (done; every check passed). On 2026-10-13 the owner approved and asked for the EEGPT core release to be built. Local build only: the owner previews before any deployment, GitHub, Hugging Face or Zenodo action.",
+  "previewDefaults": [
+   "Placement: a frozen row beside the core matrix, as for the further foundation encoders, never merged into experiments.json, the protocol files or results.csv.",
+   "A method page for EEGPT; its directory card shown as evaluated (display layer, the released status kept beside it), and EEGPT leaves the list of models in the directory but not in the matrix. The pilot comparison stays linked from the method page and outside every leaderboard.",
+   "Footnotes beside the affected cells, short and factual, once each: the one-second patch grid (P300 and semantic target); PO5 and PO6 channel embeddings unused in pretraining (BETA 8-channel); every core window shorter than the four-second pretraining window; the site’s fixed readout, not the authors’ probe; mi-rest’s 125 Hz source rate; BETA’s relation to the Tsinghua benchmark in EEGPT’s pretraining list, stated once as context, with no new exposure status.",
+   "Idle: the cue-gated counts and the window balanced accuracy and AUROC, as for the further foundation encoders; the idle row is from the same run as the published LaBraM idle row, and the published CBraMod idle row from another run.",
+   "Reading rule: above or below only when the marginal 95% intervals do not overlap, with the gap; narrow gaps (sleep staging 0.10, P300 0.28 and semantic target 0.78 percentage points) are stated with the gap, never ranked.",
+   "Rights: the reasoning of the 2026-10-12 reassessment; a new owner release record in releases.ts and on /data-use/."
+  ],
+  "decisionsOfThisReview": [
+   "Same run, only the encoder swapped: each accuracy cell is read from the run summary whose SHA-256 its core track publishes (summarySha), and the export requires that summary’s LaBraM and CBraMod results to equal the published rows. The run’s independent audit (auditSha) must have passed and must list the same EEGPT values; the dataset protocol must be the published one (protocolSha).",
+   "Idle: the counts are read from the idle run summary’s cohort aggregate and must equal its independent audit (the auditSha of the idle track). The window balanced accuracy and AUROC are the review’s recomputation from the same run’s saved probabilities with the definitions of the further foundation-encoder rows, equal in a second, independent recomputation. The published CBraMod idle row is from another run; the export says so.",
+   "Interval: each accuracy cell carries its run’s own descriptive participant bootstrap of the equal-participant mean, 10,000 draws, seed 20260919 (BETA 20260912), as every published row does. Idle has no interval.",
+   "Exposure: the seven dataset cells as the review proposed them (all not in the authors’ published pretraining list, high confidence), worded with the formula of the further foundation-encoder rows and the review’s check date, 2026-10-12. BETA’s relation to the Tsinghua benchmark (TSU in EEGPT’s list) is stated once beside the BETA cells as context; no new exposure status is introduced.",
+   "Attribution: the eight EEGPT rows and four paired contrasts are read from the public attribution audit, in the fields of deployment-topics.json and with the strings of the published LaBraM and CBraMod rows of the same track and dataset. The audit’s label for them, “hold-unresolved-weight-license”, records 2026-09-20; the file keeps its bytes and the release record says they are now published. The per-seed random-initialisation scores and their spread are not published, as for LaBraM and CBraMod.",
+   "Comparisons: against every published row of the same protocol, above or below only where the marginal 95% intervals do not overlap, with the gap in percentage points; idle has no interval and no relation.",
+   "Paper: cited by its NeurIPS 2024 proceedings DOI, 10.52202/079017-1239, which resolved to the paper’s proceedings landing page on 2026-10-13, and by the proceedings PDF pinned in the review’s evidence. The pilot’s OpenReview link is not changed by this release.",
+   "Rights: the 2026-10-12 reassessment’s reasoning holds for these cells unchanged (aggregate results are a separate output from weights; no publisher prohibition found). The checkpoint’s licence stays unresolved, no original or converted weights are distributed, Apache-2.0 covers the repository’s code only, and no endorsement by EEGPT’s authors is implied. The 2026-10-12 approval bound the Orthosis payload only; this record is the release record for these cells."
+  ]
+ },
+ "releaseRecord": {
+  "date": "2026-10-13",
+  "decision": "Publish EEGPT’s eight core-matrix cells as computed, without a re-run, as a frozen row beside the core matrix, and its pretraining-attribution rows beside the published LaBraM and CBraMod rows.",
+  "rights": "Same reasoning as the 2026-10-12 pilot decision: independently computed aggregate results are a separate output from the weights; no publisher prohibition was found; the checkpoint’s licence is unresolved; no original or converted weights are distributed; Apache-2.0 covers the repository’s code only.",
+  "eegDino": "EEG-DINO stays catalogue-only by the owner’s decision of 2026-10-04: its upstream weights carry no licence, and it was neither downloaded nor run. EEGPT differs: it was evaluated in the same runs as the published rows and was held only because its checkpoint’s licence could not be read, a hold the 2026-10-12 reassessment found to be this project’s own choice. EEG-DINO is not re-reviewed by this decision.",
+  "attributionAuditLabel": "The public attribution audit still labels the four EEGPT contrasts “hold-unresolved-weight-license”: that label records 2026-09-20. With this release they are published. The file keeps its bytes.",
+  "repositoryRecords": "Four of the eight cells (mi-rest, EEGMAT, BETA with 8 and with 4 channels) and EEGPT’s attribution controls have been in audit records in the public repository since 2026-09-20; this release puts them on the site’s pages with the other four cells.",
+  "binding": "This record approves the served file the export audit names. The 2026-10-12 parent approval bound the Orthosis payload only."
+ },
+ "review": {
+  "memo": {
+   "path": "research/eegpt_core_review_20261012/EEGPT 核心矩阵分数复查.md",
+   "sha256": "7b5c6b9e6b4f3c486991869d95662bea1649bec309924018925a6b4c3d08b9a8"
+  },
+  "coreVerification": {
+   "path": "research/publication_review_20261013/evidence/review/core-cells-and-attribution-verification.json",
+   "sha256": "62e8e1af815c179afe4972d46f99edb79d52ddb1c01c4d24e1a86fedb742fac9",
+   "note": "byte copy of the review’s stage-A verification record (read-only check of the saved predictions of mi-rest, EEGMAT, both BETA cells and the attribution packages), copied under this name from the review folder"
+  },
+  "coreVerificationNotes": {
+   "path": "research/publication_review_20261013/evidence/review/core-cells-and-attribution-verification.md",
+   "sha256": "145b65a1e0bd7a1aaff788c35d9013f7b44699be18ca0b653951ac5819796753",
+   "note": "byte copy of the same stage’s notes"
+  },
+  "idleVerification": {
+   "path": "research/eegpt_core_review_20261012/idle-verification.json",
+   "sha256": "bf083d21f0c734bad7c261a4a03c451a62fa3aff52b3d6d53c0af54f94b3f36a"
+  },
+  "idleVerificationNotes": {
+   "path": "research/eegpt_core_review_20261012/idle-verification.md",
+   "sha256": "9f90a3d5f9c945309c91a280aa9062f9f855f60306a358b251f12224a1e6b647"
+  },
+  "independentRecomputation": {
+   "path": "research/eegpt_core_review_20261012/skeptic-stage-c.json",
+   "sha256": "bfac7efcd4fe6de8656c7ee583e14ffcd4920626f6140a6ad660ab919eee05a3"
+  },
+  "exposureProposal": {
+   "path": "research/eegpt_core_review_20261012/exposure-cells-proposed.json",
+   "sha256": "731b18b6beb779cd63d5c75a212bf9fc821d55c4e40af74b345b208bdb2f52af"
+  },
+  "compatibilityAndRights": {
+   "path": "research/eegpt_core_review_20261012/exposure-compatibility-rights.md",
+   "sha256": "ca9fe08105da2ea1cb9f948a35eac69645b06028618d9e2770bf50e4115ae398"
+  },
+  "inventory": {
+   "path": "research/eegpt_core_review_20261012/inventory-mac.md",
+   "sha256": "b7c74fed34acf820460e4d4cb243dd7e5d6287c938a244642a3714587742eee6"
+  }
+ },
+ "published": {
+  "coreMatrix": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  },
+  "deploymentTopics": {
+   "path": "site/src/data/deployment-topics.json",
+   "sha256": "708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f"
+  },
+  "foundationModels": {
+   "path": "site/src/data/foundation-models-update.json",
+   "sha256": "eaaaaccb2e8b70cacc85db71726d63de036c83c3d60b7b4a9097f9aafafad13a"
+  },
+  "pilotStudies": {
+   "path": "site/src/data/pilot-studies-update.json",
+   "sha256": "c93a344b7111b2335565b4a2819c0f4be6a93ba8d6970a8fd4fcb0cf9caf2bca"
+  }
+ },
+ "runs": {
+  "mi-rest": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds003810-mps-v1/summary.json",
+    "sha256": "0dd66f4bd4d083fca1d1ab44a2d2951d57f6d19378079b8cb5ff3ee9241f0cda"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds003810-mps-v1/independent-audit.json",
+    "sha256": "e762cf7f048bf2df47b9399b9df6171733a93c162ce7800560952df30491a7f2"
+   },
+   "datasetProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds003810-mps-v1/dataset-protocol.json",
+    "sha256": "57ddb7692e3bb248b95c4e81b6aa02e7c8b19d774ed4a8b799c811b6ef3b65a2"
+   },
+   "engineProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds003810-mps-v1/engine-protocol.json",
+    "sha256": "2bb1ab0e34027ac01df1b9dfc18dc31ca197944e6c835626a9cab0724a58bf9c"
+   }
+  },
+  "arithmetic-rest": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/summary.json",
+    "sha256": "ab607e749da1eedcf88441c5b6fd0db55e2ebae0bbd91d6d18e508605eef625b"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/independent-audit.json",
+    "sha256": "2d0e4cec78c8d6e5bfc9f5390ba161f4308759e02feffbb8645d6983d9093292"
+   },
+   "datasetProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/dataset-protocol.json",
+    "sha256": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf"
+   },
+   "engineProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/engine-protocol.json",
+    "sha256": "4dfa0e59716bb69be38c16e935ba607c77c664a459e7fea1ea0fbc9e7f861439"
+   }
+  },
+  "p300-target": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds006593-cuda-v1/summary.json",
+    "sha256": "a63a7ba5bbd6dd7865ae260b707c2db896136646a910d96516fa5c862e1146c0"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds006593-cuda-v1/independent-audit.json",
+    "sha256": "30762120c57bede9f47d2e96637656e8948fca458016f7f2e3a39f951a357716"
+   },
+   "datasetProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds006593-cuda-v1/dataset-protocol.json",
+    "sha256": "bf6796dfe04dffa57bdd08933d2bb743722da71594135f04fa4fc33f3fb7dd46"
+   },
+   "engineProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds006593-cuda-v1/engine-protocol.json",
+    "sha256": "e3ed256d5decfb9672b43053bbe92b0b722971913614477873da28f10911313a"
+   }
+  },
+  "semantic-target": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds005383-cuda-v1/summary.json",
+    "sha256": "c5dca7fc30d07a001b8980a4ea65e55ef292f0891a4d32a12262b8ec88389243"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds005383-cuda-v1/independent-audit.json",
+    "sha256": "5920974ae9ca3876ce1be82497c139f0783d2ff47173641e329af976441de4c4"
+   },
+   "datasetProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds005383-cuda-v1/dataset-protocol.json",
+    "sha256": "839dfba89cf200aac7a28a7259f45024d006fcd4500170e247fcc1c4e9962c8d"
+   },
+   "engineProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/ds005383-cuda-v1/engine-protocol.json",
+    "sha256": "e3ed256d5decfb9672b43053bbe92b0b722971913614477873da28f10911313a"
+   }
+  },
+  "sleep-scalp": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/eesm19-scalp-sleep-cuda-v1/summary.json",
+    "sha256": "b7c784c17d6b33c16ffca5df42d3fd8f3d7bf14960675a7278089c4903886567"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/eesm19-scalp-sleep-cuda-v1/independent-audit.json",
+    "sha256": "e6cbf1b199bf2902b9c46e4575ebfa8aff47952625df3d71a1d720b11cc27291"
+   },
+   "datasetProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/eesm19-scalp-sleep-cuda-v1/dataset-protocol.json",
+    "sha256": "dace8a98e480ae7ee890dd6f498d5753a90e1573813b6e174f3c14bcbae8a8ff"
+   },
+   "engineProtocol": {
+    "path": "research/publication_review_20261013/evidence/runs/parallel-v1/eesm19-scalp-sleep-cuda-v1/engine-protocol.json",
+    "sha256": "87bd15e7f2aeef8c1744fd6c2c938e876e20a421147740d1cb30f4104cff300c"
+   }
+  },
+  "beta-8ch": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/beta-ssvep-v1/run-20260913-mps-v2/summary.json",
+    "sha256": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/beta-ssvep-v1/run-20260913-mps-v2-independent-audit.json",
+    "sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950"
+   },
+   "protocol": {
+    "path": "experiments/beta_ssvep_v1/protocol.json",
+    "sha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0"
+   }
+  },
+  "beta-4ch": {
+   "summary": {
+    "path": "research/publication_review_20261013/evidence/runs/beta-ssvep-v1/run-20260913-mps-v2/summary.json",
+    "sha256": "547a35763f7bca10a65c7b44c2f8c46af290159c692d237e92cd682fc21127a6"
+   },
+   "audit": {
+    "path": "research/publication_review_20261013/evidence/runs/beta-ssvep-v1/run-20260913-mps-v2-independent-audit.json",
+    "sha256": "ccddf911864b8471f488e46cae45a3651369dae1134afcdeaede68bdfcc31950"
+   },
+   "protocol": {
+    "path": "experiments/beta_ssvep_v1/protocol.json",
+    "sha256": "dcd1d2bf4dbb46b7db8c4562623448633cde4641fa372c90f25ba9d84012c2f0"
+   }
+  },
+  "idle": {
+   "summary": {
+    "path": "experiments/idle_replay_v1/outputs/run-20260910-mps-v1/summary.json",
+    "sha256": "334b3598fc70e32ceef89c606f6a721fb5dea559b0c20c839414a1fa53d4dd05"
+   },
+   "audit": {
+    "path": "experiments/idle_replay_v1/outputs/run-20260910-mps-v1/independent-audit.json",
+    "sha256": "ce2474c547f5f11c256752b0a07466beb5b6928da34bb39783aaa4647973d2e4"
+   },
+   "protocol": {
+    "path": "experiments/idle_replay_v1/protocol.json",
+    "sha256": "a1dcb0a919e290ad71b639b5e7935650399d025782972dc0c9b31706acc8dea7"
+   },
+   "models": {
+    "path": "experiments/idle_replay_v1/models.py",
+    "sha256": "00295ebcdc0bc313514c1f66165b21110828bbc0f1108faf0c9bf4b754f8f9c0"
+   }
+  },
+  "note": "The parallel-batch and BETA run files are byte copies, in evidence/, of the files in the run root whose SHA-256 the core tracks publish (summarySha, auditSha, protocolSha); they carry private storage paths and stay local. The idle files are the run’s own, in the repository’s git-ignored experiments folder. No per-person file was copied: the run summaries hold cohort aggregates only."
+ },
+ "batchState": {
+  "path": "experiments/parallel_benchmark_v1/latest-batch-state.json",
+  "sha256": "6f8329c9722fb26924e7569ffe8898fbbc87b7f1dcb70cd4c02f0f496bba5db5"
+ },
+ "publicRecords": {
+  "betaSummary": {
+   "path": "research/benchmark_expansion_v1/BETA benchmark summary.json",
+   "sha256": "20e3779fe428e17f035bed852903e934969f9450da2f7602fb4b76317b2ebe04"
+  },
+  "attributionAudit": {
+   "path": "research/deployment_validation_20260920/attribution-independent-audit.json",
+   "sha256": "ef995e7deaf7a5a185cbf3c80ba2c3d829c92c4dd32e3a993549a9f1774877f7"
+  }
+ },
+ "code": {
+  "parallelRunner": {
+   "path": "experiments/parallel_benchmark_v1/run_suite.py",
+   "sha256": "42fa5057a864a46da7148a1e77fd01ba1f0fb7e53c25fccc7ba234e1a8fabbcc"
+  },
+  "betaRunner": {
+   "path": "experiments/beta_ssvep_v1/run_benchmark.py",
+   "sha256": "4e0fc7b2cf14af10c16715def853da520a92f7e9f8fbfe89660658922617585f"
+  },
+  "attributionAuditor": {
+   "path": "experiments/deployment_v2/attribution/audit_attribution.py",
+   "sha256": "37dbef60aca8445bb943d13d1671db3da3ee5307165f75b918a2789d47cad5a5"
+  },
+  "encoderSource": {
+   "path": "experiments/asset_readiness/source/EEGPT/downstream/Modules/models/EEGPT_mcae.py",
+   "sha256": "cfe3d786e6c351e9678f9f7183cd17dab0dfbb131590ef88e3e4a9efae728a95",
+   "revision": "a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705"
+  },
+  "pretrainingScript": {
+   "path": "experiments/asset_readiness/source/EEGPT/datasets/pretrain/prepare_pretrain_dataset.py",
+   "sha256": "bcfcab154736c14c078337238cfcddefac9735d5b0bffc1db5a9ec897448e2f8",
+   "revision": "a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705"
+  }
+ },
+ "paper": {
+  "text": {
+   "path": "research/eegpt_core_review_20261012/evidence/eegpt-neurips2024-proceedings.txt",
+   "sha256": "1c4ef56ecb87e06e7842c655e6e202399a80c8a2c560b77aaf306caac13b373a"
+  },
+  "pdf": {
+   "path": "research/eegpt_core_review_20261012/evidence/eegpt-neurips2024-proceedings.pdf",
+   "sha256": "6e988e2e66e7d729d62a86cc529ca6aa632f282c7b5078c5e373dbb328e6cb94"
+  },
+  "title": "EEGPT: Pretrained Transformer for Universal and Reliable Representation of EEG Signals",
+  "venue": "NeurIPS 2024",
+  "doi": "10.52202/079017-1239",
+  "pdfUrl": "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+  "checked": "2026-10-13: https://doi.org/10.52202/079017-1239 redirects to the proceedings.com landing page whose title is the paper’s; the proceedings PDF URL serves 8,649,213 bytes, the size of the pinned PDF."
+ },
+ "betaPaper": {
+  "url": "https://doi.org/10.3389/fnins.2020.00627",
+  "quote": "an extension of the benchmark database (Wang et al., 2017)",
+  "checked": "2026-10-13: the article’s full text on frontiersin.org reads “As an extension of the benchmark database (Wang et al., 2017), the number of targets is 40”; the review notes quote the same words."
+ },
+ "rights": {
+  "reassessment": {
+   "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-publication-reassessment-20261012.json",
+   "sha256": "42fd8e695677cef56a3103d90b0ef55ce075ff4a5e2270ae88455bc64ddd5ce7"
+  },
+  "checkpointTerms": {
+   "path": "research/paired_biosignal_pilots_20261011/review/eegpt-checkpoint-terms-20261012.json",
+   "sha256": "09c6a143e0958b2504095a0b03ede905cf5759bd40375db7f6956f479e3698be"
+  },
+  "pilotParentApproval": {
+   "path": "research/paired_biosignal_pilots_20261011/review/eegpt-aggregate-release-parent-approval-20261012.json",
+   "sha256": "6fcece9c5160e49d7096af5fd1a4c43d0677c1b4db14691e642447086b911dbf"
+  },
+  "modelRights": {
+   "path": "research/publication_review_20260920/model-rights.json",
+   "sha256": "3a79dddb9c27b5ab5bf0600be0000d06d7c16a5bf17df883718a1b576f98948b"
+  },
+  "checkpointRecheck": {
+   "path": "research/deployment_validation_20260920/eegpt-checkpoint-rights-recheck.json",
+   "sha256": "d7a51c8b50054861ef76a410e93d2e4b7ac729f6e988582c0cfcd2d72e203a03"
+  },
+  "codeLicence": {
+   "path": "research/publication_review_20261012/evidence/pilot-models/EEGPT-repository-LICENSE-a0e0a8fad729.txt",
+   "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+   "retrievedFrom": "https://raw.githubusercontent.com/BINE022/EEGPT/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705/LICENSE",
+   "retrievedAt": "2026-10-12"
+  }
+ },
+ "notPublished": [
+  "Per-trial predictions and scores, per-person, per-fold and per-class metrics, features, fitted heads, idle thresholds and calibration grids, and every identifier. How many people had a negative attribution difference is not published either.",
+  "The per-seed balanced accuracies of the three constructor-random encoders and their spread: as for LaBraM and CBraMod, only their mean is published.",
+  "BETA’s descriptive duration-group summaries (S1–15 against S16–70): the published BETA rows show none.",
+  "The idle sensitivity counts of the review (how many windows or pairs lie near a threshold), its pooled AUROC, which is not the protocol’s definition, and the Monte Carlo spreads of the independent recomputation.",
+  "Timings, devices, memory and software environments.",
+  "EEGPT results outside the eight core protocols (BNCI2014-001 and the other parallel-batch datasets).",
+  "The checkpoint and its tensor conversion: no original or converted weights are distributed; their SHA-256 identifies them and grants nothing.",
+  "The run summaries, protocols and independent audits, the batch state and the review’s verification records themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because they carry private storage paths."
+ ],
+ "holds": []
+}

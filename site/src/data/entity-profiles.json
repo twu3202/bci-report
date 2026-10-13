@@ -787,6 +787,23 @@
    "reference": "ZUNA 1.1, arXiv:2607.27308",
    "reference_url": "https://arxiv.org/abs/2607.27308",
    "code_url": "https://huggingface.co/Zyphra/ZUNA1.1"
+  },
+  "eegpt": {
+   "aliases": [
+    "EEGPT",
+    "BINE022/EEGPT",
+    "eegpt_mcae_58chs_4s_large4E"
+   ],
+   "summary_en": "EEGPT is a pretrained EEG Transformer (NeurIPS 2024). Its paper pretrains it on five public datasets — PhysioMI, HGD, TSU, SEED and M3CV — at 58 electrodes, 256 Hz and 4-second windows, and summarises the channels of each 0.25-second patch in four summary tokens. BCI Report ran the released checkpoint frozen on the eight core protocols, in the same runs as the LaBraM rows and, except on idle, the CBraMod rows, with the site’s fixed readout on those tokens in place of the authors’ learnable spatial filter and linear head.",
+   "summary_zh": "EEGPT 是一个预训练的 EEG Transformer（NeurIPS 2024）。论文用五个公开数据集——PhysioMI、HGD、TSU、SEED 与 M3CV——在 58 个电极、256 Hz、4 秒时间窗上对它预训练，每个 0.25 秒片段（patch）上的各通道由四个汇总 token 概括。本站把作者发布的检查点冻结，在 8 个核心协议上运行，与 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行；分类头是本站固定的那一个，接在这些 token 上，而不是作者使用的可学习空间滤波器加线性分类头。",
+   "facts_sources": [
+    "https://papers.neurips.cc/paper_files/paper/2024/file/4540d267eeec4e5dbd9dae9448f0b739-Paper-Conference.pdf",
+    "https://doi.org/10.52202/079017-1239",
+    "https://github.com/BINE022/EEGPT/tree/a0e0a8fad729e2ecf4eedb3a81548a6e6d48a705"
+   ],
+   "reference": "EEGPT: Pretrained Transformer for Universal and Reliable Representation of EEG Signals. NeurIPS 2024.",
+   "reference_url": "https://doi.org/10.52202/079017-1239",
+   "code_url": "https://github.com/BINE022/EEGPT"
   }
  }
 }

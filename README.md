@@ -54,7 +54,11 @@ whether one shared encoder with a fixed head per question answers several
 questions as well as a question-conditioned head or separate models, for less —
 motor imagery and sleep, at matched data and compute, every contrast with a
 margin fixed before any result, and a new sleep source published with three
-stated gaps in its consent and ethics record (7 October).
+stated gaps in its consent and ethics record (7 October); and EEGPT as a frozen
+row beside the core matrix, from the same runs as the published LaBraM rows
+and, except on idle, the CBraMod rows, with its pretraining-attribution
+controls — its checkpoint licence unresolved and no weights distributed
+(13 October).
 They are kept apart rather than summed, because they measure different things. Research results, not
 diagnosis. No raw EEG, no per-participant scores, no model weights.
 
@@ -82,6 +86,7 @@ curl -O https://bci.report/data/reliable-decisions-update.json  # the 4 October 
 curl -O https://bci.report/data/foundation-models-update.json   # the 4 October foundation models
 curl -O https://bci.report/data/foundation-models-beta-8ch.csv  # their rows, one CSV per protocol
 curl -O https://bci.report/data/shared-representation-update.json  # the 7 October batch
+curl -O https://bci.report/data/eegpt-core-update.json   # EEGPT beside the core matrix, 13 October
 ```
 
 What each file holds, loading examples and how to cite a release:
@@ -120,8 +125,8 @@ Every dataset and every method also has its own page, gathering each figure
 measured on it wherever it appears on the site:
 [datasets](https://bci.report/datasets/) (BETA, EESM19, the wearable dry/wet
 SSVEP set, the Mobile BCI set, …) ·
-[methods](https://bci.report/methods/) (EEGNet, LaBraM, CBraMod, CCA, FBCCA,
-eTRCA, …). So does each core-matrix protocol:
+[methods](https://bci.report/methods/) (EEGNet, LaBraM, CBraMod, EEGPT, CCA,
+FBCCA, eTRCA, …). So does each core-matrix protocol:
 [protocols](https://bci.report/protocols/) gives each one its cohort, split,
 electrodes, window, training mode, chance level and every method's score.
 Those pages add no number of their own; the site's checks re-read every figure
@@ -238,5 +243,5 @@ describes the repository for that archive; it is written by
 dataset pages, and the site checks hold it to them.
 
 > **Known limits.** Six of eight core protocols run a single seed, the smallest
-> cohort is four people, and 9 of 18 catalogued methods have been scored. Each
+> cohort is four people, and 11 of 18 catalogued methods have been scored. Each
 > page states its own limits next to its numbers.

@@ -208,6 +208,12 @@ export function exposureTable(key: string): ExposureRow[] {
 }
 /** The model's primary sources, as the exposure table records them. */
 export const exposureSources = (key: string): string[] => E.models.find((x: any) => x.key === key)?.primary_sources ?? [];
+/**
+ * The seven core datasets as the exposure table names them (key, name, record, protocols), in its order: EEGPT's
+ * exposure cells (eegpt-core.ts) use the same keys and are printed under the same names.
+ */
+export const exposureDatasets: { key: string; name: string; record: string; protocols: string[] }[] =
+  E.datasets.map((d: any) => ({ key: d.key, name: d.name, record: d.url, protocols: d.protocols }));
 /** LaBraM's and CBraMod's sources: the same statement on all seven core datasets (owner decision 2026-10-04). */
 export function coreExposure(key: 'labram' | 'cbramod'): { statement: string; urls: string[]; checkedOn: string } {
   const cells = E.cells.filter((x: any) => x.model === key);
@@ -364,8 +370,8 @@ const ids = (...xs: string[]) => xs.map(id => {
 /**
  * One card per entry the export's directory suggestions name, except REVE Base,
  * which keeps its released card with a display-layer override
- * (directory-status.ts), and EEGPT, which keeps its released card (with its own display-layer override for the
- * pilot comparison published on 2026-10-12, directory-status.ts). The notes are site-written from the
+ * (directory-status.ts), and EEGPT, which keeps its released card (with its own display-layer override: evaluated,
+ * from eegpt-core-update.json since 2026-10-13, directory-status.ts). The notes are site-written from the
  * export's facts; the statuses are the export's.
  */
 export const fmDirectory: FmDirectoryEntry[] = [
@@ -414,7 +420,8 @@ export const reveBaseDirectory: { status: string; note: string; replaces: string
   return { status: s.suggested_status, note: s.note, replaces: s.replaces };
 })();
 /**
- * The foundation-model export leaves EEGPT unchanged. Its shown status is a display-layer override since 2026-10-12
- * (directory-status.ts): one pilot comparison published, from the pilot-studies release, not from this export.
+ * The foundation-model export leaves EEGPT unchanged (its bytes say "never loaded in v9", and they stay). Its shown
+ * status is a display-layer override (directory-status.ts): evaluated since 2026-10-13, from the EEGPT core release
+ * (eegpt-core-update.json), not from this export.
  */
 export const eegptUnchanged: boolean = /^unchanged/.test(suggested('EEGPT'));

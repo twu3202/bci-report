@@ -26,6 +26,9 @@ import { fmAdaptationContext } from '../../../data/foundation-models';
 import { fmText, fmZh } from '../../../data/foundation-models-zh';
 import FmRowView from '../../../components/FmRow.astro';
 import FmLicences from '../../../components/FmLicences.astro';
+import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptCells, eegptComparisons, eegptExposure, eegptExposureTable, eegptModel, eegptRelease,
+         eegptText, footnotesOf } from '../../../data/eegpt-core';
+import { entityCopy } from '../../../data/entity-copy';
 
 export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
   params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
@@ -76,9 +79,31 @@ const exposureText = (statement: string) => locale === 'en' ? statement : fmZh[s
 const fmNotes = fmAll.filter(r => r.notes);
 const adaptation = p.id === 'arithmetic-rest' ? fmAdaptation : [];
 const sgn = (f: { raw: number; fmt: string; src: string }) => ({ ...f, fmt: 'sgn1' as const });
+// --- EEGPT (2026-10-13): its frozen row from its own release, in its own section after the further encoders' -------
+const ec = eegptCells[p.id];
+const ecmp = eegptComparisons[p.id];
+const efn = footnotesOf(p.id);
+const exx = eegptExposureTable().find(x => x.protocols.includes(p.id))!;
+const ecopy = entityCopy[locale];
+const eSay = (en: string) => eegptText(en, locale);
+// The released rows (grey), then EEGPT (rust): the plot adds no figure.
+const eegptPlot = tradeoff ? [] : [
+  ...plot.map(r => ({ label: r.name, labelLang: payloadLang, value: r.primary.raw, interval: [r.interval![0].raw, r.interval![1].raw] as [number, number],
+                      text: `${formatFig(r.primary)} (${formatFig(r.interval![0])}–${formatFig(r.interval![1])})`, tone: 'muted' as const })),
+  { label: eegptModel.name, labelLang: payloadLang, value: ec.primary!.raw, interval: [ec.interval![0].raw, ec.interval![1].raw] as [number, number],
+    text: `${formatFig(ec.primary!)} (${formatFig(ec.interval![0])}–${formatFig(ec.interval![1])})`, tone: 'rust' as const },
+];
+// The model's terms as its method page prints them: the code licence with its scope, the checkpoint's licence status,
+// what is distributed (nothing) and the rights review. No endorsement here: the page says it once, under the licences above.
+const eegptTerms: [string, string][] = [
+  [ecopy.dtCode, `${eegptModel.codeLicence} (${eegptModel.codeLicenceScope})`],
+  [ecopy.dtWeights, eegptModel.weightsLicenceStatus],
+  [ecopy.dtWeightsNote, eegptModel.weightsNote],
+  [ecopy.dtRights, eegptModel.rightsReview],
+];
 // The files this page's figures are leaves of: the core results CSV and protocol JSON, the v9 CSV,
-// and on arithmetic-rest the v9 JSON (the EEGMAT adaptation). The cite block names their releases.
-const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation.length ? ['foundation-models-update.json'] : [])];
+// on arithmetic-rest the v9 JSON (the EEGMAT adaptation), and EEGPT's export. The cite block names their releases.
+const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation.length ? ['foundation-models-update.json'] : []), EEGPT_JSON];
 ---
 <EntityLayout
   locale={locale} path={path} active="protocols"
@@ -213,6 +238,63 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     <div class="topic-actions"><a class="button" href={`/data/${p.files.fm}`} download>{c.fmDownload}</a><a class="button fm-release" href={hrefFor(`/releases/#${fmRelease.id}`, locale)}>{c.fmRelease}{' '}<code>{fmRelease.id}</code></a></div>
   </section>
 
+  {/* EEGPT (2026-10-13): its frozen row beside the further encoders', from its own release; each footnote beside it, once. */}
+  <section class="topic-section fm-section eegpt-section" id={EEGPT_ANCHOR} aria-labelledby="eegpt-heading" data-release={eegptRelease.id}>
+    <div class="topic-heading"><div><p class="eyebrow">{c.eegptEyebrow}</p><h2 id="eegpt-heading">{c.eegptH2}</h2></div><p>{c.eegptLede(tradeoff)}</p></div>
+    {eegptPlot.length > 0 && <IntervalPlot
+      caption={c.fmPlotCaption}
+      legend={c.eegptPlotLegend}
+      domain={[0, 100]}
+      ticks={['0%', '25%', '50%', '75%', '100%']}
+      reference={p.chance?.raw}
+      rows={eegptPlot}
+    />}
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.eegptRegion}>
+      <table class="fm-results eegpt-results">
+        <thead><tr><th scope="col">{c.colEncoder}</th><th scope="col">{c.colTraining}</th>
+          {tradeoff
+            ? <><th scope="col">{c.colDetected}</th><th scope="col">{c.colFalse}</th><th scope="col">{c.colWindow}</th></>
+            : <><th scope="col">{metricLabel(p.yLabel, locale)}</th><th scope="col">{metricLabel(p.xLabel, locale)}</th></>}
+          <th scope="col">{c.colChannels}</th><th scope="col">{c.colPeople}</th><th scope="col">{c.colExposure}</th></tr></thead>
+        <tbody><tr data-eegpt-row={p.id} data-exposure={ec.exposure.status}>
+          <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${EEGPT_SLUG}/`, locale)}>{eegptModel.name}</a></span><small>{familyLabel('foundation', locale)}</small></th>
+          <td lang={payloadLang}>{tradeoff ? eegptModel.idleMode : eegptModel.mode}</td>
+          {ec.idle
+            ? <><td><Fig f={ec.idle.detection} cls="metric"/><small><Fig f={ec.idle.detected}/>{c.commandsOf}<Fig f={ec.idle.commandTrials}/>{c.commandsTail}</small>{ec.idle.abstain.raw > 0
+                    ? <span class="flag"><Fig f={ec.idle.abstain}/>{c.abstainedOf}<Fig f={ec.people}/>{c.abstainedTail}</span>
+                    : <small><Fig f={ec.idle.abstain}/>{c.abstainedOf}<Fig f={ec.people}/>{c.abstainedTail}</small>}</td>
+                <td><Fig f={ec.idle.falseActivation} cls="metric"/><small><Fig f={ec.idle.falseActivations}/>{c.commandsOf}<Fig f={ec.idle.idleTrials}/>{c.idleTail}</small></td>
+                <td><Fig f={ec.idle.windowBa} cls="metric"/><small>AUROC <Fig f={ec.idle.windowAuroc}/></small></td></>
+            : <><td><Fig f={ec.primary!} cls="metric"/><span class="interval"><Fig f={ec.interval![0]}/>–<Fig f={ec.interval![1]}/></span>{ec.chanceFlag && <span class="flag">{ec.chanceFlag === 'at-or-below' ? c.atOrBelow : c.intervalReaches}</span>}</td>
+                <td><Fig f={ec.macroF1!} cls="metric"/></td></>}
+          <td><Fig f={ec.channels}/></td>
+          <td><Fig f={ec.people}/></td>
+          <td class="fm-exposure"><small>{eSay(ec.exposure.statement).text}</small><small><a href={exx.urls[0]} target="_blank" rel="noreferrer">{c.exposureSource}</a></small></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <h3 class="roadmap-h3" id="eegpt-footnotes">{c.eegptFootnotesH3}</h3>
+    <ol class="fm-footnotes eegpt-footnotes">{efn.map(f => {
+      const t = eSay(f.text);
+      return <li id={`fn-eegpt-${f.id}`} data-footnote={f.id}><span>{t.text}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</li>;
+    })}</ol>
+    {ecmp && <>
+      <h3 class="roadmap-h3" id="eegpt-vs">{c.eegptVsH3}</h3>
+      <p class="roadmap-p">{c.eegptVsLead}</p>
+      <ul class="entity-links protocol-prose eegpt-vs">{ecmp.rows.map(r => <li data-vs={r.row} data-relation={r.relation}><span lang="en">{r.name}</span>{colon}{r.relation === 'overlap'
+        ? c.eegptOverlap
+        : <>{r.relation === 'above' ? c.eegptAbove : c.eegptBelow}<Fig f={r.gap!} cls="fig"/>{c.eegptApart}</>}</li>)}</ul>
+    </>}
+    <p class="citation-note fm-exposure-key eegpt-exposure-key">{c.eegptExposureKey(eegptExposure.checkedOn)} {c.eegptCorpus} {eSay(eegptModel.corpus).text}{eSay(eegptModel.corpus).original && <span class="note-original" lang="en">{eSay(eegptModel.corpus).original}</span>}</p>
+    <h3 class="roadmap-h3" id="eegpt-terms">{c.eegptTermsH3}</h3>
+    <ul class="entity-links protocol-prose eegpt-terms">{eegptTerms.map(([dt, en]) => {
+      // The code licence's scope is the export's sentence; the licence's name is not translated.
+      const t = en.startsWith(`${eegptModel.codeLicence} (`) ? { text: `${eegptModel.codeLicence}（${eSay(eegptModel.codeLicenceScope).text}）`, original: locale === 'zh' ? en : undefined } : eSay(en);
+      return <li><strong>{dt}</strong>{colon}<span>{locale === 'zh' ? t.text : en}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</li>;
+    })}<li><a href={eegptModel.paper} target="_blank" rel="noreferrer">{locale === 'zh' ? '论文 ↗' : 'paper ↗'}</a> · <a href={eegptModel.repository} target="_blank" rel="noreferrer">{locale === 'zh' ? '代码仓库 ↗' : 'repository ↗'}</a></li></ul>
+    <div class="topic-actions"><a class="button" href={`/data/${EEGPT_JSON}`} download>{c.eegptDownload}</a><a class="button" href={hrefFor(`/methods/${EEGPT_SLUG}/`, locale)}>{c.eegptMethod}</a><a class="button fm-release" href={hrefFor(`/releases/#${eegptRelease.id}`, locale)}>{c.fmRelease}{' '}<code>{eegptRelease.id}</code></a></div>
+  </section>
+
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <h2 id="limits-heading">{c.limits}</h2>
     <p class="protocol-limitation" lang={payloadLang}>{p.limitation}</p>
@@ -227,7 +309,7 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     <h3 class="roadmap-h3" id="pretraining-exposure">{c.exposure}</h3>
     <p class="roadmap-p" lang={payloadLang}>{p.pretrainingOverlap}</p>
     {/* The owner's sourced statement (2026-10-04) beside the released sentence, which stays as released. */}
-    <p class="roadmap-p fm-core-exposure"><strong>{c.exposureChecked(p.exposureChecked)}</strong> {p.coreExposure.map((x, i) => <>{i > 0 && (locale === 'zh' ? '；' : '; ')}<span lang="en">{x.model}</span>{colon}{exposureText(x.statement)} {x.urls.map(u => <a href={u} target="_blank" rel="noreferrer">{c.exposureSource}</a>)}</>)}{locale === 'zh' ? '。' : '.'} {c.coreExposureTail} <a href={`#${FM_ANCHOR}`}>{c.fmExposureLink}</a></p>
+    <p class="roadmap-p fm-core-exposure"><strong>{c.exposureChecked(p.exposureChecked)}</strong> {p.coreExposure.map((x, i) => <>{i > 0 && (locale === 'zh' ? '；' : '; ')}<span lang="en">{x.model}</span>{colon}{exposureText(x.statement)} {x.urls.map(u => <a href={u} target="_blank" rel="noreferrer">{c.exposureSource}</a>)}</>)}{locale === 'zh' ? '。' : '.'} {c.coreExposureTail} <a href={`#${FM_ANCHOR}`}>{c.fmExposureLink}</a> · <a href={`#${EEGPT_ANCHOR}`}>{c.eegptExposureLink}</a></p>
     <h3 class="roadmap-h3">{c.methodNotes}</h3>
     <ul class="entity-links protocol-prose" lang={payloadLang}>{notes.map(n => <li>{n}</li>)}</ul>
     <h3 class="roadmap-h3">{c.modelTerms}</h3>

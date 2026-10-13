@@ -8,7 +8,7 @@
  * competition dataset, five people, a data-quality and methods case study published by the owner's decision with its
  * rights gap stated (no ethics-approval or informed-consent statement was found); and a stored-clip computational
  * diagnostic on REFED. In "Other signals &
- * pilots", after the beyond-scalp page. EEGPT's directory card on /methods/ links #orthosis (directory-status.ts).
+ * pilots", after the beyond-scalp page. EEGPT's directory card and method page link #orthosis (directory-status.ts).
  *
  * Every figure is a leaf of pilot-studies-update.json, printed with data-fig (Fig.astro) and re-read by
  * check-workbench.mjs. Rules, from the handoffs, their approval records and the manifest: aggregates only; the three
@@ -259,13 +259,16 @@ const dirName: Record<string, { en: string; zh: string }> = {
   train_eng_test_eng: { en: 'English → English', zh: '英语 → 英语' }, train_eng_test_gr: { en: 'English → Greek', zh: '英语 → 希腊语' },
 };
 for (const d of dirs) need(d.label === dirName[d.id].en, `the BINGO direction ${d.id} as the export names it`);
-const refedArm: Record<string, { en: string; zh: string }> = {
-  eeg_ridge: { en: 'EEG Ridge (relative band power)', zh: 'EEG 岭回归（相对频带功率）' },
-  source_global_mean: { en: 'Source global mean', zh: '训练集总体均值' },
-  source_video_lookup: { en: 'Source video lookup', zh: '训练集按视频编号查表' },
-  duration_video_id_ridge: { en: 'Duration / numeric-video-ID Ridge', zh: '时长 / 数字视频编号岭回归' },
+// The arms as the page names them, and as the export does (`released`). Two controls are named for what they are
+// (owner, 2026-10-13): the training clips' mean and the same video's training target. Display only: the served
+// JSON's arm names stay.
+const refedArm: Record<string, { en: string; zh: string; released: string }> = {
+  eeg_ridge: { en: 'EEG Ridge (relative band power)', zh: 'EEG 岭回归（相对频带功率）', released: 'EEG Ridge' },
+  source_global_mean: { en: 'Training-set mean', zh: '训练集总体均值', released: 'Source global mean' },
+  source_video_lookup: { en: 'Same-video training lookup', zh: '训练集按视频编号查表', released: 'Source video lookup' },
+  duration_video_id_ridge: { en: 'Duration / numeric-video-ID Ridge', zh: '时长 / 数字视频编号岭回归', released: 'Duration / numeric-video-ID Ridge' },
 };
-for (const c of [shared, joint]) for (const [k, a] of Object.entries(c.arms)) need(a.label === refedArm[k].en.replace(' (relative band power)', ''), `the REFED arm ${k} as the export names it`);
+for (const c of [shared, joint]) for (const [k, a] of Object.entries(c.arms)) need(a.label === refedArm[k].released, `the REFED arm ${k} as the export names it`);
 const ivOf = (x: { interval_95: number[] }) => (x.interval_95[0] === x.interval_95[1] ? null : x.interval_95);
 const bmin = Math.min(...dirs.map(d => d.balanced_accuracy.mean)), bmax = Math.max(...dirs.map(d => d.balanced_accuracy.mean));
 const tmin = Math.min(...dirs.map(d => d.top3_accuracy.mean)), tmax = Math.max(...dirs.map(d => d.top3_accuracy.mean));
@@ -399,13 +402,13 @@ const copy = {
     rLabel: 'Locally executed computational diagnostic · offline · two nominal folders · no interval',
     rLede: (): Part[] => [n(RF.nominal_folders), ' nominal participant folders watched the same ', n(RF.videos), ' videos: ', n(RF.clips), ' stored EEG clips, not as many independent people. For each clip the target is the mean of its stored valence and arousal ratings on the published raw scale from 1 to 255: descriptive self-report means, not SAM scores. Four fixed arms are scored by equal-axis mean absolute error, lower being better: EEG Ridge on relative band power at every channel position, and three controls that use no EEG — the training clips’ mean, the training target of the same video, and a ridge on stored duration and the numeric video ID. Two conditions: a folder held out with the videos shared (', n(shared.folds), ' folds), and a folder held out together with ', n(joint.held_clips_per_fold), ' of the videos it is tested on (', n(joint.folds), ' folds).'],
     rCaption: { shared: 'Equal-axis mean absolute error with the videos shared and a folder held out, raw label units: lower is better.', joint: 'Equal-axis mean absolute error with a folder and its test videos held out together, raw label units: lower is better.' },
-    rLegend: 'Dot: the error over all clips of the condition; dashed line: the source global mean’s error. No interval: two nominal folders support no population inference.',
+    rLegend: 'Dot: the error over all clips of the condition; dashed line: the training-set mean’s error. No interval: two nominal folders support no population inference.',
     rRegion: 'REFED, equal-axis mean absolute error of the four arms in both conditions, scrolls horizontally',
-    rTabCaption: (): Part[] => ['Equal-axis mean absolute error over the ', n(RF.clips), ' clips of each condition, in raw label units; lower is better. In the second condition the lookup finds a matching video for ', n(joint.lookup_matched_videos), ' of ', n(joint.clips_scored), ' clips, so it falls back to the global mean.'],
+    rTabCaption: (): Part[] => ['Equal-axis mean absolute error over the ', n(RF.clips), ' clips of each condition, in raw label units; lower is better. In the second condition the lookup finds a matching video for ', n(joint.lookup_matched_videos), ' of ', n(joint.clips_scored), ' clips, so it falls back to the training-set mean.'],
     colShared: 'Shared videos, a folder held out', colJoint: 'Folder and videos held out together', control: 'uses no EEG',
-    rFindLabel: (): Part[] => ['EEG Ridge, equal-axis mean absolute error with the videos shared; the same-video lookup scores ', m3(SA.source_video_lookup.equal_axis_mae), ', the global mean ', m3(SA.source_global_mean.equal_axis_mae)],
+    rFindLabel: (): Part[] => ['EEG Ridge, equal-axis mean absolute error with the videos shared; the same-video lookup scores ', m3(SA.source_video_lookup.equal_axis_mae), ', the training-set mean ', m3(SA.source_global_mean.equal_axis_mae)],
     rFindH3: 'EEG band power has the largest error in both conditions',
-    rFindP: (): Part[] => ['Held out together with the videos, EEG Ridge’s error is ', m3(JA.eeg_ridge.equal_axis_mae), ' against ', m3(JA.source_global_mean.equal_axis_mae), ' for the global mean. With shared videos, looking up the same video’s training target has the smallest error: a familiar stimulus carries the prediction through its identity, which is what that control is there to show. Held out together, the lookup has no matching video and equals the global mean. This illustrates the confound; it does not establish a mechanism.'],
+    rFindP: (): Part[] => ['Held out together with the videos, EEG Ridge’s error is ', m3(JA.eeg_ridge.equal_axis_mae), ' against ', m3(JA.source_global_mean.equal_axis_mae), ' for the training-set mean. With shared videos, looking up the same video’s training target has the smallest error: a familiar stimulus carries the prediction through its identity, which is what that control is there to show. Held out together, the lookup has no matching video and equals the training-set mean. This illustrates the confound; it does not establish a mechanism.'],
     rLimits: 'Two nominal folders sharing their video keys: the clips are not independent people, so no interval or significance test is reported, and no population, cross-day or physiological claim follows. The rating arrays had been inspected and their means computed before this design, so these are not untouched targets. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved: published video durations exceed the stored arrays by two seconds, and pairing whole arrays establishes no precise alignment. The numeric video ID is a key index, not an established presentation order.',
     rSource: 'Data: Xiaojun Ning, Jing Wang, Zhiyang Feng, Tianzuo Xin, Shuo Zhang, Shaoqi Zhang, Zheng Lian, Yi Ding, Youfang Lin and Ziyu Jia,',
     rGated: 'gated.',
@@ -457,7 +460,7 @@ const copy = {
     related: [
       { text: 'Signals other than scalp EEG, human fNIRS and one macaque’s intracortical spiking, each read on its own: ', href: '/topics/beyond-scalp-eeg/', link: topicCards.en['beyond-scalp-eeg'].question },
       { text: 'Frozen foundation-model encoders against matched randomly initialized ones, and further checkpoints in one frozen recipe: ', href: '/topics/does-pretraining-help/', link: topicCards.en['does-pretraining-help'].question },
-      { text: 'Its entry in the model directory, with its licence status: ', href: '/methods/#eegpt', link: 'EEGPT' },
+      { text: 'Its own page, with its frozen-encoder results beside the core matrix and its licence status: ', href: '/methods/eegpt/', link: 'EEGPT' },
     ],
   },
   zh: {
@@ -634,7 +637,7 @@ const copy = {
     related: [
       { text: '头皮 EEG 之外的信号，人类 fNIRS 与一只猕猴的皮层内神经元放电，每种信号单独阅读：', href: '/topics/beyond-scalp-eeg/', link: topicCards.zh['beyond-scalp-eeg'].question },
       { text: '冻结的基础模型编码器与匹配的随机初始化编码器的比较，以及按同一冻结方案评测的更多检查点：', href: '/topics/does-pretraining-help/', link: topicCards.zh['does-pretraining-help'].question },
-      { text: '它在模型目录中的条目，以及其许可状态：', href: '/methods/#eegpt', link: 'EEGPT' },
+      { text: '它自己的页面，含核心矩阵旁边的冻结编码器结果与其许可状态：', href: '/methods/eegpt/', link: 'EEGPT' },
     ],
   },
 }[locale];

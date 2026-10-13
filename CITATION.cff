@@ -21,7 +21,9 @@ abstract: >-
   recording and across sessions, decoders trained on a person's earlier
   session and tested on a later one (including a negative result in
   continuous cursor tracking), frozen probes of further EEG foundation models
-  with each dataset checked against the authors' published pretraining lists,
+  (EEGPT among them, with its checkpoint licence unresolved and no weights
+  distributed) with each dataset checked against the authors' published
+  pretraining lists,
   foundation-model adaptation (head only, last block, LoRA), one shared
   representation answering several questions (fixed heads against
   question-conditioned heads and separate models, at matched data and compute),
@@ -31,7 +33,7 @@ abstract: >-
   them, measurements beyond scalp EEG (human fNIRS and one macaque's
   intracortical spiking, each kept apart from EEG and from the other), and
   small pilots outside every leaderboard (one cohort's injected orthosis errors,
-  including a frozen EEGPT comparison with no weights distributed; inner speech
+  including a frozen EEGPT comparison; inner speech
   across people and languages; usable channels in a handwriting recording; and
   a stored-clip emotion diagnostic). No raw recordings, no per-participant
   scores, no overall ranking.
@@ -50,8 +52,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "pilot-studies-update-20261012"
-date-released: "2026-10-12"
+version: "eegpt-core-update-20261013"
+date-released: "2026-10-13"
 keywords:
   - EEG
   - electroencephalography

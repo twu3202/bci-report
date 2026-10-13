@@ -173,6 +173,8 @@ const MODEL_LABELS: Record<string, { en: string; zh?: string }> = {
   'log-covariance-ridge': { en: 'Log-covariance ridge', zh: '对数协方差岭回归' },
   'labram': { en: 'LaBraM' },
   'cbramod': { en: 'CBraMod' },
+  // EEGPT's attribution rows (eegpt-core-update.json, 2026-10-13), beside LaBraM's and CBraMod's.
+  'eegpt': { en: 'EEGPT' },
   'eegnet': { en: 'EEGNet' },
   'fbcca': { en: 'FBCCA' },
   'cca': { en: 'CCA' },

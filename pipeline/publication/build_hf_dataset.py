@@ -35,6 +35,7 @@ import export_later_sessions_update as later_export
 import export_questions_in_language_update as questions_export
 import export_beyond_scalp_update as beyond_export
 import export_pilot_studies_update as pilot_export
+import export_eegpt_core_update as eegpt_export
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -220,6 +221,11 @@ def pilot_payload():
     return reviewed_payload('pilot-studies-update.json', pilot_export, 'Pilot-studies')
 
 
+def eegpt_payload():
+    """EEGPT's eight core-matrix cells and its pretraining-attribution rows, a frozen row beside the core matrix."""
+    return reviewed_payload('eegpt-core-update.json', eegpt_export, 'EEGPT core')
+
+
 def credit(rights):
     """A served credit line as the card prints it: the people and the record, without the site's own closing line."""
     return rights['attribution'].split(' Derived analysis by BCI Report')[0]
@@ -313,11 +319,70 @@ and movement, muscle or device artifacts may contribute; the EEGPT probe is trai
 (not zero-shot), and overlap with EEGPT's pretraining data is not excluded.
 EEGPT's code licence, {m['code_licence']}, covers {m['code_licence_scope']}; its checkpoint licence is
 unresolved, **no original or converted weights are distributed**, and its
-core-matrix scores are not in this dataset's files. {bingo}{handwriting}REFED
+core-matrix cells are in `eegpt-core-update.json`, below. {bingo}{handwriting}REFED
 ({refed['cohort']['nominal_folders']} nominal participant folders, {refed['cohort']['clips']} stored clips): a computational
 diagnostic in which source-only controls have smaller errors than EEG, with no
 interval and no physiological or population claim. Further arms are status
 only, with no figure. Licences: {licences}. Credit: {credits}"""
+
+
+def eegpt_paragraph():
+    """The card's EEGPT paragraph: what the file holds, its reading rule, the footnotes that travel with the cells and the
+    model's terms, each checked against the served file; no figure that the file's own tables do not carry."""
+    p = eegpt_payload()[1]
+    m, cells, ex = p['model'], {c['protocol']: c for c in p['cells']}, p['pretraining_exposure']
+    assert m['weights_licence'] is None and m['weights_distributed'] is False and m['code_licence'] == 'Apache-2.0'
+    assert 'source code only' in m['code_licence_scope'] and m['endorsement'] == 'none implied'
+    assert p['pilot_comparison']['leaderboard'] is False and p['directory_status']['suggested_status'] == 'Evaluated'
+    assert ex['counts'] == {'exposed': 0, 'not_exposed': 7, 'unknown': 0} and set(ex['context']) == {'beta-8ch', 'beta-4ch'}
+    assert {f['id'] for f in p['footnotes']} == {'one-second-patch-grid', 'untrained-channel-embeddings', 'tsinghua-benchmark-context',
+                                                 'shorter-than-pretraining', 'fixed-readout', 'source-rate', 'idle-run'}
+    assert cells['idle']['interval'] is None and all(c['interval_95'] for k, c in cells.items() if k != 'idle')
+    assert all(c['paired_participant_bootstrap_95'][0] > 0 for c in p['pretraining_attribution']['paired_contrasts'])
+    scored = len(cells) - 1
+    return f"""`eegpt-core-update.json`: **EEGPT beside the core matrix**, a frozen row like
+the further foundation encoders', from the same runs as the published LaBraM
+rows and, except on idle, the CBraMod rows, with only the encoder swapped,
+published as computed, without a re-run. Its {len(cells)} core-matrix cells: balanced accuracy with a participant-bootstrap
+interval, macro F1 and the chance level on {scored} protocols (each percent figure
+also in the core rows' units), and on the idle protocol ({cells['idle']['people']} people) counts and
+window metrics with no interval. Its pretraining-attribution rows on mi-rest and
+EEGMAT, in the fields of `deployment-topics.json`: the pretrained encoder against
+the mean of three random initialisations, under a fixed and a train-selected
+readout, with paired intervals. **Kept apart from `results`, and not a
+ranking**: EEGPT is above or below a published row only where their 95%
+intervals do not overlap, and several of those gaps are narrow; the file gives
+each in percentage points. Footnotes travel with the cells: one-second windows
+ran as four 0.25-second patches with no padding; on BETA with eight channels two
+channel embeddings were never trained in pretraining; every core window is
+shorter than EEGPT's 4-second pretraining window; the readout is the site's fixed
+probe, not the authors' learnable spatial filter and linear head. None of the
+seven core datasets is in EEGPT's published pretraining list — not proof that a
+recording was never seen — and BETA's relation to the Tsinghua benchmark that is
+in it is stated beside the BETA cells. EEGPT's code licence, {m['code_licence']}, covers
+{m['code_licence_scope']}; its checkpoint licence is unresolved, **no original or
+converted weights are distributed**, and no author endorsement is implied. The
+pilot comparison in `pilot-studies-update.json` stays outside every leaderboard."""
+
+
+def catalogued_elsewhere(snapshot):
+    """Catalogued methods with no core-matrix row that have rows in a later export: (name, file), in catalogue order."""
+    in_core = {r['name'] for t in snapshot['tracks'] for r in t['rows']}
+    fm = json.loads(foundation_payload()[0])['results']['foundation-models-v9']
+    complete = {r['model'] for r in fm['frozen_probe'] if r['status'] == 'complete'}
+    fm_names = {m['name'] for m in fm['models'] if m['id'] in complete}
+    eegpt = eegpt_payload()[1]
+    eegpt_names = {eegpt['model']['name']} if any(c['status'] == 'complete' for c in eegpt['cells']) else set()
+    out = []
+    for m in snapshot['models']:
+        n = m['name']
+        if n in in_core:
+            continue
+        if n in fm_names:
+            out.append((n, 'foundation-models-update.json'))
+        elif n in eegpt_names:
+            out.append((n, 'eegpt-core-update.json'))
+    return out
 
 
 def pilot_small_cohort():
@@ -565,6 +630,11 @@ def card(snapshot, n_rows, topics, n_foundation=128):
     # also lists methods reviewed but not yet scored.
     models = len({r['name'] for t in snapshot['tracks'] for r in t['rows']})
     catalogued = len(snapshot['models'])
+    # A catalogued method scored outside `results.csv` still has a row: REVE Base in the foundation-model export, EEGPT
+    # in its own. The card said 9 of 18 after both had been scored, then told the reader a method with no row had not
+    # been run, right after the EEGPT paragraph.
+    scored_elsewhere = catalogued_elsewhere(snapshot)
+    scored = models + len(scored_elsewhere)
     n_topic_rows = len(topics['rows'])
     n_topics = len(topics['topics'])
     n_contrasts = len(topics['paired_contrasts'])
@@ -787,8 +857,12 @@ are not published.
 
 {pilot_paragraph()}
 
-{models} of {catalogued} catalogued methods have been scored. A method with no
-row has not been run, which is not the same as having failed.
+{eegpt_paragraph()}
+
+{scored} of {catalogued} catalogued methods have been scored ({models} in `results.csv`;
+{' and '.join(f'{n} in `{f}`' for n, f in scored_elsewhere)}). A catalogued method
+with no row in any file has not been run, which is not the same as having
+failed.
 
 {jev_section()}
 
@@ -815,7 +889,8 @@ several are not, and this repository does not relicense any of them.
 - **Pretraining overlap is checked against published lists, not proven
   absent.** For LaBraM and CBraMod, none of the seven datasets is in the
   authors' published pretraining list (checked 4 October 2026; every source is
-  in `foundation-models-update.json`). The released protocol files keep their
+  in `foundation-models-update.json`), nor for EEGPT (checked 12 October 2026;
+  in `eegpt-core-update.json`). The released protocol files keep their
   original sentence, that overlap is unknown unless documented; recording-level
   overlap was not audited, so a frozen encoder may still have seen related data.
 
@@ -979,6 +1054,8 @@ def build(output):
     (output/'beyond-scalp-update.json').write_bytes(raw_beyond)
     raw_pilot, _ = pilot_payload()
     (output/'pilot-studies-update.json').write_bytes(raw_pilot)
+    raw_eegpt, _ = eegpt_payload()
+    (output/'eegpt-core-update.json').write_bytes(raw_eegpt)
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

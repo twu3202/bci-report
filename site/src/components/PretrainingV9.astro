@@ -27,7 +27,9 @@ import { FM_ANCHOR, FM_JSON, fmAblation, fmAdaptationMeta, fmExposure, fmMatrixM
 import { fmText, fmZh } from '../data/foundation-models-zh';
 import { adaptOpen, adaptResolved, adaptRows, betaAblationAboveCbramod, betaAboveCbramod, betaBest, betaPublished, betaRows, BETA8,
          maskingInseparable, maskingRows, protocolFacts, revePairs, SCORED_TRACKS, separatedOn, SLEEP, sleepAboveAll, sleepBest, sleepPublished,
-         sleepRows, type ChanceFlag, type Relation, type VsPublished } from '../data/foundation-topics';
+         sleepRows, eegptBeta, eegptSleep, eegptSleepAboveAll, eegptSleepGap, type ChanceFlag, type EegptTopicRow, type Relation,
+         type VsPublished } from '../data/foundation-topics';
+import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptExposure, eegptFootnoteById, eegptModel, eegptRelease, eegptText, eegptVs } from '../data/eegpt-core';
 import type { Fig as FigValue } from '../data/entities';
 
 interface Props { locale: Locale }
@@ -72,6 +74,32 @@ function relText(vs: VsPublished): string {
 }
 const exposureText = (st: string) => zh ? fmZh[st] : st;
 /**
+ * EEGPT's row (2026-10-13): the same three published rows, each relation with the gap between the two intervals where
+ * they do not overlap (the export's gap_pp), so a narrow call is printed as narrow. Never emphasised as the further
+ * encoders' "above all three" rows are: its data attribute is its own.
+ */
+function eegptRel(r: EegptTopicRow): Part[] {
+  const refs: [string, string][] = [['labram', 'LaBraM'], ['cbramod', 'CBraMod'], [r.vs.bestRow, refName(r.vs.bestRow, r.vs.bestName)]];
+  const out: Part[] = [];
+  (['above', 'overlap', 'below'] as Relation[]).forEach(rel => {
+    const xs = refs.filter(([id]) => eegptVs(r.track, id).relation === rel);
+    if (!xs.length) return;
+    if (out.length) out.push(zh ? '；' : '; ');
+    out.push(zh ? (rel === 'overlap' ? '与' : relWord.zh[rel]) : out.length ? relWord.en[rel].toLowerCase() + ' ' : relWord.en[rel] + ' ');
+    xs.forEach(([id, n], i) => {
+      if (i > 0) out.push(zh ? '、' : i === xs.length - 1 ? ' and ' : ', ');
+      const gap = eegptVs(r.track, id).gap;
+      // Chinese typesetting: a space where the relation word meets a Latin name, none after 、.
+      out.push(zh && i === 0 && /^[A-Za-z]/.test(n) ? ` ${n}` : n);
+      // The gap is between the two intervals, not the two scores: said so beside it, as on the protocol pages.
+      if (gap) out.push(zh ? '（两个区间相距 ' : ' (intervals ', gap, zh ? '）' : ' apart)');
+    });
+    if (zh && rel === 'overlap') out.push(/[A-Za-z]$/.test(xs.at(-1)![1]) ? ' 重叠' : '重叠');
+  });
+  return out;
+}
+const eSay = (en: string) => eegptText(en, locale);
+/**
  * The other released non-foundation rows whose interval overlaps the one with the highest point estimate: that row
  * is named by its point estimate only, never as the best (review of 2026-10-05).
  */
@@ -85,14 +113,21 @@ const c = {
     eyebrow: 'A narrower question · grouped, not ranked',
     h2: 'Further foundation encoders, frozen',
     lede: `This section asks a narrower question than the sections above, with no random-initialization control: which other pretrained encoders read out better under the same frozen recipe. Eleven further EEG foundation models — sixteen encoder checkpoints — were swapped into the published LaBraM and CBraMod frozen recipe and nothing else changed: the same windows, people, folds, ridge head and scoring.`,
-    rule: 'A row is above or below another only where their 95% intervals do not overlap; with 126 frozen cells, an occasional non-overlap is expected by chance.',
+    rule: 'A row is above or below another only where their 95% intervals do not overlap; with 126 frozen cells from the further encoders and EEGPT’s eight more, an occasional non-overlap is expected by chance.',
+    eegptLede: 'EEGPT sits in the sleep and BETA tables too, from its own release: it ran in the same runs as the published LaBraM and CBraMod rows with only the encoder swapped, and its random-initialization control is in the sections above.',
+    eegptName: 'Same runs as the published rows',
+    eegptSleep: [' So does EEGPT, by a narrow margin: the lower end of its interval, ', ', clears the upper end of spectral ridge’s by ', '.'],
+    eegptKey: (d: string) => `EEGPT’s row gives the gap between the two intervals beside each relation; its authors’ list was checked on ${d}.`,
+    eegptBetaNotes: 'EEGPT on BETA:',
+    eegptTerms: 'EEGPT: the checkpoint’s licence is unresolved, and no original or converted weights are distributed; Apache-2.0 covers the repository’s code only.',
+    eegptFiles: ['EEGPT’s rows are in their own section of the same protocol pages, from ', ', release ', '.'],
     key: (d: string) => `Unless a row is marked, its dataset is not in the model authors’ published pretraining list (checked ${d}): what the authors’ lists show, not proof that the recordings were never seen. Each model’s sources are on its method page.`,
     published: (p: string) => `Published rows on ${p} (core matrix):`,
     notAdapted: 'The others were not adapted:',
     colEncoder: 'Encoder', colBa: 'Balanced accuracy', colVs: (best: string) => `Against LaBraM, CBraMod and ${best}`,
     vsLegend: (best: string, ov: string[]) => `Against the published rows: LaBraM, CBraMod and ${best}, the published non-foundation row with the highest point estimate${ov.length ? ` (its interval overlaps ${list(ov)}’s)` : ''}, by whether the 95% intervals overlap.`,
     sleepH3: (n: number) => `Sleep staging: ${words[n]} new encoders above every published row`,
-    sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the published non-foundation row with the highest point estimate (', ', ', '–', `), the frozen LaBraM and CBraMod rows, and EEGNet. Sleep is the only one of the ${words[n]} scored protocols where a new row clears the published non-foundation row with the highest point estimate. The other new rows overlap the published ones or lie below them.`],
+    sleepP: (n: number) => ['On the core matrix’s sleep protocol (EESM19 scalp subset, ', ' people, six channels, chance ', '), ', ' lie entirely above every published row — spectral ridge, the published non-foundation row with the highest point estimate (', ', ', '–', '), the frozen LaBraM and CBraMod rows, and EEGNet.', ` Sleep is the only one of the ${words[n]} scored protocols where a new row clears the published non-foundation row with the highest point estimate. The other new rows overlap the published ones or lie below them.`],
     sleepRegion: 'Sleep staging, the new frozen encoders against the published rows, scrolls horizontally',
     sleepCaption: 'Sleep staging · frozen encoder and ridge head · balanced accuracy with its descriptive 95% interval.',
     betaH3: 'BETA: above CBraMod, not above training-free CCA',
@@ -133,14 +168,21 @@ const c = {
     eyebrow: '一个更窄的问题 · 分组列出，不排名',
     h2: '更多基础模型编码器（冻结）',
     lede: '这一节问的问题比上面几节更窄，也没有随机初始化对照：在同样的冻结方案下，还有哪些预训练编码器的读出效果更好。另外 11 个 EEG 基础模型（共 16 个编码器检查点）被换进已发布的 LaBraM 与 CBraMod 冻结方案，其余一概不变：时间窗、被试、折、岭回归分类头和评分方式都相同。',
-    rule: '只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；冻结单元格共有 126 个，偶尔出现不重叠，本身就在随机误差的预料之中。',
+    rule: '只有两行的 95% 区间不重叠时，才说一行高于或低于另一行；更多编码器的冻结单元格共有 126 个，EEGPT 另有 8 个，偶尔出现不重叠，本身就在随机误差的预料之中。',
+    eegptLede: '睡眠分期与 BETA 的表格中也列有 EEGPT，来自它自己的发布：它与已发布的 LaBraM、CBraMod 各行出自同一批运行，只替换了编码器；它的随机初始化对照见上面几节。',
+    eegptName: '与已发布的行出自同一批运行',
+    eegptSleep: ['EEGPT 也高于所有已发布的行，但差距很窄：它区间的下限 ', ' 只比 spectral ridge 区间的上限高 ', '。'],
+    eegptKey: (d: string) => `EEGPT 一行在每个比较旁边给出两个区间之间的差距；它的作者清单于 ${d} 核查。`,
+    eegptBetaNotes: 'BETA 上的 EEGPT：',
+    eegptTerms: 'EEGPT：检查点的许可仍未厘清，不分发任何原始或转换后的权重；Apache-2.0 只涵盖代码仓库中的代码。',
+    eegptFiles: ['EEGPT 的各行见这些协议页面上它自己的一节，数据来自 ', '，发布版本 ', '。'],
     key: (d: string) => `未加标记的行，其数据集都不在模型作者公开的预训练数据清单中（${d} 核查）：这是作者清单所显示的情况，并不证明这些记录从未被模型见过。每个模型的来源见其方法页面。`,
     published: (p: string) => `${p}上已发布的行（核心矩阵）：`,
     notAdapted: '其余的没有做适配：',
     colEncoder: '编码器', colBa: '平衡准确率', colVs: (best: string) => `与 LaBraM、CBraMod 和${/^[A-Za-z]/.test(best) ? ' ' : ''}${best}${/[A-Za-z]$/.test(best) ? ' ' : ''}相比`,
     vsLegend: (best: string, ov: string[]) => `与已发布的行相比：LaBraM、CBraMod，以及已发布的非基础模型行中点估计最高的${/^[A-Za-z]/.test(best) ? ' ' : ''}${best}${ov.length ? `（它的区间与 ${list(ov)} 的重叠）` : ''}，按 95% 区间是否重叠判断。`,
     sleepH3: (n: number) => `睡眠分期：${n} 个新编码器高于所有已发布的行`,
-    sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的非基础模型行中点估计最高的 spectral ridge（', '，', '–', `）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的非基础模型行中点估计最高的那一行。其余新行与已发布的行重叠，或低于它们。`],
+    sleepP: (n: number) => ['在核心矩阵的睡眠协议上（EESM19 头皮子集，', ' 名被试，6 个通道，随机水平 ', '），', ' 完全高于所有已发布的行——已发布的非基础模型行中点估计最高的 spectral ridge（', '，', '–', '）、冻结的 LaBraM 与 CBraMod 两行，以及 EEGNet。', `在 ${n} 个有分数的协议中，只有睡眠分期上有新行高过已发布的非基础模型行中点估计最高的那一行。其余新行与已发布的行重叠，或低于它们。`],
     sleepRegion: '睡眠分期：新的冻结编码器与已发布的行对比，可横向滚动',
     sleepCaption: '睡眠分期 · 冻结编码器加岭回归分类头 · 平衡准确率及其描述性 95% 区间。',
     betaH3: 'BETA：高于 CBraMod，但不高于免训练的 CCA',
@@ -191,7 +233,7 @@ const limits: [string, Part[]][] = zh ? [
   ['方法比较，不是部署时的比率', ['类别平衡或类别匹配的设计（P300、语义目标、运动想象对静息、抽样的睡眠数据帧）用来比较方法，不是实际使用中检出率、误报率或延迟的估计。']],
   ['新被试、同一任务与设置', ['折留出的是被试。这里没有跨天、跨设备或跨数据集的证据，也不做任何临床方面的声明。']],
   ['时间窗很短', ['每个编码器看到的都是已发布的 1–2 秒时间窗（睡眠为 15 个 2 秒片段），通常比它预训练时的上下文更短；各模型的输入处理写在协议页面上各行的脚注中。']],
-  ['是否出现在预训练数据中：看作者的清单', ['BETA 在 ST-EEGFormer 作者公开的预训练数据清单中，TMNRED 在 SingLEM 的清单中；ZUNA 1.1 没有公开清单，所以它的每个单元格都是未知；EEGMamba 的清单读自其官方代码，把握程度为中等。其余单元格——包括 LaBraM 与 CBraMod 的——都不在作者公开的预训练数据清单中（2026-10-04 核查），这并不证明这些记录从未被模型见过。']],
+  ['是否出现在预训练数据中：看作者的清单', ['BETA 在 ST-EEGFormer 作者公开的预训练数据清单中，TMNRED 在 SingLEM 的清单中；ZUNA 1.1 没有公开清单，所以它的每个单元格都是未知；EEGMamba 的清单读自其官方代码，把握程度为中等。其余单元格——包括 LaBraM 与 CBraMod 的——都不在作者公开的预训练数据清单中（2026-10-04 核查），EEGPT 的单元格也不在它作者的清单中（', eegptExposure.checkedOn, ' 核查）；这并不证明这些记录从未被模型见过。']],
   ['不代表作者认可', ['任何模型的作者都没有为这些结果背书。没有保留或分享任何适配后的权重或 LoRA 增量；每个模型的权重许可随它的行一起列出。计算耗时在共享 GPU 上测得，只作参考，所以不发布。']],
 ] : [
   ['One fixed recipe, not a ceiling', ['The frozen probe is the published linear head with only the encoder swapped; the adaptation is one untuned five-epoch recipe on one task.']],
@@ -200,7 +242,7 @@ const limits: [string, Part[]][] = zh ? [
   ['Method comparisons, not deployment rates', ['Balanced or class-matched designs (P300, semantic target, motor imagery against rest, sampled sleep epochs) compare methods; they are not detection, false-alarm or latency estimates for real use.']],
   ['New people, same task and setup', ['The folds hold out people. Nothing here is cross-day, cross-device or cross-dataset evidence, and nothing is a clinical claim.']],
   ['Short windows', ['Every encoder sees the published 1–2 s windows (sleep as 15 two-second segments), usually shorter than its pretraining context; each model’s input handling is in its row footnote on the protocol pages.']],
-  ['Pretraining exposure: the authors’ lists', ['BETA is in ST-EEGFormer’s published pretraining list and TMNRED in SingLEM’s; ZUNA 1.1 publishes none, so every ZUNA 1.1 cell is unknown; EEGMamba’s list is read from its official code, with medium confidence. Every other cell, LaBraM’s and CBraMod’s included, is not in the authors’ published pretraining list (checked 2026-10-04) — not proof that the recordings were never seen.']],
+  ['Pretraining exposure: the authors’ lists', ['BETA is in ST-EEGFormer’s published pretraining list and TMNRED in SingLEM’s; ZUNA 1.1 publishes none, so every ZUNA 1.1 cell is unknown; EEGMamba’s list is read from its official code, with medium confidence. Every other cell, LaBraM’s and CBraMod’s included, is not in the authors’ published pretraining list (checked 2026-10-04), and neither are EEGPT’s (checked ', eegptExposure.checkedOn, ') — not proof that the recordings were never seen.']],
   ['No endorsement', ['No model’s authors endorse these results. No adapted weights or LoRA deltas were kept or shared, and each model’s weights licence travels with its rows. Timings were measured on a shared GPU and are not published.']],
 ];
 
@@ -213,10 +255,11 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
 ---
 <section class="topic-section fm-topic" id="v9-encoders" aria-labelledby="v9-heading" data-release={fmRelease.id}>
   <div class="topic-heading"><div><p class="eyebrow">{c.eyebrow}</p><h2 id="v9-heading">{c.h2}</h2></div><p>{c.lede}</p></div>
+  <p class="protocol-note fm-eegpt-lede" data-eegpt-release={eegptRelease.id}>{c.eegptLede}</p>
   <p class="protocol-note fm-reading-rule">{c.rule}</p>
 
-  <h3 class="roadmap-h3" id="v9-sleep">{c.sleepH3(sleepAboveAll.length)}</h3>
-  <p class="roadmap-p" data-claim="sleep-above-all" data-models={sleepAboveAll.map(r => r.cell.model.id).join(' ')}>{c.sleepP(nScored)[0]}<Fig f={people(SLEEP)}/>{c.sleepP(nScored)[1]}<Fig f={chanceOf(SLEEP)}/>{c.sleepP(nScored)[2]}<NameList names={sleepAboveAll.map(r => r.cell.model.name)} locale={locale}/>{c.sleepP(nScored)[3]}<span data-core-topic={`${SLEEP}|${sleepBest.id}`}><Fig f={sleepBest.ba}/>{c.sleepP(nScored)[4]}<Fig f={sleepBest.interval[0]}/>{c.sleepP(nScored)[5]}<Fig f={sleepBest.interval[1]}/></span>{c.sleepP(nScored)[6]}</p>
+  <h3 class="roadmap-h3" id="v9-sleep">{c.sleepH3(sleepAboveAll.length + (eegptSleepAboveAll ? 1 : 0))}</h3>
+  <p class="roadmap-p" data-claim="sleep-above-all" data-models={sleepAboveAll.map(r => r.cell.model.id).join(' ')} data-eegpt={eegptSleepAboveAll ? 'above-all' : 'no'}>{c.sleepP(nScored)[0]}<Fig f={people(SLEEP)}/>{c.sleepP(nScored)[1]}<Fig f={chanceOf(SLEEP)}/>{c.sleepP(nScored)[2]}<NameList names={sleepAboveAll.map(r => r.cell.model.name)} locale={locale}/>{c.sleepP(nScored)[3]}<span data-core-topic={`${SLEEP}|${sleepBest.id}`}><Fig f={sleepBest.ba}/>{c.sleepP(nScored)[4]}<Fig f={sleepBest.interval[0]}/>{c.sleepP(nScored)[5]}<Fig f={sleepBest.interval[1]}/></span>{c.sleepP(nScored)[6]}<span data-eegpt-topic={SLEEP}>{c.eegptSleep[0]}<Fig f={eegptSleep.cell.interval![0]}/>{c.eegptSleep[1]}<Fig f={eegptSleepGap.gap}/>{c.eegptSleep[2]}</span>{c.sleepP(nScored)[7]}</p>
   <p class="protocol-note fm-published"><strong>{c.published(inSentence[SLEEP][locale])}</strong>{zh ? '' : ' '}{sleepPublished.map((p, i) => <>{i > 0 && ' · '}<span data-core-topic={`${SLEEP}|${p.id}`}><span lang="en">{p.name}</span> <Fig f={p.ba}/>{zh ? '（' : ' ('}<Fig f={p.interval[0]}/>–<Fig f={p.interval[1]}/>{zh ? '）' : ')'}</span></>)}</p>
   <div class="topic-table topic-table-spaced scroll" tabindex="0" role="region" aria-label={c.sleepRegion}>
     <table class="fm-results fm-topic-table"><caption>{c.sleepCaption}</caption>
@@ -225,10 +268,15 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
         <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
         <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
         <td class="fm-rel">{relText(r.vs)}</td>
-      </tr>)}</tbody>
+      </tr>)}
+      <tr data-eegpt-topic={SLEEP} data-eegpt-rel={`${eegptSleep.vs.labram} ${eegptSleep.vs.cbramod} ${eegptSleep.vs.best}`}>
+        <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${EEGPT_SLUG}/`, locale)}>{eegptModel.name}</a></span><small>{c.eegptName}</small></th>
+        <td><FmTopicBa ba={eegptSleep.cell.primary!} interval={eegptSleep.cell.interval!} flag={eegptSleep.cell.chanceFlag} locale={locale}/></td>
+        <td class="fm-rel">{eegptRel(eegptSleep).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</td>
+      </tr></tbody>
     </table>
   </div>
-  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(sleepBest.id, sleepBest.name), bestOverlaps(SLEEP, sleepBest))} {c.key(fmExposure.checkedOn)}</p>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(sleepBest.id, sleepBest.name), bestOverlaps(SLEEP, sleepBest))} {c.key(fmExposure.checkedOn)} {c.eegptKey(eegptExposure.checkedOn)}</p>
 
   <h3 class="roadmap-h3" id="v9-beta">{c.betaH3}</h3>
   <p class="roadmap-p" data-claim="beta-above-cbramod" data-models={betaAboveCbramod.map(r => r.cell.model.id).join(' ')} data-ablation={betaAblationAboveCbramod.join(' ')}>{c.betaP[0]}<Fig f={people(BETA8)}/>{c.betaP[1]}<Fig f={chanceOf(BETA8)}/>{c.betaP[2]}<NameList names={betaAboveCbramod.map(r => r.cell.model.name)} locale={locale}/>{c.betaP[3]}<span data-core-topic={`${BETA8}|cbramod`}><Fig f={betaPublished(BETA8).find(p => p.id === 'cbramod')!.ba}/></span>{c.betaP[4]}<span data-core-topic={`${BETA8}|${betaBest.id}`}><Fig f={betaBest.ba}/></span>{c.betaP[5]}</p>
@@ -240,10 +288,20 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
         <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${r.cell.model.slug}/`, locale)}>{r.cell.model.name}</a></span>{fmResearchUse(r.cell.model) && <small class="fm-research-use">{pc.researchUse}</small>}</th>
         <td><FmTopicBa ba={r.cell.primary!} interval={r.cell.interval!} flag={r.cell.chanceFlag} exposure={r.cell.exposure} locale={locale}/></td>
         <td class="fm-rel">{relText(r.vs)}</td>
-      </tr>)}</tbody>
+      </tr>)}
+      <tr data-eegpt-topic={BETA8} data-eegpt-rel={`${eegptBeta.vs.labram} ${eegptBeta.vs.cbramod} ${eegptBeta.vs.best}`}>
+        <th scope="row"><span lang="en"><a href={hrefFor(`/methods/${EEGPT_SLUG}/`, locale)}>{eegptModel.name}</a></span><small>{c.eegptName}</small></th>
+        <td><FmTopicBa ba={eegptBeta.cell.primary!} interval={eegptBeta.cell.interval!} flag={eegptBeta.cell.chanceFlag} locale={locale}/></td>
+        <td class="fm-rel">{eegptRel(eegptBeta).map(x => typeof x === 'string' ? x : <Fig f={x}/>)}</td>
+      </tr></tbody>
     </table>
   </div>
-  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(betaBest.id, betaBest.name), bestOverlaps(BETA8, betaBest))} {c.key(fmExposure.checkedOn)}</p>
+  <p class="citation-note fm-exposure-key">{c.vsLegend(refName(betaBest.id, betaBest.name), bestOverlaps(BETA8, betaBest))} {c.key(fmExposure.checkedOn)} {c.eegptKey(eegptExposure.checkedOn)}</p>
+  {/* EEGPT's BETA footnotes, beside its BETA row, once on the page: the untrained channel embeddings and the Tsinghua benchmark. */}
+  <p class="protocol-note eegpt-notes" data-eegpt-notes={BETA8}><strong>{c.eegptBetaNotes}</strong>{zh ? '' : ' '}{['untrained-channel-embeddings', 'tsinghua-benchmark-context'].map((id, i) => {
+    const t = eSay(eegptFootnoteById[id].text);
+    return <>{i > 0 && !zh && ' '}<span data-footnote={id}>{t.text}</span>{t.original && <span class="note-original" lang="en">{t.original}</span>}</>;
+  })}</p>
 
   <h3 class="roadmap-h3" id="v9-adaptation">{c.adaptH3}</h3>
   <p class="roadmap-p">{c.adaptP[0]}<Fig f={fmAdaptationMeta.people}/>{c.adaptP[1]}<Fig f={fmAdaptationMeta.folds}/>{c.adaptP[2]}<Fig f={fmAdaptationMeta.chance}/>{c.adaptP[3]}<Fig f={fmAdaptationMeta.loraRange[0]}/>{c.adaptP[4]}<Fig f={fmAdaptationMeta.loraRange[1]}/>{c.adaptP[5]}</p>
@@ -304,5 +362,7 @@ const notAdaptedGroups = [...new Map(fmNotAdapted.map(m => [m.adaptation, fmNotA
   <h3 class="roadmap-h3" id="v9-licences">{c.licencesH3}</h3>
   {/* The limits above already say no author endorses these results. */}
   <FmLicences models={[...fmMatrixModels, ...fmAblation.checkpoints.map(id => fmModelById[id])].filter((m, i, xs) => xs.indexOf(m) === i)} locale={locale} endorsement={false}/>
+  <p class="protocol-note eegpt-terms-note">{c.eegptTerms}</p>
   <p class="citation-note">{c.files[0]}{SCORED_TRACKS.map((id, i) => <>{i > 0 && c.protocolLinkSep}<a href={`${hrefFor(`/protocols/${id}/`, locale)}#${FM_ANCHOR}`}>{protocolName(id)}</a></>)}{c.files[1]}<a href={`/data/${FM_JSON}`} download>{FM_JSON}</a>{c.files[2]}<a href={hrefFor(`/releases/#${fmRelease.id}`, locale)}><code>{fmRelease.id}</code></a>{c.files[3]}</p>
+  <p class="citation-note">{c.eegptFiles[0]}<a href={`/data/${EEGPT_JSON}`} download>{EEGPT_JSON}</a>{c.eegptFiles[1]}<a href={hrefFor(`/releases/#${eegptRelease.id}`, locale)}><code>{eegptRelease.id}</code></a>{c.eegptFiles[2]}</p>
 </section>

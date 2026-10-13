@@ -879,10 +879,10 @@ for a status-only or held source; the Orthosis groups each saying they are one c
 comparison with its caveats beside it, BINGO's documented preprocessing beside its result, the handwriting group's
 caveats beside its figures and, beside its credit, a short pointer to the gap stated on /data-use/ (never the full
 statement again), MC_RTT's one animal beside its figures; no Jev on those pages; BINGO's data management plan cited nowhere in the build. EEGPT's directory card
-and its /methods/#eegpt entry carry a display-layer override (directory-status.ts), as REVE Base's does: one pilot
-comparison published and linked, the core-matrix scores unpublished pending a separate review, the checkpoint licence
-unresolved, no weights distributed, Apache-2.0 the code's alone; the released status stays beside it and
-experiments.json keeps its bytes. The two topic pages carry their own checks.
+carries a display-layer override (directory-status.ts), as REVE Base's does, linking the pilot comparison; since
+2026-10-13 it says evaluated, from the EEGPT core release below, and EEGPT has a method page in place of its
+/methods/#eegpt entry. The released status stays beside it and experiments.json keeps its bytes. The two topic pages
+carry their own checks.
 
 The beyond-scalp question, `/topics/beyond-scalp-eeg/` ("Do simple baselines work on signals other than scalp EEG?",
 under a fourth group, "Other signals & pilots", which the pilot studies share): from `beyond-scalp-update.json`, human
@@ -958,6 +958,55 @@ participants), carries no ethics, consent, review-board or dataset-licence state
 as forthcoming; the served file then carries where a statement was looked for, the gap, the owner's decision and when
 it is to be rechecked. The handwriting result withholds the mask-only control's interval (its bounds, at five people,
 would show individual scores): the export and the independent audit both check those bounds absent.
+
+EEGPT on the core matrix (owner decisions of 2026-10-12 and 2026-10-13): `eegpt-core-update.json`, under its own
+review manifest and independent export audit in `research/publication_review_20261013/`, EEGPT's eight core-matrix
+cells from the same runs as the published LaBraM rows and, except on idle, the CBraMod rows (published as computed,
+no re-run) and its pretraining-attribution rows on mi-rest and EEGMAT. The card's count of scored methods includes the
+catalogued ones scored outside `results.csv` (EEGPT, REVE Base), and `test_hf_card.py` pins it. `check_site_artifact.py` re-derives the file from its manifest
+where the pinned run records exist (git-ignored, under the review's `evidence/`), holds the manifest to the audit's hash
+and re-runs the independent audit; `build_hf_dataset.py` ships the file only when its bytes and manifest are the audited
+ones, and `test_hf_card.py` pins its card paragraph (what the file holds, the reading rule and its narrow gaps, the
+footnotes that travel with the cells, the sourced exposure statement, the weights never Apache-2.0 and none
+distributed, the pilot outside every leaderboard, no date, version label or Jev). The pages read the file through
+`src/data/eegpt-core.ts` (figures as `Fig`s from the export's percent blocks; footnotes, exposure, attribution rows,
+directory note), with its Chinese in `src/data/eegpt-core-zh.ts`, keyed by the export's English. check-workbench pins:
+every key of that table a sentence of the export carrying exactly its numbers, in Chinese, with no rejected rendering;
+the release entry with the owner's record, the EEG-DINO distinction and the public attribution audit's old
+"hold-unresolved-weight-license" label; /data-use/ with the record, every core protocol's rights record with what this
+release publishes on it, the terms, what is not published, and the pilot paragraph pointing to it instead of saying the
+core scores are not on the site's pages; EEGPT's directory card as a display-layer override (evaluated, the export's
+note, a sentence saying its cells and attribution rows are now published, its method page and the pilot comparison
+linked, the released status beside it, experiments.json unchanged) and
+its leaving the not-in-the-matrix list; EEGPT's method page in both languages (a group per core protocol read with
+the protocol page's `#eegpt` section, every figure a percent leaf, each footnote once on the page, the attribution rows,
+the checkpoint and its terms with the English beside the Chinese, no endorsement once, the exposure table with its
+sources, the corpus and the BETA context, the pilot linked, no ranking word, the weights never Apache-2.0); the seven
+core dataset pages (EEGPT's group after the further encoders', each footnote once a page, its checkpoint terms once
+under its first group linking the protocol page's list, the attribution rows inside the published groups; the method
+page states the terms with the model and prints none under a group); and the Markdown copy of the checkpoint section.
+Each protocol page's EEGPT lede names the run it shares: on idle the LaBraM row's alone, since the published CBraMod
+idle row comes from another run (its footnote says so); the home page's group label and dialog do the same on idle.
+
+On the pages that print the row, check-workbench pins (its "EEGPT on the core matrix, on the pages" block, and the
+further-encoder blocks it extends): each protocol page's own `#eegpt` section after the further encoders' (its row
+equal to the export's cell column by column in the core rows' units, the chance flags by the core rule, the sourced
+exposure statement and its source, each footnote beside the row and printed once on the page with the English beside
+the Chinese, every published row's relation and the gap between the intervals in percentage points, re-derived from
+the released intervals, the terms with the weights never Apache-2.0, its JSON, release and method page, and the
+section's figures, paragraphs and footnotes in the Markdown copy); the protocols index linking each section; the home
+page counting it among the frozen encoders (14: the further encoders' 13 matrix checkpoints and EEGPT), embedding its
+row in the further encoders' fields and rendering it after their group (first paint equal to the script's render, the
+family filter, the chart, its dialog with footnotes and terms, the tool naming its release), the snapshot note naming
+it, never ranked, and its terms under the rows; does-pretraining-help with its attribution rows and contrasts beside
+LaBraM's and CBraMod's (the plot, the contrast and score tables, the short answer, dek, description and card as far as
+those rows go, its footnotes once, its sources and JSON), its sleep and BETA rows in the further-encoder tables with its
+export's relations and the gap beside each, and the sleep heading and sentence counting it above every published row
+with its 0.10 pp margin said plainly; fewer-electrodes with its BETA and sleep row, the eight-to-four overlap by the
+released rows' rule and no difference its export does not state, its footnotes once; the same figures in English and
+Chinese; no page but the release log saying its core-matrix scores are unpublished or showing the pilot-only status.
+The REFED controls on the pilot-studies page and REFED's dataset page are named for what they are ("Training-set
+mean", "Same-video training lookup"); the served JSON's arm names stay, and the page holds its labels to them.
 
 ## What is NOT checked
 
