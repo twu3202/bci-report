@@ -145,9 +145,18 @@ if (!keyLive) die(`${origin}/${keyFile} is not serving the key; IndexNow would r
 if (!toSubmit.length) { console.log('deploy: no page changed; nothing to submit to IndexNow.'); process.exit(0); }
 
 const body = { host: new URL(origin).host, key, keyLocation: `${origin}/${keyFile}`, urlList: toSubmit };
+// On 2026-10-16 Node's POST of all 164 URLs was reset (ECONNRESET) three times while a
+// short one went through, and curl sent the same body at once: curl is the fallback here too.
+const postViaCurl = json => new Promise(resolve => {
+  const child = execFile('curl', ['-s', '-o', '/dev/null', '-w', '%{http_code}', '--max-time', '60', '-X', 'POST',
+    '-H', 'content-type: application/json; charset=utf-8', '--data-binary', '@-', 'https://api.indexnow.org/indexnow'],
+    (err, out) => resolve(err ? null : { status: Number(out), headers: { get: () => null } }));
+  child.stdin.end(json);
+});
+const json = JSON.stringify(body);
 const res = await fetch('https://api.indexnow.org/indexnow', {
-  method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8' }, body: JSON.stringify(body),
-}).catch(e => die(`IndexNow request failed: ${e.message}`));
+  method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8' }, body: json,
+}).catch(async e => (await postViaCurl(json)) ?? die(`IndexNow request failed: ${e.message}, and again through curl`));
 const meaning = {
   200: 'accepted', 202: 'received; key validation pending', 400: 'invalid format',
   403: 'key not valid', 422: 'URLs do not belong to the host, or the key does not match',
