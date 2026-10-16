@@ -419,7 +419,7 @@ function fmAdaptationGroup(): ResultGroup {
   const people = fmAdaptationMeta.people.raw;
   return {
     id: 'eegmat-v9-adaptation',
-    title: { en: 'Model adaptation, further encoders · new people, same task, one fixed recipe (not a ranking)', zh: '模型适配（更多编码器）· 新被试、同一任务、一个固定方案（不是排名）' },
+    title: { en: 'Model adaptation, further encoders · new people, same task, one fixed recipe', zh: '模型适配（更多编码器）· 新被试、同一任务、一个固定方案' },
     path, chance: fmAdaptationMeta.chance, fmTerms: 'arithmetic-rest',
     rows: fmAdaptation.flatMap(a => {
       const base = { path, method: a.model.name, methodSlug: a.model.slug as MethodSlug, people };
@@ -885,8 +885,8 @@ function reliableGroup(protocol: 'arithmetic-rest' | 'beta-8ch' | 'mi-rest'): Re
     const f = m.fixed_cutoff, d = m.learned_minus_confidence.error_at_80;
     rows.push({ ...base, condition: { en: 'Fixed threshold: calibrated confidence at least 0.8', zh: '固定阈值：校准后的置信度不低于 0.8' },
       metric: unit, value: fig(f.accepted, 'count', RDU), of: fig(f.n, 'count', RDU),
-      note: { en: [fig(f.people_with_nothing_accepted, 'count', RDU), ' of ', fig(p.people, 'count', RDU), ' people had nothing accepted. A method comparison on a balanced protocol, not a deployment rate.'],
-              zh: [`没有任何${p.unit === 'windows' ? '窗口' : '试次'}被接受的被试：`, fig(f.people_with_nothing_accepted, 'count', RDU), ' 名（共 ', fig(p.people, 'count', RDU), ' 名）。这是类别平衡协议上的方法比较，不是部署时的比率。'] } });
+      note: { en: [fig(f.people_with_nothing_accepted, 'count', RDU), ' of ', fig(p.people, 'count', RDU), ' people had nothing accepted.'],
+              zh: [`没有任何${p.unit === 'windows' ? '窗口' : '试次'}被接受的被试：`, fig(f.people_with_nothing_accepted, 'count', RDU), ' 名（共 ', fig(p.people, 'count', RDU), ' 名）。'] } });
     // ds003810's contrasts are secondary (the topic page reads them only as such): the row says so.
     rows.push({ ...base, condition: crude ? { en: 'Learned reject option minus calibrated confidence, same classifier (a secondary contrast)', zh: '可学习的拒识选项减校准后的置信度，同一分类器（次要对比）' }
                                           : { en: 'Learned reject option minus calibrated confidence, same classifier', zh: '可学习的拒识选项减校准后的置信度，同一分类器' },
@@ -1044,7 +1044,7 @@ function laterWbcicGroup(c: '2C' | '3C'): ResultGroup {
   const rows: ResultRow[] = [
     { path, method: laterArmLabel.source_prior.en, label: laterArmLabel.source_prior, comparator: true, condition, metric: BA,
       value: fig(prior.balanced_accuracy.mean, 'pct1', LTS), people: n,
-      note: { en: ['One over the number of classes: a floor, not a model.'], zh: ['等于类别数的倒数：是一个下限，不是模型。'] } },
+      note: { en: ['The floor: one over the number of classes.'], zh: ['下限：等于类别数的倒数。'] } },
     { path, method: laterArmLabel.relative_spectral_ridge.en, label: laterArmLabel.relative_spectral_ridge, condition, metric: BA,
       value: fig(ridge.balanced_accuracy.mean, 'pct1', LTS), interval: pair(ridge.balanced_accuracy.interval_95, 'pct1', LTS), people: n },
     { path, method: laterArmLabel.relative_spectral_ridge.en, label: laterArmLabel.relative_spectral_ridge,
@@ -1058,8 +1058,8 @@ function laterWbcicGroup(c: '2C' | '3C'): ResultGroup {
       condition: { en: 'Minus the relative spectral ridge, the same people and trials', zh: '减相对频谱功率 + 岭回归，相同被试与试次' }, metric: DIFF,
       value: fig(fm.paired.balanced_accuracy_difference.mean, 'pp1', LTS),
       interval: pair(fm.paired.balanced_accuracy_difference.interval_95, 'pp1', LTS), people: n,
-      note: { en: ['A comparison of two fixed pipelines on reused test trials; it does not show that pretraining caused the gain, and whether this checkpoint saw WBCIC-SHU in pretraining is not established.'],
-              zh: ['这是两条固定流程在复用的测试试次上的比较，不能说明提升来自预训练；这个检查点的预训练数据中是否出现过 WBCIC-SHU 也没有确定。'] } },
+      note: { en: ['A comparison of two fixed pipelines on reused test trials; whether pretraining caused the gain, and whether this checkpoint saw WBCIC-SHU in pretraining, are open.'],
+              zh: ['这是两条固定流程在复用的测试试次上的比较；提升是否来自预训练、这个检查点的预训练数据中是否出现过 WBCIC-SHU，都尚未确定。'] } },
   ];
   return {
     id: `later-wbcic-${c.toLowerCase()}`,
@@ -1078,8 +1078,8 @@ function laterRsvpGroup(): ResultGroup {
   for (const v of r.visits) {
     const condition: L = { en: `Trained at the first visit · nominal ${v.visit}`, zh: `第一次访次训练 · 标称第 ${v.nominal_day} 天` };
     rows.push({ ...base, condition, metric: AUROC, value: fig(v.auroc.mean, 'auc3', LTS), interval: pair(v.auroc.interval_95, 'auc3', LTS),
-      note: { en: ['Targets: ', fig(v.target_events, 'count', LTS), ' of ', fig(v.events, 'count', LTS), ' events. AUROC ranks; it is not accuracy.'],
-              zh: ['目标事件：', fig(v.target_events, 'count', LTS), ' 个（共 ', fig(v.events, 'count', LTS), ' 个事件）。AUROC 衡量排序，不是准确率。'] } });
+      note: { en: ['Targets: ', fig(v.target_events, 'count', LTS), ' of ', fig(v.events, 'count', LTS), ' events.'],
+              zh: ['目标事件：', fig(v.target_events, 'count', LTS), ' 个（共 ', fig(v.events, 'count', LTS), ' 个事件）。'] } });
     rows.push({ ...base, condition, metric: AP, value: fig(v.average_precision.mean, 'auc3', LTS) });
   }
   const d = r.contrast;
@@ -1107,14 +1107,15 @@ function laterForenzoGroup(c: 'Main' | 'Transfer Learning', arm: 'historical_dec
   const path = `${LATER_PATH}#${LATER_ANCHOR.forenzo}`;
   const ERR: L = { en: 'Normalized RMSE (lower is better)', zh: '归一化 RMSE（越低越好）' };
   const PDIFF: L = { en: 'Paired difference in normalized RMSE', zh: '归一化 RMSE 的配对差值' };
-  // Each arm with its label, beside every figure: the two arms are different outcomes, never compared.
+  // Each arm with its label, beside every figure: the two arms are different outcomes, never compared. What the
+  // velocity arm is (the historical decoder's output, not intended motion) is said once, in its group's heading.
   const armName: Record<string, L> = {
-    historical_decoder_velocity_imitation: { en: 'Historical decoder velocity (historical decoder imitation, not intended motion)', zh: '历史解码器速度（模仿历史解码器，不是意图运动）' },
-    constructed_raw_target_displacement_proxy: { en: 'Constructed displacement proxy (constructed proxy)', zh: '构造的位移代理变量（构造的代理变量）' },
+    historical_decoder_velocity_imitation: { en: 'Historical decoder velocity', zh: '历史解码器速度' },
+    constructed_raw_target_displacement_proxy: { en: 'Constructed displacement proxy', zh: '构造的位移代理变量' },
   };
   const armShort: Record<string, L> = {
-    historical_decoder_velocity_imitation: { en: 'historical decoder velocity', zh: '历史解码器速度' },
-    constructed_raw_target_displacement_proxy: { en: 'constructed displacement proxy', zh: '构造的位移代理变量' },
+    historical_decoder_velocity_imitation: { en: 'historical decoder velocity (imitates the historical decoder, not intended motion; a negative result, offline)', zh: '历史解码器速度（模仿历史解码器，不是意图运动；阴性结果，离线分析）' },
+    constructed_raw_target_displacement_proxy: { en: 'constructed displacement proxy (a negative result, offline)', zh: '构造的位移代理变量（阴性结果，离线分析）' },
   };
   // Errors span several decades: thousands separators from 1,000 up (wideFmt).
   const w = (x: number) => fig(x, wideFmt(x), LTS);
@@ -1147,9 +1148,12 @@ function laterForenzoGroup(c: 'Main' | 'Transfer Learning', arm: 'historical_dec
   ];
   return {
     id: `later-forenzo-${c === 'Main' ? 'main' : 'transfer-learning'}-${arm === 'historical_decoder_velocity_imitation' ? 'velocity' : 'displacement'}`,
-    title: { en: `Later sessions · continuous cursor tracking, ${c} cohort, ${armShort[arm].en} (a negative result; offline, no online-control claim)`,
-             zh: `后续会话 · 连续光标追踪，${c} 队列，${armShort[arm].zh}（阴性结果；离线，不涉及在线控制）` },
+    title: { en: `Later sessions · continuous cursor tracking, ${c} cohort, ${armShort[arm].en}`,
+             zh: `后续会话 · 连续光标追踪，${c} 队列，${armShort[arm].zh}` },
     path, rows,
+    // Every People cell counts records; that they are not proven unique people is said once, under the page's first Forenzo group.
+    notes: [{ en: ['The People column counts records, which are not proven to be unique people.'], zh: ['“被试”一列计的是记录数，这些记录不能证明是不同的人。'] }],
+    noteIds: ['forenzo-records'],
   };
 }
 
@@ -1205,9 +1209,9 @@ function orthCohortNote(r: any): RowNote {
   const c = r.cohort;
   return {
     en: ['One cohort — ', fig(c.people, 'count', PS), ' people, ', fig(c.runs, 'count', PS), ' runs, ', fig(c.events, 'count', PS), ' recorded device events, ', fig(c.error_events, 'count', PS),
-         ' of them injected errors — published as three configurations and counted once. The labels are recorded device events: the results do not show that a person recognised an error, and movement, muscle or device artifacts may contribute. Errors are a minority of events, so average precision is read against that share. Outside every leaderboard and model ranking.'],
+         ' of them injected errors — published as three configurations and counted once. The labels are recorded device events: the results do not show that a person recognised an error, and movement, muscle or device artifacts may contribute. Errors are a minority of events, so average precision is read against that share.'],
     zh: ['同一个队列——', fig(c.people, 'count', PS), ' 名被试、', fig(c.runs, 'count', PS), ' 个 run、', fig(c.events, 'count', PS), ' 个记录下来的设备事件，其中 ', fig(c.error_events, 'count', PS),
-         ' 个是注入的错误——以三种配置发布，只计一次。标签是记录下来的设备事件：这些结果不说明被试识别出了错误，运动、肌电或设备伪迹都可能起作用。错误只占事件的少数，所以平均精确率要对照这个比例来读。不进入任何排行榜或模型排名。'],
+         ' 个是注入的错误——以三种配置发布，只计一次。标签是记录下来的设备事件：这些结果不说明被试识别出了错误，运动、肌电或设备伪迹都可能起作用。错误只占事件的少数，所以平均精确率要对照这个比例来读。'],
   };
 }
 /** Orthosis, the 64-channel classical baseline: the first configuration of the cohort. */
@@ -1302,7 +1306,7 @@ function bingoGroup(): ResultGroup {
   const r = ps['bingo-cross-language'], path = `${PILOT_PATH}#${PILOT_ANCHOR.bingo}`, c = r.contrast, ds = r.delivered_signal;
   if (c.interval_excludes_zero !== false || ds.verified_against_file !== false)
     throw new Error('entities.ts: the BINGO notes say the contrast spans zero and the preprocessing was not re-verified');
-  const counted = { n: fig(r.cohort.source_fields, 'count', PS), what: { en: ' subject fields as the source defines them, not proven distinct people', zh: ' 个按数据源定义的被试字段，不能证明是不同的人' } };
+  const counted = { n: fig(r.cohort.source_fields, 'count', PS), what: { en: ' subject fields', zh: ' 个被试字段' } };
   const lang: Record<string, string> = { Greek: '希腊语', English: '英语' };
   const label: L = { en: 'Relative band power + ridge classifier', zh: '相对频带功率 + 岭分类器' };
   const rows: ResultRow[] = r.directions.map((d: any) => ({
@@ -1322,8 +1326,8 @@ function bingoGroup(): ResultGroup {
     title: { en: 'Pilot studies · inner speech in Greek and English, across people and across languages (a negative result)', zh: '试点研究 · 希腊语与英语的内部言语，跨被试、跨语言（阴性结果）' },
     rows,
     notes: [{
-      en: ['Every direction is close to the 15-class prior. A negative result for this one baseline in this setting: it does not show that inner speech cannot be decoded by other methods. The intervals are approximate and descriptive, from overlapping leave-one-field-out fits. Outside every leaderboard and model ranking.'],
-      zh: ['每个方向都接近 15 类的先验。这是这一个基线在这种设置下的阴性结果：并不说明其他方法也解码不了内部言语。区间是近似的描述性区间，来自彼此重叠的“每次留出一个被试字段”的拟合。不进入任何排行榜或模型排名。'],
+      en: ['Subject fields are counted as the source defines them; they are not proven to be distinct people. Every direction is close to the 15-class prior: a negative result for this one baseline in this setting, with other methods untested. The intervals are approximate and descriptive, from overlapping leave-one-field-out fits.'],
+      zh: ['被试字段按数据源的定义计数，不能证明是不同的人。每个方向都接近 15 类的先验：这是这一个基线在这种设置下的阴性结果，没有测试其他方法。区间是近似的描述性区间，来自彼此重叠的“每次留出一个被试字段”的拟合。'],
     }, {
       en: ['Delivered signals, as the project describes them (BINGO deliverable D3.1, version 2.0): the same preprocessing for both of its released datasets — band-pass and notch filtering, Artifact Subspace Reconstruction (ASR) and FORCe removal of ocular and muscle artifacts — and then segmentation into trials. The signals analysed here were therefore artifact-cleaned on the continuous recordings before any trial was cut. As the project states it; not re-verified against the delivered file.'],
       zh: ['交付的信号，按项目自己的描述（BINGO 交付文件 D3.1，2.0 版）：项目发布的两个数据集采用相同的预处理——带通与陷波滤波、伪迹子空间重构（ASR）与 FORCe 去除眼动和肌电伪迹——然后才切分为试次。因此，这里分析的信号在切分任何试次之前，已经在连续记录上做过去伪迹处理。以上按项目的表述，没有对照交付的数据文件重新核实。'],
@@ -1395,10 +1399,10 @@ function handwritingGroup(): ResultGroup {
     notes: [{
       en: [fig(c.people, 'count', PS), ' people and ',
            fig(c.trials, 'count', PS), ' trials from a reused development cohort, whose earlier scores were seen before this design: a quality-informed diagnostic, not independent confirmation. Every trial keeps ', fig(av.available_channels_per_trial.fewest, 'count', PS), ' to ', fig(av.available_channels_per_trial.most, 'count', PS), ' of ',
-           fig(av.channels_recorded, 'count', PS), ' recorded channels under a fixed numerical availability rule, which is not certified clean EEG. Four released coded labels, not verified characters or trajectories: not handwriting recognition. The intervals are descriptive, resampling the five people over overlapping folds, not population confidence intervals. The official test data were not used. No fNIRS, fusion, online, physiological-origin, competition-standing or medical claim; outside every leaderboard.'],
+           fig(av.channels_recorded, 'count', PS), ' recorded channels under a fixed numerical availability rule, which is not certified clean EEG. Four released coded labels, not verified characters or trajectories: not handwriting recognition. The intervals are descriptive, resampling the five people over overlapping folds, not population confidence intervals. The official test data were not used, and the physiological origin of the signal is not established.'],
       zh: [fig(c.people, 'count', PS), ' 名被试、',
            fig(c.trials, 'count', PS), ' 个试次，来自重复使用的开发队列；较早那次分析在这个队列上的分数，在这个设计之前已经看过：这是参考了质量检查的诊断，不是独立确认。按固定的数值可用性规则，每个试次保留 ', fig(av.available_channels_per_trial.fewest, 'count', PS), ' 至 ', fig(av.available_channels_per_trial.most, 'count', PS), ' 个通道（共记录 ',
-           fig(av.channels_recorded, 'count', PS), ' 个），这并不代表经过认证的干净 EEG。四个已发布的编码标签，对应的字符或书写轨迹都没有核实：这不是手写识别。区间是描述性的，在彼此重叠的折上对五名被试重抽样，不是群体置信区间。没有使用官方测试数据。不作任何 fNIRS、融合、在线、生理来源、竞赛名次或医学方面的声明；不进入任何排行榜。'],
+           fig(av.channels_recorded, 'count', PS), ' 个），这并不代表经过认证的干净 EEG。四个已发布的编码标签，对应的字符或书写轨迹都没有核实：这不是手写识别。区间是描述性的，在彼此重叠的折上对五名被试重抽样，不是群体置信区间。没有使用官方测试数据，信号的生理来源也没有确立。'],
     }],
   };
 }
@@ -1431,9 +1435,9 @@ function refedGroup(): ResultGroup {
     rows,
     notes: [{
       en: [fig(r.cohort.nominal_folders, 'count', PS), ' nominal participant folders with the same ', fig(r.cohort.videos, 'count', PS), ' videos: ', fig(r.cohort.clips, 'count', PS),
-           ' clips, not as many independent people, so no interval or significance test is reported. EEG Ridge has a larger error than every source-only control in both conditions. With shared videos, the same-video lookup has the smallest error, because familiar stimuli carry the prediction; held out together, it has no matching video and equals the training-set mean. Targets are the mean of each clip’s stored valence and arousal labels on the published raw scale, not SAM scores. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved, and the rating means were seen before this design. No physiological, neural or population claim; outside every leaderboard.'],
+           ' clips, not as many independent people, so no interval or significance test is reported. EEG Ridge has a larger error than every source-only control in both conditions. With shared videos, the same-video lookup has the smallest error, because familiar stimuli carry the prediction; held out together, it has no matching video and equals the training-set mean. Targets are the mean of each clip’s stored valence and arousal labels on the published raw scale, not SAM scores. Stored EEG units, the EEG-to-rating clock and the crop end points are unresolved, and the rating means were seen before this design.'],
       zh: [fig(r.cohort.nominal_folders, 'count', PS), ' 个标称被试文件夹，观看同样的 ', fig(r.cohort.videos, 'count', PS), ' 段视频：共 ', fig(r.cohort.clips, 'count', PS),
-           ' 个片段，并不是同样多的独立个体，所以不报告区间或显著性检验。两种条件下，EEG 岭回归的误差都比每个不用 EEG、只用训练集信息的对照大。共享视频时，按同一视频查表的误差最小，因为熟悉的刺激本身就能带来预测；两者一起留出时，它找不到对应的视频，结果等于总体均值。目标值是每个片段存储的效价与唤醒度标签在已发布原始标度上的均值，不是 SAM 评分。存储的 EEG 单位、EEG 与评分之间的时钟以及裁剪的端点都没有确定，评分均值在这个设计之前就已看过。不作任何生理、神经或群体层面的声明；不进入任何排行榜。'],
+           ' 个片段，并不是同样多的独立个体，所以不报告区间或显著性检验。两种条件下，EEG 岭回归的误差都比每个不用 EEG、只用训练集信息的对照大。共享视频时，按同一视频查表的误差最小，因为熟悉的刺激本身就能带来预测；两者一起留出时，它找不到对应的视频，结果等于总体均值。目标值是每个片段存储的效价与唤醒度标签在已发布原始标度上的均值，不是 SAM 评分。存储的 EEG 单位、EEG 与评分之间的时钟以及裁剪的端点都没有确定，评分均值在这个设计之前就已看过。'],
     }],
   };
 }
@@ -1503,8 +1507,8 @@ function nlbGroup(): ResultGroup {
     title: { en: 'Beyond scalp EEG · one macaque’s motor-cortex spiking, finger velocity within one session', zh: '头皮 EEG 之外 · 一只猕猴运动皮层的神经元放电，同一次会话内的手指速度' },
     rows,
     notes: [{
-      en: ['One macaque in one session, with training and validation trials interleaved: with one animal every figure is that animal’s, and no interval is reported, because the validation rows are correlated samples, not independent subjects. Not an official Neural Latents Benchmark score and not co-smoothing; offline, with no real-time or closed-loop claim, and no cross-day, cross-animal or human claim.'],
-      zh: ['一只猕猴、一次会话，训练试次与验证试次在会话内交错：只有一只动物，每个数字都是这只动物的；不报告区间，因为验证数据行是相关的样本，不是独立的个体。这不是 Neural Latents Benchmark 的官方分数，也不是 co-smoothing；离线分析，不作实时或闭环控制方面的声明，也不涉及跨天、跨动物或人类。'],
+      en: ['One macaque in one session, with training and validation trials interleaved: with one animal every figure is that animal’s, and no interval is reported, because the validation rows are correlated samples, not independent subjects. Offline finger-velocity decoding, scored by this site; the Neural Latents Benchmark’s co-smoothing metric was not computed.'],
+      zh: ['一只猕猴、一次会话，训练试次与验证试次在会话内交错：只有一只动物，每个数字都是这只动物的；不报告区间，因为验证数据行是相关的样本，不是独立的个体。离线的手指速度解码，由本站评分；没有计算 Neural Latents Benchmark 的 co-smoothing 指标。'],
     }],
   };
 }
@@ -1517,7 +1521,7 @@ function opticalGroup(): ResultGroup {
   const condition: L = { en: 'Every optical value of every recording', zh: '每段记录的每个光学数值' };
   return {
     id: 'beyond-ds007420', path,
-    title: { en: 'Beyond scalp EEG · human fNIRS recordings, numerical coverage (counts, not a score)', zh: '头皮 EEG 之外 · 人类 fNIRS 记录的数值覆盖（计数，不是分数）' },
+    title: { en: 'Beyond scalp EEG · human fNIRS recordings, numerical coverage counts', zh: '头皮 EEG 之外 · 人类 fNIRS 记录的数值覆盖计数' },
     rows: [
       { path, method, label, condition, metric: { en: 'Finite and positive values', zh: '有限且为正的数值' }, value: fig(k.positive, 'count', BS), of: fig(k.optical_values, 'count', BS), people: n,
         note: { en: ['Across ', fig(r.cohort.recordings, 'count', BS), ' recordings and ', fig(r.cohort.recording_channels, 'count', BS), ' recording-channels; ', fig(k.nonfinite, 'count', BS), ' non-finite, ', fig(k.zero, 'count', BS), ' zero and ', fig(k.negative, 'count', BS), ' negative values.'],
@@ -1526,9 +1530,9 @@ function opticalGroup(): ResultGroup {
         value: fig(k.constant_channels, 'count', BS), of: fig(r.cohort.recording_channels, 'count', BS), people: n },
     ],
     notes: [{
-      en: ['Counts only: they say nothing about signal quality, neural origin or decoding. No classifier score exists: the task codes have no verified lookup to hands or movements, and the event durations disagree — ', fig(g.event_duration_s.events_table, 's1', BS), ' in the events table, ',
+      en: ['Counts only, with no measure of signal quality, neural origin or decoding. No classifier score exists: the task codes have no verified lookup to hands or movements, and the event durations disagree — ', fig(g.event_duration_s.events_table, 's1', BS), ' in the events table, ',
            fig(g.event_duration_s.optical_files, 's1', BS), ' in the optical files, ', fig(g.event_duration_s.cited_paper, 's1', BS), ' in the cited paper.'],
-      zh: ['只有计数：说明不了信号质量、神经来源或解码。没有任何分类器分数：任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长也互相矛盾——事件表中为 ', fig(g.event_duration_s.events_table, 's1', BS), '，光学数据文件中为 ',
+      zh: ['只有计数，不涉及信号质量、神经来源或解码。没有任何分类器分数：任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长也互相矛盾——事件表中为 ', fig(g.event_duration_s.events_table, 's1', BS), '，光学数据文件中为 ',
            fig(g.event_duration_s.optical_files, 's1', BS), '，所引论文中为 ', fig(g.event_duration_s.cited_paper, 's1', BS), '。'],
     }],
   };
@@ -1546,7 +1550,7 @@ function qlReading(e: QlEntry): RowNote {
   const parts = (locale: Locale): (string | Fig)[] => {
     const zh = locale === 'zh', sep = zh ? '；' : '; ';
     const low = (t: string) => zh ? t : t.replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase());
-    const unseen = e.kind === 'unseen' ? (zh ? 'EEG 分类头没有见过，但文本编码器读过这些词。' : 'Unseen by the EEG head, not by the text encoder. ') : '';
+    const unseen = e.kind === 'unseen' ? (zh ? '未见过的问题。' : 'Unseen question. ') : '';
     const r: (string | Fig)[] = e.r ? (zh ? ['R 为 ', qlFig(e.r.estimate, 'auc2'), '；'] : ['R ', qlFig(e.r.estimate, 'auc2'), '; ']) : [];
     const diff = qlDifference(e, c.x, c.y, locale);
     return [unseen, ...r, (e.r ? low(diff) : diff) + sep + low(qlMargin(e, c.x, locale)) + sep + low(qlGate(e.gate, locale)) + (zh ? '。' : '.')];

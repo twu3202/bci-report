@@ -45,12 +45,17 @@
 .topic-table-spaced{margin-top:14px}
 /* A pooled row under per-group rows: set apart as a total, not one more group. */
 .topic-table tr.pooled-row>*{border-top:2px solid var(--rule)}
-.protocol-note{padding:15px 18px;background:var(--wash);border-left:3px solid var(--accent);font-size:.82rem;color:var(--warn-ink);margin:18px 0}
+/* A note qualifies the figures above it. It reads as a footnote under its table, not as a warning box: up to
+   thirteen of them stood on one page in rust-washed panels, and the page read as a list of alarms. */
+.protocol-note{margin:14px 0;padding:1px 0 1px 14px;border-left:2px solid var(--rule);max-width:900px;font-size:.8125rem;line-height:1.6;color:var(--muted)}
+.protocol-note strong{color:var(--ink);font-weight:620}
 .protocol-note-original{display:block;margin-top:5px;font-size:.8125rem}
 .limits-label{margin:26px 0 10px}
 .topic-heading+.limits-label{margin-top:4px}
 .method-grid-wide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .method-grid-wide article{border-top:2px solid var(--rule);padding:15px 2px}
+/* An odd last card takes the full row rather than leaving an empty cell beside it. */
+.method-grid-wide>article:last-child:nth-child(odd){grid-column:1/-1}
 .method-grid-wide h3{margin-bottom:5px}
 .method-grid-wide p{font-size:.84rem}
 /* A prepared, unscored source (beyond-scalp-eeg): its status, what was prepared and what bounds it, as paragraphs. */
@@ -116,6 +121,9 @@
      eight characters, still fits a 320px screen. */
   :lang(zh-Hans) .topic-hero h1{font-size:2rem}
   .topic-dek{font-size:1rem}
+  /* The two page actions share a row instead of stacking. */
+  .topic-actions{gap:8px;margin-top:20px}
+  .topic-actions .button{padding:6px 10px;font-size:.78rem}
   .topic-section{padding:32px 0}
   .topic-heading h2{font-size:1.45rem}
   .evidence-grid,.method-grid-wide,.citation-list{grid-template-columns:minmax(0,1fr)}

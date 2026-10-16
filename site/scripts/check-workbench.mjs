@@ -238,8 +238,8 @@ assert.match(built,/comparable <strong>down<\/strong> a column and not <strong>a
 // These pinned the count "82". The topics now draw on two exports measuring
 // different things (proportions, correlation, R²), so a summed total would be
 // the inflation these checks exist to prevent. The intent is kept, not the number.
-assert.match(built,/separate from the questions below/,'homepage must distinguish the topic extension from the 39-comparison matrix');
-assert.match(built,/not independent experiments, and not an overall ranking/,'homepage must not inflate repeated conditions into independent experiments');
+assert.match(built,/Questions beyond the matrix/,'homepage must distinguish the topic extension from the 39-comparison matrix');
+assert.match(built,/repeated conditions within its protocols/,'homepage must not inflate repeated conditions into independent experiments');
 assert.doesNotMatch(built,/\d+ additional aggregate measurements/,'no summed measurement count across exports that measure different things');
 // Every protocol is reachable without JavaScript and without a dropdown. Since
 // 2026-10-02 the column heading is a real link to the protocol's own page.
@@ -536,7 +536,7 @@ for(const [label,html] of [['en',pageOf('topics/fewer-electrodes/')],['zh',pageO
   for(const m of html.matchAll(/fewer electrodes (?:are )?(?:generally )?better|电极越少(?:一般)?越好/g))
     assert.match(html.slice(Math.max(0,m.index-60),m.index),/not|neither|不能说明/,label+': "'+m[0]+'" reads as a claim');
 }
-assert.match(pageOf('topics/fewer-electrodes/'),/not two headsets/,'software subsets are not devices');
+assert.match(pageOf('topics/fewer-electrodes/'),/do not validate a physical four-channel device/,'software subsets are not devices');
 // Alpha Waves figures stay on their own page. 79.5% is also a legitimate interval
 // bound on dry-vs-wet, so only the difference is checked elsewhere. Since
 // 2026-10-01 −1.6 pp is also LoRA minus last block, so on the page that carries
@@ -732,8 +732,8 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   {const scope=road.match(/<p class="roadmap-p research-scope">([\s\S]*?)<\/p>/)[1];
    assert.ok(scope.startsWith(JEV_STYLE[label]),label+': the scope paragraph opens with the definition of "Jev-style"');
    assert.equal(scope.slice(JEV_STYLE[label].length),label==='en'
-    ?' The first route needs no new model: its results, in the section above, rescore saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language; its results have their own page. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features; its results have their own page.'
-    :'第一条路线不需要新模型：上一节的结果，是对本站已发布模型保存下来的输出重新评分得到的。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言；它的结果有单独的页面。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头；它的结果也有单独的页面。',label+': the scope paragraph, after the definition, says what each route ran');}
+    ?' The first route needs no new model: it rescores saved outputs of models this site already publishes. The second trained models that share one encoder (small EEGNets from scratch, and CBraMod frozen or adapted by LoRA) and are given each question by an identifier, never in language. The third asks the questions in words, through a frozen text encoder and a small head over frozen EEG features.'
+    :'第一条路线不需要新模型：它对本站已发布模型保存下来的输出重新评分。第二条路线训练了共用一个编码器的模型（从头训练的小型 EEGNet，以及冻结或用 LoRA 适配的 CBraMod），问题只以标识给出，从不用语言。第三条路线用文字提问：经由冻结的文本编码器，以及冻结 EEG 特征上的一个小分类头。',label+': the scope paragraph, after the definition, says what each route ran');}
   // The Visual Jev card: the plan started from it, and it applies the idea to images; it is not where Jev comes from.
   {const card=road.slice(road.indexOf('href="https://arxiv.org/abs/2609.25845"'));
    assert.ok(card.includes(label==='en'?'the same encode-once, answer-many idea, applied to images. This plan started from it.':'同样是“编码一次、回答多个问题”的思路，用在图像上。本计划正是从这篇论文出发的。'),label+': the Visual Jev card says the plan started from it');}
@@ -799,7 +799,7 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
   assert.ok(sec.indexOf('67.7%')<sec.indexOf('93.1%')&&sec.indexOf('63.0%')<sec.indexOf('93.1%'),label+': coverage and end-to-end rate come before conditional accuracy');
   assert.match(sec,/Qinhuangdao|秦皇岛/,label+': the ethics committee is named');
   assert.match(sec,/10\.1080\/27706710\.2024\.2418650/,label+': the data paper is credited');
-  assert.match(sec,label==='en'?/not false activations per hour/:/不是每小时的误触发次数/,label+': window rates are not hourly rates');
+  assert.match(sec,label==='en'?/not false activations per hour/:/不是连续使用中每小时的误触发次数/,label+': window rates are not hourly rates');
   // Per-participant range bounds of a four-person pilot.
   assert.doesNotMatch(sec,/47\.9%|97\.9%|83\.9%|58\.3%|16\.7%|68\.8%|8\.3%/,label+': an individual rate leaked');
 }
@@ -872,6 +872,10 @@ const walkDist=(dir,out=[])=>{for(const f of readdirSync(new URL(dir,DIST))){con
   if(existsSync(new URL(rel+'/',DIST))&&!/\.\w+$/.test(f))walkDist(rel+'/',out);else out.push(rel);}return out;};
 const distFiles=walkDist('');
 const htmlPages=distFiles.filter(f=>f.endsWith('index.html'));
+// No inline script that runs: `script-src 'self'` blocks it. Vite inlined the small phone-table script into every
+// page until astro.config.mjs set assetsInlineLimit to 0 (2026-10-16); JSON data blocks are not scripts.
+for(const f of [...htmlPages,'404.html'])
+  assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/<script(?![^>]*\bsrc=)(?![^>]*\btype="application\/(?:ld\+)?json")[^>]*>/,f+': the CSP forbids inline scripts');
 const leaves=new Map();
 // A CSV's leaves are its numeric cells below the header row. RFC 4180 quoting:
 // the results files quote attribution strings that carry commas.
@@ -1488,7 +1492,7 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     // No cross-cohort comparison wording.
     assert.doesNotMatch(text,zh?/(?:比(?!较)|低于|高于|不如|优于|好于|差于)[^。；]{0,20}(?:DOD-[HO]|健康被试|呼吸暂停)|(?:DOD-[HO]|健康被试|呼吸暂停患者)[^。；]{0,30}(?:低于|高于|不如|优于|好于|差于|更低|更高)/
       :/\b(?:DOD-[HO]|healthy|apn(?:o)?ea|OSA)\b[^.;:]{0,60}\b(?:lower|higher|worse|better|less|more|drops?|fell|falls)\b[^.;:]{0,30}\bthan\b|\b(?:than|versus|vs\.?|compared (?:with|to))\b[^.;:]{0,40}\b(?:DOD-[HO]|healthy|apn(?:o)?ea|OSA)\b/i,where+': no cross-cohort comparison');
-    assert.match(text,zh?/本页不对两者做任何比较/:/nothing on this page compares them/,where+': the page says it compares the cohorts nowhere');
+    assert.match(text,zh?/各自作为一项独立实验分析/:/each analysed as its own experiment/,where+': the page says each cohort is its own experiment');
     assert.match(text,zh?/不是对健康状况的受控比较/:/not a controlled comparison of health status/,where+': not a disease effect');
     assert.match(text,zh?/没有测量从一个队列到另一个队列的迁移/:/nothing here measures transfer from one cohort to the other/,where+': not transfer');
     // No clinical or diagnostic claim; the claim boundary stated.
@@ -1537,7 +1541,7 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     const sec=nsOf(html),stext=visible(sec);
     assert.ok(html.indexOf('id="next-session"')<html.indexOf('id="methods-and-limits"')&&html.indexOf('id="next-session"')>html.indexOf('id="trca-heading"'),where+': #next-session sits after the SSVEP evidence, before methods and limits');
     for(const t of figureLike(stext)) assert.ok(obTokens.has(t),where+': "'+t+'" in #next-session is not a value of the OpenBMI export');
-    assert.match(stext,zh?/所以这里不与它们比较/:/so nothing here is compared with them/,where+': not compared with the SSVEP figures');
+    assert.match(stext,zh?/与上面的 SSVEP 结果分开解读/:/kept apart from the SSVEP results above/,where+': not compared with the SSVEP figures');
     // Cohort accounting: 54 = 1 + 2 + 51, 3,060 held-out trials, 408 jobs, 60 per person.
     for(const v of [ob.cohort.acquisition_identities,ob.cohort.engineering_exclusion,ob.cohort.input_quality_holds,ob.cohort.evaluated,ob.cohort.unique_test_trials,ob.cohort.jobs.trained,ob.cohort.test_trials_each_person])
       assert.ok(hasFig(sec,'count',v),where+': cohort count '+v);
@@ -1583,8 +1587,8 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
     for(const v of [ob.cohort.original_people,ob.cohort.added_people,ob.cohort.evaluated]) assert.ok(sec.includes(`|count|${v}"`),where+': cohort history count '+v);
     // The required limits.
     const lim=visible(sec.slice(sec.indexOf('id="next-session-limits"')));
-    for(const re of zh?[/一个数据集，离线/,/不是新被试/,/两个固定的 CPU 基线/,/只基于 60 个测试试次/,/物理幅值单位尚未确定/]
-                     :[/One dataset, offline/,/Not a new person/,/Two fixed CPU baselines/,/rests on 60 test trials/,/physical amplitude unit is not resolved/])
+    for(const re of zh?[/一个数据集，离线/,/每个模型都针对被测试的那个人拟合/,/两个固定的 CPU 基线/,/只基于 60 个测试试次/,/物理幅值单位尚未确定/]
+                     :[/One dataset, offline/,/Every model is fitted to the person it is tested on/,/Two fixed CPU baselines/,/rests on 60 test trials/,/physical amplitude unit is not resolved/])
       assert.match(lim,re,where+': next-session limit '+re);
     // Credits and rights: the paper, the data DOI, CC0 1.0, the IRB and written consent.
     for(const s0 of ['10.1093/gigascience/giz002','https://doi.org/10.5524/100542','CC0-1.0','https://creativecommons.org/publicdomain/zero/1.0/']) assert.ok(sec.includes(s0),where+': OpenBMI credit '+s0);
@@ -1732,7 +1736,7 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
       assert.ok(index.includes(`data-fig="${t.id}-protocol.json|count|${t.subjects}"`),label+': the index prints the '+t.id+' cohort from its file');
       if(t.chanceLevel!=null) assert.ok(index.includes(`data-fig="${t.id}-protocol.json|pct1raw|${t.chanceLevel}"`),label+': the index prints the '+t.id+' chance level');
     }
-    assert.match(index,label==='en'?/not a failure/:/不是失败/,label+': the index keeps the blank-cell caveat');
+    assert.match(index,label==='en'?/A blank cell in the matrix is a protocol the method was not run on/:/矩阵中的空白单元格表示该方法没有在该协议上运行/,label+': the index keeps the blank-cell caveat');
     for(const [,href] of index.matchAll(/href="(\/[^"#]*)/g)) assert.ok(resolves(href),label+': protocols index link '+href+' does not resolve');
     // The home matrix's column headings lead here, in the reader's language.
     const homePage=pageOf(prefix);
@@ -1806,13 +1810,12 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
       const printed=new Set([...html.matchAll(/data-fig="[^"]+"[^>]*>([^<]*)</g)].map(m=>m[1]));
       for(const [,v] of html.matchAll(/class="ip-value"><span class="fig">([^<]+)</g))
         for(const n of v.match(/\d+(?:\.\d+)?%/g)) assert.ok(printed.has(n),where+': plot value '+n+' is not a printed figure');
-      // A blank matrix cell is not a failure: every matrix method without a result here is named, with that caveat.
+      // A blank matrix cell is a method not run here: every matrix method without a result is named under "Not run".
       const n0=html.indexOf('class="protocol-note not-run"'),nr=n0<0?'':html.slice(n0,html.indexOf('</p>',n0));
       const notRun=allNames.filter(n=>!t.rows.some(r=>r.name===n));
       if(notRun.length){
         assert.ok(nr.length>0,where+': the methods not run must be listed');
         for(const n of notRun) assert.ok(nr.includes(esc(n)),where+': '+n+' must be listed as not run');
-        assert.match(nr,label==='en'?/that is not a failure/:/不是失败/,where+': the blank-cell caveat');
       }
       // The protocol as released, verbatim: task, cohort, input, steps, limits, exposure, credit.
       for(const text of [t.subtitle,t.observations,t.exposure,t.limitation,t.selection,t.pretrainingOverlap,
@@ -1859,12 +1862,10 @@ console.log('PASS: 2026-10-03 large-source — Dreem on its own question: DOD-H 
       assert.ok(html.includes(label==='en'?'other protocols differ in cohort, electrodes, window or chance level.':'其他协议在队列、电极、时间窗或随机水平上有所不同。'),where+': the results lede');
       assert.doesNotMatch(html,/other protocols have a different cohort|其他协议的队列、电极布局和随机水平都不同/,where+': the old results lede');
       // A protocol without a chance level does not promise one: not in its description,
-      // social description or dek. It names the false-activation rate it is read with.
+      // social description or dek. (The glance list names the false-activation rate it is read with.)
       const metas=[...html.matchAll(/<meta (?:name|property)="(?:description|og:description|twitter:description)" content="([^"]*)"/g)].map(m=>unesc(m[1]));
       const dek=(html.match(/<p class="topic-dek">([\s\S]*?)<\/p>/)||[])[1]??'';
       assert.ok(metas.length>=2&&dek.length>0,where+': description and dek render');
-      if(t.chanceLevel==null) assert.ok(dek.includes(label==='en'?'and the idle false-activation rate that command detection must be read with — as the released protocol file states it.'
-        :'，以及读指令检出率时必须一起看的空闲误触发率——都按已发布的协议文件给出。'),where+': the dek names the idle false-activation rate');
       for(const text of [...metas,dek]){
         if(t.chanceLevel==null){
           assert.doesNotMatch(text,label==='en'?/chance level|what guessing would score/:/随机水平|随机猜测/,where+': a protocol with no chance level promises one: '+text.slice(0,80));
@@ -2750,10 +2751,10 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
     // The required limitations, in the page's language.
     for(const re of zh?[/没有一个是部署时的错误率/,/每个类别各自是一段记录/,/没有空闲状态，所以给不出任何形式的误触发数字/,/覆盖率为零时没有错误率，而不是错误率为零/,/被接受的少于 10 个时标为不稳定/,/这个保证只是名义上的：它失效的频率在这里是测出来的，不是假设的/,
                         /拒绝已知类别上可能判错的试次，不等于识别陌生的输入/,/第一条路线不作任何分布外的声明/,/约四分之三训练被试/,/全覆盖时的准确率都等于本站已发布的数值/,/它们的准确率不发布，也绝不与本站的数值混在一起/,
-                        /不做多重比较校正/,/区间重叠时不排名/,/从来不是每小时的误触发率/,/与本页的空闲数字单位不同/,/bootstrap 区间粗略/]
+                        /不做多重比较校正/,/只有 95% 区间不重叠时，才说一行高于另一行/,/从来不是每小时的误触发率/,/与本页的空闲数字单位不同/,/bootstrap 区间粗略/]
                      :[/none is a deployment error rate/,/each class is its own recording/,/no idle state, so it gives no false-activation figure of any kind/,/At zero coverage there is no error rate, not a zero one/,/fewer than 10 accepted trials are flagged unstable/,/the guarantee is nominal: how often it fails is measured here, not assumed/,
                         /Rejecting likely errors on known classes is not detecting unfamiliar input/,/Route 1 makes no out-of-distribution claim/,/about three quarters of the training people/,/every full-coverage accuracy equals the site’s published value/,/their accuracies are not published and are never mixed with the site’s/,
-                        /no multiplicity correction/,/Nothing is ranked where intervals overlap/,/never a false-activation rate per hour/,/in a different unit from this page’s idle figures/,/bootstrap intervals are crude/])
+                        /no multiplicity correction/,/One row is above another only where their 95% intervals do not overlap/,/never a false-activation rate per hour/,/in a different unit from this page’s idle figures/,/bootstrap intervals are crude/])
       assert.match(text,re,where+': required limitation '+re);
     // Never a deployment rate, a ranking or an out-of-distribution claim.
     if(!zh) for(const m of text.matchAll(/deployment (?:error )?rates?/g)) assert.match(text.slice(Math.max(0,m.index-45),m.index),/\bnot\b|\bno\b|\bnone\b|\bnever\b/,where+': "'+m[0]+'" reads as a claim');
@@ -3188,8 +3189,8 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     'equivalent within delta':logr?(zh?`在 ${CUT}% 界值内等效`:`Equivalent within the ${CUT}% margin`):(zh?`在 ±${DELTA} pp 内等效`:`Equivalent within ±${DELTA} pp`),
     'non-inferior':logr?(zh?`读出非劣（界值 ${CUT}%）`:`Read-out non-inferior at ${CUT}%`):(zh?`${niWho(e,zh)} 非劣（界值 ${DELTA} pp）`:`${niWho(e,zh)} non-inferior at ${DELTA} pp`),
     'margin not met':logr?(zh?`未达到 ${CUT}% 界值`:`${CUT}% margin not met`):(zh?`未达到 ${DELTA} pp 界值`:`${DELTA} pp margin not met`),
-    'not applicable (descriptive contrast)':zh?'描述性对比，不设界值':'No margin: a descriptive contrast'})[e.margin];};
-  const gateWords=(g,zh)=>({pass:zh?'通过门槛':'Gate passed',floor:zh?'处于下限：报告，不计入':'At floor: reported, not counted','not applicable':zh?'不适用：描述性':'No gate: descriptive'})[g];
+    'not applicable (descriptive contrast)':zh?'不设界值':'No margin'})[e.margin];};
+  const gateWords=(g,zh)=>({pass:zh?'通过门槛':'Gate passed',floor:zh?'处于下限：报告，不计入':'At floor: reported, not counted','not applicable':zh?'不设门槛':'No gate'})[g];
   const byWords=(b,zh)=>({'independent secondary audit':zh?'由独立的次要审计附上':'attached by the independent secondary audit',run:zh?'由运行本身附上':'attached by the run',
     'level gate':zh?'所在层级的门槛':'the level’s gate','E2-sleep scorer, recomputed by its independent audit':zh?'由 E2 睡眠评分程序附上，并经其审计重算':'attached by the E2-sleep scorer, recomputed by its audit',
     'none: descriptive':zh?'描述性':'descriptive'})[b];
@@ -3268,7 +3269,7 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     assert.ok(ans.includes(fmt.ppr2(a1.estimate_pp))&&ans.includes(fmt.sgr2(a1.interval_95_pp[0]))&&ans.includes(fmt.ppr2(a1.interval_95_pp[1]))&&ans.includes(`${DELTA} pp`),where+': the short answer gives the motor-imagery P1 contrast and the margin');
     assert.equal(ans.includes(zh?`整个区间都高于 ${DELTA} pp`:`its whole interval lay above ${DELTA} pp`),aS.interval_95_pp[0]>DELTA,where+': the short answer says the BOAS interval lies above the margin exactly when it does');
     // Review of 2026-10-07: the verdict as tested ("not supported"), not a categorical "not at a lower cost".
-    assert.ok(!DS.openbmi.route_sentence.supported&&!DS.boas.route_sentence.supported&&ans.trim().startsWith(zh?'简答 在这些数据上，没能证明更省的设置也一样好。':'Short answer The cheaper set-up was not shown to do as well, on these data.'),where+': the short answer opens with the route verdict as tested');
+    assert.ok(!DS.openbmi.route_sentence.supported&&!DS.boas.route_sentence.supported&&ans.trim().startsWith(zh?'简答 没能证明更省的设置也一样好。':'Short answer The cheaper set-up was not shown to do as well.'),where+': the short answer opens with the route verdict as tested');
     // P5 read by its flags: naming the question adds nothing (equivalent on both motor-imagery questions, B-sh
     // non-inferior on sleep). That assigns no gain to the hidden layer: at a 2 pp margin an equivalence cannot account
     // for a 1.48 pp lift, and B-sh − B-lin (S2) is inconclusive on imagery or rest. P2 on which hand with both flags in
@@ -3744,7 +3745,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     // The note under the snapshot, and the lede: the count of what they point at.
     const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
     assert.ok(added.includes(`data-release="${REL}"`)&&added.includes(label==='en'?`${matrix.length} further foundation encoders`:`另外 ${matrix.length} 个基础模型编码器`),label+': the snapshot note counts the v9 matrix rows');
-    assert.ok(added.includes(label==='en'?'not ranked against it':'也不与它排名'),label+': the v9 rows are not ranked against the snapshot');
+    assert.ok(added.includes(label==='en'?'They sit outside this snapshot.':'它们在这个快照之外。'),label+': the v9 rows sit outside the snapshot');
     // Follow-up review of 2026-10-05: the release log and data use count eleven models and sixteen checkpoints; the note
     // says what the 13 encoders are, from the export (the models evaluated in v9, the masking ablation's siblings).
     {const models=E.models.filter(m=>m.evaluated_in_v9).length,abl=F.models.filter(m=>m.panel==='masking ablation').length;
@@ -4055,7 +4056,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       for(const [,row] of zunaRows) assert.ok(row.includes(research[label]),w+': ZUNA 1.1\'s research-use sentence travels with its row');
       // Only ZUNA 1.1's rows carry it.
       assert.equal((sec.match(new RegExp(research[label].replace(/[.()]/g,'\\$&'),'g'))||[]).length,zunaRows.length,w+': the research-use sentence belongs to ZUNA 1.1\'s rows');
-      assert.ok(sec.includes(label==='en'?'not proof that the recordings were never seen':'并不证明这些记录从未被模型见过'),w+': the exposure key says what a statement is not');
+      assert.ok(sec.includes(label==='en'?'not proof that the recordings were never seen':'并不证明这些记录从未被模型见过'),w+': the exposure limitation says an absent dataset is not proof the recordings were never seen');
       assert.ok(sec.includes(`href="/data/${FMJ}" download`),w+': the v9 JSON is linked');
       // Chance flags by the core rule, wherever a balanced accuracy is printed with its interval.
       let flagged=0;
@@ -4153,7 +4154,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       }
       const v=sec.match(/data-claim="adaptation-verdicts" data-models="([^"]+)" data-open="([^"]+)"/);
       assert.ok(v&&v[1]===A.rows.filter(r=>r.paired_lora_minus_frozen.excludes_zero).map(r=>r.model).join(' ')&&v[2]===A.rows.filter(r=>!r.paired_lora_minus_frozen.excludes_zero).map(r=>r.model).join(' '),w+': the verdict sentence names each side as the export does');
-      assert.match(vis,zh?/不是排名/:/not a ranking/,w+': one fixed recipe on one task, not a ranking');
+      assert.match(vis,zh?/训练 5 轮，不调参/:/five epochs, no tuning/,w+': one fixed, untuned recipe');
       assert.match(vis,zh?/LoRA 的参数量随架构而异/:/LoRA’s budget differs by architecture/,w+': LoRA budgets differ');
       for(const x of A.lora_parameter_range) assert.ok(sec.includes(`data-fig="${FMJ}|count|${x}"`),w+': the LoRA budget range '+x);
       const s1=A.rows.find(x=>x.model==='singlem'),sc=cell('arithmetic-rest','singlem');
@@ -4198,8 +4199,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       assert.match(vis,zh?/同时改变了掩码框架和掩码几何/:/changes the framework and the geometry at once/,w+': the separated pair changes both factors');
       // Limits: each of the export's required limitations, in the page's words; exposure as the owner's statement.
       const lim=sec.slice(sec.indexOf('id="v9-limits"'),sec.indexOf('id="v9-licences"'));
-      for(const re of zh?[/不是上限/,/未调参、训练 5 轮/,/没有计入交叉验证带来的相关性/,/多重比较校正/,/从不排名/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/ZUNA 1\.1 没有公开清单/,/EEGMamba 的清单读自其官方代码，把握程度为中等/,/作者都没有为这些结果背书/,/LoRA 增量/,/共享 GPU/]
-                       :[/not a ceiling/,/untuned five-epoch recipe/,/ignore cross-validation dependence/,/no multiplicity correction/,/Grouped, never ranked/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/ZUNA 1\.1 publishes none/,/EEGMamba’s list is read from its official code, with medium confidence/,/No model’s authors endorse these results/,/LoRA deltas/,/shared GPU/])
+      for(const re of zh?[/不是上限/,/未调参、训练 5 轮/,/没有计入交叉验证带来的相关性/,/多重比较校正/,/各行保持导出文件的模型类别顺序/,/不是实际使用中检出率、误报率或延迟的估计/,/没有跨天、跨设备或跨数据集的证据/,/临床/,/1–2 秒时间窗/,/ZUNA 1\.1 没有公开清单/,/EEGMamba 的清单读自其官方代码，把握程度为中等/,/作者都没有为这些结果背书/,/LoRA 增量/,/共享 GPU/]
+                       :[/not a ceiling/,/untuned five-epoch recipe/,/ignore cross-validation dependence/,/no multiplicity correction/,/Rows keep the export’s family order/,/not detection, false-alarm or latency estimates for real use/,/cross-day, cross-device or cross-dataset/,/clinical claim/,/1–2 s windows/,/ZUNA 1\.1 publishes none/,/EEGMamba’s list is read from its official code, with medium confidence/,/No model’s authors endorse these results/,/LoRA deltas/,/shared GPU/])
         assert.match(visible(lim),re,w+': the limitation '+re);
       assert.equal(endorseCount(html),1,w+': no endorsement, once per page, in the limits\' licence entry');
       for(const k of ['mi-rest','p300-target','sleep-scalp']) assert.ok(lim.includes(`data-fig="${FMJ}|count|${F.protocols.find(p=>p.id===k).people}"`),w+': the small cohort of '+k);
@@ -4267,8 +4268,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       // The short answer (and so FAQPage) says the same, without the ranking.
       const ans=visible(html.slice(html.indexOf('<section class="short-answer"'),html.indexOf('</section>',html.indexOf('<section class="short-answer"'))));
       assert.ok(ans.includes(zh?'在 4 个电极上，也没有任何新编码器高于免训练的标准 CCA':'no new encoder lies above training-free CCA at four electrodes')&&!/keeps the highest|仍是 4 个电极上的最高分|最高分/.test(ans),w+': the short answer states the CCA reading as an interval fact');
-      for(const re of zh?[/不能验证一顶实体的少通道电极帽/,/接近下限的分数在两个子集之间的先后并不可靠/,/不是上面的 EESM23，也不是耳部 EEG/,/两个睡眠结果不能放进同一个排名/,/没有做配对检验/]
-                       :[/does not validate a physical low-channel cap/,/near-floor scores are not ordered reliably/,/not EESM23 above and not ear-EEG/,/do not share a ranking/,/no paired test/])
+      for(const re of zh?[/不能验证一顶实体的少通道电极帽/,/接近下限的分数在两个子集之间的先后并不可靠/,/不是上面的 EESM23，也不是耳部 EEG/,/类别平衡、经过质量筛选的头皮样本/,/没有做配对检验/]
+                       :[/does not validate a physical low-channel cap/,/near-floor scores are not ordered reliably/,/not EESM23 above and not ear-EEG/,/balanced, quality-screened scalp sample of EESM19/,/no paired test/])
         assert.match(vis,re,w+': '+re);
       // The v9 export's required limitations that does-pretraining-help carries, in this page's words (review of 2026-10-05):
       // small cohorts with descriptive intervals and no multiplicity correction, balanced designs as method comparisons,
@@ -4298,7 +4299,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       assert.ok(a>html.indexOf('id="adaptation"')&&a<html.indexOf('id="next-day"'),prefix+'topics/model-adaptation/: the pointer sits in #adaptation');
       assert.ok(ptr.includes(`href="/${prefix}topics/does-pretraining-help/#v9-adaptation"`)&&pageOf(prefix+'topics/does-pretraining-help/').includes('id="v9-adaptation"'),prefix+'topics/model-adaptation/: the pointer lands on the v9 adaptation');
       assert.doesNotMatch(visible(ptr),/\d+\.\d|%|\bpp\b|data-fig/,prefix+'topics/model-adaptation/: the pointer carries no figure');
-      assert.match(visible(ptr),zh?/不是排名/:/not a ranking/,prefix+'topics/model-adaptation/: the pointer says the table is not a ranking');
+      assert.match(visible(ptr),zh?/各模型的 LoRA 参数量不同/:/LoRA budgets that differ by model/,prefix+'topics/model-adaptation/: the pointer says the LoRA budgets differ by model');
     }
   }
   assert.deepEqual(xsec.zhP,xsec.enP,'does-pretraining-help #v9-encoders: the same figures in both languages, in order');
@@ -4806,7 +4807,7 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
                        '不是意图中的手部运动，也不是意图控制','不能证明是','从不合并','没有删除、截断或缩尾任何已评分的记录','极端误差的原因','尚未确定','空值，不是零','这里没有训练任何迁移学习模型',
                        '它们的误差也不互相比较','不涉及在线控制质量或意图运动解码','没有做多重比较校正','没有从原始 EEG 独立重做完整的特征提取']
                     :['recording-session ordinals, not a guaranteed time gap','kept apart and never averaged','it does not show that pretraining caused it','whether this checkpoint saw WBCIC-SHU in pretraining is not established','reuses their test trials','not a fresh test set','Why the trials are missing is unknown',
-                       'Not a decoder for someone new','Day 7, Day 80 and Day 200 are the publisher’s labels','not precision at a chosen threshold','an online selection success rate','it does not show that elapsed time caused the change','Trigger.txt reverses',
+                       'not decoding for someone new','Day 7, Day 80 and Day 200 are the publisher’s labels','not precision at a chosen threshold','an online selection success rate','it does not show that elapsed time caused the change','Trigger.txt reverses',
                        'not intended hand motion or intended control','not proven unique people','never pooled','No scored record was removed, clipped or winsorized','what caused the extreme errors','is not established','null, not zero','no transfer-learning model was trained here',
                        'their errors are not compared with each other','no claim about online control quality or intended-motion decoding','no multiple-comparison adjustment','none independently repeated the full feature extraction'])
       assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
@@ -4867,7 +4868,7 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
   // Forenzo's dataset page prints records, never people.
   for(const pfx of ['','zh/']){
     const h=pageOf(pfx+'datasets/forenzo-continuous-tracking/');
-    assert.ok(!/<td>\d+<\/td>/.test(h)&&!h.includes(pfx?'没有人类被试':'no human participants')&&(h.match(/条记录，不能证明是不同的人|records, not proven unique people/g)||[]).length===12,pfx+'datasets/forenzo-continuous-tracking/: every row counts records, not people');
+    assert.ok(!/<td>\d+<\/td>/.test(h)&&!h.includes(pfx?'没有人类被试':'no human participants')&&(h.match(/<\/span> (?:条记录|records)<\/td>/g)||[]).length===12&&(h.match(/不能证明是不同的人|not proven to be unique people/g)||[]).length===1,pfx+'datasets/forenzo-continuous-tracking/: every row counts records, not people, and the page says once that records are not proven unique people');
   }
   assert.ok(pinned>300,'later-sessions: figures pinned to their cells ('+pinned+')');
   console.log(`PASS: later sessions — /topics/later-sessions/ in both languages: ${pinned} figures pinned to their cells from ${LTS}, the same figures in English and Chinese; WBCIC-SHU's two cohorts apart with priors and paired intervals; the RSVP subtitle word for word, three AUROC points with intervals and no curve, AP beside AUROC, delivered events null; Forenzo per cohort and arm in separate tables with mean, median, comparator and paired interval, coverage, nulls kept; required caveats present, forbidden readings only denied, no typed figure, holds figure-free, no Jev; one figure-free pointer from does-pretraining-help; Forenzo counted as records.`);
@@ -5125,7 +5126,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     // idea to images), and the Jev-style page. That the head is not a language model is a limit (owner, 2026-10-08):
     // it stands in the limits list, not in this note.
     const jev=el(main,/<p class="protocol-note" data-jev-style="true"/,where),jt=vis(jev);
-    assert.ok(jt.includes(JEV_STYLE[label])&&jt.includes(zh?'这个计划从一篇视觉论文出发':'The plan started from a vision paper')&&jt.includes(zh?'它把同样的思路用在图像上':'which applies that idea to images')
+    assert.ok(jt.includes(JEV_STYLE[label])&&jt.includes(zh?'决策研究计划从一篇视觉论文出发':'The decision-research plan started from a vision paper')&&jt.includes(zh?'它把同样的思路用在图像上':'which applies that idea to images')
       &&jev.includes('href="https://arxiv.org/abs/2609.25845"')&&jev.includes(`href="${zh?'/zh':''}/jev-style/"`),where+': the route in its plan: the definition, the paper it started from, the Jev-style page');
     const notLm=zh?'这里的分类头不是语言模型，这些结果也不能说明 EEG 能理解语言。':'The head here is not a language model, and none of these results shows that EEG understands language.';
     assert.ok(!jt.includes(notLm)&&vis(main).split(notLm).length===2&&vis(el(lim,/<li data-site-limit="not-a-language-model">/,where))===notLm,where+': "not a language model" is one limit, in the limits list, and not in the introduction');
@@ -5234,7 +5235,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   // (11) Data use: a median over an odd number of records is one record's value, mirroring the four-person note; no figure.
   const du=pageOf('data-use/'),om=el(du,/<p id="odd-medians"/,'data-use');
   assert.ok(du.indexOf('id="odd-medians"')>du.indexOf('id="small-cohorts"')&&du.slice(du.indexOf('id="small-cohorts"'),du.indexOf('id="odd-medians"')).indexOf('</section>')<0,'data-use: the odd-median line sits with the small-cohort note');
-  for(const s of ['A median over an odd number of records is one record\'s value.','Forenzo','Main cohort','It does not identify anyone','not proven to be distinct people']) assert.ok(vis(om).includes(s),'data-use: the odd-median line says "'+s+'"');
+  for(const s of ['A median over an odd number of records is one record’s value.','Forenzo','Main cohort','It does not identify anyone','not proven to be distinct people']) assert.ok(vis(om).includes(s),'data-use: the odd-median line says "'+s+'"');
   assert.ok(!/\d/.test(vis(om)),'data-use: the odd-median line types no figure');
   // (12) Data use registers route 3: the five reused records, each with what route 3 publishes; the three text encoders,
   // pinned and never redistributed; REVE Large's version, licence and paper; the wordings as the site's own CC BY 4.0
@@ -5583,12 +5584,12 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     const page=vis(own);
     for(const s of zh?['这是实际动作，不是运动想象','不是重新拟合的 bootstrap','不是独立的临床置信区间','没有排除与任务相关的全身性生理或运动影响','信号只来自大脑或皮层定位','不复现作者的被试内分数','可能用到了未来的采样点',
                        '一只猕猴、一次会话','每个数字都是这只动物的','不是 Neural Latents Benchmark 的官方分数','不是 co-smoothing','它并不是在每个指标上都更好','不是独立的个体','速度标签是离线由手指位置推导的','不是实时或闭环控制器',
-                       '说明不了信噪比','不能确立信号质量','没有经过核实的','光学数值覆盖不能弥补它们','不是九名被试','不是盲测','不是独立的评估数据','不合并成一个任务','只许可非商业使用',
-                       '不合并，不排名','都不与头皮 EEG 的结果比较','都不进入八个协议的核心矩阵','不是论文或基准排行榜上报告的分数']
+                       '信噪比、头皮耦合、饱和、运动、波长配对的完整性、生理上的合理性、神经起源、任务有效性与能否解码都没有评估','不能确立信号质量','没有经过核实的','光学数值覆盖不能弥补它们','不是九名被试','不是盲测','不是独立的评估数据','不合并成一个任务','只许可非商业使用',
+                       '三项结果没有共同的尺度，各自单独报告','都不与头皮 EEG 的结果比较','都不进入八个协议的核心矩阵','不是论文或基准排行榜上报告的分数']
                     :['executed movement, not motor imagery','not a refit bootstrap','not an independent clinical confidence interval','task-correlated systemic or motion effects are not excluded','a brain-only signal or cortical localization','does not reproduce the authors’ within-person scores','may use future samples',
                        'One macaque and one session','every figure is that animal’s','not an official Neural Latents Benchmark score','not co-smoothing','it is not better on every metric','not independent subjects','derived offline from finger position','not a real-time or closed-loop controller',
-                       'say nothing about signal-to-noise','cannot establish signal quality','no verified lookup','optical coverage does not repair them','not of nine participants','exposed, not blinded','not independent evaluation data','not pooled into one task','non-commercial use only',
-                       'Nothing pooled, nothing ranked','none is compared with a scalp-EEG result','none joins the eight-protocol core matrix','not scores reported in a paper or on a benchmark leaderboard'])
+                       'signal-to-noise, scalp coupling, saturation, motion, wavelength-pair integrity, physiological plausibility, neural origin, task validity and decoding are not assessed','cannot establish signal quality','no verified lookup','optical coverage does not repair them','not of nine participants','exposed, not blinded','not independent evaluation data','not pooled into one task','non-commercial use only',
+                       'the three results share no scale and each is reported on its own','none is compared with a scalp-EEG result','none joins the eight-protocol core matrix','not scores reported in a paper or on a benchmark leaderboard'])
       assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
     // Each bounding caveat sits beside its number, in the section of that number.
     for(const [id,s] of zh?[['bak-fnirs','不是运动想象'],['bak-fnirs','不是重新拟合的 bootstrap'],['mc-rtt','不是 Neural Latents Benchmark 的官方分数'],['mc-rtt','平均绝对误差'],['ds007420','不能确立信号质量']]
@@ -5611,8 +5612,8 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     assert.doesNotMatch(words,zh?/新增|本次更新|这次更新|最新|新发布|更新于|(?<![\w.\/#-])v\d+\b/:/\b(?:new|newly|added|updated|this update|this release adds)\b|(?<![\w.\/#-])v\d+\b|generated (?:on )?20\d\d/i,where+': no update wording or version label');
     // (8) The short answer: the three readings, each with what bounds it.
     const ans=vis(el(own,/<section class="short-answer"/,where));
-    for(const s of zh?['部分管用','不是运动想象','训练集先验','一只猕猴','同一次会话','平均绝对误差却更高','不是 Neural Latents Benchmark 的官方分数','说明不了信号质量']
-                    :['Partly','not motor imagery','training prior','one macaque','same session','higher mean absolute error','not an official Neural Latents Benchmark score','says nothing about signal quality'])
+    for(const s of zh?['部分管用','不是运动想象','训练集先验','一只猕猴','同一次会话','平均绝对误差却更高']
+                    :['Partly','not motor imagery','training prior','one macaque','same session','higher mean absolute error'])
       assert.ok(ans.includes(s),where+': the short answer says "'+s+'"');
     // Credits: each source's licence, ethics and consent (MC_RTT: animal care, consent not applicable), linked.
     const cr=el(own,/<div class="citation-list" id="credits"/,where);
@@ -5895,7 +5896,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
                          '不是校准过的群体置信区间','它的区间端点能反推出个人的分数','不是某一名被试的分数','得不出任何 fNIRS 或融合方面的结论','也不作在线、生理来源、竞赛名次或医学方面的声明']
                          :['在这一依据确立之前不发布任何数字','不是第二个队列']),
                        '并不是同样多的独立个体','不是 SAM 评分','所以不报告区间或显著性检验','但不能确立其机制','不是未经接触的目标值','已发布的视频时长比存储的数组长两秒','不是已确立的呈现顺序',
-                       '小规模试点，不排名','不合并','不是数据作者报告的结果','不涉及在线、实时、临床或部署方面的结论',
+                       '不与其他结果或核心矩阵相比较','没有任何数字把数据集、配置、语言或条件合在一起','不是数据作者报告的结果','不涉及在线、实时、临床或部署方面的结论',
                        'Apache-2.0 只涵盖代码仓库中的源代码','检查点本身的许可尚未厘清','不分发任何原始或转换后的权重']
                     :['counted once','does not show that a person recognised the error','movement, muscle and device-injection artifacts may contribute','does not isolate a neural origin','not a replication','no conclusion about how many channels are needed follows',
                        'neither arm is shown to be better, and the two are not shown to be equivalent','not a verdict on EEG foundation models in general','not additional coverage','The 64-channel scores were seen before this comparison was frozen','supervised transfer, not zero-shot',
@@ -5907,7 +5908,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
                          'no fNIRS or fusion conclusion follows','no online, physiological-origin, competition-standing or medical claim']
                          :['no figure is published until that basis is established','not a second cohort']),
                        'not as many independent people','not SAM scores','no interval or significance test is reported','it does not establish a mechanism','not untouched targets','exceed the stored arrays by two seconds','not an established presentation order',
-                       'Small pilots, not ranked','Nothing pooled','not results reported by the datasets’ authors','no online, real-time, clinical or deployment claim',
+                       'no result is set against another or against the core matrix','no figure combines datasets, configurations, languages or conditions','not results reported by the datasets’ authors','no online, real-time, clinical or deployment claim',
                        'Apache-2.0 covers the repository’s source code only','the checkpoint’s own licence is unresolved','no original or converted weights are distributed'])
       assert.ok(page.includes(s),where+': the required caveat "'+s+'"');
     // Each bounding caveat sits beside its number, in the section of that number.
@@ -5946,9 +5947,9 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     // (8) The short answer: four findings, each with what bounds it.
     const ans=vis(el(own,/<section class="short-answer"/,where));
     const nP=2+Number(BINGO_ON)+Number(HW_ON),held=2-Number(BINGO_ON)-Number(HW_ON);
-    for(const s of zh?[`${['','','两','三','四'][nP]}项试点、${['','','','三','四','五'][nP+1]}项结果，彼此不排名`,'训练时留出的被试','混杂探针','记录下来的设备事件','同样八名被试','区间跨过零','也不能说明两者等效',...(BINGO_ON?['先验']:[]),'误差比每个不用 EEG 的对照都大',
+    for(const s of zh?[`${['','','两','三','四'][nP]}项试点、${['','','','三','四','五'][nP+1]}项结果`,'训练时留出的被试','混杂探针','记录下来的设备事件','同样八名被试','区间跨过零','也不能说明两者等效',...(BINGO_ON?['先验']:[]),'误差比每个不用 EEG 的对照都大',
                        ...(HW_ON?['与经过时间与试次顺序的对照没有区分开','不是手写识别']:[]),...(held?['因权利审查暂缓']:[]),'百分点']
-                    :[`${['','','','Three','Four','Five'][nP+1]} findings from ${['','','two','three','four'][nP]} pilots, none ranked`,'left out of training','confound probe','recorded device events','the same eight people','the interval spans zero','not shown to be equivalent',...(BINGO_ON?['prior']:[]),'larger error than every control that uses no EEG',
+                    :[`${['','','','Three','Four','Five'][nP+1]} findings from ${['','','two','three','four'][nP]} pilots`,'left out of training','confound probe','recorded device events','the same eight people','the interval spans zero','not shown to be equivalent',...(BINGO_ON?['prior']:[]),'larger error than every control that uses no EEG',
                        ...(HW_ON?['not separated from elapsed time and trial order','not handwriting recognition']:[]),...(held===2?['held for their rights reviews']:held?['held for its rights review']:[])])
       assert.ok(ans.includes(s),where+': the short answer says "'+s+'"');
     if(!held) assert.ok(!/rights review|权利审查/.test(ans),where+': the short answer names no hold while every pilot is released');
@@ -6257,7 +6258,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
       const vis=visible(zh?chineseOnly(sec):sec);
       assert.doesNotMatch(vis,ranking[label],w+': no ranking word');
       assert.doesNotMatch(vis,notProof[label],w+': no exposure claim beyond the authors\' list');
-      assert.ok(vis.includes(zh?'从不排名':'never ranked'),w+': grouped, never ranked');
+      assert.ok(tradeoff?vis.includes(zh?'所以不说它高于或低于另一行':'so it is not called above or below another row'):vis.includes(zh?'95% 区间是否重叠判断':'by whether its 95% interval and EEGPT'),w+': above or below only by non-overlapping intervals, and on idle not at all');
       // The released "pretraining exposure" paragraph points here too.
       const ce=html.slice(html.indexOf('<p class="roadmap-p fm-core-exposure">'),html.indexOf('</p>',html.indexOf('<p class="roadmap-p fm-core-exposure">')));
       assert.ok(ce.includes('href="#eegpt"'),w+': the exposure paragraph of the limits points to EEGPT\'s section');
@@ -6296,8 +6297,8 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     // On idle only the LaBraM row shares EEGPT's run (the CBraMod idle row is from another run): the label says so there.
     const headOf=t=>t.type==='tradeoff'?(zh?'EEGPT（冻结）· 与已发布的 LaBraM 一行出自同一次运行':'EEGPT, frozen · the same run as the published LaBraM row')
                                        :(zh?'EEGPT（冻结）· 与已发布的 LaBraM、CBraMod 各行出自同一批运行':'EEGPT, frozen · the same runs as the published LaBraM and CBraMod rows');
-    const frozenOf=t=>t.type==='tradeoff'?(zh?'冻结探针：与已发布的 LaBraM 一行出自同一次运行，只替换编码器。从不排名。':'Frozen probe: the same run as the published LaBraM row, with only the encoder swapped. Never ranked.')
-                                         :(zh?'冻结探针：与已发布的 LaBraM、CBraMod 各行出自同一批运行，只替换编码器。从不排名。':'Frozen probe: the same runs as the published LaBraM and CBraMod rows, with only the encoder swapped. Never ranked.');
+    const frozenOf=t=>t.type==='tradeoff'?(zh?'冻结探针：与已发布的 LaBraM 一行出自同一次运行，只替换编码器。':'Frozen probe: the same run as the published LaBraM row, with only the encoder swapped.')
+                                         :(zh?'冻结探针：与已发布的 LaBraM、CBraMod 各行出自同一批运行，只替换编码器。':'Frozen probe: the same runs as the published LaBraM and CBraMod rows, with only the encoder swapped.');
     for(const t of data.tracks){
       const head=headOf(t);
       g('#track-tabs').events.click({target:{closest:()=>({dataset:{track:t.id}})}});
@@ -6326,8 +6327,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     g('#family-filter').value='all';g('#family-filter').events.change();
     // The note under the snapshot, the terms and the downloads.
     const added=home.slice(home.indexOf('<p class="matrix-added"'),home.indexOf('</p>',home.indexOf('<p class="matrix-added"')));
-    assert.ok(added.includes(`<span data-eegpt-release="${REL}">`)&&added.includes(`href="/${pfx}protocols/${data.tracks[0].id}/#eegpt"`)
-      &&added.includes(zh?'它同样不与这个快照排名':'not ranked against the snapshot either'),label+': the snapshot note names EEGPT, its release, not ranked, and links its row');
+    assert.ok(added.includes(`<span data-eegpt-release="${REL}">`)&&added.includes(`href="/${pfx}protocols/${data.tracks[0].id}/#eegpt"`),label+': the snapshot note names EEGPT and its release, and links its row');
     const terms=home.slice(home.indexOf('<p class="fm-terms-home eegpt-terms-home" id="eegpt-terms">'),home.indexOf('</p>',home.indexOf('id="eegpt-terms"')));
     assert.ok(terms.includes(zh?'检查点的许可仍未厘清':'the checkpoint’s licence is unresolved')&&terms.includes(zh?'不分发任何原始或转换后的权重':'no original or converted weights are distributed')
       &&terms.includes(`href="/${pfx}protocols/${data.tracks[0].id}/#eegpt-terms"`),label+': EEGPT\'s terms under the rows, linked');

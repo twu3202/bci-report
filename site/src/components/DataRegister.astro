@@ -22,7 +22,7 @@ const datasetPage = (name: string) => {
 };
 ---
 <section id="register" class="section" aria-labelledby="register-heading">
-  <div class="section-heading"><div><p class="eyebrow">{d.datasetsEyebrow}</p><h2 id="register-heading">{d.datasetsH2}</h2></div><p>{d.datasetsLede}{d.translated && <> {d.translated}</>}</p></div>
+  <div class="section-heading"><div><p class="eyebrow">{d.datasetsEyebrow}</p><h2 id="register-heading">{d.datasetsH2}</h2></div><p>{d.datasetsLede}{d.translated}</p></div>
   <div class="dataset-list">{data.datasets.map(x => <article class="dataset-row" data-dataset={x.name}>
     <div>
       <span class="family">{datasetTask(x.task, locale)}</span>

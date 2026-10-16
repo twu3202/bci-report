@@ -134,3 +134,41 @@
 .matrix-added a{color:var(--accent)}
 .fm-download{padding:10px 18px 0;font-size:.8rem}
 .fm-download a{color:var(--accent)}
+
+/* Phones (below 640px): the whole matrix on one screen instead of a strip that
+   scrolls sideways. Method names keep a narrow column of their own; protocol
+   names stand upright in the column heads (top to bottom in Chinese), each
+   linking to its protocol as before; and each bar becomes a rule under its
+   number, still measured from that protocol's own chance level. The family
+   colour stays on the row's edge. "≤ chance" shrinks to a ≤ mark beside the
+   number, still read out in full by a screen reader, and keyed under the
+   legend. Cohort and chance level per column are on each protocol page and in
+   the caveat below. */
+@media(max-width:640px){
+  .matrix-frame .scroll{overflow:visible;background:none}
+  .matrix{table-layout:fixed;white-space:normal}
+  .matrix th.corner,.matrix th.rowhead{position:static;width:102px;min-width:0;padding:5px 4px 5px 10px}
+  .matrix th.corner{font-size:.625rem}
+  .matrix .rowhead small,.matrix .colhead small{display:none}
+  .matrix .mname{font-size:.7rem;line-height:1.2;letter-spacing:-.015em;overflow-wrap:anywhere}
+  .matrix thead th.colhead{min-width:0;padding:8px 0 7px;vertical-align:bottom;text-align:center}
+  .matrix .colhead a{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);
+    font-size:.6875rem;font-weight:600;line-height:1.15;white-space:nowrap;text-align:left}
+  :lang(zh-Hans) .matrix .colhead a{transform:none;letter-spacing:.06em}
+  .matrix .cell{height:38px;padding:0 1px;text-align:center}
+  .matrix .track{left:3px;right:3px;top:auto;bottom:4px;transform:none;height:3px}
+  .matrix .num{display:block;font-size:.6875rem;letter-spacing:-.05em;white-space:nowrap}
+  .matrix .cmark{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .matrix .cell[data-rank=sub] .num{color:var(--warn-ink)}
+  .matrix .cell[data-rank=sub]::after{content:"≤";position:absolute;top:2px;left:0;right:0;font-size:.5625rem;line-height:1;color:var(--warn-ink)}
+  .matrix-note{gap:6px 16px;padding:10px 12px}
+  .matrix-note::after{content:"≤  at or below chance";order:3;font-size:.75rem;color:var(--warn-ink)}
+  :lang(zh-Hans) .matrix-note::after{content:"≤  不高于随机水平"}
+  .matrix-note a{order:4;margin-left:0}
+}
+/* The narrowest phones (320px): a narrower name column and smaller figures keep every number on one line. */
+@media(max-width:360px){
+  .matrix th.corner,.matrix th.rowhead{width:86px;padding-left:8px}
+  .matrix .mname{font-size:.65rem}
+  .matrix .num{font-size:.625rem;letter-spacing:-.07em}
+}

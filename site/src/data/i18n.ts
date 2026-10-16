@@ -131,11 +131,11 @@ function pilotSummary(zh: boolean): string {
   const held = [...(bingoReleased ? [] : [zh ? '内部言语' : 'inner speech']), ...(handwritingReleased ? [] : [zh ? '手写' : 'handwriting'])];
   if (zh) {
     const tail = held.length === 2 ? `；另有${held.join('与')}两项，因权利审查暂缓` : held.length ? `；以及第四项（${held[0]}），因权利审查暂缓` : '';
-    return `几项小规模试点，彼此不排名：${held.length ? parts.join('；') : `${parts.slice(0, -1).join('；')}；以及${parts[parts.length - 1]}`}${tail}。`;
+    return `几项小规模试点：${held.length ? parts.join('；') : `${parts.slice(0, -1).join('；')}；以及${parts[parts.length - 1]}`}${tail}。`;
   }
   const tail = held.length === 2 ? `; and two more, on ${held.join(' and on ')}, held for their rights reviews`
     : held.length ? `; and a fourth, on ${held[0]}, held for its rights review` : '';
-  return `Small pilots, none ranked: ${held.length ? parts.join('; ') : `${parts.slice(0, -1).join('; ')}; and ${parts[parts.length - 1]}`}${tail}.`;
+  return `Small pilots: ${held.length ? parts.join('; ') : `${parts.slice(0, -1).join('; ')}; and ${parts[parts.length - 1]}`}${tail}.`;
 }
 
 export const locales = ['en', 'zh'] as const;
@@ -449,7 +449,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
-      `Separate questions add evidence on sensors, displays, electrode layout, movement, later sessions, calibration and model adaptation, when not to act, sleep staging, pretraining, one model for several questions, questions asked in words, clinical groups, signals other than scalp EEG (human fNIRS and one macaque’s intracortical spiking) and small pilot studies.`,
+      `Questions beyond the matrix cover transfer, calibration and model adaptation, reliability and clinical groups, signals other than scalp EEG, and small pilot studies.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -466,18 +466,17 @@ export const home = {
     // No summed count: the topics now draw on two exports that measure different
     // things (proportions, correlation, R²), and one total would add them up.
     topicsLede:
-      'These measurements are repeated conditions within protocols, not independent experiments, and not an overall ranking.',
+      'Figures under one question often share participants: they are repeated conditions within its protocols.',
     readEvidence: 'Read the evidence →',
     holdsEyebrow: 'Holds',
     holdsH2: 'What is held back, and why',
-    holdsLede: 'Results that are missing on purpose.',
     holdsRegister: 'Full holds register →',
     correctionsLink: (n: number) => `Corrections (${n}) →`,
     matrixEyebrow: 'Core benchmark matrix',
     matrixH2: (c: HomeCounts) => `${c.methods} methods × ${c.protocols} protocols`,
-    matrixLede: 'The original eight-protocol snapshot, separate from the questions below. Blank cells are protocols a method has not been run on — not failures.',
+    matrixLede: 'The original snapshot: balanced accuracy in percent, and command detection on idle.',
     matrixRegion: 'Coverage matrix of methods against protocols, scrolls horizontally',
-    matrixCaption: 'Balanced accuracy of each method on each protocol. Chance level differs by protocol and is given in each column heading.',
+    matrixCaption: 'Each method’s score on each protocol; each column heading gives the cohort size and chance level.',
     corner: 'Method',
     colDetection: 'detection',
     colChance: (c: number) => `chance ${c}%`,
@@ -489,7 +488,7 @@ export const home = {
     keyLead: 'Highest score in this snapshot',
     // The encoders are the matrix checkpoints of the further models; the masking ablation's siblings make the release's
     // sixteen (review of 2026-10-05: the release log and data use count models and checkpoints).
-    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are checkpoints of ${models} models; ${ablation} more checkpoints of one of them form a masking ablation, ${n + ablation} in all. They are not part of this snapshot and are not ranked against it: they appear in each protocol’s table below and on the protocol pages.`,
+    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `${n} further foundation encoders, run as frozen probes on the same eight protocols${partly ? ` (${partly})` : ''}. They are checkpoints of ${models} models; ${ablation} more checkpoints of one of them form a masking ablation, ${n + ablation} in all. They sit outside this snapshot.`,
     matrixAddedLink: 'The foundation-encoder rows on the first protocol →',
     keyBar: "Bar = position between that protocol's chance level and 100%",
     keyGap: 'Not evaluated',
@@ -497,7 +496,7 @@ export const home = {
     matrixCaveat:
       'Bars are comparable <strong>down</strong> a column and not <strong>across</strong> one: chance level is 50% for the two-class tasks, ' +
       '20% for sleep staging and 2.5% for 40-class SSVEP, and every protocol uses a different cohort and electrode layout. There is no overall score. ' +
-      'The idle column reports command detection only — read it with the false-activation rate in its protocol.',
+      'Read the idle column with the false-activation rate in its protocol.',
     protocolsEyebrow: 'One protocol at a time',
     protocolsH2: 'The evidence behind each score',
     tabsLabel: 'Evaluation protocol',
@@ -517,7 +516,7 @@ export const home = {
     colModel: 'Model / configuration',
     colCompute: 'Compute time',
     scrollHint: 'Scroll the table sideways for the remaining columns.',
-    tableCaption: 'Scoring time includes fitting and prediction, and may include accelerator waiting. It excludes data preparation.',
+    tableCaption: 'Compute time covers fitting and prediction, possibly with accelerator waiting, and excludes data preparation.',
     visualEyebrow: 'Visual comparison',
     chartTitle: 'Accuracy by configuration',
     rights: 'Aggregate research results',
@@ -529,7 +528,7 @@ export const home = {
     atOrBelow: (c: number) => `At or below the ${c}% chance level`,
     intervalReaches: (c: number) => `Interval reaches the ${c}% chance level`,
     singleSeed: (word: string, n: number, lo: string, hi: string, mean: string) =>
-      `Single seed — the ${word} of ${n} run (${lo}–${hi}%, mean ${mean}%)`,
+      `Single seed — the ${word} of ${n} runs (${lo}–${hi}%, mean ${mean}%)`,
     seedWord: { highest: 'highest', lowest: 'lowest', middle: 'middle' } as Record<string, string>,
     // The further frozen encoders in the per-protocol table. workbench.ts carries the same strings
     // (it cannot import this module); check-workbench.mjs compares the first paint with its render.
@@ -545,14 +544,14 @@ export const home = {
     fmUnknown: 'Exposure unknown',
     fmResearchUse: 'Model card: research use only, not for diagnosis or clinical use.',
     fmAblation: 'Masking ablation: three sibling checkpoints of eeg-fm-masking',
-    fmAblationLede: 'Read against the paper-recommended checkpoint, the matrix row above: the same architecture, corpus and recipe, another masking framework or geometry. Not further models, and not ranked.',
+    fmAblationLede: 'Read against the paper-recommended checkpoint, the matrix row above: the same architecture, corpus and recipe, with another masking framework or geometry.',
     fmAblationReference: 'matrix row above',
     fmCsv: 'Foundation-encoder rows · CSV ↓',
     fmTermsLink: 'Every weights licence and its terms →',
     fmAbstained: (a: number, n: number) => `${a} of ${n} participants always abstained`,
     // EEGPT (2026-10-13): a frozen row of its own release, after the further encoders' group. workbench.ts carries the
     // same strings; check-workbench.mjs compares the first paint with its render.
-    matrixAddedEegpt: 'Beside them sits EEGPT, from the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped, and not ranked against the snapshot either.',
+    matrixAddedEegpt: 'Beside them sits EEGPT, from the same runs as the published LaBraM rows and, except on idle, the CBraMod rows, with only the encoder swapped.',
     matrixAddedEegptLink: 'EEGPT’s row on the first protocol →',
     eegptGroup: 'EEGPT, frozen · the same runs as the published LaBraM and CBraMod rows',
     eegptGroupIdle: 'EEGPT, frozen · the same run as the published LaBraM row',
@@ -600,7 +599,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `另有若干问题页，补充了关于传感器、显示设备、电极布局、运动、后续会话、校准与模型适配、何时不该执行、睡眠分期、预训练、一个模型回答多个问题、用文字提问、临床分组、头皮 EEG 之外的信号（人类 fNIRS 与一只猕猴的皮层内神经元放电），以及小规模试点研究的证据。`,
+      `矩阵之外的问题页涵盖迁移、校准与模型适配、可靠性与临床分组、头皮 EEG 之外的信号，以及小规模试点研究。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -609,18 +608,17 @@ export const home = {
     topicsEyebrow: '问题',
     topicsH2: '证据能回答的问题',
     topicsLede:
-      '这些测量是同一协议内的重复条件，不是独立实验，也不是总排名。',
+      '同一问题下的数字常常来自同一批被试：它们是该问题所用协议内的重复条件。',
     readEvidence: '查看证据 →',
     holdsEyebrow: '暂缓发布',
     holdsH2: '暂缓发布的内容，以及原因',
-    holdsLede: '有意暂不发布的结果。',
     holdsRegister: '完整暂缓登记册 →',
     correctionsLink: (n: number) => `更正（${n}）→`,
     matrixEyebrow: '核心基准矩阵',
     matrixH2: (c: HomeCounts) => `${c.methods} 种方法 × ${c.protocols} 个协议`,
-    matrixLede: '最初的八协议快照，与下方的问题页相互独立。空白单元格表示该方法尚未在该协议上运行——不是失败。',
+    matrixLede: '最初的快照：数值为平衡准确率（%），空闲一列为指令检出率。',
     matrixRegion: '方法与协议的覆盖矩阵，可横向滚动',
-    matrixCaption: '各方法在各协议上的平衡准确率。随机水平因协议而异，标注在每列表头中。',
+    matrixCaption: '各方法在各协议上的分数；每列表头给出被试数与随机水平。',
     corner: '方法',
     colDetection: '检出率',
     colChance: (c: number) => `随机水平 ${c}%`,
@@ -628,7 +626,7 @@ export const home = {
     notEvaluated: (m: string, t: string) => `${m} 尚未在「${t}」上评测`,
     atChance: '≤ 随机',
     keyLead: '本快照中该协议的最高分',
-    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们是 ${models} 个模型的检查点；其中一个模型另有 ${ablation} 个检查点组成掩码消融，共 ${n + ablation} 个。它们不属于这个快照，也不与它排名：它们列在下方每个协议的表格中，以及各协议页面上。`,
+    matrixAdded: (n: number, partly: string, models: number, ablation: number) => `另外 ${n} 个基础模型编码器，以冻结探针的方式在同样的 8 个协议上运行${partly ? `（${partly}）` : ''}。它们是 ${models} 个模型的检查点；其中一个模型另有 ${ablation} 个检查点组成掩码消融，共 ${n + ablation} 个。它们在这个快照之外。`,
     matrixAddedLink: '第一个协议上的基础模型编码器各行 →',
     keyBar: '条长 = 在该协议随机水平与 100% 之间的位置',
     keyGap: '未评测',
@@ -636,7 +634,7 @@ export const home = {
     matrixCaveat:
       '条形只能<strong>纵向</strong>比较，不能<strong>横向</strong>比较：二分类任务的随机水平是 50%，' +
       '睡眠分期是 20%，40 分类 SSVEP 是 2.5%，而且每个协议的队列和电极布局都不同。不存在总分。' +
-      '空闲一列只报告指令检出率——请结合该协议中的误触发率一起读。',
+      '空闲一列请结合该协议中的误触发率一起读。',
     protocolsEyebrow: '逐个协议',
     protocolsH2: '每个分数背后的证据',
     tabsLabel: '评测协议',
@@ -656,7 +654,7 @@ export const home = {
     colModel: '模型 / 配置',
     colCompute: '计算耗时',
     scrollHint: '横向滚动表格查看其余列。',
-    tableCaption: '评分耗时包括拟合与预测，可能含加速器等待时间，不含数据准备。',
+    tableCaption: '计算耗时包括拟合与预测（可能含加速器等待），不含数据准备。',
     visualEyebrow: '可视化比较',
     chartTitle: '各配置的准确率',
     rights: '聚合研究结果',
@@ -682,12 +680,12 @@ export const home = {
     fmUnknown: '是否出现在预训练数据中：未知',
     fmResearchUse: '模型卡：仅供研究使用，不可用于诊断或临床。',
     fmAblation: '掩码消融：eeg-fm-masking 的另外 3 个同系列检查点',
-    fmAblationLede: '请对照论文推荐的检查点（即上表中的那一行）阅读：架构、语料与训练方案相同，只改变掩码框架或掩码几何。它们不是更多的模型，也不排名。',
+    fmAblationLede: '请对照论文推荐的检查点（即上表中的那一行）阅读：架构、语料与训练方案相同，只改变掩码框架或掩码几何。',
     fmAblationReference: '即上表中的那一行',
     fmCsv: '基础模型编码器各行 · CSV ↓',
     fmTermsLink: '全部权重许可与条款 →',
     fmAbstained: (a: number, n: number) => `${n} 名被试中有 ${a} 名始终拒识`,
-    matrixAddedEegpt: '它们旁边还有 EEGPT，与已发布的 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行，只替换了编码器；它同样不与这个快照排名。',
+    matrixAddedEegpt: '它们旁边还有 EEGPT，与已发布的 LaBraM 各行、以及除空闲协议外的 CBraMod 各行出自同一批运行，只替换了编码器。',
     matrixAddedEegptLink: '第一个协议上的 EEGPT 一行 →',
     eegptGroup: 'EEGPT（冻结）· 与已发布的 LaBraM、CBraMod 各行出自同一批运行',
     eegptGroupIdle: 'EEGPT（冻结）· 与已发布的 LaBraM 一行出自同一次运行',
@@ -738,7 +736,7 @@ export const topicChrome = {
     methodsLimits: 'Methods & limits ↓',
     keepExploring: 'Keep exploring',
     exploreNav: 'Other questions',
-    allQuestions: 'All questions, and the map of which kinds of transfer have been measured →',
+    allQuestions: 'All questions and the transfer-coverage map →',
     dataSource: 'Data source:',
     reviewedAggregate: 'reviewed aggregate JSON',
     // The data-source note names the file and its schema, never the date it was generated.
@@ -765,7 +763,7 @@ export const topicChrome = {
     methodsLimits: '方法与局限 ↓',
     keepExploring: '继续探索',
     exploreNav: '其他问题',
-    allQuestions: '全部问题，以及哪些迁移已经测量过的地图 →',
+    allQuestions: '全部问题与迁移覆盖地图 →',
     dataSource: '数据来源：',
     reviewedAggregate: '已审核的聚合 JSON',
     schema: 'schema',
@@ -796,7 +794,7 @@ export const transferMapCopy = {
     comparison: 'comparison',
     alsoChanges: 'also changes: ',
     none: 'None',
-    legend: 'A state says whether evidence exists, not whether transfer works. n is the number of people behind an entry; two sizes (n=24 / 17) are two analyses or cohorts behind the same entry, largest first. “comparison” marks two electrode sets scored on the same data rather than a transfer from one to the other; “also changes” names what else changed in the same contrast.',
+    legend: 'n is the number of people behind an entry; two sizes (n=24 / 17) are two analyses or cohorts in one entry, largest first. “comparison”: two electrode sets scored separately on the same data. “also changes”: what else changed in the same contrast.',
     fullMap: 'The full map, with what each entry measures →',
   },
   zh: {
@@ -806,7 +804,7 @@ export const transferMapCopy = {
     comparison: '配对比较',
     alsoChanges: '同时变化：',
     none: '无',
-    legend: '状态只说明有没有证据，不说明迁移效果好不好。n 是每一项背后的被试数；两个数（n=24 / 17）表示同一项背后的两项分析或两个队列，大的在前。“配对比较”指两组电极在同一批数据上评分，而不是从一组迁移到另一组；“同时变化”指同一对比中还有什么一起变了。',
+    legend: 'n 是每一项背后的被试数；两个数（n=24 / 17）表示同一项背后的两项分析或两个队列，大的在前。“配对比较”：两组电极在同一批数据上分别评分。“同时变化”：同一对比中还有什么一起变了。',
     fullMap: '完整的地图，附每一项测量的内容 →',
   },
 } satisfies Record<Locale, unknown>;
@@ -816,8 +814,8 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Every question BCI Report answers from its published results: transfer across sensors, displays, electrodes, movement and sessions; calibration, model adaptation, pretraining, one model for several questions and questions asked in words; when not to act; sleep staging; clinical groups; signals other than scalp EEG, fNIRS and one macaque’s intracortical spiking; small pilot studies, outside every ranking. With a map of which kinds of transfer have been measured.',
-    dek: 'Each question has its own page: a short answer, the evidence with its cohort and interval, and its limits.',
+    description: 'Questions answered from BCI Report’s published decoding results — transfer, calibration and model adaptation, reliability and clinical groups, signals other than scalp EEG and small pilot studies — with a map of which kinds of transfer have been measured.',
+    dek: 'Answers from published decoding results, each with its cohort, interval and limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
     sources: 'Cohort sizes are read from the reviewed downloads:',
@@ -825,8 +823,8 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: 'BCI Report 根据已发布的结果回答的每一个问题：跨传感器、显示设备、电极、运动与会话的迁移；校准、模型适配、预训练、一个模型回答多个问题与用文字提问；何时不该执行；睡眠分期；临床分组；头皮 EEG 之外的信号——fNIRS 与一只猕猴的皮层内神经元放电；不进入任何排名的小规模试点研究。另附一张地图，说明哪些迁移已经测量过。',
-    dek: '每个问题都有自己的页面：简答、附被试数和区间的证据，以及局限。',
+    description: '根据 BCI Report 已发布的解码结果回答的问题：迁移、校准与模型适配、可靠性与临床分组、头皮 EEG 之外的信号以及小规模试点研究，另附一张地图，说明哪些迁移已经测量过。',
+    dek: '根据已发布的解码结果作答，每个回答都附被试数、区间与局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
     sources: '被试数取自已审核的下载文件：',
@@ -840,13 +838,13 @@ export const topicsHubCopy = {
  */
 export const jevCardCopy = {
   en: {
-    eyebrow: 'Decision research · three routes',
+    eyebrow: 'Decision research',
     title: 'Jev-style questions on EEG: the evidence',
     body: 'Three routes, each answered by this site’s own runs on public EEG data.',
     link: 'Read the evidence →',
   },
   zh: {
-    eyebrow: '决策研究 · 三条路线',
+    eyebrow: '决策研究',
     title: 'Jev 式提问用在脑电上：证据',
     body: '三条路线，每一条都由本站在公开 EEG 数据上自己的运行来回答。',
     link: '查看证据 →',
@@ -862,23 +860,23 @@ export const jevCardCopy = {
 export const topicGroupLabels: Record<Locale, Record<string, { title: string; lede: string }>> = {
   en: {
     transfer: { title: 'Transfer',
-      lede: 'Does a decoder still work when the sensor, the display, the electrode layout, the body’s movement or the session changes?' },
+      lede: 'Does a decoder still work after a change of sensor, display, electrode layout, body movement or session?' },
     adapting: { title: 'Adapting models',
-      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps at all, whether one model can answer several questions, and whether it can be asked them in words.' },
+      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps, and whether one model can answer several questions, including questions asked in words.' },
     reliability: { title: 'Reliability & clinical',
-      lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG can and cannot say about a clinical group.' },
+      lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG says about a clinical group.' },
     beyond: { title: 'Other signals & pilots',
-      lede: 'What a simple baseline shows on signals other than scalp EEG, in people and in one macaque, and what small pilot studies can and cannot show.' },
+      lede: 'What simple baselines show on signals other than scalp EEG, in people and in one macaque, and what small pilot studies show.' },
   },
   zh: {
     transfer: { title: '迁移',
       lede: '换了传感器、显示设备、电极布局或记录会话，或者人在运动时，解码器还管用吗？' },
     adapting: { title: '调整模型',
-      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练到底有没有帮助、一个模型能不能回答多个问题，以及能不能用文字向它提问。' },
+      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练有没有帮助，以及一个模型能否回答多个问题，包括用文字提出的问题。' },
     reliability: { title: '可靠性与临床',
-      lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么、不能说明什么。' },
+      lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么。' },
     beyond: { title: '其他信号与试点',
-      lede: '简单基线在头皮 EEG 之外的信号上（人类与一只猕猴）能说明什么，以及小规模试点研究能说明什么、不能说明什么。' },
+      lede: '简单基线在头皮 EEG 之外的信号上（人类与一只猕猴）表现如何，以及小规模试点研究能说明什么。' },
   },
 };
 
@@ -903,11 +901,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '2 s SSVEP · 12 targets · balanced accuracy' },
     'screen-to-vr': { kicker: 'Context transfer', title: 'Screen to VR',
       question: 'Does a P300 decoder calibrated on a screen still work in VR?',
-      summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse — and why the result is not the cost of the change. Plus: a P300 decoder trained at one image rate and tested at another.',
+      summary: 'The same 21 people calibrated on a PC screen and tested in a VR headset, and the reverse: the level reached after the switch, with no same-display score to compare. Plus: a P300 decoder trained at one image rate and tested at another.',
       detail: 'P300 · 21 people in VR · 9 people across image rates' },
     'fewer-electrodes': { kicker: 'Montage', title: 'Fewer electrodes',
       question: 'Can fewer electrodes, or electrodes in the ear, match a full scalp montage?',
-      summary: 'In-ear against scalp for sleep, four posterior electrodes against sixteen for eyes open or closed, and new foundation encoders on BETA with eight and four electrodes — and what none of it says about any headset.',
+      summary: 'In-ear against scalp for sleep, four posterior electrodes against sixteen for eyes open or closed, and foundation encoders on BETA with eight and four electrodes: channel sets from specific research recordings.',
       detail: 'Two paired comparisons · 10 and 19 people · BETA, 8 and 4 electrodes, 70 people' },
     'on-the-move': { kicker: 'Motion robustness', title: 'On the move',
       question: 'Does EEG decoding still work while walking or running?',
@@ -923,7 +921,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     // sits beside the wearable SSVEP one, which keeps every figure it had.
     'calibration-budget': { kicker: 'Calibration budget', title: 'How much calibration?',
       question: 'How much calibration data does an EEG decoder need?',
-      summary: 'Twelve, 24 or 48 labeled trials on a wearable SSVEP task, and up to 40 from a person’s next motor-imagery session, help some methods more than others and not every person—and trial count is not elapsed time.',
+      summary: 'Twelve, 24 or 48 labeled trials on a wearable SSVEP task, and up to 40 from a person’s next motor-imagery session: the gain differs by method, and some people’s scores fall.',
       detail: 'SSVEP · 102 people · motor imagery, next session · 51 people' },
     // Split from calibration-budget on 2026-10-02: the LaBraM result adapts on
     // other people and uses no label from the test person, so it is not
@@ -936,7 +934,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     // carry the name, each with its definition.
     'when-not-to-act': { kicker: 'Abstention · decision research', title: 'When not to act',
       question: 'How often does an EEG decoder fire when nobody is giving a command?',
-      summary: 'Command detection and false activation, read together; when a decoder should decline to decide, measured on two protocols; and the research plan on decisions that measurement opens, with its three routes.',
+      summary: 'Command detection read with its false-activation rate; when a decoder should decline to decide, on two protocols; and the decision-research plan, with its three routes.',
       detail: 'Idle, 4-person pilot · non-control, 20 people · reliable decisions, 36 and 70 people' },
     // Since 2026-10-03 (owner decision): Dreem, two cohorts kept apart.
     'sleep-staging': { kicker: 'Sleep staging · simple baselines', title: 'Sleep-stage balance',
@@ -945,7 +943,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'Dreem DOD-H and DOD-O · 25 and 55 nights · balanced accuracy' },
     'clinical-groups': { kicker: 'Clinical research', title: 'Clinical groups',
       question: 'Can resting-state EEG separate Parkinson\'s disease from controls?',
-      summary: 'A 149-person Parkinson\'s and control comparison, with an age-and-sex-only comparator printed beside it — and why neither is a diagnosis.',
+      summary: 'A 149-person Parkinson\'s and control comparison beside an age-and-sex-only comparator; neither is a diagnosis.',
       detail: '149 people · one site · balanced accuracy' },
     'does-pretraining-help': { kicker: 'Representation controls', title: 'Does pretraining help?',
       question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
@@ -961,7 +959,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     // the hub do not carry BOAS's three stated gaps, so the card names BOAS and prints BETA's cohort only.
     'questions-in-language': { kicker: 'Questions in language · route 3', title: 'Questions in language',
       question: 'Can an EEG model answer questions asked in words?',
-      summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: seen questions, rewordings and questions it was never trained on, kept apart — and a negative result for the last.',
+      summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: it works only for questions it was trained on, and not on every dataset.',
       detail: 'SSVEP, BETA, 70 people · sleep, BOAS · secondary: EESM19, OpenBMI, Wearable-102' },
     // Owner decisions: the non-scalp batch and the paired-biosignal pilots, one site version. Written with the
     // registrations so the dataset pages and the release log can name the pages they are read on; the pages' own
@@ -970,7 +968,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
     // "brain signals": the fNIRS result does not exclude systemic effects, so the title claims no brain origin.
     'beyond-scalp-eeg': { kicker: 'Other signals · human and macaque', title: 'Beyond scalp EEG',
       question: 'Do simple baselines work on signals other than scalp EEG?',
-      summary: 'Each signal read on its own: fNIRS telling right-hand, left-hand and foot tapping apart in people the classifier never saw; finger velocity from one macaque’s motor-cortex spiking, where a ridge decoder lowers the squared error but not the absolute error; and a numerical check of fNIRS recordings that says nothing about their quality. Intracortical handwriting and functional ultrasound are prepared, not scored.',
+      summary: 'fNIRS telling right-hand, left-hand and foot tapping apart in people the classifier never saw; finger velocity from one macaque’s motor-cortex spiking, where a ridge decoder lowers the squared error but not the absolute error; and a numerical coverage check of fNIRS recordings. Intracortical handwriting and functional ultrasound: status only.',
       detail: 'fNIRS, 30 people · intracortical spiking, 1 macaque · fNIRS coverage, 12 people' },
     'pilot-studies': { kicker: 'Pilot studies · small cohorts', title: 'Pilot studies',
       question: 'What can a small pilot show, and what can it not?',
@@ -986,11 +984,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '2 秒 SSVEP · 12 个目标 · 平衡准确率' },
     'screen-to-vr': { kicker: '场景迁移', title: '从屏幕到 VR',
       question: '在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？',
-      summary: '同样 21 名被试，在电脑屏幕上校准、在 VR 头显里测试，反之亦然——以及为什么这个结果不是换设备的代价。另有：P300 解码器在一种图像呈现速率下训练、在另一种速率下测试。',
+      summary: '同样 21 名被试，在电脑屏幕上校准、在 VR 头显里测试，反之亦然：给出的是切换之后达到的水平，没有同一显示设备上的分数可供比较。另有：P300 解码器在一种图像呈现速率下训练、在另一种速率下测试。',
       detail: 'P300 · VR 中 21 名被试 · 跨图像速率 9 名被试' },
     'fewer-electrodes': { kicker: '电极布局', title: '更少的电极',
       question: '更少的电极、或耳道内电极，能比得上完整的头皮电极吗？',
-      summary: '睡眠分期里耳道内对头皮，睁闭眼任务里后部 4 个对全部 16 个电极，以及新的基础模型编码器在 BETA 上用 8 个与 4 个电极——以及这些都不能说明哪款设备更好。',
+      summary: '睡眠分期里耳道内对头皮，睁闭眼任务里后部 4 个对全部 16 个电极，以及基础模型编码器在 BETA 上用 8 个与 4 个电极：都是具体研究记录中的通道组合。',
       detail: '两项配对比较 · 10 名与 19 名被试 · BETA 8 与 4 个电极，70 名被试' },
     'on-the-move': { kicker: '运动鲁棒性', title: '移动中的解码',
       question: '走路或跑步时，EEG 解码还管用吗？',
@@ -1002,7 +1000,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '运动想象，WBCIC-SHU，51 与 11 名被试 · RSVP，15 名被试 · 光标追踪，阴性结果' },
     'calibration-budget': { kicker: '校准预算', title: '需要多少校准？',
       question: 'EEG 解码器需要多少校准数据？',
-      summary: '可穿戴 SSVEP 任务上的 12、24 或 48 个校准试次，以及同一被试下一次运动想象会话中最多 40 个校准试次：对某些方法帮助更大，也不是对每个人都有帮助——而且试次数不等于耗时。',
+      summary: '可穿戴 SSVEP 任务上的 12、24 或 48 个校准试次，以及同一被试下一次运动想象会话中最多 40 个校准试次：增益因方法而异，也有人下降。',
       detail: 'SSVEP · 102 名被试 · 运动想象，下一次会话 · 51 名被试' },
     'model-adaptation': { kicker: '模型适配', title: '该更新哪一部分？',
       question: '新被试、第二天：预训练模型该更新哪一部分？',
@@ -1010,7 +1008,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'EEGMAT，36 名被试 · 三种更新方式 · 次日：暂缓' },
     'when-not-to-act': { kicker: '拒识 · 决策研究', title: '何时不该执行',
       question: '没有人下指令时，EEG 解码器误触发有多频繁？',
-      summary: '把指令检出与误触发放在一起读；在两个协议上测量解码器什么时候该拒绝作出决定；以及这项测量所开启的决策研究计划和它的三条路线。',
+      summary: '指令检出率与误触发率一起读；在两个协议上测量解码器什么时候该拒绝作出决定；以及决策研究计划和它的三条路线。',
       detail: '空闲，4 人试点 · 非控制状态，20 名被试 · 可靠的决策，36 与 70 名被试' },
     'sleep-staging': { kicker: '睡眠分期 · 简单基线', title: '睡眠分期的失衡',
       question: '为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？',
@@ -1018,7 +1016,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'Dreem DOD-H 与 DOD-O · 25 晚与 55 晚 · 平衡准确率' },
     'clinical-groups': { kicker: '临床研究', title: '临床分组',
       question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
-      summary: '149 名被试的帕金森病与对照比较，旁边并排放着一个只用年龄和性别的对照基线——以及为什么两者都不是诊断。',
+      summary: '149 名被试的帕金森病与对照比较，与一个只用年龄和性别的对照基线并排给出；两者都不是诊断。',
       detail: '149 名被试 · 单中心 · 平衡准确率' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
       question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
@@ -1030,11 +1028,11 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '运动想象，OpenBMI，51 名被试 · 睡眠，BOAS · EESM19，粗略重复' },
     'questions-in-language': { kicker: '用语言提问 · 第三条路线', title: '用语言提问',
       question: 'EEG 模型能回答用文字提出的问题吗？',
-      summary: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或描述提出：已见过的问题、改写后的问题和它从未训练过的问题分开列出——最后一类是阴性结果。',
+      summary: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或描述提出：只对训练过的问题成立，而且不是在每个数据集上都成立。',
       detail: 'SSVEP，BETA，70 名被试 · 睡眠，BOAS · 次要：EESM19、OpenBMI、Wearable-102' },
     'beyond-scalp-eeg': { kicker: '其他信号 · 人类与猕猴', title: '头皮 EEG 之外',
       question: '在头皮 EEG 之外的信号上，简单基线管用吗？',
-      summary: '每种信号单独阅读：用 fNIRS 在分类器从未见过的人身上区分右手、左手手指敲击与脚部敲击；从一只猕猴运动皮层的神经元放电中解码手指速度——岭回归降低了平方误差，却没有降低绝对误差；以及对 fNIRS 记录的数值核查，它说明不了这些记录的质量。皮层内手写与功能超声已完成准备，尚未评分。',
+      summary: '用 fNIRS 在分类器从未见过的人身上区分右手、左手手指敲击与脚部敲击；从一只猕猴运动皮层的神经元放电中解码手指速度——岭回归降低了平方误差，却没有降低绝对误差；以及对 fNIRS 记录的数值覆盖核查。皮层内手写与功能超声：只发状态。',
       detail: 'fNIRS，30 名被试 · 皮层内神经元放电，1 只猕猴 · fNIRS 数值覆盖，12 名被试' },
     'pilot-studies': { kicker: '试点研究 · 小样本', title: '试点研究',
       question: '一个小规模试点能说明什么、不能说明什么？',

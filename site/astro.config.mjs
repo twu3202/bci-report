@@ -16,4 +16,12 @@ export default defineConfig({
     // no inline escape hatch at all.
     inlineStylesheets: 'never',
   },
+  vite: {
+    build: {
+      // The same for scripts: Vite inlines a processed script under 4 KB (the
+      // phone-table script, src/scripts/stack-tables.ts) as an inline <script>,
+      // which `script-src 'self'` blocks. Every script ships as its own file.
+      assetsInlineLimit: 0,
+    },
+  },
 });

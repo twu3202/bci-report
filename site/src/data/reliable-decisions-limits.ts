@@ -33,7 +33,7 @@ export const rdLimitsZh: Record<string, string> = {
   'Rejecting likely errors on known classes is not detecting unfamiliar input. An uncertainty threshold may not flag an unseen class (https://arxiv.org/abs/2603.13324). Route 1 makes no out-of-distribution claim.':
     '拒绝已知类别上可能判错的试次，不等于识别陌生的输入：不确定性阈值未必能标出没见过的类别（https://arxiv.org/abs/2603.13324）。第一条路线不作任何分布外的声明。',
   'A contrast is called a difference only when its paired 95% participant-bootstrap interval excludes 0 (no multiplicity correction); otherwise "no difference resolved". No ranking where intervals overlap. Descriptive entries are never called differences.':
-    '只有配对的 95% 被试 bootstrap 区间不含 0 时，一个对比才称为有差异（不做多重比较校正）；否则写作“不能认定有差异”。区间重叠时不排名，描述性的数值也从不称为差异。',
+    '只有配对的 95% 被试 bootstrap 区间不含 0 时，一个对比才称为有差异（不做多重比较校正）；否则写作“不能认定有差异”。只有区间不重叠时，才说一行高于另一行；描述性的数值也从不称为差异。',
 };
 
 /** ds003810's contrasts are secondary: the topic page reads them only as such, and so does every group that shows them. */

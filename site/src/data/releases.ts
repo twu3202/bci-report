@@ -547,6 +547,8 @@ export const holds: Hold[] = [
     opened: '2026-10-12', closed: null,
     outcome: { en: 'Its numeric task codes have no verified lookup to hands or movements, and its event durations disagree between the events table, the optical files and the cited paper, so no classifier was scored. Its optical coverage counts are published.',
                zh: '它的数字任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长在事件表、光学数据文件与所引论文之间也互相矛盾，所以没有对任何分类器评分。它的光学数值覆盖计数已发布。' },
+    card: { en: 'Its numeric task codes have no verified lookup to hands or movements, and its event durations disagree between the events table, the optical files and the cited paper. Its optical coverage counts are published.',
+            zh: '它的数字任务编码没有经过核实的、与左右手或动作对应的对照表，事件时长在事件表、光学数据文件与所引论文之间也互相矛盾。它的光学数值覆盖计数已发布。' },
     href: '/topics/beyond-scalp-eeg/#ds007420',
   },
   {
@@ -556,6 +558,8 @@ export const holds: Hold[] = [
     opened: '2026-10-03', closed: null,
     outcome: { en: 'The stored signal metadata says millivolts; the publisher’s own converter treats the same arrays as microvolts. Models that need absolute amplitude are not run on a guessed unit, so no such score exists. The published baselines do not depend on the unit.',
                zh: '存储的信号元数据写的是毫伏，发布者自己的转换程序却把同样的数组当作微伏。需要绝对幅值的模型不在猜测的单位上运行，所以没有这类分数。已发布的基线不依赖这个单位。' },
+    card: { en: 'The stored signal metadata says millivolts; the publisher’s own converter treats the same arrays as microvolts. Models that need absolute amplitude are not run; the published baselines do not depend on the unit.',
+            zh: '存储的信号元数据写的是毫伏，发布者自己的转换程序却把同样的数组当作微伏。需要绝对幅值的模型没有运行；已发布的基线不依赖这个单位。' },
     href: '/topics/sleep-staging/#held',
   },
   {
@@ -583,6 +587,8 @@ export const holds: Hold[] = [
     opened: '2026-09-23', closed: null,
     outcome: { en: 'Five source payloads are shorter than their own headers declare. No score of any kind.',
                zh: '5 个源文件比自己的文件头声明的还短。没有任何分数。' },
+    card: { en: 'Five source payloads are shorter than their own headers declare.',
+            zh: '5 个源文件比自己的文件头声明的还短。' },
   },
   {
     id: 'clinical-foundation-models',
@@ -591,6 +597,8 @@ export const holds: Hold[] = [
     opened: '2026-09-23', closed: null,
     outcome: { en: 'The source states no physical amplitude unit. Not run on an assumed one.',
                zh: '数据源没有说明物理幅值单位。不按假设的单位去跑。' },
+    card: { en: 'Not run: the source states no physical amplitude unit.',
+            zh: '未运行：数据源没有说明物理幅值单位。' },
     href: '/topics/clinical-groups/',
   },
   {
@@ -600,8 +608,8 @@ export const holds: Hold[] = [
     opened: '2026-09-22', closed: null,
     outcome: { en: 'Not included on 22 September (intake only). Since 23 September: described, not scored; its per-condition numbers withheld.',
                zh: '9 月 22 日未纳入（只完成了数据接收）。9 月 23 日起：只有描述、没有评分，按条件汇总的数值不发布。' },
-    card: { en: 'Described, not scored: its per-condition numbers are withheld.',
-            zh: '只有描述、没有评分：按条件汇总的数值不发布。' },
+    card: { en: 'Its per-condition numbers are withheld.',
+            zh: '按条件汇总的数值不发布。' },
   },
   {
     id: 'alphawaves-consent',

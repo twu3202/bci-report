@@ -34,7 +34,7 @@ const params = (n: number | null | undefined) =>
   n ? (n / 1e6 >= 1 ? (n / 1e6).toFixed(2) + 'M' : (n / 1e3).toFixed(1) + 'K') : '—';
 ---
 <section id="models" class="section" aria-labelledby="models-heading">
-  <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}{d.translated && <> {d.translated}</>}</p></div>
+  <div class="section-heading"><div><p class="eyebrow">{d.modelsEyebrow}</p><h2 id="models-heading">{d.modelsH2}</h2></div><p>{d.modelsLede}{d.translated}</p></div>
   <div class="model-grid">{data.models.map(m => {
     const s = modelDirectoryStatus(m);
     const v9 = fmModels.find(x => x.name === m.name);
@@ -44,8 +44,8 @@ const params = (n: number | null | undefined) =>
       <h3 lang="en">{methodPage(m.name) ? <a href={methodPage(m.name)!}>{m.name}</a> : m.name}</h3>
       <p class="parameter">{v9 ? <Fig f={v9.params} cls="fig"/> : params(m.parameters)} <span>{d.parameters}</span></p>
       <p lang={dir(m.note).lang}>{dir(m.note).text}</p>
-      {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span> {s.override.note[locale] ?? s.override.note.en}{s.override.source && <> <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></>}{s.override.page && <> <a href={hrefFor(s.override.page.path, locale)} data-override-page="true">{s.override.page.label[locale] ?? s.override.page.label.en}</a></>}</p>}
-      {weights && <p class="status-override fm-weights"><span>{d.weights}</span> {weights.text}{weights.original && <span class="note-original" lang="en">{weights.original}</span>}</p>}
+      {s.override && <p class="status-override"><span>{d.releasedStatus(modelStatus(s.override.released, locale))}</span>{locale === 'en' && ' '}{s.override.note[locale] ?? s.override.note.en}{s.override.source && <> <a href={s.override.source} target="_blank" rel="noreferrer">{d.overrideSource}</a></>}{s.override.page && <> <a href={hrefFor(s.override.page.path, locale)} data-override-page="true">{s.override.page.label[locale] ?? s.override.page.label.en}</a></>}</p>}
+      {weights && <p class="status-override fm-weights"><span>{d.weights}</span>{locale === 'en' && ' '}{weights.text}{weights.original && <span class="note-original" lang="en">{weights.original}</span>}</p>}
       <p class="status-checked"><time datetime={s.checked}>{s.override ? d.statusChecked(s.checked) : d.statusAsReleased(s.checked)}</time></p>
       <div class="card-footer"><span lang={dir(m.license).lang}>{dir(m.license).text}{s.override && (s.override.licenceLine === 'code' ? d.codeAsReleased : d.licenceAsReleased)}{dir(m.license).original && <span class="note-original" lang="en">{dir(m.license).original}</span>}</span><a href={m.url || 'https://braindecode.org/'} target="_blank" rel="noreferrer">{d.officialSource}</a></div>
     </article>;
@@ -60,7 +60,7 @@ const params = (n: number | null | undefined) =>
       <p class="parameter">{e.models.length ? sizes(e.models).map((m, i) => <>{i > 0 && ' · '}<Fig f={m.params} cls="fig"/></>) : '—'} <span>{d.parameters}</span></p>
       {sizes(e.models).length > 1 && <p class="param-sizes" lang="en">{sizes(e.models).map(m => sizeLabel(m.name, e.name.replace(/ \(.*$/, ''))).join(' · ')}</p>}
       <p>{e.note[locale]}</p>
-      {note && <p class="status-override fm-weights"><span>{d.weights}</span> {note.text}{note.original && <span class="note-original" lang="en">{note.original}</span>}</p>}
+      {note && <p class="status-override fm-weights"><span>{d.weights}</span>{locale === 'en' && ' '}{note.text}{note.original && <span class="note-original" lang="en">{note.original}</span>}</p>}
       <p class="status-checked"><time datetime={fmRelease.date}>{d.statusChecked(fmRelease.date)}</time></p>
       <div class="card-footer"><span>{licence ? <>{licence.text}{licence.original && <span class="note-original" lang="en">{licence.original}</span>}</> : d.noLicence}</span>{e.source && <a href={e.source} target="_blank" rel="noreferrer">{d.officialSource}</a>}</div>
     </article>;

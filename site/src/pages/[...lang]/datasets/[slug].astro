@@ -23,7 +23,7 @@ const methodNames = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comp
 // The page's own description names the methods as the page prints them.
 const methodLabels = [...new Set(d.groups.flatMap(g => g.rows.filter(r => !r.comparator).map(r => methodLabel(r, locale))))];
 const listed = (xs: string[]) => xs.length <= 5 ? xs.join(', ') : `${xs.slice(0, 5).join(', ')} …`;
-const pages = [...new Set(d.groups.map(g => g.path))];
+const pages = d.groups.map(g => g.path).filter((p, i, all) => all.findIndex(q => q.split('#')[0] === p.split('#')[0]) === i);
 const pageLabel = (p: string) => { const s = p.match(/^\/topics\/([^/]+)\//)?.[1]; return s ? topicCards[locale][s].question : (protocolLinkLabel(p, locale) ?? (locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)')); };
 const files = [...new Set(d.groups.flatMap(g => g.rows.map(r => r.value.src)))];
 // Every file a printed figure is a leaf of, chance levels included; the cite block names their releases.
@@ -95,8 +95,8 @@ const structured = {
     {rights && <article data-rights-note="boas">
       <h3>{zh ? '发布者陈述的伦理与知情同意' : 'Ethics and consent, as the publisher states them'}</h3>
       {[rights.ethics, rights.consent].map(en => { const t = srText(en, locale); return <p>{t.text}{t.original && <span class="note-original" lang="en">{t.original}</span>}</p>; })}
-      <p>{zh ? `所有者于 ${rights.conditions.approvedOn} 批准以“说明缺口后发布”的方式发布 BOAS 的队列汇总结果；三处缺口与上面的每一组结果一起列出。${rights.conditions.participants}`
-             : `The owner approved publishing BOAS cohort aggregates with stated gaps on ${rights.conditions.approvedOn}; the three gaps are printed with the results above. ${rights.conditions.participants}`}</p>
+      <p>{zh ? `所有者于 ${rights.conditions.approvedOn} 批准以“说明缺口后发布”的方式发布 BOAS 的队列汇总结果。${rights.conditions.participants}`
+             : `The owner approved publishing BOAS cohort aggregates with stated gaps on ${rights.conditions.approvedOn}. ${rights.conditions.participants}`}</p>
     </article>}
     {bingo && <article data-rights-note="bingo">
       <h3>{c.bingoRightsH}</h3>

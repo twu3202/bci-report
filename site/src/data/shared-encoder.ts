@@ -202,7 +202,7 @@ export function marginText(e: SrEntry | SrLogR, locale: Locale): string {
     case 'non-inferior': { const who = nonInferiorArm(e, locale);
       return zh ? `${who}${logr ? '' : ' '}非劣（界值 ${m}）` : `${who} non-inferior at ${m}`; }
     case 'margin not met': return zh ? `未达到 ${m} 界值` : `${m} margin not met`;
-    case 'not applicable (descriptive contrast)': return zh ? '描述性对比，不设界值' : 'No margin: a descriptive contrast';
+    case 'not applicable (descriptive contrast)': return zh ? '不设界值' : 'No margin';
   }
   throw new Error(`shared-encoder.ts: unknown margin flag "${e.margin}"`);
 }
@@ -215,7 +215,7 @@ export function gateText(g: string, locale: Locale): string {
   switch (g) {
     case 'pass': return zh ? '通过门槛' : 'Gate passed';
     case 'floor': return zh ? '处于下限：报告，不计入' : 'At floor: reported, not counted';
-    case 'not applicable': return zh ? '不适用：描述性' : 'No gate: descriptive';
+    case 'not applicable': return zh ? '不设门槛' : 'No gate';
   }
   throw new Error(`shared-encoder.ts: unknown gate "${g}"`);
 }
@@ -388,8 +388,8 @@ if (!R2.design.multiplicity.startsWith(`${PRIMARY_N} pre-declared primary entrie
  * must travel with the results (the export's audits, D-5), so it is here in full, not only "no correction".
  */
 export const groupRule: T = {
-  en: `A contrast shows a difference when its paired 95% interval excludes zero; it is equivalent when the whole interval lies within ±${DELTA} pp, the margin fixed before any result, and an arm is non-inferior when the interval rules out its being ${DELTA} pp or more behind. No multiplicity correction: across route 2’s ${PRIMARY_N} primary comparisons and its secondary ones, about one in 20 comparisons with no true difference may show one by chance. No ranking where intervals overlap.`,
-  zh: `配对 95% 区间不含零时，才算显示出差异；整个区间落在 ±${DELTA} pp 以内（这个界值在任何结果出来之前就已定下）时，才算等效；区间排除了某个设置落后 ${DELTA} pp 或以上的可能时，说它非劣。不做多重比较校正：第二条路线有 ${PRIMARY_N} 项主分析比较，另有各项次要比较，在没有真实差异的比较里，约每 20 项就可能有 1 项偶然显示出差异。区间重叠时不排名。`,
+  en: `A contrast shows a difference when its paired 95% interval excludes zero; it is equivalent when the whole interval lies within ±${DELTA} pp, the margin fixed before any result, and an arm is non-inferior when the interval rules out its being ${DELTA} pp or more behind. No multiplicity correction: across route 2’s ${PRIMARY_N} primary comparisons and its secondary ones, about one in 20 comparisons with no true difference may show one by chance.`,
+  zh: `配对 95% 区间不含零时，才算显示出差异；整个区间落在 ±${DELTA} pp 以内（这个界值在任何结果出来之前就已定下）时，才算等效；区间排除了某个设置落后 ${DELTA} pp 或以上的可能时，说它非劣。不做多重比较校正：第二条路线有 ${PRIMARY_N} 项主分析比较，另有各项次要比较，在没有真实差异的比较里，约每 20 项就可能有 1 项偶然显示出差异。`,
 };
 
 /** The BOAS conditions as a group or section prints them: the three gaps, the participants' wording, what is not evaluated, the credit. */

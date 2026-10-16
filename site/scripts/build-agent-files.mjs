@@ -66,9 +66,12 @@ function inline(nodes) {
       case 'a': {
         const href = n.attributes?.href ?? '';
         // A card: a link wrapping a heading and a summary becomes
-        // "[heading](url): the rest", not one long link.
+        // "[heading](url): the rest", not one long link. A heading always marks a card;
+        // a bold run only in a long link, where a Chinese character counts as two
+        // (the Chinese hold and directory cards came out as one link each).
         const title = find(n, k => /^h[2-4]$/.test(k.name) || k.name === 'strong');
-        if (title && clean(inner).length > 80) {
+        const weight = s => s.length + (s.match(/[\u3000-\u9fff\uff00-\uffef]/g) ?? []).length;
+        if (title && (/^h[2-4]$/.test(title.name) || weight(clean(inner)) > 80)) {
           const label = clean(inline(kids(title)));
           // Its other parts (kicker, summary, detail) as separate phrases, without the
           // card's own "Read the evidence →" call to action: the link is the heading.
@@ -92,7 +95,10 @@ function inline(nodes) {
   }
   return out;
 }
-const clean = s => s.replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').replace(/\(\s+/g, '(').trim();
+// In-page links are dropped, which can leave the "·" that stood between two of them at
+// the end of a paragraph or doubled; those go too.
+const clean = s => s.replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').replace(/\(\s+/g, '(')
+  .replace(/·(?:\s*·)+/g, '·').replace(/^[\s·]+|[\s·]+$/g, '').trim();
 const cell = n => { inTable++; try { return clean(inline(kids(n))).replace(/\|/g, '\\|'); } finally { inTable--; } };
 
 function table(n) {

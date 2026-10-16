@@ -1,13 +1,13 @@
 ---
 /**
- * The home page, in reading order since 2026-10-02 (owner-approved restructure):
- * masthead → Questions (the topics in three groups, and a compact map of which
- * kinds of transfer have been measured) → holds → the core matrix → the
- * per-protocol panel → a directory band (methods, datasets, releases, data and
- * API) → principles. The model directory, the public-data register and the
- * external field notes moved to /methods/ and /datasets/, where the rest of
- * their content already was: they were more than half the page's words, and
- * their membership had drifted from the directories they duplicated.
+ * The home page, in reading order (owner's reorder of 2026-10-07, held by
+ * check-workbench.mjs): masthead → the core matrix (#overview), with the note on
+ * the frozen encoders beside it and the Jev-style card → the evidence behind each
+ * score, one protocol at a time (#benchmarks) → Questions (#topics: the topics in
+ * their groups, and a compact map of which kinds of transfer have been measured)
+ * → holds → a directory band (methods, datasets, releases, data and API) →
+ * principles (#methods). The model directory, the public-data register and the
+ * external field notes live on /methods/ and /datasets/.
  */
 import data from '../../data/mvp.json';
 import { corrections, holds, releases } from '../../data/releases';
@@ -241,7 +241,7 @@ const oldAnchor:Record<string,string|undefined>={methods:'models',datasets:'data
 <TransferMap locale={locale}/>
 <p class="topic-map-more"><a href={hrefFor('/topics/#transfer',locale)}>{transferMapCopy[locale].fullMap}</a></p></div></section>
 
-<section id="holds" class="holds"><div class="section-heading"><div><p class="eyebrow">{h.holdsEyebrow}</p><h2>{h.holdsH2}</h2></div><p>{h.holdsLede}</p></div>
+<section id="holds" class="holds"><div class="section-heading"><div><p class="eyebrow">{h.holdsEyebrow}</p><h2>{h.holdsH2}</h2></div></div>
 <div class="hold-grid">{openHolds.map(x=><a class="hold-card" href={holdHref(x)}><p class="state">{x.state[locale]}</p><h3>{x.item[locale]}</h3><p>{holdCard(x)}</p></a>)}</div>
 <p class="holds-more"><a href={hrefFor('/releases/#holds',locale)}>{h.holdsRegister}</a><a href={hrefFor('/releases/#corrections',locale)}>{h.correctionsLink(corrections.length)}</a></p></section>
 
