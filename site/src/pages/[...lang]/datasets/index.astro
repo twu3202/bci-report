@@ -3,9 +3,11 @@ import EntityLayout from '../../../components/EntityLayout.astro';
 import data from '../../../data/mvp.json';
 import { datasets, tr } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
-import { datasetStatus, datasetTask, directoryText, hrefFor, localeOf, localeParams } from '../../../data/i18n';
+import { datasetStatus, datasetTask, directoryText, hrefFor, localeOf, localeParams, registerCopy } from '../../../data/i18n';
 import { site } from '../../../data/site';
 import DataRegister from '../../../components/DataRegister.astro';
+import Fig from '../../../components/Fig.astro';
+import { regFig, register, registerBuilt } from '../../../data/open-register';
 import '../../../styles/directory.css';
 
 export const getStaticPaths = localeParams;
@@ -24,6 +26,7 @@ const structured = {
   eyebrow={c.datasetsTitle} dek={c.datasetsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.datasetsTitle }]}
   structured={structured}>
+  {registerBuilt && <p class="citation-note" id="register-line"><a href={hrefFor('/datasets/register/', locale)}>{registerCopy[locale].datasetsLink.replace(/\s*→$/, '')}{locale === 'zh' ? '（' : ' ('}<Fig f={regFig(register!.counts.rows.dataset)} cls="num"/>{locale === 'zh' ? ' 行）→' : ' rows) →'}</a></p>}
   <section class="topic-section" aria-labelledby="with-results">
     <h2 id="with-results">{c.datasetsWithResults}</h2>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.datasetsRegion}>

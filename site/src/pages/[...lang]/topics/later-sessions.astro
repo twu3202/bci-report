@@ -20,6 +20,7 @@ import Fig from '../../../components/Fig.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import { formatFig, wideFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
+import { elsewhere } from '../../../data/site';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -34,6 +35,14 @@ const F = (x: FigValue) => formatFig(x);
 const ans = (x: FigValue) => `[[${F(x)}]]`;
 const R = later.results;
 const cpu = R['wbcic-cross-session-cpu'], fm = R['wbcic-frozen-cbramod'], rs = R['rsvp-later-visits'], fz = R['forenzo-continuous-control'];
+
+// The long-form write-up of this page's three tests (site.ts `elsewhere`), one low-key line after the data source,
+// as questions-in-language's #ql-article. It prints no figure.
+const article = elsewhere.articles.find(a => a.page === '/topics/later-sessions/');
+const articleCopy = {
+  en: ['A longer write-up of these results is in Towards AI: ', 'Train once, reuse later: three tests of skipping BCI calibration ↗'],
+  zh: ['', '这些跨会话结果的长文解读（英文，Towards AI）↗'],
+}[locale];
 
 // --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
 const need = (ok: boolean, what: string) => { if (!ok) throw new Error(`later-sessions: the copy says ${what}`); };
@@ -591,6 +600,7 @@ const card = topicCards[locale]['later-sessions'];
     </div>
     <p class="citation-note">{copy.derived}</p>
     <p class="citation-note">{tc.dataSource} <a href="/data/later-sessions-update.json" download>later-sessions-update.json</a> · {tc.schema} {later.schema_version}{tc.period}</p>
+    {article && <p class="citation-note" id="ls-article">{articleCopy[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{articleCopy[1]}</a></p>}
   </section>
 
   <section class="topic-section" id="related" aria-labelledby="related-heading">

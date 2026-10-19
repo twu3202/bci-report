@@ -28,6 +28,9 @@ import reliable from './reliable-decisions-update.json';
 import later from './later-sessions-update.json';
 import pilot from './pilot-studies-update.json';
 import beyond from './beyond-scalp-update.json';
+// The open-register release (owner decision D1): Shin2022's arms, and route 3's follow-up run unchanged on Wearable-102.
+import dataQuality from './data-quality-update.json';
+import ssvepFollowUps from './new-ssvep-frequencies-update.json';
 import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
          ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
@@ -1590,9 +1593,250 @@ function languageGroup(id: 'beta' | 'boas'): ResultGroup {
   };
 }
 
+/* --- Data quality: Shin2022 (data-quality-update.json) -------------------------------------------------------- */
+
+/**
+ * The page the Shin2022 group is read on, and its section (owner decision D1): the page must carry the anchor, and its
+ * topic card must exist in i18n.ts (a group's "Read on" link takes the card's title).
+ */
+export const DATA_QUALITY_PATH = '/topics/data-quality/';
+const DQ = 'data-quality-update.json';
+const dqShin = dataQuality.shin2022 as any;
+/** The arms' names as the export gives them, with their Chinese; an arm with no Chinese here fails the build. */
+const SHIN_ARM_ZH: Record<string, string> = {
+  'Normalized spectral ridge': '归一化 spectral ridge',
+  'Retrospective duration control': '回溯的时长对照',
+  'Participant-weighted training prior': '按被试等权的训练集先验',
+};
+/** The export's one caveat, printed in English as the export states it, and its Chinese, keyed by that English. */
+const SHIN_CAVEAT_ZH: Record<string, string> = {
+  'The scores cover the signal-valid windows only: feedback lasting at least one second, and a first second that is finite with positive 1–40 Hz power on all 16 channels. The label is the instructed target in closed-loop cursor recordings, which carry visual, controller and behaviour confounds. The duration control reads the whole feedback duration, known only after the trial ends, so it checks a confound; the spectral arm sits close to it, and no test between arms was run. Ten participants, one recording day each; the intervals are descriptive.':
+    '分数只覆盖信号有效的时间窗：反馈至少持续一秒，且第一秒在全部 16 个通道上都是有限值、1–40 Hz 功率为正。标签是闭环光标记录中指示的目标，这些记录带有视觉、控制器与行为上的混杂。时长对照读的是整段反馈时长，要到试次结束才知道，所以它检验的是一个混杂；频谱这一组与它相差无几，组间没有做检验。10 名被试，每人一个记录日；区间是描述性的。',
+};
+
+/**
+ * Shin2022: a participant held out entirely, the instructed right or left target in the first second of cursor
+ * feedback, on the signal-valid windows only. Three arms: the normalized spectral ridge, and two controls printed as
+ * comparators — the retrospective duration control, which reads only the whole feedback duration, and the training prior.
+ * The coverage chain from the release's runs to the scored windows sits under the rows, once, with the export's caveat.
+ * No row has a method page.
+ */
+function shinGroup(): ResultGroup {
+  const s = dqShin, path = `${DATA_QUALITY_PATH}#${s.section}`, n = s.scope.participants as number;
+  if (dataQuality.placement.page !== DATA_QUALITY_PATH || !dataQuality.placement.sections.includes(s.section) || s.section !== 'shin2022')
+    throw new Error('entities.ts: Shin2022 is the #shin2022 section of the data-quality page');
+  const arm = (id: string) => {
+    const a = s.arms.find((x: { arm: string }) => x.arm === id);
+    if (!a || !SHIN_ARM_ZH[a.name]) throw new Error(`entities.ts: the Shin2022 arm ${id} and its Chinese name`);
+    return a;
+  };
+  const ridge = arm('normalized_spectral_ridge'), duration = arm('retrospective_duration_ridge'), prior = arm('training_prior');
+  // The words below: which arm reads EEG, which are controls, the prior a point, no test between arms, one day each.
+  if (ridge.role !== 'eeg' || duration.role !== 'retrospective_control' || prior.role !== 'reference' || s.arms.length !== 3
+      || prior.participant_bootstrap_percentile_95.some((v: number) => v !== prior.participant_mean_balanced_accuracy)
+      || s.method.hypothesis_tests !== false || s.method.evaluation !== 'leave-one-participant-out' || s.interval.descriptive !== true
+      || s.interval.kind !== 'participant bootstrap percentile interval' || s.interval.unit !== 'participant'
+      || s.scope.recording_days_each !== 1 || s.labels.outcome_used !== false)
+    throw new Error('entities.ts: the Shin2022 rows say one EEG arm and two controls, the prior a point, no test between arms, one day each');
+  const step = (id: string) => {
+    const c = s.coverage_chain.find((x: { id: string }) => x.id === id);
+    if (!c) throw new Error(`entities.ts: the Shin2022 coverage chain has no ${id}`);
+    return c;
+  };
+  const [runs, pairs, distinct, held, complete, closed, short, eligible, invalid, valid] = ['recorded_runs', 'byte_identical_pairs',
+    'distinct_runs', 'incomplete_run_held', 'complete_runs', 'closed_windows', 'shorter_than_one_second', 'duration_eligible',
+    'signal_invalid', 'signal_valid'].map(step);
+  // "leaving": each count is the one before it minus what the chain drops, and every participant keeps both targets.
+  if (runs.count - pairs.count !== distinct.count || distinct.count - held.count !== complete.count
+      || closed.count - short.count !== eligible.count || eligible.count - invalid.count !== valid.count
+      || valid.participants_with_both_targets !== n || complete.participants !== n)
+    throw new Error('entities.ts: the Shin2022 coverage note says each step leaves the next');
+  const caveatZh = SHIN_CAVEAT_ZH[s.caveat];
+  if (!caveatZh) throw new Error('entities.ts: no Chinese for the Shin2022 caveat as the export states it');
+  const c = (x: { count: number }) => fig(x.count, 'count', DQ);
+  const p2 = (raw: number) => fig(raw, 'pct2', DQ);
+  const label = (a: { name: string }): L => ({ en: a.name, zh: SHIN_ARM_ZH[a.name] });
+  const pooled = (a: any): RowNote => ({
+    en: ['Balanced accuracy pooled over all signal-valid windows: ', p2(a.pooled_balanced_accuracy_secondary), '.'],
+    zh: ['按全部信号有效时间窗合并计算的平衡准确率：', p2(a.pooled_balanced_accuracy_secondary), '。'],
+  });
+  const row = (a: any, condition: L, comparator: boolean, note: RowNote): ResultRow => ({
+    path, method: a.name, label: label(a), ...(comparator ? { comparator } : {}), condition, metric: BA,
+    value: p2(a.participant_mean_balanced_accuracy),
+    // The prior's interval is a point (every person gets the same score), so none is printed.
+    interval: a === prior ? undefined : [p2(a.participant_bootstrap_percentile_95[0]), p2(a.participant_bootstrap_percentile_95[1])],
+    people: n, note,
+  });
+  return {
+    id: 'shin2022', path,
+    title: { en: 'Data quality · the instructed right or left target, a participant held out entirely',
+             zh: '数据质量 · 指示的右侧或左侧目标，整名被试留出' },
+    rows: [
+      row(ridge, { en: 'A participant held out entirely · the first second of feedback, signal-valid windows', zh: '整名被试留出 · 反馈的第一秒，仅信号有效的时间窗' }, false, pooled(ridge)),
+      row(duration, { en: 'A participant held out entirely · the whole feedback duration only, known after the trial ends (no EEG)', zh: '整名被试留出 · 只用整段反馈时长，试次结束后才知道（不用 EEG）' }, true, pooled(duration)),
+      row(prior, { en: 'A participant held out entirely · no input', zh: '整名被试留出 · 没有输入' }, true,
+        { en: ['Always the larger training class, each training participant weighted equally: every person gets the same score, so there is no interval.'],
+          zh: ['总是预测训练集中较大的类别，每名训练被试等权：每名被试的分数都相同，所以没有区间。'] }),
+    ],
+    notes: [{
+      en: ['Of ', c(runs), ' runs in the release’s human recordings, ', c(pairs), ' pairs are byte-identical, leaving ', c(distinct), ' distinct runs; ', c(held),
+           ' incomplete run is held whole. The ', c(complete), ' complete runs hold ', c(closed), ' closed feedback windows: ', c(short),
+           ' end within the first second; of the other ', c(eligible), ', ', c(invalid), ' are constant on at least one channel in their first second, leaving ', c(valid),
+           ' signal-valid windows (', fig(valid.percent_of_closed_windows, 'pct1raw', DQ), ' of the closed windows), with both targets for all ',
+           fig(valid.participants_with_both_targets, 'count', DQ), ' participants. All three arms are scored on them, with participant-bootstrap intervals over ',
+           fig(s.interval.resamples, 'count', DQ), ' resamples.'],
+      zh: ['发布中真人被试的记录共有 ', c(runs), ' 个 run，其中 ', c(pairs), ' 对逐字节相同，去重后为 ', c(distinct), ' 个不同的 run；', c(held),
+           ' 个不完整的 run 整个暂缓。', c(complete), ' 个完整的 run 共有 ', c(closed), ' 个闭合的反馈时间窗：', c(short),
+           ' 个在第一秒内就结束；其余 ', c(eligible), ' 个中，有 ', c(invalid), ' 个在第一秒内至少有一个通道恒定不变，剩下 ', c(valid),
+           ' 个信号有效的时间窗（占闭合时间窗的 ', fig(valid.percent_of_closed_windows, 'pct1raw', DQ), '），全部 ',
+           fig(valid.participants_with_both_targets, 'count', DQ), ' 名被试都保有两个目标。三个组都在这些时间窗上评分，区间为被试 bootstrap，重抽样 ',
+           fig(s.interval.resamples, 'count', DQ), ' 次。'],
+    }, { en: [s.caveat], zh: [caveatZh] }],
+  };
+}
+
+/* --- Route 3's follow-ups, run on Wearable-102 (new-ssvep-frequencies-update.json) --------------------------------- */
+
+/**
+ * The page the Wearable-102 transfer group is read on, and its card's anchor (owner decision D1). The page must carry
+ * the anchor, and its topic card must exist in i18n.ts.
+ */
+export const NEW_SSVEP_PATH = '/topics/new-ssvep-frequencies/';
+const SSV = 'new-ssvep-frequencies-update.json';
+const wt = ssvepFollowUps.studies.wearable_transfer as any;
+/** The study's display names (its `display_names`), with their Chinese; a name with no Chinese here fails the build. */
+const WT_NAME_ZH: Record<string, string> = {
+  'CCA with learned correction': 'CCA 加学习修正',
+  'matched CCA': '匹配 CCA',
+  'cropped-spectrum check (Wearable-102)': '裁剪谱核查（Wearable-102）',
+};
+/**
+ * The CCA note's sourced fact (the study's `cca_definition.fact.en`), with its Chinese written here: the display layer
+ * holds the Chinese, whatever the download carries. A changed fact has no Chinese and fails the build.
+ */
+const WT_CCA_FACT_ZH: Record<string, string> = {
+  "the dry-versus-wet page's CCA uses references up to the fourth harmonic": '「干电极与湿电极」页面的 CCA 使用到四次谐波的参考信号',
+};
+const WT_SENSOR: Record<string, L> = {
+  dry: { en: 'Dry electrodes', zh: '干电极' }, wet: { en: 'Wet electrodes', zh: '湿电极' }, all: { en: 'Both sensors', zh: '两种电极合计' },
+};
+/**
+ * The study's limitation keys, each said once in the group's notes below. A key the export adds, or drops, fails the
+ * build until the notes are reread against it.
+ */
+const WT_LIMITATIONS = ['stored_amplitude_units', 'window_onset_and_other_changes', 'no_equivalence_no_single_cause', 'candidates_supplied',
+  'prior_use_overlap_snapshot', 'mean_over_105_models', 'model_score_contains_cca', 'intervals_conditional_on_models',
+  'cropped_check_diagnostic_only', 'not_comparable_with_beta_tasks', 'cca_harmonic_count'];
+
+/**
+ * Card 7 of the new-SSVEP-frequencies page: the BETA-trained models that add a bounded learned correction to CCA, run
+ * unchanged on Wearable-102's dry and wet headbands. For dry, wet and both sensors: the models, matched CCA, their
+ * paired difference and the cropped-spectrum check, a diagnostic. Dry and wet are the primary contrasts. No row has a
+ * method page: these are the follow-ups' own set-ups, beside the dry-vs-wet CCA this page already shows, whose
+ * definition differs in one setting (the CCA note).
+ */
+function wearableTransferGroup(): ResultGroup {
+  const d = wt.design, scope = ssvepFollowUps.wearable, path = `${NEW_SSVEP_PATH}#wearable-transfer`;
+  const card = ssvepFollowUps.placement.cards.find(x => x.card === 7);
+  if (ssvepFollowUps.placement.page !== NEW_SSVEP_PATH || card?.anchor !== 'wearable-transfer' || !card.studies.includes('wearable_transfer'))
+    throw new Error('entities.ts: the Wearable-102 transfer is card 7, #wearable-transfer, of the new-SSVEP-frequencies page');
+  // The scope note's words: models trained on BETA, run with no retraining or ensemble on the stored recordings.
+  const sm = d.source_models;
+  if (sm.dataset !== 'BETA' || sm.arm !== 'RAW-RESIDUAL' || sm.retraining !== false || sm.ensemble !== false || sm.models !== scope.source_models
+      || sm.models !== sm.person_folds * sm.frequency_rotations * sm.training_seeds || d.dataset.people !== scope.people
+      || d.dataset.targets !== scope.targets || d.dataset.windows_per_sensor !== scope.windows_per_sensor || scope.recordings !== 'as stored'
+      || d.dataset.amplitude !== 'as stored' || wt.interval_method.conditional_on !== `the fixed ${sm.models} source models`
+      || !/^paired person bootstrap/.test(wt.interval_method.method) || !scope.participant_overlap_with_beta.startsWith('possible'))
+    throw new Error('entities.ts: the Wearable-102 scope note no longer fits the export');
+  const methods = Object.fromEntries(d.methods.map((m: { code: string; role: string }) => [m.code, m.role]));
+  if (JSON.stringify(methods) !== JSON.stringify({ 'RAW-RESIDUAL': 'model', 'CCA-RAW': 'comparator', 'CCA-CROP': 'diagnostic' })
+      || d.endpoints.dry.role !== 'primary' || d.endpoints.wet.role !== 'primary' || d.endpoints.all.role !== 'secondary'
+      || new Set(['dry', 'wet', 'all'].map(s => d.endpoints[s].chance)).size !== 1 || d.endpoints.dry.candidate_count !== d.dataset.targets)
+    throw new Error('entities.ts: the Wearable-102 rows are the model, matched CCA and a diagnostic; dry and wet primary; one chance level');
+  // The CCA note (A2): three harmonics here, four on the dry-vs-wet page, on the same windows, whose figures are the
+  // published dry-vs-wet rows.
+  const cd = wt.cca_definition, dvw = (id: string) => deployment.rows.find(r => r.id === id)?.value;
+  const factZh = WT_CCA_FACT_ZH[cd.fact.en];
+  if (!factZh) throw new Error('entities.ts: no Chinese for the Wearable-102 CCA fact as the export states it');
+  if (cd.matched_cca.harmonics !== 3 || cd.matched_cca.same_as_model_term !== true || cd.dry_vs_wet_cca.harmonics !== 4 || cd.same_windows !== true
+      || cd.dry_vs_wet_cca.dry.estimate !== dvw(cd.dry_vs_wet_cca.dry.row_id) || cd.dry_vs_wet_cca.wet.estimate !== dvw(cd.dry_vs_wet_cca.wet.row_id))
+    throw new Error('entities.ts: the Wearable-102 CCA note says three harmonics against the dry-vs-wet page’s four, on the same windows');
+  if (JSON.stringify([...wt.limitations_keys].sort()) !== JSON.stringify([...WT_LIMITATIONS].sort()))
+    throw new Error('entities.ts: the Wearable-102 limitation keys changed; reread the group notes against them');
+  const notRun = wt.not_run.map((x: { item: string }) => x.item);
+  if (!['equivalence margin', 'target adaptation or retraining'].every(x => notRun.includes(x)) || !notRun.some((x: string) => /^one-factor ablations/.test(x)))
+    throw new Error('entities.ts: the Wearable-102 limits say no equivalence margin, one-factor ablation or target adaptation was run');
+  const name = (code: string): L => {
+    const en = wt.display_names[code] as string | undefined;
+    if (!en || !WT_NAME_ZH[en]) throw new Error(`entities.ts: no Chinese for the Wearable-102 name ${en ?? code}`);
+    return { en: cap(en), zh: WT_NAME_ZH[en] };
+  };
+  const p2 = (raw: number) => fig(raw, 'pct2', SSV);
+  const DIFF_ACC: L = { en: 'Paired difference, accuracy', zh: '配对差值（百分点），准确率' };
+  const rows: ResultRow[] = [];
+  for (const s of ['dry', 'wet', 'all']) {
+    const sensor = WT_SENSOR[s];
+    const level = (code: string, condition: L): ResultRow => {
+      const l = wt.levels[`${code}/${s}`], who = name(code);
+      if (!l || l.unit !== 'proportion' || l.people !== scope.people) throw new Error(`entities.ts: the Wearable-102 level ${code}/${s}`);
+      return { path, method: who.en, label: who, ...(methods[code] === 'model' ? {} : { comparator: true }), condition, metric: ACC,
+               value: p2(l.estimate), interval: [p2(l.interval[0]), p2(l.interval[1])], people: l.people };
+    };
+    const k = wt.contrasts[`RAW-RESIDUAL_minus_CCA-RAW/${s}`];
+    if (!k || k.unit !== 'difference of proportions' || k.role !== d.endpoints[s].role || k.people !== scope.people)
+      throw new Error(`entities.ts: the Wearable-102 contrast on ${s}`);
+    const includesZero = k.interval[0] <= 0 && k.interval[1] >= 0;
+    if (k.flags.interval_includes_zero !== includesZero) throw new Error(`entities.ts: the Wearable-102 contrast on ${s} and its zero flag`);
+    const model = name('RAW-RESIDUAL'), cca = name('CCA-RAW');
+    rows.push(
+      level('RAW-RESIDUAL', { en: `${sensor.en} · trained on BETA, run unchanged`, zh: `${sensor.zh} · 在 BETA 上训练，原样运行` }),
+      level('CCA-RAW', { en: `${sensor.en} · no training`, zh: `${sensor.zh} · 无需训练` }),
+      { path, method: model.en, label: model,
+        condition: { en: `${sensor.en} · ${wt.display_names['RAW-RESIDUAL']} minus ${wt.display_names['CCA-RAW']}, the same people and windows (${k.role} contrast)`,
+                     zh: `${sensor.zh} · 「${model.zh}」减「${cca.zh}」，相同被试与时间窗（${k.role === 'primary' ? '主要对比' : '次要对比'}）` },
+        metric: DIFF_ACC, value: fig(k.estimate, 'pp2', SSV), interval: [fig(k.interval[0], 'sgn2', SSV), fig(k.interval[1], 'pp2', SSV)], people: k.people,
+        ...(includesZero ? { note: { en: ['The interval includes zero.'], zh: ['区间包含零。'] } } : {}) },
+      level('CCA-CROP', { en: `${sensor.en} · no training, a diagnostic only`, zh: `${sensor.zh} · 无需训练，仅作诊断` }),
+    );
+  }
+  const n = (raw: number) => fig(raw, 'count', SSV);
+  const models = n(sm.models), targets = n(d.dataset.targets);
+  return {
+    id: 'wearable-transfer', path, chance: p2(d.endpoints.dry.chance),
+    title: { en: 'New SSVEP frequencies · CCA with a learned correction, trained on BETA and run unchanged',
+             zh: '没见过的 SSVEP 频率 · CCA 加学习修正：在 BETA 上训练，原样运行' },
+    rows,
+    notes: [{
+      en: ['The ', models, ' models are CCA with a learned correction, trained on BETA (', n(sm.person_folds), ' participant folds × ', n(sm.frequency_rotations),
+           ' frequency rotations × ', n(sm.training_seeds), ' training seeds), run with no retraining on ', n(d.dataset.people), ' people’s recordings as stored: ',
+           targets, ' targets, ', n(d.dataset.windows_per_sensor), ' two-second windows per sensor. Each person’s accuracy is averaged over the ', models,
+           ' models, then over people, with no ensemble or model choice. Both methods are given the ', targets,
+           ' candidate frequencies. The model’s score is a scaled CCA correlation plus a bounded learned term, so its difference from matched CCA is what the learned term adds. Intervals: paired person bootstrap, ',
+           n(wt.interval_method.draws), ' draws, conditional on the fixed ', models, ' models and unadjusted for the two sensors.'],
+      zh: ['这 ', models, ' 个模型是在 BETA 上训练的 CCA 加学习修正（', n(sm.person_folds), ' 个被试折 × ', n(sm.frequency_rotations),
+           ' 种频率轮换 × ', n(sm.training_seeds), ' 个训练随机种子），不重新训练，直接用在 ', n(d.dataset.people), ' 名被试按存储原样的记录上：',
+           targets, ' 个目标，每种电极 ', n(d.dataset.windows_per_sensor), ' 个两秒时间窗。每名被试的准确率先在 ', models,
+           ' 个模型上平均，再在被试间平均，不做集成，也不挑选模型。两种方法都给定 ', targets,
+           ' 个候选频率。模型的得分是缩放后的 CCA 相关系数加一个有界的学习项，所以它与匹配 CCA 的差值就是学习项带来的变化。区间：配对的被试 bootstrap，',
+           n(wt.interval_method.draws), ' 次抽样，以这 ', models, ' 个固定模型为条件，没有对两种电极做多重比较校正。'],
+    }, {
+      // A2: which CCA this is, beside the dry-vs-wet page's CCA on the same windows (the group above on this page).
+      en: ['Matched CCA uses sine and cosine references up to the third harmonic, as the models’ own CCA term does, and reached ', p2(wt.levels['CCA-RAW/dry'].estimate),
+           ' dry and ', p2(wt.levels['CCA-RAW/wet'].estimate), ' wet; ', cd.fact.en, ' on the same windows and reached ',
+           p2(cd.dry_vs_wet_cca.dry.estimate), ' and ', p2(cd.dry_vs_wet_cca.wet.estimate), '.'],
+      zh: ['匹配 CCA 与模型内部的 CCA 项相同，使用到三次谐波的正弦和余弦参考信号，干电极为 ', p2(wt.levels['CCA-RAW/dry'].estimate),
+           '、湿电极为 ', p2(wt.levels['CCA-RAW/wet'].estimate), '；', factZh, '，在相同时间窗上为 ',
+           p2(cd.dry_vs_wet_cca.dry.estimate), ' 和 ', p2(cd.dry_vs_wet_cca.wet.estimate), '。'],
+    }, {
+      en: ['Wearable-102’s stored amplitude unit is undocumented and the correction reads amplitude spectra, so a unit effect is not separated from the change of dataset. Window onset, hardware, reference, people and frequency grid all change at once; no equivalence margin was tested, and no one-factor ablation or target adaptation was run, so no single cause is isolated. Dry and wet are the primary contrasts; both sensors together and the cropped-spectrum check are secondary, the check a diagnostic only. This is a different task on other recordings, so these scores do not compare with BETA’s held-out or seen tasks. Wearable-102 also appears on other pages of this site, and its documentation cannot rule out that some people also appear in BETA.'],
+      zh: ['Wearable-102 存储的幅值单位没有文档说明，而修正部分读的是幅度谱，所以单位的影响与换数据集的影响没有分开。时间窗起点、硬件、参考电极、被试与频率网格同时改变；没有检验等效界值，也没有做单因素消融或目标域适配，所以无法归因于任何单一因素。干电极与湿电极是主要对比；两种电极合计与裁剪谱核查是次要的，后者仅作诊断。这是另一项任务、另一批记录，所以这些分数不能与 BETA 的留出频率或已见频率任务比较。Wearable-102 也出现在本站其他页面上，其文档无法排除部分被试也出现在 BETA 中。'],
+    }],
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
-const mvpDs = (name: string) => data.datasets.find(d => d.name === name)!;
+const mvpDs =(name: string) => data.datasets.find(d => d.name === name)!;
 const citation = (id: string) => deployment.dataset_citations.find(c => c.id === id)!;
 const rights = (r: any) => r.rights as { name: string; task: string; source: string; license: string; licenseUrl?: string; attribution: string };
 
@@ -1626,7 +1870,8 @@ export const datasets: DatasetEntity[] = [
   {
     slug: 'wearable-ssvep-102', name: 'Wearable SSVEP BCI dataset (dry and wet electrodes)', task: { en: '12-target SSVEP, dry and wet electrodes', zh: '12 目标 SSVEP，干电极与湿电极' },
     license: String(wear.identity.license), attribution: String(wear.identity.canonical_dataset_citation ?? wear.identity.dataset_citation),
-    sources: wear.primary_sources.slice(0, 2), groups: depGroups('wearable-ssvep-102'),
+    // Route 3's follow-up (owner decision D1): the BETA-trained correction run unchanged here, after the published groups.
+    sources: wear.primary_sources.slice(0, 2), groups: [...depGroups('wearable-ssvep-102'), wearableTransferGroup()],
   },
   {
     slug: 'mobile-bci', name: 'Mobile BCI dataset (SSVEP and ERP paradigms)', task: { en: 'SSVEP and ERP while standing, walking and running', zh: '站立、行走与跑动中的 SSVEP 与 ERP' },
@@ -1686,6 +1931,11 @@ export const datasets: DatasetEntity[] = [
   ...(bsReleased('ds007420') ? [{ ...fromRights('ds007420', (beyond.datasets as any)['ds007420'], [opticalGroup()],
       { en: 'Human fNIRS recordings: a numerical coverage check, no decoding', zh: '人类 fNIRS 记录：数值覆盖核查，不做解码' },
       'OpenNeuro ds007420 · multi-distance fNIRS'), technique: 'Functional near-infrared spectroscopy', signal: { en: 'fNIRS', zh: 'fNIRS ' } }] : []),
+  // The data-quality batch (data-quality-update.json, owner decision D1): Shin2022's participant-held-out check, a new
+  // page. Its name is the open register's for this source; eldBETA (score held) and ZuCo 2.0 (no score) have no page.
+  fromRights('shin2022', dqShin, [shinGroup()],
+             { en: 'Closed-loop cursor control: the instructed right or left target, dry electrodes', zh: '闭环光标控制：指示的右侧或左侧目标，干电极' },
+             'Shin2022 · closed-loop motor imagery EEG (Figshare 20383716)'),
 ];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));

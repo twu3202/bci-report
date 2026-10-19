@@ -1,0 +1,454 @@
+{
+  "schema_version": "bci-report-neurolm-eegmat-update-v1",
+  "release_id": "neurolm-eegmat-update-20261020",
+  "generated_at": "2026-10-20",
+  "status": "aggregate_preview",
+  "title": "NeuroLM’s frozen features on arithmetic and rest",
+  "question": "Do NeuroLM’s frozen EEG features separate rest from mental arithmetic better than band power?",
+  "display_track": "Frozen-feature development pilot",
+  "placement": {
+    "page": "/topics/pilot-studies/",
+    "anchor": "neurolm-eegmat",
+    "pointer_from": "/protocols/arithmetic-rest/",
+    "counted_in_pilots": false,
+    "leaderboard": false,
+    "core_matrix_row": false,
+    "new_dataset_count": 0,
+    "new_model_count": 0,
+    "text": "A separate panel on the pilot studies page, outside the pilot count and every leaderboard and model ranking; the core Arithmetic & rest matrix keeps its rows."
+  },
+  "metric_units": "balanced accuracy, macro-F1 and chance levels are proportions in [0,1], and paired differences are differences of proportions: multiply by 100 for percent or percentage points; dimensions and counts of people, recordings, windows, channels, folds, fits and resamples are whole numbers; null means not computed, never zero",
+  "scope": "NeuroLM-B stays frozen. One fixed ridge head (alpha 100) is fitted on each of three representations of the same 2,160 two-second windows from 36 people, in five participant-held-out folds: 15 fits and no tuning. Scores are equal-person means; the paired differences carry participant-bootstrap intervals.",
+  "cohort": {
+    "dataset": "EEGMAT",
+    "name": "EEG During Mental Arithmetic Tasks",
+    "version": "1.0.0",
+    "source": "https://physionet.org/content/eegmat/1.0.0/",
+    "people": 36,
+    "recordings": 72,
+    "conditions": 2,
+    "retained_seconds": 60,
+    "window_seconds": 2,
+    "windows_per_recording": 30,
+    "windows": 2160,
+    "channels": 19,
+    "channel_names": [
+      "FP1",
+      "FP2",
+      "F3",
+      "F4",
+      "F7",
+      "F8",
+      "T3",
+      "T4",
+      "C3",
+      "C4",
+      "T5",
+      "T6",
+      "P3",
+      "P4",
+      "O1",
+      "O2",
+      "FZ",
+      "CZ",
+      "PZ"
+    ],
+    "source_sampling_hz": 500,
+    "sampling_hz": 200,
+    "folds": 5,
+    "fold_sizes_people": [
+      8,
+      7,
+      7,
+      7,
+      7
+    ],
+    "split": "whole participants held out: participants sorted and assigned to a fold by index modulo five, so no person is in training and test of the same fold",
+    "labels": "the recording condition in the file name, pre-task rest against serial subtraction; the participants’ count-quality groups are left unused",
+    "classes": [
+      "pre-task rest",
+      "mental arithmetic"
+    ]
+  },
+  "model": {
+    "id": "neurolm-b",
+    "name": "NeuroLM-B",
+    "family": "foundation",
+    "paper_title": "NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals",
+    "paper_venue": "ICLR 2025",
+    "citation": "Jiang et al., ICLR 2025",
+    "paper": "https://openreview.net/forum?id=Io9yFt7XH7",
+    "paper_arxiv": "https://arxiv.org/abs/2409.00101",
+    "repository": "https://github.com/935963004/NeuroLM",
+    "source_revision": "0cda9876d8ce6ee07ed0c43eee5e9a6f5c24b177",
+    "source_url": "https://github.com/935963004/NeuroLM/tree/0cda9876d8ce6ee07ed0c43eee5e9a6f5c24b177",
+    "checkpoint": {
+      "file": "checkpoints/NeuroLM-B.pt",
+      "repository": "https://huggingface.co/Weibang/NeuroLM",
+      "revision": "eddfff5c64a4139442f826d6c67c8369fd00f45a",
+      "sha256": "ffe098bc138b89f8817d3710a3604498d8ecd15135080e2ca27735d05c6d29ab",
+      "bytes": 2377399148,
+      "url": "https://huggingface.co/Weibang/NeuroLM/tree/eddfff5c64a4139442f826d6c67c8369fd00f45a"
+    },
+    "parameters": 255107712,
+    "restored_state_entries": 240,
+    "parameters_basis": "a strict restore of the checkpoint, every state entry present and none unexpected",
+    "architecture": {
+      "layers": 12,
+      "heads": 12,
+      "width": 768,
+      "context_tokens": 1024
+    },
+    "frozen": true,
+    "fine_tuning": false,
+    "text_generation": false,
+    "language_model_head": false,
+    "transfer": "supervised: the frozen NeuroLM outputs feed a linear head trained on the other folds’ labels",
+    "weights_distributed": false,
+    "weights_note": "no weights are distributed; the SHA-256 identifies the checkpoint used and grants nothing",
+    "endorsement": "none implied"
+  },
+  "pretraining_exposure": {
+    "status": "unknown",
+    "status_vocabulary": [
+      "exposed",
+      "not_exposed",
+      "unknown"
+    ],
+    "checked_on": "2026-10-16",
+    "published_pretraining_list": {
+      "datasets": 16,
+      "includes_eegmat": false,
+      "source": "https://proceedings.iclr.cc/paper_files/paper/2025/file/8b4add8b0aa8749d80a34ca5d941c355-Paper-Conference.pdf"
+    },
+    "instruction_tasks": [
+      "TUAB",
+      "TUEV",
+      "SEED",
+      "HMC",
+      "Workload",
+      "TUSL"
+    ],
+    "eegmat_instruction_task": "Workload",
+    "checkpoint_stage": {
+      "status": "unknown",
+      "checkpoint_epoch": 19,
+      "iteration": 83660,
+      "initialised_from": "gpt2",
+      "learning_rate": 0.0006,
+      "instruction_tuning_verified": false
+    }
+  },
+  "adapter": {
+    "own_adapter": true,
+    "source_sampling_hz": 500,
+    "sampling_hz": 200,
+    "resample": {
+      "up": 2,
+      "down": 5
+    },
+    "band_pass_hz": [
+      0.1,
+      75
+    ],
+    "filter_order": 4,
+    "zero_phase": true,
+    "offline": true,
+    "filter": "Butterworth band-pass, applied forward and backward over the retained minute",
+    "notch": false,
+    "official_notch_hz": [
+      50,
+      60
+    ],
+    "demean": "per channel in each two-second window",
+    "units": "microvolts, divided by 100 for NeuroLM; band power uses the microvolt windows",
+    "amplitude_divisor": 100,
+    "window_patches": 38,
+    "patch_seconds": 1,
+    "patch_order": "time-major, then channel"
+  },
+  "probe": {
+    "scaler": "StandardScaler fitted on training windows only",
+    "head": "RidgeClassifier",
+    "alpha": 100,
+    "solver": "cholesky",
+    "class_weight": "balanced",
+    "fits": 15,
+    "hyperparameter_search": false,
+    "sealed_before_scoring": true
+  },
+  "arms": [
+    {
+      "id": "tokenizer_mean",
+      "label": "tokenizer features",
+      "dimension": 768,
+      "definition": "the mean of NeuroLM-B’s 38 tokenizer hidden states per window (two one-second blocks of 19 channels), taken before its vocabulary projection",
+      "balanced_accuracy": 0.6449074074074076,
+      "macro_f1": 0.6251820691155802,
+      "interval_95": null
+    },
+    {
+      "id": "log_bandpower",
+      "label": "band power",
+      "dimension": 95,
+      "definition": "95 absolute log band powers: 19 channels by 5 bands (1–4, 4–8, 8–13, 13–30 and 30–75 Hz), Welch with a one-second Hann window at 200 Hz on the same windows",
+      "balanced_accuracy": 0.6388888888888888,
+      "macro_f1": 0.5907640266978917,
+      "interval_95": null
+    },
+    {
+      "id": "gpt_mean",
+      "label": "GPT hidden states",
+      "dimension": 768,
+      "definition": "the mean of the 38 final normalised GPT hidden states from the same EEG-only forward pass, which stops before the language-model head",
+      "balanced_accuracy": 0.612037037037037,
+      "macro_f1": 0.5933772131283214,
+      "interval_95": null
+    }
+  ],
+  "chance_level": {
+    "balanced_accuracy": 0.5,
+    "macro_f1": null
+  },
+  "paired_contrasts": [
+    {
+      "id": "tokenizer-minus-band-power",
+      "a": "tokenizer_mean",
+      "b": "log_bandpower",
+      "label": "tokenizer features minus band power",
+      "role": "question",
+      "balanced_accuracy": {
+        "difference": 0.00601851851851852,
+        "interval_95": [
+          -0.05324074074074073,
+          0.0643865740740741
+        ],
+        "interval_includes_zero": true,
+        "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+      },
+      "macro_f1": {
+        "difference": 0.03441804241768836,
+        "interval_95": [
+          -0.03926998065641698,
+          0.1067150716210463
+        ],
+        "interval_includes_zero": true,
+        "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+      }
+    },
+    {
+      "id": "gpt-minus-tokenizer",
+      "a": "gpt_mean",
+      "b": "tokenizer_mean",
+      "label": "GPT hidden states minus tokenizer features",
+      "role": "descriptive",
+      "balanced_accuracy": {
+        "difference": -0.032870370370370376,
+        "interval_95": [
+          -0.05371527777777777,
+          -0.010173611111111137
+        ],
+        "interval_includes_zero": false,
+        "reading": "the interval lies below zero; descriptive, from this one cohort"
+      },
+      "macro_f1": {
+        "difference": -0.03180485598725867,
+        "interval_95": [
+          -0.05423384240051305,
+          -0.0074953822443153935
+        ],
+        "interval_includes_zero": false,
+        "reading": "the interval lies below zero; descriptive, from this one cohort"
+      }
+    },
+    {
+      "id": "gpt-minus-band-power",
+      "a": "gpt_mean",
+      "b": "log_bandpower",
+      "label": "GPT hidden states minus band power",
+      "role": "descriptive",
+      "balanced_accuracy": {
+        "difference": -0.026851851851851863,
+        "interval_95": [
+          -0.0833564814814815,
+          0.031030092592592557
+        ],
+        "interval_includes_zero": true,
+        "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+      },
+      "macro_f1": {
+        "difference": 0.0026131864304297,
+        "interval_95": [
+          -0.06636081805766925,
+          0.0735941509659651
+        ],
+        "interval_includes_zero": true,
+        "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+      }
+    }
+  ],
+  "interval": {
+    "kind": "paired participant bootstrap",
+    "method": "percentile interval",
+    "level": 0.95,
+    "unit": "participant",
+    "resamples": 1000,
+    "seed": 20261016,
+    "same_resamples_all_contrasts": true,
+    "fixed_fits": true,
+    "arms": "point estimates only"
+  },
+  "separate_from_core": {
+    "page": "/protocols/arithmetic-rest/",
+    "shared_windows": true,
+    "shared_channels": true,
+    "shared_fold_rule": true,
+    "shared_head": true,
+    "core_band_pass": false,
+    "core_sampling_hz": 250,
+    "core_spectral_ridge": {
+      "kind": "log relative spectrum",
+      "band_hz": [
+        0.5,
+        45
+      ],
+      "sampling_hz": 250
+    },
+    "pilot_band_power": {
+      "kind": "absolute log band power",
+      "band_hz": [
+        1,
+        75
+      ],
+      "sampling_hz": 200
+    }
+  },
+  "rights": {
+    "dataset": {
+      "name": "EEGMAT",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "rightsScope": "Personal noncommercial research; aggregate results only",
+      "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for NeuroLM’s frozen features: equal-person balanced accuracy and macro-F1 of three representations, three paired differences with their participant-bootstrap intervals, and cohort counts; no per-person, per-fold or per-window value."
+    },
+    "code": {
+      "licence": "MIT",
+      "scope": "NeuroLM’s source code at the pinned commit",
+      "url": "https://github.com/935963004/NeuroLM/blob/0cda9876d8ce6ee07ed0c43eee5e9a6f5c24b177/LICENSE",
+      "licence_file_sha256": "21bddd47eec5ad9a56bc9bec45f91426680e373f957b840fde984252b6718185"
+    },
+    "checkpoint": {
+      "licence": "CC BY 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "as_stated_by": "the licence tag in the Hugging Face repository metadata at the pinned revision",
+      "model_card_bytes": 30,
+      "model_card_terms": false,
+      "gated": false,
+      "checked_on": "2026-10-16",
+      "weights_distributed": false
+    },
+    "summary": "EEGMAT 1.0.0: Open Data Commons Attribution License 1.0 (Zyma et al., 2019; PhysioNet). NeuroLM code: MIT. NeuroLM-B checkpoint: CC BY 4.0 per its Hugging Face metadata; no weights distributed."
+  },
+  "limitations": [
+    {
+      "id": "exposure",
+      "text": "EEGMAT is NeuroLM’s Workload task, one of the six instruction tasks in its pinned code, and the training stage of this checkpoint is unresolved: its metadata (epoch 19, iteration 83,660, initialised from GPT-2, learning rate 0.0006) fits a pretraining checkpoint, and instruction tuning is unverified. The backbone may have seen these people, so exposure is shown as unknown."
+    },
+    {
+      "id": "adapter",
+      "text": "This pilot has its own offline adapter: a fourth-order zero-phase Butterworth band-pass at 0.1–75 Hz, resampling from 500 to 200 Hz, per-window demeaning, microvolts divided by 100 for NeuroLM, and no notch filter, where NeuroLM’s own pipeline adds a 50/60 Hz notch. The core Arithmetic & rest protocol filters nothing and resamples to 250 Hz, so these scores have their own panel."
+    },
+    {
+      "id": "band-power",
+      "text": "The band-power arm is 95 absolute log band powers (19 channels by 5 bands, 1–75 Hz, Welch at 200 Hz), a different feature set from the core matrix’s Spectral ridge row, which uses log relative spectra from 0.5–45 Hz at 250 Hz."
+    },
+    {
+      "id": "recording-order",
+      "text": "Rest is recorded before the task, so recording order moves with the label, and the pilot does not isolate cognitive workload."
+    },
+    {
+      "id": "capacity",
+      "text": "The 95 band-power and 768 NeuroLM dimensions share one fixed alpha, which does not equalise capacity or effective regularisation."
+    },
+    {
+      "id": "random-initialisation",
+      "text": "There is no random-initialisation control, so the pilot says nothing about a causal benefit of pretraining."
+    },
+    {
+      "id": "interval",
+      "text": "Intervals come from 1,000 participant resamples of the 15 fixed fitted heads and exclude refit uncertainty. Each arm has a point estimate only."
+    },
+    {
+      "id": "development-cohort",
+      "text": "EEGMAT is a known development cohort, used across this site. Predictions were sealed before scoring for procedural integrity: the labels are in the file names, and each person’s windows train the heads of the other folds."
+    },
+    {
+      "id": "ica",
+      "text": "The source README reports prior ICA cleaning of the published signals."
+    },
+    {
+      "id": "scope",
+      "text": "Frozen features with a supervised linear head: no text prompt, generated answer or language-model output entered any score, and nothing here measures instruction tuning, question answering, zero-shot use, cognitive workload, clinical use or online decoding."
+    }
+  ],
+  "audits": {
+    "independent_numerical_audit": {
+      "status": "passed",
+      "artifacts_hash_verified": 384,
+      "refits": 15,
+      "refits_exact": true,
+      "saved_decisions_reconstructed": true,
+      "bootstrap_max_abs_difference": 6.938893903907228e-18,
+      "checkpoint_loads": 0,
+      "sha256": "d329a085c87da98c138c1c03ce0042decafd0f72fca90514d5106a3e0da58d91"
+    },
+    "reviews": {
+      "execution": "985d6d7b74ec6c88455edeb7974a3c0f1ac18d65ffcefe3e0f1db9c045da32e6",
+      "numerical_audit": "8454c6e776c7ab65882792c4ba60bbca7707eb0442c6842c92fddb8e42b94435",
+      "interpretation": "cd28640d470dc298e27de270edb1768a1cf5128335e4ffc99ea40b2e99310e1c"
+    },
+    "boundary": "The independent audit refitted all 15 heads from the sealed NeuroLM and band-power values and reproduced every score and interval; the NeuroLM features themselves were not re-extracted by a second implementation."
+  },
+  "release_record": {
+    "date": "2026-10-20",
+    "decided": "2026-10-19",
+    "decision": "Publish the NeuroLM EEGMAT frozen-feature pilot as its approved aggregates: a separate panel on the pilot studies page, outside the pilot count and every leaderboard.",
+    "rights": "EEGMAT keeps its released record: Open Data Commons Attribution License 1.0, aggregate results only. NeuroLM’s code is MIT at the pinned commit. The NeuroLM-B checkpoint is CC BY 4.0 as the licence tag of its Hugging Face repository states, and its 30-byte model card adds no terms. No weights are distributed, and no endorsement by NeuroLM’s authors is implied.",
+    "research_release": "The research session’s release record approves an aggregate pilot handoff, outside every leaderboard, and binds the export, protocol, producer, numerical audit and three reviews by SHA-256.",
+    "research_release_status": "approved_for_aggregate_pilot_handoff",
+    "binding": "This record approves the served file the export audit names."
+  },
+  "not_published": [
+    "Per-person, per-fold and per-window values of any kind, fold assignments, participant identifiers, condition labels, features, fitted heads, predictions and the sealed prediction files: only equal-person means, paired differences with their intervals and cohort counts are published.",
+    "Demographics from the source dataset’s participant file.",
+    "Measured compute: worker times, memory and process counts from the handoff, the receipts and the audits.",
+    "The checkpoint and the NeuroLM source: no weights are distributed; the SHA-256 identifies the checkpoint used and grants nothing.",
+    "The generation-mask adapter’s checks: engineering evidence that took no part in these scores.",
+    "The IESSEEG intake and the watchlist leads of the same handoff: IESSEEG has its own release, and the leads have no results.",
+    "The handoff, protocol, producer, receipts, reviews and input manifest themselves: each is pinned by SHA-256 in this manifest and checked by the export, and none is published, because several carry private storage paths."
+  ],
+  "provenance": {
+    "manifest_sha256": "41c6c94772c50dcafb9624ad2d5ae20274a3f5b8d4617ef14a7e38105a45861e",
+    "source_export_sha256": {
+      "neurolm-eegmat": "62b7ebe4be2e331cb0651486185c7abdaa173d3279031d8ffc66c74b6208a20e"
+    },
+    "research_release_sha256": "9a9c1b4770797c899b229e176f7deec4dceacd209c80dfcd3f63d2365afc7adf",
+    "protocol_sha256": "670b55c1d63856af5b318104d40687772658f7790c9ebefd11f6633f4ed23b61",
+    "numerical_audit_sha256": "d329a085c87da98c138c1c03ce0042decafd0f72fca90514d5106a3e0da58d91",
+    "released_files_unchanged": [
+      "mvp.json",
+      "pilot-studies-update.json",
+      "eegpt-core-update.json"
+    ]
+  }
+}

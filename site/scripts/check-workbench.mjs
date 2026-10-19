@@ -4,7 +4,8 @@ import {existsSync,readFileSync,readdirSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import vm from 'node:vm';
 import {resolve} from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {pathToFileURL,fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
 // foundation-models-zh.ts enDisplay: a released sentence that names an internal evaluation version
 // prints without it (no version labels on the site, owner 2026-10-08); the JSON keeps it as released.
 const EN_SHOWN={'not run by design: LUNA Large is frozen probes only in the v9 stage specification':'not run by design: LUNA Large is frozen probes only in this evaluation\u2019s specification'};
@@ -284,6 +285,9 @@ const topicPages=[
   // Owner decision 1 (2026-10-12): four small pilots, none ranked (Orthosis, BINGO, handwriting, REFED; BINGO and the
   // handwriting analysis each behind its own publication switch).
   ['pilot-studies','What can a small pilot show, and what can it not?'],
+  // Owner decision D1 (2026-10-19): the route 3 follow-ups that answered the Hugging Face thread, and the data-quality cases.
+  ['new-ssvep-frequencies','What lets a decoder answer an SSVEP frequency it never trained on?'],
+  ['data-quality','What do the files show once a public EEG dataset is checked end to end?'],
 ];
 const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='model-adaptation'?'adaptation-update.json'
@@ -295,7 +299,9 @@ const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='later-sessions'?'later-sessions-update.json'
   :slug==='questions-in-language'?'questions-in-language-update.json'
   :slug==='beyond-scalp-eeg'?'beyond-scalp-update.json'
-  :slug==='pilot-studies'?'pilot-studies-update.json':'deployment-topics.json';
+  :slug==='pilot-studies'?'pilot-studies-update.json'
+  :slug==='new-ssvep-frequencies'?'new-ssvep-frequencies-update.json'
+  :slug==='data-quality'?'data-quality-update.json':'deployment-topics.json';
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
@@ -415,7 +421,7 @@ assert.deepEqual(
 // What translation can break without anything visibly failing is pinned here.
 const bilingual=['',...topicPages.map(([slug])=>'topics/'+slug+'/')];
 const read=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
-const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？','questions-in-language':'EEG 模型能回答用文字提出的问题吗？','beyond-scalp-eeg':'在头皮 EEG 之外的信号上，简单基线管用吗？','pilot-studies':'一个小规模试点能说明什么、不能说明什么？'};
+const zhTitles={'dry-vs-wet':'干电极的解码效果能和湿电极一样好吗？','fewer-electrodes':'更少的电极、或耳道内电极，能比得上完整的头皮电极吗？','screen-to-vr':'在屏幕上校准的 P300 解码器，换到 VR 里还管用吗？','on-the-move':'走路或跑步时，EEG 解码还管用吗？','clinical-groups':'静息态 EEG 能把帕金森病患者和对照组区分开吗？','calibration-budget':'EEG 解码器需要多少校准数据？','sleep-staging':'为什么睡眠分期器大多数时候判对，却仍会漏掉整类睡眠阶段？','model-adaptation':'新被试、第二天：预训练模型该更新哪一部分？','when-not-to-act':'没有人下指令时，EEG 解码器误触发有多频繁？','does-pretraining-help':'预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？','shared-encoder':'一个 EEG 模型回答同一份数据上的多个问题，能和分开的模型一样好吗，代价又是多少？','later-sessions':'在较早会话上训练的解码器，到后来还管用吗？','questions-in-language':'EEG 模型能回答用文字提出的问题吗？','beyond-scalp-eeg':'在头皮 EEG 之外的信号上，简单基线管用吗？','pilot-studies':'一个小规模试点能说明什么、不能说明什么？','new-ssvep-frequencies':'解码器靠什么回答没训练过的 SSVEP 频率？','data-quality':'把公开 EEG 数据集从头到尾核一遍，文件里能看到什么？'};
 for(const path of bilingual){
   const en=read(path),zh=read('zh/'+path);
   assert.match(en,/<html lang="en"/,path+': English page must declare lang="en"');
@@ -452,7 +458,7 @@ for(const [slug] of topicPages){
 }
 // Credits survive translation: every DOI on an English topic page is on its Chinese twin.
 for(const [slug] of topicPages){
-  const dois=html=>new Set([...html.matchAll(/10\.\d{4,9}\/[^\s"<)]+/g)].map(m=>m[0].replace(/[.,;]$/,'')));
+  const dois=html=>new Set([...html.matchAll(/10\.\d{4,9}\/[^\s"<)　-ヿ一-鿿＀-￯]+/g)].map(m=>m[0].replace(/[.,;]$/,'')));
   const missing=[...dois(read('topics/'+slug+'/'))].filter(d=>!dois(read('zh/topics/'+slug+'/')).has(d));
   assert.deepEqual(missing,[],slug+': the Chinese page dropped a credit');
 }
@@ -662,7 +668,7 @@ const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
 // attributes are set aside here, and everything printed, and every other attribute, is still read.
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
-    assert.ok(!pageOf(p).replace(/ data-fig="(?:shared-representation|later-sessions|questions-in-language)-update\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+    assert.ok(!pageOf(p).replace(/ data-fig="(?:(?:shared-representation|later-sessions|questions-in-language|new-ssvep-frequencies|data-quality|clinical-iesseeg|neurolm-eegmat)-update|open-register-20261020)\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
 
 // --- 2026-09-27 site update: when not to act, and the release log ----------
 // The abstention topic: every figure from the reviewed idle protocol, and a
@@ -811,6 +817,10 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 // definition of "Jev-style" in both its languages (route.jev_style, the owner's text edit of the same date). Anything
 // else in either file must be English.
 const zhAllowed={
+  // The register is bilingual by design: step names, rules and gap labels carry their Chinese beside the English.
+  'open-register-20261020.json':j=>{const strip=o=>{if(Array.isArray(o))o.forEach(strip);else if(o&&typeof o==='object')for(const k of Object.keys(o)){if(k==='zh'||k.endsWith('_zh'))delete o[k];else strip(o[k]);}};strip(j);},
+  // The Wearable-102 CCA definition carries the card's Chinese sentence beside the English (A2).
+  'new-ssvep-frequencies-update.json':j=>{delete j.studies.wearable_transfer.cca_definition.fact.zh;},
   'questions-in-language-wordings.json':j=>{for(const k of Object.keys(j.lists))if(k.startsWith('zh/'))delete j.lists[k];},
   'questions-in-language-update.json':j=>{const r=j.results['questions-in-language'];for(const k of r.key_findings)delete k.zh;delete r.pre_run_checks.why_they_failed.zh;
     delete j.boas_conditions.gaps_zh;delete r.route.jev_style.zh;const pc=r.pre_run_checks,quote=/\("[^"]*\p{Script=Han}[^"]*"\)/gu;
@@ -897,6 +907,8 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   pp2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2)+' pp',sgn2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(2),pct2:r=>(r*100).toFixed(2)+'%',
   auc3:r=>r.toFixed(3),auc2:r=>r.toFixed(2),num3:r=>r.toFixed(3).replace(/^-/,'−'),count:r=>r.toLocaleString('en-US'),s1:r=>r.toFixed(1).replace(/^-/,'−')+' s',
   m2:r=>(r/1e6).toFixed(2)+'M',
+  // The route 3 follow-ups (2026-10-20): the thread's bet as a whole percent ("39%"); the adapter's margin at one decimal.
+  pct0:r=>(r*100).toFixed(0)+'%',num1:r=>r.toFixed(1).replace(/^-/,'−'),
   // Route 2 (2026-10-07): values already in percentage points, two decimals; a step time in seconds as milliseconds.
   ppr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2)+' pp',sgr2:r=>(r===0?'':r>0?'+':'−')+Math.abs(r).toFixed(2),ms2:r=>(r*1000).toFixed(2)+' ms',
   // The later-sessions page: values spanning many decades — a whole number with thousands separators, or three
@@ -2169,7 +2181,8 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     assert.match(sec,zh?/也请同时引用上游数据集/:/Cite the upstream datasets? as well/,path+': the cite block sends the reader to the upstream credit');
     // Plural on topic pages, which draw on several datasets; singular on a dataset's own page
     // (2026-10-02 review); method pages send the reader to the dataset pages.
-    const upstream=p.startsWith('methods/')?(zh?'也请同时引用上游数据集：每个数据集页面都写明了署名。':'Cite the upstream datasets as well: each dataset’s page gives its credit.')
+    // The two registers (2026-10-20) list many sources, so they send the reader to each source's credit, as method pages do.
+    const upstream=p.startsWith('methods/')||/^datasets\/register\//.test(p)?(zh?'也请同时引用上游数据集：每个数据集页面都写明了署名。':'Cite the upstream datasets as well: each dataset’s page gives its credit.')
       :/^(?:datasets|protocols)\//.test(p)?(zh?'也请同时引用上游数据集：其署名就在本页。':'Cite the upstream dataset as well: its credit is on this page.')
       :(zh?'也请同时引用上游数据集：署名就在本页。':'Cite the upstream datasets as well: their credits are on this page.');
     assert.ok(sec.includes(upstream),path+': the upstream credit sentence: '+upstream);
@@ -2448,6 +2461,10 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     // handwriting analysis's people while each is released, and REFED's two nominal folders with its clips beside them.
     'pilot-studies':{files:['pilot-studies-update.json'],pins:[PSX.results['orthosis-64ch-classical'].cohort.people,...(BINGO_ON?[PSX.results['bingo-cross-language'].cohort.source_fields]:[]),
       ...(HW_ON?[PSX.results['handwriting-mask-aware'].cohort.people]:[]),PSX.results['refed-stored-clip'].cohort.nominal_folders,PSX.results['refed-stored-clip'].cohort.clips]},
+    // The route 3 follow-ups (2026-10-20): BETA's and Wearable-102's people.
+    'new-ssvep-frequencies':{files:['new-ssvep-frequencies-update.json'],pins:(j=>[j.cohort.people,j.wearable.people])(JSON.parse(readFileSync(new URL('data/new-ssvep-frequencies-update.json',DIST),'utf8')))},
+    // The data-quality cases (2026-10-20): Shin2022's participants.
+    'data-quality':{files:['data-quality-update.json'],pins:[JSON.parse(readFileSync(new URL('data/data-quality-update.json',DIST),'utf8')).shin2022.scope.participants]},
   };
   assert.deepEqual(Object.keys(cardPins).sort(),topicPages.map(([s])=>s).sort(),'every topic card has its count pins');
   for(const page of ['','zh/']){
@@ -2546,8 +2563,8 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     const count=k=>counts(k)[0];
     assert.equal(count('releases'),nReleases,(page||'/')+': reviewed releases');
     assert.equal(count('files'),nFiles,(page||'/')+': downloadable files, as listed on /api/');
-    assert.equal(count('methods'),entityPages.filter(f=>!f.startsWith('zh/')&&/^methods\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': methods with result pages');
-    assert.equal(count('datasets'),entityPages.filter(f=>!f.startsWith('zh/')&&/^datasets\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': datasets with results');
+    assert.equal(count('methods'),entityPages.filter(f=>!/(?:^|\/)(?:datasets|methods)\/register\//.test(f)&&!f.startsWith('zh/')&&/^methods\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': methods with result pages');
+    assert.equal(count('datasets'),entityPages.filter(f=>!/(?:^|\/)(?:datasets|methods)\/register\//.test(f)&&!f.startsWith('zh/')&&/^datasets\/[^/]+\/index\.html$/.test(f)).length,(page||'/')+': datasets with results');
     assert.equal(count('questions'),topicPages.length,(page||'/')+': questions');
     for(const id of ['models','datasets','news']) assert.ok(html.includes(`id="${id}"`),(page||'/')+': the old #'+id+' anchor still lands');
     assert.ok(!html.includes('class="model-grid"')&&!html.includes('class="dataset-list"')&&!html.includes('class="news-grid"'),(page||'/')+': the directory, register and field notes left the home page');
@@ -3827,7 +3844,7 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   }
 
   // 4. Method pages: groups, checkpoints and terms, exposure; the Measured-on line on every one.
-  const methodPages=entityPages.filter(f=>/^(?:zh\/)?methods\/[^/]+\/index\.html$/.test(f));
+  const methodPages=entityPages.filter(f=>!/(?:^|\/)(?:datasets|methods)\/register\//.test(f)&&/^(?:zh\/)?methods\/[^/]+\/index\.html$/.test(f));
   for(const f of methodPages){
     const html=readFileSync(new URL(f,DIST),'utf8'),zh=f.startsWith('zh/'),prefix=zh?'zh/':'',path=f.replace(/index\.html$/,'');
     const at=html.indexOf('<p class="entity-measured">'),line=html.slice(at,html.indexOf('</p>',at));
@@ -3952,7 +3969,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // protocol page and the protocols index, the seven core dataset pages, the methods hub (its card evaluated, its new
   // page) and does-pretraining-help (its attribution rows). REVE's and LaBraM's method pages keep 2026-10-04.
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
-    const d=p==='methods/reve/'||p==='methods/labram/'?'2026-10-04':'2026-10-13';
+    // On 2026-10-20 the methods hub gained its register line and every dataset page its register row link.
+    const d=p==='methods/reve/'||p==='methods/labram/'?'2026-10-04':['methods/','datasets/eegmat/','datasets/eesm19/'].includes(p)?'2026-10-20':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
@@ -4320,7 +4338,8 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // dates now; on 2026-10-13 EEGPT's rows reached the two further-encoder questions, and the Questions hub's
   // does-pretraining-help card counts three encoders and names EEGPT on sleep.
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
-    const d=p==='topics/model-adaptation/'?'2026-10-04':'2026-10-13';
+    // On 2026-10-20 the Questions hub gained two cards and model-adaptation its article line.
+    const d=p==='topics/model-adaptation/'||p==='topics/'?'2026-10-20':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
@@ -5689,14 +5708,15 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   const pages={};
   for(const [label,pfx] of [['en',''],['zh','zh/']]){
     const zh=label==='zh',path=pfx+'topics/pilot-studies/',where=path,html=pageOf(path);
-    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"'));
+    // The separate NeuroLM panel (2026-10-20) cites its own export; scripts/checks/neurolm-eegmat.mjs reads it.
+    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"')).replace(/<section\b[^>]*\sid="neurolm-eegmat"[\s\S]*?<\/section>/,'');
     const own=main.slice(0,main.indexOf('<nav class="topic-switcher"'));
     pages[label]=main;
     const sec=id=>el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where);
     // (1) Every figure is a leaf of this export, and nothing else is cited.
     assert.ok(figAttrs(main).length>(BINGO_ON?200:150)&&figAttrs(main).every(a=>a.startsWith(PS+'|')),where+': every figure is a leaf of '+PS+' ('+figAttrs(main).length+')');
     const cite=html.slice(html.indexOf('<section class="cite-page"'));
-    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],PSX.release_id,where+': the cite block names this release alone');
+    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],'neurolm-eegmat-update-20261020 '+PSX.release_id,where+': the cite block names the pilot release and the NeuroLM panel\'s release');
     assert.ok(html.includes('href="/data/'+PS+'"')&&/^(?:Data source:|数据来源：) pilot-studies-update\.json · schema bci-report-pilot-studies-update-v1[.。]$/.test(vis(el(own,/<p class="citation-note">(?:Data source:|数据来源：)/,where))),where+': the data-source note names the file and its schema, and no date');
     // (8) Each released section names its species and signal, says it is executed locally, and links its dataset page;
     // the held one links none.
@@ -5930,7 +5950,8 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
     const denial=zh?/不|没|无|从不|并非|未|非/:/\b(?:not|no|never|nor|none|nothing|neither|without)\b/i;
     let denied=0;
     for(const t of sentences) if(forbidden.test(t)){assert.match(t,denial,where+': "'+t.slice(0,140)+'" reads as a claim it may only deny');denied++;}
-    assert.ok(denied>=8,where+': the denials were read ('+denied+')');
+    // A held handwriting analysis takes its own denials with it.
+    assert.ok(denied>=(HW_ON?8:6),where+': the denials were read ('+denied+')');
     const ownMd=readFileSync(new URL(path+'index.md',DIST),'utf8').split(/^(?:Keep exploring|继续探索)$/m)[0];
     assert.ok(own.length>30000&&ownMd.length>12000,where+': the page\'s own content read');
     assert.doesNotMatch(own+ownMd,/\bJev\b/,where+': the page does not mention Jev');
@@ -6416,5 +6437,10 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   assert.ok(!JSON.stringify(EGX).match(/"(?:per_person|per_participant|per_subject|per_fold|per_trial|subject_scores|participant_scores)[^"]*":/),'EEGPT: the export carries no per-person, per-fold or per-trial field');
   assert.ok(protocolFigs>=8*2*6,'EEGPT: the protocol rows were read ('+protocolFigs+')');
   console.log(`PASS: EEGPT on the core matrix, on the pages — its own section on every protocol page in both languages (${protocolFigs} figures pinned to its export, each cell column by column in the core rows' units, the chance flags, the sourced exposure and its source, each footnote beside the row and once on the page, every published row's relation and gap re-derived from the released intervals, its terms with the weights never Apache-2.0, its release, JSON and method page); the protocols index links each; the home page counts it among the frozen encoders, embeds and renders its row after the further encoders' group (family filter, chart, dialog with its footnotes and terms, the tool naming its release), names it in the snapshot note with its terms, never ranked; does-pretraining-help carries its attribution rows and contrasts beside LaBraM's and CBraMod's, the short answer, dek, description and card as far as those rows go, its footnotes once and its sources, and its sleep and BETA rows with its export's relations and gaps; fewer-electrodes its BETA and sleep row with the overlap by the released rows' rule and its footnotes once; the same figures in English and Chinese; no stale status outside the release log; no per-person field.`);
+}
+// The 2026-10-20 release's pages each carry their own check module (scripts/checks/), run here against the same build.
+for(const f of readdirSync(new URL('./checks/',import.meta.url)).filter(f=>f.endsWith('.mjs')).sort()){
+  const out=execFileSync(process.execPath,[fileURLToPath(new URL('./checks/'+f,import.meta.url)),fileURLToPath(DIST)],{encoding:'utf8'});
+  console.log(out.trim().split('\n').filter(l=>/^PASS|passed/.test(l)).join('\n'));
 }
 console.log('Mocked WebMCP contract passed. Real supported-browser WebMCP integration has not been verified.');

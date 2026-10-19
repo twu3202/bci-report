@@ -1,0 +1,49 @@
+{
+  "status": "pass",
+  "release_id": "clinical-iesseeg-update-20261020",
+  "export_sha256": "c2302fe6945276de8f9183340c165245bc4c5097c9ebe60fa7ac389725b2427d",
+  "manifest_sha256": "67418da30bd51f1c89985c845f88e6dcc2d8b875ab6da04b7dde4d9b179ce7ac",
+  "auditor": "pipeline/publication/audit_clinical_iesseeg_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins, and takes the score blocks from the independent numerical audits the release reviews bind (the export copies the research exports), the cohort and fold structure from the cohort timing QC audit’s selection record, the age band from the reviews’ numeric checks, the audit counts from the reviews’ numerical records, and every derived figure from its own arithmetic on those.",
+  "arms": {
+    "controls": [
+      "SOURCE_PRIOR",
+      "AGE",
+      "ACQUISITION_METADATA",
+      "EEG",
+      "EEG_PLUS_AGE",
+      "AGE_RESIDUAL_EEG"
+    ],
+    "neurolm": [
+      "TOKENIZER",
+      "TOKENIZER_AGE_RESIDUAL",
+      "GPT_HIDDEN",
+      "GPT_HIDDEN_AGE_RESIDUAL"
+    ]
+  },
+  "figures_compared": 328,
+  "copied_exactly": 292,
+  "recomputed": 35,
+  "nulls_kept": 1,
+  "withheld_values_checked_absent": 80,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "both release reviews passed, approve the pinned exports, and bind the numerical audits, protocols and release card read here",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "all ten score blocks, all-100 and age <=2, equal the independent numerical audits value for value, in protocol order",
+    "cohort, folds, age band and input-cohort QC equal the QC audit’s selection and recomputed aggregate and the reviews’ numeric checks",
+    "method figures equal the pinned protocols; audit counts equal the reviews’ numerical records",
+    "dataset strings equal the release card at the pinned revision and both reviews’ attribution records; the model strings equal the NeuroLM review’s provenance; provenance hashes equal the manifest’s pins",
+    "no per-fold metric, per-group age summary or demographic field, no private host, storage name or path, and no conference or submission reference, in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "research exports, release reviews, numerical audits, protocols, cohort QC audit, release card and licence: pinned in the manifest and named in the served provenance",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves"
+    ],
+    "not_bound": [
+      "the private seal, score and prediction files are named by SHA-256 only; the reviews verified them, and this audit does not open them",
+      "labels, captions, limitations, the release record and other prose are checked by the export, not by this audit"
+    ]
+  }
+}

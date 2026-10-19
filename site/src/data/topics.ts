@@ -127,10 +127,15 @@ export const topicPages = [
   { slug: 'shared-encoder', group: 'adapting' },
   // Route 3 of the decision-research plan, questions in language (owner approval of the results).
   { slug: 'questions-in-language', group: 'adapting' },
+  // Owner decision D1: route 3's seven follow-ups on SSVEP frequencies the decoder never trained on, right after route 3.
+  { slug: 'new-ssvep-frequencies', group: 'adapting' },
   { slug: 'when-not-to-act', group: 'reliability' },
   // Since 2026-10-03 (owner decision): Dreem sleep staging, two simple baselines.
   { slug: 'sleep-staging', group: 'reliability' },
   { slug: 'clinical-groups', group: 'reliability' },
+  // Owner decision D1: public datasets checked end to end from their files (Shin2022 worked; eldBETA and ZuCo 2.0 as
+  // status cases), last in its group.
+  { slug: 'data-quality', group: 'reliability' },
   // Owner decision 1 (2026-10-12): signals other than scalp EEG — human fNIRS, one macaque's intracortical spiking and
   // an fNIRS coverage check — in its own group with the pilot studies of the same version, which follow it here.
   { slug: 'beyond-scalp-eeg', group: 'beyond' },

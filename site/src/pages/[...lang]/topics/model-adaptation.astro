@@ -10,6 +10,7 @@ import adaptation from '../../../data/adaptation-update.json';
 import context from '../../../data/context-update.json';
 import mvp from '../../../data/mvp.json';
 import { coreExposure } from '../../../data/foundation-models';
+import { elsewhere } from '../../../data/site';
 // LaBraM's published pretraining list, as the v9 exposure table links it (owner decision 2026-10-04).
 const labramExposure = coreExposure('labram');
 
@@ -66,6 +67,14 @@ const kib = Math.round(eng.adapter_float32_bytes / 1024);
 const n = (v: number) => v.toLocaleString('en-US');
 const share = `${(eng.adapter_fraction * 100).toFixed(2)}%`;
 type Part = string | FigValue;
+
+// The long-form write-up of the EEGMAT adaptation result (site.ts `elsewhere`, owner decision D8): one low-key line
+// after the data sources, as questions-in-language's #ql-article. It prints no figure.
+const article = elsewhere.articles.find(a => a.page === '/topics/model-adaptation/');
+const articleCopy = {
+  en: ['A longer write-up of the EEGMAT adaptation results is on Hugging Face: ', 'Choosing how to adapt an EEG foundation model ↗'],
+  zh: ['', 'EEGMAT 适配结果的长文解读（英文，Hugging Face）↗'],
+}[locale];
 
 const copy = {
   en: {
@@ -252,5 +261,6 @@ const card = topicCards[locale]['model-adaptation'];
     </div>
     <p class="citation-note">{tc.dataSource} <a href="/data/adaptation-update.json" download>adaptation-update.json</a> · {tc.schema} {adaptation.schema_version}{tc.period}</p>
     <p class="citation-note">{tc.dataSource} <a href="/data/evidence-update.json" download>evidence-update.json</a> · {copy.engSource}{tc.period}</p>
+    {article && <p class="citation-note" id="ma-article">{articleCopy[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{articleCopy[1]}</a></p>}
   </section>
 </TopicLayout>

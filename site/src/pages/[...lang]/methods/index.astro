@@ -3,10 +3,12 @@ import EntityLayout from '../../../components/EntityLayout.astro';
 import data from '../../../data/mvp.json';
 import { methods, tr, unmeasuredModels } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
-import { familyLabel, hrefFor, localeOf, localeParams, modelStatus } from '../../../data/i18n';
+import { familyLabel, hrefFor, localeOf, localeParams, modelStatus, registerCopy } from '../../../data/i18n';
 import { site } from '../../../data/site';
 import ModelDirectory from '../../../components/ModelDirectory.astro';
 import FieldNotes from '../../../components/FieldNotes.astro';
+import Fig from '../../../components/Fig.astro';
+import { regFig, register, registerBuilt } from '../../../data/open-register';
 import '../../../styles/directory.css';
 
 export const getStaticPaths = localeParams;
@@ -30,6 +32,7 @@ const structured = {
   eyebrow={c.methodsTitle} dek={c.methodsDek}
   crumbs={[{ label: c.home, href: hrefFor('/', locale) }, { label: c.methodsTitle }]}
   structured={structured}>
+  {registerBuilt && <p class="citation-note" id="register-line"><a href={hrefFor('/methods/register/', locale)}>{registerCopy[locale].methodsLink.replace(/\s*→$/, '')}{locale === 'zh' ? '（' : ' ('}<Fig f={regFig(register!.counts.rows.model)} cls="num"/>{locale === 'zh' ? ' 行）→' : ' rows) →'}</a></p>}
   <section class="topic-section" aria-labelledby="with-pages">
     <h2 id="with-pages">{c.methodsWithResults}</h2>
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.datasetsRegion}>

@@ -1,0 +1,703 @@
+{
+  "schema_version": "bci-report-clinical-iesseeg-update-v1",
+  "release_id": "clinical-iesseeg-update-20261020",
+  "generated_at": "2026-10-20",
+  "status": "aggregate_preview",
+  "title": "IESSEEG: age and recording-setting controls, with frozen NeuroLM probes",
+  "question": "Do EEG case-control results survive age and recording-setting controls?",
+  "placement": {
+    "page": "/topics/clinical-groups/",
+    "section": "iesseeg",
+    "subsections": [
+      "iesseeg-controls",
+      "iesseeg-neurolm"
+    ],
+    "after": "ds004584",
+    "leaderboard": false,
+    "dataset_page": false
+  },
+  "counts": {
+    "new_canonical_datasets": 0,
+    "new_model_identity": false,
+    "new_dataset_pages": 0
+  },
+  "medical_disclaimer": true,
+  "medical_disclaimer_wording": {
+    "file": "clinical-update.json",
+    "field": "medical_disclaimer"
+  },
+  "metric_units": "balanced accuracy, AUROC, accuracy, F1, sensitivity and specificity are proportions in [0,1]; n and the confusion counts (true negatives, false positives, false negatives, true positives) are whole numbers of people; null means not computed",
+  "scope": "Aggregate development evidence on one public case-control EEG dataset: six arms with and without EEG, including age-only and recording-settings-only controls, and four arms that read frozen NeuroLM features with the same probes, on the same people and folds. A section of an existing page, outside every leaderboard, with no dataset page and no change to any count.",
+  "caption": "Point estimates out of fold; no interval or test was specified. One awake recording per person, first 60 s. Age and recording settings differ between groups; regressing out age is a sensitivity analysis.",
+  "audit_boundary": "The probes and every score were reproduced independently; the NeuroLM features themselves were not re-extracted by a second implementation.",
+  "dataset": {
+    "name": "IESSEEG",
+    "service": "Hugging Face",
+    "repository": "Capur/IESSEEG",
+    "revision": "1c32ee3a425a324808a9d275b60ce85625af35c8",
+    "url": "https://huggingface.co/datasets/Capur/IESSEEG/tree/1c32ee3a425a324808a9d275b60ce85625af35c8",
+    "release_card_url": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/README.md",
+    "licence_file_url": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/LICENSE",
+    "licence": "CC-BY-4.0",
+    "licence_scope": "the dataset and annotations",
+    "licence_deed": "https://creativecommons.org/licenses/by/4.0/",
+    "requested_citation": "IESSEEG: An Open EEG Dataset Towards Better Understanding of Infantile Epileptic Spasms Syndrome",
+    "prior_reuse": {
+      "declared_by": "the publisher, on the release card",
+      "case_segments": 400,
+      "study": "Rajaraman et al. (2024)",
+      "study_title": "Computational EEG attributes predict response to therapy for epileptic spasms",
+      "crosswalk": "The participant-level crosswalk between that analysis and this release is unresolved; the cohort adds no dataset to any count."
+    },
+    "ethics_as_stated": {
+      "quote": "The retrospective study received institutional review board approval under protocol 17-000026, with waivers of informed consent and HIPAA research authorization. Do not attempt to re-identify participants.",
+      "source": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/README.md"
+    },
+    "attribution_source": "the release card and LICENSE at the pinned revision"
+  },
+  "cohort": {
+    "people": 100,
+    "cases": 50,
+    "controls": 50,
+    "classes": 2,
+    "chance_level": 0.5,
+    "composition": "Cases of infantile epileptic spasms syndrome, each on the recording made before the treatment the source study evaluated, and controls on their control recording; one institution’s retrospective cohort",
+    "recording": "one clinician-selected awake segment per person, chosen by a fixed lexicographic rule with no signal-driven choice; its first 60 s",
+    "seconds_analysed": 60,
+    "channels": 17,
+    "reference": "the common average of the 17 channels shared by every recording",
+    "folds": 5,
+    "train_people": 80,
+    "held_out_people": 20,
+    "held_out_cases": 10,
+    "held_out_controls": 10,
+    "split": "the publisher’s five participant-disjoint folds; each person is held out once",
+    "prediction_unit": "one out-of-fold prediction per person and arm",
+    "labels": "each participant’s case or control status",
+    "age_matching_as_stated": {
+      "quote": "Controls are not fully age matched.",
+      "source": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/README.md"
+    }
+  },
+  "age_band": {
+    "maximum_age_years": 2,
+    "people": 68,
+    "cases": 42,
+    "controls": 26,
+    "same_predictions": true,
+    "refit": false,
+    "note": "The age ≤2 column re-scores the same out-of-fold predictions for the people aged 2 or under, with nothing refitted; it is a descriptive subgroup. Only the band’s size and its case and control counts are published; per-group age means and sex counts stay unpublished."
+  },
+  "input_qc": {
+    "assets": 300,
+    "bytes": 2884494142,
+    "recordings": 100,
+    "recordings_passed": 100,
+    "recordings_held": 0,
+    "recordings_with_gaps": 0,
+    "scalp_channels": [
+      {
+        "channels": 19,
+        "recordings": 59
+      },
+      {
+        "channels": 17,
+        "recordings": 41
+      }
+    ],
+    "sampling_hz": [
+      {
+        "hz": 200,
+        "recordings": 98
+      },
+      {
+        "hz": 2000,
+        "recordings": 2
+      }
+    ],
+    "checked_by": "an independent read-only audit of every input file’s hash, timing and calibration",
+    "note": "Endpoint and constant-sample counts were kept as descriptions; no recording was excluded on them."
+  },
+  "display": {
+    "columns": [
+      {
+        "block": "pooled",
+        "metric": "balanced_accuracy",
+        "label": "Balanced accuracy, all 100"
+      },
+      {
+        "block": "pooled",
+        "metric": "auroc",
+        "label": "AUROC, all 100"
+      },
+      {
+        "block": "age_le_2",
+        "metric": "balanced_accuracy",
+        "label": "Balanced accuracy, age ≤2 years"
+      }
+    ],
+    "primary_metric": "balanced_accuracy",
+    "interval": null,
+    "reading_rule": "Both metric columns are shown for every arm; the two metrics order the arms differently, and no arm or threshold is chosen from these results.",
+    "f1_headline": false,
+    "f1_reason": "The training prior calls every person a case, and on a balanced cohort that alone gives a high F1."
+  },
+  "controls": {
+    "title": "Age and acquisition controls for an awake EEG case-control pilot",
+    "anchor": "iesseeg-controls",
+    "method": {
+      "spectra": "Welch spectra at each recording’s native rate: log relative power in five bands from 1 to 45 Hz and log total 1–45 Hz power for each of the 17 channels",
+      "feature_count": 102,
+      "features_per_channel": 6,
+      "welch_window_seconds": 4,
+      "welch_overlap": 0.5,
+      "frequency_resolution_hz": 0.25,
+      "bands_hz": [
+        [
+          1,
+          4
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          13,
+          30
+        ],
+        [
+          30,
+          45
+        ]
+      ],
+      "classifier": "standardisation fitted on the training fold only, then L2 logistic regression; fixed in advance, with no tuning",
+      "logistic_c": 1.0,
+      "age_terms": "log1p of age at the recording, in years, and its square",
+      "age_residualization": "inside each training fold, each feature is regressed on an intercept and the two age terms; the training-fold coefficients are applied to the training and held-out people",
+      "acquisition_terms": "the original scalp channel count (17 or 19) and native sampling rate (200 or 2,000 Hz)"
+    },
+    "arms": [
+      {
+        "id": "SOURCE_PRIOR",
+        "label": "Training prior",
+        "role": "reference",
+        "inputs": "No input: the training fold’s share of cases, which calls every person a case",
+        "eeg_input": false,
+        "excluded_from_model_comparisons": true,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.5,
+          "auroc": 0.5,
+          "accuracy": 0.5,
+          "f1": 0.6666666666666666,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "confusion_tn_fp_fn_tp": [
+            0,
+            50,
+            0,
+            50
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.5,
+          "auroc": 0.5,
+          "accuracy": 0.6176470588235294,
+          "f1": 0.7636363636363637,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "confusion_tn_fp_fn_tp": [
+            0,
+            26,
+            0,
+            42
+          ]
+        }
+      },
+      {
+        "id": "AGE",
+        "label": "Age only",
+        "role": "confound_control",
+        "inputs": "No EEG: log1p of age at the recording, and its square",
+        "eeg_input": false,
+        "excluded_from_model_comparisons": true,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.68,
+          "auroc": 0.621,
+          "accuracy": 0.68,
+          "f1": 0.7377049180327869,
+          "sensitivity": 0.9,
+          "specificity": 0.46,
+          "confusion_tn_fp_fn_tp": [
+            23,
+            27,
+            5,
+            45
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.5,
+          "auroc": 0.35027472527472525,
+          "accuracy": 0.6176470588235294,
+          "f1": 0.7636363636363637,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "confusion_tn_fp_fn_tp": [
+            0,
+            26,
+            0,
+            42
+          ]
+        }
+      },
+      {
+        "id": "ACQUISITION_METADATA",
+        "label": "Acquisition metadata only",
+        "role": "diagnostic_control",
+        "inputs": "No EEG: the original scalp channel count and sampling rate",
+        "eeg_input": false,
+        "excluded_from_model_comparisons": true,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.61,
+          "auroc": 0.5242,
+          "accuracy": 0.61,
+          "f1": 0.5714285714285714,
+          "sensitivity": 0.52,
+          "specificity": 0.7,
+          "confusion_tn_fp_fn_tp": [
+            35,
+            15,
+            24,
+            26
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.6923076923076923,
+          "auroc": 0.5741758241758241,
+          "accuracy": 0.6470588235294118,
+          "f1": 0.6363636363636364,
+          "sensitivity": 0.5,
+          "specificity": 0.8846153846153846,
+          "confusion_tn_fp_fn_tp": [
+            23,
+            3,
+            21,
+            21
+          ]
+        }
+      },
+      {
+        "id": "EEG",
+        "label": "EEG spectral features",
+        "role": "eeg",
+        "inputs": "The 102 log band-power features of the 17 channels",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.81,
+          "auroc": 0.8236,
+          "accuracy": 0.81,
+          "f1": 0.8,
+          "sensitivity": 0.76,
+          "specificity": 0.86,
+          "confusion_tn_fp_fn_tp": [
+            43,
+            7,
+            12,
+            38
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.7655677655677655,
+          "auroc": 0.76007326007326,
+          "accuracy": 0.7647058823529411,
+          "f1": 0.8,
+          "sensitivity": 0.7619047619047619,
+          "specificity": 0.7692307692307693,
+          "confusion_tn_fp_fn_tp": [
+            20,
+            6,
+            10,
+            32
+          ]
+        }
+      },
+      {
+        "id": "EEG_PLUS_AGE",
+        "label": "EEG spectral features + age",
+        "role": "eeg_with_age",
+        "inputs": "The 102 spectral features and the two age terms",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.8,
+          "auroc": 0.8432,
+          "accuracy": 0.8,
+          "f1": 0.7959183673469388,
+          "sensitivity": 0.78,
+          "specificity": 0.82,
+          "confusion_tn_fp_fn_tp": [
+            41,
+            9,
+            11,
+            39
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.739010989010989,
+          "auroc": 0.7793040293040293,
+          "accuracy": 0.75,
+          "f1": 0.7951807228915663,
+          "sensitivity": 0.7857142857142857,
+          "specificity": 0.6923076923076923,
+          "confusion_tn_fp_fn_tp": [
+            18,
+            8,
+            9,
+            33
+          ]
+        }
+      },
+      {
+        "id": "AGE_RESIDUAL_EEG",
+        "label": "EEG after training-fold age residualization",
+        "role": "sensitivity_analysis",
+        "inputs": "The 102 spectral features with age regressed out inside each training fold",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.6699999999999999,
+          "auroc": 0.7028,
+          "accuracy": 0.67,
+          "f1": 0.6597938144329897,
+          "sensitivity": 0.64,
+          "specificity": 0.7,
+          "confusion_tn_fp_fn_tp": [
+            35,
+            15,
+            18,
+            32
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.6941391941391941,
+          "auroc": 0.7298534798534798,
+          "accuracy": 0.6764705882352942,
+          "f1": 0.7027027027027027,
+          "sensitivity": 0.6190476190476191,
+          "specificity": 0.7692307692307693,
+          "confusion_tn_fp_fn_tp": [
+            20,
+            6,
+            16,
+            26
+          ]
+        }
+      }
+    ],
+    "audit": {
+      "status": "pass",
+      "models": 30,
+      "learned_refits": 25,
+      "prior_checks": 5,
+      "reconstructed_predictions": 600,
+      "independent_feature_checks": 4,
+      "max_feature_error": 1.3322676295501878e-15,
+      "max_probability_error": 0.0,
+      "what": "An independent program refit every learned model, checked every prior, rebuilt every held-out probability with zero difference, and recomputed the features of one recording per channel-count and sampling-rate group with its own EDF reader and FFT.",
+      "protocol_sha256": "c10ea32bf16726b8ec8afd02eee74f84234f58dfcb7d9ecbc45b637255be2b8a",
+      "score_sha256": "291d5c8c9e3a0a4732475f7fa7fd02d41d50ad92fed52db378a7c94fb40ab989",
+      "seal_sha256": "9804ba65c5c6b662ce9d0cff90c3b069a2b0d4dc899af39fd81632c01ab0386d"
+    }
+  },
+  "neurolm": {
+    "title": "Do frozen EEG representations survive age controls?",
+    "anchor": "iesseeg-neurolm",
+    "model": {
+      "name": "NeuroLM-B",
+      "repository": "https://github.com/935963004/NeuroLM",
+      "source_revision": "0cda9876d8ce6ee07ed0c43eee5e9a6f5c24b177",
+      "source_url": "https://github.com/935963004/NeuroLM/tree/0cda9876d8ce6ee07ed0c43eee5e9a6f5c24b177",
+      "checkpoint_sha256": "ffe098bc138b89f8817d3710a3604498d8ecd15135080e2ca27735d05c6d29ab",
+      "use": "a frozen feature extractor read by supervised logistic probes",
+      "weights_updated": false,
+      "text_tokens": 0,
+      "generation": false,
+      "checkpoint_stage": "unknown",
+      "pretraining_exposure": "unknown",
+      "redistributed": false
+    },
+    "method": {
+      "preprocessing": "EDF samples in microvolts and the common average of the 17 channels at the native rate; the two 2,000 Hz recordings resampled to 200 Hz; a 0.1–75 Hz band-pass, 50 and 60 Hz notch filters, and amplitudes divided by 100",
+      "sampling_hz": 200,
+      "resample_factor": 10,
+      "bandpass_hz": [
+        0.1,
+        75
+      ],
+      "notch_hz": [
+        50,
+        60
+      ],
+      "amplitude_divisor": 100,
+      "windows": 15,
+      "window_seconds": 4,
+      "tokens_per_window": 68,
+      "token_seconds": 1,
+      "dimensions": 768,
+      "tokens": "one token per channel and second, with no padding",
+      "attention": "the tokenizer sees every token; in the GPT branch each token sees its own second and earlier ones, with the channels of the same second visible to each other",
+      "representations": "tokenizer states after its final normalisation, and GPT hidden states after the final layer normalisation; each averaged over the tokens of a window, then over the windows",
+      "probe": "the classifier and the age residualization of the spectral arms, unchanged"
+    },
+    "arms": [
+      {
+        "id": "TOKENIZER",
+        "label": "Frozen EEG tokenizer",
+        "role": "frozen_representation",
+        "inputs": "The 768 frozen tokenizer values of each person",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.77,
+          "auroc": 0.9012,
+          "accuracy": 0.77,
+          "f1": 0.7722772277227723,
+          "sensitivity": 0.78,
+          "specificity": 0.76,
+          "confusion_tn_fp_fn_tp": [
+            38,
+            12,
+            11,
+            39
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.739010989010989,
+          "auroc": 0.8818681318681318,
+          "accuracy": 0.75,
+          "f1": 0.7951807228915663,
+          "sensitivity": 0.7857142857142857,
+          "specificity": 0.6923076923076923,
+          "confusion_tn_fp_fn_tp": [
+            18,
+            8,
+            9,
+            33
+          ]
+        }
+      },
+      {
+        "id": "TOKENIZER_AGE_RESIDUAL",
+        "label": "Tokenizer + training-fold age residualization",
+        "role": "sensitivity_analysis",
+        "inputs": "The tokenizer values with age regressed out inside each training fold",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.72,
+          "auroc": 0.7976,
+          "accuracy": 0.72,
+          "f1": 0.6956521739130435,
+          "sensitivity": 0.64,
+          "specificity": 0.8,
+          "confusion_tn_fp_fn_tp": [
+            40,
+            10,
+            18,
+            32
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.7133699633699634,
+          "auroc": 0.8452380952380952,
+          "accuracy": 0.6911764705882353,
+          "f1": 0.7123287671232876,
+          "sensitivity": 0.6190476190476191,
+          "specificity": 0.8076923076923077,
+          "confusion_tn_fp_fn_tp": [
+            21,
+            5,
+            16,
+            26
+          ]
+        }
+      },
+      {
+        "id": "GPT_HIDDEN",
+        "label": "Frozen GPT hidden states",
+        "role": "frozen_representation",
+        "inputs": "The 768 frozen GPT hidden-state values of each person",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.84,
+          "auroc": 0.9024,
+          "accuracy": 0.84,
+          "f1": 0.8431372549019608,
+          "sensitivity": 0.86,
+          "specificity": 0.82,
+          "confusion_tn_fp_fn_tp": [
+            41,
+            9,
+            7,
+            43
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.8443223443223443,
+          "auroc": 0.9120879120879121,
+          "accuracy": 0.8529411764705882,
+          "f1": 0.8809523809523809,
+          "sensitivity": 0.8809523809523809,
+          "specificity": 0.8076923076923077,
+          "confusion_tn_fp_fn_tp": [
+            21,
+            5,
+            5,
+            37
+          ]
+        }
+      },
+      {
+        "id": "GPT_HIDDEN_AGE_RESIDUAL",
+        "label": "GPT hidden states + training-fold age residualization",
+        "role": "sensitivity_analysis",
+        "inputs": "The GPT hidden-state values with age regressed out inside each training fold",
+        "eeg_input": true,
+        "excluded_from_model_comparisons": false,
+        "pooled": {
+          "n": 100,
+          "balanced_accuracy": 0.71,
+          "auroc": 0.7936,
+          "accuracy": 0.71,
+          "f1": 0.6813186813186813,
+          "sensitivity": 0.62,
+          "specificity": 0.8,
+          "confusion_tn_fp_fn_tp": [
+            40,
+            10,
+            19,
+            31
+          ]
+        },
+        "age_le_2": {
+          "n": 68,
+          "balanced_accuracy": 0.7591575091575091,
+          "auroc": 0.8782051282051282,
+          "accuracy": 0.7205882352941176,
+          "f1": 0.7246376811594203,
+          "sensitivity": 0.5952380952380952,
+          "specificity": 0.9230769230769231,
+          "confusion_tn_fp_fn_tp": [
+            24,
+            2,
+            17,
+            25
+          ]
+        }
+      }
+    ],
+    "audit": {
+      "status": "pass",
+      "independent_refits": 20,
+      "held_out_predictions_reconstructed": 400,
+      "reconstruction_error": 0.0,
+      "refit_error": 0.0,
+      "source_hash_checks": 300,
+      "feature_receipts_checked": 100,
+      "real_neural_features_independently_recomputed": false,
+      "what": "An independent program refit every probe and rebuilt every held-out probability with zero difference, checked every input file’s hash, and checked each feature file’s hash, layout and finiteness.",
+      "seal_sha256": "b18a592b3536998a1fd9be080f4c563512af644da7bd8f2de56bfa0eef72e80b",
+      "score_sha256": "7f62ba4ce8a7ba97d29692bcafa1dcdf8df039a62403af83bdd7f309a76d47fd"
+    },
+    "footnote": "NeuroLM’s preprocessing differs from the spectral pipeline: the two 2,000 Hz recordings are resampled to 200 Hz, then a 0.1–75 Hz band-pass, 50 and 60 Hz notches and division by 100. A difference between the two pipelines therefore mixes preprocessing with architecture. The checkpoint’s training stage and its prior exposure to these participants are unknown."
+  },
+  "limitations": [
+    "A small awake-only case-control development cohort from one institution. Labels are each participant’s case or control status, with no timed spasm events. There is no external or clinical validation, and the publisher’s full benchmark is outside this pilot.",
+    "Regressing out age inside each training fold assigns no share of the score to age, does not show that confounding is gone, and can also remove disease-related signal that varies with age.",
+    "Recording settings (channel count and sampling rate) are a no-EEG diagnostic control, shown beside the EEG rows and kept out of model comparisons.",
+    "NeuroLM is used as a frozen feature extractor read by supervised logistic probes: its weights are unchanged, and there is no text prompt, text generation or zero-shot diagnosis."
+  ],
+  "rights": {
+    "name": "IESSEEG · awake case-control pilot",
+    "task": "Case/control discrimination from one awake minute of EEG per person",
+    "source": "https://huggingface.co/datasets/Capur/IESSEEG/tree/1c32ee3a425a324808a9d275b60ce85625af35c8",
+    "version": "Hugging Face Capur/IESSEEG at revision 1c32ee3a425a324808a9d275b60ce85625af35c8",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Dataset: IESSEEG: An Open EEG Dataset Towards Better Understanding of Infantile Epileptic Spasms Syndrome, Hugging Face Capur/IESSEEG at revision 1c32ee3a, CC BY 4.0 for the dataset and annotations. The release card declares that the 400 case clinician-selected segments were previously analysed by Rajaraman et al. (2024), Computational EEG attributes predict response to therapy for epileptic spasms.",
+    "privacyReview": "The release card states institutional review board approval of the retrospective study, with waivers of informed consent and HIPAA research authorization, and asks that no one attempt to re-identify participants. The publication boundary is the one the Parkinson’s comparison uses: aggregate scores only, with no participant rows, predictions, ages or per-group age and sex composition; the age ≤2 column gives the band’s size and its case and control counts.",
+    "reviewedAt": "2026-10-19",
+    "reviewBasis": [
+      "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/README.md",
+      "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/LICENSE",
+      "https://huggingface.co/datasets/Capur/IESSEEG/tree/1c32ee3a425a324808a9d275b60ce85625af35c8"
+    ],
+    "redistributed": false
+  },
+  "release_record": {
+    "date": "2026-10-20",
+    "decided": "2026-10-19",
+    "decision": "Publish the IESSEEG awake case-control pilot as a section of the clinical groups page: six arms with and without EEG, including age-only and recording-settings-only controls, and four arms that read frozen NeuroLM features with the same probes. Every score is the approved research export's value, unchanged.",
+    "age_band": "The age <=2 column is published as the release reviews approved it: the band's size and its case and control counts, scored from the same out-of-fold predictions. Per-group age means and sex counts stay unpublished.",
+    "placement": "A section with its own question heading on the existing page; the page's heading, short answer and card keep their wording, and no dataset page or count is created."
+  },
+  "holds": [],
+  "not_published": [
+    "Participant rows of any kind: identifiers, ages, diagnoses, recordings, fold assignments, features, out-of-fold predictions and probabilities.",
+    "Per-fold metrics for the five folds and for the age <=2 band within each fold.",
+    "Per-group age means, medians and quartiles, and sex counts: aggregates, but a demographic profile of a diagnosis-specific group, which this site does not publish. The age <=2 column gives only the band's size and its case and control counts.",
+    "Intervals and significance tests: none was specified before scoring, and none is computed after it.",
+    "EEG signals, model code, the NeuroLM checkpoint and its features: none is redistributed.",
+    "Runtimes, hosts, storage locations and the private seal and score files (named by SHA-256 only)."
+  ],
+  "provenance": {
+    "manifest_sha256": "67418da30bd51f1c89985c845f88e6dcc2d8b875ab6da04b7dde4d9b179ce7ac",
+    "source_export_sha256": {
+      "controls": "1b4bb1676ffc385af9626bb431067ec2045ceb68017987780fba9446fd5bcb89",
+      "neurolm": "36f10d003be9f8794f46676ffe5c82815bb5581c0acc9513946b36230f0e07e8"
+    },
+    "release_review_sha256": {
+      "controls": "40f5661c5ae191daf4a0f0072ccec5cf8e5c106fecdff5a49780b42d7935ef1b",
+      "neurolm": "3357f5fe69d5296e017b4aea02fa1beb6f0bd50e9bdb9137bfef8ac7c91da4e8"
+    },
+    "numerical_audit_sha256": {
+      "controls": "9de015675a6bb7412b1fe55e3c05187628149e757032c6da8680e65dce16203a",
+      "neurolm": "50ed596f7d8c83694a29287ef0262e07b459de0b3483896a5ee951e99fc1ece6"
+    },
+    "protocol_sha256": {
+      "controls": "c10ea32bf16726b8ec8afd02eee74f84234f58dfcb7d9ecbc45b637255be2b8a",
+      "neurolm": "256eed9cb064861a8ddbcc1b168a4a33eed2136ce303bc3337bd1e0b06c78458"
+    },
+    "cohort_qc_audit_sha256": "4bc7b3a9f1cd58da968d2555fae5f14011a721de2903880a6dd3ebb324eb30ca",
+    "release_card_sha256": {
+      "readme": "79c7d3cec9eba6e0082f871e10eb80d411ada81eff41f3c22a5f89b7001cf0d6",
+      "licence": "95634d4d0810fe27a025c2546e7863aca1491ac1c68349e7a0566d0249a649aa"
+    },
+    "released_files_unchanged": [
+      "clinical-update.json"
+    ]
+  }
+}

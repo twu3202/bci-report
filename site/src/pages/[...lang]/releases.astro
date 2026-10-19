@@ -18,14 +18,18 @@ import language from '../../data/questions-in-language-update.json';
 import beyond from '../../data/beyond-scalp-update.json';
 import pilot from '../../data/pilot-studies-update.json';
 import eegpt from '../../data/eegpt-core-update.json';
+import ssvep from '../../data/new-ssvep-frequencies-update.json';
+import dataQuality from '../../data/data-quality-update.json';
+import clinicalIesseeg from '../../data/clinical-iesseeg-update.json';
+import neurolmEegmat from '../../data/neurolm-eegmat-update.json';
 import SiteHeader from '../../components/SiteHeader.astro';
 import AgentLinks from '../../components/AgentLinks.astro';
 import ShareImage from '../../components/ShareImage.astro';
 import FooterElsewhere from '../../components/FooterElsewhere.astro';
 import { site } from '../../data/site';
-import { corrections, holds, releases } from '../../data/releases';
+import { corrections, holds, openRegister, releases } from '../../data/releases';
 import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale,
-         topicCards, topicChrome } from '../../data/i18n';
+         registerCopy, topicCards, topicChrome } from '../../data/i18n';
 import '../../styles/global.css';
 import '../../styles/topics.css';
 
@@ -45,6 +49,9 @@ const fileFacts = (file: string) => {
   const bytes = served(file);
   return { file, bytes: bytes.length, sha: createHash('sha256').update(bytes).digest('hex') };
 };
+// The open register is read from the bytes served, by the name releases.ts gives its newest version, so a later
+// register version changes releases.ts alone.
+const register = JSON.parse(served(openRegister.json).toString('utf8'));
 // The review manifest each payload was built from, where the payload records it.
 const manifestOf: Record<string, string | undefined> = {
   evidence: evidence.provenance.manifest_sha256,
@@ -61,9 +68,16 @@ const manifestOf: Record<string, string | undefined> = {
   beyondScalp: beyond.provenance.manifest_sha256,
   pilotStudies: pilot.provenance.manifest_sha256,
   eegptCore: eegpt.provenance.manifest_sha256,
+  openRegister: register.provenance?.manifest_sha256,
+  newSsvepFrequencies: ssvep.provenance.manifest_sha256,
+  dataQuality: dataQuality.provenance.manifest_sha256,
+  clinicalIesseeg: clinicalIesseeg.provenance.manifest_sha256,
+  neurolmEegmat: neurolmEegmat.provenance.manifest_sha256,
   deployment: undefined, mvp: undefined,
 };
-const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id, extension: extension.release_id, largeSource: large.release_id, reliableDecisions: reliable.release_id, foundationModels: foundation.release_id, sharedRepresentation: shared.release_id, laterSessions: later.release_id, questionsInLanguage: language.release_id , beyondScalp: beyond.release_id, pilotStudies: pilot.release_id, eegptCore: eegpt.release_id };
+const idOf = { mvp: data.releaseId, deployment: deployment.release_id, evidence: evidence.release_id, clinical: clinical.release_id, context: context.release_id, adaptation: adaptation.release_id, extension: extension.release_id, largeSource: large.release_id, reliableDecisions: reliable.release_id, foundationModels: foundation.release_id, sharedRepresentation: shared.release_id, laterSessions: later.release_id, questionsInLanguage: language.release_id , beyondScalp: beyond.release_id, pilotStudies: pilot.release_id, eegptCore: eegpt.release_id,
+  openRegister: register.release_id, newSsvepFrequencies: ssvep.release_id, dataQuality: dataQuality.release_id,
+  clinicalIesseeg: clinicalIesseeg.release_id, neurolmEegmat: neurolmEegmat.release_id };
 for (const r of releases)
   if (idOf[r.payload] !== r.id) throw new Error(`releases.ts: ${r.id} does not match its payload (${idOf[r.payload]})`);
 
@@ -76,11 +90,16 @@ const kib = (n: number) => n < 1024 ? `${n} B` : `${(n / 1024).toFixed(1)} KiB`;
 const hubTitle: Record<string, { en: string; zh: string }> = {
   '/protocols/': { en: 'Protocols', zh: '协议' }, '/methods/': { en: 'Methods', zh: '方法' }, '/datasets/': { en: 'Datasets', zh: '数据集' },
 };
+// The open register's two pages (2026-10-20): a static segment beside the dataset and method pages, titled here.
+const registerTitle: Record<string, string> = {
+  '/datasets/register/': registerCopy[locale].datasets.title, '/methods/register/': registerCopy[locale].methods.title,
+};
 const pageTitle = (p: string) => {
   const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
   if (slug) return topicCards[locale][slug].title;
   // Since 2026-10-04 a release can name a hub (the v9 rows sit on every protocol page and have method pages).
   if (hubTitle[p]) return hubTitle[p][locale];
+  if (registerTitle[p]) return registerTitle[p];
   if (p !== '/') throw new Error(`releases.astro: no title for the page ${p}`);
   return locale === 'zh' ? '核心矩阵（首页）' : 'Core matrix (home page)';
 };

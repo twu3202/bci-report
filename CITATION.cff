@@ -52,8 +52,8 @@ identifiers:
     value: "https://bci.report/releases/"
     description: "Every release, with the SHA-256 of each file it ships"
 license: CC-BY-4.0
-version: "eegpt-core-update-20261013"
-date-released: "2026-10-13"
+version: "open-register-update-20261020"
+date-released: "2026-10-20"
 keywords:
   - EEG
   - electroencephalography

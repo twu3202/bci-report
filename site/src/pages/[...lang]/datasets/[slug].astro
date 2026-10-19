@@ -1,20 +1,41 @@
 ---
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import EntityLayout from '../../../components/EntityLayout.astro';
 import ResultGroups from '../../../components/ResultGroups.astro';
 import profiles from '../../../data/entity-profiles.json';
 import { bingoRights, datasets, handwritingRights, methodLabel, tr, type DatasetEntity } from '../../../data/entities';
 import { entityCopy } from '../../../data/entity-copy';
-import { directoryText, hrefFor, locales, defaultLocale, localeOf, topicCards } from '../../../data/i18n';
-import { site } from '../../../data/site';
-import { requestedCitations } from '../../../data/releases';
+import { directoryText, hrefFor, locales, defaultLocale, localeOf, registerCopy, topicCards, type Locale } from '../../../data/i18n';
+import { elsewhere, site } from '../../../data/site';
+import { openRegister, requestedCitations } from '../../../data/releases';
+import { registerServed } from '../../../data/files';
+import { topicPages } from '../../../data/topics';
 import { protocolLinkLabel } from '../../../data/protocols';
 import { creator } from '../../../data/structured';
 import { boasConditions, boasStatements, srText } from '../../../data/shared-encoder';
 
-export const getStaticPaths = () => locales.flatMap(code => datasets.map(d => ({
-  params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d },
-})));
-const { dataset: d } = Astro.props as { dataset: DatasetEntity };
+// Every dataset page links its row in the open register (/datasets/register/#r-site-<slug>). The rows are read from the
+// bytes the site serves, by the name releases.ts gives the newest register file, and only when that file is served
+// (files.ts `registerServed`), so a build without it links nowhere that does not exist. With it, a page whose row is
+// missing, or whose row names another page, refuses to build.
+export const getStaticPaths = () => {
+  type Row = { id: string; ladder: string; site?: { page?: string } };
+  const rows = registerServed
+    ? new Map((JSON.parse(readFileSync(resolve('public/data', openRegister.json), 'utf8')).entries as Row[]).map(r => [r.id, r]))
+    : null;
+  const rowOf = (slug: string) => {
+    if (!rows) return null;
+    const id = `r-site-${slug}`, row = rows.get(id);
+    if (!row || row.ladder !== 'dataset' || row.site?.page !== `/datasets/${slug}/`)
+      throw new Error(`datasets/[slug]: ${openRegister.json} has no dataset row ${id} for /datasets/${slug}/`);
+    return id;
+  };
+  return locales.flatMap(code => datasets.map(d => ({
+    params: { lang: code === defaultLocale ? undefined : code, slug: d.slug }, props: { dataset: d, registerRow: rowOf(d.slug) },
+  })));
+};
+const { dataset: d, registerRow } = Astro.props as { dataset: DatasetEntity; registerRow: string | null };
 const locale = localeOf(Astro.params.lang);
 const c = entityCopy[locale];
 const path = `/datasets/${d.slug}/`;
@@ -37,6 +58,21 @@ const abs = (p: string) => new URL(p, site.origin).href;
 // BOAS (2026-10-07): its register entry prints the ethics committee and reference and the written consent as its
 // rights record gives them; its three stated gaps travel with its figures, in the result group above.
 const zh = locale === 'zh';
+// BETA's link to route 3's follow-up tests, which read its held-out frequencies (owner decision D1): navigation, no
+// figure, while topics.ts lists that question.
+const ssvepFollowUps = d.slug === 'beta' && topicPages.some(t => t.slug === 'new-ssvep-frequencies')
+  ? { lead: zh ? 'BETA 留出频率上的后续检验：' : 'Follow-up tests on BETA’s held-out frequencies: ', question: topicCards[locale]['new-ssvep-frequencies'].question }
+  : null;
+// A long-form write-up that reads this dataset (site.ts `elsewhere`; BETA's, owner decision D8): one low-key line at
+// the end of the source section, as questions-in-language's #ql-article. It prints no figure.
+const article = elsewhere.articles.find(a => a.page === path);
+const articleCopy: Record<string, Record<Locale, [string, string]>> = {
+  'cca-and-frozen-eeg-foundation-models-on-beta': {
+    en: ['A longer write-up of the core-matrix results on BETA is on Hugging Face: ', 'CCA and frozen EEG foundation models on BETA ↗'],
+    zh: ['', 'BETA 核心矩阵部分结果的长文解读（英文，Hugging Face）↗'],
+  },
+};
+if (article && !articleCopy[article.id]) throw new Error(`datasets/[slug]: no article line for ${article.id} on ${path}`);
 const rights = d.rightsNote === 'boas' ? { ...boasStatements(), conditions: boasConditions(locale) } : null;
 // BINGO (owner decision 3, 2026-10-12): its rights exactly as they stand — no ethics-approval reference, and the
 // project's consent statement, which is about its other dataset — beside its credit, read from the export.
@@ -78,6 +114,7 @@ const structured = {
   <section class="topic-section" aria-labelledby="appears-heading">
     <h2 id="appears-heading">{c.appearsIn}</h2>
     <ul class="entity-links">{pages.map(p => <li><a href={hrefFor(p, locale)}>{pageLabel(p)}</a></li>)}</ul>
+    {ssvepFollowUps && <p class="citation-note" id="ssvep-follow-ups">{ssvepFollowUps.lead}<a href={hrefFor('/topics/new-ssvep-frequencies/', locale)}>{ssvepFollowUps.question}</a></p>}
   </section>
   <section class="topic-section" aria-labelledby="results-heading">
     <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.resultsLede}</p></div>
@@ -108,6 +145,8 @@ const structured = {
       <h3>{c.handwritingRightsH}</h3>
       <p>{tr(handwriting.pointer, locale)}{zh && <span class="note-original" lang="en">{handwriting.pointer.en}</span>} <a href="/data-use/#handwriting-rights">{c.handwritingDataUse}</a></p>
     </article>}</div>
+    {registerRow && <p class="citation-note" id="register-row" data-register-row={registerRow}><a href={hrefFor(`/datasets/register/#${registerRow}`, locale)}>{registerCopy[locale].rowLink}</a></p>}
+    {article && <p class="citation-note" id="ds-article">{articleCopy[article.id][locale][0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{articleCopy[article.id][locale][1]}</a></p>}
     <p class="citation-note"><a href={hrefFor('/datasets/', locale)}>{c.allDatasets}</a> · <a href={hrefFor('/methods/', locale)}>{c.allMethods}</a></p>
   </section>
 </EntityLayout>

@@ -12,8 +12,10 @@
  * holds every one of these.
  */
 import EntityLayout from '../../../components/EntityLayout.astro';
-import { hrefFor, localeOf, localeParams, topicChrome } from '../../../data/i18n';
-import { visualJev } from '../../../data/questions-in-language';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { qlRelease, visualJev } from '../../../data/questions-in-language';
+import { topicPages } from '../../../data/topics';
+import ssvep from '../../../data/new-ssvep-frequencies-update.json';
 import { decisionRoadmap, jevIndependence, jevStyle, typesafeJev } from '../../../data/decision-research';
 import { elsewhere, site } from '../../../data/site';
 
@@ -31,6 +33,22 @@ const hrefOf = (r: string) => r.startsWith('#') ? `${hrefFor('/topics/when-not-t
 const article = elsewhere.articles.find(a => a.page === '/topics/when-not-to-act/');
 const article2 = elsewhere.articles.find(a => a.page === '/topics/shared-encoder/');
 const article3 = elsewhere.articles.find(a => a.page === '/topics/questions-in-language/');
+// Route 3's follow-ups (owner decision D1): the line route 3's #unseen-frequency ends with, after the route's first
+// link and with no digit. Its counts are words, held to new-ssvep-frequencies-update.json; its link text is the
+// follow-up page's question.
+const fcards = ssvep.placement.cards, fcard = (k: number) => fcards.find(c => c.card === k);
+if (!(topicPages.some(t => t.slug === 'new-ssvep-frequencies') && ssvep.placement.page === '/topics/new-ssvep-frequencies/'
+  && ssvep.cohort.dataset === 'BETA' && ssvep.cohort.same_cohort_as === qlRelease.id && ssvep.cohort.cards.join() === '1,2,3,4,5,6'
+  && [1, 2, 3, 4, 5, 6].map(k => fcard(k)?.anchor).join() === 'reference-spectrum,head-and-features,phase-jitter,phase-ramp,cca-mechanism,cca-correction'
+  && fcards.filter(c => !('status_only' in c && c.status_only)).length === 7 && fcard(6)?.studies.join() === 'cca_adapter'
+  && fcard(7)?.studies.join() === 'wearable_transfer' && ssvep.wearable.cards.join() === '7' && ssvep.wearable.dataset !== ssvep.cohort.dataset
+  && ssvep.wearable.source_dataset === ssvep.cohort.dataset && ssvep.wearable.retraining === false))
+  throw new Error('jev-style: six follow-ups on route 3’s BETA cohort, one idea each, and a seventh that tried the learned correction to CCA on a second dataset, on their own question page');
+const followQ = topicCards[locale]['new-ssvep-frequencies'].question.replace(/[?？]$/, '');
+const followUps = {
+  en: ['Six follow-up experiments on the same BETA cohort each tested one idea (the question, the head, phase, the matching computation, a learned correction to CCA), and a seventh tried the correction on a second dataset: ', `${followQ.charAt(0).toLowerCase()}${followQ.slice(1)} →`],
+  zh: ['在同一批 BETA 被试上，六项后续实验各检验一个想法（提问方式、分类头、相位、匹配计算、对 CCA 的学习修正），第七项则在第二个数据集上检验了这个修正：', `${followQ} →`],
+}[locale];
 const copy = {
   en: {
     docTitle: 'Jev-style questions on EEG: the evidence',
@@ -112,6 +130,7 @@ const structured = {
       <h3>{r.title}</h3>
       <p><strong>{r.q}</strong> {r.a}</p>
       <p class="route-results"><a href={hrefOf(results[i])}>{r.link}</a></p>
+      {runs[i].id === 'questions-in-language' && <p class="route-run-note" data-follow-ups="true">{followUps[0]}<a href={hrefFor('/topics/new-ssvep-frequencies/', locale)}>{followUps[1]}</a></p>}
     </li>)}</ol>
     <p class="roadmap-p">{copy.roadmap[0]}<a href={`${hrefFor('/topics/when-not-to-act/', locale)}#decision-research`}>{copy.roadmap[1]}</a></p>
     {article && <p class="citation-note" id="jev-article">{copy.article[0]}<a href={article.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article[1]}</a>{article2 && <>{locale === 'zh' ? '；' : '; '}{copy.article2[0]}<a href={article2.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article2[1]}</a></>}{article3 && <>{locale === 'zh' ? '；' : '; '}{copy.article3[0]}<a href={article3.url} target="_blank" rel="noreferrer" hreflang="en">{copy.article3[1]}</a></>}</p>}

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { site } from '../data/site';
 import { releases } from '../data/releases';
-import { topicCards } from '../data/i18n';
+import { registerCopy, topicCards } from '../data/i18n';
 
 /**
  * /releases.xml — an Atom feed of the release log, one entry per reviewed
@@ -29,10 +29,15 @@ const typeOf = (file: string) => (file.endsWith('.csv') ? 'text/csv' : 'applicat
 // Since 2026-10-04 a release can name a hub (the v9 rows: every protocol page, the method pages),
 // titled as releases.astro titles them.
 const hubName: Record<string, string> = { '/protocols/': 'Protocols', '/methods/': 'Methods', '/datasets/': 'Datasets' };
+// The open register's two pages (2026-10-20), titled as releases.astro titles them.
+const registerName: Record<string, string> = {
+  '/datasets/register/': registerCopy.en.datasets.title, '/methods/register/': registerCopy.en.methods.title,
+};
 const pageName = (p: string) => {
   const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
   if (slug) return topicCards.en[slug].title;
   if (hubName[p]) return hubName[p];
+  if (registerName[p]) return registerName[p];
   if (p !== '/') throw new Error(`releases.xml.ts: no title for the page ${p}`);
   return 'Core matrix (home page)';
 };

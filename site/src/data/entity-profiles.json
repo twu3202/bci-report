@@ -456,6 +456,21 @@
     "https://raw.githubusercontent.com/OpenNeuroDatasets/ds007420/1.0.5/dataset_description.json",
     "https://europepmc.org/article/PMC/PMC10203730"
    ]
+  },
+  "shin2022": {
+   "aliases": [
+    "Shin2022",
+    "Figshare 20383716",
+    "Data from: Closed-loop motor imagery EEG simulation for brain-computer interfaces",
+    "Shin, Suma and He (2022)"
+   ],
+   "summary_en": "Shin2022 (Figshare 20383716) holds the recordings of a closed-loop motor imagery cursor study: 10 healthy participants, one recording day each, moved a cursor toward an instructed right or left target with visual feedback, recorded with a 16-channel dry-electrode g.tec g.Nautilus headset at 250 Hz. The release is organised into live and simulated recordings, each under three experimental conditions (BW, NT and CV), following the authors’ parallel design with a BCI simulator. Released by Hyonyoung Shin, Daniel Suma and Bin He under CC BY 4.0 and described in Frontiers in Human Neuroscience (2022). Only the live human recordings are used here.",
+   "summary_zh": "Shin2022（Figshare 20383716）收录一项闭环运动想象光标研究的记录：10 名健康被试各记录一天，在视觉反馈下把光标移向指示的右侧或左侧目标，设备为 16 通道干电极 g.tec g.Nautilus，采样率 250 Hz。发布内容按作者与 BCI 模拟器并行的实验设计，分为真人记录与模拟记录两部分，各含 BW、NT、CV 三种实验条件。由 Hyonyoung Shin、Daniel Suma 与 Bin He 以 CC BY 4.0 发布，并在 Frontiers in Human Neuroscience（2022）中描述。这里只用到真人被试的记录。",
+   "facts_sources": [
+    "https://doi.org/10.6084/m9.figshare.20383716.v1",
+    "https://api.figshare.com/v2/articles/20383716/versions/1",
+    "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.951591/full"
+   ]
   }
  },
  "methods": {

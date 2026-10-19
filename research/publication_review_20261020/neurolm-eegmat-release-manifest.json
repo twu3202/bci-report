@@ -1,0 +1,179 @@
+{
+ "release_id": "neurolm-eegmat-update-20261020",
+ "freeze_date": "2026-10-20",
+ "reviewed_at": "2026-10-19",
+ "reviewer": "publishing session",
+ "scope": "Editorial decisions for the NeuroLM EEGMAT frozen-feature pilot: NeuroLM-B frozen, one fixed ridge head on each of three representations of the same 2,160 two-second windows from 36 people, scored as equal-person means with paired participant-bootstrap differences. Its own manifest: it amends no earlier review and changes no released file. mvp.json, the arithmetic-rest protocol and results files, the further-encoder CSVs, eegpt-core-update.json and pilot-studies-update.json keep their bytes; the pilot sits in its own file, neurolm-eegmat-update.json, as a separate panel on the pilot studies page. Every figure is read from a file this manifest pins by SHA-256: the approved aggregate export of the research session, bound by its release record and equal to the producer aggregate the independent numerical audit checked; dimensions from the frozen protocol; the parameter count from the strict-restore receipt of the smoke evidence; licences from the preflight record; exposure facts from the pinned NeuroLM source, the preflight and the checkpoint-stage inspection. Nothing was re-run: NeuroLM was not loaded, no feature was extracted, no head was refitted and no network was used.",
+ "approval": {
+  "date": "2026-10-19",
+  "decision": "aggregate_preview",
+  "basis": "The owner’s decision D1 in chat on 2026-10-19, recorded in owner-decisions.json: publish IESSEEG with the NeuroLM results, including the NeuroLM EEGMAT pilot panel. The research session’s release record approves an aggregate pilot handoff and leaves website publication to the site (website_published_by_this_chat false); publication on the site rests on D1. Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+  "ownerDecisions": {
+   "path": "research/publication_review_20261020/owner-decisions.json",
+   "sha256": "3661cb4d54f2daa8512e994865cab20a93c6a6d2ba0e9b31b81092b1bd9ff3b7"
+  },
+  "previewDefaults": [
+   "Placement: a separate panel, #neurolm-eegmat on /topics/pilot-studies/, outside the pilot count, with a pointer that carries no figures from /protocols/arithmetic-rest/. The pilot-studies short answer, description, dek, card and pilot count keep their wording.",
+   "Label: the tokenizer arm is “tokenizer features”, the export’s own name (tokenizer_mean).",
+   "Exposure: unknown, with the checkpoint’s training stage unresolved.",
+   "Interval wording: the pilot-studies sentence, “the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent”.",
+   "Licences per part: EEGMAT under its released record; NeuroLM code MIT at the pinned commit; the NeuroLM-B checkpoint CC BY 4.0 as its Hugging Face metadata states; no weights distributed.",
+   "Counts: no new dataset, model or pilot in any counter; no row in the core Arithmetic & rest matrix, the further-encoder CSVs or any leaderboard."
+  ],
+  "decisionsOfThisReview": [
+   "Values: every score and paired difference is read from the approved export, which the research release record binds by SHA-256 and the readings verified; it must equal the producer aggregate that the interpretation review pins and the independent numerical audit checked, and the readings’ verified numbers.",
+   "Dimensions from the frozen protocol (768, 768 and 95, the last 19 channels by 5 bands). The parameter count, 255,107,712, from the strict-restore receipt of the smoke evidence, which the initial validation review and the handoff state; the unrendered legacy models.json entry for NeuroLM is not read.",
+   "Licences from the preflight record: code MIT, its LICENSE file the one the frozen protocol and the acquisition receipt hash; Hugging Face license metadata cc-by-4.0 with a 30-byte card, public and ungated. Read by the research session on 2026-10-16 and not refetched here.",
+   "Exposure unknown: EEGMAT is absent from the published pretraining list, Workload is one of the six instruction tasks in the pinned code, and the checkpoint metadata (epoch 19, iteration 83,660, initialised from gpt2, learning rate 0.0006) fits a pretraining checkpoint with instruction tuning unverified.",
+   "Intervals: the export gives paired-difference intervals only, so each arm carries a null interval.",
+   "The core protocol facts that put this pilot in its own panel are read from the core run’s pinned dataset and engine protocols and the core runner, the files the EEGPT core release pins."
+  ]
+ },
+ "releaseRecord": {
+  "date": "2026-10-20",
+  "decision": "Publish the NeuroLM EEGMAT frozen-feature pilot as its approved aggregates: a separate panel on the pilot studies page, outside the pilot count and every leaderboard.",
+  "rights": "EEGMAT keeps its released record: Open Data Commons Attribution License 1.0, aggregate results only. NeuroLM’s code is MIT at the pinned commit. The NeuroLM-B checkpoint is CC BY 4.0 as the licence tag of its Hugging Face repository states, and its 30-byte model card adds no terms. No weights are distributed, and no endorsement by NeuroLM’s authors is implied.",
+  "researchRelease": "The research session’s release record approves an aggregate pilot handoff, outside every leaderboard, and binds the export, protocol, producer, numerical audit and three reviews by SHA-256.",
+  "binding": "This record approves the served file the export audit names."
+ },
+ "research": {
+  "export": {
+   "path": "research/iclr_bci_expansion_20261016/exports/NeuroLM EEGMAT Frozen Feature Pilot.json",
+   "sha256": "62b7ebe4be2e331cb0651486185c7abdaa173d3279031d8ffc66c74b6208a20e"
+  },
+  "releaseRecord": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM EEGMAT Aggregate Release.json",
+   "sha256": "9a9c1b4770797c899b229e176f7deec4dceacd209c80dfcd3f63d2365afc7adf"
+  },
+  "deliveryVerification": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/NeuroLM and IESSEEG Delivery Verification.json",
+   "sha256": "984070de6f2972e64370dfd2acc993793a05b497f880cf7ae14afa718d716147"
+  },
+  "protocol": {
+   "path": "research/iclr_bci_expansion_20261016/validation/eegmat-probe-protocol.json",
+   "sha256": "670b55c1d63856af5b318104d40687772658f7790c9ebefd11f6633f4ed23b61"
+  },
+  "producer": {
+   "path": "research/iclr_bci_expansion_20261016/validation/scripts/neurolm_eegmat_probe.py",
+   "sha256": "98fd8d9a22c98ca62c505f4a9d459e49d44be878ed0a2f6204137b2e77e59e25"
+  },
+  "numericalAudit": {
+   "path": "research/iclr_bci_expansion_20261016/validation/independent-numerical-attempt02.json",
+   "sha256": "d329a085c87da98c138c1c03ce0042decafd0f72fca90514d5106a3e0da58d91"
+  },
+  "pendingAggregate": {
+   "path": "research/iclr_bci_expansion_20261016/validation/eegmat-aggregate-pending-audit.json",
+   "sha256": "9237b7a3720659a6f94bb7665eb4ed85496c5d42b76138a53b97a8fb72b12d52"
+  },
+  "numericalAuditReview": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM EEGMAT Numerical Audit Review.md",
+   "sha256": "8454c6e776c7ab65882792c4ba60bbca7707eb0442c6842c92fddb8e42b94435"
+  },
+  "interpretationReview": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM EEGMAT Handoff Interpretation Review.md",
+   "sha256": "cd28640d470dc298e27de270edb1768a1cf5128335e4ffc99ea40b2e99310e1c"
+  },
+  "executionReview": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM EEGMAT Execution Review.md",
+   "sha256": "985d6d7b74ec6c88455edeb7974a3c0f1ac18d65ffcefe3e0f1db9c045da32e6"
+  },
+  "handoff": {
+   "path": "research/iclr_bci_expansion_20261016/NeuroLM EEGMAT Validation and IESSEEG Intake Handoff.md",
+   "sha256": "cf2b74af25dbbcf7ff16bca2c6e3efba459159d1ba93915386c2be8415b04466"
+  },
+  "preflight": {
+   "path": "research/iclr_bci_expansion_20261016/validation/neurolm-preflight.json",
+   "sha256": "8b3a92957b3a5495a57650b707a09818b2ff6761a0e312449a76c6a7f7c7e569"
+  },
+  "stageInspection": {
+   "path": "research/iclr_bci_expansion_20261016/validation/checkpoint-stage-inspection.json",
+   "sha256": "21a96b694171d571e9dbb5de3e7e37fa16f31dd9043efbe6309f296cde132450"
+  },
+  "advancementCheck": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/Validation Advancement Check.json",
+   "sha256": "87e28515742c943f841ac8807a4000d5194866841fe2583a912e5754c93c7c76"
+  },
+  "maskExecutionAudit": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM Mask Execution Audit.md",
+   "sha256": "27718c9608f88c588b87e1317815eaffdfe2ea6bd97a925205b448462bd911a9"
+  },
+  "smokeEvidence": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM Acquisition and Smoke Evidence.json",
+   "sha256": "3193efc3d6106157f42d46bb5f0f5c71165112d11a29109c83327e3a16bf0893"
+  },
+  "smokeDelivery": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/OpenReview Update Delivery Verification.json",
+   "sha256": "087ae1acecba5993e6f52d17f73797e0c6cbb9d7674c69e16906a8e5f758373f"
+  },
+  "initialValidationReview": {
+   "path": "research/iclr_bci_expansion_20261016/validation/NeuroLM Initial Validation Review.md",
+   "sha256": "e4206360075bc1feda3b8fddd0da15da2ffe4376bf7ce827edcfc750f2c95bcc"
+  },
+  "instructionSource": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/neurolm-training-source/train_instruction.py",
+   "sha256": "1f836d5cfab13768dc5dd0689b77b50d56195f0d914e5b74efa940268a7b6791"
+  },
+  "downstreamSource": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/neurolm-training-source/downstream_dataset.py",
+   "sha256": "9781d5033aae0c9a6589fa78417c6f3ce865a94de58a9784d699a50832614cfb"
+  },
+  "sourceReceipt": {
+   "path": "research/iclr_bci_expansion_20261016/evidence/neurolm-training-source/source-receipt.json",
+   "sha256": "57513b3c025ae1242dc0b03aa14423824ea9eb2ccb71fd3137cb908718c6934e"
+  },
+  "paperRecord": {
+   "path": "research/iclr_bci_expansion_20261016/Additional ICLR BCI Opportunities.json",
+   "sha256": "8eb247abba7977fc4e6a00ea552c797e0c05f312f2f88c826461344ce5ffa5b1"
+  }
+ },
+ "planning": {
+  "readings": {
+   "path": "research/site_release_plan_20261019/handoff-readings.json",
+   "sha256": "f231b1aac935f5fbe991a636191e13b2e1c8a5818bca9f57231fb64ca6c90c6a",
+   "entry": "NeuroLM EEGMAT frozen-feature pilot"
+  }
+ },
+ "published": {
+  "coreMatrix": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  },
+  "pilotStudies": {
+   "path": "site/src/data/pilot-studies-update.json",
+   "sha256": "c93a344b7111b2335565b4a2819c0f4be6a93ba8d6970a8fd4fcb0cf9caf2bca"
+  },
+  "eegptCore": {
+   "path": "site/src/data/eegpt-core-update.json",
+   "sha256": "8563862b961a226636d1349ec62f5bfd4fe922bda326c27fbcf7557e2d277a26"
+  }
+ },
+ "core": {
+  "manifest": {
+   "path": "research/publication_review_20261013/eegpt-core-release-manifest.json",
+   "sha256": "21e27baaebe9af009a9555a5b1a64e367246b14df00413ab0d9159c183b60ffc"
+  },
+  "datasetProtocol": {
+   "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/dataset-protocol.json",
+   "sha256": "5d53ccbd5a00763908162f0b700c0a3236e0d4f9d43b08e42ee31a2ef01aefbf"
+  },
+  "engineProtocol": {
+   "path": "research/publication_review_20261013/evidence/runs/parallel-v1/physionet-eegmat-1.0.0-mps-v1/engine-protocol.json",
+   "sha256": "4dfa0e59716bb69be38c16e935ba607c77c664a459e7fea1ea0fbc9e7f861439"
+  },
+  "runner": {
+   "path": "experiments/parallel_benchmark_v1/run_suite.py",
+   "sha256": "42fa5057a864a46da7148a1e77fd01ba1f0fb7e53c25fccc7ba234e1a8fabbcc"
+  },
+  "note": "The core run’s dataset and engine protocols are the byte copies the EEGPT core release keeps in its git-ignored evidence folder (they carry private storage paths); the runner is the one that release pins."
+ },
+ "notPublished": [
+  "Per-person, per-fold and per-window values of any kind, fold assignments, participant identifiers, condition labels, features, fitted heads, predictions and the sealed prediction files: only equal-person means, paired differences with their intervals and cohort counts are published.",
+  "Demographics from the source dataset’s participant file.",
+  "Measured compute: worker times, memory and process counts from the handoff, the receipts and the audits.",
+  "The checkpoint and the NeuroLM source: no weights are distributed; the SHA-256 identifies the checkpoint used and grants nothing.",
+  "The generation-mask adapter’s checks: engineering evidence that took no part in these scores.",
+  "The IESSEEG intake and the watchlist leads of the same handoff: IESSEEG has its own release, and the leads have no results.",
+  "The handoff, protocol, producer, receipts, reviews and input manifest themselves: each is pinned by SHA-256 in this manifest and checked by the export, and none is published, because several carry private storage paths."
+ ],
+ "holds": []
+}

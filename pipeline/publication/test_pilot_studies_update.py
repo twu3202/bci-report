@@ -721,6 +721,10 @@ class HeldSiteBuild(unittest.TestCase):
         page = (dist / 'topics/pilot-studies/index.html').read_text()
         self.assertIn('id="bingo-cross-language-rights"', page)
         self.assertIn('Four findings from three pilots', page)
+        # The NeuroLM-on-EEGMAT panel is its own release: a held pilot neither drops it nor pulls it into the count.
+        self.assertIn('id="neurolm-eegmat"', page)
+        self.assertIn('data-counted="false"', page)
+        self.assertIn('data-fig="neurolm-eegmat-update.json|pct2|0.6449074074074076"', page)
         self.assertNotIn('pilot-studies-update.json|pct1|0.0666', page)
         self.assertIn('<tr id="hold-bingo-cross-language-rights"', (dist / 'releases/index.html').read_text())
         self.assertIn('BINGO, held', (dist / 'data-use/index.html').read_text())
@@ -733,6 +737,10 @@ class HeldSiteBuild(unittest.TestCase):
         page = (dist / 'topics/pilot-studies/index.html').read_text()
         self.assertIn('id="handwriting-mask-aware-rights"', page)
         self.assertIn('Four findings from three pilots', page)
+        # The NeuroLM-on-EEGMAT panel is its own release: a held pilot neither drops it nor pulls it into the count.
+        self.assertIn('id="neurolm-eegmat"', page)
+        self.assertIn('data-counted="false"', page)
+        self.assertIn('data-fig="neurolm-eegmat-update.json|pct2|0.6449074074074076"', page)
         self.assertNotIn('pilot-studies-update.json|pct2|0.2680864', page)
         self.assertIn('<tr id="hold-handwriting-mask-aware-rights"', (dist / 'releases/index.html').read_text())
         self.assertIn('The handwriting dataset, held', (dist / 'data-use/index.html').read_text())

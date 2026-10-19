@@ -4,8 +4,10 @@
  * checked against dist/data by check-workbench.mjs, so a file can't be served
  * without a description here, or described without being served.
  */
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import data from './mvp.json';
-import { releases } from './releases';
+import { openRegister, releases } from './releases';
 import { bingoReleased, handwritingReleased } from './pilot-switch';
 import type { Locale } from './i18n';
 
@@ -85,10 +87,44 @@ const named: Record<string, Text> = {
     en: 'Screen-to-VR P300 transfer, treadmill walking speed beside a movement-nuisance comparator, and the asynchronous SSVEP non-control pilot, with audits.',
     zh: '从屏幕到 VR 的 P300 迁移、跑步机步速（旁边并排放着运动干扰对照），以及异步 SSVEP 非控制试点，附审计。',
   },
+  // The four result files of the open-register release (owner decision D1).
+  'new-ssvep-frequencies-update.json': {
+    en: 'What lets a decoder answer an SSVEP frequency it never trained on? Seven audited follow-ups to route 3 on its BETA cohort, and the same models run unchanged on Wearable-102: the endpoints with their chance levels; a name key from the site’s names to the export codes; for each study its levels and paired contrasts with their intervals and interval method, roles and flags, its checks as pass or fail with counts, and what was not run; the stimulus phases taken from the BETA authors’ corrigendum; a status card for the cross-spectral round, with no figures; rights records and the audit record.',
+    zh: '解码器靠什么回答没训练过的 SSVEP 频率？第三条路线在其 BETA 队列上的七项经审计的后续检验，以及同一批模型原样用于 Wearable-102 的结果：各端点及其随机水平；从本站名称到导出代码的对照表；每项检验的水平与配对对比及其区间与区间方法、角色与标记，以通过或失败及计数给出的检查，以及没有运行的部分；取自 BETA 作者更正说明的刺激相位；互谱一轮的状态卡（没有数字）；权利记录与审计记录。',
+  },
+  'data-quality-update.json': {
+    en: 'Three public EEG datasets checked end to end from their files. Shin2022, the worked case: a participant-held-out diagnostic with three arms (a training prior, a normalised spectral ridge and a retrospective duration control; participant-mean balanced accuracy with its participant-bootstrap interval, and a pooled secondary value), the coverage chain from the runs in the release to the signal-valid windows, where the catalog’s trial length comes from, how the files were checked, its holds, rights and consent and ethics statements. eldBETA: counts for one participant’s recordings, with the score held. ZuCo 2.0: a timing hold on one converted run, with no figure.',
+    zh: '三个公开 EEG 数据集，从文件本身从头到尾核了一遍。Shin2022 是完整的案例：整名被试留出的诊断，三个组（训练集先验、归一化的 spectral ridge 与一个回溯的时长对照；按被试平均的平衡准确率及其被试 bootstrap 区间，以及合并计算的次要数值），从发布中的 run 到信号有效时间窗的覆盖链，目录中试次时长的来历，文件是怎么核的，以及它的暂缓项、权利、知情同意与伦理声明。eldBETA：一名被试记录的计数，分数暂缓。ZuCo 2.0：一个转换后记录的时间问题，暂缓，没有数字。',
+  },
+  'clinical-iesseeg-update.json': {
+    en: 'IESSEEG, an infant case-control pilot with age and recording-setting controls: six arms with and without EEG (a training prior, age only, recording settings only, EEG spectral features, EEG with age, and EEG after training-fold age residualization) and four arms that read frozen NeuroLM features with the same probes. Out-of-fold point estimates of balanced accuracy, AUROC and secondary metrics with confusion counts, for everyone and for the people aged 2 or under; the cohort and its input check; the release card’s attribution and ethics statement; the audit boundary, limitations and what is not published; and the clinical-groups page’s medical disclaimer.',
+    zh: 'IESSEEG，一项附年龄与采集设置对照的婴儿病例对照试点：六个使用或不使用 EEG 的组（训练集先验、只用年龄、只用采集设置、EEG 频谱特征、EEG 加年龄，以及在训练折内回归掉年龄后的 EEG），以及用同样的分类头读冻结 NeuroLM 特征的四个组。平衡准确率、AUROC 与次要指标的折外点估计及混淆计数，分别针对全部被试与 2 岁及以下的被试；队列及其输入核查；数据集发布卡片中的署名与伦理声明；审计边界、局限与不发布的内容；以及临床分组页面的医学免责声明。',
+  },
+  'neurolm-eegmat-update.json': {
+    en: 'NeuroLM’s frozen features on EEGMAT’s arithmetic and rest, a separate pilot panel: equal-person balanced accuracy and macro-F1 of three representations (tokenizer features, GPT hidden states and band power) under one fixed ridge head, three paired differences with their participant-bootstrap intervals, the adapter and the probe, the checkpoint’s identity and the terms of each part, pretraining exposure (unknown) with its sources, limitations, the audit record and what is not published.',
+    zh: 'NeuroLM 冻结特征在 EEGMAT 心算与静息上的结果，作为单独的试点一栏：同一个固定的岭回归分类头下三种表示（分词器特征、GPT 隐藏状态与频带功率）按被试等权的平衡准确率与宏平均 F1，三个配对差值及其被试 bootstrap 区间，适配流程与分类头，检查点的标识与各部分的条款，是否出现在预训练数据中（未知）及其出处，局限、审计记录与不发布的内容。',
+  },
+};
+
+/**
+ * The open register's files (releases.ts `openRegister`). Each register version is a new dated file, and earlier ones
+ * stay served and listed, so the names are matched by shape: open-register-<YYYYMMDD>.json and .csv.
+ */
+const registerFile: Record<'json' | 'csv', Text> = {
+  json: {
+    en: 'The open register, canonical: every EEG dataset we know of and every EEG model and paper we track, one row each under an opaque id, with its ladder (dataset or model), the furthest step checked, each step’s evidence as pass, gap or not applicable with its source, the gaps, its status, the terms as stated and by whom, aliases (repository ids, accessions, MOABB loaders), findings as codes with their parameters, and links; the step definitions in English and Chinese, the rules, the sources with the frozen query, the counts and the uploader families.',
+    zh: '开放登记册的规范文件：我们知道的每个 EEG 数据集、关注的每个 EEG 模型与论文，每项一行、各有一个不透明的编号，附其所属的核验序列（数据集或模型）、核验到的最远一步、每一步的证据（通过、缺口或不适用，及其出处）、缺口、状态、所述条款及其出处、别名（仓库编号、登录号、MOABB 加载器）、以代码加参数表示的发现，以及链接；另有中英文的步骤定义、规则、含冻结查询的来源、计数与上传者系列。',
+  },
+  csv: {
+    en: 'The open register’s dataset ladder, flat, for spreadsheets and the Hugging Face viewer: one row per dataset entry with its id, group, name, host, licence as stated, whether access is gated, the furthest step checked, gaps, status and page. Findings are in the JSON.',
+    zh: '开放登记册的数据集部分，扁平表格，供电子表格与 Hugging Face 预览使用：每个数据集条目一行，含编号、分组、名称、托管方、所述许可、访问是否受限、核验到的最远一步、缺口、状态与页面。发现写在 JSON 中。',
+  },
 };
 
 export function describeFile(file: string): Text {
   if (named[file]) return named[file];
+  const register = file.match(/^open-register-\d{8}\.(json|csv)$/);
+  if (register) return registerFile[register[1] as 'json' | 'csv'];
   // The v9 batch's per-protocol CSVs (releases.ts foundationModelFiles).
   const fm = file.match(/^foundation-models-(.+)\.csv$/);
   if (fm) {
@@ -109,3 +145,19 @@ export function describeFile(file: string): Text {
 
 /** Every served download, newest release first, with the release that ships it. */
 export const servedFiles = releases.flatMap(r => r.files.map(file => ({ file, release: r.id, date: r.date })));
+
+/**
+ * Whether a download is in public/data, the directory the site serves (read at build time, as releases.astro reads
+ * it for the hashes). Every link to a register page is guarded on the register file being served (plan §4.7), so a
+ * build without it links nowhere that does not exist.
+ */
+export const isServed = (file: string) => existsSync(resolve('public/data', file));
+export const registerServed = isServed(openRegister.json);
+/**
+ * Whether each register page is built: its register file is served (both pages read it, and neither is built
+ * without it) and its route exists. A page that links a register page, or lists it, is guarded on its flag.
+ */
+const routeExists = (path: string) =>
+  [`src/pages/[...lang]${path.slice(0, -1)}.astro`, `src/pages/[...lang]${path}index.astro`].some(p => existsSync(resolve(p)));
+export const registerPageBuilt = registerServed && routeExists('/datasets/register/');
+export const modelRegisterPageBuilt = registerServed && routeExists('/methods/register/');

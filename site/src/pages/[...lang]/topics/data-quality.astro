@@ -1,0 +1,364 @@
+---
+/**
+ * What do the files show once a public EEG dataset is checked end to end? (owner decisions D1 and D2): Shin2022 as the
+ * worked case, a participant-held-out diagnostic with three arms beside the coverage chain that counts its runs and
+ * windows from the files; eldBETA as a status case with counts and no score; ZuCo 2.0 as a status case with no figure.
+ * In "Reliability & clinical", last.
+ *
+ * Every figure is a leaf of data-quality-update.json, printed with data-fig (Fig.astro); the words for the export's
+ * own English, and the facts each sentence rests on, are in src/data/data-quality.ts. Rules: the coverage chain is
+ * printed once, in its table; the duration control is labelled retrospective and set apart; Shin2022's caveat sits
+ * once, beside its table; eldBETA prints counts and the holds line, "header calibration applied", and no score; the
+ * ZuCo 2.0 case prints no figure; each case links its row in the open register only while the register file is served
+ * and its page built, and the catalog line says MOABB's counts are on Shin2022's row only while that row carries them.
+ * The sentences that summarise the export are checked against it here, and the page refuses to build without them.
+ */
+import TopicLayout from '../../../components/TopicLayout.astro';
+import Fig from '../../../components/Fig.astro';
+import Parts from '../../../components/Parts.astro';
+import { chrome, hrefFor, localeOf, localeParams, registerCopy, topicCards, topicChrome } from '../../../data/i18n';
+import { datasetBySlug, formatFig, type Fig as FigValue } from '../../../data/entities';
+import {
+  DQ, DQ_ANCHOR, DQ_PATH, chainLabel, dqCatalogFinding, dqFig, dqNotPublishedShown, dqRegisterRows, dqSay, dqSchema, dqText, duration, eld,
+  eldHold, eldHolds, prior, shin, shinArms, shinChain, singlemSource, spectral, step, zuco, zucoCase, zucoHold, type ChainStep, type Part,
+  type ShinArm,
+} from '../../../data/data-quality';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const t = chrome[locale];
+// The space between two sentences, or a sentence and its link: none in Chinese, after a full-width mark.
+const sp = zh ? '' : ' ';
+const pct = (raw: number): FigValue => dqFig(raw, 'pct2');
+const n = (raw: number): FigValue => dqFig(raw, 'count');
+const F = (x: FigValue) => formatFig(x);
+const ans = (x: FigValue) => `[[${F(x)}]]`;
+
+// --- The facts the page's own sentences state, beyond those data-quality.ts asserts. -----------------------------
+const need = (ok: unknown, what: string) => { if (!ok) throw new Error(`topics/data-quality: the copy says ${what}`); };
+const pairs = step('byte_identical_pairs'), distinct = step('distinct_runs'), complete = step('complete_runs');
+const short = step('shorter_than_one_second'), invalid = step('signal_invalid'), valid = step('signal_valid');
+const C = eld.counts, SC = shin.consent_and_ethics, EC = eld.consent_and_ethics;
+// The short answer and the description: some runs repeat, some windows end early or carry a flat channel; the
+// spectral arm beside the duration control and the prior; eldBETA passes every check with its score held; ZuCo's hold.
+need(pairs.count > 0 && short.count > 0 && invalid.count > 0, 'some runs repeat byte for byte and some windows end early or carry a flat channel');
+need(spectral.mean > prior.mean && duration.mean > prior.mean, 'both arms sit above the training prior');
+need(C.trials_passing_checks === C.trials && C.trials_dropped === 0 && eld.flags.score_published === false, 'eldBETA passes every check, its score held');
+need(zuco.flags.fixation_times_outside_recording && zuco.flags.score_computed === false, 'ZuCo 2.0: fixation times outside the recording, no score');
+// The lede: every participant held out once, the others fitting the ridge.
+need(shin.method.folds === shin.scope.participants && shin.method.training_participants_each_fold === shin.scope.participants - 1, 'each participant held out once');
+need(shin.scope.hardware.startsWith('g.tec') && shin.scope.channels === 16 && shin.method.channel_names.startsWith('EEG1–EEG16'), 'the headset and its channels');
+need(shin.interval.resamples === 10000 && shin.interval.percentile_method === 'linear interpolation', 'the bootstrap');
+// The source blocks: the paper each statement was read from, and the code the data record links.
+need(SC.read_from.includes('10.3389/fnhum.2022.951591') && shin.rights.attribution.includes('10.3389/fnhum.2022.951591'), 'Shin2022’s paper');
+need(EC.read_from.includes('s41597-022-01372-9') && eld.rights.attribution.includes('10.1038/s41597-022-01372-9'), 'eldBETA’s data descriptor');
+need(shin.rights.terms.linked_code.url === 'https://github.com/mcvain/bci-simulator', 'the simulator code the record links');
+need(shin.rights.terms.other_terms_stated.map(x => x.item).join() === 'de-identification,citation request', 'the two terms Shin2022’s record states');
+need(eld.rights.terms.other_terms_stated.length === 1 && eld.rights.terms.other_terms_stated[0].item === 'access', 'the access term eldBETA’s descriptor states');
+need(zuco.source.licence_as_stated === 'CC-BY-4.0' && zuco.source.licence_stated_by === 'the dataset_description.json of that version'
+  && zuco.source.terms_unverified.length === 2, 'ZuCo 2.0’s stated licence, and the two terms unverified');
+need(eld.related.model === 'singlem' && eld.related.dataset === 'beta', 'the SingLEM exposure row on BETA');
+
+// The arms table: the reference and the EEG arm, then the retrospective control under its own heading.
+type ArmRow = { kind: 'arm'; a: ShinArm } | { kind: 'sub' };
+const armRows: ArmRow[] = [...shinArms.filter(a => a.role !== 'retrospective_control').map(a => ({ kind: 'arm' as const, a })),
+  { kind: 'sub' }, { kind: 'arm', a: duration }];
+need(shinArms.filter(a => a.role === 'retrospective_control').length === 1, 'one retrospective control');
+// The chain's per-target column: instructed right, then left, with a no-break space each side of the dot so a stacked
+// cell never strands it on a line of its own.
+const dot = '\u00a0·\u00a0';
+const targets = (c: ChainStep): Part[] => c.by_target ? [n(c.by_target['1']), dot, n(c.by_target['2'])]
+  : c.windows_per_run_by_target ? [n(c.windows_per_run_by_target['1']), dot, n(c.windows_per_run_by_target['2']), zh ? '（每个 run）' : '\u00a0per run'] : ['—'];
+const shinPage = datasetBySlug['shin2022'] ? hrefFor('/datasets/shin2022/', locale) : null;
+// In-page pointers as full paths: the Markdown copy drops in-page jump links.
+const here = (anchor: string) => `${hrefFor(DQ_PATH, locale)}#${anchor}`;
+const registerRow = (id: string) => hrefFor(`/datasets/register/#${id}`, locale);
+const rc = registerCopy[locale];
+
+const copy = {
+  en: {
+    description: `Shin2022, read from its files: for a held-out participant, alpha and beta band power reached ${F(pct(spectral.mean))} balanced accuracy, a control reading only trial duration ${F(pct(duration.mean))}, the training prior ${F(pct(prior.mean))}. eldBETA: one person’s recordings pass every check, score held. ZuCo 2.0: a timing hold.`,
+    answer: `Shin2022’s files repeat some runs byte for byte, and some feedback windows end early or carry a flat channel; on the windows that remain, a participant-held-out check put alpha and beta band power at ${ans(pct(spectral.mean))} balanced accuracy, beside ${ans(pct(duration.mean))} for a control that reads only how long each trial lasted and ${ans(pct(prior.mean))} for the training prior. eldBETA’s raw recordings for one participant pass every check, and with one person the score is held. In one converted ZuCo 2.0 run some fixation times fall outside the recording, so no EEG–text score is computed.`,
+    eyebrow: 'Data quality and reproducibility · three public EEG datasets, read from their files',
+    dek: 'Shin2022 is the worked case: its runs, duplicates and windows counted from the files, then a participant-held-out check beside a control that reads only trial duration. eldBETA and ZuCo 2.0 are status cases, with what their files showed and no score.',
+    // Shin2022
+    shinEyebrow: 'Worked case · Shin2022 · closed-loop cursor control, dry electrodes',
+    shinH2: shin.question,
+    shinLede: (): Part[] => ['Right-versus-left instructed target in the first second of cursor feedback, for a participant held out entirely: each of the ', n(shin.scope.participants), ' participants is left out once, and a ridge fitted on the other ', n(shin.method.training_participants_each_fold), ' scores their windows. On the signal-valid windows counted below, alpha and beta band power reached ', pct(spectral.mean), ' participant-mean balanced accuracy (', pct(spectral.interval[0]), '–', pct(spectral.interval[1]), '). A control that reads only each trial’s full feedback duration reached ', pct(duration.mean), ' (', pct(duration.interval[0]), '–', pct(duration.interval[1]), '). The training prior gives ', pct(prior.mean), '.'],
+    armsRegion: 'Shin2022, three arms, scrolls horizontally',
+    armsCaption: (): Part[] => ['Participant-mean balanced accuracy: the ', n(shin.scope.participants), ' held-out participants’ balanced accuracies averaged with equal weight, with its 95% participant-bootstrap interval. The pooled value counts every signal-valid window together: a secondary figure, without an interval.'],
+    cols: ['Arm', 'Participant-mean balanced accuracy', 'Pooled (secondary)', 'What it reads'],
+    role: { reference: 'reference', eeg: 'EEG', retrospective_control: 'retrospective control' } as Record<ShinArm['role'], string>,
+    retroGroup: 'Retrospective control',
+    chainH3: 'From the runs in the release to the scored windows',
+    chainRegion: 'Shin2022 coverage chain, scrolls horizontally',
+    chainCaption: 'Each count is read from a hash-pinned record (the label and duplicate audit, the signal census review or the scored export), and each step follows from the one above it. Right and left are the instructed targets.',
+    chainCols: ['Step', 'Count', 'Right · left', 'What the files show'],
+    stepRole: { excluded: 'excluded', held: 'held' } as Record<string, string>,
+    chainExtra: {
+      distinct_runs: [' They hold ', n(distinct.closed_windows!), ' closed feedback windows.'],
+      complete_runs: [' They cover all ', n(complete.participants!), ' participants.'],
+      signal_invalid: [' Flat on all channels: ', n(invalid.flat_on_all_channels!), '; on some: ', n(invalid.flat_on_some_channels!), '. Windows with non-finite input: ', n(invalid.non_finite_input_windows!), '.'],
+      signal_valid: [' That is ', dqFig(valid.percent_of_closed_windows!, 'pct1raw'), ' of the closed windows and ', dqFig(valid.percent_of_duration_eligible!, 'pct2raw'), ' of those lasting at least one second; all ', n(valid.participants_with_both_targets!), ' participants keep windows of both targets.'],
+    } as Record<string, Part[]>,
+    catalog: (): Part[] => ['MOABB’s dataset summary gives a trial length of ', n(shin.catalog.catalog_trial_seconds), '\u00a0s: that is the feedback cap (MaxFeedbackDuration) set in the header of each of the ', n(shin.catalog.headers_read), ' runs read.'],
+    catalogRegister: ['MOABB’s trial and run counts for Shin2022 are findings on ', 'its row in the open register', '.'],
+    checkedH3: 'How it was checked',
+    state: { pass: 'Pass', held: 'Held' } as Record<string, string>,
+    holdsH3: 'Held or unestablished',
+    sourceH3: 'Source, licence and consent',
+    sourceH: 'Source and licence',
+    consentArticleH: 'Ethics and consent, as the source states them',
+    ethicsH: 'Ethics approval:',
+    consentH: 'Informed consent:',
+    alsoStates: 'The data record also states:',
+    descriptorStates: 'The data descriptor also states:',
+    recordLink: 'Dataset record ↗',
+    paperLink: 'Paper, with its ethics statement ↗',
+    descriptorLink: 'Data descriptor, with its ethics statement ↗',
+    codeLink: 'Simulator code ↗',
+    datasetPage: 'Dataset page →',
+    // eldBETA
+    eldEyebrow: 'Status case · eldBETA · SSVEP selection by older adults',
+    eldH2: 'One participant’s raw recordings, end to end',
+    eldLede: (): Part[] => ['The raw-recording route runs end to end on one participant’s ', n(C.blocks), ' blocks of ', n(C.targets), ' targets: all ', n(C.trials), ' trials pass the reader and the quality checks, none dropped. The continuous recordings hold ', n(C.non_finite_values_outside_analysed_windows), ' non-finite values outside the analysed windows, left as recorded, and none inside them. With one person every score is that person’s, so the accuracy is held.'],
+    paperListLink: 'SingLEM paper, Table I ↗',
+    factLink: 'SingLEM’s pretraining-exposure rows →',
+    holdLink: 'Its entry in the holds register →',
+    // ZuCo 2.0
+    zucoEyebrow: 'Status case · ZuCo 2.0 on NEMAR · no score',
+    zucoH2: 'A timing hold on one converted run',
+    clearsH3: 'The hold clears with',
+    zucoSourceLink: 'Source and stated terms ↓',
+    // The register
+    registerH2: 'Each case in the open register',
+    registerLede: 'Each case has a row in the open register, with the furthest step checked and the gaps that remain.',
+    caseNames: { shin2022: 'Shin2022', eldbeta: 'eldBETA', zuco2: 'ZuCo 2.0' } as Record<string, string>,
+    // Methods and limits
+    limitsH2: 'Methods and limits',
+    methodH3: 'Shin2022: how the check was run',
+    method: (): Part[] => ['Leave one participant out: ', n(shin.method.folds), ' folds, each fitted on ', n(shin.method.training_participants_each_fold), ' participants. The window is ', dqSay(shin.method.window, 'en'), ': ', n(shin.method.window_samples), ' samples at ', n(shin.scope.sampling_hz), ' Hz from a ', shin.scope.hardware, ' headset with dry electrodes (', dqSay(shin.method.channel_names, 'en'), '). The label is the instructed target as each run stores it (', shin.labels.state, '); the trial’s outcome is never read.'],
+    intervalH3: 'The intervals',
+    interval: (): Part[] => ['Each interval resamples the ', n(shin.scope.participants), ' participants ', n(shin.interval.resamples), ' times, with one resampling index for all three arms, and reads its percentiles by linear interpolation.'],
+    notPubH3: 'What is not published',
+    zucoSourceH3: 'ZuCo 2.0: source and stated terms',
+    zucoRecord: `${zuco.source.repository} accession ${zuco.source.accession}, version ${zuco.source.version}, doi:${zuco.source.doi}.`,
+    zucoLicence: `Licence as stated: ${zuco.source.licence_as_stated}, in the dataset_description.json of that version. Not yet verified:`,
+    relatedH2: 'Related',
+    related: [
+      { text: '', href: '/data-use/#sources-data-quality', link: 'How each source’s licence, consent and ethics statement was read →', english: true },
+      { text: 'Small pilot studies, each with its own limits: ', href: '/topics/pilot-studies/', link: topicCards.en['pilot-studies'].question, english: false },
+    ],
+  },
+  zh: {
+    description: `Shin2022 从文件读起：整名被试留出时，alpha 与 beta 频带功率的平衡准确率为 ${F(pct(spectral.mean))}，只读试次时长的对照为 ${F(pct(duration.mean))}，训练集先验为 ${F(pct(prior.mean))}。eldBETA：一名被试的记录通过全部检查，分数暂缓。ZuCo 2.0：时间问题暂缓。`,
+    answer: `Shin2022 的文件里有些 run 逐字节重复，有些反馈时间窗不足一秒或有一个通道恒定不变；在剩下的时间窗上做整名被试留出的检验，alpha 与 beta 频带功率的平衡准确率为 ${ans(pct(spectral.mean))}，只读每个试次持续多久的对照为 ${ans(pct(duration.mean))}，训练集先验为 ${ans(pct(prior.mean))}。eldBETA 一名被试的原始记录通过了全部检查；只有一个人，所以分数暂缓。ZuCo 2.0 的一个转换后记录中，有些注视时间落在记录之外，所以不计算 EEG–文本分数。`,
+    eyebrow: '数据质量与可复现性 · 三个公开 EEG 数据集，从文件读起',
+    dek: 'Shin2022 是完整的案例：先从文件里清点 run、重复文件与时间窗，再做整名被试留出的检验，旁边配一个只读试次时长的对照。eldBETA 与 ZuCo 2.0 是状态案例：写明文件里看到了什么，不给分数。',
+    shinEyebrow: '完整案例 · Shin2022 · 闭环光标控制，干电极',
+    shinH2: '整名被试留出后，还剩下什么？',
+    shinLede: (): Part[] => ['任务是在光标反馈的第一秒内判断指示目标是右还是左，被检验的被试完全不参与训练：', n(shin.scope.participants), ' 名被试轮流留出一次，用其余 ', n(shin.method.training_participants_each_fold), ' 人拟合的岭回归给其时间窗打分。在下文清点出的信号有效时间窗上，alpha 与 beta 频带功率按被试平均的平衡准确率为 ', pct(spectral.mean), '（', pct(spectral.interval[0]), '–', pct(spectral.interval[1]), '）。只读每个试次整段反馈时长的对照为 ', pct(duration.mean), '（', pct(duration.interval[0]), '–', pct(duration.interval[1]), '）。训练集先验为 ', pct(prior.mean), '。'],
+    armsRegion: 'Shin2022 的三个组，可横向滚动',
+    armsCaption: (): Part[] => ['按被试平均的平衡准确率：', n(shin.scope.participants), ' 名留出被试各自的平衡准确率等权平均，附被试 bootstrap 的 95% 区间。合并值把所有信号有效的时间窗放在一起计算，是次要数字，不附区间。'],
+    cols: ['组', '按被试平均的平衡准确率', '合并值（次要）', '读什么'],
+    role: { reference: '参照', eeg: 'EEG', retrospective_control: '回溯对照' } as Record<ShinArm['role'], string>,
+    retroGroup: '回溯对照',
+    chainH3: '从发布中的 run 到参与评分的时间窗',
+    chainRegion: 'Shin2022 的覆盖链，可横向滚动',
+    chainCaption: '每个计数都读自以哈希固定的记录（标签与重复文件审计、信号普查审核或评分导出），每一步都由上一步推出。右与左指的是指示的目标。',
+    chainCols: ['步骤', '计数', '右 · 左', '文件里看到的'],
+    stepRole: { excluded: '排除', held: '暂缓' } as Record<string, string>,
+    chainExtra: {
+      distinct_runs: ['共含 ', n(distinct.closed_windows!), ' 个已结束的反馈时间窗。'],
+      complete_runs: ['覆盖全部 ', n(complete.participants!), ' 名被试。'],
+      signal_invalid: ['所有通道都恒定的有 ', n(invalid.flat_on_all_channels!), ' 个，部分通道恒定的有 ', n(invalid.flat_on_some_channels!), ' 个；输入含非有限值的时间窗有 ', n(invalid.non_finite_input_windows!), ' 个。'],
+      signal_valid: ['占已结束时间窗的 ', dqFig(valid.percent_of_closed_windows!, 'pct1raw'), '，占至少持续一秒的时间窗的 ', dqFig(valid.percent_of_duration_eligible!, 'pct2raw'), '；全部 ', n(valid.participants_with_both_targets!), ' 名被试都保留了两个目标的时间窗。'],
+    } as Record<string, Part[]>,
+    catalog: (): Part[] => ['MOABB 的数据集摘要给出的试次时长为 ', n(shin.catalog.catalog_trial_seconds), ' 秒：这是所读 ', n(shin.catalog.headers_read), ' 个 run 的文件头都设定的反馈上限（MaxFeedbackDuration）。'],
+    catalogRegister: ['MOABB 列出的 Shin2022 试次数与 run 数，作为发现写在', '开放登记册中它的那一行', '。'],
+    checkedH3: '是怎么核的',
+    state: { pass: '通过', held: '暂缓' } as Record<string, string>,
+    holdsH3: '暂缓或尚未确立的部分',
+    sourceH3: '来源、许可与知情同意',
+    sourceH: '来源与许可',
+    consentArticleH: '数据源陈述的伦理与知情同意',
+    ethicsH: '伦理审批：',
+    consentH: '知情同意：',
+    alsoStates: '数据记录还写明：',
+    descriptorStates: '数据描述论文还写明：',
+    recordLink: '数据集记录 ↗',
+    paperLink: '论文及其伦理声明 ↗',
+    descriptorLink: '数据描述论文及其伦理声明 ↗',
+    codeLink: '模拟器代码 ↗',
+    datasetPage: '数据集页面 →',
+    eldEyebrow: '状态案例 · eldBETA · 老年人的 SSVEP 选择',
+    eldH2: '一名被试的原始记录，从头到尾',
+    eldLede: (): Part[] => ['从原始记录读起的流程，在一名被试的 ', n(C.blocks), ' 个组块（', n(C.targets), ' 个目标）上从头到尾跑通：全部 ', n(C.trials), ' 个试次都通过了读取与质量检查，没有一个被剔除。连续记录中，分析时间窗之外有 ', n(C.non_finite_values_outside_analysed_windows), ' 个非有限值，按记录原样保留，分析时间窗之内一个也没有。只有一个人时，任何分数都是这个人的分数，所以准确率暂缓。'],
+    paperListLink: 'SingLEM 论文的表 I ↗',
+    factLink: 'SingLEM 的“是否出现在预训练数据中”各行 →',
+    holdLink: '它在暂缓登记表中的条目 →',
+    zucoEyebrow: '状态案例 · NEMAR 上的 ZuCo 2.0 · 没有分数',
+    zucoH2: '一个转换后记录的时间问题',
+    clearsH3: '具备以下条件后解除暂缓',
+    zucoSourceLink: '来源与所述条款 ↓',
+    registerH2: '三个案例在开放登记册中的行',
+    registerLede: '每个案例在开放登记册中都有一行，写明核验到了哪一步，以及还有哪些缺口。',
+    caseNames: { shin2022: 'Shin2022', eldbeta: 'eldBETA', zuco2: 'ZuCo 2.0' } as Record<string, string>,
+    limitsH2: '方法与局限',
+    methodH3: 'Shin2022：检验是怎样做的',
+    method: (): Part[] => ['每次留出一名被试：共 ', n(shin.method.folds), ' 折，每折用 ', n(shin.method.training_participants_each_fold), ' 名被试拟合。时间窗是', dqSay(shin.method.window, 'zh'), '：', n(shin.method.window_samples), ' 个采样点，采样率 ', n(shin.scope.sampling_hz), ' Hz，来自一套干电极的 ', shin.scope.hardware, ' 头戴设备（', dqSay(shin.method.channel_names, 'zh'), '）。标签是每个 run 存储的指示目标（', shin.labels.state, '）；从不读取试次的结果。'],
+    intervalH3: '区间',
+    interval: (): Part[] => ['每个区间对 ', n(shin.scope.participants), ' 名被试有放回地重抽样 ', n(shin.interval.resamples), ' 次，三个组共用同一套重抽样下标，百分位按线性插值读取。'],
+    notPubH3: '不发布的内容',
+    zucoSourceH3: 'ZuCo 2.0：来源与所述条款',
+    zucoRecord: `${zuco.source.repository} 登录号 ${zuco.source.accession}，版本 ${zuco.source.version}，doi:${zuco.source.doi}。`,
+    zucoLicence: `所述许可：${zuco.source.licence_as_stated}，见该版本的 dataset_description.json。尚未核实：`,
+    relatedH2: '相关',
+    related: [
+      { text: '', href: '/data-use/#sources-data-quality', link: '每个数据源的许可、知情同意与伦理声明是怎样读取的 →', english: true },
+      { text: '小规模试点研究，各有各的局限：', href: '/topics/pilot-studies/', link: topicCards.zh['pilot-studies'].question, english: false },
+    ],
+  },
+}[locale];
+
+// The coverage chain once: none of its counts may appear in the short answer or the description.
+for (const c of shinChain) for (const s of [copy.answer, copy.description]) need(!s.includes(F(n(c.count))) || c.count < 20, `${c.id}: the chain only in its table`);
+const card = topicCards[locale]['data-quality'];
+const shinEthics = dqText(SC.ethics_approval.statement, locale), shinConsent = dqText(SC.informed_consent.statement, locale);
+const eldEthics = dqText(EC.ethics_approval.statement, locale), eldConsent = dqText(EC.informed_consent.statement, locale);
+const rows = dqRegisterRows;
+// MOABB's counts are named as findings on Shin2022's register row only while that row carries them and its page is built.
+const catalogOnRow = rows !== null && dqCatalogFinding;
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path={DQ_PATH}
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="data-quality"
+  answer={copy.answer}
+  dataFiles={[`/data/${DQ}`]}
+>
+  <section class="topic-section" id={DQ_ANCHOR.shin} aria-labelledby="shin-heading" data-dq="shin2022">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.shinEyebrow}</p><h2 id="shin-heading">{copy.shinH2}</h2></div><p><Parts p={copy.shinLede()}/></p></div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.armsRegion}>
+      <table data-dq-table="arms">
+        <caption><Parts p={copy.armsCaption()}/></caption>
+        <thead><tr>{copy.cols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{armRows.map(r => r.kind === 'sub'
+          ? <tr class="subhead" data-dq-group="retrospective"><th scope="colgroup" colspan="4">{copy.retroGroup}</th></tr>
+          : <tr data-dq-arm={r.a.arm} data-role={r.a.role}>
+            <th scope="row">{dqSay(r.a.name, locale)}{r.a.role !== 'retrospective_control' && <small>{copy.role[r.a.role]}</small>}</th>
+            <td data-cell="mean"><Fig f={pct(r.a.mean)} cls="metric"/><span class="interval">{tc.interval95} <Fig f={pct(r.a.interval[0])}/>–<Fig f={pct(r.a.interval[1])}/></span></td>
+            <td data-cell="pooled"><Fig f={pct(r.a.pooled)} cls="metric"/></td>
+            <td data-cell="input">{dqSay(r.a.input, locale)}</td>
+          </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-dq-note="shin-caveat">{dqSay(shin.caveat, locale)}</p>
+
+    <h3 class="roadmap-h3" id="shin2022-coverage">{copy.chainH3}</h3>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.chainRegion}>
+      <table data-dq-table="chain">
+        <caption>{copy.chainCaption}</caption>
+        <thead><tr>{copy.chainCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{shinChain.map(c => <tr data-dq-step={c.id} data-role={c.role}>
+          <th scope="row">{chainLabel[c.id][locale]}{c.role && <small>{copy.stepRole[c.role]}</small>}</th>
+          <td data-cell="count"><Fig f={n(c.count)} cls="metric"/></td>
+          <td data-cell="targets"><Parts p={targets(c)}/></td>
+          <td data-cell="shows">{dqSay(c.text, locale)}{copy.chainExtra[c.id] && <Parts p={copy.chainExtra[c.id]}/>}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p" data-dq-note="catalog"><Parts p={copy.catalog()}/>{catalogOnRow && <span data-dq-part="catalog-register">{sp}{copy.catalogRegister[0]}<a href={registerRow(rows!.shin2022)}>{copy.catalogRegister[1]}</a>{copy.catalogRegister[2]}</span>}</p>
+
+    <h3 class="roadmap-h3" id="shin2022-checks">{copy.checkedH3}</h3>
+    <ol class="rd-rules" data-dq-list="how-checked">{shin.how_checked.map(h => <li data-state={h.state}><strong>{copy.state[h.state]}</strong>{zh ? '：' : ': '}{dqSay(h.text, locale)}</li>)}</ol>
+
+    <h3 class="roadmap-h3" id="shin2022-holds">{copy.holdsH3}</h3>
+    <ul class="rd-rules" data-dq-list="shin-holds">{shin.holds.map(h => <li>{dqSay(h, locale)}</li>)}</ul>
+
+    <h3 class="roadmap-h3" id="shin2022-source">{copy.sourceH3}</h3>
+    <div class="citation-list" data-dq-credit="shin2022">
+      <article>
+        <h3 lang="en">{shin.rights.name}</h3>
+        <p>{dqSay(shin.rights.task, locale)}{sp}{dqSay(shin.rights.version, locale)}{tc.period}</p>
+        <p lang="en" data-dq-attribution="shin2022">{shin.rights.attribution}</p>
+        <p>{dqSay(shin.rights.terms.linked_code.note, locale)}{sp}<a href={shin.rights.terms.linked_code.url} target="_blank" rel="noreferrer">{copy.codeLink}</a></p>
+        <p><a href={shin.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={shin.rights.licenseUrl} target="_blank" rel="noreferrer">{shin.rights.license}</a>{shinPage && <> · <a href={shinPage}>{copy.datasetPage}</a></>}</p>
+      </article>
+      <article data-dq-consent="shin2022">
+        <h3>{copy.consentArticleH}</h3>
+        <p><strong>{copy.ethicsH}</strong>{sp}{shinEthics.text}{shinEthics.original && <span class="note-original" lang="en">{shinEthics.original}</span>}</p>
+        <p><strong>{copy.consentH}</strong>{sp}{shinConsent.text}{shinConsent.original && <span class="note-original" lang="en">{shinConsent.original}</span>}</p>
+        <p>{copy.alsoStates}{sp}{shin.rights.terms.other_terms_stated.map((x, i) => <>{i > 0 && ' '}“<span lang="en">{x.quote}</span>”</>)}</p>
+        <p><a href={SC.read_from} target="_blank" rel="noreferrer">{copy.paperLink}</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.eldbeta} aria-labelledby="eldbeta-heading" data-dq="eldbeta">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.eldEyebrow}</p><h2 id="eldbeta-heading">{copy.eldH2}</h2></div><p><Parts p={copy.eldLede()}/></p></div>
+    <h3 class="roadmap-h3" id="eldbeta-holds">{copy.holdsH3}</h3>
+    <ul class="rd-rules" data-dq-list="eldbeta-holds">{eldHolds(locale).map(h => <li><Parts p={h}/></li>)}</ul>
+    <p class="roadmap-p" data-dq-note="singlem">{dqSay(eld.related.fact, locale)}{sp}<a href={singlemSource} target="_blank" rel="noreferrer">{copy.paperListLink}</a> · <a href={hrefFor('/methods/singlem/#pretraining-exposure', locale)}>{copy.factLink}</a></p>
+    <p class="protocol-note" data-dq-hold={eldHold!.id}><strong>{eldHold!.item[locale]} · {eldHold!.state[locale]}{tc.period}</strong>{sp}<a href={hrefFor(`/releases/#hold-${eldHold!.id}`, locale)}>{copy.holdLink}</a></p>
+    <h3 class="roadmap-h3" id="eldbeta-source">{copy.sourceH3}</h3>
+    <div class="citation-list" data-dq-credit="eldbeta">
+      <article>
+        <h3 lang="en">{eld.rights.name}</h3>
+        <p>{dqSay(eld.rights.task, locale)}{sp}{dqSay(eld.rights.version, locale)}{tc.period}</p>
+        <p lang="en" data-dq-attribution="eldbeta">{eld.rights.attribution}</p>
+        <p><a href={eld.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={eld.rights.licenseUrl} target="_blank" rel="noreferrer">{eld.rights.license}</a></p>
+      </article>
+      <article data-dq-consent="eldbeta">
+        <h3>{copy.consentArticleH}</h3>
+        <p><strong>{copy.ethicsH}</strong>{sp}{eldEthics.text}{eldEthics.original && <span class="note-original" lang="en">{eldEthics.original}</span>}</p>
+        <p><strong>{copy.consentH}</strong>{sp}{eldConsent.text}{eldConsent.original && <span class="note-original" lang="en">{eldConsent.original}</span>}</p>
+        <p>{copy.descriptorStates}{sp}{eld.rights.terms.other_terms_stated.map(x => <>“<span lang="en">{x.quote}</span>”</>)}</p>
+        <p><a href={EC.read_from} target="_blank" rel="noreferrer">{copy.descriptorLink}</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.zuco} aria-labelledby="zuco-heading" data-dq="zuco2">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.zucoEyebrow}</p><h2 id="zuco-heading">{copy.zucoH2}</h2></div><p>{zucoCase[locale]}{sp}{dqSay(zuco.scope, locale)}</p></div>
+    <h3 class="roadmap-h3" id="zuco2-clears">{copy.clearsH3}</h3>
+    <ul class="rd-rules" data-dq-list="zuco2-clears">{zuco.clears_when.map(x => <li>{dqSay(x, locale)}</li>)}</ul>
+    <p class="roadmap-p" data-dq-note="zuco2-consent">{dqSay(zuco.consent_and_ethics.gap, locale)}{sp}<a href={here(DQ_ANCHOR.zucoSource)}>{copy.zucoSourceLink}</a></p>
+    <p class="protocol-note" data-dq-hold={zucoHold!.id}><strong>{zucoHold!.item[locale]} · {zucoHold!.state[locale]}{tc.period}</strong>{sp}<a href={hrefFor(`/releases/#hold-${zucoHold!.id}`, locale)}>{copy.holdLink}</a></p>
+  </section>
+
+  {rows && <section class="topic-section" id={DQ_ANCHOR.register} aria-labelledby="register-heading" data-dq="register">
+    <div class="topic-heading"><div><h2 id="register-heading">{copy.registerH2}</h2></div><p>{copy.registerLede}</p></div>
+    <ul class="rd-rules" data-dq-list="register">{(Object.keys(rows) as (keyof typeof rows)[]).map(k => <li data-dq-row={rows[k]}><span lang="en">{copy.caseNames[k]}</span>{zh ? '：' : ': '}<a href={registerRow(rows[k])}>{rc.rowLink}</a></li>)}</ul>
+  </section>}
+
+  <section class="topic-section" id={DQ_ANCHOR.methods} aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <h3 class="roadmap-h3">{copy.methodH3}</h3>
+    <p class="roadmap-p" data-dq-note="method"><Parts p={copy.method()}/></p>
+    <h3 class="roadmap-h3">{copy.intervalH3}</h3>
+    <p class="roadmap-p" data-dq-note="interval"><Parts p={copy.interval()}/></p>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <ul class="rd-rules" data-dq-list="not-published">{dqNotPublishedShown(locale).map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3" id={DQ_ANCHOR.zucoSource}>{copy.zucoSourceH3}</h3>
+    <div data-dq-credit="zuco2">
+      <p class="roadmap-p">{copy.zucoRecord}{sp}{copy.zucoLicence}{sp}{zuco.source.terms_unverified.map((x, i) => <>{i > 0 && (zh ? '；' : '; ')}{dqSay(x, locale)}</>)}{tc.period}{sp}<a href={zuco.source.url} target="_blank" rel="noreferrer">{copy.recordLink}</a></p>
+      <p class="citation-note" lang="en">{zuco.source.citation}</p>
+    </div>
+    <p class="citation-note">{tc.dataSource} <a href={`/data/${DQ}`} download>{DQ}</a> · {tc.schema} {dqSchema}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="related" aria-labelledby="related-heading">
+    <div class="topic-heading"><div><h2 id="related-heading">{copy.relatedH2}</h2></div></div>
+    <ul class="rd-rules" data-dq-list="related">
+      {copy.related.map(x => <li>{x.text}<a href={hrefFor(x.href, locale)}>{x.link}</a>{x.english ? t.englishMark : ''}</li>)}
+      {rows && <li><a href={hrefFor('/datasets/register/', locale)}>{rc.datasetsLink}</a></li>}
+    </ul>
+  </section>
+</TopicLayout>

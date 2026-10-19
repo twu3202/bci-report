@@ -599,3 +599,58 @@ td .flag{margin-top:6px}
   .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .controls .button{grid-column:1/-1;justify-self:start}
 }
+
+/* --- Open register (/datasets/register/, /methods/register/; components/RegisterTable.astro) ------------------
+   The step badge is styled by its class alone, rg-l1 … rg-l5, a deeper wash at each step, and the step list under
+   #levels uses the same classes. A cell's notes (who states its terms, the host's facts, aliases) sit on their own
+   lines under its value. A row or a group that the filter hides stays hidden on a phone, where the stacked table's
+   display rules above would otherwise show it again (scripts/register-filter.ts sets only `hidden`). */
+.rg-count-list{margin:0;padding-left:18px;display:grid;gap:10px;max-width:920px;font-size:.9rem}
+.rg-count-list .num,.rg-group .num{font-family:var(--mono);font-weight:600}
+.rg-query{margin-top:16px;max-width:920px;font-size:.8125rem;color:var(--muted)}
+.rg-query summary{cursor:pointer;color:var(--ink)}
+.rg-query p{margin-top:6px}
+.rg-steps{margin:0;padding:0;list-style:none;display:grid;gap:8px;max-width:920px}
+.rg-steps>div{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:12px;align-items:baseline;font-size:.875rem}
+.rg-steps dd{margin:0}
+.rg-rules-heading{margin-top:24px;font-size:1rem}
+.rg-rules{margin:8px 0 0;padding-left:18px;display:grid;gap:5px;max-width:920px;font-size:.875rem}
+.rg-badge{display:inline-block;padding:1px 7px;border:1px solid var(--rule);border-radius:2px;background:var(--panel);
+  font:600 .72rem/1.45 var(--sans);color:var(--ink);white-space:normal}
+.rg-l2{background:#faf2e8}
+.rg-l3{background:var(--warn-bg);border-color:#e6cda5}
+.rg-l4{background:var(--wash);border-color:#e4c3a5}
+.rg-l5{background:var(--good-bg);border-color:#c8d3b3;color:var(--good)}
+.rg-filter{margin:0 0 14px}
+.rg-filter fieldset{margin:0;padding:10px 14px 12px;border:1px solid var(--line);background:var(--panel);
+  display:flex;flex-wrap:wrap;gap:10px 16px;align-items:end}
+.rg-filter legend{padding:0 4px;font-size:.75rem;color:var(--muted)}
+.rg-filter label{display:grid;gap:3px;font-size:.75rem;color:var(--muted)}
+.rg-filter select{max-width:none;min-width:9em;color:var(--ink)}
+.rg-filter .rg-check{display:flex;align-items:center;gap:6px;min-height:36px;font-size:.8125rem;color:var(--ink)}
+.rg-empty{margin:8px 0 0;font-size:.875rem;color:var(--muted)}
+.rg-table [hidden]{display:none!important}
+.rg-table :is(th,td){white-space:normal}
+.rg-table th[scope=row]{min-width:220px;max-width:320px;overflow-wrap:anywhere;vertical-align:top}
+.rg-table th[scope=row] a{color:var(--accent-deep);font-weight:620}
+.rg-table td{min-width:150px}
+.rg-table td:last-child{min-width:250px}
+.rg-table small{display:block;margin-top:3px;font-size:.75rem;line-height:1.5;color:var(--muted)}
+.rg-table small a{color:var(--accent)}
+.rg-table .rg-main{display:block}
+.rg-table .rg-main+.rg-main{margin-top:2px}
+.rg-table code{font-family:var(--mono);font-size:.78rem}
+.rg-table tr:target>*{background:var(--wash)}
+.rg-group th{text-transform:none;letter-spacing:0;font-size:.875rem;color:var(--ink);background:#efe3d4;padding:11px 18px}
+.rg-table .rg-note{max-width:920px;font-weight:400;font-size:.78rem}
+.rg-list{margin:0;padding-left:16px;display:grid;gap:4px}
+.rg-links{margin-top:6px;font-size:.78rem}
+.rg-links a{color:var(--accent)}
+.rg-fix{white-space:nowrap}
+@media(max-width:640px){
+  .rg-steps>div{grid-template-columns:1fr;gap:3px}
+  .rg-table th[scope=row]{max-width:none}
+  .rg-filter fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rg-filter select{width:100%;min-width:0}
+  .rg-filter :is(.rg-check,.button){grid-column:1/-1;justify-self:start}
+}

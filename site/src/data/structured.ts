@@ -36,6 +36,11 @@ import later from './later-sessions-update.json';
 import language from './questions-in-language-update.json';
 import beyond from './beyond-scalp-update.json';
 import pilot from './pilot-studies-update.json';
+// The open-register release's four result files (owner decision D1).
+import ssvepFollowUps from './new-ssvep-frequencies-update.json';
+import dataQuality from './data-quality-update.json';
+import clinicalIesseeg from './clinical-iesseeg-update.json';
+import neurolmEegmat from './neurolm-eegmat-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -164,16 +169,34 @@ const fmExports = (protocols: string[], core: boolean): LaterExport[] => [
 // published LaBraM and CBraMod rows (and whose frozen cells the protocol pages print).
 const eegptExport: LaterExport = { file: `/data/${EEGPT_JSON}`, release: eegptRelease.id, generated: eegptRelease.date,
                                    metrics: ['balanced_accuracy', 'participant_mean_balanced_accuracy'] };
+// The open-register release (owner decision D1, 2026-10-20): IESSEEG's section on clinical-groups and NeuroLM's separate
+// panel on pilot-studies, each from its own export, beside the page's earlier one.
+const iesseegExport: LaterExport = { file: '/data/clinical-iesseeg-update.json', release: clinicalIesseeg.release_id,
+                                     generated: clinicalIesseeg.generated_at, metrics: ['balanced_accuracy', 'auroc'] };
+const neurolmExport: LaterExport = { file: '/data/neurolm-eegmat-update.json', release: neurolmEegmat.release_id,
+                                     generated: neurolmEegmat.generated_at,
+                                     metrics: ['balanced_accuracy', 'macro_f1', 'paired_difference_balanced_accuracy'] };
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
+  // Route 3's follow-ups on SSVEP frequencies the decoder never trained on: its own export only. The route 3 page links
+  // it with no figure, so questions-in-language's entry below is unchanged.
+  'new-ssvep-frequencies': { file: '/data/new-ssvep-frequencies-update.json', release: ssvepFollowUps.release_id,
+                             generated: ssvepFollowUps.generated_at,
+                             metrics: ['accuracy', 'balanced_accuracy', 'paired_difference_accuracy', 'paired_difference_balanced_accuracy',
+                                       'decision_transition_share'] },
+  // Public datasets checked end to end: its own export only (Shin2022's arms and coverage chain; eldBETA's counts).
+  'data-quality': { file: '/data/data-quality-update.json', release: dataQuality.release_id, generated: dataQuality.generated_at,
+                    metrics: ['participant_mean_balanced_accuracy', 'pooled_balanced_accuracy', 'window_counts'] },
   // Beyond scalp EEG (owner decision, 2026-10-12): its own export only — human fNIRS, one macaque's intracortical
   // spiking and an fNIRS coverage check, each its own species, signal and metric; two sources status only.
   'beyond-scalp-eeg': { file: '/data/beyond-scalp-update.json', release: beyond.release_id, generated: beyond.generated_at,
                         metrics: ['balanced_accuracy', 'class_recall', 'r_squared', 'rmse', 'mae', 'optical_value_counts'] },
   // The pilot studies (owner decision, 2026-10-12): its own export only, every pilot outside every leaderboard and
   // model ranking. EEGPT's directory card on /methods/ links the Orthosis section and prints none of its figures.
-  'pilot-studies': { file: '/data/pilot-studies-update.json', release: pilot.release_id, generated: pilot.generated_at,
-                     metrics: ['balanced_accuracy', 'auroc', 'average_precision', 'paired_difference_balanced_accuracy',
-                               'top3_accuracy', 'equal_axis_mae'] },
+  // Since 2026-10-20 also NeuroLM's frozen features on EEGMAT, a separate panel outside the pilot count (its own export).
+  'pilot-studies': [{ file: '/data/pilot-studies-update.json', release: pilot.release_id, generated: pilot.generated_at,
+                      metrics: ['balanced_accuracy', 'auroc', 'average_precision', 'paired_difference_balanced_accuracy',
+                                'top3_accuracy', 'equal_axis_mae'] },
+                    neurolmExport],
   // A decoder trained on an earlier session, tested on a later one: its own export only (WBCIC-SHU, the longitudinal
   // RSVP source and Forenzo). does-pretraining-help links the page and prints none of its figures.
   'later-sessions': { file: '/data/later-sessions-update.json', release: later.release_id, generated: later.generated_at,
@@ -226,9 +249,12 @@ const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
                          metrics: ['balanced_accuracy'] },
                        { file: '/data/evidence-update.json', release: evidence.release_id, generated: evidence.generated_at,
                          metrics: [] }],
-  'clinical-groups': { file: '/data/clinical-update.json', release: clinical.release_id,
-                       generated: clinical.generated_at,
-                       metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },
+  // Since 2026-10-20 also IESSEEG's section (D13), after the Parkinson's comparison, whose release stays first: the
+  // page's question, short answer and card are the 2026-09-23 release's.
+  'clinical-groups': [{ file: '/data/clinical-update.json', release: clinical.release_id,
+                        generated: clinical.generated_at,
+                        metrics: ['balanced_accuracy', 'macro_f1', 'auroc'] },
+                      iesseegExport],
 };
 
 /**
@@ -329,6 +355,32 @@ export function protocolCatalog(name: string, description: string) {
       name: `${site.name}: ${t.title} on ${t.dataset} — protocol and results`,
       url: abs(`/protocols/${t.id}/`),
     })),
+  };
+}
+
+/** A register row as the catalog markup names it: its name, its address, and a description (Google requires one on a Dataset). */
+export interface CatalogRow { name: string; url?: string; description?: string }
+/**
+ * A register page as a schema.org DataCatalog (owner decision D1): /datasets/register/ lists datasets, each a
+ * `dataset` entry by name, its host's address and its description; /methods/register/ lists models and papers, which
+ * are not datasets, so they are `hasPart` CreativeWorks. Never a Dataset with `isBasedOn`: the rows are other people's records, and the
+ * Zenodo metadata writer would turn each into an `isDerivedFrom` of this project's archive. The register's own files
+ * reach the home Dataset's `distribution` through releases.ts, like every other download.
+ */
+export function registerCatalog(ladder: 'dataset' | 'model', name: string, description: string,
+                                rows: CatalogRow[] = []) {
+  const path = ladder === 'dataset' ? '/datasets/register/' : '/methods/register/';
+  const entry = (type: string) => (r: CatalogRow) => ({
+    '@type': type, name: r.name, ...(r.url ? { url: r.url } : {}), ...(r.description ? { description: r.description } : {}),
+  });
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DataCatalog',
+    name,
+    description,
+    url: abs(path),
+    creator,
+    ...(ladder === 'dataset' ? { dataset: rows.map(entry('Dataset')) } : { hasPart: rows.map(entry('CreativeWork')) }),
   };
 }
 

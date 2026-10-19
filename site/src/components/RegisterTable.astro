@@ -1,0 +1,54 @@
+---
+/**
+ * One ladder of the open register as a server-rendered table (plan §2.6–2.7): /datasets/register/ passes
+ * ladder="dataset", /methods/register/ ladder="model". Five columns under a <thead>; one <tbody> per group, opened by a
+ * heading row that spans the table (scripts/stack-tables.ts keeps it a heading on a phone); one row per register
+ * entry, its anchor the entry's opaque id. The step badge is styled by its class alone (rg-l1 … rg-l5), and each row
+ * ends with its correction mail. The cells are built and escaped in data/open-register.ts, where every figure is a
+ * value of the register file printed with data-fig.
+ *
+ * The filter above the table is rendered hidden, with its "no row matches" note inside it: scripts/register-filter.ts
+ * shows it and, on each change, sets or clears `hidden` on the rows, the groups and that note, and nothing else.
+ * Without the script every row shows and no dead control is on the page; the Markdown copy, which leaves forms out,
+ * carries every row.
+ */
+import { formatFig } from '../data/entities';
+import { registerCopy, type Locale } from '../data/i18n';
+import { filterChoices, registerGroups, ui, type Ladder } from '../data/open-register';
+
+interface Props { locale: Locale; ladder: Ladder }
+const { locale, ladder } = Astro.props;
+const C = registerCopy[locale], U = ui[locale], zh = locale === 'zh';
+const groups = registerGroups(ladder, locale);
+const columns = ladder === 'dataset' ? C.datasetColumns : C.modelColumns;
+const choices = filterChoices(ladder, locale);
+const region = zh ? `${C[ladder === 'dataset' ? 'datasets' : 'methods'].title}，可横向滚动` : `${C[ladder === 'dataset' ? 'datasets' : 'methods'].title}, scrolls horizontally`;
+const rowsWord = (n: number) => (zh ? ` ${C.rows}` : n === 1 ? ' row' : ` ${C.rows}`);
+---
+<form class="rg-filter" data-register-filter={ladder} hidden>
+  <fieldset>
+    <legend>{U.filter.legend}</legend>
+    <label>{U.filter.group}<select name="g"><option value="">{U.filter.all}</option>{choices.groups.map(o => <option value={o.value}>{o.label}</option>)}</select></label>
+    <label>{U.filter.step}<select name="step"><option value="">{U.filter.all}</option>{choices.steps.map(o => <option value={o.value}>{o.label}</option>)}</select></label>
+    <label>{U.filter.terms}<select name="terms"><option value="">{U.filter.all}</option><option value="1">{U.filter.stated}</option><option value="0">{U.filter.unstated}</option></select></label>
+    <label class="rg-check"><input type="checkbox" name="gap" value="1"/>{U.filter.gap}</label>
+    <button type="reset" class="button">{U.filter.reset}</button>
+  </fieldset>
+  <p class="rg-empty" data-register-empty hidden>{U.filter.empty}</p>
+</form>
+<div class="topic-table scroll rg-frame" tabindex="0" role="region" aria-label={region}>
+  <table class="rg-table" data-register-table={ladder}>
+    <thead><tr>{columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+    {groups.map(g => <tbody id={`group-${g.key}`} data-rg-group={g.key}>
+      <tr class="rg-group"><th colspan="5" scope="rowgroup"><strong>{g.name}</strong>{g.count && <> · <span data-fig={`${g.count.src}|${g.count.fmt}|${g.count.raw}`} class="num">{formatFig(g.count)}</span>{rowsWord(g.count.raw)}</>}<small class="rg-note">{g.note}</small></th></tr>
+      {g.rows.map(r => <tr id={r.id} data-g={r.group} data-step={r.step} data-terms={r.terms ? '1' : '0'} data-gap={r.gap ? '1' : '0'}>
+        <th scope="row" set:html={r.name}/>
+        <td set:html={r.signal}/>
+        <td set:html={r.termsCell}/>
+        <td set:html={r.checked}/>
+        <td set:html={r.found}/>
+      </tr>)}
+    </tbody>)}
+  </table>
+</div>
+<script>import '../scripts/register-filter';</script>

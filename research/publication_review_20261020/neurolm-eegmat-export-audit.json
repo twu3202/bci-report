@@ -1,0 +1,32 @@
+{
+  "status": "pass",
+  "release_id": "neurolm-eegmat-update-20261020",
+  "export_sha256": "4e7001b2b69ea2578d1db5c9617dc1b99e8f3985f13b2e2fb1b11f32024d6a55",
+  "manifest_sha256": "41c6c94772c50dcafb9624ad2d5ae20274a3f5b8d4617ef14a7e38105a45861e",
+  "auditor": "pipeline/publication/audit_neurolm_eegmat_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins, takes the scores and paired differences from the producer aggregate that the interpretation review pins and the independent numerical audit checked (the export reads the approved export), requires them equal to the readings’ verified numbers, and derives every other figure by its own reading of the protocol, receipts, preflight, stage inspection and core run files.",
+  "figures_compared": 124,
+  "copied_exactly": 24,
+  "recomputed": 96,
+  "nulls_kept": 4,
+  "withheld_values_checked_absent": 15,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "scores and paired differences equal the audited producer aggregate, the approved export and the readings’ verified numbers",
+    "interval flags, interval level, cohort counts, fold sizes, patches, dimensions, the parameter count and the exposure and adapter facts are recomputed from the pinned protocol and receipts",
+    "the core protocol facts are read from the core run’s pinned dataset and engine protocols and runner",
+    "labels, readings, the EEGMAT rights record, the licences per part, the hashes and the not-published list are checked as strings",
+    "no measured compute, no private path and no private user, host or volume name in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "the approved export, protocol, producer, numerical audit and three reviews: pinned in the manifest and bound by the research release record, which the export checks",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves"
+    ],
+    "not_bound": [
+      "the NeuroLM features themselves: the independent numerical audit refitted the heads from the sealed values and did not re-extract them; this audit opens no sealed file",
+      "prose, the limitation texts and the release record are checked by the export, not by this audit"
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "release_id": "new-ssvep-frequencies-update-20261020",
+  "export_sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0",
+  "manifest_sha256": "54cc10869787ca8af1b9bff5e7306eadc5bb1e5c277f27ae95c8f1127702981a",
+  "auditor": "pipeline/publication/audit_new_ssvep_frequencies_export.py",
+  "independence": "A separate program from the export and from the three block modules, importing none of them. It reads the served bytes, the release manifest and the files the manifest pins, re-derives every study block from the original research exports by its own reading (level and contrast ids from the exports’ own labels, the declared edits from the plan’s list), and recomputes the cohort, the Wearable-102 scope, the endpoints and every check count from the protocols, receipts and reviews.",
+  "figures_compared": 2228,
+  "copied_exactly": 1864,
+  "recomputed": 248,
+  "editorial": 52,
+  "nulls_kept": 64,
+  "strings_compared": 1273,
+  "export_codes_resolved": 348,
+  "withheld_values_checked_absent": 42,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "every level and contrast is its study export’s own double (the one-vs-rest head from the live route 3 file), and every contrast equals the difference of its two levels",
+    "the declared edits: REF’s epochs renamed training_epochs, CCA’s seeds given as no training, and the dropped jitter and ramp fields present in their sources and absent from the served file",
+    "the cohort, the Wearable-102 scope, the endpoints and every check count recomputed from the pinned protocols, receipts, reviews, the A2 note and the core matrix",
+    "every export code resolves in its source to the value the served file gives",
+    "hashes, released rights records, the corrigendum and CBraMod records, the release record and the not-published list checked as strings",
+    "no withheld value, no form of the commenter’s confidence figure, no private path and no private user, host or volume name in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "every study’s source export, review, protocol and receipts: pinned in the manifest, and the same bytes the block modules pin, which the export checks",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves"
+    ],
+    "not_bound": [
+      "the run outputs behind each export (predictions, seals, fitted models): each study’s own numerical review recomputed them; this audit opens no sealed file",
+      "editorial strings (display names, limitation keys, card anchors, the name key’s rows and the text this release writes) are checked by the export and its tests, not by this audit"
+    ]
+  }
+}

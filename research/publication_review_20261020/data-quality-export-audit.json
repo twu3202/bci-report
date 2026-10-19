@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "release_id": "data-quality-update-20261020",
+  "export_sha256": "fbfb8fb59dc80397d0c4331a3067cf640b27522af6687dd5b3132c8f4e928bda",
+  "manifest_sha256": "57d38a4f89486fec7edce50825d7ac977af25cfae035bb9bda9a6393aca4e005",
+  "auditor": "pipeline/publication/audit_data_quality_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins, and takes Shin2022’s arms from the release audit’s independent reconstruction (the export reads the research export), the run chain from the label audit’s integrity block and the duplicate review, the window chain from the frozen protocol and the census review, eldBETA’s counts from its release audit and raw QC aggregate and its cohort size from the MOABB catalog row (the export reads the research export and the Figshare record), and every derived figure from its own arithmetic on those.",
+  "cases": [
+    "shin2022",
+    "eldbeta",
+    "zuco2"
+  ],
+  "figures_compared": 115,
+  "copied_exactly": 15,
+  "recomputed": 66,
+  "flags": 33,
+  "nulls_kept": 1,
+  "withheld_values_checked_absent": 73,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every pinned input is the file the manifest names, and every A3 capture has the SHA-256 the record and its shasum sidecar give",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "Shin2022’s three arms equal the release audit’s independent reconstruction and are the export’s fields verbatim, in its order",
+    "the coverage chain adds up from 110 recorded runs to 2220 signal-valid windows, link by link, from records other than those the export reads where a second record exists",
+    "eldBETA’s counts equal its release audit and raw QC aggregate; no held score, comparator or residual and no held-score field is in the file",
+    "the ZuCo 2.0 case carries no figure or digit outside its anchor, name and source identity, and its flags follow the independent alignment audit",
+    "consent, ethics and terms are the A3 record’s, and every quotation is found verbatim in its capture",
+    "no per-participant range, duration distribution, catalog count, held eldBETA figure, ZuCo 2.0 run value, register-only content, submission reference, private host, storage name or path is in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "research exports, release audits, protocol, label and duplicate audit, census review and raw QC aggregate: pinned in the manifest and named in the served provenance",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves",
+      "consent and ethics: the A3 record, pinned in the manifest, and its captures, pinned by the record"
+    ],
+    "not_bound": [
+      "the sealed predictions and private score files are verified by the research release audits, whose records are pinned; this audit does not open them",
+      "prose, the arm descriptions, the holds and the release record are checked by the export, not by this audit"
+    ]
+  }
+}

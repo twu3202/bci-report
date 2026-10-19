@@ -1,0 +1,2816 @@
+{
+ "review": "register-classifier-audit",
+ "package": "R2",
+ "freeze_date": "20261020",
+ "question": "Is the open-register classifier output accurate enough to show, field by field, before wave 2?",
+ "inputs": {
+  "classified": "research/open_register_20261019/classified/batch-01..28.json (649 rows; 400 in_scope true, 249 false)",
+  "digests": "research/open_register_20261019/digests/ (what the classifier saw: card excerpt up to 3,500 chars, first 25 file names)",
+  "cards": "research/open_register_20261019/raw/readme/ (full card as fetched from raw/main)",
+  "details": "research/open_register_20261019/raw/details/ (HF API detail with the full file list and git blob ids)",
+  "field_spec": "ROW_SPEC in the open-register-classify workflow script (field definitions and enums)",
+  "snapshot": "HF collector listing 2026-10-19T14:23:55Z, 28 search terms + 20 tag filters",
+  "verifier_files_consulted": "research/open_register_20261019/verified/ (98 files) read only as supporting evidence for sampled rows that have one",
+  "network": "none used"
+ },
+ "method": {
+  "sample_size": 90,
+  "strata": "in_scope (true/false) x sensitive flag present (possible-reupload-of-agreement-only-corpus, declared-licence-differs-from-source, personal-or-identifying-info-visible) x modality group (eeg: scalp or ear EEG present; invasive: iEEG/ECoG/sEEG or intracortical, no EEG; other_neural_or_biosignal: EMG, fNIRS, MEG or other biosignal only; non_neural: fMRI/imaging or not neural; unclear).",
+  "allocation": "60 in-scope rows and 30 out-of-scope rows, because in-scope rows are the ones displayed (D11). Each non-empty cell gets min(2, N); the rest of each budget is split in proportion to N by largest remainder.",
+  "selection": "Within a cell, ids sorted ascending; take index floor((i + 0.5) * N / n) for i = 0..n-1 (every k-th, centred). Deterministic; rerunning on the same classified/ files reproduces the 90 ids.",
+  "judging": "For each row the full card and the full file list were re-read before reading the classifier row, and each field was judged against the ROW_SPEC definition. \"Correct\" means the value is what the spec asks for on this evidence, or a defensible choice where the enum allows more than one. \"Wrong\" has four kinds: scope rule (in_scope contradicts the spec or the classifier's own handling of the same kind of row), unsupported (in_scope true with no evidence of brain-signal data beyond a repo name), keyword match (consent \"present\" for a sentence that is not a consent or ethics statement), overstatement (a one-liner states identity with a named dataset, or a re-upload, that the card does not state and no metadata establishes). Copy relations established by identical git blob ids or LFS sha256 against another HF repo count as facts (checked here for wang124/L-Mind and dhioewhd/things-eeg). stated.* values are correct when copied from the card or when \"not stated\" matches a card that states nothing. Reviewer notes that do not change a value are listed separately and not counted as errors.",
+  "fields": [
+   "in_scope",
+   "modality",
+   "paradigm",
+   "content_kind",
+   "stated.participants",
+   "stated.channels",
+   "stated.sampling_rate_hz",
+   "stated.device",
+   "declared_terms",
+   "source_claim",
+   "derived_from",
+   "consent_or_ethics_statement",
+   "one_line_en",
+   "one_line_zh"
+  ],
+  "intervals": "Wilson 95% intervals on the sample proportions. Stratum-weighted estimates reweight each cell by N/n.",
+  "threshold": "A field is displayable when it is at least 95% correct in the in-scope sample (60 rows), the rows that are shown. With 60 rows, 0 errors gives a Wilson lower bound of 94.0%."
+ },
+ "sample": {
+  "cells": [
+   {
+    "in_scope": false,
+    "sensitive_flag": false,
+    "modality_group": "eeg",
+    "N": 13,
+    "n": 3
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": false,
+    "modality_group": "invasive",
+    "N": 2,
+    "n": 2
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": false,
+    "modality_group": "non_neural",
+    "N": 140,
+    "n": 11
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": false,
+    "modality_group": "other_neural_or_biosignal",
+    "N": 22,
+    "n": 3
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": false,
+    "modality_group": "unclear",
+    "N": 54,
+    "n": 5
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": true,
+    "modality_group": "eeg",
+    "N": 1,
+    "n": 1
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": true,
+    "modality_group": "non_neural",
+    "N": 13,
+    "n": 3
+   },
+   {
+    "in_scope": false,
+    "sensitive_flag": true,
+    "modality_group": "other_neural_or_biosignal",
+    "N": 4,
+    "n": 2
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg",
+    "N": 228,
+    "n": 27
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "invasive",
+    "N": 16,
+    "n": 4
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "other_neural_or_biosignal",
+    "N": 60,
+    "n": 9
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "unclear",
+    "N": 19,
+    "n": 4
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "eeg",
+    "N": 65,
+    "n": 9
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "invasive",
+    "N": 4,
+    "n": 2
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "other_neural_or_biosignal",
+    "N": 6,
+    "n": 3
+   },
+   {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "unclear",
+    "N": 2,
+    "n": 2
+   }
+  ],
+  "rows": [
+   {
+    "sample_index": 0,
+    "id": "L-678/eeg-emotion-depression",
+    "batch": "06",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 1,
+    "id": "ms57rd/THINGS-EEG_NICE-EEG_preprocessing",
+    "batch": "22",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 2,
+    "id": "toolevalxm/NeuroCog-EEG-Processed",
+    "batch": "26",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "source_claim"
+    ]
+   },
+   {
+    "sample_index": 3,
+    "id": "Nori778/InVitro-InVivo-SpikeTrain-Generation",
+    "batch": "08",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "content_kind"
+    ]
+   },
+   {
+    "sample_index": 4,
+    "id": "ronniebasak/ach-cortical-circuits",
+    "batch": "25",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 5,
+    "id": "BrainAlign/cdl-devai-results-ds002236",
+    "batch": "02",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 6,
+    "id": "BrainWave-ML/dpo_final",
+    "batch": "02",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 7,
+    "id": "FOMO-MRI/FOMO260K",
+    "batch": "05",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "one_line_zh"
+    ]
+   },
+   {
+    "sample_index": 8,
+    "id": "NeuroBLab/MICrONS",
+    "batch": "08",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 9,
+    "id": "SanderGi/eval_lerobot-eeg-test_camera_policy",
+    "batch": "09",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "stated.device"
+    ]
+   },
+   {
+    "sample_index": 10,
+    "id": "chehablab/AOMIC_t1w",
+    "batch": "14",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 11,
+    "id": "dbzfan2012/lerobot-eeg-test-50_camera",
+    "batch": "15",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 12,
+    "id": "issoufzousko07/baoule-common-voice",
+    "batch": "18",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 13,
+    "id": "neurovlm/pubmed_summary_qa",
+    "batch": "22",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 14,
+    "id": "nirs123/test_dataset_20260612_143933",
+    "batch": "23",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 15,
+    "id": "webxos/BCI-FPS",
+    "batch": "27",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 16,
+    "id": "CRUISEResearchGroup/CGM-JEPA-Pretraining",
+    "batch": "03",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "source_claim"
+    ]
+   },
+   {
+    "sample_index": 17,
+    "id": "amathislab/Gait120-EMG",
+    "batch": "12",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope",
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 18,
+    "id": "mackelab/STG_energy",
+    "batch": "21",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 19,
+    "id": "DataAbyss/brain-wave-035",
+    "batch": "03",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 20,
+    "id": "DataAbyss/brain-wave-123",
+    "batch": "04",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 21,
+    "id": "ProfArnald/Realtime_EEG_headset_dataset",
+    "batch": "08",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 22,
+    "id": "crossmodal/PLS-NCA-ECG-EDA-Gaze-EEG",
+    "batch": "15",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 23,
+    "id": "mhozan/TacVel-fNIRS",
+    "batch": "21",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 24,
+    "id": "tankalapavankalyan/eeg-corpus-manifest",
+    "batch": "26",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 25,
+    "id": "Emulated-Inc/sci-seeg-contact-localisation",
+    "batch": "04",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 26,
+    "id": "aryashah00/Gaslight-Gatekeep-V1-V3",
+    "batch": "13",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 27,
+    "id": "neurovlm/neurovault_maps",
+    "batch": "22",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "non_neural"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 28,
+    "id": "THULab/sensor_dataset",
+    "batch": "10",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 29,
+    "id": "dheerajthuvara/ecg-arrhythmia-data",
+    "batch": "16",
+    "stratum": {
+     "in_scope": false,
+     "sensitive_flag": true,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 30,
+    "id": "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+    "batch": "01",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "one_line_en",
+     "one_line_zh"
+    ],
+    "fields_with_notes": [
+     "derived_from"
+    ]
+   },
+   {
+    "sample_index": 31,
+    "id": "ChenglinLiuChris/eeg",
+    "batch": "03",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "one_line_en"
+    ]
+   },
+   {
+    "sample_index": 32,
+    "id": "Fudan-fMRI/EEG-Graspbot",
+    "batch": "05",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 33,
+    "id": "Kkuntal990/bnci-windows",
+    "batch": "06",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "paradigm"
+    ]
+   },
+   {
+    "sample_index": 34,
+    "id": "Lance1573/L-Mind",
+    "batch": "06",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "derived_from"
+    ]
+   },
+   {
+    "sample_index": 35,
+    "id": "NOttheol/EEG-Talha-Alakus-Gonen-Turkoglu",
+    "batch": "07",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 36,
+    "id": "NeuroMM/NeuroMM-2026",
+    "batch": "08",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "consent_or_ethics_statement",
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 37,
+    "id": "SanderGi/eval_lerobot-eeg-test-170_eeg_policy",
+    "batch": "09",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 38,
+    "id": "TKQXX/THINGS-EEG-MEG_CVPR2026",
+    "batch": "10",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "one_line_en",
+     "one_line_zh"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 39,
+    "id": "Yvhang009/eeg-fmri-ds006040-derived",
+    "batch": "11",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "consent_or_ethics_statement"
+    ]
+   },
+   {
+    "sample_index": 40,
+    "id": "Zachary1150/ear-eeg-motor-raw",
+    "batch": "12",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 41,
+    "id": "aspire-osu/maestro-eeg-dataset",
+    "batch": "13",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "consent_or_ethics_statement"
+    ]
+   },
+   {
+    "sample_index": 42,
+    "id": "braindecode/example_dataset-eegwindows",
+    "batch": "14",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "paradigm"
+    ]
+   },
+   {
+    "sample_index": 43,
+    "id": "ctorre/self-calibrating-bci",
+    "batch": "15",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 44,
+    "id": "dhioewhd/things-eeg",
+    "batch": "16",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "one_line_en",
+     "one_line_zh"
+    ]
+   },
+   {
+    "sample_index": 45,
+    "id": "fracapuano/eeg2meg-small-tokenized",
+    "batch": "17",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 46,
+    "id": "heee565/SpanishBCBL",
+    "batch": "18",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "one_line_zh"
+    ],
+    "fields_with_notes": [
+     "declared_terms"
+    ]
+   },
+   {
+    "sample_index": 47,
+    "id": "jalauer/Gruendler2009",
+    "batch": "18",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "paradigm"
+    ]
+   },
+   {
+    "sample_index": 48,
+    "id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "batch": "21",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "consent_or_ethics_statement"
+    ]
+   },
+   {
+    "sample_index": 49,
+    "id": "matvelen6369/eeg_data_disoder",
+    "batch": "21",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "paradigm"
+    ]
+   },
+   {
+    "sample_index": 50,
+    "id": "neurofusion/eeg-restingstate",
+    "batch": "22",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 51,
+    "id": "perottofederico/things-eeg-captions-3",
+    "batch": "23",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "one_line_en",
+     "one_line_zh"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 52,
+    "id": "perottofederico/things-eeg-captions-single-sub_09",
+    "batch": "24",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "stated.participants"
+    ]
+   },
+   {
+    "sample_index": 53,
+    "id": "raei/Khanday-2026-EEGFoundationModelsSpeechDecodingBenchmark",
+    "batch": "24",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 54,
+    "id": "sajjad5221/emmt-eeg-raw-phases",
+    "batch": "25",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 55,
+    "id": "wang124/L-Mind",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "derived_from"
+    ]
+   },
+   {
+    "sample_index": 56,
+    "id": "xkoo115/UnifiedNeuroGen-Demo-Dataset",
+    "batch": "27",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 57,
+    "id": "Emulated-Inc/seeg-speech-spectrogram-reconstruction",
+    "batch": "04",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 58,
+    "id": "Omni-iEEG/Omni-iEEG",
+    "batch": "08",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 59,
+    "id": "kristinbranson/neurodata-reuse-zhang2025",
+    "batch": "20",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 60,
+    "id": "strawcoder33/bci-mamba-data",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [
+     "one_line_zh"
+    ],
+    "fields_with_notes": [
+     "one_line_en"
+    ]
+   },
+   {
+    "sample_index": 61,
+    "id": "Emulated-Inc/meg-story-phoneme-decoding",
+    "batch": "04",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 62,
+    "id": "Lo6yu/egocentric_dataset",
+    "batch": "06",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 63,
+    "id": "atgarcia/EMGSoundTest",
+    "batch": "13",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 64,
+    "id": "emgbenchanon/muniverse-dynamic-v2",
+    "batch": "16",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [
+     "in_scope"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 65,
+    "id": "jasontchan/emg-gestures-task1",
+    "batch": "19",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 66,
+    "id": "jasontchan/emg-gestures-task3-u1",
+    "batch": "19",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 67,
+    "id": "jasontchan/eval_emg-task1-bigger-u3_test",
+    "batch": "19",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 68,
+    "id": "jasontchan/pick-place-three-blocks-full-emg-corrected",
+    "batch": "20",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 69,
+    "id": "velvet-pine-22/PULSE",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "source_claim"
+    ]
+   },
+   {
+    "sample_index": 70,
+    "id": "CharlieTY/EEG_dataset",
+    "batch": "03",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [
+     "in_scope"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 71,
+    "id": "as0305/BCI-Competition-IVa-dataset-2",
+    "batch": "13",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [
+     "in_scope",
+     "one_line_zh"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 72,
+    "id": "autara-ai/eeg",
+    "batch": "13",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 73,
+    "id": "opsecsystems/EEGWORLD",
+    "batch": "23",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": false,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [
+     "in_scope"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 74,
+    "id": "JLB-JLB/seizure_eeg_dev",
+    "batch": "05",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 75,
+    "id": "LidongYang/BrainFLORA",
+    "batch": "06",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "modality"
+    ]
+   },
+   {
+    "sample_index": 76,
+    "id": "SanderGi/lerobot-eeg-test-alex-10-twisted",
+    "batch": "09",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 77,
+    "id": "SanderGi/lerobot-eeg-test-alex-2-distraction",
+    "batch": "10",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "stated.participants"
+    ]
+   },
+   {
+    "sample_index": 78,
+    "id": "SanderGi/lerobot-eeg-test-alex-9-right",
+    "batch": "10",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "stated.participants"
+    ]
+   },
+   {
+    "sample_index": 79,
+    "id": "cagataydev/emotiv-ecot",
+    "batch": "14",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "consent_or_ethics_statement"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 80,
+    "id": "graycatHCO3/eegmmidb_0to8_cross",
+    "batch": "17",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [
+     "one_line_en",
+     "one_line_zh"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 81,
+    "id": "monster-monash/DREAMERA",
+    "batch": "22",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 82,
+    "id": "tankalapavankalyan/ds007808-sub01-speechopen-pangolin-preprocessed",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "eeg"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 83,
+    "id": "Terrycz/ECOG-ds005574",
+    "batch": "11",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 84,
+    "id": "tttgxias/Omni-iEEG",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "invasive"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 85,
+    "id": "azithromycin/AnasElkhabbaz_sensor_dataset",
+    "batch": "14",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [
+     "in_scope"
+    ],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 86,
+    "id": "neuroinfinite/fnirs-finekyber",
+    "batch": "22",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   },
+   {
+    "sample_index": 87,
+    "id": "vovw/emg",
+    "batch": "26",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "other_neural_or_biosignal"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope",
+     "stated.participants"
+    ]
+   },
+   {
+    "sample_index": 88,
+    "id": "bannuska/seegTest",
+    "batch": "14",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": [
+     "in_scope"
+    ]
+   },
+   {
+    "sample_index": 89,
+    "id": "gsbcilab/bci-dataset-v4",
+    "batch": "17",
+    "stratum": {
+     "in_scope": true,
+     "sensitive_flag": true,
+     "modality_group": "unclear"
+    },
+    "fields_wrong": [],
+    "fields_with_notes": []
+   }
+  ]
+ },
+ "field_accuracy": {
+  "in_scope": {
+   "all_90": {
+    "correct": 85,
+    "n": 90,
+    "pct": 94.4,
+    "wilson95_pct": [
+     87.6,
+     97.6
+    ]
+   },
+   "in_scope_60": {
+    "correct": 55,
+    "n": 60,
+    "pct": 91.7,
+    "wilson95_pct": [
+     81.9,
+     96.4
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 94.3,
+   "weighted_all_649_pct": 96.5,
+   "error_kinds": {
+    "scope rule": 2,
+    "unsupported": 3
+   },
+   "meets_95_in_scope_sample": false,
+   "meets_95_all_sample": false,
+   "rows_with_reviewer_note": 8
+  },
+  "modality": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 6
+  },
+  "paradigm": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 4
+  },
+  "content_kind": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 1
+  },
+  "stated.participants": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "rows_with_a_value": 27,
+   "rows_with_a_value_correct": 27,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 4
+  },
+  "stated.channels": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "rows_with_a_value": 32,
+   "rows_with_a_value_correct": 32,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 0
+  },
+  "stated.sampling_rate_hz": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "rows_with_a_value": 19,
+   "rows_with_a_value_correct": 19,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 0
+  },
+  "stated.device": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "rows_with_a_value": 18,
+   "rows_with_a_value_correct": 18,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 1
+  },
+  "declared_terms": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 1
+  },
+  "source_claim": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 3
+  },
+  "derived_from": {
+   "all_90": {
+    "correct": 90,
+    "n": 90,
+    "pct": 100.0,
+    "wilson95_pct": [
+     95.9,
+     100.0
+    ]
+   },
+   "in_scope_60": {
+    "correct": 60,
+    "n": 60,
+    "pct": 100.0,
+    "wilson95_pct": [
+     94.0,
+     100.0
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 100.0,
+   "weighted_all_649_pct": 100.0,
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 3
+  },
+  "consent_or_ethics_statement": {
+   "all_90": {
+    "correct": 89,
+    "n": 90,
+    "pct": 98.9,
+    "wilson95_pct": [
+     94.0,
+     99.8
+    ]
+   },
+   "in_scope_60": {
+    "correct": 59,
+    "n": 60,
+    "pct": 98.3,
+    "wilson95_pct": [
+     91.1,
+     99.7
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 98.2,
+   "weighted_all_649_pct": 98.9,
+   "error_kinds": {
+    "keyword match": 1
+   },
+   "meets_95_in_scope_sample": true,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 4
+  },
+  "one_line_en": {
+   "all_90": {
+    "correct": 86,
+    "n": 90,
+    "pct": 95.6,
+    "wilson95_pct": [
+     89.1,
+     98.3
+    ]
+   },
+   "in_scope_60": {
+    "correct": 56,
+    "n": 60,
+    "pct": 93.3,
+    "wilson95_pct": [
+     84.1,
+     97.4
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 91.9,
+   "weighted_all_649_pct": 95.0,
+   "error_kinds": {
+    "overstatement": 4
+   },
+   "meets_95_in_scope_sample": false,
+   "meets_95_all_sample": true,
+   "rows_with_reviewer_note": 3
+  },
+  "one_line_zh": {
+   "all_90": {
+    "correct": 83,
+    "n": 90,
+    "pct": 92.2,
+    "wilson95_pct": [
+     84.8,
+     96.2
+    ]
+   },
+   "in_scope_60": {
+    "correct": 53,
+    "n": 60,
+    "pct": 88.3,
+    "wilson95_pct": [
+     77.8,
+     94.2
+    ]
+   },
+   "out_of_scope_30": {
+    "correct": 30,
+    "n": 30,
+    "pct": 100.0,
+    "wilson95_pct": [
+     88.6,
+     100.0
+    ]
+   },
+   "weighted_in_scope_400_pct": 87.6,
+   "weighted_all_649_pct": 92.3,
+   "error_kinds": {
+    "overstatement": 7
+   },
+   "meets_95_in_scope_sample": false,
+   "meets_95_all_sample": false,
+   "rows_with_reviewer_note": 2
+  }
+ },
+ "wrong_rows": [
+  {
+   "sample_index": 30,
+   "id": "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_en",
+   "kind": "overstatement",
+   "classifier_value": "Tsinghua SSVEP Benchmark files (S1-S35 .mat.7z) re-uploaded without a card.",
+   "corrected_value": "35 per-subject .mat.7z files (S1-S35) plus Freq_Phase.mat and 64-channels.loc, laid out like the Tsinghua SSVEP Benchmark; no card.",
+   "why": "No card; identity with the Benchmark rests on the repo name and file layout. 're-uploaded' states a re-upload as fact, which D3 allows only after an independent check."
+  },
+  {
+   "sample_index": 30,
+   "id": "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "清华SSVEP Benchmark数据转存，无说明",
+   "corrected_value": "35个被试.mat.7z文件，结构同清华SSVEP Benchmark，无说明",
+   "why": "Same as one_line_en: 转存 asserts a re-upload."
+  },
+  {
+   "sample_index": 38,
+   "id": "TKQXX/THINGS-EEG-MEG_CVPR2026",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_en",
+   "kind": "overstatement",
+   "classifier_value": "Preprocessed THINGS-EEG (10 subjects) and THINGS-MEG (4 subjects) tensors plus stimulus images.",
+   "corrected_value": "No card; folders named THINGS-EEG (sub-01 to sub-10) and THINGS-MEG (sub-01 to sub-04) hold .pt tensors and stimulus images.",
+   "why": "No card. Identity with THINGS-EEG and THINGS-MEG rests on folder names only; the project's own verifier standard (graycatHCO3/BCICIV_2B) is 'named after', not a statement of content."
+  },
+  {
+   "sample_index": 38,
+   "id": "TKQXX/THINGS-EEG-MEG_CVPR2026",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "THINGS脑电与脑磁预处理张量及刺激图像",
+   "corrected_value": "无说明；以THINGS-EEG/MEG命名的张量与刺激图像",
+   "why": "Same as one_line_en."
+  },
+  {
+   "sample_index": 46,
+   "id": "heee565/SpanishBCBL",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "35人打字时MEG/EEG(SpanishBCBL副本)",
+   "corrected_value": "35名成人打字时的MEG/EEG（Brain2Qwerty），文件列表未核",
+   "why": "副本 (copy) asserts a copy of bcbl190626/SpanishBCBL; the evidence is a byte-identical card, and the API detail call failed so the files were never seen. The EN line makes no copy claim, so the two languages also disagree."
+  },
+  {
+   "sample_index": 51,
+   "id": "perottofederico/things-eeg-captions-3",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_en",
+   "kind": "overstatement",
+   "classifier_value": "One THINGS-EEG subject split (66,160 rows) with images, captions and encoder hidden states.",
+   "corrected_value": "One split named test_sub_08 (66,160 rows) of EEG, images, captions and encoder hidden states; repo named after THINGS-EEG; no card text.",
+   "why": "The card is dataset_info YAML only; THINGS-EEG identity rests on the repo name. The sibling row perottofederico/things-eeg-captions-single-sub_09 hedges correctly ('THINGS-EEG-style')."
+  },
+  {
+   "sample_index": 51,
+   "id": "perottofederico/things-eeg-captions-3",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "THINGS-EEG单被试分片，含图像描述隐状态",
+   "corrected_value": "以THINGS-EEG命名的单被试分片，含图像、描述与隐状态",
+   "why": "Same as one_line_en."
+  },
+  {
+   "sample_index": 60,
+   "id": "strawcoder33/bci-mamba-data",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "invasive"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "T15皮层内语音解码数据及基线RNN，无说明",
+   "corrected_value": "文件结构同Brain-to-Text '25（T15，45个会话）及基线RNN，无说明",
+   "why": "No card; the T15 / Card et al. identity rests on file names. The EN line marks this ('Brain-to-Text '25 layout'); the ZH line drops the qualifier and states it as fact."
+  },
+  {
+   "sample_index": 64,
+   "id": "emgbenchanon/muniverse-dynamic-v2",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "other_neural_or_biosignal"
+   },
+   "field": "in_scope",
+   "kind": "scope rule",
+   "classifier_value": true,
+   "corrected_value": false,
+   "why": "The card says all 416 recordings are synthetic (NeuroMotion + BioMime simulation). The spec admits 'recordings of brain or neural activity'; simulated signals from other generators (webxos/BCI-FPS, THULab/bci_grid_movement_v1, Axym-Labs/axobench*, mackelab/STG_energy) were all put out of scope, while this row and six synthetic-EEG rows were put in. If the register wants a synthetic group, it needs its own rule; under the current spec this row is out."
+  },
+  {
+   "sample_index": 70,
+   "id": "CharlieTY/EEG_dataset",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "unclear"
+   },
+   "field": "in_scope",
+   "kind": "unsupported",
+   "classifier_value": true,
+   "corrected_value": false,
+   "why": "The card is one line ('For the EEG fine-tuning'); the repo holds one 1.8 MB dataset.json with no modality tag, and the classifier's own scope_reason says it cannot tell signals from text. The spec admits recordings of brain activity; nothing here shows any. Hold it out of the in-scope count (or mark it 'undetermined') until the file is read."
+  },
+  {
+   "sample_index": 71,
+   "id": "as0305/BCI-Competition-IVa-dataset-2",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "unclear"
+   },
+   "field": "in_scope",
+   "kind": "unsupported",
+   "classifier_value": true,
+   "corrected_value": false,
+   "why": "The card is dataset_info only, with columns patient_id, image_id, pixels (binary) and label: an image table. Only the repo name links it to BCI Competition IVa (a 5-subject motor-imagery EEG set, which has no 'patients'). The classifier's own scope_reason says the link to EEG is not stated."
+  },
+  {
+   "sample_index": 71,
+   "id": "as0305/BCI-Competition-IVa-dataset-2",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "unclear"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "BCI竞赛IVa图像数据第2部分，无说明",
+   "corrected_value": "以BCI竞赛IVa命名的仓库系列第2部分：5040行图像，无说明",
+   "why": "The EN line says 'in a BCI Competition IVa-named repo family'; the ZH line states the data are BCI Competition IVa data."
+  },
+  {
+   "sample_index": 73,
+   "id": "opsecsystems/EEGWORLD",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": false,
+    "modality_group": "unclear"
+   },
+   "field": "in_scope",
+   "kind": "unsupported",
+   "classifier_value": true,
+   "corrected_value": false,
+   "why": "No card. Only the repo name says EEG. The 26,104 equal-size .npy files are keyed by THINGS image ids and cover almost the whole THINGS image set (26,107), far more than either THINGS-EEG release used, so they look image-derived. The classifier's own notes say 'arrays may be image-derived rather than EEG'. Hold out (or mark 'undetermined') until a file is read."
+  },
+  {
+   "sample_index": 79,
+   "id": "cagataydev/emotiv-ecot",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "eeg"
+   },
+   "field": "consent_or_ethics_statement",
+   "kind": "keyword match",
+   "classifier_value": "present",
+   "corrected_value": "absent",
+   "why": "The only mention is a recording control ('a jaw clench vetoes consent'). The card has no statement that participants consented and no ethics approval; the row's own notes say 'no ethics approval'. The same reading was applied to Yvhang009/eeg-fmri-ds006040-derived (consent and IRB mentioned only as a rule for future uploads -> 'absent'), so 'present' here is inconsistent."
+  },
+  {
+   "sample_index": 80,
+   "id": "graycatHCO3/eegmmidb_0to8_cross",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_en",
+   "kind": "overstatement",
+   "classifier_value": "Per-subject PyTorch tensors for 106 EEGMMIDB subjects ('0to8' labels); no card.",
+   "corrected_value": "106 per-subject PyTorch files (S001-S109, three numbers missing) in a repo named after EEGMMIDB; no card.",
+   "why": "The card holds only an MIT licence line. EEGMMIDB identity rests on the repo name and S001-S109 file names; the project's verifier standard for this uploader's BCICIV_2B repo is 'named after'."
+  },
+  {
+   "sample_index": 80,
+   "id": "graycatHCO3/eegmmidb_0to8_cross",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "eeg"
+   },
+   "field": "one_line_zh",
+   "kind": "overstatement",
+   "classifier_value": "EEGMMIDB 106名受试者逐人PyTorch张量",
+   "corrected_value": "以EEGMMIDB命名的106个逐被试PyTorch文件，无说明",
+   "why": "Same as one_line_en."
+  },
+  {
+   "sample_index": 85,
+   "id": "azithromycin/AnasElkhabbaz_sensor_dataset",
+   "stratum": {
+    "in_scope": true,
+    "sensitive_flag": true,
+    "modality_group": "other_neural_or_biosignal"
+   },
+   "field": "in_scope",
+   "kind": "scope rule",
+   "classifier_value": true,
+   "corrected_value": false,
+   "why": "The card describes a 3-channel resting forearm muscle-sensor set at 3.33 Hz with no decoding or interface use. The spec admits EMG only when recorded with or used as a neural interface, and the classifier put two TsFile conversions of the same source out of scope on exactly this ground (THULab/sensor_dataset and THULab/anaselkhabbaz_sensor_dataset: 'no neural-interface or decoding use stated'). One source, two opposite scope calls."
+  }
+ ],
+ "reviewer_notes": [
+  {
+   "sample_index": 2,
+   "id": "toolevalxm/NeuroCog-EEG-Processed",
+   "field": "source_claim",
+   "note": "The quote is about why only a subset is released (privacy and ethical requirements from research partners); it names no source. Acceptable because named_source and link carry the project."
+  },
+  {
+   "sample_index": 3,
+   "id": "Nori778/InVitro-InVivo-SpikeTrain-Generation",
+   "field": "content_kind",
+   "note": "'metadata or code only' vs 'empty or placeholder': README-only landing page; either reading fits the enum."
+  },
+  {
+   "sample_index": 4,
+   "id": "ronniebasak/ach-cortical-circuits",
+   "field": "in_scope",
+   "note": "Borderline and defensible: the only real-recording part is per-epoch summary statistics of Allen Neuropixels mouse V1 data; the rest is simulation."
+  },
+  {
+   "sample_index": 7,
+   "id": "FOMO-MRI/FOMO260K",
+   "field": "one_line_zh",
+   "note": "'26 万例脑 MRI 扫描' uses 例 (cases) for 260,927 scans; '26 万次' or '26 万份扫描' reads closer to the card."
+  },
+  {
+   "sample_index": 9,
+   "id": "SanderGi/eval_lerobot-eeg-test_camera_policy",
+   "field": "stated.device",
+   "note": "Holds the robot type (so_follower) copied from meta/info.json in the card; it is not a recording device. Harmless for an out-of-scope row."
+  },
+  {
+   "sample_index": 11,
+   "id": "dbzfan2012/lerobot-eeg-test-50_camera",
+   "field": "in_scope",
+   "note": "No card; scope rests on the repo name and a carded sibling. Consistent with the file list (one front-camera video, small data parquet)."
+  },
+  {
+   "sample_index": 16,
+   "id": "CRUISEResearchGroup/CGM-JEPA-Pretraining",
+   "field": "source_claim",
+   "note": "Quote is verbatim once Markdown link/bold syntax is removed; it is about the licence, but names the two upstream sources."
+  },
+  {
+   "sample_index": 17,
+   "id": "amathislab/Gait120-EMG",
+   "field": "in_scope",
+   "note": "Gait EMG for musculoskeletal modelling; out of scope under the spec's 'EMG only when used as a neural interface' rule. Defensible; other gait or gesture EMG rows were put in scope, so the EMG boundary is applied unevenly across the population."
+  },
+  {
+   "sample_index": 17,
+   "id": "amathislab/Gait120-EMG",
+   "field": "modality",
+   "note": "'other biosignal' stands for ground-reaction forces and motion capture, which are not biosignals; EMG alone would be cleaner."
+  },
+  {
+   "sample_index": 18,
+   "id": "mackelab/STG_energy",
+   "field": "modality",
+   "note": "Simulated stomatogastric circuit plus 5 invertebrate .abf preparation recordings; 'other biosignal' is a loose fit (the recordings are neural, not intracortical), but no enum value fits better."
+  },
+  {
+   "sample_index": 23,
+   "id": "mhozan/TacVel-fNIRS",
+   "field": "modality",
+   "note": "Empty repo; 'unclear' here while other empty repos take the modality from the name (e.g. ms57rd/THINGS-EEG_NICE-EEG_preprocessing -> scalp EEG). Either is acceptable for an empty repo; the convention is uneven."
+  },
+  {
+   "sample_index": 28,
+   "id": "THULab/sensor_dataset",
+   "field": "in_scope",
+   "note": "Resting forearm sEMG with no decoding use stated; out of scope under the EMG rule. Check consistency with its siblings azithromycin/AnasElkhabbaz_sensor_dataset and THULab/anaselkhabbaz_sensor_dataset (same source)."
+  },
+  {
+   "sample_index": 30,
+   "id": "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+   "field": "derived_from",
+   "note": "basis 'name/file structure' with confidence 'high'; under the B9 contract this belongs in matches_metadata_of, not derived_from."
+  },
+  {
+   "sample_index": 31,
+   "id": "ChenglinLiuChris/eeg",
+   "field": "one_line_en",
+   "note": "Content (labeled, filtered, z-scored 2-s windows) comes from the file name only; 'per file name' would make that visible. Not counted as wrong because a file name is part of the file list the row may describe."
+  },
+  {
+   "sample_index": 33,
+   "id": "Kkuntal990/bnci-windows",
+   "field": "paradigm",
+   "note": "'motor imagery' is inferred from the repo name 'bnci' plus 26 channels at 250 Hz matching BNCI2014_001; the card states no task. Plausible; 'unclear' would be the card-only reading."
+  },
+  {
+   "sample_index": 34,
+   "id": "Lance1573/L-Mind",
+   "field": "derived_from",
+   "note": "'none (original release per card)': the card ties the data to the paper but does not say this repo is the authors' release; wang124/L-Mind carries the same card."
+  },
+  {
+   "sample_index": 36,
+   "id": "NeuroMM/NeuroMM-2026",
+   "field": "consent_or_ethics_statement",
+   "note": "Card is gated (HTTP 401) and only the truncated API description was read, so 'absent' means 'not visible'; the enum has no value for an unread card."
+  },
+  {
+   "sample_index": 36,
+   "id": "NeuroMM/NeuroMM-2026",
+   "field": "modality",
+   "note": "'scalp EEG' while the notes say scalp vs intracranial is not visible; a seizure video-EEG challenge makes scalp likely, but it is not stated."
+  },
+  {
+   "sample_index": 39,
+   "id": "Yvhang009/eeg-fmri-ds006040-derived",
+   "field": "consent_or_ethics_statement",
+   "note": "Card mentions consent and IRB only as a rule for future uploads; 'absent' is the right reading for this data, but a literal keyword rule would say 'present'. The spec should say 'statement about the recorded participants'."
+  },
+  {
+   "sample_index": 40,
+   "id": "Zachary1150/ear-eeg-motor-raw",
+   "field": "modality",
+   "note": "No card; 'ear EEG' comes from the repo name and 'scalp EEG' from the uploader's other card (Motor-Processed). Reasonable, but it is not from this repo's card or files."
+  },
+  {
+   "sample_index": 41,
+   "id": "aspire-osu/maestro-eeg-dataset",
+   "field": "consent_or_ethics_statement",
+   "note": "Card gated (HTTP 401); 'absent' means 'not visible'."
+  },
+  {
+   "sample_index": 42,
+   "id": "braindecode/example_dataset-eegwindows",
+   "field": "paradigm",
+   "note": "'motor imagery' inferred from 26 ch, 250 Hz and the sub-1/ses-0train/run-0 layout matching MOABB BNCI2014_001; the card states no task."
+  },
+  {
+   "sample_index": 44,
+   "id": "dhioewhd/things-eeg",
+   "field": "one_line_en",
+   "note": "'Copy of ... (UBP release)' is true: all 33,519 git blob ids equal those of Haitao999/things-eeg in the snapshot (checked in this audit). The line should name the repo it copies, since 'Copy of THINGS-EEG' reads as a copy of the original OSF release."
+  },
+  {
+   "sample_index": 44,
+   "id": "dhioewhd/things-eeg",
+   "field": "one_line_zh",
+   "note": "副本 is backed by blob-identical files; naming Haitao999/things-eeg would remove the ambiguity."
+  },
+  {
+   "sample_index": 46,
+   "id": "heee565/SpanishBCBL",
+   "field": "declared_terms",
+   "note": "Says 'licence tag, card YAML and License section'; the API detail call failed (status 0), so only the card YAML and License section were seen."
+  },
+  {
+   "sample_index": 47,
+   "id": "jalauer/Gruendler2009",
+   "field": "paradigm",
+   "note": "'clinical/seizure/pathology' for an ERN flanker task in screened undergraduates; 'P300/ERP' is at least as apt. The card frames it as OCD estimation, so either reading is defensible."
+  },
+  {
+   "sample_index": 48,
+   "id": "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+   "field": "consent_or_ethics_statement",
+   "note": "Card gated (HTTP 401); 'absent' means 'not visible'."
+  },
+  {
+   "sample_index": 49,
+   "id": "matvelen6369/eeg_data_disoder",
+   "field": "paradigm",
+   "note": "'clinical/seizure/pathology' rests only on a column named 'disoder'; the notes say so."
+  },
+  {
+   "sample_index": 52,
+   "id": "perottofederico/things-eeg-captions-single-sub_09",
+   "field": "stated.participants",
+   "note": "'1 (split name train_sub_09)' is read from the split name in the card's dataset_info, which is a small inference; the qualifier shows the basis."
+  },
+  {
+   "sample_index": 55,
+   "id": "wang124/L-Mind",
+   "field": "derived_from",
+   "note": "Copy relation is established by 12,012 identical blob ids (checked in this audit); basis label 'name/file structure' undersells it. Under B9 this is duplicate_of, not derived_from."
+  },
+  {
+   "sample_index": 60,
+   "id": "strawcoder33/bci-mamba-data",
+   "field": "one_line_en",
+   "note": "Hedged by 'Brain-to-Text '25 layout', but 'Intracortical speech-decoding data (T15 ...)' still leads with the identity taken from file names."
+  },
+  {
+   "sample_index": 62,
+   "id": "Lo6yu/egocentric_dataset",
+   "field": "in_scope",
+   "note": "Wrist EMG as one sensor stream for robot learning; in scope here while gait EMG (amathislab/Gait120-EMG) and resting forearm EMG (THULab/sensor_dataset) were put out of scope. Defensible, but the EMG boundary is applied unevenly (see systematic findings)."
+  },
+  {
+   "sample_index": 69,
+   "id": "velvet-pine-22/PULSE",
+   "field": "source_claim",
+   "note": "named_source reads 'first-party release for a NeurIPS 2026 Evaluations & Datasets submission (anonymous)' and the quote is the card's anonymous-review notice. Accurate, but displaying it would break the site rule against referring to a conference submission; strip before display."
+  },
+  {
+   "sample_index": 72,
+   "id": "autara-ai/eeg",
+   "field": "in_scope",
+   "note": "Rests on one file name (EEG_Dataset.zip) and the repo name; weak but positive evidence. A file-reading run should confirm."
+  },
+  {
+   "sample_index": 75,
+   "id": "LidongYang/BrainFLORA",
+   "field": "modality",
+   "note": "'scalp EEG' comes from the card's description of the method and from EEG-named feature files and encoder checkpoints; the repo holds MEG and fMRI responses but no EEG recordings."
+  },
+  {
+   "sample_index": 77,
+   "id": "SanderGi/lerobot-eeg-test-alex-2-distraction",
+   "field": "stated.participants",
+   "note": "Value 'not stated (repo name contains the first name 'alex')' is accurate but carries a personal-name pointer into a display field; strip the parenthesis before display."
+  },
+  {
+   "sample_index": 78,
+   "id": "SanderGi/lerobot-eeg-test-alex-9-right",
+   "field": "stated.participants",
+   "note": "Same first-name pointer as the alex-2 row; strip before display."
+  },
+  {
+   "sample_index": 87,
+   "id": "vovw/emg",
+   "field": "in_scope",
+   "note": "Rests on the repo name 'emg' and finger-named files (index, middle); weak but consistent with gesture EMG. A file-reading run should confirm."
+  },
+  {
+   "sample_index": 87,
+   "id": "vovw/emg",
+   "field": "stated.participants",
+   "note": "Notes record a first name in the folder name; keep it out of display fields."
+  },
+  {
+   "sample_index": 88,
+   "id": "bannuska/seegTest",
+   "field": "in_scope",
+   "note": "Rests on the repo name and file names ('eeg minta' = 'eeg sample'); weak but positive."
+  }
+ ],
+ "recommendation": {
+  "display": {
+   "modality": "Display. 60/60 in the in-scope sample. On rows with no readable card the value comes from repo, folder or file names; mark those rows (see population_screens.no_readable_card).",
+   "paradigm": "Display. 60/60. A few values are inferred from a repo name matching a known set (e.g. \"bnci\" + 26 ch + 250 Hz -> motor imagery); acceptable as a category, never as a stated fact.",
+   "content_kind": "Display. 60/60.",
+   "declared_terms": "Display as \"declared on the card or licence tag\". 60/60."
+  },
+  "card_states_only": {
+   "stated.participants": "Show only as \"card states: <value>\", with \"not stated\" shown as a gap. 60/60; 27 sampled rows carried a value and all 27 match the card. Strip the classifier's parenthetical reviewer notes before display: 13 SanderGi/lerobot-eeg-test-alex-* rows read \"not stated (repo name contains the first name 'alex')\".",
+   "stated.channels": "Show only as \"card states\". 60/60; 32 rows with a value, all match.",
+   "stated.sampling_rate_hz": "Show only as \"card states\". 60/60; 19 rows with a value, all match.",
+   "stated.device": "Show only as \"card states\". 60/60; 18 rows with a value, all match. One out-of-scope row holds a robot type, not a recording device.",
+   "source_claim": "Show only as \"card states\" (named_source, link, quote). 60/60 in the sample; across all 649 rows, 364 quotes and all 364 are verbatim after Markdown and line-break normalisation, none over 25 words. Remove before display: the openreview.net link on brain-bzh/reve-dataset and the review-status text on synapse-ear-eeg/synapse and velvet-pine-22/PULSE (site rule: nothing referring to OpenReview or a conference submission).",
+   "derived_from": "Accurate under the classifier's own schema (60/60), but show it only when basis is \"stated in card\" (123 of the 400 in-scope rows), worded \"card names <source>\". The 161 in-scope rows with basis \"name/file structure\" are suspicions: under B9 they become matches_metadata_of and stay off the page unless an independent check with a captured original-terms page confirms them (D3). The 116 rows with basis \"none\" have nothing to show.",
+   "consent_or_ethics_statement": "Passes the bar (59/60, 98.3%) but show only as \"card states\" with the card's own sentence, never as a yes/no \"participants consented\". The field merges consent and ethics: Capur/IESSEEG is \"present\" because its card states IRB approval with consent and HIPAA authorisation WAIVED. 24 of the 25 HTTP-401 gated in-scope rows read \"absent\" although the card was never read; display \"card not readable\" for them. Fix cagataydev/emotiv-ecot to \"absent\"; re-read eZWALT/price-of-attention (card only points to DATA_SHEET.md) and neukym/kymata-soto (mentions the wording of consent forms only)."
+  },
+  "drop_or_fix_before_display": {
+   "in_scope": "Below the bar: 55/60 (91.7%) in the in-scope sample, stratum-weighted 94.3% over the 400 in-scope rows; 30/30 on out-of-scope rows. Because D11 makes this flag the Hugging Face population, do not print the 400 count until three rule fixes run: (a) signals that are only simulated go out of the brain-signal count, or into a group of their own (7 rows: DBbun/EEG-250Hz_v1.0, the four Neurazum disorder tables, sigmanova/synthetic_data_for_eeg, emgbenchanon/muniverse-dynamic-v2; Bhuvii19/EEGFakeBench and woldier/eeg_denoise_dataset also hold real recordings and stay); (b) apply the EMG rule the same way everywhere (of the 68 rows whose only signal modality is EMG, 61 are in scope and 7 out; the same AnasElkhabbaz source is in for azithromycin/AnasElkhabbaz_sensor_dataset and out for the two THULab conversions); (c) a row whose only evidence of brain signals is a repo name is \"undetermined\", not counted (check the 21 in-scope rows whose modality is \"unclear\"; 3 of the 4 sampled were wrong, and the six as0305/BCI-Competition-IVa-dataset* rows are image tables with a patient_id column). The stratum-weighted estimate is that about 23 of the 400 rows change; the printed count must come from the re-check, not this estimate.",
+   "one_line_en": "Below the bar: 56/60 (93.3%). All four errors are overstatements: the line names a source dataset, or says \"re-uploaded\"/\"copy\", when the card does not say so and identity rests on names. Rewrite with one rule before display: when derived_from.basis is not \"stated in card\", the line may say only \"named after X\" or \"file layout matches X\". A keyword screen flags 45 in-scope EN lines for that rewrite (population_screens.one_line_name_claims_without_qualifier). Copy statements backed by identical git blob ids or LFS sha256 with another Hugging Face repo are facts and can stay if worded \"files identical to <repo>\".",
+   "one_line_zh": "Below the bar: 53/60 (88.3%). Seven overstatements; in three of them the EN line is qualified and the ZH line drops the qualifier (heee565/SpanishBCBL 副本, strawcoder33/bci-mamba-data, as0305/BCI-Competition-IVa-dataset-2). Rewrite under the same rule, and require the ZH line to carry the EN qualifier (以X命名 / 结构同X / 疑为X). The screen flags 58 in-scope ZH lines."
+  }
+ },
+ "systematic_findings": [
+  {
+   "id": "S1",
+   "title": "in_scope rules are applied unevenly",
+   "detail": "Simulated signals: in scope for 7 rows (synthetic EEG tables, synthetic EEG pretraining data, simulated HD-sEMG) but out of scope for webxos/BCI-FPS, webxos/BCI-grid-movement-v1, THULab/bci_grid_movement_v1, Axym-Labs/axobench* and mackelab/STG_energy. EMG: the spec admits EMG \"only when recorded with or used as a neural interface\"; of the 68 rows whose only signal modality is EMG, 61 are in and 7 out, and one source (AnasElkhabbaz/sensor_dataset) is in for one conversion and out for two others. No-evidence rows: repo names alone put CharlieTY/EEG_dataset, opsecsystems/EEGWORLD and the as0305 image tables in scope."
+  },
+  {
+   "id": "S2",
+   "title": "One-liners turn suspicions into facts, and ZH drops qualifiers",
+   "detail": "Every one-liner error in the sample is the same kind: identity with a known dataset, or a re-upload, stated without a qualifier when the card does not state it. The project's own verifier standard (verified/graycatHCO3__BCICIV_2B.json) is \"named after\", not \"mirror\". The ZH line is shorter and loses qualifiers the EN line keeps (EN 4 errors, ZH 7)."
+  },
+  {
+   "id": "S3",
+   "title": "derived_from mixes declared sources and suspicions",
+   "detail": "In the 400 in-scope rows the basis is \"stated in card\" 123, \"name/file structure\" 161 (confidence high 69, medium 46, low 46) and \"none\" 116. B9 requires matches_metadata_of for suspicion and derived_from only for declared sources, so the export must split the field by basis."
+  },
+  {
+   "id": "S4",
+   "title": "consent_or_ethics_statement conflates consent, waiver and ethics approval",
+   "detail": "Of the 22 in-scope \"present\" rows, 18 carry a clear consent or ethics sentence, Capur/IESSEEG carries an IRB approval with consent waived, and 3 are weak (cagataydev/emotiv-ecot recording veto, eZWALT/price-of-attention pointer to another file, neukym/kymata-soto mention of consent-form wording). No in-scope \"absent\" row has a missed consent or ethics sentence (keyword re-scan of all 378 non-present in-scope rows: 2 hits, both rules for future users, correctly \"absent\"). 24 gated rows are \"absent\" without the card having been read."
+  },
+  {
+   "id": "S5",
+   "title": "Many in-scope rows have no card to read",
+   "detail": "177 of the 400 in-scope rows have no readable card body: 86 return HTTP 404, 25 return HTTP 401 (gated) and 66 hold only front matter or are empty. For these rows every stated.* field is \"not stated\" by construction and modality, paradigm and content_kind come from names and file lists."
+  },
+  {
+   "id": "S6",
+   "title": "Cards were not pinned to a revision",
+   "detail": "raw/readme/ was fetched from raw/main while raw/details/ records the revision sha. The audit judged the classifier against the same snapshot it read; B9 requires re-reading cards at each row's pinned revision_sha before wave 2."
+  }
+ ],
+ "display_hazards": [
+  {
+   "id": "brain-bzh/reve-dataset",
+   "field": "source_claim.link",
+   "issue": "openreview.net URL. Site rule: nothing referring to OpenReview."
+  },
+  {
+   "id": "synapse-ear-eeg/synapse",
+   "field": "source_claim",
+   "issue": "named_source and quote describe a release for an anonymous submission under double-blind review. Site rule against referring to a conference submission; check against D4 (rows tied to ICLR 2027 submissions wait until after the 16 December 2026 decisions)."
+  },
+  {
+   "id": "velvet-pine-22/PULSE",
+   "field": "source_claim",
+   "issue": "named_source says \"NeurIPS 2026 Evaluations & Datasets submission (anonymous)\" and the quote is the anonymous-review notice."
+  },
+  {
+   "id": "gifoe/CRCICLR",
+   "field": "id",
+   "issue": "The repo id contains \"ICLR\" and the card names only a \"CRCICLR HSC-TTA project\". Check against D4 before listing."
+  },
+  {
+   "id": "ut-vision/EgoBrain-Mini",
+   "field": "source_claim, derived_from",
+   "issue": "Cites ICLR 2026 (a published paper). Allowed, but a plain \"ICLR\" scan in F3 will flag it; the scan should target \"ICLR 2027\"."
+  },
+  {
+   "id": "SanderGi/lerobot-eeg-test-alex-* (13 rows)",
+   "field": "stated.participants",
+   "issue": "Value carries \"(repo name contains the first name 'alex')\". Strip the parenthetical before display."
+  },
+  {
+   "id": "Capur/IESSEEG",
+   "field": "consent_or_ethics_statement",
+   "issue": "\"present\" stands for IRB approval with consent and HIPAA authorisation waived. Never render it as participants consenting."
+  }
+ ],
+ "population_screens": {
+  "one_line_name_claims_without_qualifier": {
+   "method": "In-scope rows with derived_from.basis \"name/file structure\" whose one-liner contains a distinctive token of the candidate source and no qualifier (EN: style, named, layout, match, likely, possibly, appears, suggests, by name; ZH: 疑, 命名, 似, 可能, 结构, 风格, 式, 类). A screen for rewriting, with some false positives; copy statements backed by identical blob ids are facts.",
+   "en_count": 45,
+   "zh_count": 58,
+   "union_count": 65,
+   "en": [
+    "2Levi/EEG_fNIRS_4_BCI",
+    "Amirrzh/MI_EEG_Datasets",
+    "AnantaJ/BETA-from_Tsinghua_BCI_Lab",
+    "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+    "Bhuvii19/EEGFakeBench",
+    "Dadaism6/Omni-iEEG-Channel-feature",
+    "Dadaism6/Omni-iEEG-Raw-Event-EDF",
+    "Forainest789/NATVIEW_EEGFMRI_processed",
+    "MER-PS/MER-PS-public-leaderboard-evaluation-data",
+    "MER-PS/MER-PS-trainval",
+    "PromiseZ5Q2SQ/EEG-Hallucination",
+    "SciAILab/OSWorld-Science-data",
+    "TKQXX/THINGS-EEG-MEG_CVPR2026",
+    "abachu2005/mes-eeg-processed",
+    "as674262040/pub_eeg",
+    "braindecode/chbmit",
+    "braindecode/faced",
+    "braindecode/isruc-sleep",
+    "braindecode/mdd_mumtaz2016",
+    "gifoe/CRCICLR",
+    "graycatHCO3/bi_bci2000_MELR_tensor",
+    "graycatHCO3/eegmmidb_0to8_cross",
+    "graycatHCO3/eegmmidb_denoised",
+    "graycatHCO3/eegmmidb_tensor",
+    "hamedtu/eeg-motor-imagery-data",
+    "introvoyz042/Egocentric-EMG-Force",
+    "jamie33/July",
+    "justkha05/EEG",
+    "kgarg47/kahlus-raw-eeg-waveforms-efa0d90",
+    "kkchaulagain/LieWaves-EEG",
+    "liverman/EEG_DECODE",
+    "luigi-s/EEG_Image_CVPR_ALL_subj",
+    "mod1155/CineBrain",
+    "perottofederico/EEGCVPR40-captions",
+    "perottofederico/EEGCVPR40_GoodCaptions",
+    "perottofederico/EEGCVPR40_good_captions",
+    "pyinglie/EEG-To-Text_Datasets",
+    "pyinglie/EEG-To-Text_Preprocessed",
+    "rishab-iyer1/mindeye_ieeg",
+    "sajjad5221/eeg2text-emmt-dataset-unique-sentences",
+    "sarveshrbabu/eeg-seizure-data",
+    "tttgxias/Omni-iEEG",
+    "wang124/L-Mind",
+    "wbxlala/sleep_edf_3he1",
+    "wd41/isruc-sleep"
+   ],
+   "zh": [
+    "2Levi/EEG_fNIRS_4_BCI",
+    "Amirrzh/MI_EEG_Datasets",
+    "AnantaJ/BETA-from_Tsinghua_BCI_Lab",
+    "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+    "Bhuvii19/EEGFakeBench",
+    "BinDance/EEG",
+    "Forainest789/NATVIEW_EEGFMRI_processed",
+    "HeliumHcc/EEG_raw_datasets",
+    "HeliumHcc/preprocessed_EEG",
+    "MER-PS/MER-PS-public-leaderboard-evaluation-data",
+    "MER-PS/MER-PS-trainval",
+    "McGregorW/EEGDatasets",
+    "McGregorW/EEGDatasetsH5",
+    "McGregorW/EEGDatasets_raw",
+    "PromiseZ5Q2SQ/EEG-Hallucination",
+    "SciAILab/OSWorld-Science-data",
+    "TKQXX/THINGS-EEG-MEG_CVPR2026",
+    "WymanYYY/Sleep-EDF-V2",
+    "argaaw/dtu_eeg_more_preproc",
+    "as0305/BCI-Competition-IVa-dataset-1",
+    "as0305/BCI-Competition-IVa-dataset-2",
+    "as0305/BCI-Competition-IVa-dataset-3",
+    "as0305/BCI-Competition-IVa-dataset-4",
+    "as0305/BCI-Competition-IVa-dataset-5",
+    "as674262040/pub_eeg",
+    "braindecode/chbmit",
+    "braindecode/faced",
+    "braindecode/mdd_mumtaz2016",
+    "graycatHCO3/BI_BCI2000_MELR",
+    "graycatHCO3/bi_bci2000_MELR_tensor",
+    "graycatHCO3/eegmmidb_0to8_cross",
+    "graycatHCO3/eegmmidb_denoised",
+    "graycatHCO3/eegmmidb_tensor",
+    "hamedtu/eeg-motor-imagery-data",
+    "hezy18/EEG-SVRec",
+    "iatosh/SleepEDF-V-Dataset",
+    "introvoyz042/Egocentric-EMG-Force",
+    "jamie33/July",
+    "jomonjoseph98/real-eeg",
+    "justkha05/EEG",
+    "kgarg47/kahlus-raw-eeg-waveforms-efa0d90",
+    "kkchaulagain/LieWaves-EEG",
+    "luigi-s/EEG_Image_CVPR_ALL_subj",
+    "mod1155/CineBrain",
+    "musicji83/amigos-eeg-dataset",
+    "perottofederico/EEGCVPR40-captions",
+    "perottofederico/EEGCVPR40_GoodCaptions",
+    "perottofederico/EEGCVPR40_good_captions",
+    "pyinglie/EEG-To-Text_Datasets",
+    "pyinglie/EEG-To-Text_Preprocessed",
+    "rishab-iyer1/mindeye_ieeg",
+    "sajjad5221/eeg2text-emmt-dataset-unique-sentences",
+    "sarveshrbabu/eeg-seizure-data",
+    "strawcoder33/bci-mamba-data",
+    "tttgxias/Omni-iEEG",
+    "wang124/L-Mind",
+    "wbxlala/sleep_edf_3he1",
+    "yushiran/fnirs_fmri_stroop"
+   ]
+  },
+  "no_readable_card": {
+   "count_in_scope": 177,
+   "by_reason": {
+    "front-matter/empty": 66,
+    "<<HTTP 404>>": 86,
+    "<<HTTP 401>>": 25
+   },
+   "ids": [
+    "2Levi/EEG_fNIRS_4_BCI",
+    "34data/v14-real-bci-datasets",
+    "Amirrzh/MI_EEG_Datasets",
+    "AnantaJ/BETA-from_Tsinghua_BCI_Lab",
+    "AnantaJ/Benchmark-from_Tsinghua_BCI_Lab",
+    "AnasElkhabbaz/EMG-Dataset",
+    "Ann000/xr-emg-force-interface",
+    "Aurelianous/eeg-audio",
+    "Bhuvii19/EEGFakeBench",
+    "BinDance/EEG",
+    "BiscuitBobby/eeg_cvpr",
+    "CharlieTY/EEG_dataset",
+    "ChenglinLiuChris/eeg",
+    "DBbun/EEG-250Hz_v1.0",
+    "Dadaism6/Omni-iEEG-Channel-feature",
+    "Dadaism6/Omni-iEEG-Raw-Event-EDF",
+    "Dexora/emg",
+    "Forainest789/NATVIEW_EEGFMRI_processed",
+    "HeliumHcc/EEG_raw_datasets",
+    "HeliumHcc/preprocessed_EEG",
+    "James-ChenSD/rawData_EEG",
+    "Jingrui77/EMGVLA-Dataset",
+    "JuniorThap/EEG-relaxation-concentration",
+    "KernelCo/holohub_bci_visualization",
+    "Krishan0698/BCI",
+    "LiyuanHan/bcijelly-invasive",
+    "MER-PS/MER-PS-public-leaderboard-evaluation-data",
+    "MER-PS/MER-PS-trainval",
+    "MElHuseyni/EEG_data",
+    "MaRez10/EEG_Pain_Perception",
+    "McGregorW/EEGDatasets",
+    "McGregorW/EEGDatasetsH5",
+    "McGregorW/EEGDatasets_raw",
+    "NOttheol/EEG-Talha-Alakus-Gonen-Turkoglu",
+    "Nerlnet/EEG_Eye_State_Classification",
+    "Nerlnet/EEG_Eye_State_Classification_table_freq_window",
+    "NeuroBench/thor_eeg_mi",
+    "NeuroMM/NeuroMM-2026",
+    "Omni-iEEG/Omni-iEEG",
+    "PaoloMaccallini/EEG",
+    "Papyson/Music_Stimulated_EEG",
+    "PromiseZ5Q2SQ/EEG-Hallucination",
+    "Rodr16020/eeg-words-dataset",
+    "RuthvikBandari/neural-compass-bci",
+    "SanderGi/eval_lerobot-eeg-test-170_eeg_policy",
+    "SciAILab/OSWorld-Science-data",
+    "StevenLe456/psychiatric-eeg",
+    "TKQXX/THINGS-EEG-MEG_CVPR2026",
+    "Tanisha0709/EEGBCI",
+    "Terrycz/ECOG-ds005574",
+    "UWU-R-13/SSVEP-ANN",
+    "Ugo96/MMI-EEGSR",
+    "WymanYYY/Sleep-EDF-V2",
+    "Yuchang-Zhao/BCI-Data",
+    "Zachary1150/ear-eeg-motor-raw",
+    "abachu2005/mes-eeg-processed",
+    "abdo25/EEG_records",
+    "alexeykashevnik/EEGMeditation",
+    "alif-munim/eeg-filtered",
+    "anonymous-588/MCD-EEG",
+    "aparker03/eeg-csv",
+    "argaaw/aved_eeg",
+    "argaaw/dtu_eeg",
+    "argaaw/dtu_eeg_more_preproc",
+    "as0305/BCI-Competition-IVa-dataset",
+    "as0305/BCI-Competition-IVa-dataset-1",
+    "as0305/BCI-Competition-IVa-dataset-2",
+    "as0305/BCI-Competition-IVa-dataset-3",
+    "as0305/BCI-Competition-IVa-dataset-4",
+    "as0305/BCI-Competition-IVa-dataset-5",
+    "aspire-osu/maestro-eeg-dataset",
+    "atgarcia/EMGSoundFull",
+    "atgarcia/EMGSoundTest",
+    "atgarcia/EMGSoundTrain1",
+    "atgarcia/EMGSoundTrain2",
+    "atgarcia/EMGSoundTrain3",
+    "atgarcia/EMGSoundTrain4",
+    "autara-ai/eeg",
+    "bannuska/seegTest",
+    "charantejarangi123/EEG_dataset",
+    "colacolaaa/EEGtest",
+    "colacolaaa/EEGtrain",
+    "conorhassan/fast-autoregressive-inference-eeg",
+    "dancinlab/anima-eeg-consciousness",
+    "dbzfan2012/lerobot-eeg-test-50-2-24",
+    "dbzfan2012/lerobot-eeg-test-50-2-24_eeg",
+    "dbzfan2012/lerobot-eeg-test-50_eeg",
+    "dbzfan2012/lerobot-eeg-test_170_eeg",
+    "dbzfan2012/lerobot-eeg-test_eeg",
+    "divyanshmaurya1/projectcerebro-eeg-parquet",
+    "edessa/EMG",
+    "elinora18/EEGData",
+    "fracapuano/eeg2meg-large-tokenized",
+    "fracapuano/eeg2meg-medium",
+    "fracapuano/eeg2meg-medium-tokenized",
+    "fracapuano/eeg2meg-small-tokenized",
+    "fracapuano/eeg2meg-tiny",
+    "gabrycina/eeg2meg-medium",
+    "gabrycina/eeg2meg-tiny",
+    "graycatHCO3/BCICIV_2A_tensor",
+    "graycatHCO3/BCICIV_2B",
+    "graycatHCO3/BI_BCI2000_MELR",
+    "graycatHCO3/bi_bci2000_MELR_tensor",
+    "graycatHCO3/comp90051-eegmmidb-prepared-20261014",
+    "graycatHCO3/eegmmidb_0to8_cross",
+    "graycatHCO3/eegmmidb_denoised",
+    "graycatHCO3/eegmmidb_tensor",
+    "gxyi/SEED_Processwd_EEG",
+    "gymprathap/Brain-Computer-Interaction-Eye-State-Classification",
+    "hamedtu/eeg-motor-imagery-data",
+    "hezy18/EEG-SVRec",
+    "iatosh/SleepEDF-V-Dataset",
+    "inogii/eeg_subject0",
+    "jlgr/EMG-Dataset",
+    "jomonjoseph98/real-eeg",
+    "justkha05/EEG",
+    "kkchaulagain/LieWaves-EEG",
+    "lasfk/EEG-fNIRS-based-Handwriting-Trajectory-Dataset",
+    "lee-jhwn/multimodal-speech-biosignals",
+    "liverman/EEG_DECODE",
+    "liyongsea/THINGS_EEG_Test",
+    "marical/eeg-eye-state",
+    "matvelen6369/eeg_data",
+    "matvelen6369/eeg_data_disoder",
+    "musicji83/amigos-eeg-dataset",
+    "nagyadam97/EEG_records_raw_schizophrenia_bipolar",
+    "nariow/EEG-Electrode-Shift-Dataset",
+    "opsecsystems/D1D2_Fundamental",
+    "opsecsystems/EEGWORLD",
+    "opsecsystems/eegdream",
+    "perottofederico/EEGCVPR40-captions",
+    "perottofederico/EEGCVPR40_GoodCaptions",
+    "perottofederico/EEGCVPR40_good_captions",
+    "perottofederico/things-eeg",
+    "perottofederico/things-eeg-captions",
+    "perottofederico/things-eeg-captions-2",
+    "perottofederico/things-eeg-captions-3",
+    "perottofederico/things-eeg-captions-single-sub_01",
+    "perottofederico/things-eeg-captions-single-sub_02",
+    "perottofederico/things-eeg-captions-single-sub_03",
+    "perottofederico/things-eeg-captions-single-sub_04",
+    "perottofederico/things-eeg-captions-single-sub_05",
+    "perottofederico/things-eeg-captions-single-sub_06",
+    "perottofederico/things-eeg-captions-single-sub_07",
+    "perottofederico/things-eeg-captions-single-sub_08",
+    "perottofederico/things-eeg-captions-single-sub_09",
+    "perottofederico/things-eeg-captions-single-sub_10",
+    "phuongbtmp/EEG2Speech",
+    "prastab/eeg-processed-train-dataset",
+    "praxilon76/Sample_data",
+    "pyinglie/EEG-To-Text_Datasets",
+    "pyinglie/EEG-To-Text_Preprocessed",
+    "rishab-iyer1/mindeye_ieeg",
+    "rverma0631/eeg40",
+    "rverma0631/emg40",
+    "sajjad5221/eeg2text-emmt-dataset-unique-sentences",
+    "sarveshrbabu/eeg-seizure-data",
+    "skywalker-p/EEG_2d",
+    "smam/tuh-eeg",
+    "srimeenakshiks/eeg-biometric-data",
+    "strawcoder33/bci-mamba-data",
+    "tobisns/multisource-eeg-motorimagery",
+    "tttgxias/Omni-iEEG",
+    "ut-vision/EgoBrain-Mini",
+    "vovw/emg",
+    "wbxlala/sleep_edf_3he1",
+    "wbxlala/sleep_edf_str",
+    "williamKang112/bci-mvp",
+    "xw1216/openneuro-ds005178-eesm23-v1-0-0-transfer",
+    "xw1216/openneuro-ds005185-eesm19-raw-v1-0-2",
+    "xw1216/openneuro-hbn-eeg-releases-v1-0-1",
+    "xw1216/tuh-eeg-cloud-transfer",
+    "yushiran/fnirs_fmri_stroop",
+    "yushiran/fnirs_stroop",
+    "zainkashif/eeg-epochs",
+    "zhou-sicheng0731/emg",
+    "zl3030/reliant-bci-nlb-public-raw"
+   ]
+  },
+  "one_line_length_limits": {
+   "en_over_16_words": 0,
+   "zh_over_30_chars": 0,
+   "population": 649
+  },
+  "source_claim_quotes": {
+   "population_quotes": 364,
+   "verbatim_after_normalisation": 364,
+   "note": "Normalisation: Markdown links and emphasis, HTML tags, curly quotes and line breaks. A first pass flagged 4, all normalisation artifacts (bracketed link text, a quote across a line break, an em dash).",
+   "over_25_words": 0
+  },
+  "verdict_words": {
+   "hits": 0,
+   "note": "Scan for illegal, pirated, violation, infringing, unauthorised and the ZH equivalents across every field of all 649 rows; one substring hit (\"respiration\") is a false positive."
+  },
+  "in_scope_synthetic": [
+   "Bhuvii19/EEGFakeBench (also real BCI IV 2a and EEGMMIDB files; stays)",
+   "DBbun/EEG-250Hz_v1.0",
+   "Neurazum/Disorders_and_Diagnosis_EEG_Dataset-v3",
+   "Neurazum/Disorders_and_Diagnosis_EEG_Dataset-v4",
+   "Neurazum/Disorders_and_Diagnosis_EEG_Dataset-v5",
+   "Neurazum/General-Disorders-EEG-Dataset-v1",
+   "emgbenchanon/muniverse-dynamic-v2",
+   "sigmanova/synthetic_data_for_eeg",
+   "woldier/eeg_denoise_dataset (semi-simulated, includes real segments; stays)"
+  ],
+  "in_scope_modality_unclear": [
+   "34data/v14-real-bci-datasets",
+   "BinDance/EEG",
+   "CharlieTY/EEG_dataset",
+   "UWU-R-13/SSVEP-ANN",
+   "Yuchang-Zhao/BCI-Data",
+   "as0305/BCI-Competition-IVa-dataset",
+   "as0305/BCI-Competition-IVa-dataset-1",
+   "as0305/BCI-Competition-IVa-dataset-2",
+   "as0305/BCI-Competition-IVa-dataset-3",
+   "as0305/BCI-Competition-IVa-dataset-4",
+   "as0305/BCI-Competition-IVa-dataset-5",
+   "autara-ai/eeg",
+   "bannuska/seegTest",
+   "colacolaaa/EEGtest",
+   "colacolaaa/EEGtrain",
+   "elinora18/EEGData",
+   "gsbcilab/bci-dataset-v4",
+   "inogii/eeg_subject0",
+   "opsecsystems/EEGWORLD",
+   "williamKang112/bci-mvp",
+   "zainkashif/eeg-epochs"
+  ],
+  "emg_only_out_of_scope": [
+   "Scan2s/s2s-certified-motion",
+   "THULab/anaselkhabbaz_sensor_dataset",
+   "THULab/sensor_dataset",
+   "amathislab/Gait120-EMG",
+   "amathislab/ultra-mocap-emg-preprocessed",
+   "cyrilzakka/emg2qwerty",
+   "jxie/emg"
+  ],
+  "out_of_scope_rows_listing_a_brain_modality": {
+   "count": 17,
+   "note": "All 17 hold no signal data (empty, README-only, code-only, metadata index, annotation-only or stub files), which matches the spec. Consistent with 30/30 correct out-of-scope calls in the sample."
+  },
+  "consent_present_in_scope_review": {
+   "clear": 18,
+   "waiver_not_consent": [
+    "Capur/IESSEEG"
+   ],
+   "weak": [
+    "cagataydev/emotiv-ecot",
+    "eZWALT/price-of-attention",
+    "neukym/kymata-soto"
+   ]
+  }
+ },
+ "summary": {
+  "rows_audited": 90,
+  "rows_with_any_wrong_field": 12,
+  "wrong_field_entries": 17,
+  "displayable": [
+   "modality",
+   "paradigm",
+   "content_kind",
+   "declared_terms"
+  ],
+  "card_states_only": [
+   "stated.participants",
+   "stated.channels",
+   "stated.sampling_rate_hz",
+   "stated.device",
+   "source_claim",
+   "derived_from (basis \"stated in card\" only)",
+   "consent_or_ethics_statement (with the card sentence; gated rows \"card not readable\")"
+  ],
+  "fix_before_display": [
+   "in_scope (population filter: synthetic rule, EMG rule, no-evidence rows)",
+   "one_line_en (qualifier rule)",
+   "one_line_zh (qualifier rule, parity with EN)"
+  ]
+ }
+}

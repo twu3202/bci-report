@@ -1,0 +1,125 @@
+{
+  "release_id": "clinical-iesseeg-update-20261020",
+  "release_date": "2026-10-20",
+  "reviewed_at": "2026-10-19",
+  "reviewer": "publishing session, package B6",
+  "scope": "Editorial decisions for the IESSEEG section of /topics/clinical-groups/: the six CPU arms of the awake case-control pilot (age and acquisition controls) and the four frozen NeuroLM probe arms on the same 100 people and folds, published verbatim from the two research exports that their release reviews approve, with the input-cohort QC figures from the independent timing QC audit. A section on an existing page: no dataset page, no new dataset or model in any count, outside every leaderboard.",
+  "approval": {
+    "date": "2026-10-19",
+    "decision": "aggregate_preview",
+    "basis": "The owner's decisions for this release, recorded in research/publication_review_20261020/owner-decisions.json and quoted below: D1 publishes IESSEEG with the NeuroLM results; D7 (option A) publishes the age <=2 column as the release reviews approved it; D13 places it as a section of /topics/clinical-groups/ with its own question heading. The two research release reviews approve the exact export bytes for an aggregate development card outside the overall leaderboard; neither grants website authority, which D1 supplies.",
+    "ownerDecisions": {
+      "path": "research/publication_review_20261020/owner-decisions.json",
+      "note": "Quoted verbatim; the export requires each quoted text to be the current value at its key, so a changed decision stops the build. The file is not pinned by hash because later packages may add decisions to it.",
+      "quoted": {
+        "D1": "All three: the seven SSVEP follow-ups (new-ssvep-frequencies), Shin2022 with the data-quality page, and IESSEEG with the NeuroLM results (clinical-groups section and the NeuroLM EEGMAT pilot panel)",
+        "D7": "IESSEEG age <=2 column published as approved (option A)",
+        "D13": "A section on /topics/clinical-groups/ with its own question heading; the Parkinson's h1, short answer and card unchanged"
+      }
+    },
+    "declaredEdits": [],
+    "decisionsOfThisReview": [
+      "Verbatim: every score block (all-100 and age <=2: n, balanced accuracy, AUROC, accuracy, F1, sensitivity, specificity, confusion counts) and every audit count is copied from the two approved exports without rounding, and must equal, value and type, the independent numerical audit each release review binds. Option A of D7 drops nothing, so there is no declared edit and no re-review.",
+      "Six CPU arms and four neural arms, in the protocol order; no arm or threshold is selected. Both balanced accuracy and AUROC are display columns, with the age <=2 balanced accuracy as the third; F1 stays in the blocks and is never a display column.",
+      "The age <=2 column publishes the band's size and its case and control counts (68: 42 and 26), which both release reviews state. The per-group age means, medians and quartiles in the cohort metadata audit and any sex counts stay out, as for the Parkinson's comparison in clinical-update.json; the export refuses them by key and by value.",
+      "Per-fold metrics stay out: the scored aggregates carry them (folds of 20, and age-band folds of 12 to 15 people); the export refuses them by key and by value.",
+      "Input-cohort QC (300 assets and their bytes, 100 recordings passed with no gaps, the channel-count and sampling-rate distributions) is read from the independent cohort timing QC result audit pinned here, and each figure must also be stated in the hash-bound CPU handoff. The plan lists the timing QC audit as b6b94df1...; that hash is the one-file pilot timing audit (validation/IESSEEG Pilot Timing and QC Audit.md), which holds none of the cohort figures, so it is not an input.",
+      "Attribution comes only from the IESSEEG release card at revision 1c32ee3a425a324808a9d275b60ce85625af35c8 (README and LICENSE, the bytes the CPU release review binds): the requested citation title, CC BY 4.0 for the dataset and annotations, the publisher's prior-reuse declaration and the card's ethics statement. Nothing names or links a conference submission; the export refuses such text.",
+      "medical_disclaimer is true and points to the medical_disclaimer wording of clinical-update.json, which the page reuses; that file keeps its bytes.",
+      "NeuroLM: the checkpoint's training stage and its prior exposure to these participants are unknown; the model is identified by its source revision and checkpoint SHA-256 only. No NeuroLM licence is stated: none is in the pinned records of this release.",
+      "The handoffs are copy sources only. They name private storage, so no sentence of theirs is published verbatim; the private names the export refuses are read from them at run time."
+    ]
+  },
+  "sources": {
+    "controlsExport": {
+      "path": "research/iclr_bci_expansion_20261016/exports/IESSEEG Awake Development Baselines.json",
+      "sha256": "1b4bb1676ffc385af9626bb431067ec2045ceb68017987780fba9446fd5bcb89"
+    },
+    "neurolmExport": {
+      "path": "research/iclr_bci_expansion_20261016/exports/IESSEEG Frozen NeuroLM Development Results.json",
+      "sha256": "36f10d003be9f8794f46676ffe5c82815bb5581c0acc9513946b36230f0e07e8"
+    },
+    "controlsReleaseReview": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Awake Baseline Release Review.json",
+      "sha256": "40f5661c5ae191daf4a0f0072ccec5cf8e5c106fecdff5a49780b42d7935ef1b"
+    },
+    "neurolmReleaseReview": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Frozen Encoder Release Review.json",
+      "sha256": "3357f5fe69d5296e017b4aea02fa1beb6f0bd50e9bdb9137bfef8ac7c91da4e8",
+      "note": "No other file states a hash for this review; it is pinned here."
+    },
+    "controlsHandoff": {
+      "path": "research/iclr_bci_expansion_20261016/IESSEEG Awake Baseline and Dataset Validation Handoff.md",
+      "sha256": "09d2f1f8351f820d549045a015bdbf5a20ec3aa175c4cf7e849fa1cef84e4216"
+    },
+    "neurolmHandoff": {
+      "path": "research/iclr_bci_expansion_20261016/IESSEEG Frozen NeuroLM Validation Handoff.md",
+      "sha256": "c29b1eecc9104c17485cceb5cab0b48d83df0791841612a2022072ecc9339a89"
+    },
+    "controlsNumericalAudit": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Awake Baseline Numerical Audit Attempt 01.json",
+      "sha256": "9de015675a6bb7412b1fe55e3c05187628149e757032c6da8680e65dce16203a"
+    },
+    "neurolmNumericalAudit": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Frozen Encoder Numerical and Scoring Audit.json",
+      "sha256": "50ed596f7d8c83694a29287ef0262e07b459de0b3483896a5ee951e99fc1ece6"
+    },
+    "controlsProtocol": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Awake Baseline Protocol.json",
+      "sha256": "c10ea32bf16726b8ec8afd02eee74f84234f58dfcb7d9ecbc45b637255be2b8a"
+    },
+    "neurolmProtocol": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Frozen Encoder Protocol.json",
+      "sha256": "256eed9cb064861a8ddbcc1b168a4a33eed2136ce303bc3337bd1e0b06c78458"
+    },
+    "cohortQcAudit": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Cohort Timing QC Result Audit.json",
+      "sha256": "4bc7b3a9f1cd58da968d2555fae5f14011a721de2903880a6dd3ebb324eb30ca",
+      "note": "The independent read-only result audit of the 100-recording cohort timing QC; every figure the export takes from it is also stated in the hash-bound CPU handoff."
+    },
+    "releaseCard": {
+      "path": "research/iclr_bci_expansion_20261016/evidence/dataset-access-20261016/iesseeg-README.md",
+      "sha256": "79c7d3cec9eba6e0082f871e10eb80d411ada81eff41f3c22a5f89b7001cf0d6",
+      "retrievedFrom": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/README.md"
+    },
+    "releaseLicence": {
+      "path": "research/iclr_bci_expansion_20261016/evidence/dataset-access-20261016/iesseeg-LICENSE",
+      "sha256": "95634d4d0810fe27a025c2546e7863aca1491ac1c68349e7a0566d0249a649aa",
+      "retrievedFrom": "https://huggingface.co/datasets/Capur/IESSEEG/blob/1c32ee3a425a324808a9d275b60ce85625af35c8/LICENSE"
+    }
+  },
+  "withheldReference": {
+    "controlsScoredAggregates": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Awake Baseline Scored Aggregates.json",
+      "sha256": "291d5c8c9e3a0a4732475f7fa7fd02d41d50ad92fed52db378a7c94fb40ab989",
+      "note": "Holds the per-fold metrics; read only to prove that none of them reaches the served file."
+    },
+    "cohortMetadataAudit": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Cohort Metadata Audit.json",
+      "sha256": "441b9623f4ffba45a17582098e90b6823eefafcd463f1ea6d6882253034a77e2",
+      "note": "Holds per-group age means, medians and quartiles; read only to prove that none of them reaches the served file."
+    }
+  },
+  "published": {
+    "clinical": {
+      "path": "site/src/data/clinical-update.json",
+      "sha256": "082a25d15436eb52ebf1e25f981088f2fa56f21377f7ed0e7907d849a33678df",
+      "note": "The released Parkinson's comparison: keeps its bytes; the page reuses its medical_disclaimer wording."
+    }
+  },
+  "releaseRecord": {
+    "date": "2026-10-20",
+    "decision": "Publish the IESSEEG awake case-control pilot as a section of the clinical groups page: six arms with and without EEG, including age-only and recording-settings-only controls, and four arms that read frozen NeuroLM features with the same probes. Every score is the approved research export's value, unchanged.",
+    "ageBand": "The age <=2 column is published as the release reviews approved it: the band's size and its case and control counts, scored from the same out-of-fold predictions. Per-group age means and sex counts stay unpublished.",
+    "placement": "A section with its own question heading on the existing page; the page's heading, short answer and card keep their wording, and no dataset page or count is created."
+  },
+  "notPublished": [
+    "Participant rows of any kind: identifiers, ages, diagnoses, recordings, fold assignments, features, out-of-fold predictions and probabilities.",
+    "Per-fold metrics for the five folds and for the age <=2 band within each fold.",
+    "Per-group age means, medians and quartiles, and sex counts: aggregates, but a demographic profile of a diagnosis-specific group, which this site does not publish. The age <=2 column gives only the band's size and its case and control counts.",
+    "Intervals and significance tests: none was specified before scoring, and none is computed after it.",
+    "EEG signals, model code, the NeuroLM checkpoint and its features: none is redistributed.",
+    "Runtimes, hosts, storage locations and the private seal and score files (named by SHA-256 only)."
+  ],
+  "holds": []
+}

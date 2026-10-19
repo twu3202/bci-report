@@ -1,0 +1,471 @@
+---
+/**
+ * What lets a decoder answer an SSVEP frequency it never trained on? (owner decision D1): route 3's follow-ups on
+ * frequencies the trained part of a decoder never saw. Six follow-ups on route 3's BETA cohort, each testing one idea
+ * (how the question is asked, the head, stimulus phase, the matching computation, a learned correction to CCA), and a
+ * seventh that runs that correction unchanged on Wearable-102; card 8 holds the place of the cross-spectral round,
+ * with no figures. Its own question in "Adapting models", right after questions-in-language, whose #unseen-frequency
+ * links here with no figure.
+ *
+ * The page is the shell (plan §2.1, package P-SS1): the short answer, the intro line that links the public thread
+ * once (the commenter is not named), the endpoint strip, the cards 1–6 scope line given once, the name key, card 8,
+ * #methods-and-limits and the credits. Cards 1–7 are the three components in src/components/ssvep/, each owning its
+ * cards' <section>s (QueryCards 1–2, PhaseCards 3–4, CcaCards 5–7).
+ *
+ * Every figure is a leaf of new-ssvep-frequencies-update.json (src/data/new-ssvep-frequencies.ts), printed with
+ * data-fig and re-read by scripts/checks/new-ssvep-frequencies.mjs; the cite block names this release only. The
+ * sentences that summarise the export are checked against it below, and the page refuses to build if the numbers
+ * stop supporting them. Copy rules (the plan, superseded where the reviews say so): the short answer as the adapter
+ * binding review words its first sentence (no ranking word); no update date or version label; each caveat once,
+ * beside its evidence; no figure of the commenter's own confidence anywhere; the bet only on card 4.
+ */
+import TopicLayout from '../../../components/TopicLayout.astro';
+import QueryCards from '../../../components/ssvep/QueryCards.astro';
+import PhaseCards from '../../../components/ssvep/PhaseCards.astro';
+import CcaCards from '../../../components/ssvep/CcaCards.astro';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import ql from '../../../data/questions-in-language-update.json';
+import mvp from '../../../data/mvp.json';
+import {
+  SSVEP, SSVEP_PATH, SSVEP_DATA, ssvepRelease, need, pct2, pp2, sgn2, count, ans, formatSsvep, figAttr,
+  study, level, contrast, cardChrome, cardOfStudy, cardsOfName, codesOf, endpoints, endpoint, cohort, wearable, thread,
+  rights, nameKey, siteName, notPublished, intervalText, notRunOf, STUDY_IDS,
+  type Part, type SsvepFig, type CardNumber, type StudyId, type Endpoint,
+} from '../../../data/new-ssvep-frequencies';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const F = (x: SsvepFig) => formatSsvep(x);
+
+// --- The facts every sentence below rests on; the page refuses to build without them. -----------------------
+const A: StudyId = 'cca_adapter', W: StudyId = 'wearable_transfer';
+const adapted = level(A, 'RAW-RESIDUAL/u8'), ccaAlone = level(A, 'CCA-RAW/u8'), gain = contrast(A, 'RAW-RESIDUAL minus CCA-RAW/u8');
+need(gain.left === 'RAW-RESIDUAL/u8' && gain.right === 'CCA-RAW/u8' && gain.interval[0] > 0 && adapted.estimate > ccaAlone.estimate,
+  'CCA with a learned correction is above CCA alone on held-out frequencies, its paired interval above zero');
+need(gain.people === cohort.people && adapted.people === cohort.people && cohort.dataset === 'BETA', `the BETA cohort, ${cohort.people} people`);
+const u8 = endpoint('u8');
+need(u8.candidates === cohort.held_out_frequencies && study(A).design?.endpoints?.u8?.candidate_count === u8.candidates,
+  'choosing among the eight held-out frequencies');
+need(ccaAlone.estimate === level('cca_diagnostics', 'CCA-RAW/u8').estimate && ccaAlone.estimate === level('ref', 'CCA/u8').estimate
+  && ccaAlone.estimate === level('phase_ramp', 'CCA/u8').estimate, 'CCA alone is one score on every card that prints it');
+need(study(A).design?.arms?.find((a: { code: string }) => a.code === 'RAW-RESIDUAL')?.training === 'trained on source people and seen frequencies'
+  && study(A).design?.arms?.find((a: { code: string }) => a.code === 'CCA-RAW')?.training === 'no training'
+  && study(A).protection?.scale === 'CCA correlation', 'temporal CCA with a small learned correction on top of its score');
+const dry = contrast(W, 'RAW-RESIDUAL_minus_CCA-RAW/dry'), wet = contrast(W, 'RAW-RESIDUAL_minus_CCA-RAW/wet');
+need(dry.role === 'primary' && wet.role === 'primary' && dry.left === 'RAW-RESIDUAL/dry' && dry.right === 'CCA-RAW/dry'
+  && wet.left === 'RAW-RESIDUAL/wet' && wet.right === 'CCA-RAW/wet' && dry.people === wearable.people && wet.people === wearable.people,
+  'the two primary Wearable-102 contrasts: the models minus CCA, dry and wet');
+const sm = study(W).design?.source_models;
+need(sm?.arm === 'RAW-RESIDUAL' && sm?.retraining === false && sm?.ensemble === false && sm?.models === wearable.source_models
+  && study(W).source_models_sha256 === study(A).source_sha256 && wearable.retraining === false && wearable.source_dataset === cohort.dataset,
+  'the same models, trained on BETA, run unchanged');
+need(study(W).cca_definition?.matched_cca?.same_definition_as === 'cca_adapter CCA-RAW' && study(W).cca_definition?.matched_cca?.same_as_model_term === true,
+  'the CCA the Wearable-102 change is measured against is the CCA inside the models');
+// "Learned heads that read reference spectra or stimulus phase stayed far below CCA": every trained head of cards 1–4
+// on held-out frequencies, its interval's top more than 30 points under the bottom of CCA's.
+const ccaHier = level('ref', 'CCA/u8');
+const heads = (['ref', 'ref2', 'phase_jitter', 'phase_ramp'] as const).flatMap(id => Object.entries(study(id).levels)
+  .filter(([k]) => k.endsWith('/u8') && !/^(?:CCA|TEMPLATE)\//.test(k)).map(([k, v]) => ({ id, k, v })));
+const readsRefOrPhase = heads.filter(h => /REF/.test(h.k) || /^L0c-/.test(h.k) || h.id === 'phase_jitter' || /^(?:FS|MATCH)-/.test(h.k));
+need(heads.length >= 20 && readsRefOrPhase.length >= 15 && heads.every(h => h.v.seeds === cohort.training_seeds)
+  && heads.every(h => h.v.interval[1] < ccaHier.interval[0] - 0.3), 'every learned head of cards 1–4 stayed far below CCA on held-out frequencies');
+
+// The intro line, the scope line and the endpoint strip.
+// The strip's words are keyed by endpoint; the export's task names pin what each row measures.
+need(endpoints.map(e => e.task).join('|') === 'Held-out 8-way|Seen 32-way balanced|Core 40-way|Wearable-102 12-way|ID on held-out'
+  && study(W).design?.endpoints?.dry?.role === 'primary' && study(W).design?.endpoints?.wet?.role === 'primary',
+  'held-out accuracy, seen balanced accuracy, the core task, Wearable-102 with dry and wet scored separately, the question number on held-out');
+need(cohort.same_cohort_as === ql.release_id && SSVEP_DATA.provenance.parent_release.release_id === ql.release_id,
+  'these follow-ups reuse the cohort route 3 studied');
+need(cohort.unseen_means === 'unseen by the trained part of the decoder', '"unseen" means unseen by the trained part of the decoder');
+need(cohort.window_seconds === 2 && cohort.seen_frequencies + cohort.held_out_frequencies === cohort.targets,
+  'two-second windows; the seen and held-out frequencies make up the targets');
+need(endpoint('seen_ba').candidates === cohort.seen_frequencies && endpoint('core_40').candidates === cohort.targets
+  && endpoint('wearable_12').candidates === wearable.targets && endpoint('id_held_out').defined === false
+  && endpoint('id_held_out').reason === 'cannot_ask_unseen' && endpoint('core_40').separate_page === true && endpoint('core_40').cards.length === 0,
+  'the strip: held-out, seen, the core task on its own pages, Wearable-102, and the question number undefined on held-out frequencies');
+need(endpoint('core_40').pages?.join() === '/protocols/beta-8ch/,/protocols/beta-4ch/'
+  && mvp.tracks.some((t: { id: string }) => t.id === 'beta-8ch') && mvp.tracks.some((t: { id: string }) => t.id === 'beta-4ch'),
+  'the core 40-way task is on the two BETA protocol pages');
+need(endpoint('u8').cards.join() === '1,2,3,4,5,6' && endpoint('seen_ba').cards.join() === '1,2,3,4,5,6' && endpoint('wearable_12').cards.join() === '7',
+  'held-out and seen on cards 1–6, Wearable-102 on card 7');
+need(wearable.sensors.join() === 'dry,wet' && wearable.recordings === 'as stored', 'dry and wet headbands, recordings as stored');
+
+// Methods and limits: the definitions, the disclosures and the credits are the export's.
+const RD = study('ref').design!.descriptive_readoffs;
+need(/neighbour interpolation read-off/.test(RD.nn8) && /use the one valid neighbour at a grid edge/.test(RD.nn8)
+  && /uses the true target to define this local diagnostic/.test(RD.u3) && /edge cases have two candidates/.test(RD.u3)
+  && /At L1 this diagnostic also involves associated stimulus phase/.test(RD.u3)
+  && RD.ties === 'Candidate frequencies are in ascending order; exact score ties select the lowest frequency.',
+  'the nn8, u3 and tie-rule definitions');
+need(/^Same eight frequencies and trials scored with eight candidates in the four other rotations where those frequencies were seen\.$/.test(study('ref').design!.matched_eight),
+  'the m8 definition');
+const costOk = (id: StudyId, arm: string) => Math.abs(level(id, `${arm}/u8`).estimate - level(id, `${arm}/m8`).estimate
+  - (study(id).levels[`${arm}/cost`] as { estimate: number }).estimate) < 1e-9;
+need(costOk('ref', 'L0-FS-REF') && costOk('phase_ramp', 'FS-REF') && costOk('ref2', 'L0c-FS-REFc-0')
+  && study('ref').levels['CCA/cost'].estimate === 0 && study('ref').levels['TEMPLATE/cost'].estimate === 0,
+  'the generalisation cost is held-out accuracy minus m8, zero by construction for the scorers with no training');
+need(/all 8 channels/.test(study('phase_jitter').design!.delay.draw) && study('phase_jitter').display_names.L0 === 'plain spectrum'
+  && study('phase_jitter').display_names.L0c === 'complex spectrum' && study('ref').display_names.L1 === 'frozen CBraMod features',
+  'eight channels; the plain and complex spectra and the frozen CBraMod features');
+need(study('phase_ramp').limitations_keys.includes('feature_recipe_confound') && study('ref2').limitations_keys.includes('l0c_recipe_as_a_whole'),
+  'the complex and plain spectra differ in more than phase');
+need(study('ref2').limitations_keys.includes('compatibility_reader_recovery') && study('softmax').limitations_keys.includes('runtime_guard_recovery')
+  && cardOfStudy('ref2') === 2 && cardOfStudy('softmax') === 2, 'the two engineering disclosures, both card 2’s');
+need(['ref', 'ref2', 'cca_diagnostics', 'cca_adapter'].every(id => study(id as StudyId).limitations_keys.includes('unadjusted_intervals'))
+  && study('phase_jitter').intervals?.secondary_intervals === 'Descriptive; unadjusted for multiplicity.'
+  && study('phase_ramp').multiplicity === 'Six primary and seven secondary paired contrasts; no multiplicity correction.',
+  'no interval is adjusted for multiple comparisons');
+need(STUDY_IDS.every(id => study(id).interval_method.level === 0.95), 'every interval is a 95% interval');
+const beta = rights.datasets.beta, wear = rights.datasets.wearable_102, corr = rights.corrigendum, cbm = rights.cbramod;
+need(beta.license === 'CC BY 4.0' && /Liu et al\./.test(beta.citation) && /\(2020\)/.test(beta.citation) && wear.license === 'CC BY 4.0'
+  && /Readme\.pdf$/.test(wear.readme) && /^https:\/\/doi\.org\/10\.3390\/s21041256$/.test(wear.paper_citation.split(' ').at(-1)!),
+  'BETA, CC BY 4.0, Liu et al. 2020; Wearable-102, CC BY 4.0, its paper and its Readme');
+need(corr.mirror === 'Bingchuan/BETA' && corr.url.includes(`/resolve/${corr.revision}/Description.pdf`) && corr.cards.join() === '2,3',
+  'the corrigendum, read from the mirror at its pinned revision, for cards 2 and 3');
+const cbmRecord = mvp.models.find((m: { name: string }) => m.name === 'CBraMod') as { license: string; url: string } | undefined;
+need(cbm.method_page === '/methods/cbramod/' && cbmRecord?.license === cbm.license && cbmRecord?.url === cbm.repository && cbm.cards.join() === '1',
+  'CBraMod’s licence as the method record states it');
+need(/no weights are distributed/.test(SSVEP_DATA.release_record.rights), 'no CBraMod weights are distributed');
+// Card 8: the status card names no figure (its English and Chinese below carry no digit).
+need(cardChrome(8, locale).statusOnly && notPublished.some(x => /^The cross-spectral round: in progress at the freeze;/.test(x)),
+  'the cross-spectral round is in progress and ships as its own release');
+
+// --- English the Chinese page translates, keyed to the export so a changed export fails the build. ----------
+const NOT_PUBLISHED: Record<string, { en: string; zh: string }> = {
+  'Per-person, per-fold, per-rotation, per-seed, per-window and per-frequency values of any kind, predictions, scores, features, fitted heads and the sealed run files: only cohort levels, paired contrasts with their intervals, transition shares and check counts are published.': {
+    en: 'Per-person, per-fold, per-rotation, per-seed, per-window and per-frequency values of any kind, predictions, scores, features, fitted heads and the sealed run files: only cohort levels, paired contrasts with their intervals, transition shares and check counts are published.',
+    zh: '任何逐人、逐折、逐轮换、逐种子、逐时间窗或逐频率的数值，以及预测、分数、特征、拟合好的分类头和封存的运行文件：只发布队列层面的水平、配对对比及其区间、决策转变比例与检查计数。',
+  },
+  'The handoffs, protocols, freezes, receipts, reviews and the canonical jitter score themselves: each is pinned by SHA-256 in the release manifest and checked by the export; several carry private storage paths.': {
+    en: 'The handoffs, protocols, freezes, receipts and reviews, and card 3’s canonical score file: each is pinned by SHA-256 in the release manifest and checked by the export; several carry private storage paths.',
+    zh: '交接文档、协议、冻结记录、回执与审查，以及卡片 3 的正式分数文件：每一份都在发布清单中以 SHA-256 固定，并由导出流程核对；其中几份含有私有存储路径。',
+  },
+  'The commenter’s name.': { en: 'The commenter’s name.', zh: '评论者的名字。' },
+  'The cross-spectral round: in progress at the freeze; its status card carries no figures, and it ships as its own file and release.': {
+    en: 'The cross-spectral round: in progress at the freeze; its status card carries no figures, and it ships as its own file and release.',
+    zh: '互谱这一轮：冻结时仍在进行；它的状态卡没有数字，结果将作为单独的文件和发布推出。',
+  },
+  'Measured compute: run times, memory and process identifiers.': { en: 'Measured compute: run times, memory and process identifiers.', zh: '实测的计算量：运行时间、内存与进程标识。' },
+  'The adapter’s per-seed accuracies and its CROP-RESIDUAL transitions; the Wearable-102 contrast against the cropped-spectrum check.': {
+    en: 'Card 6’s per-seed accuracies and the decision transitions of the cropped match with learned correction; the Wearable-102 contrast against the cropped-spectrum check.',
+    zh: '卡片 6 各随机种子的准确率，以及加学习修正的裁剪谱匹配的决策转变；Wearable-102 上相对裁剪谱检查的对比。',
+  },
+};
+for (const x of notPublished) need(x in NOT_PUBLISHED, `words for the not-published item "${x.slice(0, 60)}…"`);
+const CONDITIONS_ZH: Record<string, string> = {
+  'Attribution required. Participant consent described use for non-commercial scientific research, a narrower operational boundary than the copyright license; minors required parental consent.':
+    '须署名。被试知情同意所描述的用途是非商业科学研究，这一使用边界比版权许可更窄；未成年被试须征得监护人同意。',
+  'Cohort aggregates only; no participant records, EEG signals, or individual predictions.':
+    '只发布队列层面的聚合结果；不发布被试记录、EEG 信号或单个预测。',
+};
+for (const x of beta.publication_conditions) need(x in CONDITIONS_ZH, `Chinese for BETA's condition "${x.slice(0, 50)}…"`);
+need(wear.consent_scope === 'The paper describes consent for noncommercial scientific research.', 'Wearable-102’s consent scope as the record states it');
+need(wear.local_representation === 'Official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.',
+  'Wearable-102 was read from the author mirror snapshot');
+need(corr.used_for === 'the stimulus phases of the reference with stimulus phase (REFc-0), converted to the cosine convention with zero latency',
+  'what the corrigendum was used for');
+need(cbm.used_for === 'the frozen CBraMod features (L1) of card 1, the ones route 3 used', 'what CBraMod was used for');
+
+// --- Figures the short answer and the description name. ------------------------------------------------------
+const fAdapted = pct2(adapted.estimate), fCca = pct2(ccaAlone.estimate), fK = count(u8.candidates!), fGain = pp2(gain.estimate);
+const fGainLo = sgn2(gain.interval[0]), fGainHi = sgn2(gain.interval[1]), fPeople = count(cohort.people);
+const fDry = pp2(dry.estimate), fDryLo = sgn2(dry.interval[0]), fDryHi = sgn2(dry.interval[1]);
+const fWet = pp2(wet.estimate), fWetLo = sgn2(wet.interval[0]), fWetHi = sgn2(wet.interval[1]);
+need(dry.interval[0] < 0 && dry.interval[1] > 0 && wet.interval[0] < 0 && wet.interval[1] > 0, 'both Wearable-102 intervals span zero');
+
+// --- The chrome around the cards. ------------------------------------------------------------------------------
+const cardLinks = (ns: number[]): { href: string; text: string }[] => ns.map(n => ({ href: `#${cardChrome(n as CardNumber, locale).anchor}`, text: String(n) }));
+const protocolName: Record<string, Record<'en' | 'zh', string>> = {
+  '/protocols/beta-8ch/': { en: 'BETA, eight channels', zh: 'BETA，八个通道' },
+  '/protocols/beta-4ch/': { en: 'BETA, four channels', zh: 'BETA，四个通道' },
+};
+const ENDPOINT_COPY: Record<Endpoint['id'], Record<'en' | 'zh', { task: string; note: string }>> = {
+  u8: { en: { task: 'Held-out frequencies', note: 'Accuracy among the frequencies left out of training the decoder in that rotation.' },
+        zh: { task: '留出频率', note: '在该轮换中训练解码器时留出的那些频率之间选择的准确率。' } },
+  seen_ba: { en: { task: 'Seen frequencies, balanced', note: 'Balanced accuracy among the frequencies the decoder trained on.' },
+             zh: { task: '见过的频率（平衡）', note: '在解码器训练过的频率之间选择的平衡准确率。' } },
+  core_40: { en: { task: 'Core BETA protocols', note: 'The core matrix’s task, reported on its own protocol pages.' },
+             zh: { task: 'BETA 核心协议', note: '核心矩阵的任务，结果在各自的协议页面上。' } },
+  wearable_12: { en: { task: 'Wearable-102', note: 'Accuracy among Wearable-102’s targets; dry and wet headbands are scored separately.' },
+                 zh: { task: 'Wearable-102', note: '在 Wearable-102 的目标之间选择的准确率；干电极与湿电极头带分别评分。' } },
+  id_held_out: { en: { task: 'Question number on held-out frequencies', note: 'A question number exists only for a frequency seen in training, so it cannot ask about a held-out one.' },
+                 zh: { task: '用题号询问留出频率', note: '题号只为训练中见过的频率而设，所以无法询问留出的频率。' } },
+};
+
+const copy = {
+  en: {
+    description: `On BETA’s held-out frequencies, CCA with a small learned correction reached ${F(fAdapted)} against ${F(fCca)} for CCA alone; run unchanged on Wearable-102, the same models changed CCA’s score by ${F(fDry)} dry and ${F(fWet)} wet. Heads that read reference spectra or stimulus phase stayed far below CCA.`,
+    answer: `On BETA’s held-out frequencies, temporal CCA with a small learned correction reached ${ans(fAdapted)} against ${ans(fCca)} for CCA alone, choosing among ${ans(fK)} frequencies (${ans(fGain)}, ${ans(fGainLo)} to ${ans(fGainHi)}; ${ans(fPeople)} people). Run unchanged on Wearable-102, the same models changed CCA’s score by ${ans(fDry)} on dry electrodes (${ans(fDryLo)} to ${ans(fDryHi)}) and ${ans(fWet)} on wet (${ans(fWetLo)} to ${ans(fWetHi)}). Learned heads that read reference spectra or stimulus phase stayed far below CCA.`,
+    eyebrow: 'Route 3 follow-ups · SSVEP frequencies the decoder never trained on',
+    dek: 'Six follow-ups on route 3’s BETA cohort each test one idea — how the question is asked, the head, stimulus phase, the matching computation and a learned correction to CCA — and a seventh runs that correction unchanged on Wearable-102.',
+    setupEyebrow: 'Tasks, cohort and names',
+    setupH2: 'How the follow-ups are set up',
+    intro: ['These follow-ups answer questions from ', 'a reader’s comments on Hugging Face', '.'],
+    endpointsRegion: 'The tasks the cards report, with their chance levels, scrolls horizontally',
+    endpointsCaption: 'The tasks the cards report, with the chance level of each.',
+    colTask: 'Task', colCandidates: 'Candidates', colChance: 'Chance', colCards: 'Cards', colNote: 'What it measures',
+    notDefined: 'not defined', none: '—', cardWord: 'Card ',
+    scope: (link: string): [Part[], string, Part[]] => [
+      ['Cards 1 to 6: BETA, ', count(cohort.people), ' people, ', count(cohort.windows), ' two-second windows, ', count(cohort.person_folds),
+        ' participant folds × ', count(cohort.frequency_rotations), ' frequency rotations (', count(cohort.seen_frequencies), ' seen, ',
+        count(cohort.held_out_frequencies), ' held out); trained heads use ', count(cohort.training_seeds), ' seeds. These follow-ups reuse the cohort '],
+      link,
+      [' already studied. “Unseen” means unseen by the trained part of the decoder.'],
+    ],
+    scopeLink: 'route 3',
+    namesRegion: 'The names this page uses and the export codes behind them, scrolls horizontally',
+    namesCaption: 'The names this page uses, with the codes the data file uses for them.',
+    colName: 'Name on this page', colCodes: 'Export code', colUsed: 'Cards',
+    card8: 'Next in the thread: one set of learned weights scores each candidate’s channel-by-channel matrices at the fundamental and two harmonics, with no per-frequency parameters: fixed learned linear readouts of cross-spectral features, with prescribed trial-dependent normalization or whitening. The design is frozen and the run is in progress; its results join this page after review.',
+    limitsH2: 'Methods and limits',
+    defsH3: 'Definitions',
+    defs: [
+      ['Plain spectrum (L0)', 'The log-magnitude spectrum of each of the eight channels, kept channel by channel: it keeps which channel is which and discards phase.'],
+      ['Complex spectrum (L0c)', 'Each channel’s complex Fourier coefficients of the Hann-tapered window, real and imaginary parts, so phase is kept. It also differs from the plain spectrum in normalisation, size and the capacity of the head that reads it.'],
+      ['Frozen CBraMod features (L1)', 'The features of the frozen CBraMod encoder that route 3 used; no encoder weight was trained here.'],
+      ['m8', 'The same eight frequencies and windows, scored among eight candidates in the four other rotations, where those frequencies were seen in training: the matched comparison for a held-out score.'],
+      ['Generalisation cost', 'Held-out accuracy minus m8 for the same arm. For a scorer with no training it is zero by construction.'],
+      ['nn8', 'A neighbour read-off: for each held-out frequency, the arm’s scores for the adjacent seen frequency on either side are averaged (the one neighbour at the edge of the grid), and the choice is then made among the eight held-out candidates. It interpolates from the neighbours, beside the direct held-out score.'],
+      ['u3', 'A local diagnostic: for windows whose frequency is held out, the score for that frequency competes with its adjacent seen frequencies (two candidates at the edge of the grid). It uses the true target to choose its candidates, which makes it a test of local frequency discrimination; on frozen CBraMod features it also involves stimulus phase.'],
+      ['Ties', 'Candidate frequencies are in ascending order, and an exact score tie selects the lowest frequency.'],
+    ] as [string, string][],
+    intervalsH3: 'Intervals, card by card',
+    intervalCards: (ns: number[]) => ns.length > 1 ? `Cards ${ns[0]} and ${ns[1]}` : `Card ${ns[0]}`,
+    intervalsNote: 'No interval is adjusted for multiple comparisons. Differences are paired and computed before rounding, so a printed difference can differ in its last digit from the difference of the printed levels.',
+    disclosuresH3: 'Two engineering disclosures',
+    disclosures: 'Card 2 scored the earlier question-number and numeric-code runs through a reviewed compatibility reader, because those files lacked a field listing their questions. The softmax run’s pre-freeze guard was changed to hash file contents. Neither change touched training, predictions or results.',
+    notRunH3: 'Not run',
+    runIn: (n: number) => ` (run in card ${n})`,
+    notPubH3: 'Not published here',
+    creditsH3: 'Credits, licences and consent',
+    betaUse: 'Cards 1 to 6, and the source of the models card 7 runs on Wearable-102.',
+    corrName: 'BETA authors’ corrigendum (Description.pdf)',
+    corrUse: (rev: string): Part[] => ['The stimulus phases of the reference with stimulus phase (cards 2 and 3), converted to the cosine convention with zero latency. Read from the Hugging Face mirror Bingchuan/BETA (revision ', rev, ').'],
+    corrLink: 'Description.pdf ↗',
+    cbramodUse: 'The frozen CBraMod features of card 1 (L1), the ones route 3 used. No weights are distributed.',
+    cbramodPage: 'CBraMod’s page', codeLink: 'Code ↗',
+    wearConsent: 'The paper describes consent for noncommercial scientific research.',
+    wearMirror: 'Computed from the official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.',
+    recordLink: 'Dataset record ↗', sourceLink: 'Source ↗', readmeLink: 'Readme ↗',
+    derived: 'Derived analyses by BCI Report, aggregates only; no raw data are redistributed.',
+    relatedH2: 'Related questions',
+    related: [
+      { text: 'Route 3’s own result on unseen frequencies, a head asked in words: ', href: '/topics/questions-in-language/#unseen-frequency', link: topicCards.en['questions-in-language'].question },
+      { text: 'Wearable-102’s dry and wet headbands, with CCA and trained decoders: ', href: '/topics/dry-vs-wet/', link: topicCards.en['dry-vs-wet'].question },
+    ],
+  },
+  zh: {
+    description: `在 BETA 的留出频率上，加一个小的学习修正的 CCA 达到 ${F(fAdapted)}，CCA 单独为 ${F(fCca)}；同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${F(fDry)}、湿电极 ${F(fWet)}。读参考谱或刺激相位的分类头远低于 CCA。`,
+    answer: `在 BETA 的留出频率上，时域 CCA 加一个小的学习修正达到 ${ans(fAdapted)}，CCA 单独为 ${ans(fCca)}，两者都在 ${ans(fK)} 个频率中选择（${ans(fGain)}，${ans(fGainLo)} 至 ${ans(fGainHi)}；${ans(fPeople)} 名被试；pp 即百分点）。同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${ans(fDry)}（${ans(fDryLo)} 至 ${ans(fDryHi)}）、湿电极 ${ans(fWet)}（${ans(fWetLo)} 至 ${ans(fWetHi)}）。读参考谱或刺激相位的学习型分类头远低于 CCA。`,
+    eyebrow: '第三条路线 · 后续检验 · 解码器没训练过的 SSVEP 频率',
+    dek: '在第三条路线的 BETA 队列上，六项后续检验各检验一个想法——提问方式、分类头、刺激相位、匹配计算，以及对 CCA 的学习修正；第七项把这个修正原样用于 Wearable-102。',
+    setupEyebrow: '任务、队列与名称',
+    setupH2: '这些后续检验怎样设置',
+    intro: ['这些后续检验回答的是一位读者在 ', 'Hugging Face 帖子下的评论', '中提出的问题。'],
+    endpointsRegion: '各卡片报告的任务及其随机水平，可横向滚动',
+    endpointsCaption: '各卡片报告的任务，以及每个任务的随机水平。',
+    colTask: '任务', colCandidates: '候选数', colChance: '随机水平', colCards: '卡片', colNote: '衡量什么',
+    notDefined: '无定义', none: '—', cardWord: '卡片 ',
+    scope: (link: string): [Part[], string, Part[]] => [
+      ['卡片 1 至 6：BETA，', count(cohort.people), ' 名被试，', count(cohort.windows), ' 个两秒时间窗，', count(cohort.person_folds),
+        ' 个被试折 × ', count(cohort.frequency_rotations), ' 个频率轮换（', count(cohort.seen_frequencies), ' 个见过、',
+        count(cohort.held_out_frequencies), ' 个留出）；训练的分类头各用 ', count(cohort.training_seeds), ' 个随机种子。这些后续检验沿用'],
+      link,
+      ['已经研究过的队列。“没见过”指解码器中经过训练的部分没有见过。'],
+    ],
+    scopeLink: '第三条路线',
+    namesRegion: '本页使用的名称及其导出代码，可横向滚动',
+    namesCaption: '本页使用的名称，以及数据文件中对应的代码。',
+    colName: '本页名称', colCodes: '导出代码', colUsed: '卡片',
+    card8: '讨论串中的下一项：用一组共享的学习权重给每个候选频率在基频及两个谐波上的通道×通道矩阵打分，不设逐频率参数，即在互谱特征上固定的学习线性读出，并按规定做逐试次归一化或白化。设计已冻结，正在运行；结果经审核后加入本页。',
+    limitsH2: '方法与局限',
+    defsH3: '定义',
+    defs: [
+      ['普通频谱（L0）', '八个通道各自的对数幅度谱，按通道分开保留：保留通道身份，舍弃相位。'],
+      ['复数频谱（L0c）', '每个通道在 Hann 窗下的复数傅里叶系数，包括实部与虚部，因而保留相位。它与普通频谱在归一化、维度以及读取它的分类头的容量上也不同。'],
+      ['冻结的 CBraMod 特征（L1）', '第三条路线所用的冻结 CBraMod 编码器的特征；这里没有训练编码器的任何权重。'],
+      ['m8', '同样的八个频率和时间窗，在这些频率参与训练的另外四个轮换中，于八个候选之间评分：它是留出分数的匹配对照。'],
+      ['泛化代价', '同一组的留出准确率减去 m8。对无需训练的打分方法，按构造为零。'],
+      ['nn8', '近邻读出。对每个留出频率，把该组对两侧相邻的见过频率的分数取平均（网格边缘只有一个近邻），再在八个留出候选之间选择。它由近邻插值得到，与直接的留出分数并列。'],
+      ['u3', '局部诊断。对真实频率被留出的时间窗，让该频率的分数与其相邻的见过频率竞争（网格边缘为两个候选）。它用真实目标来选定候选，因此衡量的是局部的频率分辨；在冻结的 CBraMod 特征上，它还涉及刺激相位。'],
+      ['并列', '候选频率按升序排列；分数完全相同时，选频率最低的一个。'],
+    ] as [string, string][],
+    intervalsH3: '各卡片的区间',
+    intervalCards: (ns: number[]) => ns.length > 1 ? `卡片 ${ns[0]} 与 ${ns[1]}` : `卡片 ${ns[0]}`,
+    intervalsNote: '没有任何区间做多重比较校正。差值为配对差，在舍入前计算，因此印出的差值可能与印出水平之差在最后一位上不同。',
+    disclosuresH3: '两项工程说明',
+    disclosures: '卡片 2 通过一个经过审查的兼容读取器，为此前的题号与数值编码运行评分，因为那些文件缺少列出其问题的字段。softmax 运行的冻结前检查改为对文件内容计算哈希。两项改动都没有涉及训练、预测或结果。',
+    notRunH3: '没有运行的部分',
+    runIn: (n: number) => `（卡片 ${n} 中已运行）`,
+    notPubH3: '这里不发布的内容',
+    creditsH3: '署名、许可与知情同意',
+    betaUse: '卡片 1 至 6，以及卡片 7 在 Wearable-102 上运行的模型的来源。',
+    corrName: 'BETA 作者的更正说明（Description.pdf）',
+    corrUse: (rev: string): Part[] => ['带刺激相位的参考谱（卡片 2 与 3）所用的刺激相位，换算为余弦约定、零潜伏期。读自 Hugging Face 镜像 Bingchuan/BETA（固定版本 ', rev, '）。'],
+    corrLink: 'Description.pdf ↗',
+    cbramodUse: '卡片 1 中冻结的 CBraMod 特征（L1），即第三条路线所用的特征。不分发任何权重。',
+    cbramodPage: 'CBraMod 的页面', codeLink: '代码 ↗',
+    wearConsent: '论文描述的知情同意范围是非商业科学研究。',
+    wearMirror: '基于 2026-09-20 获取的清华 BCI 实验室作者官方镜像快照计算；该镜像本身没有单独的 DOI 或版本号。',
+    recordLink: '数据集记录 ↗', sourceLink: '来源 ↗', readmeLink: 'Readme ↗',
+    derived: '以上均为 BCI Report 的衍生分析，只发布聚合结果，不再分发任何原始数据。',
+    relatedH2: '相关问题',
+    related: [
+      { text: '第三条路线本身在没见过的频率上的结果，用文字提问的分类头：', href: '/topics/questions-in-language/#unseen-frequency', link: topicCards.zh['questions-in-language'].question },
+      { text: 'Wearable-102 的干电极与湿电极头带，含 CCA 与训练过的解码器：', href: '/topics/dry-vs-wet/', link: topicCards.zh['dry-vs-wet'].question },
+    ],
+  },
+}[locale];
+
+// Chinese for the export's licence string, as the model directory prints it.
+const CBRAMOD_LICENCE_ZH: Record<string, string> = { 'Code: MIT · Weights: Apache-2.0 (official model card)': '代码：MIT · 权重：Apache-2.0（官方模型卡）' };
+need(cbm.license in CBRAMOD_LICENCE_ZH, 'Chinese for CBraMod’s licence string');
+// Card 8 carries no digit in either language; the thread link carries no figure.
+need(!/\d/.test(copy.card8) && !/\d/.test(copy.intro.join('')), 'card 8 and the intro line print no figure');
+
+// The endpoint strip, the scope line and the name key.
+const stripRows = endpoints.map(e => ({
+  e, words: ENDPOINT_COPY[e.id][locale],
+  candidates: e.candidates === null ? null : count(e.candidates),
+  chance: e.chance === null ? null : pct2(e.chance),
+  links: e.id === 'core_40' ? (e.pages ?? []).map(p => ({ href: hrefFor(p, locale), text: protocolName[p][locale] })) : cardLinks(e.cards),
+}));
+const [scopeBefore, scopeLink, scopeAfter] = copy.scope(copy.scopeLink);
+const keyRows = nameKey.filter(n => n.in_page_key).map(n => ({ n, name: siteName(n.site_name, locale), ...codesOf(n, locale), used: cardLinks(cardsOfName(n)) }));
+need(keyRows.length === 21, 'the name key’s 21 names');
+
+// Methods: intervals by card, not run by card.
+const intervalGroups: { cards: number[]; id: StudyId }[] = [
+  { cards: [1, 2], id: 'ref' }, { cards: [3, 4], id: 'phase_jitter' }, { cards: [5], id: 'cca_diagnostics' }, { cards: [6], id: 'cca_adapter' }, { cards: [7], id: 'wearable_transfer' },
+];
+const sameMethod = (a: StudyId, b: StudyId) => JSON.stringify(study(a).interval_method) === JSON.stringify(study(b).interval_method);
+need(sameMethod('ref', 'ref2') && sameMethod('ref', 'softmax') && sameMethod('phase_jitter', 'phase_ramp'),
+  'cards 1 and 2 share one interval method, cards 3 and 4 another');
+const notRunRows = ([1, 2, 3, 4, 5, 6, 7] as CardNumber[]).map(n => ({
+  n, items: cardChrome(n, locale).studies.flatMap(id => notRunOf(id, locale)),
+})).filter(r => r.items.length > 0);
+const notPubRows = notPublished.map(x => NOT_PUBLISHED[x][locale]);
+const conditions = beta.publication_conditions.map(x => zh ? CONDITIONS_ZH[x] : x);
+const card8 = cardChrome(8, locale);
+const card = topicCards[locale]['new-ssvep-frequencies'];
+const sep = zh ? '；' : '; ';
+const rev = corr.revision.slice(0, 8);
+need(wear.license === beta.license, 'Wearable-102 and BETA share the licence whose deed the BETA record links');
+---
+<TopicLayout
+  locale={locale}
+  title={card.title}
+  description={copy.description}
+  path="/topics/new-ssvep-frequencies/"
+  eyebrow={copy.eyebrow}
+  dek={copy.dek}
+  activeSlug="new-ssvep-frequencies"
+  answer={copy.answer}
+  dataFiles={[SSVEP_PATH]}
+>
+  <section class="topic-section" id="setup" aria-labelledby="setup-heading" data-ssvep="setup">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.setupEyebrow}</p><h2 id="setup-heading">{copy.setupH2}</h2></div>
+      <p data-ssvep-note="thread">{copy.intro[0]}<a href={thread.url} target="_blank" rel="noreferrer">{copy.intro[1]}</a>{copy.intro[2]}</p></div>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.endpointsRegion}>
+      <table data-ssvep-table="endpoints">
+        <caption>{copy.endpointsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colTask}</th><th scope="col">{copy.colCandidates}</th><th scope="col">{copy.colChance}</th><th scope="col">{copy.colCards}</th><th scope="col">{copy.colNote}</th></tr></thead>
+        <tbody>{stripRows.map(r => <tr data-endpoint={r.e.id}>
+          <th scope="row">{r.words.task}</th>
+          <td>{r.candidates ? <span data-fig={figAttr(r.candidates)} class="metric">{F(r.candidates)}</span> : copy.none}</td>
+          <td>{r.chance ? <span data-fig={figAttr(r.chance)} class="metric">{F(r.chance)}</span> : copy.notDefined}</td>
+          <td>{r.links.length ? r.links.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.text}</a></>) : copy.none}</td>
+          <td>{r.words.note}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="roadmap-p ssvep-scope" data-ssvep-scope="cards-1-6">{scopeBefore.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}<a href={hrefFor('/topics/questions-in-language/', locale)}>{scopeLink}</a>{scopeAfter.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.namesRegion}>
+      <table data-ssvep-table="name-key">
+        <caption>{copy.namesCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colCodes}</th><th scope="col">{copy.colUsed}</th></tr></thead>
+        <tbody>{keyRows.map(r => <tr data-name={r.n.site_name}>
+          <th scope="row">{r.name}</th>
+          <td>{r.codes.map((c, i) => <>{i > 0 && ' · '}<code>{c}</code></>)}{r.note && <small>{r.note}</small>}</td>
+          <td>{r.used.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.text}</a></>)}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <QueryCards locale={locale}/>
+  <PhaseCards locale={locale}/>
+  <CcaCards locale={locale}/>
+
+  <section class="topic-section ssvep-card" id={card8.anchor} aria-labelledby={card8.headingId} data-ssvep-card="8" data-status-only="true">
+    <div class="topic-heading"><div><p class="eyebrow">{card8.eyebrow}</p><h2 id={card8.headingId}>{card8.title}</h2></div></div>
+    <p class="roadmap-p ssvep-status">{copy.card8}</p>
+  </section>
+
+  <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
+    <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
+    <h3 class="roadmap-h3">{copy.defsH3}</h3>
+    <ul class="rd-rules" data-ssvep-note="definitions">{copy.defs.map(([term, def]) => <li><strong>{term}</strong>{zh ? '：' : '. '}{def}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.intervalsH3}</h3>
+    <ul class="rd-rules" data-ssvep-note="intervals">{intervalGroups.map(g => <li data-interval-cards={g.cards.join(' ')}><strong>{copy.intervalCards(g.cards)}</strong>{zh ? '：' : '. '}{intervalText(g.id, locale).map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}{zh ? '。' : '.'}</li>)}</ul>
+    <p class="roadmap-p" data-ssvep-note="rounding">{copy.intervalsNote}</p>
+    <h3 class="roadmap-h3">{copy.disclosuresH3}</h3>
+    <p class="roadmap-p" data-ssvep-note="disclosures">{copy.disclosures}</p>
+    <h3 class="roadmap-h3">{copy.notRunH3}</h3>
+    <ul class="rd-rules" data-ssvep-note="not-run">{notRunRows.map(r => <li data-not-run-card={r.n}><strong>{copy.cardWord}{r.n}</strong>{zh ? '：' : ': '}{r.items.map((x, i) => <>{i > 0 && sep}{x.text}{x.runIn && copy.runIn(x.runIn)}</>)}{zh ? '。' : '.'}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <ul class="rd-rules" data-ssvep-note="not-published">{notPubRows.map(x => <li>{x}</li>)}</ul>
+    <h3 class="roadmap-h3">{copy.creditsH3}</h3>
+    <div class="citation-list" id="credits">
+      <article data-credit="beta">
+        <h3 lang="en">{beta.name}</h3>
+        <p lang="en">{beta.citation}</p>
+        <p>{copy.betaUse}</p>
+        {conditions.map(x => <p>{x}</p>)}
+        <p><a href={beta.source} target="_blank" rel="noreferrer">{copy.sourceLink}</a> · <a href={beta.licenseUrl} target="_blank" rel="noreferrer">{beta.license}</a></p>
+      </article>
+      <article data-credit="beta-corrigendum">
+        <h3>{copy.corrName}</h3>
+        <p>{copy.corrUse(rev).map(p => typeof p === 'string' && p === rev ? <code>{p}…</code> : typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>
+        <p><a href={corr.url} target="_blank" rel="noreferrer">{copy.corrLink}</a></p>
+      </article>
+      <article data-credit="cbramod">
+        <h3 lang="en">{cbm.name}</h3>
+        <p>{copy.cbramodUse}</p>
+        <p>{zh ? CBRAMOD_LICENCE_ZH[cbm.license] : cbm.license}{zh && <span class="note-original" lang="en">{cbm.license}</span>}</p>
+        <p><a href={hrefFor(cbm.method_page, locale)}>{copy.cbramodPage}</a> · <a href={cbm.repository} target="_blank" rel="noreferrer">{copy.codeLink}</a></p>
+      </article>
+      <article data-credit="wearable-ssvep-102">
+        <h3 lang="en">{wear.name} · {wear.title}</h3>
+        <p lang="en">{wear.paper_citation}</p>
+        <p lang="en">{wear.dataset_citation}</p>
+        <p>{copy.wearConsent}{zh && <span class="note-original" lang="en">{wear.consent_scope}</span>}</p>
+        <p>{copy.wearMirror}</p>
+        <p><a href={`https://doi.org/${wear.canonical_version_doi}`} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={wear.readme} target="_blank" rel="noreferrer">{copy.readmeLink}</a> · <a href={beta.licenseUrl} target="_blank" rel="noreferrer">{wear.license}</a></p>
+      </article>
+    </div>
+    <p class="citation-note">{copy.derived}</p>
+    <p class="citation-note">{tc.dataSource} <a href={SSVEP_PATH} download>{SSVEP}</a> · {tc.schema} {ssvepRelease.schema}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id="related" aria-labelledby="related-heading">
+    <div class="topic-heading"><div><h2 id="related-heading">{copy.relatedH2}</h2></div></div>
+    <ul class="rd-rules" data-ssvep-note="related">{copy.related.map(x => <li>{x.text}<a href={hrefFor(x.href, locale)}>{x.link}</a></li>)}</ul>
+  </section>
+</TopicLayout>
+
+<style is:global>
+  /* Global, not scoped: a scoped style would add a data-astro-cid attribute to every element of this template, and
+     check-workbench.mjs reads figures by their exact markup (class="metric">). Every selector is this page's own. */
+  /* The scope line is read before every card: set apart from the tables, as the protocol notes are. The element
+     selector outranks .roadmap-p, which topics.css loads after this file. */
+  p.ssvep-scope{max-width:900px;margin:16px 0;padding:1px 0 1px 14px;border-left:2px solid var(--rule)}
+  .ssvep-scope a,[data-ssvep-table] a{color:var(--accent)}
+  /* Card 8 holds a place: its status sentence reads as a plan, with no figure. */
+  p.ssvep-status{padding:14px 16px;border:1px solid var(--line);border-top:3px solid var(--accent-deep);background:var(--panel);max-width:860px}
+  [data-ssvep-table="name-key"] td small{display:block;margin-top:3px;font-size:.7rem;color:var(--muted);line-height:1.4}
+  [data-credit="beta-corrigendum"] code{font-family:var(--mono);font-size:.76rem}
+</style>

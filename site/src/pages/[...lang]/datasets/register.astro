@@ -1,0 +1,96 @@
+---
+/**
+ * /datasets/register/: the open register's dataset ladder (plan §2.6; owner decisions D3, D5, D11). A static segment,
+ * so it takes precedence over [slug] and no dataset may be called "register". Built only while the register file is
+ * served (open-register.ts `registerBuilt`); every figure is a value of that file.
+ *
+ * In order: the counts (#counts), the steps and the rules, each defined once (#levels, with the file's step names and
+ * what each step needs, in both languages), every dataset row in its group (#datasets, components/RegisterTable.astro),
+ * and the files. The markup is a schema.org DataCatalog whose datasets are the rows, never a Dataset with `isBasedOn`
+ * (structured.ts `registerCatalog`): each row by a name that carries no Hugging Face user name, with a description.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import RegisterTable from '../../../components/RegisterTable.astro';
+import Fig from '../../../components/Fig.astro';
+import { defaultLocale, hrefFor, localeOf, locales, registerCopy } from '../../../data/i18n';
+import { entityCopy } from '../../../data/entity-copy';
+import { isServed, modelRegisterPageBuilt } from '../../../data/files';
+import { openRegister } from '../../../data/releases';
+import { REGISTER_FILE, catalogRows, ladderSteps, longDate, regFig, register, registerBuilt, registerCounts } from '../../../data/open-register';
+import { registerCatalog } from '../../../data/structured';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = () => (registerBuilt ? locales.map(code => ({ params: { lang: code === defaultLocale ? undefined : code } })) : []);
+
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const C = registerCopy[locale], E = entityCopy[locale];
+const path = '/datasets/register/';
+const k = registerCounts();
+const { C: N, H, S } = k;
+const F = (x: number) => regFig(x);
+const at = (step: number) => N.rows.dataset_by_level[String(step)] ?? 0;
+const snapshotDay = longDate(S.retrieved_at, locale), snapshotTime = S.retrieved_at.slice(11, 16);
+const checkedDays = k.checked.map(d => longDate(d, locale));
+const query = register!.sources.hf;
+// The model register is linked only while its page is built (files.ts); the CSV only while it is served.
+const modelPage = modelRegisterPageBuilt;
+const csvServed = isServed(openRegister.csv);
+const description = C.datasets.lede;
+const catalog = catalogRows('dataset');
+// Every Dataset item carries its row's name, url and description (Google requires the description).
+const structured = registerCatalog('dataset', `${site.name}: ${registerCopy.en.datasets.title}`, registerCopy.en.datasets.lede, catalog);
+---
+<EntityLayout locale={locale} path={path} active="datasets"
+  documentTitle={C.datasets.title} h1={C.datasets.h1} description={description}
+  eyebrow={zh ? '开放登记册' : 'Open register'} dek={C.datasets.lede}
+  crumbs={[{ label: E.home, href: hrefFor('/', locale) }, { label: E.datasetsTitle, href: hrefFor('/datasets/', locale) }, { label: zh ? '开放登记册' : 'Open register' }]}
+  structured={structured} cite={{ files: [REGISTER_FILE], upstream: 'datasets' }}>
+
+  <section class="topic-section rg-counts" id="counts" aria-labelledby="counts-heading">
+    <div class="topic-heading"><div><h2 id="counts-heading">{zh ? '登记册收录了什么' : 'What the register holds'}</h2></div>
+      <p>{zh ? <>这里的每个数字都是<a href={`/data/${REGISTER_FILE}`}>登记册文件</a>中的值。</> : <>Every number here is a value of <a href={`/data/${REGISTER_FILE}`}>the register file</a>.</>}</p></div>
+    {zh ? <ul class="rg-count-list">
+      <li data-rg-count="rows"><strong>行数。</strong>数据集登记共 <Fig f={F(N.rows.dataset)} cls="num"/> 行：Hugging Face 上的上传 <Fig f={F(N.rows.dataset_by_group.hf)} cls="num"/> 行，经 EEGDash 镜像的 OpenNeuro 数据 <Fig f={F(N.rows.dataset_by_group.eegdash)} cls="num"/> 行，本站的数据集 <Fig f={F(N.rows.dataset_by_group.site)} cls="num"/> 行，MOABB 的记录 <Fig f={F(N.rows.dataset_by_group.moabb)} cls="num"/> 行，需要签署协议或提出申请的语料 <Fig f={F(N.rows.dataset_by_group.corpus)} cls="num"/> 行。按核验到的最远一步：第 1 步 <Fig f={F(at(1))} cls="num"/> 行，第 2 步 <Fig f={F(at(2))} cls="num"/> 行，第 3 步 <Fig f={F(at(3))} cls="num"/> 行，第 4 步 <Fig f={F(at(4))} cls="num"/> 行，第 5 步 <Fig f={F(at(5))} cls="num"/> 行。模型登记另有 <Fig f={F(N.rows.model)} cls="num"/> 行{modelPage ? <>，见<a href={hrefFor('/methods/register/', locale)}>模型登记册</a></> : null}。{checkedDays.length === 1 ? `这里的每一行都核验于 ${checkedDays[0]}。` : `这里的各行分别核验于 ${checkedDays.join('和')}。`}</li>
+      <li data-rg-count="hf"><strong>Hugging Face。</strong>{snapshotDay} {snapshotTime}（UTC）按 <Fig f={F(S.search_terms)} cls="num"/> 个检索词与 <Fig f={F(S.tag_filters)} cls="num"/> 个标签筛选读取，共 <Fig f={F(S.listings)} cls="num"/> 条列表。其中 <Fig f={F(S.eegdash_mirrors)} cls="num"/> 条是 EEGDash 对 OpenNeuro 与 NEMAR 记录的镜像，在这里合为一行。其余 <Fig f={F(S.other_uploads)} cls="num"/> 条中，关键词筛选先排除了 <Fig f={F(S.prefilter_dropped)} cls="num"/> 条，登记册分类器读了 <Fig f={F(S.classified)} cls="num"/> 条，把其中 <Fig f={F(H.classifier_in_scope)} cls="num"/> 条标为脑信号数据。复核又去掉了 <Fig f={F(H.recheck_out_emg_rule)} cls="num"/> 条（按 EMG 规则）、<Fig f={F(H.recheck_out_simulated)} cls="num"/> 条（信号是模拟的）和 <Fig f={F(H.recheck_out_undetermined)} cls="num"/> 条（只有名称显示与脑信号有关）。剩下的 <Fig f={F(H.in_scope)} cls="num"/> 条中，<Fig f={F(H.single_rows)} cls="num"/> 条各占一行，<Fig f={F(H.family_members)} cls="num"/> 条归入 <Fig f={F(H.family_rows)} cls="num"/> 个上传者系列行，<Fig f={F(H.merged_into_site_rows)} cls="num"/> 条并入本站的条目，<Fig f={F(H.merged_into_moabb_rows)} cls="num"/> 条就是某个 MOABB 记录本身、并入该记录的条目，<Fig f={F(H.held_for_review)} cls="num"/> 条暂缓待审。其中 <Fig f={F(H.no_licence_tag)} cls="num"/> 条没有许可标签；<Fig f={F(H.gated_manual)} cls="num"/> 条需申请访问并由上传者逐一审批，<Fig f={F(H.gated_auto)} cls="num"/> 条申请后自动获准。</li>
+      <li data-rg-count="eegdash"><strong>EEGDash。</strong>共 <Fig f={F(N.eegdash.mirrors)} cls="num"/> 个镜像：OpenNeuro 记录 <Fig f={F(N.eegdash.openneuro)} cls="num"/> 个，NEMAR 记录 <Fig f={F(N.eegdash.nemar)} cls="num"/> 个，其他记录 <Fig f={F(N.eegdash.other)} cls="num"/> 个。本站有 <Fig f={F(N.eegdash.site_rows_with_mirror)} cls="num"/> 个条目、MOABB 有 <Fig f={F(N.eegdash.moabb_rows_with_mirror)} cls="num"/> 个条目带有镜像。</li>
+      <li data-rg-count="moabb"><strong>MOABB。</strong>{k.moabbRelease} 版有 <Fig f={F(N.moabb.loaders)} cls="num"/> 个加载器，对应 <Fig f={F(N.moabb.record_groups)} cls="num"/> 个原始记录；其中 <Fig f={F(N.moabb.merged_into_site_rows)} cls="num"/> 个记录是本站已列出的数据集，并入了本站的条目。目录读取于 {longDate(k.catalogChecked, locale)}。</li>
+      <li data-rg-count="corpus"><strong>需要协议的语料。</strong>共 <Fig f={F(N.corpus.families)} cls="num"/> 个语料需要签署协议、提出申请或注册才能获取；这 <Fig f={F(N.corpus.captured)} cls="num"/> 个语料的条款都引自存档的来源页面。</li>
+    </ul> : <ul class="rg-count-list">
+      <li data-rg-count="rows"><strong>Rows.</strong> <Fig f={F(N.rows.dataset)} cls="num"/> rows on the dataset ladder: <Fig f={F(N.rows.dataset_by_group.hf)} cls="num"/> for uploads on Hugging Face, <Fig f={F(N.rows.dataset_by_group.eegdash)} cls="num"/> for OpenNeuro via EEGDash, <Fig f={F(N.rows.dataset_by_group.site)} cls="num"/> for this site’s datasets, <Fig f={F(N.rows.dataset_by_group.moabb)} cls="num"/> for MOABB records and <Fig f={F(N.rows.dataset_by_group.corpus)} cls="num"/> for corpora that require an agreement or request. By the furthest step checked: <Fig f={F(at(1))} cls="num"/> at step 1, <Fig f={F(at(2))} cls="num"/> at step 2, <Fig f={F(at(3))} cls="num"/> at step 3, <Fig f={F(at(4))} cls="num"/> at step 4 and <Fig f={F(at(5))} cls="num"/> at step 5. The model ladder has another <Fig f={F(N.rows.model)} cls="num"/> rows{modelPage ? <>, on <a href={hrefFor('/methods/register/', locale)}>the model register</a></> : null}. {checkedDays.length === 1 ? `Every row here was checked on ${checkedDays[0]}.` : `The rows here were checked on ${(checkedDays.length > 1 ? `${checkedDays.slice(0, -1).join(', ')} and ${checkedDays.at(-1)}` : checkedDays[0])}.`}</li>
+      <li data-rg-count="hf"><strong>Hugging Face.</strong> Read on {snapshotDay} at {snapshotTime} UTC for <Fig f={F(S.search_terms)} cls="num"/> search terms and <Fig f={F(S.tag_filters)} cls="num"/> tag filters: <Fig f={F(S.listings)} cls="num"/> listings. <Fig f={F(S.eegdash_mirrors)} cls="num"/> are EEGDash’s mirrors of OpenNeuro and NEMAR records, one row here. Of the other <Fig f={F(S.other_uploads)} cls="num"/>, a keyword filter set aside <Fig f={F(S.prefilter_dropped)} cls="num"/> and the register’s classifier read <Fig f={F(S.classified)} cls="num"/>, marking <Fig f={F(H.classifier_in_scope)} cls="num"/> as brain-signal data. A re-check then took out <Fig f={F(H.recheck_out_emg_rule)} cls="num"/> under the EMG rule, <Fig f={F(H.recheck_out_simulated)} cls="num"/> with simulated signals and <Fig f={F(H.recheck_out_undetermined)} cls="num"/> whose name was their only sign of brain signals. Of the <Fig f={F(H.in_scope)} cls="num"/> left, <Fig f={F(H.single_rows)} cls="num"/> are rows of their own, <Fig f={F(H.family_members)} cls="num"/> sit in <Fig f={F(H.family_rows)} cls="num"/> rows for an uploader’s series, <Fig f={F(H.merged_into_site_rows)} cls="num"/> are merged into this site’s rows, <Fig f={F(H.merged_into_moabb_rows)} cls="num"/> is a MOABB record’s own upload and sits in that record’s row, and <Fig f={F(H.held_for_review)} cls="num"/> are held for review. <Fig f={F(H.no_licence_tag)} cls="num"/> of them carry no licence tag; <Fig f={F(H.gated_manual)} cls="num"/> are gated with each request approved by the uploader, and <Fig f={F(H.gated_auto)} cls="num"/> with automatic approval.</li>
+      <li data-rg-count="eegdash"><strong>EEGDash.</strong> <Fig f={F(N.eegdash.mirrors)} cls="num"/> mirrors: <Fig f={F(N.eegdash.openneuro)} cls="num"/> of OpenNeuro records, <Fig f={F(N.eegdash.nemar)} cls="num"/> of NEMAR records and <Fig f={F(N.eegdash.other)} cls="num"/> of other records. <Fig f={F(N.eegdash.site_rows_with_mirror)} cls="num"/> of this site’s rows and <Fig f={F(N.eegdash.moabb_rows_with_mirror)} cls="num"/> MOABB rows have one.</li>
+      <li data-rg-count="moabb"><strong>MOABB.</strong> Release {k.moabbRelease} has <Fig f={F(N.moabb.loaders)} cls="num"/> loaders over <Fig f={F(N.moabb.record_groups)} cls="num"/> source records; <Fig f={F(N.moabb.merged_into_site_rows)} cls="num"/> of those records are datasets this site already lists, merged into its rows. Catalog read on {longDate(k.catalogChecked, locale)}.</li>
+      <li data-rg-count="corpus"><strong>Corpora under agreement.</strong> <Fig f={F(N.corpus.families)} cls="num"/> corpora require a signed agreement, a request or a registration; the terms of all <Fig f={F(N.corpus.captured)} cls="num"/> are quoted from captured copies of their pages.</li>
+    </ul>}
+    <details class="rg-query">
+      <summary>{zh ? 'Hugging Face 检索所用的检索词与标签' : 'The Hugging Face search terms and tags'}</summary>
+      <p>{zh ? '检索词：' : 'Search terms: '}{query.search_terms.map((t, i) => <>{i > 0 && (zh ? '、' : ', ')}<code>{t}</code></>)}{zh ? '。' : '.'}</p>
+      <p>{zh ? '标签：' : 'Tags: '}{query.tag_filters.map((t, i) => <>{i > 0 && (zh ? '、' : ', ')}<code>{t}</code></>)}{zh ? '。' : '.'}</p>
+    </details>
+  </section>
+
+  <section class="topic-section" id="levels" aria-labelledby="levels-heading">
+    <div class="topic-heading"><div><h2 id="levels-heading">{C.levelsH2}</h2></div>
+      <p>{zh
+        ? '一个数据集要经过五步。一行所在的步骤，是它本身的证据已在案的最远一步；之前各步缺少的项目作为缺口，列在步骤标记旁边。每一步的证据逐项附出处，写在 JSON 文件里。'
+        : 'A dataset climbs five steps. A row’s step is the furthest one whose own evidence is on file; an item missing from an earlier step is listed beside the badge as a gap. The evidence for each step, item by item with its source, is in the JSON file.'}</p></div>
+    <dl class="rg-steps">{ladderSteps('dataset', locale).map(s => <div><dt><span class={`rg-badge rg-l${s.step}`}>{zh ? `第 ${s.step} 步 · ${s.name}` : `Step ${s.step} · ${s.name}`}</span></dt><dd>{s.needs}</dd></div>)}</dl>
+    <h3 class="rg-rules-heading">{zh ? '规则' : 'Rules'}</h3>
+    <ul class="rg-rules">{C.rules.map(r => <li>{r}</li>)}</ul>
+    <p class="citation-note">{zh
+      ? <>要更正某一行，请用该行末尾的邮件链接，邮件主题写有该行的编号。怎样处理更正，见<a href="/data-use/#register-corrections">数据使用页面</a>（英文）。</>
+      : <>To correct a row, use the mail link at its end: the subject names the row’s id. How corrections are handled is on <a href="/data-use/#register-corrections">the data-use page</a>.</>}</p>
+  </section>
+
+  <section class="topic-section" id="datasets" aria-labelledby="datasets-heading">
+    <div class="topic-heading"><div><h2 id="datasets-heading">{zh ? '全部条目' : 'Every row'}</h2></div>
+      <p>{zh
+        ? '每一行链接到它的托管方，写明所述条款及其出处、核验到的步骤与缺口，以及那一步看到了什么。'
+        : 'Each row links its host and gives its terms as stated and by whom, the step it reached with any gaps, and what that step showed.'}</p></div>
+    <RegisterTable locale={locale} ladder="dataset"/>
+    <p class="citation-note" id="register-files">{zh
+      ? <>下载：<a href={`/data/${REGISTER_FILE}`} download><code>{REGISTER_FILE}</code></a>（两类登记，含每一步的证据与以代码表示的发现）{csvServed && <>与 <a href={`/data/${openRegister.csv}`} download><code>{openRegister.csv}</code></a>（本页数据集登记的扁平表格，不含发现）</>}。<a href={hrefFor('/api/', locale)}>全部文件</a></>
+      : <>Download: <a href={`/data/${REGISTER_FILE}`} download><code>{REGISTER_FILE}</code></a> (both ladders, with each step’s evidence and the findings as codes){csvServed && <> and <a href={`/data/${openRegister.csv}`} download><code>{openRegister.csv}</code></a> (this ladder, flat, with no findings)</>}. <a href={hrefFor('/api/', locale)}>Every file</a></>}</p>
+  </section>
+</EntityLayout>

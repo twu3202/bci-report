@@ -1,0 +1,678 @@
+{
+ "release_id": "new-ssvep-frequencies-update-20261020",
+ "freeze_date": "2026-10-20",
+ "reviewed_at": "2026-10-20",
+ "reviewer": "publishing session",
+ "scope": "Editorial decisions for the seven route 3 follow-ups on new SSVEP frequencies: the reference-spectrum query (REF), the head and feature follow-up (REF2) with the two softmax heads, the phase jitter, the phase ramp, the CCA mechanism diagnostics, the CCA adapter and the transfer of the adapter models to Wearable-102. Its own manifest: it amends no earlier review and changes no released file. questions-in-language-update.json, deployment-topics.json and mvp.json keep their bytes; the follow-ups sit in their own file, new-ssvep-frequencies-update.json, on the new page /topics/new-ssvep-frequencies/. Every figure is read from the audited export of its study, pinned by SHA-256 here and bound by that study’s reviews and receipts, through the three block modules (blocks_query.py, blocks_phase.py, blocks_cca.py), which apply the declared edits and select named fields. Nothing was re-run: no model was loaded, no score recomputed and no network used.",
+ "approval": {
+  "date": "2026-10-19",
+  "decision": "aggregate_preview",
+  "basis": "The owner’s decision D1 in chat on 2026-10-19, recorded in owner-decisions.json: publish the seven SSVEP follow-ups (new-ssvep-frequencies). Each study’s research receipts approve an aggregate handoff and leave website publication to the site; publication on the site rests on D1. Defaults stated to the owner and not objected to: the thread is linked and the commenter is not named (D6); the cross-spectral round is a status card with no figures (D9); the adapter handoff binding (R1) and the phase wording (R5) were re-checked by independent reviewers in the publishing session (R1_R5). Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+  "ownerDecisions": {
+   "path": "research/publication_review_20261020/owner-decisions.json",
+   "sha256": "3661cb4d54f2daa8512e994865cab20a93c6a6d2ba0e9b31b81092b1bd9ff3b7"
+  },
+  "previewDefaults": [
+   "Placement: a new question page, /topics/new-ssvep-frequencies/, in the adapting group after questions-in-language. The route 3 page keeps its bytes and gains one link with no figures.",
+   "Cards 1 to 6 share one scope line, the BETA cohort route 3 studied; card 7 has its own scope strip with the participant-overlap caveat and the A2 line on which CCA it reports.",
+   "Each card prints its own study’s interval: the hierarchical paired bootstrap with seed 20261007 for cards 1 to 4, the paired person bootstrap with seed 20261015 for cards 5 to 7.",
+   "The bet in the thread, that held-out accuracy would clear 39%, appears once, on card 4, from studies.phase_ramp.thread_bet; the threshold prints as the thread states it (R5 M5).",
+   "The commenter’s confidence figure is absent from the file, the page and this manifest (R5 M7).",
+   "Names: the plan’s name key, site names first and export codes second; one site name for the cropped-spectrum match of the diagnostics and adapter exports, and its own name for the Wearable-102 cropped-spectrum check.",
+   "Counts: one new question page; no new dataset, model or leaderboard row."
+  ],
+  "decisionsOfThisReview": [
+   "Values: every level and contrast is its study export’s own double, through the block modules; units stay fractions. The export audit re-derives every figure from the pinned research files without the block modules.",
+   "Declared edits only: each is listed under declaredEdits and applied by the block modules, which refuse an edit that does not find what it names.",
+   "The one-vs-rest head (route 3’s B-sh) is cited, point and interval, from the live route 3 file, which keeps its bytes.",
+   "The adapter’s figures come from its export 6f68114e… only; the handoffs are context and never a copy source (R1).",
+   "Wearable-102: the A2 note names the CCA the transfer reports (three harmonics) beside the dry-versus-wet page’s (four harmonics) on the same windows.",
+   "Cohort, Wearable-102 scope and endpoints are read from the blocks and required equal across every study that states them; the core 40-way chance level is the core matrix’s BETA track value.",
+   "Credits: BETA’s released rights record from the route 3 file and its conditions from deployment-topics.json; the corrigendum from the REF2 phase table that its protocol pins; CBraMod’s licence from the core matrix’s model record; Wearable-102’s released record from deployment-topics.json, with the Readme and the consent scope from the readings."
+  ]
+ },
+ "releaseRecord": {
+  "date": "2026-10-20",
+  "decision": "Publish the seven route 3 follow-ups on new SSVEP frequencies as their audited aggregates, on a new question page, outside every leaderboard.",
+  "rights": "BETA keeps its released record: CC BY 4.0, cohort aggregates only, with participant consent described for noncommercial scientific research. Wearable-102 keeps its released record: CC BY 4.0, cohort aggregates only. The frozen CBraMod features are the ones route 3 used; no weights are distributed.",
+  "researchRelease": "Each study’s receipts approve an aggregate handoff and bind its export, protocol and reviews by SHA-256; website publication rests on the owner’s decision D1.",
+  "binding": "This record approves the served file the export audit names."
+ },
+ "blocks": {
+  "query": {
+   "module": "pipeline/publication/ssvep_followups/blocks_query.py",
+   "studies": [
+    "ref",
+    "ref2",
+    "softmax"
+   ],
+   "pins": {
+    "ref_export": {
+     "path": "research/decision_route3_ref_20261013/Reference Spectrum Query Audited Results.json",
+     "sha256": "211510622bec8320d77d71074a42ad1b3299958a5629e11f480a1161ebccce64"
+    },
+    "ref_review": {
+     "path": "research/decision_route3_ref_20261013/review/release-conformance-review.json",
+     "sha256": "e419bf003d129108b949d7e0219096bd3a3908cf993ab432d7b36ae0c9b3d60c"
+    },
+    "ref2_export": {
+     "path": "research/decision_route3_ref2_20261014/exports/final-aggregate-evidence.json",
+     "sha256": "a0df66fc8e9f049936c00179699935d5bec79a2923459273626fa8207a318763"
+    },
+    "ref2_review": {
+     "path": "research/decision_route3_ref2_20261014/review/Final Result Release Review.json",
+     "sha256": "94c0cdf78cce0f978ec6be2e3d38ccf6597a1cf189a4a6940f60d09d3d6397f4"
+    },
+    "ref2_protocol": {
+     "path": "research/decision_route3_ref2_20261014/protocol.json",
+     "sha256": "b16a173d304bf48cffc5d274156881a12987fbfbc275a39f37a1b5d9a5e5d4be"
+    },
+    "softmax_export": {
+     "path": "research/decision_route3_softmax_20261014/exports/final-aggregate-evidence.json",
+     "sha256": "957e29f5559dbc8361599469e51f5d4b3c2281febafad398315fa5a679da4823"
+    },
+    "softmax_review": {
+     "path": "research/decision_route3_softmax_20261014/review/Final Result Release Review.json",
+     "sha256": "7701fb476bbf4a048c5614d44de1628d6dfb06da1dd6509b801a615f204493c6"
+    },
+    "softmax_baseline": {
+     "path": "research/decision_route3_softmax_20261014/Existing Baseline Audit.json",
+     "sha256": "34ad81d8d500b921f642f8a6b336e523bf19a27e4c91e6d17136a7d317ac04ce"
+    },
+    "softmax_runtime_review": {
+     "path": "research/decision_route3_softmax_20261014/recovery_20261015/Softmax Guard Recovery Review.json",
+     "sha256": "cc8874fc11455723a636e1a7a5a8875bda05493b6b383494e01befda712c8b51"
+    },
+    "parent": {
+     "path": "site/src/data/questions-in-language-update.json",
+     "sha256": "2583b5958c24e02898929c354e16653e50e33704aaaee37927e158f9d72d01dd"
+    }
+   }
+  },
+  "phase": {
+   "module": "pipeline/publication/ssvep_followups/blocks_phase.py",
+   "studies": [
+    "phase_jitter",
+    "phase_ramp"
+   ],
+   "pins": {
+    "jitter_export": {
+     "path": "research/decision_route3_phase_jitter_20261015/exports/phase-jitter-v1.json",
+     "sha256": "7232ce0000738b25a3e7eb95a0b82a2999c22e55e4b6673ff822d80c31535ef3"
+    },
+    "jitter_score": {
+     "path": "research/decision_route3_phase_jitter_20261015/exports/phase-jitter-aggregate.json",
+     "sha256": "74eb6de8524588e5b9ac7854973b87bac31a9a977ea96cda6c00f9ca8eb59bdc"
+    },
+    "jitter_protocol": {
+     "path": "research/decision_route3_phase_jitter_20261015/protocol.json",
+     "sha256": "8dbe7f458d14631bc111b6439bf55ce5deed6d11c1c3e0fb5ad4bbde729e1a71"
+    },
+    "jitter_interpretation": {
+     "path": "research/decision_route3_phase_jitter_20261015/review/final-interpretation-review.json",
+     "sha256": "ca2e5db29b5cc760f67869368248d5b1217e8ead964002fe82331892b51059fa"
+    },
+    "jitter_provenance": {
+     "path": "research/decision_route3_phase_jitter_20261015/review/final-provenance-review.json",
+     "sha256": "ad6350346bdeff29067b06113df853a70e02e82197888a8f0cbbdb92ea65f5c7"
+    },
+    "jitter_release": {
+     "path": "research/decision_route3_phase_jitter_20261015/state/release-status.json",
+     "sha256": "776efd6aa26b6702c78986733ebaf292309d4e8c0548a3c8073e2298bf5d8a56"
+    },
+    "jitter_audit": {
+     "path": "research/decision_route3_phase_jitter_20261015/review/completed-run/aggregate.json",
+     "sha256": "67c3974e1345f11cb23e2fb3ce9a346ec61f60a29f5b5b91aa9478c68d7381c4"
+    },
+    "jitter_canary": {
+     "path": "research/decision_route3_phase_jitter_20261015/review/completed-run/canary-gate.json",
+     "sha256": "019c026a4d779d76f731ba2946688aeeaa4b617c28718fea7224c606dbdc4128"
+    },
+    "jitter_bridge": {
+     "path": "research/decision_route3_phase_jitter_20261015/review/completed-run/bridge-gate.json",
+     "sha256": "ea1197ce7ede964a161db9faf50829d8fb3001961a2dcdabc65560fcf56ee980"
+    },
+    "ramp_score": {
+     "path": "research/decision_route3_phaseaug_20261016/review/final-trx/score/main.private.json",
+     "sha256": "7498eb5cf79d2f807ab6e12584fdaa76c3542a703701c7fc9e0e31a1164bc8d2"
+    },
+    "ramp_audit": {
+     "path": "research/decision_route3_phaseaug_20261016/review/final-trx/audit/aggregate.json",
+     "sha256": "41ff565b37247a8842c947e98769aefc058602d9bd51b2550015c0c963e12fb6"
+    },
+    "ramp_protocol": {
+     "path": "research/decision_route3_phaseaug_20261016/protocol.json",
+     "sha256": "d28a6e3cdf0928fa7f55c9dc19b335a4eb3e43180cb1f31903c6a0f41c916f6a"
+    },
+    "ramp_interpretation": {
+     "path": "research/decision_route3_phaseaug_20261016/review/release-interpretation-review.json",
+     "sha256": "af55b077127724fa9537e07c7f259ea8623c6d6322b654e0dd7d2cdc4efadeaa"
+    },
+    "ramp_provenance": {
+     "path": "research/decision_route3_phaseaug_20261016/review/release-provenance-review.json",
+     "sha256": "942ad85d8a4aca6dfd334081aebd02876b80e9e569a8ef1259754d05621e54f3"
+    },
+    "ramp_release": {
+     "path": "research/decision_route3_phaseaug_20261016/review/release-status.json",
+     "sha256": "4044b7668d440cf84faffd25386603d6428ab1ab0f5b7c9cd3e27f22f93ce3ee"
+    },
+    "ramp_canary": {
+     "path": "research/decision_route3_phaseaug_20261016/review/canary-gate.json",
+     "sha256": "35c58ffe467dfd7b6d4138793bafa537283e70c1f3cd390f150bb9d272271198"
+    },
+    "ref_export": {
+     "path": "research/decision_route3_ref_20261013/Reference Spectrum Query Audited Results.json",
+     "sha256": "211510622bec8320d77d71074a42ad1b3299958a5629e11f480a1161ebccce64"
+    },
+    "ref2_export": {
+     "path": "research/decision_route3_ref2_20261014/exports/final-aggregate-evidence.json",
+     "sha256": "a0df66fc8e9f049936c00179699935d5bec79a2923459273626fa8207a318763"
+    },
+    "cca_adapter_export": {
+     "path": "research/decision_route3_cca_adapter_20261015/exports/CCA Adapter Aggregate Results.json",
+     "sha256": "6f68114e4d431beb4903f68e3e2d4549da825d8f94d2ff3a776e368a7b3dca2b"
+    },
+    "wording_review": {
+     "path": "research/publication_review_20261020/reviews/phase-wording-review.md",
+     "sha256": "5c019b411714cbeaf7acff715326e2e938b67d101e06c10b7c70fa1e5eebca6c",
+     "text": true
+    }
+   }
+  },
+  "cca": {
+   "module": "pipeline/publication/ssvep_followups/blocks_cca.py",
+   "studies": [
+    "cca_diagnostics",
+    "cca_adapter",
+    "wearable_transfer"
+   ],
+   "pins": {
+    "diag_export": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/exports/aggregate-evidence.json",
+     "sha256": "fae60f74c73c99c441aedca3ad0d8c2fe7a9360e83fec0348e53962c4a53b1cf"
+    },
+    "diag_protocol": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/protocol.json",
+     "sha256": "92a4c24e320277b064a2eb2ce8357f90714e5a7a0aca2d0ae19fe1a474a12195"
+    },
+    "diag_freeze": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/execution-freeze.json",
+     "sha256": "d98eb3f78f8fe18518d7d41f2dae0fb2901547e9fc10569563f55c66ee7f40fc"
+    },
+    "diag_review": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/review/Final Result Release Review.json",
+     "sha256": "c9db74cd35d1559a7375b0c8f6e5cc22055525098f68e0c58caceae6f9183d80"
+    },
+    "diag_hash_verification": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/review/Independent Release Hash Verification.json",
+     "sha256": "dab529224e16db3b1913737a20553174a1265af123ac0bddc5428af2b3bc9f4d"
+    },
+    "diag_handoff_review": {
+     "path": "research/decision_route3_cca_diagnostics_20261015/review/final-handoff-review.json",
+     "sha256": "f9fd999be41a561ecd498f05e4db344bc065f277f60547ecb2925b21343a98d8"
+    },
+    "adapter_export": {
+     "path": "research/decision_route3_cca_adapter_20261015/exports/CCA Adapter Aggregate Results.json",
+     "sha256": "6f68114e4d431beb4903f68e3e2d4549da825d8f94d2ff3a776e368a7b3dca2b"
+    },
+    "adapter_protocol": {
+     "path": "research/decision_route3_cca_adapter_20261015/protocol.json",
+     "sha256": "22826d2ceae1a46968fffabf56951d84abbbce3f75d8a4962f3ad385228194ca"
+    },
+    "adapter_freeze": {
+     "path": "research/decision_route3_cca_adapter_20261015/execution-freeze.json",
+     "sha256": "29bdbe5af3601385e8e3ef47d72985132278be269939d63a01f4b9708e8fa3b1"
+    },
+    "adapter_numerical_review": {
+     "path": "research/decision_route3_cca_adapter_20261015/review/release-numerical-audit.json",
+     "sha256": "e880280e330f03a280281936e01a52371d4ca3e4c383e4a527a28b106fd12e5c"
+    },
+    "adapter_review": {
+     "path": "research/decision_route3_cca_adapter_20261015/review/release-interpretation-review.json",
+     "sha256": "4e1a38171be118d0c4d1b0f145c4b24578b18af349cccfa265c4aec335f9d4ac"
+    },
+    "adapter_release_status": {
+     "path": "research/decision_route3_cca_adapter_20261015/state/release-status.json",
+     "sha256": "9f4929bbda746079ad1bfc8625f9d0c2eaebd099b505f33a2eaf0663821680bd"
+    },
+    "adapter_runner": {
+     "path": "research/decision_route3_cca_adapter_20261015/scripts/run_adapter.py",
+     "sha256": "dc304bd80a21d79ed24f3d5cf0d5e879a37129d90d724532e1c39f3be963da10"
+    },
+    "adapter_binding_review": {
+     "path": "research/publication_review_20261020/reviews/cca-adapter-binding-review.md",
+     "sha256": "957c9de845b8f1fd4e521cfadbf27059f8f64cd84cb76c0a613d14f0df43201f"
+    },
+    "wear_export": {
+     "path": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+     "sha256": "9c94a14be0b55822fe7dd359b6f02bb07340e4b0bb3d74d3479bbd4219cb50f6"
+    },
+    "wear_protocol": {
+     "path": "research/decision_route3_external_20261015/protocol.json",
+     "sha256": "079acad5374eb1b45245bb57c51ba384c5532eb7046d3b246634a592d02e223b"
+    },
+    "wear_freeze": {
+     "path": "research/decision_route3_external_20261015/freeze.json",
+     "sha256": "d24ddc66a542c80c06196935f5a6183e33782e0bbe72a7c0c53a80258cc1de30"
+    },
+    "wear_review": {
+     "path": "research/decision_route3_external_20261015/review/release-interpretation-review.json",
+     "sha256": "d12eb3600827cd6c9babe4aa5d2a90026db80cd9db39b03e43a3bcc7d3aa99d1"
+    },
+    "wear_numerical_summary": {
+     "path": "research/decision_route3_external_20261015/review/release-numerical-summary.json",
+     "sha256": "dd6ca7671893901444e60b1525a0add8d29756cf2ecb9803c345730365125448"
+    },
+    "wear_release_status": {
+     "path": "research/decision_route3_external_20261015/state/release-status.json",
+     "sha256": "756b368478469c8057b566a378a70e0424cdde39fab3abfcdeae4bbc1f4992a5"
+    },
+    "wear_cca_definition": {
+     "path": "research/publication_review_20261020/notes/wearable-cca-definition.json",
+     "sha256": "5d3684165974b5b260c4afb3b55f90ed2cba635fe3cbb43158b020f684a65224"
+    },
+    "dry_vs_wet": {
+     "path": "site/src/data/deployment-topics.json",
+     "sha256": "708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f"
+    },
+    "route3": {
+     "path": "site/src/data/questions-in-language-update.json",
+     "sha256": "2583b5958c24e02898929c354e16653e50e33704aaaee37927e158f9d72d01dd"
+    }
+   }
+  }
+ },
+ "sources": {
+  "ref": {
+   "block": "query",
+   "export": "ref_export",
+   "review": "ref_review",
+   "readings": "REF (reference-spectrum query arm)"
+  },
+  "ref2": {
+   "block": "query",
+   "export": "ref2_export",
+   "review": "ref2_review",
+   "readings": "REF2 + softmax (phase matching, matching head, no-query softmax)"
+  },
+  "softmax": {
+   "block": "query",
+   "export": "softmax_export",
+   "review": "softmax_review",
+   "readings": "REF2 + softmax (phase matching, matching head, no-query softmax)"
+  },
+  "phase_jitter": {
+   "block": "phase",
+   "export": "jitter_export",
+   "review": "jitter_interpretation",
+   "readings": "Phase jitter"
+  },
+  "phase_ramp": {
+   "block": "phase",
+   "export": "ramp_score",
+   "review": "ramp_interpretation",
+   "readings": "Phase-ramp augmentation, six cells"
+  },
+  "cca_diagnostics": {
+   "block": "cca",
+   "export": "diag_export",
+   "review": "diag_review",
+   "readings": "CCA mechanism diagnostics"
+  },
+  "cca_adapter": {
+   "block": "cca",
+   "export": "adapter_export",
+   "review": "adapter_review",
+   "readings": "CCA adapter (learned bounded correction on CCA)"
+  },
+  "wearable_transfer": {
+   "block": "cca",
+   "export": "wear_export",
+   "review": "wear_review",
+   "readings": "BETA to Wearable102 external transfer"
+  }
+ },
+ "declaredEdits": {
+  "ref": {
+   "applied_by": "query",
+   "edits": [
+    {
+     "op": "remove",
+     "pointer": "/status"
+    },
+    {
+     "op": "remove",
+     "pointer": "/independent_handoff_review_required"
+    },
+    {
+     "op": "remove",
+     "pointer": "/results/questions-in-language-ref/limitations/7"
+    },
+    {
+     "op": "rename",
+     "pointer": "/results/questions-in-language-ref/design/epochs",
+     "to": "training_epochs"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA u8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA seen_ba/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA m8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA nn8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA u3/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L0/levels/CCA cost/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA u8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA seen_ba/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA m8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA nn8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA u3/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/results/questions-in-language-ref/descriptive/REF-ssvep-L1/levels/CCA cost/seeds",
+     "to": "no training"
+    }
+   ],
+   "summary": [
+    "the pending-publication status and the operator review-path line removed",
+    "the Jev line removed from the limitations",
+    "design.epochs renamed training_epochs",
+    "every CCA level’s seeds: 1 becomes “no training”"
+   ]
+  },
+  "ref2": {
+   "applied_by": "query",
+   "edits": [
+    {
+     "op": "remove",
+     "pointer": "/remote_root"
+    },
+    {
+     "op": "remove",
+     "pointer": "/completion/recovery_overlay"
+    },
+    {
+     "op": "remove",
+     "pointer": "/aggregate/status"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1u8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1seen_ba/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1m8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1nn8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1u3/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/aggregate/levels/CCA~1cost/seeds",
+     "to": "no training"
+    }
+   ],
+   "summary": [
+    "the private run root and the recovery receipt path removed",
+    "the pre-audit pending status removed",
+    "every CCA level’s seeds: 1 becomes “no training”"
+   ]
+  },
+  "softmax": {
+   "applied_by": "query",
+   "edits": [
+    {
+     "op": "remove",
+     "pointer": "/remote_root"
+    },
+    {
+     "op": "remove",
+     "pointer": "/audit/original_full_receipt_remains_private"
+    },
+    {
+     "op": "remove",
+     "pointer": "/aggregate/status"
+    }
+   ],
+   "summary": [
+    "the private run root and the private receipt path removed",
+    "the pre-audit pending status removed"
+   ]
+  },
+  "phase_jitter": {
+   "applied_by": "phase",
+   "edits": [
+    {
+     "op": "remove",
+     "pointer": "/one_period_prediction"
+    },
+    {
+     "op": "remove",
+     "pointer": "/release_governed_by"
+    }
+   ],
+   "summary": [
+    "the misread one-period reference block removed (R5)",
+    "the operator release_governed_by path removed",
+    "the canonical score is pinned by hash and never served"
+   ]
+  },
+  "phase_ramp": {
+   "applied_by": "phase",
+   "edits": [
+    {
+     "op": "remove",
+     "pointer": "/status"
+    },
+    {
+     "op": "remove",
+     "pointer": "/fifty_five_reference"
+    },
+    {
+     "op": "remove",
+     "pointer": "/interpretation"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1u8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1seen_ba/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1m8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1nn8/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1u3/seeds",
+     "to": "no training"
+    },
+    {
+     "op": "replace",
+     "pointer": "/levels/CCA~1cost/seeds",
+     "to": "no training"
+    }
+   ],
+   "summary": [
+    "the pre-audit status removed; the release status is the audit’s",
+    "the misread reference flags and the interpretation string removed; its clauses survive as limitation keys and interval_method.conditional_on (R5 M3)",
+    "every CCA level’s seeds: 1 becomes “no training”",
+    "thread_bet added: {held8_threshold, source_url}, from the thread as the protocols record it (R5 M5, M7)"
+   ]
+  },
+  "cca_diagnostics": {
+   "applied_by": "cca",
+   "not_selected": [
+    "private_root not selected",
+    "job block not selected (process id, timestamps, producer status)",
+    "exported_at_utc and the hashes of private run receipts not selected; the export is pinned by its own hash",
+    "summary.release_status and release_eligibility not selected; the release review supersedes them",
+    "audit.analytic.rows and gates.l0c-equivalence.rows not selected; only the number of checked rows is kept",
+    "gates.preflight.reference_ranks reduced to the common dimension and the counts of candidates and domains",
+    "summary.random_pairing ranges not selected; permutation means kept",
+    "privacy string not selected",
+    "held8_accuracy and seen32_balanced_accuracy named u8 and seen_ba in ids (route 3 spelling of the same tasks)",
+    "training-free scorers carry \"no training\" and the ridge scorer \"deterministic fit\" in place of seeds"
+   ]
+  },
+  "cca_adapter": {
+   "applied_by": "cca",
+   "not_selected": [
+    "status not selected; state/release-status.json supersedes it",
+    "indices_sha256 not selected (hash of private bootstrap indices)",
+    "per_seed_descriptive not selected",
+    "privacy string not selected",
+    "residual_diagnostics.CROP-RESIDUAL not selected; RAW-RESIDUAL transitions kept",
+    "protected_trials published as protected_instances, labelled as prediction instances across 3 seeds and 5 rotations",
+    "interval seed taken from the numerical review and the percentile rule from the pinned runner",
+    "held8_accuracy and seen32_balanced_accuracy named u8 and seen_ba in ids (route 3 spelling of the same tasks)",
+    "CCA baselines carry \"no training\" in place of seeds"
+   ]
+  },
+  "wearable_transfer": {
+   "applied_by": "cca",
+   "not_selected": [
+    "free-text scope, limitations, rights and citations strings not selected (missing spaces; the page writes its own copy from limitations_keys)",
+    "strata.*.metrics.RAW-RESIDUAL_minus_CCA-CROP not selected; the cropped-spectrum check is a level only",
+    "status, schema and protocol_id not selected; the export is pinned by its own hash",
+    "CCA levels carry \"no training\" in place of seeds"
+   ]
+  }
+ },
+ "handoffContext": {
+  "cca_diagnostics": {
+   "bound_sha256": "b99ea68a507cec8c45f448a49e2db4f490fb723dbf57708ffca568bfa5feaa32",
+   "bound_by": "diag_handoff_review",
+   "role": "context only, never a copy source"
+  },
+  "cca_adapter": {
+   "bound_sha256": "61d424e9666b6488108581c5ec7ff6f1c6303afdc238795d75de5eb54ef9ea3d",
+   "bound_by": "adapter_release_status",
+   "on_disk_sha256": "f40400108526ca1e412945595f9377d6d3c03ffab91319a2bd400f85a757f625",
+   "difference": "one inserted space in a table header; no word, figure or claim differs (R1)",
+   "role": "context only, never a copy source"
+  },
+  "wearable_transfer": {
+   "bound_sha256": "1ee606a6766e9c92a76da31ac2c2f131e32c5bd24d624d94fff001efba85d82d",
+   "bound_by": "wear_release_status",
+   "role": "context only, never a copy source"
+  }
+ },
+ "reviews": {
+  "wordingReview": {
+   "package": "R5",
+   "block": "phase",
+   "pin": "wording_review"
+  },
+  "adapterBindingReview": {
+   "package": "R1",
+   "block": "cca",
+   "pin": "adapter_binding_review"
+  },
+  "wearableCcaDefinition": {
+   "package": "A2",
+   "block": "cca",
+   "pin": "wear_cca_definition"
+  }
+ },
+ "planning": {
+  "readings": {
+   "path": "research/site_release_plan_20261019/handoff-readings.json",
+   "sha256": "f231b1aac935f5fbe991a636191e13b2e1c8a5818bca9f57231fb64ca6c90c6a"
+  }
+ },
+ "published": {
+  "route3": {
+   "path": "site/src/data/questions-in-language-update.json",
+   "sha256": "2583b5958c24e02898929c354e16653e50e33704aaaee37927e158f9d72d01dd"
+  },
+  "deploymentTopics": {
+   "path": "site/src/data/deployment-topics.json",
+   "sha256": "708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f"
+  },
+  "coreMatrix": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  }
+ },
+ "credits": {
+  "phaseTable": {
+   "path": "research/decision_route3_ref2_20261014/provenance/phase-table.json",
+   "sha256": "803031e4c875d6179907e7cbc7f9da2f142fb546ac2fa6b921399aad99ba4767"
+  }
+ },
+ "notPublished": [
+  "Per-person, per-fold, per-rotation, per-seed, per-window and per-frequency values of any kind, predictions, scores, features, fitted heads and the sealed run files: only cohort levels, paired contrasts with their intervals, transition shares and check counts are published.",
+  "The handoffs, protocols, freezes, receipts, reviews and the canonical jitter score themselves: each is pinned by SHA-256 in the release manifest and checked by the export; several carry private storage paths.",
+  "The commenter’s name.",
+  "The cross-spectral round: in progress at the freeze; its status card carries no figures, and it ships as its own file and release.",
+  "Measured compute: run times, memory and process identifiers.",
+  "The adapter’s per-seed accuracies and its CROP-RESIDUAL transitions; the Wearable-102 contrast against the cropped-spectrum check."
+ ],
+ "holds": []
+}

@@ -1,0 +1,626 @@
+---
+/**
+ * Cards 1 and 2 of /topics/new-ssvep-frequencies/ (package P-SS2, plan §2.1 cards 1 and 2):
+ *   #reference-spectrum — the REF study: the head asked with the spectrum of CCA's own reference signals;
+ *   #head-and-features  — REF2 and the softmax run: the head, the spectrum it reads, or the way a frequency is asked.
+ *
+ * Each card runs question → what changed → matched control → result → limit. The result is the plan's lead, with
+ * every figure a leaf of new-ssvep-frequencies-update.json; below it the card's planned contrasts (always visible)
+ * and every level behind the card (a <details> table of seven columns); the caption names the interval method, the
+ * number of contrasts and that no multiplicity correction was applied. Seen and held-out results sit in separate
+ * columns. Card 1 states both readings of R2 on the plain spectrum (equivalent within the margin, and a small
+ * difference below zero) and the L1 sentence; card 2 sets the reference with stimulus phase beside card 1's
+ * reference spectrum, the numeric code and CCA, gives the corrigendum sentence and the harmonics effects with their
+ * intervals, and frames the complex spectrum through its own feature contrasts, never through a head comparison.
+ *
+ * Props
+ *   locale: Locale — 'en' or 'zh', the page's language. Nothing else is passed: every figure and every word the card
+ *     needs comes from src/data/new-ssvep-frequencies.ts and the Chinese map below.
+ *
+ * Contract with the page (P-SS1)
+ *   - Renders exactly the <section>s for cards 1 and 2, in that order, each
+ *       <section class="topic-section ssvep-card" id={c.anchor} aria-labelledby={c.headingId} data-ssvep-card={c.card}>
+ *     with the eyebrow and the <h2 id={c.headingId}> from cardChrome(n, locale).
+ *   - Every figure is an SsvepFig printed as <span data-fig={figAttr(f)}>{formatSsvep(f)}</span> (class="metric" for
+ *     the figure that leads a table cell). Both languages print the same multiset of data-fig values: the Chinese
+ *     page runs the same code and only swaps words.
+ *   - The scope of cards 1–6 is stated once on the page and is not restated here; the thread is linked once, on the
+ *     page, and never from these cards. No figure of the commenter's own confidence, and no bet: the bet is card 4's.
+ *   - Every table has a <thead>; the tables inside <details> have seven columns (stack-tables.ts stacks them below
+ *     640px). No inline style, script or event handler. Styles: <style is:global> with selectors that start from
+ *     this file's own card attributes, so no data-astro-cid attribute lands on the figures.
+ *
+ * Words. Every sentence is English with {slots} for figures and links; the Chinese is looked up by that exact
+ * English (ZH below), on both pages, so English with no Chinese fails the build in either language. A Chinese entry
+ * must carry the same slots and the same literal digits as its English, end in Chinese punctuation, and be used.
+ * Every sentence that summarises the export is guarded by need(), so the build fails if the numbers stop supporting
+ * it.
+ */
+import type { Locale } from '../../data/i18n';
+import { hrefFor, topicChrome } from '../../data/i18n';
+import {
+  cardChrome, study, level, contrast, levelFig, levelIv, contrastFig, contrastIv, undefinedReason, nameOf, siteName,
+  intervalText, notRunOf, cohort, rights, needFor, count, figAttr, formatSsvep,
+  type Part, type SsvepFig, type StudyId,
+} from '../../data/new-ssvep-frequencies';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const need = needFor('new-ssvep-frequencies cards 1–2');
+const tc = topicChrome[locale];
+const to = zh ? ' 至 ' : ' to ';
+const sep = zh ? '；' : '; ';
+const F = (f: SsvepFig) => formatSsvep(f);
+const cap = (s: string) => (zh ? s : s.charAt(0).toUpperCase() + s.slice(1));
+
+// --- Words: English with {slots}, and the Chinese keyed by that exact English. ------------------------------------
+type Link = { href: string; text: string };
+type Seg = Part | Link;
+type Slot = Seg | Seg[];
+const isLink = (x: Seg): x is Link => typeof x === 'object' && 'href' in x;
+
+const ZH: Record<string, string> = {
+  // Card chrome
+  'Question': '问题',
+  'What changed': '改变了什么',
+  'Matched control': '匹配对照',
+  'Result': '结果',
+  'Limit': '局限',
+  // Tables
+  'Contrast': '对比',
+  'Task': '任务',
+  'Role': '角色',
+  'Difference, 95% interval': '差值，95% 区间',
+  'Reading': '解读',
+  'Arm': '实验组',
+  'Held-out': '留出频率',
+  'Seen, balanced': '见过的频率（平衡）',
+  'Held-out against m8': '留出频率对 m8',
+  'Cost, held-out − m8': '代价（留出 − m8）',
+  'Primary': '主要',
+  'Secondary': '次要',
+  'not defined': '无定义',
+  'by construction': '按构造',
+  'from route 3': '取自第三条路线',
+  'from card 1': '取自卡片 1',
+  'Below zero': '低于零',
+  'Above zero': '高于零',
+  'Direction unresolved': '方向未定',
+  'read for a difference only': '只看差异',
+  'equivalent within ±{m} pp': '在 ±{m} pp 内等效',
+  'not equivalent within ±{m} pp': '未在 ±{m} pp 内等效',
+  'cost not within ±{m} pp of zero': '代价不在零的 ±{m} pp 以内',
+  'non-inferiority to CCA (−{m} pp) not met': '未达到相对 CCA 的非劣界值（−{m} pp）',
+  'meaningful head gain (lower bound above +{m} pp) not met': '未达到有意义的分类头提升（下限高于 +{m} pp）',
+  '{feat} · {head} · {role}': '{feat} · {head} · {role}',
+  '{feat} · {role}': '{feat} · {role}',
+  '{feat} · {head}': '{feat} · {head}',
+  '{feat} · no question, softmax run': '{feat} · 不带问题，softmax 运行',
+  'No training': '无需训练',
+  'primary': '主要',
+  'secondary': '次要',
+  '{a} − {b}': '{a} − {b}',
+  '{name}: held-out − m8': '{name}：留出 − m8',
+  // Card 1
+  'Asked with the spectrum of CCA’s own reference signals, does the head do better on frequencies it never trained on?':
+    '用 CCA 自身参考信号的频谱来提问，分类头在没训练过的频率上会不会做得更好？',
+  'How each frequency is asked: the reference spectrum in place of the numeric code or the question number, read by the FiLM head on the same features and splits.':
+    '每个频率的问法：用参考谱代替数值编码或题号，由 FiLM 分类头在同样的特征与数据划分上读取。',
+  'The same FiLM head asked with the numeric code on held-out frequencies and with the question number on seen ones; CCA and a fixed spectrum match, neither of them trained, score the same windows.':
+    '同一种 FiLM 分类头：在留出频率上用数值编码提问，在见过的频率上用题号提问；CCA 与固定频谱匹配都不经训练，在同样的时间窗上评分。',
+  'Asked with the spectrum of CCA’s own reference signals (sine and cosine at the frequency and its second and third harmonics), the head reached {ref} ({refIv}) on frequencies it never trained on. The numeric code reached {num} and CCA {cca}. Paired with the numeric code, the reference spectrum differed by {r1} ({r1Iv}). On the seen {k32}-way task it reached {seen} balanced accuracy, against {id} for the question number: the paired difference, {r2} ({r2Iv}), is equivalent within the ±{m}-point margin and is also a small difference below zero.':
+    '用 CCA 自身参考信号的频谱提问（频率本身及其二次与三次谐波上的正弦与余弦），分类头在没训练过的频率上达到 {ref}（{refIv}）。数值编码为 {num}，CCA 为 {cca}。与数值编码配对相比，参考谱相差 {r1}（{r1Iv}）。在见过频率的 {k32} 类任务上，它的平衡准确率为 {seen}，题号为 {id}：配对差为 {r2}（{r2Iv}），在 ±{m} pp 的界值内等效，同时也是一个低于零的小差值。',
+  'On frozen CBraMod features the reference spectrum was again below the numeric code on unseen frequencies ({l1r1}, {l1r1Iv}). On seen frequencies it was within the margin, with the direction unresolved ({l1r2}, {l1r2Iv}). This question changes the harmonics, the shape and size of the query and the size of the head together, so the result describes the recipe as a whole.':
+    '在冻结的 CBraMod 特征上，参考谱在没见过的频率上同样低于数值编码（{l1r1}，{l1r1Iv}）。在见过的频率上，它落在界值之内，差值方向未定（{l1r2}，{l1r2Iv}）。这种问法同时改变了谐波、查询的形状与大小以及分类头的大小，所以这一结果描述的是整套做法。',
+  '{iv}. Four primary contrasts on the plain spectrum and four secondary on frozen CBraMod features, with no multiplicity correction. A fixed spectrum match against the same reference, with no training, reached {tpl} on unseen frequencies. Its scores do not depend on the rotation, so its generalisation cost is zero by construction, as is CCA’s.':
+    '{iv}。普通频谱上四项主要对比、冻结的 CBraMod 特征上四项次要对比，均未做多重比较校正。用同一参考做固定频谱匹配、不经训练，在没见过的频率上达到 {tpl}。它的分数不随频率轮换而变，因此泛化代价按构造为零，CCA 也是如此。',
+  'Not run in this round: {items}; {card2} runs both.': '本轮没有运行{items}；{card2} 运行了这两项。',
+  '{a} and {b}': '{a}与{b}',
+  'card 2': '卡片 2',
+  'The reference spectrum against each comparator: four planned contrasts on each feature set, in percentage points.':
+    '参考谱与各对照的比较：每种特征上四项预先设定的对比，单位为百分点。',
+  'Card 1’s contrasts, scrolls horizontally': '卡片 1 的对比，可横向滚动',
+  'Every level behind card 1: held-out, m8, cost, seen, and the two read-offs': '卡片 1 的全部水平：留出、m8、代价、见过的频率，以及两项读出',
+  'Card 1’s levels, scrolls horizontally': '卡片 1 的各水平，可横向滚动',
+  'Levels with their 95% intervals. Rows marked route 3 are route 3’s own runs, reused unchanged. The question number exists only for seen frequencies, so its held-out cells are not defined. CCA reads the raw multichannel window, which keeps the timing and phase the plain spectrum drops, and is the comparator for both feature sets.':
+    '各水平及其 95% 区间。标注“第三条路线”的行是第三条路线本身的运行结果，原样沿用。题号只为见过的频率而设，因此它的留出各格无定义。CCA 读取原始的多通道时间窗，保留了普通频谱舍弃的时序与相位，它是两种特征共同的对照。',
+  // Card 2
+  'What holds the head back: the head itself, the spectrum it reads, or the way a frequency is asked? And does a plain softmax do better on seen frequencies?':
+    '拖住分类头的是什么：分类头本身、它读取的频谱，还是频率的问法？在见过的频率上，普通的 softmax 会不会更好？',
+  'One named part per contrast: the head (a matching head in place of the FiLM head), the features (the complex spectrum, which keeps phase, in place of the plain spectrum), the question (the reference with stimulus phase, or the reference without its second and third harmonics) and, in a separate run, the output (a softmax with no question, or route 3’s head trained with a softmax loss).':
+    '每项对比改变一个指明的部分：分类头（用匹配分类头代替 FiLM 分类头）、特征（用保留相位的复数频谱代替普通频谱）、问法（带刺激相位的参考谱，或去掉二次与三次谐波的参考谱），以及在另一次运行中的输出（不带问题的 softmax，或用 softmax 损失训练第三条路线的分类头）。',
+  'The same arm without that change, paired on the same people, folds, rotations and seeds; card 1’s reference spectrum, numeric code and CCA sit beside them as levels.':
+    '未做这一改变的同一组，在相同的被试、折、轮换与种子上配对；卡片 1 的参考谱、数值编码与 CCA 作为水平列在一旁。',
+  'A plain {k32}-way softmax on the same spectrum reached {lin} seen balanced accuracy ({linIv}). The head with one output per question, trained with the same softmax loss, reached {ce}; trained one-vs-rest, as in route 3, it reached {bce}. The paired difference, {d} ({dIv}), is small, below zero and inside the ±{m}-point margin.':
+    '在同样的频谱上，普通的 {k32} 类 softmax 在见过频率上的平衡准确率为 {lin}（{linIv}）。每个问题一个输出的分类头，用同样的 softmax 损失训练，达到 {ce}；像第三条路线那样用一对其余方式训练，则为 {bce}。两者的配对差为 {d}（{dIv}）：差值很小，低于零，并且在 ±{m} pp 的界值之内。',
+  'On the plain spectrum, a matching head in place of the FiLM head changed seen balanced accuracy by {hr} with the reference spectrum ({hrIv}) and by {hi} with question numbers ({hiIv}); the protocol counts a head gain as meaningful when its lower bound is above +{m} points, and neither lower bound is. With question numbers, the complex spectrum, which also keeps phase, changed seen balanced accuracy by {ff} for the FiLM head ({ffIv}), to {cf}, and by {fm} for the matching head ({fmIv}), to {cm}. It also changes size, scaling and the head’s size, so these figures describe the feature recipe as a whole.':
+    '在普通频谱上，用匹配分类头代替 FiLM 分类头，见过频率的平衡准确率在用参考谱提问时变化 {hr}（{hrIv}），用题号提问时变化 {hi}（{hiIv}）；按协议，分类头的提升要在区间下限高于 +{m} pp 时才算有意义，两项的下限都没有达到。用题号提问时，还保留了相位的复数频谱使 FiLM 分类头的见过频率平衡准确率变化 {ff}（{ffIv}），达到 {cf}；使匹配分类头变化 {fm}（{fmIv}），达到 {cm}。复数频谱还改变了维度、缩放与分类头的大小，所以这些数字描述的是整套特征做法。',
+  'On held-out frequencies, a question carrying each target’s stimulus phase changed the complex-spectrum FiLM head’s accuracy by {phf} against the magnitude question ({phfIv}), to {rf}, and the matching head’s by {phm} ({phmIv}), to {rm}. Read side by side, both stay below the reference spectrum on the plain spectrum ({ref}), the numeric code ({num}) and CCA ({cca}); the matching head’s paired difference from CCA is {tc} ({tcIv}).':
+    '在留出频率上，带有各目标刺激相位的问法使复数频谱上 FiLM 分类头的准确率相对幅度问法变化 {phf}（{phfIv}），达到 {rf}；匹配分类头变化 {phm}（{phmIv}），达到 {rm}。并列来看，两者都低于普通频谱上的参考谱（{ref}）、数值编码（{num}）与 CCA（{cca}）；匹配分类头与 CCA 的配对差为 {tc}（{tcIv}）。',
+  'The stimulus phases come from the BETA authors’ corrigendum, converted to the cosine convention with zero latency; equal amplitudes across harmonics, with harmonic h at h times the stimulus phase, are modelling assumptions. They are the phases of the stimulus as displayed, and the question carries no phase measured on the scalp.':
+    '刺激相位取自 BETA 作者的更正说明，换算为余弦约定、零潜伏期；各谐波幅度相等、第 h 次谐波的相位取刺激相位的 h 倍，属于建模假设。它们是屏幕上所显示刺激的相位，问法中不含任何在头皮上测得的相位。',
+  'Dropping the second and third harmonics from the reference spectrum changed the plain-spectrum FiLM head’s held-out accuracy by {hu} ({huIv}), to {r1u}, and its seen balanced accuracy by {hs} ({hsIv}).':
+    '从参考谱中去掉二次与三次谐波，普通频谱上 FiLM 分类头的留出准确率变化 {hu}（{huIv}），降至 {r1u}；见过频率的平衡准确率变化 {hs}（{hsIv}）。',
+  '{iv}. Twelve planned contrasts in the main run, all primary, and one primary and one secondary in the softmax run, with no multiplicity correction.':
+    '{iv}。主运行中十二项预先设定的对比均为主要对比，softmax 运行中一项主要、一项次要，均未做多重比较校正。',
+  'Each arm is one fixed recipe: the matching head is one bilinear design, and the softmax run changes the whole training objective or several parts of the architecture at once. These contrasts compare the recipes; how much frequency information the plain spectrum holds stays open. Both runs were designed with route 3’s results known.':
+    '每一组都是一套固定的做法。匹配分类头是一种双线性设计；softmax 运行则一次改变了整个训练目标，或同时改变了结构中的几个部分。这些对比比较的是这些做法本身；普通频谱究竟含有多少频率信息，仍是开放的问题。两次运行都是在已知第三条路线结果的情况下设计的。',
+  'Each contrast changes one named part; differences in percentage points.': '每项对比改变一个指明的部分；差值单位为百分点。',
+  'Card 2’s contrasts, scrolls horizontally': '卡片 2 的对比，可横向滚动',
+  'Every level behind card 2: held-out, m8, cost, seen, and the two read-offs': '卡片 2 的全部水平：留出、m8、代价、见过的频率，以及两项读出',
+  'Card 2’s levels, scrolls horizontally': '卡片 2 的各水平，可横向滚动',
+  'Levels with their 95% intervals. Rows marked card 1 or route 3 are those runs, reused unchanged. A question number or a softmax exists only for seen frequencies, so their held-out cells are not defined. On the complex spectrum u3 also involves stimulus phase, because neighbouring targets differ in phase.':
+    '各水平及其 95% 区间。标注“卡片 1”或“第三条路线”的行是那些运行的结果，原样沿用。题号与 softmax 只适用于见过的频率，因此它们的留出各格无定义。在复数频谱上，u3 还涉及刺激相位，因为相邻目标的相位不同。',
+  'The head · plain spectrum': '分类头 · 普通频谱',
+  'The features · complex spectrum − plain spectrum': '特征 · 复数频谱 − 普通频谱',
+  'The question · complex spectrum': '问法 · 复数频谱',
+  'The question · plain spectrum': '问法 · 普通频谱',
+  'The output · softmax run, plain spectrum': '输出 · softmax 运行，普通频谱',
+  'Matching head − FiLM head, asked with the reference spectrum': '匹配分类头 − FiLM 分类头，用参考谱提问',
+  'Matching head − FiLM head, asked with question numbers': '匹配分类头 − FiLM 分类头，用题号提问',
+  'FiLM head, asked with the reference spectrum': 'FiLM 分类头，用参考谱提问',
+  'FiLM head, asked with question numbers': 'FiLM 分类头，用题号提问',
+  'Matching head, asked with the reference spectrum': '匹配分类头，用参考谱提问',
+  'Matching head, asked with question numbers': '匹配分类头，用题号提问',
+  'FiLM head: reference with stimulus phase − reference spectrum': 'FiLM 分类头：带刺激相位的参考谱 − 参考谱',
+  'Matching head: reference with stimulus phase − reference spectrum': '匹配分类头：带刺激相位的参考谱 − 参考谱',
+  'Matching head: reference with stimulus phase − numeric code': '匹配分类头：带刺激相位的参考谱 − 数值编码',
+  'Matching head asked with the reference with stimulus phase − CCA (no training)': '用带刺激相位的参考谱提问的匹配分类头 − CCA（无需训练）',
+  'FiLM head: fundamental-only reference − reference spectrum': 'FiLM 分类头：仅含基频的参考谱 − 参考谱',
+  'One output per question: softmax training − one-vs-rest training': '每个问题一个输出：softmax 训练 − 一对其余训练',
+  'One output per question, softmax training − plain 32-way softmax': '每个问题一个输出、softmax 训练 − 普通的 32 类 softmax',
+};
+const slotsOf = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort().join();
+// "route 3" is 第三条路线 in Chinese, a numeral the digit check cannot see: both are taken out before it counts.
+const digitsOf = (s: string) => (s.replace(/\{\w+\}/g, '').replace(/\broute 3\b|第三条路线/g, '').match(/\d+/g) ?? []).join(',');
+for (const [en, z] of Object.entries(ZH)) {
+  need(slotsOf(en) === slotsOf(z), `the Chinese of “${en.slice(0, 60)}…” carries the same slots`);
+  need(digitsOf(en) === digitsOf(z), `the Chinese of “${en.slice(0, 60)}…” carries the same digits`);
+  need(!/[.!?]$/.test(z) && !/\p{Script=Han}[.,;:]/u.test(z), `the Chinese of “${en.slice(0, 60)}…” uses Chinese punctuation`);
+}
+const used = new Set<string>();
+/** A sentence in the page's language: English with {slots}, the Chinese looked up by that exact English. */
+function say(en: string, slots: Record<string, Slot> = {}): Seg[] {
+  need(en in ZH, `Chinese for “${en.slice(0, 70)}…”`);
+  used.add(en);
+  const t = zh ? ZH[en] : en, out: Seg[] = [], printed = new Set<string>();
+  for (const piece of t.split(/(\{\w+\})/)) {
+    const m = piece.match(/^\{(\w+)\}$/);
+    if (!m) { if (piece) out.push(piece); continue; }
+    need(m[1] in slots, `the slot {${m[1]}} of “${en.slice(0, 50)}…”`);
+    printed.add(m[1]);
+    const v = slots[m[1]];
+    out.push(...(Array.isArray(v) ? v : [v]));
+  }
+  need(Object.keys(slots).every(k => printed.has(k)), `every slot of “${en.slice(0, 50)}…” is printed`);
+  return out;
+}
+/** Words only (headers, labels, aria-labels): no figure, no link. */
+function txt(en: string, slots: Record<string, string> = {}): string {
+  const s = say(en, slots);
+  need(s.every(x => typeof x === 'string'), `“${en}” is words only`);
+  return (s as string[]).join('');
+}
+
+// --- The margin, from the export. ---------------------------------------------------------------------------------
+const softPrimary = contrast('softmax', 'BSH-CE minus BSH-BCE'), softSecondary = contrast('softmax', 'BSH-CE minus LINEAR-CE');
+const M = softPrimary.flags!.equivalence_margin as number;
+need(M === 0.02 && softSecondary.flags!.equivalence_margin === M, 'the ±2-point margin of the softmax run');
+const RULE_EQ = 'Both interval bounds strictly inside [-0.02,+0.02]', RULE_NI = 'Lower interval bound strictly greater than -0.02';
+const m = String(Math.round(M * 100));
+need(m === '2', 'the margin prints as 2 points');
+
+// --- Shared pieces --------------------------------------------------------------------------------------------------
+const ivAt = (x: { interval: [number, number] }) => x.interval;
+/** The direction of a paired difference: from its flag where the export gives one, and always from its interval. */
+function dirWord(c: { interval: [number, number]; flags?: Record<string, unknown> }): string {
+  const [lo, hi] = ivAt(c);
+  const d = lo > 0 ? 'positive' : hi < 0 ? 'negative' : 'not_resolved';
+  if (c.flags && 'difference' in c.flags) need(c.flags.difference === d, `a difference flag (${String(c.flags.difference)}) its interval supports`);
+  return txt(d === 'negative' ? 'Below zero' : d === 'positive' ? 'Above zero' : 'Direction unresolved');
+}
+const taskOf = (key: string) => key.endsWith('/u8') ? txt('Held-out') : key.endsWith('/seen_ba') ? txt('Seen, balanced') : (need(false, `a task for ${key}`), '');
+const roleWord = (r: string) => (need(r === 'primary' || r === 'secondary', `a role (${r})`), txt(r === 'primary' ? 'Primary' : 'Secondary'));
+const armOf = (key: string) => key.split('/')[0];
+/** An arm code split into features, head and question ("L0c-MATCH-REFc-0" → L0c, MATCH, REFc-0). */
+function armParts(arm: string): { feat?: string; head?: string; q: string } {
+  const a = arm.match(/^(L0c|L0|L1)-(FS|MATCH)-(.+)$/);
+  if (a) return { feat: a[1], head: a[2], q: a[3] };
+  const s = arm.match(/^(L0)-(.+)$/);
+  if (s) return { feat: s[1], q: s[2] };
+  return { q: arm };
+}
+
+// Levels tables: one row per arm, seven columns.
+const METRICS = ['u8', 'm8', 'cost', 'seen_ba', 'nn8', 'u3'] as const;
+interface FigCell { t: 'fig'; main: SsvepFig; iv: Part[] | null }
+type Cell = FigCell | { t: 'undef' } | { t: 'none' };
+interface LevelRow { arm: string; name: string; origin: string | null; cells: Cell[] }
+interface LevelGroup { heading: string; rows: LevelRow[] }
+function cellOf(id: StudyId, key: string): Cell {
+  const x = study(id).levels[key];
+  if (!x) return undefinedReason(id, key) ? { t: 'undef' } : { t: 'none' };
+  need(!undefinedReason(id, key), `${id} ${key} is either defined or not`);
+  const diff = x.unit === 'difference of proportions';
+  const zero = diff && x.estimate === 0 && x.interval[0] === 0 && x.interval[1] === 0;
+  if (zero) need(x.seeds === 'no training' || (id === 'ref' && key === 'TEMPLATE/cost'), `${key}: a zero cost only for a scorer with no training`);
+  return { t: 'fig', main: levelFig(id, key), iv: zero ? null : levelIv(id, key, diff ? to : '–') };
+}
+function levelRow(id: StudyId, arm: string, nameFrom: StudyId = id): LevelRow {
+  const keys = METRICS.map(k => `${arm}/${k}`);
+  const origins = new Set(keys.map(k => study(id).levels[k]?.origin).filter(Boolean));
+  need(origins.size === 1, `${id} ${arm}: one origin for the whole row`);
+  const origin = [...origins][0] as string;
+  need(['new', 'reused_parent', 'reused_ref'].includes(origin) && (origin !== 'reused_ref' || id === 'ref2'), `${id} ${arm}: a known origin`);
+  return {
+    arm, name: cap(nameOf(nameFrom, armParts(arm).q, locale)),
+    origin: origin === 'reused_parent' ? txt('from route 3') : origin === 'reused_ref' ? txt('from card 1') : null,
+    cells: keys.map(k => cellOf(id, k)),
+  };
+}
+/** Every level of a study appears in exactly one row of its card's table. */
+function covers(id: StudyId, groups: LevelGroup[], arms: string[]) {
+  const inTable = groups.flatMap(g => g.rows.map(r => r.arm)).filter(a => arms.includes(a));
+  const inExport = [...new Set([...Object.keys(study(id).levels), ...study(id).undefined.map(u => u.level!)].map(armOf))];
+  need(inTable.length === new Set(inTable).size && inExport.every(a => inTable.includes(a)) && inTable.every(a => inExport.includes(a)),
+    `${id}: every arm of the export in the card's levels table, once`);
+}
+const levelHeads = [txt('Arm'), txt('Held-out'), 'm8', txt('Cost, held-out − m8'), txt('Seen, balanced'), 'nn8', 'u3'];
+need(levelHeads.length === 7, 'seven columns in each levels table');
+
+// Contrast tables: five columns.
+interface ContrastRow { id: StudyId; key: string; label: string; task: string; role: string; est: SsvepFig; iv: Part[]; reading: string }
+interface ContrastGroup { heading: string; rows: ContrastRow[] }
+const contrastHeads = [txt('Contrast'), txt('Task'), txt('Role'), txt('Difference, 95% interval'), txt('Reading')];
+
+// ===================================================================================================================
+// Card 1 — the reference spectrum (REF)
+// ===================================================================================================================
+const R = 'ref' as const;
+const ref = study(R);
+need(ref.design?.harmonics?.join() === '1,2,3', 'the reference: the frequency and its second and third harmonics');
+need(ref.display_names.REF === 'reference spectrum' && ref.display_names.FS === 'FiLM head' && ref.display_names.L1 === 'frozen CBraMod features'
+  && ref.display_names.TEMPLATE === 'fixed spectrum match (no training)', 'card 1 names its arms as the name key does');
+const r1 = contrast(R, 'L0/R1'), r2 = contrast(R, 'L0/R2'), r3 = contrast(R, 'L0/R3'), r4 = contrast(R, 'L0/R4');
+const l1r1 = contrast(R, 'L1/R1'), l1r2 = contrast(R, 'L1/R2');
+need(r1.left === 'L0-FS-REF/u8' && r1.right === 'L0-FS-NUM/u8' && r1.role === 'primary' && r1.interval[1] < 0,
+  'paired with the numeric code on held-out frequencies, the reference spectrum is below it');
+need(r2.left === 'L0-FS-REF/seen_ba' && r2.right === 'L0-FS-ID/seen_ba' && r2.role === 'primary' && r2.flags?.margin_pass === true
+  && r2.flags?.margin_rule === RULE_EQ && r2.flags?.difference === 'negative' && r2.interval[1] < 0 && r2.interval[0] > -M && r2.estimate > -0.01,
+  'R2 on the plain spectrum: equivalent within the margin, and a small difference below zero');
+need(r3.right === 'CCA/u8' && r3.flags?.margin_rule === RULE_NI && r4.left === 'L0-FS-REF/u8' && r4.right === 'L0-FS-REF/m8',
+  'R3 against CCA, R4 the generalisation cost');
+need(l1r1.left === 'L1-FS-REF/u8' && l1r1.right === 'L1-FS-NUM/u8' && l1r1.role === 'secondary' && l1r1.interval[1] < 0,
+  'on frozen CBraMod features the reference spectrum is again below the numeric code on held-out frequencies');
+need(l1r2.left === 'L1-FS-REF/seen_ba' && l1r2.right === 'L1-FS-ID/seen_ba' && l1r2.flags?.margin_pass === true
+  && l1r2.flags?.difference === 'not_resolved' && l1r2.interval[0] < 0 && l1r2.interval[1] > 0,
+  'on frozen CBraMod features, seen: within the margin, the direction unresolved');
+const c1Keys = Object.keys(ref.contrasts);
+const c1Roles = c1Keys.map(k => `${k.split('/')[0]}:${ref.contrasts[k].role}`);
+need(c1Keys.join() === 'L0/R1,L0/R2,L0/R3,L0/R4,L1/R1,L1/R2,L1/R3,L1/R4' && c1Roles.filter(r => r === 'L0:primary').length === 4
+  && c1Roles.filter(r => r === 'L1:secondary').length === 4 && ref.checks.audit.numeric_metrics.contrasts === 8,
+  'four primary contrasts on the plain spectrum and four secondary on frozen CBraMod features');
+need(['recipe_as_a_whole', 'unadjusted_intervals', 'structural_zero_cost', 'template_untrained', 'cca_keeps_temporal_information', 'cca_raw_eeg_comparator']
+  .every(k => ref.limitations_keys.includes(k)), 'card 1’s limits are the export’s');
+const tplU8 = level(R, 'TEMPLATE/u8');
+need(tplU8.estimate === level(R, 'TEMPLATE/m8').estimate && ref.levels['TEMPLATE/cost'].estimate === 0 && ref.levels['CCA/cost'].estimate === 0
+  && level(R, 'CCA/u8').estimate === level(R, 'CCA/m8').estimate, 'the fixed match and CCA: zero generalisation cost by construction');
+need(level(R, 'L0-FS-REF/u8').estimate < level(R, 'L0-FS-NUM/u8').estimate && level(R, 'L0-FS-NUM/u8').estimate < level(R, 'CCA/u8').estimate,
+  'the numeric code and CCA, the levels beside the reference spectrum');
+const c1NotRun = notRunOf(R, locale).filter(x => x.runIn === 2);
+need(c1NotRun.length === 2 && ref.not_run.filter(x => x.run_in === 'ref2').map(x => x.item).join() === 'Matching/bilinear head,Fundamental-only reference ablation',
+  'card 2 ran the matching head and the fundamental-only reference that card 1 did not');
+// By the page's path, not a bare '#': the Markdown copy drops in-page jump links outside tables, and their words with them.
+const card2Link: Link = { href: `${hrefFor('/topics/new-ssvep-frequencies/', locale)}#${cardChrome(2, locale).anchor}`, text: txt('card 2') };
+
+const c1 = {
+  chrome: cardChrome(1, locale),
+  question: say('Asked with the spectrum of CCA’s own reference signals, does the head do better on frequencies it never trained on?'),
+  changed: say('How each frequency is asked: the reference spectrum in place of the numeric code or the question number, read by the FiLM head on the same features and splits.'),
+  control: say('The same FiLM head asked with the numeric code on held-out frequencies and with the question number on seen ones; CCA and a fixed spectrum match, neither of them trained, score the same windows.'),
+  lead: [
+    say('Asked with the spectrum of CCA’s own reference signals (sine and cosine at the frequency and its second and third harmonics), the head reached {ref} ({refIv}) on frequencies it never trained on. The numeric code reached {num} and CCA {cca}. Paired with the numeric code, the reference spectrum differed by {r1} ({r1Iv}). On the seen {k32}-way task it reached {seen} balanced accuracy, against {id} for the question number: the paired difference, {r2} ({r2Iv}), is equivalent within the ±{m}-point margin and is also a small difference below zero.', {
+      ref: levelFig(R, 'L0-FS-REF/u8'), refIv: levelIv(R, 'L0-FS-REF/u8'), num: levelFig(R, 'L0-FS-NUM/u8'), cca: levelFig(R, 'CCA/u8'),
+      r1: contrastFig(R, 'L0/R1'), r1Iv: contrastIv(R, 'L0/R1', to), k32: count(cohort.seen_frequencies),
+      seen: levelFig(R, 'L0-FS-REF/seen_ba'), id: levelFig(R, 'L0-FS-ID/seen_ba'), r2: contrastFig(R, 'L0/R2'), r2Iv: contrastIv(R, 'L0/R2', to), m,
+    }),
+    say('On frozen CBraMod features the reference spectrum was again below the numeric code on unseen frequencies ({l1r1}, {l1r1Iv}). On seen frequencies it was within the margin, with the direction unresolved ({l1r2}, {l1r2Iv}). This question changes the harmonics, the shape and size of the query and the size of the head together, so the result describes the recipe as a whole.', {
+      l1r1: contrastFig(R, 'L1/R1'), l1r1Iv: contrastIv(R, 'L1/R1', to), l1r2: contrastFig(R, 'L1/R2'), l1r2Iv: contrastIv(R, 'L1/R2', to),
+    }),
+  ],
+  caption: say('{iv}. Four primary contrasts on the plain spectrum and four secondary on frozen CBraMod features, with no multiplicity correction. A fixed spectrum match against the same reference, with no training, reached {tpl} on unseen frequencies. Its scores do not depend on the rotation, so its generalisation cost is zero by construction, as is CCA’s.', {
+    iv: intervalText(R, locale), tpl: levelFig(R, 'TEMPLATE/u8'),
+  }),
+  limit: say('Not run in this round: {items}; {card2} runs both.', {
+    items: say('{a} and {b}', { a: c1NotRun[0].text, b: c1NotRun[1].text }), card2: card2Link,
+  }),
+  contrastCaption: txt('The reference spectrum against each comparator: four planned contrasts on each feature set, in percentage points.'),
+  contrastRegion: txt('Card 1’s contrasts, scrolls horizontally'),
+  levelsSummary: txt('Every level behind card 1: held-out, m8, cost, seen, and the two read-offs'),
+  levelsRegion: txt('Card 1’s levels, scrolls horizontally'),
+  levelsCaption: txt('Levels with their 95% intervals. Rows marked route 3 are route 3’s own runs, reused unchanged. The question number exists only for seen frequencies, so its held-out cells are not defined. CCA reads the raw multichannel window, which keeps the timing and phase the plain spectrum drops, and is the comparator for both feature sets.'),
+};
+
+/** Card 1's reading of a contrast, from the export's flags. */
+function refReading(key: string): string {
+  const c = contrast(R, key), f = c.flags ?? {};
+  const rule = f.margin_rule as string | null, pass = f.margin_pass as boolean | null;
+  let r: string;
+  if (rule === null) { need(pass === null, `${key}: no margin, no verdict`); r = txt('read for a difference only'); }
+  else if (rule === RULE_EQ && key.endsWith('/R4')) r = txt(pass ? 'cost within ±{m} pp of zero' : 'cost not within ±{m} pp of zero', { m });
+  else if (rule === RULE_EQ) r = txt(pass ? 'equivalent within ±{m} pp' : 'not equivalent within ±{m} pp', { m });
+  else if (rule === RULE_NI) r = txt(pass ? 'non-inferior to CCA within −{m} pp' : 'non-inferiority to CCA (−{m} pp) not met', { m });
+  else { need(false, `${key}: a known margin rule`); r = ''; }
+  return dirWord(c) + sep + r;
+}
+function refLabel(key: string): string {
+  const c = contrast(R, key), L = armOf(c.left), Rt = armOf(c.right);
+  if (key.endsWith('/R4')) { need(L === Rt && c.left.endsWith('/u8') && c.right.endsWith('/m8'), `${key}: held-out minus m8 of one arm`); return txt('{name}: held-out − m8', { name: cap(nameOf(R, armParts(L).q, locale)) }); }
+  return txt('{a} − {b}', { a: cap(nameOf(R, armParts(L).q, locale)), b: nameOf(R, armParts(Rt).q, locale) });
+}
+const c1Contrasts: ContrastGroup[] = (['L0', 'L1'] as const).map(feat => ({
+  heading: txt('{feat} · {role}', { feat: cap(nameOf(R, feat, locale)), role: txt(feat === 'L0' ? 'primary' : 'secondary') }),
+  rows: c1Keys.filter(k => k.startsWith(feat + '/')).map(k => {
+    const c = contrast(R, k);
+    need(c.left.startsWith(feat + '-'), `${k} on ${feat}`);
+    return { id: R, key: k, label: refLabel(k), task: k.endsWith('/R4') ? txt('Held-out against m8') : taskOf(c.left), role: roleWord(c.role),
+             est: contrastFig(R, k), iv: contrastIv(R, k, to), reading: refReading(k) };
+  }),
+}));
+const c1Levels: LevelGroup[] = [
+  ...(['L0', 'L1'] as const).map(feat => ({
+    heading: txt('{feat} · {head} · {role}', { feat: cap(nameOf(R, feat, locale)), head: nameOf(R, 'FS', locale), role: txt(feat === 'L0' ? 'primary' : 'secondary') }),
+    rows: ['REF', 'NUM', 'ID', 'TPL'].map(q => levelRow(R, `${feat}-FS-${q}`)),
+  })),
+  { heading: txt('No training'), rows: ['CCA', 'TEMPLATE'].map(a => levelRow(R, a)) },
+];
+covers(R, c1Levels, ['L0-FS-REF', 'L0-FS-NUM', 'L0-FS-ID', 'L0-FS-TPL', 'L1-FS-REF', 'L1-FS-NUM', 'L1-FS-ID', 'L1-FS-TPL', 'CCA', 'TEMPLATE']);
+
+// ===================================================================================================================
+// Card 2 — the head, the spectrum or the question (REF2 and the softmax run)
+// ===================================================================================================================
+const R2 = 'ref2' as const, S = 'softmax' as const;
+const ref2 = study(R2), soft = study(S);
+need(ref2.display_names.REF1 === 'fundamental-only reference' && ref2.display_names['REFc-0'] === 'reference with stimulus phase'
+  && ref2.display_names.MATCH === 'matching head' && ref2.display_names.L0c === 'complex spectrum'
+  && soft.display_names['LINEAR-CE'] === 'plain 32-way softmax' && soft.display_names['BSH-CE'] === 'one output per question, softmax training'
+  && soft.display_names['BSH-BCE'] === 'one output per question, one-vs-rest training', 'card 2 names its arms as the name key does');
+// Every level card 2 reuses from card 1 or route 3 is the same number card 1 prints.
+for (const k of ['L0-FS-REF/u8', 'L0-FS-REF/seen_ba', 'L0-FS-NUM/u8', 'L0-FS-ID/seen_ba', 'CCA/u8', 'CCA/seen_ba'])
+  need(level(R2, k).estimate === level(R, k).estimate && level(R2, k).interval.join() === level(R, k).interval.join(), `card 2’s ${k} is card 1’s`);
+const C = (k: string) => contrast(R2, k);
+const want = (id: StudyId, k: string, left: string, right: string) => {
+  const c = contrast(id, k);
+  need(c.left === left && c.right === right, `${id} ${k} is ${left} minus ${right}`);
+  return c;
+};
+// Seen: the softmax run.
+const lin = level(S, 'L0-LINEAR-CE/seen_ba'), ce = level(S, 'L0-BSH-CE/seen_ba'), bce = level(S, 'L0-BSH-BCE/seen_ba');
+want(S, 'BSH-CE minus BSH-BCE', 'L0-BSH-CE/seen_ba', 'L0-BSH-BCE/seen_ba');
+want(S, 'BSH-CE minus LINEAR-CE', 'L0-BSH-CE/seen_ba', 'L0-LINEAR-CE/seen_ba');
+need(softPrimary.role === 'primary' && softSecondary.role === 'secondary' && Object.keys(soft.contrasts).length === 2,
+  'the softmax run: one primary and one secondary contrast');
+need(softPrimary.flags!.equivalent_strict_2pp === true && softPrimary.interval[1] < 0 && softPrimary.interval[0] > -M && softPrimary.estimate > -0.01,
+  'the one-output head, softmax against one-vs-rest training: small, below zero, inside the margin');
+need(bce.origin === 'reused_parent' && soft.limitations_keys.includes('bsh_one_vs_rest_loss') && ce.origin === 'new' && lin.origin === 'new',
+  'the one-vs-rest head is route 3’s, reused');
+need(['L0-LINEAR-CE/u8', 'L0-BSH-CE/u8', 'L0-BSH-BCE/u8'].every(k => undefinedReason(S, k) === 'cannot_ask_unseen'),
+  'a softmax over the seen frequencies cannot answer a held-out one');
+// Seen: the head and the features.
+const hr = want(R2, 'head_REF', 'L0-MATCH-REF/seen_ba', 'L0-FS-REF/seen_ba'), hi = want(R2, 'head_ID', 'L0-MATCH-ID/seen_ba', 'L0-FS-ID/seen_ba');
+need(hr.flags!.meaningful_head_gain === false && hi.flags!.meaningful_head_gain === false && hr.interval[0] <= M && hi.interval[0] <= M,
+  'neither head contrast’s lower bound is above the +2 points a meaningful head gain needs');
+const ff = want(R2, 'features_FS_ID', 'L0c-FS-ID/seen_ba', 'L0-FS-ID/seen_ba'), fm = want(R2, 'features_MATCH_ID', 'L0c-MATCH-ID/seen_ba', 'L0-MATCH-ID/seen_ba');
+want(R2, 'features_FS_REF', 'L0c-FS-REF/seen_ba', 'L0-FS-REF/seen_ba'); want(R2, 'features_MATCH_REF', 'L0c-MATCH-REF/seen_ba', 'L0-MATCH-REF/seen_ba');
+need(ref2.limitations_keys.includes('l0c_recipe_as_a_whole') && ref2.limitations_keys.includes('match_one_recipe'),
+  'the complex spectrum is a feature recipe as a whole; the matching head is one recipe');
+// Held-out: stimulus phase, beside card 1's levels.
+const phf = want(R2, 'phase_FS', 'L0c-FS-REFc-0/u8', 'L0c-FS-REF/u8'), phm = want(R2, 'phase_MATCH', 'L0c-MATCH-REFc-0/u8', 'L0c-MATCH-REF/u8');
+const tcc = want(R2, 'transfer_CCA', 'L0c-MATCH-REFc-0/u8', 'CCA/u8');
+want(R2, 'transfer_NUM', 'L0c-MATCH-REFc-0/u8', 'L0c-MATCH-NUM/u8');
+const rf = level(R2, 'L0c-FS-REFc-0/u8'), rm = level(R2, 'L0c-MATCH-REFc-0/u8');
+const beside = ['L0-FS-REF/u8', 'L0-FS-NUM/u8', 'CCA/u8'].map(k => level(R2, k));
+need(beside.every(b => rf.interval[1] < b.interval[0] && rm.interval[1] < b.interval[0]),
+  'with stimulus phase, both heads stay below the reference spectrum on the plain spectrum, the numeric code and CCA');
+need(phf.interval[0] > 0 && phm.interval[0] > 0 && tcc.flags!.noninferiority_to_CCA === false && tcc.interval[1] < 0
+  && ref2.limitations_keys.includes('refc0_gain_within_l0c') && ref2.limitations_keys.includes('stimulus_phase_assumptions'),
+  'the stimulus-phase question: above the magnitude question on the complex spectrum, below CCA');
+need(rights.corrigendum.used_for === 'the stimulus phases of the reference with stimulus phase (REFc-0), converted to the cosine convention with zero latency'
+  && rights.corrigendum.cards.includes(2), 'the stimulus phases: the corrigendum, the cosine convention, zero latency');
+// The harmonics.
+const hu = want(R2, 'harmonics_u8', 'L0-FS-REF1/u8', 'L0-FS-REF/u8'), hs = want(R2, 'harmonics_seen', 'L0-FS-REF1/seen_ba', 'L0-FS-REF/seen_ba');
+need(hu.interval[1] < 0 && hs.interval[1] < 0, 'dropping the second and third harmonics lowers both scores');
+// Counts and limits.
+const c2Keys = Object.keys(ref2.contrasts);
+need(c2Keys.length === 12 && Object.values(ref2.contrasts).every(c => c.role === 'primary') && ref2.checks.audit.numeric_metrics.contrasts === 12,
+  'twelve planned contrasts in the main run, all primary');
+need(['unadjusted_intervals', 'match_one_recipe'].every(k => ref2.limitations_keys.includes(k))
+  && ['objective_and_architecture_change', 'no_ceiling_or_causal_claim', 'motivated_by_known_results'].every(k => soft.limitations_keys.includes(k)),
+  'card 2’s limits are the export’s');
+need(JSON.stringify(soft.interval_method) === JSON.stringify(ref2.interval_method), 'one interval method for both runs of card 2');
+
+const c2 = {
+  chrome: cardChrome(2, locale),
+  question: say('What holds the head back: the head itself, the spectrum it reads, or the way a frequency is asked? And does a plain softmax do better on seen frequencies?'),
+  changed: say('One named part per contrast: the head (a matching head in place of the FiLM head), the features (the complex spectrum, which keeps phase, in place of the plain spectrum), the question (the reference with stimulus phase, or the reference without its second and third harmonics) and, in a separate run, the output (a softmax with no question, or route 3’s head trained with a softmax loss).'),
+  control: say('The same arm without that change, paired on the same people, folds, rotations and seeds; card 1’s reference spectrum, numeric code and CCA sit beside them as levels.'),
+  lead: [
+    say('A plain {k32}-way softmax on the same spectrum reached {lin} seen balanced accuracy ({linIv}). The head with one output per question, trained with the same softmax loss, reached {ce}; trained one-vs-rest, as in route 3, it reached {bce}. The paired difference, {d} ({dIv}), is small, below zero and inside the ±{m}-point margin.', {
+      k32: count(cohort.seen_frequencies), lin: levelFig(S, 'L0-LINEAR-CE/seen_ba'), linIv: levelIv(S, 'L0-LINEAR-CE/seen_ba'),
+      ce: levelFig(S, 'L0-BSH-CE/seen_ba'), bce: levelFig(S, 'L0-BSH-BCE/seen_ba'),
+      d: contrastFig(S, 'BSH-CE minus BSH-BCE'), dIv: contrastIv(S, 'BSH-CE minus BSH-BCE', to), m,
+    }),
+    say('On the plain spectrum, a matching head in place of the FiLM head changed seen balanced accuracy by {hr} with the reference spectrum ({hrIv}) and by {hi} with question numbers ({hiIv}); the protocol counts a head gain as meaningful when its lower bound is above +{m} points, and neither lower bound is. With question numbers, the complex spectrum, which also keeps phase, changed seen balanced accuracy by {ff} for the FiLM head ({ffIv}), to {cf}, and by {fm} for the matching head ({fmIv}), to {cm}. It also changes size, scaling and the head’s size, so these figures describe the feature recipe as a whole.', {
+      hr: contrastFig(R2, 'head_REF'), hrIv: contrastIv(R2, 'head_REF', to), hi: contrastFig(R2, 'head_ID'), hiIv: contrastIv(R2, 'head_ID', to), m,
+      ff: contrastFig(R2, 'features_FS_ID'), ffIv: contrastIv(R2, 'features_FS_ID', to), cf: levelFig(R2, 'L0c-FS-ID/seen_ba'),
+      fm: contrastFig(R2, 'features_MATCH_ID'), fmIv: contrastIv(R2, 'features_MATCH_ID', to), cm: levelFig(R2, 'L0c-MATCH-ID/seen_ba'),
+    }),
+    say('On held-out frequencies, a question carrying each target’s stimulus phase changed the complex-spectrum FiLM head’s accuracy by {phf} against the magnitude question ({phfIv}), to {rf}, and the matching head’s by {phm} ({phmIv}), to {rm}. Read side by side, both stay below the reference spectrum on the plain spectrum ({ref}), the numeric code ({num}) and CCA ({cca}); the matching head’s paired difference from CCA is {tc} ({tcIv}).', {
+      phf: contrastFig(R2, 'phase_FS'), phfIv: contrastIv(R2, 'phase_FS', to), rf: levelFig(R2, 'L0c-FS-REFc-0/u8'),
+      phm: contrastFig(R2, 'phase_MATCH'), phmIv: contrastIv(R2, 'phase_MATCH', to), rm: levelFig(R2, 'L0c-MATCH-REFc-0/u8'),
+      ref: levelFig(R2, 'L0-FS-REF/u8'), num: levelFig(R2, 'L0-FS-NUM/u8'), cca: levelFig(R2, 'CCA/u8'),
+      tc: contrastFig(R2, 'transfer_CCA'), tcIv: contrastIv(R2, 'transfer_CCA', to),
+    }),
+    say('The stimulus phases come from the BETA authors’ corrigendum, converted to the cosine convention with zero latency; equal amplitudes across harmonics, with harmonic h at h times the stimulus phase, are modelling assumptions. They are the phases of the stimulus as displayed, and the question carries no phase measured on the scalp.'),
+    say('Dropping the second and third harmonics from the reference spectrum changed the plain-spectrum FiLM head’s held-out accuracy by {hu} ({huIv}), to {r1u}, and its seen balanced accuracy by {hs} ({hsIv}).', {
+      hu: contrastFig(R2, 'harmonics_u8'), huIv: contrastIv(R2, 'harmonics_u8', to), r1u: levelFig(R2, 'L0-FS-REF1/u8'),
+      hs: contrastFig(R2, 'harmonics_seen'), hsIv: contrastIv(R2, 'harmonics_seen', to),
+    }),
+  ],
+  caption: say('{iv}. Twelve planned contrasts in the main run, all primary, and one primary and one secondary in the softmax run, with no multiplicity correction.', {
+    iv: intervalText(R2, locale),
+  }),
+  limit: say('Each arm is one fixed recipe: the matching head is one bilinear design, and the softmax run changes the whole training objective or several parts of the architecture at once. These contrasts compare the recipes; how much frequency information the plain spectrum holds stays open. Both runs were designed with route 3’s results known.'),
+  contrastCaption: txt('Each contrast changes one named part; differences in percentage points.'),
+  contrastRegion: txt('Card 2’s contrasts, scrolls horizontally'),
+  levelsSummary: txt('Every level behind card 2: held-out, m8, cost, seen, and the two read-offs'),
+  levelsRegion: txt('Card 2’s levels, scrolls horizontally'),
+  levelsCaption: txt('Levels with their 95% intervals. Rows marked card 1 or route 3 are those runs, reused unchanged. A question number or a softmax exists only for seen frequencies, so their held-out cells are not defined. On the complex spectrum u3 also involves stimulus phase, because neighbouring targets differ in phase.'),
+};
+need(ref2.limitations_keys.includes('u3_phase_and_id'), 'u3 involves stimulus phase where phase is kept');
+
+/** Card 2's reading of a contrast: its direction, and the one rule the protocol applies to it, if any. */
+function ref2Reading(id: StudyId, key: string, rule?: 'head' | 'cca' | 'equiv'): string {
+  const c = contrast(id, key), f = c.flags ?? {};
+  const parts = [dirWord(c)];
+  if (rule === 'head') { need(f.meaningful_head_gain === false, `${key}: the head-gain verdict`); parts.push(txt('meaningful head gain (lower bound above +{m} pp) not met', { m })); }
+  if (rule === 'cca') { need(f.noninferiority_to_CCA === false, `${key}: the non-inferiority verdict`); parts.push(txt('non-inferiority to CCA (−{m} pp) not met', { m })); }
+  if (rule === 'equiv') parts.push(txt(f.equivalent_strict_2pp ? 'equivalent within ±{m} pp' : 'not equivalent within ±{m} pp', { m }));
+  if (id === R2) need(f.equivalent_within_2pp === false && (rule === 'head' || f.meaningful_head_gain === null) && (rule === 'cca' || f.noninferiority_to_CCA === null),
+    `${key}: no other verdict in the export`);
+  return parts.join(sep);
+}
+const C2_ROWS: { heading: string; rows: { id: StudyId; key: string; label: string; rule?: 'head' | 'cca' | 'equiv' }[] }[] = [
+  { heading: 'The head · plain spectrum', rows: [
+    { id: R2, key: 'head_REF', label: 'Matching head − FiLM head, asked with the reference spectrum', rule: 'head' },
+    { id: R2, key: 'head_ID', label: 'Matching head − FiLM head, asked with question numbers', rule: 'head' },
+  ] },
+  { heading: 'The features · complex spectrum − plain spectrum', rows: [
+    { id: R2, key: 'features_FS_REF', label: 'FiLM head, asked with the reference spectrum' },
+    { id: R2, key: 'features_FS_ID', label: 'FiLM head, asked with question numbers' },
+    { id: R2, key: 'features_MATCH_REF', label: 'Matching head, asked with the reference spectrum' },
+    { id: R2, key: 'features_MATCH_ID', label: 'Matching head, asked with question numbers' },
+  ] },
+  { heading: 'The question · complex spectrum', rows: [
+    { id: R2, key: 'phase_FS', label: 'FiLM head: reference with stimulus phase − reference spectrum' },
+    { id: R2, key: 'phase_MATCH', label: 'Matching head: reference with stimulus phase − reference spectrum' },
+    { id: R2, key: 'transfer_NUM', label: 'Matching head: reference with stimulus phase − numeric code' },
+    { id: R2, key: 'transfer_CCA', label: 'Matching head asked with the reference with stimulus phase − CCA (no training)', rule: 'cca' },
+  ] },
+  { heading: 'The question · plain spectrum', rows: [
+    { id: R2, key: 'harmonics_u8', label: 'FiLM head: fundamental-only reference − reference spectrum' },
+    { id: R2, key: 'harmonics_seen', label: 'FiLM head: fundamental-only reference − reference spectrum' },
+  ] },
+  { heading: 'The output · softmax run, plain spectrum', rows: [
+    { id: S, key: 'BSH-CE minus BSH-BCE', label: 'One output per question: softmax training − one-vs-rest training', rule: 'equiv' },
+    { id: S, key: 'BSH-CE minus LINEAR-CE', label: 'One output per question, softmax training − plain 32-way softmax', rule: 'equiv' },
+  ] },
+];
+const c2Listed = C2_ROWS.flatMap(g => g.rows);
+need(c2Listed.filter(r => r.id === R2).map(r => r.key).sort().join() === [...c2Keys].sort().join()
+  && c2Listed.filter(r => r.id === S).map(r => r.key).join() === Object.keys(soft.contrasts).join(), 'every contrast of card 2, once');
+// The groups say what each contrast holds fixed: features and head from the arm codes.
+for (const g of C2_ROWS) for (const r of g.rows) {
+  const c = contrast(r.id, r.key), L = armParts(armOf(c.left)), Rt = armOf(c.right) === 'CCA' ? null : armParts(armOf(c.right));
+  const ok = g.heading.startsWith('The head') ? L.feat === 'L0' && Rt?.feat === 'L0' && L.head === 'MATCH' && Rt?.head === 'FS' && L.q === Rt?.q
+    : g.heading.startsWith('The features') ? L.feat === 'L0c' && Rt?.feat === 'L0' && L.head === Rt?.head && L.q === Rt?.q
+    : g.heading === 'The question · complex spectrum' ? L.feat === 'L0c' && L.q === 'REFc-0' && (Rt === null || (Rt.feat === 'L0c' && Rt.head === L.head))
+    : g.heading === 'The question · plain spectrum' ? L.feat === 'L0' && L.q === 'REF1' && Rt?.feat === 'L0' && Rt?.q === 'REF' && L.head === 'FS' && Rt?.head === 'FS'
+    : L.feat === 'L0' && r.id === S;
+  need(ok, `card 2’s ${r.key} sits in “${g.heading}”`);
+}
+const c2Contrasts: ContrastGroup[] = C2_ROWS.map(g => ({
+  heading: txt(g.heading),
+  rows: g.rows.map(r => {
+    const c = contrast(r.id, r.key);
+    return { id: r.id, key: r.key, label: txt(r.label), task: taskOf(c.left), role: roleWord(c.role),
+             est: contrastFig(r.id, r.key), iv: contrastIv(r.id, r.key, to), reading: ref2Reading(r.id, r.key, r.rule) };
+  }),
+}));
+const fsHead = nameOf(R2, 'FS', locale), mHead = nameOf(R2, 'MATCH', locale), plain = cap(nameOf(R2, 'L0', locale)), cplx = cap(nameOf(R2, 'L0c', locale));
+const c2Levels: LevelGroup[] = [
+  { heading: txt('{feat} · {head}', { feat: plain, head: fsHead }), rows: ['REF', 'REF1', 'ID', 'NUM', 'TPL'].map(q => levelRow(R2, `L0-FS-${q}`)) },
+  { heading: txt('{feat} · {head}', { feat: plain, head: mHead }), rows: ['REF', 'ID', 'NUM'].map(q => levelRow(R2, `L0-MATCH-${q}`)) },
+  { heading: txt('{feat} · {head}', { feat: cplx, head: fsHead }), rows: ['REF', 'REFc-0', 'ID', 'NUM'].map(q => levelRow(R2, `L0c-FS-${q}`)) },
+  { heading: txt('{feat} · {head}', { feat: cplx, head: mHead }), rows: ['REF', 'REFc-0', 'ID', 'NUM'].map(q => levelRow(R2, `L0c-MATCH-${q}`)) },
+  { heading: txt('{feat} · no question, softmax run', { feat: plain }), rows: ['LINEAR-CE', 'BSH-CE', 'BSH-BCE'].map(a => levelRow(S, `L0-${a}`)) },
+  { heading: txt('No training'), rows: [levelRow(R2, 'CCA')] },
+];
+covers(R2, c2Levels, ['L0-FS-REF', 'L0-FS-REF1', 'L0-FS-ID', 'L0-FS-NUM', 'L0-FS-TPL', 'L0-MATCH-REF', 'L0-MATCH-ID', 'L0-MATCH-NUM',
+  'L0c-FS-REF', 'L0c-FS-REFc-0', 'L0c-FS-ID', 'L0c-FS-NUM', 'L0c-MATCH-REF', 'L0c-MATCH-REFc-0', 'L0c-MATCH-ID', 'L0c-MATCH-NUM', 'CCA']);
+covers(S, c2Levels, ['L0-LINEAR-CE', 'L0-BSH-CE', 'L0-BSH-BCE']);
+
+const cards = [
+  { ...c1, contrasts: c1Contrasts, levels: c1Levels },
+  { ...c2, contrasts: c2Contrasts, levels: c2Levels },
+];
+const stepTerms = [txt('Question'), txt('What changed'), txt('Matched control')];
+const steps = (c: typeof cards[number]) => [c.question, c.changed, c.control].map((body, i) => ({ term: stepTerms[i], body }));
+const resultH = txt('Result'), limitH = txt('Limit');
+const notDefined = txt('not defined'), byConstruction = txt('by construction');
+// Unknown English fails the build above; a Chinese entry nothing prints fails it here.
+const unused = Object.keys(ZH).filter(k => !used.has(k));
+need(unused.length === 0, `every Chinese entry is printed (unused: ${unused.map(k => `“${k.slice(0, 40)}”`).join(', ')})`);
+need(siteName('reference spectrum', locale) === nameOf(R, 'REF', locale), 'one name for the reference spectrum');
+---
+{cards.map(c => <section class="topic-section ssvep-card" id={c.chrome.anchor} aria-labelledby={c.chrome.headingId} data-ssvep-card={c.chrome.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c.chrome.eyebrow}</p><h2 id={c.chrome.headingId}>{c.chrome.title}</h2></div></div>
+  <dl class="ssvep-steps" data-ssvep-steps="">
+    {steps(c).map(s => <div><dt>{s.term}</dt><dd>{s.body.map(p => typeof p === 'string' ? p : isLink(p) ? <a href={p.href}>{p.text}</a> : <span data-fig={figAttr(p)}>{F(p)}</span>)}</dd></div>)}
+  </dl>
+  <h3 class="roadmap-h3">{resultH}</h3>
+  {c.lead.map((par, i) => <p class="roadmap-p" data-ssvep-lead={i + 1}>{par.map(p => typeof p === 'string' ? p : isLink(p) ? <a href={p.href}>{p.text}</a> : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>)}
+  <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={c.contrastRegion}>
+    <table data-ssvep-table={`card-${c.chrome.card}-contrasts`}>
+      <caption>{c.contrastCaption}</caption>
+      <thead><tr>{contrastHeads.map(h => <th scope="col">{h}</th>)}</tr></thead>
+      <tbody>{c.contrasts.map(g => <>
+        <tr class="subhead"><th scope="colgroup" colspan={contrastHeads.length}>{g.heading}</th></tr>
+        {g.rows.map(r => <tr data-contrast={`${r.id}|${r.key}`}>
+          <th scope="row">{r.label}</th>
+          <td>{r.task}</td>
+          <td>{r.role}</td>
+          <td><span data-fig={figAttr(r.est)} class="metric">{F(r.est)}</span><span class="interval">{r.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}</span></td>
+          <td>{r.reading}</td>
+        </tr>)}
+      </>)}</tbody>
+    </table>
+  </div>
+  <p class="protocol-note" data-ssvep-caption="">{c.caption.map(p => typeof p === 'string' ? p : isLink(p) ? <a href={p.href}>{p.text}</a> : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>
+  <details class="rd-panel" data-ssvep-levels={c.chrome.card}>
+    <summary>{c.levelsSummary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={c.levelsRegion}>
+      <table data-ssvep-table={`card-${c.chrome.card}-levels`}>
+        <caption>{c.levelsCaption}</caption>
+        <thead><tr>{levelHeads.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{c.levels.map(g => <>
+          <tr class="subhead"><th scope="colgroup" colspan={levelHeads.length}>{g.heading}</th></tr>
+          {g.rows.map(r => <tr data-level-row={r.arm}>
+            <th scope="row">{r.name}{r.origin && <small>{r.origin}</small>}</th>
+            {r.cells.map(x => x.t === 'fig'
+              ? <td><span data-fig={figAttr(x.main)} class="metric">{F(x.main)}</span><span class="interval">{x.iv ? x.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>) : byConstruction}</span></td>
+              : <td data-null={x.t}>{x.t === 'undef' ? notDefined : '—'}</td>)}
+          </tr>)}
+        </>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="roadmap-p ssvep-limit" data-ssvep-limit=""><strong>{limitH}</strong>{zh ? '：' : '. '}{c.limit.map(p => typeof p === 'string' ? p : isLink(p) ? <a href={p.href}>{p.text}</a> : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>
+</section>)}
+
+<style is:global>
+  /* Global, not scoped: a scoped style would add a data-astro-cid attribute to every element of this component, and
+     check-workbench.mjs reads figures by their exact markup. Every selector starts from this file's two cards. */
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-steps{display:grid;gap:9px;max-width:900px;margin:0 0 4px}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-steps>div{display:grid;grid-template-columns:minmax(120px,160px) minmax(0,1fr);gap:16px;align-items:baseline}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-steps dt{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:650;color:var(--muted)}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-steps dd{margin:0;font-size:.875rem}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .topic-table th[scope=row] small{display:block;margin-top:3px;font-size:.7rem;font-weight:400;color:var(--muted)}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-limit a,:is([data-ssvep-card="1"],[data-ssvep-card="2"]) .protocol-note a{color:var(--accent)}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .rd-panel .topic-table{margin-top:4px}
+  :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .topic-table td[data-null]{color:var(--muted)}
+  @media(max-width:560px){
+    :is([data-ssvep-card="1"],[data-ssvep-card="2"]) .ssvep-steps>div{grid-template-columns:minmax(0,1fr);gap:2px}
+  }
+</style>

@@ -40,8 +40,9 @@ export const site = {
  * - `explorer`: a Space that reads the Hugging Face mirror at one pinned release
  *   and labels every answer with it; /api/ and llms.txt link it.
  * - `articles`: long-form write-ups (on Hugging Face, or in a publication such as
- *   Towards AI), one line per article; `page` is the topic page that links it (/jev-style/ links the decision-research ones as well).
- *   The link label is the page's own copy and carries no "Jev-style".
+ *   Towards AI), one line per article; `page` is the page that links it, a topic page or, for the BETA write-up, the
+ *   dataset page (/jev-style/ links the decision-research ones as well). Each page holds its article line's copy, keyed
+ *   by `id`, and that label carries no "Jev-style". `published` is for the record only; no page prints it.
  */
 export const elsewhere = {
   explorer: 'https://huggingface.co/spaces/Twu31/bci-report-explorer',
@@ -50,8 +51,16 @@ export const elsewhere = {
       url: 'https://huggingface.co/blog/Twu31/when-should-an-eeg-decoder-abstain' },
     { id: 'one-eeg-encoder-several-questions', page: '/topics/shared-encoder/', published: '2026-10-08',
       url: 'https://huggingface.co/blog/Twu31/one-eeg-encoder-several-questions' },
+    // Owner decision D8: the two write-ups of 2026-10-10 and 2026-10-11, linked low-key from the page each one reads.
+    { id: 'choosing-how-to-adapt-an-eeg-foundation-model', page: '/topics/model-adaptation/', published: '2026-10-10',
+      url: 'https://huggingface.co/blog/Twu31/choosing-how-to-adapt-an-eeg-foundation-model' },
+    { id: 'cca-and-frozen-eeg-foundation-models-on-beta', page: '/datasets/beta/', published: '2026-10-11',
+      url: 'https://huggingface.co/blog/Twu31/cca-and-frozen-eeg-foundation-models-on-beta' },
     { id: 'can-an-eeg-decoder-answer-a-question-it-was-never-trained-on', page: '/topics/questions-in-language/', published: '2026-10-12',
       url: 'https://pub.towardsai.net/can-an-eeg-decoder-answer-a-question-it-was-never-trained-on-a9b0b7525b39' },
+    // The later-sessions write-up (WBCIC-SHU, longitudinal RSVP and Forenzo). Not decision research: no /jev-style/ line.
+    { id: 'train-once-reuse-later', page: '/topics/later-sessions/', published: '2026-10-17',
+      url: 'https://pub.towardsai.net/train-once-reuse-later-three-tests-of-skipping-bci-calibration-59641e38b4ae' },
   ],
 } as const;
 

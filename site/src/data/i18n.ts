@@ -110,7 +110,7 @@
  *   patch (transformer input)    片段            glossed 片段（patch） at first use on a page
  *   summary token                汇总 token
  */
-import { site } from './site';
+import { contact, site } from './site';
 import directoryZh from './directory-zh.json';
 import { bingoReleased, handwritingReleased } from './pilot-switch';
 
@@ -171,11 +171,19 @@ export const translatedPaths = [
   '/topics/later-sessions/',
   // Route 3 of the decision-research plan, questions in language (owner approval of the results).
   '/topics/questions-in-language/',
+  // Route 3's follow-ups on SSVEP frequencies the decoder never trained on (owner decision D1).
+  '/topics/new-ssvep-frequencies/',
   // The three routes in one place, with what "Jev-style" means here.
   '/jev-style/',
   // Beyond scalp EEG (fNIRS, macaque intracortical spiking) and the pilot studies, one site version (owner decisions).
   '/topics/beyond-scalp-eeg/',
   '/topics/pilot-studies/',
+  // Public datasets checked end to end from their files (owner decision D1).
+  '/topics/data-quality/',
+  // The open register's two ladders (owner decision D1). The `[slug]` shape below matches them too; they are listed
+  // here because they are not entity pages, so entities.ts `entityPaths` does not carry them into the sitemap.
+  '/datasets/register/',
+  '/methods/register/',
   '/releases/',
   '/api/',
 ] as const;
@@ -449,7 +457,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
-      `Questions beyond the matrix cover transfer, calibration and model adaptation, reliability and clinical groups, signals other than scalp EEG, and small pilot studies.`,
+      `Questions beyond the matrix cover transfer, calibration and model adaptation, reliability, clinical groups and data quality, signals other than scalp EEG, and small pilot studies.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -599,7 +607,7 @@ export const home = {
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `矩阵之外的问题页涵盖迁移、校准与模型适配、可靠性与临床分组、头皮 EEG 之外的信号，以及小规模试点研究。`,
+      `矩阵之外的问题页涵盖迁移、校准与模型适配、可靠性、临床分组与数据质量、头皮 EEG 之外的信号，以及小规模试点研究。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },
@@ -814,7 +822,7 @@ export const topicsHubCopy = {
   en: {
     docTitle: 'Questions: what EEG decoding evidence can answer',
     h1: 'What the evidence can answer',
-    description: 'Questions answered from BCI Report’s published decoding results — transfer, calibration and model adaptation, reliability and clinical groups, signals other than scalp EEG and small pilot studies — with a map of which kinds of transfer have been measured.',
+    description: 'Questions answered from BCI Report’s published decoding results — transfer, calibration and model adaptation, reliability, clinical groups and data quality, signals other than scalp EEG and small pilot studies — with a map of which kinds of transfer have been measured.',
     dek: 'Answers from published decoding results, each with its cohort, interval and limits.',
     mapEyebrow: 'Transfer coverage',
     mapH2: 'Which kinds of transfer have been measured',
@@ -823,7 +831,7 @@ export const topicsHubCopy = {
   zh: {
     docTitle: '问题：EEG 解码证据能回答什么',
     h1: '证据能回答的问题',
-    description: '根据 BCI Report 已发布的解码结果回答的问题：迁移、校准与模型适配、可靠性与临床分组、头皮 EEG 之外的信号以及小规模试点研究，另附一张地图，说明哪些迁移已经测量过。',
+    description: '根据 BCI Report 已发布的解码结果回答的问题：迁移、校准与模型适配、可靠性、临床分组与数据质量、头皮 EEG 之外的信号以及小规模试点研究，另附一张地图，说明哪些迁移已经测量过。',
     dek: '根据已发布的解码结果作答，每个回答都附被试数、区间与局限。',
     mapEyebrow: '迁移覆盖',
     mapH2: '哪些迁移已经测量过',
@@ -862,9 +870,9 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: 'Transfer',
       lede: 'Does a decoder still work after a change of sensor, display, electrode layout, body movement or session?' },
     adapting: { title: 'Adapting models',
-      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps, and whether one model can answer several questions, including questions asked in words.' },
+      lede: 'How much calibration a decoder needs, which part of a pretrained model to update, whether pretraining helps, whether one model can answer several questions, including questions asked in words, and what lets a decoder answer an SSVEP frequency it never trained on.' },
     reliability: { title: 'Reliability & clinical',
-      lede: 'When a decoder should not act, what accuracy hides in sleep staging, and what resting-state EEG says about a clinical group.' },
+      lede: 'When a decoder should not act, what accuracy hides in sleep staging, what resting-state EEG says about a clinical group, and what a public dataset’s files show when checked end to end.' },
     beyond: { title: 'Other signals & pilots',
       lede: 'What simple baselines show on signals other than scalp EEG, in people and in one macaque, and what small pilot studies show.' },
   },
@@ -872,9 +880,9 @@ export const topicGroupLabels: Record<Locale, Record<string, { title: string; le
     transfer: { title: '迁移',
       lede: '换了传感器、显示设备、电极布局或记录会话，或者人在运动时，解码器还管用吗？' },
     adapting: { title: '调整模型',
-      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练有没有帮助，以及一个模型能否回答多个问题，包括用文字提出的问题。' },
+      lede: '解码器需要多少校准、预训练模型该更新哪一部分、预训练有没有帮助、一个模型能否回答多个问题（包括用文字提出的问题），以及解码器靠什么回答没训练过的 SSVEP 频率。' },
     reliability: { title: '可靠性与临床',
-      lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，以及静息态 EEG 对一个临床分组能说明什么。' },
+      lede: '解码器什么时候不该执行，睡眠分期中准确率掩盖了什么，静息态 EEG 对一个临床分组能说明什么，以及把公开数据集从头到尾核一遍后文件里能看到什么。' },
     beyond: { title: '其他信号与试点',
       lede: '简单基线在头皮 EEG 之外的信号上（人类与一只猕猴）表现如何，以及小规模试点研究能说明什么。' },
   },
@@ -945,6 +953,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Can resting-state EEG separate Parkinson\'s disease from controls?',
       summary: 'A 149-person Parkinson\'s and control comparison beside an age-and-sex-only comparator; neither is a diagnosis.',
       detail: '149 people · one site · balanced accuracy' },
+    // Public datasets checked end to end (owner decision D1): Shin2022's people are the one cohort size on the card; eldBETA
+    // and ZuCo 2.0 carry no score (D2 and the converted-run hold).
+    'data-quality': { kicker: 'Data quality and reproducibility', title: 'Checked end to end',
+      question: 'What do the files show once a public EEG dataset is checked end to end?',
+      summary: 'Three public EEG datasets read from their own files: Shin2022’s runs, duplicates and valid windows counted before a participant-held-out check, where the EEG arm sits close to a control that reads only trial duration; eldBETA’s one-person run, with counts and no score; and a timing hold on one converted ZuCo run.',
+      detail: 'Shin2022, 10 people · eldBETA, counts only · ZuCo, status only' },
     'does-pretraining-help': { kicker: 'Representation controls', title: 'Does pretraining help?',
       question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
       summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings. Plus further foundation models in the same frozen recipe: three checkpoints and, narrowly, EEGPT above every published row on sleep staging, none above training-free CCA on BETA.',
@@ -961,6 +975,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Can an EEG model answer questions asked in words?',
       summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: it works only for questions it was trained on, and not on every dataset.',
       detail: 'SSVEP, BETA, 70 people · sleep, BOAS · secondary: EESM19, OpenBMI, Wearable-102' },
+    // Route 3's follow-ups (owner decision D1): every digit on the card is a value of new-ssvep-frequencies-update.json
+    // (BETA's people, the held-out frequencies, Wearable-102's people; the kicker's 3 is the training seeds' count too).
+    'new-ssvep-frequencies': { kicker: 'Route 3 follow-ups', title: 'New SSVEP frequencies',
+      question: 'What lets a decoder answer an SSVEP frequency it never trained on?',
+      summary: 'Seven follow-ups, each testing one idea: six on route 3’s BETA cohort (the question, the head, stimulus phase, the matching computation and a learned correction to CCA) and a seventh that ran the correction on Wearable-102. Heads that read reference spectra or stimulus phase stayed far below CCA, which needs no training; a small learned correction on top of CCA added a few points on BETA and changed little on Wearable-102.',
+      detail: 'SSVEP, BETA, 70 people · 8 held-out frequencies · Wearable-102, 102 people' },
     // Owner decisions: the non-scalp batch and the paired-biosignal pilots, one site version. Written with the
     // registrations so the dataset pages and the release log can name the pages they are read on; the pages' own
     // stage refines the copy. Species and modality stay on the card; nothing is ranked.
@@ -1018,6 +1038,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: '静息态 EEG 能把帕金森病患者和对照组区分开吗？',
       summary: '149 名被试的帕金森病与对照比较，与一个只用年龄和性别的对照基线并排给出；两者都不是诊断。',
       detail: '149 名被试 · 单中心 · 平衡准确率' },
+    'data-quality': { kicker: '数据质量与可复现性', title: '从头核到尾',
+      question: '把公开 EEG 数据集从头到尾核一遍，文件里能看到什么？',
+      summary: '三个公开 EEG 数据集，都从文件本身读起：Shin2022 先清点 run、重复文件与有效时间窗，再做整名被试留出的检验，EEG 一组与只读试次时长的对照相差无几；eldBETA 一名被试的运行，只给计数、没有分数；以及 ZuCo 一个转换后记录的时间问题，暂缓。',
+      detail: 'Shin2022，10 名被试 · eldBETA，只给计数 · ZuCo，只发状态' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
       question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
       summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。另有更多基础模型按同样的冻结方案评测：睡眠分期上有 3 个检查点和 EEGPT（差距很窄）高于所有已发布的行，BETA 上没有一个高于免训练的 CCA。',
@@ -1030,6 +1054,10 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'EEG 模型能回答用文字提出的问题吗？',
       summary: '冻结 EEG 特征上的一个小分类头，每个问题分别用题号、标签模板或描述提出：只对训练过的问题成立，而且不是在每个数据集上都成立。',
       detail: 'SSVEP，BETA，70 名被试 · 睡眠，BOAS · 次要：EESM19、OpenBMI、Wearable-102' },
+    'new-ssvep-frequencies': { kicker: '第三条路线 · 后续检验', title: '没见过的 SSVEP 频率',
+      question: '解码器靠什么回答没训练过的 SSVEP 频率？',
+      summary: '七项后续检验各检验一个想法：六项在第三条路线所用的 BETA 队列上（提问方式、分类头、刺激相位、匹配计算，以及对 CCA 的学习修正），第七项把这个修正用在 Wearable-102 上。读参考谱或刺激相位的分类头远低于无需训练的 CCA；在 CCA 之上加一个小的学习修正，在 BETA 上有所提高，在 Wearable-102 上变化很小。',
+      detail: 'SSVEP，BETA，70 名被试 · 8 个留出频率 · Wearable-102，102 名被试' },
     'beyond-scalp-eeg': { kicker: '其他信号 · 人类与猕猴', title: '头皮 EEG 之外',
       question: '在头皮 EEG 之外的信号上，简单基线管用吗？',
       summary: '用 fNIRS 在分类器从未见过的人身上区分右手、左手手指敲击与脚部敲击；从一只猕猴运动皮层的神经元放电中解码手指速度——岭回归降低了平方误差，却没有降低绝对误差；以及对 fNIRS 记录的数值覆盖核查。皮层内手写与功能超声：只发状态。',
@@ -1066,9 +1094,139 @@ export const topicQuestionPhrases: Record<string, string> = {
   'does-pretraining-help': '预训练对 LaBraM、CBraMod 这类 EEG 基础模型|有帮助吗？',
   'shared-encoder': '一个 EEG 模型|回答同一份|数据上的|多个问题，|能和分开的模型|一样好吗，|代价又是多少？',
   'questions-in-language': 'EEG 模型|能回答|用文字提出的|问题吗？',
+  'new-ssvep-frequencies': '解码器|靠什么|回答|没训练过的 SSVEP 频率？',
+  'data-quality': '把公开 EEG 数据集|从头到尾|核一遍，|文件里|能看到什么？',
   'beyond-scalp-eeg': '在头皮 EEG 之外的|信号上，|简单基线|管用吗？',
   'pilot-studies': '一个小规模试点|能说明什么、|不能说明什么？',
 };
+
+/* --- The open register (owner decision D1) --------------------------------- */
+
+/**
+ * The open register's two ladders, as /datasets/register/ and /methods/register/ print them: each step's name and
+ * what the step needs, in both languages. The dataset ladder and the model ladder have distinct names, and every badge
+ * names its ladder. Pretraining exposure is a field of a model row, never a step. The register file
+ * (open-register-<D>.json `level_definitions`, `rules`) carries the same step names, the same words for what each step
+ * needs (`needs_en`, `needs_zh`) and the same rules (the third, on re-upload findings, is owner decision D3), word for
+ * word in both languages; #levels prints the file's own words. open-register.ts checks the names, the English and the
+ * rules on every build, and the Chinese for what a step needs once the file is final: the provisional file's Chinese
+ * still differs at dataset step 2 (说明卡, where the site says 数据卡片) and on every model step, and the freeze
+ * takes the Chinese below.
+ * No figure here: every count on a register page is a value of the register file.
+ */
+export interface RegisterStep { step: number; name: Record<Locale, string>; needs: Record<Locale, string> }
+
+export const datasetLadder: RegisterStep[] = [
+  { step: 1, name: { en: 'Listed', zh: '已列出' },
+    needs: { en: 'Host record read: host, licence as stated and by whom, size, whether access is gated',
+             zh: '已读取托管记录：托管方、所声明的许可及声明者、数据规模、是否需要授权访问' } },
+  { step: 2, name: { en: 'Read', zh: '已读取' },
+    needs: { en: 'Files opened; a specification sheet from the files, compared with the card',
+             zh: '已打开文件；根据文件整理规格表，并与数据卡片对照' } },
+  { step: 3, name: { en: 'Traced', zh: '已追溯' },
+    needs: { en: 'Derivation, original terms against declared terms, consent or ethics statement, pinned revision',
+             zh: '来源链、原始条款与声明条款的对照、知情同意或伦理声明、固定版本' } },
+  { step: 4, name: { en: 'Run', zh: '已运行' },
+    needs: { en: 'Fixed-protocol baseline here, chance from trial counts, share of participants above chance, result or hold on a page',
+             zh: '本站按固定协议运行的基线、按试次数计算的随机水平、高于随机水平的被试比例、页面上的结果或暂缓说明' } },
+  { step: 5, name: { en: 'In the matrix', zh: '已进入核心矩阵' },
+    needs: { en: 'Comparable on a protocol page', zh: '可在协议页上比较' } },
+];
+
+export const modelLadder: RegisterStep[] = [
+  { step: 1, name: { en: 'Identified', zh: '已识别' },
+    needs: { en: 'Official record matched: paper, repository or model page',
+             zh: '与官方记录对上：论文、代码仓库或模型页面' } },
+  { step: 2, name: { en: 'Terms recorded', zh: '已记录条款' },
+    needs: { en: 'Licence for each part (code, weights, data); file listing read',
+             zh: '逐部分记下许可（代码、权重、数据）；读过文件清单' } },
+  { step: 3, name: { en: 'Files checked', zh: '已检查文件' },
+    needs: { en: 'Downloaded, hash-checked, restored or smoke-tested',
+             zh: '已下载、核对哈希、加载恢复或做过试运行' } },
+  { step: 4, name: { en: 'Scored here', zh: '已在本站评分' },
+    needs: { en: 'A result computed here and published on a page',
+             zh: '在本站算出结果，并发布在页面上' } },
+  { step: 5, name: { en: 'In the matrix', zh: '已进入核心矩阵' },
+    needs: { en: 'Comparable on the core protocol pages', zh: '可在核心协议页面上比较' } },
+];
+
+/** A row's correction route: a mail to the corrections address naming the row's opaque id, and nothing else. */
+export const registerCorrectionHref = (rowId: string) => {
+  if (!/^r-[a-z0-9-]+$/.test(rowId)) throw new Error(`i18n.ts: ${rowId} is not an opaque register row id`);
+  return `mailto:${contact.corrections}?subject=${encodeURIComponent(`Register row ${rowId}`)}`;
+};
+
+/** The register pages' shared words. Badge texts are built here so both ladders say their name the same way. */
+export const registerCopy = {
+  en: {
+    datasets: {
+      title: 'Open register · datasets',
+      h1: 'Every EEG dataset we know of, and how far we checked it',
+      lede: 'Every EEG dataset we know of, with the furthest step we have checked and what that step showed. Anything can be listed here. The score tables keep their own rules: rights review, aggregate results only, no redistribution.',
+    },
+    methods: {
+      title: 'Open register · models',
+      h1: 'Every EEG model and paper we track, and how far we checked it',
+      lede: 'Every EEG model and paper we track, with the furthest step we have checked, what that step showed and the terms of its code, weights and data.',
+    },
+    levelsH2: 'The steps',
+    ladderName: { dataset: 'Dataset ladder', model: 'Model ladder' },
+    rules: [
+      'Gated data, or data that needs a signed or requested agreement, stays at step 1 unless we accept its terms.',
+      'Suspected re-uploads stay at step 1 whatever their gating. They are compared by metadata only, and none of their files is downloaded.',
+      'A finding about a re-upload is stated only when an independent check confirms it and a captured page of the original terms backs it.',
+      'Rows state facts.',
+      'Every row has a correction route.',
+    ],
+    datasetBadge: (step: number, gap?: { step: number; item: string }) =>
+      `Step ${step} of 5 · ${datasetLadder[step - 1].name.en}${gap ? ` · gap at step ${gap.step}: ${gap.item}` : ''}`,
+    modelBadge: (step: number) => `Model ladder · step ${step} of 5 · ${modelLadder[step - 1].name.en}`,
+    status: { published: 'Published', score_held: 'Score held', status_only: 'Status only', planned: 'Planned', listed: 'Listed' } as Record<string, string>,
+    groups: { hf: 'Hugging Face uploads', eegdash: 'OpenNeuro via EEGDash', site: 'This site’s datasets', moabb: 'MOABB catalog',
+              agreement: 'Corpora that require an agreement or request' } as Record<string, string>,
+    datasetColumns: ['Dataset', 'Signal · task', 'Terms as stated', 'Checked to', 'What we found'],
+    modelColumns: ['Model or paper', 'Kind · signal', 'Terms by part (code / weights / data)', 'Checked to', 'What we found'],
+    rows: 'rows',
+    correct: 'Correct this row',
+    rowLink: 'Row in the open register →',
+    datasetsLink: 'The open register: every EEG dataset we know of, and how far we checked it →',
+    methodsLink: 'The model register: every EEG model and paper we track, and how far we checked it →',
+  },
+  zh: {
+    datasets: {
+      title: '开放登记册 · 数据集',
+      h1: '我们知道的每个 EEG 数据集，以及核验到了哪一步',
+      lede: '我们知道的每个 EEG 数据集，核验到了哪一步、那一步看到了什么。任何数据集都可以列在这里；分数表照旧按自己的规则：权利审查、只发布聚合结果、不再分发数据。',
+    },
+    methods: {
+      title: '开放登记册 · 模型',
+      h1: '我们关注的每个 EEG 模型与论文，以及核验到了哪一步',
+      lede: '我们关注的每个 EEG 模型与论文，核验到了哪一步、那一步看到了什么，以及其代码、权重与数据各自的条款。',
+    },
+    levelsH2: '核验的步骤',
+    ladderName: { dataset: '数据集核验', model: '模型核验' },
+    rules: [
+      '需要授权才能获取的数据，或需要签署、申请协议的数据，除非我们接受其条款，否则停留在第 1 步。',
+      '疑似转传的数据无论是否需要授权都停留在第 1 步。它们只按元数据比对，不下载任何文件。',
+      '关于转传的发现，只有经独立核查确认、并有原始条款页面的存档为据时才会写出。',
+      '每一行只陈述事实。',
+      '每一行都有更正途径。',
+    ],
+    datasetBadge: (step: number, gap?: { step: number; item: string }) =>
+      `第 ${step} 步（共 5 步）· ${datasetLadder[step - 1].name.zh}${gap ? ` · 第 ${gap.step} 步缺：${gap.item}` : ''}`,
+    modelBadge: (step: number) => `模型核验 · 第 ${step} 步（共 5 步）· ${modelLadder[step - 1].name.zh}`,
+    status: { published: '已发布', score_held: '分数暂缓', status_only: '只发状态', planned: '计划中', listed: '已列出' } as Record<string, string>,
+    groups: { hf: 'Hugging Face 上的上传', eegdash: '经 EEGDash 镜像的 OpenNeuro 数据', site: '本站的数据集', moabb: 'MOABB 目录',
+              agreement: '需要签署协议或提出申请的语料' } as Record<string, string>,
+    datasetColumns: ['数据集', '信号 · 任务', '所述条款', '核验到', '核验所见'],
+    modelColumns: ['模型或论文', '类型 · 信号', '各部分条款（代码 / 权重 / 数据）', '核验到', '核验所见'],
+    rows: '行',
+    correct: '更正这一行',
+    rowLink: '开放登记册中的这一行 →',
+    datasetsLink: '开放登记册：我们知道的每个 EEG 数据集，以及核验到了哪一步 →',
+    methodsLink: '模型登记册：我们关注的每个 EEG 模型与论文，以及核验到了哪一步 →',
+  },
+} satisfies Record<Locale, unknown>;
 
 /** The h1 of a topic page as phrases, to be joined with <wbr>. */
 export function questionPhrases(slug: string, locale: Locale): string[] {

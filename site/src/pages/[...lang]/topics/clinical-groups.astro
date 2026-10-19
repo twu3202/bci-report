@@ -1,14 +1,27 @@
 ---
+/**
+ * Can resting-state EEG separate Parkinson's disease from controls? The 2026-09-23 clinical release (ds004584, a
+ * spectral model beside an age-and-sex comparator), whose question, short answer, description and card this page
+ * keeps. Since owner decision D13 it also carries IESSEEG as a section with its own question (#iesseeg): an infant
+ * case-control pilot with age and recording-setting controls and frozen NeuroLM probes, from its own release
+ * (src/data/clinical-iesseeg.ts, which guards every sentence of that section against clinical-iesseeg-update.json).
+ */
 import clinical from '../../../data/clinical-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
+import Fig from '../../../components/Fig.astro';
+import Parts from '../../../components/Parts.astro';
 import { intervalPct, pct, pp } from '../../../data/topics';
 import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { IES_ANCHORS, IES_DEK, IES_PATH, guardParkinsonsOnly, iesseegCopy } from '../../../data/clinical-iesseeg';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
 const tc = topicChrome[locale];
+// The space between two sentences: none in Chinese, after a full-width mark.
+const sp = zh ? '' : ' ';
 
 // Only the source with a recorded `aggregate_preview` decision has a result
 // here. The two status-only sources of this batch carry no numbers at all;
@@ -37,7 +50,7 @@ const copy = {
     plotRows: { eeg: 'Relative-spectrum logistic regression', demo: 'Age-and-sex comparator' },
     plotNotes: { eeg: 'resting-state EEG', demo: 'no EEG input' },
     eyebrow: 'Clinical research · resting-state EEG',
-    dek: `Parkinson's disease against controls, person by person: a spectral model on resting-state EEG, and a comparator given only age and sex.`,
+    dek: `Parkinson's disease against controls, person by person: a spectral model on resting-state EEG, and a comparator given only age and sex; ${IES_DEK.en}.`,
     findingLabel: `EEG minus the age-and-sex comparator, same ${c.cohort.people} people`,
     findingH3: overlap ? 'A higher mean, with overlapping intervals' : 'The EEG model scores above a model with no EEG',
     findingP: `The EEG model's interval starts at ${pct(eegCi[0])}; the comparator's ends at ${pct(demoCi[1])}.`,
@@ -81,7 +94,7 @@ const copy = {
     plotRows: { eeg: '相对频谱逻辑回归', demo: '年龄性别对照基线' },
     plotNotes: { eeg: '静息态 EEG', demo: '不用 EEG' },
     eyebrow: '临床研究 · 静息态 EEG',
-    dek: `逐名被试区分帕金森病与对照：一个基于静息态 EEG 的频谱模型，以及一个只用年龄和性别的对照基线。`,
+    dek: `逐名被试区分帕金森病与对照：一个基于静息态 EEG 的频谱模型，以及一个只用年龄和性别的对照基线；${IES_DEK.zh}。`,
     findingLabel: `EEG 减去年龄性别基线，同一批 ${c.cohort.people} 名被试（pp 为百分点）`,
     findingH3: overlap ? '均值更高，但区间有重叠' : 'EEG 模型高于完全不用 EEG 的模型',
     findingP: `EEG 模型的区间从 ${pct(eegCi[0])} 起，对照基线的区间到 ${pct(demoCi[1])} 止。`,
@@ -121,6 +134,16 @@ const copy = {
   },
 }[locale];
 const card = topicCards[locale]['clinical-groups'];
+// D13: the question, short answer, description and card stay the Parkinson's comparison's, citing clinical-update.json
+// only. Every number they print is one of that file's figures as this page formats them (and the interval's 95% level);
+// none names IESSEEG.
+const PINNED_QUESTION = { en: 'Can resting-state EEG separate Parkinson\'s disease from controls?', zh: '静息态 EEG 能把帕金森病患者和对照组区分开吗？' };
+if (card.question !== PINNED_QUESTION[locale]) throw new Error('clinical-groups: the page\'s question stays the Parkinson\'s question (D13)');
+guardParkinsonsOnly([copy.answer, copy.description, card.title, card.summary, card.detail],
+  [String(people), pct(eeg.mean_balanced_accuracy), pct(demo.mean_balanced_accuracy), intervalPct(eegCi), intervalPct(demoCi), auroc(eeg.auroc), chance, '95%']);
+// IESSEEG's section, every figure a leaf of its own release.
+const ic = iesseegCopy(locale);
+const ia = IES_ANCHORS;
 const rows = [
   { m: eeg, note: copy.eegNote, tone: 'rust' as const },
   { m: demo, note: copy.comparatorNote, tone: 'ink' as const },
@@ -134,7 +157,7 @@ const rows = [
   eyebrow={copy.eyebrow}
   dek={copy.dek}
   activeSlug="clinical-groups"
-  dataFiles={['/data/clinical-update.json']}
+  dataFiles={['/data/clinical-update.json', IES_PATH]}
   answer={copy.answer}
 >
   <IntervalPlot
@@ -181,5 +204,48 @@ const rows = [
       <article><h3 lang="en">{c.rights.name}</h3><p lang="en">{c.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[2]} target="_blank" rel="noreferrer">{copy.manuscriptLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.mirrorLink}</a> · <a href={c.rights.licenseUrl} target="_blank" rel="noreferrer">{c.rights.license}</a></p></article>
     </div>
     <p class="citation-note">{tc.dataSource} <a href="/data/clinical-update.json" download>{tc.reviewedAggregate}</a> · {tc.schema} {clinical.schema_version}{tc.period}</p>
+  </section>
+
+  <section class="topic-section" id={ia.section} aria-labelledby="iesseeg-heading" data-iesseeg="section">
+    <div class="topic-heading"><div><p class="eyebrow">{ic.eyebrow}</p><h2 id="iesseeg-heading">{ic.h2}</h2></div><p><Parts p={ic.lede}/></p></div>
+    <p class="protocol-note" data-iesseeg-note="audit-boundary"><strong>{ic.boundary}</strong></p>
+    <p class="roadmap-p" data-iesseeg-note="reading"><Parts p={ic.reading}/></p>
+    <p class="protocol-note" data-iesseeg-note="caption"><strong>{ic.bothTables}</strong>{sp}<Parts p={ic.caption}/>{sp}{ic.metricsLine}</p>
+    <p class="protocol-note" data-iesseeg-note="age-band"><Parts p={ic.bandNote}/></p>
+    <div id={ia.controls} data-iesseeg-block="controls">
+      <h3 class="roadmap-h3">{ic.controlsH3}</h3>
+      <p class="roadmap-p"><Parts p={ic.controlsP}/></p>
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={ic.controlsRegion}>
+        <table data-iesseeg-table="controls">
+          <caption>{ic.controlsCaption}</caption>
+          <thead><tr><th scope="col">{ic.colArm}</th>{ic.cols.map((c, i) => <th scope="col"><Parts p={c}/>{i === 2 && <small><Parts p={ic.bandSize}/></small>}</th>)}</tr></thead>
+          <tbody>{([[false, ic.groupNoEeg], [true, ic.groupEeg]] as const).map(([eeg, group]) => <>
+            <tr class="subhead"><th scope="colgroup" colspan="4">{group}</th></tr>
+            {ic.cpu.filter(r => r.eeg === eeg).map(r => <tr data-iesseeg-arm={r.id}><th scope="row">{r.label}<small><Parts p={r.inputs}/></small></th><td data-cell="ba"><Fig f={r.ba} cls="metric"/></td><td data-cell="auroc"><Fig f={r.auroc} cls="metric"/></td><td data-cell="ba-age"><Fig f={r.ba2} cls="metric"/></td></tr>)}
+          </>)}</tbody>
+        </table>
+      </div>
+    </div>
+    <div id={ia.neurolm} data-iesseeg-block="neurolm">
+      <h3 class="roadmap-h3">{ic.neurolmH3}</h3>
+      <p class="roadmap-p"><Parts p={ic.neurolmP}/></p>
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={ic.neurolmRegion}>
+        <table data-iesseeg-table="neurolm">
+          <caption>{ic.neurolmCaption}</caption>
+          <thead><tr><th scope="col">{ic.colArm}</th>{ic.cols.map((c, i) => <th scope="col"><Parts p={c}/>{i === 2 && <small><Parts p={ic.bandSize}/></small>}</th>)}</tr></thead>
+          <tbody>{ic.neural.map(r => <tr data-iesseeg-arm={r.id}><th scope="row">{r.label}<small><Parts p={r.inputs}/></small></th><td data-cell="ba"><Fig f={r.ba} cls="metric"/></td><td data-cell="auroc"><Fig f={r.auroc} cls="metric"/></td><td data-cell="ba-age"><Fig f={r.ba2} cls="metric"/></td></tr>)}</tbody>
+        </table>
+      </div>
+      <p class="protocol-note" data-iesseeg-note="neurolm-footnote"><strong>{ic.footnoteLabel}</strong>{sp}<Parts p={ic.footnote}/></p>
+      <p class="citation-note" data-iesseeg-note="neurolm-source"><a href={ic.model.sourceUrl} target="_blank" rel="noreferrer">{ic.neurolmCode} <code>{ic.model.revision}</code> ↗</a> · {ic.checkpoint} <code>{ic.model.sha}</code></p>
+    </div>
+    <p class="protocol-note" data-iesseeg-note="disclaimer">{copy.disclaimer ? <>{copy.disclaimer}<span class="protocol-note-original">{copy.disclaimerOriginal}<span lang="en">{clinical.medical_disclaimer}</span></span></> : clinical.medical_disclaimer}</p>
+    <p class="eyebrow" id="iesseeg-limits">{ic.limitsH3}</p>
+    <div class="method-grid-wide" data-iesseeg-limits="true">{ic.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    <div class="citation-list">
+      <article data-iesseeg-audit="true"><h3>{ic.auditH3}</h3><p><Parts p={ic.auditCpu}/></p><p><Parts p={ic.auditNeu}/></p><p><Parts p={ic.inputCheck}/></p></article>
+      <article data-iesseeg-credits="true"><h3 lang="en">{ic.rightsName}</h3><p lang="en">{ic.attribution}</p><p>{ic.consent}{sp}{ic.protocolLine}</p><p>{ic.crosswalk}</p><p><a href={ic.links.dataset.href} target="_blank" rel="noreferrer">{ic.links.dataset.text}</a> · <a href={ic.links.card.href} target="_blank" rel="noreferrer">{ic.links.card.text}</a> · <a href={ic.links.licenceFile.href} target="_blank" rel="noreferrer">{ic.links.licenceFile.text}</a> · <a href={ic.links.licence.href} target="_blank" rel="noreferrer">{ic.links.licence.text}</a> · <a href={ic.links.dataUse.href}>{ic.links.dataUse.text}</a></p></article>
+    </div>
+    <p class="citation-note">{tc.dataSource} <a href={IES_PATH} download>{tc.reviewedAggregate}</a> · {tc.schema} {ic.schema}{tc.period}</p>
   </section>
 </TopicLayout>

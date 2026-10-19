@@ -1,0 +1,447 @@
+---
+/**
+ * Cards 3 and 4 of /topics/new-ssvep-frequencies/ (package P-SS3): #phase-jitter, a random common delay in training
+ * with the phase-carrying query, and #phase-ramp, the six-cell phase ramp with magnitude queries. Copy is the plan's
+ * §2.1 cards 3 and 4 as the phase wording review corrects them (M1–M8, R1–R6): the ramp has six primary contrasts
+ * and seven secondary; held-out and seen are different tasks, with m8 as the matched comparison; each caption names
+ * its bootstrap and says it is conditional on the fixed person folds and three seeds; the FiLM head is named; card 3's
+ * magnitude-reference head is "on the plain spectrum"; the randomized-label counts carry their limit.
+ *
+ * Props
+ *   locale: Locale — 'en' or 'zh'. Every figure and word comes from src/data/new-ssvep-frequencies.ts; the Chinese
+ *     is in COPY below, beside the English it translates, and the two print the same figures in the same order.
+ *
+ * Contract with the page (kept from the shell, package P-SS1)
+ *   - Exactly the <section>s for cards 3 and 4, in that order, each with the chrome from cardChrome(n, locale).
+ *   - The bet appears once, on card 4 only: "held-out accuracy would clear 39%", the threshold printed from
+ *     studies.phase_ramp.thread_bet.held8_threshold at pct0, so it reads "39%" in both languages. No second link to
+ *     the thread, and no figure of the commenter's own confidence anywhere.
+ *   - Every figure is an SsvepFig printed as <span data-fig={figAttr(f)}>{formatSsvep(f)}</span> (class="metric" last
+ *     where a table cell leads with it). The scope of cards 1–6 is on the page; a card does not restate it.
+ *   - Every table has a <thead>; each table inside <details> has at least four columns (contrast · task · comparison
+ *     · role · estimate · interval; the read-offs: arm · cost · nn8 · u3). No inline style, script or handler. The
+ *     existing classes (topics.css) cover the cards; the one rule below is a <style is:global> whose selectors start
+ *     from the cards' own attributes (a scoped style would add data-astro-cid-* after class="metric", which
+ *     check-workbench.mjs reads by its exact markup).
+ *
+ * Every sentence that summarises the export is guarded by need() below: the page refuses to build when the numbers
+ * stop supporting it.
+ */
+import { topicChrome, type Locale } from '../../data/i18n';
+import {
+  needFor, study, level, contrast, levelFig, levelIv, contrastFig, contrastIv, undefinedReason, nameOf, siteName,
+  intervalText, cardChrome, endpoint, count, pct0, formatSsvep, figAttr,
+  type Part, type StudyId, type Contrast,
+} from '../../data/new-ssvep-frequencies';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const need = needFor('PhaseCards, cards 3 and 4');
+const J: StudyId = 'phase_jitter', R: StudyId = 'phase_ramp';
+const jit = study(J), ramp = study(R);
+const u8 = endpoint('u8'), seen = endpoint('seen_ba');
+const within = (iv: [number, number], x: number) => iv[0] <= x && x <= iv[1];
+const has = (keys: string[], want: string[]) => want.every(k => keys.includes(k));
+
+// --- Card 3: the facts its sentences rest on --------------------------------------------------------------------
+const jd = jit.design!;
+const model = jd.model as { architecture: string; parameters: number; trained_from_scratch: boolean; cca_features: boolean };
+need(/FiLM complex-spectrum reference-query head/.test(model.architecture) && model.trained_from_scratch === true
+  && model.cca_features === false && Number.isInteger(model.parameters), 'card 3: the FiLM head on the complex spectrum, trained from scratch');
+interface JArm { arm: string; cell: string; features: string; head: string; query: string; historical_reuse: boolean;
+  training_delay_seconds: string | null; delay_uses_training_label: boolean | null }
+const jArms = jd.arms as JArm[];
+const jArm = (a: string) => { const x = jArms.find(y => y.arm === a); need(x, `card 3: the arm ${a}`); return x!; };
+const [jA, jB, jC, jM] = ['A', 'B', 'C', 'M'].map(jArm);
+need(jArms.length === 4 && [jA, jB, jC].every(x => x.features === 'L0c' && x.head === 'FS' && x.query === 'REFc-0')
+  && jM.features === 'L0' && jM.head === 'FS' && jM.query === 'REF',
+  'card 3: three arms share the FiLM head, the complex spectrum and the phase-carrying query; the fourth is the magnitude-reference head on the plain spectrum');
+need(jA.cell === 'COMMON-125MS' && jA.training_delay_seconds === '0.125*u' && jA.delay_uses_training_label === false
+  && jB.cell === 'COMMON-ONE-PERIOD' && jB.training_delay_seconds === 'u/f_assigned_source_label' && jB.delay_uses_training_label === true
+  && jC.training_delay_seconds === null && jM.training_delay_seconds === null && jC.historical_reuse && jM.historical_reuse,
+  'card 3: a 0–125 ms delay that ignores the label, a delay of up to one period of the training label, and two arms without delay');
+need(jit.display_names['COMMON-125MS'] === '0–125 ms delay' && jit.display_names['COMMON-ONE-PERIOD'] === 'one-period delay'
+  && jit.display_names.FS === 'FiLM head' && jit.display_names.L0c === 'complex spectrum' && jit.display_names.L0 === 'plain spectrum'
+  && jit.display_names['REFc-0'] === 'reference with stimulus phase' && jit.display_names.REF === 'reference spectrum',
+  'card 3: the names its sentences use');
+need(/common tau across all 8 channels/.test(jd.delay.draw) && /^Z\[c,nu\] <- Z\[c,nu\] \* exp\(-2\*pi\*i\*nu\*tau\)$/.test(jd.delay.formula)
+  && jd.delay.queries === 'All REFc-0 queries stay fixed.' && /^No augmentation/.test(jd.delay.inference),
+  'card 3: one phase ramp on the windowed coefficients, common to all channels, in training only; queries and test windows unchanged');
+const jP1 = contrast(J, 'P1'), jS4 = contrast(J, 'S4'), jS5 = contrast(J, 'S5');
+need(jP1.role === 'primary' && jP1.left === `${jA.cell}/u8` && jP1.right === `${jC.cell}/u8` && jP1.flags?.role_as_stated === 'single primary',
+  'card 3: the single primary contrast is 0–125 ms minus no delay, on held-out frequencies');
+need(jS4.left === `${jA.cell}/seen_ba` && jS4.right === `${jC.cell}/seen_ba` && jS4.interval[1] < 0
+  && jS5.left === `${jB.cell}/seen_ba` && jS5.right === `${jC.cell}/seen_ba` && jS5.interval[1] < 0,
+  'card 3: seen balanced accuracy fell in both delay arms');
+const jKeys = Object.keys(jit.contrasts);
+need(jKeys.length === jit.checks.audit.numerical_summary.contrasts && jKeys.filter(k => jit.contrasts[k].role === 'primary').join() === 'P1'
+  && jKeys.filter(k => k !== 'P1').every(k => jit.contrasts[k].role === 'secondary' && jit.contrasts[k].flags?.role_as_stated === 'descriptive secondary')
+  && jit.intervals?.secondary_intervals === 'Descriptive; unadjusted for multiplicity.',
+  'card 3: one primary contrast, the others descriptive and unadjusted');
+need(has(jit.limitations_keys, ['delay_on_windowed_coefficients', 'one_period_range_uses_training_label', 'fixed_range_not_uniform_phase',
+  'phase_is_label_information', 'magnitude_head_differs_in_recipe', 'conditional_intervals', 'secondary_unadjusted', 'randomized_label_check_limit',
+  'queries_and_test_windows_unchanged']), 'card 3: the limits its caption states');
+const jRL = jit.checks.randomized_label;
+need(jRL.status === 'pass' && jRL.cells_passed === jRL.cells && jRL.fits > 0, 'card 3: every randomized-label check passed');
+
+// --- Card 4: the facts its sentences rest on --------------------------------------------------------------------
+const rd = ramp.design!;
+interface Cell { cell: string; features: string; head: string; query: string; parameters: number; control: string; augmentation: string }
+const cells = rd.cells as Cell[];
+need(cells.length === 6 && cells.every(c => c.features === 'L0c' && c.augmentation === 'COMMON-ONE-PERIOD' && c.control === `L0c-${c.cell}`
+  && c.cell === `${c.head}-${c.query}`), 'card 4: six cells on the complex spectrum, each trained with the ramp, each beside its control without it');
+const controls = cells.map(c => c.control);
+const plainArms = (rd.comparators as string[]).filter(x => x.startsWith('L0-'));
+need((rd.comparators as string[]).join() === [...controls, ...plainArms, 'CCA'].join() && plainArms.join() === 'L0-FS-REF,L0-FS-NUM',
+  'card 4: nine comparators, the six controls, the two plain-spectrum heads and CCA');
+need(rd.delay.delay_uses_training_label === true && rd.delay.training_delay_seconds === 'u/f_assigned_source_label'
+  && /common tau across all 8 channels/.test(rd.delay.draw) && /^Z\[c,nu\] <- Z\[c,nu\] \* exp\(-2\*pi\*i\*nu\*tau\)$/.test(rd.delay.formula)
+  && /remain fixed/.test(rd.delay.queries) && /^No augmentation/.test(rd.delay.inference),
+  'card 4: a delay of up to one period of the training label, one phase ramp for all channels, in training only; queries and test windows unchanged');
+need(ramp.display_names.FS === 'FiLM head' && ramp.display_names.MATCH === 'matching head' && ramp.display_names.REF === 'reference spectrum'
+  && ramp.display_names.NUM === 'numeric code' && ramp.display_names.L0 === 'plain spectrum' && ramp.display_names.L0c === 'complex spectrum',
+  'card 4: the names its sentences use');
+need(rd.endpoints.u8.candidate_count === u8.candidates && rd.endpoints.u8.chance === u8.chance && rd.endpoints.seen_ba.candidate_count === seen.candidates
+  && rd.endpoints.seen_ba.chance === seen.chance && rd.endpoints.m8.candidate_count === u8.candidates,
+  'card 4: held-out among 8, seen among 32, m8 among the same 8');
+
+type Kind = 'ramp' | 'control' | 'plain' | 'cca';
+interface Arm { code: string; kind: Kind; head?: string; query?: string }
+function armOf(code: string): Arm {
+  if (code === 'CCA') return { code, kind: 'cca' };
+  const m = code.match(/^(?:(L0c?)-)?(FS|MATCH)-(REF|NUM|ID)$/);
+  need(m, `card 4: an arm code ${code}`);
+  return { code, kind: !m![1] ? 'ramp' : m![1] === 'L0c' ? 'control' : 'plain', head: m![2], query: m![3] };
+}
+const rampArms = [...cells.map(c => c.cell), ...controls, ...plainArms, 'CCA'].map(armOf);
+const METRICS = ['u8', 'm8', 'seen_ba', 'cost', 'nn8', 'u3'] as const;
+const undefinedKeys = Object.entries(ramp.undefined_metrics as Record<string, string[]>).flatMap(([a, ms]) => ms.map(m => `${a}/${m}`)).sort();
+need(undefinedKeys.join() === rampArms.filter(a => a.query === 'ID').flatMap(a => ['u8', 'u3', 'cost'].map(m => `${a.code}/${m}`)).sort().join()
+  && undefinedKeys.every(k => undefinedReason(R, k) === 'cannot_ask_unseen'),
+  'card 4: the question number has no held-out score, u3 or cost, and only it');
+for (const a of rampArms) for (const m of METRICS) need(undefinedKeys.includes(`${a.code}/${m}`) || ramp.levels[`${a.code}/${m}`],
+  `card 4: ${a.code}/${m}, a level or a reason it is not defined`);
+
+const rP1 = contrast(R, 'P1'), rS1 = contrast(R, 'S1'), rS5 = contrast(R, 'S5'), rS7 = contrast(R, 'S7');
+need(rP1.role === 'primary' && rP1.left === 'FS-REF/u8' && rP1.right === 'L0-FS-REF/u8',
+  'card 4: P1 is the FiLM head with the reference spectrum, ramp minus plain spectrum, on held-out frequencies (primary)');
+need(rS5.role === 'secondary' && rS5.left === 'FS-REF/u8' && rS5.right === 'L0c-FS-REF/u8',
+  'card 4: S5 is the same head and query, ramp minus no ramp, on held-out frequencies (secondary)');
+need(rS1.left === 'FS-REF/seen_ba' && rS1.right === 'L0c-FS-REF/seen_ba' && rS1.interval[1] < 0, 'card 4: seen balanced accuracy fell with the ramp');
+need(['MATCH-REF', 'MATCH-NUM'].every(a => within(level(R, `${a}/u8`).interval, u8.chance!))
+  && ['MATCH-REF', 'MATCH-NUM', 'MATCH-ID'].every(a => within(level(R, `${a}/seen_ba`).interval, seen.chance!)),
+  'card 4: the matching head ended at chance on both tasks');
+need(level(R, 'CCA/u8').seeds === 'no training' && level(R, 'CCA/u8').estimate === level(R, 'CCA/m8').estimate, 'card 4: CCA has no training');
+const bet = ramp.thread_bet as { held8_threshold: number; source_url: string };
+need(Object.keys(bet).sort().join() === 'held8_threshold,source_url'
+  && level(R, 'FS-REF/u8').interval[1] < bet.held8_threshold && level(R, 'FS-NUM/u8').interval[1] < bet.held8_threshold,
+  'card 4: the bet, and the FiLM head with both queries of the commitment below it');
+const rKeys = Object.keys(ramp.contrasts);
+const primaries = rKeys.filter(k => ramp.contrasts[k].role === 'primary'), secondaries = rKeys.filter(k => ramp.contrasts[k].role === 'secondary');
+need(rKeys.length === ramp.checks.audit.numerical_summary.contrasts && primaries.join() === 'P1,P2,P3,P4,P5,P6'
+  && secondaries.join() === 'S1,S2,S3,S4,S5,S6,S7' && primaries.length + secondaries.length === rKeys.length
+  && ramp.multiplicity === 'Six primary and seven secondary paired contrasts; no multiplicity correction.',
+  'card 4: six primary and seven secondary contrasts, unadjusted');
+const range = (ks: string[]) => `${ks[0]}–${ks[ks.length - 1]}`;
+const vsCca = rKeys.filter(k => [ramp.contrasts[k].left, ramp.contrasts[k].right].some(s => s.startsWith('CCA/')));
+need(vsCca.join() === 'S7' && rS7.left === 'MATCH-REF/u8' && rS7.right === 'CCA/u8' && rS7.flags?.noninferiority_to_CCA === false,
+  'card 4: S7 is the only contrast with CCA');
+const vsPlain = rKeys.filter(k => ramp.contrasts[k].right.startsWith('L0-'));
+need(vsPlain.join() === 'P1,P2,S3,S4' && vsPlain.every(k => ramp.contrasts[k].left.split('/')[0].match(/^(FS|MATCH)-/)),
+  'card 4: the contrasts against the plain spectrum');
+need(rKeys.every(k => ramp.contrasts[k].flags?.equivalent_within_2pp === false), 'card 4: no contrast is called equivalent');
+need(has(ramp.limitations_keys, ['different_tasks_use_m8', 'cca_one_seed_axis_s7_only', 'feature_recipe_confound', 'delay_uses_training_label',
+  'heads_not_initialisation_matched', 'phase_is_label_information', 'ramp_approximates_time_shift', 'harmonic_phases_coupled',
+  'queries_and_test_windows_unchanged', 'id_held_out_undefined', 'near_zero_match_cost_is_not_transfer', 'conditional_intervals', 'unadjusted_contrasts']),
+  'card 4: the limits its caption states');
+need(['MATCH-REF', 'MATCH-NUM'].every(a => within(level(R, `${a}/u8`).interval, u8.chance!) && within(level(R, `${a}/m8`).interval, u8.chance!)),
+  'card 4: the matching head’s held-out and m8 scores both sit at chance, so its near-zero cost is no transfer');
+const rRL = ramp.checks.randomized_label;
+need(rRL.status === 'pass' && rRL.cells_passed === rRL.cells && rRL.fits > 0, 'card 4: every randomized-label check passed');
+need(JSON.stringify(jit.interval_method) === JSON.stringify(ramp.interval_method)
+  && /fixed person folds and three training seeds/.test(ramp.interval_method.conditional_on ?? ''),
+  'cards 3 and 4: one interval method, conditional on the fixed person folds and three seeds');
+
+// --- Words ------------------------------------------------------------------------------------------------------
+const lv = (id: StudyId, key: string): Part[] => [levelFig(id, key), ' (', ...levelIv(id, key), ')'];
+const lvZh = (id: StudyId, key: string): Part[] => [levelFig(id, key), '（', ...levelIv(id, key), '）'];
+const COPY = {
+  en: {
+    lead3: (): Part[] => [
+      'During training only, each window’s complex spectrum got a random delay common to all channels, drawn either from 0–125 ms or from 0 to one period of the training label’s frequency. The head was the FiLM head on the complex spectrum, asked with the reference with stimulus phase, the phase-carrying query (',
+      count(model.parameters), ' parameters, trained from scratch); queries and test windows were unchanged. On held-out frequencies the 0–125 ms arm reached ',
+      ...lv(J, 'COMMON-125MS/u8'), ' and the one-period arm ', ...lv(J, 'COMMON-ONE-PERIOD/u8'), '. The same head without the delay reached ',
+      ...lv(J, 'L0c-FS-REFc-0/u8'), '. Primary change, 0–125 ms minus no delay: ', contrastFig(J, 'P1'), ' (', ...contrastIv(J, 'P1', ' to '),
+      '). Seen balanced accuracy fell from ', levelFig(J, 'L0c-FS-REFc-0/seen_ba'), ' to ', levelFig(J, 'COMMON-125MS/seen_ba'), ' and ',
+      levelFig(J, 'COMMON-ONE-PERIOD/seen_ba'), '.',
+    ],
+    caption3: (): Part[] => [
+      'Only the 0–125 ms minus no-delay contrast is primary; the others are descriptive. ', ...intervalText(J, 'en'), '. None of the ',
+      count(jit.checks.audit.numerical_summary.contrasts), ' contrasts is adjusted for multiplicity. The delay multiplies already-windowed coefficients by one phase ramp, which approximates an onset shift. The one-period range is drawn from the training label’s frequency; the 0–125 ms range ignores the label and equals one period only at the lowest stimulus frequency, so its phase spread differs by target. BETA assigns each target its own stimulus phase, in equal steps between neighbouring frequencies, so the delay also removes information tied to the label. The magnitude-reference head on the plain spectrum (',
+      levelFig(J, 'L0-FS-REF/u8'), ') differs in features, query and size. All ', count(jRL.cells), ' randomized-label checks passed (', count(jRL.fits),
+      ' fits); a training-only shortcut through the label-dependent delay remains possible.',
+    ],
+    lead4: (): Part[] => [
+      'During training only, each window’s complex spectrum got a random delay of up to one stimulus period, applied as one phase ramp across all channels. Queries and test windows were unchanged. With the magnitude reference as the query, the FiLM head reached ',
+      levelFig(R, 'FS-REF/u8'), ' on held-out frequencies (', ...levelIv(R, 'FS-REF/u8'), '). Against the same head and query on the plain spectrum the change was ',
+      contrastFig(R, 'P1'), ' (primary; ', ...contrastIv(R, 'P1', ' to '), '); against the same head and query on the complex spectrum without the ramp, which reached ',
+      levelFig(R, 'L0c-FS-REF/u8'), ', it was ', contrastFig(R, 'S5'), ' (secondary; ', ...contrastIv(R, 'S5', ' to '), '). Seen balanced accuracy fell from ',
+      levelFig(R, 'L0c-FS-REF/seen_ba'), ' to ', levelFig(R, 'FS-REF/seen_ba'), '. The matching head ended at chance on both tasks. CCA reached ',
+      levelFig(R, 'CCA/u8'), ' on the same held-out task. ',
+    ],
+    bet: (): Part[] => [
+      'The bet in the thread was that held-out accuracy would clear ', pct0(bet.held8_threshold), '; the FiLM head reached ', levelFig(R, 'FS-REF/u8'),
+      ' with the magnitude reference and ', levelFig(R, 'FS-NUM/u8'), ' with the numeric code.',
+    ],
+    caption4: (): Part[] => [
+      'Of the ', count(ramp.checks.audit.numerical_summary.contrasts), ` contrasts, six are primary (${range(primaries)}) and seven secondary (${range(secondaries)}); none is adjusted for multiplicity. `,
+      ...intervalText(R, 'en'), `. CCA has no training and a single seed axis; its only contrast is ${vsCca[0]} (`, contrastFig(R, vsCca[0]),
+      '). Held-out scores choose among ', count(rd.endpoints.u8.candidate_count), ' candidates and seen scores among ', count(rd.endpoints.seen_ba.candidate_count),
+      ', so the two are different tasks; m8 is the matched comparison for a held-out score, and there the FiLM head with the magnitude reference reached ',
+      levelFig(R, 'FS-REF/m8'), `. The contrasts against the plain spectrum (${vsPlain.join(', ')}) compare two feature recipes as well as the ramp: the complex and plain spectra differ in normalisation, size and capacity. The delay range is drawn from each window’s training label. The FiLM and matching heads start from different initial scores, so head comparisons are not initialisation-matched. BETA assigns each target its own stimulus phase, so phase carries real label information. The ramp acts on already-windowed coefficients, keeps magnitudes and the phase between channels, rotates the phases of the harmonics together, and approximates a time shift. All `,
+      count(rRL.cells), ' randomized-label checks passed (', count(rRL.fits), ' fits); a training-only shortcut through the label-dependent delay remains possible.',
+    ],
+    jArmsRegion: 'Card 3’s four arms on held-out and seen frequencies, scrolls horizontally',
+    jArmsCaption: 'Card 3’s four arms: accuracy with 95% intervals.',
+    colArm: 'Arm', colRecipe: 'Head · features · query', colHeld: 'Held-out frequencies', colSeen: 'Seen frequencies, balanced',
+    colM8: 'm8, the matched comparison', colCost: 'Generalisation cost', colHeadQuery: 'Head · query',
+    jArmName: { A: '0–125 ms delay', B: 'one-period delay', C: 'no delay (matched control)', M: 'magnitude-reference head on the plain spectrum' } as Record<string, string>,
+    jSide: { A: '0–125 ms delay', B: 'one-period delay', C: 'no delay', M: 'magnitude-reference head on the plain spectrum' } as Record<string, string>,
+    contrastsSummary: (n: number): Part[] => ['The ', count(n), ' paired contrasts'],
+    contrastsRegion: (card: number) => `Card ${card}’s paired contrasts, scrolls horizontally`,
+    jContrastsCaption: 'Each contrast is a paired difference, left minus right, in percentage points.',
+    rContrastsCaption: 'Each contrast is a paired difference in percentage points: the cell under its code, trained with the ramp, minus the arm in the comparison, which has the same head and query unless they are named. No ramp is the complex spectrum trained without the ramp; the plain spectrum has no ramp.',
+    colContrast: 'Contrast', colTask: 'Task', colComparison: 'Comparison', colRole: 'Role', colEstimate: 'Estimate', colInterval: '95% interval',
+    task: { u8: 'Held-out', seen_ba: 'Seen, balanced' } as Record<string, string>,
+    role: { primary: 'primary', secondary: 'secondary', descriptive: 'descriptive' } as Record<string, string>,
+    to: ' to ',
+    rSide: { ramp: 'ramp', control: 'no ramp', plain: 'plain spectrum' } as Record<string, string>,
+    named: (side: string, arm: string) => `${side} (${arm})`,
+    rArmsRegion: 'Card 4’s six cells, their controls and the comparators, scrolls horizontally',
+    rArmsCaption: 'Card 4’s arms: accuracy with 95% intervals. A dash marks a score that is not defined: a question number cannot ask about a held-out frequency.',
+    group: { ramp: 'Complex spectrum, trained with the ramp', control: 'Complex spectrum, no ramp (matched controls)', plain: 'Plain spectrum, no ramp', cca: 'No training' } as Record<Kind, string>,
+    readoffsSummary: 'Descriptive read-offs: generalisation cost, nn8 and u3',
+    readoffsRegion: 'Card 4’s descriptive read-offs, scrolls horizontally',
+    readoffsCaption: 'Descriptive read-offs with 95% intervals, defined under methods and limits. A dash marks a score that is not defined.',
+    readoffsNote: 'The matching head’s cost is near zero because its held-out and m8 scores both sit at chance.',
+    none: '—',
+  },
+  zh: {
+    lead3: (): Part[] => [
+      '只在训练时，给每个时间窗的复数频谱加一个所有通道共用的随机延迟，延迟取自 0–125 ms，或取自 0 到训练标签频率的一个周期。分类头是复数频谱上的 FiLM 分类头，以带刺激相位的参考谱作查询，即带相位的查询（',
+      count(model.parameters), ' 个参数，从零开始训练）；查询和测试时间窗都不变。在留出频率上，0–125 ms 组达到 ',
+      ...lvZh(J, 'COMMON-125MS/u8'), '，一个周期组达到 ', ...lvZh(J, 'COMMON-ONE-PERIOD/u8'), '。同一分类头不加延迟时为 ',
+      ...lvZh(J, 'L0c-FS-REFc-0/u8'), '。主要对比，0–125 ms 减去不加延迟：', contrastFig(J, 'P1'), '（', ...contrastIv(J, 'P1', ' 至 '),
+      '）。见过频率上的平衡准确率从 ', levelFig(J, 'L0c-FS-REFc-0/seen_ba'), ' 降到 ', levelFig(J, 'COMMON-125MS/seen_ba'), ' 和 ',
+      levelFig(J, 'COMMON-ONE-PERIOD/seen_ba'), '。',
+    ],
+    caption3: (): Part[] => [
+      '只有 0–125 ms 减去不加延迟这一项是主要对比，其余都是描述性对比。', ...intervalText(J, 'zh'), '。这 ',
+      count(jit.checks.audit.numerical_summary.contrasts), ' 项对比都没有做多重比较校正。延迟是把已经加窗的系数乘以同一条相位斜坡，近似于起点的平移。一个周期的范围取决于训练标签的频率；0–125 ms 的范围不看标签，只在最低的刺激频率上恰好等于一个周期，所以各目标的相位分布不同。BETA 给每个目标分配各自的刺激相位，相邻频率之间按相同步长递增，所以延迟也去掉了与标签相关的信息。普通频谱上的幅度参考谱分类头（',
+      levelFig(J, 'L0-FS-REF/u8'), '）在特征、查询和规模上都不同。全部 ', count(jRL.cells), ' 项随机标签检查都通过了（', count(jRL.fits),
+      ' 次拟合）；仍不能排除借助依赖标签的延迟、只在训练中起作用的捷径。',
+    ],
+    lead4: (): Part[] => [
+      '只在训练时，给每个时间窗的复数频谱加一个最长一个刺激周期的随机延迟，以同一条相位斜坡作用于所有通道。查询和测试时间窗都不变。以幅度参考谱作查询时，FiLM 分类头在留出频率上达到 ',
+      levelFig(R, 'FS-REF/u8'), '（', ...levelIv(R, 'FS-REF/u8'), '）。与普通频谱上同一分类头、同一查询相比，变化为 ',
+      contrastFig(R, 'P1'), '（主要对比；', ...contrastIv(R, 'P1', ' 至 '), '）；与不加斜坡的复数频谱上同一分类头、同一查询相比（后者为 ',
+      levelFig(R, 'L0c-FS-REF/u8'), '），变化为 ', contrastFig(R, 'S5'), '（次要对比；', ...contrastIv(R, 'S5', ' 至 '), '）。见过频率上的平衡准确率从 ',
+      levelFig(R, 'L0c-FS-REF/seen_ba'), ' 降到 ', levelFig(R, 'FS-REF/seen_ba'), '。匹配分类头在两项任务上最终都落在随机水平。同一留出任务上，CCA 达到 ',
+      levelFig(R, 'CCA/u8'), '。',
+    ],
+    bet: (): Part[] => [
+      '讨论串中的赌注是留出频率准确率会超过 ', pct0(bet.held8_threshold), '；FiLM 分类头以幅度参考谱作查询达到 ', levelFig(R, 'FS-REF/u8'),
+      '，以数值编码作查询为 ', levelFig(R, 'FS-NUM/u8'), '。',
+    ],
+    caption4: (): Part[] => [
+      '这 ', count(ramp.checks.audit.numerical_summary.contrasts), ` 项对比中，六项为主要对比（${range(primaries)}），七项为次要对比（${range(secondaries)}）；都没有做多重比较校正。`,
+      ...intervalText(R, 'zh'), `。CCA 无需训练，只有单一的种子维度；它唯一的对比是 ${vsCca[0]}（`, contrastFig(R, vsCca[0]),
+      '）。留出分数在 ', count(rd.endpoints.u8.candidate_count), ' 个候选中选择，见过频率的分数在 ', count(rd.endpoints.seen_ba.candidate_count),
+      ' 个候选中选择，两者是不同的任务；留出分数的匹配对照是 m8，以幅度参考谱作查询的 FiLM 分类头在 m8 上达到 ',
+      levelFig(R, 'FS-REF/m8'), `。与普通频谱的对比（${vsPlain.join('、')}）比较的除了斜坡，还有两种特征配方：复数频谱与普通频谱在归一化、维度和容量上都不同。延迟范围取决于每个时间窗的训练标签。FiLM 分类头与匹配分类头的初始分数不同，所以分类头之间的比较没有对齐初始化。BETA 给每个目标分配各自的刺激相位，所以相位本身携带真实的标签信息。相位斜坡作用于已经加窗的系数，保留幅度和通道间的相位，各谐波的相位一起转动，近似于一次时间平移。全部 `,
+      count(rRL.cells), ' 项随机标签检查都通过了（', count(rRL.fits), ' 次拟合）；仍不能排除借助依赖标签的延迟、只在训练中起作用的捷径。',
+    ],
+    jArmsRegion: '卡片 3 的四个组在留出频率与见过频率上的结果，可横向滚动',
+    jArmsCaption: '卡片 3 的四个组：准确率及其 95% 区间。',
+    colArm: '组', colRecipe: '分类头 · 特征 · 查询', colHeld: '留出频率', colSeen: '见过的频率（平衡）',
+    colM8: 'm8（匹配对照）', colCost: '泛化代价', colHeadQuery: '分类头 · 查询',
+    jArmName: { A: '0–125 ms 延迟', B: '一个周期的延迟', C: '不加延迟（匹配对照）', M: '普通频谱上的幅度参考谱分类头' } as Record<string, string>,
+    jSide: { A: '0–125 ms 延迟', B: '一个周期的延迟', C: '不加延迟', M: '普通频谱上的幅度参考谱分类头' } as Record<string, string>,
+    contrastsSummary: (n: number): Part[] => ['全部 ', count(n), ' 项配对对比'],
+    contrastsRegion: (card: number) => `卡片 ${card} 的配对对比，可横向滚动`,
+    jContrastsCaption: '每项对比都是配对差，左项减去右项，单位为百分点。',
+    rContrastsCaption: '每项对比都是配对差，单位为百分点：代码下方的单元（训练时加斜坡）减去“比较”一栏中的组；除非另行注明，两者的分类头与查询相同。不加斜坡指训练时不加相位斜坡的复数频谱；普通频谱不加斜坡。',
+    colContrast: '对比', colTask: '任务', colComparison: '比较', colRole: '角色', colEstimate: '估计值', colInterval: '95% 区间',
+    task: { u8: '留出频率', seen_ba: '见过的频率（平衡）' } as Record<string, string>,
+    role: { primary: '主要', secondary: '次要', descriptive: '描述性' } as Record<string, string>,
+    to: ' 至 ',
+    rSide: { ramp: '加斜坡', control: '不加斜坡', plain: '普通频谱' } as Record<string, string>,
+    named: (side: string, arm: string) => `${side}（${arm}）`,
+    rArmsRegion: '卡片 4 的六个单元、它们的对照与参照组，可横向滚动',
+    rArmsCaption: '卡片 4 的各组：准确率及其 95% 区间。短横表示没有定义的分数：题号无法询问留出的频率。',
+    group: { ramp: '复数频谱，训练时加相位斜坡', control: '复数频谱，不加斜坡（匹配对照）', plain: '普通频谱，不加斜坡', cca: '无需训练' } as Record<Kind, string>,
+    readoffsSummary: '描述性读出：泛化代价、nn8 与 u3',
+    readoffsRegion: '卡片 4 的描述性读出，可横向滚动',
+    readoffsCaption: '描述性读出及其 95% 区间，定义见“方法与局限”。短横表示没有定义的分数。',
+    readoffsNote: '匹配分类头的泛化代价接近零，是因为它的留出分数和 m8 都落在随机水平。',
+    none: '—',
+  },
+}[locale];
+
+// --- Rows -------------------------------------------------------------------------------------------------------
+type Seg = { t: string; a?: string };
+const seg = (p: Part[]): Seg[] => p.map(x => typeof x === 'string' ? { t: x } : { t: formatSsvep(x), a: figAttr(x) });
+interface Cellv { lead?: Seg; iv?: Seg[] }
+/**
+ * A level cell: its estimate, and its interval unless the interval is a point (CCA's cost). A cost is a signed
+ * difference, so its bounds are joined by "to" rather than a dash.
+ */
+function cellOf(id: StudyId, key: string): Cellv {
+  if (undefinedReason(id, key)) return {};
+  const x = level(id, key);
+  const iv = levelIv(id, key, x.unit === 'difference of proportions' ? COPY.to : '–');
+  return { lead: seg([levelFig(id, key)])[0], iv: x.interval[0] === x.interval[1] ? undefined : seg(iv) };
+}
+/** "a minus b": in Chinese, a space where 减去 meets a Latin letter or a digit. */
+const minus = (a: string, b: string) => zh ? `${a}${/[A-Za-z0-9)]$/.test(a) ? ' ' : ''}减去${/^[A-Za-z0-9+−]/.test(b) ? ' ' : ''}${b}` : `${a} minus ${b}`;
+const sep = ' · ';
+const recipe = (a: JArm) => [nameOf(J, a.head, locale), nameOf(J, a.features, locale), nameOf(J, a.query, locale)].join(sep);
+const jRows = jArms.map(a => ({ a, name: COPY.jArmName[a.arm], recipe: recipe(a), held: cellOf(J, `${a.cell}/u8`), seen: cellOf(J, `${a.cell}/seen_ba`) }));
+const sideOfJ = (key: string) => {
+  const cell = key.split('/')[0], a = jArms.find(x => x.cell === cell);
+  need(a, `card 3: a contrast side ${key}`);
+  return COPY.jSide[a!.arm];
+};
+const taskOf = (c: Contrast) => {
+  const [lt, rt] = [c.left, c.right].map(s => s.split('/')[1]);
+  need(lt === rt && (lt === 'u8' || lt === 'seen_ba'), `a contrast within one task: ${c.left} minus ${c.right}`);
+  return COPY.task[lt];
+};
+const jContrasts = jKeys.map(k => {
+  const c = contrast(J, k);
+  return { k, task: taskOf(c), comparison: minus(sideOfJ(c.left), sideOfJ(c.right)),
+    role: COPY.role[c.role === 'primary' ? 'primary' : 'descriptive'], est: seg([contrastFig(J, k)])[0], iv: seg(contrastIv(J, k, COPY.to)) };
+});
+
+const ccaName = nameOf(R, 'CCA', locale);
+const headQuery = (a: Arm) => a.kind === 'cca' ? ccaName : `${nameOf(R, a.head!, locale)}${sep}${nameOf(R, a.query!, locale)}`;
+const groups = (['ramp', 'control', 'plain', 'cca'] as Kind[]).map(kind => ({
+  kind, label: COPY.group[kind],
+  rows: rampArms.filter(a => a.kind === kind).map(a => ({
+    a, name: headQuery(a), held: cellOf(R, `${a.code}/u8`), m8: cellOf(R, `${a.code}/m8`), seen: cellOf(R, `${a.code}/seen_ba`),
+    cost: cellOf(R, `${a.code}/cost`), nn8: cellOf(R, `${a.code}/nn8`), u3: cellOf(R, `${a.code}/u3`),
+  })),
+}));
+need(groups.map(g => g.rows.length).join() === '6,6,2,1', 'card 4: six cells, six controls, two plain-spectrum heads and CCA');
+const rContrasts = rKeys.map(k => {
+  const c = contrast(R, k), l = armOf(c.left.split('/')[0]), r = armOf(c.right.split('/')[0]);
+  need(l.kind === 'ramp' && r.kind !== 'ramp' && (r.kind !== 'control' || (r.head === l.head && r.query === l.query)),
+    `card 4: ${k} is a cell trained with the ramp minus its own control, a plain-spectrum head or CCA`);
+  // The right side shares the cell's head and query unless the comparison names them.
+  const right = r.kind === 'cca' ? ccaName : r.head === l.head && r.query === l.query ? COPY.rSide[r.kind] : COPY.named(COPY.rSide[r.kind], headQuery(r));
+  return { k, arm: headQuery(l), task: taskOf(c), comparison: minus(COPY.rSide.ramp, right),
+    role: COPY.role[c.role], est: seg([contrastFig(R, k)])[0], iv: seg(contrastIv(R, k, COPY.to)) };
+});
+
+const c3 = cardChrome(3, locale), c4 = cardChrome(4, locale);
+need(c3.anchor === 'phase-jitter' && c3.studies.join() === J && c4.anchor === 'phase-ramp' && c4.studies.join() === R, 'cards 3 and 4 at their anchors');
+const lead3 = seg(COPY.lead3()), caption3 = seg(COPY.caption3()), lead4 = seg(COPY.lead4()), bet4 = seg(COPY.bet()), caption4 = seg(COPY.caption4());
+const jSummary = seg(COPY.contrastsSummary(jit.checks.audit.numerical_summary.contrasts));
+const rSummary = seg(COPY.contrastsSummary(ramp.checks.audit.numerical_summary.contrasts));
+// The bet sits on card 4 alone; card 3's words carry no threshold at whole percent.
+need(![...lead3, ...caption3].some(s => s.a?.includes('|pct0|')) && bet4.filter(s => s.a?.includes('|pct0|')).length === 1, 'the bet once, on card 4');
+need(siteName('FiLM head', locale) === nameOf(R, 'FS', locale), 'one name for the FiLM head');
+---
+<section class="topic-section ssvep-card" id={c3.anchor} aria-labelledby={c3.headingId} data-ssvep-card={c3.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c3.eyebrow}</p><h2 id={c3.headingId}>{c3.title}</h2></div></div>
+  <p class="roadmap-p" data-ssvep-lead="3">{lead3.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</p>
+  <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={COPY.jArmsRegion}>
+    <table data-ssvep-table="phase-jitter-arms">
+      <caption>{COPY.jArmsCaption}</caption>
+      <thead><tr><th scope="col">{COPY.colArm}</th><th scope="col">{COPY.colRecipe}</th><th scope="col">{COPY.colHeld}</th><th scope="col">{COPY.colSeen}</th></tr></thead>
+      <tbody>{jRows.map(r => <tr data-arm={r.a.cell}>
+        <th scope="row">{r.name}<small lang="en"><code>{r.a.cell}</code></small></th>
+        <td>{r.recipe}</td>
+        {[r.held, r.seen].map(v => v.lead ? <td><span data-fig={v.lead.a} class="metric">{v.lead.t}</span>{v.iv && <span class="interval">{v.iv.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</span>}</td> : <td data-null="true">{COPY.none}</td>)}
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <p class="protocol-note" data-ssvep-caption="3">{caption3.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</p>
+  <details class="rd-panel" data-ssvep-details="phase-jitter-contrasts">
+    <summary>{jSummary.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={COPY.contrastsRegion(3)}>
+      <table data-ssvep-table="phase-jitter-contrasts">
+        <caption>{COPY.jContrastsCaption}</caption>
+        <thead><tr><th scope="col">{COPY.colContrast}</th><th scope="col">{COPY.colTask}</th><th scope="col">{COPY.colComparison}</th><th scope="col">{COPY.colRole}</th><th scope="col">{COPY.colEstimate}</th><th scope="col">{COPY.colInterval}</th></tr></thead>
+        <tbody>{jContrasts.map(c => <tr data-contrast={c.k}>
+          <th scope="row"><code>{c.k}</code></th>
+          <td>{c.task}</td>
+          <td>{c.comparison}</td>
+          <td>{c.role}</td>
+          <td><span data-fig={c.est.a} class="metric">{c.est.t}</span></td>
+          <td>{c.iv.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<section class="topic-section ssvep-card" id={c4.anchor} aria-labelledby={c4.headingId} data-ssvep-card={c4.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c4.eyebrow}</p><h2 id={c4.headingId}>{c4.title}</h2></div></div>
+  <p class="roadmap-p" data-ssvep-lead="4">{lead4.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}<span data-ssvep-bet="">{bet4.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</span></p>
+  <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={COPY.rArmsRegion}>
+    <table data-ssvep-table="phase-ramp-arms">
+      <caption>{COPY.rArmsCaption}</caption>
+      <thead><tr><th scope="col">{COPY.colHeadQuery}</th><th scope="col">{COPY.colHeld}</th><th scope="col">{COPY.colM8}</th><th scope="col">{COPY.colSeen}</th></tr></thead>
+      <tbody>{groups.map(g => <>
+        <tr class="subhead" data-group={g.kind}><th colspan="4" scope="colgroup">{g.label}</th></tr>
+        {g.rows.map(r => <tr data-arm={r.a.code}>
+          <th scope="row">{r.name}<small lang="en"><code>{r.a.code}</code></small></th>
+          {[r.held, r.m8, r.seen].map(v => v.lead ? <td><span data-fig={v.lead.a} class="metric">{v.lead.t}</span>{v.iv && <span class="interval">{v.iv.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</span>}</td> : <td data-null="true">{COPY.none}</td>)}
+        </tr>)}
+      </>)}</tbody>
+    </table>
+  </div>
+  <p class="protocol-note" data-ssvep-caption="4">{caption4.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</p>
+  <details class="rd-panel" data-ssvep-details="phase-ramp-contrasts">
+    <summary>{rSummary.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={COPY.contrastsRegion(4)}>
+      <table data-ssvep-table="phase-ramp-contrasts">
+        <caption>{COPY.rContrastsCaption}</caption>
+        <thead><tr><th scope="col">{COPY.colContrast}</th><th scope="col">{COPY.colTask}</th><th scope="col">{COPY.colComparison}</th><th scope="col">{COPY.colRole}</th><th scope="col">{COPY.colEstimate}</th><th scope="col">{COPY.colInterval}</th></tr></thead>
+        <tbody>{rContrasts.map(c => <tr data-contrast={c.k}>
+          <th scope="row"><code>{c.k}</code><small>{c.arm}</small></th>
+          <td>{c.task}</td>
+          <td>{c.comparison}</td>
+          <td>{c.role}</td>
+          <td><span data-fig={c.est.a} class="metric">{c.est.t}</span></td>
+          <td>{c.iv.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <details class="rd-panel" data-ssvep-details="phase-ramp-readoffs">
+    <summary>{COPY.readoffsSummary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={COPY.readoffsRegion}>
+      <table data-ssvep-table="phase-ramp-readoffs">
+        <caption>{COPY.readoffsCaption}</caption>
+        <thead><tr><th scope="col">{COPY.colHeadQuery}</th><th scope="col">{COPY.colCost}</th><th scope="col">nn8</th><th scope="col">u3</th></tr></thead>
+        <tbody>{groups.map(g => <>
+          <tr class="subhead" data-group={g.kind}><th colspan="4" scope="colgroup">{g.label}</th></tr>
+          {g.rows.map(r => <tr data-arm={r.a.code}>
+            <th scope="row">{r.name}<small lang="en"><code>{r.a.code}</code></small></th>
+            {[r.cost, r.nn8, r.u3].map(v => v.lead ? <td><span data-fig={v.lead.a} class="metric">{v.lead.t}</span>{v.iv && <span class="interval">{v.iv.map(s => s.a ? <span data-fig={s.a}>{s.t}</span> : s.t)}</span>}</td> : <td data-null="true">{COPY.none}</td>)}
+          </tr>)}
+        </>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-ssvep-note="match-cost">{COPY.readoffsNote}</p>
+  </details>
+</section>
+
+<style is:global>
+  /* A signed difference keeps its unit on its line when a phone stacks the table ("−13.37 pp", not "−13.37 / pp"). */
+  :is([data-ssvep-card="3"],[data-ssvep-card="4"]) .topic-table .metric{white-space:nowrap}
+</style>

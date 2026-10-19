@@ -1,0 +1,580 @@
+---
+/**
+ * Cards 5, 6 and 7 of /topics/new-ssvep-frequencies/ (package P-SS4): #cca-mechanism (the CCA diagnostics),
+ * #cca-correction (the CCA adapter) and #wearable-transfer (the card 6 models run unchanged on Wearable-102).
+ *
+ * Copy: plan §2.1 cards 5–7 as the adapter binding review (§3) corrects it, with card 5's lower bound for the cropped
+ * match minus Hann-tapered CCA as the export prints it, card 7's CCA sentence from the Wearable-102 CCA definition note
+ * (A2), and the reading's caveat block. Every figure is a leaf of new-ssvep-frequencies-update.json printed with
+ * data-fig; the adapter's gain prints from its own field, never as a difference of printed levels; transitions are
+ * shares of all decisions on the task; every 73.2x value carries its study and task, and every Wearable value
+ * "Wearable-102". The cards name the interval method in their captions; the page's #methods-and-limits lists what was
+ * not run. No link to the thread (the page's intro line has it).
+ *
+ * Props
+ *   locale: Locale — 'en' or 'zh'. Every word is in the copy map below (Chinese beside English); words for the
+ *     export's own strings (variants, training, limitation keys, bundled changes) are keyed by the export's English,
+ *     so a changed export fails the build instead of printing other words.
+ *
+ * One format is local: num1, the adapter's protected margin (0.200001) at one decimal, "0.2" (plan §2.1 card 6; F4).
+ * new-ssvep-frequencies.ts formatSsvep and the page's check do not know it yet; show() prints it here.
+ *
+ * Styles: the existing classes (topics.css) and the page's p.ssvep-scope; the small global block at the end starts
+ * every selector from this component's own card attribute, as the page's contract asks.
+ */
+import type { Locale } from '../../data/i18n';
+import { hrefFor, topicCards, topicChrome } from '../../data/i18n';
+import {
+  SSVEP, needFor, pct2, count, fig, formatSsvep, figAttr, study, level, contrast, levelFig, contrastFig, levelIv,
+  contrastIv, undefinedReason, cardChrome, cardOfStudy, cohort, wearable, siteName, nameOf, intervalText,
+  type Part, type SsvepFig, type SsvepFmt, type StudyId,
+} from '../../data/new-ssvep-frequencies';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const tc = topicChrome[locale];
+const need = needFor('new-ssvep-frequencies cards 5–7');
+const sections = ([5, 6, 7] as const).map(n => cardChrome(n, locale));
+
+// --- Figures, words, links ---------------------------------------------------------------------------------------
+type Link = { href: string; text: string };
+type Bit = string | SsvepFig | Link;
+const isLink = (b: Bit): b is Link => typeof b === 'object' && 'href' in b;
+/** The protected margin at one decimal ("0.2"): the one figure on these cards outside formatSsvep's formats. */
+const num1 = (raw: number): SsvepFig => {
+  need(typeof raw === 'number' && Number.isFinite(raw), 'a finite margin');
+  return { raw, fmt: 'num1' as unknown as SsvepFmt, src: SSVEP };
+};
+const show = (f: SsvepFig): string => (f.fmt as string) === 'num1' ? f.raw.toFixed(1).replace(/^-/, '−') : formatSsvep(f);
+/** A plain number at two decimals (Hz, seconds): entities.ts auc2 is raw.toFixed(2). */
+const dec2 = (raw: number) => fig(raw, 'auc2');
+const to = zh ? ' 至 ' : ' to ';
+const liv = (id: StudyId, key: string): Part[] => levelIv(id, key, '–');
+const civ = (id: StudyId, key: string): Part[] => contrastIv(id, key, to);
+const cap = (s: string) => zh ? s : s.charAt(0).toUpperCase() + s.slice(1);
+const nm = (id: StudyId, code: string) => nameOf(id, code, locale);
+// By the page's path, not a bare '#': the Markdown copy drops in-page jump links with their text.
+const cardLink = (n: 2 | 6, text: string): Link => ({ href: hrefFor(`/topics/new-ssvep-frequencies/#${cardChrome(n, locale).anchor}`, locale), text });
+const words = (m: Record<string, Record<Locale, string>>, key: string, what: string): string => {
+  need(key in m, `words for ${what} "${key}"`);
+  return m[key][locale];
+};
+const D: StudyId = 'cca_diagnostics', A: StudyId = 'cca_adapter', W: StudyId = 'wearable_transfer';
+need(cardOfStudy(D) === 5 && cardOfStudy(A) === 6 && cardOfStudy(W) === 7 && cardOfStudy('ref2') === 2, 'cards 5, 6 and 7 read the CCA studies; card 2 the earlier heads');
+const dz = study(D), az = study(A), wz = study(W);
+
+// The export's English, in both languages.
+const VARIANT: Record<string, Record<Locale, string>> = {
+  'centred': { en: 'centred', zh: '中心化' },
+  'uncentred': { en: 'uncentred', zh: '未中心化' },
+  'joint reference span': { en: 'joint reference span', zh: '联合参考子空间' },
+  'per-harmonic spans': { en: 'per-harmonic spans', zh: '逐谐波子空间' },
+};
+const TRAINING: Record<string, Record<Locale, string>> = {
+  'no training': { en: 'no training', zh: '无需训练' },
+  'ridge fitted on source people': { en: 'ridge fitted on the source people', zh: '在源被试上拟合的岭回归' },
+  'trained on source people and seen frequencies': { en: 'trained on the source people and seen frequencies', zh: '在源被试与见过的频率上训练' },
+};
+const BUNDLE: Record<string, Record<Locale, string>> = {
+  'cross-channel mixing': { en: 'cross-channel mixing', zh: '跨通道混合' },
+  'fitting the reference coefficients': { en: 'fitting the reference coefficients', zh: '拟合参考系数' },
+  'aggregation': { en: 'aggregation', zh: '聚合方式' },
+  'several matching operations': { en: 'several matching operations', zh: '多项匹配运算' },
+};
+const bundleList = (items: string[], l: Locale): string => {
+  const w = items.map(x => { need(x in BUNDLE, `words for the bundled change "${x}"`); return BUNDLE[x][l]; });
+  return l === 'zh' ? w.join('、') : w.length > 2 ? `${w.slice(0, -1).join(', ')}, and ${w.at(-1)}` : w.join(' and ');
+};
+
+// --- Card 5: the CCA diagnostics -----------------------------------------------------------------------------------
+const HANN = 'CCA-HANN-C minus CCA-RAW', HANN_UC = 'CCA-HANN-U minus CCA-HANN-C', CROP_HANN = 'SUBSPACE-CROP minus CCA-HANN-U',
+  CROP_ENERGY = 'SUBSPACE-CROP minus CHANNEL-JOINT', ENERGY_HJ = 'CHANNEL-HARMONIC minus CHANNEL-JOINT',
+  RIDGE_AVG = 'SHARED-RIDGE minus CHANNEL-HARMONIC', RIDGE_CCA = 'SHARED-RIDGE minus CCA-RAW';
+const STEMS5 = [HANN, HANN_UC, CROP_HANN, CROP_ENERGY, ENERGY_HJ, RIDGE_AVG, RIDGE_CCA];
+const TASKS = ['u8', 'seen_ba'] as const;
+const below = (x: { interval: [number, number] }) => x.interval[1] < 0, above = (x: { interval: [number, number] }) => x.interval[0] > 0;
+const spans = (x: { interval: [number, number] }) => x.interval[0] < 0 && x.interval[1] > 0;
+const sidesOf = (id: StudyId, key: string) => { const c = contrast(id, key); return [c.left.split('/')[0], c.right.split('/')[0]]; };
+
+need(Object.keys(dz.contrasts).join('|') === STEMS5.flatMap(s => TASKS.map(t => `${s}/${t}`)).join('|')
+  && Object.values(dz.contrasts).every(c => c.role === 'prespecified' && c.people === cohort.people),
+  'seven prespecified contrasts on each of the two tasks, 70 people');
+need(dz.interval_method.method === 'paired person bootstrap, percentile interval' && dz.interval_method.conditional_on === undefined,
+  'card 5: a person bootstrap');
+need(level(D, 'CCA-RAW/u8').seeds === 'no training' && sidesOf(D, `${HANN}/u8`).join() === 'CCA-HANN-C,CCA-RAW'
+  && below(contrast(D, `${HANN}/u8`)) && contrast(D, `${HANN}/u8`).estimate < 0, 'the Hann taper lowered CCA on held-out frequencies');
+need(sidesOf(D, `${CROP_HANN}/u8`).join() === 'SUBSPACE-CROP,CCA-HANN-U' && TASKS.every(t => spans(contrast(D, `${CROP_HANN}/${t}`)))
+  && (dz.contrast_limitations[`${CROP_HANN}/u8`] ?? []).includes('crop_vs_hann_unresolved'), 'the cropped match minus Hann-tapered CCA: both intervals span zero');
+need(dz.design.scorers.find((s: { code: string }) => s.code === 'SUBSPACE-CROP')?.training === 'no training'
+  && dz.display_names['SUBSPACE-CROP'] === 'cropped-spectrum match (no training)', 'the cropped-spectrum match has no training');
+need(dz.limitations_keys.includes('coordinates_before_scaler') && dz.limitations_keys.includes('crop_changes_metric')
+  && dz.checks.cropped_coordinates_match_earlier_cache?.passed === true, 'the match reads the earlier heads’ coordinates before their fitted scaling');
+const EARLIER = { fs: 'L0c-FS-REFc-0/u8', match: 'L0c-MATCH-REFc-0/u8' };
+need(study('ref2').display_names.L0c === 'complex spectrum' && study('ref2').display_names.FS === 'FiLM head'
+  && study('ref2').display_names.MATCH === 'matching head' && study('ref2').display_names['REFc-0'] === 'reference with stimulus phase'
+  && level('ref2', EARLIER.fs).seeds === cohort.training_seeds && level('ref2', EARLIER.match).seeds === cohort.training_seeds,
+  'the earlier complex-spectrum heads: the FiLM and matching heads asked with the reference with stimulus phase (card 2)');
+need(dz.limitations_keys.includes('earlier_heads_descriptive')
+  && dz.not_run.some((x: { item: string }) => x.item === 'paired contrast with the earlier complex-spectrum heads'), 'the earlier heads are quoted with no paired contrast');
+need(level(D, 'CHANNEL-JOINT/u8').estimate === level(D, 'CHANNEL-HARMONIC/u8').estimate
+  && level(D, 'CCA-HANN-C/u8').estimate === level(D, 'CCA-HANN-U/u8').estimate, 'the two energy variants and the two Hann variants score alike');
+for (const s of [HANN_UC, ENERGY_HJ]) for (const t of TASKS) {
+  const c = contrast(D, `${s}/${t}`);
+  need(c.estimate === 0 && c.flags?.identical_results === true && (dz.contrast_limitations[`${s}/${t}`] ?? []).includes('identical_results_different_definitions'),
+    `${s} on ${t}: identical results from different definitions`);
+}
+const ridge = dz.design.scorers.find((s: { code: string }) => s.code === 'SHARED-RIDGE');
+need(ridge?.training === 'ridge fitted on source people' && ridge?.fits === cohort.card5.ridge_fits && dz.design.ridge_fits === cohort.card5.ridge_fits
+  && dz.design.harmonics === 3, 'one ridge scorer fitted on the source people, 35 fits, over three harmonics');
+need(above(contrast(D, `${RIDGE_AVG}/u8`)) && below(contrast(D, `${RIDGE_CCA}/u8`)) && spans(contrast(D, `${RIDGE_AVG}/seen_ba`))
+  && (dz.contrast_limitations[`${RIDGE_AVG}/u8`] ?? []).includes('ridge_no_seen_gain'),
+  'the ridge scorer: above the energy average on held-out frequencies, below CCA, its seen interval spanning zero');
+const bundled5 = contrast(D, `${CROP_ENERGY}/u8`).flags?.bundles as string[];
+need(Array.isArray(bundled5) && bundled5.join('|') === 'cross-channel mixing|fitting the reference coefficients|aggregation'
+  && JSON.stringify(contrast(D, `${CROP_ENERGY}/seen_ba`).flags?.bundles) === JSON.stringify(bundled5)
+  && (dz.contrast_limitations[`${CROP_ENERGY}/u8`] ?? []).includes('bundled_contrast'), 'the +17.98 contrast bundles three changes');
+need(dz.design.training_free_scorers === cohort.card5.training_free_scorers
+  && dz.design.scorers.filter((s: { training: string }) => s.training === 'no training').length === cohort.card5.training_free_scorers,
+  'six training-free scorers');
+need(dz.design.dataset.targets === cohort.targets && dz.checks.reference_subspace_preflight?.candidates === cohort.targets
+  && dz.limitations_keys.includes('candidates_known'), 'every method is given all 40 candidate frequencies');
+const ck = dz.checks;
+need(ck.raw_cca_reconstruction?.passed && ck.raw_cca_reconstruction.windows === cohort.windows && ck.independent_analytic_spot_check?.passed
+  && ck.independent_analytic_spot_check.scorers_checked === cohort.card5.training_free_scorers
+  && ck.independent_ridge_refits?.passed && ck.independent_ridge_refits.refits === ck.independent_ridge_refits.of
+  && ck.independent_ridge_refits.of === cohort.card5.ridge_fits && dz.limitations_keys.includes('six_row_spot_check'), 'how card 5 was checked');
+// Same scores in cards 5 and 6 (the adapter review: bit-identical), each read from its own study.
+for (const [a, d] of [['CCA-RAW', 'CCA-RAW'], ['CCA-CROP', 'SUBSPACE-CROP']]) for (const t of TASKS)
+  need(JSON.stringify([level(A, `${a}/${t}`).estimate, level(A, `${a}/${t}`).interval]) === JSON.stringify([level(D, `${d}/${t}`).estimate, level(D, `${d}/${t}`).interval]),
+    `${a} in card 6 is ${d} in card 5 (${t})`);
+
+/** A scorer's or arm's name; where two codes share a site name, the export's variant tells them apart. */
+function armName(id: StudyId, code: string): string {
+  const s = study(id), n = nm(id, code);
+  const shared = Object.values(s.display_names).filter(v => v === s.display_names[code]).length > 1;
+  if (!shared) return n;
+  const v = s.design?.scorers?.find((x: { code: string }) => x.code === code)?.variant;
+  return `${n}${zh ? '（' : ' ('}${words(VARIANT, v, 'a variant')}${zh ? '）' : ')'}`;
+}
+function contrastName(id: StudyId, key: string): string {
+  const [l, r] = sidesOf(id, key), s = study(id);
+  if (s.display_names[l] === s.display_names[r]) {
+    const v = (c: string) => words(VARIANT, s.design?.scorers?.find((x: { code: string }) => x.code === c)?.variant, 'a variant');
+    return `${cap(nm(id, l))}${zh ? '：' : ': '}${v(l)} − ${v(r)}`;
+  }
+  return `${cap(armName(id, l))} − ${armName(id, r)}`;
+}
+const LIMIT: Record<string, Record<Locale, string>> = {
+  identical_results_different_definitions: { en: 'Identical results from different definitions.', zh: '定义不同，结果相同。' },
+  crop_vs_hann_unresolved: { en: 'Unresolved: the interval spans zero on both tasks.', zh: '尚无定论：两项任务上的区间都跨过零。' },
+  bundled_contrast: { en: `This lead bundles three changes: ${bundleList(bundled5, 'en')}.`, zh: `这一领先捆绑了三项改变：${bundleList(bundled5, 'zh')}。` },
+  ridge_no_seen_gain: { en: 'Above the average on held-out frequencies; on seen frequencies the interval spans zero.', zh: '在留出频率上高于平均；在见过的频率上，区间跨过零。' },
+  // Card 6's lead says it, beside the same figure: the table row adds nothing (a caveat once).
+  bundled_matching_operations: { en: '', zh: '' },
+  residual_not_uniformly_better: { en: 'On held-out frequencies the correction on the cropped match is below the adapted head.', zh: '在留出频率上，加在裁剪谱匹配上的修正低于适配分类头。' },
+  raw_vs_crop_baseline_access: { en: 'The two corrections start from different baselines: CCA on the raw window, and the cropped match.', zh: '两种修正的起点不同：一个是原始时间窗上的 CCA，一个是裁剪谱匹配。' },
+};
+need(bundled5.length === 3, 'three bundled changes, as the note says');
+need(contrast(A, 'CROP-RESIDUAL minus ADAPT-FS/u8').interval[1] < 0, 'the correction on the cropped match is below the adapted head on held-out frequencies');
+const notesOf = (id: StudyId, stem: string): string[] => {
+  const lim = study(id).contrast_limitations ?? {};
+  const u = lim[`${stem}/u8`] ?? [], s = lim[`${stem}/seen_ba`] ?? [];
+  need(JSON.stringify(u) === JSON.stringify(s), `${stem}: one note for both tasks`);
+  return u.map((k: string) => words(LIMIT, k, 'a contrast note')).filter(Boolean);
+};
+const contrastRows = (id: StudyId, stems: string[]) => stems.map(s => ({
+  stem: s, name: contrastName(id, `${s}/u8`), notes: notesOf(id, s),
+  cells: TASKS.map(t => ({ est: contrastFig(id, `${s}/${t}`), iv: civ(id, `${s}/${t}`) })),
+}));
+const c5Rows = contrastRows(D, STEMS5);
+const c5Levels = dz.design.scorers.map((s: { code: string; training: string }) => ({
+  code: s.code, name: cap(armName(D, s.code)), training: /no training/.test(dz.display_names[s.code]) ? null : words(TRAINING, s.training, 'a training'),
+  cells: TASKS.map(t => ({ est: levelFig(D, `${s.code}/${t}`), iv: liv(D, `${s.code}/${t}`) })),
+}));
+
+// --- Card 6: the CCA adapter ---------------------------------------------------------------------------------------
+const GAIN = 'RAW-RESIDUAL minus CCA-RAW', ADAPT = 'ADAPT-FS minus ENERGY-FS';
+const STEMS6 = ['ADAPT-FS minus ENERGY-FS', 'ADAPT-FS minus CCA-CROP', 'CROP-RESIDUAL minus ADAPT-FS', 'CROP-RESIDUAL minus CCA-CROP', GAIN,
+  'RAW-RESIDUAL minus CROP-RESIDUAL'];
+need(Object.keys(az.contrasts).join('|') === STEMS6.flatMap(s => TASKS.map(t => `${s}/${t}`)).join('|')
+  && Object.values(az.contrasts).every(c => c.role === 'prespecified' && c.people === cohort.people && c.seeds === cohort.training_seeds),
+  'six prespecified contrasts on each task, 70 people, three seeds');
+need(az.interval_method.method === 'paired person bootstrap, percentile interval' && az.interval_method.conditional_on === 'the fitted models and the three fixed training seeds',
+  'card 6: a person bootstrap, conditional on the fitted models and the three seeds');
+need(sidesOf(A, `${GAIN}/u8`).join() === 'RAW-RESIDUAL,CCA-RAW' && TASKS.every(t => above(contrast(A, `${GAIN}/${t}`))),
+  'CCA with learned correction above CCA alone on both tasks, the intervals above zero');
+const arms6 = az.design.arms as { code: string; training: string; fits?: number }[];
+need(arms6.map(a => a.code).join() === 'ENERGY-FS,ADAPT-FS,CROP-RESIDUAL,RAW-RESIDUAL,CCA-CROP,CCA-RAW'
+  && arms6.filter(a => a.training !== 'no training').every(a => a.fits === wearable.source_models)
+  && az.design.dataset.training_seeds === cohort.training_seeds && az.limitations_keys.includes('seeds_averaged'),
+  'four trained arms of 105 fits each, three seeds averaged, beside CCA and the cropped match');
+const prot = az.protection;
+need(prot.scale === 'CCA correlation' && prot.protected_margin >= 0.2 && show(num1(prot.protected_margin)) === '0.2' && prot.protected_flips === 0
+  && az.limitations_keys.includes('protection_structural') && az.limitations_keys.includes('protection_bound'),
+  'the correction reorders only candidates whose CCA correlations lie within 0.2; no protected decision changed');
+need(prot.instances_unit === `prediction instances across ${cohort.training_seeds} seeds and ${cohort.frequency_rotations} rotations`,
+  'protected prediction instances are counted over the three seeds and five rotations');
+const tr = az.transitions;
+const OUTCOMES = ['wrong_to_right', 'right_to_wrong', 'wrong_to_different_wrong', 'unchanged_right', 'unchanged_wrong', 'changed'] as const;
+need(tr.arm === 'RAW-RESIDUAL' && tr.against === 'CCA-RAW' && tr.unit === 'share of all decisions on the task' && tr.u8.denominator === 'all held-out decisions'
+  && tr.seen_ba.denominator === 'all seen decisions' && az.limitations_keys.includes('transitions_share_of_all_decisions'),
+  'transitions of CCA with learned correction against CCA alone, as shares of all decisions on the task');
+for (const t of TASKS) {
+  const x = tr[t];
+  need(Math.abs(x.wrong_to_right + x.right_to_wrong + x.wrong_to_different_wrong + x.unchanged_right + x.unchanged_wrong - 1) < 1e-9
+    && Math.abs(x.changed - x.wrong_to_right - x.right_to_wrong - x.wrong_to_different_wrong) < 1e-9
+    && Math.abs(x.wrong_to_right - x.right_to_wrong - contrast(A, `${GAIN}/${t}`).estimate) < 1e-9,
+    `${t}: the five outcomes sum to all decisions, "changed" is the first three, and the transitions match the gain`);
+}
+need(tr.averaged_over === `three seeds, then five rotations, then ${cohort.people} people`, 'transitions averaged over seeds, rotations, then people');
+const added = contrast(A, `${ADAPT}/u8`).flags as { bundles?: string[]; added_input?: { canonical_correlations: number; computed_on: string } };
+need(sidesOf(A, `${ADAPT}/u8`).join() === 'ADAPT-FS,ENERGY-FS' && added?.added_input?.canonical_correlations === 6
+  && added.added_input.computed_on === 'cropped-spectrum match (no training)' && added.bundles?.join() === 'several matching operations'
+  && above(contrast(A, `${ADAPT}/u8`)) && az.limitations_keys.includes('canonical_correlations_from_cropped_match'),
+  'the adapted head is the energy head given six canonical correlations from the cropped-spectrum match; the gain bundles several matching operations');
+need(undefinedReason(A, 'ADAPT-FS minus CCA-RAW') === 'not_a_planned_contrast' && !Object.keys(az.contrasts).some(k => k.startsWith('ADAPT-FS minus CCA-RAW')),
+  'the adapted head against CCA alone was not a planned contrast and has no interval');
+need(az.limitations_keys.includes('candidates_supplied') && az.limitations_keys.includes('frequency_code_supplied')
+  && ['filter-bank CCA', 'supervised spatial templates'].every(i => az.not_run.some((x: { item: string }) => x.item === i)),
+  'the candidates supply CCA’s references and the numeric code; filter-bank CCA and supervised spatial templates were not compared');
+need(az.limitations_keys.includes('separate_tasks') && az.limitations_keys.includes('unadjusted_intervals'), 'separate tasks, unadjusted intervals');
+const c6Rows = contrastRows(A, STEMS6);
+const c6Arms = arms6.map(a => ({
+  code: a.code, name: cap(nm(A, a.code)), training: /no training/.test(az.display_names[a.code]) ? null : words(TRAINING, a.training, 'a training'),
+  cells: TASKS.map(t => ({ est: levelFig(A, `${a.code}/${t}`), iv: liv(A, `${a.code}/${t}`) })),
+}));
+
+// --- Card 7: Wearable-102 ------------------------------------------------------------------------------------------
+const WK = ['dry', 'wet', 'all'] as const;
+const wd = wz.design, wsm = wd.source_models, wcd = wz.cca_definition;
+need(wd.dataset.name === wearable.dataset && wd.dataset.people === wearable.people && wd.dataset.targets === wearable.targets
+  && wd.dataset.windows_per_sensor === wearable.windows_per_sensor && wd.dataset.sensors.join() === wearable.sensors.join()
+  && JSON.stringify(wd.dataset.frequency_range_hz) === JSON.stringify(wearable.frequency_range_hz) && wearable.window_seconds === 2
+  && wd.dataset.amplitude === 'as stored' && wearable.recordings === 'as stored', 'card 7’s scope strip: the Wearable-102 block');
+need(wearable.participant_overlap_with_beta === 'possible: the documentation cannot rule it out' && wz.limitations_keys.includes(wearable.overlap_limitation_key),
+  'the documentation cannot rule out that some people also appear in BETA');
+need(wsm.dataset === 'BETA' && wsm.arm === 'RAW-RESIDUAL' && wsm.models === wearable.source_models && wsm.retraining === false && wsm.ensemble === false
+  && wsm.models === wsm.person_folds * wsm.frequency_rotations * wsm.training_seeds && wsm.person_folds === cohort.person_folds
+  && wsm.frequency_rotations === cohort.frequency_rotations && wsm.training_seeds === cohort.training_seeds
+  && arms6.find(a => a.code === 'RAW-RESIDUAL')?.fits === wsm.models && wz.source_models_sha256 === az.source_sha256,
+  'the 105 card 6 models (7 folds × 5 rotations × 3 seeds), trained on BETA, run unchanged');
+need(WK.every(k => wd.endpoints[k].candidate_count === wearable.targets) && wd.endpoints.dry.role === 'primary' && wd.endpoints.wet.role === 'primary'
+  && wd.endpoints.all.role === 'secondary' && wd.endpoints.all.label === 'both sensors'
+  && wd.endpoints.dry.windows === wearable.windows_per_sensor && wd.endpoints.wet.windows === wearable.windows_per_sensor && wd.endpoints.all.windows === wearable.windows,
+  'dry and wet primary, both sensors secondary');
+const wc = (k: string) => contrast(W, `RAW-RESIDUAL_minus_CCA-RAW/${k}`);
+need(WK.every(k => wc(k).role === wd.endpoints[k].role && sidesOf(W, `RAW-RESIDUAL_minus_CCA-RAW/${k}`).join() === 'RAW-RESIDUAL,CCA-RAW' && spans(wc(k))
+  && wc(k).people === wearable.people) && Object.keys(wz.contrasts).length === 3, 'the models minus matched CCA, by sensor: every interval includes zero');
+need(wz.not_run.some((x: { item: string }) => x.item === 'equivalence margin') && wz.limitations_keys.includes('no_equivalence_no_single_cause'),
+  'no equivalence margin was set, and no single factor is isolated');
+need(wz.limitations_keys.includes('model_score_contains_cca') && wcd.matched_cca.same_as_model_term === true && wcd.matched_cca.code === 'CCA-RAW',
+  'the models’ score is CCA plus a bounded learned term');
+need(wcd.matched_cca.harmonics === 3 && wearable.matched_cca_harmonics === 3 && wcd.dry_vs_wet_cca.harmonics === 4 && wcd.same_windows === true
+  && wcd.windows_per_sensor === wearable.windows_per_sensor && wcd.differs_in === 'harmonic count' && wz.limitations_keys.includes('cca_harmonic_count')
+  && wcd.fact.en === "the dry-versus-wet page's CCA uses references up to the fourth harmonic"
+  && wcd.fact.zh === '「干电极与湿电极」页面的 CCA 使用到四次谐波的参考信号' && topicCards.zh['dry-vs-wet'].title === '干电极与湿电极',
+  'matched CCA uses three harmonics, the dry-versus-wet page’s CCA four, on the same windows (A2)');
+need(wd.methods.find((m: { code: string }) => m.code === 'CCA-CROP')?.role === 'diagnostic' && wz.limitations_keys.includes('cropped_check_diagnostic_only')
+  && wz.display_names['CCA-CROP'] === 'cropped-spectrum check (Wearable-102)', 'the cropped-spectrum check is a Wearable-102 diagnostic only');
+need(wz.limitations_keys.includes('stored_amplitude_units') && wz.limitations_keys.includes('window_onset_and_other_changes')
+  && wd.dataset.window_s[0] === 0.14 && wsm.window_s[0] === 0 && wz.limitations_keys.includes('candidates_supplied')
+  && wz.limitations_keys.includes('mean_over_105_models') && wz.limitations_keys.includes('not_comparable_with_beta_tasks')
+  && wz.limitations_keys.includes('intervals_conditional_on_models') && wz.interval_method.conditional_on === 'the fixed 105 source models',
+  'card 7’s caveat block: units, window onset, candidates, the mean over the models, separate tasks, the conditional intervals');
+need(new Set(wz.limitations_keys).size === 11 && wz.limitations_keys.every(k => ['stored_amplitude_units', 'window_onset_and_other_changes',
+  'no_equivalence_no_single_cause', 'candidates_supplied', 'prior_use_overlap_snapshot', 'mean_over_105_models', 'model_score_contains_cca',
+  'intervals_conditional_on_models', 'cropped_check_diagnostic_only', 'not_comparable_with_beta_tasks', 'cca_harmonic_count'].includes(k)),
+  'card 7 says each of the Wearable-102 study’s limitations');
+const wRows = WK.map(k => ({
+  k, role: wd.endpoints[k].role as 'primary' | 'secondary', windows: count(wd.endpoints[k].windows),
+  model: { est: levelFig(W, `RAW-RESIDUAL/${k}`), iv: liv(W, `RAW-RESIDUAL/${k}`) },
+  cca: { est: levelFig(W, `CCA-RAW/${k}`), iv: liv(W, `CCA-RAW/${k}`) },
+  change: { est: contrastFig(W, `RAW-RESIDUAL_minus_CCA-RAW/${k}`), iv: civ(W, `RAW-RESIDUAL_minus_CCA-RAW/${k}`) },
+  crop: { est: levelFig(W, `CCA-CROP/${k}`), iv: liv(W, `CCA-CROP/${k}`) },
+}));
+const dvw = { dry: pct2(wcd.dry_vs_wet_cca.dry.estimate), wet: pct2(wcd.dry_vs_wet_cca.wet.estimate) };
+
+// --- Words -------------------------------------------------------------------------------------------------------
+const L5 = (k: string) => levelFig(D, k), C5 = (k: string) => contrastFig(D, k);
+const L6 = (k: string) => levelFig(A, k), C6 = (k: string) => contrastFig(A, k);
+const L7 = (k: string) => levelFig(W, k), C7 = (k: string) => contrastFig(W, k);
+const dvwHref = hrefFor('/topics/dry-vs-wet/', locale);
+const copy = {
+  en: {
+    q5: 'CCA reads the raw window with no training. Which parts of that computation carry its lead over the learned heads?',
+    lead5a: (): Bit[] => ['On the same splits, CCA on the raw two-second window reached ', L5('CCA-RAW/u8'), ' on held-out frequencies (', ...liv(D, 'CCA-RAW/u8'),
+      ', person bootstrap). Tapering the window with a Hann function changed it by ', C5(`${HANN}/u8`), ' (', ...civ(D, `${HANN}/u8`), '), to ',
+      L5('CCA-HANN-C/u8'), '. A cropped-spectrum match with no training reached ', L5('SUBSPACE-CROP/u8'), ' on held-out frequencies (',
+      ...liv(D, 'SUBSPACE-CROP/u8'), '), ', C5(`${CROP_HANN}/u8`), ' from Hann-tapered CCA (', ...civ(D, `${CROP_HANN}/u8`),
+      `). It works on the complex spectral coordinates that the earlier complex-spectrum heads read before their fitted scaling; asked with the ${nm('ref2', 'REFc-0')}, those heads reached `,
+      levelFig('ref2', EARLIER.fs), ` (${nm('ref2', 'FS')}) and `, levelFig('ref2', EARLIER.match), ` (${nm('ref2', 'MATCH')}) on `, cardLink(2, 'card 2'),
+      ', quoted here with no paired contrast. The match fits channel and reference weights for each window without labels.'],
+    lead5b: (): Bit[] => ['Averaging each channel’s energy in the reference span reached ', L5('CHANNEL-JOINT/u8'), ' (', ...liv(D, 'CHANNEL-JOINT/u8'),
+      '). One ridge scorer trained on the source people over each channel’s energy fraction at each of the ', count(dz.design.harmonics), ' harmonics reached ',
+      L5('SHARED-RIDGE/u8'), ' (', ...liv(D, 'SHARED-RIDGE/u8'), '): ', C5(`${RIDGE_AVG}/u8`), ' over that average (', ...civ(D, `${RIDGE_AVG}/u8`), ') and ',
+      C5(`${RIDGE_CCA}/u8`), ' from CCA (', ...civ(D, `${RIDGE_CCA}/u8`), '). On the seen 32-way task it was ', C5(`${RIDGE_AVG}/seen_ba`),
+      ' from the same average (', ...civ(D, `${RIDGE_AVG}/seen_ba`), ').'],
+    c5Caption: 'Card 5 on BETA: the seven prespecified contrasts, in percentage points, each with its 95% interval.',
+    c5Region: 'Card 5’s contrasts, scrolls horizontally',
+    c5Summary: 'Every scorer on both tasks',
+    c5LevelsCaption: 'Card 5 on BETA: accuracy of the seven scorers on held-out and seen frequencies, with 95% intervals.',
+    c5LevelsRegion: 'Card 5’s scorers, scrolls horizontally',
+    cap5: (): Bit[] => ['Every method is given all ', count(cohort.targets), ' candidate frequencies; held-out means left out of supervised fitting. The study has ',
+      count(cohort.card5.training_free_scorers), ' training-free scorers and ', count(cohort.card5.ridge_fits),
+      ' ridge fits, and seven prespecified contrasts on each task. ', ...intervalText(D, locale), '; no multiplicity correction.'],
+    scale5: (): Bit[] => ['The cropped coordinates match the inputs the earlier heads read on the ', count(ck.cropped_coordinates_match_earlier_cache.rows_checked),
+      ' rows checked; the heads’ fitted scaling is invertible but changes the distances the match uses. Checked: CCA reconstructed on all ',
+      count(ck.raw_cca_reconstruction.windows), ' windows, the training-free scorers spot-checked on ', count(ck.independent_analytic_spot_check.rows_checked),
+      ' rows, all ', count(ck.independent_ridge_refits.refits), ' ridge fits refitted independently.'],
+
+    q6: 'If CCA is kept and a learned part only corrects its score, does accuracy on held-out frequencies rise?',
+    lead6: (): Bit[] => ['Keeping temporal CCA and adding a bounded learned correction to its score reached ', L6('RAW-RESIDUAL/u8'), ' on held-out frequencies (',
+      ...liv(A, 'RAW-RESIDUAL/u8'), '), against ', L6('CCA-RAW/u8'), ' for CCA alone: ', C6(`${GAIN}/u8`), ' (', ...civ(A, `${GAIN}/u8`),
+      '). On the seen 32-way task it reached ', L6('RAW-RESIDUAL/seen_ba'), ' against ', L6('CCA-RAW/seen_ba'), ' (', C6(`${GAIN}/seen_ba`), ', ',
+      ...civ(A, `${GAIN}/seen_ba`), '). The correction can reorder only candidates whose CCA correlations lie within ', num1(prot.protected_margin),
+      ' of each other. Of all held-out decisions, it turned ', pct2(tr.u8.wrong_to_right), ' from wrong to right and ', pct2(tr.u8.right_to_wrong),
+      ' from right to wrong. Giving the energy head six canonical correlations from the cropped-spectrum match, which makes it the adapted head, added ',
+      C6(`${ADAPT}/u8`), ' on held-out frequencies (', ...civ(A, `${ADAPT}/u8`), '); that gain bundles several matching operations.'],
+    cap6: (): Bit[] => ['The candidate frequencies still supply CCA’s sine and cosine references and the numeric code of each frequency. Filter-bank CCA and supervised spatial templates were not compared. The adapted head against CCA alone was not a planned contrast and has no interval. Each trained arm is the mean of three fixed training seeds. Six prespecified contrasts on each task; ',
+      ...intervalText(A, locale), '; no multiplicity correction.'],
+    c6Summary: 'All six arms, the six contrasts and the decision changes',
+    c6ArmsCaption: 'Card 6 on BETA: accuracy of the six arms on held-out and seen frequencies, with 95% intervals.',
+    c6ArmsRegion: 'Card 6’s arms, scrolls horizontally',
+    c6ContrastsCaption: 'Card 6 on BETA: the six prespecified contrasts, in percentage points, each with its 95% interval.',
+    c6ContrastsRegion: 'Card 6’s contrasts, scrolls horizontally',
+    c6TransCaption: (): Bit[] => ['Card 6 on BETA: how the correction changed CCA’s decisions, as shares of all decisions on each task, averaged over three seeds, then five rotations, then ',
+      count(cohort.people), ' people.'],
+    c6TransRegion: 'Card 6’s decision changes, scrolls horizontally',
+    protected6: (): Bit[] => ['Decisions whose two largest CCA correlations differed by more than ', num1(prot.protected_margin), ' changed ', count(prot.protected_flips),
+      ' times, out of ', count(prot.protected_instances.u8), ' held-out and ', count(prot.protected_instances.seen_ba), ' seen prediction instances (counted over the ',
+      count(cohort.training_seeds), ' seeds and ', count(cohort.frequency_rotations), ' rotations).'],
+
+    q7: 'Run unchanged on a second dataset, does the learned correction still change CCA’s score?',
+    scope7: (): Bit[] => ['Wearable-102: ', count(wearable.people), ' people, ', count(wearable.targets), ' targets from ', dec2(wearable.frequency_range_hz[0]), ' to ',
+      dec2(wearable.frequency_range_hz[1]), ' Hz, ', count(wearable.windows_per_sensor), ' two-second windows per sensor, dry and wet headbands, recordings as stored; ',
+      count(wearable.source_models), ' unchanged BETA models. The documentation cannot rule out that some people also appear in BETA.'],
+    lead7: (): Bit[] => ['The ', count(wsm.models), ' models of ', cardLink(6, 'card 6'), ' (', count(wsm.person_folds), ' participant folds × ', count(wsm.frequency_rotations),
+      ' frequency rotations × ', count(wsm.training_seeds), ' seeds), trained on BETA, were run unchanged on Wearable-102. On the same windows the models averaged ',
+      L7('RAW-RESIDUAL/dry'), ' on dry electrodes and ', L7('RAW-RESIDUAL/wet'), ' on wet, and matched CCA ', L7('CCA-RAW/dry'), ' and ', L7('CCA-RAW/wet'),
+      '. Paired with matched CCA, the models changed the score by ', C7('RAW-RESIDUAL_minus_CCA-RAW/dry'), ' dry (', ...civ(W, 'RAW-RESIDUAL_minus_CCA-RAW/dry'),
+      ') and ', C7('RAW-RESIDUAL_minus_CCA-RAW/wet'), ' wet (', ...civ(W, 'RAW-RESIDUAL_minus_CCA-RAW/wet'),
+      '); both intervals include zero, and no equivalence margin was set. The models’ score is CCA plus a bounded learned term, so the change from matched CCA is what the learned term adds.'],
+    a2: (): Bit[] => ['Matched CCA here uses sine and cosine references up to the third harmonic, as the models’ own CCA term does, and reached ', L7('CCA-RAW/dry'),
+      ' dry and ', L7('CCA-RAW/wet'), ' wet; ', { href: dvwHref, text: 'the dry-versus-wet page' }, '’s CCA uses references up to the fourth harmonic on the same windows and reached ',
+      dvw.dry, ' and ', dvw.wet, '.'],
+    diag7: (): Bit[] => ['A ', nm(W, 'CCA-CROP'), ' reached ', L7('CCA-CROP/dry'), ' dry and ', L7('CCA-CROP/wet'), ' wet; it is shown as a diagnostic only.'],
+    c7Caption: (): Bit[] => ['Card 7: accuracy among the ', count(wearable.targets), ' Wearable-102 targets, by sensor, with 95% intervals.'],
+    c7Region: 'Card 7’s Wearable-102 results, scrolls horizontally',
+    colStratum: 'Wearable-102 sensor', colChange: 'Change from matched CCA', colCrop: 'Cropped-spectrum check (Wearable-102), diagnostic',
+    stratum: { dry: 'Wearable-102, dry', wet: 'Wearable-102, wet', all: 'Wearable-102, both sensors' },
+    role: { primary: 'primary', secondary: 'secondary' }, windowsWord: ' windows',
+    limitsLabel: 'Limits.',
+    limits7: (): Bit[] => ['Wearable-102’s stored amplitude unit is undocumented and the correction reads amplitude spectra, so these are as-stored figures. Its windows start ',
+      dec2(wd.dataset.window_s[0]), ' s after stimulus onset and BETA’s at onset, and hardware, reference, people and frequency grid change at the same time, so no single factor is isolated. Both methods receive the ',
+      count(wearable.targets), ' candidate frequencies. Each person’s accuracy is computed for each of the ', count(wsm.models),
+      ' models and averaged over models, then over people, with no ensemble, refit or model choice. This task on other recordings stands apart from the BETA results of cards 1 to 6.'],
+    cap7: (): Bit[] => ['Dry and wet are the two primary contrasts and both sensors the secondary one. ', ...intervalText(W, locale), '; no multiplicity correction.'],
+
+    colContrast: 'Contrast', colHeld: 'Held-out 8-way', colSeen: 'Seen 32-way balanced', colNote: 'Note', colName: 'Name on this page', colCode: 'Export code',
+    colOutcome: 'Decision change', colCounts: 'What it counts',
+    outcome: {
+      wrong_to_right: ['Wrong to right', 'CCA alone chose a wrong frequency; with the correction the decision was right.'],
+      right_to_wrong: ['Right to wrong', 'CCA alone chose the right frequency; with the correction the decision was wrong.'],
+      wrong_to_different_wrong: ['Wrong to a different wrong', 'Both decisions wrong, on different frequencies.'],
+      unchanged_right: ['Unchanged, right', 'Both chose the right frequency.'],
+      unchanged_wrong: ['Unchanged, wrong', 'Both chose the same wrong frequency.'],
+      changed: ['Changed in total', 'The first three rows together.'],
+    } as Record<(typeof OUTCOMES)[number], [string, string]>,
+  },
+  zh: {
+    q5: 'CCA 不经训练、直接读取原始时间窗。它领先于学习型分类头，靠的是这一计算中的哪些部分？',
+    lead5a: (): Bit[] => ['在相同的划分下，原始两秒时间窗上的 CCA 在留出频率上达到 ', L5('CCA-RAW/u8'), '（', ...liv(D, 'CCA-RAW/u8'),
+      '，被试 bootstrap）。给时间窗加 Hann 窗后，它变化了 ', C5(`${HANN}/u8`), '（', ...civ(D, `${HANN}/u8`), '），降至 ', L5('CCA-HANN-C/u8'),
+      '。无需训练的裁剪谱匹配在留出频率上达到 ', L5('SUBSPACE-CROP/u8'), '（', ...liv(D, 'SUBSPACE-CROP/u8'), '），与 Hann 窗 CCA 相差 ', C5(`${CROP_HANN}/u8`),
+      '（', ...civ(D, `${CROP_HANN}/u8`), `）。它所用的复数谱坐标，正是此前的复数频谱分类头在拟合缩放之前读取的坐标；以${nm('ref2', 'REFc-0')}提问时，这些分类头在`,
+      cardLink(2, '卡片 2'), ' 中分别为 ', levelFig('ref2', EARLIER.fs), `（${nm('ref2', 'FS')}）和 `, levelFig('ref2', EARLIER.match),
+      `（${nm('ref2', 'MATCH')}），这里只作对照引用，没有与它们做配对对比。该匹配不使用标签，为每个时间窗拟合通道权重与参考权重。`],
+    lead5b: (): Bit[] => ['在参考信号张成的子空间内对每个通道的能量取平均，达到 ', L5('CHANNEL-JOINT/u8'), '（', ...liv(D, 'CHANNEL-JOINT/u8'),
+      '）。在源被试上训练的单个岭回归打分器，以每个通道在 ', count(dz.design.harmonics), ' 个谐波上各自的能量占比为输入，达到 ', L5('SHARED-RIDGE/u8'), '（',
+      ...liv(D, 'SHARED-RIDGE/u8'), '）：相对该平均为 ', C5(`${RIDGE_AVG}/u8`), '（', ...civ(D, `${RIDGE_AVG}/u8`), '），相对 CCA 为 ', C5(`${RIDGE_CCA}/u8`), '（',
+      ...civ(D, `${RIDGE_CCA}/u8`), '）。在见过频率的 32 类任务上，它与同一平均相差 ', C5(`${RIDGE_AVG}/seen_ba`), '（', ...civ(D, `${RIDGE_AVG}/seen_ba`), '）。'],
+    c5Caption: '卡片 5（BETA）：七个预先设定的对比，单位为百分点，均附 95% 区间。',
+    c5Region: '卡片 5 的对比，可横向滚动',
+    c5Summary: '各打分方法在两项任务上的结果',
+    c5LevelsCaption: '卡片 5（BETA）：七种打分方法在留出频率与见过的频率上的准确率，附 95% 区间。',
+    c5LevelsRegion: '卡片 5 的打分方法，可横向滚动',
+    cap5: (): Bit[] => ['每种方法都获得全部 ', count(cohort.targets), ' 个候选频率；“留出”指不参与有监督的拟合。本研究包含 ', count(cohort.card5.training_free_scorers),
+      ' 种无需训练的打分方法和 ', count(cohort.card5.ridge_fits), ' 次岭回归拟合，每项任务上有七个预先设定的对比。', ...intervalText(D, locale), '；未做多重比较校正。'],
+    scale5: (): Bit[] => ['在核对的 ', count(ck.cropped_coordinates_match_earlier_cache.rows_checked),
+      ' 行上，裁剪后的坐标与此前分类头读取的输入一致；分类头拟合的缩放是可逆的，但会改变匹配所用的距离。核对方式：在全部 ', count(ck.raw_cca_reconstruction.windows),
+      ' 个时间窗上重建了 CCA，无需训练的打分方法抽查了 ', count(ck.independent_analytic_spot_check.rows_checked), ' 行，', count(ck.independent_ridge_refits.refits),
+      ' 次岭回归拟合全部独立重新拟合。'],
+
+    q6: '保留 CCA，只让学习的部分修正它的得分，留出频率上的准确率会提高吗？',
+    lead6: (): Bit[] => ['保留时域 CCA，在其得分上加一个有界的学习修正，在留出频率上达到 ', L6('RAW-RESIDUAL/u8'), '（', ...liv(A, 'RAW-RESIDUAL/u8'), '），CCA 单独为 ',
+      L6('CCA-RAW/u8'), '：', C6(`${GAIN}/u8`), '（', ...civ(A, `${GAIN}/u8`), '）。在见过频率的 32 类任务上，它达到 ', L6('RAW-RESIDUAL/seen_ba'), '，CCA 为 ',
+      L6('CCA-RAW/seen_ba'), '（', C6(`${GAIN}/seen_ba`), '，', ...civ(A, `${GAIN}/seen_ba`), '）。这个修正只能重新排序 CCA 相关系数彼此相差在 ', num1(prot.protected_margin),
+      ' 以内的候选。在全部留出频率的判断中，它把 ', pct2(tr.u8.wrong_to_right), ' 由错改对，把 ', pct2(tr.u8.right_to_wrong),
+      ' 由对改错。给能量分类头加入裁剪谱匹配的六个典型相关系数，即得到适配分类头，在留出频率上带来 ', C6(`${ADAPT}/u8`), '（', ...civ(A, `${ADAPT}/u8`),
+      '）；这一增益捆绑了多项匹配运算。'],
+    cap6: (): Bit[] => ['候选频率仍为 CCA 提供正弦与余弦参考信号，也提供每个频率的数值编码。这里没有与滤波器组 CCA 和有监督的空间模板做比较。适配分类头与单独 CCA 的比较不是预先计划的对比，没有区间。每个训练组取三个固定训练种子的平均。每项任务上有六个预先设定的对比；',
+      ...intervalText(A, locale), '；未做多重比较校正。'],
+    c6Summary: '全部六组、六个对比与判断的变化',
+    c6ArmsCaption: '卡片 6（BETA）：六组在留出频率与见过的频率上的准确率，附 95% 区间。',
+    c6ArmsRegion: '卡片 6 的各组，可横向滚动',
+    c6ContrastsCaption: '卡片 6（BETA）：六个预先设定的对比，单位为百分点，均附 95% 区间。',
+    c6ContrastsRegion: '卡片 6 的对比，可横向滚动',
+    c6TransCaption: (): Bit[] => ['卡片 6（BETA）：修正如何改变 CCA 的判断，以占该任务全部判断的比例表示；先在三个种子上平均，再在五个轮换上平均，最后在 ', count(cohort.people), ' 名被试上平均。'],
+    c6TransRegion: '卡片 6 的判断变化，可横向滚动',
+    protected6: (): Bit[] => ['CCA 中最大的两个相关系数相差超过 ', num1(prot.protected_margin), ' 的判断，改变了 ', count(prot.protected_flips), ' 次；这样的预测实例在留出频率上有 ',
+      count(prot.protected_instances.u8), ' 个，在见过的频率上有 ', count(prot.protected_instances.seen_ba), ' 个（在 ', count(cohort.training_seeds), ' 个种子与 ',
+      count(cohort.frequency_rotations), ' 个轮换上合计）。'],
+
+    q7: '原样用于第二个数据集时，学习修正还会改变 CCA 的得分吗？',
+    scope7: (): Bit[] => ['Wearable-102：', count(wearable.people), ' 名被试，', count(wearable.targets), ' 个目标（', dec2(wearable.frequency_range_hz[0]), ' 至 ',
+      dec2(wearable.frequency_range_hz[1]), ' Hz），每种电极 ', count(wearable.windows_per_sensor), ' 个两秒时间窗，干电极与湿电极头带，记录按原样存储；', count(wearable.source_models),
+      ' 个未改动的 BETA 模型。数据集文档无法排除部分被试也出现在 BETA 中。'],
+    lead7: (): Bit[] => [cardLink(6, '卡片 6'), ' 的 ', count(wsm.models), ' 个模型（', count(wsm.person_folds), ' 个被试折 × ', count(wsm.frequency_rotations), ' 个频率轮换 × ',
+      count(wsm.training_seeds), ' 个种子）在 BETA 上训练，原样用于 Wearable-102。在相同的时间窗上，模型平均为干电极 ', L7('RAW-RESIDUAL/dry'), '、湿电极 ',
+      L7('RAW-RESIDUAL/wet'), '，匹配 CCA 为 ', L7('CCA-RAW/dry'), ' 和 ', L7('CCA-RAW/wet'), '。与匹配 CCA 配对比较，模型使干电极的得分变化 ',
+      C7('RAW-RESIDUAL_minus_CCA-RAW/dry'), '（', ...civ(W, 'RAW-RESIDUAL_minus_CCA-RAW/dry'), '），湿电极变化 ', C7('RAW-RESIDUAL_minus_CCA-RAW/wet'), '（',
+      ...civ(W, 'RAW-RESIDUAL_minus_CCA-RAW/wet'), '）；两个区间都包含零，也没有设定等效界值。模型的得分是 CCA 加一个有界的学习项，因此相对匹配 CCA 的变化就是学习项带来的部分。'],
+    a2: (): Bit[] => ['此处的匹配 CCA 与模型内部的 CCA 项相同，使用到三次谐波的正弦和余弦参考信号，干电极为 ', L7('CCA-RAW/dry'), '、湿电极为 ', L7('CCA-RAW/wet'), '；',
+      { href: dvwHref, text: '「干电极与湿电极」页面' }, '的 CCA 在相同窗口上使用到四次谐波的参考信号，为 ', dvw.dry, ' 和 ', dvw.wet, '。'],
+    diag7: (): Bit[] => [nm(W, 'CCA-CROP'), '的干电极为 ', L7('CCA-CROP/dry'), '、湿电极为 ', L7('CCA-CROP/wet'), '；它只作为诊断列出。'],
+    c7Caption: (): Bit[] => ['卡片 7：在 Wearable-102 的 ', count(wearable.targets), ' 个目标之间选择的准确率，按电极类型列出，附 95% 区间。'],
+    c7Region: '卡片 7 的 Wearable-102 结果，可横向滚动',
+    colStratum: 'Wearable-102 电极类型', colChange: '相对匹配 CCA 的变化', colCrop: '裁剪谱检查（Wearable-102），仅作诊断',
+    stratum: { dry: 'Wearable-102，干电极', wet: 'Wearable-102，湿电极', all: 'Wearable-102，两种电极合并' },
+    role: { primary: '主要对比', secondary: '次要对比' }, windowsWord: ' 个时间窗',
+    limitsLabel: '局限：',
+    limits7: (): Bit[] => ['Wearable-102 存储的幅值单位没有文档说明，而修正项读取的是幅度谱，所以这些数字都基于原样存储的记录。它的时间窗从刺激开始后 ', dec2(wd.dataset.window_s[0]),
+      ' s 起，BETA 的时间窗从刺激开始时起；硬件、参考电极、被试和频率网格也同时改变，因此无法分离出单一因素。两种方法都获得这 ', count(wearable.targets),
+      ' 个候选频率。每名被试的准确率对 ', count(wsm.models), ' 个模型分别计算，先在模型上平均，再在被试上平均；没有集成、重新拟合或模型挑选。这一任务基于另一批记录，与卡片 1 至 6 的 BETA 结果分开看待。'],
+    cap7: (): Bit[] => ['干电极与湿电极为两个主要对比，两种电极合并为次要对比。', ...intervalText(W, locale), '；未做多重比较校正。'],
+
+    colContrast: '对比', colHeld: '留出频率，8 选 1', colSeen: '见过的频率，32 类平衡', colNote: '说明', colName: '本页名称', colCode: '导出代码',
+    colOutcome: '判断的变化', colCounts: '统计的是什么',
+    outcome: {
+      wrong_to_right: ['由错改对', 'CCA 单独时选错了频率，加修正后判断正确。'],
+      right_to_wrong: ['由对改错', 'CCA 单独时选对了频率，加修正后判断错误。'],
+      wrong_to_different_wrong: ['由错改为另一个错', '两次判断都错，但选的频率不同。'],
+      unchanged_right: ['未变，正确', '两者都选对了频率。'],
+      unchanged_wrong: ['未变，错误', '两者选了同一个错误频率。'],
+      changed: ['共改变', '前三行之和。'],
+    } as Record<(typeof OUTCOMES)[number], [string, string]>,
+  },
+}[locale];
+need(siteName('matched CCA', 'en') === wz.display_names['CCA-RAW'] && wz.display_names['RAW-RESIDUAL'] === az.display_names['RAW-RESIDUAL'],
+  'card 7’s names: matched CCA, and the card 6 model');
+const transRows = OUTCOMES.map(k => ({ k, words: copy.outcome[k], cells: TASKS.map(t => pct2(tr[t][k])) }));
+const heads7 = [copy.colStratum, cap(nm(W, 'RAW-RESIDUAL')), cap(nm(W, 'CCA-RAW')), copy.colChange, copy.colCrop];
+const [c5, c6, c7] = sections;
+---
+<section class="topic-section ssvep-card" id={c5.anchor} aria-labelledby={c5.headingId} data-ssvep-card={c5.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c5.eyebrow}</p><h2 id={c5.headingId}>{c5.title}</h2></div><p data-ssvep-note="question">{copy.q5}</p></div>
+  <p class="roadmap-p" data-ssvep-note="lead">{copy.lead5a().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="roadmap-p" data-ssvep-note="lead">{copy.lead5b().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.c5Region}>
+    <table data-ssvep-table="c5-contrasts">
+      <caption>{copy.c5Caption}</caption>
+      <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th><th scope="col">{copy.colNote}</th></tr></thead>
+      <tbody>{c5Rows.map(r => <tr data-contrast={r.stem}>
+        <th scope="row">{r.name}</th>
+        {r.cells.map(c => <td><span data-fig={figAttr(c.est)} class="metric">{show(c.est)}</span><span class="interval">{tc.interval95} {c.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{show(p)}</span>)}</span></td>)}
+        <td>{r.notes.length ? r.notes.join(zh ? '' : ' ') : '—'}</td>
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <details class="rd-panel" data-ssvep-details="c5-levels">
+    <summary>{copy.c5Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.c5LevelsRegion}>
+      <table data-ssvep-table="c5-levels">
+        <caption>{copy.c5LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colCode}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th></tr></thead>
+        <tbody>{c5Levels.map(r => <tr data-arm={r.code}>
+          <th scope="row">{r.name}{r.training && <small>{r.training}</small>}</th>
+          <td><code>{r.code}</code></td>
+          {r.cells.map(c => <td><span data-fig={figAttr(c.est)} class="metric">{show(c.est)}</span><span class="interval">{tc.interval95} {c.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{show(p)}</span>)}</span></td>)}
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-note="caption">{copy.cap5().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="protocol-note" data-ssvep-note="checks">{copy.scale5().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+</section>
+
+<section class="topic-section ssvep-card" id={c6.anchor} aria-labelledby={c6.headingId} data-ssvep-card={c6.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c6.eyebrow}</p><h2 id={c6.headingId}>{c6.title}</h2></div><p data-ssvep-note="question">{copy.q6}</p></div>
+  <p class="roadmap-p" data-ssvep-note="lead">{copy.lead6().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="protocol-note" data-ssvep-note="caption">{copy.cap6().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <details class="rd-panel" data-ssvep-details="c6-tables">
+    <summary>{copy.c6Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.c6ArmsRegion}>
+      <table data-ssvep-table="c6-arms">
+        <caption>{copy.c6ArmsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colCode}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th></tr></thead>
+        <tbody>{c6Arms.map(r => <tr data-arm={r.code}>
+          <th scope="row">{r.name}{r.training && <small>{r.training}</small>}</th>
+          <td><code>{r.code}</code></td>
+          {r.cells.map(c => <td><span data-fig={figAttr(c.est)} class="metric">{show(c.est)}</span><span class="interval">{tc.interval95} {c.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{show(p)}</span>)}</span></td>)}
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.c6ContrastsRegion}>
+      <table data-ssvep-table="c6-contrasts">
+        <caption>{copy.c6ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th><th scope="col">{copy.colNote}</th></tr></thead>
+        <tbody>{c6Rows.map(r => <tr data-contrast={r.stem}>
+          <th scope="row">{r.name}</th>
+          {r.cells.map(c => <td><span data-fig={figAttr(c.est)} class="metric">{show(c.est)}</span><span class="interval">{tc.interval95} {c.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{show(p)}</span>)}</span></td>)}
+          <td>{r.notes.length ? r.notes.join(zh ? '' : ' ') : '—'}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.c6TransRegion}>
+      <table data-ssvep-table="c6-transitions">
+        <caption>{copy.c6TransCaption().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</caption>
+        <thead><tr><th scope="col">{copy.colOutcome}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th><th scope="col">{copy.colCounts}</th></tr></thead>
+        <tbody>{transRows.map(r => <tr data-transition={r.k}>
+          <th scope="row">{r.words[0]}</th>
+          {r.cells.map(f => <td><span data-fig={figAttr(f)} class="metric">{show(f)}</span></td>)}
+          <td>{r.words[1]}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-ssvep-note="protected">{copy.protected6().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  </details>
+</section>
+
+<section class="topic-section ssvep-card" id={c7.anchor} aria-labelledby={c7.headingId} data-ssvep-card={c7.card}>
+  <div class="topic-heading"><div><p class="eyebrow">{c7.eyebrow}</p><h2 id={c7.headingId}>{c7.title}</h2></div><p data-ssvep-note="question">{copy.q7}</p></div>
+  <p class="roadmap-p ssvep-scope" data-ssvep-scope="card-7">{copy.scope7().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="roadmap-p" data-ssvep-note="lead">{copy.lead7().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.c7Region}>
+    <table data-ssvep-table="c7-wearable">
+      <caption>{copy.c7Caption().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</caption>
+      <thead><tr>{heads7.map(h => <th scope="col">{h}</th>)}</tr></thead>
+      <tbody>{wRows.map(r => <tr data-stratum={r.k} data-role={r.role}>
+        <th scope="row">{copy.stratum[r.k]}<small>{copy.role[r.role]} · <span data-fig={figAttr(r.windows)}>{show(r.windows)}</span>{copy.windowsWord}</small></th>
+        {[r.model, r.cca, r.change, r.crop].map(c => <td><span data-fig={figAttr(c.est)} class="metric">{show(c.est)}</span><span class="interval">{tc.interval95} {c.iv.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{show(p)}</span>)}</span></td>)}
+      </tr>)}</tbody>
+    </table>
+  </div>
+  <p class="roadmap-p" data-ssvep-note="a2-cca">{copy.a2().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="roadmap-p" data-ssvep-note="wearable-diagnostic">{copy.diag7().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="protocol-note" data-ssvep-note="limits"><strong>{copy.limitsLabel}</strong>{zh ? '' : ' '}{copy.limits7().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+  <p class="protocol-note" data-ssvep-note="caption">{copy.cap7().map(b => typeof b === 'string' ? b : isLink(b) ? <a href={b.href}>{b.text}</a> : <span data-fig={figAttr(b)}>{show(b)}</span>)}</p>
+</section>
+
+<style is:global>
+  /* Global, not scoped (the page's contract: a scoped style would add data-astro-cid-* to every element, and
+     check-workbench.mjs reads figures by their exact markup). Every selector starts from one of these cards. */
+  :is([data-ssvep-card="5"],[data-ssvep-card="6"],[data-ssvep-card="7"]) .topic-table th[scope=row] small{display:block;margin-top:3px;font-size:.7rem;font-weight:400;color:var(--muted);line-height:1.4}
+  :is([data-ssvep-card="5"],[data-ssvep-card="6"]) .topic-table td code{font-family:var(--mono);font-size:.72rem}
+  :is([data-ssvep-card="5"],[data-ssvep-card="6"],[data-ssvep-card="7"]) .topic-table td:last-child:not(:has(.metric)){font-size:.8rem;color:var(--muted)}
+  /* The column floor is for wide screens; phones stack the table (stack-tables.ts). */
+  @media (min-width:641px){:is([data-ssvep-card="5"],[data-ssvep-card="6"],[data-ssvep-card="7"]) .topic-table td:last-child:not(:has(.metric)){min-width:220px}}
+  :is([data-ssvep-card="5"],[data-ssvep-card="6"],[data-ssvep-card="7"]) p.roadmap-p a{color:var(--accent)}
+</style>

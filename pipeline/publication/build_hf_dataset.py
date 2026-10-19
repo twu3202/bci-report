@@ -13,6 +13,7 @@ mirror that other people have already cloned.
 """
 import argparse
 import csv
+import io
 import json
 import re
 import shutil
@@ -33,6 +34,11 @@ import export_foundation_models_update as foundation_export
 import export_shared_representation_update as shared_export
 import export_later_sessions_update as later_export
 import export_questions_in_language_update as questions_export
+import export_new_ssvep_frequencies_update as ssvep_export
+import export_data_quality_update as quality_export
+import export_clinical_iesseeg_update as iesseeg_export
+import export_neurolm_eegmat_update as neurolm_export
+import export_open_register as register_export
 import export_beyond_scalp_update as beyond_export
 import export_pilot_studies_update as pilot_export
 import export_eegpt_core_update as eegpt_export
@@ -209,6 +215,22 @@ def reviewed_payload(name, module, label):
     payload = json.loads(raw)
     validate_public(payload)
     return raw, payload
+
+
+# The 2026-10-20 release: four result exports, each refused unless it is the one its own audit passed.
+RELEASE_20261020 = (('new-ssvep-frequencies-update.json', ssvep_export, 'SSVEP follow-ups'),
+                    ('data-quality-update.json', quality_export, 'Data quality'),
+                    ('clinical-iesseeg-update.json', iesseeg_export, 'Clinical IESSEEG'),
+                    ('neurolm-eegmat-update.json', neurolm_export, 'NeuroLM EEGMAT'))
+
+
+def register_csv():
+    """The open register's dataset ladder as its audit bound it. Only the CSV ships here: it carries no comparison
+    finding about another upload (owner decision D3 keeps those to bci.report and its JSON)."""
+    raw = (PUBLISHED/'open-register-20261020.csv').read_bytes()
+    audit = json.loads(register_export.EXPORT_AUDIT_OUT.read_text())
+    assert audit['status'] == 'pass' and hashlib.sha256(raw).hexdigest() == audit['csv_sha256'], 'Register CSV is not the reviewed one'
+    return raw
 
 
 def beyond_payload():
@@ -623,6 +645,24 @@ release they come from; the third is mostly a negative result for questions the
 EEG head was never trained on."""
 
 
+def release_20261020_paragraph():
+    rows = sum(1 for _ in csv.DictReader(io.StringIO(register_csv().decode('utf8'))))
+    return f"""`new-ssvep-frequencies-update.json`: **six follow-up experiments on BETA and one on
+Wearable-102** asking what lets a decoder answer an SSVEP frequency it never
+trained on: reference-spectrum queries, matching heads, phase jitter and phase
+ramps, CCA's mechanism, and a bounded learned correction on top of CCA.
+`data-quality-update.json`: **Shin2022 checked end to end**, a participant-held-out
+diagnostic with its coverage accounting; eldBETA and ZuCo 2.0 as status only.
+`clinical-iesseeg-update.json`: **an infant case-control pilot (IESSEEG)** with age and
+recording-setting controls and frozen NeuroLM probes; point estimates, no clinical use.
+`neurolm-eegmat-update.json`: **NeuroLM's frozen tokenizer features on EEGMAT**, a
+separate panel beside the pilot studies.
+`open-register-20261020.csv`: **the open register's dataset ladder**, {rows} rows: every
+dataset bci.report lists, with the furthest of five verification steps it has
+reached and the gaps. The full register, with its findings, is at
+https://bci.report/datasets/register/."""
+
+
 def card(snapshot, n_rows, topics, n_foundation=128):
     tracks = len(snapshot['tracks'])
     # Methods that actually produced a row, not the size of the model catalogue.
@@ -859,6 +899,8 @@ are not published.
 
 {eegpt_paragraph()}
 
+{release_20261020_paragraph()}
+
 {scored} of {catalogued} catalogued methods have been scored ({models} in `results.csv`;
 {' and '.join(f'{n} in `{f}`' for n, f in scored_elsewhere)}). A catalogued method
 with no row in any file has not been run, which is not the same as having
@@ -1056,6 +1098,9 @@ def build(output):
     (output/'pilot-studies-update.json').write_bytes(raw_pilot)
     raw_eegpt, _ = eegpt_payload()
     (output/'eegpt-core-update.json').write_bytes(raw_eegpt)
+    for name, module, label in RELEASE_20261020:
+        (output/name).write_bytes(reviewed_payload(name, module, label)[0])
+    (output/'open-register-20261020.csv').write_bytes(register_csv())
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')

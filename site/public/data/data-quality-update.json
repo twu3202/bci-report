@@ -1,0 +1,589 @@
+{
+  "schema_version": "bci-report-data-quality-update-v1",
+  "release_id": "data-quality-update-20261020",
+  "generated_at": "2026-10-20",
+  "status": "aggregate_preview",
+  "title": "Checked end to end",
+  "question": "What do the files show once a public EEG dataset is checked end to end?",
+  "placement": {
+    "page": "/topics/data-quality/",
+    "group": "reliability",
+    "sections": [
+      "shin2022",
+      "eldbeta",
+      "zuco2"
+    ],
+    "leaderboard": false,
+    "core_matrix": false
+  },
+  "metric_units": "balanced accuracies and their interval bounds are proportions in [0,1]; the percent fields of the coverage chain are percentages; counts of runs, windows, trials, blocks, targets, participants, channels and values are whole numbers; null means not stated, never zero",
+  "scope": "Three public EEG datasets read from their files: Shin2022 as a worked case, with a participant-held-out diagnostic and the chain from the release’s recorded runs to the windows it is scored on, and eldBETA and ZuCo 2.0 as status cases with no score. Outside every leaderboard and the core matrix.",
+  "cases": [
+    {
+      "id": "shin2022",
+      "kind": "worked_case",
+      "status": "released"
+    },
+    {
+      "id": "eldbeta",
+      "kind": "status_case",
+      "status": "score_held"
+    },
+    {
+      "id": "zuco2",
+      "kind": "status_case",
+      "status": "no_score"
+    }
+  ],
+  "shin2022": {
+    "id": "shin2022",
+    "kind": "worked_case",
+    "section": "shin2022",
+    "name": "Shin2022",
+    "question": "What survives a participant-held-out check?",
+    "task": "Right-versus-left instructed target in the first second of cursor feedback, for a participant held out entirely.",
+    "scope": {
+      "participants": 10,
+      "recording_days_each": 1,
+      "participant_health": "healthy",
+      "channels": 16,
+      "sampling_hz": 250,
+      "sensor": "dry",
+      "hardware": "g.tec g.Nautilus RESEARCH (16 channel)",
+      "paradigm": "closed-loop right/left cursor control with visual feedback",
+      "human_recordings_only": true,
+      "foundation_models": false,
+      "leaderboard": false,
+      "core_matrix": false
+    },
+    "labels": {
+      "state": "TargetCode",
+      "classes": {
+        "1": "instructed right target",
+        "2": "instructed left target"
+      },
+      "outcome_used": false
+    },
+    "method": {
+      "evaluation": "leave-one-participant-out",
+      "folds": 10,
+      "training_participants_each_fold": 9,
+      "window": "the first second of feedback, read from its recorded start, never extended or padded",
+      "window_samples": 250,
+      "window_seconds": 1.0,
+      "features": 32,
+      "bands_hz": {
+        "alpha": [
+          8,
+          12
+        ],
+        "beta": [
+          13,
+          30
+        ]
+      },
+      "reference_band_hz": [
+        1,
+        40
+      ],
+      "ridge_alpha": 1.0,
+      "tuning": false,
+      "channel_names": "EEG1–EEG16 in stored order; the headers carry no channel names",
+      "primary_statistic": "the unweighted mean of the held-out participants’ balanced accuracies",
+      "secondary_statistic": "balanced accuracy pooled over all signal-valid windows",
+      "hypothesis_tests": false,
+      "label_from_outcome": false
+    },
+    "interval": {
+      "kind": "participant bootstrap percentile interval",
+      "level": 0.95,
+      "resamples": 10000,
+      "seed": 20261019,
+      "unit": "participant",
+      "one_index_matrix_for_all_arms": true,
+      "percentile_method": "linear interpolation",
+      "descriptive": true
+    },
+    "arms": [
+      {
+        "arm": "training_prior",
+        "participant_bootstrap_percentile_95": [
+          0.5,
+          0.5
+        ],
+        "participant_mean_balanced_accuracy": 0.5,
+        "pooled_balanced_accuracy_secondary": 0.5,
+        "name": "Participant-weighted training prior",
+        "role": "reference",
+        "input": "No input: always the larger training class, with each training participant weighted equally."
+      },
+      {
+        "arm": "normalized_spectral_ridge",
+        "participant_bootstrap_percentile_95": [
+          0.5151479335970062,
+          0.5365559126246574
+        ],
+        "participant_mean_balanced_accuracy": 0.5258798351627936,
+        "pooled_balanced_accuracy_secondary": 0.5255062493354576,
+        "name": "Normalized spectral ridge",
+        "role": "eeg",
+        "input": "32 log band powers relative to each channel’s 1–40 Hz power: alpha (8–12 Hz) and beta (13–30 Hz) on each of the 16 stored channels; ridge with alpha 1.0, no tuning."
+      },
+      {
+        "arm": "retrospective_duration_ridge",
+        "participant_bootstrap_percentile_95": [
+          0.5086500807371863,
+          0.5402184183943439
+        ],
+        "participant_mean_balanced_accuracy": 0.5232989594475479,
+        "pooled_balanced_accuracy_secondary": 0.5214808477895801,
+        "name": "Retrospective duration control",
+        "role": "retrospective_control",
+        "input": "One value: the log of the full feedback duration, which is known only after the trial ends; ridge with alpha 1.0."
+      }
+    ],
+    "caveat": "The scores cover the signal-valid windows only: feedback lasting at least one second, and a first second that is finite with positive 1–40 Hz power on all 16 channels. The label is the instructed target in closed-loop cursor recordings, which carry visual, controller and behaviour confounds. The duration control reads the whole feedback duration, known only after the trial ends, so it checks a confound; the spectral arm sits close to it, and no test between arms was run. Ten participants, one recording day each; the intervals are descriptive.",
+    "coverage_chain": [
+      {
+        "id": "recorded_runs",
+        "count": 110,
+        "evidence": "label_and_duplicate_audit",
+        "text": "Runs in the release’s human recordings; the simulated branch is excluded and adds no participant."
+      },
+      {
+        "id": "byte_identical_pairs",
+        "count": 9,
+        "pair_conditions": [
+          "BW30",
+          "NT0"
+        ],
+        "within_one_participant": true,
+        "evidence": "label_and_duplicate_audit",
+        "text": "Pairs of runs that are byte-identical: each pair sits within one participant and joins a BW30 run and an NT0 run."
+      },
+      {
+        "id": "distinct_runs",
+        "count": 101,
+        "closed_windows": 2412,
+        "evidence": "label_and_duplicate_audit",
+        "text": "Distinct runs once each byte-identical pair counts once."
+      },
+      {
+        "id": "incomplete_run_held",
+        "count": 1,
+        "role": "held",
+        "evidence": "label_and_duplicate_audit",
+        "text": "One run ends inside a feedback window; it is held whole."
+      },
+      {
+        "id": "complete_runs",
+        "count": 100,
+        "participants": 10,
+        "windows_per_run_by_target": {
+          "1": 12,
+          "2": 12
+        },
+        "evidence": "label_and_duplicate_audit",
+        "text": "Complete distinct runs, each with twelve closed feedback windows per target."
+      },
+      {
+        "id": "closed_windows",
+        "count": 2400,
+        "by_target": {
+          "1": 1200,
+          "2": 1200
+        },
+        "evidence": "label_and_duplicate_audit",
+        "text": "Closed feedback windows in the complete runs."
+      },
+      {
+        "id": "shorter_than_one_second",
+        "count": 167,
+        "by_target": {
+          "1": 76,
+          "2": 91
+        },
+        "role": "excluded",
+        "evidence": "label_and_duplicate_audit",
+        "text": "Feedback ended within the first second, so the window holds less than the one second the arms read."
+      },
+      {
+        "id": "duration_eligible",
+        "count": 2233,
+        "by_target": {
+          "1": 1124,
+          "2": 1109
+        },
+        "evidence": "signal_census_review",
+        "text": "Windows with at least one second of feedback."
+      },
+      {
+        "id": "signal_invalid",
+        "count": 13,
+        "by_target": {
+          "1": 7,
+          "2": 6
+        },
+        "flat_on_all_channels": 8,
+        "flat_on_some_channels": 5,
+        "non_finite_input_windows": 0,
+        "role": "excluded",
+        "evidence": "export",
+        "text": "Windows whose first second is constant on at least one channel, which leaves that channel no 1–40 Hz power; the rule was frozen after a score-free census and before any fit."
+      },
+      {
+        "id": "signal_valid",
+        "count": 2220,
+        "by_target": {
+          "1": 1117,
+          "2": 1103
+        },
+        "percent_of_closed_windows": 92.5,
+        "percent_of_duration_eligible": 99.4178235557546,
+        "participants_with_both_targets": 10,
+        "evidence": "export",
+        "text": "Signal-valid windows: the population all three arms are scored on."
+      }
+    ],
+    "catalog": {
+      "catalog": "MOABB dataset summary",
+      "catalog_trial_seconds": 6,
+      "header_feedback_cap_seconds": 6,
+      "headers_read": 110,
+      "reading": "The catalog’s six-second trial length is the feedback cap (MaxFeedbackDuration) that every run’s header sets.",
+      "register": "MOABB’s catalog trial and run counts for Shin2022 are findings on its register row."
+    },
+    "how_checked": [
+      {
+        "id": "strict-protocol-stopped",
+        "state": "held",
+        "models_fitted": 0,
+        "text": "The first, strict protocol over all duration-eligible windows met a flat signal interval at its zero-power gate and stopped before any model was fitted; that attempt stays failed and held."
+      },
+      {
+        "id": "score-free-census",
+        "state": "pass",
+        "windows": 2233,
+        "models_trained": 0,
+        "scores_computed": false,
+        "text": "A census read the signal of every duration-eligible window, with no model and no score."
+      },
+      {
+        "id": "second-protocol-frozen",
+        "state": "pass",
+        "scores_inspected_during_design": false,
+        "text": "A second protocol with the signal-validity rule was frozen after the census and before any fit."
+      },
+      {
+        "id": "predictions-sealed",
+        "state": "pass",
+        "text": "Predictions were sealed before the audit; metrics were computed only after it."
+      },
+      {
+        "id": "independent-audit",
+        "state": "pass",
+        "metrics_reproduced": true,
+        "max_decision_difference": 9.992007221626409e-15,
+        "text": "An independent audit rebuilt every metric from the sealed predictions."
+      },
+      {
+        "id": "release-review",
+        "state": "pass",
+        "text": "An independent release review passed the aggregate values and the coverage for publication."
+      }
+    ],
+    "holds": [
+      "The paper pairs NT0 with BW60, while the byte-identical runs pair BW30 with NT0; which recording NT0 stands for is unresolved.",
+      "Comparisons between the BW, CV and NT control-parameter conditions are held: one BW60 header records a 5-second buffer, and the NT and CV headers record 30-second defaults.",
+      "The incomplete run is held whole; using its closed windows would need its own frozen rule.",
+      "A task over every closed window, whatever its duration, would need its own frozen protocol.",
+      "The full scalp montage, the display latency, the absolute hardware calibration and any overlap with pretraining corpora are unestablished.",
+      "The physical cause of the flat intervals is unknown.",
+      "Exact deduplication leaves trials dependent within each participant and run sequence; every run of a participant stays in that participant’s fold."
+    ],
+    "rights": {
+      "name": "Shin2022 · Data from: Closed-loop motor imagery EEG simulation for brain-computer interfaces (Shin, Suma and He)",
+      "task": "Closed-loop right/left cursor control with visual feedback; the label is the instructed target.",
+      "source": "https://doi.org/10.6084/m9.figshare.20383716.v1",
+      "version": "Figshare record 20383716, version 1, the only version the record lists",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Hyonyoung Shin, Daniel Suma and Bin He · Data from: Closed-loop motor imagery EEG simulation for brain-computer interfaces, figshare, doi:10.6084/m9.figshare.20383716.v1, CC BY 4.0. Paper: Hyonyoung Shin, Daniel Suma and Bin He, Closed-loop motor imagery EEG simulation for brain-computer interfaces, Frontiers in Human Neuroscience 16:951591 (2022), doi:10.3389/fnhum.2022.951591. Funding: NIH AT009263. Modifications: canonical deduplication of the byte-identical runs, first-second window selection and signal-validity filtering. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-19",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/20383716/versions/1",
+        "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.951591/full"
+      ],
+      "privacyReview": "The study was reviewed and approved by the Institutional Review Board of Carnegie Mellon University; the paper gives no approval number. The participants gave written informed consent to take part in the study. The data record states that all identifying information has been removed. Published here: each arm’s participant-mean balanced accuracy with its participant-bootstrap interval and pooled secondary value, and aggregate run and window counts; no per-participant value, identifier, prediction or signal.",
+      "terms": {
+        "data_licence": {
+          "value": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "stated_by": "Figshare record 10.6084/m9.figshare.20383716.v1, licence field",
+          "read_from": "https://api.figshare.com/v2/articles/20383716/versions/1",
+          "read_at": "2026-10-19T15:38:16Z",
+          "capture_sha256": "6ad051001e2923c60dc62b13fd961af5df70b17cd01e3cd2f31ac8541a4cefa6",
+          "pinned_version": 1,
+          "versions_listed": 1,
+          "pinned_version_is_latest": true
+        },
+        "paper_licence": {
+          "value": "Creative Commons Attribution License (CC BY)",
+          "quote": "This is an open-access article distributed under the terms of the Creative Commons Attribution License (CC BY)",
+          "covers": "the article text and figures; the data licence is the Figshare record's"
+        },
+        "other_terms_stated": [
+          {
+            "item": "de-identification",
+            "quote": "All identifying information have been removed.",
+            "stated_by": "Figshare record description"
+          },
+          {
+            "item": "citation request",
+            "quote": "Please cite the above paper if you use any data included in this dataset.",
+            "stated_by": "Figshare record description"
+          }
+        ],
+        "linked_code": {
+          "url": "https://github.com/mcvain/bci-simulator",
+          "note": "The simulator code is a separate work linked from the data record; the data licence covers the data record."
+        }
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "statement": "The study was reviewed and approved by the Institutional Review Board of Carnegie Mellon University; the paper gives no approval number.",
+        "quote": "The studies involving human participants were reviewed and approved by the Institutional Review Board of Carnegie Mellon University.",
+        "body": "Institutional Review Board of Carnegie Mellon University",
+        "approval_number": null,
+        "location": "paper, Ethics statement"
+      },
+      "informed_consent": {
+        "stated": true,
+        "kind": "written informed consent",
+        "statement": "The participants gave written informed consent to take part in the study.",
+        "quote": "The patients/participants provided their written informed consent to participate in this study.",
+        "location": "paper, Ethics statement"
+      },
+      "read_from": "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.951591/full",
+      "read_section": "Ethics statement",
+      "read_at": "2026-10-19T15:38:23Z",
+      "capture_sha256": "8081e8395bfed4cc23981d1a34d2d2bc50c77372c177db9b597aff12c92f079b",
+      "gaps": [
+        {
+          "field": "ethics.approval_number",
+          "note": "The paper names the approving board and gives no approval or protocol number."
+        }
+      ]
+    }
+  },
+  "eldbeta": {
+    "id": "eldbeta",
+    "kind": "status_case",
+    "section": "eldbeta",
+    "status": "score_held",
+    "name": "eldBETA",
+    "counts": {
+      "participants_run": 1,
+      "published_participants": 100,
+      "blocks": 7,
+      "targets": 9,
+      "trials": 63,
+      "trials_passing_checks": 63,
+      "trials_dropped": 0,
+      "non_finite_values_in_analysed_windows": 0,
+      "non_finite_values_outside_analysed_windows": 248320
+    },
+    "flags": {
+      "header_calibration_applied": true,
+      "derived_matlab_epochs_used": false,
+      "recordings_repaired": false,
+      "score_published": false
+    },
+    "status_text": "The raw-recording route runs end to end on one participant’s seven blocks: all 63 trials pass the reader and the quality checks, none dropped. The continuous recordings hold 248,320 non-finite values outside the analysed windows, left as recorded. With one person every score is that person’s, so the accuracy is held.",
+    "held": {
+      "what": "the one-participant training-free CCA accuracy",
+      "reason": "With one person every score is that person’s.",
+      "decision": "the owner’s decision for this release, keeping the one-person rule"
+    },
+    "holds": [
+      "The derived MATLAB epochs were not used: their amplitude scale, resampling and exact endpoints are unestablished.",
+      "The raw recordings were read with the header calibration applied; the recorded unit code has no independent audit.",
+      "The non-finite values in the continuous recordings are neither located nor explained.",
+      "The other 99 published participants are neither acquired nor evaluated."
+    ],
+    "related": {
+      "fact": "eldBETA is in SingLEM’s published pretraining list, as SingLEM’s exposure row on BETA records; eldBETA and BETA are separate databases.",
+      "file": "foundation-models-update.json",
+      "model": "singlem",
+      "model_name": "SingLEM",
+      "dataset": "beta"
+    },
+    "rights": {
+      "name": "eldBETA: A Large Eldercare-oriented Benchmark Database of SSVEP-BCI for the Aging Population (Liu, Wang, Gao and Chen)",
+      "task": "Nine-target SSVEP selection by older adults, recorded in seven blocks per person.",
+      "source": "https://doi.org/10.6084/m9.figshare.18032669.v3",
+      "version": "Figshare record 18032669, version 3, the latest of the 3 versions the record lists",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Bingchuan Liu, Yijun Wang, Xiaorong Gao and Xiaogang Chen · eldBETA: A Large Eldercare-oriented Benchmark Database of SSVEP-BCI for the Aging Population, figshare, doi:10.6084/m9.figshare.18032669.v3, CC BY 4.0. Data descriptor: Scientific Data, doi:10.1038/s41597-022-01372-9. Funding: National Natural Science Foundation of China (No. 62171473). Modifications: decoding of the original recording format with the header calibration, and fixed channel and window selection; no score from these data is published. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-19",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/18032669/versions/3",
+        "https://www.nature.com/articles/s41597-022-01372-9"
+      ],
+      "privacyReview": "The protocol followed the Declaration of Helsinki and was approved by the institutional review board of Tsinghua University, approval number 20210032. The participants were familiarised with the protocol and gave full written consent before the experiment. Published here: counts for one participant’s recordings (blocks, targets, trials, trials dropped and non-finite values) and no score; no identifier, per-trial value or signal.",
+      "terms": {
+        "data_licence": {
+          "value": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "stated_by": "Figshare record 10.6084/m9.figshare.18032669.v3, licence field",
+          "read_from": "https://api.figshare.com/v2/articles/18032669/versions/3",
+          "read_at": "2026-10-19T15:38:18Z",
+          "capture_sha256": "2c7bc79717a5b05a51135948a03f1313bae45d8a40b2f06bb7fda39304e5721d",
+          "pinned_version": 3,
+          "versions_listed": 3,
+          "pinned_version_is_latest": true
+        },
+        "paper_licence": {
+          "value": "Creative Commons Attribution 4.0 International License",
+          "quote": "This article is licensed under a Creative Commons Attribution 4.0 International License",
+          "covers": "the data descriptor article; the data licence is the Figshare record's"
+        },
+        "other_terms_stated": [
+          {
+            "item": "access",
+            "quote": "The eldBETA database is open-access for research and can be downloaded from the website",
+            "stated_by": "data descriptor, abstract"
+          }
+        ]
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "statement": "The protocol followed the Declaration of Helsinki and was approved by the institutional review board of Tsinghua University, approval number 20210032.",
+        "quote": "The experimental protocol was under the declaration of Helsinki and approved by the institutional review board of Tsinghua University (NO. 20210032).",
+        "body": "Institutional review board of Tsinghua University",
+        "approval_number": "20210032",
+        "location": "data descriptor, Methods, Participants"
+      },
+      "informed_consent": {
+        "stated": true,
+        "kind": "written consent",
+        "statement": "The participants were familiarised with the protocol and gave full written consent before the experiment.",
+        "quote": "The participants were instructed to be familiarized with experimental protocol and gave full written consent before the experiment.",
+        "location": "data descriptor, Methods, Participants"
+      },
+      "read_from": "https://www.nature.com/articles/s41597-022-01372-9",
+      "read_section": "Methods, Participants",
+      "read_at": "2026-10-19T15:38:25Z",
+      "capture_sha256": "be6ee193ed347217cb3c50d88add275093bde9367780c97fdb2376b253549435",
+      "gaps": []
+    }
+  },
+  "zuco2": {
+    "id": "zuco2",
+    "kind": "status_case",
+    "section": "zuco2",
+    "status": "no_score",
+    "name": "ZuCo 2.0",
+    "finding": "In one converted run on NEMAR, some fixation times fall outside the recording; the run’s stimulus markers lie within it.",
+    "hold": "No EEG–text score is computed until the converter's timing rules and a source-checksummed fixture are available.",
+    "scope": "The hold covers that one converted run; no timing was corrected and no row removed.",
+    "clears_when": [
+      "the exact converter revision, configuration and environment, with its rules for casts, time origin and boundaries",
+      "a source-checksummed timing fixture with the original start and end timestamps and the recording’s start and end clocks",
+      "the canonical mapping of triggers, sentences and runs"
+    ],
+    "flags": {
+      "fixation_times_outside_recording": true,
+      "stimulus_markers_within_recording": true,
+      "timing_corrected": false,
+      "rows_removed": false,
+      "score_computed": false,
+      "data_redistributed": false
+    },
+    "consent_and_ethics": {
+      "read": false,
+      "gap": "No consent or ethics statement for this dataset was read in this release."
+    },
+    "source": {
+      "name": "ZuCo 2.0",
+      "repository": "NEMAR",
+      "accession": "nm000279",
+      "version": "1.0.0",
+      "doi": "10.82901/nemar.nm000279.v1.0.0",
+      "url": "https://data.nemar.org/nm000279/v1.0.0/",
+      "licence_as_stated": "CC-BY-4.0",
+      "licence_stated_by": "the dataset_description.json of that version",
+      "terms_unverified": [
+        "the original terms on OSF",
+        "terms for the text excerpts the stimuli quote"
+      ],
+      "citation": "Hollenstein, N., Troendle, M., Zhang, C., & Langer, N. (2020). ZuCo 2.0: A Dataset of Physiological Recordings During Natural Reading and Annotation. LREC 2020."
+    }
+  },
+  "holds": [
+    {
+      "id": "eldbeta-one-participant-score",
+      "case": "eldbeta",
+      "state": "score held",
+      "reason": "One participant: every score would be that person's, so the accuracy is held by the owner's decision."
+    },
+    {
+      "id": "zuco2-converted-run-timing",
+      "case": "zuco2",
+      "state": "no score",
+      "reason": "Fixation timing in one converted run falls outside the recording; no EEG–text score until the converter's timing rules and a source-checksummed fixture are available."
+    }
+  ],
+  "not_published": [
+    "Participant rows of any kind: identifiers, run and file names, fold assignments, features, fitted models, decision values and predictions; raw signals from any of the three datasets.",
+    "Per-participant figures from the Shin2022 evidence: window counts per participant and their ranges, and which participants had flat windows.",
+    "The Shin2022 feedback-duration distribution (quantiles and mean) and the per-channel counts of the signal census.",
+    "eldBETA's one-participant accuracy and its fixed first-frequency comparator: held by the owner's decision under the one-person rule.",
+    "ZuCo 2.0's converted-run code, row-level timing values and marker counts; no ZuCo 2.0 data are redistributed.",
+    "MOABB's catalog trial and run counts for Shin2022: register content, in the open register file.",
+    "Compute times, storage sizes, hosts and storage locations.",
+    "The research exports, audits, reviews, protocols and handoffs themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because several carry private storage paths."
+  ],
+  "release_record": {
+    "date": "2026-10-20",
+    "decided": "2026-10-19",
+    "decision": "Publish the data-quality page's three cases: Shin2022's participant-held-out diagnostic with its three arms and its coverage chain, and eldBETA and ZuCo 2.0 as status cases with no score.",
+    "eldbeta": "Status and counts only, by the owner's decision: one participant's recordings pass the reader and the quality checks, and every score from one person would be that person's, so the accuracy is held.",
+    "zuco2": "Status only: a fixation-timing hold on one converted run, with no figure and no score.",
+    "placement": "A new question page in the reliability group, outside every leaderboard and the core matrix; Shin2022's arms sit beside their coverage chain."
+  },
+  "provenance": {
+    "manifest_sha256": "57d38a4f89486fec7edce50825d7ac977af25cfae035bb9bda9a6393aca4e005",
+    "source_export_sha256": {
+      "shin2022": "04a8b3a4842147b24bd105f4cdbc0fb06d2892e6591149b7a03a433ffb070d58",
+      "eldbeta": "01badee2179110badcb4689a65a1272c540ed1a4fac5a665def93ac4a0cbbe42"
+    },
+    "release_audit_sha256": {
+      "shin2022": "7eeb3bdf463bf1caff05a0bb7c043c57521781c5a172763a09ddbf6a6241bc1a",
+      "eldbeta": "6a93d8a0183e601bbd2d6d841e1f7a9b267d3cf35bd3232717cb5dbd324ff415"
+    },
+    "protocol_sha256": {
+      "shin2022": "c141bb45f1f8de819f9607b55050b5a86da2fb7c149fbaa07a8e9e8037aeda99",
+      "eldbeta": "781716d8ad8eacdd69ef8702db9fed09f89e8f4b5ae47e1744370da08b599cc3"
+    },
+    "evidence_sha256": {
+      "label_and_duplicate_audit": "931bd8933017131839df0ee1837decef459b70f02648e55fd2043a2d5221bf07",
+      "signal_census_review": "1443631ab2b082a1f1a48c88e71b1d98e30b065f3c7b1c0bc7258e759f9d500d",
+      "eldbeta_raw_qc": "ed686dba181bd3e5f9b5fd26462ab7f940e83d62046e7ab0f62aed091e1ed9f8",
+      "zuco2_alignment_audit": "9536f58a5743688f24ce70857d2c8b884b9b19f33032d148e7dcbc40f8b3571f",
+      "consent_statements": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69"
+    },
+    "released_files_unchanged": [
+      "foundation-models-update.json"
+    ],
+    "holds": [
+      "eldbeta-one-participant-score",
+      "zuco2-converted-run-timing"
+    ]
+  }
+}

@@ -8,6 +8,7 @@ import { siteUpdates } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 import { entityPaths } from '../data/entities';
 import { protocolPagesDate, protocolPaths } from '../data/protocols';
+import { modelRegisterPageBuilt, registerPageBuilt } from '../data/files';
 
 /**
  * `lastmod` only, taken from the release each page actually renders.
@@ -35,10 +36,17 @@ const EVIDENCE_PAGES = new Set(['/topics/fewer-electrodes/', '/topics/on-the-mov
 const CLINICAL_PAGES = new Set(['/', '/topics/clinical-groups/', '/data-use/']);
 // The newest site update that changed the page, if any (releases.ts keeps the history).
 // An update marked `entityPages` changed every dataset and method page (2026-10-02:
-// each gained a cite block), so it dates all of them without listing each one.
+// each gained a cite block), so it dates all of them without listing each one; one
+// marked `datasetPages` changed every dataset page (2026-10-20: each gained its line
+// to the open register).
 const ENTITY = /^\/(?:datasets|methods)\//;
+const DATASET = /^\/datasets\//;
 const updatedOn = (path: string) => siteUpdates.find(u =>
-  (u.paths as readonly string[]).includes(path) || ('entityPages' in u && u.entityPages && ENTITY.test(path)))?.date;
+  (u.paths as readonly string[]).includes(path) || ('entityPages' in u && u.entityPages && ENTITY.test(path))
+  || ('datasetPages' in u && u.datasetPages && DATASET.test(path)))?.date;
+// The register pages are built only while the register file is served and their routes exist (files.ts); the
+// sitemap lists a register page only when it is built.
+const unbuilt = new Set([...(registerPageBuilt ? [] : ['/datasets/register/']), ...(modelRegisterPageBuilt ? [] : ['/methods/register/'])]);
 // Dataset and method pages that no update names keep the date they were first published.
 const ENTITY_FIRST_PUBLISHED = siteUpdates[siteUpdates.length - 1].date;
 const lastmodOf = (path: string) =>
@@ -56,7 +64,10 @@ export const GET: APIRoute = ({ site: origin }) => {
   // in the 2026-09-27 site update; each carries the newest update that changed it.
   // Protocol pages (src/data/protocols.ts): one per core-matrix protocol, plus
   // their index, first published in the 2026-10-02 site update (protocolPagesDate).
-  for (const path of [...translatedPaths, ...entityPaths, ...protocolPaths]) {
+  // Each path once: the register pages (2026-10-20) are listed in translatedPaths, and a path both lists carry
+  // would otherwise appear twice.
+  for (const path of new Set([...translatedPaths, ...entityPaths, ...protocolPaths])) {
+    if (unbuilt.has(path)) continue;
     const links = alternates(path, base)
       .map((l) => `<xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${l.href}"/>`).join('');
     for (const code of locales)

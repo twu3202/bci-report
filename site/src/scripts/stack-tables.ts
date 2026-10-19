@@ -58,7 +58,9 @@ function label(t: HTMLTableElement) {
       if (results && !lead && i > 0 && figure) { cell.dataset.lead = ''; lead = true; }
       // A sentence-long cell takes the block's full width rather than a narrow half of it; a
       // short one ("15", "0.2 s") sits on one line after its column's name.
-      const length = (cell.textContent ?? '').trim().length;
+      // A CJK character is about two Latin characters wide.
+      const text = (cell.textContent ?? '').trim();
+      const length = text.length + (text.match(/[\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g)?.length ?? 0);
       if (i > 0 && !figure && length > 36) cell.dataset.wide = '';
       cell.toggleAttribute('data-short', i > 0 && length <= 12);
       c += cell.colSpan;

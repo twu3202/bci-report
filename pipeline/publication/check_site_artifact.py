@@ -250,6 +250,24 @@ def check(root):
     if eegpt_rederived:
         assert eegpt_core_audit.audit() == eegpt_audit, 'EEGPT core independent audit no longer reproduces'
     expected.add('eegpt-core-update.json')
+    # The 2026-10-20 release: four result exports and the open register, each served exactly as its audit bound it.
+    review_0420 = PROJECT/'research/publication_review_20261020'
+    for served, audit_path, manifest_path in (
+            ('new-ssvep-frequencies-update.json', 'new-ssvep-frequencies-export-audit.json', 'new-ssvep-frequencies-release-manifest.json'),
+            ('data-quality-update.json', 'data-quality-export-audit.json', 'data-quality-release-manifest.json'),
+            ('clinical-iesseeg-update.json', 'clinical-iesseeg-export-audit.json', 'clinical-iesseeg-release-manifest.json'),
+            ('neurolm-eegmat-update.json', 'neurolm-eegmat-export-audit.json', 'neurolm-eegmat-release-manifest.json'),
+            ('open-register-20261020.json', 'register/open-register-export-audit.json', 'register/open-register-release-manifest.json')):
+        audit = json.loads((review_0420/audit_path).read_text())
+        payload = (root/'data'/served).read_bytes()
+        assert audit['status'] == 'pass', f'{served}: its audit did not pass'
+        assert hashlib.sha256(payload).hexdigest() == audit['export_sha256'], f'Unreviewed download {served}'
+        assert hashlib.sha256((review_0420/manifest_path).read_bytes()).hexdigest() == audit['manifest_sha256'], f'{served}: manifest is not the audited one'
+        assert (PROJECT/'site/src/data'/served).read_bytes() == payload, f'{served}: source/download drift'
+        expected.add(served)
+    reg_audit = json.loads((review_0420/'register/open-register-export-audit.json').read_text())
+    assert hashlib.sha256((root/'data/open-register-20261020.csv').read_bytes()).hexdigest() == reg_audit['csv_sha256'], 'Unreviewed register CSV'
+    expected.add('open-register-20261020.csv')
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -264,7 +282,8 @@ def check(root):
         if path.suffix in BINARY_SUFFIXES:
             continue
         content = path.read_text()
-        assert not any(term in content for term in forbidden), path
+        # A web address is not a filesystem path: the SEED terms page lives at bcmi.sjtu.edu.cn/home/seed/ (2026-10-20).
+        assert not any(term in re.sub(r'https?://[^\s"\'<>]+', '', content) for term in forbidden), path
         assert not re.search(r'\bsub-\d{2,}\b',content), path
         if path.suffix=='.json': validate_public(json.loads(content))
     for path in root.rglob('*.html'):

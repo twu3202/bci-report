@@ -15,6 +15,24 @@
  * stops a later update from rolling an earlier page's date back.
  */
 import { BINGO_HOLD, HANDWRITING_HOLD, bingoReleased, handwritingReleased } from './pilot-switch';
+// The open-register release's four result files: the figures its notes print are read from them, never typed.
+import ssvepFollowUps from './new-ssvep-frequencies-update.json';
+import dataQuality from './data-quality-update.json';
+import clinicalIesseeg from './clinical-iesseeg-update.json';
+import neurolmEegmat from './neurolm-eegmat-update.json';
+// The open register's newest file (its name is `openRegister.json` below; the two are checked equal).
+import registerFile from './open-register-20261020.json';
+
+/**
+ * The open register's newest version (owner decision D1): the release that ships it and its two files. The register
+ * pages read these files; each later version is a new dated file and release, and earlier files stay served and
+ * listed. Any link to a register page is guarded on `openRegister.json` being served (files.ts `isServed`).
+ */
+export const openRegister = {
+  release: 'open-register-update-20261020',
+  json: 'open-register-20261020.json',
+  csv: 'open-register-20261020.csv',
+} as const;
 
 // The pilots a switch holds (pilot-switch.ts), named as the release text names them; none while every switch releases.
 const pilotsHeld = [...(bingoReleased ? [] : ['bingo']), ...(handwritingReleased ? [] : ['handwriting'])];
@@ -27,6 +45,24 @@ const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net
 // The seven core datasets' pages, which carry a group per core protocol (EEGPT's since 2026-10-13).
 const coreDatasetPages = ['ds003810', 'eegmat', 'beta', 'ds006593', 'tmnred', 'eesm19', 'ds005342'].map(slug => `/datasets/${slug}/`);
 export const siteUpdates = [
+  {
+    date: '2026-10-20',
+    // The open-register release (owner decisions D1–D13): the two register pages, and the /datasets/ and /methods/ hubs'
+    // lines to them; every dataset page's "Row in the open register" line (`datasetPages`), Shin2022's new page and its
+    // group, Wearable-102's transfer group, BETA's link to the new question and its article; two new questions,
+    // new-ssvep-frequencies and data-quality, with their cards on the home page and the Questions hub, and the home
+    // holds band's two new holds (eldBETA's one-person score, ZuCo 2.0's converted-run timing); clinical-groups' IESSEEG
+    // section and its dek; pilot-studies' separate NeuroLM panel, with its pointer on the Arithmetic & rest protocol
+    // page; route 3's link to the follow-ups on questions-in-language and /jev-style/; the article lines on
+    // later-sessions and model-adaptation; the release log, the API page and data use. The topic switcher on every
+    // other topic page lists the two new questions too; that is navigation and is not counted here.
+    paths: ['/', '/topics/', '/topics/new-ssvep-frequencies/', '/topics/data-quality/', '/topics/clinical-groups/',
+            '/topics/pilot-studies/', '/protocols/arithmetic-rest/', '/topics/questions-in-language/', '/jev-style/',
+            '/topics/later-sessions/', '/topics/model-adaptation/',
+            '/datasets/', '/datasets/register/', '/datasets/shin2022/', '/datasets/beta/', '/datasets/wearable-ssvep-102/',
+            '/methods/', '/methods/register/', '/releases/', '/api/', '/data-use/'],
+    datasetPages: true,
+  },
   {
     date: '2026-10-13',
     // EEGPT on the core matrix (owner decisions of 2026-10-12 and 2026-10-13): its frozen row beside the core matrix
@@ -183,7 +219,8 @@ export interface Release {
   /** The payload whose release_id / releaseId this entry must match. */
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
     | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage'
-    | 'beyondScalp' | 'pilotStudies' | 'eegptCore';
+    | 'beyondScalp' | 'pilotStudies' | 'eegptCore'
+    | 'openRegister' | 'newSsvepFrequencies' | 'dataQuality' | 'clinicalIesseeg' | 'neurolmEegmat';
   files: string[];
   pages: string[];
   summary: Text;
@@ -197,7 +234,131 @@ const protocolFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-re
 export const foundationModelFiles = ['mi-rest', 'idle', 'beta-8ch', 'beta-4ch', 'arithmetic-rest', 'p300-target',
   'semantic-target', 'sleep-scalp'].map(id => `foundation-models-${id}.csv`);
 
+/*
+ * The figures the open-register release's notes print, read from the four result files and formatted as their pages
+ * format them: levels at two decimals in percent, contrasts at two decimals in points with their sign, interval bounds
+ * signed only when negative.
+ */
+const pct2 = (v: number) => `${(v * 100).toFixed(2)}%`;
+const pp2 = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(2)}`;
+const bound2 = (v: number) => `${v < 0 ? '−' : ''}${Math.abs(v * 100).toFixed(2)}`;
+const count = (n: number) => n.toLocaleString('en-US');
+const need = <T,>(value: T | undefined, what: string): T => {
+  if (value === undefined || value === null) throw new Error(`releases.ts: ${what} is missing from its file`);
+  return value;
+};
+const ssvepCohort = ssvepFollowUps.cohort, ssvepWearable = ssvepFollowUps.wearable;
+const ssvepAdapter = ssvepFollowUps.studies.cca_adapter;
+const ssvepCorrected = need(ssvepAdapter.levels['RAW-RESIDUAL/u8'], 'the corrected CCA level').estimate;
+const ssvepCca = need(ssvepAdapter.levels['CCA-RAW/u8'], 'the CCA level').estimate;
+const ssvepGain = need(ssvepAdapter.contrasts['RAW-RESIDUAL minus CCA-RAW/u8'], 'the correction contrast');
+const ssvepDry = need(ssvepFollowUps.studies.wearable_transfer.contrasts['RAW-RESIDUAL_minus_CCA-RAW/dry'], 'the dry contrast');
+const ssvepWet = need(ssvepFollowUps.studies.wearable_transfer.contrasts['RAW-RESIDUAL_minus_CCA-RAW/wet'], 'the wet contrast');
+const shin = dataQuality.shin2022, eld = dataQuality.eldbeta.counts;
+const shinArm = (arm: string) => need(shin.arms.find(a => a.arm === arm), `the Shin2022 arm ${arm}`);
+const shinChain = (id: string) => need(shin.coverage_chain.find(c => c.id === id), `the Shin2022 coverage step ${id}`).count;
+const shinLine = (arm: string, zh = false) => {
+  const a = shinArm(arm), [lo, hi] = a.participant_bootstrap_percentile_95.map(v => pct2(v).slice(0, -1));
+  return `${pct2(a.participant_mean_balanced_accuracy)}${zh ? `（${lo}–${hi}）` : ` (${lo}–${hi})`}`;
+};
+const iesCohort = clinicalIesseeg.cohort, iesBand = clinicalIesseeg.age_band, iesNeurolm = clinicalIesseeg.neurolm.method;
+const neurolmContrast = need(neurolmEegmat.paired_contrasts.find(c => c.id === 'tokenizer-minus-band-power'), 'the tokenizer contrast').balanced_accuracy;
+const neurolmCohort = neurolmEegmat.cohort;
+if (registerFile.release_id !== openRegister.release)
+  throw new Error(`releases.ts: ${openRegister.json} names the release ${registerFile.release_id}, not ${openRegister.release}`);
+const regCounts = registerFile.counts, regRows = regCounts.rows, regHf = regCounts.hf, regMoabb = regCounts.moabb;
+// The snapshot's retrieval time, as a date and a UTC time (the counts are that snapshot's, owner decision D11).
+const regSnapshot = { day: regHf.snapshot.retrieved_at.slice(0, 10), time: regHf.snapshot.retrieved_at.slice(11, 16) };
+const regDay = (zh: boolean) => { const [y, m, d] = regSnapshot.day.split('-').map(Number);
+  return zh ? `${y} 年 ${m} 月 ${d} 日` : `${d} ${['January','February','March','April','May','June','July','August','September','October','November','December'][m - 1]} ${y}`; };
+
 export const releases: Release[] = [
+  // The open-register release (owner decisions D1–D13, 2026-10-19): five release ids, one site version. The register
+  // is the headline, the one CITATION.cff and the home Dataset cite; the four result files follow in the plan's order.
+  {
+    id: openRegister.release, date: '2026-10-20', payload: 'openRegister',
+    files: [openRegister.json, openRegister.csv],
+    // Its two pages, and the dataset and method hubs, which link them.
+    pages: ['/datasets/register/', '/methods/register/', '/datasets/', '/methods/'],
+    summary: {
+      en: `The open register: every EEG dataset we know of and every EEG model and paper we track, each with the furthest step we have checked and what that step showed, in ${count(regRows.total)} rows (${count(regRows.dataset)} dataset rows and ${regRows.model} model rows). Two ladders with their own step names: a dataset is listed, read, traced, run here and in the core matrix; a model is identified, has its terms recorded and its files checked, is scored here and in the core matrix. Each row keeps the evidence for every step as pass, gap or not applicable, with its source, so its step is the furthest one whose evidence is on file and its gaps stay visible. The dataset rows come in five groups: uploads on Hugging Face that hold brain-signal data, from a frozen snapshot of ${regHf.snapshot.search_terms} search terms and ${regHf.snapshot.tag_filters} tag filters read on ${regDay(false)} at ${regSnapshot.time} UTC (${count(regHf.snapshot.listings)} listings, ${count(regHf.snapshot.eegdash_mirrors)} of them EEGDash mirrors, and ${count(regHf.in_scope)} other uploads in scope); OpenNeuro’s mirrors on EEGDash, as one family row; this site’s own datasets; the catalog of MOABB release ${regMoabb.release}, one row per source record (${regMoabb.loaders} loaders over ${regMoabb.record_groups} records, ${regMoabb.merged_into_site_rows} of them merged into this site’s rows); and corpora that require an agreement or request, with their access terms as captured from the source. Anything can be listed here; the score tables keep their own rules.`,
+      zh: `开放登记册：我们知道的每个 EEG 数据集、关注的每个 EEG 模型与论文，各自核验到了哪一步、那一步看到了什么，共 ${count(regRows.total)} 行（数据集 ${count(regRows.dataset)} 行，模型 ${regRows.model} 行）。两条核验序列，各有自己的步骤名称：数据集依次为已列出、已读取、已追溯、在本站运行、进入核心矩阵；模型依次为已识别、已记录条款、已检查文件、在本站评分、进入核心矩阵。每一行都保留每一步的证据——通过、缺口或不适用，并注明出处——所以一行所处的步骤，就是证据已在案的最远一步，缺口也一直可见。数据集分五组：Hugging Face 上含脑信号数据的上传，来自冻结的一次检索快照（${regHf.snapshot.search_terms} 个检索词与 ${regHf.snapshot.tag_filters} 个标签筛选，于 ${regDay(true)} UTC ${regSnapshot.time} 读取：${count(regHf.snapshot.listings)} 条列表，其中 ${count(regHf.snapshot.eegdash_mirrors)} 条是 EEGDash 镜像，另有 ${count(regHf.in_scope)} 个上传在收录范围内）；EEGDash 上的 OpenNeuro 镜像，合为一个系列行；本站自己的数据集；MOABB ${regMoabb.release} 版的目录，每个原始记录一行（${regMoabb.loaders} 个加载器对应 ${regMoabb.record_groups} 个记录，其中 ${regMoabb.merged_into_site_rows} 个并入本站的行）；以及需要签署协议或提出申请的语料，附从来源页面存档的访问条款。任何数据集都可以列在这里；分数表照旧按自己的规则。`,
+    },
+    notes: [
+      { en: 'The rules, stated once on the register: gated data, or data that needs a signed or requested agreement, stays at step 1 unless we accept its terms; suspected re-uploads stay at step 1 whatever their gating, compared by metadata only, with none of their files downloaded; a finding about a re-upload is stated only when an independent check confirms it and a captured page of the original terms backs it, and then in factual words: that an upload matches another source’s metadata, or that its declared terms differ from the original terms; rows state facts; and every row has a correction route, a mail that names the row’s id. The CSV carries no findings; they are in the JSON. Repository ids and usernames appear in a row’s text, never in a link or an anchor; an uploader’s series of repositories is one family row; card text, download counts and modification dates are not shown.',
+        zh: '登记册上只说一次的规则：需要授权才能获取的数据，或需要签署、申请协议的数据，除非我们接受其条款，否则停留在第 1 步；疑似转传的数据无论是否需要授权都停留在第 1 步，只按元数据比对，不下载任何文件；关于转传的发现，只有经独立核查确认、并有原始条款页面的存档为据时才会写出，而且只用陈述事实的措辞：某个上传与另一来源的元数据一致，或其声明的条款与原始条款不同；每一行只陈述事实；每一行都有更正途径，即一封写明该行编号的邮件。CSV 不含任何发现，发现都在 JSON 里。仓库编号与用户名只出现在行的正文里，从不出现在链接或锚点中；同一上传者的一系列仓库合为一个系列行；不显示数据卡片原文、下载次数与修改日期。' },
+      { en: 'The register now lists sources that give a reader nothing to run, such as L-FAME (CC BY-NC 4.0), because it records what was checked. Each later register version is a new dated file and release; this file stays served and listed.',
+        zh: '登记册现在也列出那些读者无从运行的数据源，例如 L-FAME（CC BY-NC 4.0），因为它记录的是核验过什么。之后每一版登记册都是一个新的带日期的文件和一次新的发布；这个文件会继续提供下载，并保留在列表中。' },
+    ],
+  },
+  {
+    id: ssvepFollowUps.release_id, date: '2026-10-20', payload: 'newSsvepFrequencies',
+    files: ['new-ssvep-frequencies-update.json'],
+    // Its own question page; Wearable-102's dataset page carries the transfer group, and the route 3 page one link.
+    pages: ['/topics/new-ssvep-frequencies/'],
+    summary: {
+      en: `Route 3’s follow-ups on SSVEP frequencies a decoder never trained on, on a new question page: seven audited studies that answer questions from a reader’s comments on Hugging Face. Six reuse route 3’s BETA cohort and splits (${ssvepCohort.people} people, ${ssvepCohort.person_folds} participant folds by ${ssvepCohort.frequency_rotations} frequency rotations, ${ssvepCohort.seen_frequencies} seen and ${ssvepCohort.held_out_frequencies} held-out frequencies; trained heads over ${ssvepCohort.training_seeds} seeds), each testing one idea: asking with the reference spectrum; the head, the spectrum or the question; a random delay on a phase-carrying query; a random phase ramp with magnitude queries; where CCA’s lead comes from; and a bounded learned correction on top of CCA. The seventh runs the correction’s models unchanged on Wearable-102’s dry and wet headbands (${ssvepWearable.people} people). Each card gives its question, what changed, the matched control, the result and its limit; every interval is its own study’s, and no multiplicity correction was applied. A status card for the cross-spectral round carries no figures; that round ships as its own release.`,
+      zh: `第三条路线关于“解码器没训练过的 SSVEP 频率”的后续检验，放在一个新的问题页上：七项经审计的研究，回答一位读者在 Hugging Face 的评论中提出的问题。其中六项沿用第三条路线的 BETA 队列与数据划分（${ssvepCohort.people} 名被试，${ssvepCohort.person_folds} 个被试折 × ${ssvepCohort.frequency_rotations} 种频率轮换，${ssvepCohort.seen_frequencies} 个已见频率与 ${ssvepCohort.held_out_frequencies} 个留出频率；训练的分类头各跑 ${ssvepCohort.training_seeds} 个随机种子），每项检验一个想法：用参考谱来提问；是分类头、频谱还是提问方式；带相位查询上的随机延迟；幅度查询下的随机相位斜坡；CCA 的领先从哪里来；以及在 CCA 之上加一个有界的学习修正。第七项把这个修正的模型原样用在 Wearable-102 的干、湿两种头带上（${ssvepWearable.people} 名被试）。每张卡片依次给出问题、改了什么、匹配的对照、结果与局限；每个区间都是该项研究自己的区间，没有做多重比较校正。互谱一轮只有一张没有数字的状态卡，那一轮将作为单独的发布上线。`,
+    },
+    notes: [
+      { en: `On frequencies left out of training, temporal CCA with a small learned correction reached ${pct2(ssvepCorrected)} against ${pct2(ssvepCca)} for CCA alone, choosing among ${ssvepCohort.held_out_frequencies} frequencies (${pp2(ssvepGain.estimate)} points, ${bound2(ssvepGain.interval[0])} to ${bound2(ssvepGain.interval[1])}; ${ssvepCohort.people} people). Run unchanged on Wearable-102, the same models changed CCA’s score by ${pp2(ssvepDry.estimate)} points on dry electrodes (${bound2(ssvepDry.interval[0])} to ${bound2(ssvepDry.interval[1])}) and ${pp2(ssvepWet.estimate)} on wet (${bound2(ssvepWet.interval[0])} to ${bound2(ssvepWet.interval[1])}). Learned heads that read reference spectra or stimulus phase stayed far below CCA.`,
+        zh: `在训练时留出的频率上，时域 CCA 加一个小的学习修正，${ssvepCohort.held_out_frequencies} 选 1 达到 ${pct2(ssvepCorrected)}，CCA 单独为 ${pct2(ssvepCca)}（${pp2(ssvepGain.estimate)} pp，${bound2(ssvepGain.interval[0])} 至 ${bound2(ssvepGain.interval[1])}；${ssvepCohort.people} 名被试）。同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${pp2(ssvepDry.estimate)} pp（${bound2(ssvepDry.interval[0])} 至 ${bound2(ssvepDry.interval[1])}）、湿电极 ${pp2(ssvepWet.estimate)} pp（${bound2(ssvepWet.interval[0])} 至 ${bound2(ssvepWet.interval[1])}）。读参考谱或刺激相位的学习型分类头远低于 CCA。` },
+      { en: `${ssvepFollowUps.release_record.rights} The stimulus phases of one query come from the BETA authors’ corrigendum, read at a pinned revision of the Hugging Face mirror ${ssvepFollowUps.rights.corrigendum.mirror}. The Wearable-102 documentation cannot rule out that some of its participants also appear in BETA.`,
+        zh: `BETA 沿用其已发布的记录：CC BY 4.0，只发布队列聚合结果，被试知情同意所述的用途为非商业科学研究。Wearable-102 沿用其已发布的记录：CC BY 4.0，只发布队列聚合结果。冻结的 CBraMod 特征就是第三条路线所用的那一份，不分发任何权重。其中一种查询所用的刺激相位，取自 BETA 作者的更正说明，读自 Hugging Face 镜像 ${ssvepFollowUps.rights.corrigendum.mirror} 的一个固定版本。Wearable-102 的文档无法排除其中部分被试也出现在 BETA 中。` },
+      { en: 'Not published: per-person, per-fold, per-rotation, per-seed, per-window and per-frequency values, predictions, scores, features, fitted heads and the sealed run files; the adapter’s per-seed accuracies and the transitions of the cropped-match correction; the Wearable-102 contrast against the cropped-spectrum check; the commenter’s name; measured compute; and the handoffs, protocols, freezes, receipts and reviews themselves, pinned by hash in the release manifest because several carry private storage paths.',
+        zh: '不发布：逐人、逐折、逐轮换、逐随机种子、逐时间窗与逐频率的任何数值，预测、分数、特征、拟合好的分类头与封存的运行文件；修正模型各随机种子的准确率，以及裁剪谱匹配加修正那一组的判定转变；Wearable-102 上相对裁剪谱核查的对比；评论者的名字；实测的计算量；以及交接文件、协议、冻结记录、回执与审核记录本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。' },
+    ],
+  },
+  {
+    id: dataQuality.release_id, date: '2026-10-20', payload: 'dataQuality',
+    files: ['data-quality-update.json'],
+    // Its own question page; Shin2022's new dataset page carries its three arms.
+    pages: ['/topics/data-quality/'],
+    summary: {
+      en: `A new question page: what do the files show once a public EEG dataset is checked end to end? Three public datasets, each read from its own files. Shin2022 is the worked case: a participant-held-out diagnostic over ${shin.scope.participants} people with three arms (a participant-weighted training prior, a normalised spectral ridge on the first second of cursor feedback, and a retrospective control that reads only the feedback duration), scored on the signal-valid windows that its coverage chain counts from the runs in the release. eldBETA and ZuCo 2.0 are status cases with no score: one participant’s eldBETA recordings, as counts, and a timing hold on one converted ZuCo 2.0 run.`,
+      zh: `一个新的问题页：把公开 EEG 数据集从头到尾核一遍，文件里能看到什么？三个公开数据集，都从各自的文件读起。Shin2022 是完整的案例：在 ${shin.scope.participants} 名被试上做整名被试留出的诊断，共三个组（按被试等权的训练集先验、在光标反馈第一秒上的归一化 spectral ridge，以及只读反馈时长的回溯对照）；评分所用的是信号有效的时间窗，由覆盖链从发布中的 run 一路清点而来。eldBETA 与 ZuCo 2.0 是没有分数的状态案例：eldBETA 一名被试的记录，只给计数；ZuCo 2.0 一个转换后记录的时间问题，暂缓。`,
+    },
+    notes: [
+      { en: `Shin2022: in the release, ${shinChain('byte_identical_pairs')} pairs of runs are byte-identical, so the files hold ${shinChain('distinct_runs')} distinct runs, and one incomplete run is held whole. On the signal-valid windows the normalised spectral ridge reached ${shinLine('normalized_spectral_ridge')} participant-mean balanced accuracy and the duration control ${shinLine('retrospective_duration_ridge')}, against ${pct2(shinArm('training_prior').participant_mean_balanced_accuracy)} for the prior. ${shin.caveat} ${shin.catalog.reading}`,
+        zh: `Shin2022：发布中有 ${shinChain('byte_identical_pairs')} 对 run 逐字节相同，所以文件里实际是 ${shinChain('distinct_runs')} 个不同的 run；另有一个不完整的 run 整个暂缓。在信号有效的时间窗上，归一化 spectral ridge 按被试平均的平衡准确率为 ${shinLine('normalized_spectral_ridge', true)}，时长对照为 ${shinLine('retrospective_duration_ridge', true)}，训练集先验为 ${pct2(shinArm('training_prior').participant_mean_balanced_accuracy)}。分数只覆盖信号有效的时间窗：反馈至少持续一秒，且第一秒在全部 ${shin.scope.channels} 个通道上都是有限值、${shin.method.reference_band_hz.join('–')} Hz 功率为正。标签是闭环光标记录中指示的目标，带有视觉、控制器与行为上的混杂。时长对照读的是整段反馈时长，要到试次结束才知道，所以它检验的是一个混杂；频谱这一组与它相差无几，组间没有做检验。${shin.scope.participants} 名被试，每人一个记录日；区间是描述性的。目录中 ${shin.catalog.catalog_trial_seconds} 秒的试次时长，是每个 run 的文件头都设定的反馈上限（MaxFeedbackDuration）。` },
+      { en: `eldBETA: the raw-recording route runs end to end on one participant’s ${eld.blocks} blocks: all ${eld.trials} trials pass the reader and the quality checks, and ${eld.trials_dropped === 0 ? 'none is dropped' : `${eld.trials_dropped} are dropped`}. The continuous recordings hold ${count(eld.non_finite_values_outside_analysed_windows)} non-finite values outside the analysed windows, left as recorded. With one person every score is that person’s, so the accuracy is held, by the owner’s decision. The header calibration was applied, and the derived MATLAB epochs were not used. ZuCo 2.0: in one converted run on NEMAR, some fixation times fall outside the recording, so no EEG–text score is computed until the converter’s timing rules and a source-checksummed fixture are available.`,
+        zh: `eldBETA：从原始记录读起的流程，在一名被试的 ${eld.blocks} 个组块上从头到尾跑通：全部 ${eld.trials} 个试次都通过了读取与质量检查，${eld.trials_dropped === 0 ? '没有一个被剔除' : `剔除 ${eld.trials_dropped} 个`}。连续记录中，分析时间窗之外有 ${count(eld.non_finite_values_outside_analysed_windows)} 个非有限值，按记录原样保留。只有一个人时，任何分数都是这个人的分数，所以准确率按所有者的决定暂缓。读取时应用了文件头中的定标，没有使用派生的 MATLAB 分段。ZuCo 2.0：在 NEMAR 上一个转换后的记录中，有些注视时间落在记录之外，所以在转换程序的时间规则与带源校验和的测试样例具备之前，不计算任何 EEG–文本分数。` },
+      { en: `Licences, from each record: Shin2022 ${shin.rights.license} (Figshare 20383716), eldBETA ${dataQuality.eldbeta.rights.license} (Figshare 18032669), ZuCo 2.0 ${dataQuality.zuco2.source.licence_as_stated} as its NEMAR dataset description states, with the original terms on OSF and the terms of the quoted text excerpts unverified. Shin2022’s paper names its approving board and states written informed consent; eldBETA’s data descriptor gives its board’s approval number and states written consent; for ZuCo 2.0 no consent or ethics statement was read in this release. Not published: participant rows of any kind and raw signals; Shin2022’s per-participant figures, feedback-duration distribution and per-channel census counts; eldBETA’s one-participant accuracy and its comparator; ZuCo 2.0’s converted-run code, timing values and marker counts; compute; and the research exports, audits, reviews, protocols and handoffs themselves, pinned by hash in the release manifest because several carry private storage paths. MOABB’s catalog counts for Shin2022 are findings on its row in the open register.`,
+        zh: `许可来自各自的记录：Shin2022 为 ${shin.rights.license}（Figshare 20383716），eldBETA 为 ${dataQuality.eldbeta.rights.license}（Figshare 18032669），ZuCo 2.0 按其 NEMAR 数据集说明为 ${dataQuality.zuco2.source.licence_as_stated}，OSF 上的原始条款与刺激所引文本片段的条款尚未核实。Shin2022 的论文写明了批准研究的伦理委员会，并说明被试签署了书面知情同意；eldBETA 的数据描述论文给出了伦理批件编号，并说明被试签署了书面同意；ZuCo 2.0 在本次发布中没有读到知情同意或伦理声明。不发布：任何形式的逐被试数据与原始信号；Shin2022 的逐被试数字、反馈时长的分布与逐通道的普查计数；eldBETA 那一名被试的准确率及其对照；ZuCo 2.0 转换后记录的编号、时间数值与标记计数；计算量；以及研究导出文件、审计、审核、协议与交接文件本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。MOABB 目录中 Shin2022 的计数，作为发现写在开放登记册中它的那一行。` },
+    ],
+  },
+  {
+    id: clinicalIesseeg.release_id, date: '2026-10-20', payload: 'clinicalIesseeg',
+    files: ['clinical-iesseeg-update.json'],
+    // A section of the clinical-groups page (owner decision D13); no dataset page and no count.
+    pages: ['/topics/clinical-groups/'],
+    summary: {
+      en: `A new section on the clinical-groups page, with its own question: do EEG case-control results survive age and recording-setting controls? IESSEEG, a public infant EEG dataset (${iesCohort.people} people: ${iesCohort.cases} cases of infantile epileptic spasms syndrome and ${iesCohort.controls} controls, one awake minute each), on the publisher’s ${iesCohort.folds} participant-disjoint folds: six arms with and without EEG, including an age-only control, a recording-settings-only control and EEG after age is regressed out inside each training fold, and four arms that read frozen NeuroLM features with the same probes. Out-of-fold point estimates of balanced accuracy and AUROC, both shown for every arm, for everyone and for the ${iesBand.people} people aged ${iesBand.maximum_age_years} or under. The page’s Parkinson’s question, short answer and card keep their wording, and IESSEEG adds no dataset page or count.`,
+      zh: `临床分组页面上新增的一节，有自己的问题：EEG 病例对照结果经得起年龄与采集设置校正吗？IESSEEG 是一个公开的婴儿 EEG 数据集（${iesCohort.people} 名被试：${iesCohort.cases} 例婴儿癫痫性痉挛综合征病例与 ${iesCohort.controls} 名对照，每人一分钟清醒期记录），使用发布者给出的 ${iesCohort.folds} 个被试不重叠的折：六个使用或不使用 EEG 的组，包括只用年龄的对照、只用采集设置的对照，以及在每个训练折内回归掉年龄后的 EEG；另有四个组用同样的分类头读冻结的 NeuroLM 特征。给出平衡准确率与 AUROC 的折外点估计，每个组两项都列出，分别针对全部被试与 ${iesBand.maximum_age_years} 岁及以下的 ${iesBand.people} 名被试。该页面关于帕金森病的问题、简答与卡片保持原有措辞；IESSEEG 不新增数据集页面，也不计入任何计数。`,
+    },
+    notes: [
+      { en: `${clinicalIesseeg.caption} ${clinicalIesseeg.audit_boundary} ${clinicalIesseeg.neurolm.footnote}`,
+        zh: `折外点估计；事先没有指定区间或检验。每人一段清醒期记录，取前 ${iesCohort.seconds_analysed} 秒。两组之间年龄与采集设置不同；回归掉年龄是一项敏感性分析。分类头与每一个分数都经过独立复现；NeuroLM 特征本身没有用第二套实现重新提取。NeuroLM 的预处理与频谱流程不同：两段 ${count(Math.max(...clinicalIesseeg.input_qc.sampling_hz.map(x => x.hz)))} Hz 的记录先重采样到 ${iesNeurolm.sampling_hz} Hz，再做 ${iesNeurolm.bandpass_hz.join('–')} Hz 带通、${iesNeurolm.notch_hz.join(' 与 ')} Hz 陷波并除以 ${iesNeurolm.amplitude_divisor}，所以两条流程之间的差异混合了预处理与模型结构。检查点的训练阶段，以及它此前是否接触过这些被试，都是未知的。` },
+      { en: `IESSEEG: ${clinicalIesseeg.dataset.licence.replace(/^CC-BY-4\.0$/, 'CC BY 4.0')} for ${clinicalIesseeg.dataset.licence_scope}, from the release card and LICENSE at revision ${clinicalIesseeg.dataset.revision.slice(0, 8)} of ${clinicalIesseeg.dataset.repository}, cited by the title the card requests: “${clinicalIesseeg.dataset.requested_citation}”. ${clinicalIesseeg.rights.privacyReview} The card declares that the ${clinicalIesseeg.dataset.prior_reuse.case_segments} case segments were previously analysed by ${clinicalIesseeg.dataset.prior_reuse.study}; the participant-level crosswalk to that analysis is unresolved. NeuroLM-B is used frozen and identified by its checkpoint’s SHA-256; no weights are distributed. Not published: participant rows of any kind, per-fold metrics, per-group age and sex composition, intervals and tests, signals, code, the checkpoint and its features, and runtimes and storage locations.`,
+        zh: `IESSEEG：许可为 CC BY 4.0，涵盖数据集与标注，依据 ${clinicalIesseeg.dataset.repository} 在版本 ${clinicalIesseeg.dataset.revision.slice(0, 8)} 时的发布卡片与 LICENSE 文件；按卡片要求的标题引用：“${clinicalIesseeg.dataset.requested_citation}”。发布卡片写明，这项回顾性研究获得了机构审查委员会的批准，并豁免了知情同意与 HIPAA 研究授权，同时要求任何人不得尝试重新识别被试。发布边界与帕金森病比较相同：只发布聚合分数，不发布逐被试数据、预测、年龄，也不发布各组的年龄与性别构成；${iesBand.maximum_age_years} 岁及以下一栏只给出该年龄段的人数及其病例与对照人数。卡片声明，其中 ${clinicalIesseeg.dataset.prior_reuse.case_segments} 个病例片段此前已由 ${clinicalIesseeg.dataset.prior_reuse.study} 分析过；与那项分析在被试层面的对应关系尚未厘清。NeuroLM-B 以冻结方式使用，并以检查点的 SHA-256 标识；不分发任何权重。不发布：任何形式的逐被试数据、逐折指标、各组的年龄与性别构成、区间与检验、信号、代码、检查点及其特征，以及运行时间与存储位置。` },
+    ],
+  },
+  {
+    id: neurolmEegmat.release_id, date: '2026-10-20', payload: 'neurolmEegmat',
+    files: ['neurolm-eegmat-update.json'],
+    // A separate panel on the pilot-studies page, outside its pilot count; the Arithmetic & rest page points to it.
+    pages: ['/topics/pilot-studies/'],
+    summary: {
+      en: `A separate panel on the pilot-studies page, outside the pilot count and every leaderboard: NeuroLM-B kept frozen on EEGMAT’s arithmetic and rest (${neurolmCohort.people} people, ${count(neurolmCohort.windows)} two-second windows, whole participants held out in ${neurolmCohort.folds} folds), with one fixed ridge head fitted on each of three representations of the same windows: NeuroLM’s tokenizer features, its GPT hidden states and band power. Equal-person balanced accuracy and macro-F1 for each, and three paired differences with paired participant-bootstrap intervals. A pointer on the Arithmetic & rest protocol page leads to it; the core matrix keeps its rows.`,
+      zh: `试点研究页面上单独的一栏，不计入试点数量，也不进入任何排行榜：在 EEGMAT 的心算与静息上冻结使用 NeuroLM-B（${neurolmCohort.people} 名被试，${count(neurolmCohort.windows)} 个两秒时间窗，${neurolmCohort.folds} 折、整名被试留出），在同一批时间窗的三种表示上各拟合一个固定的岭回归分类头：NeuroLM 的分词器特征、它的 GPT 隐藏状态，以及频带功率。给出每种表示按被试等权的平衡准确率与宏平均 F1，以及三个配对差值及其配对被试 bootstrap 区间。“心算与静息”协议页面上有一条指向它的链接；核心矩阵的各行保持不变。`,
+    },
+    notes: [
+      { en: `Tokenizer features minus band power is ${pp2(neurolmContrast.difference)} points (paired 95% participant-bootstrap interval ${bound2(neurolmContrast.interval_95[0])} to ${pp2(neurolmContrast.interval_95[1])}): ${neurolmContrast.reading}. Pretraining exposure is unknown: EEGMAT is NeuroLM’s ${neurolmEegmat.pretraining_exposure.eegmat_instruction_task} task, one of the ${neurolmEegmat.pretraining_exposure.instruction_tasks.length} instruction tasks in its pinned code, and this checkpoint’s training stage is unresolved. The pilot has its own adapter and band-power features, so its scores sit in their own panel; rest is recorded before the task, so recording order moves with the label.`,
+        zh: `分词器特征减频带功率为 ${pp2(neurolmContrast.difference)} pp（配对的 95% 被试 bootstrap 区间 ${bound2(neurolmContrast.interval_95[0])} 至 ${pp2(neurolmContrast.interval_95[1])}）：区间跨过零，所以既不能说明哪一方更好，也不能说明两者等效。是否出现在预训练数据中：未知。EEGMAT 就是 NeuroLM 固定版本代码中 ${neurolmEegmat.pretraining_exposure.instruction_tasks.length} 个指令任务之一的 ${neurolmEegmat.pretraining_exposure.eegmat_instruction_task}，而这个检查点处于哪个训练阶段尚未厘清。这个试点有自己的适配流程与频带功率特征，所以分数单独成栏；静息在任务之前记录，所以记录顺序与标签一起变化。` },
+      { en: `${neurolmEegmat.release_record.rights} Not published: per-person, per-fold and per-window values of any kind, demographics, measured compute, the checkpoint and the NeuroLM source, and the handoff, protocol, producer, receipts and reviews themselves, pinned by hash in the release manifest because several carry private storage paths.`,
+        zh: `EEGMAT 沿用其已发布的记录：${neurolmEegmat.rights.dataset.license}，只发布聚合结果。NeuroLM 的代码在固定的提交版本下为 ${neurolmEegmat.rights.code.licence} 许可。NeuroLM-B 检查点按其 Hugging Face 仓库的许可标签为 ${neurolmEegmat.rights.checkpoint.licence}，其 ${neurolmEegmat.rights.checkpoint.model_card_bytes} 字节的模型卡没有附加任何条款。不分发任何权重，也不代表 NeuroLM 作者的认可。不发布：任何逐人、逐折与逐时间窗的数值，人口学信息，实测的计算量，检查点与 NeuroLM 源代码，以及交接文件、协议、生成脚本、回执与审核记录本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。` },
+    ],
+  },
   {
     id: 'eegpt-core-update-20261013', date: '2026-10-13', payload: 'eegptCore',
     files: ['eegpt-core-update.json'],
@@ -518,6 +679,32 @@ export interface Hold {
 
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
+  // The data-quality batch (data-quality-update.json `holds`, ids as the export gives them). eldBETA's one-person score
+  // is held by the owner's decision D2, keeping the one-person rule (Stieger, FALCON H2); its counts are published.
+  {
+    id: 'eldbeta-one-participant-score',
+    item: { en: 'eldBETA · one-person score', zh: 'eldBETA · 单人分数' },
+    state: { en: 'Status only', zh: '只发状态' },
+    opened: '2026-10-20', closed: null,
+    outcome: { en: `The raw-recording route runs end to end on one participant’s ${eld.blocks} blocks, and all ${eld.trials} trials pass the reader and the quality checks. With one person every score is that person’s, so the accuracy is held, by the owner’s decision; the counts are published.`,
+               zh: `从原始记录读起的流程在一名被试的 ${eld.blocks} 个组块上跑通，全部 ${eld.trials} 个试次都通过了读取与质量检查。只有一个人时，任何分数都是这个人的分数，所以准确率按所有者的决定暂缓；计数已发布。` },
+    card: { en: 'The raw-recording route runs end to end on one participant’s recordings. With one person every score is that person’s, so the accuracy is held; the counts are published.',
+            zh: '从原始记录读起的流程在一名被试的记录上跑通。只有一个人时，任何分数都是这个人的分数，所以准确率暂缓；计数已发布。' },
+    href: '/topics/data-quality/#eldbeta',
+  },
+  // ZuCo 2.0: one converted run's fixation timing. The card's heading names the dataset without its version number,
+  // because a hold card carries no decimal figure; the register row's outcome names it in full.
+  {
+    id: 'zuco2-converted-run-timing',
+    item: { en: 'ZuCo on NEMAR · converted-run timing', zh: 'NEMAR 上的 ZuCo · 转换后记录的时间' },
+    state: { en: 'No score', zh: '没有分数' },
+    opened: '2026-10-20', closed: null,
+    outcome: { en: 'In one converted run of ZuCo 2.0 on NEMAR, some fixation times fall outside the recording. No EEG–text score is computed until the converter’s timing rules and a source-checksummed fixture are available; no timing was corrected and no row removed.',
+               zh: '在 NEMAR 上 ZuCo 2.0 的一个转换后记录中，有些注视时间落在记录之外。在转换程序的时间规则与带源校验和的测试样例具备之前，不计算任何 EEG–文本分数；没有修正任何时间，也没有删除任何数据行。' },
+    card: { en: 'In one converted run on NEMAR, some fixation times fall outside the recording. No EEG–text score is computed until the converter’s timing rules and a source-checksummed fixture are available.',
+            zh: '在 NEMAR 上的一个转换后记录中，有些注视时间落在记录之外。在转换程序的时间规则与带源校验和的测试样例具备之前，不计算任何 EEG–文本分数。' },
+    href: '/topics/data-quality/#zuco2',
+  },
   // BINGO, while its publication switch holds it (pilot-switch.ts): the export's hold record, with no figure.
   ...(bingoReleased ? [] : [{
     id: BINGO_HOLD,

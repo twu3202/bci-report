@@ -1,0 +1,191 @@
+{
+  "release_id": "data-quality-update-20261020",
+  "release_date": "2026-10-20",
+  "reviewed_at": "2026-10-19",
+  "reviewer": "publishing session, package B5",
+  "scope": "Editorial decisions for /topics/data-quality/: Shin2022 as the worked case, with the three arms of its participant-held-out diagnostic copied verbatim from the research export that its release review approves and its coverage chain read as values from hash-pinned evidence; eldBETA and ZuCo 2.0 as status cases with no score. Consent, ethics and terms come from this release's A3 record. BI2013a and MOABB's catalog trial and run counts for Shin2022 are register content and stay out of this file. No released file changes.",
+  "approval": {
+    "date": "2026-10-19",
+    "decision": "aggregate_preview",
+    "basis": "The owner's decisions for this release, recorded in research/publication_review_20261020/owner-decisions.json and quoted below: D1 publishes Shin2022 with the data-quality page; D2 keeps eldBETA to status and counts, with its one-participant score held under the one-person rule. The Shin2022 release review (PASS) approves the export's aggregate values and coverage for a limited public release outside the motor-imagery and foundation-model leaderboards; the consistency review accepts the export as equal to the release audit. Neither research review grants website authority, which D1 supplies. Local build only: the owner previews before any deployment, GitHub, Hugging Face or Zenodo action.",
+    "ownerDecisions": {
+      "path": "research/publication_review_20261020/owner-decisions.json",
+      "note": "Quoted verbatim; the export requires each quoted text to be the current value at its key, so a changed decision stops the build. The file is not pinned by hash because other packages of this release may add decisions to it.",
+      "quoted": {
+        "D1": "All three: the seven SSVEP follow-ups (new-ssvep-frequencies), Shin2022 with the data-quality page, and IESSEEG with the NeuroLM results (clinical-groups section and the NeuroLM EEGMAT pilot panel)",
+        "D2": "Status and counts only; the score is held, keeping the one-person rule (Stieger, FALCON H2)"
+      }
+    },
+    "declaredEdits": [],
+    "decisionsOfThisReview": [
+      "Shin2022 arms verbatim: the three arms (training prior, normalized spectral ridge, retrospective duration control) carry the export's four fields per arm without rounding, and each must equal, value for value and type for type, the release audit's independently reconstructed metrics. The arm names, roles and feature descriptions are written here from the frozen protocol.",
+      "Coverage chain as values: the run chain (110 recorded runs, 9 byte-identical pairs, 101 distinct runs, 1 incomplete run held whole, 100 complete runs) is read from the label and duplicate audit; the window chain (2400 closed windows, 167 shorter than one second, 2233 duration-eligible, 13 signal-invalid of which 8 flat on all 16 channels, 2220 signal-valid) from the export, the audit, the protocol and the census review; every link must add up and must equal every second pinned record that states it. Per-participant minimums and maximums, the duration distribution and the per-channel census counts stay out, by key and by value.",
+      "No malformed strings: the export's metric_definition and limitations have lost their spaces, and the export's bytes cannot change without changing the reviewed SHA-256. None of those strings is copied; the file states the same facts in its own words, each checked against a pinned record.",
+      "The files against the catalog: the catalog's six-second trial length is the feedback cap that every run's header sets (MaxFeedbackDuration), stated from the label semantics evidence. MOABB's catalog trial and run counts for Shin2022 are findings on its register row, in the open register file; this file refuses those figures.",
+      "eldBETA per D2: status and counts only (one participant's 7 blocks, 9 targets, 63 trials, none dropped; no non-finite value in the analysed windows and 248,320 outside them, left as recorded; the header calibration applied; the derived MATLAB epochs unused). The one-participant CCA accuracy and the fixed first-frequency comparator stay out, by key, by value and by text. The counts are read from the export and must equal the release audit and the raw QC aggregate. Units are never called verified.",
+      "ZuCo 2.0: status only, with no figure outside its source identity: no run code, row value or marker count. The wording follows the ZuCo2 paragraph of the hash-bound CPU handoff, which the CPU release review checked for consistency with the follow-up; the flags come from the independent alignment audit; the source identity and stated licence from the intake gate's identity and terms blocks.",
+      "Consent, ethics and terms come only from the A3 record (consent-statements.json): statements, quotes, locations, approval numbers and gaps as recorded, each capture checked against the SHA-256 the record gives. ZuCo 2.0 has no A3 record; that gap is declared on its case.",
+      "Attribution names the creators, the version-pinned dataset DOI, the paper or data descriptor, the licence and the modifications, and ends with “Derived analysis by BCI Report; not endorsed by the authors.”",
+      "The fact line on eldBETA (it is in SingLEM's published pretraining list) is read from the released foundation-models-update.json, which keeps its bytes.",
+      "The handoffs are copy sources only. They name private storage, so no sentence of theirs is published verbatim; the private names the export refuses are read from them at run time."
+    ]
+  },
+  "sources": {
+    "shinExport": {
+      "path": "research/moabb_expansion_20261019/exports/shin2022-signal-valid-conditional-diagnostic-v2.json",
+      "sha256": "04a8b3a4842147b24bd105f4cdbc0fb06d2892e6591149b7a03a433ffb070d58",
+      "note": "The approved public aggregate. Its three arms and its coverage block are published as values; its free-text fields are not copied."
+    },
+    "shinReleaseAudit": {
+      "path": "research/moabb_expansion_20261019/evidence/Shin Signal-Valid Baseline Release Audit.json",
+      "sha256": "7eeb3bdf463bf1caff05a0bb7c043c57521781c5a172763a09ddbf6a6241bc1a",
+      "note": "Independent reconstruction of the metrics from the sealed predictions; carries private relative paths and hashes, so it is pinned and checked, never published."
+    },
+    "shinProtocol": {
+      "path": "research/moabb_expansion_20261019/protocols/Shin Signal-Valid Conditional Baseline Protocol.json",
+      "sha256": "c141bb45f1f8de819f9607b55050b5a86da2fb7c149fbaa07a8e9e8037aeda99"
+    },
+    "shinLabelDuplicateAudit": {
+      "path": "research/moabb_expansion_20261019/evidence/Shin Actual Label and Duplicate Audit.json",
+      "sha256": "931bd8933017131839df0ee1837decef459b70f02648e55fd2043a2d5221bf07",
+      "note": "The run chain and the duration split; also holds per-participant ranges and the duration distribution, which this release does not publish."
+    },
+    "shinCensusReview": {
+      "path": "research/moabb_expansion_20261019/evidence/Shin Signal QC Census Result Review.json",
+      "sha256": "1443631ab2b082a1f1a48c88e71b1d98e30b065f3c7b1c0bc7258e759f9d500d"
+    },
+    "shinResultReview": {
+      "path": "research/moabb_expansion_20261019/review/Shin Signal-Valid Baseline Result Review.md",
+      "sha256": "6b152eaaca8797c0e84a4f4ea4ecd6034e241fee7619e6f0e173f3a5d63ad3af",
+      "note": "Release authority for the aggregate values and coverage. No other file states its hash; it is pinned here."
+    },
+    "shinDuplicateReview": {
+      "path": "research/moabb_expansion_20261019/review/Shin Actual Label and Duplicate Review.md",
+      "sha256": "f432c0685e88efdfbc2c349e08579599cefe42c066e791c60f080b7d8d858b7b"
+    },
+    "shinLabelSemantics": {
+      "path": "research/moabb_expansion_20261019/review/Shin Label Semantics Evidence.md",
+      "sha256": "1b818831b7fb62f83cf6386606a0a543865b161d79ccbfd87fb95f392ac4f4f5"
+    },
+    "shinZeroPowerReview": {
+      "path": "research/moabb_expansion_20261019/review/Shin Zero Power Independent Review.md",
+      "sha256": "8297b74cc9b762098c63bb1a6b0fa754794e40ac9806a613109349e00f18b18b"
+    },
+    "moabbConsistencyReview": {
+      "path": "research/moabb_expansion_20261019/review/MOABB Handoff Consistency Review.md",
+      "sha256": "8aa0ee96c2509b4f3a2042960f5463e5293494b13add0a2741eff96fbe3253cc"
+    },
+    "moabbWebsiteHandoff": {
+      "path": "research/moabb_expansion_20261019/MOABB Expansion Website Update Handoff.md",
+      "sha256": "290ae6970310ecead0534288a0ab8609ad309767e0893471e50c4156c5c47a31",
+      "note": "Copy source only; names private storage."
+    },
+    "moabbShortlist": {
+      "path": "research/moabb_expansion_20261019/evidence/moabb-shortlist-verified.json",
+      "sha256": "02a7708b8f3db4b59df4bf5ed1904e2629afd60cec5f2913c055f54f73c045fc",
+      "note": "MOABB catalog rows at docs commit ed1aacdb39a445efe13a4f026673b14cc2913b85; this file reads only Shin2022's trial length, session count, sensor, hardware and health fields and eldBETA's participant count."
+    },
+    "eldbetaExport": {
+      "path": "research/moabb_expansion_20261019/exports/eldbeta-raw-cca-single-participant-v1.json",
+      "sha256": "01badee2179110badcb4689a65a1272c540ed1a4fac5a665def93ac4a0cbbe42",
+      "note": "Its counts and quality checks are published; its score fields are not (D2)."
+    },
+    "eldbetaReleaseAudit": {
+      "path": "research/moabb_expansion_20261019/evidence/EldBETA CCA Release Audit.json",
+      "sha256": "6a93d8a0183e601bbd2d6d841e1f7a9b267d3cf35bd3232717cb5dbd324ff415"
+    },
+    "eldbetaRawQc": {
+      "path": "research/moabb_expansion_20261019/evidence/EldBETA Raw GDF QC Result Aggregate.json",
+      "sha256": "ed686dba181bd3e5f9b5fd26462ab7f940e83d62046e7ab0f62aed091e1ed9f8"
+    },
+    "eldbetaResultReview": {
+      "path": "research/moabb_expansion_20261019/review/EldBETA CCA Result Review.md",
+      "sha256": "e92be772a2c1134535352c0b5f4f0726e09e182b7edf1ca3b22a09b74fa806e4"
+    },
+    "eldbetaConsistencyReview": {
+      "path": "research/moabb_expansion_20261019/review/EldBETA CCA Handoff Consistency Review.md",
+      "sha256": "c9023e5ac11da5b21fe9c4ba8e7de6923f0d430503bfcc82f440e2d8f17a77ed"
+    },
+    "eldbetaHandoff": {
+      "path": "research/moabb_expansion_20261019/EldBETA Raw CCA Pilot Results Handoff.md",
+      "sha256": "8efdbc746b715b14cbc7101989ef6dd50ea3adfb50c9718c6240639c47a60f13",
+      "note": "Copy source only; names private storage."
+    },
+    "eldbetaTimingUnits": {
+      "path": "research/moabb_expansion_20261019/review/EldBETA Timing and Unit Evidence.md",
+      "sha256": "1d4346675a46cb01d852f088e354d993354f477c0eef6e74aa6279d5c6765b93"
+    },
+    "zucoHandoff": {
+      "path": "research/iclr_bci_expansion_20261016/IESSEEG Awake Baseline and Dataset Validation Handoff.md",
+      "sha256": "09d2f1f8351f820d549045a015bdbf5a20ec3aa175c4cf7e849fa1cef84e4216",
+      "note": "Its ZuCo2 status paragraph is the approved wording source; copy source only, it names private storage."
+    },
+    "zucoReleaseReview": {
+      "path": "research/iclr_bci_expansion_20261016/validation/IESSEEG Awake Baseline Release Review.json",
+      "sha256": "40f5661c5ae191daf4a0f0072ccec5cf8e5c106fecdff5a49780b42d7935ef1b",
+      "note": "Binds the CPU handoff and checks its ZuCo2 paragraph against the timing follow-up."
+    },
+    "zucoIntakeGate": {
+      "path": "research/iclr_bci_expansion_20261016/validation/ZuCo2 Version and Intake Gate.json",
+      "sha256": "b1429b5cc36436fbcf1133e1ae00cc1b74c6501ac630b1ceecf07b4e2e688c5b",
+      "note": "Only its identity and terms blocks are read; it also lists pseudonymous directory codes, which this file refuses."
+    },
+    "zucoAlignmentAudit": {
+      "path": "research/iclr_bci_expansion_20261016/validation/ZuCo2 Independent Alignment Audit.json",
+      "sha256": "9536f58a5743688f24ce70857d2c8b884b9b19f33032d148e7dcbc40f8b3571f",
+      "note": "Its flags are published as booleans; its counts and durations are not."
+    }
+  },
+  "consent": {
+    "statements": {
+      "path": "research/publication_review_20261020/evidence/consent-statements.json",
+      "sha256": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69",
+      "note": "Package A3 of this release. Each capture it cites for Shin2022 and eldBETA is checked against the SHA-256 the record gives; the captures sit in the git-ignored evidence folder."
+    }
+  },
+  "withheldReference": {
+    "zucoFollowup": {
+      "path": "research/iclr_bci_expansion_20261016/validation/ZuCo2 Conversion Timing Provenance Follow-up.json",
+      "sha256": "33a14823b1fcfeb6562a50ff41be347fcd8d0dba64221d626c78ec61115d673f",
+      "note": "Holds the converted run's code and row-level timing values; read only to prove that none of them reaches the served file."
+    }
+  },
+  "published": {
+    "foundationModels": {
+      "path": "site/src/data/foundation-models-update.json",
+      "sha256": "eaaaaccb2e8b70cacc85db71726d63de036c83c3d60b7b4a9097f9aafafad13a",
+      "note": "The released file whose SingLEM exposure row lists eldBETA; it keeps its bytes."
+    }
+  },
+  "releaseRecord": {
+    "date": "2026-10-20",
+    "decision": "Publish the data-quality page's three cases: Shin2022's participant-held-out diagnostic with its three arms and its coverage chain, and eldBETA and ZuCo 2.0 as status cases with no score.",
+    "eldbeta": "Status and counts only, by the owner's decision: one participant's recordings pass the reader and the quality checks, and every score from one person would be that person's, so the accuracy is held.",
+    "zuco2": "Status only: a fixation-timing hold on one converted run, with no figure and no score.",
+    "placement": "A new question page in the reliability group, outside every leaderboard and the core matrix; Shin2022's arms sit beside their coverage chain."
+  },
+  "notPublished": [
+    "Participant rows of any kind: identifiers, run and file names, fold assignments, features, fitted models, decision values and predictions; raw signals from any of the three datasets.",
+    "Per-participant figures from the Shin2022 evidence: window counts per participant and their ranges, and which participants had flat windows.",
+    "The Shin2022 feedback-duration distribution (quantiles and mean) and the per-channel counts of the signal census.",
+    "eldBETA's one-participant accuracy and its fixed first-frequency comparator: held by the owner's decision under the one-person rule.",
+    "ZuCo 2.0's converted-run code, row-level timing values and marker counts; no ZuCo 2.0 data are redistributed.",
+    "MOABB's catalog trial and run counts for Shin2022: register content, in the open register file.",
+    "Compute times, storage sizes, hosts and storage locations.",
+    "The research exports, audits, reviews, protocols and handoffs themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because several carry private storage paths."
+  ],
+  "holds": [
+    {
+      "id": "eldbeta-one-participant-score",
+      "case": "eldbeta",
+      "state": "score held",
+      "reason": "One participant: every score would be that person's, so the accuracy is held by the owner's decision."
+    },
+    {
+      "id": "zuco2-converted-run-timing",
+      "case": "zuco2",
+      "state": "no score",
+      "reason": "Fixation timing in one converted run falls outside the recording; no EEG–text score until the converter's timing rules and a source-checksummed fixture are available."
+    }
+  ]
+}

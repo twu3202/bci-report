@@ -23,6 +23,13 @@
  * stated in full once, in the credits, and pointed to beside the result; a held pilot and the status-only arms print no
  * figure. Nothing pooled, nothing ranked, no per-person value. The sentences that summarise the export are checked against it below, and the page refuses to
  * build if the numbers stop supporting them.
+ *
+ * After the pilots' methods and limits, a separate panel (owner decision D1, 2026-10-19): NeuroLM's frozen features on
+ * EEGMAT's arithmetic and rest, #neurolm-eegmat, from its own export (neurolm-eegmat-update.json, read through
+ * src/data/neurolm-eegmat.ts). It sits outside the pilot count: nPilots, the short answer, description, dek and card
+ * keep their words, and the page refuses to build if one of them names NeuroLM or carries one of the panel's figures.
+ * The panel prints its own question, figures, caveats, limits, credits and data source; the Arithmetic & rest protocol
+ * page points to it with no figure.
  */
 import pilot from '../../../data/pilot-studies-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
@@ -34,6 +41,8 @@ import { BINGO_RIGHTS_ZH, PILOT_ANCHOR, PILOT_PATH, formatFig, ppFmt, sgnFmt, ty
 import { BINGO_HOLD, HANDWRITING_HOLD, bingoReleased, handwritingReleased } from '../../../data/pilot-switch';
 import { EEGPT_PILOT_PATH } from '../../../data/directory-status';
 import { holds } from '../../../data/releases';
+import { NEUROLM_ANCHOR, NEUROLM_JSON, PAIRED_DOMAIN, carriesNeurolm, neurolmArms, neurolmContrasts, neurolmCopy, neurolmFacts, neurolmLimits,
+         neurolmNotPublished, neurolmRelease, neurolmText, CONSENT_EN } from '../../../data/neurolm-eegmat';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -460,6 +469,7 @@ const copy = {
       { text: 'Signals other than scalp EEG, human fNIRS and one macaque’s intracortical spiking: ', href: '/topics/beyond-scalp-eeg/', link: topicCards.en['beyond-scalp-eeg'].question },
       { text: 'Frozen foundation-model encoders against matched randomly initialized ones, and further checkpoints in one frozen recipe: ', href: '/topics/does-pretraining-help/', link: topicCards.en['does-pretraining-help'].question },
       { text: 'Its own page, with its frozen-encoder results beside the core matrix and its licence status: ', href: '/methods/eegpt/', link: 'EEGPT' },
+      { text: 'Public EEG datasets read from their own files, from the runs in a release to the windows a check can use: ', href: '/topics/data-quality/', link: topicCards.en['data-quality'].question },
     ],
   },
   zh: {
@@ -636,6 +646,7 @@ const copy = {
       { text: '头皮 EEG 之外的信号，人类 fNIRS 与一只猕猴的皮层内神经元放电：', href: '/topics/beyond-scalp-eeg/', link: topicCards.zh['beyond-scalp-eeg'].question },
       { text: '冻结的基础模型编码器与匹配的随机初始化编码器的比较，以及按同一冻结方案评测的更多检查点：', href: '/topics/does-pretraining-help/', link: topicCards.zh['does-pretraining-help'].question },
       { text: '它自己的页面，含核心矩阵旁边的冻结编码器结果与其许可状态：', href: '/methods/eegpt/', link: 'EEGPT' },
+      { text: '从文件本身读起的公开 EEG 数据集，从发布中的 run 一直核到检验能用上的时间窗：', href: '/topics/data-quality/', link: topicCards.zh['data-quality'].question },
     ],
   },
 }[locale];
@@ -747,6 +758,23 @@ const oRows = [
   { key: 'majority58', label: arm.majority, a: oep.arms.majority },
   { key: 'prior58', label: arm.prior, a: oep.arms.prior },
 ] as const;
+
+// --- NeuroLM on EEGMAT: a separate panel, outside the pilot count (owner decision D1, 2026-10-19). -----------------
+// The count is the pilots' own, and the summarising sentences and the card name none of the panel's results.
+need(nPilots === pilot.pilots.filter(p => p.publication === 'released').length && pilot.pilots.length === 4
+  && !pilot.pilots.some(p => /neurolm|eegmat/i.test(`${p.id} ${p.dataset}`)), 'the pilot count is the four pilots’ released ones, and NeuroLM is not one of them');
+for (const [what, text] of [['short answer', copy.answer], ['description', copy.description], ['dek', copy.dek], ['card', Object.values(card).join(' ')]] as const)
+  need(!carriesNeurolm(text), `the ${what} without NeuroLM or any of its figures`);
+const nc = neurolmCopy[locale];
+const nArms = neurolmArms(locale), nContrasts = neurolmContrasts(locale), nLimits = neurolmLimits(locale), nNotPub = neurolmNotPublished(locale);
+const NF = neurolmFacts, NM = NF.model, NR = NF.rights;
+const nAudit = neurolmText(NF.audits.boundary, locale), nConsent = neurolmText(CONSENT_EN, locale);
+need(NM.weights_note === 'no weights are distributed; the SHA-256 identifies the checkpoint used and grants nothing', 'the checkpoint distributes nothing');
+const nWeights = zh ? `${neurolmText(NM.weights_note, locale).text}。` : `${NM.weights_note[0].toUpperCase()}${NM.weights_note.slice(1)}.`;
+const nTb = nContrasts[0];
+need(nTb.id === 'tokenizer-minus-band-power' && nTb.role === 'question', 'the panel’s question first');
+const neurolmCreditsHref = `${hrefFor(PILOT_PATH, locale)}#neurolm-credits`;
+const colon = zh ? '：' : ': ';
 ---
 <TopicLayout
   locale={locale}
@@ -1036,6 +1064,81 @@ const oRows = [
     </div>
     <p class="citation-note">{copy.derived}</p>
     <p class="citation-note">{tc.dataSource} <a href="/data/pilot-studies-update.json" download>pilot-studies-update.json</a> · {tc.schema} {pilot.schema_version}{tc.period}</p>
+  </section>
+
+  {/* NeuroLM on EEGMAT (owner decision D1, 2026-10-19): a separate panel from its own export, outside the pilot count. */}
+  <section class="topic-section" id={NEUROLM_ANCHOR} aria-labelledby="neurolm-eegmat-heading" data-panel="neurolm-eegmat" data-counted="false" data-release={neurolmRelease.id}>
+    <div class="topic-heading"><div><p class="eyebrow">{nc.eyebrow}</p><h2 id="neurolm-eegmat-heading">{nc.h2}</h2><p class="topic-subtitle" data-subtitle="neurolm-eegmat">{nc.label}</p></div><p><Parts p={nc.lede()}/></p></div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={nc.armsRegion}>
+      <table data-neurolm-table="arms">
+        <caption><Parts p={nc.armsCaption()}/></caption>
+        <thead><tr><th scope="col">{nc.colRep}</th><th scope="col">{nc.colDim}</th><th scope="col">{nc.colBa}</th><th scope="col">{nc.colF1}</th></tr></thead>
+        <tbody>{nArms.map(a => <tr data-neurolm-row={a.id}>
+          <th scope="row">{a.label}</th>
+          <td data-cell="dimension"><Fig f={a.dimension}/></td>
+          <td data-cell="ba"><Fig f={a.ba} cls="metric"/></td>
+          <td data-cell="f1"><Fig f={a.f1} cls="metric"/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <IntervalPlot
+      id="neurolm-eegmat-paired"
+      caption={nc.plotCaption}
+      legend={nc.plotLegend}
+      domain={PAIRED_DOMAIN}
+      ticks={['−10', '−5', '0', '+5', '+10 pp']}
+      reference={0}
+      axisLabel={zh ? '配对差值' : 'Paired difference'}
+      rows={nContrasts.map(c => ({ label: c.label, value: c.ba.d.raw, interval: [c.ba.lo.raw, c.ba.hi.raw] as [number, number], fig: c.ba.d,
+        noteParts: [`${nc.role[c.role]} · ${tc.interval95} `, c.ba.lo, nc.to, c.ba.hi], tone: c.role === 'question' ? 'olive' as const : 'muted' as const }))}
+    />
+    <div class="finding" data-finding="neurolm-eegmat">
+      <div class="finding-number"><strong><Fig f={nTb.ba.d}/></strong><span><Parts p={nc.findLabel()}/></span></div>
+      <div class="finding-copy"><h3>{nc.findH3}</h3><p><Parts p={nc.findP()}/></p></div>
+    </div>
+    <p class="protocol-note" data-neurolm-note="caveats"><Parts p={nc.caveats()}/>{sp}<a href={hrefFor('/protocols/arithmetic-rest/', locale)}>{nc.coreLink}</a></p>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={nc.pairedRegion}>
+      <table data-neurolm-table="paired">
+        <caption><Parts p={nc.pairedCaption()}/></caption>
+        <thead><tr><th scope="col">{nc.colContrast}</th><th scope="col">{nc.colRole}</th><th scope="col">{nc.colBa}</th><th scope="col">{nc.colF1}</th></tr></thead>
+        <tbody>{nContrasts.map(c => <tr data-neurolm-row={c.id}>
+          <th scope="row">{c.label}</th>
+          <td data-cell="role">{nc.role[c.role]}</td>
+          {(['ba', 'f1'] as const).map(k => <td data-cell={k}><Fig f={c[k].d} cls="metric"/><span class="interval">{nc.interval} <Fig f={c[k].lo}/>{nc.to}<Fig f={c[k].hi}/> · {c[k].zero ? nc.crossesZero : nc.belowZero}</span></td>)}
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="citation-note" data-neurolm-note="source">{nc.rightsLine}{sp}<a href={dataset('eegmat')}>{nc.datasetPage}</a> · <a href={neurolmCreditsHref}>{nc.creditsLink}</a></p>
+    <p class="citation-note" data-neurolm-note="audit">{nAudit.text}{nAudit.original && <span class="note-original" lang="en">{nAudit.original}</span>}</p>
+    <h3 class="roadmap-h3" id="neurolm-eegmat-methods">{nc.methodsH3}</h3>
+    <div class="method-grid-wide" data-neurolm-note="methods">
+      <article><h3>{nc.mWindowsH}</h3><p><Parts p={nc.mWindows()}/></p></article>
+      <article><h3>{nc.mProbeH}</h3><p><Parts p={nc.mProbe()}/></p></article>
+      <article><h3>{nc.mModelH}</h3><p><Parts p={nc.mModel()}/></p></article>
+      <article><h3>{nc.armsH}</h3><ul class="rd-rules">{nArms.map(a => <li data-neurolm-arm={a.id}><strong>{a.label}</strong>{colon}{a.definition}{zh && <span class="note-original" lang="en">{a.definitionEn}</span>}</li>)}</ul></article>
+    </div>
+    <h3 class="roadmap-h3">{nc.limitsH3}</h3>
+    <ul class="rd-rules" data-neurolm-note="limits">{nLimits.map(l => <li data-neurolm-limit={l.id}>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</li>)}</ul>
+    <h3 class="roadmap-h3">{nc.notPubH3}</h3>
+    <ul class="rd-rules" data-neurolm-note="not-published">{nNotPub.map((x: { text: string }) => <li>{x.text}</li>)}</ul>
+    <p class="roadmap-p"><a href="/data-use/#sources-neurolm-eegmat">{nc.dataUse}</a></p>
+    <h3 class="roadmap-h3">{nc.creditsH3}</h3>
+    <div class="citation-list" id="neurolm-credits">
+      <article data-credit="neurolm-eegmat-dataset">
+        <h3>{nc.eegmatH}</h3>
+        <p lang="en">{NR.dataset.attribution}</p>
+        <p data-consent="eegmat"><strong>{nc.consentH}</strong>{sp}{nConsent.text}{nConsent.original && <span class="note-original" lang="en">{nConsent.original}</span>}</p>
+        <p><strong>{nc.scopeH}</strong>{sp}<span lang="en">{NR.dataset.rightsScope}</span></p>
+        <p><a href={NR.dataset.source} target="_blank" rel="noreferrer">{nc.recordLink}</a> · <a href={NR.dataset.licenseUrl} target="_blank" rel="noreferrer">{NR.dataset.license}</a> · <a href={dataset('eegmat')}>{nc.datasetPage}</a></p>
+      </article>
+      <article data-credit="neurolm">
+        <h3>{nc.neurolmH}</h3>
+        <p>{nc.paper}{sp}<a href={NM.paper_arxiv} target="_blank" rel="noreferrer" lang="en">{NM.paper_title} ↗</a>{zh ? '；' : '; '}{nc.code}{sp}<a href={NM.source_url} target="_blank" rel="noreferrer">{NM.repository.replace('https://github.com/', '')} ↗</a>{sp}{nc.at}{sp}<code>{NM.source_revision}</code>{zh ? '，' : ', '}<a href={NR.code.url} target="_blank" rel="noreferrer">{NR.code.licence}</a>{tc.period}</p>
+        <p data-neurolm-note="checkpoint">{nc.ckpt}{sp}<a href={NM.checkpoint.url} target="_blank" rel="noreferrer"><code>{NM.checkpoint.file}</code> ↗</a>{sp}{nc.at}{sp}<code>{NM.checkpoint.revision}</code>{zh ? '，' : ', '}{nc.sha}{sp}<code>{NM.checkpoint.sha256}</code>{tc.period}{sp}<Parts p={nc.ckptLicence()}/>{sp}{nWeights}</p>
+      </article>
+    </div>
+    <p class="citation-note">{nc.endorse}</p>
+    <p class="citation-note" data-neurolm-note="data-source">{nc.dataSource} <a href={`/data/${NEUROLM_JSON}`} download>{NEUROLM_JSON}</a> · {nc.schema} {NF.schema}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="related" aria-labelledby="related-heading">

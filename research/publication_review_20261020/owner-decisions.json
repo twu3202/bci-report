@@ -1,0 +1,22 @@
+{
+  "freeze_date": "20261020",
+  "recorded_at": "2026-10-19",
+  "plan": "research/site_release_plan_20261019/Release Layout Plan v2.md",
+  "decisions": {
+    "D1": {"question": "Which research results ship with the open register in this release", "answer": "All three: the seven SSVEP follow-ups (new-ssvep-frequencies), Shin2022 with the data-quality page, and IESSEEG with the NeuroLM results (clinical-groups section and the NeuroLM EEGMAT pilot panel)", "source": "owner, chat 2026-10-19"},
+    "D2": {"question": "eldBETA one-person CCA score (26/63)", "answer": "Status and counts only; the score is held, keeping the one-person rule (Stieger, FALCON H2)", "source": "owner, chat 2026-10-19"},
+    "D3": {"question": "Register wave 1: state verified re-upload findings", "answer": "Yes, only facts confirmed by an independent check and backed by a captured original-terms page; factual wording only; a correction route on every row; no prior contact with uploaders", "source": "owner, chat 2026-10-19", "default_kept": "HF dataset CSV and card carry no comparison findings unless the owner asks"},
+    "D13": {"question": "IESSEEG placement", "answer": "A section on /topics/clinical-groups/ with its own question heading; the Parkinson's h1, short answer and card unchanged", "source": "owner, chat 2026-10-19"},
+    "defaults_stated_to_owner_and_not_objected": {
+      "D4": "Rows tied to ICLR 2027 submissions wait until after the 16 December 2026 decisions",
+      "D5": "The 737 EEGDash mirrors are one family row; the full map stays in the JSON",
+      "D6": "The HF commenter is linked, not named",
+      "D7": "IESSEEG age <=2 column published as approved (option A)",
+      "D8": "Article 3 and 4 links added low-key",
+      "D9": "Cross-spectral round shown as a status card with no figures",
+      "D12": "Step 4 'share above chance' shown as 'not computed' until counts exist; own pages for step-2/3 rows deferred",
+      "R1_R5": "Adapter handoff binding and ramp/jitter wording are re-checked by independent reviewers in this session; other sessions are not asked to change anything"
+    },
+    "D11_population": "Hugging Face group = repos the classifier marked in_scope (brain-signal data) from the frozen 28-term + 20-tag snapshot; counts printed for that snapshot with its evidence date"
+  }
+}

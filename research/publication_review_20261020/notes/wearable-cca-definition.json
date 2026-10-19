@@ -1,0 +1,403 @@
+{
+  "schema": "bci-report-publication-note-v1",
+  "package": "A2",
+  "title": "Which CCA the Wearable-102 transfer reports",
+  "release_freeze_date": "20261020",
+  "recorded_at": "2026-10-19",
+  "status": "sourced_from_code_and_protocols",
+  "question": "Why does matched CCA in the BETA to Wearable-102 transfer export read 65.38% dry and 81.65% wet, while the dry-vs-wet page shows CCA at 65.47% and 81.56% on the same windows?",
+  "answer": "The two CCAs differ in one setting: the harmonic count of the sine/cosine references. The transfer study recomputed CCA with the BETA CCA-adapter definition (harmonics 1 to 3, six reference columns), which is also the fixed CCA term inside the 105 models. The dry-vs-wet benchmark uses harmonics 1 to 4 (eight reference columns). Both read the same prepared array of 24,480 windows (sha256 b8e039b1...), both centre data and references over time, both use a relative rank threshold of 1e-10 on the signal basis and take the largest canonical correlation, and both break exact ties at the first candidate. With the harmonic count set to three, the dry-vs-wet code reproduces the transfer code to 6.7e-16 on synthetic windows. Adding the fourth harmonic gives a net 12 more correct dry windows (8,014 against 8,002 of 12,240) and a net 11 fewer correct wet windows (9,983 against 9,994).",
+  "definitions": {
+    "transfer_matched_cca": {
+      "display_name": "Matched CCA",
+      "export_key": "CCA-RAW",
+      "study": "BETA to Wearable-102 frozen transfer (protocol beta-frozen-raw-residual-to-wearable102-as-stored-v1)",
+      "protocol_text": "CCA-RAW recomputed on exactly the same mapped target windows, three sine/cosine harmonics, centered time coordinates, SVDrelative rank threshold1e-10",
+      "handoff_text": "Both target CCA controls were freshly calculated with the source experiment's three-harmonic definition on these exact same windows; old target CCA score files were not reused.",
+      "harmonics": [
+        1,
+        2,
+        3
+      ],
+      "reference_columns": 6,
+      "reference_construction": "sin and cos of 2*pi*h*f*t for h = 1, 2, 3, with t = n/250 s for n = 0..499 from the first sample of the window; each reference row centred over time; orthonormal basis from an SVD with relative rank threshold 1e-10 (adapter_core.refs, transform raw, _basis)",
+      "signal_side": "float64; each channel centred over time; orthonormal basis from an SVD with relative rank threshold 1e-10; score = largest singular value of the cross-product of the two bases (adapter_core.canonical_correlations, cca_scores with domain raw)",
+      "channels": "native eight channels reordered to PO5, PO3, POZ, PO4, PO6, O1, OZ, O2 (protocol input.channel_order 3,1,0,2,4,6,5,7); no rescaling or refiltering",
+      "score_storage": "float64 (transfer_runner SCHEMAS rho_raw); argmax over float64; float64 against float32 argmax mismatches 0 of 24,480",
+      "ties": "np.argmax, first index in the documented target-axis order",
+      "same_as_model_term": "The models score 20 x (rho - 0.5) + bias + 2 x tanh(correction), and rho is this same raw three-harmonic CCA (transfer_runner passes rho_raw to the model; adapter_core forward), so matched CCA is the CCA built into the models.",
+      "metric": "per person accuracy over 120 windows per sensor, mean over 102 people; one deterministic prediction per window"
+    },
+    "dry_vs_wet_cca": {
+      "display_name": "CCA (dry-vs-wet page, analytic references table)",
+      "site_rows": [
+        "wearable-sensor-transfer-006 (dry)",
+        "wearable-sensor-transfer-005 (wet)"
+      ],
+      "release_id": "deployment-topics-20260920-v1",
+      "protocol_id": "wearable-ssvep-dry-wet-transfer-2s-subject6fold-v1",
+      "protocol_text": "Largest canonical correlation with centered sine/cosine references at each documented target frequency.",
+      "harmonics": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "reference_columns": 8,
+      "reference_construction": "sin and cos of 2*pi*h*f*t for h = 1..4, with t = n/250 s for n = 0..499 from the first sample of the window; each reference column centred over time; orthonormal basis from numpy QR (run_benchmark.reference_bases, default harmonics=4)",
+      "signal_side": "float64; each channel centred over time; orthonormal basis from an SVD with relative rank threshold 1e-10; score = largest singular value of the cross-product (run_benchmark.cca_scores_batch)",
+      "channels": "native eight channels in the stored order POz, PO3, PO4, PO5, PO6, Oz, O1, O2",
+      "score_storage": "scores written as float32 (cca-scores.npy, sha256 4ec81c8d...); argmax over the float32 scores",
+      "ties": "numpy argmax, first index in the documented target-axis order",
+      "metric": "participant_mean_balanced_accuracy: balanced accuracy per participant over 120 windows per sensor, mean over 102 participants",
+      "page": "site/src/pages/[...lang]/topics/dry-vs-wet.astro renders these rows in the analytic references table and does not name the harmonic count"
+    }
+  },
+  "differences": {
+    "harmonics": {
+      "transfer_matched_cca": "fundamental, second and third harmonic (h = 1..3)",
+      "dry_vs_wet_cca": "fundamental, second, third and fourth harmonic (h = 1..4)",
+      "highest_reference_frequency_hz": {
+        "three_harmonics": [
+          27.75,
+          44.25
+        ],
+        "four_harmonics": [
+          37.0,
+          59.0
+        ],
+        "note": "range of h x f over the 12 targets for the top harmonic; both inside the 6 to 80 Hz prepared band and below the 125 Hz Nyquist limit"
+      },
+      "effect": "This is the one definitional difference. The four-harmonic reference space contains the three-harmonic one, so every candidate score is equal or higher with four harmonics; a decision changes only when the fourth harmonic lifts another candidate past the one the three-harmonic CCA chose."
+    },
+    "reference_construction": {
+      "difference": "QR basis of centred references (dry-vs-wet) against SVD basis with a 1e-10 relative rank threshold (transfer)",
+      "effect": "None beyond floating point: both span the same centred sine/cosine space, which has full rank here, and canonical correlations depend only on the two spaces. Synthetic check: 6.7e-16 maximum score difference at three harmonics.",
+      "shared": "sine and cosine pairs, so the phase origin of t (window start, 0.14 s after onset) does not affect either score"
+    },
+    "windows": {
+      "difference": "none",
+      "shared": "the same prepared array epochs250.npy, sha256 b8e039b1bf2fe3222f0627148fe2b1581a3bbd0f8fda9d8fe6c35f2ce873b19b, shape 24,480 x 8 x 500, float32: samples 160 to 660 at 250 Hz, i.e. 0.14 to 2.14 s after stimulus onset; fourth-order Butterworth 6 to 80 Hz, zero phase (sosfiltfilt), applied to each 500-sample epoch; stored amplitudes; 102 people x 2 sensors x 10 blocks x 12 targets; 12,240 windows per sensor",
+      "evidence": [
+        "research/decision_route3_external_20261015/freeze.json and state/intake-manifest.json bind the transfer input epochs250.npy to b8e039b1... and its protocol.json to ccc489c2..., which is the sha256 of experiments/deployment_v2/wearable/protocol.json (the dry-vs-wet protocol).",
+        "experiments/deployment_v2/wearable/eegnet-transfer-protocol.json gives prepared_input_sha256 b8e039b1... for the dry-vs-wet benchmark input.",
+        "experiments/deployment_v2/wearable_trca/protocol.json binds signal_sha256 b8e039b1... together with the dry-vs-wet cca-scores.npy 4ec81c8d..."
+      ]
+    },
+    "channels": {
+      "difference": "channel order only (transfer reorders to the BETA model order)",
+      "effect": "none: canonical correlations do not depend on channel order; synthetic check 5.0e-16"
+    },
+    "metric": {
+      "difference": "participant-mean balanced accuracy (dry-vs-wet) against participant-mean accuracy (transfer)",
+      "effect": "none: every person has 10 windows of each of the 12 targets per sensor, so balanced accuracy equals accuracy, and with 120 windows per person the participant mean equals correct windows / 12,240"
+    },
+    "intervals": {
+      "dry_vs_wet_cca": "participant bootstrap, 10,000 draws, seed 20260920, percentile (deployment protocol metrics.uncertainty; run_benchmark.py participant_metrics)",
+      "transfer_matched_cca": "paired person bootstrap, 2,000 draws, seed 20261015, percentile; conditional on the fixed 105 models for model rows (export bootstrap block)",
+      "effect": "the point values are unaffected; the intervals differ slightly because the draws and seeds differ"
+    },
+    "score_precision": {
+      "difference": "argmax over float32-stored scores (dry-vs-wet) against float64 (transfer)",
+      "effect": "The transfer study found 0 float64 against float32 argmax changes for its three-harmonic CCA over all 24,480 windows. The same check was not run on the four-harmonic scores; it could only matter on near-ties."
+    }
+  },
+  "numbers": [
+    {
+      "label": "Matched CCA (CCA-RAW), Wearable-102 dry, three harmonics",
+      "file": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+      "field": "strata.dry.metrics.CCA-RAW.mean",
+      "value": 0.6537581699346404,
+      "display_pct2": "65.38",
+      "interval_95": [
+        0.6073427287581699,
+        0.7005759803921568
+      ],
+      "interval_display_pct2": "60.73 to 70.06",
+      "interval_method": "paired person bootstrap, 2,000 draws, seed 20261015, percentile; conditional on the fixed 105 models for model rows (export bootstrap block)",
+      "windows": 12240
+    },
+    {
+      "label": "Matched CCA (CCA-RAW), Wearable-102 wet, three harmonics",
+      "file": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+      "field": "strata.wet.metrics.CCA-RAW.mean",
+      "value": 0.8165032679738562,
+      "display_pct2": "81.65",
+      "interval_95": [
+        0.7759722222222222,
+        0.8513888888888888
+      ],
+      "interval_display_pct2": "77.60 to 85.14",
+      "interval_method": "paired person bootstrap, 2,000 draws, seed 20261015, percentile; conditional on the fixed 105 models for model rows (export bootstrap block)",
+      "windows": 12240
+    },
+    {
+      "label": "Dry-vs-wet CCA, Wearable-102 dry, four harmonics",
+      "file": "site/src/data/deployment-topics.json",
+      "field": "rows[id=wearable-sensor-transfer-006].value",
+      "value": 0.6547385620915033,
+      "display_pct2": "65.47",
+      "interval_95": [
+        0.606125408496732,
+        0.7017156862745099
+      ],
+      "interval_display_pct2": "60.61 to 70.17",
+      "interval_method": "participant bootstrap, 10,000 draws, seed 20260920, percentile (deployment protocol metrics.uncertainty; run_benchmark.py participant_metrics)",
+      "windows": 12240
+    },
+    {
+      "label": "Dry-vs-wet CCA, Wearable-102 wet, four harmonics",
+      "file": "site/src/data/deployment-topics.json",
+      "field": "rows[id=wearable-sensor-transfer-005].value",
+      "value": 0.8156045751633987,
+      "display_pct2": "81.56",
+      "interval_95": [
+        0.7772058823529411,
+        0.8508986928104574
+      ],
+      "interval_display_pct2": "77.72 to 85.09",
+      "interval_method": "participant bootstrap, 10,000 draws, seed 20260920, percentile (deployment protocol metrics.uncertainty; run_benchmark.py participant_metrics)",
+      "windows": 12240
+    }
+  ],
+  "exact_window_counts": {
+    "basis": "value x 12,240; each count is an integer to within 1e-6",
+    "dry": {
+      "three_harmonics_correct": 8002,
+      "four_harmonics_correct": 8014,
+      "net_four_minus_three": 12,
+      "difference_pp_raw": 0.09803921568628526,
+      "difference_pp2": "+0.10"
+    },
+    "wet": {
+      "three_harmonics_correct": 9994,
+      "four_harmonics_correct": 9983,
+      "net_four_minus_three": -11,
+      "difference_pp_raw": -0.08986928104575131,
+      "difference_pp2": "-0.09"
+    },
+    "display_note": "Subtracting the rounded levels gives 0.09 for both sensors; the raw differences round to +0.10 pp dry and -0.09 pp wet. Any printed difference is computed from the raw fields.",
+    "not_known": "how many individual windows change decision in each direction; that needs the window-level scores, which stay private"
+  },
+  "other_wearable_cca_on_site": [
+    {
+      "where": "/topics/calibration-budget/ (track wearable-etrca-calibration)",
+      "values": [
+        {
+          "label": "Calibration-budget CCA, Wearable-102 dry, blocks 5 to 10",
+          "file": "site/src/data/deployment-topics.json",
+          "field": "rows[id=wearable-etrca-calibration-027].value",
+          "value": 0.650871459694989,
+          "display_pct2": "65.09",
+          "windows": 7344
+        },
+        {
+          "label": "Calibration-budget CCA, Wearable-102 wet, blocks 5 to 10",
+          "file": "site/src/data/deployment-topics.json",
+          "field": "rows[id=wearable-etrca-calibration-028].value",
+          "value": 0.8114106753812638,
+          "display_pct2": "81.14",
+          "windows": 7344
+        }
+      ],
+      "definition": "the same four-harmonic scores as the dry-vs-wet page, on blocks 5 to 10 only (7,344 windows per sensor)",
+      "source_text": "The parent's fixed four-harmonic CCA scores; centered sine/cosine references at the 12 documented frequencies."
+    },
+    {
+      "where": "/topics/questions-in-language/ route 3 S12 (its TPL minus CCA contrasts, site/src/data/questions-in-language-update.json)",
+      "definition": "reads the same four-harmonic score file: route3 stage2.s12_values loads inputs/wearable-20260920/cca-scores.npy, bound at sha256 4ec81c8d... in research/decision_route3_20261007/audit-secondary-numeric.json"
+    }
+  ],
+  "cropped_spectrum_diagnostic": {
+    "export_key": "CCA-CROP",
+    "display_label": "cropped-spectrum check (Wearable-102)",
+    "definition": "the same three-harmonic CCA computed in Hann-windowed rFFT coordinates (2,500-point FFT, bins 70 to 480, 7.0 to 48.0 Hz, real and imaginary parts, uncentred); the unchanged source cropped-spectral definition; diagnostic only",
+    "numbers": [
+      {
+        "label": "CCA-CROP, Wearable-102 dry",
+        "file": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+        "field": "strata.dry.metrics.CCA-CROP.mean",
+        "value": 0.5777777777777777,
+        "display_pct2": "57.78",
+        "interval_95": [
+          0.5279411764705882,
+          0.6289297385620916
+        ],
+        "interval_display_pct2": "52.79 to 62.89",
+        "interval_method": "paired person bootstrap, 2,000 draws, seed 20261015, percentile; conditional on the fixed 105 models for model rows (export bootstrap block)",
+        "windows": 12240
+      },
+      {
+        "label": "CCA-CROP, Wearable-102 wet",
+        "file": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+        "field": "strata.wet.metrics.CCA-CROP.mean",
+        "value": 0.7301470588235295,
+        "display_pct2": "73.01",
+        "interval_95": [
+          0.6845506535947713,
+          0.7718157679738561
+        ],
+        "interval_display_pct2": "68.46 to 77.18",
+        "interval_method": "paired person bootstrap, 2,000 draws, seed 20261015, percentile; conditional on the fixed 105 models for model rows (export bootstrap block)",
+        "windows": 12240
+      }
+    ]
+  },
+  "card7": {
+    "sentence_en": "Matched CCA here uses sine and cosine references up to the third harmonic, as the models' own CCA term does, and reached 65.38% dry and 81.65% wet; the dry-versus-wet page's CCA uses references up to the fourth harmonic on the same windows and reached 65.47% and 81.56%.",
+    "sentence_zh": "此处的匹配 CCA 与模型内部的 CCA 项相同，使用到三次谐波的正弦和余弦参考信号，干电极为 65.38%、湿电极为 81.65%；「干电极与湿电极」页面的 CCA 在相同窗口上使用到四次谐波的参考信号，为 65.47% 和 81.56%。",
+    "a2_fact_for_plan_template": {
+      "en": "the dry-versus-wet page's CCA uses references up to the fourth harmonic",
+      "zh": "「干电极与湿电极」页面的 CCA 使用到四次谐波的参考信号"
+    },
+    "figures_pct2": [
+      "65.38",
+      "81.65",
+      "65.47",
+      "81.56"
+    ],
+    "figure_sources": {
+      "65.38": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json strata.dry.metrics.CCA-RAW.mean",
+      "81.65": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json strata.wet.metrics.CCA-RAW.mean",
+      "65.47": "site/src/data/deployment-topics.json rows[id=wearable-sensor-transfer-006].value",
+      "81.56": "site/src/data/deployment-topics.json rows[id=wearable-sensor-transfer-005].value"
+    },
+    "checks": [
+      "EN and ZH figure multisets are equal",
+      "harmonic counts are written as words, so they are not data-fig values",
+      "each figure is labelled with its study in the card (Wearable-102 scope strip)",
+      "no dates, version labels or ranking words"
+    ]
+  },
+  "verification": {
+    "synthetic_check": {
+      "what": "A scratch script (not kept in the repo) took the CCA functions from both source files by AST, without running either module, and scored 240 synthetic eight-channel windows (seed 20261020) at the 12 Wearable-102 frequencies. No recording was read.",
+      "functions": {
+        "dry_vs_wet": [
+          "reference_bases",
+          "cca_scores_batch"
+        ],
+        "transfer": [
+          "refs",
+          "transform",
+          "_basis",
+          "canonical_correlations",
+          "cca_scores"
+        ]
+      },
+      "results": {
+        "transfer_code_vs_dry_vs_wet_code_at_three_harmonics_max_abs_diff": 6.661338147750939e-16,
+        "argmax_agreement_at_three_harmonics": "240 of 240",
+        "transfer_channel_reorder_max_abs_diff": 4.996003610813204e-16,
+        "four_minus_three_harmonics_max_abs_diff": 0.10565487714396571,
+        "four_minus_three_harmonics_min": 3.457756209135354e-07,
+        "argmax_changes_four_vs_three_harmonics": "2 of 240",
+        "reference_columns": {
+          "dry_vs_wet_default": 8,
+          "transfer": 6
+        }
+      },
+      "passed": true
+    },
+    "not_done": "The real windows and the stored four-harmonic score file live in private run directories that are not on this machine, and this package allows no network, so the 12 and 11 window differences were not re-derived by scoring the real windows with both definitions. They follow from the published levels and the code above."
+  },
+  "sources": [
+    {
+      "path": "site/src/data/deployment-topics.json",
+      "sha256": "708e6daad94bad3e32a4602af276e40d559e262741e92196a3590a74c6d9232f",
+      "git": "tracked",
+      "used_for": "dry-vs-wet and calibration-budget CCA levels and intervals, protocol ids, release id"
+    },
+    {
+      "path": "site/src/pages/[...lang]/topics/dry-vs-wet.astro",
+      "sha256": "c5e7cf9772b1981f851a0ee32d85c13272bd1eb81745e3ec19b69fa778ade59f",
+      "git": "tracked",
+      "used_for": "the page shows the cca rows in its analytic references table and names no harmonic count"
+    },
+    {
+      "path": "experiments/deployment_v2/wearable/protocol.json",
+      "sha256": "ccc489c2cdd207667e072a4f081acb32b2f74cb1772d7b5b976e59e3e97b7c2a",
+      "git": "ignored (local)",
+      "used_for": "dry-vs-wet CCA definition (models.cca.harmonics = 4), windows, filter, bootstrap"
+    },
+    {
+      "path": "experiments/deployment_v2/wearable/run_benchmark.py",
+      "sha256": "1f1108f8c783499f2e64b8c50481980a9bd1b988013c3e6ae4bb3b293ecf5a6e",
+      "git": "ignored (local)",
+      "used_for": "reference_bases (harmonics=4, QR), cca_scores_batch, float32 score storage, participant_metrics"
+    },
+    {
+      "path": "experiments/deployment_v2/wearable/eegnet-transfer-protocol.json",
+      "sha256": "cc0b4b9993497ac166a204884c81bed54704ba072ea3a3a320bf147a621c8d25",
+      "git": "ignored (local)",
+      "used_for": "prepared input sha256 b8e039b1..."
+    },
+    {
+      "path": "experiments/deployment_v2/wearable_trca/protocol.json",
+      "sha256": "c16a627388cc035859e8d1ffde368079c751b1a12aaaf76729a248489d9cd697",
+      "git": "ignored (local)",
+      "used_for": "'four-harmonic CCA scores' statement; signal and cca-scores hashes"
+    },
+    {
+      "path": "experiments/decision_route3_v1/route3/stage2.py",
+      "sha256": "7350ad4b6239f11638a5042d861c2217212cfc132c2df9ebbf7c51961e576f00",
+      "git": "ignored (local)",
+      "used_for": "S12 reads the published Wearable cca-scores.npy"
+    },
+    {
+      "path": "research/decision_route3_20261007/audit-secondary-numeric.json",
+      "sha256": "73c09588ffeda8bb56bf0c31db1c6251f500726a7886a0a09c1657a981d86068",
+      "git": "ignored (local)",
+      "used_for": "S12 input cca-scores.npy bound at 4ec81c8d..."
+    },
+    {
+      "path": "research/decision_route3_external_20261015/protocol.json",
+      "sha256": "079acad5374eb1b45245bb57c51ba384c5532eb7046d3b246634a592d02e223b",
+      "git": "untracked (read-only folder)",
+      "used_for": "matched CCA definition (methods.comparator), windows, channel order, metric, bootstrap"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/scripts/adapter_core.py",
+      "sha256": "331aa9a83ae6d82c3c156a56e3b892f45f743a992a9e88d230617465a3a44fe6",
+      "git": "untracked (read-only folder)",
+      "used_for": "HARMONICS = 3, refs, transform, _basis, canonical_correlations, model score 20*(rho-0.5)"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/scripts/transfer_runner.py",
+      "sha256": "41c9daf35245b04ad17e0ea77d51169a71cd6578effb6a502b30664ea6ee95e5",
+      "git": "untracked (read-only folder)",
+      "used_for": "rho_raw call, float64 storage, channel reorder only, scoring by argmax"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/freeze.json",
+      "sha256": "d24ddc66a542c80c06196935f5a6183e33782e0bbe72a7c0c53a80258cc1de30",
+      "git": "untracked (read-only folder)",
+      "used_for": "binds the code hashes above and the input epochs250.npy and protocol.json hashes"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/state/intake-manifest.json",
+      "sha256": "5588927fe18b7697880491187721353a0fa56e258dd5254287438061961d7df1",
+      "git": "untracked (read-only folder)",
+      "used_for": "input hashes and channel reorder"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/exports/wearable102-frozen-transfer.json",
+      "sha256": "9c94a14be0b55822fe7dd359b6f02bb07340e4b0bb3d74d3479bbd4219cb50f6",
+      "git": "untracked (read-only folder)",
+      "used_for": "matched CCA and CCA-CROP levels, intervals and float precision counts"
+    },
+    {
+      "path": "research/decision_route3_external_20261015/BETA to Wearable102 Transfer Results Handoff.md",
+      "sha256": "1ee606a6766e9c92a76da31ac2c2f131e32c5bd24d624d94fff001efba85d82d",
+      "git": "untracked (read-only folder)",
+      "used_for": "three-harmonic recomputation on the same windows; old score files not reused"
+    },
+    {
+      "path": "research/site_release_plan_20261019/handoff-readings.json",
+      "sha256": "f231b1aac935f5fbe991a636191e13b2e1c8a5818bca9f57231fb64ca6c90c6a",
+      "git": "untracked",
+      "used_for": "the open hold this note answers (item BETA to Wearable102 external transfer)"
+    }
+  ],
+  "private_paths": "none; every path is repo-relative and every hash is a content hash"
+}

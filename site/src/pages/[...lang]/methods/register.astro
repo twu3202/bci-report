@@ -1,0 +1,175 @@
+---
+/**
+ * /methods/register/: the open register's model ladder (plan §2.7; owner decisions D1 and D4). A static segment, so it
+ * takes precedence over [slug] and no method may be called "register". Built only while the register file is served
+ * (open-register.ts `registerBuilt`); every figure is a value of that file, read from the field it names.
+ *
+ * In order: the counts (#counts), the model ladder's five steps and the rules that apply to it, each defined once
+ * (#levels, with the file's step names and what each step needs, in both languages), and every model row in its group
+ * (#models, components/RegisterTable.astro with ladder="model"). The model ladder's step names are its own (Identified,
+ * Terms recorded, Files checked, Scored here, In the matrix), and every badge in the table names the ladder. Terms are
+ * given per part (code, weights, data), with "not found" printed where a part has none on record; pretraining exposure
+ * is a field of a row; a venue appears only where the venue's proceedings or the paper's camera-ready version show it.
+ * Owner decision D4 keeps some leads, and every field about them, off the rows; the guard below holds it.
+ *
+ * The sentences that describe the rows say only what the rows present bear out, so they follow the file:
+ *  - the count sentence names the parts of /methods/ the rows cover (methods/index.astro: the methods with pages, the
+ *    other measured baselines, the models in the directory) and the other models and papers whose records were read;
+ *  - the terms sentence says what a "—" means for as long as a row of this site's models carries no terms by part;
+ *  - the step sentence names the key item of a step that has more than one (item_definitions `anchor`).
+ *
+ * The markup is a schema.org DataCatalog whose parts are the rows (structured.ts `registerCatalog`, models and papers
+ * as CreativeWorks), never a Dataset with `isBasedOn`. A part is named as this site names it: a method by its name on
+ * /methods/, any other row with no "<user>/" prefix.
+ */
+import EntityLayout from '../../../components/EntityLayout.astro';
+import RegisterTable from '../../../components/RegisterTable.astro';
+import Fig from '../../../components/Fig.astro';
+import data from '../../../data/mvp.json';
+import { methods, unmeasuredModels } from '../../../data/entities';
+import { defaultLocale, hrefFor, localeOf, locales, registerCopy } from '../../../data/i18n';
+import { entityCopy } from '../../../data/entity-copy';
+import { REGISTER_FILE, catalogRows, ladderSteps, longDate, regFig, register, registerBuilt, ui, type RegisterEntry } from '../../../data/open-register';
+import { registerCatalog } from '../../../data/structured';
+import { site } from '../../../data/site';
+
+export const getStaticPaths = () => (registerBuilt ? locales.map(code => ({ params: { lang: code === defaultLocale ? undefined : code } })) : []);
+
+const need = (ok: unknown, what: string) => { if (!ok) throw new Error(`methods/register.astro: ${what}`); };
+const locale = localeOf(Astro.params.lang);
+const zh = locale === 'zh';
+const C = registerCopy[locale], E = entityCopy[locale];
+const path = '/methods/register/';
+const R = register!;
+const N = R.counts.rows, M = R.counts.models;
+const rows = R.entries.filter(e => e.ladder === 'model');
+const F = (x: number) => regFig(x);
+
+// The counts the strip prints, checked to add up the way it says they do.
+const STEPS = [1, 2, 3, 4, 5];
+const atStep = (s: number): number | null => N.model_by_level[String(s)] ?? null;
+need(rows.length === N.model, `${rows.length} model rows in the file, and the counts say ${N.model}`);
+need(Object.keys(N.model_by_level).every(k => STEPS.includes(Number(k))) && STEPS.every(s => rows.filter(e => e.level === s).length === (atStep(s) ?? 0)),
+  'the steps make the model rows, each as the rows themselves say');
+need(STEPS.every(s => atStep(s) !== 0), 'a step with no rows is said in words, never printed as a count');
+const others = rows.filter(e => e.kind === 'model');
+need(M.external_rows - M.merged_into_site_methods === others.length,
+  'the other models and papers: those read, less those merged into a method page’s row');
+need(N.dataset === R.entries.filter(e => e.ladder === 'dataset').length, 'the dataset rows');
+// Owner decision D4. The guard's words are put together here so that this file does not spell them out.
+const D4 = new RegExp(['IC' + 'LR 20' + '27', 'open' + 'review', 'sub' + 'mission', 'forum\\?id='].join('|'), 'i');
+const D4_YEAR = new RegExp('\\b20' + '27\\b');
+need(!D4.test(JSON.stringify(rows)), 'a model row carries what owner decision D4 keeps off the rows');
+need(rows.every(e => !e.venue || (!D4_YEAR.test(e.venue.value) && e.venue.checked)), 'a venue with no checked date, or one owner decision D4 keeps off');
+// A venue rests on the venue's proceedings, linked, or on the paper's camera-ready version: the #models sentence says so.
+const VENUE_EVIDENCE = ['official_proceedings', 'camera_ready_pdf'];
+need(rows.every(e => !e.venue || (VENUE_EVIDENCE.includes(e.venue.evidence) && (e.venue.evidence !== 'official_proceedings' || e.venue.url))),
+  'a venue resting on evidence the #models sentence does not name, or proceedings with no address');
+
+// What the rows cover of /methods/ (methods/index.astro builds the same three lists).
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '');
+const anchorOf = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const namesOf = (e: RegisterEntry) => [e.name, ...e.aliases.filter(a => a.kind === 'name').map(a => a.value)].map(norm);
+const rowNamed = (name: string, page?: string) => rows.some(e => (page !== undefined && e.links.page === page) || namesOf(e).includes(norm(name)));
+const paged = new Set(methods.map(m => m.name));
+const baselines = data.models.filter(m => m.status === 'Evaluated' && !methods.some(x => x.name === m.name || (x.slug === 'cca' && m.name === 'Standard CCA')));
+const directory = unmeasuredModels.filter(m => !paged.has(m.name));
+need(methods.every(m => rows.some(e => e.kind === 'site_model' && e.links.page === `/methods/${m.slug}/`)), 'a method with a page and no row');
+const covers = {
+  baselines: baselines.length > 0 && baselines.every(m => rowNamed(m.name)),
+  directory: directory.length > 0 && directory.every(m => rowNamed(m.name, `/methods/#${anchorOf(m.name)}`)),
+};
+const coverage = [
+  zh ? '在本站有页面的每个模型与方法' : 'each model and method with a page on this site',
+  ...(covers.baselines ? [zh ? '本站测过的其他基线' : 'the other baselines measured here'] : []),
+  ...(covers.directory ? [zh ? '模型目录中的模型' : 'the models in the directory'] : []),
+  ...(others.length ? [zh ? '我们读过官方记录的其他模型与论文' : 'the other models and papers whose official records we read'] : []),
+];
+const coverageText = zh
+  ? (coverage.length < 2 ? coverage.join('') : `${coverage.slice(0, -1).join('、')}，以及${coverage.at(-1)}`)
+  : (coverage.length < 2 ? coverage.join('') : `${coverage.slice(0, -1).join(', ')}${coverage.length > 2 ? ',' : ''} and ${coverage.at(-1)}`);
+
+// The terms sentence: while a row of this site's models carries no terms by part, it says what that row's "—" means.
+const partless = rows.filter(e => !e.terms_by_part);
+need(partless.every(e => e.kind === 'site_model' && e.links.page), 'a row with no terms by part that is not one of this site’s models');
+const termsText = zh
+  ? `条款按代码、权重与数据分别写明，并注明各自的出处；找不到条款的部分写作“未找到”。${partless.length ? '本站模型中这一栏写作“—”的行，登记册文件没有按部分给出它的条款。' : ''}`
+  : `Terms are given for the code, the weights and the data separately, each with who states them, and a part whose terms we could not find says “not found”.${partless.length ? ' A row of this site’s models that prints “—” there has no terms by part in the register file.' : ''}`;
+
+// The step sentence: a step with several items is reached through its key item (item_definitions `anchor`).
+const items = R.item_definitions.model as Record<string, { step: number; label_en: string; label_zh: string; anchor?: boolean }>;
+const keyed = STEPS.map(s => ({ s, all: Object.values(items).filter(i => i.step === s) }))
+  .filter(x => x.all.length > 1).map(x => ({ s: x.s, keys: x.all.filter(i => i.anchor) }));
+need(STEPS.every(s => Object.values(items).some(i => i.step === s && i.anchor)), 'a step with no key item');
+const keyedText = keyed.map(k => zh ? `第 ${k.s} 步的关键项目是${k.keys.map(i => i.label_zh).join('、')}` : `at step ${k.s}, the ${k.keys.map(i => i.label_en).join(' and the ')}`);
+
+const checkedDays = [...new Set(rows.map(e => e.checked))].sort().map(d => longDate(d, locale));
+// "a, b and c" / "a、b 和 c": in Chinese, 和 takes a space beside a date or a Latin word, none beside Chinese.
+const andList = (xs: string[]) => {
+  if (xs.length < 2) return xs.join('');
+  const head = xs.slice(0, -1).join(zh ? '、' : ', '), last = xs.at(-1)!;
+  if (!zh) return `${head} and ${last}`;
+  const latin = (ch: string | undefined) => !!ch && /[\w]/.test(ch);
+  return `${head}${latin(head.slice(-1)) ? ' ' : ''}和${latin(last[0]) ? ' ' : ''}${last}`;
+};
+// The rules that apply to every row on either ladder, from the file; the access and re-upload rules belong to datasets.
+const RULES = ['rows_state_facts', 'correction_route'];
+const rules = RULES.map(id => { const r = R.rules.find(x => x.id === id); need(r, `the file has no rule ${id}`); return zh ? r!.zh : r!.en; });
+const levelsH2 = zh ? `${C.ladderName.model}的步骤` : `The ${C.ladderName.model.toLowerCase()}’s steps`;
+
+// The markup: each part named as this site names it.
+const catalog = catalogRows('model');
+need(catalog.length === rows.length, 'the markup has one part per row');
+const methodName = new Map(methods.map(m => [`/methods/${m.slug}/`, m.name]));
+const USER_PREFIX = /(?<![\w.-])[\w.-]+\/(?=[\w.-])/g;
+const partName = (e: RegisterEntry, given: string) => (e.kind === 'site_model' && e.links.page && methodName.get(e.links.page)) || given.replace(USER_PREFIX, '');
+const structured: Record<string, any> = registerCatalog('model', `${site.name}: ${registerCopy.en.methods.title}`, registerCopy.en.methods.lede, catalog);
+structured.hasPart = structured.hasPart.map((d: Record<string, unknown>, i: number) => {
+  const name = partName(rows[i], String(d.name));
+  need(!/[\w.-]\/[\w.-]/.test(name), `${rows[i].id}: the markup names it with a user name (${name})`);
+  // The part keeps its row's url and description (structured.ts), as on the dataset register.
+  return { ...d, name };
+});
+---
+<EntityLayout locale={locale} path={path} active="methods"
+  documentTitle={C.methods.title} h1={C.methods.h1} description={C.methods.lede}
+  eyebrow={ui[locale].eyebrow} dek={C.methods.lede}
+  crumbs={[{ label: E.home, href: hrefFor('/', locale) }, { label: E.methodsTitle, href: hrefFor('/methods/', locale) }, { label: zh ? '模型登记册' : 'Model register' }]}
+  structured={structured} cite={{ files: [REGISTER_FILE], upstream: 'datasets' }}>
+
+  <section class="topic-section rg-counts" id="counts" aria-labelledby="counts-heading">
+    <div class="topic-heading"><div><h2 id="counts-heading">{zh ? '模型登记收录了什么' : 'What the model ladder holds'}</h2></div>
+      <p>{zh ? <>这里的每个数字都是<a href={`/data/${REGISTER_FILE}`}>登记册文件</a>中的值。</> : <>Every number here is a value of <a href={`/data/${REGISTER_FILE}`}>the register file</a>.</>}</p></div>
+    {zh ? <ul class="rg-count-list">
+      <li data-rg-count="rows"><strong>行数。</strong>模型登记共 <Fig f={F(N.model)} cls="num"/> 行：{coverageText}。按核验到的最远一步：{STEPS.map((s, i) => <>{i > 0 && '，'}{atStep(s) !== null ? <>第 {s} 步 <Fig f={F(atStep(s)!)} cls="num"/> 行</> : `第 ${s} 步没有`}</>)}。数据集登记另有 <Fig f={F(N.dataset)} cls="num"/> 行，见<a href={hrefFor('/datasets/register/', locale)}>数据集登记册</a>。{checkedDays.length === 1 ? `这里的每一行都核验于 ${checkedDays[0]}。` : `这里的各行分别核验于 ${andList(checkedDays)}。`}</li>
+      <li data-rg-count="tracked"><strong>其他模型与论文。</strong>我们读过另外 <Fig f={F(M.external_rows)} cls="num"/> 个模型与论文的官方记录，其中 <Fig f={F(M.merged_into_site_methods)} cls="num"/> 个在本站已有方法页面，已并入该方法的那一行。</li>
+    </ul> : <ul class="rg-count-list">
+      <li data-rg-count="rows"><strong>Rows.</strong> <Fig f={F(N.model)} cls="num"/> rows on the model ladder: {coverageText}. By the furthest step checked: {STEPS.map((s, i) => <>{i > 0 && (i === STEPS.length - 1 ? ' and ' : ', ')}{atStep(s) !== null ? <><Fig f={F(atStep(s)!)} cls="num"/> at step {s}</> : `none at step ${s}`}</>)}. The dataset ladder has another <Fig f={F(N.dataset)} cls="num"/> rows, on <a href={hrefFor('/datasets/register/', locale)}>the dataset register</a>. {checkedDays.length === 1 ? `Every row here was checked on ${checkedDays[0]}.` : `The rows here were checked on ${andList(checkedDays)}.`}</li>
+      <li data-rg-count="tracked"><strong>Other models and papers.</strong> We read the official records of <Fig f={F(M.external_rows)} cls="num"/> further models and papers; <Fig f={F(M.merged_into_site_methods)} cls="num"/> of them already have a method page here and are merged into that method’s row.</li>
+    </ul>}
+  </section>
+
+  <section class="topic-section" id="levels" aria-labelledby="levels-heading">
+    <div class="topic-heading"><div><h2 id="levels-heading">{levelsH2}</h2></div>
+      <p>{zh
+        ? `一个模型或一篇论文要经过五步，步骤名称与数据集登记的不同，表中每个步骤标记都写明“模型核验”。一行所在的步骤，是关键项目已在案的最远一步${keyedText.length ? `（${keyedText.join('；')}）` : ''}；该步及之前各步缺少的项目作为缺口，列在步骤标记旁边。每一步的证据逐项附出处，写在 JSON 文件里。`
+        : `A model or paper climbs five steps with names of their own, and every badge in the table names the model ladder. A row’s step is the furthest one whose key item is on file${keyedText.length ? ` (${keyedText.join('; ')})` : ''}; an item still missing at its step or an earlier one is listed beside the badge as a gap. The evidence for each step, item by item with its source, is in the JSON file.`}</p></div>
+    <dl class="rg-steps">{ladderSteps('model', locale).map(s => <div><dt><span class={`rg-badge rg-l${s.step}`}>{zh ? `第 ${s.step} 步 · ${s.name}` : `Step ${s.step} · ${s.name}`}</span></dt><dd>{s.needs}</dd></div>)}</dl>
+    <h3 class="rg-rules-heading">{zh ? '规则' : 'Rules'}</h3>
+    <ul class="rg-rules">{rules.map(r => <li>{r}</li>)}</ul>
+    <p class="citation-note">{zh
+      ? <>需要授权的数据与疑似转传的数据另有规则，写在<a href={hrefFor('/datasets/register/#levels', locale)}>数据集登记册</a>上。要更正某一行，请用该行末尾的邮件链接，邮件主题写有该行的编号。怎样处理更正，见<a href="/data-use/#register-corrections">数据使用页面</a>（英文）。</>
+      : <>Gated data and suspected re-uploads have rules of their own, on <a href={hrefFor('/datasets/register/#levels', locale)}>the dataset register</a>. To correct a row, use the mail link at its end: the subject names the row’s id. How corrections are handled is on <a href="/data-use/#register-corrections">the data-use page</a>.</>}</p>
+  </section>
+
+  <section class="topic-section" id="models" aria-labelledby="models-heading">
+    <div class="topic-heading"><div><h2 id="models-heading">{zh ? '全部条目' : 'Every row'}</h2></div>
+      <p>{zh
+        ? `每一行链接到它在本站的页面或模型自己的记录。${termsText}只有会议论文集或论文的最终定稿显示论文已被接收时，才写出发表场合，并附核对日期；论文集可在线查阅的，发表场合链接到论文集。模型的预训练数据是否包含它在本站评分所用的数据，写在“是否出现在预训练数据中”一项里。`
+        : `Each row links its page on this site or the model’s own records. ${termsText} A paper’s venue appears only where the venue’s proceedings or the paper’s camera-ready version show it accepted, with the date we checked; where the proceedings are online, the venue links them. Whether a model’s pretraining data include the data it is scored on appears as its pretraining exposure.`}</p></div>
+    <RegisterTable locale={locale} ladder="model"/>
+    <p class="citation-note" id="register-files">{zh
+      ? <>下载：<a href={`/data/${REGISTER_FILE}`} download><code>{REGISTER_FILE}</code></a>（两类登记，含每一步的证据与以代码表示的发现）。<a href={hrefFor('/api/', locale)}>全部文件</a></>
+      : <>Download: <a href={`/data/${REGISTER_FILE}`} download><code>{REGISTER_FILE}</code></a> (both ladders, with each step’s evidence and the findings as codes). <a href={hrefFor('/api/', locale)}>Every file</a></>}</p>
+  </section>
+</EntityLayout>

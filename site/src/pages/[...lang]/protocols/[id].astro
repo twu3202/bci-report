@@ -29,6 +29,7 @@ import FmLicences from '../../../components/FmLicences.astro';
 import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptCells, eegptComparisons, eegptExposure, eegptExposureTable, eegptModel, eegptRelease,
          eegptText, footnotesOf } from '../../../data/eegpt-core';
 import { entityCopy } from '../../../data/entity-copy';
+import { NEUROLM_PANEL_PATH, NEUROLM_POINTER_PROTOCOL, neurolmPointer } from '../../../data/neurolm-eegmat';
 
 export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
   params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
@@ -78,6 +79,8 @@ const say = (en: string) => fmText(en, locale);
 const exposureText = (statement: string) => locale === 'en' ? statement : fmZh[statement];
 const fmNotes = fmAll.filter(r => r.notes);
 const adaptation = p.id === 'arithmetic-rest' ? fmAdaptation : [];
+// The NeuroLM pilot on EEGMAT is pointed to from this protocol alone, in words: its scores stay in their own panel.
+const neurolmPointed = p.id === 'arithmetic-rest' && p.id === NEUROLM_POINTER_PROTOCOL;
 const sgn = (f: { raw: number; fmt: string; src: string }) => ({ ...f, fmt: 'sgn1' as const });
 // --- EEGPT (2026-10-13): its frozen row from its own release, in its own section after the further encoders' -------
 const ec = eegptCells[p.id];
@@ -160,6 +163,8 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     </div>
     <p class="citation-note">{c.computeNote}</p>
     {p.notRun.length > 0 && <p class="protocol-note not-run"><strong>{c.notRun}</strong> <span lang="en">{p.notRun.map((m, i) => <>{i > 0 && ', '}{m.methodSlug ? <a href={hrefFor(`/methods/${m.methodSlug}/`, locale)}>{m.name}</a> : m.name}</>)}</span>{locale === 'zh' ? '。' : '. '}{c.notRunCaveat}</p>}
+    {/* NeuroLM's frozen-feature pilot (owner decision D1, 2026-10-19): its own panel on the pilot studies page, outside the core matrix; this page points to it with no figure. */}
+    {neurolmPointed && <p class="citation-note" data-neurolm-pointer="true"><a href={hrefFor(NEUROLM_PANEL_PATH, locale)}>{neurolmPointer[locale]}</a></p>}
   </section>
 
   <section class="topic-section fm-section" id={FM_ANCHOR} aria-labelledby="fm-heading" data-release={fmRelease.id}>
