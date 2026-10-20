@@ -69,9 +69,9 @@ FONTS = {
     ("sans", False): "/System/Library/Fonts/Supplemental/Arial.ttf",
 }
 
-HEADLINE = ("Every EEG score, with the", "protocol that produced it.")
-DEK = ("Cohort, electrode count, training budget and chance",
-       "level travel with every number.")
+HEADLINE = ("EEG results", "you can check.")
+DEK = ("Each score carries its protocol. The open register",
+       "shows how far every dataset has been checked.")
 
 
 def font(size: int, bold: bool = False, family: str = "sans"):

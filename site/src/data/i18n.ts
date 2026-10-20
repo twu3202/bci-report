@@ -286,7 +286,7 @@ export const chrome: Record<Locale, Chrome> = {
     footerReleases: 'Releases & downloads',
     downloadData: 'Download data ↓',
     englishMark: '',
-    shareAlt: c => `${site.name}: Every EEG score, with the protocol that produced it. Core benchmark matrix: ` +
+    shareAlt: c => `${site.name}: EEG results you can check. Core benchmark matrix: ` +
       `${c.protocols} protocols, ${c.datasets} datasets, ${c.comparisons} comparisons, ${c.methods} methods.`,
     footerCode: 'Code on GitHub',
     footerMirror: 'Data mirror on Hugging Face',
@@ -309,7 +309,7 @@ export const chrome: Record<Locale, Chrome> = {
     footerReleases: '发布记录与下载',
     downloadData: '下载数据 ↓',
     englishMark: '（英文）',
-    shareAlt: c => `${site.name}：每一个 EEG 分数，都附带产生它的协议。核心基准矩阵：` +
+    shareAlt: c => `${site.name}：经得起核对的 EEG 结果。核心基准矩阵：` +
       `${c.protocols} 个协议、${c.datasets} 个数据集、${c.comparisons} 项比较、${c.methods} 种方法。`,
     footerCode: 'GitHub 上的代码',
     footerMirror: 'Hugging Face 数据镜像',
@@ -451,13 +451,14 @@ export const home = {
     // No date and no version label anywhere in visible text (owner decision 2026-10-08): the
     // release log (/releases/) is where dates live; check-workbench.mjs refuses one elsewhere.
     eyebrow: 'Open EEG evaluation',
-    h1: 'Every EEG score, with the protocol that produced it.',
+    h1: 'EEG results you can check.',
     // What the protocol pages carry, counted from the data: the core matrix's methods
     // and the further frozen encoders, named apart and never summed (review of 2026-10-06).
     lede: (c: HomeCounts) =>
       `${c.protocols} fixed protocols on ${c.datasets} public datasets carry the core matrix’s ${c.methods} decoding methods ` +
       `and, beside them, ${c.added} foundation encoders as frozen probes. ` +
-      `Questions beyond the matrix cover transfer, calibration and model adaptation, reliability, clinical groups and data quality, signals other than scalp EEG, and small pilot studies.`,
+      `Questions beyond the matrix cover transfer, calibration and model adaptation, reliability, clinical groups and data quality, signals other than scalp EEG, and small pilot studies. ` +
+      `The open register lists every EEG dataset and model we know of, with how far each has been checked.`,
     // A visible caption: the four counts are the core matrix's, not the site's.
     statsCaption: 'Core matrix',
     // The line under them: the v9 encoders on the same protocols, a count of their own, never added in.
@@ -603,11 +604,12 @@ export const home = {
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
       'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发；另有首批 fNIRS 与皮层内神经元放电基线。',
     eyebrow: '公开 EEG 评测',
-    h1: '每一个 EEG 分数，都附带产生它的协议。',
+    h1: '经得起核对的 EEG 结果。',
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
-      `矩阵之外的问题页涵盖迁移、校准与模型适配、可靠性、临床分组与数据质量、头皮 EEG 之外的信号，以及小规模试点研究。`,
+      `矩阵之外的问题页涵盖迁移、校准与模型适配、可靠性、临床分组与数据质量、头皮 EEG 之外的信号，以及小规模试点研究。` +
+      `开放登记册列出我们知道的每个 EEG 数据集和模型，并写明每一项核验到了哪一步。`,
     statsCaption: '核心矩阵',
     statsAdded: ['另有 ', ' 个基础模型编码器在同样的协议上（冻结）→'] as const,
     stats: { protocols: '协议', datasets: '数据集', comparisons: '比较', methods: '方法' },

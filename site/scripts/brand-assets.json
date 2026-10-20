@@ -9,15 +9,15 @@
     "sha256": "c8e39b13b3da909761d1008d15600b7cb3457da7c5605dab9c40b07e0cb80513"
   },
   "og.png": {
-    "sha256": "0db84ed6f5c32547b07977263d797b0398e65670aec9354106a1da675d252527",
+    "sha256": "629a62129b738183b7902e09fa9a8f64d0c94e227c3aae6824217abc1d3ac28b",
     "width": 1200,
     "height": 630,
     "text": [
       "BCI Report",
-      "Every EEG score, with the",
-      "protocol that produced it.",
-      "Cohort, electrode count, training budget and chance",
-      "level travel with every number.",
+      "EEG results",
+      "you can check.",
+      "Each score carries its protocol. The open register",
+      "shows how far every dataset has been checked.",
       "8 protocols",
       "7 datasets",
       "39 comparisons",
