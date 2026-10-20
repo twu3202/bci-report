@@ -604,7 +604,7 @@ export const home = {
       '公开 EEG 解码结果，每一项都附带产生它的协议：运动想象、4 与 8 电极 SSVEP、' +
       'P300 与语义 ERP、认知负荷、睡眠分期，以及空闲误触发；另有首批 fNIRS 与皮层内神经元放电基线。',
     eyebrow: '公开 EEG 评测',
-    h1: '经得起核对的 EEG 结果。',
+    h1: '经得起核对的 EEG 结果',
     lede: (c: HomeCounts) =>
       `在 ${c.protocols} 个固定协议、${c.datasets} 个公开数据集上，既有核心矩阵的 ${c.methods} 种解码方法，` +
       `也有以冻结探针方式运行的 ${c.added} 个基础模型编码器。` +
