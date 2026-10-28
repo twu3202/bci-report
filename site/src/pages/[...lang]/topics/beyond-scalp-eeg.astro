@@ -20,7 +20,7 @@ import Fig from '../../../components/Fig.astro';
 import Parts from '../../../components/Parts.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
-import { BEYOND_ANCHOR, BEYOND_PATH, formatFig, wideFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
+import { BEYOND_ANCHOR, BEYOND_PATH, DATA_QUALITY_ANCHOR, DATA_QUALITY_PATH, formatFig, wideFmt, type Fig as FigValue, type Fmt } from '../../../data/entities';
 import { holds } from '../../../data/releases';
 
 export const getStaticPaths = localeParams;
@@ -276,6 +276,8 @@ const copy = {
       { text: 'Small EEG pilots, some on datasets that also record fNIRS or muscle activity: ', href: '/topics/pilot-studies/', link: topicCards.en['pilot-studies'].question },
       { text: 'Electrodes in the ear rather than on the scalp, against a full scalp montage: ', href: '/topics/fewer-electrodes/', link: topicCards.en['fewer-electrodes'].question },
       { text: 'Continuous cursor tracking decoded from scalp EEG across sessions of the same person, a different signal, task and metric: ', href: '/topics/later-sessions/#forenzo', link: 'Continuous cursor tracking, a negative result' },
+      // NeBULA (owner decision D34): figure-free, its scores held under the one-person rule on the data-quality page.
+      { text: 'EEG and EMG recorded together while one participant reaches with an upper-limb exoskeleton, checked from its files, with its scores held: ', href: `${DATA_QUALITY_PATH}#${DATA_QUALITY_ANCHOR.nebula}`, link: 'NeBULA, a status case on the data-quality page' },
     ],
   },
   zh: {
@@ -385,6 +387,7 @@ const copy = {
       { text: '小规模的 EEG 试点研究，其中一些数据集同时记录了 fNIRS 或肌电：', href: '/topics/pilot-studies/', link: topicCards.zh['pilot-studies'].question },
       { text: '耳道内而不是头皮上的电极，与完整的头皮电极对比：', href: '/topics/fewer-electrodes/', link: topicCards.zh['fewer-electrodes'].question },
       { text: '从头皮 EEG 解码同一个人跨会话的连续光标追踪，信号、任务与指标都不同：', href: '/topics/later-sessions/#forenzo', link: '连续光标追踪，一个阴性结果' },
+      { text: '一名被试借助上肢外骨骼伸手时同步记录的 EEG 与肌电（EMG），从文件读起逐项核查，分数暂缓：', href: `${DATA_QUALITY_PATH}#${DATA_QUALITY_ANCHOR.nebula}`, link: 'NeBULA，数据质量页面上的状态案例' },
     ],
   },
 }[locale];

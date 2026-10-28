@@ -1,0 +1,172 @@
+{
+ "release_id": "eegmat-ten-second-update-20261028",
+ "freeze_date": "2026-10-28",
+ "reviewed_at": "2026-10-28",
+ "reviewer": "publishing session",
+ "scope": "Editorial decisions for the ten-second EEGMAT probes of two frozen encoders, EEG-Captioner and AXON: each read by one fixed ridge head in five subject-disjoint folds on the same 432 ten-second windows from 36 people, each against Welch band power on the same windows, scored as participant-mean balanced accuracy with a paired participant-bootstrap interval. Its own manifest: it amends no earlier review and changes no released file. mvp.json, the arithmetic-rest files, eegpt-core-update.json, adaptation-update.json, neurolm-eegmat-update.json and pilot-studies-update.json keep their bytes; the probes sit in their own file, eegmat-ten-second-update.json, as one separate panel on the pilot studies page with a subsection per encoder. Every figure is read from a file this manifest pins by SHA-256: EEG-Captioner from the independent result-audit outcome that its release approval binds; AXON from the aggregate result that its independent release review binds, equal to the corrected audit evidence the review pins; identities and licences from the two intake records. Nothing was re-run: neither encoder was loaded, no feature was extracted, no head was refitted and no network was used.",
+ "approval": {
+  "date": "2026-10-28",
+  "decision": "aggregate_preview",
+  "basis": "The owner’s decision D14 in chat on 2026-10-28, recorded in owner-decisions.json and quoted below: publish all reviewed aggregates of this round, including the EEG-Captioner and AXON ten-second EEGMAT probes. EEG-Captioner’s release approval passes an internal conditional-probe handoff and records publication_authorized false; AXON’s independent release review passes a conditional aggregate release and edits no website. Neither research record grants website authority, which D14 supplies. Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+  "ownerDecisions": {
+   "path": "research/publication_review_20261028/owner-decisions.json",
+   "note": "Quoted verbatim; the export requires the quoted text to be the current value at its key, so a changed decision stops the build. The file is not pinned by hash because other packages of this release may add to it.",
+   "quoted": {
+    "D14": "All: the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33), NeuroRVQ on EEGMAT, MI and P300 (aggregate scores only, CC BY-NC, no weights), the EEG-Captioner and AXON ten-second EEGMAT probes, and the Kim beta-range CCA baseline"
+   }
+  },
+  "previewDefaults": [
+   "Placement: one separate panel, #eegmat-ten-second on /topics/pilot-studies/, after #neurorvq, outside the pilot count, with a pointer that carries no figures from /protocols/arithmetic-rest/. The pilot-studies short answer, description, dek, card and pilot count keep their wording.",
+   "Two subsections, one per encoder, each with its own baseline label: \"EEG-Captioner encoder, mean-token 256-d + ridge\" against Welch band power matched for this run; \"AXON, 512-d + ridge\" against the same Welch predictions reused without refitting, not matched for normalisation or parameter count. No shared table and no encoder-against-encoder difference.",
+   "Beside every score: 0 of 432 windows meet EEG-Captioner’s source annotation-QC rules, and 72 of 72 recordings are flagged by them. Beside AXON’s score also: AXON’s own numerical input check passed 432 of 432, a different check.",
+   "Interval wording: the pilot-studies sentence, “the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent”.",
+   "Licences per part: EEGMAT under its released record; EEG-Captioner code MIT, encoder weights Apache-2.0; AXON checkpoint Apache-2.0, its Braindecode module Apache-2.0 within a BSD-3-Clause project; no weights distributed; AXON’s paper reference not cited until checked.",
+   "Counts: no new dataset, model or pilot in any counter; no row in the core Arithmetic & rest matrix, the further-encoder CSVs or any leaderboard; not ranked against any two-second EEGMAT result on the site."
+  ],
+  "decisionsOfThisReview": [
+   "Release status is read from each study’s own approval record: EEG-Captioner’s release approval (PASS_INTERNAL_CONDITIONAL_PROBE_HANDOFF), which binds the handoff, the interpretation review and the independent result-audit outcome by SHA-256; AXON’s independent release review (PASS_CONDITIONAL_AGGREGATE_RELEASE), which binds the aggregate result and the handoff and pins the corrected audit evidence, the feature comparison and the frozen protocol. The aggregate’s own status field is checked for consistency only.",
+   "Values: EEG-Captioner’s participant-mean balanced accuracies, paired difference and interval from the independent result-audit outcome, equal to the interpretation review’s verified numbers; AXON’s from the released aggregate, equal to the corrected audit’s producer and independent scores. Stored at full source precision as fractions; rounding is the site’s.",
+   "The Welch baseline of the AXON subsection is the EEG-Captioner run’s baseline: AXON’s frozen protocol names the EEG-Captioner run’s sealed baseline predictions and physical array by the SHA-256 that the EEG-Captioner audit outcome checked, and both records give the same participant-mean baseline score.",
+   "Source QC: the totals only (0 of 432 windows meet the rules; 72 of 72 recordings flagged), summed from the audit outcome’s aggregate QC summary and equal to the release approval, the AXON aggregate and AXON’s protocol; the rule as the frozen protocol’s configuration and the handoff state it. The flagged channel-record count and the counts by condition and fold stay out.",
+   "Identity: EEG-Captioner from its intake handoff (Hugging Face revision, source commit, encoder bytes and SHA-256, MIT code, Apache-2.0 weight metadata), equal to the probe protocol and handoff; AXON from its final checkpoint intake admission (repository, revision, bytes, SHA-256), the bound model card and access record (apache-2.0, public, ungated) and the strict-load packet (Braindecode commit; the module’s per-file Apache-2.0 terms under a BSD-3-Clause project root).",
+   "Audit boundary: EEG-Captioner’s audit recomputed features, heads, scores and the bootstrap from the sealed arrays, not the raw preprocessing or the source QC. AXON’s first independent audit failed its feature tolerance and is kept; the corrected audit, which aligned only the auditor’s frozen-parameter state, matched the production features byte for byte under the unchanged tolerance, and production was unchanged.",
+   "Plan conflict, resolved by the source: the plan’s line “0 of 432 windows, and 72 of 72 recordings, meet EEG-Captioner’s source annotation-QC rules” reads as if every recording met the rules; the handoff records 72 of 72 recordings marked source-ineligible, so the line says they are flagged.",
+   "After the independent review of the export: the EEG-Captioner audit block names its scope (feature_max_abs_error, hard_predictions_reproduced_exactly, and the refitted heads’ decision scores within the power of ten above the recorded errors, never the errors themselves); the source-QC rule reads as the frozen protocol’s exact semantics (the summed duration of BAD annotations over the whole recording) and runs on each whole preprocessed recording before the zero Oz channel, as the handoff and the protocol’s diagnostic domain state; AXON’s subsection carries its own limits from its handoff and protocol (the Welch comparison cannot isolate what pretraining contributes; the EEG-Captioner and Welch outcomes were known before AXON ran); the release record says the research approval does not itself authorise publication. Reader-visible text names no internal decision id."
+  ]
+ },
+ "releaseRecord": {
+  "date": "2026-10-28",
+  "decision": "Publish the EEG-Captioner and AXON ten-second EEGMAT probes as their approved aggregates: one separate panel on the pilot studies page with a subsection per encoder, each against its own Welch band-power baseline, outside the pilot count and every leaderboard.",
+  "rights": "EEGMAT keeps its released record: Open Data Commons Attribution License 1.0, aggregate results only. EEG-Captioner’s source code is MIT. EEG-Captioner’s encoder weights are Apache-2.0 as its Hugging Face weight metadata states. AXON’s checkpoint is Apache-2.0 as its Hugging Face licence tag states; its Braindecode module carries per-file Apache-2.0 terms within a BSD-3-Clause project. No weights are distributed, and no endorsement by either model’s authors is implied.",
+  "researchRelease": "EEG-Captioner’s release approval passes an internal conditional-probe handoff and does not itself authorise publication; AXON’s independent release review passes a conditional aggregate release. Both keep the probes outside the main leaderboard and bind their aggregates, handoffs and audits by SHA-256. Publication on the site rests on the site owner’s decision of 2026-10-28.",
+  "binding": "This record approves the served file the export audit names."
+ },
+ "captioner": {
+  "outcome": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/review/result_audit/independent-result-audit-outcome.json",
+   "sha256": "db45216a9ba6591ce6c284595e0fb69c9979bc9fe37bd74f1e9358d8a6af7fbd"
+  },
+  "approval": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/review/release-approval.json",
+   "sha256": "e8fee718675a324ee1566b8c1dd353fd8a1e7b3f812c933175ce3bb25aa59177"
+  },
+  "interpretation": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/review/interpretation-review.json",
+   "sha256": "955237ecca6262906977cec8cbab457b7f4cca6ded8ed6def2522850fadae812"
+  },
+  "handoff": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/EEG-Captioner EEGMAT 10-Second Conditional Probe Handoff.md",
+   "sha256": "e33ae7e2752299b43a058df25978a052abab0c9ea0807b3ee3fc2f3847d8e623"
+  },
+  "protocol": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/Frozen Evaluation Protocol.json",
+   "sha256": "8966b298a3180347ad78b21b87d440dec8d5088040453471459cb3392c0bad82"
+  },
+  "ledger": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/evaluation/review/result_audit/producer-ledger.json",
+   "sha256": "86ce4080d86e26bb3458db6f67d6722c2362cb8f6df83cd5107e14981a6e4df6"
+  },
+  "intakeHandoff": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/EEG-Captioner Encoder Intake Handoff.md",
+   "sha256": "f4cd42aade6607d12028b698eb1d16dee7b8d85991c8b0bfa67a35637eea7470"
+  },
+  "intakeApproval": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/state/release-approval.json",
+   "sha256": "ef861890509f532ad3115d69c5b07041d727f32418954c38e2383b6f1c3781a6"
+  }
+ },
+ "axon": {
+  "aggregate": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/release/AXON EEGMAT Aggregate Result.json",
+   "sha256": "2c1fee43cffb6f4a4f9070067ef031f834e9c46c717cd96305f5a05261e75b8e"
+  },
+  "review": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/release/Independent AXON Result Release Review.json",
+   "sha256": "142df9d09ce4211ac677b92914836708e30b488c78f27ff72a16e285cdf1ce6f"
+  },
+  "handoff": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/release/AXON EEGMAT Conditional Probe Results Handoff.md",
+   "sha256": "8963c29f8bed1b9d825b91a212fbadadef2322bf32e3cd3fd0e653ce4095ba8f"
+  },
+  "correctedAudit": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/evaluation/audit_gradient_freeze_correction1/observed/Corrected Audit Aggregate Evidence.json",
+   "sha256": "f124d02632ac8db52cddf79f7f4f830825f69d3a82d68ed7abfec58a136fbc7d"
+  },
+  "featureComparison": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/evaluation/audit_gradient_freeze_correction1/observed/Feature Comparison Aggregate.json",
+   "sha256": "d738aa2b5cd8fb67a18386eaf16518aaec7facca06835ce54fb300bb2ac33a45"
+  },
+  "protocol": {
+   "path": "research/autonomous_validation_20261026/axon_real_data_admission_20261027/evaluation/window_extension1_ssd/Frozen Protocol SSD.json",
+   "sha256": "22264f7de601c1ba3dee9fe091b28bf5b103853112c2298768ab53d07a401f2b"
+  },
+  "intakeAdmission": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/Final Checkpoint Intake Result Admission.json",
+   "sha256": "3cf635e6d1100c8b2ab59ce2e64f2ed8521968e95d7f6ea7740dea1a5b146076"
+  },
+  "loadHandoff": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/AXON Checkpoint and Synthetic Acceptance Handoff.md",
+   "sha256": "ba4946a1e2eade8f02c160dfab30a11501f3a65df10b1570f778b816f8af1e11"
+  },
+  "loadPacket": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/Next Strict Load Packet.md",
+   "sha256": "1c4ff67b4d9f052cbb595a8d3788a998e3e28403eb3dd8683a53595726650f96"
+  },
+  "card": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/observed_D1_recovery1/README.md",
+   "sha256": "7f67a68d169d5f66a29b44d56a4408489cc6b66eb3050cc7e5c9c3d00d335851"
+  },
+  "access": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/observed_D1_recovery1/access.json",
+   "sha256": "b9bf1ee2b52fa3481e8c3df819401761d584d7c141448d581b2a8b6bcea76eec"
+  }
+ },
+ "planning": {
+  "handoff": {
+   "path": "research/autonomous_validation_20261026/handoff_20261028/BCI Report Consolidated Research and Website Handoff.md",
+   "sha256": "21d078bc5a4c4bd0e876e8f548b8209e7d7c665f6c7634f3eb5e090b154e5462"
+  },
+  "queue": {
+   "path": "research/autonomous_validation_20261026/handoff_20261028/Website Integration Queue.json",
+   "sha256": "9162bfd39467cbe138ae256e8e4a4fe9d8d3af0cf2cdc935305c159668a6085c"
+  }
+ },
+ "published": {
+  "coreMatrix": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  },
+  "pilotStudies": {
+   "path": "site/src/data/pilot-studies-update.json",
+   "sha256": "c93a344b7111b2335565b4a2819c0f4be6a93ba8d6970a8fd4fcb0cf9caf2bca"
+  },
+  "eegptCore": {
+   "path": "site/src/data/eegpt-core-update.json",
+   "sha256": "8563862b961a226636d1349ec62f5bfd4fe922bda326c27fbcf7557e2d277a26"
+  },
+  "adaptation": {
+   "path": "site/src/data/adaptation-update.json",
+   "sha256": "6253e1d7a7915e12afdfe926688a0bbeb52f2fef28c21d8423c406e353902bc2"
+  },
+  "neurolmEegmat": {
+   "path": "site/src/data/neurolm-eegmat-update.json",
+   "sha256": "4e7001b2b69ea2578d1db5c9617dc1b99e8f3985f13b2e2fb1b11f32024d6a55"
+  },
+  "foundationArithmetic": {
+   "path": "site/public/data/foundation-models-arithmetic-rest.csv",
+   "sha256": "61cd05ee7bf418e759663632942e57da8a0b4ded6b2156aa3885fe0c2005db7c"
+  }
+ },
+ "notPublished": [
+  "Per-person, per-fold and per-window values of any kind: per-fold balanced accuracy, fold assignments, participant identifiers, features, fitted heads, predictions and the sealed files. Only participant-mean balanced accuracy, paired differences with their intervals, cohort counts and the source-QC totals are published.",
+  "Confusion matrices and pooled macro-F1: window-pooled summaries, a different aggregation from the participant means shown.",
+  "The source-QC breakdown beyond the totals: the count of flagged channel-record instances and the counts by condition and by fold.",
+  "Workflow accounting: forward counts, head-fit counts, CPU and wall time and memory, from the handoffs, ledgers and audits.",
+  "A difference between the two encoders: none is computed.",
+  "A score on a cohort that meets EEG-Captioner’s source QC: no such study was selected, and one would need a new prospective protocol.",
+  "AXON’s paper reference: not cited until checked.",
+  "Checkpoints and weights: none is distributed; each SHA-256 identifies the file used and grants nothing.",
+  "The handoffs, protocols, approvals, reviews, audits and receipts themselves: each is pinned by SHA-256 in the release manifest and checked by the export, and none is published, because several carry private storage paths."
+ ],
+ "holds": []
+}

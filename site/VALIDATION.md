@@ -1008,6 +1008,143 @@ Chinese; no page but the release log saying its core-matrix scores are unpublish
 The REFED controls on the pilot-studies page and REFED's dataset page are named for what they are ("Training-set
 mean", "Same-video training lookup"); the served JSON's arm names stay, and the page holds its labels to them.
 
+The release log is two pages (owner decision D17, 2026-10-28). `/releases/` is a short index: the three newest release
+days, each with one to three short changes and its release ids; one visible line for every older release id; the
+corrections; and the holds register, open holds first and the resolved ones collapsed. `/releases/archive/` (`RECORD` in
+check-workbench) keeps every release's entry as released: its summary, notes, review manifest and the SHA-256 of each
+file it ships. What a release recorded is read from the archive: every served file listed once with the SHA-256 of its
+served bytes; each batch's id with its review manifest inside its own entry (not merely somewhere on the page), and the
+same id on a line of the index; the newest entry, which `CITATION.cff`, the home Dataset markup and llms.txt cite; the
+feed's entries in the archive's order; the home page's release count, equal to the index's lines; and the entry texts
+pinned for route 2, the v9 batch and EEGPT. Wherever a paragraph above says the release log names a batch, its manifest
+or a file's hash, that is now its archive entry. The holds, the corrections, the Dreem row and the pilot holds are read
+from the index. Both pages are in the sitemap in both languages with their alternates; the archive's Markdown copy is in
+llms.txt and, verbatim, in llms-full.txt; held sources are named on neither page; the Chinese archive passes the
+rejected-rendering list; both pages stay out of the update-label check. Every link into `/releases/#…` from llms.txt,
+llms-full.txt, the feed or a served file must land on a visible line of the index (outside any `<details>`), and a hold
+link on an open hold. `scripts/checks/release-log.mjs` checks the split itself (plan §4.5 (a)–(h)): the index's three
+newest days match the archive's dates and ids; each day has one to three changes, each with one or two links that land,
+at most 220 English or 110 Chinese characters, no date, version or update word, and the figures its payloads give, the
+same in both languages; every release id is on the index exactly once on a visible line, none inside `<details>`, older
+ids in the archive's order with their dates and pages; the index carries no hash, `data-file` or release entry; every
+`/releases/#hold-…` link on any page or Markdown copy names an open hold and every other `/releases/#…` link lands on a
+visible line; the archive has no holds or corrections table and links both; the feed keeps its `/releases/#<id>` ids and
+links the archive; and every `/api/` release link points into the archive at an entry that exists.
+
+The 2026-10-28 round (owner decisions D14–D29): five releases on one day, `ssvep-followups-update`, `neurorvq-update`,
+`eegmat-ten-second-update`, `dataset-checks-update` and `open-register-update` (the headline, which `CITATION.cff`
+cites), each payload under its own review manifest and export audit in `research/publication_review_20261028/`. Each
+page of the round carries its own module in `scripts/checks/` (`ssvep-followups`, `neurorvq`, `eegmat-ten-second`,
+`data-quality`, `open-register`, `release-log`, `ssvep-cross-page`), which check-workbench runs at its end. What
+check-workbench reads itself, and what changed in it:
+
+- Separate panels. The pilot-studies checks set aside every `<section data-counted="false">`, not only the NeuroLM
+  panel: NeuroLM on EEGMAT (2026-10-20), NeuroRVQ on three tasks and the ten-second EEGMAT probes. Each panel is a
+  section of its own with no nested section, names its release in `data-release`, and prints the figures of that
+  release's export only; what is left is read as the pilot export's page, as before (every figure a leaf of
+  `pilot-studies-update.json`, the denial rule, the EEGPT weights never Apache-2.0 — the ten-second panel's
+  Apache-2.0 lines each name their model ("EEG-Captioner’s encoder weights: Apache-2.0", "AXON’s checkpoint:
+  Apache-2.0"), and NeuroRVQ's "mean-token pooling" names its backbone's pooling, so both stay with their own modules).
+  The cite block is computed instead of pinned: the pilot release and each panel's release, each once, newest first,
+  the pilot release last. EEGMAT's shared facts (rest recorded before arithmetic, the prior ICA cleaning, a known
+  development cohort, and its credit, licence and consent) print once, in the NeuroLM panel; the NeuroRVQ and
+  ten-second panels point there (`scripts/checks/neurorvq.mjs` and `eegmat-ten-second.mjs` hold each once on the page,
+  a build guard holds the three panels' EEGMAT rights records equal, and the ten-second module requires every
+  Apache-2.0 sentence to name EEG-Captioner or AXON and never EEGPT).
+- Later exports. `dataFileOf` still names each question's first download (its hero button); `laterFilesOf` names the
+  export a later release adds to a question: IESSEEG on clinical-groups, the three panels on pilot-studies, cards 8 to
+  14 on new-ssvep-frequencies, the dataset checks on data-quality. Each is linked from the page in both languages, and
+  on those pages every `data-fig` cites the first download or one of them. `topicPages` is unchanged: the round adds
+  no question.
+- Formats. The `data-fig` format table gains `pp2eq` (a difference of two equal levels prints 0.00 pp, never −0.00 pp,
+  and only below 1e-12), `sgn5` (a bound the export flags below two decimals, at five: −0.00022) and `pm1` (card 13's
+  margin, ±0.5 pp), as `src/data/ssvep-followups.ts` prints them. The earlier batches' token checks leave the three out,
+  as they leave out every later format.
+- Translated text in downloads. Every dated register file (`open-register-<date>.json`) is read as the 2026-10-20 one
+  was, with its `zh` and `*_zh` keys set aside; `ssvep-followups-update.json` with exactly two fields set aside, card 11's
+  filter-bank CCA recipe and the D25 timing label, whose Chinese the page prints verbatim. Any other Chinese fails.
+- The withheld L-FAME descriptors. Card 11's grid holds two full-precision raw values in `data-fig` attributes that
+  begin "0.230" and "0.265", so the follow-ups export's attributes are set aside like the earlier batches'; and the
+  register pages print from the newest dated register file, so every `open-register-<date>.json` attribute is. Printed
+  text and every other attribute are still read.
+- Topic cards. The new-ssvep-frequencies card counts the follow-ups of both releases in words, computed from the two
+  files (fourteen cards, thirteen on BETA's held-out task, five on Wearable-102, one of them only there); the
+  data-quality card names every case of its two files and counts the one-person cases (eldBETA, Damm, NeBULA) in a
+  word. Neither card's file list grows: the round adds no digit to either card.
+- The SSVEP multiplicity sentence, once per language on the page, computed from the export's `interval_adjustment`
+  (card 12's Bonferroni family at 1 − 0.05/9 over nine comparisons, card 13's 90% margin test, no other interval
+  adjusted, with both figures as their `data-fig` attributes); the earlier "no interval is adjusted" sentence is gone.
+- `/data-use/`: the four sections of the round in release order, after the NeuroLM section and before the register.
+  Each names its release linked to the index, prints its export's rights sentence and every item of its not-published
+  list, and has a header row on every table. Every rights row as its export states it, with its label for what is
+  published (Kim "Aggregate scores", MIND "Aggregate scores, conditional", Damm and NeBULA "Held — no figure", read
+  from the export's case status; the follow-ups' "Aggregate results"); BETA's, Wearable-102's, EEGMAT's, ds003810's and
+  ds006593's records reused unchanged; NeuroRVQ's code and checkpoint CC BY-NC 4.0 linked to the licence file, its
+  checkpoint SHA-256, no weights distributed and no Apache licence; the ten-second encoders' five parts (EEG-Captioner
+  code MIT, weights Apache-2.0; AXON checkpoint and module Apache-2.0, Braindecode BSD-3-Clause) with their files'
+  SHA-256 and no weights distributed. Each dataset check's terms by kind: a licence with its link (Kim, NeBULA); MIND's
+  licence statements, every one the export records, side by side in its order with the record page's linked, both
+  CC BY 4.0 and CC BY-NC 4.0 and no single licence (D15), and ScienceDB's terms-of-use page stated as not read; Damm's
+  CC0 as its dataset description states it, linked to that file, with the missing LICENSE file noted and no licence
+  link of the site's own. NeBULA's unregistered Zenodo id is never linked. Each case's ethics and consent quoted, or
+  "not stated", with the document it was read from; Damm and NeBULA named in the small-cohort note.
+- The release record: the five releases each on the archive with their review manifests in their own entries and on
+  the index, in both languages; the register release heads the day.
+- Wearable-102's link line. `/datasets/wearable-ssvep-102/` links, under "Where it appears", the follow-up cards
+  whose endpoints include its dry and wet headbands (cards 10, 12, 13 and 14, as the export's Wearable-102 endpoint
+  names them), each link named by the heading its anchor carries, and no other dataset page links a follow-up card
+  (`ssvep-cross-page`).
+- The review of the SSVEP page (`ssvep-followups`, its review check): the name key, one row per set of scores across
+  both files, is a collapsed panel (owner decision D31; `new-ssvep-frequencies` exempts this one three-column table,
+  which fits unstacked at 360 px, from its rule that a table inside a panel has four or more columns); card 11 names
+  route 3's S11 recipe and links that page with no figure from its export (D32); the short answer says the untrained
+  harmonic sum came out nearly level with the learned eigenvalue head (no equivalence margin was registered); the dek
+  counts thirteen cards on BETA, five on Wearable-102 and one only there, as the topic card does; card 10's
+  Wearable-102 caption types no figure; cards 9, 12 and 14 name the two margins, what the reference check measures,
+  and the coverage heuristic behind the rising weights; Chinese prose on cards 8 to 14 has no space after a full-width
+  closing parenthesis and no nested full-width parentheses.
+- The review of the data-quality cases (`data-quality`): NeBULA's task line says MOABB's catalog lists the dataset under
+  motor imagery, in both languages (a build guard reads the NeBULA2025 row of the served 2026-10-20 register), and
+  "open register keeps" is gone; Kim beta-range's dataset page has its own subtitle, equal to its profile's summary in
+  `entity-profiles.json`, and one block of names and sources; Kim's amplitude hold is named once in its section.
+- NeBULA's related line on beyond-scalp-eeg (owner decision D34): one line in each language links its case on the
+  data-quality page (the export's placement and section, whose anchor renders there), names it and prints no figure.
+- The register's checked dates and AXON's code terms (`open-register`, `model-register`, the export audit and
+  `test_open_register.py`). A row's `checked` is the day its evidence was checked: a row the 2026-10-20 file holds
+  unchanged in every other field keeps that file's date (the freeze's re-read of its census values checks nothing
+  new), new and changed rows carry the freeze day, and the manifest counts the rows that keep an earlier date
+  (`rules.checked_kept_from_previous`). AXON's code terms are two licences in a fixed order, the module's file terms
+  and the project's root licence (`by: module_and_project_licence`, worded by `open-register.ts`); no terms value
+  carries parentheses. The register release's note names AXON's module code and project code apart, and the build
+  stops if that value is not two licences.
+- The release log's holds (`releases.ts`): Damm's two runs, NeBULA's three targets and three assistance levels are
+  read from `dataset-checks-update.json`, and a guard stops the build if the file changes the assistance names the
+  Chinese hold types.
+- The sitemap: `protocols/mi-rest/` (the NeuroRVQ pointer), `methods/` (the register's model count),
+  `topics/fewer-electrodes/` (the pointer to card 11), `topics/` (the two extended cards) and
+  `topics/beyond-scalp-eeg/` (NeBULA's related line) now carry 2026-10-28, and exactly the 43 entries the round
+  changed carry that date (21 pages in both languages and /data-use/).
+
+Mutation-tested on a copy of the build: each of 15 injected violations was caught (a panel's release dropped from the
+cite block, a panel figure citing the pilot export, a later export's link broken, both card counts, the multiplicity
+count, MIND's label, its unread terms page, an invented CC0 link, a not-published item dropped, an extra 2026-10-28
+date, Chinese outside the two allowed fields and outside the register's `zh` keys, a printed L-FAME prefix, and
+−0.00 pp).
+
+`check_site_artifact.py` holds each of the round's five served files to its own export audit and review manifest in
+`research/publication_review_20261028/` (the four result files and `open-register-20261028.json`, with the register's
+CSV to its audit's `csv_sha256`), requires the source and download copies to be identical, and keeps the files they
+rest on to the bytes those audits name: the released SSVEP file (D28), both `open-register-20261020` files and
+`data-quality-update.json`. It finds every page the payloads' placements name (cards, panels, sections, the protocol
+pages' pointers, Kim beta-range's page, the release archive, the register pages linking the newest file) in both
+languages with its Markdown copy, and refuses in every built file a private path root, host or volume word, the thread's
+commenter or an ICLR 2027 reference (`blocks_cca.REFUSED_TEXT`, with no literal of the name in the checker); on the
+day's files and the SSVEP page a 55 is allowed only as the tail of a decimal or signed figure. `build_hf_dataset.py`
+ships the four result files only as their audits bound them, each dated register CSV under its own release's audit and
+manifest (both versions ship), and `test_hf_card.py` pins the card's five paragraphs for the day (EEGPT never
+Apache-2.0: a sentence naming both says "source code only"; NeuroRVQ's exposure stated for its three datasets; Damm's
+CC0 with its missing LICENSE file, printed only while the payload states the file absent).
+
 ## What is NOT checked
 
 - The automated checks are not a browser visual review or an accessibility audit; the manual browser coverage is recorded below.

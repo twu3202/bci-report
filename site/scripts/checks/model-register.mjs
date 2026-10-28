@@ -1,5 +1,6 @@
-// The open register's model ladder (release open-register-update-20261020, owner decisions D1 and D4):
-// /methods/register/ in both languages and the /methods/ link line, checked in a built site.
+// The open register's model ladder (owner decisions D1 and D4; the newest register file, which since the 20261028 round
+// is open-register-20261028.json, owner decisions D14, D19 and D26): /methods/register/ in both languages and the /methods/
+// link line, checked in a built site.
 //
 //   node scripts/checks/model-register.mjs <build dir>        (or import { checkModelRegister } and pass the dir)
 //
@@ -49,7 +50,12 @@
 //     methods table names it, with no "<user>/" prefix; the count sentence names exactly the parts of /methods/ the
 //     rows cover; the terms sentence says what a "—" means for as long as a row carries no terms by part; the group
 //     notes claim holds and official records only where every row of the group bears them out;
-// 13. the page's weight, reported.
+// 13. the page's weight, reported;
+// 14. the 20261028 round's rows: NeuroRVQ, EEG-Captioner and AXON at step 4, each linking its panel on the pilot-studies
+//     page (a built anchor), with pretraining exposure unknown, no venue, no method page and no weights copy; AXON with no
+//     paper link; FAME, EEG-PRIME, STST-JEPA, BandVQ and USE-FM at step 1, each with its hold and its paper linked, no
+//     venue; FAME a model row apart from the L-FAME dataset row; every row's terms values licence codes only (AXON's code:
+//     the module's file terms and the project's root licence, in that order, worded by the page in each language).
 //
 // While the register file says it is provisional (`status: "provisional"`, its site rows placeholders until the
 // freeze), an item of 3, 4 or 12 that the placeholders, or a change requested of another package, have not met yet is
@@ -62,7 +68,6 @@ import { createHash as hash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const PATH = 'methods/register/';
-const RELEASE = 'open-register-update-20261020';
 const H1 = { en: 'Every EEG model and paper we track, and how far we checked it', zh: '我们关注的每个 EEG 模型与论文，以及核验到了哪一步' };
 const TITLE = { en: 'Open register · models', zh: '开放登记册 · 模型' };
 const COLUMNS = {
@@ -92,6 +97,12 @@ const NEUROLM = 'r-model-neurolm-b';
 const NEUROLM_CASES = ['/topics/pilot-studies/#neurolm-eegmat', '/topics/clinical-groups/#iesseeg'];
 const PAGED_NO_VENUE = { 'r-model-zuna': '/methods/zuna/', 'r-model-eeg-fm-masking': '/methods/eeg-fm-masking/' };
 const HELD = ['r-model-diver-1', 'r-model-popt', 'r-model-omnimouse', 'r-model-biox-bridge', 'r-model-poyo-plus', 'r-model-poyo-cap', 'r-model-neuroformer', 'r-model-brainlm'];
+// The 20261028 round (owner decisions D14, D19, D26): three models scored on the pilot-studies page, each linking its
+// panel; five identified from their papers, each with its hold.
+const SCORED = { 'r-model-neurorvq': '/topics/pilot-studies/#neurorvq', 'r-model-eeg-captioner': '/topics/pilot-studies/#eegmat-ten-second',
+                 'r-model-axon': '/topics/pilot-studies/#eegmat-ten-second' };
+const IDENTIFIED = { 'r-model-fame': 'no_release_found', 'r-model-eeg-prime': 'code_not_reachable', 'r-model-stst-jepa': 'no_release_found',
+                     'r-model-bandvq': 'no_release_found', 'r-model-use-fm': 'no_release_found' };
 const MAIL = 'contact@bci.report';
 // Owner decision D4: what it keeps off the rows and the page, put together here so that this file does not spell it out.
 const D4_RE = new RegExp(['IC' + 'LR 20' + '27', 'open' + 'review', 'sub' + 'mission', 'forum\\?id='].join('|'), 'i');
@@ -177,6 +188,8 @@ export function checkModelRegister(distDir) {
   const text = read(`data/${FILE}`);
   assert.equal(text, readFileSync(fileURLToPath(new URL(`../../public/data/${FILE}`, import.meta.url)), 'utf8'), `${FILE}: the served copy is public/data's`);
   const R = JSON.parse(text);
+  // The release that ships the newest file is named by its date.
+  const RELEASE = `open-register-update-${FILE.match(/(\d{8})/)[1]}`;
   assert.equal(R.release_id, RELEASE, 'the release');
   const rows = R.entries.filter(e => e.ladder === 'model');
   const byId = new Map(R.entries.map(e => [e.id, e]));
@@ -399,9 +412,30 @@ export function checkModelRegister(distDir) {
       }
       if (PAGED_NO_VENUE[id]) ok(e.links.page === PAGED_NO_VENUE[id] && !e.venue, `${w}: links ${PAGED_NO_VENUE[id]}, with no venue`);
       if (HELD.includes(id)) ok(holds > 0, `${w}: at its step with its holds`);
+      // The 20261028 round's rows.
+      if (SCORED[id]) {
+        ok(e.level === 4 && e.kind === 'model' && !e.links.page && !e.venue && JSON.stringify(e.links.cases) === JSON.stringify([SCORED[id]]) && e.exposure === 'unknown',
+          `${w}: at step 4, linking ${SCORED[id]}, exposure unknown, no method page and no venue`);
+        ok(!e.aliases.some(a => a.kind === 'weights_copy') && !t.includes(zh ? '权重副本' : 'Weights copies'), `${w}: the authors' weights only, no copy`);
+        ok(t.includes(EXPOSURE[lang].unknown), `${w}: prints its pretraining exposure`);
+        if (id === 'r-model-axon') ok(!e.urls.paper && !cells[0][2].includes(zh ? '>论文' : '>Paper'), `${w}: no paper cited until it is checked`);
+      }
+      // A terms value is licence codes only: words about it come from the page's own vocabulary, in each language.
+      ok(!Object.values(e.terms_by_part ?? {}).some(p => /[()]/.test(p.value ?? '')), `${w}: its terms are licence codes, with no words of their own in parentheses`);
+      if (IDENTIFIED[id]) {
+        ok(e.level === 1 && !e.venue && JSON.stringify(e.findings) === JSON.stringify([{ code: 'hold', params: { reason_code: IDENTIFIED[id] } }]),
+          `${w}: at step 1, held (${IDENTIFIED[id]}), no venue`);
+        ok(e.urls.paper && cells[0][2].includes(`href="${esc(e.urls.paper)}"`), `${w}: its paper linked`);
+        ok(holds === 1, `${w}: its hold printed`);
+      }
     }
     ok(fullRows === rendered.length, `${where}: every row parsed (${fullRows})`);
     for (const id of [NEUROLM, ...Object.keys(PAGED_NO_VENUE), ...HELD]) ok(rendered.includes(id), `${where}: the row ${id}`);
+    if (R.release_id >= 'open-register-update-20261028') {
+      for (const id of [...Object.keys(SCORED), ...Object.keys(IDENTIFIED)]) ok(rendered.includes(id), `${where}: the row ${id}`);
+      const fame = byId.get('r-model-fame'), lfame = byId.get('r-site-lfame');
+      ok(fame?.ladder === 'model' && lfame?.ladder === 'dataset' && fame.name !== lfame.name, `${where}: FAME, a model row apart from the L-FAME dataset row`);
+    }
 
     // 5. Links and anchors.
     const ids = [...main.matchAll(/\sid="([^"]+)"/g)].map(x => x[1]);

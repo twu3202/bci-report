@@ -38,10 +38,14 @@ import export_new_ssvep_frequencies_update as ssvep_export
 import export_data_quality_update as quality_export
 import export_clinical_iesseeg_update as iesseeg_export
 import export_neurolm_eegmat_update as neurolm_export
-import export_open_register as register_export
 import export_beyond_scalp_update as beyond_export
 import export_pilot_studies_update as pilot_export
 import export_eegpt_core_update as eegpt_export
+import export_ssvep_followups_update as followups_export
+import export_neurorvq_update as neurorvq_export
+import export_eegmat_ten_second_update as ten_second_export
+import export_dataset_checks_update as checks_export
+from ssvep_followups import blocks_cca
 
 PROJECT = Path(__file__).resolve().parents[2]
 PUBLISHED = PROJECT/'site/public/data'
@@ -224,13 +228,57 @@ RELEASE_20261020 = (('new-ssvep-frequencies-update.json', ssvep_export, 'SSVEP f
                     ('neurolm-eegmat-update.json', neurolm_export, 'NeuroLM EEGMAT'))
 
 
-def register_csv():
+# The 2026-10-28 release: four result exports, each refused unless it is the one its own audit passed. The fifth release
+# of that day, the open register's second dated version, ships as its CSV below. None of them adds rows to the merged
+# CSVs: each ships as its own file, like the 2026-10-20 ones.
+RELEASE_20261028 = (('ssvep-followups-update.json', followups_export, 'SSVEP follow-ups'),
+                    ('neurorvq-update.json', neurorvq_export, 'NeuroRVQ'),
+                    ('eegmat-ten-second-update.json', ten_second_export, 'Ten-second EEGMAT'),
+                    ('dataset-checks-update.json', checks_export, 'Dataset checks'))
+
+# The open register's dated versions, each held to its own release's audit and manifest. Named here rather than read
+# from export_open_register, whose constants move to the newest date: the 20261020 files stay served byte for byte
+# beside the 20261028 ones (their bytes cite that release's hold ids), and both ship.
+REGISTER_VERSIONS = ('20261020', '20261028')
+
+
+def register_review(date):
+    return PROJECT/f'research/publication_review_{date}/register'
+
+
+def register_audit(date):
+    """A register version's audit, refused unless it passed and its manifest is the audited one."""
+    audit = json.loads((register_review(date)/'open-register-export-audit.json').read_text())
+    assert audit['status'] == 'pass' and audit['release_id'] == f'open-register-update-{date}', f'Register {date}: audit'
+    manifest = (register_review(date)/'open-register-release-manifest.json').read_bytes()
+    assert hashlib.sha256(manifest).hexdigest() == audit['manifest_sha256'], f'Register {date}: manifest is not the audited one'
+    return audit
+
+
+def register_csv(date='20261020'):
     """The open register's dataset ladder as its audit bound it. Only the CSV ships here: it carries no comparison
     finding about another upload (owner decision D3 keeps those to bci.report and its JSON)."""
-    raw = (PUBLISHED/'open-register-20261020.csv').read_bytes()
-    audit = json.loads(register_export.EXPORT_AUDIT_OUT.read_text())
-    assert audit['status'] == 'pass' and hashlib.sha256(raw).hexdigest() == audit['csv_sha256'], 'Register CSV is not the reviewed one'
+    raw = (PUBLISHED/f'open-register-{date}.csv').read_bytes()
+    audit = register_audit(date)
+    assert hashlib.sha256(raw).hexdigest() == audit['csv_sha256'], f'Register CSV {date} is not the reviewed one'
+    later = [d for d in REGISTER_VERSIONS if d > date]
+    for d in later[:1]:
+        # The next version's audit names this one's served bytes as unchanged.
+        prev = register_audit(d)['previous_version']
+        assert prev['release_id'] == f'open-register-update-{date}' and prev['served_unchanged'] is True, f'Register {d}: previous'
+        assert hashlib.sha256(raw).hexdigest() == prev['csv_sha256'], f'Register CSV {date} changed after release'
     return raw
+
+
+def register_json(date):
+    """The register's JSON, read here only for the card's counts; it stays on bci.report (owner decision D3)."""
+    raw = (PUBLISHED/f'open-register-{date}.json').read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == register_audit(date)['export_sha256'], f'Register JSON {date} is not the reviewed one'
+    for d in [d for d in REGISTER_VERSIONS if d > date][:1]:
+        assert hashlib.sha256(raw).hexdigest() == register_audit(d)['previous_version']['json_sha256'], f'Register JSON {date} changed'
+    payload = json.loads(raw)
+    validate_public(payload)
+    return payload
 
 
 def beyond_payload():
@@ -657,10 +705,266 @@ diagnostic with its coverage accounting; eldBETA and ZuCo 2.0 as status only.
 recording-setting controls and frozen NeuroLM probes; point estimates, no clinical use.
 `neurolm-eegmat-update.json`: **NeuroLM's frozen tokenizer features on EEGMAT**, a
 separate panel beside the pilot studies.
-`open-register-20261020.csv`: **the open register's dataset ladder**, {rows} rows: every
-dataset bci.report lists, with the furthest of five verification steps it has
-reached and the gaps. The full register, with its findings, is at
-https://bci.report/datasets/register/."""
+`open-register-20261020.csv`: **the open register's dataset ladder** as its first
+release froze it, {rows} rows, each dataset with the furthest of five verification
+steps it had reached and the gaps; kept byte for byte, with the current ladder in
+`open-register-20261028.csv`, below."""
+
+
+# ---------------------------------------------------------------------------- the 2026-10-28 release
+# One card paragraph per batch of the day. Every figure, count, licence and credit is read from the served file and
+# formatted here; the wording around them is fixed, and each claim it makes is asserted against the file first.
+WORDS = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten'}
+
+
+def word(n):
+    return WORDS[n]
+
+
+def pct(x):
+    """A proportion as a percent with two decimals. A value that would print as 0.00 is refused, not misprinted."""
+    assert x == 0 or abs(100 * x) >= 0.005, x
+    return f'{100 * x:.2f}%'
+
+
+def pp(x):
+    """A difference of proportions in signed percentage points, two decimals; never a rounded ±0.00."""
+    assert x == 0 or abs(100 * x) >= 0.005, x
+    return f'{100 * x:+.2f}'
+
+
+def lower_first(text):
+    return text[0].lower() + text[1:]
+
+
+def bracket(interval, signed=False):
+    f = pp if signed else (lambda v: pct(v)[:-1])
+    return f'[{f(interval[0])}, {f(interval[1])}]'
+
+
+def release_20261028_payload(name):
+    """One of the day's four result files, as its audit bound it, with the earlier files it rests on held unchanged."""
+    module = {n: m for n, m, _ in RELEASE_20261028}[name]
+    label = {n: l for n, _, l in RELEASE_20261028}[name]
+    raw, payload = reviewed_payload(name, module, label)
+    audit = json.loads(module.EXPORT_AUDIT.read_text())
+    unchanged = dict(audit.get('released_file_unchanged', {}))
+    if 'released_file_sha256' in audit:            # the SSVEP follow-ups: cards 1 to 7 stay in the released file
+        unchanged[payload['placement']['reads_with']['file']] = audit['released_file_sha256']
+    for served, digest in unchanged.items():
+        assert hashlib.sha256((PUBLISHED/served).read_bytes()).hexdigest() == digest, f'{label}: {served} changed'
+    assert payload['placement']['leaderboard'] is False, f'{label}: on a leaderboard'
+    return raw, payload
+
+
+def followups_paragraph():
+    """Cards 8 to 14 of the SSVEP page: what each asks, the cohorts, one untrained baseline's figures, the interval rules,
+    the CPU component record and the credits, read from the served file."""
+    p = release_20261028_payload('ssvep-followups-update.json')[1]
+    cards, s = p['placement']['cards'], p['studies']
+    assert [c['card'] for c in cards] == list(range(8, 15)) and p['placement']['reads_with']['cards'] == list(range(1, 8))
+    assert cards[0]['supersedes'] == {'release_id': p['placement']['reads_with']['release_id'],
+                                      'file': p['placement']['reads_with']['file'], 'entry': 'status_only'}
+    asks = dict(FOLLOWUP_CARDS)
+    assert [c['anchor'] for c in cards] == list(asks), 'a card the card paragraph does not describe'
+    beta = s['xspec']['design']['dataset']
+    wearable = s['harmonic_pooling_wearable']['design']['dataset']
+    assert all(beta['people'] == (st['design'].get('dataset') or st['design']['datasets']['BETA'])['people'] for st in s.values()
+               if st is not s['harmonic_pooling_wearable']), 'one BETA cohort'
+    on_wearable = [e for e in p['endpoints'] if e['id'] == 'wearable_12'][0]
+    ps = s['practical_settings']
+    fb, cell = ps['design']['fbcca'], ps['design']['cells']
+    anchor = ps['cpu_components']['anchor_cell']
+    c = next(x for x in cell if x['id'] == anchor)
+    level = ps['levels'][f'{anchor}/{fb["code"]}/u8']
+    cca = next(m['code'] for m in ps['design']['methods'] if m['code'].startswith('CCA-'))
+    diff = ps['contrasts'][f'{anchor}/{fb["code"]} minus {anchor}/{cca}/u8']
+    assert level['seeds'] == 'no training' and fb['trained_head'] is False and diff['flags']['interval_includes_zero'] is False
+    assert diff['interval'][0] > 0 and p['rights']['credits']['fbcca']['used_for'] == fb['description']['en']
+    other = fb['other_recipe_on_site']
+    held = next(e for e in p['endpoints'] if e['id'] == 'u8')
+    adj = {a['card']: a for a in p['interval_adjustment']['adjusted']}
+    assert set(adj) == {12, 13} and p['interval_adjustment']['other_intervals_adjusted'] is False
+    assert adj[12]['adjustment'] == 'Bonferroni'
+    cpu = ps['cpu_components']['measurement']
+    assert cpu['threads'] == 1 and cpu['buffers'] == 'warm' and cpu['summed'] is False and cpu['gpu'] is False
+    r = p['rights']['datasets']
+    assert all('commercial scientific research' in t for t in (r['beta']['publication_conditions'][0], r['wearable_102']['consent_scope']))
+    assert r['beta']['license'] == r['wearable_102']['license']
+    fbcca = p['rights']['credits']['fbcca']
+    assert fbcca['code_distributed'] is False
+    described = '; '.join(f"card {x['card']}, {asks[x['anchor']]}" for x in cards)
+    return f"""`ssvep-followups-update.json`: **{word(len(cards))} more follow-ups on SSVEP frequencies a
+decoder never trained on**, cards {cards[0]['card']} to {cards[-1]['card']} of the site's page, read with
+`{p['placement']['reads_with']['file']}` (cards {p['placement']['reads_with']['cards'][0]} to {p['placement']['reads_with']['cards'][-1]}, kept byte for byte; card {cards[0]['card']}'s
+results here replace the status entry it carries): {described}. All {word(len(cards))} use the
+BETA cohort ({beta['people']} people, {beta['targets']} target frequencies); cards {', '.join(str(x) for x in on_wearable['cards'][:-1])} and {on_wearable['cards'][-1]}
+also report Wearable-102 ({wearable['people']} people, {' and '.join(wearable['sensors'])} sensors). Untrained
+{fb['description']['en']} ({fbcca['short']}), reached {pct(level['estimate'])} {bracket(level['interval'])} on the {held['task'].lower()}
+task with {c['window_s']:g}-second windows and {word(c['electrodes'])} electrodes, {pp(diff['estimate'])} pp
+{bracket(diff['interval'], True)} over CCA on the same windows; the page https://bci.report{other['page']}
+reports a different filter-bank recipe ({word(other['sub_bands'])} {other['filter']} sub-bands). Seen and
+held-out frequencies are separate tasks, reported side by side. Card {adj[12]['card']} uses
+{adj[12]['adjustment']}-adjusted {100 * adj[12]['level']:.2f}% intervals over {word(adj[12]['comparisons'])} comparisons for
+{adj[12]['applies_to']}, and card {adj[13]['card']} a {100 * adj[13]['level']:g}% interval for {adj[13]['applies_to']};
+no other interval is adjusted. Card {ps['card']} also gives CPU component medians in
+milliseconds, measured {cpu['buffers']} on one thread and never summed ({ps['cpu_components']['label']['en']}).
+Every figure compares set-ups on fixed splits, outside every leaderboard. BETA and
+Wearable-102 are both {r['beta']['license']}, with participant consent described for noncommercial
+scientific research. Credit: {r['beta']['citation'].rstrip('.')}; {r['wearable_102']['dataset_citation'].rstrip('.')};
+filter-bank CCA, {fbcca['reference']}"""
+
+
+# What each of cards 8 to 14 asks, in the order of the served placement (asserted above).
+FOLLOWUP_CARDS = (
+    ('cross-spectral', 'a learned readout over cross-spectral matrices'),
+    ('eigenvalue-pooling', 'coherence and eigenvalue heads'),
+    ('harmonic-pooling', 'pooling rules over the harmonics, with the BETA heads run unchanged on Wearable-102'),
+    ('practical-settings', 'filter-bank CCA with shorter windows and fewer electrodes'),
+    ('harmonic-gap', "where the harmonic sum's gain over joint CCA comes from"),
+    ('fixed-decay', 'fixed decaying weights on the harmonics and on filter-bank sub-bands'),
+    ('rising-weights', 'rising harmonic weights'),
+)
+
+
+def neurorvq_paragraph():
+    """NeuroRVQ's frozen backbone on three tasks: the file's scope, each task's primary difference with its reading, the
+    exposure, the gates of the protocols not run, and the terms; no weights distributed."""
+    p = release_20261028_payload('neurorvq-update.json')[1]
+    m, pl, ex = p['model'], p['placement'], p['pretraining_exposure']
+    assert pl['counted_in_pilots'] is False and pl['core_matrix_row'] is False and pl['pointers_carry_figures'] is False
+    assert m['frozen'] is True and m['fine_tuning'] is False and m['weights_distributed'] is False and m['endorsement'] == 'none implied'
+    assert p['rights']['code']['licence'] == p['rights']['weights']['licence'] == 'CC BY-NC 4.0'
+    assert p['rights']['weights']['weights_distributed'] is False
+    assert ex['status'] == 'unknown' and not any(d['named_in_list'] for d in ex['datasets']) and ex['per_checkpoint_list_published'] is False
+    blocks = []
+    for b in p['blocks']:
+        d = b['paired_difference']
+        assert d['interval_includes_zero'] == (d['interval_95'][0] <= 0 <= d['interval_95'][1])
+        assert d['interval_95'][0] <= d['difference'] <= d['interval_95'][1]
+        blocks.append(f"{b['title']} ({b['dataset']}, {b['cohort']['people']} people): {d['label']}, "
+                      f"{pp(d['difference'])} pp {bracket(d['interval_95'], True)}; {d['reading']}.")
+    not_run = [g['protocol'] for g in p['protocols_not_run']]
+    credits = ' · '.join(credit(v) for v in p['rights']['datasets'].values())
+    return f"""`neurorvq-update.json`: **{p['title']}**, a separate panel on the pilot studies
+page, outside the pilot count and every leaderboard and model ranking. {p['scope']}
+{' '.join(blocks)} Every score uses {m['variant']}; {lower_first(m['authors_wrapper']['text'])}
+Pretraining exposure is {ex['status']} for all {word(len(ex['datasets']))} datasets: none is named in NeuroRVQ's published
+pretraining list, and no per-checkpoint list is published. Not run: {', '.join(f'`{x}`' for x in not_run)}, each
+with its gate in the file. {p['rights']['summary']} No endorsement by NeuroRVQ's authors is
+implied. Credit: NeuroRVQ, arXiv:{m['arxiv_id']} ({m['repository']}) · {credits}"""
+
+
+def ten_second_paragraph():
+    """EEG-Captioner and AXON on ten-second EEGMAT windows: the scope and cohort, each encoder against Welch band power
+    with the source-QC totals beside the scores, what is not computed, and the terms."""
+    p = release_20261028_payload('eegmat-ten-second-update.json')[1]
+    pl, qc, iv = p['placement'], p['source_annotation_qc'], p['interval']
+    assert pl['counted_in_pilots'] is False and pl['core_matrix_row'] is False
+    assert iv['both_span_zero'] is True and p['encoder_contrast']['published'] is False
+    cap, ax = p['eeg_captioner'], p['axon']
+    diffs = [e['paired_difference'] for e in (cap, ax)]
+    assert all(d['interval_includes_zero'] and d['interval_95'][0] <= 0 <= d['interval_95'][1] for d in diffs)
+    assert diffs[0]['reading'] == diffs[1]['reading']
+    assert cap['caption_result'] is False and cap['language_model_loaded'] is False
+    assert cap['identity']['weights_distributed'] is False and ax['identity']['weights_distributed'] is False
+    assert cap['pretraining_exposure'] == ax['pretraining_exposure'] == 'unknown'
+    welch = next(a for a in ax['arms'] if a['role'] == 'baseline')
+    pretraining = next(x['text'] for x in ax['limitations'] if x['id'] == 'pretraining-not-isolated')
+    order = next(x['text'] for x in p['limitations'] if x['id'] == 'recording-order')
+    scores = ', and '.join(f"{d['label']}, {pp(d['difference'])} pp {bracket(d['interval_95'], True)}" for d in diffs)
+    return f"""`eegmat-ten-second-update.json`: **two frozen encoders on ten-second arithmetic and
+rest windows**, a separate panel on the pilot studies page, outside the pilot count
+and every leaderboard and model ranking. {p['scope']} {scores}:
+for each, {diffs[0]['reading']}. {qc['beside_every_score']} {qc['scope']}
+{cap['scope']} For AXON the Welch figures are {welch['note']}. {pretraining}
+{p['encoder_contrast']['text']} {p['separate_from_two_second_results']['text']} {order}
+Pretraining exposure is {cap['pretraining_exposure']} for both encoders. {p['rights']['summary']} No endorsement by
+either model's authors is implied. Credit: {credit(p['rights']['dataset'])}"""
+
+
+def dataset_checks_paragraph():
+    """Four public datasets read from their files: Kim beta-range's training-free CCA baseline, MIND's conditional
+    stored-marker case with both licence statements, and Damm and NeBULA as one-person status cases with no score."""
+    p = release_20261028_payload('dataset-checks-update.json')[1]
+    kim, mind = p['kim2025-beta-range'], p['mind2026']
+    assert [c['id'] for c in p['cases']] == ['kim2025-beta-range', 'mind2026', 'damm', 'nebula']
+    assert p['placement']['core_matrix'] is False
+    k, res = kim['cohort'], kim['result']
+    assert kim['method']['training_free'] is True and kim['method']['tuning'] is False and res['equals_balanced_accuracy'] is True
+    assert res['accuracy_interval_95'][0] > res['chance'] and k['complete_cohort'] is True
+    hold = next(h for h in p['holds'] if h['case'] == 'kim2025-beta-range')
+    caveat = lambda case, cid: next(c['text'] for c in case['caveats'] if c['id'] == cid)
+    prim = mind['primary']
+    assert [x['pair'] for x in prim['pairs']] == ['4/5', '6/7'] and mind['status'] == 'released_conditional'
+    runs_each, rest = divmod(prim['runs'], prim['record_ids'])
+    assert rest == 0 and runs_each == prim['folds_for_each_record_id'] and 'third is held out' in prim['design']
+    assert set(mind['rights']['licenses_stated']) == {'CC BY 4.0', 'CC BY-NC 4.0'}
+    one = p['one_person']
+    assert one['cases'] == ['eldbeta', 'damm', 'nebula'] and all(p[x]['status'] == 'score_held' for x in ('damm', 'nebula'))
+    assert all(p[x]['design']['participants_run'] == 1 for x in ('damm', 'nebula'))
+    short = lambda x: p[x]['rights']['name'].split(':')[0].split(' (')[0]
+    licences = '; '.join(f"{short(x)}: {p[x]['rights']['license']}" for x in ('kim2025-beta-range', 'damm', 'nebula'))
+    # Damm's rights gap stays beside its licence: its README cites a LICENSE file the pinned tree does not hold.
+    damm_terms = p['damm']['rights']['terms']
+    assert damm_terms['license_file_present'] is False and damm_terms['data_licence']['value'] == p['damm']['rights']['license']
+    credits = ' · '.join(credit(p[x]['rights']) for x in ('kim2025-beta-range', 'mind2026', 'damm', 'nebula'))
+    return f"""`dataset-checks-update.json`: **{word(len(p['cases']))} public EEG datasets read from their
+files**, on the data-quality page, outside every leaderboard and the core matrix.
+Kim beta-range SSVEP ({k['participants']} participants, {k['targets']} targets from {kim['intake']['frequency_lowest_hz']:.1f} to
+{kim['intake']['frequency_highest_hz']:.1f} Hz): training-free standard CCA on {kim['method']['window_seconds']:g}-second windows reached a mean
+participant accuracy of {pct(res['mean_participant_accuracy'])} {bracket(res['accuracy_interval_95'])} against a chance level of
+{100 * res['chance']:g}% ({res['chance_basis']}). {caveat(kim, 'interval')} {hold['reason']}
+MIND, a conditional case: {lower_first(mind['task'])} {caveat(mind, 'record-ids')} CSP + LDA beside an
+ordinal lookup and a majority control for each pair, on {prim['record_ids']} record IDs with
+{word(runs_each)} runs each, two training and the third held out. {caveat(mind, 'stored-marker-windows')}
+{caveat(mind, 'terms')} Damm finger motor imagery and NeBULA are status cases of one person each,
+beside eldBETA in `data-quality-update.json`: {lower_first(one['sentence'])} Ethics and consent
+statements, or their gaps, are in the file for each case. Licences: {licences}; MIND
+as above. For Damm, {lower_first(damm_terms['license_file_note'])} Credit: {credits}"""
+
+
+def register_20261028_paragraph():
+    """The open register's second dated version: its CSV, what moved since the first, and the model rows on the site."""
+    date, prev = REGISTER_VERSIONS[1], REGISTER_VERSIONS[0]
+    rows = list(csv.DictReader(io.StringIO(register_csv(date).decode('utf8'))))
+    now, before = register_json(date), register_json(prev)
+    old = {e['id'] for e in before['entries']}
+    fresh = [e for e in now['entries'] if e['id'] not in old]
+    models = [e for e in fresh if e['kind'] == 'model']
+    merged = old - {e['id'] for e in now['entries']}
+    # The day's dataset checks, in their own order, each with exactly one site row of its own.
+    cases = [c['id'] for c in release_20261028_payload('dataset-checks-update.json')[1]['cases']]
+    sites = [next(e for e in fresh if e['id'].startswith(f'r-site-{c}')) for c in cases]
+    assert len({e['id'] for e in sites}) == len(cases) == len([e for e in fresh if e['kind'] == 'site_dataset'])
+    assert all(m.startswith('r-moabb-') for m in merged) and len(merged) == len(sites)
+    assert len(rows) == now['counts']['rows']['dataset'] == before['counts']['rows']['dataset']
+    site_steps = {e['level'] for e in sites}
+    scored = [e for e in models if e['level'] == 4]
+    listed = [e for e in models if e['level'] == 1]
+    assert len(site_steps) == 1 and len(scored) + len(listed) == len(models)
+    assert {e['name'] for e in scored} == {'NeuroRVQ', 'EEG-Captioner', 'AXON'}
+    assert all(any(f['code'] == 'hold' for f in e['findings']) for e in listed), 'a step-1 row without its hold'
+    names = ', '.join(e['name'].split(' · ')[0] for e in sites[:-1]) + ' and ' + sites[-1]['name'].split(' · ')[0]
+    step = now['level_definitions']
+    return f"""`open-register-{date}.csv`: **the open register's dataset ladder**, {len(rows)} rows:
+every dataset bci.report lists, with the furthest of five verification steps it
+has reached and the gaps. The {word(len(sites))} datasets checked in `dataset-checks-update.json` ({names})
+have rows of their own at step {site_steps.pop()}, “{step['dataset']['4']['en']}”, each with its MOABB record group merged
+into it. The model rows stay on the site: NeuroRVQ, EEG-Captioner and AXON at step
+{scored[0]['level']}, “{step['model']['4']['en']}”, and {word(len(listed))} further models at step {listed[0]['level']}, “{step['model']['1']['en']}”,
+with their holds. The full register, with its findings, is at
+https://bci.report/datasets/register/ and https://bci.report/methods/register/."""
+
+
+def release_20261028_section():
+    """The day's five card paragraphs, in the order the release log lists them, each checked against the thread rule:
+    the commenter is never named and the figure never appears (read through blocks_cca.REFUSED_TEXT)."""
+    text = '\n\n'.join((followups_paragraph(), neurorvq_paragraph(), ten_second_paragraph(),
+                        dataset_checks_paragraph(), register_20261028_paragraph()))
+    hits = {m.group(0).lower() for m in blocks_cca.REFUSED_TEXT.finditer(re.sub(r'https?://\S+', ' ', text))}
+    assert not hits, f'refused text in the card: {sorted(hits)}'
+    return text
 
 
 def card(snapshot, n_rows, topics, n_foundation=128):
@@ -901,6 +1205,8 @@ are not published.
 
 {release_20261020_paragraph()}
 
+{release_20261028_section()}
+
 {scored} of {catalogued} catalogued methods have been scored ({models} in `results.csv`;
 {' and '.join(f'{n} in `{f}`' for n, f in scored_elsewhere)}). A catalogued method
 with no row in any file has not been run, which is not the same as having
@@ -1100,7 +1406,10 @@ def build(output):
     (output/'eegpt-core-update.json').write_bytes(raw_eegpt)
     for name, module, label in RELEASE_20261020:
         (output/name).write_bytes(reviewed_payload(name, module, label)[0])
-    (output/'open-register-20261020.csv').write_bytes(register_csv())
+    for name, _, _ in RELEASE_20261028:
+        (output/name).write_bytes(release_20261028_payload(name)[0])
+    for date in REGISTER_VERSIONS:
+        (output/f'open-register-{date}.csv').write_bytes(register_csv(date))
     (output/'deployment-topics.json').write_text(
         json.dumps(topics, indent=2, ensure_ascii=False)+'\n')
     (output/'snapshot.json').write_text(json.dumps(snapshot, indent=2, ensure_ascii=False)+'\n')
@@ -1108,6 +1417,17 @@ def build(output):
     # The card's logo. Not data, so it bypasses the data checks above; it is the
     # tiled raster from site/public/, which survives the Hub's dark theme.
     shutil.copyfile(PROJECT/'site/public/logo.png', output/'logo.png')
+    # The thread rule over everything that ships, read through blocks_cca.REFUSED_TEXT (no literal of the name here):
+    # the card and the 2026-10-28 files match none of it; earlier files match only ordinary words and figures that the
+    # rule also catches ('pending', 'superseded', a 0.55 or a 55% in a released table).
+    ordinary = {'pending', 'superseded', '0.55', '55%'}
+    day = {name for name, _, _ in RELEASE_20261028} | {f'open-register-{REGISTER_VERSIONS[-1]}.csv', 'README.md'}
+    for path in output.rglob('*'):
+        if path.suffix not in {'.json', '.csv', '.md'}:
+            continue
+        text = re.sub(r'https?://[^\s"\'<>)]+', ' ', path.read_text())
+        hits = {m.group(0).lower() for m in blocks_cca.REFUSED_TEXT.finditer(text)}
+        assert hits <= (set() if path.name in day else ordinary), f'refused text in {path.name}: {sorted(hits)}'
 
     return {'rows': len(rows), 'protocols': len(snapshot['tracks']),
             'models': len(snapshot['models']),

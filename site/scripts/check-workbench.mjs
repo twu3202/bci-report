@@ -302,11 +302,24 @@ const dataFileOf=slug=>slug==='fewer-electrodes'?'evidence-update.json'
   :slug==='pilot-studies'?'pilot-studies-update.json'
   :slug==='new-ssvep-frequencies'?'new-ssvep-frequencies-update.json'
   :slug==='data-quality'?'data-quality-update.json':'deployment-topics.json';
+// dataFileOf names the page's first download (its hero button). A later release that adds a separate section or cards
+// to a question keeps that button and adds its own export, which the page links too: the IESSEEG section and the
+// NeuroLM panel (2026-10-20); the SSVEP follow-ups' cards 8 to 14, the NeuroRVQ and ten-second panels and the four
+// dataset checks (2026-10-28). On these pages every data-fig cites the first download or one of these, nothing else.
+const laterFilesOf=slug=>({'clinical-groups':['clinical-iesseeg-update.json'],
+  'pilot-studies':['neurolm-eegmat-update.json','neurorvq-update.json','eegmat-ten-second-update.json'],
+  'new-ssvep-frequencies':['ssvep-followups-update.json'],'data-quality':['dataset-checks-update.json']})[slug]??[];
 for(const [slug,title] of topicPages){
   const page=DIST+'topics/'+slug+'/index.html';
   const html=readFileSync(new URL(page,import.meta.url),'utf8');
   assert.ok(html.includes('<h1>'+title+'</h1>'),slug+': page title must render in the initial HTML');
   assert.ok(html.includes('href="/data/'+dataFileOf(slug)+'"'),slug+': the reviewed export holding its figures must be reachable');
+  for(const f of laterFilesOf(slug)) for(const pfx of ['','zh/']){
+    const h=pfx?readFileSync(new URL(DIST+'zh/topics/'+slug+'/index.html',import.meta.url),'utf8'):html;
+    assert.ok(h.includes('href="/data/'+f+'"'),pfx+slug+': the later export '+f+' must be reachable from the page');
+    const cited=new Set([...h.matchAll(/data-fig="([^|"]+)\|/g)].map(m=>m[1]));
+    assert.ok(cited.has(f)&&[...cited].every(c=>c===dataFileOf(slug)||laterFilesOf(slug).includes(c)),pfx+slug+': every figure cites the page\'s first download or a later export of its own ('+[...cited].join(', ')+')');
+  }
   assert.ok(html.includes('aria-label="Breadcrumb"'),slug+': breadcrumb is required');
   assert.ok(html.includes('rel="canonical"'),slug+': canonical link is required');
 }
@@ -492,8 +505,14 @@ const chineseOnly=html=>html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<
 // nothing else with 暴露 in it, pass.
 const allowedWith={'暴露':/(?:隐私|元数据)暴露/g};
 const hasRejected=(text,bad)=>(allowedWith[bad]?text.replace(allowedWith[bad],''):text).includes(bad);
-// The release log is checked here too; the API page is checked with the entity pages below.
-for(const path of [...bilingual,'releases/']){
+// The release log is two pages (owner decision D17, 2026-10-28). /releases/ is the index: the three newest release
+// days, one visible line (<li id>) per release id, the corrections and the holds register. RECORD, /releases/archive/,
+// keeps every release's entry as released (<article class="release-entry" id>: its summary, notes, review manifest
+// and the SHA-256 of each file it ships). What a release recorded is read from RECORD; the holds and corrections, and
+// the line each /releases/#<id> link lands on, from the index. scripts/checks/release-log.mjs checks the split itself.
+const RECORD='releases/archive/';
+// The release log is checked here too, both its pages; the API page is checked with the entity pages below.
+for(const path of [...bilingual,'releases/',RECORD]){
   const zh=chineseOnly(read('zh/'+path));
   for(const [bad,good] of Object.entries(rejected))
     assert.ok(!hasRejected(zh,bad),`zh/${path}: "${bad}" is a rejected rendering — use "${good}"`);
@@ -508,6 +527,12 @@ for(const [bad,good] of Object.entries(rejected))
 // The handoff's hard lines, each pinned to the concrete way it could break.
 const ev=JSON.parse(readFileSync(new URL('../src/data/evidence-update.json',import.meta.url),'utf8'));
 const pageOf=p=>readFileSync(new URL(DIST+''+p+'index.html',import.meta.url),'utf8');
+// A release's entry on RECORD in the language of `prefix` ('' or 'zh/'), empty when it has none; its line on the index.
+const recordEntry=(prefix,id)=>{const rec=pageOf(prefix+RECORD),at=rec.indexOf(`<article class="release-entry" id="${id}">`);
+  return at<0?'':rec.slice(at,rec.indexOf('</article>',at));};
+const indexLine=(prefix,id)=>pageOf(prefix+'releases/').includes(`<li id="${id}">`);
+// A release with its review manifest in its own entry on RECORD, and a line on the index.
+const recorded=(prefix,id,manifest)=>{const e=recordEntry(prefix,id);return e.length>0&&e.includes(manifest)&&indexLine(prefix,id);};
 const everyPage=['','data-use/',...topicPages.map(([s])=>'topics/'+s+'/')].flatMap(p=>p==='data-use/'?[p]:[p,'zh/'+p]);
 // Only sources with a recorded aggregate_preview decision. L-FAME was excluded
 // from this batch and carries no result here; the 2026-09-23 batch publishes its
@@ -665,10 +690,13 @@ const lfameMedians=['0.3540','0.3849','0.2303','0.2655','0.2319'];
 // The route-2 page (2026-10-07) carries contrasts in pp whose full-precision raw values, inside data-fig attributes
 // that the data-fig loop holds to the route-2 export, begin "0.230" and "0.231"; the later-sessions page's raw values
 // (a 35.4% interval bound, 0.0052730… and the like) contain them too, and so do the route-3 page's (2026-10-08). Those
-// attributes are set aside here, and everything printed, and every other attribute, is still read.
+// attributes are set aside here, and everything printed, and every other attribute, is still read. On 2026-10-28 card
+// 11 of the SSVEP page holds two such raw values in its grid (0.23008705…, a top-three ridge lower bound, and
+// 0.26527232…, an eigenvalue-head upper bound), so the SSVEP follow-ups export joins the list; and the register pages
+// print from the newest dated register file, so every open-register-<date>.json is set aside, not the first one only.
 for(const p of [...everyPage,'topics/clinical-groups/','zh/topics/clinical-groups/'])
   for(const v of lfameMedians)
-    assert.ok(!pageOf(p).replace(/ data-fig="(?:(?:shared-representation|later-sessions|questions-in-language|new-ssvep-frequencies|data-quality|clinical-iesseeg|neurolm-eegmat)-update|open-register-20261020)\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
+    assert.ok(!pageOf(p).replace(/ data-fig="(?:(?:shared-representation|later-sessions|questions-in-language|new-ssvep-frequencies|ssvep-followups|data-quality|clinical-iesseeg|neurolm-eegmat)-update|open-register-\d{8})\.json\|[^"]*"/g,'').includes(v.slice(0,5)),p+': a withheld L-FAME descriptor appeared');
 
 // --- 2026-09-27 site update: when not to act, and the release log ----------
 // The abstention topic: every figure from the reviewed idle protocol, and a
@@ -755,25 +783,26 @@ const manifests=['publication_review_20260922/evidence-release-manifest.json','p
   'publication_review_20261003/large-source-release-manifest.json']
   .map(f=>JSON.parse(readFileSync(new URL('../../research/'+f,import.meta.url),'utf8')));
 const held=manifests.flatMap(m=>m.sources).filter(x=>x.decision==='hold');
-const allPages=[...everyPage,...['screen-to-vr','when-not-to-act'].flatMap(s=>['topics/'+s+'/','zh/topics/'+s+'/']),'releases/','zh/releases/'];
+const allPages=[...everyPage,...['screen-to-vr','when-not-to-act'].flatMap(s=>['topics/'+s+'/','zh/topics/'+s+'/']),'releases/','zh/releases/',RECORD,'zh/'+RECORD];
 for(const h of held) for(const p of allPages){
   assert.ok(!pageOf(p).includes(h.name),p+': held source '+h.id+' is named');
   assert.ok(!pageOf(p).includes(h.source.split('/').pop()),p+': held source '+h.id+' is linked');
 }
-// The release log: every download is listed, and every listed hash is the hash
-// of the byte-identical file the site serves.
+// The release log: every download is listed on the record, and every listed hash is the hash
+// of the byte-identical file the site serves. The index lists each release and keeps the holds, with no hash.
 const {createHash}=await import('node:crypto');
-for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
-  const html=pageOf(path);
+for(const [label,prefix] of [['en',''],['zh','zh/']]){
+  const html=pageOf(prefix+RECORD),index=pageOf(prefix+'releases/');
   const listed=[...html.matchAll(/<code class="hash" data-file="([^"]+)">([0-9a-f]{64})<\/code>/g)];
   const served=readdirSync(new URL(DIST+'data/',import.meta.url));
-  assert.deepEqual(listed.map(m=>m[1]).sort(),[...served].sort(),label+': every served download is listed exactly once');
+  assert.deepEqual(listed.map(m=>m[1]).sort(),[...served].sort(),label+' '+RECORD+': every served download is listed exactly once');
   for(const [,file,sha] of listed)
-    assert.equal(sha,createHash('sha256').update(readFileSync(new URL(DIST+'data/'+file,import.meta.url))).digest('hex'),label+': '+file+' hash on the page is not the served file');
+    assert.equal(sha,createHash('sha256').update(readFileSync(new URL(DIST+'data/'+file,import.meta.url))).digest('hex'),label+' '+RECORD+': '+file+' hash on the page is not the served file');
   for(const id of [data.releaseId,topics.release_id,ev.release_id,cl.release_id])
-    assert.ok(html.includes(`id="${id}"`),label+': release '+id+' must be listed');
-  assert.ok(html.includes(ev.provenance.manifest_sha256)&&html.includes(cl.provenance.manifest_sha256),label+': review manifest hashes are shown');
-  assert.match(html,/class="hold-resolved"/,label+': resolved holds stay in the register');
+    assert.ok(recordEntry(prefix,id)&&indexLine(prefix,id),label+': release '+id+' must be recorded in the archive and listed on the index');
+  assert.ok(recorded(prefix,ev.release_id,ev.provenance.manifest_sha256)&&recorded(prefix,cl.release_id,cl.provenance.manifest_sha256),label+' '+RECORD+': review manifest hashes are shown');
+  assert.match(index,/class="hold-resolved"/,label+': resolved holds stay in the register');
+  assert.doesNotMatch(index,/class="hash"|data-file=|class="release-entry"/,label+': the releases index carries no hash; the archive does');
 }
 
 // --- 2026-09-27 context batch ------------------------------------------------
@@ -816,11 +845,15 @@ for(const [label,path] of [['en','topics/when-not-to-act/'],['zh','zh/topics/whe
 // reading and BOAS gaps, which the pages do not print (they write their own, glossary-checked); and the site's one
 // definition of "Jev-style" in both its languages (route.jev_style, the owner's text edit of the same date). Anything
 // else in either file must be English.
+// The register is bilingual by design: step names, rules and gap labels carry their Chinese beside the English. Every
+// dated register file (open-register-<date>.json, one per register release since 2026-10-20) is read the same way.
+const zhStripRegister=j=>{const strip=o=>{if(Array.isArray(o))o.forEach(strip);else if(o&&typeof o==='object')for(const k of Object.keys(o)){if(k==='zh'||k.endsWith('_zh'))delete o[k];else strip(o[k]);}};strip(j);};
 const zhAllowed={
-  // The register is bilingual by design: step names, rules and gap labels carry their Chinese beside the English.
-  'open-register-20261020.json':j=>{const strip=o=>{if(Array.isArray(o))o.forEach(strip);else if(o&&typeof o==='object')for(const k of Object.keys(o)){if(k==='zh'||k.endsWith('_zh'))delete o[k];else strip(o[k]);}};strip(j);},
   // The Wearable-102 CCA definition carries the card's Chinese sentence beside the English (A2).
   'new-ssvep-frequencies-update.json':j=>{delete j.studies.wearable_transfer.cca_definition.fact.zh;},
+  // The SSVEP follow-ups (2026-10-28): card 11's filter-bank CCA recipe and the D25 timing label carry the Chinese the
+  // page prints verbatim. Those two fields only.
+  'ssvep-followups-update.json':j=>{delete j.studies.practical_settings.design.fbcca.description.zh;delete j.studies.practical_settings.cpu_components.label.zh;},
   'questions-in-language-wordings.json':j=>{for(const k of Object.keys(j.lists))if(k.startsWith('zh/'))delete j.lists[k];},
   'questions-in-language-update.json':j=>{const r=j.results['questions-in-language'];for(const k of r.key_findings)delete k.zh;delete r.pre_run_checks.why_they_failed.zh;
     delete j.boas_conditions.gaps_zh;delete r.route.jev_style.zh;const pc=r.pre_run_checks,quote=/\("[^"]*\p{Script=Han}[^"]*"\)/gu;
@@ -829,7 +862,8 @@ const zhAllowed={
 };
 for(const file of readdirSync(new URL(DIST+'data/',import.meta.url))){
   let text=readFileSync(new URL(DIST+'data/'+file,import.meta.url),'utf8');
-  if(zhAllowed[file]){const j=JSON.parse(text);zhAllowed[file](j);text=JSON.stringify(j);}
+  const allow=zhAllowed[file]??(/^open-register-\d{8}\.json$/.test(file)?zhStripRegister:null);
+  if(allow){const j=JSON.parse(text);allow(j);text=JSON.stringify(j);}
   assert.equal(/\p{Script=Han}/u.test(text),false,'dist/data/'+file+': a download must not carry translated text');
 }
 assert.equal(existsSync(new URL(DIST+'zh/data-use/index.html',import.meta.url)),false,'/data-use/ stays English-only');
@@ -916,10 +950,15 @@ const fmt={pct1:r=>(r*100).toFixed(1)+'%',pct1raw:r=>r.toFixed(1)+'%',pct2raw:r=
   int0:r=>Math.round(r).toLocaleString('en-US').replace(/^-/,'−'),sig3:r=>r.toPrecision(3).replace(/^-/,'−'),
   // EEGPT on the core matrix (2026-10-13): the gap between two non-overlapping intervals, already in percentage points,
   // never signed (entities.ts gap2).
-  gap2:r=>r.toFixed(2)+' pp'};
+  gap2:r=>r.toFixed(2)+' pp',
+  // The SSVEP follow-ups (2026-10-28, ssvep-followups.ts formatSc): a difference of two equal levels prints 0.00 pp, never
+  // −0.00 pp (only below 1e-12, floating-point residue; any larger value keeps its sign); a bound the export flags as
+  // below two decimals at five decimals of a percentage point (−0.00022); card 13's symmetric margin (±0.5 pp).
+  pp2eq:r=>(Math.abs(r)<1e-12?'0.00 pp':(r>0?'+':'−')+Math.abs(r*100).toFixed(2)+' pp'),
+  sgn5:r=>(r===0?'':r>0?'+':'−')+Math.abs(r*100).toFixed(5),pm1:r=>'±'+Math.abs(r*100).toFixed(1)+' pp'};
 // The token checks of the earlier batches read every format but these: their pages print none, and a later
 // format applied to their values would only widen what those checks accept.
-const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2','int0','sig3','gap2'].includes(k)).map(([,g])=>g);
+const fmtEarlier=Object.entries(fmt).filter(([k])=>!['ppr2','sgr2','ms2','int0','sig3','gap2','pp2eq','sgn5','pm1'].includes(k)).map(([,g])=>g);
 // Protocol pages (/protocols/, since 2026-10-02) are held to every entity-page
 // check below: figures re-read, bilingual parity, hreflang, CSP, glossary,
 // sitemap and llms.txt. Their own checks follow in the protocol block.
@@ -1117,10 +1156,10 @@ for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
 // The entity pages carry the new rows, re-read from their file by the entity checks above.
 for(const p of ['datasets/eegmat/','zh/datasets/eegmat/','methods/labram/','zh/methods/labram/'])
   assert.ok(pageOf(p).includes('adaptation-update.json|'),p+': adaptation figures must reach the entity page');
-// Releases: the batch, its manifest hash, and the corrections register.
+// Releases: the batch and its manifest hash (on the record), and the corrections register (on the index).
 for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
   const html=pageOf(path);
-  assert.ok(html.includes(`id="${ad.release_id}"`)&&html.includes(ad.provenance.manifest_sha256),label+': the adaptation release and its manifest');
+  assert.ok(recorded(label==='zh'?'zh/':'',ad.release_id,ad.provenance.manifest_sha256),label+': the adaptation release and its manifest');
   const corr=html.slice(html.indexOf('id="corrections"'),html.indexOf('id="holds"'));
   assert.equal((corr.match(/<tr>/g)||[]).length-1,2,label+': two corrections listed');
   assert.match(corr,/heliyon|Heliyon/,label+': the ds003810 citation correction');
@@ -1156,8 +1195,10 @@ for(const p of ['api/','zh/api/']){
     assert.doesNotMatch(readFileSync(new URL(f,DIST),'utf8'),/Research preview|research preview|研究预览/,f+': the stage label must not return');
 }
 
-// CITATION.cff names the newest release on the releases page.
-const newest=pageOf('releases/').match(/<article class="release-entry" id="([^"]+)"/)[1];
+// CITATION.cff names the newest release: the first entry of the record.
+const newestEntry=pageOf(RECORD).match(/<article class="release-entry" id="([^"]+)"/);
+assert.ok(newestEntry,RECORD+': the record must carry the release entries');
+const newest=newestEntry[1];
 assert.match(readFileSync(new URL('../../CITATION.cff',import.meta.url),'utf8'),new RegExp('^version: "'+newest+'"$','m'),'CITATION.cff must cite the newest release, '+newest);
 // IndexNow: the key file ships and holds exactly its own name.
 const keyFile=distFiles.find(f=>/^[0-9a-f]{32}\.txt$/.test(f));
@@ -1374,11 +1415,9 @@ for(const p of ['datasets/ysu-async-ssvep/','zh/datasets/ysu-async-ssvep/','data
   assert.ok(pageOf(p).includes('data-fig="extension-update.json|'),p+': extension figures must reach the dataset page');
 assert.ok(pageOf('datasets/ltrsvp/').includes('10.1371/journal.pone.0178498')&&pageOf('datasets/ltrsvp/').includes('Open Data Commons Attribution License 1.0'),'LTRSVP dataset page: credit and licence');
 assert.equal((pageOf('datasets/ltrsvp/').match(/data-fig="extension-update\.json\|pct1\|/g)||[]).length,9*3+1,'LTRSVP dataset page: nine cells with intervals, and the chance level');
-// Releases: the batch and its manifest hash.
-for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
-  const html=pageOf(path);
-  assert.ok(html.includes(`id="${xt.release_id}"`)&&html.includes(xt.provenance.manifest_sha256),label+': the extension release and its manifest');
-}
+// Releases: the batch and its manifest hash, on the record.
+for(const [label,prefix] of [['en',''],['zh','zh/']])
+  assert.ok(recorded(prefix,xt.release_id,xt.provenance.manifest_sha256),label+': the extension release and its manifest');
 assert.ok(llms.includes('https://bci.report/datasets/ltrsvp/index.md'),'llms.txt: the LTRSVP dataset page');
 console.log('PASS: 2026-10-02 extension — both rejection rules side by side with coverage, end-to-end rate and per-state false acceptance; helped/harmed shown; trade-off and limits stated; LTRSVP arms, crossing interval and full matrix; no causal, per-hour or command-accuracy claim; presentation order stated and "later recording" only within a rate; YSU answer qualified, eyebrow, test-window count and four named table regions; credits; dataset pages with the people behind each paired mean.');
 
@@ -1669,10 +1708,10 @@ console.log('PASS: 2026-10-02 extension — both rejection rules side by side wi
       assert.ok(at>0&&row.includes(`<td>${people}</td>`),label+'/datasets/: '+slug+' listed with '+people+' people');
     }
   }
-  // Releases: the batch, its manifest hash, the hold (open, figure-free, linking its section).
+  // Releases: the batch and its manifest hash (on the record), the hold (on the index: open, figure-free, linking its section).
   for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
     const html=pageOf(path);
-    assert.ok(html.includes(`id="${ls.release_id}"`)&&html.includes(ls.provenance.manifest_sha256),label+': the large-source release and its manifest');
+    assert.ok(recorded(label==='zh'?'zh/':'',ls.release_id,ls.provenance.manifest_sha256),label+': the large-source release and its manifest');
     const at=html.indexOf('<tr id="hold-dreem-amplitude-sensitive-models" class="hold-open">'),row=html.slice(at,html.indexOf('</tr>',at));
     assert.ok(at>0,label+': the Dreem hold is in the register, open');
     assert.ok(!/\d/.test(visible(row.slice(row.lastIndexOf('<td>')))),label+': the hold\'s reason carries no figure');
@@ -2039,10 +2078,15 @@ const siteTs=readFileSync(new URL('../src/data/site.ts',import.meta.url),'utf8')
 const siteField=k=>siteTs.match(new RegExp('^\\s*'+k+":\\s*'([^']+)'",'m'))[1];
 const [repository,mirror,citationFile]=['repository','mirror','citationFile'].map(siteField);
 const ldOf=html=>[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
-const releasesPage=pageOf('releases/');
+// Every release as recorded (RECORD), newest first, with the files it ships.
+const releasesPage=pageOf(RECORD);
 const releaseEntries=[...releasesPage.matchAll(/<article class="release-entry" id="([^"]+)">\s*<header><time datetime="([^"]+)">([\s\S]*?)<\/article>/g)]
   .map(m=>({id:m[1],date:m[2],files:[...m[3].matchAll(/data-file="([^"]+)"/g)].map(f=>f[1])}));
-assert.ok(releaseEntries.length>=6,'the releases page must list every release');
+assert.ok(releaseEntries.length>=6,'the release archive must record every release');
+// The index has a line for each, in the record's order (#latest, then #earlier), in both languages.
+for(const prefix of ['','zh/'])
+  assert.deepEqual([...pageOf(prefix+'releases/').matchAll(/<li id="([^"]+)">/g)].map(m=>m[1]),releaseEntries.map(r=>r.id),
+    prefix+'releases/: one line per recorded release, in the record\'s order');
 const releaseOf=new Map(releaseEntries.flatMap(r=>r.files.map(f=>[f,r])));
 const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
 
@@ -2137,6 +2181,37 @@ const [newestRelease,oldestRelease]=[releaseEntries[0],releaseEntries.at(-1)];
     // copies (a Cloudflare configuration rule), so the page says so instead of the old caveat.
     assert.match(html,p==='api/'?/Any HTTP client can fetch the files under \/data\/, the llms files and the Markdown copies/:/\/data\/ 下的文件、llms 文件和各页的 Markdown 副本，任何 HTTP 客户端都能下载/,p+': the page says which files any client can fetch');
   }
+}
+
+// The release log's two pages for agents: both in the sitemap in both languages with their alternates, and the
+// archive's Markdown copy in llms.txt (llms-full.txt carries it verbatim, checked with the other copies). Every link
+// into /releases/ from llms.txt, llms-full.txt, the feed or a served file lands on a visible line of the index (outside
+// any <details>), and a hold link on an open hold; scripts/checks/release-log.mjs reads every page and Markdown copy so.
+{
+  for(const path of ['releases/',RECORD]){
+    assert.ok(sitemap.includes(`<loc>https://bci.report/${path}</loc>`)&&sitemap.includes(`<loc>https://bci.report/zh/${path}</loc>`),path+': sitemap entry in both languages');
+    assert.ok(sitemap.includes(`hreflang="zh-Hans" href="https://bci.report/zh/${path}"`)&&sitemap.includes(`hreflang="en" href="https://bci.report/${path}"`),path+': the sitemap pairs it with its alternates');
+  }
+  assert.ok(llms.includes(`https://bci.report/${RECORD}index.md`),'llms.txt: the release archive\'s Markdown copy');
+  // Visible: everything outside <details>, nested or not.
+  const outsideDetails=h=>{let out='',d=0,i=0;for(const m of h.matchAll(/<details\b|<\/details>/g)){if(!d)out+=h.slice(i,m.index);d+=m[0][1]==='/'?-1:1;i=m.index+m[0].length;}return d?out:out+h.slice(i);};
+  const visibleIds={},openHolds={};
+  for(const [lang,prefix] of [['en',''],['zh','zh/']]){
+    const html=pageOf(prefix+'releases/'),shown=outsideDetails(html.slice(html.indexOf('<main'),html.indexOf('</main>')));
+    visibleIds[lang]=new Set([...shown.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]));
+    openHolds[lang]=new Set([...shown.matchAll(/<tr id="(hold-[^"]+)" class="hold-open">/g)].map(m=>m[1]));
+    assert.ok(releaseEntries.every(r=>visibleIds[lang].has(r.id)),prefix+'releases/: every release id on a visible line');
+  }
+  const sources=[['llms.txt',llms],['llms-full.txt',readFileSync(new URL('llms-full.txt',DIST),'utf8')],['releases.xml',readFileSync(new URL('releases.xml',DIST),'utf8')],
+    ...readdirSync(new URL('data/',DIST)).filter(f=>/\.(?:json|csv)$/.test(f)).map(f=>['data/'+f,readFileSync(new URL('data/'+f,DIST),'utf8')])];
+  let n=0;
+  for(const [where,text] of sources) for(const m of decodeHtml(text).matchAll(/(?:https:\/\/bci\.report)?(\/zh)?\/releases\/#([A-Za-z0-9_-]+)/g)){
+    const lang=m[1]?'zh':'en',frag=m[2];
+    if(frag.startsWith('hold-')) assert.ok(openHolds[lang].has(frag),where+': '+m[0]+' names no open hold');
+    assert.ok(visibleIds[lang].has(frag),where+': '+m[0]+' lands on no visible line of /releases/');
+    n++;
+  }
+  assert.ok(n>=releaseEntries.length,'links into /releases/ from llms.txt, llms-full.txt, the feed and the served files were read ('+n+')');
 }
 
 // _headers: the downloads may be read from any origin; the pages may not.
@@ -2477,6 +2552,37 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
       for(const n of pins) assert.ok(numbers.includes(n),(page||'/')+' '+slug+' card: must print '+n);
     }
   }
+  // The 2026-10-28 round extends two questions' cards, and adds no digit to either (the pins above hold that: neither card
+  // lists the new export among its files). new-ssvep-frequencies counts the follow-ups of both releases in words, counted
+  // here from the two files: the cards of each, those on BETA's held-out task, those on Wearable-102, and those on
+  // Wearable-102 alone. data-quality names every case of its two files, the one-person cases counted in a word.
+  {
+    const S1=JSON.parse(readFileSync(new URL('data/new-ssvep-frequencies-update.json',DIST),'utf8')),S2=JSON.parse(readFileSync(new URL('data/ssvep-followups-update.json',DIST),'utf8'));
+    const ep=(j,id)=>j.endpoints.find(e=>e.id===id).cards;
+    assert.ok(S2.placement.reads_with.release_id===S1.release_id&&S2.placement.reads_with.cards.join()===S1.placement.cards.filter(c=>!S2.placement.cards.some(n=>n.card===c.card)).map(c=>c.card).join(),'new-ssvep-frequencies card: the later file reads with the earlier one, card 8 taken over');
+    const all=[...S2.placement.reads_with.cards,...S2.placement.cards.map(c=>c.card)],beta=[...ep(S1,'u8'),...ep(S2,'u8')],wear=[...ep(S1,'wearable_12'),...ep(S2,'wearable_12')];
+    const only=wear.filter(c=>!beta.includes(c));
+    assert.ok(all.every((c,i)=>c===i+1)&&new Set([...beta,...wear]).size===all.length,'new-ssvep-frequencies card: cards 1 to '+all.length+', each on BETA, Wearable-102 or both');
+    const W={en:['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'],
+      zh:['零','一','两','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十']};
+    const D1=JSON.parse(readFileSync(new URL('data/data-quality-update.json',DIST),'utf8')),D2=JSON.parse(readFileSync(new URL('data/dataset-checks-update.json',DIST),'utf8'));
+    // The short names the cards use, one per case of the page's two files, in the export's page order.
+    const dqNames={shin2022:'Shin2022','kim2025-beta-range':'Kim beta-range',mind2026:'MIND',eldbeta:'eldBETA',damm:'Damm',nebula:'NeBULA',zuco2:'ZuCo'},dqNamesZh={...dqNames,'kim2025-beta-range':'Kim beta 频段'};
+    assert.deepEqual(D2.placement.page_order,[...new Set([...D1.cases.map(c=>c.id),...D2.cases.map(c=>c.id)])].sort((a,b)=>D2.placement.page_order.indexOf(a)-D2.placement.page_order.indexOf(b)),'data-quality card: the page order holds every case of both files once');
+    assert.deepEqual(Object.keys(dqNames).sort(),[...D2.placement.page_order].sort(),'data-quality card: a short name for every case');
+    for(const page of ['','zh/','topics/','zh/topics/']){
+      const html=pageOf(page),zh=page.startsWith('zh/'),w=n=>W[zh?'zh':'en'][n];
+      const cardOf=slug=>{const at=html.search(new RegExp(`<a class="topic-entry-card" href="(?:/zh)?/topics/${slug}/"`));return visible(html.slice(at,html.indexOf('</a>',at)));};
+      const ss=cardOf('new-ssvep-frequencies'),cap=s=>zh?s:s[0].toUpperCase()+s.slice(1);
+      assert.ok(zh?ss.includes(`${w(all.length)}项后续检验：${w(beta.length)}项在第三条路线所用的 BETA 队列上，${w(wear.length)}项在 Wearable-102 上，其中${w(only.length)}项只在那里运行`)
+        :ss.includes(`${cap(w(all.length))} follow-ups: ${w(beta.length)} on route 3’s BETA cohort, ${w(wear.length)} on Wearable-102, ${w(only.length)} of them only there`),(page||'/')+': the new-ssvep-frequencies card counts both files\' follow-ups in words ('+all.length+', '+beta.length+', '+wear.length+', '+only.length+')');
+      const dq=cardOf('data-quality');
+      for(const id of D2.placement.page_order) assert.ok(dq.includes((zh?dqNamesZh:dqNames)[id]),(page||'/')+': the data-quality card names '+(zh?dqNamesZh:dqNames)[id]);
+      assert.deepEqual(D2.one_person.cases,['eldbeta','damm','nebula'],'data-quality card: the one-person cases of the export');
+      assert.ok(zh?dq.includes(`${D2.one_person.cases.map(id=>dqNames[id]).join('、').replace(/、([^、]+)$/,' 与 $1')} ${w(D2.one_person.cases.length)}个单人案例`)
+        :dq.includes(`${w(D2.one_person.cases.length)} one-person cases, ${D2.one_person.cases.map(id=>dqNames[id]).join(', ').replace(/, ([^,]+)$/,' and $1')}`),(page||'/')+': the data-quality card counts the one-person cases in a word and names them');
+    }
+  }
   // The transfer-coverage map, compact on the home page, full on the hub: cohort sizes and links only.
   const sortedPeople=track=>peopleOf(track).sort((a,b)=>b-a);
   const mapPins={'person:dry-vs-wet':peopleOf('wearable-sensor-transfer'),'person:model-adaptation':[ad.results['eegmat-labram-adaptation'].cohort.people],
@@ -2554,7 +2660,9 @@ for(const url of [repository,mirror,citationFile,'https://bci.report/releases.xm
     assert.ok(html.includes(`<a href="${prefix}/releases/#corrections">`)&&visible(html).includes(page?`更正（${nCorrections}）`:`Corrections (${nCorrections})`),(page||'/')+': the corrections link counts the register ('+nCorrections+')');
   }
   // Directory band counts are the counts of what they link to; the old home anchors still land.
-  const nReleases=(releasesHtml.match(/<article class="release-entry" id="/g)||[]).length;
+  // Releases: the entries of the record, each a line of the index the band links to.
+  const nReleases=(pageOf(RECORD).match(/<article class="release-entry" id="/g)||[]).length;
+  assert.equal(new Set([...releasesHtml.matchAll(/<li id="([^"]+)">/g)].map(m=>m[1])).size,nReleases,'releases: the index has a line for every recorded release');
   const nFiles=new Set([...pageOf('api/').matchAll(/href="\/data\/([^"]+)"/g)].map(m=>m[1])).size;
   for(const page of ['','zh/']){
     const html=pageOf(page);
@@ -2885,7 +2993,7 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
   {
     const node=ldOf(pageOf('topics/when-not-to-act/'))[0]['@graph'].find(n=>n['@type']==='Dataset');
     assert.ok(node.distribution.some(d=>d.contentUrl==='https://bci.report/data/reliable-decisions-update.json')&&node.variableMeasured.includes('selective_coverage'),'when-not-to-act: Dataset markup names the route-1 file and what it measures');
-    for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${rdx.release_id}"`)&&pageOf(path).includes(rdx.provenance.manifest_sha256),path+': the route-1 release and its manifest');
+    for(const prefix of ['','zh/']) assert.ok(recorded(prefix,rdx.release_id,rdx.provenance.manifest_sha256),prefix+RECORD+': the route-1 release and its manifest');
     const du=pageOf('data-use/'),s0=du.slice(du.indexOf('id="sources-2026-10-04"'),du.indexOf('</section>',du.indexOf('id="sources-2026-10-04"')));
     assert.ok(s0.length>800&&['EEGMAT','BETA','ds003810','BNCI2015-001','idle'].every(x=>s0.includes(x)),'data-use: the 4 October section names its recordings and what is left out');
     // The same date's v9 review has its own entry (review of 2026-10-05): the route-1 sentence is scoped to route 1;
@@ -3059,8 +3167,8 @@ console.log('PASS: 2026-10-02 home and hubs — one navigation everywhere with t
       }
     }
   }
-  for(const path of ['releases/','zh/releases/'])
-    assert.ok(pageOf(path).includes(`id="${fm.release_id}"`)&&pageOf(path).includes(fm.provenance.manifest_sha256),path+': the v9 release and its manifest');
+  for(const prefix of ['','zh/'])
+    assert.ok(recorded(prefix,fm.release_id,fm.provenance.manifest_sha256),prefix+RECORD+': the v9 release and its manifest');
   // The API page and the feed list the nine files through the generic checks above (every served file, exactly once).
 }
 console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight CSVs served as reviewed and agreeing; the released matrix untouched; each CSV in its core results CSV\'s columns and protocol values, one row per checkpoint, matrix before ablation; not run empty with its reason; chance flags follow the intervals; exposure a sourced statement with LaBraM and CBraMod sourced, ST-EEGFormer×BETA and SingLEM×TMNRED exposed, ZUNA 1.1 unknown; research-use sentence; no timings; release log.');
@@ -3142,10 +3250,11 @@ console.log('PASS: 2026-10-04 v9 foundation models, boundary — JSON and eight 
   const boasPeople=peopleIn(D.boas);
   assert.ok(boasPeople.length>100&&Math.min(...boasPeople)>=C.minimum_cell_people&&C.minimum_cell_people===20&&Math.min(...boasPeople)===C.smallest_cell_people,'route 2: every BOAS cell pools at least 20 people');
   assert.doesNotMatch(served('shared-representation-update.json').toString(),/"(?:p[159]0(?:_pp)?|[^"]*percentile[^"]*|[^"]*per_person[^"]*|[^"]*per_fold[^"]*)":/,'route 2: no per-person percentile or per-fold value in the file');
-  for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${sr.release_id}"`)&&pageOf(path).includes(sr.provenance.manifest_sha256),path+': the route-2 release and its manifest');
-  {const rel=pageOf('releases/'),at=rel.indexOf(`id="${sr.release_id}"`),entry=visible(rel.slice(at,rel.indexOf('</article>',at)));
+  for(const prefix of ['','zh/']) assert.ok(recorded(prefix,sr.release_id,sr.provenance.manifest_sha256),prefix+RECORD+': the route-2 release and its manifest');
+  {const entry=visible(recordEntry('',sr.release_id));
+   assert.ok(entry.length>0,RECORD+': the route-2 entry');
    for(const re of [/publishable with stated gaps/,/public sharing or secondary use/,/no peer-reviewed paper describes BOAS/i,/version 1\.1\.1 \(May 2025\)/,/pseudonymised in the public release/,/after every other result was known/])
-     assert.match(entry,re,'releases: the route-2 entry states '+re);}
+     assert.match(entry,re,RECORD+': the route-2 entry states '+re);}
   // Data use: the three records, each ending with what route 2 publishes; BOAS's gaps and credit in full.
   const du=pageOf('data-use/'),at7=du.indexOf('id="sources-2026-10-07"'),s7=du.slice(at7,du.indexOf('</section>',at7));
   assert.deepEqual([...s7.matchAll(/<tr data-route2-source="([^"]+)">/g)].map(m=>m[1]),['openbmi','boas','eesm19'],'data-use: one route-2 rights row per dataset');
@@ -3416,17 +3525,17 @@ console.log('PASS: 2026-10-07 route 2, boundary — served as reviewed; OpenBMI,
     assert.ok(bp.includes(`href="${DS.boas.rights.licenseUrl}"`)&&bp.includes(DS.boas.rights.license)&&bp.includes('class="entity-profile"'),pfx+'datasets/boas/: CC0 linked, and the sourced profile');
     const ix=pageOf(pfx+'datasets/');assert.ok(ix.includes(`href="/${pfx}datasets/boas/"`)&&/data-boas-pointer="true"/.test(ix),pfx+'datasets/: the BOAS row and the pointer to its gaps');
     // The release log names the new question; when-not-to-act prints no route-2 figure and does not cite the release.
-    const rel=pageOf(pfx+'releases/'),ra=rel.indexOf(`id="${sr.release_id}"`),entry=rel.slice(ra,rel.indexOf('</article>',ra));
-    assert.ok(entry.includes(`href="/${pfx}topics/shared-encoder/"`),pfx+'releases/: the route-2 release names its question');
+    const entry=recordEntry(pfx,sr.release_id);
+    assert.ok(entry.includes(`href="/${pfx}topics/shared-encoder/"`),pfx+RECORD+': the route-2 release names its question');
     // Review of 2026-10-07: what is withheld is the measured compute totals, as the export's not_published says; the
     // page's cost ledger prints the indicative step times. The hidden layer carries the lift on sleep only; no
     // checkpoint outlived its fit.
     const ev=visible(entry),du=zh?null:visible(pageOf('data-use/').slice(pageOf('data-use/').indexOf('id="sources-2026-10-07"')));
-    for(const [t,w] of [[ev,pfx+'releases/'],...(du?[[du.slice(0,du.indexOf('Release ')),'data-use/#sources-2026-10-07']]:[])])
+    for(const [t,w] of [[ev,pfx+RECORD],...(du?[[du.slice(0,du.indexOf('Release ')),'data-use/#sources-2026-10-07']]:[])])
       assert.ok(t.includes(zh?'实测的计算总量（GPU 小时、每次拟合与每组的实际耗时、每个外层折的训练步数）':'measured compute totals (GPU-hours, wall time per fit and per block, training steps per outer fold)')
         &&t.includes(zh?'“仅供参考”的标注发布在共享 GPU 上交替测得的两项耗时':'labelled indicative, the two times measured interleaved on a shared GPU')&&!/measured compute time;|实测的计算耗时；/.test(t),w+': the compute items withheld, and the indicative times the ledger prints');
     assert.ok(ev.includes(zh?'在运动想象上，这个隐藏层与固定头的对比无法下结论':'on motor imagery its own contrast with the fixed heads was inconclusive')&&!/whatever lifted|同一个隐藏层不加条件时也有/.test(ev)
-      &&ev.includes(zh?'没有一个留到对应的拟合结束之后':'none outlived its fit'),pfx+'releases/: the lift is the hidden layer\'s on sleep only, and no checkpoint outlived its fit');
+      &&ev.includes(zh?'没有一个留到对应的拟合结束之后':'none outlived its fit'),pfx+RECORD+': the lift is the hidden layer\'s on sleep only, and no checkpoint outlived its fit');
     const w=pageOf(pfx+'topics/when-not-to-act/');
     assert.ok(!w.includes(`data-fig="${SRF}|`)&&!w.slice(w.indexOf('<section class="cite-page"')).includes(sr.release_id),pfx+'topics/when-not-to-act/: links route 2, prints none of its figures and does not cite it');
   }
@@ -3957,9 +4066,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
       const m=tr.match(/<small class="fm-count"><a href="([^"]+)">([^<]+)<\/a><\/small>/);
       assert.ok(m&&m[1]===`/${prefix}protocols/${t.id}/#foundation-v9`&&m[2].includes(label==='en'?`+ ${n} further foundation encoders`:`另有 ${n} 个基础模型编码器`),prefix+'protocols/: '+t.id+' counts the v9 rows it links to ('+n+')');
     }
-    const rel=pageOf(prefix+'releases/'),entry=rel.slice(rel.indexOf(`id="${REL}"`),rel.indexOf('</article>',rel.indexOf(`id="${REL}"`)));
-    for(const p of ['protocols','methods']) assert.ok(entry.includes(`href="/${prefix}${p}/"`),prefix+'releases/: the v9 release names the '+p+' hub');
-    assert.doesNotMatch(entry,/Core matrix \(home page\)|核心矩阵（首页）/,prefix+'releases/: a hub is not the home page');
+    const entry=recordEntry(prefix,REL);
+    assert.ok(entry.length>0&&indexLine(prefix,REL),prefix+RECORD+': the v9 release, recorded and on the index');
+    for(const p of ['protocols','methods']) assert.ok(entry.includes(`href="/${prefix}${p}/"`),prefix+RECORD+': the v9 release names the '+p+' hub');
+    assert.doesNotMatch(entry,/Core matrix \(home page\)|核心矩阵（首页）/,prefix+RECORD+': a hub is not the home page');
     if(label==='en'){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.includes('&lt;a href=&quot;https://bci.report/protocols/&quot;&gt;Protocols&lt;/a&gt;')&&!fe.includes('Core matrix (home page)'),'releases.xml: the v9 entry names the hubs as the release log does');}
   }
@@ -3969,8 +4079,11 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // protocol page and the protocols index, the seven core dataset pages, the methods hub (its card evaluated, its new
   // page) and does-pretraining-help (its attribution rows). REVE's and LaBraM's method pages keep 2026-10-04.
   for(const p of ['protocols/mi-rest/','protocols/','methods/','methods/reve/','methods/labram/','datasets/eegmat/','datasets/eesm19/','topics/does-pretraining-help/']){
-    // On 2026-10-20 the methods hub gained its register line and every dataset page its register row link.
-    const d=p==='methods/reve/'||p==='methods/labram/'?'2026-10-04':['methods/','datasets/eegmat/','datasets/eesm19/'].includes(p)?'2026-10-20':'2026-10-13';
+    // On 2026-10-20 the methods hub gained its register line and every dataset page its register row link. On
+    // 2026-10-28 the motor-imagery protocol page gained its figure-free pointer to the NeuroRVQ panel (D19), and the
+    // methods hub's register line its new model count (the register's newest file).
+    const d=p==='methods/reve/'||p==='methods/labram/'?'2026-10-04':['protocols/mi-rest/','methods/'].includes(p)?'2026-10-28'
+      :['datasets/eegmat/','datasets/eesm19/'].includes(p)?'2026-10-20':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-04 v9 foundation models: the topics ----------------------------------------------------
@@ -4324,11 +4437,11 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   assert.deepEqual(xsec.zhM,xsec.enM,'fewer-electrodes #v9-montage: the same figures in both languages, in order');
   // The release log names both topics; the transfer map's two entries are pinned with the other map pins above.
   for(const prefix of ['','zh/']){
-    const rel=pageOf(prefix+'releases/'),entry=rel.slice(rel.indexOf(`id="${REL}"`),rel.indexOf('</article>',rel.indexOf(`id="${REL}"`)));
-    for(const t of ['does-pretraining-help','fewer-electrodes']) assert.ok(entry.includes(`href="/${prefix}topics/${t}/"`),prefix+'releases/: the v9 release names '+t);
+    const entry=recordEntry(prefix,REL);
+    for(const t of ['does-pretraining-help','fewer-electrodes']) assert.ok(entry.includes(`href="/${prefix}topics/${t}/"`),prefix+RECORD+': the v9 release names '+t);
     // Interval facts and the authors' lists, never a ranking or a corpus claim (review of 2026-10-05).
-    assert.doesNotMatch(visible(entry),/stays? the highest|best published non-foundation|was pretrained on|仍是最高|最佳非基础模型行|的预训练数据包含/,prefix+'releases/: the v9 note ranks no overlapping rows and claims no corpus');
-    assert.ok(visible(entry).includes(prefix?'没有任何新行高于无需训练的标准 CCA':'no new row lies above standard CCA, which needs no training'),prefix+'releases/: the v9 note says no new row lies above standard CCA');
+    assert.doesNotMatch(visible(entry),/stays? the highest|best published non-foundation|was pretrained on|仍是最高|最佳非基础模型行|的预训练数据包含/,prefix+RECORD+': the v9 note ranks no overlapping rows and claims no corpus');
+    assert.ok(visible(entry).includes(prefix?'没有任何新行高于无需训练的标准 CCA':'no new row lies above standard CCA, which needs no training'),prefix+RECORD+': the v9 note says no new row lies above standard CCA');
     if(!prefix){const feed=readFileSync(new URL('releases.xml',DIST),'utf8'),fe=feed.slice(feed.indexOf(`<id>https://bci.report/releases/#${REL}</id>`),feed.indexOf('</entry>',feed.indexOf(`#${REL}</id>`)));
       assert.ok(fe.length>500&&!/stays? the highest|best published non-foundation|was pretrained on/.test(fe),'releases.xml: the v9 entry ranks no overlapping rows and claims no corpus');}
   }
@@ -4338,8 +4451,10 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
   // dates now; on 2026-10-13 EEGPT's rows reached the two further-encoder questions, and the Questions hub's
   // does-pretraining-help card counts three encoders and names EEGPT on sleep.
   for(const p of ['topics/fewer-electrodes/','topics/does-pretraining-help/','topics/model-adaptation/','topics/']){
-    // On 2026-10-20 the Questions hub gained two cards and model-adaptation its article line.
-    const d=p==='topics/model-adaptation/'||p==='topics/'?'2026-10-20':'2026-10-13';
+    // On 2026-10-20 the Questions hub gained two cards and model-adaptation its article line. On 2026-10-28
+    // fewer-electrodes gained its figure-free pointer to the SSVEP page's card 11 (D24), and the Questions hub's
+    // new-ssvep-frequencies card counts both follow-up releases and its data-quality card names the new cases.
+    const d=p==='topics/model-adaptation/'?'2026-10-20':['topics/fewer-electrodes/','topics/'].includes(p)?'2026-10-28':'2026-10-13';
     assert.ok(sitemap.includes(`<loc>https://bci.report/${p}</loc><lastmod>${d}</lastmod>`),'sitemap: '+p+' changed on '+d);}
 }
 // --- 2026-10-05 review: the Markdown copies of the route-1 and v9 sections ---------------------------
@@ -4396,9 +4511,9 @@ console.log('PASS: 2026-10-07 route 2 on the site — /topics/shared-encoder/: e
     }
   }
   assert.ok(checked>3000,'the route-1 and v9 copy check read the sections ('+checked+' figures)');
-  // llms-full.txt is assembled from the English copies: each one is in it, verbatim.
+  // llms-full.txt is assembled from the English copies: each one is in it, verbatim (the release archive too, plan §4.4).
   const full=readFileSync(new URL('llms-full.txt',DIST),'utf8');
-  for(const f of htmlPages.filter(f=>!f.startsWith('zh/')&&f!=='404.html'&&/^(?:index\.html|(?:topics|datasets|methods|protocols)\/(?:[^/]+\/)?index\.html|(?:api|releases|data-use)\/index\.html)$/.test(f))){
+  for(const f of htmlPages.filter(f=>!f.startsWith('zh/')&&f!=='404.html'&&/^(?:index\.html|(?:topics|datasets|methods|protocols)\/(?:[^/]+\/)?index\.html|(?:api|releases|releases\/archive|data-use)\/index\.html)$/.test(f))){
     const md=readFileSync(new URL(f.replace(/index\.html$/,'index.md'),DIST),'utf8').trim();
     assert.ok(full.includes(md),'llms-full.txt: the copy of /'+f.replace(/index\.html$/,'')+' is in it, verbatim');
   }
@@ -4960,7 +5075,7 @@ console.log('PASS: 2026-09-22 evidence — Alpha Waves released with credits, no
   assert.deepEqual(R.route.jev_style,JEV_STYLE,'route 3: the served file carries the site\'s one definition of "Jev-style"');
   assert.deepEqual(R.route.jev_source,{company:'TypeSafe AI',url:'https://typesafe.ai/blog/introducing-system-one-models-and-jev'},'route 3: Jev\'s source, TypeSafe\'s launch post');
   assert.ok(R.route.origin.note.startsWith('The decision-research plan started from Visual Jev')&&R.route.origin.note.includes('applies the same encode-once, answer-many idea to images'),'route 3: the plan started from Visual Jev, which applies the idea to images');
-  for(const path of ['releases/','zh/releases/']) assert.ok(pageOf(path).includes(`id="${ql.release_id}"`)&&pageOf(path).includes(ql.provenance.manifest_sha256),path+': the route-3 release and its manifest');
+  for(const prefix of ['','zh/']) assert.ok(recorded(prefix,ql.release_id,ql.provenance.manifest_sha256),prefix+RECORD+': the route-3 release and its manifest');
 }
 console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served as reviewed, one release; 35 primary entries in three blocks, 140 in all; every flag follows its interval and the frozen margins, difference-only entries without a margin, R = exp(log R); seen, reworded and unseen labelled apart; every BOAS cell at least 20 people, no per-person, per-fold, percentile or demographic key; S10 breakdowns not served; canaries pass or fail and counts, the override, centring diagnostic, S0b-6, EA-1 and numeracy disclosed; Yu & Yao, 2026 first; the route block carries the site\'s definition of "Jev-style", Jev\'s source and where the plan started, and no scope or independence line.');
 
@@ -5279,11 +5394,12 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
 // llms-full.txt are read for an update marker ("updated <date>", "Added <date>", "since <date>", "Held since",
 // "run on <date>", a "· reviewed <date>" label, "snapshot <date>", "this update", "generated <date>") or an internal
 // version label ("v9", "(v9", "release v9", 第九轮), and a data-source note may carry no date at all.
-// Kept on purpose, and so left out here: /releases/ and releases.xml (dates and release ids); each page's "Cite this
-// page" block and the /api/ BibTeX (release ids and their dates); evidence dates ("checked … on <date>", "Rights
-// reviewed <date>", "Status checked <date>", an upstream snapshot's acquisition date, an owner's decision or licence
-// acceptance), which no pattern below targets; dataset, licence and model versions (OpenNeuro 1.0.3, Figshare v3,
-// REVE licence v1.0, protocol ids …-v1), which the version pattern does not match; and /data-use/'s policy dates.
+// Kept on purpose, and so left out here: /releases/, /releases/archive/ (each release's entry as released) and
+// releases.xml (dates and release ids); each page's "Cite this page" block and the /api/ BibTeX (release ids and their
+// dates); evidence dates ("checked … on <date>", "Rights reviewed <date>", "Status checked <date>", an upstream
+// snapshot's acquisition date, an owner's decision or licence acceptance), which no pattern below targets; dataset,
+// licence and model versions (OpenNeuro 1.0.3, Figshare v3, REVE licence v1.0, protocol ids …-v1), which the version
+// pattern does not match; and /data-use/'s policy dates.
 {
   const MONTH='(?:January|February|March|April|May|June|July|August|September|October|November|December)';
   const DAY=`\\d{1,2} ${MONTH}`,ISO='20\\d\\d-\\d\\d-\\d\\d',ZHD='20\\d\\d 年 \\d+ 月 \\d+ 日';
@@ -5309,7 +5425,7 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   const verbatim=['LUNA Large is frozen probes only in the v9 stage specification'];
   // /data-use/'s policy dates: the review each source was added under, and a status-only source's released reason.
   const policy={'/data-use/':[new RegExp(`Sources added ${DAY} 20\\d\\d`,'g'),/replayed on 2026-09-22/g]};
-  const KEEP_PAGES=new Set(['/releases/','/zh/releases/']);
+  const KEEP_PAGES=new Set(['/releases/','/zh/releases/','/'+RECORD,'/zh/'+RECORD]);
   const pendingSeen=new Set(),bad=[];
   const scrub=(text,path)=>{
     let t=text;
@@ -5379,10 +5495,10 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
 {
   const BSF='beyond-scalp-update.json',PSF='pilot-studies-update.json';
   const bsx=JSON.parse(readFileSync(new URL('data/'+BSF,DIST),'utf8')),psx=JSON.parse(readFileSync(new URL('data/'+PSF,DIST),'utf8'));
-  // Releases and holds.
+  // Releases (on the record, with their manifests) and holds (on the index).
   for(const [label,path] of [['en','releases/'],['zh','zh/releases/']]){
     const html=pageOf(path);
-    for(const x of [bsx,psx]) assert.ok(html.includes(`id="${x.release_id}"`)&&html.includes(x.provenance.manifest_sha256),label+': release '+x.release_id+' with its manifest');
+    for(const x of [bsx,psx]) assert.ok(recorded(label==='zh'?'zh/':'',x.release_id,x.provenance.manifest_sha256),label+': release '+x.release_id+' with its manifest');
     for(const h of [...bsx.holds,...psx.holds]) assert.ok(html.includes(`<tr id="hold-${h.id}"`),label+': hold '+h.id+' in the register');
   }
   // Data use: every source of both batches, with what is published on it.
@@ -5708,15 +5824,30 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   const pages={};
   for(const [label,pfx] of [['en',''],['zh','zh/']]){
     const zh=label==='zh',path=pfx+'topics/pilot-studies/',where=path,html=pageOf(path);
-    // The separate NeuroLM panel (2026-10-20) cites its own export; scripts/checks/neurolm-eegmat.mjs reads it.
-    const main=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"')).replace(/<section\b[^>]*\sid="neurolm-eegmat"[\s\S]*?<\/section>/,'');
+    // The separate panels, each a <section data-counted="false" data-release="…"> outside the pilot count, cite their own
+    // exports and are read by their own check modules: NeuroLM on EEGMAT (2026-10-20, scripts/checks/neurolm-eegmat.mjs),
+    // NeuroRVQ on three tasks and the ten-second EEGMAT probes (2026-10-28, scripts/checks/neurorvq.mjs and
+    // eegmat-ten-second.mjs). None holds a nested section. What is left is the pilot export's page, read below.
+    const body=html.slice(html.indexOf('<main'),html.indexOf('<section class="cite-page"'));
+    const panels=[...body.matchAll(/<section\b[^>]*\sdata-counted="false"[^>]*>[\s\S]*?<\/section>/g)].map(m=>m[0]);
+    assert.ok(panels.length>=3&&panels.some(s=>/\sid="neurolm-eegmat"/.test(s))&&panels.every(s=>!s.slice(1).includes('<section')),where+': the separate panels, NeuroLM\'s among them, each a section of its own');
+    const panelReleases=panels.map(s=>{const r=s.match(/^<section\b[^>]*\sdata-release="([^"]+)"/);assert.ok(r,where+': a separate panel names its release');
+      // Every figure in a panel is a leaf of one export, and that export is the panel's release.
+      const files=[...new Set(figAttrs(s).map(a=>a.split('|')[0]))];
+      assert.ok(files.length===1&&files[0]!==PS&&JSON.parse(readFileSync(new URL('data/'+files[0],DIST),'utf8')).release_id===r[1],where+': the panel of '+r[1]+' prints the figures of its own export only ('+files.join(', ')+')');
+      return r[1];});
+    const main=panels.reduce((h,s)=>h.replace(s,''),body);
     const own=main.slice(0,main.indexOf('<nav class="topic-switcher"'));
     pages[label]=main;
     const sec=id=>el(own,new RegExp(`<section\\b[^>]*\\sid="${id}"`),where);
     // (1) Every figure is a leaf of this export, and nothing else is cited.
     assert.ok(figAttrs(main).length>(BINGO_ON?200:150)&&figAttrs(main).every(a=>a.startsWith(PS+'|')),where+': every figure is a leaf of '+PS+' ('+figAttrs(main).length+')');
     const cite=html.slice(html.indexOf('<section class="cite-page"'));
-    assert.equal(cite.match(/data-releases="([^"]+)"/)[1],'neurolm-eegmat-update-20261020 '+PSX.release_id,where+': the cite block names the pilot release and the NeuroLM panel\'s release');
+    // The cite block names the releases the page prints, computed: every separate panel's release and the pilot release,
+    // newest first (the pilot release, the oldest, last), each once.
+    const cited=cite.match(/data-releases="([^"]+)"/)[1].split(' '),dayOf=id=>Number(id.match(/(\d{8})$/)[1]);
+    assert.ok(cited.length===new Set(cited).size&&[...cited].sort().join()===[...panelReleases,PSX.release_id].sort().join()&&cited.at(-1)===PSX.release_id
+      &&cited.every((id,i)=>!i||dayOf(cited[i-1])>=dayOf(id)),where+': the cite block names the pilot release and each separate panel\'s release, newest first ('+cited.join(' ')+')');
     assert.ok(html.includes('href="/data/'+PS+'"')&&/^(?:Data source:|数据来源：) pilot-studies-update\.json · schema bci-report-pilot-studies-update-v1[.。]$/.test(vis(el(own,/<p class="citation-note">(?:Data source:|数据来源：)/,where))),where+': the data-source note names the file and its schema, and no date');
     // (8) Each released section names its species and signal, says it is executed locally, and links its dataset page;
     // the held one links none.
@@ -6067,8 +6198,8 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   }
   // (2) The release entry.
   for(const [label,prefix] of [['en',''],['zh','zh/']]){
-    const rel=pageOf(prefix+'releases/'),a=rel.indexOf(`id="${REL}"`),entry=rel.slice(a,rel.indexOf('</article>',a)),w=prefix+'releases/ '+REL;
-    assert.ok(a>0&&entry.includes(`<time datetime="${EGX.generated_at}">`)&&entry.includes(`href="/data/${EJ}"`)&&entry.includes(EGX.provenance.manifest_sha256),w+': the entry, its date, file and manifest');
+    const entry=recordEntry(prefix,REL),w=prefix+RECORD+' '+REL;
+    assert.ok(entry.length>0&&indexLine(prefix,REL)&&entry.includes(`<time datetime="${EGX.generated_at}">`)&&entry.includes(`href="/data/${EJ}"`)&&entry.includes(EGX.provenance.manifest_sha256),w+': the entry, its date, file and manifest');
     for(const p of ['protocols','methods']) assert.ok(entry.includes(`href="/${prefix}${p}/"`),w+': names the '+p+' hub');
     assert.ok(entry.includes(label==='en'?'How EEGPT differs from EEG-DINO':'EEGPT 与 EEG-DINO 的区别')&&entry.includes('hold-unresolved-weight-license'),w+': the EEG-DINO distinction and the public audit\'s old label');
     assert.ok(entry.includes(label==='en'?'Owner decisions of 12 and 13 October 2026':'所有者 2026 年 10 月 12 日与 13 日的决定'),w+': the owner\'s record');
@@ -6437,6 +6568,159 @@ console.log('PASS: 2026-10-08 route 3, boundary — results and wordings served 
   assert.ok(!JSON.stringify(EGX).match(/"(?:per_person|per_participant|per_subject|per_fold|per_trial|subject_scores|participant_scores)[^"]*":/),'EEGPT: the export carries no per-person, per-fold or per-trial field');
   assert.ok(protocolFigs>=8*2*6,'EEGPT: the protocol rows were read ('+protocolFigs+')');
   console.log(`PASS: EEGPT on the core matrix, on the pages — its own section on every protocol page in both languages (${protocolFigs} figures pinned to its export, each cell column by column in the core rows' units, the chance flags, the sourced exposure and its source, each footnote beside the row and once on the page, every published row's relation and gap re-derived from the released intervals, its terms with the weights never Apache-2.0, its release, JSON and method page); the protocols index links each; the home page counts it among the frozen encoders, embeds and renders its row after the further encoders' group (family filter, chart, dialog with its footnotes and terms, the tool naming its release), names it in the snapshot note with its terms, never ranked; does-pretraining-help carries its attribution rows and contrasts beside LaBraM's and CBraMod's, the short answer, dek, description and card as far as those rows go, its footnotes once and its sources, and its sleep and BETA rows with its export's relations and gaps; fewer-electrodes its BETA and sleep row with the overlap by the released rows' rule and its footnotes once; the same figures in English and Chinese; no stale status outside the release log; no per-person field.`);
+}
+// --- 2026-10-28: five releases on one day — what this file reads itself ------------------------------------------------
+// Owner decisions D14–D29. Each page of the round carries its own module in scripts/checks/ (ssvep-followups, neurorvq,
+// eegmat-ten-second, data-quality, open-register, release-log, ssvep-cross-page), run below. Read here: (1) the SSVEP
+// page's multiplicity sentence, computed from the follow-ups export, once per language, the earlier "no interval is
+// adjusted" sentence gone; (2) /data-use/'s four sections of the round, in release order: each names its release, prints
+// its export's rights sentence and every item of its not-published list; every rights record as its export states it,
+// each row's label for what is published read from the export's status; the model terms part by part with no weights
+// distributed; MIND's licence statements side by side (D15), Damm's licence as its dataset description states it with no
+// invented link, Kim's and NeBULA's linked, NeBULA's unregistered Zenodo id never linked; the ethics and consent quotes;
+// Damm and NeBULA in the small-cohort note; (3) the sitemap dates: exactly the pages the round changed carry 2026-10-28;
+// (4) the five releases on the archive; (5) NeBULA's figure-free related line on beyond-scalp-eeg (D34).
+{
+  const J=f=>JSON.parse(readFileSync(new URL('data/'+f,DIST),'utf8'));
+  const SC=J('ssvep-followups-update.json'),NR=J('neurorvq-update.json'),TS=J('eegmat-ten-second-update.json'),DC=J('dataset-checks-update.json');
+  const vis=h=>decodeHtml(h.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+  const spanEnd=(h,at)=>{const tag=h.slice(at+1).match(/^\w+/)[0],re=new RegExp(`<${tag}\\b|</${tag}>`,'g');re.lastIndex=at;let d=0,m;
+    while((m=re.exec(h))){d+=m[0].startsWith('</')?-1:1;if(!d)return m.index;}return h.length;};
+  const el=(h,sel,where)=>{const a=h.search(sel);assert.ok(a>=0,where+': '+sel+' renders');return h.slice(a,spanEnd(h,a));};
+  const WORD={en:['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'],zh:['零','一','两','三','四','五','六','七','八','九','十','十一','十二']};
+  // (1) Card 12's primary family is Bonferroni-adjusted over its comparisons, card 13's margin test uses a 90% interval,
+  // and nothing else is adjusted (plan §2.1; the sentence the 2026-10-20 page pinned said no interval was adjusted).
+  const IA=SC.interval_adjustment,[a12,a13]=IA.adjusted;
+  assert.ok(IA.adjusted.length===2&&IA.other_intervals_adjusted===false&&a12.card===12&&a12.adjustment==='Bonferroni'&&a13.card===13
+    &&Math.abs(a12.level-(1-0.05/a12.comparisons))<1e-12,'SSVEP follow-ups: two adjusted intervals, card 12\'s at Bonferroni\'s level over its comparisons, none other');
+  for(const [pfx,zh] of [['',false],['zh/',true]]){
+    const where=pfx+'topics/new-ssvep-frequencies/',html=pageOf(where);
+    const ps=[...html.matchAll(/<p\b[^>]*\sdata-ssvep-note="rounding"[^>]*>[\s\S]*?<\/p>/g)].map(m=>m[0]);
+    assert.equal(ps.length,1,where+': one multiplicity note');
+    const f=(i,a,k)=>`<span data-at="interval_adjustment|adjusted|${i}|level" data-fig="ssvep-followups-update.json|${k}|${a.level}">${fmt[k](a.level)}</span>`;
+    const want=zh?`卡片 ${a12.card} 的主要比较族在${WORD.zh[a12.comparisons]}个比较上使用 ${a12.adjustment} 校正的 ${f(0,a12,'pct2')} 区间，卡片 ${a13.card} 的等效检验使用 ${f(1,a13,'pct0')} 区间；其余区间都没有校正。`
+      :`Card ${a12.card}’s primary family uses ${a12.adjustment}-adjusted ${f(0,a12,'pct2')} intervals over ${WORD.en[a12.comparisons]} comparisons, and card ${a13.card}’s equivalence test a ${f(1,a13,'pct0')} interval; no other interval is adjusted.`;
+    assert.ok(ps[0].includes(want),where+': the multiplicity sentence, computed from the export ("'+vis(want)+'")');
+    const v=visible(html);
+    assert.equal(v.split(zh?'其余区间都没有校正':'no other interval is adjusted').length-1,1,where+': the multiplicity sentence once on the page');
+    assert.doesNotMatch(v,/No interval is adjusted for multiple comparisons|没有任何区间做多重比较校正/,where+': the earlier multiplicity sentence is gone');
+  }
+  // (2) /data-use/.
+  const du=pageOf('data-use/');
+  const order=['sources-neurolm-eegmat','sources-ssvep-followups','sources-neurorvq','sources-eegmat-ten-second','sources-dataset-checks','register'].map(id=>du.indexOf(`<section id="${id}"`));
+  assert.ok(order.every((x,i)=>x>0&&(!i||x>order[i-1])),'data-use: the four sections of 2026-10-28 in release order, after the NeuroLM section and before the register');
+  const sec=id=>{const a=du.indexOf(`<section id="${id}">`);return du.slice(a,du.indexOf('</section>',a));};
+  const rowOf=(s,attr,id,where)=>{const m=s.match(new RegExp(`<tr ${attr}="${id}"[^>]*>[\\s\\S]*?</tr>`));assert.ok(m,where+': the row '+id);return m[0];};
+  const label=r=>vis((r.match(/<strong>([^<]*)<\/strong>/)||[,''])[1]);
+  const has=(r,t)=>vis(r).includes(t);
+  for(const [id,X] of [['sources-ssvep-followups',SC],['sources-neurorvq',NR],['sources-eegmat-ten-second',TS],['sources-dataset-checks',DC]]){
+    const s=sec(id),v=vis(s),where='data-use: #'+id;
+    assert.ok(s.includes(`<a href="/releases/#${X.release_id}"><code>${X.release_id}</code></a>`),where+': names its release, linked to the release index');
+    if(X.release_record.rights) assert.ok(v.includes(X.release_record.rights),where+': the export\'s rights sentence');
+    const np=v.slice(v.indexOf('Not published:'));
+    assert.ok(v.indexOf('Not published:')>0,where+': what is not published');
+    for(const x of X.not_published) assert.ok(np.includes(x.replace(/\.$/,'').slice(1)),where+': not published — "'+x.slice(0,70)+'…"');
+    const tables=s.match(/<table\b/g)||[];
+    assert.ok(tables.length>=1&&tables.length===(s.match(/<table\b[^>]*>\s*<thead>/g)||[]).length,where+': every table has its header row');
+    assert.doesNotMatch(s,/\sstyle="|\son[a-z]+="/,where+': no inline style or handler');
+  }
+  // The SSVEP follow-ups: BETA's and Wearable-102's released records, reused unchanged, with what cards 8 to 14 publish
+  // on each; filter-bank CCA credited, no code distributed.
+  {const s=sec('sources-ssvep-followups'),D=SC.rights.datasets,where='data-use: #sources-ssvep-followups';
+    assert.deepEqual([...s.matchAll(/<tr data-ssvep-followups-row="([^"]+)"/g)].map(m=>m[1]),Object.keys(D).map(k=>k.replace(/_/g,'-')),where+': one row per reused dataset record, in the export\'s order');
+    for(const [k,d] of Object.entries(D)){const r=rowOf(s,'data-ssvep-followups-row',k.replace(/_/g,'-'),where);
+      assert.ok(has(r,d.license)&&has(r,d.published_here)&&(d.licenseUrl?r.includes(`href="${d.licenseUrl}"`):r.includes(`href="https://doi.org/${d.canonical_version_doi}"`))&&label(r)==='Aggregate results',where+': '+k+' keeps its record, with its licence and what the cards publish');}
+    const fb=SC.rights.credits.fbcca,fp=vis(el(s,/<p id="ssvep-followups-fbcca"/,where));
+    assert.ok(fb.code_distributed===false&&s.includes(`href="${fb.reference_url}"`)&&fp.includes(fb.used_for)&&fp.includes('no code is distributed'),where+': filter-bank CCA credited to its paper, no code distributed');}
+  // NeuroRVQ: each task's released record; the code and the checkpoint CC BY-NC 4.0 from one licence file, no weights.
+  {const s=sec('sources-neurorvq'),R=NR.rights,where='data-use: #sources-neurorvq';
+    assert.deepEqual([...s.matchAll(/<tr data-neurorvq-row="([^"]+)"/g)].map(m=>m[1]),Object.keys(R.datasets),where+': one row per task\'s dataset record');
+    for(const [k,d] of Object.entries(R.datasets)){const r=rowOf(s,'data-neurorvq-row',k,where);
+      assert.ok(r.includes(`href="${d.source}"`)&&r.includes(`href="${d.licenseUrl}"`)&&has(r,d.license)&&has(r,d.attribution)&&label(r)==='Aggregate scores',where+': '+k+' keeps its record');}
+    assert.deepEqual([...s.matchAll(/<tr data-neurorvq-part="([^"]+)"/g)].map(m=>m[1]),['code','weights'],where+': the model\'s terms, code and checkpoint');
+    for(const k of ['code','weights']){const r=rowOf(s,'data-neurorvq-part',k,where),p=R[k];
+      assert.ok(r.includes(`href="${p.licence_url}"`)&&r.includes(`href="${p.url}"`)&&has(r,p.licence)&&has(r,p.scope),where+': the '+k+' terms, linked to the licence file');}
+    const w=rowOf(s,'data-neurorvq-part','weights',where);
+    assert.ok(R.weights.weights_distributed===false&&NR.model.weights_distributed===false&&has(w,'No weights are distributed')&&w.includes(NR.model.checkpoint.sha256),where+': the checkpoint identified by its SHA-256, no weights distributed');
+    assert.doesNotMatch(vis(s),/Apache/,where+': no Apache licence is named for NeuroRVQ');}
+  // The ten-second EEGMAT probes: EEGMAT's released record; each encoder's terms by part, as the export states them.
+  {const s=sec('sources-eegmat-ten-second'),d=TS.rights.dataset,cap=TS.eeg_captioner,ax=TS.axon,where='data-use: #sources-eegmat-ten-second';
+    const r=rowOf(s,'data-ten-second-row','eegmat',where);
+    assert.ok(r.includes(`href="${d.source}"`)&&r.includes(`href="${d.licenseUrl}"`)&&has(r,d.license)&&has(r,d.attribution)&&label(r)==='Aggregate scores',where+': EEGMAT keeps its record');
+    const parts={'eeg-captioner-code':cap.rights.code,'eeg-captioner-weights':cap.rights.weights,'axon-checkpoint':ax.rights.checkpoint,'axon-module':ax.rights.module,'braindecode-project':ax.rights.project};
+    assert.deepEqual([...s.matchAll(/<tr data-ten-second-part="([^"]+)"/g)].map(m=>m[1]),Object.keys(parts),where+': every part\'s terms');
+    for(const [k,p] of Object.entries(parts)){const pr=rowOf(s,'data-ten-second-part',k,where),cells=[...pr.matchAll(/<td>([\s\S]*?)<\/td>/g)].map(m=>vis(m[1]));
+      assert.ok(cells[0]?.startsWith(p.licence)&&(!p.licence_url||pr.includes(`href="${p.licence_url}"`))&&has(pr,p.scope??p.as_stated_by),where+': '+k+' is '+p.licence+', as '+(p.scope??p.as_stated_by));}
+    assert.ok([cap.identity,ax.identity].every(i=>i.weights_distributed===false)&&cap.rights.weights.distributed===false&&ax.rights.checkpoint.distributed===false
+      &&s.includes(cap.identity.encoder_sha256)&&s.includes(ax.identity.checkpoint_sha256)&&vis(el(s,/<p id="ten-second-weights"/,where)).includes('No checkpoint or weights are distributed'),where+': each file identified by its SHA-256, no weights distributed');
+    assert.doesNotMatch(vis(s),/EEGPT/,where+': EEGPT is not among these terms');}
+  // The four dataset checks: one row per case, in the export's order; what is published from the case's status; the
+  // terms by kind — a licence with its link (Kim, NeBULA), the statements side by side (MIND), the licence as the dataset
+  // description states it, linked to that file, with no invented licence link (Damm).
+  {const s=sec('sources-dataset-checks'),where='data-use: #sources-dataset-checks';
+    const PUBLISHED={released:'Aggregate scores',released_conditional:'Aggregate scores, conditional',score_held:'Held — no figure'};
+    assert.deepEqual([...s.matchAll(/<tr data-dc-source="([^"]+)"/g)].map(m=>m[1]),DC.cases.map(c=>c.id),where+': one row per case, in the export\'s order');
+    for(const c of DC.cases){const x=DC[c.id],R=x.rights,r=rowOf(s,'data-dc-source',c.id,where),kind=r.match(/data-dc-terms="([^"]+)"/)[1];
+      assert.equal(label(r),PUBLISHED[c.status],where+': '+c.id+' is published as its status says ('+c.status+')');
+      assert.ok(r.includes(`href="${R.source}"`)&&has(r,R.attribution)&&has(r,R.privacyReview)&&has(r,R.version),where+': '+c.id+'\'s source, version, attribution and privacy review');
+      if(c.status==='score_held') assert.ok(x.flags.score_published===false&&/no score/.test(R.privacyReview),where+': '+c.id+'\'s scores are held');
+      if(R.terms?.statements){
+        // MIND (D15): every licence statement the export records, in its order, set side by side; the one read from the
+        // record page linked; the terms-of-use page stated as not read.
+        assert.equal(kind,'statements',where+': '+c.id+'\'s terms are statements');
+        const lis=[...r.matchAll(/<li data-licence-statement="([^"]+)">([\s\S]*?)<\/li>/g)];
+        assert.deepEqual(lis.map(m=>m[1]),R.terms.statements.map(t=>t.source),where+': '+c.id+'\'s licence statements, each once, in the export\'s order');
+        for(const [i,t] of R.terms.statements.entries()) assert.ok(vis(lis[i][2]).startsWith(t.value+(t.url?' ↗':'')+' — ')&&(!t.url||lis[i][2].includes(`href="${t.url}"`)),where+': '+c.id+' — '+t.source+' states '+t.value);
+        assert.deepEqual([...new Set(R.terms.statements.map(t=>t.value))].sort(),[...R.licenses_stated].sort(),where+': '+c.id+' lists every licence it states');
+        assert.ok(['CC BY 4.0','CC BY-NC 4.0'].every(l=>R.licenses_stated.includes(l))&&R.licenseUrl===undefined,where+': '+c.id+' carries both licence statements and no single licence (D15)');
+        assert.ok(R.terms.terms_of_use_page_read===false&&has(r,'ScienceDB’s terms-of-use page was not read'),where+': '+c.id+': the ScienceDB terms-of-use page, not read');
+      }else if(R.licenseUrl){
+        assert.equal(kind,'licence',where+': '+c.id+'\'s terms are a licence');
+        assert.ok(r.includes(`href="${R.licenseUrl}"`)&&has(r,R.license+' ↗'),where+': '+c.id+'\'s licence, linked');
+      }else{
+        assert.ok(kind==='stated'&&R.licenseUrl===null&&R.terms.license_file_present===false,where+': '+c.id+'\'s licence as its dataset description states it');
+        const td=[...r.matchAll(/<td>([\s\S]*?)<\/td>/g)][1][1];
+        assert.ok(vis(td).startsWith(R.license)&&td.includes(`href="${R.terms.data_licence.read_from}"`)&&has(td,R.terms.license_file_note)&&!/creativecommons\.org/.test(td),where+': '+c.id+' — '+R.license+' as stated, linked to the file that states it, with no licence link of our own');
+      }
+    }
+    assert.ok(DC.nebula.rights.terms.zenodo_13627307.registered_public_record===false&&!/href="[^"]*13627307/.test(du),'data-use: the Zenodo id NeBULA\'s files name, no registered record, is never linked');
+    // The ethics and consent statements, as each source states them, each read from its own document.
+    const ce=el(s,/<p id="dataset-checks-consent"/,where),cv=vis(ce);
+    for(const c of DC.cases){const e=DC[c.id].consent_and_ethics;
+      for(const k of ['ethics_approval','informed_consent']) assert.ok(e[k].stated?cv.includes(`“${e[k].quote}”`):cv.includes((k==='ethics_approval'?'ethics approval':'Informed consent')+': not stated'),where+': '+c.id+'\'s '+k.replace('_',' ')+(e[k].stated?', quoted':', not stated'));
+      assert.ok(ce.includes(`href="${e.read_from}"`),where+': '+c.id+'\'s statements, read from their document');}
+  }
+  // The small-cohort note names the one-person cases of the round, with what they publish.
+  {const p=vis(el(du,/<p id="small-cohorts-pilots"/,'data-use'));
+    for(const id of DC.one_person.cases.filter(id=>DC[id])) assert.ok(p.includes(DC[id].name.split(' ')[0]),'data-use: the small-cohort note names '+id);}
+  // (4) The five releases: each recorded on the archive with its review manifest in its own entry and a line on the
+  // index, in both languages; the register release, the headline (the version CITATION.cff cites), first of the day.
+  const REG=J('open-register-20261028.json'),five=[REG,SC,NR,TS,DC];
+  for(const prefix of ['','zh/']) for(const X of five) assert.ok(recorded(prefix,X.release_id,X.provenance.manifest_sha256),prefix+RECORD+': '+X.release_id+' and its review manifest');
+  const day=[...pageOf(RECORD).matchAll(/<article class="release-entry" id="([^"]+)"/g)].map(m=>m[1]).filter(id=>id.endsWith('-20261028'));
+  assert.deepEqual([...day].sort(),five.map(X=>X.release_id).sort(),RECORD+': five releases on 2026-10-28');
+  assert.equal(day[0],REG.release_id,RECORD+': the register release heads the day, as the headline release');
+  // (5) NeBULA's related line on beyond-scalp-eeg (owner decision D34): one line in each language, linking its case on the
+  // data-quality page (the export's placement and section), whose anchor renders there; the line prints no figure.
+  for(const pfx of ['','zh/']){
+    const where=pfx+'topics/beyond-scalp-eeg/',ul=el(pageOf(where),/<ul class="rd-rules" data-beyond-note="related"/,where);
+    const href=`/${pfx}${DC.placement.page.slice(1)}#${DC.nebula.section}`;
+    const lis=[...ul.matchAll(/<li>[\s\S]*?<\/li>/g)].map(m=>m[0]).filter(li=>li.includes(`href="${href}"`));
+    assert.equal(lis.length,1,where+': one related line to NeBULA\'s case ('+href+')');
+    assert.ok(/NeBULA/.test(vis(lis[0]))&&!/\d/.test(vis(lis[0])),where+': NeBULA\'s related line names it and prints no figure');
+    assert.ok(pageOf(pfx+DC.placement.page.slice(1)).includes(`id="${DC.nebula.section}"`),where+': NeBULA\'s case renders where the line points');
+  }
+  // (3) The sitemap: the pages the round changed, and only those, carry its date. Cards 8 to 14 and the pages that point
+  // to them (questions-in-language, /jev-style/, fewer-electrodes' pointer to card 11, Wearable-102's link line); the
+  // pilot-studies panels and the three protocol pages' pointers; the data-quality cases and NeBULA's line on
+  // beyond-scalp-eeg (D34), Kim's page and the datasets index that lists it; both register pages and the methods hub's model count; the home page and the Questions hub
+  // (the holds band, the extended cards); the release index and its archive; the API page; data use (English only).
+  const round=['','topics/','topics/new-ssvep-frequencies/','topics/questions-in-language/','jev-style/','topics/fewer-electrodes/','datasets/wearable-ssvep-102/',
+    'topics/pilot-studies/','protocols/arithmetic-rest/','protocols/mi-rest/','protocols/p300-target/','topics/data-quality/','topics/beyond-scalp-eeg/','datasets/','datasets/kim2025-beta-range/',
+    'datasets/register/','methods/','methods/register/','releases/','releases/archive/','api/'];
+  const dated=[...sitemap.matchAll(/<loc>https:\/\/bci\.report\/([^<]*)<\/loc><lastmod>2026-10-28<\/lastmod>/g)].map(m=>m[1]);
+  assert.deepEqual([...dated].sort(),[...round.flatMap(p=>[p,'zh/'+p]),'data-use/'].sort(),'sitemap: exactly the pages the 2026-10-28 round changed carry its date');
+  console.log(`PASS: 2026-10-28 — five releases recorded with their manifests, the register release heading the day; the SSVEP multiplicity sentence computed from its export in both languages, once, the earlier sentence gone; /data-use/'s four sections in release order with their releases, rights sentences and not-published lists, ${Object.keys(SC.rights.datasets).length+Object.keys(NR.rights.datasets).length+1+DC.cases.length} rights rows as their exports state them, the model terms part by part with no weights distributed, MIND's ${DC.mind2026.rights.terms.statements.length} licence statements side by side, Damm's licence as stated, the ethics and consent quotes; NeBULA's figure-free related line on beyond-scalp-eeg in both languages; ${dated.length} sitemap entries dated 2026-10-28, exactly the round's pages.`);
 }
 // The 2026-10-20 release's pages each carry their own check module (scripts/checks/), run here against the same build.
 for(const f of readdirSync(new URL('./checks/',import.meta.url)).filter(f=>f.endsWith('.mjs')).sort()){

@@ -10,6 +10,8 @@ export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
 const latest = releases[0];
 const base = `${site.origin}/data/`;
+// Each file's release and every file's SHA-256 are on the release archive (owner decision D17, 2026-10-28).
+const releaseArchive = hrefFor('/releases/archive/', locale);
 const copy = {
   en: {
     title: 'Data API', h1: 'BCI Report data API: static JSON and CSV at stable URLs',
@@ -18,7 +20,7 @@ const copy = {
     dek: 'Every published result is a static file: the same bytes the pages are built from.',
     howH2: 'How it works',
     how: [
-      ['Stable URLs', `Every file lives at ${base}<file>. A file is only ever replaced by a reviewed release, and the releases page gives the SHA-256 of the bytes currently served.`],
+      ['Stable URLs', `Every file lives at ${base}<file>. A file is only ever replaced by a reviewed release, and the release archive gives the SHA-256 of the bytes currently served.`],
       ['No key, no account', 'Plain HTTPS GET. Static files behind a CDN; no rate limit is promised, so cache what you use. Any HTTP client can fetch the files under /data/, the llms files and the Markdown copies, so pd.read_csv can read a CSV straight from its URL. Files under /data/ allow cross-origin reads, so a notebook running in a browser can fetch them too.'],
       ['Licence', 'The aggregate results are CC BY 4.0. The recordings they were computed from belong to their authors and keep their own terms — each dataset page names them. The code that builds the site and the exports is MIT-licensed.'],
       ['Mirror', 'The same files are on Hugging Face as the dataset Twu31/bci-report, with the per-protocol tables merged into loadable configurations.'],
@@ -42,7 +44,7 @@ const copy = {
       ['/sitemap.xml', 'every page, both languages, with last-modified dates', false],
       ['/releases.xml', 'an Atom feed with one entry per reviewed release', true],
     ] as [string | null, string, boolean][],
-    releasesLink: 'Releases, with SHA-256 of every file →',
+    releasesLink: 'Release archive, with the SHA-256 of every file →',
     explorer: ['BCI Report Explorer on Hugging Face ↗', ': browse the same results, or query them through MCP tools. It reads one pinned release of the mirror and names it in every answer.'],
   },
   zh: {
@@ -52,7 +54,7 @@ const copy = {
     dek: '每一个已发布的结果都是一个静态文件，与页面构建所用的字节完全相同。',
     howH2: '使用方式',
     how: [
-      ['固定地址', `每个文件都位于 ${base}<文件名>。文件只会被经过审核的发布替换，发布记录页给出当前所提供字节的 SHA-256。`],
+      ['固定地址', `每个文件都位于 ${base}<文件名>。文件只会被经过审核的发布替换，发布归档给出当前所提供字节的 SHA-256。`],
       ['无需密钥或账号', '普通的 HTTPS GET 请求。静态文件经 CDN 提供；不承诺任何速率上限，请缓存你用到的文件。/data/ 下的文件、llms 文件和各页的 Markdown 副本，任何 HTTP 客户端都能下载，pd.read_csv 也可以直接按网址读取 CSV。/data/ 下的文件允许跨域读取，在浏览器里运行的笔记本也能直接获取。'],
       ['许可', '聚合结果采用 CC BY 4.0。计算这些结果所用的原始记录属于其作者，并保留各自的条款——每个数据集页面都写明了。构建本站和导出文件的代码采用 MIT 许可。'],
       ['镜像', '同样的文件也在 Hugging Face 上，数据集名为 Twu31/bci-report，各协议的表格已合并为可直接加载的配置。'],
@@ -75,7 +77,7 @@ const copy = {
       ['/sitemap.xml', '两种语言的全部页面，附最后修改日期', false],
       ['/releases.xml', 'Atom 订阅源，每次经过审核的发布一条', true],
     ] as [string | null, string, boolean][],
-    releasesLink: '发布记录（附每个文件的 SHA-256）→',
+    releasesLink: '发布归档（附每个文件的 SHA-256）→',
     explorer: ['Hugging Face 上的 BCI Report Explorer ↗', '（英文）：浏览同一批结果，或通过 MCP 工具查询。它读取镜像中固定的一次发布，并在每个回答里注明是哪一次。'],
   },
 }[locale];
@@ -107,10 +109,10 @@ const structured = {
     <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.filesRegion}>
       <table>
         <thead><tr><th scope="col">{copy.colFile}</th><th scope="col">{copy.colHolds}</th><th scope="col">{copy.colRelease}</th></tr></thead>
-        <tbody>{servedFiles.map(f => <tr><th scope="row"><a href={`/data/${f.file}`} download><code>{f.file}</code></a></th><td>{describeFile(f.file)[locale]}</td><td><a href={`${hrefFor('/releases/', locale)}#${f.release}`}><code>{f.release}</code></a></td></tr>)}</tbody>
+        <tbody>{servedFiles.map(f => <tr><th scope="row"><a href={`/data/${f.file}`} download><code>{f.file}</code></a></th><td>{describeFile(f.file)[locale]}</td><td><a href={`${releaseArchive}#${f.release}`}><code>{f.release}</code></a></td></tr>)}</tbody>
       </table>
     </div>
-    <p class="citation-note"><a href={hrefFor('/releases/', locale)}>{copy.releasesLink}</a></p>
+    <p class="citation-note"><a href={releaseArchive}>{copy.releasesLink}</a></p>
   </section>
   <section class="topic-section" aria-labelledby="examples-heading">
     <h2 id="examples-heading">{copy.examplesH2}</h2>

@@ -471,6 +471,22 @@
     "https://api.figshare.com/v2/articles/20383716/versions/1",
     "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.951591/full"
    ]
+  },
+  "kim2025-beta-range": {
+   "aliases": [
+    "Kim2025BetaRange",
+    "Figshare 28806815",
+    "doi:10.1038/s41597-025-06032-2",
+    "SSVEP 40class dataset",
+    "A 40-Class SSVEP Speller Dataset: Beta Range Stimulation for Low-Fatigue BCI Applications"
+   ],
+   "summary_en": "Kim beta-range SSVEP (Figshare 28806815) is the release of a 40-target SSVEP speller study with its stimuli in the beta range, described by Heegyu Kim, Kyungho Won, Minkyu Ahn and Sung Chan Jun in Scientific Data (2025) and deposited by Heegyu Kim under CC BY 4.0. Besides the task recordings, the record holds rest and questionnaire files; only the 40 task files are used here.",
+   "summary_zh": "Kim beta 频段 SSVEP（Figshare 28806815）是一项 40 目标 SSVEP 拼写器研究的数据发布，刺激频率位于 beta 频段；Heegyu Kim、Kyungho Won、Minkyu Ahn 与 Sung Chan Jun 在 Scientific Data（2025）中描述了这项研究，数据由 Heegyu Kim 以 CC BY 4.0 存放。除任务记录外，记录中还有静息与问卷文件；这里只用到 40 个任务文件。",
+   "facts_sources": [
+    "https://doi.org/10.6084/m9.figshare.28806815.v3",
+    "https://api.figshare.com/v2/articles/28806815/versions/3",
+    "https://www.nature.com/articles/s41597-025-06032-2"
+   ]
   }
  },
  "methods": {

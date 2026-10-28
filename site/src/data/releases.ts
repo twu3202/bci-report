@@ -1,12 +1,12 @@
 /**
  * The release log: every reviewed batch, what it added, what it held back.
  *
- * What a payload already records is read from the payload on the page: release
- * IDs, dates, manifest hashes, and the SHA-256 of every download, computed from
- * the bytes being served. Only what no payload records is written here — which
+ * What a payload already records is read from the payload on the release archive
+ * (/releases/archive/, release-record.ts): release IDs, dates, manifest hashes, and
+ * the SHA-256 of every download, computed from the bytes being served. Only what no payload records is written here — which
  * pages a batch added, and the history of holds, including resolved ones.
  * check-workbench.mjs checks every id and date below against the payloads, and
- * every download on the page against its file in dist/data.
+ * every download on the archive against its file in dist/data.
  */
 
 /**
@@ -20,8 +20,21 @@ import ssvepFollowUps from './new-ssvep-frequencies-update.json';
 import dataQuality from './data-quality-update.json';
 import clinicalIesseeg from './clinical-iesseeg-update.json';
 import neurolmEegmat from './neurolm-eegmat-update.json';
-// The open register's newest file (its name is `openRegister.json` below; the two are checked equal).
+// The open register's files: the newest (its name is `openRegister.json` below; the two are checked equal), and the
+// version before it, which its own release keeps listing (`earlierRegisters`).
+import registerNow from './open-register-20261028.json';
 import registerFile from './open-register-20261020.json';
+// The 2026-10-28 round's four result files (owner decisions D14–D29); the round's register release is the fifth. The
+// figures their entries, notes and holds print are read from them, never typed.
+import ssvepCards from './ssvep-followups-update.json';
+import neurorvq from './neurorvq-update.json';
+import eegmatTen from './eegmat-ten-second-update.json';
+import datasetChecks from './dataset-checks-update.json';
+// The release log's highlights (owner decisions D17 and D29): the figures they print are read from these, never typed.
+// The 2026-10-20 register file is imported by its own name, so the highlight of that day keeps its row count when a
+// later register file becomes the newest.
+import eegptCore from './eegpt-core-update.json';
+import register20261020 from './open-register-20261020.json';
 
 /**
  * The open register's newest version (owner decision D1): the release that ships it and its two files. The register
@@ -29,10 +42,18 @@ import registerFile from './open-register-20261020.json';
  * listed. Any link to a register page is guarded on `openRegister.json` being served (files.ts `isServed`).
  */
 export const openRegister = {
-  release: 'open-register-update-20261020',
-  json: 'open-register-20261020.json',
-  csv: 'open-register-20261020.csv',
+  release: 'open-register-update-20261028',
+  json: 'open-register-20261028.json',
+  csv: 'open-register-20261028.csv',
 } as const;
+/**
+ * The register's earlier versions, newest first. Each stays served byte for byte under its dated name (the served bytes
+ * cite that release's hold ids) and is listed with its own release, which ships it.
+ */
+export const earlierRegisters = [
+  { release: 'open-register-update-20261020', json: 'open-register-20261020.json', csv: 'open-register-20261020.csv' },
+] as const;
+const earlierRegister = earlierRegisters[0];
 
 // The pilots a switch holds (pilot-switch.ts), named as the release text names them; none while every switch releases.
 const pilotsHeld = [...(bingoReleased ? [] : ['bingo']), ...(handwritingReleased ? [] : ['handwriting'])];
@@ -45,6 +66,23 @@ const methodPages = ['eegnet', 'labram', 'cbramod', 'shallowfbcspnet', 'deep4net
 // The seven core datasets' pages, which carry a group per core protocol (EEGPT's since 2026-10-13).
 const coreDatasetPages = ['ds003810', 'eegmat', 'beta', 'ds006593', 'tmnred', 'eesm19', 'ds005342'].map(slug => `/datasets/${slug}/`);
 export const siteUpdates = [
+  {
+    date: '2026-10-28',
+    // Five releases on one day, one site version (owner decisions D14–D29): cards 8 to 14 on new-ssvep-frequencies, with
+    // the route 3 page's and /jev-style/'s lines to them, fewer-electrodes' figure-free pointer to card 11 (D24) and
+    // Wearable-102's link line to cards 10, 12, 13 and 14; pilot-studies' two separate panels (NeuroRVQ, the ten-second EEGMAT
+    // probes) with figure-free pointers on the Arithmetic & rest, motor-imagery and P300 protocol pages (D19); four
+    // cases on data-quality and Kim beta-range's dataset page (D21), which the dataset index lists; NeBULA's figure-free
+    // related line on beyond-scalp-eeg (D34); the register's
+    // newest file on both register pages, and the model count on the methods hub; the home holds band's three new holds
+    // (Kim's amplitude-dependent models, Damm's and NeBULA's one-person scores) and the data-quality card there and on the
+    // Questions hub, which names the new cases; the release log and its archive (D17), the API page and data use.
+    paths: ['/', '/topics/', '/topics/new-ssvep-frequencies/', '/topics/questions-in-language/', '/jev-style/', '/topics/fewer-electrodes/',
+            '/datasets/wearable-ssvep-102/', '/topics/pilot-studies/',
+            '/protocols/arithmetic-rest/', '/protocols/mi-rest/', '/protocols/p300-target/',
+            '/topics/data-quality/', '/topics/beyond-scalp-eeg/', '/datasets/', '/datasets/kim2025-beta-range/', '/datasets/register/', '/methods/', '/methods/register/',
+            '/releases/', '/releases/archive/', '/api/', '/data-use/'],
+  },
   {
     date: '2026-10-20',
     // The open-register release (owner decisions D1–D13): the two register pages, and the /datasets/ and /methods/ hubs'
@@ -220,7 +258,8 @@ export interface Release {
   payload: 'mvp' | 'deployment' | 'evidence' | 'clinical' | 'context' | 'adaptation' | 'extension' | 'largeSource'
     | 'reliableDecisions' | 'foundationModels' | 'sharedRepresentation' | 'laterSessions' | 'questionsInLanguage'
     | 'beyondScalp' | 'pilotStudies' | 'eegptCore'
-    | 'openRegister' | 'newSsvepFrequencies' | 'dataQuality' | 'clinicalIesseeg' | 'neurolmEegmat';
+    | 'openRegister' | 'newSsvepFrequencies' | 'dataQuality' | 'clinicalIesseeg' | 'neurolmEegmat'
+    | 'ssvepFollowups' | 'neurorvq' | 'eegmatTenSecond' | 'datasetChecks';
   files: string[];
   pages: string[];
   summary: Text;
@@ -264,20 +303,285 @@ const shinLine = (arm: string, zh = false) => {
 const iesCohort = clinicalIesseeg.cohort, iesBand = clinicalIesseeg.age_band, iesNeurolm = clinicalIesseeg.neurolm.method;
 const neurolmContrast = need(neurolmEegmat.paired_contrasts.find(c => c.id === 'tokenizer-minus-band-power'), 'the tokenizer contrast').balanced_accuracy;
 const neurolmCohort = neurolmEegmat.cohort;
-if (registerFile.release_id !== openRegister.release)
-  throw new Error(`releases.ts: ${openRegister.json} names the release ${registerFile.release_id}, not ${openRegister.release}`);
+if (registerNow.release_id !== openRegister.release)
+  throw new Error(`releases.ts: ${openRegister.json} names the release ${registerNow.release_id}, not ${openRegister.release}`);
+if (registerFile.release_id !== earlierRegister.release)
+  throw new Error(`releases.ts: ${earlierRegister.json} names the release ${registerFile.release_id}, not ${earlierRegister.release}`);
 const regCounts = registerFile.counts, regRows = regCounts.rows, regHf = regCounts.hf, regMoabb = regCounts.moabb;
 // The snapshot's retrieval time, as a date and a UTC time (the counts are that snapshot's, owner decision D11).
 const regSnapshot = { day: regHf.snapshot.retrieved_at.slice(0, 10), time: regHf.snapshot.retrieved_at.slice(11, 16) };
 const regDay = (zh: boolean) => { const [y, m, d] = regSnapshot.day.split('-').map(Number);
   return zh ? `${y} 年 ${m} 月 ${d} 日` : `${d} ${['January','February','March','April','May','June','July','August','September','October','November','December'][m - 1]} ${y}`; };
 
+/*
+ * The 2026-10-28 round (owner decisions D14–D29): what its four entries and three holds print, read from the four result
+ * files and formatted as above, a paired difference and both its bounds signed. A sentence a file states in English is
+ * printed as stated, and its Chinese is keyed below by that English, so a changed sentence has no Chinese and stops the
+ * build until it is reread.
+ */
+const zhOf = (map: Record<string, string>, en: string, what: string) => {
+  const zh = map[en];
+  if (!zh) throw new Error(`releases.ts: no Chinese for ${what} as its file states it`);
+  return zh;
+};
+const WORDS = { en: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
+                zh: ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'] };
+const said = (n: number, zh = false) => need((zh ? WORDS.zh : WORDS.en)[n], `a word for ${n}`);
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+const ivl = (i: number[], zh = false) => `${pp2(i[0])}${zh ? ' 至 ' : ' to '}${pp2(i[1])}`;
+type Level = { estimate: number; interval: number[] };
+
+// Cards 8 to 14 of new-ssvep-frequencies (ssvep-followups-update.json): their numbers, cohorts and interval rules.
+const sc = ssvepCards as any;
+const scCards: number[] = sc.placement.cards.map((c: { card: number }) => c.card);
+const scFirst = Math.min(...scCards), scLast = Math.max(...scCards);
+const scU8 = need(sc.endpoints.find((e: { id: string }) => e.id === 'u8'), 'the held-out endpoint');
+const scWear = need(sc.endpoints.find((e: { id: string }) => e.id === 'wearable_12'), 'the Wearable-102 endpoint');
+const scBetaPeople: number = sc.studies.xspec.design.dataset.people, scWearPeople: number = sc.studies.harmonic_pooling_wearable.design.dataset.people;
+const scBonf = need(sc.interval_adjustment.adjusted.find((a: { adjustment?: string }) => a.adjustment === 'Bonferroni'), 'the Bonferroni family');
+const scMargin = need(sc.interval_adjustment.adjusted.find((a: { margin?: number }) => a.margin !== undefined), 'the margin test');
+if (sc.interval_adjustment.other_intervals_adjusted !== false || sc.interval_adjustment.adjusted.length !== 2)
+  throw new Error('releases.ts: two cards adjust their intervals and the others do not');
+const scP = sc.studies.practical_settings, scCpuCard: number = scP.card, scCpu = scP.cpu_components.measurement;
+if (scCpu.summed !== false || scCpu.threads !== 1 || scCpu.buffers !== 'warm' || scCpu.gpu !== false)
+  throw new Error('releases.ts: the CPU component timings are warm single-thread measurements of each component, never summed');
+const scCode = (study: any, name: string) => need(Object.entries(study.display_names as Record<string, string>).find(([, v]) => v === name), `the set-up "${name}"`)[0];
+// The cell with the longest window and the most electrodes: the one the short answer's filter-bank figure comes from (D22).
+const fbCell = [...scP.design.cells].sort((a: any, b: any) => b.samples - a.samples || b.electrodes - a.electrodes)[0];
+const fbCode = scP.design.fbcca.code, scCcaCode = scCode(scP, 'CCA (no training)');
+const fbLevel: Level = need(scP.levels[`${fbCell.id}/${fbCode}/u8`], 'the filter-bank CCA level');
+const fbCca: Level = need(scP.levels[`${fbCell.id}/${scCcaCode}/u8`], 'the CCA level in that cell');
+const fbGain: Level = need(scP.contrasts[`${fbCell.id}/${fbCode} minus ${fbCell.id}/${scCcaCode}/u8`], 'filter-bank CCA minus CCA');
+const fbOther = scP.design.fbcca.other_recipe_on_site;
+const scEigen = sc.studies.coherence_eigen;
+const eigVsSum: Level = need(scEigen.contrasts[`${scCode(scEigen, 'eigenvalue head')} minus ${scCode(scEigen, 'harmonic sum (no training)')}/u8`],
+  'the eigenvalue head minus the harmonic sum');
+if (fbGain.interval[0] <= 0 || !(eigVsSum.interval[0] < 0 && eigVsSum.interval[1] > 0) || fbOther.page !== '/topics/questions-in-language/')
+  throw new Error('releases.ts: the notes say filter-bank CCA is above CCA, the eigenvalue head’s interval spans zero, and the other recipe is route 3’s');
+const SC_RIGHTS_ZH: Record<string, string> = {
+  'BETA keeps its released record: CC BY 4.0, cohort aggregates only, with participant consent described for noncommercial scientific research. Wearable-102 keeps its released record: CC BY 4.0, cohort aggregates only. Filter-bank CCA is credited to Chen et al. 2015; the code that ran is the project’s own SciPy realisation, and no code or weights are distributed.':
+    'BETA 沿用其已发布的记录：CC BY 4.0，只发布队列聚合结果，被试知情同意所述的用途为非商业科学研究。Wearable-102 沿用其已发布的记录：CC BY 4.0，只发布队列聚合结果。滤波器组 CCA 归功于 Chen 等人 2015 年的方法；实际运行的是本项目自己用 SciPy 实现的代码，不分发任何代码或权重。',
+};
+
+// NeuroRVQ's frozen backbone on three tasks (neurorvq-update.json): each block's cohort, arms and paired difference.
+const nr = neurorvq as any;
+const nrBlock = (id: string) => need(nr.blocks.find((b: { id: string }) => b.id === id), `the NeuroRVQ ${id} block`);
+const [nrEegmat, nrMi, nrP300] = ['eegmat', 'mi-rest', 'p300-target'].map(nrBlock);
+const nrFolds: number = nrEegmat.cohort.folds, nrDim: number = nr.model.pooling.dimension;
+if ([nrMi, nrP300].some(b => b.cohort.folds !== nrFolds) || nr.probe.hyperparameter_search !== false || nr.model.frozen !== true
+    || nr.model.weights_distributed !== false || nr.rights.weights.weights_distributed !== false || nrEegmat.paired_difference.interval_includes_zero !== true
+    || nrMi.paired_difference.interval_95[1] >= 0 || nrP300.paired_difference.interval_95[1] >= 0 || nr.pretraining_exposure.status !== 'unknown'
+    || nr.pretraining_exposure.datasets.some((d: { named_in_list: boolean }) => d.named_in_list))
+  throw new Error('releases.ts: the NeuroRVQ notes say one fold count, nothing tuned, a frozen undistributed backbone, EEGMAT’s interval spanning zero, the other two below it, and exposure unknown');
+const nrComparator = (b: any) => need(b.arms.find((a: { id: string }) => a.id === b.paired_difference.b), `the ${b.id} comparator`);
+// The notes name EEGMAT's comparator and one comparator for motor imagery and P300; the Chinese is written for these.
+if (nrComparator(nrEegmat).label !== 'band power' || nrComparator(nrMi).label !== 'temporal means' || nrComparator(nrP300).label !== 'temporal means'
+    || nr.model.variant !== 'the released backbone with parameter-free branch normalisation and mean-token pooling')
+  throw new Error('releases.ts: the NeuroRVQ notes name band power on EEGMAT, temporal means on motor imagery and P300, and the variant that ran');
+/** The protocols not run, each with its gate as the file states it, in Chinese keyed by that English. */
+const NR_NOT_RUN_ZH: Record<string, string> = {
+  'semantic-target|the original calibration evidence is still missing': '语义目标（仍缺少原始校准证据）',
+  'beta-4ch|physical units and reference are unresolved': '4 通道 BETA（物理单位与参考电极尚未厘清）',
+  'beta-8ch|physical units are unresolved, and PO5 and PO6 are missing from the model’s channel list': '8 通道 BETA（物理单位尚未厘清，模型的通道列表中也没有 PO5 与 PO6）',
+  'idle|its inputs are missing, and it needs its own calibration, threshold and split protocol': '空闲（缺少输入，且需要自己的校准、阈值与划分方案）',
+  'sleep-scalp|deferred to a separate study': '睡眠（推迟到单独的研究）',
+};
+const nrNotRun = (zh: boolean) => (nr.protocols_not_run as { protocol: string; gate: string }[])
+  .map(p => zh ? zhOf(NR_NOT_RUN_ZH, `${p.protocol}|${p.gate}`, `the ${p.protocol} gate`) : `${p.protocol} (${p.gate})`).join(zh ? '、' : '; ');
+const NR_RIGHTS_ZH: Record<string, string> = {
+  'NeuroRVQ’s code and weights are CC BY-NC 4.0, the licence file of both repositories at the pinned revisions; only aggregate figures are published, no weights are distributed, and no endorsement by NeuroRVQ’s authors is implied. EEGMAT, ds003810 and ds006593 keep their released records.':
+    'NeuroRVQ 的代码与权重均为 CC BY-NC 4.0，即两个仓库在固定版本下的许可文件；只发布聚合数字，不分发任何权重，也不代表 NeuroRVQ 作者的认可。EEGMAT、ds003810 与 ds006593 沿用其已发布的记录。',
+};
+const NR_READING_ZH: Record<string, string> = {
+  'the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent': '区间跨过零，所以既不能说明哪一方更好，也不能说明两者等效',
+};
+
+// The ten-second EEGMAT panel (eegmat-ten-second-update.json): EEG-Captioner's encoder and AXON, each against Welch band power.
+const ts = eegmatTen as any, tsCohort = ts.cohort, tsQc = ts.source_annotation_qc;
+const tsArm = (enc: any, role: string) => need(enc.arms.find((a: { role: string }) => a.role === role), `${enc.name}’s ${role}`);
+const [tsCap, tsAx] = [ts.eeg_captioner, ts.axon];
+if (tsQc.windows !== tsCohort.windows || tsQc.windows_meeting_rules !== 0 || tsQc.recordings_flagged !== tsCohort.recordings
+    || tsAx.numerical_input_check.windows_passed !== tsCohort.windows || ts.encoder_contrast.published !== false
+    || tsCap.baseline.matched !== true || tsAx.baseline.matched !== false || tsCap.caption_result !== false
+    || tsArm(tsCap, 'baseline').balanced_accuracy !== tsArm(tsAx, 'baseline').balanced_accuracy
+    || ![tsCap, tsAx].every(e => e.paired_difference.interval_includes_zero === true))
+  throw new Error('releases.ts: the ten-second notes say none of the windows meets the source QC, every recording is flagged, AXON’s own check passed every window, one shared band-power baseline matched only for EEG-Captioner, no caption result, no encoder contrast, and both intervals span zero');
+const TS_RIGHTS_ZH: Record<string, string> = {
+  'EEGMAT keeps its released record: Open Data Commons Attribution License 1.0, aggregate results only. EEG-Captioner’s source code is MIT. EEG-Captioner’s encoder weights are Apache-2.0 as its Hugging Face weight metadata states. AXON’s checkpoint is Apache-2.0 as its Hugging Face licence tag states; its Braindecode module carries per-file Apache-2.0 terms within a BSD-3-Clause project. No weights are distributed, and no endorsement by either model’s authors is implied.':
+    'EEGMAT 沿用其已发布的记录：Open Data Commons Attribution License 1.0，只发布聚合结果。EEG-Captioner 的源代码为 MIT 许可。EEG-Captioner 编码器的权重按其 Hugging Face 权重元数据为 Apache-2.0。AXON 的检查点按其 Hugging Face 许可标签为 Apache-2.0；它在 Braindecode 中的模块带有逐文件的 Apache-2.0 条款，所在项目为 BSD-3-Clause。不分发任何权重，也不代表两个模型作者的认可。',
+};
+
+// Four dataset checks (dataset-checks-update.json): Kim's worked case, MIND's conditional case, Damm's and NeBULA's status.
+const dc = datasetChecks as any, kim = dc['kim2025-beta-range'], mind = dc.mind2026, damm = dc.damm, nebula = dc.nebula;
+const mindSchedules: number = mind.schedule.pairs[0].schedules, mindScheduleTrials: number = mind.schedule.pairs[0].trials_per_schedule;
+if (dc.cases.map((c: { id: string; status: string }) => `${c.id}:${c.status}`).join() !== 'kim2025-beta-range:released,mind2026:released_conditional,damm:score_held,nebula:score_held'
+    || kim.result.chance !== 1 / kim.cohort.targets || kim.method.training_free !== true || damm.design.classes !== 5
+    || mind.primary.pairs.map((p: { pair: string }) => p.pair).join() !== '4/5,6/7'
+    || mind.rights.terms.statements.map((s: { source: string; value: string }) => `${s.source}:${s.value}`).join()
+       !== 'paper:CC BY 4.0,archive dataset description:CC BY 4.0,MOABB adapter:CC BY-NC 4.0,ScienceDB record page:CC BY-NC 4.0'
+    || ![kim, mind, nebula].every(c => c.consent_and_ethics.ethics_approval.stated && c.consent_and_ethics.informed_consent.stated)
+    || mind.consent_and_ethics.ethics_approval.body !== null || !damm.consent_and_ethics.ethics_approval.stated
+    || damm.consent_and_ethics.informed_consent.stated !== false || !/^the data descriptor article only/.test(nebula.rights.terms.paper_licence.covers)
+    || mind.schedule.pairs.some((p: { schedules: number; trials_per_schedule: number; complementary: boolean }) => p.schedules !== mindSchedules || p.trials_per_schedule !== mindScheduleTrials || !p.complementary)
+    || mind.primary.pairs.some((p: { majority: number; ordinal_lookup: number }) => p.ordinal_lookup >= p.majority)
+    || damm.flags.score_published !== false || nebula.flags.score_published !== false || nebula.flags.order_diagnostic_comparison_published !== false
+    || nebula.design.assistance_conditions.join() !== 'free,low,high'
+    || mind.rights.terms.terms_of_use_page_read !== false || damm.rights.terms.license_file_present !== false
+    || dc.holds.map((h: { id: string }) => h.id).join() !== 'kim-amplitude-dependent-models,damm-one-participant-score,nebula-one-participant-scores')
+  throw new Error('releases.ts: the dataset-check notes and holds no longer fit the file');
+const mindLicences = [...new Set(mind.rights.terms.statements.map((s: { value: string }) => s.value))] as string[];
+const [mind45, mind67] = mind.primary.pairs;
+const figshareId = (r: { source: string }) => need(r.source.match(/figshare\.(\d+)/)?.[1], `the Figshare record of ${r.source}`);
+const dcHold = (id: string) => need(dc.holds.find((h: { id: string }) => h.id === id), `the hold ${id}`);
+const DC_HOLD_ZH: Record<string, string> = {
+  'Amplitude units, channel gains and the saved reference history are not established, so models whose output depends on amplitude are held on these files.':
+    '幅值单位、通道增益与保存下来的参考历史都没有确立，所以在这些文件上，输出依赖幅值的模型暂缓。',
+};
+
+/*
+ * The register's 2026-10-28 file (open-register-update-20261028, owner decisions D14–D16, D19, D21, D26, D27): what it
+ * adds to the file before it, read from both files and from the payloads its new rows rest on, never typed. The four
+ * dataset checks become this site's rows, each folding in its MOABB record; three models scored on the pilot-studies page
+ * reach step 4; five models identified from their papers stand at step 1 with their holds.
+ */
+const rn = registerNow as any, rp = registerFile as any;
+const rnIds = new Set<string>(rn.entries.map((e: { id: string }) => e.id)), rpIds = new Set<string>(rp.entries.map((e: { id: string }) => e.id));
+const rnAdded = rn.entries.filter((e: { id: string }) => !rpIds.has(e.id));
+const dcAt = (e: any) => dc.placement.sections.indexOf(String(e.links.case).split('#')[1]);
+const rnSite = rnAdded.filter((e: any) => e.group === 'site').sort((a: any, b: any) => dcAt(a) - dcAt(b));
+const rnScoredIds = [nr.model.id, ts.eeg_captioner.id, ts.axon.id].map(id => `r-model-${id}`);
+const rnScored = rnScoredIds.map(id => need(rnAdded.find((e: any) => e.id === id), `the register row ${id}`));
+const rnIdentified = rnAdded.filter((e: any) => e.ladder === 'model' && e.level === 1);
+const rnFolded = rp.entries.filter((e: any) => e.group === 'moabb' && !rnIds.has(e.id));
+const rnRow = (slug: string) => need(rnSite.find((e: any) => e.id === `r-site-${slug}`), `the register row of ${slug}`);
+const [rnKim, rnMind, rnDamm, rnNeb] = ['kim2025-beta-range', 'mind2026', 'damm-finger-imagery', 'nebula'].map(rnRow);
+const rnReasons = [...new Set(rnIdentified.flatMap((e: any) => e.findings.filter((f: any) => f.code === 'hold').map((f: any) => f.params.reason_code)))].sort();
+const rnUnreachable = rnIdentified.filter((e: any) => e.findings.some((f: any) => f.params?.reason_code === 'code_not_reachable'));
+if (rnSite.length !== dc.cases.length || rnSite.length !== rnFolded.length || rnSite.some((e: any) => e.level !== 4 || dcAt(e) < 0)
+    || rnAdded.length !== rnSite.length + rnScored.length + rnIdentified.length || rnScored.some((e: any) => e.level !== 4 || e.exposure !== 'unknown')
+    || rn.counts.rows.total !== rp.counts.rows.total + rnScored.length + rnIdentified.length || rn.counts.rows.dataset !== rp.counts.rows.dataset
+    || rn.counts.moabb.merged_into_site_rows !== rp.counts.moabb.merged_into_site_rows + rnFolded.length
+    || rnReasons.join() !== 'code_not_reachable,no_release_found' || rnUnreachable.length !== 1
+    || !rnKim.findings.some((f: any) => f.params?.reason_code === 'amplitude_units_unresolved')
+    || !rnFolded.some((e: any) => e.findings.some((f: any) => f.params?.reason_code === 'onset_timing_unresolved'))
+    || rnNeb.gaps.some((g: any) => g.step === 3) || nebula.rights.terms.data_licence.versions_listed !== 1)
+  throw new Error('releases.ts: the register’s new rows no longer fit what its release says of them');
+const rnName = (e: any) => String(e.name).split(' · ')[0];
+// The dataset rows' names in Chinese, keyed by the English the register file gives (a name without Chinese stops the build).
+const RN_NAME_ZH: Record<string, string> = {
+  'Kim beta-range SSVEP': 'Kim beta 频段 SSVEP', MIND: 'MIND', 'Damm finger motor imagery': 'Damm 手指运动想象', NeBULA: 'NeBULA',
+};
+const rnNameZh = (e: any) => zhOf(RN_NAME_ZH, rnName(e), `the name of ${e.id}`);
+// "a, b and c"; in Chinese "a、b 与 c", 与 spaced only beside a Latin name.
+const rnList = (xs: string[], zh = false) => {
+  if (xs.length < 2) return xs.join('');
+  const head = xs.slice(0, -1).join(zh ? '、' : ', '), last = xs.at(-1)!;
+  return zh ? `${head}${/[\x21-\x7e]$/.test(head) ? ' ' : ''}与${/^[\x21-\x7e]/.test(last) ? ' ' : ''}${last}` : `${head} and ${last}`;
+};
+const rnStatus = (s: string, zh = false) => rnSite.filter((e: any) => e.status === s).map(zh ? rnNameZh : rnName);
+// A row's gaps at step 3, by the file's own labels.
+const rnGaps3 = (e: any, zh = false) => e.gaps.filter((g: any) => g.step === 3).map((g: any) => (zh ? g.label_zh : g.label_en));
+// A part stated as two licences in a fixed order (AXON's code: the module's file terms, then the project's root licence,
+// as open-register.ts words the `by` token) is printed as two parts, each named; any other part as one value.
+const rnTerms = (e: any, zh = false) => {
+  const t = e.terms_by_part;
+  const code = t.code.by === 'module_and_project_licence'
+    ? (([m, p]) => (zh ? `模块代码 ${m}、项目代码 ${p}` : `module code ${m}, project code ${p}`))(
+        need(String(t.code.value).match(/^([^,]+), ([^,]+)$/)?.slice(1), `the two code licences of ${e.id}`))
+    : (zh ? `代码 ${t.code.value}` : `code ${t.code.value}`);
+  return zh ? `${e.name}：${code}，权重 ${t.weights.value}` : `${e.name}: ${code}, weights ${t.weights.value}`;
+};
+
 export const releases: Release[] = [
+  // The 2026-10-28 round (owner decisions D14–D29): five release ids, one site version (D20). The register release is the
+  // headline and the one CITATION.cff names, and goes first; these four follow in the plan's order.
+  {
+    id: openRegister.release, date: '2026-10-28', payload: 'openRegister',
+    files: [openRegister.json, openRegister.csv],
+    // Its two pages, and the methods hub, whose line counts the model rows.
+    pages: ['/datasets/register/', '/methods/register/', '/methods/'],
+    summary: {
+      en: `The open register in a new dated file of ${count(rn.counts.rows.total)} rows: ${count(rn.counts.rows.dataset)} dataset rows and ${rn.counts.rows.model} model rows. The ${said(rnSite.length)} datasets checked end to end on the data-quality page become this site’s rows at step 4 of the dataset ladder, each with its MOABB record folded in: ${rnList(rnStatus('published'))} with their results published, and ${rnList(rnStatus('score_held'))} with their scores held. ${cap(said(rnScored.length))} models scored on the pilot-studies page enter the model ladder at step 4: ${rnList(rnScored.map(rnName))}. ${cap(said(rnIdentified.length))} more models are identified from their papers at step 1, each with its hold: ${rnList(rnIdentified.map(rnName))}. ${earlierRegister.json} stays served byte for byte.`,
+      zh: `开放登记册的一份新的带日期文件，共 ${count(rn.counts.rows.total)} 行：数据集 ${count(rn.counts.rows.dataset)} 行，模型 ${rn.counts.rows.model} 行。数据质量页面上从头到尾核过的${said(rnSite.length, true)}个数据集成为本站的条目，处在数据集登记的第 4 步，各自并入其 MOABB 记录：${rnList(rnStatus('published', true), true)} 的结果已发布，${rnList(rnStatus('score_held', true), true)} 的分数暂缓。在试点研究页面上计算过分数的${said(rnScored.length, true)}个模型进入模型登记的第 4 步：${rnList(rnScored.map(rnName), true)}。另有${said(rnIdentified.length, true)}个模型依据其论文列入第 1 步，各附暂缓原因：${rnList(rnIdentified.map(rnName), true)}。${earlierRegister.json} 按原有字节继续提供。`,
+    },
+    notes: [
+      { en: `${rnName(rnKim)}: its row links its dataset page and its case on the data-quality page, and holds models whose output depends on amplitude, in place of the onset-timing hold its MOABB record carried. ${rnName(rnMind)}: both licences side by side (${rnMind.terms_as_stated.value}), with ${rnList(rnGaps3(rnMind))} as gaps at step 3. ${rnName(rnDamm)}: ${rnList(rnGaps3(rnDamm))} as gaps at step 3. ${rnName(rnNeb)}: its Figshare record at its only version, with no gap at step 3.`,
+        zh: `${rnNameZh(rnKim)}：条目链接到它的数据集页面和数据质量页面上的案例，暂缓的是输出依赖幅值的模型，取代其 MOABB 记录原有的刺激起始时间暂缓。${rnNameZh(rnMind)}：两种许可并列（${rnMind.terms_as_stated.value.split(', ').join('、')}），第 3 步缺${rnGaps3(rnMind, true).join('与')}。${rnNameZh(rnDamm)}：第 3 步缺${rnGaps3(rnDamm, true).join('与')}。${rnNameZh(rnNeb)}：Figshare 记录，只有一个版本，第 3 步没有缺口。` },
+      { en: `${rnList(rnScored.map(rnName))}: each links its panel on the pilot-studies page and has no method page; pretraining exposure is unknown for all ${said(rnScored.length)}. Terms by part: ${rnScored.map(e => rnTerms(e)).join('; ')}. ${rnList(rnIdentified.map(rnName))}: each links its paper; ${rnList(rnUnreachable.map(rnName))} is held because its code repository could not be reached, and the other ${said(rnIdentified.length - rnUnreachable.length)} because no official release of code or weights was found. Not published: the register use statements drafted for some rows, which stay internal, and third-party conversions of ${rnName(rnScored[0])}’s checkpoint.`,
+        zh: `${rnList(rnScored.map(rnName), true)}：各自链接到试点研究页面上的那一栏，没有方法页面；${said(rnScored.length, true)}者是否出现在预训练数据中都是未知的。各部分条款：${rnScored.map(e => rnTerms(e, true)).join('；')}。${rnList(rnIdentified.map(rnName), true)}：各自链接到论文；${rnList(rnUnreachable.map(rnName), true)} 暂缓，因为其代码仓库无法访问，其余${said(rnIdentified.length - rnUnreachable.length, true)}个暂缓，因为没有找到官方发布的代码或权重。不发布：为部分条目起草的登记册用途说明，仍只在内部；${rnName(rnScored[0])} 检查点的第三方转换版本。` },
+    ],
+  },
+  {
+    id: sc.release_id, date: '2026-10-28', payload: 'ssvepFollowups',
+    files: ['ssvep-followups-update.json'],
+    // Cards 8 to 14 of the question page the 2026-10-20 release opened; that release's file keeps its bytes.
+    pages: ['/topics/new-ssvep-frequencies/'],
+    summary: {
+      en: `${cap(said(scCards.length))} more follow-ups on SSVEP frequencies a decoder never trained on, as cards ${scFirst} to ${scLast} of the same question page, each read from its own audited aggregate: the cross-spectral round’s results, which take the place of card ${scFirst}’s status entry; eigenvalue pooling; harmonic pooling, on BETA and on Wearable-102; filter-bank CCA with shorter windows and fewer electrodes; the gap between harmonics; a fixed decay over harmonics; and rising harmonic weights. All ${said(scCards.length)} use route 3’s BETA cohort (${scBetaPeople} people), and ${said(scWear.cards.length)} of them also run on Wearable-102’s dry and wet headbands (${scWearPeople} people). Seen and held-out frequencies are separate tasks, reported side by side, and each set-up sits beside its untrained control. Each card carries its own interval method: card ${scBonf.card}’s primary family is Bonferroni-adjusted over ${scBonf.comparisons} comparisons, card ${scMargin.card}’s margin test uses a ${Math.round(scMargin.level * 100)}% interval, and no other interval is adjusted. Card ${scCpuCard} adds CPU timings: warm, single-thread measurements of each component, never summed, and no sensor-to-decision latency.`,
+      zh: `解码器没训练过的 SSVEP 频率又有${said(scCards.length, true)}项后续检验，作为同一问题页的第 ${scFirst} 至 ${scLast} 张卡片，每项都读自各自经审计的聚合结果：互谱一轮的结果，取代第 ${scFirst} 张卡片原来的状态说明；特征值合并；谐波合并（BETA 与 Wearable-102）；更短时间窗、更少电极下的滤波器组 CCA；谐波之间的差距；谐波的固定衰减权重；以及递增的谐波权重。${said(scCards.length, true)}项都使用第三条路线的 BETA 队列（${scBetaPeople} 名被试），其中${said(scWear.cards.length, true)}项也在 Wearable-102 的干、湿两种头带上运行（${scWearPeople} 名被试）。已见频率与留出频率是两项任务，并列报告；每种设置旁边都有不需要训练的对照。每张卡片各有自己的区间方法：第 ${scBonf.card} 张卡片的主要比较族对 ${scBonf.comparisons} 个比较做了 Bonferroni 校正，第 ${scMargin.card} 张卡片的界值检验用 ${Math.round(scMargin.level * 100)}% 区间，其余区间都没有校正。第 ${scCpuCard} 张卡片附 CPU 计时：各组件在预热后单线程测得，从不相加，也不是从传感器到决策的延迟。`,
+    },
+    notes: [
+      { en: `On the held-out ${scU8.candidates}-way task with ${fbCell.window_s}-second windows and ${fbCell.electrodes} electrodes, filter-bank CCA with no training reached ${pct2(fbLevel.estimate)} against ${pct2(fbCca.estimate)} for CCA on the same windows (${pp2(fbGain.estimate)} points, ${ivl(fbGain.interval)}; ${scBetaPeople} people). The learned eigenvalue head differs from the harmonic sum, which needs no training, by ${pp2(eigVsSum.estimate)} points (${ivl(eigVsSum.interval)}). Route 3’s questions-in-language page runs another filter-bank recipe on the same task, with ${fbOther.sub_bands} ${fbOther.filter} sub-bands.`,
+        zh: `在留出频率 ${scU8.candidates} 选 1 的任务上，用 ${fbCell.window_s} 秒时间窗、${fbCell.electrodes} 个电极，不需要训练的滤波器组 CCA 达到 ${pct2(fbLevel.estimate)}，同一批时间窗上的 CCA 为 ${pct2(fbCca.estimate)}（${pp2(fbGain.estimate)} pp，${ivl(fbGain.interval, true)}；${scBetaPeople} 名被试）。学习得到的特征值分类头与不需要训练的谐波求和相差 ${pp2(eigVsSum.estimate)} pp（${ivl(eigVsSum.interval, true)}）。第三条路线的“用语言提问”页面在同一任务上运行另一种滤波器组方案，用 ${fbOther.sub_bands} 个 ${fbOther.filter} 子带。` },
+      { en: `${sc.release_record.rights} This file’s card ${scFirst} replaces the status entry that new-ssvep-frequencies-update.json carries for it; that file keeps its bytes.`,
+        zh: `${zhOf(SC_RIGHTS_ZH, sc.release_record.rights, 'the SSVEP follow-ups’ rights')}本文件的第 ${scFirst} 张卡片取代 new-ssvep-frequencies-update.json 中它的状态说明；那个文件保持原有字节。` },
+      { en: 'Not published: per-person, per-fold, per-rotation, per-seed, per-window and per-frequency values of any kind, predictions, scores, features, fitted heads and the sealed run files; the cross-spectral round’s per-seed, canary and random-pairing accuracies; the fixed-decay retrospective ratio table; all-trial decision counts beyond the harmonic-gap shares, and that card’s Delta means and distractor margins; run times of whole evaluations and audits, memory, CPU-time readings and every host, processor, system and runtime label; the comment thread’s predictions on these cards; the commenter’s name; and the handoffs, protocols, freezes, receipts, reviews and approvals themselves, pinned by hash in the release manifest because several carry private storage paths.',
+        zh: '不发布：逐人、逐折、逐轮换、逐随机种子、逐时间窗与逐频率的任何数值，预测、分数、特征、拟合好的分类头与封存的运行文件；互谱一轮各随机种子的准确率、金丝雀检查与随机配对的准确率；固定衰减的回溯比值表；除谐波差距那张卡片的比例之外的全试次判定计数，以及那张卡片的 Delta 均值与干扰项余量；整轮评测与审计的运行时间、内存、CPU 时间读数，以及任何主机、处理器、系统与运行环境的标签；评论串对这几张卡片的预测；评论者的名字；以及交接文件、协议、冻结记录、回执、审核与批准记录本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。' },
+    ],
+  },
+  {
+    id: nr.release_id, date: '2026-10-28', payload: 'neurorvq',
+    files: ['neurorvq-update.json'],
+    // A separate panel on the pilot-studies page, outside its pilot count (D19); three protocol pages point to it, with no figure.
+    pages: ['/topics/pilot-studies/'],
+    summary: {
+      en: `A separate panel on the pilot-studies page, outside the pilot count and every leaderboard: NeuroRVQ’s released backbone, kept frozen and read by one fixed ridge head, on three existing tasks: EEGMAT’s arithmetic and rest (${nrEegmat.cohort.people} people, ${count(nrEegmat.cohort.windows)} ${said(nrEegmat.cohort.window_seconds)}-second windows), motor imagery against rest on ${nrMi.dataset} (${nrMi.cohort.people} people, ${count(nrMi.cohort.windows)} windows) and P300 target against non-target on ${nrP300.dataset} (${nrP300.cohort.people} people, ${count(nrP300.cohort.windows)} ${said(nrP300.cohort.window_seconds)}-second epochs), ${nrFolds} participant-held-out folds each, nothing tuned. Each task sets the backbone’s ${nrDim} pooled values beside simple features of the same windows, with participant-mean balanced accuracy and macro-F1 for each, and one paired difference with its participant-bootstrap interval. Pointers on the three protocol pages lead to it and carry no figure; the core matrix keeps its rows.`,
+      zh: `试点研究页面上单独的一栏，不计入试点数量，也不进入任何排行榜：NeuroRVQ 发布的主干保持冻结，用一个固定的岭回归分类头读取，用于三项现有任务：EEGMAT 的心算与静息（${nrEegmat.cohort.people} 名被试，${count(nrEegmat.cohort.windows)} 个${said(nrEegmat.cohort.window_seconds, true)}秒时间窗）、${nrMi.dataset} 上的运动想象对静息（${nrMi.cohort.people} 名被试，${count(nrMi.cohort.windows)} 个时间窗），以及 ${nrP300.dataset} 上的 P300 目标对非目标（${nrP300.cohort.people} 名被试，${count(nrP300.cohort.windows)} 个${said(nrP300.cohort.window_seconds, true)}秒分段），各 ${nrFolds} 折、整名被试留出，不调任何参数。每项任务都把主干的 ${nrDim} 维池化值与同一批时间窗的简单特征并列，各给出按被试平均的平衡准确率与宏平均 F1，以及一个配对差值及其被试 bootstrap 区间。三个协议页面上各有一条指向它的链接，不带任何数字；核心矩阵的各行保持不变。`,
+    },
+    notes: [
+      { en: `NeuroRVQ minus its comparator, in balanced-accuracy points: on EEGMAT ${pp2(nrEegmat.paired_difference.difference)} (${ivl(nrEegmat.paired_difference.interval_95)}) against ${nrComparator(nrEegmat).label}: ${nrEegmat.paired_difference.reading}; on motor imagery ${pp2(nrMi.paired_difference.difference)} (${ivl(nrMi.paired_difference.interval_95)}) and on P300 ${pp2(nrP300.paired_difference.difference)} (${ivl(nrP300.paired_difference.interval_95)}) against ${nrComparator(nrMi).label}, both below zero. Pretraining exposure is unknown: none of the three datasets is named in the paper’s list of ${nr.pretraining_exposure.published_pretraining_list.corpora} pretraining corpora, ${nr.pretraining_exposure.published_pretraining_list.proprietary} of them proprietary. There is no random-initialisation arm, so the panel says nothing about pretraining. The authors’ inference wrapper does not restore strictly (${nr.model.authors_wrapper.missing_normalisation_tensors} normalisation tensors missing), so what ran is ${nr.model.variant}.`,
+        zh: `NeuroRVQ 减其对照，以平衡准确率的百分点计：EEGMAT 上为 ${pp2(nrEegmat.paired_difference.difference)}（${ivl(nrEegmat.paired_difference.interval_95, true)}），对照是频带功率：${zhOf(NR_READING_ZH, nrEegmat.paired_difference.reading, 'the EEGMAT reading')}；运动想象上为 ${pp2(nrMi.paired_difference.difference)}（${ivl(nrMi.paired_difference.interval_95, true)}），P300 上为 ${pp2(nrP300.paired_difference.difference)}（${ivl(nrP300.paired_difference.interval_95, true)}），对照都是时域均值，两者都在零以下。是否出现在预训练数据中：未知。这三个数据集都不在论文列出的 ${nr.pretraining_exposure.published_pretraining_list.corpora} 个预训练语料中（其中 ${nr.pretraining_exposure.published_pretraining_list.proprietary} 个是私有的）。没有随机初始化的对照组，所以这一栏不能说明预训练的作用。作者的推理封装不能严格加载（缺少 ${nr.model.authors_wrapper.missing_normalisation_tensors} 个归一化张量），所以实际运行的是发布的主干，各分支用无参数的归一化，并对词元取均值池化。` },
+      { en: `${nr.release_record.rights} Not run: ${nrNotRun(false)}. Not published: per-person, per-fold and per-window values of any kind, fold assignments, identifiers, labels, extracted values, fitted heads, predictions and the sealed files; how many people each arm scored above 50%; per-arm intervals and macro-F1 differences, none of which was computed; measured compute; the checkpoint and the authors’ source; third-party conversions of the checkpoint and the licence tags they carry; and the handoffs, protocols, configurations, receipts and reviews themselves, pinned by hash in the release manifest because several carry private storage paths.`,
+        zh: `${zhOf(NR_RIGHTS_ZH, nr.release_record.rights, 'NeuroRVQ’s rights')}没有运行：${nrNotRun(true)}。不发布：任何逐人、逐折与逐时间窗的数值，折的分配、标识、标签、提取的数值、拟合好的分类头、预测与封存文件；每一组有多少人得分高于 50%；各组的区间与宏平均 F1 的差值——都没有计算；实测的计算量；检查点与作者的源代码；第三方对检查点的转换及其所带的许可标签；以及交接文件、协议、配置、回执与审核记录本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。` },
+    ],
+  },
+  {
+    id: ts.release_id, date: '2026-10-28', payload: 'eegmatTenSecond',
+    files: ['eegmat-ten-second-update.json'],
+    // A second separate panel on the pilot-studies page, after NeuroRVQ's; the Arithmetic & rest page points to both.
+    pages: ['/topics/pilot-studies/'],
+    summary: {
+      en: `Another separate panel on the pilot-studies page, outside the pilot count and every leaderboard: two frozen encoders on ${said(tsCohort.window_seconds)}-second EEGMAT windows of arithmetic and rest (${tsCohort.people} people, ${tsCohort.recordings} recordings, ${tsCohort.windows} windows, ${tsCohort.folds} subject-disjoint folds), each read by one fixed ridge head and set against Welch band power on the same windows, in a subsection of its own: EEG-Captioner’s encoder (${tsCap.representation.dimension} dimensions; only the encoder ran, with no caption) and AXON (${tsAx.representation.dimension} dimensions). Participant-mean balanced accuracy and a paired difference with its participant-bootstrap interval for each; beside every score, ${tsQc.windows_meeting_rules} of ${tsQc.windows} windows meet EEG-Captioner’s source annotation-QC rules. No difference between the two encoders is computed, and the panel is kept apart from the two-second results on this site.`,
+      zh: `试点研究页面上另一个单独的一栏，不计入试点数量，也不进入任何排行榜：两个冻结编码器，用于 EEGMAT 心算与静息的${said(tsCohort.window_seconds, true)}秒时间窗（${tsCohort.people} 名被试，${tsCohort.recordings} 段记录，${tsCohort.windows} 个时间窗，${tsCohort.folds} 个被试不重叠的折），各用一个固定的岭回归分类头读取，并与同一批时间窗上的 Welch 频带功率比较，各占一小节：EEG-Captioner 的编码器（${tsCap.representation.dimension} 维；只运行了编码器，没有生成描述）与 AXON（${tsAx.representation.dimension} 维）。各给出按被试平均的平衡准确率，以及一个配对差值及其被试 bootstrap 区间；每个分数旁边都注明：${tsQc.windows} 个时间窗中有 ${tsQc.windows_meeting_rules} 个符合 EEG-Captioner 来源的标注质量控制规则。不计算两个编码器之间的差值；这一栏与本站的两秒时间窗结果分开。`,
+    },
+    notes: [
+      { en: `EEG-Captioner’s encoder reached ${pct2(tsArm(tsCap, 'encoder').balanced_accuracy)} against ${pct2(tsArm(tsCap, 'baseline').balanced_accuracy)} for Welch band power fitted in the same run (${pp2(tsCap.paired_difference.difference)} points, ${ivl(tsCap.paired_difference.interval_95)}). AXON reached ${pct2(tsArm(tsAx, 'encoder').balanced_accuracy)} against the same band-power predictions, reused without refitting and matched for neither normalisation nor parameter count (${pp2(tsAx.paired_difference.difference)} points, ${ivl(tsAx.paired_difference.interval_95)}). Both intervals span zero. AXON’s own numerical input check passed ${tsAx.numerical_input_check.windows_passed} of ${tsAx.numerical_input_check.windows} windows, a different check from the source QC, which flags whole recordings (${tsQc.recordings_flagged} of ${tsQc.recordings}) and does not say that each window has an artifact. AXON ran after the EEG-Captioner and Welch outcomes were known; rest is recorded before arithmetic; pretraining exposure is unknown for both encoders.`,
+        zh: `EEG-Captioner 的编码器达到 ${pct2(tsArm(tsCap, 'encoder').balanced_accuracy)}，同一次运行中拟合的 Welch 频带功率为 ${pct2(tsArm(tsCap, 'baseline').balanced_accuracy)}（${pp2(tsCap.paired_difference.difference)} pp，${ivl(tsCap.paired_difference.interval_95, true)}）。AXON 达到 ${pct2(tsArm(tsAx, 'encoder').balanced_accuracy)}，对照是同一组频带功率预测，没有重新拟合，归一化与参数量都没有匹配（${pp2(tsAx.paired_difference.difference)} pp，${ivl(tsAx.paired_difference.interval_95, true)}）。两个区间都跨过零。AXON 自己的数值输入检查在 ${tsAx.numerical_input_check.windows} 个时间窗中通过了 ${tsAx.numerical_input_check.windows_passed} 个；这与来源的质量控制是两回事，后者按整段记录标记（${tsQc.recordings} 段中标记了 ${tsQc.recordings_flagged} 段），并不说明每个时间窗都有伪迹。AXON 是在 EEG-Captioner 与 Welch 的结果已知之后运行的；静息在心算之前记录；这些数据是否出现在两个编码器的预训练数据中，都是未知的。` },
+      { en: `${ts.release_record.rights} Not published: per-person, per-fold and per-window values of any kind, fold assignments, identifiers, features, fitted heads, predictions and the sealed files; confusion matrices and pooled macro-F1; the source-QC breakdown beyond its totals; forward counts, head-fit counts, CPU and wall time and memory; a difference between the two encoders; AXON’s paper reference, until it is checked; the checkpoints and weights, whose SHA-256 identifies each file and grants nothing; and the handoffs, protocols, approvals, reviews, audits and receipts themselves, pinned by hash in the release manifest because several carry private storage paths.`,
+        zh: `${zhOf(TS_RIGHTS_ZH, ts.release_record.rights, 'the ten-second panel’s rights')}不发布：任何逐人、逐折与逐时间窗的数值，折的分配、标识、特征、拟合好的分类头、预测与封存文件；混淆矩阵与合并计算的宏平均 F1；来源质量控制除总数之外的细分；前向计算次数、分类头拟合次数、CPU 与实际耗时以及内存；两个编码器之间的差值；AXON 的论文出处，核实之前不引用；检查点与权重——其 SHA-256 只用于标识文件，不授予任何权利；以及交接文件、协议、批准、审核、审计与回执本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。` },
+    ],
+  },
+  {
+    id: dc.release_id, date: '2026-10-28', payload: 'datasetChecks',
+    files: ['dataset-checks-update.json'],
+    // Four cases on the data-quality page (D15, D16, D18); Kim beta-range's dataset page carries its result (D21).
+    pages: ['/topics/data-quality/'],
+    summary: {
+      en: `${cap(said(dc.cases.length))} more public EEG datasets checked end to end on the data-quality page, each read from its own files. Kim beta-range SSVEP is a worked case: training-free CCA on all ${kim.cohort.participants} participants (${count(kim.cohort.trials)} trials, ${kim.cohort.targets} targets from ${kim.intake.frequency_lowest_hz.toFixed(1)} to ${kim.intake.frequency_highest_hz.toFixed(1)} Hz), with a dataset page of its own. MIND is a conditional case on record IDs: CSP + LDA on ${said(mind.primary.pairs.length)} stored-code pairs beside an ordinal lookup and a majority control, with record-ID resampling ranges and the facts of its label schedules. Damm finger motor imagery and NeBULA are one-person status cases: design, counts and file facts, with every score held. The one-person rule is stated once on the page, before eldBETA, Damm and NeBULA.`,
+      zh: `数据质量页面上又有${said(dc.cases.length, true)}个公开 EEG 数据集从头到尾核了一遍，都从各自的文件读起。Kim beta 频段 SSVEP 是完整的案例：在全部 ${kim.cohort.participants} 名被试上运行不需要训练的 CCA（${count(kim.cohort.trials)} 个试次，${kim.cohort.targets} 个目标，${kim.intake.frequency_lowest_hz.toFixed(1)} 至 ${kim.intake.frequency_highest_hz.toFixed(1)} Hz），并有自己的数据集页面。MIND 是以记录编号为单位的有条件案例：在${said(mind.primary.pairs.length, true)}对存储编码上运行 CSP + LDA，与按位置查表的对照和多数类对照并列，附记录编号重抽样范围与标签排程的事实。Damm 手指运动想象与 NeBULA 是单人状态案例：只给设计、计数与文件事实，所有分数暂缓。单人规则在页面上只说一次，放在 eldBETA、Damm 与 NeBULA 之前。`,
+    },
+    notes: [
+      { en: `Kim: mean participant accuracy ${pct2(kim.result.mean_participant_accuracy)} (${pct2(kim.result.accuracy_interval_95[0])} to ${pct2(kim.result.accuracy_interval_95[1])}), against chance of one in ${kim.cohort.targets}; the amplitudes are as stored, and models whose output depends on amplitude are held. MIND, primary panel of ${mind.primary.record_ids} record IDs and ${count(mind.primary.trials)} trials: CSP + LDA ${pct2(mind45.csp_lda)} on stored codes ${mind45.pair} and ${pct2(mind67.csp_lda)} on ${mind67.pair}, against ${pct2(mind45.majority)} for the majority control; the ordinal lookup sits below the majority control because each pair follows one of only ${said(mindSchedules)} complementary ${mindScheduleTrials}-trial label schedules. Record IDs are not verified people. Damm: ${damm.design.delivered_cues} delivered cues over ${said(damm.design.classes)} fingers and ${damm.files.scalp_channels} scalp channels. NeBULA: ${nebula.design.trials} delivered trials, ${nebula.eeg.channels} EEG channels and ${nebula.file_facts.emg_channel_rows} EMG rows where the metadata states ${nebula.file_facts.emg_channels_in_metadata}.`,
+        zh: `Kim：按被试平均的准确率为 ${pct2(kim.result.mean_participant_accuracy)}（${pct2(kim.result.accuracy_interval_95[0])} 至 ${pct2(kim.result.accuracy_interval_95[1])}），随机水平为 ${kim.cohort.targets} 选 1；幅值按存储原样，输出依赖幅值的模型暂缓。MIND，主面板 ${mind.primary.record_ids} 个记录编号、${count(mind.primary.trials)} 个试次：CSP + LDA 在存储编码 ${mind45.pair} 上为 ${pct2(mind45.csp_lda)}，在 ${mind67.pair} 上为 ${pct2(mind67.csp_lda)}，多数类对照为 ${pct2(mind45.majority)}；按位置查表的对照低于多数类对照，是因为每一对编码只遵循${said(mindSchedules, true)}种互补的 ${mindScheduleTrials} 试次标签排程之一。记录编号并非核实过的人。Damm：${said(damm.design.classes, true)}个手指共 ${damm.design.delivered_cues} 个实际呈现的提示，${damm.files.scalp_channels} 个头皮通道。NeBULA：${nebula.design.trials} 个实际进行的试次，${nebula.eeg.channels} 个 EEG 通道，EMG 文件有 ${nebula.file_facts.emg_channel_rows} 行通道，而元数据写的是 ${nebula.file_facts.emg_channels_in_metadata}。` },
+      { en: `Licences, from each record: Kim ${kim.rights.license} (Figshare ${figshareId(kim.rights)}, version ${kim.rights.terms.data_licence.pinned_version}, which the research used; the paper cites version ${kim.rights.terms.paper_cited_version.version}, also ${kim.rights.terms.paper_cited_version.licence}); MIND ${mindLicences.join(' and ')} side by side, as the paper and the archive’s dataset description state the first and the MOABB adapter and the ScienceDB record’s metadata the second, with ScienceDB’s terms-of-use page not read; Damm ${damm.rights.license} as its dataset description states, while its README cites a LICENSE file the tree does not hold; NeBULA ${nebula.rights.license} (Figshare ${figshareId(nebula.rights)}), the paper’s own licence covering the article only. Kim’s, MIND’s and NeBULA’s papers state ethics approval and consent, MIND’s without naming its committee; Damm’s dataset description names its ethics approval, and no consent statement was found. Not published: values per person, per record ID, per fold, per run or per trial, identifiers, features, fitted models, predictions and raw signals; every Damm and NeBULA score and any comparison of NeBULA’s order diagnostic with its EEG or EMG arms; MIND’s pooled metrics, confusion matrices, secondary schedule census and model-fit counts; Kim’s per-participant accuracies; compute, hosts and storage locations; and the research aggregates, audits, reviews, protocols and handoffs themselves, pinned by hash in the release manifest because several carry private storage paths.`,
+        zh: `许可来自各自的记录：Kim 为 ${kim.rights.license}（Figshare ${figshareId(kim.rights)}，研究所用的第 ${kim.rights.terms.data_licence.pinned_version} 版；论文引用的是第 ${kim.rights.terms.paper_cited_version.version} 版，同样为 ${kim.rights.terms.paper_cited_version.licence}）；MIND 的 ${mindLicences.join(' 与 ')} 并列给出：论文与压缩包中的数据集说明写的是前者，MOABB 适配器与 ScienceDB 记录的元数据写的是后者，ScienceDB 的使用条款页面没有读取；Damm 按其数据集说明为 ${damm.rights.license}，而其 README 提到的 LICENSE 文件并不在仓库中；NeBULA 为 ${nebula.rights.license}（Figshare ${figshareId(nebula.rights)}），论文自己的许可只涵盖文章本身。Kim、MIND 与 NeBULA 的论文都写明了伦理批准与知情同意，MIND 的论文没有写出伦理委员会的名称；Damm 的数据集说明写明了伦理批准，没有找到知情同意声明。不发布：逐人、逐记录编号、逐折、逐 run 与逐试次的数值，标识、特征、拟合好的模型、预测与原始信号；Damm 与 NeBULA 的任何分数，以及 NeBULA 的顺序诊断与其 EEG 或 EMG 组之间的任何比较；MIND 合并计算的指标、混淆矩阵、次要面板的排程统计与模型拟合次数；Kim 的逐被试准确率；计算量、主机与存储位置；以及研究聚合文件、审计、审核、协议与交接文件本身——其中几份含有私有存储路径，只在发布清单中以哈希固定。` },
+    ],
+  },
   // The open-register release (owner decisions D1–D13, 2026-10-19): five release ids, one site version. The register
   // is the headline, the one CITATION.cff and the home Dataset cite; the four result files follow in the plan's order.
   {
-    id: openRegister.release, date: '2026-10-20', payload: 'openRegister',
-    files: [openRegister.json, openRegister.csv],
+    id: earlierRegister.release, date: '2026-10-20', payload: 'openRegister',
+    files: [earlierRegister.json, earlierRegister.csv],
     // Its two pages, and the dataset and method hubs, which link them.
     pages: ['/datasets/register/', '/methods/register/', '/datasets/', '/methods/'],
     summary: {
@@ -657,6 +961,141 @@ export function releasesFor(files: string[]): Release[] {
   return found;
 }
 
+/*
+ * The release log's index (owner decision D17, 2026-10-28). /releases/ shows the newest release days in full, each with
+ * one to three short changes, and one line for every earlier release; /releases/archive/ carries every record above as
+ * released. Ids released on one day are one site version (D20), so the index counts days, not ids.
+ */
+
+/** One short change of a release day: a sentence whose bracketed spans are its links, in the order of `links`. */
+export interface Change {
+  /** English and Chinese, each with one `[…]` span per link. */
+  text: Text;
+  /** One or two site paths, each with its anchor where the change has one. */
+  links: string[];
+}
+
+/** How many release days the index shows in full. */
+export const LATEST_DAYS = 3;
+
+/** The release days, newest first, each with its ids in the order of `releases`. */
+export function releaseDays(): { date: string; releases: Release[] }[] {
+  const days: { date: string; releases: Release[] }[] = [];
+  for (const r of releases) {
+    const last = days.at(-1);
+    if (last?.date === r.date) last.releases.push(r);
+    else days.push({ date: r.date, releases: [r] });
+  }
+  return days;
+}
+
+// Every figure a highlight prints, as each language prints it; the checks below admit no other (D29: counts computed
+// from the payloads).
+const printed = { en: new Set<string>(), zh: new Set<string>() };
+const hlWord = (n: number) => {
+  const en = said(n), zh = said(n, true);
+  printed.en.add(en); printed.zh.add(zh);
+  return { en, zh, En: cap(en) };
+};
+const hlFigure = (n: number) => { const s = count(n); printed.en.add(s); printed.zh.add(s); return s; };
+// 2026-10-28: the four result files of the round.
+const hlCards = hlWord(scCards.length);
+const hlFirstCard = need([...sc.placement.cards].sort((a: { card: number }, b: { card: number }) => a.card - b.card)[0], 'the first follow-up card');
+const hlCases = hlWord(dc.cases.length);
+const hlWindow = hlWord(ts.cohort.window_seconds);
+if ((nr.blocks as { id: string }[]).map(b => b.id).join() !== 'eegmat,mi-rest,p300-target')
+  throw new Error('releases.ts: the NeuroRVQ highlight names arithmetic, motor imagery and P300; the file’s blocks changed');
+// 2026-10-20: that day's register file, and the questions that day opened (topic pages no earlier release names).
+const hlRows = hlFigure(register20261020.counts.rows.total);
+const openedOn = (date: string) => {
+  const before = new Set(releases.filter(r => r.date < date).flatMap(r => r.pages));
+  return [...new Set(releases.filter(r => r.date === date).flatMap(r => r.pages))].filter(p => /^\/topics\/[^/]+\/$/.test(p) && !before.has(p));
+};
+const hlQuestions = openedOn('2026-10-20');
+if (hlQuestions.join() !== [ssvepFollowUps.placement.page, dataQuality.placement.page].join())
+  throw new Error(`releases.ts: the 2026-10-20 highlight names the two questions that day opened, not ${hlQuestions.join(', ')}`);
+const hlNewQuestions = hlWord(hlQuestions.length);
+// 2026-10-13: EEGPT's channel counts on the two protocols fewer-electrodes shows.
+const eegptChannels = (id: string) => need(eegptCore.protocols.find(p => p.id === id), `EEGPT’s ${id} protocol`).channels;
+const [hlBeta, hlSleep] = [hlWord(eegptChannels('beta-4ch')), hlWord(eegptChannels('sleep-scalp'))];
+
+/**
+ * What each of the newest release days changed (owner decision D29: the plan's drafts, counts computed from the
+ * payloads). A day leaves the index when it is no longer among the newest LATEST_DAYS, and its entry here is unused.
+ */
+export const highlights: Record<string, Change[]> = {
+  '2026-10-28': [
+    { text: { en: `${hlCards.En} more follow-ups on [SSVEP frequencies a decoder never trained on], among them filter-bank CCA, shorter windows, fewer electrodes and fixed harmonic weights, each beside its untrained control.`,
+              zh: `[解码器没训练过的 SSVEP 频率]又有${hlCards.zh}项后续检验，包括滤波器组 CCA、更短的时间窗、更少的电极和固定的谐波权重，每项都与不训练的对照并列。` },
+      links: [`${sc.placement.page}#${hlFirstCard.anchor}`] },
+    { text: { en: `Frozen-encoder probes in panels of their own: [NeuroRVQ] on arithmetic, motor imagery and P300, and [EEG-Captioner and AXON] on ${hlWindow.en}-second arithmetic and rest windows.`,
+              zh: `冻结编码器探针各成一栏：[NeuroRVQ] 用于心算、运动想象与 P300；[EEG-Captioner 与 AXON] 用于${hlWindow.zh}秒心算与静息窗口。` },
+      links: [`${nr.placement.page}#${nr.placement.anchor}`, `${ts.placement.page}#${ts.placement.anchor}`] },
+    { text: { en: `${hlCases.En} more datasets [checked end to end], with a CCA baseline on Kim’s beta-range SSVEP, and [the open register] extended to match.`,
+              zh: `又有${hlCases.zh}个数据集[从头核到尾]，其中有 Kim beta 频段 SSVEP 的 CCA 基线；[开放登记册]随之扩充。` },
+      links: [dc.placement.page, '/methods/register/'] },
+  ],
+  '2026-10-20': [
+    { text: { en: `The open register: [every EEG dataset we know of] and [every EEG model we track], in ${hlRows} rows, each at the furthest step checked, with its gaps listed.`,
+              zh: `开放登记册：[我们知道的每个 EEG 数据集]和[我们关注的每个 EEG 模型]，共 ${hlRows} 行，每行停在核验到的最远一步，并列出缺口。` },
+      links: ['/datasets/register/', '/methods/register/'] },
+    { text: { en: `${hlNewQuestions.En} new questions: what lets a decoder answer [SSVEP frequencies it never trained on], and [what public EEG files show when checked end to end].`,
+              zh: `${hlNewQuestions.zh}个新问题：解码器靠什么回答[没训练过的 SSVEP 频率]，以及[公开 EEG 文件从头核到尾后能看到什么]。` },
+      links: hlQuestions },
+    { text: { en: '[IESSEEG] infant case-control results with age and recording-setting controls, and [NeuroLM’s frozen features on EEGMAT] in a panel of their own.',
+              zh: '[IESSEEG] 婴儿病例对照结果，附年龄与采集设置对照；[NeuroLM 在 EEGMAT 上的冻结特征]单独成一栏。' },
+      links: [`${clinicalIesseeg.placement.page}#${clinicalIesseeg.placement.section}`, `${neurolmEegmat.placement.page}#${neurolmEegmat.placement.anchor}`] },
+  ],
+  '2026-10-13': [
+    { text: { en: 'EEGPT’s frozen row beside the core matrix on [every core protocol], computed in the same runs as the published LaBraM rows.',
+              zh: 'EEGPT 的冻结结果作为一行放在核心矩阵旁，覆盖[每个核心协议]，与已发布的 LaBraM 各行出自同一批运行。' },
+      links: ['/protocols/'] },
+    { text: { en: `Its [pretraining-attribution rows] beside LaBraM’s and CBraMod’s, and its [${hlBeta.en}-channel BETA and ${hlSleep.en}-channel sleep rows].`,
+              zh: `它的[预训练归因各行]与 LaBraM、CBraMod 的并列，另有[${hlBeta.zh}通道 BETA 与${hlSleep.zh}通道睡眠分期各行]。` },
+      links: ['/topics/does-pretraining-help/', '/topics/fewer-electrodes/'] },
+    { text: { en: 'A [method page for EEGPT]: its checkpoint, inputs and terms, and its pretraining exposure by dataset.',
+              zh: 'EEGPT 的[方法页面]：检查点、输入与条款，以及各数据集是否出现在它的预训练数据中。' },
+      links: ['/methods/eegpt/'] },
+  ],
+};
+
+/** A change's text without its link brackets: what a reader sees. */
+export const changeText = (t: string) => t.replace(/[[\]]/g, '');
+// Build-time rules for the highlights (plan §4.4); release-record.ts adds that every link resolves to a built page.
+{
+  const LIMIT = { en: 220, zh: 110 };
+  const DATE_OR_VERSION = /\b20\d\d\b|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b|\b(?:[Uu]pdated|[Ss]ince|[Nn]ew in|[Aa]dded)\b|(?<![\w./#-])[vV]\d+\b|\d+ ?[年月日]|更新|新增于|本次|这次|第[一二三四五六七八九十]+轮/;
+  // Figures: digits not part of a name such as P300; number words, which are counts in this text.
+  const FIGURES = /(?<![A-Za-z0-9.-])[0-9][0-9,.]*(?<![,.])/g;
+  const WORDS_IN = { en: /\b(?:zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi, zh: /[零一两二三四五六七八九十]+(?=个|项|名|秒|通道)/g };
+  const days = new Set(releaseDays().map(d => d.date));
+  for (const date of Object.keys(highlights))
+    if (!days.has(date)) throw new Error(`releases.ts: highlights name ${date}, which is no release day`);
+  for (const { date } of releaseDays().slice(0, LATEST_DAYS)) {
+    const changes = highlights[date];
+    if (!changes || changes.length < 1 || changes.length > 3)
+      throw new Error(`releases.ts: the release day ${date} needs one to three highlights, not ${changes?.length ?? 0}`);
+    for (const c of changes) {
+      if (c.links.length < 1 || c.links.length > 2) throw new Error(`releases.ts: a ${date} highlight has ${c.links.length} links; one or two`);
+      const digits = { en: '', zh: '' };
+      for (const l of ['en', 'zh'] as const) {
+        const t = c.text[l], spans = t.match(/\[[^[\]]+\]/g) ?? [], seen = changeText(t);
+        const where = `releases.ts: the ${date} highlight “${seen.slice(0, 40)}…”`;
+        if (spans.length !== c.links.length || seen.length !== t.length - 2 * spans.length)
+          throw new Error(`${where} (${l}) needs one [bracketed] span per link (${c.links.length})`);
+        if (seen.length > LIMIT[l]) throw new Error(`${where} (${l}) is ${seen.length} characters; at most ${LIMIT[l]}`);
+        const label = seen.match(DATE_OR_VERSION);
+        if (label) throw new Error(`${where} (${l}) carries a date, version or update word: “${label[0]}”`);
+        const figs = [...seen.matchAll(FIGURES)].map(m => m[0]);
+        for (const f of [...figs, ...[...seen.matchAll(WORDS_IN[l])].map(m => m[0].toLowerCase())])
+          if (!printed[l].has(f)) throw new Error(`${where} (${l}) prints “${f}”, which no payload gave it`);
+        digits[l] = figs.sort().join(' ');
+      }
+      if (digits.en !== digits.zh) throw new Error(`releases.ts: a ${date} highlight prints ${digits.en || 'no figure'} in English and ${digits.zh || 'no figure'} in Chinese`);
+    }
+  }
+}
+
 export interface Hold {
   /**
    * Stable slug: the register row on /releases/ is `#hold-<id>`, and a home card
@@ -679,6 +1118,42 @@ export interface Hold {
 
 /** Every hold ever recorded, open or resolved. The home page shows the open ones. */
 export const holds: Hold[] = [
+  // The dataset-checks batch (dataset-checks-update.json `holds`, ids as the export gives them; owner decisions D15, D16).
+  // Kim's amplitude-dependent models wait on physical units; Damm's and NeBULA's scores are held under the one-person
+  // rule (D2), as eldBETA's are. MIND is published (D15) and opens no hold.
+  {
+    id: 'kim-amplitude-dependent-models',
+    item: { en: 'Kim beta-range SSVEP · amplitude-dependent models', zh: 'Kim beta 频段 SSVEP · 依赖幅值的模型' },
+    state: { en: 'Held', zh: '暂缓' },
+    opened: dc.release_record.date, closed: null,
+    outcome: { en: `${dcHold('kim-amplitude-dependent-models').reason} Training-free CCA, which does not depend on a common amplitude scale, is published for all ${kim.cohort.participants} participants.`,
+               zh: `${zhOf(DC_HOLD_ZH, dcHold('kim-amplitude-dependent-models').reason, 'the Kim hold')}不需要训练的 CCA 不依赖共同的幅值尺度，全部 ${kim.cohort.participants} 名被试的结果已发布。` },
+    card: { en: `${dcHold('kim-amplitude-dependent-models').reason} Training-free CCA, which does not depend on a common amplitude scale, is published.`,
+            zh: `${zhOf(DC_HOLD_ZH, dcHold('kim-amplitude-dependent-models').reason, 'the Kim hold')}不需要训练的 CCA 不依赖共同的幅值尺度，已发布。` },
+    href: `${dc.placement.page}#${kim.section}`,
+  },
+  {
+    id: 'damm-one-participant-score',
+    item: { en: 'Damm finger motor imagery · one-person score', zh: 'Damm 手指运动想象 · 单人分数' },
+    state: { en: 'Status only', zh: '只发状态' },
+    opened: dc.release_record.date, closed: null,
+    outcome: { en: `One participant’s ${said(damm.design.runs_used)} random-order runs, checked end to end: ${damm.design.delivered_cues} delivered cues, and ${said(damm.variants.length)} variants and controls fixed before scoring and independently audited. Every score is held under the one-person rule, by the owner’s decision; design, counts and file facts are published.`,
+               zh: `一名被试的${said(damm.design.runs_used, true)}个随机顺序 run 从头到尾跑通：${damm.design.delivered_cues} 个实际呈现的提示，${said(damm.variants.length, true)}种变体与对照在评分之前就已固定，并经过独立审计。按单人规则，所有分数依所有者的决定暂缓；设计、计数与文件事实已发布。` },
+    card: { en: `One participant’s ${said(damm.design.runs_used)} random-order runs, checked end to end. The scores are held under the one-person rule; design, counts and file facts are published.`,
+            zh: `一名被试的${said(damm.design.runs_used, true)}个随机顺序 run 从头到尾跑通。分数按单人规则暂缓；设计、计数与文件事实已发布。` },
+    href: `${dc.placement.page}#${damm.section}`,
+  },
+  {
+    id: 'nebula-one-participant-scores',
+    item: { en: 'NeBULA · one-person scores', zh: 'NeBULA · 单人分数' },
+    state: { en: 'Status only', zh: '只发状态' },
+    opened: dc.release_record.date, closed: null,
+    outcome: { en: `One participant reaching to ${said(nebula.design.targets)} targets under ${rnList(nebula.design.assistance_conditions)} assistance: ${nebula.design.trials} delivered trials, with EEG, EMG and EEG plus EMG arms run and independently audited. Every score is held under the one-person rule, by the owner’s decision; design, counts and file facts are published.`,
+               zh: `一名被试在自由、低与高${said(nebula.design.assistance_conditions.length, true)}种辅助水平下伸手够向${said(nebula.design.targets, true)}个目标：${nebula.design.trials} 个实际进行的试次，EEG、EMG 与 EEG 加 EMG 各组都已运行并经过独立审计。按单人规则，所有分数依所有者的决定暂缓；设计、计数与文件事实已发布。` },
+    card: { en: `One participant reaching to ${said(nebula.design.targets)} targets under ${said(nebula.design.assistance_conditions.length)} levels of assistance. The EEG, EMG and combined scores are held under the one-person rule; design, counts and file facts are published.`,
+            zh: `一名被试在${said(nebula.design.assistance_conditions.length, true)}种辅助水平下伸手够向${said(nebula.design.targets, true)}个目标。EEG、EMG 与两者合并的分数都按单人规则暂缓；设计、计数与文件事实已发布。` },
+    href: `${dc.placement.page}#${nebula.section}`,
+  },
   // The data-quality batch (data-quality-update.json `holds`, ids as the export gives them). eldBETA's one-person score
   // is held by the owner's decision D2, keeping the one-person rule (Stieger, FALCON H2); its counts are published.
   {

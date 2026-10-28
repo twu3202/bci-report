@@ -79,7 +79,6 @@ HOLD_REASONS = {
     'released_ids_duplicated',          # Liu2024
     'targets_stored_with_outputs',      # Schrag2026Pediatric
     'deposits_differ',                  # Hinss2021
-    'onset_timing_unresolved',          # Kim2025BetaRange
     'release_family_unchecked',         # Dreyer2023
     'one_offline_session',              # Alawieh2025
     # Model ladder
@@ -91,15 +90,28 @@ HOLD_REASONS = {
     'noncommercial_noderivs_weights',
     'acceptance_not_verified',
     'data_not_public',
+    'no_release_found',                 # 20261028 refresh rows (D26): no official code or weights release found
 }
-# Holds on this site's own dataset rows (plan section 2.6): a hold the releases log keeps open, by reason code and the
-# hold's id in site/src/data/releases.ts and data-quality-update.json. Their words live with the page
-# (open-register.ts holdReason), so ``schema(site_holds=...)`` declares a code only once the page has words for it, and
-# the exporter attaches a site hold only where its code is declared.
-SITE_HOLD_REASONS = {
-    'converted_run_timing': 'zuco2-converted-run-timing',     # ZuCo 2.0 on NEMAR: one converted run's timing
-    'one_person_score': 'eldbeta-one-participant-score',      # eldBETA: a one-person score (owner decision D2)
+# Holds on this site's own dataset rows (plan sections 2.6 and 3): a hold the releases log keeps open, row by row: the
+# row, its reason code, and the hold's id in site/src/data/releases.ts and in the payload that opens it
+# (data-quality-update.json for eldBETA and ZuCo 2.0, dataset-checks-update.json for the 20261028 dataset checks). One
+# reason may hold several rows, each under its own hold id (one_person_score: eldBETA, Damm, NeBULA). Kim beta-range's
+# hold replaces the MOABB catalog row's onset_timing_unresolved, which leaves the vocabulary with that row. Their words
+# live with the page (open-register.ts holdReason), so ``schema(site_holds=...)`` declares a code only once the page has
+# words for it, and the exporter attaches a site hold only where its code is declared.
+SITE_HOLDS: dict[str, tuple[str, str]] = {
+    'r-site-zuco2': ('converted_run_timing', 'zuco2-converted-run-timing'),        # one converted run's timing
+    'r-site-eldbeta': ('one_person_score', 'eldbeta-one-participant-score'),       # owner decision D2
+    'r-site-kim2025-beta-range': ('amplitude_units_unresolved', 'kim-amplitude-dependent-models'),   # D14
+    'r-site-damm-finger-imagery': ('one_person_score', 'damm-one-participant-score'),                # D16
+    'r-site-nebula': ('one_person_score', 'nebula-one-participant-scores'),                          # D16
 }
+# The same table by reason code: {reason code: {row id: hold id}}.
+SITE_HOLD_REASONS: dict[str, dict[str, str]] = {}
+for _row, (_code, _hold) in SITE_HOLDS.items():
+    SITE_HOLD_REASONS.setdefault(_code, {})[_row] = _hold
+SITE_HOLD_REASONS = dict(sorted((k, dict(sorted(v.items()))) for k, v in SITE_HOLD_REASONS.items()))
+del _row, _code, _hold
 
 TOKEN = re.compile(r'^[a-z0-9][a-z0-9_.:+-]*$')
 ROW = re.compile(r'^r-(?:hf-\d{4}|moabb-\d{4}|corpus-[a-z0-9-]+|model-[a-z0-9-]+|site-[a-z0-9.-]+)$')

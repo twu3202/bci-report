@@ -31,6 +31,11 @@ import beyond from './beyond-scalp-update.json';
 // The open-register release (owner decision D1): Shin2022's arms, and route 3's follow-up run unchanged on Wearable-102.
 import dataQuality from './data-quality-update.json';
 import ssvepFollowUps from './new-ssvep-frequencies-update.json';
+// The 2026-10-28 round (owner decisions D15–D21): the four dataset checks, and Kim beta-range's page from the register
+// version that carries its row.
+import datasetChecks from './dataset-checks-update.json';
+import ssvepCards from './ssvep-followups-update.json';
+import { openRegister } from './releases';
 import type { Locale } from './i18n';
 import { D as SRD, srFig, srPp, srLo, qName, code as srCode, differenceText, marginText, gateText, floorMarginText,
          ppEntry, entry as srEntry, arm as srArm, type SrEntry, type SrLogR } from './shared-encoder';
@@ -228,6 +233,11 @@ export interface DatasetEntity {
   technique?: string;
   /** The signal a non-EEG dataset's page title names (2026-10-12): "fNIRS", "intracortical spiking". */
   signal?: L;
+  /**
+   * Figure-free links to sections of a topic page that read this dataset without a group here (2026-10-28: Wearable-102's
+   * line to the follow-up cards that also run on it), printed under "Where it appears" after a lead.
+   */
+  related?: { lead: L; links: { href: string; label: L }[] };
 }
 
 const MVP = 'experiments.json', DEP = 'deployment-topics.json', EVI = 'evidence-update.json',
@@ -1695,6 +1705,61 @@ function shinGroup(): ResultGroup {
   };
 }
 
+/* --- Dataset checks (dataset-checks-update.json, 2026-10-28) -------------------------------------------------------- */
+
+/**
+ * The data-quality page's sections by register slug (owner decisions D15, D16, D18): the open register's site rows link
+ * their case here, as BEYOND_ANCHOR does for the status-only sources beyond scalp EEG. Damm's row is named for the
+ * dataset (r-site-damm-finger-imagery) and its section is #damm. The order is the page order the dataset-checks file sets.
+ */
+export const DATA_QUALITY_ANCHOR = {
+  shin2022: 'shin2022', 'kim2025-beta-range': 'kim2025-beta-range', mind2026: 'mind2026', eldbeta: 'eldbeta',
+  'damm-finger-imagery': 'damm', nebula: 'nebula', zuco2: 'zuco2',
+} as const;
+if (datasetChecks.placement.page !== DATA_QUALITY_PATH
+    || JSON.stringify(Object.values(DATA_QUALITY_ANCHOR)) !== JSON.stringify(datasetChecks.placement.page_order)
+    || !dataQuality.placement.sections.every(s => (Object.values(DATA_QUALITY_ANCHOR) as string[]).includes(s))
+    || !datasetChecks.placement.sections.every(s => (Object.values(DATA_QUALITY_ANCHOR) as string[]).includes(s)))
+  throw new Error('entities.ts: the data-quality sections are the two files’ cases, in the dataset-checks file’s page order');
+
+const DC = 'dataset-checks-update.json';
+const dcKim = (datasetChecks as any)['kim2025-beta-range'];
+/**
+ * Kim beta-range's page exists from the open-register version that carries its row (r-site-kim2025-beta-range) on: the
+ * dataset page refuses to build against a served register without that row (datasets/[slug].astro), and the
+ * 2026-10-20 register predates it. Until releases.ts `openRegister` names a register of this round, the record waits in
+ * `pendingDatasets` below, where the register's site-row exporter can read its name, licence and page.
+ */
+const KIM_PAGE = openRegister.release.slice(-8) >= datasetChecks.release_record.date.replaceAll('-', '');
+const kimRange = (k: any) => [k.intake.frequency_lowest_hz, k.intake.frequency_highest_hz].map((v: number) => v.toFixed(1));
+/**
+ * Kim beta-range (owner decision D21): one group with no method link, so the page stays off /methods/cca/. This carries
+ * the one approved figure, the mean participant accuracy with its participant-bootstrap interval, and the chance level,
+ * so the page builds and cites its release. The group's notes (the caveats, the intake, the hold) and the page's profile
+ * are the data-quality page package's.
+ */
+function kimGroup(): ResultGroup {
+  const k = dcKim, r = k.result, path = `${DATA_QUALITY_PATH}#${DATA_QUALITY_ANCHOR['kim2025-beta-range']}`, [lo, hi] = kimRange(k);
+  if (k.section !== 'kim2025-beta-range' || k.dataset_page !== `/datasets/${k.id}/` || k.method_link !== false || k.method.training_free !== true
+      || r.equals_balanced_accuracy !== true || k.cohort.complete_cohort !== true || k.method.trials_dropped !== 0 || r.chance !== 1 / k.cohort.targets)
+    throw new Error('entities.ts: Kim beta-range is a worked case with its own page, no method link, and training-free CCA on every trial of every participant');
+  const p2 = (raw: number) => fig(raw, 'pct2', DC);
+  return {
+    id: 'kim2025-beta-range', path, chance: p2(r.chance),
+    title: { en: `Data quality · which of ${k.cohort.targets} targets, with no training`, zh: `数据质量 · ${k.cohort.targets} 个目标中的哪一个，无需训练` },
+    rows: [{
+      path, method: 'Standard CCA', label: { en: 'CCA (no training)', zh: 'CCA（无需训练）' }, metric: ACC,
+      condition: { en: `${k.cohort.targets} targets, ${lo}–${hi} Hz · a nominal ${k.method.window_seconds}-second window from the stored onset, ${k.method.channels} channels`,
+                   zh: `${k.cohort.targets} 个目标，${lo}–${hi} Hz · 从存储的起点开始的标称 ${k.method.window_seconds} 秒时间窗，${k.method.channels} 个通道` },
+      value: p2(r.mean_participant_accuracy), interval: [p2(r.accuracy_interval_95[0]), p2(r.accuracy_interval_95[1])], people: k.cohort.participants,
+    }],
+  };
+}
+
+const kimDataset = (): DatasetEntity => fromRights('kim2025-beta-range', dcKim, [kimGroup()],
+  { en: `${dcKim.cohort.targets}-target SSVEP speller, ${kimRange(dcKim).join(' to ')} Hz`, zh: `${dcKim.cohort.targets} 目标 SSVEP 拼写器，${kimRange(dcKim).join(' 至 ')} Hz` },
+  `Kim beta-range SSVEP · ${dcKim.cohort.targets} targets, ${kimRange(dcKim).join('–')} Hz (Figshare ${dcKim.rights.source.match(/figshare\.(\d+)/)[1]})`);
+
 /* --- Route 3's follow-ups, run on Wearable-102 (new-ssvep-frequencies-update.json) --------------------------------- */
 
 /**
@@ -1834,6 +1899,37 @@ function wearableTransferGroup(): ResultGroup {
   };
 }
 
+/**
+ * Wearable-102's line to the follow-up cards that also run on its dry and wet headbands (2026-10-28): the cards the
+ * follow-ups export's Wearable-102 endpoint names, in its order, by their anchors on the new-SSVEP-frequencies page.
+ * Navigation only, with no figure; the cards' figures stay on that page. (The plan named cards 10 and 12; the export
+ * places Wearable-102 on 13 and 14 as well, and the source wins.)
+ */
+function wearableFollowUps(): DatasetEntity['related'] {
+  const cards = (ssvepCards.placement.cards as { card: number; anchor: string; endpoints: string[] }[]);
+  const endpoint = (ssvepCards.endpoints as { id: string; cards: number[]; sensors?: string[] }[]).find(e => e.id === 'wearable_12');
+  // Each label is its card's own title (ssvep-followups.ts CARD_COPY, which imports this module, so it is not read
+  // from there); scripts/checks/ssvep-cross-page.mjs holds every link's text to the heading its anchor carries.
+  const TITLES: Record<string, L> = {
+    'harmonic-pooling': { en: 'Pooling CCA’s per-harmonic statistics', zh: '汇总 CCA 的逐谐波统计量' },
+    'harmonic-gap': { en: 'Where the harmonic sum’s gain over joint CCA comes from', zh: '谐波求和相对联合 CCA 的增益从哪里来' },
+    'fixed-decay': { en: 'One decay rule on harmonics and on filter-bank bands', zh: '同一衰减规则用于谐波和滤波器组子带' },
+    'rising-weights': { en: 'A rising weight on the harmonics', zh: '逐级升高的谐波权重' },
+  };
+  if (ssvepCards.placement.page !== NEW_SSVEP_PATH) throw new Error('entities.ts: the follow-up cards are on the new-SSVEP-frequencies page');
+  if (!endpoint || endpoint.sensors?.join() !== 'dry,wet' || !endpoint.cards.length)
+    throw new Error('entities.ts: the follow-ups export names the cards that report Wearable-102 dry and wet');
+  return {
+    lead: { en: 'Follow-up tests that also run on these dry and wet headbands: ', zh: '同样在这两种干、湿头带上运行的后续检验：' },
+    links: endpoint.cards.map(n => {
+      const c = cards.find(x => x.card === n);
+      if (!c || !c.endpoints.includes('dry') || !c.endpoints.includes('wet') || !TITLES[c.anchor])
+        throw new Error(`entities.ts: card ${n} is a follow-up card that reports Wearable-102 dry and wet, with its title here`);
+      return { href: `${NEW_SSVEP_PATH}#${c.anchor}`, label: TITLES[c.anchor] };
+    }),
+  };
+}
+
 /* --- The datasets ------------------------------------------------------------------ */
 
 const mvpDs =(name: string) => data.datasets.find(d => d.name === name)!;
@@ -1872,6 +1968,8 @@ export const datasets: DatasetEntity[] = [
     license: String(wear.identity.license), attribution: String(wear.identity.canonical_dataset_citation ?? wear.identity.dataset_citation),
     // Route 3's follow-up (owner decision D1): the BETA-trained correction run unchanged here, after the published groups.
     sources: wear.primary_sources.slice(0, 2), groups: [...depGroups('wearable-ssvep-102'), wearableTransferGroup()],
+    // Cards 10, 12, 13 and 14 of the follow-ups also run on these headbands (2026-10-28): one figure-free line to them.
+    related: wearableFollowUps(),
   },
   {
     slug: 'mobile-bci', name: 'Mobile BCI dataset (SSVEP and ERP paradigms)', task: { en: 'SSVEP and ERP while standing, walking and running', zh: '站立、行走与跑动中的 SSVEP 与 ERP' },
@@ -1936,7 +2034,18 @@ export const datasets: DatasetEntity[] = [
   fromRights('shin2022', dqShin, [shinGroup()],
              { en: 'Closed-loop cursor control: the instructed right or left target, dry electrodes', zh: '闭环光标控制：指示的右侧或左侧目标，干电极' },
              'Shin2022 · closed-loop motor imagery EEG (Figshare 20383716)'),
+  // The dataset-checks batch (dataset-checks-update.json, owner decision D21): Kim beta-range's training-free CCA, a page
+  // with no method link, from the register version that carries its row (KIM_PAGE). MIND is a section only, and Damm and
+  // NeBULA (scores held) have no page.
+  ...(KIM_PAGE ? [kimDataset()] : []),
 ];
+
+/**
+ * A dataset page that waits on the register version carrying its row (KIM_PAGE), with its record: until then Kim
+ * beta-range is here and not in `datasets`, so no page or link to it is built, and the register's site rows can still
+ * read its name, licence and page from it.
+ */
+export const pendingDatasets: DatasetEntity[] = KIM_PAGE ? [] : [kimDataset()];
 
 export const datasetBySlug = Object.fromEntries(datasets.map(d => [d.slug, d]));
 

@@ -7,6 +7,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import data from './mvp.json';
+import ssvepCards from './ssvep-followups-update.json';
 import { openRegister, releases } from './releases';
 import { bingoReleased, handwritingReleased } from './pilot-switch';
 import type { Locale } from './i18n';
@@ -17,6 +18,10 @@ const zhTrack: Record<string, string> = {
   'mi-rest': '运动想象与静息', idle: '空闲与指令', 'beta-8ch': 'SSVEP · 8 通道', 'beta-4ch': 'SSVEP · 4 通道',
   'arithmetic-rest': '心算与静息', 'p300-target': 'P300 目标 ERP', 'semantic-target': '语义目标 ERP', 'sleep-scalp': '睡眠分期',
 };
+
+// The SSVEP follow-ups' card numbers, as the file places them (2026-10-28).
+const ssvepCardNos = ssvepCards.placement.cards.map(c => c.card);
+const [ssvepFirst, ssvepLast] = [Math.min(...ssvepCardNos), Math.max(...ssvepCardNos)];
 
 const named: Record<string, Text> = {
   'experiments.json': {
@@ -104,6 +109,23 @@ const named: Record<string, Text> = {
     en: 'NeuroLM’s frozen features on EEGMAT’s arithmetic and rest, a separate pilot panel: equal-person balanced accuracy and macro-F1 of three representations (tokenizer features, GPT hidden states and band power) under one fixed ridge head, three paired differences with their participant-bootstrap intervals, the adapter and the probe, the checkpoint’s identity and the terms of each part, pretraining exposure (unknown) with its sources, limitations, the audit record and what is not published.',
     zh: 'NeuroLM 冻结特征在 EEGMAT 心算与静息上的结果，作为单独的试点一栏：同一个固定的岭回归分类头下三种表示（分词器特征、GPT 隐藏状态与频带功率）按被试等权的平衡准确率与宏平均 F1，三个配对差值及其被试 bootstrap 区间，适配流程与分类头，检查点的标识与各部分的条款，是否出现在预训练数据中（未知）及其出处，局限、审计记录与不发布的内容。',
   },
+  // The four result files of the 2026-10-28 round (owner decisions D14–D29); the round's register files are matched by shape below.
+  'ssvep-followups-update.json': {
+    en: `More audited follow-ups on SSVEP frequencies a decoder never trained on, cards ${ssvepFirst} to ${ssvepLast} of that question page, on route 3’s BETA cohort and, for some, on Wearable-102’s dry and wet headbands: the endpoints with their chance levels; a name key from the site’s names to the export codes, and the estimates several cards share; for each study its design, levels and paired contrasts with their intervals and interval method, roles and flags, its checks as pass or fail with counts, and what was not run; which intervals are adjusted; CPU timings of each component (warm, single-thread, never summed); rights records, the filter-bank CCA credit and the audit record.`,
+    zh: `解码器没训练过的 SSVEP 频率的更多经审计后续检验，即那个问题页的第 ${ssvepFirst} 至 ${ssvepLast} 张卡片，用第三条路线的 BETA 队列，其中部分也用 Wearable-102 的干、湿两种头带：各端点及其随机水平；从本站名称到导出代码的对照表，以及几张卡片共用的估计值；每项检验的设计、水平与配对对比及其区间与区间方法、角色与标记，以通过或失败及计数给出的检查，以及没有运行的部分；哪些区间做了校正；各组件的 CPU 计时（预热后单线程测得，从不相加）；权利记录、滤波器组 CCA 的出处与审计记录。`,
+  },
+  'neurorvq-update.json': {
+    en: 'NeuroRVQ’s frozen backbone on three existing tasks (EEGMAT’s arithmetic and rest, motor imagery against rest, P300 target against non-target), a separate pilot panel: for each task the cohort, split and input chain, the participant-mean balanced accuracy and macro-F1 of the backbone and of simple features of the same windows under one fixed ridge head, and one paired difference with its participant-bootstrap interval; the checkpoint’s identity and how it was restored, pretraining exposure (unknown) with its sources, the protocols not run and why, the terms of the code, the weights and each dataset, limitations, the audit record and what is not published.',
+    zh: 'NeuroRVQ 冻结主干在三项现有任务上的结果（EEGMAT 的心算与静息、运动想象对静息、P300 目标对非目标），作为单独的试点一栏：每项任务的队列、数据划分与输入流程，同一个固定的岭回归分类头下主干与同一批时间窗简单特征按被试平均的平衡准确率与宏平均 F1，以及一个配对差值及其被试 bootstrap 区间；检查点的标识与加载方式，是否出现在预训练数据中（未知）及其出处，没有运行的协议及其原因，代码、权重与各数据集的条款，局限、审计记录与不发布的内容。',
+  },
+  'eegmat-ten-second-update.json': {
+    en: 'Two frozen encoders, EEG-Captioner’s and AXON, on ten-second windows of EEGMAT’s arithmetic and rest, a separate pilot panel with a subsection for each: the cohort and its preprocessing, the source annotation-QC totals printed beside every score, each encoder’s participant-mean balanced accuracy against Welch band power on the same windows with a paired participant-bootstrap interval, each encoder’s identity and terms, AXON’s own numerical input check, why no difference between the two encoders is computed, limitations, the audit record and what is not published.',
+    zh: '两个冻结编码器（EEG-Captioner 的编码器与 AXON）在 EEGMAT 心算与静息十秒时间窗上的结果，作为单独的试点一栏，每个编码器一小节：队列及其预处理，印在每个分数旁边的来源标注质量控制总数，每个编码器按被试平均的平衡准确率与同一批时间窗上的 Welch 频带功率比较及其配对被试 bootstrap 区间，每个编码器的标识与条款，AXON 自己的数值输入检查，为什么不计算两个编码器之间的差值，局限、审计记录与不发布的内容。',
+  },
+  'dataset-checks-update.json': {
+    en: 'Four public EEG datasets checked end to end from their files. Kim beta-range SSVEP, a worked case: training-free CCA on all its participants, the mean participant accuracy with its participant-bootstrap interval against chance, the intake and how it was checked, caveats, and a hold on amplitude-dependent models. MIND, a conditional case on record IDs: CSP + LDA beside an ordinal lookup and a majority control for two stored-code pairs, record-ID resampling ranges, the label schedules, a separate secondary panel and the coverage chain. Damm and NeBULA, one-person status cases: design, counts, file facts and the arms run, with every score held. For each source its rights record, its licence statements as each source states them, its consent and ethics statements, and the holds.',
+    zh: '四个公开 EEG 数据集，从文件本身从头到尾核了一遍。Kim beta 频段 SSVEP 是完整的案例：在全部被试上运行不需要训练的 CCA，按被试平均的准确率及其被试 bootstrap 区间与随机水平的比较，数据接收及其核查方式，注意事项，以及对依赖幅值的模型的暂缓。MIND 是以记录编号为单位的有条件案例：两对存储编码上的 CSP + LDA，与按位置查表的对照和多数类对照并列，记录编号重抽样范围，标签排程，单独的次要面板与覆盖链。Damm 与 NeBULA 是单人状态案例：设计、计数、文件事实与运行过的各组，所有分数暂缓。每个数据源的权利记录、按各来源原话给出的许可声明、知情同意与伦理声明，以及暂缓项。',
+  },
 };
 
 /**
@@ -161,3 +183,5 @@ const routeExists = (path: string) =>
   [`src/pages/[...lang]${path.slice(0, -1)}.astro`, `src/pages/[...lang]${path}index.astro`].some(p => existsSync(resolve(p)));
 export const registerPageBuilt = registerServed && routeExists('/datasets/register/');
 export const modelRegisterPageBuilt = registerServed && routeExists('/methods/register/');
+/** Whether the release archive (owner decision D17, 2026-10-28) is built: the sitemap lists it only then. */
+export const releaseArchiveBuilt = routeExists('/releases/archive/');

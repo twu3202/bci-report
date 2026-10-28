@@ -14,7 +14,8 @@
 //     the caveat paragraph with exposure "unknown" and the adapter beside the result;
 //  4. the pilot count, short answer, description, dek and card unchanged in substance: none names NeuroLM or prints one
 //     of the panel's results, and the answer still counts the pilots the pilot-studies export releases;
-//  5. the cite block names the two releases the page prints; the data source names the file;
+//  5. the cite block names the pilot studies' release and each separate panel's the page prints; the data source names
+//     the file;
 //  6. every table has a header row, a table inside <details> has four or more columns; no inline script, style
 //     attribute or handler; no private path, no ICLR 2027 or OpenReview reference, no version label or update word,
 //     no ranking word outside a denial, no Jev; no number typed outside a figure except the export's own sentences;
@@ -110,9 +111,12 @@ export function checkNeurolmEegmat(distDir) {
     const desc = decode(html.match(/<meta name="description" content="([^"]*)"/)[1]);
     assert.ok(!carries(desc), `${where}: the description`);
     assert.ok(!carries(vis(el(main, /<p class="topic-dek"/, where))), `${where}: the dek`);
-    // (5) The cite block names the page's two releases; the panel names its file.
+    // (5) The cite block names the pilot studies' release and each separate panel's (since 2026-10-28 also NeuroRVQ's and
+    // the ten-second panel's), read from the page's data-counted="false" sections; the panel names its file.
     const cite = html.slice(html.indexOf('<section class="cite-page"'));
-    assert.deepEqual(cite.match(/data-releases="([^"]+)"/)[1].split(' ').sort(), [PS.release_id, X.release_id].sort(), `${where}: the cite block names the pilot studies' release and the panel's`);
+    const panels = [...own.matchAll(/<section\b[^>]*>/g)].map(m => m[0]).filter(t => /data-counted="false"/.test(t)).map(t => t.match(/data-release="([^"]+)"/)[1]);
+    assert.ok(panels.includes(X.release_id), `${where}: the NeuroLM panel names its release`);
+    assert.deepEqual(cite.match(/data-releases="([^"]+)"/)[1].split(' ').sort(), [PS.release_id, ...panels].sort(), `${where}: the cite block names the pilot studies' release and each panel's`);
     assert.ok(s.includes(`href="/data/${FILE}"`) && vis(el(s, /<p class="citation-note" data-neurolm-note="data-source"/, where)).includes(X.schema_version), `${where}: the data source names the file and its schema`);
     // (3) The arms table.
     const at1 = el(s, /<table data-neurolm-table="arms"/, where);
@@ -242,5 +246,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const dir = process.argv[2];
   if (!dir) { console.error('usage: node scripts/checks/neurolm-eegmat.mjs <build dir>'); process.exit(2); }
   const { pinned, figures } = checkNeurolmEegmat(dir);
-  console.log(`PASS: NeuroLM on EEGMAT — the separate panel #neurolm-eegmat on /topics/pilot-studies/ in both languages: ${figures} figures, every one a leaf of ${FILE} and none outside the panel, ${pinned} pinned to their cells; the same figures and typed numbers in English and Chinese; the three arms with no per-arm interval, the three paired differences with their bounds, the reused interval sentence, exposure unknown and the adapter beside the result; the pilot count, short answer, description, dek and card carrying nothing of the panel; the cite block naming both releases; licences per part, consent and the checkpoint's identity; the Markdown copy in order; the pointer on /protocols/arithmetic-rest/ alone, in words.`);
+  console.log(`PASS: NeuroLM on EEGMAT — the separate panel #neurolm-eegmat on /topics/pilot-studies/ in both languages: ${figures} figures, every one a leaf of ${FILE} and none outside the panel, ${pinned} pinned to their cells; the same figures and typed numbers in English and Chinese; the three arms with no per-arm interval, the three paired differences with their bounds, the reused interval sentence, exposure unknown and the adapter beside the result; the pilot count, short answer, description, dek and card carrying nothing of the panel; the cite block naming the pilot studies' release and each panel's; licences per part, consent and the checkpoint's identity; the Markdown copy in order; the pointer on /protocols/arithmetic-rest/ alone, in words.`);
 }

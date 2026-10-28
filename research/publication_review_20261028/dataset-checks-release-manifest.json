@@ -1,0 +1,338 @@
+{
+  "release_id": "dataset-checks-update-20261028",
+  "release_date": "2026-10-28",
+  "reviewed_at": "2026-10-28",
+  "reviewer": "publishing session, package DC",
+  "scope": "Editorial decisions for four new sections of /topics/data-quality/: Kim beta-range as a worked case (training-free as-stored CCA on all 40 participants), MIND as a conditional worked case (stored-marker CSP + LDA on record IDs, with its ordinal and majority controls and a separate secondary panel), and Damm and NeBULA as one-person status cases with design, counts, file and timing facts and no score. Every figure is read from a file this manifest pins by SHA-256; consent, ethics and terms come from this release’s A2 record. data-quality-update.json keeps its bytes. Nothing was re-run and no network was used by this package.",
+  "approval": {
+    "date": "2026-10-28",
+    "decision": "aggregate_preview",
+    "basis": "The owner’s decisions for this release, recorded in owner-decisions.json and quoted below: D14 publishes the Kim beta-range CCA baseline; D15 publishes MIND now as a conditional case on /topics/data-quality/ with record-ID wording and both licence statements; D16 keeps the one-person rule for Damm and NeBULA (design, counts, file and timing facts and holds only); D18 places the Damm and NeBULA status cases beside eldBETA with the one-person sentence stated once. D2, carried over, holds one-person scores. Every research record withholds website authority (publication_authorized false or an internal-only scope); the owner’s decisions supply it. Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+    "ownerDecisions": {
+      "path": "research/publication_review_20261028/owner-decisions.json",
+      "note": "Quoted verbatim; the export requires each quoted text to be the current value at its key, so a changed decision stops the build. The file is not pinned by hash because other packages of this release may add to it.",
+      "quoted": {
+        "D14": "All: the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33), NeuroRVQ on EEGMAT, MI and P300 (aggregate scores only, CC BY-NC, no weights), the EEG-Captioner and AXON ten-second EEGMAT probes, and the Kim beta-range CCA baseline",
+        "D15": "Publish now as a conditional case on /topics/data-quality/: record IDs, not verified people; both licence statements side by side (paper and archive CC BY 4.0, MOABB CC BY-NC 4.0); the ScienceDB terms page stated as not read",
+        "D16": "Keep the rule: design, counts, file and timing facts and holds only; the scores stay held, as for eldBETA",
+        "D18": "Damm and NeBULA status cases on /topics/data-quality/ beside eldBETA, with the one-person sentence stated once"
+      }
+    },
+    "carriedOver": {
+      "path": "research/publication_review_20261020/owner-decisions.json",
+      "note": "D2 as the 2026-10-20 record states it; the 2026-10-28 record carries it over by name.",
+      "quoted": {
+        "D2": "Status and counts only; the score is held, keeping the one-person rule (Stieger, FALCON H2)"
+      }
+    },
+    "declaredEdits": [],
+    "decisionsOfThisReview": [
+      "Release status is read from each study’s own approval and review records, never from an aggregate’s own status field: Kim from state/release-approval.json (PASS_INTERNAL_AGGREGATE_HANDOFF, binding the audit aggregate, the interpretation review and the handoff); MIND from the bound result interpretation review (APPROVED_INTERNAL_CONDITIONAL_HANDOFF, binding the aggregate, the schedule structure and the arithmetic checks) and the workflow closure, which resolve the aggregate’s pending field without editing it; Damm from state/release-approval.json; NeBULA from the EEG pilot’s release approval, the EMG intake’s release approval and the EMG pilot’s root release receipt.",
+      "Kim: the figures are read from the independent audit aggregate (b3043fb0…) and never parsed from the handoff, whose comma-grouped counts have lost their spacing. The accuracy interval is the aggregate’s difference interval plus the fixed 2.5% chance level, as the interpretation review verified; both intervals are stored at full precision.",
+      "MIND: the primary panel (record-ID mean balanced accuracy for CSP + LDA, the ordinal lookup and the majority control per stored-code pair), the four contrasts with their record-ID resampling ranges, the schedule facts of the primary panel and the coverage chain are published; the secondary panel is published separately with no interval and without its schedule census. Pooled metrics, confusion matrices, macro-F1, the secondary differences, the overfull runs’ marker counts and all accounting stay out.",
+      "Damm and NeBULA per D16 and D2: design, counts, file and timing facts, the variants and arms that were run and audited, and the holds. No score of any kind: no accuracy, balanced accuracy, difference, control value, paired count or diagnostic fraction, by key, by value and by text. No statement of how the NeBULA order diagnostic compared with EEG or EMG.",
+      "The one-person sentence is stated once, in a lead before the eldBETA, Damm and NeBULA sections; the Damm and NeBULA cases do not repeat it.",
+      "Consent, ethics and terms come only from the A2 record (consent-statements.json): quotes, committees, approval numbers, licences and gaps as recorded, each capture checked against the SHA-256 the record gives. MIND’s ethics and consent are quoted from the research intake receipt, as A2 records.",
+      "The handoffs and research records are copy and value sources only. Several name private storage, so no sentence of theirs is published verbatim; the private names the export refuses are read from them at run time.",
+      "Review fixes (package FIX DC): Kim’s sealing is stated once, in the owner’s wording, with its limit (process separation, not blinded labels, because the stored class order is known), checked against the execution approval’s reporting limits and the handoff. The hold reasons are short lines for the /releases/ holds table that name the one-person rule; the one-person reasoning is stated only in the lead sentence, and the data-quality page prints neither the hold reasons nor a second copy of it. The Damm and NeBULA text carries no comparison word (higher, lower, exceed, above or below chance, compared with, better, worse and their kin), so no held score is compared even without a number. NeBULA’s flag is order_diagnostic_comparison_published. Kim’s pre-score checks, NeBULA’s FCz reference and MIND’s “reported apart, never pooled” are each stated in one field; Kim’s hold record keeps its id and scope, its reason being the caveat as-stored-amplitudes.",
+      "NeBULA participant counts, in one field (design.participant_counts), as each source states them: the paper and the Figshare record’s description state 40 participants; the record’s files hold 39 participant archives (counted from the research intake’s file manifest, which lists the same files as the A2 capture); MOABB’s catalogue lists 39. The hold on the other participants carries no count."
+    ],
+    "conflictsReported": [
+      "MIND terms. D15 and plan section 2.4 say the ScienceDB record’s own terms were not read. The A2 capture of the ScienceDB record page (one request) shows CC BY-NC 4.0 in the page’s schema.org metadata for record version 4.0.0. This export states all four statements side by side (paper and archive dataset description CC BY 4.0; MOABB adapter and the ScienceDB record metadata CC BY-NC 4.0) and states that ScienceDB’s terms-of-use page was not read. The owner’s wording is needed before deployment.",
+      "NeBULA Zenodo. Plan section 2.4 treats Zenodo 13627307 as the same dataset family with readable terms. A2 found it is not a registered public record (Zenodo API, record page, DataCite and doi.org all 404); it is named only in the files’ own dataset description. The export names it with that status and does not link it as a record.",
+      "Kim record version. The paper’s Data availability links Figshare version 2; the research used version 3, the latest. Both carry CC BY 4.0. The export pins version 3 and states the paper’s citation of version 2.",
+      "Damm consent. Plan section 2.4 asks for the consent statement or the gap; A2 found no consent statement in the dataset files or metadata and no paper named, so consent is stated as a gap.",
+      "NeBULA participant count. The paper and the Figshare record’s description state 40 participants (paper: “We enlisted 40 healthy participants”, subject IDs 1 to 40); the record’s files hold 39 participant archives, one ID in that range having none; MOABB and the live open register list 39. The export states all three counts side by side and no longer derives “the other 39 published participants” from the 40. The register row can keep MOABB’s 39, which equals the files’ count."
+    ]
+  },
+  "sources": {
+    "kimAggregate": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/review/independent_audit/Kim_Independent_Audit_Aggregate.json",
+      "sha256": "b3043fb059da18d94cbf423a5f0c0c40a266a63ef6f13f3d5b7f165eebab60de",
+      "note": "The approved aggregate: mean participant accuracy, chance, difference and its participant-bootstrap interval. Its execution receipt and private hashes are not published."
+    },
+    "kimReleaseApproval": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/state/release-approval.json",
+      "sha256": "93e4ac9ed5bfe632e464ead0ddf3543d95e928b02e4d3dfd210fc2d54bf1600c",
+      "note": "Release status: binds the aggregate, the interpretation review and the handoff."
+    },
+    "kimInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/review/interpretation-review.json",
+      "sha256": "5a493f015f16e9dff27fc1c04862d58838d5d49d99be7c8b877c2460b7986c0b"
+    },
+    "kimFinalApproval": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/review/Kim Final Bound Execution Approval.json",
+      "sha256": "b9794962d85e35e03a2ff262a25f4c295befeef121772ac98b5cd8245f0a10fd"
+    },
+    "kimGateReview": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/review/Kim Scale Invariant CCA Gate Review.json",
+      "sha256": "a30b51496f2a8beb52d5c53d225f31a04eecbf903209ebfd831323f7c9f9645c"
+    },
+    "kimBinding": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/evaluation/binding.json",
+      "sha256": "f470c79635929d1635c1475a4fbcbdcb5023efd512504f71cd0a7953dc923edc",
+      "note": "The scientific binding the aggregate names; it pins the protocol, the asset manifest and the schema record."
+    },
+    "kimProtocol": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/evaluation/protocol.json",
+      "sha256": "c35fdf87b835a6144964bc751828f7e80550a2742f57919331536cff9d6e31aa"
+    },
+    "kimAssetManifest": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/evaluation/manifest.json",
+      "sha256": "0c03688866a6fd567cb908baa5ad158d43ea703045a7646167993c0e0dc8b5d1",
+      "note": "Supplied and computed MD5 per task file; only the counts are published."
+    },
+    "kimSchema": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/evaluation/schema.json",
+      "sha256": "a1206a9361a806ec4cfab27f67f361ffc71a2ab37b45df31c421ca6341464f0a",
+      "note": "The first participant’s schema record: stored frequency order and epoch bounds; its stored-value ranges are not published."
+    },
+    "kimSourceEvidence": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/Kim Source and Execution Evidence.json",
+      "sha256": "f1a27c839a8407fbd3bf5ec8081e0fddfc90931f74519da6a0fb428a4b27b5b0",
+      "note": "Paper, author script and MOABB adapter findings; names a private row file."
+    },
+    "kimAuditReadiness": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/review/independent_audit/readiness.json",
+      "sha256": "58475adb25a7e4011d165fa71cd766d30d9ba1cc4a15af228d60ea5b75cc26b9",
+      "note": "The fixed fixture design of the independent audit; the fixture identities are not published."
+    },
+    "kimHandoff": {
+      "path": "research/autonomous_validation_20261026/kim_betarange/Kim Beta-Range SSVEP Results Handoff.md",
+      "sha256": "5dac922bdc98121183a5f79b251eec597659cbb9495c4268d54b079c4ca31956",
+      "note": "Copy source only; names private storage."
+    },
+    "mindAggregate": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/MIND V4 Audited Aggregate.json",
+      "sha256": "ff43f57febaa21e2e5e48dc8ff5095dd856ba1fed18de80278b76bb7b0f77ef7",
+      "note": "Read unchanged; its pending-review field is resolved by the bound interpretation review. Its pooled metrics, confusion matrices, accounting and secondary differences are not published."
+    },
+    "mindInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/review/Result Interpretation Review.json",
+      "sha256": "8fd28353b6d8e98d8fc210675c498d2f9b053a951ca5e79c2fa185b3a60af98c"
+    },
+    "mindArithmeticChecks": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/review/Result Arithmetic and Binding Checks.json",
+      "sha256": "6d3532b3a0a9baa958b66bd4d79e26a3bafb8be5ea78302bd0308dd0adb3ff59"
+    },
+    "mindScheduleStructure": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/Frozen Ordinal Schedule Structure.json",
+      "sha256": "0df417452495f338a840ae5607b93b172ffffe5889120c2e91fa44467d1c2481",
+      "note": "The primary schedule facts are published; the secondary census is not."
+    },
+    "mindWorkflowClosure": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/MIND V4 Workflow Closure.json",
+      "sha256": "1cfcf25e1e9611dc2ffc5922337d52cb8e755d8854b2e72691ef0ca4dab531ee"
+    },
+    "mindProtocol": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/baseline/Frozen Conditional Stored-Marker Protocol.json",
+      "sha256": "e642711eb6453d9907765135b0cb55a3521965617e1e31d3c60b87b883e6dbc9",
+      "note": "Processing facts; carries record identifiers and private paths, never published."
+    },
+    "mindHandoff": {
+      "path": "research/autonomous_validation_20261026/mind_v4_analysis_20261028/results/MIND V4 Conditional Stored-Marker Baseline Handoff.md",
+      "sha256": "93f5a5d2887f67d56fdd097828a15ef9aa2bf3d94fa9ce4e7b74637f810a6ba4",
+      "note": "Copy source only; names private storage."
+    },
+    "mindIntakeReceipt": {
+      "path": "research/autonomous_validation_20261026/mind_v4_intake_20261028/Public Metadata Receipt.json",
+      "sha256": "668114a22191068485572b9e32242be66977afbe0511f5a7b1f9d46af33ddfcb",
+      "note": "The research intake’s transcript of the arXiv page; A2 quotes ethics, consent and the paper licence from it."
+    },
+    "mindAdapter": {
+      "path": "research/autonomous_validation_20261026/scans/datasets/mind_adapter.txt",
+      "sha256": "7dd89f01c401438ac4a11886e656509c2325b343276d7fb01a58eb27ecbf6e2b",
+      "note": "The MOABB adapter source; its licence field."
+    },
+    "dammHandoff": {
+      "path": "research/autonomous_validation_20261026/damm/Damm Conditional Held-Run Pilot Handoff.md",
+      "sha256": "b6a8984f3d56c96feb34089cd9fc8f314d810fd32bcfb26b0d80be348b2d477d",
+      "note": "Copy source only; names private storage and carries the held scores."
+    },
+    "dammReleaseApproval": {
+      "path": "research/autonomous_validation_20261026/damm/state/release-approval.json",
+      "sha256": "913f9bb8cbff33d2f632289c6e5f8dc6ce2514c6aa368d3b5e2d5c0b616dbc82"
+    },
+    "dammInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/damm/review/interpretation-review.json",
+      "sha256": "1b5833084f6a4aab8a43b10ba749960d9fcbc7d847b07c1095c9fc3d8281471c"
+    },
+    "dammProtocol": {
+      "path": "research/autonomous_validation_20261026/damm/evaluation_candidate/Prospective Protocol.json",
+      "sha256": "89f2f0f4ac2d8f4f0690c57d65f891f70431888dfe5c6de4d2390734d316f8e6",
+      "note": "Design, channels, windows and variants; names private storage."
+    },
+    "dammScopeAdjudication": {
+      "path": "research/autonomous_validation_20261026/damm/review/Conditional Scientific Scope Adjudication.json",
+      "sha256": "73787c726bcec3cb7b0fb2e2aafd75427537d60c8a191d6f84f62e25efc1d2bd"
+    },
+    "dammExecutionReview": {
+      "path": "research/autonomous_validation_20261026/damm/review/Independent Pilot Execution Review.json",
+      "sha256": "3fe43104ffa0deefbefa1ab4a0974d544d77cd962a8770ca8c645d406beed54a"
+    },
+    "dammIntakeQc": {
+      "path": "research/autonomous_validation_20261026/damm/state/Private Schema Intake Aggregate QC.json",
+      "sha256": "427f770a66a0904ec5a75bbe1c6ff6709f502a392c71f85fa5de339839ff48ad"
+    },
+    "nebulaEegHandoff": {
+      "path": "research/autonomous_validation_20261026/nebula/NeBULA Conditional EEG Pilot Handoff.md",
+      "sha256": "33c3b533fadd1e34f18ea221dceb259a2bac8721d8156fc6675a8d1b2f8b519a",
+      "note": "Copy source only; names private storage and carries the held scores."
+    },
+    "nebulaEegReleaseApproval": {
+      "path": "research/autonomous_validation_20261026/nebula/state/release-approval.json",
+      "sha256": "9ce592d2d602882a3676c42023e91e9cade8bce972fe0a3b040a5b11508da007"
+    },
+    "nebulaEegInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/nebula/review/interpretation-review.json",
+      "sha256": "66bb5b814edad67be81bf05c1fd6e3e88f44934e328cdef5746aa2b1f9e766d3"
+    },
+    "nebulaEegProtocol": {
+      "path": "research/autonomous_validation_20261026/nebula/evaluation_recovery1/Prospective Protocol.md",
+      "sha256": "860e7046657a580ab4d842061a79d1e0d31f1d463dae1f696aa73a55f393ef5c"
+    },
+    "nebulaBoundaryAdjudication": {
+      "path": "research/autonomous_validation_20261026/nebula/review/Boundary Tie Engineering Adjudication.json",
+      "sha256": "446ca4e5a85566ecbae53607f3fc53a9473402f2358455e1d372211a8d495ce9"
+    },
+    "nebulaBoundaryAggregate": {
+      "path": "research/autonomous_validation_20261026/nebula/evaluation_recovery1/Failed Attempt Metadata Boundary Aggregate.json",
+      "sha256": "c46d2bb76679b1b08043c8df92a26c5fd7127b0aeb4cfb1682058a5b028abfd2",
+      "note": "Marker boundaries and EEG sample counts per run; the per-run counts are not published."
+    },
+    "nebulaIntakeQc": {
+      "path": "research/autonomous_validation_20261026/nebula/state/Private Schema Intake Aggregate QC.json",
+      "sha256": "b0a69350c7734dffe3afc5328fe9da7f873f1585394f70c9caa8a797cdd4101a"
+    },
+    "nebulaEmgIntakeHandoff": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/NeBULA EMG Structure and Event Intake Handoff.md",
+      "sha256": "0eaa65fd12a567354e9844147b7332ba8737e11c0bdb976c3842474a29990453",
+      "note": "Copy source only; names private storage."
+    },
+    "nebulaEmgIntakeReleaseApproval": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/review/release-approval.json",
+      "sha256": "cd00dec43cb3461b221bed95cc1ebf9d8f78dc375e4737b2c04934f8362a5378"
+    },
+    "nebulaEmgIntakeInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/review/Intake Handoff Interpretation Review.json",
+      "sha256": "a22a2add9c3c217b5c47b8c7a24427fc4b5809b178e02f708dc0fb0fc4418431"
+    },
+    "nebulaEmgReceipt": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/Structure Event Native Receipt.json",
+      "sha256": "b360511ef6722e8959369eef17831e7bac31e1118ca0a0ba140a3d502211cc26",
+      "note": "Rows, widths, markers and ties per run; the per-run widths are not published."
+    },
+    "nebulaEmgAdmission": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/review/Structure Event Result Admission.json",
+      "sha256": "6234571848b2c6957adb7cbe1d19b3b2fa6cc94e9c360a70d42b1fe3563a44ed"
+    },
+    "nebulaEmgMetadata": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_metadata_followup_20261026/Metadata_Aggregate.json",
+      "sha256": "245c98c848790e57e2c74987a478a12579d567ea243a9fe14b4c0b3fb453aa29",
+      "note": "The EMG JSON channel count and the channel table; names private storage."
+    },
+    "nebulaEmgPilotHandoff": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_pilot_20261027/NeBULA Conditional EMG and Fusion Pilot Results Handoff.md",
+      "sha256": "18301ea5aca892fd9516c8334a13961d9c6f12b3edbe7e6fb415a13fddd189b9",
+      "note": "Copy source only; carries the held scores."
+    },
+    "nebulaEmgPilotProtocol": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_pilot_20261027/Frozen Scientific Protocol.json",
+      "sha256": "818000075ed2c6598f9d95c73573d3c892b6848c984d6e37c184453d14ef513c"
+    },
+    "nebulaEmgPilotInterpretationReview": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_pilot_20261027/review/Result Interpretation Review.json",
+      "sha256": "f8711564754e435086d11d470674666e3e7f401e06c2c2546aa52755afab5995"
+    },
+    "nebulaEmgPilotReleaseReceipt": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_pilot_20261027/review/Root Release Receipt.json",
+      "sha256": "68374609bc3c8b6bd9d731e0f973a95b3849a55548d29f60ad3b00f5b81e80e0"
+    },
+    "nebulaFileManifest": {
+      "path": "research/autonomous_validation_20261026/scans/datasets/nebula_manifest.txt",
+      "sha256": "131396c8877c77fca6125751f491e83fa0be108d91722333fee4bc453b3899c8",
+      "note": "The research intake’s copy of the Figshare 27301629 file list (version 1): the participant archives the record holds are counted from it, and it must list the same files as the A2 capture of the record. File names and sizes are not published."
+    },
+    "moabbCatalog": {
+      "path": "research/moabb_expansion_20261019/evidence/moabb-catalog.json",
+      "sha256": "bb6ecaf38505b585b3417196d8cfa54556fececb4bede58b7a5317f77c03aada",
+      "note": "The MOABB catalogue snapshot the open register reads; its NeBULA2025 row gives the participant count MOABB lists."
+    }
+  },
+  "withheldReference": {
+    "dammAudit": {
+      "path": "research/autonomous_validation_20261026/damm/review/result_audit/Independent Private Result Audit.json",
+      "sha256": "032ca634548f13d14c8d341e09c6643c4610275ce55668e242d804d81d8cd534",
+      "note": "Holds the held one-participant scores and confusion matrices; read only to prove that none reaches the served file, and for its trial, channel and variant counts."
+    },
+    "nebulaEegAudit": {
+      "path": "research/autonomous_validation_20261026/nebula/review/result_audit/Independent Private Result Audit.json",
+      "sha256": "25b8e0dc3d2a9fcf45ed89483a8f33d726d77da65cde86caa0678162b1553614",
+      "note": "Holds the held EEG scores; read only to prove that none reaches the served file, and for its trial, channel and fit counts."
+    },
+    "nebulaEmgPilotAggregate": {
+      "path": "research/autonomous_validation_20261026/nebula/emg_pilot_20261027/review/results/Independent Numerical Audit Aggregate Results.json",
+      "sha256": "fe2081d9e68076574ffda3ae5e5ca9984cd2262378a8bb4cac69b63b76e42a17",
+      "note": "Holds the held EMG and fusion scores and paired counts; read only to prove that none reaches the served file."
+    }
+  },
+  "consent": {
+    "statements": {
+      "path": "research/publication_review_20261028/evidence/consent-statements.json",
+      "sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+      "note": "Package A2 of this release. Each capture it cites is checked against the SHA-256 the record gives; the captures sit in the git-ignored evidence folder."
+    }
+  },
+  "published": {
+    "dataQuality": {
+      "path": "site/src/data/data-quality-update.json",
+      "sha256": "fbfb8fb59dc80397d0c4331a3067cf640b27522af6687dd5b3132c8f4e928bda",
+      "note": "Released 2026-10-20; keeps its bytes. Its SHA-256 must equal the export_sha256 of the 2026-10-20 export audit."
+    },
+    "dataQualityExportAudit": {
+      "path": "research/publication_review_20261020/data-quality-export-audit.json",
+      "sha256": "8ec5d0bd7f7c40b231bb71997ac8516f873dab2e1238d883754f0ab561840e42"
+    },
+    "dataQualityManifest": {
+      "path": "research/publication_review_20261020/data-quality-release-manifest.json",
+      "sha256": "57d38a4f89486fec7edce50825d7ac977af25cfae035bb9bda9a6393aca4e005"
+    }
+  },
+  "releaseRecord": {
+    "date": "2026-10-28",
+    "decision": "Publish four dataset checks on the data-quality page: Kim beta-range’s training-free CCA baseline on all 40 participants, MIND’s stored-marker baseline as a conditional case on record IDs, and Damm and NeBULA as one-person status cases with no score.",
+    "kim": "Worked case: mean participant accuracy with its participant-bootstrap interval against the fixed chance of 40 targets; amplitude-dependent models on these files stay held.",
+    "mind": "Conditional worked case: CSP + LDA beside an ordinal lookup and a majority control for each stored-code pair, with record-ID resampling ranges and the label-schedule facts; a separate secondary panel with no interval.",
+    "damm": "Status case: design, counts, file and timing facts and the eight variants run; the scores are held.",
+    "nebula": "Status case: design, counts, file facts for the EEG and EMG files, and the EEG, EMG and EEG plus EMG arms run; the scores are held.",
+    "placement": "Four sections on /topics/data-quality/ after Shin2022 and before ZuCo 2.0, outside every leaderboard and the core matrix; the one-person sentence once, before eldBETA, Damm and NeBULA; a dataset page for Kim beta-range with no method link."
+  },
+  "notPublished": [
+    "Values per person, per record ID, per fold, per run or per trial: identifiers, file and run names, fold assignments, features, fitted models, decision values and predictions; raw signals from any of the four datasets.",
+    "Every Damm and NeBULA score: accuracies, balanced accuracies, control values, differences, paired correctness counts and diagnostic fractions, held by the owner’s decision under the one-person rule; and any comparison of NeBULA’s order diagnostic with its EEG or EMG arms.",
+    "MIND’s pooled metrics, confusion matrices and macro-F1, the secondary panel’s schedule census and differences, the overfull runs’ marker counts and the model-fit counts.",
+    "Kim’s per-participant accuracies, the fixture identities of the independent audit and the stored-value ranges of the schema record.",
+    "Compute times, CPU and memory accounting, storage sizes, hosts and storage locations.",
+    "The research aggregates, audits, reviews, protocols and handoffs themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because several carry private storage paths."
+  ],
+  "holds": [
+    {
+      "id": "kim-amplitude-dependent-models",
+      "case": "kim2025-beta-range",
+      "state": "held",
+      "reason": "Amplitude units, channel gains and the saved reference history are not established, so models whose output depends on amplitude are held on these files."
+    },
+    {
+      "id": "damm-one-participant-score",
+      "case": "damm",
+      "state": "score held",
+      "reason": "One participant; scores held under the site’s one-person rule."
+    },
+    {
+      "id": "nebula-one-participant-scores",
+      "case": "nebula",
+      "state": "scores held",
+      "reason": "One participant; EEG, EMG and EEG plus EMG scores held under the site’s one-person rule."
+    }
+  ]
+}

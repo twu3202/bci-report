@@ -1,4 +1,4 @@
-"""Acceptance tests for the open register builder (packages B8a and B8b).
+"""Acceptance tests for the open register builder (packages B8a and B8b of 20261020; package R5 of 20261028).
 
     python3 -m unittest pipeline/publication/test_open_register.py
 
@@ -16,8 +16,15 @@ gaps; the rows the package names are present (IESSEEG, eldBETA with its score he
 MOABB's catalog counts); the alpha-waves finding is sourced; merged external rows are aliases of their site rows; the
 step words are the pages'; the manifest the file names is the one on disk; the model rows cover /methods/; each
 step's evidence lists an item once per public source; the CSV's host is the record's repository, never the DOI
-resolver. Class SiteHolds: the eldBETA and ZuCo 2.0 holds are in the site rows with their sources, and the served file
-declares and attaches exactly the ones site/src/data/open-register.ts words.
+resolver. Class SiteHolds: the site holds (eldBETA, ZuCo 2.0, and this round's Kim beta-range, Damm and NeBULA) are in
+the site rows, row by row with their hold ids and sources, and the served file declares and attaches exactly the ones
+site/src/data/open-register.ts words.
+
+The 20261028 version (class Round20261028): a new dated file beside the 20261020 one, which stays served byte for byte;
+four MOABB record groups fold into the dataset checks' site rows at step 4 (Kim beta-range published with its amplitude
+hold, MIND published with its terms and version gaps, Damm and NeBULA with their scores held), every value of the A3 census
+re-read; NeuroRVQ, EEG-Captioner and AXON at step 4 linking their panels; FAME, EEG-PRIME, STST-JEPA, BandVQ and USE-FM at
+step 1 with holds; the counts the plan expects; the thread commenter never named (read through blocks_cca.REFUSED_TEXT).
 """
 from __future__ import annotations
 
@@ -36,9 +43,10 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 import export_open_register as X  # noqa: E402
-from register_findings import (FindingError, SITE_HOLD_REASONS, comparison_allowed, finding,  # noqa: E402
+from register_findings import (FindingError, SITE_HOLD_REASONS, SITE_HOLDS, comparison_allowed, finding,  # noqa: E402
                                schema as finding_schema, validate)
 from register_ids import IdMap  # noqa: E402
+from ssvep_followups import blocks_cca  # noqa: E402
 
 EXT = json.loads(X.EXTERNAL_OUT.read_text())
 SITE = json.loads(X.SITE_OUTS[0].read_text())
@@ -164,7 +172,8 @@ class Population(unittest.TestCase):
                 'Rodrigues2017': 'alpha-waves', 'Yang2025': 'wbcic-shu', 'BNCI2014_001': 'bnci2014-001',
                 'BNCI2014_004': 'bnci2014-004', 'BNCI2014_008': 'bnci2014-008', 'BNCI2014_009': 'bnci2014-009',
                 'PhysionetMI': 'physionet-eegmmidb', 'Shin2022': 'shin2022', 'Liu2022EldBETA': 'eldbeta',
-                'Stieger2021': 'stieger-longitudinal'}
+                'Stieger2021': 'stieger-longitudinal', 'Kim2025BetaRange': 'kim2025-beta-range', 'MIND2026': 'mind2026',
+                'Damm2026': 'damm-finger-imagery', 'NeBULA2025': 'nebula'}
         for e in merged:
             self.assertIn(f'r-site-{e["merge_into"]}', site_ids)
         for loader, slug in must.items():
@@ -174,8 +183,9 @@ class Population(unittest.TestCase):
         self.assertEqual(bi['status'], 'planned')
         self.assertNotIn('merge_into', bi)
         self.assertEqual(bi['terms_as_stated']['value'], 'Creative Commons Attribution 1.0 Generic')
+        # The catalog holds; Kim2025BetaRange's onset-timing hold left with its row, which folds into its site row (20261028).
         for loader, code in (('Liu2024', 'released_ids_duplicated'), ('Schrag2026Pediatric', 'targets_stored_with_outputs'),
-                             ('Hinss2021', 'deposits_differ'), ('Kim2025BetaRange', 'onset_timing_unresolved'),
+                             ('Hinss2021', 'deposits_differ'),
                              ('Dreyer2023', 'release_family_unchecked'), ('Alawieh2025', 'one_offline_session')):
             e = next(x for x in rows if loader in x['moabb']['loaders'])
             self.assertIn({'code': 'hold', 'params': {'reason_code': code}}, e['findings'], loader)
@@ -200,7 +210,9 @@ class Population(unittest.TestCase):
     def test_model_rows(self):
         rows = {e['id']: e for e in EXT['entries'] if e['ladder'] == 'model'}
         want = {'neurolm-b', 'zuna', 'eeg-fm-masking', 'diver-1', 'popt', 'omnimouse', 'biox-bridge', 'poyo-plus',
-                'poyo-cap', 'neuroformer', 'brainlm'}
+                'poyo-cap', 'neuroformer', 'brainlm',
+                # 20261028: three models scored here (D14, D19) and five identified in the 2026-10-25 refresh (D26).
+                'neurorvq', 'eeg-captioner', 'axon', 'fame', 'eeg-prime', 'stst-jepa', 'bandvq', 'use-fm'}
         self.assertEqual(set(rows), {f'r-model-{s}' for s in want})
         n = rows['r-model-neurolm-b']
         self.assertEqual((n['level'], n['exposure']), (4, 'unknown'))
@@ -561,7 +573,7 @@ class Structure(unittest.TestCase):
     def test_site_file_shape(self):
         self.assertEqual(X.SITE_OUTS[0].read_bytes(), X.SITE_OUTS[1].read_bytes())
         self.assertEqual(SITE['status'], 'frozen')
-        self.assertEqual(SITE['release_id'], 'open-register-update-20261020')
+        self.assertEqual(SITE['release_id'], 'open-register-update-20261028')
         for e in SITE['entries']:
             self.assertNotIn('merge_into', e)
             for k in ('id', 'ladder', 'group', 'kind', 'name', 'aliases', 'source_groups', 'urls', 'terms_as_stated',
@@ -571,7 +583,8 @@ class Structure(unittest.TestCase):
             self.assertEqual(set(e['step_evidence']), {'1', '2', '3', '4', '5'})
             self.assertIn(e['status'], SITE['vocab']['status'])
         site_rows = {e['id'] for e in SITE['entries'] if e['group'] == 'site'}
-        for slug in ('iesseeg', 'eldbeta', 'zuco2', 'lfame', 'shin2022', 'beta'):
+        for slug in ('iesseeg', 'eldbeta', 'zuco2', 'lfame', 'shin2022', 'beta', 'kim2025-beta-range', 'mind2026',
+                     'damm-finger-imagery', 'nebula'):
             self.assertIn(f'r-site-{slug}', site_rows)
         hf_rows = [e for e in SITE['entries'] if e['group'] == 'hf']
         self.assertEqual(len(hf_rows), EXT['counts']['hf']['single_rows'] + EXT['counts']['hf']['family_rows'])
@@ -593,7 +606,9 @@ class Structure(unittest.TestCase):
                           ('r-site-mobile-bci', 'NEMAR'), ('r-site-gait-eeg', 'PhysioNet'), ('r-site-openbmi', 'GigaDB'),
                           ('r-site-forenzo-continuous-tracking', 'KiltHub'), ('r-site-rabut-fus', 'CaltechDATA'),
                           ('r-site-eldbeta', 'Figshare'), ('r-site-ds003810', 'OpenNeuro'), ('r-site-alpha-waves', 'Zenodo'),
-                          ('r-site-iesseeg', 'Hugging Face')):
+                          ('r-site-iesseeg', 'Hugging Face'), ('r-site-kim2025-beta-range', 'Figshare'),
+                          ('r-site-mind2026', 'ScienceDB'), ('r-site-damm-finger-imagery', 'OpenNeuro'),
+                          ('r-site-nebula', 'Figshare')):
             self.assertEqual(host[rid], want, rid)
         self.assertEqual(X._host({'group': 'moabb', 'urls': {'record': 'https://doi.org/10.9999/unknown'},
                                   'moabb': {'repository': None}}), '')
@@ -616,14 +631,42 @@ def items_of(e):
     return {(int(k), it['item']): it['state'] for k, b in e['step_evidence'].items() for it in b.get('items', [])}
 
 
+PREV_ROWS = {e['id']: e for e in json.loads(X.PREV_SERVED[0].read_text())['entries']}
+PREV_CHECKED = {k: e['checked'] for k, e in PREV_ROWS.items()}
+
+
 class Freeze(unittest.TestCase):
+    def test_checked_is_the_day_the_evidence_was_checked(self):
+        # A row the 20261020 file holds unchanged in every other field keeps that file's date: the freeze re-read its
+        # census values and checked nothing new. A new or changed row carries the freeze day or its own evidence date.
+        day = f'{X.D[:4]}-{X.D[4:6]}-{X.D[6:]}'
+        rest = lambda e: {k: v for k, v in e.items() if k != 'checked'}
+        kept = new = 0
+        for e in SITE['entries']:
+            p = PREV_ROWS.get(e['id'])
+            if p is not None and rest(p) == rest(e):
+                self.assertEqual(e['checked'], p['checked'], e['id'])
+                kept += p['checked'] == f'{X.PREV[:4]}-{X.PREV[4:6]}-{X.PREV[6:]}'   # stamped with that version's freeze day
+            elif e['group'] == 'site' or e.get('kind') == 'site_model':
+                self.assertEqual(e['checked'], day, e['id'])
+                new += 1
+            self.assertLessEqual(e['checked'], day, e['id'])
+        for rid in ('r-site-shin2022', 'r-site-eldbeta', 'r-site-zuco2', 'r-site-iesseeg', 'r-model-eegpt'):
+            self.assertEqual(SITE['entries'][[x['id'] for x in SITE['entries']].index(rid)]['checked'], PREV_CHECKED[rid], rid)
+        for rid in ('r-site-kim2025-beta-range', 'r-site-mind2026', 'r-site-damm-finger-imagery', 'r-site-nebula'):
+            self.assertEqual(next(x for x in SITE['entries'] if x['id'] == rid)['checked'], day, rid)
+        self.assertEqual(json.loads(MANIFEST.read_text())['rules']['checked_kept_from_previous'], kept)
+        self.assertGreater(kept, 0)
+
     def test_reread_clean_and_census_pinned(self):
         rr = FROZEN['reread']
         self.assertEqual(rr['mismatches'], [])
         self.assertEqual(rr['unresolved'], [])
         self.assertGreater(rr['values_checked'], 500)
         self.assertTrue(rr['a3']['unchanged'])
+        self.assertTrue(rr['a3_20261028']['unchanged'])
         self.assertEqual(FROZEN['census']['sha256'], X.sha(X.INPUTS['a5'].read_bytes()))
+        self.assertEqual(FROZEN['census_supplement']['sha256'], X.sha(X.INPUTS['a3_census'].read_bytes()))
         self.assertEqual(FROZEN['freeze'], X.D)
 
     def test_site_rows_are_the_frozen_rows(self):
@@ -632,8 +675,10 @@ class Freeze(unittest.TestCase):
         self.assertEqual(set(site), set(frozen))
         for rid, r in frozen.items():
             e = site[rid]
-            for k in ('name', 'level', 'status', 'links', 'terms_as_stated', 'access', 'checked'):
+            for k in ('name', 'level', 'status', 'links', 'terms_as_stated', 'access'):
                 self.assertEqual(e[k], r[k], (rid, k))
+            # The checked date: the freeze day, or the earlier file's date for a row it holds unchanged (carry_checked).
+            self.assertIn(e['checked'], (r['checked'], PREV_CHECKED.get(rid)), rid)
             self.assertEqual(e['gaps'], r['gaps'], rid)
             self.assertEqual({(int(k), i['item'], i['state']) for k, b in e['step_evidence'].items() for i in b['items']},
                              {(int(k), i['item'], i['state']) for k, b in r['step_evidence'].items() for i in b['items']}, rid)
@@ -747,7 +792,7 @@ class Freeze(unittest.TestCase):
         self.assertEqual(prov['site_rows_sha256'], X.sha(X.SITE_ROWS.read_bytes()))
         self.assertEqual(prov['external_sha256'], X.sha(X.EXTERNAL_OUT.read_bytes()))
         man = json.loads(MANIFEST.read_text())
-        self.assertEqual(man['release_id'], 'open-register-update-20261020')
+        self.assertEqual(man['release_id'], 'open-register-update-20261028')
         for label, pin in man['sources'].items():
             self.assertEqual(X.sha((X.PROJECT / pin['path']).read_bytes()), pin['sha256'], label)
         self.assertEqual(man['freeze']['mismatches'], [])
@@ -789,7 +834,7 @@ class Freeze(unittest.TestCase):
 
 
 class SiteHolds(unittest.TestCase):
-    """The holds on eldBETA and ZuCo 2.0: always in the site rows, served once the page words their reason codes."""
+    """The site holds, row by row: always in the site rows, served once the page words their reason codes."""
     WORDS = ("const holdReason: Record<string, T> = {\n"
              "  weights_licence_not_found: { en: 'Held: no licence found for the weights.', zh: '暂缓：没有找到权重的许可。' },\n"
              "  converted_run_timing: { en: 'Held: in one converted run, some fixation times fall outside the recording.',\n"
@@ -797,15 +842,24 @@ class SiteHolds(unittest.TestCase):
              "  one_person_score: { en: 'Held: with one person, every score is that person’s.', zh: '' },\n"
              "};\n")
 
-    def test_site_rows_carry_both_holds_with_their_sources(self):
-        rows = {r['slug']: r for r in FROZEN['datasets']}
-        for slug, code in (('eldbeta', 'one_person_score'), ('zuco2', 'converted_run_timing')):
-            holds = [f for f in rows[slug]['findings'] if f['code'] == 'hold']
-            hold_id = SITE_HOLD_REASONS[code]
+    PAYLOAD = {'r-site-eldbeta': 'data-quality-update.json', 'r-site-zuco2': 'data-quality-update.json',
+               'r-site-kim2025-beta-range': 'dataset-checks-update.json', 'r-site-damm-finger-imagery': 'dataset-checks-update.json',
+               'r-site-nebula': 'dataset-checks-update.json'}
+
+    def test_site_rows_carry_every_hold_with_its_sources(self):
+        rows = {f'r-site-{r["slug"]}': r for r in FROZEN['datasets']}
+        self.assertEqual(set(SITE_HOLDS), set(self.PAYLOAD))
+        for rid, (code, hold_id) in SITE_HOLDS.items():
+            holds = [f for f in rows[rid]['findings'] if f['code'] == 'hold']
+            self.assertEqual(SITE_HOLD_REASONS[code][rid], hold_id)
             self.assertEqual(holds, [{'code': 'hold', 'params': {'reason_code': code},
                                       'sources': [f'site/src/data/releases.ts#holds[id={hold_id}]',
-                                                  f'site/src/data/data-quality-update.json#holds[id={hold_id}]']}], slug)
+                                                  f'site/src/data/{self.PAYLOAD[rid]}#holds[id={hold_id}]']}], rid)
             validate(holds)
+        # One reason holds three rows, each under its own hold id.
+        self.assertEqual(set(SITE_HOLD_REASONS['one_person_score']),
+                         {'r-site-eldbeta', 'r-site-damm-finger-imagery', 'r-site-nebula'})
+        self.assertEqual(len(set(h for _, h in SITE_HOLDS.values())), len(SITE_HOLDS))
 
     def test_words_are_read_from_the_page_module(self):
         with tempfile.TemporaryDirectory() as d:
@@ -829,9 +883,8 @@ class SiteHolds(unittest.TestCase):
                     self.assertIn(f['params']['reason_code'], declared, e['id'])
         man = json.loads(MANIFEST.read_text())['site_holds']
         self.assertEqual(set(man['worded_on_site']), worded)
-        self.assertEqual(set(man['withheld_until_worded']),
-                         {f'r-site-{s}:{c}' for s, c in (('eldbeta', 'one_person_score'), ('zuco2', 'converted_run_timing'))
-                          if c not in worded})
+        self.assertEqual(set(man['withheld_until_worded']), {f'{r}:{c}' for r, (c, _) in SITE_HOLDS.items() if c not in worded})
+        self.assertEqual({k: tuple(v) for k, v in man['rows'].items()}, SITE_HOLDS)
         with self.assertRaises(FindingError):
             finding_schema({'not_a_site_hold'})
 
@@ -849,10 +902,151 @@ class SiteHolds(unittest.TestCase):
         rows = {e['id']: e for e in site['entries']}
         self.assertEqual([f['params'] for f in rows['r-site-zuco2']['findings']], [{'reason_code': 'converted_run_timing'}])
         self.assertIn({'reason_code': 'one_person_score'}, [f['params'] for f in rows['r-site-eldbeta']['findings']])
-        for rid in ('r-site-zuco2', 'r-site-eldbeta'):
+        for rid in SITE_HOLDS:
             hold = next(f for f in rows[rid]['findings'] if f['code'] == 'hold')
+            self.assertEqual(hold['params'], {'reason_code': SITE_HOLDS[rid][0]})
             self.assertTrue(all(s.startswith('site/src/data/') for s in hold['sources']), rid)
             validate(rows[rid]['findings'])
+
+
+A3C = json.loads(X.INPUTS['a3_census'].read_text())
+DC = json.loads(X.INPUTS['dataset_checks_update'].read_text())
+
+
+class Round20261028(unittest.TestCase):
+    """The 20261028 version: the 20261020 files unchanged, the four dataset checks, the eight model rows, the counts."""
+    NEW_SITE = {'r-site-kim2025-beta-range': ('r-moabb-0071', 'Kim2025BetaRange', 'published'),
+                'r-site-mind2026': ('r-moabb-0095', 'MIND2026', 'published'),
+                'r-site-damm-finger-imagery': ('r-moabb-0048', 'Damm2026', 'score_held'),
+                'r-site-nebula': ('r-moabb-0106', 'NeBULA2025', 'score_held')}
+
+    def test_previous_version_served_unchanged(self):
+        for p in X.PREV_SERVED[:2]:
+            self.assertEqual(X.sha(p.read_bytes()), X.PREV_SERVED_SHA256, p)
+        self.assertNotEqual(X.SITE_OUTS[0], X.PREV_SERVED[0])
+        old = json.loads(X.PREV_SERVED[0].read_text())
+        self.assertEqual(old['release_id'], 'open-register-update-20261020')
+        man = json.loads(MANIFEST.read_text())['changes']
+        self.assertTrue(man['previous']['served_unchanged'])
+        self.assertEqual(man['previous']['json_sha256'], X.PREV_SERVED_SHA256)
+
+    def test_counts_the_plan_expects(self):
+        c = SITE['counts']
+        r = c['rows']
+        self.assertEqual((r['total'], r['dataset'], r['model']), (535, 487, 48))
+        self.assertEqual((r['dataset_by_group']['moabb'], r['dataset_by_group']['site']), (136, 51))
+        self.assertEqual((r['by_status']['published'], r['by_status']['score_held'], r['by_status']['listed']), (60, 4, 463))
+        self.assertEqual(c['moabb']['merged_into_site_rows'], 22)
+        self.assertEqual((r['dataset_by_level']['1'], r['dataset_by_level']['4']), (435, 31))
+        self.assertEqual((r['model_by_level']['1'], r['model_by_level']['4']), (16, 17))
+        self.assertEqual(c['models']['external_rows'], 30)
+        ch = json.loads(MANIFEST.read_text())['changes']
+        self.assertEqual(set(ch['rows_folded_into_site_rows'][i]['row'] for i in range(4)), {v[0] for v in self.NEW_SITE.values()})
+        self.assertEqual({x['row']: x['into'] for x in ch['rows_folded_into_site_rows']}, {v[0]: k for k, v in self.NEW_SITE.items()})
+        self.assertEqual(ch['levels_changed'], [])
+
+    def test_dataset_checks_rows(self):
+        site = {e['id']: e for e in SITE['entries']}
+        ext = {e['id']: e for e in EXT['entries']}
+        for rid, (moabb, loader, status) in self.NEW_SITE.items():
+            e = site[rid]
+            self.assertEqual((e['group'], e['level'], e['status']), ('site', 4, status), rid)
+            self.assertNotIn(moabb, site)
+            self.assertEqual(ext[moabb]['merge_into'], rid.removeprefix('r-site-'))
+            self.assertIn({'value': loader, 'kind': 'moabb_loader'}, e['aliases'])
+            self.assertIn({'value': ext[moabb]['moabb']['doi'], 'kind': 'doi'}, e['aliases'])
+            self.assertEqual(sorted(e['source_groups']), ['moabb', 'site'])
+            # Every census item, as the census states it.
+            src = next(s for s in A3C['sources'] if f'r-site-{s["id"].removeprefix("site-")}' == rid)
+            self.assertEqual({(int(k), i['item'], i['state']) for k, b in e['step_evidence'].items() for i in b['items']},
+                             {(int(k), i['item'], i['state']) for k, its in src['steps'].items() for i in its}, rid)
+        kim, mind, damm, neb = (site[i] for i in self.NEW_SITE)
+        k = DC['kim2025-beta-range']
+        self.assertEqual(kim['links'], {'page': '/datasets/kim2025-beta-range/', 'case': '/topics/data-quality/#kim2025-beta-range'})
+        self.assertEqual(kim['urls']['record'], k['rights']['source'])
+        self.assertEqual([(g['step'], g['item']) for g in kim['gaps']], [(4, 'share_above_chance')])
+        self.assertIn({'code': 'hold', 'params': {'reason_code': 'amplitude_units_unresolved'}},
+                      [{'code': f['code'], 'params': f['params']} for f in kim['findings']])
+        self.assertEqual(mind['terms_as_stated'], {'value': ', '.join(DC['mind2026']['rights']['licenses_stated']), 'by': 'site_release'})
+        self.assertEqual({(g['step'], g['item']) for g in mind['gaps']},
+                         {(3, 'original_terms'), (3, 'pinned_version'), (4, 'chance_stated'), (4, 'share_above_chance')})
+        self.assertFalse([f for f in mind['findings'] if f['code'] == 'hold'])
+        self.assertEqual({(g['step'], g['item']) for g in damm['gaps']},
+                         {(3, 'rights_reviewed'), (3, 'consent_ethics'), (4, 'chance_stated')})
+        self.assertEqual(damm['terms_as_stated']['value'], DC['damm']['rights']['license'])
+        self.assertEqual({(g['step'], g['item']) for g in neb['gaps']}, {(4, 'chance_stated')})
+        # NeBULA: the Zenodo DOI its files name is no registered record, so it is no alias and no link.
+        self.assertNotIn('13627307', json.dumps(neb['aliases']) + json.dumps(neb['urls']))
+        self.assertFalse(DC['nebula']['rights']['terms']['zenodo_13627307']['registered_public_record'])
+        for e in (damm, neb):
+            self.assertEqual(e['status'], 'score_held')
+            self.assertEqual([i['state'] for i in e['step_evidence']['4']['items'] if i['item'] == 'share_above_chance'],
+                             ['not-applicable'])
+        # No row carries the catalog's onset-timing hold any more.
+        for doc in (EXT, SITE):
+            self.assertNotIn('onset_timing_unresolved', json.dumps(doc['entries']))
+
+    def test_census_values_reread(self):
+        n = 0
+        for s in A3C['sources']:
+            for its in s['steps'].values():
+                for it in its:
+                    for src in it['sources']:
+                        X.census_reread(src, s['id'])
+                        n += 1
+        for m in A3C['models']:
+            for its in m['steps'].values():
+                for it in its:
+                    for src in it['sources']:
+                        X.census_reread(src, m['row'])
+                        n += 1
+        self.assertGreater(n, 60)
+        with self.assertRaises(ValueError):
+            X.census_reread({'file': X.rel(X.INPUTS['dataset_checks_update']), 'field': 'damm.files.edf_channels', 'value': 64}, 'unit')
+
+    def test_scored_models(self):
+        rows = {e['id']: e for e in SITE['entries'] if e['ladder'] == 'model'}
+        cases = {'r-model-neurorvq': '/topics/pilot-studies/#neurorvq', 'r-model-eeg-captioner': '/topics/pilot-studies/#eegmat-ten-second',
+                 'r-model-axon': '/topics/pilot-studies/#eegmat-ten-second'}
+        for rid, case in cases.items():
+            e = rows[rid]
+            self.assertEqual((e['kind'], e['level'], e['status'], e['exposure']), ('model', 4, 'published', 'unknown'), rid)
+            self.assertEqual(e['links'], {'cases': [case]})
+            self.assertNotIn('venue', e)
+            self.assertEqual([(g['step'], g['item']) for g in e['gaps']], [(2, 'data_terms')], rid)
+            self.assertEqual([a['kind'] for a in e['aliases']], ['official_weights'], rid)
+        nr = rows['r-model-neurorvq']
+        self.assertEqual((nr['terms_by_part']['code']['value'], nr['terms_by_part']['weights']['value']), ('CC BY-NC 4.0', 'CC BY-NC 4.0'))
+        self.assertEqual(nr['aliases'][0]['value'], 'ntinosbarmpas/NeuroRVQ')     # the authors' weights; no conversion
+        self.assertNotIn('paper', rows['r-model-axon']['urls'])                   # not cited until checked
+        self.assertEqual(rows['r-model-axon']['terms_by_part']['weights'], {'state': 'stated', 'value': 'Apache-2.0', 'by': 'hf_licence_tag'})
+        # The module's file terms and the project's root licence, in that order, as values; the page words the token.
+        self.assertEqual(rows['r-model-axon']['terms_by_part']['code'],
+                         {'state': 'stated', 'value': 'Apache-2.0, BSD-3-Clause', 'by': 'module_and_project_licence'})
+        self.assertNotIn('(', json.dumps([e['terms_by_part'] for e in rows.values() if e.get('terms_by_part')]))
+        self.assertEqual(rows['r-model-eeg-captioner']['terms_by_part']['code']['value'], 'MIT')
+
+    def test_refresh_models(self):
+        rows = {e['id']: e for e in SITE['entries'] if e['ladder'] == 'model'}
+        holds = {'fame': 'no_release_found', 'eeg-prime': 'code_not_reachable', 'stst-jepa': 'no_release_found',
+                 'bandvq': 'no_release_found', 'use-fm': 'no_release_found'}
+        rf = {c['id']: c for c in json.loads(X.INPUTS['model_refresh'].read_text())['candidates']}
+        for key, hold in holds.items():
+            e = rows[f'r-model-{key}']
+            self.assertEqual((e['level'], e['status'], e['checked']), (1, 'listed', '2026-10-25'), key)
+            self.assertEqual(e['findings'], [{'code': 'hold', 'params': {'reason_code': hold}}], key)
+            self.assertEqual(e['urls'], {'paper': rf[key]['paper']})
+            self.assertNotIn('venue', e)
+            self.assertIsNone(VENUE.search(json.dumps(e)), key)
+        self.assertEqual(rows['r-model-fame']['name'], 'FAME')
+        self.assertEqual({e['id'] for e in SITE['entries'] if e['name'] == 'FAME'}, {'r-model-fame'})
+
+    def test_commenter_never_named(self):
+        for f in (X.SITE_OUTS[0], X.CSV_OUT, X.EXTERNAL_OUT, MANIFEST, X.INPUTS['a3_census'], X.SITE_ROWS):
+            text = re.sub(r'https?://[^\s"]+', ' ', f.read_text())
+            hits = {m.group(0).lower() for m in blocks_cca.REFUSED_TEXT.finditer(text)}
+            # 'pending' is the re-check's sign-off state, the one word of the rule the register carries by design.
+            self.assertLessEqual(hits, {'pending'}, f)
 
 
 class IdMapUnit(unittest.TestCase):

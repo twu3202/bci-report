@@ -1,14 +1,16 @@
-"""Independent audit of the frozen open register (package B8b of the 20261020 release).
+"""Independent audit of the frozen open register (package B8b of the 20261020 release; package R5 of the 20261028 round).
 
     python3 pipeline/publication/audit_open_register_export.py          # audit and write the audit record
     python3 pipeline/publication/audit_open_register_export.py --check  # audit only; exit 1 on any failure
 
 A separate program from the export: it imports nothing from export_open_register.py or the site-row exporter. It reads
 the served bytes (site/src/data and site/public/data), the release manifest and the files the manifest pins, the A5
-census, the MOABB catalog, i18n.ts as text and the external rows file, and re-derives from them what the served file
-must say: every site row from the census (its level by the plan rule, its gaps, its status, its findings), every merge
-of an external row into a site row, the counts, the CSV, and the words the register may never carry. It writes
-research/publication_review_20261020/register/open-register-export-audit.json.
+census and the 20261028 A3 census that extends it, the MOABB catalog, i18n.ts as text and the external rows file, and
+re-derives from them what the served file must say: every site row from the censuses (its level by the plan rule, its
+gaps, its status, its findings), every merge of an external row into a site row, the counts (and the counts the plan
+expects for this version), the CSV, the rows this round adds, and the words the register may never carry. It also
+checks that the 20261020 files are still served byte for byte. It writes
+research/publication_review_20261028/register/open-register-export-audit.json.
 """
 from __future__ import annotations
 
@@ -23,21 +25,33 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[2]
-D = '20261020'
+D = '20261028'
+PREV = '20261020'
 RELEASE = f'open-register-update-{D}'
 REVIEW = PROJECT / f'research/publication_review_{D}'
 REGISTER = REVIEW / 'register'
+REVIEW_PREV = PROJECT / f'research/publication_review_{PREV}'
 SERVED = (PROJECT / f'site/src/data/open-register-{D}.json', PROJECT / f'site/public/data/open-register-{D}.json')
 CSV_PATH = PROJECT / f'site/public/data/open-register-{D}.csv'
 MANIFEST = REGISTER / 'open-register-release-manifest.json'
 EXTERNAL = REGISTER / f'open-register-external-{D}.json'
 SITE_ROWS = REGISTER / f'site-register-rows-{D}.json'
-A5 = REVIEW / 'notes/site-step-evidence.json'
+A5 = REVIEW_PREV / 'notes/site-step-evidence.json'
+A3C = REGISTER / f'site-step-evidence-{D}.json'
+# The register version this one follows, served unchanged (its bytes cite the 20261020 hold ids).
+PREV_SERVED = (PROJECT / f'site/src/data/open-register-{PREV}.json', PROJECT / f'site/public/data/open-register-{PREV}.json')
+PREV_JSON_SHA256 = 'c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558'
+PREV_CSV = PROJECT / f'site/public/data/open-register-{PREV}.csv'
+PREV_CSV_SHA256 = 'aef5cffcac9fa23b14a0276ee0a8d9cb79aecf1d0f81eb95613f7d7874b7a9fe'
 MOABB_CATALOG = PROJECT / 'research/moabb_expansion_20261019/evidence/moabb-catalog.json'
 I18N = PROJECT / 'site/src/data/i18n.ts'
 REGISTER_TS = PROJECT / 'site/src/data/open-register.ts'
 RELEASES_TS = PROJECT / 'site/src/data/releases.ts'
 DATA_QUALITY = PROJECT / 'site/src/data/data-quality-update.json'
+DATASET_CHECKS = PROJECT / 'site/src/data/dataset-checks-update.json'
+NEURORVQ = PROJECT / 'site/src/data/neurorvq-update.json'
+TEN_SECOND = PROJECT / 'site/src/data/eegmat-ten-second-update.json'
+REFRESH = PROJECT / 'research/research_refresh_20261025/models/EEG model refresh evidence.json'
 OUT = REGISTER / 'open-register-export-audit.json'
 
 ANCHOR = {1: 'host_record', 2: 'files_opened', 3: 'original_terms', 4: 'fixed_protocol_baseline',
@@ -51,18 +65,36 @@ FORBIDDEN_TEXT = [r'/(?:Users|home|Volumes|mnt)/', r'\btrx50\b', r'\bGal4\b', 'B
 FORBIDDEN_KEYS = {'downloads', 'likes', 'createdAt', 'lastModified', 'description', 'readme', 'one_line_en', 'one_line_zh',
                   'notes', 'trendingScore', 'consent_or_ethics_statement', 'source_claim', 'Gender',
                   'Age Mean', 'Age Min', 'Age Max', 'Handedness'}
-# The holds this release opens on two site rows (plan section 2.6): row -> (reason code, hold id on the site).
-SITE_HOLDS = {'r-site-eldbeta': ('one_person_score', 'eldbeta-one-participant-score'),
-              'r-site-zuco2': ('converted_run_timing', 'zuco2-converted-run-timing')}
-# The model and MOABB hold reasons B8a declares (the page words all of them).
-BASE_HOLD_REASONS = {'released_ids_duplicated', 'targets_stored_with_outputs', 'deposits_differ', 'onset_timing_unresolved',
+# The holds open on site rows (plan sections 2.6 and 3), row by row: row -> (reason code, hold id on the site, the payload
+# that opens it). This audit's own table; the export's is register_findings.SITE_HOLDS.
+SITE_HOLDS = {'r-site-eldbeta': ('one_person_score', 'eldbeta-one-participant-score', DATA_QUALITY),
+              'r-site-zuco2': ('converted_run_timing', 'zuco2-converted-run-timing', DATA_QUALITY),
+              'r-site-kim2025-beta-range': ('amplitude_units_unresolved', 'kim-amplitude-dependent-models', DATASET_CHECKS),
+              'r-site-damm-finger-imagery': ('one_person_score', 'damm-one-participant-score', DATASET_CHECKS),
+              'r-site-nebula': ('one_person_score', 'nebula-one-participant-scores', DATASET_CHECKS)}
+# The model and MOABB hold reasons the export declares (the page words all of them). Kim2025BetaRange's onset-timing hold
+# left with its MOABB row, which now folds into r-site-kim2025-beta-range (its site hold is amplitude units); the
+# 20261028 refresh rows add no_release_found.
+BASE_HOLD_REASONS = {'released_ids_duplicated', 'targets_stored_with_outputs', 'deposits_differ',
                      'release_family_unchecked', 'one_offline_session', 'weights_licence_not_found',
                      'code_licence_not_found', 'no_released_checkpoint', 'code_not_reachable', 'not_human_scalp_eeg',
-                     'noncommercial_noderivs_weights', 'acceptance_not_verified', 'data_not_public'}
+                     'noncommercial_noderivs_weights', 'acceptance_not_verified', 'data_not_public', 'no_release_found'}
 # A record DOI's repository by registrant prefix, as this audit states it (the CSV's host is never the resolver).
 DOI_REPOSITORY = {'10.18112': 'OpenNeuro', '10.5281': 'Zenodo', '10.6084': 'Figshare', '10.25452': 'Figshare',
                   '10.48324': 'DANDI', '10.82901': 'NEMAR', '10.13026': 'PhysioNet', '10.5524': 'GigaDB',
-                  '10.1184': 'KiltHub', '10.22002': 'CaltechDATA'}
+                  '10.1184': 'KiltHub', '10.22002': 'CaltechDATA', '10.57760': 'ScienceDB'}
+# What the plan (section 3) expects this version's counts to be, from the 20261020 file's: the export computes the
+# counts from the rows, and this audit checks them against both the rows and these.
+EXPECTED = {'total': 535, 'dataset': 487, 'model': 48, 'moabb': 136, 'site': 51, 'published': 60, 'score_held': 4,
+            'listed': 463, 'moabb_merged': 22, 'dataset_level_1': 435, 'dataset_level_4': 31, 'model_level_1': 16,
+            'model_level_4': 17, 'model_external_rows': 30}
+# The rows this round adds and the MOABB record groups it folds into site rows (plan section 3).
+NEW_SITE_ROWS = {'r-site-kim2025-beta-range': ('r-moabb-0071', 'Kim2025BetaRange'), 'r-site-mind2026': ('r-moabb-0095', 'MIND2026'),
+                 'r-site-damm-finger-imagery': ('r-moabb-0048', 'Damm2026'), 'r-site-nebula': ('r-moabb-0106', 'NeBULA2025')}
+SCORED_MODELS = {'r-model-neurorvq': '/topics/pilot-studies/#neurorvq', 'r-model-eeg-captioner': '/topics/pilot-studies/#eegmat-ten-second',
+                 'r-model-axon': '/topics/pilot-studies/#eegmat-ten-second'}
+REFRESH_MODELS = {'r-model-fame': 'no_release_found', 'r-model-eeg-prime': 'code_not_reachable', 'r-model-stst-jepa': 'no_release_found',
+                  'r-model-bandvq': 'no_release_found', 'r-model-use-fm': 'no_release_found'}
 PARTICIPANT = re.compile(r'(?<![a-z0-9])(?:sub|subj|subject|participant|pt)[-_ ]?\d+(?![a-z0-9])', re.I)
 
 
@@ -113,6 +145,14 @@ class Audit:
         X = json.loads(ext_bytes)
         S = json.loads(SITE_ROWS.read_text())
         census = json.loads(A5.read_text())
+        a3c = json.loads(A3C.read_text())
+        self.ok('the A3 census extends the A5 census as it stands, and repeats none of its sources',
+                a3c['release_freeze'] == D and a3c['extends']['sha256'] == sha(A5.read_bytes())
+                and not {s['id'] for s in a3c['sources']} & {s['id'] for s in census['sources']})
+        census = {**census, 'sources': census['sources'] + a3c['sources']}
+        self.a3c = a3c
+        self.ok('the 20261020 register files are still served byte for byte',
+                all(sha(p.read_bytes()) == PREV_JSON_SHA256 for p in PREV_SERVED) and sha(PREV_CSV.read_bytes()) == PREV_CSV_SHA256)
         self.ok('the release and the frozen status', R['release_id'] == RELEASE and R['status'] == 'frozen'
                 and M['release_id'] == RELEASE)
         prov = R.get('provenance') or {}
@@ -123,7 +163,8 @@ class Audit:
                  if not (PROJECT / pin['path']).exists() or sha((PROJECT / pin['path']).read_bytes()) != pin['sha256']]
         self.ok('every file the manifest pins has the SHA-256 it gives', not drift, ', '.join(drift))
         self.ok('the site rows were re-read cleanly at the freeze',
-                not S['reread']['mismatches'] and not S['reread']['unresolved'] and S['census']['sha256'] == sha(A5.read_bytes()))
+                not S['reread']['mismatches'] and not S['reread']['unresolved'] and S['census']['sha256'] == sha(A5.read_bytes())
+                and S['census_supplement']['sha256'] == sha(A3C.read_bytes()))
         rows = R['entries']
         by_id = {e['id']: e for e in rows}
         self.ok('every row id is unique', len(by_id) == len(rows))
@@ -131,11 +172,28 @@ class Audit:
                                                        r'site-[a-z0-9-]+)$', e['id']) for e in rows))
         self.ok('every row has its correction mail', all(
             e['correction']['mailto'] == f'mailto:contact@bci.report?subject=Register%20row%20{e["id"]}' for e in rows))
+        # The checked date is the day a row's evidence was checked: a row the 20261020 file holds unchanged in every other
+        # field keeps that file's date; a new or changed site row carries the freeze day.
+        prev = {e['id']: e for e in json.loads(PREV_SERVED[0].read_text())['entries']}
+        rest = lambda e: {k: v for k, v in e.items() if k != 'checked'}
+        day = f'{D[:4]}-{D[4:6]}-{D[6:]}'
+        same = [e for e in rows if e['id'] in prev and rest(prev[e['id']]) == rest(e)]
+        moved = [e['id'] for e in same if e['checked'] != prev[e['id']]['checked']]
+        self.ok('a row the 20261020 file holds unchanged keeps the date that file gives it', not moved, ', '.join(moved[:8]))
+        fresh = [e['id'] for e in rows if e not in same and (e['group'] == 'site' or e.get('kind') == 'site_model') and e['checked'] != day]
+        self.ok('a new or changed site row carries the freeze day', not fresh, ', '.join(fresh[:8]))
+        # The rows the 20261020 version stamped with its own freeze day (its site rows) and holds unchanged.
+        prev_day = f'{PREV[:4]}-{PREV[4:6]}-{PREV[6:]}'
+        self.ok('the manifest counts the rows that keep an earlier date', M['rules'].get('checked_kept_from_previous') == len(
+            [e for e in same if e['checked'] == prev_day]))
         self.site_dataset_rows(R, census, by_id)
         self.named_rows(R, census, by_id)
+        self.round_rows(R, X, by_id)
         self.merges(R, X, by_id)
         self.model_rows(R, S, by_id)
+        self.round_models(R, by_id)
         self.counts(R)
+        self.expected_counts(R)
         self.csv_file(R)
         self.site_holds(R, M)
         self.evidence_items(R)
@@ -238,6 +296,106 @@ class Audit:
         self.ok('the core rows link the pretraining-exposure block', all(
             re.fullmatch(r'/protocols/(beta-8ch|mi-rest|idle|p300-target|arithmetic-rest|semantic-target|sleep-scalp)/#pretraining-exposure', by_id[f'r-site-{self.slug_of(s)}']['links'].get('exposure') or '')
             for s in census['sources'] if s['census_group'] == 'core'))
+
+    def round_rows(self, R, X, by_id) -> None:
+        """The four dataset checks this round promotes: each a site row at step 4 that folds in its MOABB record group, its
+        case on the data-quality page, its terms as the payload states them, and its hold where it has one."""
+        dc = json.loads(DATASET_CHECKS.read_text())
+        ext = {e['id']: e for e in X['entries']}
+        for rid, (moabb, loader) in NEW_SITE_ROWS.items():
+            e = by_id.get(rid) or {}
+            m = ext.get(moabb) or {}
+            self.ok(f'{rid}: at step 4, folding in {moabb} (its loader {loader} and its DOI as aliases)',
+                    e.get('level') == 4 and moabb not in by_id and m.get('merge_into') == rid.removeprefix('r-site-')
+                    and {('moabb_loader', loader), ('doi', m.get('moabb', {}).get('doi'))} <= {(a['kind'], a['value']) for a in e.get('aliases', [])}
+                    and 'moabb' in e.get('source_groups', []))
+        kim, mind, damm, neb = (by_id.get(i) or {} for i in NEW_SITE_ROWS)
+        self.ok('Kim beta-range: published, its dataset page and its case, the Figshare record at the version used',
+                kim.get('status') == 'published' and kim.get('links') == {'page': dc['placement']['dataset_pages']['kim2025-beta-range'],
+                                                                          'case': '/topics/data-quality/#kim2025-beta-range'}
+                and kim.get('urls', {}).get('record') == dc['kim2025-beta-range']['rights']['source']
+                and kim.get('terms_as_stated', {}).get('value') == dc['kim2025-beta-range']['rights']['license']
+                and [(g['step'], g['item']) for g in kim.get('gaps', [])] == [(4, 'share_above_chance')])
+        kim_moabb = ext.get('r-moabb-0071') or {}
+        self.ok('Kim beta-range: the catalog\'s onset-timing hold left with its MOABB row; no row carries it',
+                not any(f['code'] == 'hold' and f['params']['reason_code'] == 'onset_timing_unresolved'
+                        for x in (R['entries'] + X['entries']) for f in x['findings'])
+                and not [f for f in kim_moabb.get('findings', []) if f['code'] == 'hold'])
+        self.ok('MIND: published, both licences side by side, its original terms and pinned version gaps at step 3, no hold',
+                mind.get('status') == 'published' and mind.get('terms_as_stated', {}).get('value') == ', '.join(dc['mind2026']['rights']['licenses_stated'])
+                and {(3, 'original_terms'), (3, 'pinned_version')} <= {(g['step'], g['item']) for g in mind.get('gaps', [])}
+                and not [f for f in mind.get('findings', []) if f['code'] == 'hold']
+                and mind.get('links') == {'case': '/topics/data-quality/#mind2026'})
+        self.ok('Damm: score held, CC0, its rights review and consent gaps at step 3, its case',
+                damm.get('status') == 'score_held' and damm.get('terms_as_stated', {}).get('value') == dc['damm']['rights']['license']
+                and {(3, 'rights_reviewed'), (3, 'consent_ethics')} <= {(g['step'], g['item']) for g in damm.get('gaps', [])}
+                and damm.get('links') == {'case': '/topics/data-quality/#damm'})
+        zen = '13627307'
+        self.ok('NeBULA: score held, its Figshare record, no step-3 gap, and the Zenodo DOI its files name is no alias',
+                neb.get('status') == 'score_held' and neb.get('urls', {}).get('record') == dc['nebula']['rights']['source']
+                and not [g for g in neb.get('gaps', []) if g['step'] == 3]
+                and not any(zen in a['value'] for a in neb.get('aliases', [])) and zen not in json.dumps(neb.get('urls', {}))
+                and neb.get('links') == {'case': '/topics/data-quality/#nebula'})
+        for rid in ('r-site-damm-finger-imagery', 'r-site-nebula'):
+            nums = []
+
+            def walk(x, k=None):
+                if isinstance(x, dict):
+                    for kk, v in x.items():
+                        walk(v, kk)
+                elif isinstance(x, list):
+                    for v in x:
+                        walk(v, k)
+                elif isinstance(x, (int, float)) and not isinstance(x, bool) and k not in ('level', 'step'):
+                    nums.append((k, x))
+            walk(by_id.get(rid) or {})
+            self.ok(f'{rid}: no number in the row but its steps (one participant, scores held, D16)', not nums, str(nums))
+
+    def round_models(self, R, by_id) -> None:
+        """The three models scored this round (step 4, linking their panels) and the five refresh rows (step 1, held)."""
+        nr, ts = json.loads(NEURORVQ.read_text()), json.loads(TEN_SECOND.read_text())
+        rf = {c['id']: c for c in json.loads(REFRESH.read_text())['candidates']}
+        for rid, case in SCORED_MODELS.items():
+            e = by_id.get(rid) or {}
+            self.ok(f'{rid}: step 4, published, linking {case}, exposure unknown, no method page and no venue',
+                    e.get('level') == 4 and e.get('status') == 'published' and e.get('links') == {'cases': [case]}
+                    and e.get('exposure') == 'unknown' and 'venue' not in e and e.get('kind') == 'model'
+                    and not [g for g in e.get('gaps', []) if g['step'] != 2 or g['item'] != 'data_terms'])
+        n = by_id.get('r-model-neurorvq') or {}
+        self.ok('NeuroRVQ: code and weights as its payload states them (CC BY-NC), the authors\' weights only',
+                n.get('terms_by_part', {}).get('code', {}).get('value') == nr['rights']['code']['licence']
+                and n.get('terms_by_part', {}).get('weights', {}).get('value') == nr['rights']['weights']['licence']
+                and [a['kind'] for a in n.get('aliases', [])] == ['official_weights'] and n.get('urls', {}).get('paper') == nr['model']['paper'])
+        ax = by_id.get('r-model-axon') or {}
+        self.ok('AXON: no paper cited, its weights Apache-2.0 by the licence tag',
+                'paper' not in ax.get('urls', {}) and ax.get('terms_by_part', {}).get('weights', {}).get('value') == ts['axon']['rights']['checkpoint']['licence'])
+        self.ok('AXON: its code terms are the module\'s file terms and the project\'s root licence, in that order, with no words of their own',
+                ax.get('terms_by_part', {}).get('code') == {'state': 'stated', 'by': 'module_and_project_licence',
+                                                            'value': f"{ts['axon']['rights']['module']['licence']}, {ts['axon']['rights']['project']['licence']}"})
+        cap = by_id.get('r-model-eeg-captioner') or {}
+        self.ok('EEG-Captioner: code and weights as its payload states them',
+                cap.get('terms_by_part', {}).get('code', {}).get('value') == ts['eeg_captioner']['rights']['code']['licence']
+                and cap.get('terms_by_part', {}).get('weights', {}).get('value') == ts['eeg_captioner']['rights']['weights']['licence'])
+        for rid, hold in REFRESH_MODELS.items():
+            e = by_id.get(rid) or {}
+            self.ok(f'{rid}: step 1, listed, held ({hold}), its paper linked, no venue',
+                    e.get('level') == 1 and e.get('status') == 'listed' and e.get('findings') == [{'code': 'hold', 'params': {'reason_code': hold}}]
+                    and e.get('urls') == {'paper': rf[rid.removeprefix('r-model-')]['paper']} and 'venue' not in e)
+        fame = by_id.get('r-model-fame') or {}
+        self.ok('FAME is a model row, apart from the L-FAME dataset row', fame.get('ladder') == 'model' and fame.get('name') == 'FAME'
+                and (by_id.get('r-site-lfame') or {}).get('ladder') == 'dataset')
+
+    def expected_counts(self, R) -> None:
+        c = R['counts']
+        got = {'total': c['rows']['total'], 'dataset': c['rows']['dataset'], 'model': c['rows']['model'],
+               'moabb': c['rows']['dataset_by_group']['moabb'], 'site': c['rows']['dataset_by_group']['site'],
+               'published': c['rows']['by_status']['published'], 'score_held': c['rows']['by_status']['score_held'],
+               'listed': c['rows']['by_status']['listed'], 'moabb_merged': c['moabb']['merged_into_site_rows'],
+               'dataset_level_1': c['rows']['dataset_by_level']['1'], 'dataset_level_4': c['rows']['dataset_by_level']['4'],
+               'model_level_1': c['rows']['model_by_level']['1'], 'model_level_4': c['rows']['model_by_level']['4'],
+               'model_external_rows': c['models']['external_rows']}
+        self.ok('the counts the plan expects for this version (section 3)', got == EXPECTED,
+                ', '.join(f'{k}: {got[k]} (plan {EXPECTED[k]})' for k in EXPECTED if got[k] != EXPECTED[k]))
 
     def merges(self, R, X, by_id) -> None:
         ext = {e['id']: e for e in X['entries']}
@@ -352,7 +510,7 @@ class Audit:
         t = REGISTER_TS.read_text()
         start = t.index('const holdReason')
         block = t[start:t.index('\n};', start)]
-        return {code for code, _ in SITE_HOLDS.values()
+        return {code for code, _, _ in SITE_HOLDS.values()
                 if re.search(rf"\n  {code}: \{{ en: '[^']+',\s*zh: '[^']+' \}}", block)}
 
     def site_holds(self, R, M) -> None:
@@ -364,21 +522,22 @@ class Audit:
         undeclared = [e['id'] for e in R['entries'] for f in e['findings']
                       if f['code'] == 'hold' and f['params']['reason_code'] not in declared]
         self.ok('every hold finding\'s reason is declared', not undeclared, ', '.join(undeclared))
-        rel_text, dq = RELEASES_TS.read_text(), json.loads(DATA_QUALITY.read_text())
-        for rid, (code, hold_id) in SITE_HOLDS.items():
+        rel_text = RELEASES_TS.read_text()
+        for rid, (code, hold_id, payload) in SITE_HOLDS.items():
             e = next((x for x in R['entries'] if x['id'] == rid), {})
             holds = [f for f in e.get('findings', []) if f['code'] == 'hold']
             self.ok(f'{rid}: the hold {hold_id} is open on the site', f"id: '{hold_id}'" in rel_text
-                    and any(h['id'] == hold_id for h in dq['holds']))
+                    and any(h['id'] == hold_id for h in json.loads(payload.read_text())['holds']))
             want = [{'code': 'hold', 'params': {'reason_code': code},
                      'sources': [f'site/src/data/releases.ts#holds[id={hold_id}]',
-                                 f'site/src/data/data-quality-update.json#holds[id={hold_id}]']}] if code in worded else []
+                                 f'{payload.relative_to(PROJECT)}#holds[id={hold_id}]']}] if code in worded else []
             self.ok(f'{rid}: its hold finding ({code}) is served where the page words it, with its sources',
                     holds == want, f'{holds} != {want}')
         sh = M.get('site_holds') or {}
         self.ok('the manifest records the site holds as served',
                 set(sh.get('worded_on_site', [])) == worded
-                and set(sh.get('withheld_until_worded', [])) == {f'{r}:{c}' for r, (c, _) in SITE_HOLDS.items() if c not in worded})
+                and set(sh.get('withheld_until_worded', [])) == {f'{r}:{c}' for r, (c, _, _) in SITE_HOLDS.items() if c not in worded}
+                and {k: tuple(v) for k, v in (sh.get('rows') or {}).items()} == {k: (c, h) for k, (c, h, _) in SITE_HOLDS.items()})
 
     def evidence_items(self, R) -> None:
         """Each step's evidence lists an item once per public source."""
@@ -425,10 +584,14 @@ def main(argv=None) -> int:
         'csv_sha256': sha(CSV_PATH.read_bytes()),
         'auditor': 'pipeline/publication/audit_open_register_export.py',
         'independence': ('A separate program from the export, importing nothing from it or from the site-row exporter. '
-                         'It reads the served bytes, the release manifest and the files it pins, the A5 census, the '
-                         'MOABB catalog (the export reads the shortlist), i18n.ts as text and the external rows, and '
-                         're-derives every site row\'s level, gaps and status from the census, every merge from the '
-                         'external rows, the counts from the rows and the CSV from the JSON.'),
+                         'It reads the served bytes, the release manifest and the files it pins, the A5 census and the '
+                         'A3 census that extends it, the MOABB catalog (the export reads the shortlist), i18n.ts as text, '
+                         'the payloads the new rows rest on and the external rows, and re-derives every site row\'s level, '
+                         'gaps and status from the censuses, every merge from the external rows, the counts from the rows '
+                         '(and against the counts the plan expects), and the CSV from the JSON.'),
+        'previous_version': {'release_id': f'open-register-update-{PREV}', 'json_sha256': PREV_JSON_SHA256,
+                             'csv_sha256': PREV_CSV_SHA256, 'served_unchanged': True},
+        'expected_counts': EXPECTED,
         'rows': {'total': R['counts']['rows']['total'], 'dataset': R['counts']['rows']['dataset'],
                  'model': R['counts']['rows']['model'], 'site_dataset': R['counts']['rows']['dataset_by_group']['site']},
         'level_rule': ('the furthest step whose anchor item is on file, gaps at or below it; rows where this differs from '

@@ -30,6 +30,8 @@ import { EEGPT_ANCHOR, EEGPT_JSON, EEGPT_SLUG, eegptCells, eegptComparisons, eeg
          eegptText, footnotesOf } from '../../../data/eegpt-core';
 import { entityCopy } from '../../../data/entity-copy';
 import { NEUROLM_PANEL_PATH, NEUROLM_POINTER_PROTOCOL, neurolmPointer } from '../../../data/neurolm-eegmat';
+import { NEURORVQ_PANEL_PATH, NEURORVQ_POINTER_PROTOCOLS, neurorvqPointer } from '../../../data/neurorvq';
+import { TEN_SECOND_PANEL_PATH, TEN_SECOND_POINTER_PROTOCOL, arithmeticPanelsPointer } from '../../../data/eegmat-ten-second';
 
 export const getStaticPaths = () => locales.flatMap(code => protocols.map(p => ({
   params: { lang: code === defaultLocale ? undefined : code, id: p.id }, props: { protocol: p },
@@ -81,6 +83,12 @@ const fmNotes = fmAll.filter(r => r.notes);
 const adaptation = p.id === 'arithmetic-rest' ? fmAdaptation : [];
 // The NeuroLM pilot on EEGMAT is pointed to from this protocol alone, in words: its scores stay in their own panel.
 const neurolmPointed = p.id === 'arithmetic-rest' && p.id === NEUROLM_POINTER_PROTOCOL;
+// NeuroRVQ's panel and the ten-second EEGMAT panel on the pilot studies page (owner decisions D14 and D19, 2026-10-28):
+// pointed to from the protocols they read, in words. Arithmetic & rest links both panels in one line; motor imagery and
+// P300 link NeuroRVQ's. Their scores stay in their panels.
+const neurorvqPointed = NEURORVQ_POINTER_PROTOCOLS.includes(p.id);
+const panelsPointed = neurorvqPointed && p.id === TEN_SECOND_POINTER_PROTOCOL;
+const ap = arithmeticPanelsPointer[locale];
 const sgn = (f: { raw: number; fmt: string; src: string }) => ({ ...f, fmt: 'sgn1' as const });
 // --- EEGPT (2026-10-13): its frozen row from its own release, in its own section after the further encoders' -------
 const ec = eegptCells[p.id];
@@ -165,6 +173,10 @@ const citeFiles = [p.files.results, p.files.protocol, p.files.fm, ...(adaptation
     {p.notRun.length > 0 && <p class="protocol-note not-run"><strong>{c.notRun}</strong> <span lang="en">{p.notRun.map((m, i) => <>{i > 0 && ', '}{m.methodSlug ? <a href={hrefFor(`/methods/${m.methodSlug}/`, locale)}>{m.name}</a> : m.name}</>)}</span>{locale === 'zh' ? '。' : '. '}{c.notRunCaveat}</p>}
     {/* NeuroLM's frozen-feature pilot (owner decision D1, 2026-10-19): its own panel on the pilot studies page, outside the core matrix; this page points to it with no figure. */}
     {neurolmPointed && <p class="citation-note" data-neurolm-pointer="true"><a href={hrefFor(NEUROLM_PANEL_PATH, locale)}>{neurolmPointer[locale]}</a></p>}
+    {/* Frozen-encoder probes with their own preprocessing (owner decisions D14 and D19, 2026-10-28): their own panels on the pilot studies page, outside the core matrix; no figure here. */}
+    {panelsPointed
+      ? <p class="citation-note" data-neurorvq-pointer="true" data-eegmat-ten-second-pointer="true">{ap.lead}<a href={hrefFor(NEURORVQ_PANEL_PATH, locale)}>{ap.neurorvq}</a> · <a href={hrefFor(TEN_SECOND_PANEL_PATH, locale)}>{ap.tenSecond}</a></p>
+      : neurorvqPointed && <p class="citation-note" data-neurorvq-pointer="true"><a href={hrefFor(NEURORVQ_PANEL_PATH, locale)}>{neurorvqPointer[locale]}</a></p>}
   </section>
 
   <section class="topic-section fm-section" id={FM_ANCHOR} aria-labelledby="fm-heading" data-release={fmRelease.id}>

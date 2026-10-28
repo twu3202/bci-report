@@ -113,6 +113,8 @@
 import { contact, site } from './site';
 import directoryZh from './directory-zh.json';
 import { bingoReleased, handwritingReleased } from './pilot-switch';
+// The 'new-ssvep-frequencies' topic card's counts of route 3's follow-ups, across both releases that carry them.
+import { countWord, ssvepFollowUps } from './questions-in-language';
 
 /**
  * The pilot-studies card's summary, from what each publication switch releases (pilot-switch.ts): the released pilots
@@ -185,6 +187,9 @@ export const translatedPaths = [
   '/datasets/register/',
   '/methods/register/',
   '/releases/',
+  // Every release's full record (owner decision D17, 2026-10-28): /releases/ keeps the newest days and a line for each
+  // earlier release, and the archive carries each record as released.
+  '/releases/archive/',
   '/api/',
 ] as const;
 
@@ -578,7 +583,7 @@ export const home = {
       datasets: { title: 'Datasets', count: 'datasets with results',
         body: 'Every figure measured on each dataset; the public-data register, with source terms, credit and what no release includes.' },
       releases: { title: 'Releases', count: 'reviewed releases',
-        body: 'What each batch added and held back, the SHA-256 of every file, corrections and the holds register.' },
+        body: 'What the newest releases changed, a line for every earlier one, corrections, the holds register, and an archive with every file’s SHA-256.' },
       api: { title: 'Data & API', count: 'downloadable files',
         body: 'Every JSON and CSV file with what it holds, code examples, the release feed and how to cite.' },
     },
@@ -711,7 +716,7 @@ export const home = {
       datasets: { title: '数据集', count: '个有结果的数据集',
         body: '在每个数据集上测得的全部数字；公开数据登记，附来源条款、署名，以及哪些数据没有纳入任何发布。' },
       releases: { title: '发布记录', count: '次经过审核的发布',
-        body: '每一批新增了什么、暂缓了什么，每个文件的 SHA-256，更正与暂缓登记册。' },
+        body: '最近几次发布各改了什么，更早的每次发布各一行，更正、暂缓登记册，以及附每个文件 SHA-256 的归档。' },
       api: { title: '数据与 API', count: '个可下载文件',
         body: '每个 JSON 与 CSV 文件及其内容说明、代码示例、发布订阅源与引用方式。' },
     },
@@ -956,11 +961,12 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       summary: 'A 149-person Parkinson\'s and control comparison beside an age-and-sex-only comparator; neither is a diagnosis.',
       detail: '149 people · one site · balanced accuracy' },
     // Public datasets checked end to end (owner decision D1): Shin2022's people are the one cohort size on the card; eldBETA
-    // and ZuCo 2.0 carry no score (D2 and the converted-run hold).
+    // and ZuCo 2.0 carry no score (D2 and the converted-run hold). Since 2026-10-28 also Kim beta-range, MIND, and Damm and
+    // NeBULA as one-person cases (D15, D16, D18), named with no figure.
     'data-quality': { kicker: 'Data quality and reproducibility', title: 'Checked end to end',
       question: 'What do the files show once a public EEG dataset is checked end to end?',
-      summary: 'Three public EEG datasets read from their own files: Shin2022’s runs, duplicates and valid windows counted before a participant-held-out check, where the EEG arm sits close to a control that reads only trial duration; eldBETA’s one-person run, with counts and no score; and a timing hold on one converted ZuCo run.',
-      detail: 'Shin2022, 10 people · eldBETA, counts only · ZuCo, status only' },
+      summary: 'Public EEG datasets read from their own files: Shin2022’s runs, duplicates and valid windows counted before a participant-held-out check, where the EEG arm sits close to a control that reads only trial duration; training-free CCA on Kim beta-range SSVEP; MIND’s stored markers, read on record IDs; three one-person cases, eldBETA, Damm and NeBULA, with counts and no score; and a timing hold on one converted ZuCo run.',
+      detail: 'Shin2022, 10 people · Kim beta-range · MIND · one-person cases, counts only · ZuCo, status only' },
     'does-pretraining-help': { kicker: 'Representation controls', title: 'Does pretraining help?',
       question: 'Does pretraining help EEG foundation models like LaBraM and CBraMod?',
       summary: 'Matched pretrained and constructor-random encoders under fixed and train-selected readout settings. Plus further foundation models in the same frozen recipe: three checkpoints and, narrowly, EEGPT above every published row on sleep staging, none above training-free CCA on BETA.',
@@ -977,11 +983,14 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       question: 'Can an EEG model answer questions asked in words?',
       summary: 'One small head over frozen EEG features, asked each question by a number, a label template or a description: it works only for questions it was trained on, and not on every dataset.',
       detail: 'SSVEP, BETA, 70 people · sleep, BOAS · secondary: EESM19, OpenBMI, Wearable-102' },
-    // Route 3's follow-ups (owner decision D1): every digit on the card is a value of new-ssvep-frequencies-update.json
-    // (BETA's people, the held-out frequencies, Wearable-102's people; the kicker's 3 is the training seeds' count too).
+    // Route 3's follow-ups (owner decisions D1, D22, D28): every digit on the card is a value of
+    // new-ssvep-frequencies-update.json (BETA's people, the held-out frequencies, Wearable-102's people; the kicker's 3 is
+    // the training seeds' count too). The summary counts the follow-ups of both releases, that file's and
+    // ssvep-followups-update.json's, in words computed in questions-in-language.ts, which also holds its sentences on
+    // filter-bank CCA and the harmonic sum to the later file.
     'new-ssvep-frequencies': { kicker: 'Route 3 follow-ups', title: 'New SSVEP frequencies',
       question: 'What lets a decoder answer an SSVEP frequency it never trained on?',
-      summary: 'Seven follow-ups, each testing one idea: six on route 3’s BETA cohort (the question, the head, stimulus phase, the matching computation and a learned correction to CCA) and a seventh that ran the correction on Wearable-102. Heads that read reference spectra or stimulus phase stayed far below CCA, which needs no training; a small learned correction on top of CCA added a few points on BETA and changed little on Wearable-102.',
+      summary: `${countWord(ssvepFollowUps.total, 'en', true)} follow-ups: ${countWord(ssvepFollowUps.beta, 'en')} on route 3’s BETA cohort, ${countWord(ssvepFollowUps.wearable, 'en')} on Wearable-102, ${countWord(ssvepFollowUps.wearableOnly, 'en')} of them only there. Heads that read reference spectra or stimulus phase stayed far below CCA, which needs no training; a small learned correction on top of CCA added a few points on BETA and changed little on Wearable-102; filter-bank CCA, untrained too, scored above CCA in every setting tested, and an untrained harmonic sum came out nearly level with a learned eigenvalue head.`,
       detail: 'SSVEP, BETA, 70 people · 8 held-out frequencies · Wearable-102, 102 people' },
     // Owner decisions: the non-scalp batch and the paired-biosignal pilots, one site version. Written with the
     // registrations so the dataset pages and the release log can name the pages they are read on; the pages' own
@@ -1042,8 +1051,8 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: '149 名被试 · 单中心 · 平衡准确率' },
     'data-quality': { kicker: '数据质量与可复现性', title: '从头核到尾',
       question: '把公开 EEG 数据集从头到尾核一遍，文件里能看到什么？',
-      summary: '三个公开 EEG 数据集，都从文件本身读起：Shin2022 先清点 run、重复文件与有效时间窗，再做整名被试留出的检验，EEG 一组与只读试次时长的对照相差无几；eldBETA 一名被试的运行，只给计数、没有分数；以及 ZuCo 一个转换后记录的时间问题，暂缓。',
-      detail: 'Shin2022，10 名被试 · eldBETA，只给计数 · ZuCo，只发状态' },
+      summary: '公开 EEG 数据集，都从文件本身读起：Shin2022 先清点 run、重复文件与有效时间窗，再做整名被试留出的检验，EEG 一组与只读试次时长的对照相差无几；Kim beta 频段 SSVEP 上不需要训练的 CCA；MIND 的存储标记，以记录编号为单位读取；eldBETA、Damm 与 NeBULA 三个单人案例，只给计数、没有分数；以及 ZuCo 一个转换后记录的时间问题，暂缓。',
+      detail: 'Shin2022，10 名被试 · Kim beta 频段 · MIND · 单人案例，只给计数 · ZuCo，只发状态' },
     'does-pretraining-help': { kicker: '表征对照', title: '预训练有用吗？',
       question: '预训练对 LaBraM、CBraMod 这类 EEG 基础模型有帮助吗？',
       summary: '在固定与训练集内选定两种分类头设置下，对比匹配的预训练编码器与随机初始化编码器。另有更多基础模型按同样的冻结方案评测：睡眠分期上有 3 个检查点和 EEGPT（差距很窄）高于所有已发布的行，BETA 上没有一个高于免训练的 CCA。',
@@ -1058,7 +1067,7 @@ export const topicCards: Record<Locale, Record<string, { kicker: string; title: 
       detail: 'SSVEP，BETA，70 名被试 · 睡眠，BOAS · 次要：EESM19、OpenBMI、Wearable-102' },
     'new-ssvep-frequencies': { kicker: '第三条路线 · 后续检验', title: '没见过的 SSVEP 频率',
       question: '解码器靠什么回答没训练过的 SSVEP 频率？',
-      summary: '七项后续检验各检验一个想法：六项在第三条路线所用的 BETA 队列上（提问方式、分类头、刺激相位、匹配计算，以及对 CCA 的学习修正），第七项把这个修正用在 Wearable-102 上。读参考谱或刺激相位的分类头远低于无需训练的 CCA；在 CCA 之上加一个小的学习修正，在 BETA 上有所提高，在 Wearable-102 上变化很小。',
+      summary: `${countWord(ssvepFollowUps.total, 'zh')}项后续检验：${countWord(ssvepFollowUps.beta, 'zh')}项在第三条路线所用的 BETA 队列上，${countWord(ssvepFollowUps.wearable, 'zh')}项在 Wearable-102 上，其中${countWord(ssvepFollowUps.wearableOnly, 'zh')}项只在那里运行。读参考谱或刺激相位的分类头远低于无需训练的 CCA；在 CCA 之上加一个小的学习修正，在 BETA 上有所提高，在 Wearable-102 上变化很小；同样无需训练的滤波器组 CCA 在所测的每种设置下都高于 CCA，无需训练的谐波求和与学习得到的特征值分类头几乎持平。`,
       detail: 'SSVEP，BETA，70 名被试 · 8 个留出频率 · Wearable-102，102 名被试' },
     'beyond-scalp-eeg': { kicker: '其他信号 · 人类与猕猴', title: '头皮 EEG 之外',
       question: '在头皮 EEG 之外的信号上，简单基线管用吗？',

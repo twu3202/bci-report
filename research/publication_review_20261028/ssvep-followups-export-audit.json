@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "release_id": "ssvep-followups-update-20261028",
+  "export_sha256": "e147f2f0bb0babf103a138aeab9cf9a59c0bd153bad477cc0a193907253ddbb5",
+  "manifest_sha256": "481fefa22dac4febdce98935fe31c432ff8d438d3217dcc46fbd765275f005a3",
+  "released_file_sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0",
+  "auditor": "pipeline/publication/audit_ssvep_followups_export.py",
+  "independence": "A separate program from the export and from the five block modules, importing none of them. It reads the served bytes, the release manifest and the files the manifest pins, re-derives every study block from the original aggregates by its own reading (level and contrast ids from the aggregates’ own labels, roles from the protocols, reuse from the card each comparator comes from), and recomputes the designs, the decision-change shares, the reference check and every check count from the protocols, approvals, reviews and receipts. Its last check runs the export program in a separate process on the same manifest bytes and requires the served bytes to equal that build, which binds the editorial strings it does not derive.",
+  "figures_compared": 2705,
+  "copied_exactly": 2317,
+  "recomputed": 255,
+  "editorial": 76,
+  "nulls_kept": 57,
+  "strings_compared": 2037,
+  "row_sets_compared": 9,
+  "export_codes_resolved": 461,
+  "same_estimate_names": 16,
+  "shared_rows_derived": 14,
+  "context_pins_bound": 9,
+  "withheld_values_checked_absent": 334,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "the released new-ssvep-frequencies-update.json keeps the bytes its 2026-10-20 export audit names, in both served copies",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "every level and contrast is its study aggregate’s own double, and every contrast equals the difference of its two levels",
+    "every reused comparator equals the card it comes from to the last bit: card 5 and card 7 in the released file, card 8 in the cross-spectral aggregate, card 9 in the coherence aggregate, card 10 in the A/C summary",
+    "card 8’s whitened-readout gap is the difference of the two source levels, as the handoff prints it",
+    "card 12’s decision changes are recomputed as count / 11,200 and their net equals the level difference",
+    "the designs, interval methods and every check count recomputed from the pinned protocols, approvals, reviews and receipts; the CPU component medians read from the timing aggregate, wall clock only",
+    "every export code resolves in its source to the value the served file gives",
+    "each shared row’s interval home, whether its cards’ intervals differ, and its aliases, worked out from the intervals derived here and the display names; every card keeps its own source interval",
+    "every context-only pin has its pinned bytes and is bound by a pinned record, by SHA-256 or by file name; every handoff is the one its queue row names (row 30: the parent handoff that asked for the CPU timings)",
+    "hashes, released rights records, the FBCCA credit, the release record and the not-published list checked as strings",
+    "no withheld value, no part of the comment thread, no form of the commenter’s confidence figure, no private path, no host label and no private user, host or volume name in the served file",
+    "the served bytes equal the export program’s fresh build from the same manifest bytes, run in a separate process, so every editorial string is the export’s own"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "every study’s aggregate, review, approval, protocol and receipts: pinned in the manifest, and the same bytes the block modules pin, which the export checks",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves",
+      "editorial strings (display names, limitation keys, card anchors, the name key’s rows and the text this release writes): bound by bytes to the export program’s fresh build; their wording is checked by the export and its tests"
+    ],
+    "not_bound": [
+      "the run outputs behind each aggregate (predictions, seals, fitted models): each study’s own numerical review recomputed them; this audit opens no sealed file"
+    ]
+  }
+}

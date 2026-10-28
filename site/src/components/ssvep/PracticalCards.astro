@@ -1,0 +1,519 @@
+---
+/**
+ * Cards 10, 11, 13 and 14 of /topics/new-ssvep-frequencies/ (plan §2.1, package P-SS): #harmonic-pooling (pooling
+ * CCA's per-harmonic statistics, on BETA and on Wearable-102), #practical-settings (filter-bank CCA, shorter windows and
+ * fewer electrodes, with the CPU component timings of owner decision D25 in its details), #fixed-decay (one decay rule
+ * on harmonics and on filter-bank bands) and #rising-weights (a rising weight on the harmonics).
+ *
+ * Every figure is a field of ssvep-followups-update.json, made by src/data/ssvep-followups.ts from its path and
+ * printed with data-at and data-fig; scripts/checks/ssvep-followups.mjs holds each to its field and format. A shared
+ * level prints its interval on its home card only and links that card elsewhere; every contrast prints its own
+ * interval. Wearable-102 sits in its own block and table, never ranked against BETA. The CPU timings are component
+ * medians labelled as the export labels them, never summed, with no host label.
+ *
+ * Props
+ *   locale: Locale — 'en' or 'zh'.
+ *   cards: number[] — which of its cards (10, 11, 13, 14) to render here; the page interleaves the two components so
+ *     the cards run in number order.
+ */
+import type { Locale } from '../../data/i18n';
+import { hrefFor } from '../../data/i18n';
+import {
+  need, figAt, countAt, st, scChrome, level, contrast, spansZero, lvBits, ctBits, levelCell, contrastCell, rangeCell, toHtml, figHtml,
+  nameOf, trainingWords, roleWords, taskWords, contrastName, intervalText, cardLink, keyed, codeOf, said, cardOfStudy,
+  type Bit, type AnyBit, type ScStudy, type ScFig,
+} from '../../data/ssvep-followups';
+
+interface Props { locale: Locale; cards?: number[] }
+const { locale, cards = [10, 11, 13, 14] } = Astro.props;
+const show = (n: number) => cards.includes(n);
+const zh = locale === 'zh';
+const H = (bits: AnyBit[]) => toHtml(bits);
+const to = zh ? ' 至 ' : ' to ';
+const [c10, c11, c13, c14] = ([10, 11, 13, 14] as const).map(n => scChrome(n, locale));
+const A: ScStudy = 'harmonic_pooling', C: ScStudy = 'harmonic_pooling_wearable', P: ScStudy = 'practical_settings', D: ScStudy = 'fixed_decay', W: ScStudy = 'rising_weights';
+const nm = (id: ScStudy, code: string) => nameOf(id, code, locale);
+const ln = (n: number) => cardLink(n, locale);
+const lnC = (n: number) => cardLink(n, locale, false, true);
+const contrastRows = (id: ScStudy, keys = Object.keys(st(id).contrasts)) => keys.map(k => {
+  const c = contrast(id, k);
+  return { k, name: contrastName(id, c, locale), task: taskWords(k, locale), role: roleWords(c.role, locale), cell: contrastCell(c, locale) };
+});
+
+// --- Card 10: pooling the per-harmonic statistics -------------------------------------------------------------------
+const a = st(A), cw = st(C);
+const aP = ['RAW-LEAD3-RIDGE minus RAW-HARM-SUM/u8', 'EIG-RAW minus RAW-LEAD3-RIDGE/u8', 'RAW-HARM-ALLSUM minus RAW-HARM-SUM/u8'].map(k => contrast(A, k));
+const aS = ['RAW-HARM-MAX minus RAW-HARM-SUM/u8', 'JOINT-ALLSUM minus CCA-RAW/u8', 'EIG-JOINT minus JOINT-ALLSUM/u8'].map(k => contrast(A, k));
+need(a.design.contrast_family.primary === 3 && a.design.contrast_family.secondary === 3 && a.design.contrast_family.multiplicity_adjusted === false
+  && a.design.contrast_family.equivalence_margin === null && aP.every(c => c.role === 'primary') && aS.every(c => c.role === 'secondary')
+  && Object.keys(a.contrasts).length === 6, 'card 10, BETA: three primary and three secondary contrasts, no margin');
+need(spansZero(aP[0]) && spansZero(aP[1]) && aP[2].hi.raw < 0 && aS[0].hi.raw < 0 && aS[1].lo.raw > 0 && spansZero(aS[2]),
+  'card 10, BETA: the top-three ridge and the eigenvalue head unresolved, the all-component sum below the harmonic sum');
+need(a.design.arms.find((x: any) => x.code === 'RAW-HARM-ALLSUM').components === 'all six components'
+  && a.design.arms.find((x: any) => x.code === 'RAW-HARM-SUM').components === 'leading component of each harmonic'
+  && a.design.arms.find((x: any) => x.code === 'RAW-LEAD3-RIDGE').components === 'leading component of each harmonic', 'card 10: what each rule pools');
+keyed(A, 'eigenfeatures_carry_cca_statistics', 'pooling_rules_only', 'no_learned_lead3_advantage', 'no_equivalence_margin', 'seen_descriptive');
+const cP = ['EIG-RAW minus RAW-HARM-SUM/dry', 'EIG-RAW minus RAW-HARM-SUM/wet'].map(k => contrast(C, k));
+need(cw.design.contrast_family.primary === 1 && cw.design.contrast_family.per_sensor === true && cP.every(c => c.role === 'primary' && spansZero(c))
+  && Object.values(cw.contrasts).filter((c: any) => c.role === 'primary').length === 2, 'card 10, Wearable-102: one primary contrast per sensor, both unresolved');
+const sh = cw.design.source_heads;
+need(sh.dataset === 'BETA' && sh.heads_per_learned_arm === 35 && sh.collapsed_to_one_affine_function === true && sh.target_fits === 0 && sh.target_selection === false
+  && sh.retraining === false && cw.design.dataset.same_windows_as === 'wearable_transfer' && cw.design.dataset.candidate_order === 'native order, unsorted'
+  && cw.design.dataset.tie_rule === 'first native candidate index' && cw.checks.matched_cca_equals_card7.dry && cw.checks.matched_cca_equals_card7.wet,
+  'card 10, Wearable-102: card 7’s windows, 35 BETA heads collapsed to one function, nothing fitted on the target');
+keyed(C, 'intervals_conditional_on_heads', 'average_not_compact_model', 'not_comparable_with_beta_tasks', 'not_unknown_frequency_discovery',
+  'stored_amplitude_units', 'window_onset_and_filter', 'candidates_supplied_off_grid', 'prior_use_overlap', 'no_single_factor', 'no_equivalence_margin');
+const c10Beta = a.design.arms.map((x: any) => ({ code: x.code, name: nm(A, x.code), training: trainingWords(x.training, locale),
+  cells: ['u8', 'seen_ba'].map(t => levelCell(level(A, `${x.code}/${t}`), locale)) }));
+const c10Wear = cw.design.methods.map((x: any) => ({ code: x.code, name: nm(C, x.code), training: trainingWords(x.training, locale),
+  cells: ['dry', 'wet'].map(t => levelCell(level(C, `${x.code}/${t}`), locale)) }));
+need(cw.design.methods.find((x: any) => x.code === 'CCA-RAW').level_only === true && level(C, 'CCA-RAW/dry').iv === null && level(C, 'CCA-RAW/dry').home === 7,
+  'card 10: matched CCA is card 7’s level only');
+const c10Rows = [...contrastRows(A), ...contrastRows(C)];
+
+// --- Card 11: filter-bank CCA, shorter windows, fewer electrodes -----------------------------------------------------
+const p = st(P), dz = p.design;
+const cellIdx = (id: string) => dz.cells.findIndex((c: any) => c.id === id);
+need(p.grid.order === 'prospective' && p.checks.grid_order_is_prospective === true && p.grid.cells.join() === dz.cells.map((c: any) => c.id).join()
+  && p.grid.methods.join() === dz.methods.map((m: any) => m.code).join(), 'card 11: the grid in prospective order');
+const cellLabel = (id: string, sep = ' · '): Bit[] => { const i = cellIdx(id);
+  return [figAt(['studies', P, 'design', 'cells', i, 'window_s'], 's1'), sep, countAt('studies', P, 'design', 'cells', i, 'electrodes'), zh ? ' 个电极' : ' electrodes']; };
+// In a sentence the electrode count is a word ("2.0 s with four electrodes"), as the card's other sentences say it.
+const inCell = (id: string): Bit[] => { const i = cellIdx(id);
+  return [figAt(['studies', P, 'design', 'cells', i, 'window_s'], 's1'), zh ? '、' : ' with ', said(dz.cells[i].electrodes, locale), zh ? '个电极' : ' electrodes']; };
+const anchor = 'w500-c8', anchorCell = dz.cells[cellIdx(anchor)];
+need(anchorCell.window_s === 2 && anchorCell.electrodes === 8 && [...dz.cells].sort((x: any, y: any) => y.samples - x.samples || y.electrodes - x.electrodes)[0].id === anchor,
+  'card 11: the 2-s, eight-electrode cell is the longest window with the most electrodes');
+const FB = dz.fbcca.code, SUM = 'RAW-HARM-SUM-H3', CCA = 'CCA-RAW-H3', EIG = 'EIG-RAW6-RIDGE';
+const pk = (cell: string, code: string, t = 'u8') => `${cell}/${code}/${t}`;
+const pc = (l: string, r: string) => contrast(P, `${l} minus ${r}/u8`);
+const fbL = level(P, pk(anchor, FB)), fbSum = level(P, pk(anchor, SUM)), fbCca = level(P, pk(anchor, CCA));
+const fbVsSum = pc(`${anchor}/${FB}`, `${anchor}/${SUM}`), fbVsCca = pc(`${anchor}/${FB}`, `${anchor}/${CCA}`);
+need(dz.primary.B.join() === fbVsSum.key && fbVsSum.role === 'primary' && fbVsSum.lo.raw > 0 && fbVsCca.role === 'secondary' && fbVsCca.lo.raw > 0
+  && fbL.home === 11 && fbSum.home === 9 && fbCca.home === 5, 'card 11: filter-bank CCA above the harmonic sum (primary) and CCA (secondary), at its home card');
+const dPrim = dz.primary.D.map((k: string) => contrast(P, k));
+const dPos = dPrim.filter((c: any) => c.lo.raw > 0);
+need(dPrim.length === 6 && dPrim.every((c: any) => c.role === 'primary') && dPos.length === 1 && dPos[0].key === `w500-c4/${EIG} minus w500-c4/${SUM}/u8`
+  && dPrim.filter((c: any) => c !== dPos[0]).every((c: any) => spansZero(c)) && dPrim.length === dz.cells.length, 'card 11: one of six eigenvalue-head primaries above zero, at 2 s and four electrodes');
+keyed(P, 'one_learning_contrast_positive', 'complete_pipelines', 'observation_window_not_latency', 'author_preprocessing_inherited', 'recorded_subset_not_headset',
+  'eight_not_always_better', 'candidates_supplied', 'no_forty_way_claim', 'not_foundation_model_evidence', 'not_bitwise_matlab', 'other_recipe_on_site', 'seen_descriptive');
+const win4 = pc(pk('w125-c4', FB).replace('/u8', ''), pk('w500-c4', FB).replace('/u8', '')), win8 = pc(pk('w125-c8', FB).replace('/u8', ''), pk('w500-c8', FB).replace('/u8', ''));
+need(win4.hi.raw < 0 && win8.hi.raw < 0, 'card 11: shorter windows cut filter-bank CCA');
+const elec = p.contrast_groups.electrodes.map((k: string) => contrast(P, k));
+need(elec.length === 5 && elec.every((c: any) => c.hi.raw < 0 && c.key.startsWith('w250-c4/') && c.key.includes(' minus w250-c8/')), 'card 11: four against eight electrodes at 1 s, every interval below zero');
+const elecFb = elec.find((c: any) => c.key.startsWith(`w250-c4/${FB} `))!, elecRaw = elec.filter((c: any) => c !== elecFb);
+need(elecRaw.length === 4 && elecRaw.every((c: any) => dz.raw_family.codes.includes(codeOf(c.left))), 'card 11: the four raw-family methods');
+const elecLo = [...elecRaw].sort((x: any, y: any) => x.est.raw - y.est.raw)[0], elecHi = [...elecRaw].sort((x: any, y: any) => y.est.raw - x.est.raw)[0];
+const q = p.qualifiers.eight_electrodes_not_always_better;
+need(q.cells.join() === 'w125-c4,w125-c8' && q.paired_interval === null && q.limitation_key === 'eight_not_always_better' && q.methods_four_above_eight.length === 3
+  && q.methods_four_above_eight.every((m: string) => p.levels[pk('w125-c4', m)].estimate > p.levels[pk('w125-c8', m)].estimate), 'card 11: at 0.5 s three methods score higher with four electrodes');
+const fbd = dz.fbcca, other = fbd.other_recipe_on_site;
+need(fbd.sub_bands === 7 && fbd.harmonics === 5 && fbd.trained_head === false && fbd.bitwise_replication_of_the_matlab_code === false
+  && other.code === 'S11' && other.page === '/topics/questions-in-language/' && other.filter === 'Butterworth' && other.release_id === 'questions-in-language-update-20261008'
+  && fbd.input === 'the authors’ preprocessed window, cropped before its own filtering' && dz.preprocessing.crop_before_new_filtering === true
+  && dz.preprocessing.new_filtering_borrows_later_samples === false,
+  'card 11: its filter-bank recipe, and route 3’s other recipe on its page');
+const ans11 = p.answers_not_run[0];
+need(p.answers_not_run.length === 1 && ans11.card === 6 && ans11.item === 'filter-bank CCA', 'card 11 runs filter-bank CCA, which card 6 did not run');
+need(p.reproduces.filter((r: any) => r.role_here !== undefined && r.role_there !== undefined && r.role_here !== r.role_there).length === 2
+  && p.reproduces.every((r: any) => { const here = r.here.includes(' minus ') ? p.contrasts[r.here] : p.levels[r.here];
+    const src = r.card === 5 ? undefined : st(r.study as ScStudy)[r.here.includes(' minus ') ? 'contrasts' : 'levels'][r.there];
+    return here && (r.card === 5 || Math.abs(here.estimate - src.estimate) < 1e-12); }), 'card 11: the 2-s, eight-electrode cell reproduces cards 9 and 10');
+const METHODS = p.grid.methods as string[];
+const gridRows = (t: 'u8' | 'seen_ba') => (p.grid.cells as string[]).map(cell => ({ cell, label: cellLabel(cell), cells: METHODS.map(m => levelCell(level(P, pk(cell, m, t)), locale)) }));
+const GROUP: Record<string, Record<'en' | 'zh', string>> = { method: { en: 'method', zh: '方法' }, window: { en: 'window', zh: '时间窗' }, electrodes: { en: 'electrodes', zh: '电极' } };
+need(Object.keys(p.contrast_groups).join() === 'method,window,electrodes'
+  && Object.values(p.contrast_groups).flat().length === Object.keys(p.contrasts).length, 'card 11: three groups cover the contrasts');
+const pName = (key: string): Bit[] => {
+  const c = contrast(P, key), [lc, lm] = c.left.split('/'), [rc, rm] = c.right.split('/');
+  if (lc === rc) return [`${nm(P, lm)} − ${nm(P, rm)}, `, ...cellLabel(lc)];
+  need(lm === rm, `${key}: one method or one cell`);
+  return [`${nm(P, lm)}: `, ...cellLabel(lc), ' − ', ...cellLabel(rc)];
+};
+const c11Rows = Object.entries(p.contrast_groups as Record<string, string[]>).flatMap(([gid, keys]) => keys.map(k => {
+  const c = contrast(P, k);
+  return { k, group: GROUP[gid][locale], name: H(pName(k)), role: roleWords(c.role, locale), cell: contrastCell(c, locale) };
+}));
+// CPU component timings (D25): warm, single-thread wall-clock medians [min, max], components only, never summed, no host label.
+const cpu = p.cpu_components, m = cpu.measurement;
+need(m.clock === 'wall' && m.unit === 'ms' && m.statistic === 'median [min, max]' && m.measured_calls === 3 && m.warmup_calls_excluded === 1 && m.threads === 1
+  && m.gpu === false && m.buffers === 'warm' && m.candidates === 40 && m.batch_sizes.join() === '1,8' && m.summed === false
+  && cpu.anchor_cell === anchor && cpu.checks.whole_method_measurements === 0 && cpu.label.en === 'components; not sensor-to-decision or online latency',
+  'card 11: warm single-thread component medians of three calls, never summed, at the anchor cell');
+need(!/\b(?:A[M]D|Intel|Ry[z]en|Thread[r]ipper|Xeon|EPYC|Apple|M\d|GHz|Linux|Ubuntu|macOS|Windows|Python|NumPy|SciPy \d)\b/i.test(JSON.stringify(cpu)), 'card 11: no host, processor, system or runtime label in the timings');
+for (const k of ['components_never_summed', 'not_sensor_to_decision', 'shared_geometry_counted_once', 'readouts_exclude_extraction', 'forty_candidates',
+  'three_warm_repetitions', 'wall_times_used', 'one_head_not_average', 'unmeasured_stages', 'batch_amortised_not_lone_trial', 'anchor_not_chosen_by_speed',
+  'no_hardware_recommendation']) need(cpu.limitations_keys.includes(k), `card 11 timings carry ${k}`);
+const COMPONENT: Record<string, Record<'en' | 'zh', string>> = {
+  crop: { en: 'crop, validation and copy', zh: '裁剪、校验与复制' },
+  raw_filter: { en: 'raw 6–80 Hz filter', zh: '原始信号 6–80 Hz 滤波' },
+  raw_geometry: { en: 'shared raw CCA geometry', zh: '共享的原始 CCA 几何计算' },
+  fbcca: { en: 'filter-bank CCA: filter, geometry and scores', zh: '滤波器组 CCA：滤波、几何计算与打分' },
+  top3_readout: { en: 'top-three ridge readout on cached statistics', zh: '基于缓存统计量的三项主分量岭回归读出' },
+  eigenvalue_readout: { en: 'eigenvalue head readout on cached statistics', zh: '基于缓存统计量的特征值分类头读出' },
+};
+need(cpu.components.every((c: any) => COMPONENT[c.code]?.en === c.name) && dz.raw_family.band_hz.join() === '6,80', 'card 11: words for each timed component');
+const cpuRows = cpu.components.map((c: any) => ({ code: c.code, name: COMPONENT[c.code][locale], cells: [1, 8].map(b => {
+  const k = `${anchor}/${b}/${c.code}`, base = ['studies', P, 'cpu_components', 'groups', k, b === 1 ? 'wall_ms_per_call' : 'wall_ms_amortised'];
+  need(cpu.groups[k]?.cell === anchor && cpu.groups[k].batch === b && cpu.groups[k].component === c.code, `the timing group ${k}`);
+  return rangeCell(figAt([...base, 'median'], 'sig3'), figAt([...base, 'min'], 'sig3'), figAt([...base, 'max'], 'sig3'), locale);
+}) }));
+const fbMs = (b: 1 | 8) => figAt(['studies', P, 'cpu_components', 'groups', `${anchor}/${b}/fbcca`, b === 1 ? 'wall_ms_per_call' : 'wall_ms_amortised', 'median'], 'sig3');
+const batch8 = countAt('studies', P, 'cpu_components', 'measurement', 'batch_sizes', 1);
+
+// --- Card 13: one decay rule ------------------------------------------------------------------------------------------
+const d = st(D), rule = d.design.rule;
+need(rule.weight === 'n^-1.25 + 0.25' && rule.exponent === 1.25 && rule.offset === 0.25 && rule.origin === 'the sub-band weights of the published filter-bank CCA recipe'
+  && fbd.sub_band_weights === 'n^-1.25 + 0.25 for sub-band n = 1 to 7' && d.design.harmonic_and_sub_band_weights_are_different_operations === true
+  && d.design.each_contrast_changes_weights_within_one_construction === true && d.design.constructions.H3.terms === 3 && d.design.constructions.FBCCA.terms === 7
+  && d.design.training_fits === 0, 'card 13: the filter-bank recipe’s weight rule on three harmonics and on seven sub-bands, nothing trained');
+const ruleBits = (): AnyBit[] => ['n', '^', '−', figAt(['studies', D, 'design', 'rule', 'exponent'], 'auc2'), ' + ', figAt(['studies', D, 'design', 'rule', 'offset'], 'auc2')];
+const dP = contrast(D, 'H3-DECAY minus H3-FLAT/u8'), dFb = contrast(D, 'FBCCA-DECAY minus FBCCA-FLAT/u8');
+const dSeen = contrast(D, 'H3-DECAY minus H3-FLAT/seen_ba'), dFbSeen = contrast(D, 'FBCCA-DECAY minus FBCCA-FLAT/seen_ba');
+const dDry = contrast(D, 'H3-DECAY minus H3-FLAT/dry'), dWet = contrast(D, 'H3-DECAY minus H3-FLAT/wet');
+const eq = d.equivalence;
+need(dP.role === 'primary' && Object.values(d.contrasts).filter((c: any) => c.role === 'primary').length === 1 && eq.contrast === dP.key && eq.met === false
+  && eq.interval_beyond_margin === true && eq.interval[1] < -eq.margin && dP.flags.equivalence_met === false && dP.hi.raw < 0 && dFb.lo.raw > 0,
+  'card 13: the single primary contrast, its 90% interval wholly outside the margin; the sub-band rule raises filter-bank CCA');
+need(Math.abs(d.levels['FBCCA-DECAY/u8'].estimate - p.levels[pk(anchor, FB)].estimate) < 1e-12 && level(D, 'FBCCA-DECAY/u8').home === 11
+  && level(D, 'H3-FLAT/u8').home === 9, 'card 13: the decayed filter-bank arm is card 11’s filter-bank CCA; the flat harmonic sum card 9’s');
+keyed(D, 'equivalence_not_met', 'equivalence_approximate', 'within_construction_only', 'secondary_descriptive', 'harmonic_weighting_is_adaptation', 'no_optimality_claim', 'wearable_units_and_windows');
+const eqLo = figAt(['studies', D, 'equivalence', 'interval', 0], 'sgn2'), eqHi = figAt(['studies', D, 'equivalence', 'interval', 1], 'sgn2');
+const eqLevel = figAt(['studies', D, 'equivalence', 'interval_level'], 'pct0'), eqMargin = figAt(['studies', D, 'equivalence', 'margin'], 'pm1');
+const D_ARMS = ['H3-FLAT', 'H3-DECAY', 'FBCCA-FLAT', 'FBCCA-DECAY'], T4 = ['u8', 'seen_ba', 'dry', 'wet'];
+const c13Levels = D_ARMS.map(code => ({ code, name: nm(D, code), cells: T4.map(t => d.levels[`${code}/${t}`] ? levelCell(level(D, `${code}/${t}`), locale) : '—') }));
+need(Object.values(d.levels).every((l: any) => l.interval === null) && D_ARMS.every(c => T4.some(t => d.levels[`${c}/${t}`])), 'card 13: levels without intervals');
+
+// --- Card 14: rising weights ------------------------------------------------------------------------------------------
+const w = st(W);
+need(w.design.weights.literal_rise.join() === '1,1.5,1.9' && w.display_names.literal_rise === 'rising weights 1, 1.5, 1.9 (no training)'
+  && w.design.weights.flat.join() === '1,1,1' && w.design.same_vector_for_every_candidate === true && w.design.training_fits === 0
+  && w.design.pooled === 'the three harmonic-local leading squared canonical correlations', 'card 14: the rising weights its name states, on the three harmonics, nothing trained');
+const crit = w.criterion, wP = contrast(W, 'literal_rise minus flat/u8');
+need(crit.contrast === wP.key && crit.met === true && crit.prespecified === true && crit.rule === 'the paired 95% interval lies wholly above zero' && wP.lo.raw > 0
+  && wP.role === 'primary' && Object.values(w.contrasts).filter((c: any) => c.role === 'primary').length === 1, 'card 14: the single prespecified criterion, met');
+const wSeen = contrast(W, 'literal_rise minus flat/seen_ba'), wDry = contrast(W, 'literal_rise minus flat/dry'), wWet = contrast(W, 'literal_rise minus flat/wet');
+need(spansZero(wSeen) && wDry.hi.raw < 0 && spansZero(wWet) && wSeen.role === 'secondary' && wDry.role === 'secondary' && wWet.role === 'secondary',
+  'card 14: seen unresolved, dry below zero, wet unresolved');
+keyed(W, 'single_primary', 'secondary_descriptive', 'exact_profile_rounding_check', 'dry_decrement_wet_unresolved', 'coverage_heuristic', 'passbands_wider_than_nominal',
+  'no_alpha_test', 'no_learned_weights');
+need(Object.entries(w.contrasts).filter(([k]) => k.startsWith('exact_rise')).every(([, c]: [string, any]) => c.role === 'rounding_check')
+  && /^cumulative sum of n\^-1\.25 \+ 0\.25 over n = 1 to 3, divided by its first term$/.test(w.design.exact_profile), 'card 14: the exact profile is a rounding check of card 13’s rule');
+// The coverage heuristic in one clause: the recipe's sub-bands rise in their lower edges and share one upper edge (nested).
+need(typeof fbd.pass_band_high_edge_hz === 'number' && fbd.pass_band_low_edges_hz.length === fbd.sub_bands
+  && fbd.pass_band_low_edges_hz.every((x: number, i: number, a: number[]) => i === 0 || x > a[i - 1]) && fbd.pass_band_low_edges_hz.at(-1) < fbd.pass_band_high_edge_hz,
+  'card 14: filter-bank CCA’s sub-bands are nested, one upper edge and rising lower edges');
+const W_ARMS = ['flat', 'literal_rise', 'exact_rise'];
+const c14Levels = W_ARMS.map(code => ({ code, name: nm(W, code), cells: T4.map(t => levelCell(level(W, `${code}/${t}`), locale)) }));
+
+const copy = {
+  en: {
+    q10: 'CCA gives one squared correlation per harmonic. Does the rule that pools them matter, and does a learned rule do better than a sum?',
+    betaH3: 'BETA, held-out frequencies',
+    lead10a: (): Bit[] => ['All three primary contrasts: the top-three ridge, learned on each harmonic’s leading correlation, minus the harmonic sum ', ...ctBits(aP[0], locale),
+      ', unresolved; the eigenvalue head minus the top-three ridge ', ...ctBits(aP[1], locale), ', unresolved; the all-component sum, which sums all six components rather than each harmonic’s leading one, minus the harmonic sum ',
+      ...ctBits(aP[2], locale), '.'],
+    lead10b: (): Bit[] => ['Secondary: the harmonic max minus the harmonic sum ', ...ctBits(aS[0], locale), '; the joint all-component sum minus CCA ', ...ctBits(aS[1], locale),
+      '; the joint eigenvalue head minus the joint all-component sum ', ...ctBits(aS[2], locale), '.'],
+    wearH3: 'Wearable-102, dry and wet',
+    scope10: (): Bit[] => ['The same ', countAt('studies', C, 'design', 'dataset', 'windows_per_sensor'), ' windows per sensor as ', ln(7), ', ', countAt('studies', C, 'design', 'dataset', 'people'),
+      ' people, ', countAt('studies', C, 'design', 'dataset', 'targets'), ' candidates in their native order, exact ties going to the first. Each learned arm’s ',
+      countAt('studies', C, 'design', 'source_heads', 'heads_per_learned_arm'), ' BETA heads run unchanged, their scores averaged with equal weights, which collapses them to one affine function; ',
+      countAt('studies', C, 'design', 'source_heads', 'target_fits'), ' fits on Wearable-102.'],
+    lead10c: (): Bit[] => ['The primary contrast, the eigenvalue head minus the harmonic sum: ', ...ctBits(cP[0], locale), ' dry and ', ...ctBits(cP[1], locale), ' wet, both unresolved.'],
+    c10Summary: 'Every set-up on BETA and on Wearable-102, and all the contrasts',
+    c10BetaCaption: 'Card 10, BETA: accuracy on held-out frequencies and balanced accuracy on seen ones (descriptive). Levels from cards 5 and 9 carry their intervals there.',
+    c10WearCaption: 'Card 10, Wearable-102: accuracy among its targets, by sensor. Matched CCA is card 7’s level.',
+    c10ContrastsCaption: 'Card 10: paired differences, each with its own interval.',
+    cap10: (): Bit[] => ['The eigenvalue features already carry CCA’s statistics for each trial. These contrasts compare pooling rules only: they do not show that second components are irrelevant in general, and the top-three result does not establish a learned advantage. No equivalence margin was registered, so an interval that includes zero leaves the direction unresolved. On Wearable-102 the average of the BETA heads is not a compact model trained on its own, and its levels are not comparable with BETA’s tasks; the candidates are supplied, so nothing here finds an unknown frequency, and the dataset’s units, windows and possible participant overlap are as ',
+      ln(7), ' states them. BETA: ', ...intervalText(A, locale), '. Wearable-102: ', ...intervalText(C, locale), '.'],
+    q11: 'Filter-bank CCA, shorter windows, and four electrodes instead of eight: how does each change held-out accuracy?',
+    scope11: (): Bit[] => ['BETA, held-out and seen tasks. Windows of ', ...[0, 2, 4].flatMap((i, j) => [figAt(['studies', P, 'design', 'cells', i, 'window_s'], 's1'), j === 0 ? ', ' : j === 1 ? ' and ' : '']),
+      ' cut from the authors’ ', countAt('studies', P, 'design', 'preprocessing', 'author_band_hz', 0), '–', countAt('studies', P, 'design', 'preprocessing', 'author_band_hz', 1),
+      ' Hz preprocessing and cropped before any new filtering; eight recorded electrodes (', dz.electrodes.eight.join(', '), ') or four of them (', dz.electrodes.four.join(', '),
+      '). The raw-family methods filter ', countAt('studies', P, 'design', 'raw_family', 'band_hz', 0), '–', countAt('studies', P, 'design', 'raw_family', 'band_hz', 1), ' Hz and use ',
+      countAt('studies', P, 'design', 'raw_family', 'harmonics'), ' harmonics; filter-bank CCA filters each cropped window itself.'],
+    lead11a: (): Bit[] => ['Filter-bank CCA, which needs no training, reached ', ...lvBits(fbL, locale), ' on held-out frequencies with ', figAt(['studies', P, 'design', 'cells', cellIdx(anchor), 'window_s'], 's1'),
+      ' windows and ', said(anchorCell.electrodes, locale), ' electrodes. Against the harmonic sum’s ', ...lvBits(fbSum, locale), ' that is ', ...ctBits(fbVsSum, locale),
+      ', the primary contrast; against CCA’s ', ...lvBits(fbCca, locale), ' it is ', ...ctBits(fbVsCca, locale), '.'],
+    lead11b: (): Bit[] => ['The eigenvalue head minus the harmonic sum is a primary contrast in each of the ', said(dz.cells.length, locale), ' cells. One is above zero, at ', ...inCell('w500-c4'), ': ',
+      ...ctBits(dPos[0], locale), '; the other ', said(dPrim.length - 1, locale), ' intervals include zero.'],
+    lead11c: (): Bit[] => ['Going from ', figAt(['studies', P, 'design', 'cells', 4, 'window_s'], 's1'), ' to ', figAt(['studies', P, 'design', 'cells', 0, 'window_s'], 's1'),
+      ' windows changed filter-bank CCA by ', ...ctBits(win4, locale), ' with four electrodes and by ', ...ctBits(win8, locale), ' with eight.'],
+    lead11d: (): Bit[] => ['With ', figAt(['studies', P, 'design', 'cells', 2, 'window_s'], 's1'), ' windows, four electrodes instead of eight changed filter-bank CCA by ', ...ctBits(elecFb, locale),
+      ' and the four raw-family methods by between ', ...ctBits(elecLo, locale), ' and ', ...ctBits(elecHi, locale), ', every interval below zero. With ', figAt(['studies', P, 'design', 'cells', 0, 'window_s'], 's1'),
+      ' windows the harmonic sum, the top-three ridge and the eigenvalue head have higher level means with four electrodes than with eight, so eight electrodes do not always help; no paired interval was registered for those pairs.'],
+    recipe11: (): Bit[] => ['Card 11’s recipe is ', fbd.description.en, '. ', { href: hrefFor(`${other.page}#secondary`, locale), text: 'Route 3’s page' },
+      ' reports another filter-bank recipe on the same task, ', other.code, ', with ', said(other.sub_bands, locale), ' ', other.filter, ' sub-bands. ', lnC(6),
+      ' listed filter-bank CCA among the things it did not run; this card runs it on the authors’ preprocessed window, cropped before the filter bank.'],
+    c11Summary: 'Every cell of the grid, on both tasks, and all the contrasts',
+    c11HeldCaption: 'Card 11: accuracy on held-out frequencies, cells in the order fixed before the run. Levels shared with cards 5, 9 and 10 carry their intervals there.',
+    c11SeenCaption: 'Card 11: balanced accuracy on seen frequencies, a separate task, descriptive.',
+    c11ContrastsCaption: 'Card 11: paired differences on held-out frequencies, each with its own interval and its own role in this study.',
+    reproduces11: (): Bit[] => ['At ', ...inCell(anchor), ' the grid reproduces the levels and contrasts of ', ln(10), ' and ', ln(9),
+      '’s eigenvalue head minus harmonic sum; two contrasts that are primary on card 10 are secondary here, each keeping its own study’s role.'],
+    cpuSummary: 'CPU component timings',
+    cpu11: (): Bit[] => ['Warm, single-thread wall-clock medians of ', countAt('studies', P, 'cpu_components', 'measurement', 'measured_calls'), ' calls after ',
+      countAt('studies', P, 'cpu_components', 'measurement', 'warmup_calls_excluded'), ' warm-up call, with the fastest and slowest call, for the cell at ', ...inCell(anchor),
+      ', scoring ', countAt('studies', P, 'cpu_components', 'measurement', 'candidates'), ' candidates with one fixed released head. Filter-bank CCA took ', fbMs(1),
+      ' ms for a single trial and ', fbMs(8), ' ms per trial in a batch of ', batch8, '. Each component is timed on its own and never summed: the shared raw CCA geometry serves the four raw-family methods and is timed once, the readouts exclude feature extraction, and the decision step and the average over heads were not timed. A batch figure divides the batch’s time by its size and is not the latency of a lone trial. The cell was not chosen for speed, and nothing here compares or recommends hardware.'],
+    cpuCaption: (): Bit[] => ['Card 11: CPU timings in milliseconds — ', cpu.label.en, '.'],
+    cpuHeads: (): string[] => ['Component', 'Code', H(['One trial (ms)']), H(['Batch of ', batch8, ', per trial (ms)'])],
+    cap11: (): Bit[] => ['Filter-bank CCA against the raw-family methods compares complete pipelines: its sub-bands, harmonics and weighting change together. A window length is how much signal the decoder sees, not acquisition-to-decision latency, and every cell inherits the authors’ preprocessing. Four electrodes are a recorded subset of the eight, not a four-electrode headset. The candidate frequencies’ references are given at test time, so nothing here supports a ', countAt('studies', P, 'design', 'dataset', 'targets'), '-way or online spelling claim, and the filter-bank result is no evidence about foundation models. The recipe is a SciPy realisation, not a bitwise replication of the authors’ MATLAB code. No equivalence margin was registered, and the seen-task levels are descriptive. ',
+      ...intervalText(P, locale), '.'],
+    q13: 'The filter-bank recipe weights its sub-bands by a decaying rule. What does the same rule do on the three harmonics?',
+    lead13a: (): Bit[] => ['One fixed weight rule, ', ...ruleBits(), ', the sub-band weights of the published filter-bank CCA recipe. On the ', said(d.design.constructions.H3.terms, locale),
+      ' harmonics it lowered BETA held-out accuracy from ', ...lvBits(level(D, 'H3-FLAT/u8'), locale), ' to ', ...lvBits(level(D, 'H3-DECAY/u8'), locale), ': ', ...ctBits(dP, locale),
+      ', the primary contrast. Its prespecified ', eqLevel, ' interval, ', eqLo, to, eqHi, ', lies wholly outside the ', eqMargin,
+      ' margin, so the equivalence criterion is not met. On filter-bank CCA’s ', said(d.design.constructions.FBCCA.terms, locale), ' sub-bands the same rule raised accuracy from ',
+      ...lvBits(level(D, 'FBCCA-FLAT/u8'), locale), ' to ', ...lvBits(level(D, 'FBCCA-DECAY/u8'), locale), ': ', ...ctBits(dFb, locale), '.'],
+    lead13b: (): Bit[] => ['On the seen 32-way task the rule changed the harmonic sum by ', ...ctBits(dSeen, locale), ' and filter-bank CCA by ', ...ctBits(dFbSeen, locale),
+      '. On Wearable-102, where only the harmonic construction ran, it changed accuracy by ', ...ctBits(dDry, locale), ' dry and ', ...ctBits(dWet, locale), ' wet.'],
+    c13Summary: 'Every set-up on every task, and the contrasts',
+    c13LevelsCaption: 'Card 13: accuracy (balanced on the seen task). The export gives these levels without intervals; the harmonic sum’s and filter-bank CCA’s are on the cards named, and each contrast carries its own.',
+    c13ContrastsCaption: 'Card 13: paired differences, each with its own 95% interval.',
+    cap13: (): Bit[] => ['Harmonic weights and sub-band weights are different operations, and each contrast changes weights within one construction only; applying the sub-band rule to harmonic numbers adapts the published recipe. The decayed filter-bank arm is ',
+      ln(11), '’s filter-bank CCA. A single fixed rule says nothing about an optimal weighting. The margin test reads a percentile interval, so its equivalence inference is approximate, and the secondary intervals are descriptive. Wearable-102’s units and windows are as ',
+      ln(7), ' states them. ', ...intervalText(D, locale), '.'],
+    q14: `Does weighting the three harmonics ${w.design.weights.literal_rise.join(', ')}, instead of equally, raise held-out accuracy?`,
+    lead14a: (): Bit[] => ['On BETA’s held-out frequencies, rising weights on the three harmonics raised accuracy from the harmonic sum’s ', ...lvBits(level(W, 'flat/u8'), locale), ' to ',
+      ...lvBits(level(W, 'literal_rise/u8'), locale), ': ', ...ctBits(wP, locale), '. The single prespecified criterion, a paired 95% interval wholly above zero, is met.'],
+    lead14b: (): Bit[] => ['On the seen 32-way task the change was ', ...ctBits(wSeen, locale), '. On Wearable-102 the same weights changed accuracy from ', ...lvBits(level(W, 'flat/dry'), locale),
+      ' to ', ...lvBits(level(W, 'literal_rise/dry'), locale), ' dry, ', ...ctBits(wDry, locale), ', and by ', ...ctBits(wWet, locale), ' wet.'],
+    method14: (): Bit[] => ['The rising weights follow a coverage heuristic: filter-bank CCA’s sub-bands share one upper edge, so a higher harmonic falls in more of them. The exact profile divides the cumulative sum of ', ln(13), '’s decay weights over the three harmonics by its first term; its rows are a rounding check, not an equivalence claim. The actual filter passbands are wider than their nominal edges, so a candidate’s harmonics can fall in more sub-bands than the nominal edges suggest; coverage counts and summed band weights are heuristics. No pre-stimulus alpha or noise was measured, and no weight was learned or searched.'],
+    c14Summary: 'Every set-up on every task, and the contrasts',
+    c14LevelsCaption: 'Card 14: accuracy (balanced on the seen task). The harmonic sum carries its intervals on the cards named.',
+    c14ContrastsCaption: 'Card 14: paired differences, each with its own interval; the exact-profile rows are a rounding check.',
+    cap14: (): Bit[] => ['The dry interval lies below zero; the wet and seen intervals include zero. Apart from the single primary contrast, the intervals are descriptive. ', ...intervalText(W, locale), '.'],
+    colName: 'Set-up', colTraining: 'Training', colHeld: 'Held-out 8-way', colSeen: 'Seen 32-way, balanced', colDry: 'Wearable-102 dry', colWet: 'Wearable-102 wet',
+    colContrast: 'Contrast', colTask: 'Task', colRole: 'Role', colDiff: 'Difference', colGroup: 'Group', colCell: 'Window · electrodes',
+    region: (n: number, what: string) => `Card ${n}: ${what}, scrolls horizontally`,
+    R: { levels: 'levels of each set-up', contrasts: 'paired contrasts', grid: 'the grid of cells', cpu: 'CPU component timings' },
+  },
+  zh: {
+    q10: 'CCA 对每个谐波给出一个相关平方。用什么规则把它们汇总起来有没有关系？学习得到的规则会比直接求和更好吗？',
+    betaH3: 'BETA，留出频率',
+    lead10a: (): Bit[] => ['全部三项主要对比：在每个谐波的主相关上学习的三项主分量岭回归减去谐波求和为 ', ...ctBits(aP[0], locale),
+      '，方向未定；特征值分类头减去三项主分量岭回归为 ', ...ctBits(aP[1], locale), '，方向未定；全分量求和（对全部六个分量求和，而不是每个谐波只取主分量）减去谐波求和为 ',
+      ...ctBits(aP[2], locale), '。'],
+    lead10b: (): Bit[] => ['次要对比：谐波取最大减去谐波求和为 ', ...ctBits(aS[0], locale), '；联合全分量求和减去 CCA 为 ', ...ctBits(aS[1], locale),
+      '；联合特征值分类头减去联合全分量求和为 ', ...ctBits(aS[2], locale), '。'],
+    wearH3: 'Wearable-102，干电极与湿电极',
+    scope10: (): Bit[] => ['与', ln(7), ' 相同的每种电极 ', countAt('studies', C, 'design', 'dataset', 'windows_per_sensor'), ' 个时间窗，', countAt('studies', C, 'design', 'dataset', 'people'),
+      ' 名被试，', countAt('studies', C, 'design', 'dataset', 'targets'), ' 个候选按原始顺序排列，分数完全相同时取第一个。每个学习组的 ',
+      countAt('studies', C, 'design', 'source_heads', 'heads_per_learned_arm'), ' 个 BETA 分类头原样运行，分数等权平均，相当于合并成一个仿射函数；在 Wearable-102 上拟合 ',
+      countAt('studies', C, 'design', 'source_heads', 'target_fits'), ' 次。'],
+    lead10c: (): Bit[] => ['主要对比，特征值分类头减去谐波求和：干电极 ', ...ctBits(cP[0], locale), '，湿电极 ', ...ctBits(cP[1], locale), '，方向都未定。'],
+    c10Summary: 'BETA 与 Wearable-102 上的全部设置，以及全部对比',
+    c10BetaCaption: '卡片 10，BETA：留出频率上的准确率与见过频率上的平衡准确率（描述性）。来自卡片 5 和 9 的水平，区间在原卡片上。',
+    c10WearCaption: '卡片 10，Wearable-102：按电极分别给出在其目标之间选择的准确率。匹配 CCA 是卡片 7 的水平。',
+    c10ContrastsCaption: '卡片 10：配对差值，各带自己的区间。',
+    cap10: (): Bit[] => ['特征值特征本身已含有逐试次的 CCA 统计量。这些对比只比较汇总规则：并不说明第二分量在一般情况下无关，三项主分量的结果也不能说明学习带来了优势。没有登记等效界值，所以区间包含零只表示方向未定。在 Wearable-102 上，BETA 分类头的平均不是单独训练的紧凑模型，其水平也不能与 BETA 的任务相比；候选频率是给定的，所以这里没有发现未知频率；该数据集的单位、时间窗与可能的被试重叠，见',
+      ln(7), ' 的说明。BETA：', ...intervalText(A, locale), '。Wearable-102：', ...intervalText(C, locale), '。'],
+    q11: '滤波器组 CCA、更短的时间窗、用四个电极代替八个：各自怎样改变留出频率上的准确率？',
+    scope11: (): Bit[] => ['BETA，留出与见过两项任务。时间窗为 ', ...[0, 2, 4].flatMap((i, j) => [figAt(['studies', P, 'design', 'cells', i, 'window_s'], 's1'), j === 0 ? '、' : j === 1 ? ' 与 ' : '']),
+      '，截自作者 ', countAt('studies', P, 'design', 'preprocessing', 'author_band_hz', 0), '–', countAt('studies', P, 'design', 'preprocessing', 'author_band_hz', 1),
+      ' Hz 预处理后的数据，在任何新的滤波之前裁剪；八个记录电极（', dz.electrodes.eight.join('、'), '）或其中四个（', dz.electrodes.four.join('、'),
+      '）。原始信号方法先做 ', countAt('studies', P, 'design', 'raw_family', 'band_hz', 0), '–', countAt('studies', P, 'design', 'raw_family', 'band_hz', 1), ' Hz 滤波，用 ',
+      countAt('studies', P, 'design', 'raw_family', 'harmonics'), ' 个谐波；滤波器组 CCA 对每个裁剪后的时间窗自行滤波。'],
+    lead11a: (): Bit[] => ['不需要训练的滤波器组 CCA，在 ', figAt(['studies', P, 'design', 'cells', cellIdx(anchor), 'window_s'], 's1'), ' 时间窗、', said(anchorCell.electrodes, locale),
+      '个电极下，留出频率上达到 ', ...lvBits(fbL, locale), '。相对谐波求和的 ', ...lvBits(fbSum, locale), '，差值为 ', ...ctBits(fbVsSum, locale),
+      '，这是主要对比；相对 CCA 的 ', ...lvBits(fbCca, locale), '，差值为 ', ...ctBits(fbVsCca, locale), '。'],
+    lead11b: (): Bit[] => ['特征值分类头减去谐波求和，在', said(dz.cells.length, locale), '个单元格中各是一项主要对比。其中一项高于零，在 ', ...inCell('w500-c4'), '下：',
+      ...ctBits(dPos[0], locale), '；其余', said(dPrim.length - 1, locale), '项的区间都包含零。'],
+    lead11c: (): Bit[] => ['时间窗从 ', figAt(['studies', P, 'design', 'cells', 4, 'window_s'], 's1'), ' 缩短到 ', figAt(['studies', P, 'design', 'cells', 0, 'window_s'], 's1'),
+      '，滤波器组 CCA 在四个电极下变化 ', ...ctBits(win4, locale), '，在八个电极下变化 ', ...ctBits(win8, locale), '。'],
+    lead11d: (): Bit[] => ['在 ', figAt(['studies', P, 'design', 'cells', 2, 'window_s'], 's1'), ' 时间窗下，用四个电极代替八个，滤波器组 CCA 变化 ', ...ctBits(elecFb, locale),
+      '，四种原始信号方法的变化在 ', ...ctBits(elecLo, locale), '与 ', ...ctBits(elecHi, locale), '之间，区间都低于零。在 ', figAt(['studies', P, 'design', 'cells', 0, 'window_s'], 's1'),
+      ' 时间窗下，谐波求和、三项主分量岭回归与特征值分类头用四个电极时的水平均值高于八个电极，所以八个电极并不总是更好；这些配对没有登记配对区间。'],
+    recipe11: (): Bit[] => ['卡片 11 的方案为', fbd.description.zh, '。', { href: hrefFor(`${other.page}#secondary`, locale), text: '第三条路线的页面' },
+      '报告了同一任务上的另一种滤波器组方案 ', other.code, '，用', said(other.sub_bands, locale), '个巴特沃斯（', other.filter, '）子带。', ln(6),
+      ' 把滤波器组 CCA 列为没有运行的部分；本卡片在作者预处理后的时间窗上运行它，并在滤波器组之前裁剪。'],
+    c11Summary: '网格中的每个单元格（两项任务），以及全部对比',
+    c11HeldCaption: '卡片 11：留出频率上的准确率，单元格按运行前固定的顺序排列。与卡片 5、9、10 共享的水平，区间在原卡片上。',
+    c11SeenCaption: '卡片 11：见过频率上的平衡准确率，这是另一项任务，仅作描述。',
+    c11ContrastsCaption: '卡片 11：留出频率上的配对差值，各带自己的区间，以及在本研究中的角色。',
+    reproduces11: (): Bit[] => ['在 ', ...inCell(anchor), '下，网格复现了', ln(10), ' 的水平与对比，以及', ln(9),
+      ' 的特征值分类头减去谐波求和；在卡片 10 上是主要对比的两项在这里是次要对比，各自保留本研究中的角色。'],
+    cpuSummary: 'CPU 组件计时',
+    cpu11: (): Bit[] => ['预热后单线程的墙钟时间中位数，取 ', countAt('studies', P, 'cpu_components', 'measurement', 'warmup_calls_excluded'), ' 次预热调用之后的 ',
+      countAt('studies', P, 'cpu_components', 'measurement', 'measured_calls'), ' 次调用，并给出最快与最慢的一次；单元格为 ', ...inCell(anchor),
+      '，用一个固定的已发布分类头为 ', countAt('studies', P, 'cpu_components', 'measurement', 'candidates'), ' 个候选打分。滤波器组 CCA 处理单个试次用时 ', fbMs(1),
+      ' ms，在 ', batch8, ' 个试次的批次中每个试次 ', fbMs(8), ' ms。每个组件单独计时，从不相加：共享的原始 CCA 几何计算供四种原始信号方法共用，只计一次；读出时间不含特征提取；决策步骤与多个分类头的平均没有计时。批次数字是批次总时间除以批次大小，不是单个试次到达时的延迟。这个单元格不是按速度挑选的，这里也不比较或推荐任何硬件。'],
+    cpuCaption: (): Bit[] => ['卡片 11：以毫秒计的 CPU 计时——', cpu.label.zh, '。'],
+    cpuHeads: (): string[] => ['组件', '代码', H(['单个试次（ms）']), H([batch8, ' 个试次的批次，每个试次（ms）'])],
+    cap11: (): Bit[] => ['滤波器组 CCA 与原始信号方法的对比，比较的是完整的流程：子带、谐波与加权同时不同。时间窗长度是解码器看到的信号长度，不是从采集到决策的延迟；每个单元格都沿用了作者的预处理。四个电极是八个记录电极中的一部分，不是四电极头戴设备。测试时给定了候选频率的参考信号，所以这里不支持 ', countAt('studies', P, 'design', 'dataset', 'targets'), ' 选 1 或在线拼写的结论，滤波器组的结果也不是关于基础模型的证据。该方案是 SciPy 实现，不是作者 MATLAB 代码的逐位复现。没有登记等效界值，见过任务上的水平仅作描述。',
+      ...intervalText(P, locale), '。'],
+    q13: '滤波器组方案用一条衰减规则给各子带加权。同一规则用在三个谐波上会怎样？',
+    lead13a: (): Bit[] => ['一条固定的权重规则 ', ...ruleBits(), '，即已发表的滤波器组 CCA 方案中的子带权重。用在', said(d.design.constructions.H3.terms, locale),
+      '个谐波上，它把 BETA 留出频率上的准确率从 ', ...lvBits(level(D, 'H3-FLAT/u8'), locale), ' 降到 ', ...lvBits(level(D, 'H3-DECAY/u8'), locale), '：', ...ctBits(dP, locale),
+      '，这是主要对比。预先设定的 ', eqLevel, ' 区间为 ', eqLo, to, eqHi, '，完全落在 ', eqMargin,
+      ' 的界值之外，因此不满足等效标准。用在滤波器组 CCA 的', said(d.design.constructions.FBCCA.terms, locale), '个子带上，同一规则把准确率从 ',
+      ...lvBits(level(D, 'FBCCA-FLAT/u8'), locale), ' 提高到 ', ...lvBits(level(D, 'FBCCA-DECAY/u8'), locale), '：', ...ctBits(dFb, locale), '。'],
+    lead13b: (): Bit[] => ['在见过频率的 32 选 1 任务上，该规则使谐波求和变化 ', ...ctBits(dSeen, locale), '，使滤波器组 CCA 变化 ', ...ctBits(dFbSeen, locale),
+      '。在 Wearable-102 上只运行了谐波这一种构造，准确率在干电极上变化 ', ...ctBits(dDry, locale), '，在湿电极上变化 ', ...ctBits(dWet, locale), '。'],
+    c13Summary: '每项任务上的全部设置，以及各对比',
+    c13LevelsCaption: '卡片 13：准确率（见过频率任务为平衡准确率）。导出文件给出的这些水平没有区间；谐波求和与滤波器组 CCA 的区间在所注明的卡片上，每项对比都带自己的区间。',
+    c13ContrastsCaption: '卡片 13：配对差值，各带自己的 95% 区间。',
+    cap13: (): Bit[] => ['谐波权重与子带权重是不同的运算，每项对比只在同一种构造内部改变权重；把子带规则用于谐波序号，是对已发表方案的改编。加衰减权重的滤波器组一组即',
+      ln(11), ' 的滤波器组 CCA。单独一条固定规则说明不了什么是最优加权。界值检验读取的是百分位区间，因此等效推断是近似的；次要区间仅作描述。Wearable-102 的单位与时间窗见',
+      ln(7), ' 的说明。', ...intervalText(D, locale), '。'],
+    q14: `把三个谐波的权重设为 ${w.design.weights.literal_rise.join('、')}，而不是相等，能提高留出频率上的准确率吗？`,
+    lead14a: (): Bit[] => ['在 BETA 的留出频率上，三个谐波逐级升高的权重把准确率从谐波求和的 ', ...lvBits(level(W, 'flat/u8'), locale), ' 提高到 ',
+      ...lvBits(level(W, 'literal_rise/u8'), locale), '：', ...ctBits(wP, locale), '。唯一预先设定的标准，即配对 95% 区间完全高于零，得到满足。'],
+    lead14b: (): Bit[] => ['在见过频率的 32 选 1 任务上，变化为 ', ...ctBits(wSeen, locale), '。在 Wearable-102 上，同样的权重使干电极准确率从 ', ...lvBits(level(W, 'flat/dry'), locale),
+      ' 变为 ', ...lvBits(level(W, 'literal_rise/dry'), locale), '，即 ', ...ctBits(wDry, locale), '；湿电极变化 ', ...ctBits(wWet, locale), '。'],
+    method14: (): Bit[] => ['递增权重依据一种覆盖度的经验估计：滤波器组 CCA 的各子带共用同一个上边界，所以越高的谐波落入的子带越多。精确曲线把', ln(13), ' 的衰减权重在三个谐波上的累积和除以其第一项；这几行是舍入检查，不是等效结论。实际的滤波器通带比名义边界更宽，所以一个候选的谐波可能落入比名义边界所示更多的子带；覆盖计数与子带权重之和只是经验估计。没有测量刺激前的 alpha 或噪声，也没有学习或搜索任何权重。'],
+    c14Summary: '每项任务上的全部设置，以及各对比',
+    c14LevelsCaption: '卡片 14：准确率（见过频率任务为平衡准确率）。谐波求和的区间在所注明的卡片上。',
+    c14ContrastsCaption: '卡片 14：配对差值，各带自己的区间；精确曲线各行是舍入检查。',
+    cap14: (): Bit[] => ['干电极的区间低于零；湿电极与见过频率的区间包含零。除唯一的主要对比外，其余区间仅作描述。', ...intervalText(W, locale), '。'],
+    colName: '设置', colTraining: '训练', colHeld: '留出频率 8 选 1', colSeen: '见过的频率 32 选 1（平衡）', colDry: 'Wearable-102 干电极', colWet: 'Wearable-102 湿电极',
+    colContrast: '对比', colTask: '任务', colRole: '角色', colDiff: '差值', colGroup: '分组', colCell: '时间窗 · 电极',
+    region: (n: number, what: string) => `卡片 ${n}：${what}，可横向滚动`,
+    R: { levels: '各设置的水平', contrasts: '配对对比', grid: '单元格网格', cpu: 'CPU 组件计时' },
+  },
+}[locale];
+need(/^filter-bank CCA \(seven Chebyshev sub-bands, five harmonics\)/.test(fbd.description.en) && /七个切比雪夫子带、五个谐波/.test(fbd.description.zh), 'card 11: the recipe in both languages');
+const gridHead = METHODS.map(mm => nm(P, mm));
+---
+{show(10) && <section class="topic-section ssvep-card" id={c10.anchor} aria-labelledby={c10.headingId} data-ssvep-card="10">
+  <div class="topic-heading"><div><p class="eyebrow">{c10.eyebrow}</p><h2 id={c10.headingId}>{c10.title}</h2></div><p data-ssvep-note="question">{copy.q10}</p></div>
+  <h3 class="roadmap-h3">{copy.betaH3}</h3>
+  <p class="roadmap-p" data-ssvep-lead="10" set:html={H(copy.lead10a())}/>
+  <p class="roadmap-p" data-ssvep-lead="10b" set:html={H(copy.lead10b())}/>
+  <h3 class="roadmap-h3">{copy.wearH3}</h3>
+  <p class="roadmap-p ssvep-scope" data-ssvep-scope="card-10-wearable" set:html={H(copy.scope10())}/>
+  <p class="roadmap-p" data-ssvep-lead="10c" set:html={H(copy.lead10c())}/>
+  <details class="rd-panel" data-ssvep-details="c10-tables">
+    <summary>{copy.c10Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(10, copy.R.levels)}>
+      <table data-ssvep-table="c10-beta">
+        <caption>{copy.c10BetaCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colTraining}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th></tr></thead>
+        <tbody>{c10Beta.map((r: any) => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th><td>{r.training}</td>{r.cells.map((c: string) => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(10, copy.R.levels)}>
+      <table data-ssvep-table="c10-wearable">
+        <caption>{copy.c10WearCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colTraining}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{c10Wear.map((r: any) => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th><td>{r.training}</td>{r.cells.map((c: string) => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(10, copy.R.contrasts)}>
+      <table data-ssvep-table="c10-contrasts">
+        <caption>{copy.c10ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{c10Rows.map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="10" set:html={H(copy.cap10())}/>
+</section>}
+
+{show(11) && <section class="topic-section ssvep-card" id={c11.anchor} aria-labelledby={c11.headingId} data-ssvep-card="11">
+  <div class="topic-heading"><div><p class="eyebrow">{c11.eyebrow}</p><h2 id={c11.headingId}>{c11.title}</h2></div><p data-ssvep-note="question">{copy.q11}</p></div>
+  <p class="roadmap-p ssvep-scope" data-ssvep-scope="card-11" set:html={H(copy.scope11())}/>
+  <p class="roadmap-p" data-ssvep-lead="11" set:html={H(copy.lead11a())}/>
+  <p class="roadmap-p" data-ssvep-lead="11b" set:html={H(copy.lead11b())}/>
+  <p class="roadmap-p" data-ssvep-lead="11c" set:html={H(copy.lead11c())}/>
+  <p class="roadmap-p" data-ssvep-lead="11d" set:html={H(copy.lead11d())}/>
+  <p class="roadmap-p" data-ssvep-note="recipe" set:html={H(copy.recipe11())}/>
+  <details class="rd-panel" data-ssvep-details="c11-tables">
+    <summary>{copy.c11Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(11, copy.R.grid)}>
+      <table data-ssvep-table="c11-held">
+        <caption>{copy.c11HeldCaption}</caption>
+        <thead><tr><th scope="col">{copy.colCell}</th>{gridHead.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{gridRows('u8').map(r => <tr data-cell={r.cell}><th scope="row" set:html={H(r.label)}/>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(11, copy.R.grid)}>
+      <table data-ssvep-table="c11-seen">
+        <caption>{copy.c11SeenCaption}</caption>
+        <thead><tr><th scope="col">{copy.colCell}</th>{gridHead.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{gridRows('seen_ba').map(r => <tr data-cell={r.cell}><th scope="row" set:html={H(r.label)}/>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(11, copy.R.contrasts)}>
+      <table data-ssvep-table="c11-contrasts">
+        <caption>{copy.c11ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colGroup}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{c11Rows.map(r => <tr data-contrast={r.k}><th scope="row" set:html={r.name}/><td>{r.group}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-ssvep-note="reproduces" set:html={H(copy.reproduces11())}/>
+  </details>
+  <details class="rd-panel" data-ssvep-details="c11-cpu">
+    <summary>{copy.cpuSummary}</summary>
+    <p class="protocol-note" data-ssvep-note="cpu" set:html={H(copy.cpu11())}/>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(11, copy.R.cpu)}>
+      <table data-ssvep-table="c11-cpu">
+        <caption set:html={H(copy.cpuCaption())}/>
+        <thead><tr>{copy.cpuHeads().map(h => <th scope="col" set:html={h}/>)}</tr></thead>
+        <tbody>{cpuRows.map((r: any) => <tr data-component={r.code}><th scope="row">{r.name}</th><td><code>{r.code}</code></td>{r.cells.map((c: string) => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="11" set:html={H(copy.cap11())}/>
+</section>}
+
+{show(13) && <section class="topic-section ssvep-card" id={c13.anchor} aria-labelledby={c13.headingId} data-ssvep-card="13">
+  <div class="topic-heading"><div><p class="eyebrow">{c13.eyebrow}</p><h2 id={c13.headingId}>{c13.title}</h2></div><p data-ssvep-note="question">{copy.q13}</p></div>
+  <p class="roadmap-p" data-ssvep-lead="13" set:html={H(copy.lead13a())}/>
+  <p class="roadmap-p" data-ssvep-lead="13b" set:html={H(copy.lead13b())}/>
+  <details class="rd-panel" data-ssvep-details="c13-tables">
+    <summary>{copy.c13Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(13, copy.R.levels)}>
+      <table data-ssvep-table="c13-levels">
+        <caption>{copy.c13LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{c13Levels.map(r => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(13, copy.R.contrasts)}>
+      <table data-ssvep-table="c13-contrasts">
+        <caption>{copy.c13ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{contrastRows(D).map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="13" set:html={H(copy.cap13())}/>
+</section>}
+
+{show(14) && <section class="topic-section ssvep-card" id={c14.anchor} aria-labelledby={c14.headingId} data-ssvep-card="14">
+  <div class="topic-heading"><div><p class="eyebrow">{c14.eyebrow}</p><h2 id={c14.headingId}>{c14.title}</h2></div><p data-ssvep-note="question">{copy.q14}</p></div>
+  <p class="roadmap-p" data-ssvep-lead="14" set:html={H(copy.lead14a())}/>
+  <p class="roadmap-p" data-ssvep-lead="14b" set:html={H(copy.lead14b())}/>
+  <p class="roadmap-p" data-ssvep-note="method" set:html={H(copy.method14())}/>
+  <details class="rd-panel" data-ssvep-details="c14-tables">
+    <summary>{copy.c14Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(14, copy.R.levels)}>
+      <table data-ssvep-table="c14-levels">
+        <caption>{copy.c14LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{c14Levels.map(r => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(14, copy.R.contrasts)}>
+      <table data-ssvep-table="c14-contrasts">
+        <caption>{copy.c14ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{contrastRows(W).map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="14" set:html={H(copy.cap14())}/>
+</section>}
+
+<style is:global>
+  /* Global, not scoped (the page's contract: a scoped style would add data-astro-cid-* to every element, and
+     check-workbench.mjs reads figures by their exact markup). Every selector starts from one of these cards. */
+  :is([data-ssvep-card="10"],[data-ssvep-card="11"],[data-ssvep-card="13"],[data-ssvep-card="14"]) .topic-table th[scope=row] small{display:block;margin-top:3px;font-size:.7rem;font-weight:400;color:var(--muted);line-height:1.4}
+  :is([data-ssvep-card="10"],[data-ssvep-card="11"],[data-ssvep-card="13"],[data-ssvep-card="14"]) .topic-table code{font-family:var(--mono);font-size:.72rem}
+  :is([data-ssvep-card="10"],[data-ssvep-card="11"],[data-ssvep-card="13"],[data-ssvep-card="14"]) :is(p.roadmap-p,p.protocol-note) a{color:var(--accent)}
+  :is([data-ssvep-card="10"],[data-ssvep-card="11"],[data-ssvep-card="13"],[data-ssvep-card="14"]) .topic-table .interval a{color:inherit;text-decoration:underline}
+  [data-ssvep-card="11"] details + details{margin-top:12px}
+</style>

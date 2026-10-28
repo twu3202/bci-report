@@ -30,6 +30,15 @@
  * keep their words, and the page refuses to build if one of them names NeuroLM or carries one of the panel's figures.
  * The panel prints its own question, figures, caveats, limits, credits and data source; the Arithmetic & rest protocol
  * page points to it with no figure.
+ *
+ * After it, two more such panels (owner decisions D14 and D19, 2026-10-28), each from its own export and outside the
+ * pilot count, with the same guard on the count and the summarising sentences: #neurorvq, NeuroRVQ's frozen backbone
+ * on EEGMAT, motor imagery and P300 (neurorvq-update.json, through src/data/neurorvq.ts), and #eegmat-ten-second,
+ * EEG-Captioner's and AXON's frozen encoders on ten-second EEGMAT windows, one subsection each beside the same Welch
+ * baseline (eegmat-ten-second-update.json, through src/data/eegmat-ten-second.ts). The three protocol pages point to
+ * them with no figure. EEGMAT's shared facts (rest recorded before arithmetic, the prior ICA cleaning, a known
+ * development cohort, and its credit, licence and consent) are the NeuroLM panel's, stated once beside its evidence; the
+ * two later panels point to them, keeping what their own exports add and the licence link.
  */
 import pilot from '../../../data/pilot-studies-update.json';
 import TopicLayout from '../../../components/TopicLayout.astro';
@@ -43,6 +52,12 @@ import { EEGPT_PILOT_PATH } from '../../../data/directory-status';
 import { holds } from '../../../data/releases';
 import { NEUROLM_ANCHOR, NEUROLM_JSON, PAIRED_DOMAIN, carriesNeurolm, neurolmArms, neurolmContrasts, neurolmCopy, neurolmFacts, neurolmLimits,
          neurolmNotPublished, neurolmRelease, neurolmText, CONSENT_EN } from '../../../data/neurolm-eegmat';
+import mvp from '../../../data/mvp.json';
+import { trackTitle } from '../../../data/i18n';
+import { NEURORVQ_ANCHOR, NEURORVQ_JSON, NEURORVQ_PAIRED_DOMAIN, carriesNeurorvq, neurorvqBlocks, neurorvqCopy, neurorvqCreditLimits, neurorvqDatasets,
+         neurorvqFacts, neurorvqModelLimits, neurorvqNotPublished, neurorvqNotRun, neurorvqPanelLimits, neurorvqRelease } from '../../../data/neurorvq';
+import { TEN_SECOND_ANCHOR, TEN_SECOND_JSON, carriesTenSecond, tenSecondCopy, tenSecondEncoders, tenSecondFacts, tenSecondLimits, tenSecondNotPublished,
+         tenSecondRelease, tenSecondText } from '../../../data/eegmat-ten-second';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -775,6 +790,29 @@ const nTb = nContrasts[0];
 need(nTb.id === 'tokenizer-minus-band-power' && nTb.role === 'question', 'the panel’s question first');
 const neurolmCreditsHref = `${hrefFor(PILOT_PATH, locale)}#neurolm-credits`;
 const colon = zh ? '：' : ': ';
+
+// --- NeuroRVQ on three tasks and the ten-second EEGMAT probes: two more separate panels, outside the pilot count -----
+// (owner decisions D14 and D19, 2026-10-28). The count is still the pilots' own, and the summarising sentences and the
+// card name none of the panels' results.
+for (const [what, text] of [['short answer', copy.answer], ['description', copy.description], ['dek', copy.dek], ['card', Object.values(card).join(' ')]] as const)
+  need(!carriesNeurorvq(text) && !carriesTenSecond(text), `the ${what} without NeuroRVQ, EEG-Captioner, AXON or any of their figures`);
+const rc = neurorvqCopy[locale], rBlocks = neurorvqBlocks(locale), rModel = neurorvqModelLimits(locale), rPanel = neurorvqPanelLimits(locale);
+const rCredit = neurorvqCreditLimits(locale), rNotPub = neurorvqNotPublished(locale), rNotRun = neurorvqNotRun(locale), rDatasets = neurorvqDatasets(locale);
+const NRF = neurorvqFacts, RM = NRF.model, RR = NRF.rights;
+// A protocol's title as the core matrix names it, in this locale.
+const protocolTitle = (id: string) => { const t = mvp.tracks.find(x => x.id === id); need(!!t, `the protocol ${id} is a core protocol`); return trackTitle(t!.title, locale); };
+// The NeuroLM panel, whose EEGMAT statements (recording order, ICA cleaning, development cohort) the later panels point to;
+// its credits (neurolmCreditsHref, above) hold EEGMAT's credit, licence and consent for the page.
+const neurolmHref = `${hrefFor(PILOT_PATH, locale)}#${NEUROLM_ANCHOR}`;
+const t2 = tenSecondCopy[locale], tEnc = tenSecondEncoders(locale), TF = tenSecondFacts;
+const tLimits = tenSecondLimits(locale, 'panel'), tAxonLimits = tenSecondLimits(locale, 'axon'), tNotPub = tenSecondNotPublished(locale);
+const tPre = tenSecondText(TF.cohort.preprocessing.text, locale), tIv = tenSecondText(TF.interval.text, locale), tIvScope = tenSecondText(TF.interval.scope, locale);
+const tQcSource = tenSecondText(TF.qc.source, locale), tQcRule = tenSecondText(TF.qc.rule_text, locale), tQcScope = tenSecondText(TF.qc.scope, locale);
+const tContrast = tenSecondText(TF.contrast.text, locale), tSeparate = tenSecondText(TF.separation.text, locale);
+const TD = TF.rights.dataset, TC = TF.captioner.identity, TA = TF.axon.identity;
+const stop = zh ? '。' : '.';
+// The English of a sentence printed in Chinese, beside it.
+const originals = (...xs: { original?: string }[]) => xs.map(x => x.original).filter(Boolean).join(' ');
 ---
 <TopicLayout
   locale={locale}
@@ -1139,6 +1177,150 @@ const colon = zh ? '：' : ': ';
     </div>
     <p class="citation-note">{nc.endorse}</p>
     <p class="citation-note" data-neurolm-note="data-source">{nc.dataSource} <a href={`/data/${NEUROLM_JSON}`} download>{NEUROLM_JSON}</a> · {nc.schema} {NF.schema}{tc.period}</p>
+  </section>
+
+  {/* NeuroRVQ on three tasks (owner decisions D14 and D19, 2026-10-28): a separate panel from its own export, outside the pilot count. */}
+  <section class="topic-section" id={NEURORVQ_ANCHOR} aria-labelledby="neurorvq-heading" data-panel="neurorvq" data-counted="false" data-release={neurorvqRelease.id}>
+    <div class="topic-heading"><div><p class="eyebrow">{rc.eyebrow}</p><h2 id="neurorvq-heading">{rc.h2}</h2><p class="topic-subtitle" data-subtitle="neurorvq">{rc.label}</p></div><p><Parts p={rc.lede()}/></p></div>
+    <IntervalPlot
+      id="neurorvq-paired"
+      caption={rc.plotCaption}
+      legend={rc.plotLegend}
+      domain={NEURORVQ_PAIRED_DOMAIN}
+      ticks={['−30', '−20', '−10', '0', '+10 pp']}
+      reference={0}
+      axisLabel={rc.axis}
+      rows={rBlocks.map(b => ({ label: `${b.title} · ${b.dataset}`, value: b.diff.d.raw, interval: [b.diff.lo.raw, b.diff.hi.raw] as [number, number], fig: b.diff.d,
+        noteParts: [`${rc.minus}${sp}${b.diff.comparator} · ${rc.interval} `, b.diff.lo, rc.to, b.diff.hi], tone: b.diff.zero ? 'olive' as const : 'ink' as const }))}
+    />
+    {rBlocks.map(b => <div class="neurorvq-block" data-neurorvq-block={b.id}>
+      <h3 class="roadmap-h3" id={`neurorvq-${b.id}`}>{b.title} · {b.dataset}</h3>
+      <p class="roadmap-p" data-neurorvq-cohort={b.id}><Parts p={b.cohort}/>{sp}<a href={hrefFor(`/protocols/${b.protocol}/`, locale)}>{rc.protocolLink}</a></p>
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={rc.region(b.title)}>
+        <table data-neurorvq-table={b.id}>
+          <caption><Parts p={b.caption}/></caption>
+          <thead><tr><th scope="col">{rc.colRep}</th><th scope="col">{rc.colRole}</th><th scope="col">{rc.colDim}</th><th scope="col">{rc.colBa}</th><th scope="col">{rc.colF1}</th></tr></thead>
+          <tbody>{b.arms.map(a => <tr data-neurorvq-row={a.id}>
+            <th scope="row">{a.label}</th>
+            <td data-cell="role">{a.role}</td>
+            <td data-cell="dimension"><Fig f={a.dimension}/></td>
+            <td data-cell="ba"><Fig f={a.ba} cls="metric"/></td>
+            <td data-cell="f1"><Fig f={a.f1} cls="metric"/></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <div class="finding" data-finding={`neurorvq-${b.id}`}>
+        <div class="finding-number"><strong><Fig f={b.diff.d}/></strong><span><Parts p={b.findLabel}/></span></div>
+        <div class="finding-copy"><h3>{b.findH3}</h3><p><Parts p={b.findP}/></p></div>
+      </div>
+      <ul class="rd-rules" data-neurorvq-defs={b.id}>{b.arms.map(a => <li data-neurorvq-arm={a.id}><strong>{a.label}</strong>{colon}{a.definition}{zh && <span class="note-original" lang="en">{a.definitionEn}</span>}</li>)}</ul>
+      <ul class="rd-rules" data-neurorvq-note={`${b.id}-limits`}>{b.limits.map(l => <li data-neurorvq-limit={l.id}>{l.shared
+        ? <>{l.shared.lead}<a href={neurolmHref}>{l.shared.link}</a>{l.shared.rest}</>
+        : <>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</>}</li>)}</ul>
+      <p class="citation-note" data-neurorvq-audit={b.id}>{b.audit.text}{b.audit.original && <span class="note-original" lang="en">{b.audit.original}</span>}</p>
+    </div>)}
+    <h3 class="roadmap-h3" id="neurorvq-model">{rc.modelH3}</h3>
+    <ul class="rd-rules" data-neurorvq-note="model">{rModel.map(l => <li data-neurorvq-limit={l.id}>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</li>)}</ul>
+    <p class="roadmap-p" data-neurorvq-note="head"><Parts p={rc.head()}/></p>
+    <h3 class="roadmap-h3">{rc.limitsH3}</h3>
+    <ul class="rd-rules" data-neurorvq-note="limits">{rPanel.map(l => <li data-neurorvq-limit={l.id}>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</li>)}</ul>
+    <p class="roadmap-p" data-neurorvq-note="not-run">{rc.notRun}{rNotRun.map((x, i) => <>{i > 0 && (zh ? '；' : '; ')}{protocolTitle(x.protocol)}{zh ? `（${x.gate.text}）` : ` (${x.gate.text})`}</>)}{stop}</p>
+    <h3 class="roadmap-h3">{rc.notPubH3}</h3>
+    <ul class="rd-rules" data-neurorvq-note="not-published">{rNotPub.map(x => <li>{x.text}</li>)}</ul>
+    <p class="roadmap-p"><a href="/data-use/#sources-neurorvq">{rc.dataUse}</a></p>
+    <h3 class="roadmap-h3">{rc.creditsH3}</h3>
+    <div class="citation-list" id="neurorvq-credits">
+      <article data-credit="neurorvq">
+        <h3>{rc.modelCreditH}</h3>
+        <p>{rc.paper}{sp}<a href={RM.paper} target="_blank" rel="noreferrer">arXiv:{RM.arxiv_id} ↗</a>{zh ? '；' : '; '}{rc.code}{sp}<a href={RM.source_url} target="_blank" rel="noreferrer">{RM.repository.replace('https://github.com/', '')} ↗</a>{sp}{rc.at}{sp}<code>{RM.source_revision}</code>{zh ? '，' : ', '}<a href={RR.code.url} target="_blank" rel="noreferrer">{RR.code.licence}</a>{tc.period}</p>
+        <p data-neurorvq-note="checkpoint">{rc.ckpt}{sp}<a href={RM.checkpoint.url} target="_blank" rel="noreferrer"><code>{RM.checkpoint.file}</code> ↗</a>{sp}{rc.at}{sp}<code>{RM.checkpoint.revision}</code>{zh ? '，' : ', '}{rc.sha}{sp}<code>{RM.checkpoint.sha256}</code>{zh ? '，' : ', '}<a href={RR.weights.url} target="_blank" rel="noreferrer">{RR.weights.licence}</a>{tc.period}</p>
+        {rCredit.map(l => <p data-neurorvq-limit={l.id}>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</p>)}
+      </article>
+      {rDatasets.map(d => d.sharedWithNeurolm ? <article data-credit={`neurorvq-dataset-${d.block}`} data-credit-ref="neurolm-credits">
+        <h3>{d.name}</h3>
+        <p><a href={neurolmCreditsHref}>{rc.eegmatCreditRef}</a> · <a href={d.licenseUrl} target="_blank" rel="noreferrer">{d.license}</a> · <a href={dataset(d.slug)}>{rc.datasetPage}</a></p>
+      </article> : <article data-credit={`neurorvq-dataset-${d.block}`}>
+        <h3>{d.name}</h3>
+        <p lang="en">{d.attribution}</p>
+        <p data-consent={`neurorvq-${d.slug}`}><strong>{rc.consentH}</strong>{sp}{d.consent.text}{d.consent.original && <span class="note-original" lang="en">{d.consent.original}</span>}</p>
+        <p><strong>{rc.scopeH}</strong>{sp}<span lang="en">{d.rightsScope}</span></p>
+        <p><a href={d.source} target="_blank" rel="noreferrer">{rc.recordLink}</a> · <a href={d.licenseUrl} target="_blank" rel="noreferrer">{d.license}</a> · <a href={dataset(d.slug)}>{rc.datasetPage}</a></p>
+      </article>)}
+    </div>
+    <p class="citation-note" data-neurorvq-note="data-source">{rc.dataSource} <a href={`/data/${NEURORVQ_JSON}`} download>{NEURORVQ_JSON}</a> · {rc.schema} {NRF.schema}{tc.period}</p>
+  </section>
+
+  {/* EEG-Captioner and AXON on ten-second EEGMAT windows (owner decision D14, 2026-10-28): a separate panel from its own export, outside the pilot count; one subsection per encoder, each beside the same Welch baseline. */}
+  <section class="topic-section" id={TEN_SECOND_ANCHOR} aria-labelledby="eegmat-ten-second-heading" data-panel="eegmat-ten-second" data-counted="false" data-release={tenSecondRelease.id}>
+    <div class="topic-heading"><div><p class="eyebrow">{t2.eyebrow}</p><h2 id="eegmat-ten-second-heading">{t2.h2}</h2><p class="topic-subtitle" data-subtitle="eegmat-ten-second">{t2.label}</p></div><p><Parts p={t2.lede()}/></p></div>
+    <div data-ts-block="cohort">
+      <h3 class="roadmap-h3" id="eegmat-ten-second-cohort">{t2.cohortH3}</h3>
+      <p class="roadmap-p" data-ts-note="cohort"><Parts p={t2.cohort()}/>{tPre.text}{zh && <span class="note-original" lang="en">{tPre.original}</span>}</p>
+      <p class="roadmap-p" data-ts-note="probe"><Parts p={t2.probe()}/></p>
+      <p class="roadmap-p" data-ts-note="interval">{tIv.text}{sp}{tIvScope.text}{zh && <span class="note-original" lang="en">{originals(tIv, tIvScope)}</span>}</p>
+      <p class="protocol-note" data-ts-note="qc-rule"><strong>{t2.qcH}</strong>{sp}{tQcSource.text}{stop}{sp}{tQcRule.text}{sp}{tQcScope.text}{zh && <span class="note-original" lang="en">{`${tQcSource.original}. ${originals(tQcRule, tQcScope)}`}</span>}</p>
+    </div>
+    {tEnc.map(e => <div data-ts-encoder={e.id}>
+      <h3 class="roadmap-h3" id={`eegmat-ten-second-${e.id}`}>{e.title}</h3>
+      <ul class="rd-rules" data-ts-note={`${e.id}-design`}>
+        <li data-ts-design="input"><strong>{t2.inputH}</strong>{sp}{e.input.text}{stop}{e.input.original && <span class="note-original" lang="en">{e.input.original}</span>}</li>
+        <li data-ts-design="representation"><strong>{t2.repH}</strong>{sp}{e.representation.text}{stop}{e.representation.original && <span class="note-original" lang="en">{e.representation.original}</span>}</li>
+        {e.baseline && <li data-ts-design="baseline"><strong>{t2.baseH}</strong>{sp}{e.baseline.text}{stop}{e.baseline.original && <span class="note-original" lang="en">{e.baseline.original}</span>}</li>}
+        {e.scope && <li data-ts-design="scope">{e.scope.text}{e.scope.original && <span class="note-original" lang="en">{e.scope.original}</span>}</li>}
+      </ul>
+      <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={t2.region(e.title)}>
+        <table data-ts-table={e.id}>
+          <caption><Parts p={t2.caption()}/></caption>
+          <thead><tr><th scope="col">{t2.colRep}</th><th scope="col">{t2.colRole}</th><th scope="col">{t2.colDim}</th><th scope="col">{t2.colBa}</th></tr></thead>
+          <tbody>{e.arms.map(a => <tr data-ts-row={a.id}>
+            <th scope="row">{a.label}</th>
+            <td data-cell="role">{a.role}{a.note && <small>{a.note}</small>}</td>
+            <td data-cell="dimension"><Fig f={a.dimension}/></td>
+            <td data-cell="ba"><Fig f={a.ba} cls="metric"/></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <div class="finding" data-finding={`eegmat-ten-second-${e.id}`}>
+        <div class="finding-number"><strong><Fig f={e.diff.d}/></strong><span><Parts p={e.findLabel}/></span></div>
+        <div class="finding-copy"><h3>{t2.findH3}</h3><p><Parts p={e.findP}/></p>
+          <p data-ts-qc={e.id}><Parts p={e.qc}/></p>
+          {e.inputCheck && <p data-ts-input-check={e.id}><Parts p={e.inputCheck}/>{stop}{sp}<strong>{t2.inputRuleH}</strong>{sp}{e.inputRule!.text}{stop}{e.inputRule!.original && <span class="note-original" lang="en">{e.inputRule!.original}</span>}</p>}
+        </div>
+      </div>
+      {e.id === 'axon' && <ul class="rd-rules" data-ts-note="axon-limits">{[...e.limits, ...tAxonLimits].map(l => <li data-ts-limit={l.id}>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</li>)}</ul>}
+      <p class="citation-note" data-ts-audit={e.id}>{e.audit.text}{e.audit.original && <span class="note-original" lang="en">{e.audit.original}</span>}</p>
+    </div>)}
+    <p class="protocol-note" data-ts-note="contrast">{tContrast.text}{zh && <span class="note-original" lang="en">{tContrast.original}</span>}</p>
+    <p class="protocol-note" data-ts-note="separation">{tSeparate.text}{zh && <span class="note-original" lang="en">{tSeparate.original}</span>}{sp}<a href={hrefFor('/protocols/arithmetic-rest/', locale)}>{t2.coreLink}</a></p>
+    <h3 class="roadmap-h3">{t2.otherH3}</h3>
+    <ul class="rd-rules" data-ts-note="limits">{tLimits.map(l => <li data-ts-limit={l.id}>{l.shared
+      ? <>{l.shared.lead}<a href={neurolmHref}>{l.shared.link}</a>{l.shared.rest}</>
+      : <>{l.text}{l.original && <span class="note-original" lang="en">{l.original}</span>}</>}</li>)}</ul>
+    <h3 class="roadmap-h3">{t2.notPubH3}</h3>
+    <ul class="rd-rules" data-ts-note="not-published">{tNotPub.map(x => <li>{x.text}</li>)}</ul>
+    <p class="roadmap-p"><a href="/data-use/#sources-eegmat-ten-second">{t2.dataUse}</a></p>
+    <h3 class="roadmap-h3">{t2.creditsH3}</h3>
+    <div class="citation-list" id="eegmat-ten-second-credits">
+      <article data-credit="eegmat-ten-second-dataset" data-credit-ref="neurolm-credits">
+        <h3>{t2.eegmatH}</h3>
+        <p><a href={neurolmCreditsHref}>{t2.eegmatCreditRef}</a> · <a href={TD.licenseUrl} target="_blank" rel="noreferrer">{TD.license}</a> · <a href={dataset('eegmat')}>{t2.datasetPage}</a></p>
+      </article>
+      <article data-credit="eeg-captioner">
+        <h3>{t2.captionerH}</h3>
+        <p>{t2.model}{sp}<a href={TC.hf_repository} target="_blank" rel="noreferrer">{TC.hf_repository.replace('https://huggingface.co/', '')} ↗</a>{sp}{t2.at}{sp}<code>{TC.hf_revision}</code>{zh ? '；' : '; '}{t2.code}{sp}<a href={TC.source_repository} target="_blank" rel="noreferrer">{TC.source_repository.replace('https://github.com/', '')} ↗</a>{sp}{t2.at}{sp}<code>{TC.source_revision}</code>{tc.period}</p>
+        <p data-ts-note="eeg-captioner-encoder">{t2.encoderFile}{sp}{t2.sha}{sp}<code>{TC.encoder_sha256}</code>{tc.period}</p>
+        <p data-ts-licence="eeg-captioner"><Parts p={t2.capLicence()}/></p>
+      </article>
+      <article data-credit="axon">
+        <h3>{t2.axonH}</h3>
+        <p>{t2.model}{sp}<a href={TA.hf_repository} target="_blank" rel="noreferrer">{TA.hf_repository.replace('https://huggingface.co/', '')} ↗</a>{sp}{t2.at}{sp}<code>{TA.hf_revision}</code>{zh ? '；' : '; '}{t2.checkpoint}{sp}<code>{TA.checkpoint_file}</code>{zh ? '，' : ', '}{t2.sha}{sp}<code>{TA.checkpoint_sha256}</code>{tc.period}</p>
+        <p>{t2.source}{sp}<a href={TA.source_repository} target="_blank" rel="noreferrer">{TA.source_repository.replace('https://github.com/', '')} ↗</a>{sp}{t2.at}{sp}<code>{TA.source_revision}</code>{zh ? '，' : ', '}{t2.module}{sp}<code>{TA.module}</code>{tc.period}</p>
+        <p data-ts-licence="axon"><Parts p={t2.axLicence()}/></p>
+      </article>
+    </div>
+    <p class="citation-note" data-ts-note="weights">{t2.weights}</p>
+    <p class="citation-note">{t2.endorse}</p>
+    <p class="citation-note" data-ts-note="data-source">{t2.dataSource} <a href={`/data/${TEN_SECOND_JSON}`} download>{TEN_SECOND_JSON}</a> · {t2.schema} {TF.schema}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="related" aria-labelledby="related-heading">

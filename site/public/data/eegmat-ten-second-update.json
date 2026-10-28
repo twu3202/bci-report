@@ -1,0 +1,482 @@
+{
+  "schema_version": "bci-report-eegmat-ten-second-update-v1",
+  "release_id": "eegmat-ten-second-update-20261028",
+  "generated_at": "2026-10-28",
+  "status": "aggregate_preview",
+  "title": "A separate panel: two frozen encoders on ten-second arithmetic and rest windows",
+  "question": "Do frozen EEG-Captioner or AXON features separate rest from mental arithmetic in ten-second windows better than Welch band power?",
+  "placement": {
+    "page": "/topics/pilot-studies/",
+    "anchor": "eegmat-ten-second",
+    "after_anchor": "neurorvq",
+    "pointer_from": "/protocols/arithmetic-rest/",
+    "counted_in_pilots": false,
+    "leaderboard": false,
+    "core_matrix_row": false,
+    "new_dataset_count": 0,
+    "new_model_count": 0,
+    "subsections": [
+      "eeg_captioner",
+      "axon"
+    ],
+    "shared_table": false,
+    "text": "A separate panel on the pilot studies page, outside the pilot count and every leaderboard and model ranking, with one subsection per encoder; the core Arithmetic & rest matrix keeps its rows."
+  },
+  "metric_units": "balanced accuracy is a proportion in [0,1] and paired differences are differences of proportions: multiply by 100 for percent or percentage points; dimensions and counts of people, recordings, windows, channels, folds and draws are whole numbers; QC ratios are proportions of channels or of recording duration",
+  "scope": "Two frozen encoders, each read by one fixed ridge head (alpha 100) in five subject-disjoint folds on the same 432 ten-second EEGMAT windows from 36 people, and each set against Welch band power on the same windows. Scores are participant-mean balanced accuracies; each paired difference carries a participant-bootstrap interval.",
+  "cohort": {
+    "dataset": "EEGMAT",
+    "name": "EEG During Mental Arithmetic Tasks",
+    "version": "1.0.0",
+    "source": "https://physionet.org/content/eegmat/1.0.0/",
+    "people": 36,
+    "recordings": 72,
+    "conditions": 2,
+    "retained_seconds": 60,
+    "window_seconds": 10,
+    "windows_per_recording": 6,
+    "windows": 432,
+    "channels": 19,
+    "channel_names": [
+      "FP1",
+      "FP2",
+      "F3",
+      "F4",
+      "C3",
+      "C4",
+      "P3",
+      "P4",
+      "O1",
+      "O2",
+      "F7",
+      "F8",
+      "T3",
+      "T4",
+      "T5",
+      "T6",
+      "FZ",
+      "CZ",
+      "PZ"
+    ],
+    "sampling_hz": 200,
+    "folds": 5,
+    "split": "subject-disjoint: participants are sorted and dealt into the five folds in turn, so both recordings and all windows of a person stay in one fold",
+    "labels": "the recording condition: pre-task rest against mental arithmetic",
+    "classes": [
+      "rest",
+      "mental arithmetic"
+    ],
+    "same_windows_both_encoders": true,
+    "preprocessing": {
+      "whole_recording": true,
+      "band_pass_hz": [
+        0.1,
+        75
+      ],
+      "notch_hz": 50,
+      "sampling_hz": 200,
+      "units": "microvolts",
+      "text": "Each complete recording was filtered at 0.1–75 Hz with a 50 Hz notch and resampled to 200 Hz, then its first 60 s were cut into six ten-second windows."
+    },
+    "text": "36 people, 72 recordings, 432 ten-second windows (six from the first 60 s of each recording), 19 channels at 200 Hz, five subject-disjoint folds."
+  },
+  "source_annotation_qc": {
+    "source": "EEG-Captioner’s published annotation-QC rules, run unchanged at the pinned source revision on each whole preprocessed recording, before the zero Oz channel was inserted",
+    "windows": 432,
+    "windows_meeting_rules": 0,
+    "recordings": 72,
+    "recordings_flagged": 72,
+    "level": "recording",
+    "rule": {
+      "flagged_channel_ratio_above": 0.3,
+      "bad_duration_ratio_above": 0.2,
+      "channel_peak_uv": 500,
+      "channel_flat_uv": 1,
+      "channel_bad_percent": 5,
+      "minimum_bad_duration_s": 0.02,
+      "segment_hard_peak_uv": 100
+    },
+    "rule_text": "A recording is flagged when more than 0.3 of its channels are flagged or the summed duration of BAD annotations exceeds 0.2 of the recording. A channel is flagged by MNE’s adjacent-sample amplitude criteria (500 µV peak, 1 µV flat, 5% of the record, segments of at least 0.02 s); the 100 µV segment rule applies only inside a recording that passes.",
+    "selects_windows": false,
+    "changes_inputs": false,
+    "recomputed_by_audit": false,
+    "beside_every_score": "0 of 432 windows meet EEG-Captioner’s source annotation-QC rules, and 72 of 72 recordings are flagged by them.",
+    "scope": "The flag is set per recording at the parent-trial level. It does not say that each window has an artifact, and it is not evidence that EEGMAT as a whole is unusable."
+  },
+  "probe": {
+    "scaler": "StandardScaler fitted on the training folds only",
+    "head": "RidgeClassifier",
+    "alpha": 100,
+    "solver": "svd",
+    "class_weight": "balanced",
+    "fit_intercept": true,
+    "fits_per_representation": 5,
+    "hyperparameter_search": false,
+    "encoder_fine_tuning": false,
+    "sealed_before_scoring": true,
+    "shared_by_both_encoders": true
+  },
+  "interval": {
+    "kind": "paired participant bootstrap",
+    "method": "percentile interval",
+    "level": 0.95,
+    "unit": "participant",
+    "draws": 20000,
+    "seed": 20261026,
+    "same_rule_both_encoders": true,
+    "prespecified": true,
+    "both_span_zero": true,
+    "text": "20,000 paired participant draws of the 36 participant differences in each subsection, with a 2.5–97.5 percentile interval. Both intervals span zero.",
+    "scope": "Each interval resamples the participant differences of this fixed cohort and its fixed predictions; training sets overlap across folds, so it describes this cohort, not a population."
+  },
+  "eeg_captioner": {
+    "id": "eeg-captioner",
+    "name": "EEG-Captioner encoder",
+    "title": "EEG-Captioner encoder, mean-token 256-d + ridge",
+    "representation": {
+      "dimension": 256,
+      "tokens": 200,
+      "definition": "the mean of the 200 output tokens of EEG-Captioner’s frozen encoder, 256 dimensions"
+    },
+    "input": {
+      "measured_channels": 19,
+      "zero_oz_channel": true,
+      "model_channels": 20,
+      "amplitude_divisor": 100,
+      "text": "the 19 measured channels in microvolts with a zero Oz channel inserted, as the encoder’s loader permits, divided by 100"
+    },
+    "encoder_only": true,
+    "caption_result": false,
+    "language_model_loaded": false,
+    "scope": "Only EEG-Captioner’s encoder was run; its language model, projector and language adapter were not loaded, and there is no caption result.",
+    "pretraining_exposure": "unknown",
+    "arms": [
+      {
+        "id": "eeg-captioner",
+        "role": "encoder",
+        "label": "EEG-Captioner encoder, mean-token 256-d + ridge",
+        "dimension": 256,
+        "balanced_accuracy": 0.6574074074074076
+      },
+      {
+        "id": "welch-band-power",
+        "role": "baseline",
+        "label": "Welch band power (95-d, 0.5–45 Hz, ten-second windows)",
+        "note": "matched for this run",
+        "dimension": 95,
+        "balanced_accuracy": 0.6759259259259258
+      }
+    ],
+    "baseline": {
+      "matched": true,
+      "fitted_in_this_run": true,
+      "definition": "95 absolute log band powers: 19 channels by 5 bands (0.5–4, 4–8, 8–13, 13–30 and 30–45 Hz), Welch at 200 Hz with 400-sample Hann segments and 200-sample overlap, on the same windows"
+    },
+    "paired_difference": {
+      "a": "eeg-captioner",
+      "b": "welch-band-power",
+      "label": "EEG-Captioner encoder minus Welch band power",
+      "difference": -0.0185185185185185,
+      "interval_95": [
+        -0.09027777777777773,
+        0.04861111111111114
+      ],
+      "interval_includes_zero": true,
+      "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+    },
+    "identity": {
+      "hf_repository": "https://huggingface.co/LyJinAoki/EEG-Captioner",
+      "hf_revision": "1d56a371d68a108dd56c362cc41205c5b511cc76",
+      "source_repository": "https://github.com/lyJinAoki/EEG-Captioner",
+      "source_revision": "088d9af2dedcb181534f7fdcff7c913a19e10f04",
+      "encoder_bytes": 20852784,
+      "encoder_sha256": "060a5c0d9ac11543470038adbcbc5d9ba5828c1dc7c7d5097549435fbe28e989",
+      "frozen": true,
+      "fine_tuning": false,
+      "weights_distributed": false
+    },
+    "rights": {
+      "code": {
+        "licence": "MIT",
+        "scope": "EEG-Captioner’s source code at the pinned commit"
+      },
+      "weights": {
+        "licence": "Apache-2.0",
+        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "as_stated_by": "the portable weight metadata of the Hugging Face repository at the pinned revision",
+        "distributed": false
+      }
+    },
+    "audit": {
+      "status": "passed",
+      "starts_at": "the sealed preprocessed arrays",
+      "rows_reproduced": 432,
+      "feature_max_abs_error": 0.0,
+      "heads_refitted": true,
+      "hard_predictions_reproduced_exactly": true,
+      "head_decision_score_error_below": 1e-06,
+      "scores_and_bootstrap_matched": true,
+      "raw_preprocessing_recomputed": false,
+      "source_qc_recomputed": false,
+      "producer_helpers_imported": false,
+      "text": "A separately operated reconstruction, importing none of the producer’s scientific helpers, reproduced all 432 encoder and baseline feature rows exactly from the sealed preprocessed arrays. It refitted every head, reproduced every hard prediction exactly with decision scores within 1e-6 of the producer’s, and matched every score and the bootstrap. The raw preprocessing and the source QC were checked against their pinned source and hashes, not recomputed."
+    }
+  },
+  "axon": {
+    "id": "axon",
+    "name": "AXON",
+    "title": "AXON, 512-d + ridge",
+    "representation": {
+      "dimension": 512,
+      "definition": "the mean over AXON’s channel and patch tokens, 512 dimensions"
+    },
+    "input": {
+      "measured_channels": 19,
+      "reordered_to_model_order": true,
+      "zero_oz_channel": false,
+      "divided_by_100": false,
+      "own_standardisation": true,
+      "template_positions": true,
+      "digitised_positions": false,
+      "text": "the same 19 measured channels in microvolts, reordered to AXON’s channel order and standardised per channel and window inside AXON"
+    },
+    "native_head_used": false,
+    "pretraining_exposure": "unknown",
+    "arms": [
+      {
+        "id": "axon",
+        "role": "encoder",
+        "label": "AXON, 512-d + ridge",
+        "dimension": 512,
+        "balanced_accuracy": 0.7013888888888888
+      },
+      {
+        "id": "welch-band-power",
+        "role": "baseline",
+        "label": "Welch band power (95-d, 0.5–45 Hz, ten-second windows)",
+        "note": "the same predictions reused without refitting; not matched for normalisation or parameter count",
+        "dimension": 95,
+        "balanced_accuracy": 0.6759259259259258
+      }
+    ],
+    "baseline": {
+      "matched": false,
+      "fitted_in_this_run": false,
+      "same_baseline_as": "eeg-captioner",
+      "matched_normalisation": false,
+      "matched_parameter_count": false,
+      "isolates_pretraining": false
+    },
+    "paired_difference": {
+      "a": "axon",
+      "b": "welch-band-power",
+      "label": "AXON minus Welch band power",
+      "difference": 0.02546296296296297,
+      "interval_95": [
+        -0.057870370370370336,
+        0.10416666666666667
+      ],
+      "interval_includes_zero": true,
+      "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+    },
+    "limitations": [
+      {
+        "id": "pretraining-not-isolated",
+        "text": "The Welch comparison cannot isolate what AXON’s pretraining contributes."
+      },
+      {
+        "id": "outcomes-known",
+        "text": "AXON’s interval is descriptive for a second reason too: the EEG-Captioner and Welch outcomes were known before AXON ran."
+      }
+    ],
+    "numerical_input_check": {
+      "windows_passed": 432,
+      "windows": 432,
+      "minimum_channel_std_uv": 1e-12,
+      "separate_from_source_qc": true,
+      "rule": "every sample finite, and every channel’s sample standard deviation in every window above 1e-12 µV: numerical non-degeneracy, a separate matter from signal quality",
+      "beside_score": "AXON’s own numerical input check passed 432 of 432, a different check"
+    },
+    "identity": {
+      "hf_repository": "https://huggingface.co/MannasAI/axon-eeg",
+      "hf_revision": "fe7f85239e6018f393039a10a103bf7075c93aa6",
+      "checkpoint_file": "model.safetensors",
+      "checkpoint_bytes": 474574184,
+      "checkpoint_sha256": "89c864a3ed947588ffc740cd4b342a2158661b13898c0dd9a86abebd33ffc882",
+      "source_repository": "https://github.com/braindecode/braindecode",
+      "source_revision": "8c618f15a702f63d4899e3e8bc2e6f10a5f54151",
+      "module": "braindecode.models.AXON",
+      "frozen": true,
+      "fine_tuning": false,
+      "weights_distributed": false
+    },
+    "rights": {
+      "checkpoint": {
+        "licence": "Apache-2.0",
+        "licence_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "as_stated_by": "the licence tag of the Hugging Face repository at the pinned revision",
+        "gated": false,
+        "distributed": false
+      },
+      "module": {
+        "licence": "Apache-2.0",
+        "scope": "the per-file terms of the AXON module in Braindecode"
+      },
+      "project": {
+        "licence": "BSD-3-Clause",
+        "scope": "the licence at the Braindecode project root"
+      }
+    },
+    "audit": {
+      "starts_at": "the sealed physical array the EEG-Captioner run prepared",
+      "raw_preprocessing_recomputed": false,
+      "first_audit": {
+        "status": "failed",
+        "kept": true,
+        "failed_check": "feature tolerance",
+        "rtol": 1e-06,
+        "atol": 1e-07
+      },
+      "corrected_audit": {
+        "status": "passed",
+        "rows_reproduced": 432,
+        "byte_identical": true,
+        "feature_max_abs_error": 0.0,
+        "heads_refitted": true,
+        "tolerance_relaxed": false
+      },
+      "production_unchanged": true,
+      "producer_rerun": false,
+      "text": "AXON’s first independent audit failed its feature tolerance and is kept. The corrected audit changed only the auditor’s frozen-parameter state to match production; it reproduced all 432 production rows byte for byte under the unchanged tolerance, refitted the heads and matched every score. Production was unchanged."
+    }
+  },
+  "encoder_contrast": {
+    "published": false,
+    "same_inputs": false,
+    "axon_ran_after_outcomes_known": true,
+    "text": "No EEG-Captioner against AXON difference is computed: AXON ran after the EEG-Captioner and Welch outcomes were known, and the two encoders read different inputs (a zero Oz channel and division by 100 for EEG-Captioner; reordered channels with its own standardisation for AXON)."
+  },
+  "separate_from_two_second_results": {
+    "ranked_against_two_second_results": false,
+    "window_seconds": 10,
+    "two_second_window_seconds": 2,
+    "core_band_pass": false,
+    "core_sampling_hz": 250,
+    "not_ranked_against": [
+      {
+        "id": "core-matrix",
+        "label": "the core Arithmetic & rest matrix",
+        "page": "/protocols/arithmetic-rest/"
+      },
+      {
+        "id": "frozen-rows",
+        "label": "the REVE and EEGPT frozen rows"
+      },
+      {
+        "id": "labram-last-block",
+        "label": "LaBraM last-block adaptation",
+        "page": "/topics/model-adaptation/"
+      },
+      {
+        "id": "neurolm-panel",
+        "label": "the NeuroLM panel",
+        "page": "/topics/pilot-studies/",
+        "anchor": "neurolm-eegmat"
+      },
+      {
+        "id": "neurorvq-panel",
+        "label": "the NeuroRVQ panel",
+        "page": "/topics/pilot-studies/",
+        "anchor": "neurorvq"
+      }
+    ],
+    "text": "Not ranked against the two-second results on this site: the core Arithmetic & rest matrix, the REVE and EEGPT frozen rows, LaBraM last-block adaptation, the NeuroLM panel and the NeuroRVQ panel. These probes use filtered ten-second windows at 200 Hz, where the core protocol uses unfiltered two-second windows at 250 Hz, and its Spectral ridge row uses log relative spectra from 0.5–45 Hz rather than these absolute band powers."
+  },
+  "rights": {
+    "dataset": {
+      "name": "EEGMAT",
+      "source": "https://physionet.org/content/eegmat/1.0.0/",
+      "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+      "license": "Open Data Commons Attribution License 1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+      "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+      "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+      "reviewedAt": "2026-09-20",
+      "reviewBasis": [
+        "https://physionet.org/content/eegmat/1.0.0/",
+        "https://www.mdpi.com/2306-5729/4/1/14",
+        "https://opendatacommons.org/licenses/by/1-0/"
+      ],
+      "rightsScope": "Personal noncommercial research; aggregate results only",
+      "published_here": "Reused unchanged from the review of the same recordings for the core matrix. Published here for two frozen encoders on ten-second windows: participant-mean balanced accuracy of each encoder and of Welch band power, two paired differences with their participant-bootstrap intervals, cohort counts and the source-QC totals; no per-person, per-fold or per-window value."
+    },
+    "summary": "EEGMAT 1.0.0: Open Data Commons Attribution License 1.0 (Zyma et al., 2019; PhysioNet). EEG-Captioner source code: MIT. EEG-Captioner encoder weights: Apache-2.0 per the Hugging Face weight metadata. AXON checkpoint: Apache-2.0 per its Hugging Face licence tag; the AXON module: per-file Apache-2.0 terms within the BSD-3-Clause Braindecode project. No weights distributed."
+  },
+  "limitations": [
+    {
+      "id": "recording-order",
+      "text": "Rest is recorded before arithmetic, so recording order, time and artifacts move with the label; subject-disjoint folds do not remove this, and neither probe isolates cognitive workload."
+    },
+    {
+      "id": "exposure",
+      "text": "Whether either encoder saw EEGMAT in pretraining is unknown, so exposure is shown as unknown for both."
+    },
+    {
+      "id": "axon-inputs",
+      "text": "AXON reads nominal template electrode positions, not positions digitised for each person, and the cache’s 0.1–75 Hz band with a 50 Hz notch differs from the pretraining preprocessing on AXON’s model card (0.5–99.5 Hz, a 50 or 60 Hz notch, standardisation and clipping at 15 standard deviations)."
+    },
+    {
+      "id": "upstream-recording",
+      "text": "EEGMAT’s linked-ear reference and its upstream filtering are uncertain from the source files, and further filtering cannot restore frequencies removed before release."
+    },
+    {
+      "id": "scope",
+      "text": "Frozen encoders with a supervised linear head, scored on recording condition: the filters ran over whole recordings, using context outside each window, and nothing here measures clinical use or online decoding."
+    }
+  ],
+  "release_record": {
+    "date": "2026-10-28",
+    "decided": "2026-10-28",
+    "decision": "Publish the EEG-Captioner and AXON ten-second EEGMAT probes as their approved aggregates: one separate panel on the pilot studies page with a subsection per encoder, each against its own Welch band-power baseline, outside the pilot count and every leaderboard.",
+    "rights": "EEGMAT keeps its released record: Open Data Commons Attribution License 1.0, aggregate results only. EEG-Captioner’s source code is MIT. EEG-Captioner’s encoder weights are Apache-2.0 as its Hugging Face weight metadata states. AXON’s checkpoint is Apache-2.0 as its Hugging Face licence tag states; its Braindecode module carries per-file Apache-2.0 terms within a BSD-3-Clause project. No weights are distributed, and no endorsement by either model’s authors is implied.",
+    "research_release": "EEG-Captioner’s release approval passes an internal conditional-probe handoff and does not itself authorise publication; AXON’s independent release review passes a conditional aggregate release. Both keep the probes outside the main leaderboard and bind their aggregates, handoffs and audits by SHA-256. Publication on the site rests on the site owner’s decision of 2026-10-28.",
+    "research_release_status": {
+      "eeg_captioner": "PASS_INTERNAL_CONDITIONAL_PROBE_HANDOFF",
+      "axon": "PASS_CONDITIONAL_AGGREGATE_RELEASE"
+    },
+    "binding": "This record approves the served file the export audit names."
+  },
+  "not_published": [
+    "Per-person, per-fold and per-window values of any kind: per-fold balanced accuracy, fold assignments, participant identifiers, features, fitted heads, predictions and the sealed files. Only participant-mean balanced accuracy, paired differences with their intervals, cohort counts and the source-QC totals are published.",
+    "Confusion matrices and pooled macro-F1: window-pooled summaries, a different aggregation from the participant means shown.",
+    "The source-QC breakdown beyond the totals: the count of flagged channel-record instances and the counts by condition and by fold.",
+    "Workflow accounting: forward counts, head-fit counts, CPU and wall time and memory, from the handoffs, ledgers and audits.",
+    "A difference between the two encoders: none is computed.",
+    "A score on a cohort that meets EEG-Captioner’s source QC: no such study was selected, and one would need a new prospective protocol.",
+    "AXON’s paper reference: not cited until checked.",
+    "Checkpoints and weights: none is distributed; each SHA-256 identifies the file used and grants nothing.",
+    "The handoffs, protocols, approvals, reviews, audits and receipts themselves: each is pinned by SHA-256 in the release manifest and checked by the export, and none is published, because several carry private storage paths."
+  ],
+  "provenance": {
+    "manifest_sha256": "3f22f09009af5b2dd989504f21c6776b1c2b38b9a559ed4a6d9257219918cd0f",
+    "source_export_sha256": {
+      "eeg-captioner": "db45216a9ba6591ce6c284595e0fb69c9979bc9fe37bd74f1e9358d8a6af7fbd",
+      "axon": "2c1fee43cffb6f4a4f9070067ef031f834e9c46c717cd96305f5a05261e75b8e"
+    },
+    "release_approval_sha256": {
+      "eeg-captioner": "e8fee718675a324ee1566b8c1dd353fd8a1e7b3f812c933175ce3bb25aa59177",
+      "axon": "142df9d09ce4211ac677b92914836708e30b488c78f27ff72a16e285cdf1ce6f"
+    },
+    "protocol_sha256": {
+      "eeg-captioner": "8966b298a3180347ad78b21b87d440dec8d5088040453471459cb3392c0bad82",
+      "axon": "22264f7de601c1ba3dee9fe091b28bf5b103853112c2298768ab53d07a401f2b"
+    },
+    "released_files_unchanged": [
+      "mvp.json",
+      "pilot-studies-update.json",
+      "eegpt-core-update.json",
+      "adaptation-update.json",
+      "neurolm-eegmat-update.json"
+    ]
+  }
+}

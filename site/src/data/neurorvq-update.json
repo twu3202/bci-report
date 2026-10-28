@@ -1,0 +1,692 @@
+{
+  "schema_version": "bci-report-neurorvq-update-v1",
+  "release_id": "neurorvq-update-20261028",
+  "generated_at": "2026-10-28",
+  "status": "aggregate_preview",
+  "title": "NeuroRVQ’s frozen backbone on three tasks",
+  "question": "Does NeuroRVQ’s frozen backbone, read by a fitted ridge head, separate the classes of three existing tasks better than simple features of the same windows?",
+  "placement": {
+    "page": "/topics/pilot-studies/",
+    "anchor": "neurorvq",
+    "after": "neurolm-eegmat",
+    "pointers_from": [
+      "/protocols/arithmetic-rest/",
+      "/protocols/mi-rest/",
+      "/protocols/p300-target/"
+    ],
+    "pointers_carry_figures": false,
+    "counted_in_pilots": false,
+    "leaderboard": false,
+    "core_matrix_row": false,
+    "foundation_encoder_table": false,
+    "method_page": false,
+    "new_dataset_count": 0,
+    "new_model_count": 0,
+    "text": "A separate panel on the pilot studies page, outside the pilot count and every leaderboard and model ranking; the core matrix and the foundation-encoder table keep their rows, and the three protocol pages link to the panel without figures."
+  },
+  "metric_units": "balanced accuracy, macro-F1 and chance levels are proportions in [0,1], and paired differences are differences of proportions: multiply by 100 for percent or percentage points; dimensions and counts of people, recordings, windows, channels, folds, fits, tensors, elements, bytes and resamples are whole numbers; null means not computed, never zero",
+  "scope": "NeuroRVQ’s released backbone stays frozen. On each task one ridge head (alpha 100) is fitted per fold on the other participants, for the backbone’s 800 pooled values and for simple features of the same windows: 36 people on EEGMAT, 10 on motor imagery against rest and 21 on P300 target against non-target, five participant-held-out folds each, nothing tuned. Scores are participant means; each task has one paired difference with a participant-bootstrap interval.",
+  "model": {
+    "id": "neurorvq",
+    "name": "NeuroRVQ",
+    "family": "foundation",
+    "arxiv_id": "2510.13068",
+    "paper": "https://arxiv.org/abs/2510.13068",
+    "repository": "https://github.com/KonstantinosBarmpas/NeuroRVQ",
+    "source_revision": "926e770d9d16b6aa308404280fa0cc0211a6f9fb",
+    "source_url": "https://github.com/KonstantinosBarmpas/NeuroRVQ/tree/926e770d9d16b6aa308404280fa0cc0211a6f9fb",
+    "checkpoint": {
+      "file": "pretrained_models/foundation_models/NeuroRVQ_EEG_foundation_model_v1.pt",
+      "repository": "https://huggingface.co/ntinosbarmpas/NeuroRVQ",
+      "revision": "d944b87f44ae0ba2923b2f10d0518f23f6803b76",
+      "sha256": "d14ef4eae2d4594d5f1f709226a3bb5f362afd84b68050d5da0fa0586aea886a",
+      "bytes": 234352952,
+      "url": "https://huggingface.co/ntinosbarmpas/NeuroRVQ/tree/d944b87f44ae0ba2923b2f10d0518f23f6803b76"
+    },
+    "variant": "the released backbone with parameter-free branch normalisation and mean-token pooling",
+    "restore": {
+      "strict": true,
+      "trained_tensors": 263,
+      "trained_elements": 5869088,
+      "checkpoint_tensors": 330,
+      "checkpoint_elements": 58560632,
+      "unused_checkpoint_tensors": 67,
+      "coverage": 1.0
+    },
+    "authors_wrapper": {
+      "strict_restore": false,
+      "missing_normalisation_tensors": 8,
+      "text": "The authors’ affine inference wrapper fails a strict restore: eight normalisation tensors it expects are missing from the checkpoint."
+    },
+    "branch_normalisation": {
+      "parameter_free": true,
+      "branches": 4,
+      "width": 200,
+      "epsilon": 1e-05,
+      "source_default_scale": 1.0,
+      "source_default_shift": 0.0
+    },
+    "pooling": {
+      "kind": "the mean of each branch’s tokens, four branches joined",
+      "branches": 4,
+      "branch_width": 200,
+      "dimension": 800
+    },
+    "architecture": {
+      "depth": 12,
+      "heads": 10,
+      "width": 200
+    },
+    "frozen": true,
+    "fine_tuning": false,
+    "transfer": "supervised: the frozen backbone’s pooled values feed a ridge head fitted on the other folds’ labels",
+    "weights_distributed": false,
+    "weights_note": "no weights are distributed; the SHA-256 identifies the checkpoint used and grants nothing",
+    "endorsement": "none implied"
+  },
+  "pretraining_exposure": {
+    "status": "unknown",
+    "status_vocabulary": [
+      "exposed",
+      "not_exposed",
+      "unknown"
+    ],
+    "checked_on": "2026-10-25",
+    "published_pretraining_list": {
+      "corpora": 13,
+      "public": 12,
+      "proprietary": 1
+    },
+    "per_checkpoint_list_published": false,
+    "datasets": [
+      {
+        "task": "eegmat",
+        "named_in_list": false,
+        "status": "unknown"
+      },
+      {
+        "task": "mi-rest",
+        "named_in_list": false,
+        "status": "unknown"
+      },
+      {
+        "task": "p300-target",
+        "named_in_list": false,
+        "status": "unknown"
+      }
+    ]
+  },
+  "probe": {
+    "scaler": "StandardScaler fitted on the training participants’ windows only",
+    "head": "RidgeClassifier",
+    "alpha": 100,
+    "solver": "cholesky",
+    "class_weight": "balanced",
+    "hyperparameter_search": false,
+    "fine_tuning": false,
+    "sealed_before_scoring": true
+  },
+  "interval": {
+    "kind": "paired participant bootstrap",
+    "method": "percentile interval",
+    "level": 0.95,
+    "unit": "participant",
+    "resamples": 20000,
+    "seed": 20261026,
+    "metric": "balanced accuracy",
+    "fixed_fits": true,
+    "arms": "point estimates only"
+  },
+  "chance_level": {
+    "balanced_accuracy": 0.5,
+    "macro_f1": null
+  },
+  "blocks": [
+    {
+      "id": "eegmat",
+      "protocol": "arithmetic-rest",
+      "protocol_page": "/protocols/arithmetic-rest/",
+      "title": "Arithmetic and rest",
+      "task": "pre-task rest against mental arithmetic",
+      "classes": [
+        "pre-task rest",
+        "mental arithmetic"
+      ],
+      "dataset": "EEGMAT",
+      "cohort": {
+        "people": 36,
+        "recordings": 72,
+        "retained_seconds": 60,
+        "window_seconds": 2,
+        "windows_per_recording": 30,
+        "windows": 2160,
+        "channels": 19,
+        "folds": 5
+      },
+      "split": "whole participants held out: participants sorted and assigned to a fold by index modulo five, so no person is in training and test of the same fold",
+      "input_chain": {
+        "kind": "own chain",
+        "source_sampling_hz": 500,
+        "sampling_hz": 200,
+        "notch_hz": [
+          50,
+          60,
+          100
+        ],
+        "band_pass_hz": [
+          0.5,
+          44.5
+        ],
+        "filter_order": 3,
+        "forward_backward": true,
+        "clip_microvolts": 500,
+        "resampling": "FFT over the retained minute of each recording",
+        "epoch_demean": false,
+        "rereference": false,
+        "amplitude_divisor": 1,
+        "reference": "linked ears, as the source describes"
+      },
+      "core_track": {
+        "page": "/protocols/arithmetic-rest/",
+        "core_rows": false,
+        "same_people": true,
+        "same_window_count": true,
+        "same_prepared_windows": false,
+        "own_resampling": true,
+        "comparators_recomputed": true
+      },
+      "arms": [
+        {
+          "id": "neurorvq",
+          "label": "NeuroRVQ backbone",
+          "role": "probe",
+          "dimension": 800,
+          "definition": "the four 200-value branch outputs of the frozen backbone, each averaged over the window’s 38 tokens (19 channels by two one-second patches) and joined into 800 values",
+          "balanced_accuracy": 0.6634259259259259,
+          "macro_f1": 0.6482198226102802,
+          "interval_95": null
+        },
+        {
+          "id": "band-power",
+          "label": "band power",
+          "role": "matched comparator",
+          "dimension": 95,
+          "definition": "95 log band powers: 19 channels by five bands (1–4, 4–8, 8–13, 13–30 and 30–44.5 Hz), Welch with one-second Hann windows at 200 Hz on the same adapted windows",
+          "balanced_accuracy": 0.6481481481481483,
+          "macro_f1": 0.6050057914535415,
+          "interval_95": null
+        }
+      ],
+      "paired_difference": {
+        "a": "neurorvq",
+        "b": "band-power",
+        "label": "NeuroRVQ backbone minus band power",
+        "role": "primary",
+        "metric": "balanced_accuracy",
+        "difference": 0.015277777777777776,
+        "interval_95": [
+          -0.03518518518518519,
+          0.06666666666666667
+        ],
+        "interval_includes_zero": true,
+        "reading": "the interval spans zero, so neither is shown to be better, and the two are not shown to be equivalent"
+      },
+      "fits": 10,
+      "audit": {
+        "status": "pass",
+        "heads_refit": 10,
+        "held_out_outputs_reproduced": 4320,
+        "comparator_values_bitwise": null,
+        "backbone_values_reextracted": false,
+        "sha256": "bd672fb7035dd8c4347d7a57678c4747e11db21953ae5fe8540171775818e07a",
+        "boundary": "The independent audit rebuilt every row, fold and label, refitted all 10 heads and reproduced all 4,320 held-out predictions, the scores and the interval; it read both arms’ values from the producer’s sealed files and did not re-extract them."
+      },
+      "caveat_keys": [
+        "variant",
+        "transfer",
+        "exposure",
+        "input-scale",
+        "input-eegmat",
+        "dimensions",
+        "eegmat-order",
+        "development-cohort",
+        "interval",
+        "separation",
+        "scope",
+        "rights"
+      ]
+    },
+    {
+      "id": "mi-rest",
+      "protocol": "mi-rest",
+      "protocol_page": "/protocols/mi-rest/",
+      "title": "Motor imagery and rest",
+      "task": "dominant-hand motor imagery against rest",
+      "classes": [
+        "motor imagery",
+        "rest"
+      ],
+      "dataset": "ds003810",
+      "cohort": {
+        "people": 10,
+        "windows": 1200,
+        "window_seconds": 2,
+        "channels": 15,
+        "folds": 5
+      },
+      "split": "whole participants held out: participants sorted and assigned to a fold by index modulo five, so no person is in training and test of the same fold",
+      "input_chain": {
+        "kind": "core prepared windows",
+        "source_sampling_hz": 125,
+        "sampling_hz": 200,
+        "resample": {
+          "up": 8,
+          "down": 5
+        },
+        "resampling": "polyphase, per window, with zero padding at the edges",
+        "epoch_demean": true,
+        "further_filter": false,
+        "clip": false,
+        "rereference": false,
+        "amplitude_divisor": 1,
+        "units": "microvolts as the source cache stores them",
+        "reference": "left ear lobe, as the source states"
+      },
+      "core_track": {
+        "page": "/protocols/mi-rest/",
+        "core_rows": false,
+        "same_people": true,
+        "same_window_count": true,
+        "same_prepared_windows": true,
+        "own_resampling": true,
+        "comparators_recomputed": true
+      },
+      "arms": [
+        {
+          "id": "neurorvq",
+          "label": "NeuroRVQ backbone",
+          "role": "probe",
+          "dimension": 800,
+          "definition": "the four 200-value branch outputs of the frozen backbone, each averaged over the window’s 30 tokens (15 channels by two one-second patches) and joined into 800 values",
+          "balanced_accuracy": 0.5508333333333333,
+          "macro_f1": 0.5264332778137192,
+          "interval_95": null
+        },
+        {
+          "id": "temporal-means",
+          "label": "temporal means",
+          "role": "primary comparator",
+          "dimension": 1500,
+          "definition": "1,500 means of non-overlapping four-sample (20 ms) bins after resampling to 200 Hz: 15 channels by 100 bins",
+          "balanced_accuracy": 0.7033333333333334,
+          "macro_f1": 0.6983863480354476,
+          "interval_95": null
+        },
+        {
+          "id": "band-power",
+          "label": "band power",
+          "role": "descriptive comparator",
+          "dimension": 75,
+          "definition": "75 log band powers: 15 channels by five bands (1–4, 4–8, 8–13, 13–30 and 30–45 Hz), Welch with one-second windows at 200 Hz",
+          "balanced_accuracy": 0.5883333333333333,
+          "macro_f1": 0.5647969284711711,
+          "interval_95": null
+        }
+      ],
+      "paired_difference": {
+        "a": "neurorvq",
+        "b": "temporal-means",
+        "label": "NeuroRVQ backbone minus temporal means",
+        "role": "primary",
+        "metric": "balanced_accuracy",
+        "difference": -0.1525,
+        "interval_95": [
+          -0.20166666666666666,
+          -0.10249999999999997
+        ],
+        "interval_includes_zero": false,
+        "reading": "the interval lies below zero; descriptive, from this one cohort"
+      },
+      "fits": 15,
+      "audit": {
+        "status": "pass",
+        "heads_refit": 15,
+        "held_out_outputs_reproduced": 3600,
+        "comparator_values_bitwise": true,
+        "backbone_values_reextracted": true,
+        "sha256": "711faa01804f5a517b66b8f9110c9dbf1ed9d725f09c51cbfe7e6f7ba2e9bce6",
+        "supplement_sha256": "457c429b33cf330e96fbe2a57b277982116699f7bbb3752e3987d21dda4231bd",
+        "boundary": "The independent audit recomputed the temporal and band-power values bit for bit, refitted all 15 heads and reproduced all 3,600 held-out predictions, the scores and the interval; a supplementary check re-extracted all 1,200 × 800 NeuroRVQ values exactly, reusing the accepted backbone loader."
+      },
+      "caveat_keys": [
+        "variant",
+        "transfer",
+        "exposure",
+        "input-scale",
+        "input-cache",
+        "units",
+        "dimensions",
+        "interval",
+        "separation",
+        "scope",
+        "rights"
+      ]
+    },
+    {
+      "id": "p300-target",
+      "protocol": "p300-target",
+      "protocol_page": "/protocols/p300-target/",
+      "title": "P300 target and non-target",
+      "task": "target against non-target epochs",
+      "classes": [
+        "non-target",
+        "target"
+      ],
+      "dataset": "ds006593",
+      "cohort": {
+        "people": 21,
+        "windows": 2520,
+        "window_seconds": 1,
+        "channels": 19,
+        "folds": 5,
+        "balance": {
+          "target": 60,
+          "non_target": 60,
+          "unit": "epochs per person"
+        }
+      },
+      "split": "whole participants held out: participants sorted and assigned to a fold by index modulo five, so no person is in training and test of the same fold",
+      "input_chain": {
+        "kind": "core prepared windows",
+        "source_sampling_hz": 300,
+        "sampling_hz": 200,
+        "resample": {
+          "up": 2,
+          "down": 3
+        },
+        "resampling": "polyphase, per window, with zero padding at the edges",
+        "epoch_demean": false,
+        "further_filter": false,
+        "clip": false,
+        "rereference": false,
+        "amplitude_divisor": 1,
+        "units": "microvolts as the source cache stores them",
+        "reference": "unknown: the reference fields of the source headers are blank"
+      },
+      "core_track": {
+        "page": "/protocols/p300-target/",
+        "core_rows": false,
+        "same_people": true,
+        "same_window_count": true,
+        "same_prepared_windows": true,
+        "own_resampling": true,
+        "comparators_recomputed": true
+      },
+      "arms": [
+        {
+          "id": "neurorvq",
+          "label": "NeuroRVQ backbone",
+          "role": "probe",
+          "dimension": 800,
+          "definition": "the four 200-value branch outputs of the frozen backbone, each averaged over the window’s 19 tokens (one one-second patch per channel) and joined into 800 values",
+          "balanced_accuracy": 0.5039682539682541,
+          "macro_f1": 0.47361097417708453,
+          "interval_95": null
+        },
+        {
+          "id": "temporal-means",
+          "label": "temporal means",
+          "role": "primary comparator",
+          "dimension": 950,
+          "definition": "950 means of non-overlapping four-sample (20 ms) bins after resampling to 200 Hz: 19 channels by 50 bins",
+          "balanced_accuracy": 0.5396825396825397,
+          "macro_f1": 0.5220746452819641,
+          "interval_95": null
+        }
+      ],
+      "paired_difference": {
+        "a": "neurorvq",
+        "b": "temporal-means",
+        "label": "NeuroRVQ backbone minus temporal means",
+        "role": "primary",
+        "metric": "balanced_accuracy",
+        "difference": -0.03571428571428571,
+        "interval_95": [
+          -0.055555555555555546,
+          -0.015079365079365073
+        ],
+        "interval_includes_zero": false,
+        "reading": "the interval lies below zero; descriptive, from this one cohort"
+      },
+      "fits": 10,
+      "audit": {
+        "status": "pass",
+        "heads_refit": 10,
+        "held_out_outputs_reproduced": 5040,
+        "comparator_values_bitwise": true,
+        "backbone_values_reextracted": true,
+        "sha256": "a213f1e80c87941273e2cc5138c1fceb0a73b0731fc17f9232739db0e10db6ed",
+        "boundary": "A separately written audit re-extracted all 2,520 × 800 NeuroRVQ values and 2,520 × 950 temporal means exactly, reusing the accepted backbone loader, refitted all 10 heads and reproduced all 5,040 held-out predictions, the scores and the interval."
+      },
+      "caveat_keys": [
+        "variant",
+        "transfer",
+        "exposure",
+        "input-scale",
+        "input-cache",
+        "units",
+        "dimensions",
+        "p300-windows",
+        "interval",
+        "separation",
+        "scope",
+        "rights"
+      ]
+    }
+  ],
+  "protocols_not_run": [
+    {
+      "protocol": "semantic-target",
+      "gate": "the original calibration evidence is still missing"
+    },
+    {
+      "protocol": "beta-4ch",
+      "gate": "physical units and reference are unresolved"
+    },
+    {
+      "protocol": "beta-8ch",
+      "gate": "physical units are unresolved, and PO5 and PO6 are missing from the model’s channel list"
+    },
+    {
+      "protocol": "idle",
+      "gate": "its inputs are missing, and it needs its own calibration, threshold and split protocol"
+    },
+    {
+      "protocol": "sleep-scalp",
+      "gate": "deferred to a separate study"
+    }
+  ],
+  "rights": {
+    "code": {
+      "licence": "CC BY-NC 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "scope": "NeuroRVQ’s source code at the pinned revision",
+      "url": "https://github.com/KonstantinosBarmpas/NeuroRVQ/blob/926e770d9d16b6aa308404280fa0cc0211a6f9fb/LICENSE",
+      "licence_title": "Attribution-NonCommercial 4.0 International",
+      "checked_on": "2026-10-25"
+    },
+    "weights": {
+      "licence": "CC BY-NC 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "scope": "the NeuroRVQ checkpoints in the Hugging Face repository at the pinned revision",
+      "url": "https://huggingface.co/ntinosbarmpas/NeuroRVQ/blob/d944b87f44ae0ba2923b2f10d0518f23f6803b76/LICENSE",
+      "licence_title": "Attribution-NonCommercial 4.0 International",
+      "same_file_as_code": true,
+      "checked_on": "2026-10-25",
+      "weights_distributed": false
+    },
+    "datasets": {
+      "eegmat": {
+        "name": "EEGMAT",
+        "source": "https://physionet.org/content/eegmat/1.0.0/",
+        "version": "PhysioNet EEG During Mental Arithmetic Tasks 1.0.0 · 1.0.0",
+        "license": "Open Data Commons Attribution License 1.0",
+        "licenseUrl": "https://opendatacommons.org/licenses/by/1-0/",
+        "attribution": "Igor Zyma, Ivan Seleznov, Anton Popov, Mariia Chernykh, Oleksii Shpenkov · EEG During Mental Arithmetic Tasks 1.0.0, PhysioNet, doi:10.13026/C2JQ1P. Study: Zyma et al. (2019), doi:10.3390/data4010014. PhysioNet platform: Pollard et al. (2026), doi:10.1038/s44360-026-00096-z.",
+        "privacyReview": "Paper reports Bioethics Commission approval (15 August 2018) and written consent from every participant. EDF dates are normalized, but subject-info.csv contains age, gender, occupation, and recording date; those fields must not be published.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://physionet.org/content/eegmat/1.0.0/",
+          "https://www.mdpi.com/2306-5729/4/1/14",
+          "https://opendatacommons.org/licenses/by/1-0/"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only"
+      },
+      "mi-rest": {
+        "name": "ds003810",
+        "source": "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+        "version": "OpenNeuro snapshot 2.0.2 · c674303319303b9ffc4ff7e2340b3a4807e8ffb5",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Peterson et al. · OpenNeuro ds003810, version 2.0.2. Study: https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/",
+        "privacyReview": "Study paper reports ethics approval by CEySTE CCT-CONICET Santa Fe, Declaration of Helsinki compliance, and signed consent. Twelve adults participated; ten were retained. Public participants.tsv includes exact age, sex, handedness, and pseudonymous ID, which must not be surfaced.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds003810.v2.0.2",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC9114495/"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only"
+      },
+      "p300-target": {
+        "name": "ds006593",
+        "source": "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+        "version": "OpenNeuro snapshot 1.0.0 · b3fa345b310abfcf442dd4e2867f6652336c3fe4",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "OpenNeuro ds006593 contributors · version 1.0.0, doi:10.18112/openneuro.ds006593.v1.0.0; original author credits retained at the linked source.",
+        "privacyReview": "Dataset metadata/README report IRB approval #10-05-2022 and written informed consent. Participant metadata contains pseudonymous IDs and study descriptors without demographic fields. Eye-tracking and raw signals remain off-site.",
+        "reviewedAt": "2026-09-20",
+        "reviewBasis": [
+          "https://doi.org/10.18112/openneuro.ds006593.v1.0.0",
+          "https://nemar.org/dataset/on006593"
+        ],
+        "rightsScope": "Personal noncommercial research; aggregate results only"
+      }
+    },
+    "summary": "NeuroRVQ code and weights: CC BY-NC 4.0, the licence file of both repositories; aggregate figures only and no weights distributed. EEGMAT 1.0.0: Open Data Commons Attribution License 1.0 (Zyma et al., 2019; PhysioNet). ds003810 and ds006593: CC0 1.0 (OpenNeuro)."
+  },
+  "limitations": [
+    {
+      "id": "variant",
+      "text": "Every score uses the released NeuroRVQ backbone with parameter-free branch normalisation and mean-token pooling: 263 trained tensors restore strictly, the four branch normalisations carry no parameters and take the source’s default scale 1 and shift 0, and each branch’s tokens are averaged and the four 200-value branches joined into 800 values. The authors’ inference wrapper fails a strict restore, because eight normalisation tensors it expects are missing from the checkpoint."
+    },
+    {
+      "id": "transfer",
+      "text": "Supervised transfer: the backbone stays frozen, and in each fold a standardiser and a ridge head (alpha 100, balanced class weights) are fitted on the other participants’ windows. No score is zero-shot, and nothing was tuned."
+    },
+    {
+      "id": "exposure",
+      "text": "Pretraining exposure is unknown. None of the three datasets is named in the paper’s list of 13 pretraining corpora, but the list includes a proprietary collection and no per-checkpoint list of corpora or participants is published, so the backbone may have seen these recordings."
+    },
+    {
+      "id": "input-scale",
+      "text": "The checkpoint and the paper do not establish the amplitude scale or reference NeuroRVQ was pretrained on. Every chain here feeds microvolts as an adaptation: the EEGMAT chain follows the notch, band-pass and clip of the example preprocessing in NeuroRVQ’s code, and the motor-imagery and P300 chains leave all three out. No score here reproduces NeuroRVQ’s published pipeline, and none separates the representation from an input mismatch."
+    },
+    {
+      "id": "input-eegmat",
+      "text": "EEGMAT has its own input chain: the first 60 seconds of each recording, notches at 50, 60 and 100 Hz, a third-order 0.5–44.5 Hz band-pass run forward and backward, clipping at ±500 µV and resampling from 500 to 200 Hz, with no demeaning or re-referencing. The band-power arm reads the same adapted windows."
+    },
+    {
+      "id": "input-cache",
+      "text": "Motor imagery and P300 reuse the core matrix’s prepared windows, people and fold rule, resampled per window from 125 and 300 Hz to 200 Hz with no further filter, clipping or rescaling; motor imagery keeps the core per-channel epoch demeaning. Their temporal and band-power arms were recomputed in this chain, apart from the matrix run: the motor-imagery band power differs from that protocol’s Spectral ridge row, and the P300 temporal means from that protocol’s Temporal ridge row."
+    },
+    {
+      "id": "units",
+      "text": "Motor-imagery and P300 amplitudes are read as microvolts from the source cache: ds003810’s EDF unit fields are blank and its channel files declare microvolts, and ds006593’s headers give a 0.1 µV resolution with blank reference fields; the P300 cache’s original preparation from the raw files was not re-run. Neither reading is an independent instrument calibration."
+    },
+    {
+      "id": "dimensions",
+      "text": "The arms differ in size under one fixed alpha: NeuroRVQ’s 800 values against 95 band powers on EEGMAT, 1,500 temporal means and 75 band powers on motor imagery, and 950 temporal means on P300. There is no random-initialisation arm, so the panel says nothing about what pretraining contributes."
+    },
+    {
+      "id": "p300-windows",
+      "text": "The P300 sample is balanced at 60 target and 60 non-target epochs per person, where the source inquiries hold about one target in ten letters, and stimuli come about every 0.3 s, so each one-second window holds later responses. The scores are for single epochs and do not measure speller accuracy."
+    },
+    {
+      "id": "eegmat-order",
+      "text": "On EEGMAT, rest is recorded before arithmetic, so recording order moves with the label, and the published signals were already cleaned with ICA."
+    },
+    {
+      "id": "development-cohort",
+      "text": "EEGMAT is a known development cohort, used across this site, so the EEGMAT block is not an untouched external confirmation."
+    },
+    {
+      "id": "interval",
+      "text": "Each paired difference carries a descriptive 95% interval from 20,000 paired participant resamples, conditional on the fixed folds and fitted heads; each arm has a point estimate only."
+    },
+    {
+      "id": "separation",
+      "text": "Each panel on this page has its own input chain and band-power arm, so these scores stay outside every leaderboard and are not ranked against the NeuroLM panel, the ten-second panel or the core matrix."
+    },
+    {
+      "id": "scope",
+      "text": "Offline results for one frozen variant: the EEGMAT chain filters the retained first minute of each recording as one block before cutting it into windows, and nothing here measures cognitive workload, clinical use, online decoding or other uses of NeuroRVQ."
+    },
+    {
+      "id": "rights",
+      "text": "NeuroRVQ’s code and weights are licensed CC BY-NC 4.0, the licence file of both repositories at the pinned revisions. Only aggregate figures are published here; no weights are distributed, and no endorsement by NeuroRVQ’s authors is implied."
+    }
+  ],
+  "release_record": {
+    "date": "2026-10-28",
+    "decided": "2026-10-28",
+    "decision": "Publish NeuroRVQ’s frozen-backbone probes on EEGMAT, on motor imagery against rest and on P300 target against non-target as their approved aggregates: one panel on the pilot studies page, outside the pilot count and every leaderboard, with pointers from three protocol pages that carry no figures.",
+    "rights": "NeuroRVQ’s code and weights are CC BY-NC 4.0, the licence file of both repositories at the pinned revisions; only aggregate figures are published, no weights are distributed, and no endorsement by NeuroRVQ’s authors is implied. EEGMAT, ds003810 and ds006593 keep their released records.",
+    "research_release": "Each study’s release approval passes an internal aggregate handoff and binds its handoff, independent audit and interpretation review by SHA-256; publication on the site rests on the owner’s decisions D14 and D19.",
+    "research_release_status": {
+      "eegmat": "PASS_INTERNAL_AGGREGATE_HANDOFF",
+      "mi-rest": "PASS_INTERNAL_AGGREGATE_HANDOFF",
+      "p300-target": "PASS_INTERNAL_AGGREGATE_HANDOFF"
+    },
+    "binding": "This record approves the served file the export audit names."
+  },
+  "not_published": [
+    "Per-person, per-fold and per-window values of any kind, fold assignments, participant identifiers, labels, extracted values, fitted heads, predictions and the sealed files: only participant-mean scores, one paired difference per task with its interval, and cohort counts are published.",
+    "How many people each arm scored above 50%, which the sources give as descriptive point-estimate counts.",
+    "Per-arm intervals and macro-F1 differences: none were computed, so each arm has a point estimate only.",
+    "Measured compute: workflow, audit and CPU times, memory, budgets and process counts from the handoffs and receipts. None of them measures inference speed.",
+    "The checkpoint and the authors’ source: no weights are distributed; the checkpoint SHA-256 identifies the file used and grants nothing. No hash of a source or Hugging Face file is published beyond the checkpoint SHA-256 and the two revisions.",
+    "Third-party conversions of the checkpoint and the licence tags they carry: only the authors’ repositories are cited.",
+    "The handoffs, protocols, configurations, input queues, receipts and reviews themselves: each is pinned by SHA-256 in this manifest and checked by the export, and none is published, because several carry private storage paths."
+  ],
+  "provenance": {
+    "manifest_sha256": "876311164c20374afa7c085710df03877a31d778e3e88e33028888127d898391",
+    "source_export_sha256": {
+      "eegmat": "bd672fb7035dd8c4347d7a57678c4747e11db21953ae5fe8540171775818e07a",
+      "mi-rest": "711faa01804f5a517b66b8f9110c9dbf1ed9d725f09c51cbfe7e6f7ba2e9bce6",
+      "p300-target": "a213f1e80c87941273e2cc5138c1fceb0a73b0731fc17f9232739db0e10db6ed"
+    },
+    "release_approval_sha256": {
+      "eegmat": "42ad73cfef0ac3055d6f774f08fc7fa0525ee0a88eaba4236d1489975a5afba2",
+      "mi-rest": "42c93cfd57574dff18ce36aa1a1be1cea1dfb9c4ed772b5c39ba6f397af8b57f",
+      "p300-target": "a0c5babaf161ff6444beb1679639f5877d7411c478d39441237703aa74445b39"
+    },
+    "handoff_sha256": {
+      "eegmat": "83db9e1fea94ca9ae31af00314849dc55be8703854a898432626f783c5603bb6",
+      "mi-rest": "4013b3e52e472b9fbf0bd0a1d48b94da87bf02453e39fc48833b487f4a6b288c",
+      "p300-target": "2fb9710c2bf470614cb06f70cbf65823e522aadcb730355aad64ba9da659e045"
+    },
+    "protocol_sha256": {
+      "eegmat": "7ff3be8737af9757a6aa14d330f74d445bb0bba8f233eb960534987f0574b72d",
+      "mi-rest": "2ce987ef88df95f4bef70caa746b44da317905df94db1008362e4b10ab8b22ec",
+      "p300-target": "56e3a4466b06e10e35f27f37914992b94256bfbdf932c48f79626d43cc47b146"
+    },
+    "released_files_unchanged": [
+      "mvp.json",
+      "pilot-studies-update.json",
+      "neurolm-eegmat-update.json",
+      "eegpt-core-update.json",
+      "foundation-models-update.json"
+    ]
+  }
+}

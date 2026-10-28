@@ -1,13 +1,17 @@
-// The checks of /topics/new-ssvep-frequencies/ (package P-SS1, plan §2.1 and §4.7), run on a built site:
+// The checks of /topics/new-ssvep-frequencies/ (plan §2.1 and §4.7 of the 2026-10-20 round, and plan §2.1 of the
+// 2026-10-28 round), run on a built site:
 //
 //   node scripts/checks/new-ssvep-frequencies.mjs <dist directory>
 //
-// It reads the page in both languages, their Markdown copies and the served data file, and asserts the page shell's
-// acceptance items: figure parity between English and Chinese against new-ssvep-frequencies-update.json, the pinned
-// short answer, headings and anchors, the endpoint strip, the scope line, the name key, card 8, methods and limits,
-// the cite block, the thread linked once, and the strings that must never appear. The cards themselves are written by
-// three components (src/components/ssvep/); a section still marked data-ssvep-stub keeps the assertions that need its
-// content PENDING rather than failing. Cards 3 and 4 (PhaseCards.astro) have their own block of checks near the end.
+// It reads the page in both languages, their Markdown copies and the served data files, and asserts the page shell's
+// acceptance items: figure parity between English and Chinese, each figure a leaf of its own file
+// (new-ssvep-frequencies-update.json for cards 1 to 7, ssvep-followups-update.json for cards 8 to 14 and the shell's
+// share of them), the pinned short answer with owner decision D22's sentence, headings and anchors of all fourteen
+// cards, the endpoint strip, the scope lines, the name key of both files, methods and limits (the multiplicity
+// sentence of the 2026-10-28 round), the cite block naming both releases, the thread linked once, and the strings that
+// must never appear. Cards 8 to 14 have their own module, scripts/checks/ssvep-followups.mjs, which holds each of their
+// figures to its field. A section still marked data-ssvep-stub keeps the assertions that need its content PENDING rather
+// than failing. Cards 3 and 4 (PhaseCards.astro) have their own block of checks near the end.
 // Exit code 1 on any failure. No network, no writes.
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -16,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 
 const DIST = resolve(process.argv[2] ?? fileURLToPath(new URL('../../dist/', import.meta.url)));
 const SITE = fileURLToPath(new URL('../../', import.meta.url));
-const FILE = 'new-ssvep-frequencies-update.json';
+const FILE = 'new-ssvep-frequencies-update.json', MORE = 'ssvep-followups-update.json';
 const PAGE = 'topics/new-ssvep-frequencies/';
 const results = [];
 const report = (name, status, detail = '') => results.push({ name, status, detail });
@@ -39,6 +43,7 @@ const md = { en: existsSync(join(DIST, pages.en, 'index.md')) ? read(pages.en + 
 const servedText = read('data/' + FILE);
 const data = JSON.parse(servedText);
 const S = data.studies;
+const moreText = read('data/' + MORE), more = JSON.parse(moreText);
 
 // --- Helpers (formats as entities.ts formatFig and check-workbench.mjs, plus pct0 and num1) ----------------------
 const fmt = {
@@ -52,9 +57,14 @@ const fmt = {
   pct0: r => (r * 100).toFixed(0) + '%',
   // The adapter's protected margin on the CCA-correlation scale, at one decimal (card 6: 0.200001 prints "0.2").
   num1: r => r.toFixed(1).replace(/^-/, '−'),
+  // Cards 8 to 14 (ssvep-followups.ts): two equal levels, a bound below two decimals, a symmetric margin, seconds, a
+  // two-decimal plain number (the decay rule). ssvep-followups.mjs holds each to its field.
+  pp2eq: r => (Math.abs(r) < 1e-12 ? '0.00 pp' : (r > 0 ? '+' : '−') + Math.abs(r * 100).toFixed(2) + ' pp'),
+  sgn5: r => (r === 0 ? '' : r > 0 ? '+' : '−') + Math.abs(r * 100).toFixed(5), pm1: r => '±' + Math.abs(r * 100).toFixed(1) + ' pp',
+  s1: r => r.toFixed(1).replace(/^-/, '−') + ' s',
 };
-const leaves = new Set();
-(function walk(v) { if (typeof v === 'number') leaves.add(v); else if (v && typeof v === 'object') Object.values(v).forEach(walk); })(data);
+const leavesOf = d => { const set = new Set(); (function walk(v) { if (typeof v === 'number') set.add(v); else if (v && typeof v === 'object') Object.values(v).forEach(walk); })(d); return set; };
+const leaves = leavesOf(data), leavesMore = leavesOf(more);
 const decode = s => s.replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
   .replace(/&(amp|lt|gt|quot|apos|nbsp);/g, (_, e) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' })[e]);
 const visible = h => decode(h.replace(/<head>[\s\S]*?<\/head>/, '').replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '')
@@ -76,6 +86,7 @@ const tokens55 = /(?<![\d.])5{2}(?:\.0+)?(?![\d.])|(?<![\d.])0?\.5{2}(?!\d)|fift
 check('served data file is byte-identical to src/data and public/data', () => {
   for (const p of ['src/data/' + FILE, 'public/data/' + FILE]) eq(readFileSync(join(SITE, p), 'utf8') === servedText, true, p);
   eq(data.release_id, 'new-ssvep-frequencies-update-20261020', 'release id');
+  for (const p of ['src/data/' + MORE, 'public/data/' + MORE]) eq(readFileSync(join(SITE, p), 'utf8') === moreText, true, p);
 });
 check('Markdown copies exist and carry the cite block', () => {
   for (const l of ['en', 'zh']) {
@@ -95,13 +106,16 @@ check('h1 is the question, and the <title> leads with it', () => {
   }
 });
 const ORDER = ['setup', 'reference-spectrum', 'head-and-features', 'phase-jitter', 'phase-ramp', 'cca-mechanism', 'cca-correction',
-  'wearable-transfer', 'cross-spectral', 'methods-and-limits', 'related', 'cite'];
+  'wearable-transfer', 'cross-spectral', 'eigenvalue-pooling', 'harmonic-pooling', 'practical-settings', 'harmonic-gap', 'fixed-decay',
+  'rising-weights', 'methods-and-limits', 'related', 'cite'];
+const CARDS = [...data.placement.cards.filter(c => !c.status_only), ...more.placement.cards];
 check('sections in order, each card at its anchor with its heading', () => {
-  eq(data.placement.cards.map(c => c.anchor), ORDER.slice(1, 9), 'the export’s card anchors');
+  eq(data.placement.cards.map(c => c.anchor), ORDER.slice(1, 9), 'the released file’s card anchors');
+  eq(CARDS.map(c => c.anchor), ORDER.slice(1, 15), 'both files’ card anchors');
   for (const l of ['en', 'zh']) {
     const ids = [...mainOf(html[l]).matchAll(/<section[^>]*\sid="([^"]+)"/g)].map(m => m[1]).filter(id => ORDER.includes(id));
     eq(ids, ORDER, `${l}: section order`);
-    data.placement.cards.forEach(c => {
+    CARDS.forEach(c => {
       const sec = sectionOf(html[l], c.anchor);
       ok(new RegExp(`data-ssvep-card="${c.card}"`).test(sec.slice(0, 400)), `${l}: #${c.anchor} is card ${c.card}`);
       const by = sec.match(/aria-labelledby="([^"]+)"/)?.[1];
@@ -112,11 +126,11 @@ check('sections in order, each card at its anchor with its heading', () => {
 });
 
 // --- Figures ---------------------------------------------------------------------------------------------------------
-check('every data-fig is a leaf of the page’s file, printed in its format', () => {
+check('every data-fig is a leaf of its own file (cards 1–7 the released file, cards 8–14 the later one), printed in its format', () => {
   let n = 0;
   for (const l of ['en', 'zh']) for (const f of figsIn(html[l])) {
-    eq(f.file, FILE, `${l}: a figure from another file`);
-    ok(leaves.has(f.raw), `${l}: ${f.raw} is not a value in ${FILE}`);
+    ok(f.file === FILE || f.file === MORE, `${l}: a figure from another file: ${f.file}`);
+    ok((f.file === FILE ? leaves : leavesMore).has(f.raw), `${l}: ${f.raw} is not a value in ${f.file}`);
     ok(fmt[f.fmt], `${l}: unknown format ${f.fmt}`);
     eq(f.text, fmt[f.fmt](f.raw), `${l}: ${f.raw} as ${f.fmt}`);
     n++;
@@ -140,7 +154,7 @@ check('the bet prints as 39% once per language, on card 4 only', () => {
   const bet = /(?<![\d.])39%/g;
   for (const l of ['en', 'zh']) {
     const all = (visible(mainOf(html[l])).match(bet) ?? []).length;
-    const pct0Figs = figsIn(html[l]).filter(f => f.fmt === 'pct0');
+    const pct0Figs = figsIn(html[l]).filter(f => f.fmt === 'pct0' && f.file === FILE);
     ok(pct0Figs.every(f => f.raw === thr.held8_threshold), `${l}: pct0 prints the bet only`);
     if (stubs(html[l]) && /data-ssvep-stub/.test(sectionOf(html[l], 'phase-ramp'))) { eq(all, 0, `${l}: no 39% before card 4 is written`); return pendingIfStub('card 4 not written yet'); }
     eq(all, 1, `${l}: "39%" occurrences`);
@@ -152,18 +166,27 @@ check('the bet prints as 39% once per language, on card 4 only', () => {
 // --- The short answer ----------------------------------------------------------------------------------------------
 const A = S.cca_adapter, W = S.wearable_transfer;
 const gain = A.contrasts['RAW-RESIDUAL minus CCA-RAW/u8'], dry = W.contrasts['RAW-RESIDUAL_minus_CCA-RAW/dry'], wet = W.contrasts['RAW-RESIDUAL_minus_CCA-RAW/wet'];
+// Owner decision D22: untrained filter-bank CCA against CCA on the same held-out task, and the learned eigenvalue head
+// against the untrained harmonic sum, both from ssvep-followups-update.json.
+const MP = more.studies.practical_settings, ME = more.studies.coherence_eigen;
+const fbG = MP.contrasts['w500-c8/FBCCA-M3-N7-H5 minus w500-c8/CCA-RAW-H3/u8'], eigS = ME.contrasts['EIG-RAW minus RAW-HARM-SUM/u8'];
 const ANSWER_FIGS = [fmt.pct2(A.levels['RAW-RESIDUAL/u8'].estimate), fmt.pct2(A.levels['CCA-RAW/u8'].estimate), fmt.count(data.endpoints[0].candidates),
   fmt.pp2(gain.estimate), fmt.sgn2(gain.interval[0]), fmt.sgn2(gain.interval[1]), fmt.count(data.cohort.people),
-  fmt.pp2(dry.estimate), fmt.sgn2(dry.interval[0]), fmt.sgn2(dry.interval[1]), fmt.pp2(wet.estimate), fmt.sgn2(wet.interval[0]), fmt.sgn2(wet.interval[1])];
+  fmt.pp2(dry.estimate), fmt.sgn2(dry.interval[0]), fmt.sgn2(dry.interval[1]), fmt.pp2(wet.estimate), fmt.sgn2(wet.interval[0]), fmt.sgn2(wet.interval[1]),
+  fmt.pct2(MP.levels['w500-c8/FBCCA-M3-N7-H5/u8'].estimate), fmt.pct2(MP.levels['w500-c8/CCA-RAW-H3/u8'].estimate), fmt.pp2(fbG.estimate), fmt.sgn2(fbG.interval[0]),
+  fmt.sgn2(fbG.interval[1]), fmt.pp2(eigS.estimate), fmt.sgn2(eigS.interval[0]), fmt.sgn2(eigS.interval[1])];
 const answerOf = h => { const a = h.indexOf('<section class="short-answer"'); return h.slice(a, h.indexOf('</section>', a)); };
-check('short answer as pinned (adapter binding review §3 item 3; Wearable-102 and heads sentences of plan §2.1)', () => {
-  eq(ANSWER_FIGS, ['86.15%', '80.90%', '8', '+5.24 pp', '+3.91', '+6.62', '70', '+0.07 pp', '−0.71', '+0.91', '−0.61 pp', '−1.48', '+0.23'], 'the pinned figures');
+check('short answer as pinned (adapter binding review §3 item 3; Wearable-102 and heads sentences of plan §2.1; D22)', () => {
+  eq(ANSWER_FIGS, ['86.15%', '80.90%', '8', '+5.24 pp', '+3.91', '+6.62', '70', '+0.07 pp', '−0.71', '+0.91', '−0.61 pp', '−1.48', '+0.23',
+    '90.21%', '80.90%', '+9.31 pp', '+6.84', '+11.71', '+0.07 pp', '−0.45', '+0.62'], 'the pinned figures');
+  ok(MP.design.fbcca.trained_head === false && fbG.interval[0] > 0 && eigS.interval[0] < 0 && eigS.interval[1] > 0, 'D22: filter-bank CCA untrained and above CCA; the head and the sum unresolved');
   const PHRASES = {
     en: ['On BETA’s held-out frequencies, temporal CCA with a small learned correction reached', 'for CCA alone, choosing among',
       'Run unchanged on Wearable-102, the same models changed CCA’s score by', 'on dry electrodes', 'on wet',
-      'Learned heads that read reference spectra or stimulus phase stayed far below CCA.'],
+      'Learned heads that read reference spectra or stimulus phase stayed far below CCA.',
+      'On the same held-out task, filter-bank CCA, which needs no training, reached', 'and the untrained harmonic sum came out nearly level with the learned eigenvalue head (the head minus the sum:'],
     zh: ['在 BETA 的留出频率上，时域 CCA 加一个小的学习修正达到', 'CCA 单独为', '同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极', '湿电极',
-      '读参考谱或刺激相位的学习型分类头远低于 CCA。'],
+      '读参考谱或刺激相位的学习型分类头远低于 CCA。', '在同一留出任务上，不需要训练的滤波器组 CCA 达到', '不需要训练的谐波求和与学习得到的特征值分类头几乎持平（分类头减去求和：'],
   };
   for (const l of ['en', 'zh']) {
     const ans = answerOf(html[l]);
@@ -197,6 +220,7 @@ check('the thread is linked once per language, from the intro line, its commente
   eq(data.thread.commenter_named, false, 'commenter_named');
   for (const l of ['en', 'zh']) {
     const hrefs = [...html[l].matchAll(/href="([^"]*huggingface\.co\/posts\/[^"]*)"/g)].map(m => m[1]);
+    ok(!/huggingface\.co\/posts\//.test(moreText), 'the later file carries no thread link');
     eq(hrefs, [data.thread.url], `${l}: links to the thread`);
     ok(sectionOf(html[l], 'setup').includes(`href="${data.thread.url}"`), `${l}: the link sits in the intro line`);
   }
@@ -204,14 +228,25 @@ check('the thread is linked once per language, from the intro line, its commente
   const NAME = new Set(['6e7f5e4c7a5ed600cb60c4cd7fa0b60724ddd2a89426474c71d7d8d06bb9c4d9', 'f695cdd94ee90fff62b7216da4bcd9283b9514e061f6108043cac331f5f1a65a']);
   const hit = s => (s.toLowerCase().match(/[a-z]+/g) ?? []).some(w => NAME.has(createHash('sha256').update(w).digest('hex')));
   for (const l of ['en', 'zh']) { ok(!hit(html[l]), `${l}: the page names the commenter`); ok(!md[l] || !hit(md[l]), `${l}: the Markdown copy names the commenter`); }
-  ok(!hit(servedText), 'the data file names the commenter');
+  ok(!hit(servedText) && !hit(moreText), 'a data file names the commenter');
 });
 check('the commenter’s confidence figure appears nowhere (wording review M7 token rules)', () => {
+  // A printed figure is a leaf of a served file (checked above), and neither file holds the confidence figure (walked
+  // below); card 10's "+0.55" is a difference in percentage points. The words are read with the figures set aside, and
+  // no figure prints as the confidence figure.
+  const noFigs = h => h.replace(/<span (?:data-at="[^"]*" )?data-fig="[^"]*"[^>]*>[^<]*<\/span>/g, ' ');
+  const figTexts = [...new Set(['en', 'zh'].flatMap(l => figsIn(html[l]).map(f => f.text)))].filter(x => tokens55.test(x)).sort((a, b) => b.length - a.length);
+  const stripFigs = s => figTexts.reduce((t, x) => t.split(x).join(' '), s);
   for (const l of ['en', 'zh']) {
-    const m = visible(html[l]).match(tokens55); ok(!m, `${l}: page text “${m?.[0]}”`);
+    for (const f of figsIn(html[l])) ok(!/^[+−]?55(?:\.0+)?%$|^0?\.55$/.test(f.text), `${l}: the figure ${f.text}`);
+    const m = visible(noFigs(html[l])).match(tokens55); ok(!m, `${l}: page text “${m?.[0]}”`);
     const a = [...html[l].matchAll(/\s(?:aria-label|title|alt|content)="([^"]*)"/g)].map(x => decode(x[1])).join(' ¶ ').match(tokens55); ok(!a, `${l}: attribute “${a?.[0]}”`);
-    if (md[l]) { const k = md[l].match(tokens55); ok(!k, `${l}: Markdown “${k?.[0]}”`); }
+    if (md[l]) { const k = stripFigs(md[l]).match(tokens55); ok(!k, `${l}: Markdown “${k?.[0]}”`); }
   }
+  for (const d of [more]) (function walk(v, path) {
+    if (typeof v === 'number') ok(v !== 11 / 20 && v !== 100 * 11 / 20, `${MORE}: ${path} = ${v}`);
+    else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) { ok(!/fifty|05{2}/i.test(k), `${MORE}: key ${path}.${k}`); walk(x, path + '.' + k); }
+  })(d, '');
   (function walk(v, path) {
     if (typeof v === 'number') ok(v !== 11 / 20 && v !== 100 * 11 / 20, `data file: ${path} = ${v}`);
     else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) { ok(!/fifty|05{2}|prediction/i.test(k), `data file: key ${path}.${k}`); walk(x, path + '.' + k); }
@@ -242,8 +277,8 @@ check('the cards 1–6 scope line, once, from the cohort block', () => {
     ok(/href="(?:\/zh)?\/topics\/questions-in-language\/"/.test(lines[0][0]), `${l}: route 3 linked`);
   }
 });
-check('name key: the export’s in-page names, with their codes', () => {
-  const key = data.name_key.filter(n => n.in_page_key);
+check('name key: the released in-page names, then the later file’s new names, with their codes', () => {
+  const key = [...data.name_key.filter(n => n.in_page_key), ...more.name_key.filter(n => n.key === 'new')];
   for (const l of ['en', 'zh']) {
     const t = html[l].match(/<table data-ssvep-table="name-key">[\s\S]*?<\/table>/)?.[0];
     ok(t, `${l}: the name key`);
@@ -254,32 +289,35 @@ check('name key: the export’s in-page names, with their codes', () => {
     }
   }
 });
-check('card 8 is a status card: the addendum wording, no figure', () => {
+check('card 8 carries the cross-spectral round’s results from the later file, in place of the released status entry (D28)', () => {
+  eq(more.placement.cards[0].supersedes, { release_id: data.release_id, file: FILE, entry: 'status_only' }, 'the later file supersedes the status entry');
+  eq(data.placement.cards[7].status_only, true, 'the released file keeps its status entry (its bytes are unchanged)');
   for (const l of ['en', 'zh']) {
     const sec = sectionOf(html[l], 'cross-spectral');
-    eq(figsIn(sec).length, 0, `${l}: figures on card 8`);
-    const p = visible(sec.match(/<p class="roadmap-p ssvep-status[^"]*"[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
-    ok(p.length > 100 && !/\d/.test(p), `${l}: the status sentence carries no digit`);
-    ok(l === 'en' ? p.includes('fixed learned linear readouts of cross-spectral features, with prescribed trial-dependent normalization or whitening')
-      && p.includes('The design is frozen and the run is in progress; its results join this page after review.')
-      : p.includes('在互谱特征上固定的学习线性读出，并按规定做逐试次归一化或白化') && p.includes('设计已冻结，正在运行；结果经审核后加入本页。'), `${l}: the addendum wording`);
+    ok(figsIn(sec).length > 0 && figsIn(sec).every(f => f.file === MORE), `${l}: card 8’s figures are the later file’s`);
+    ok(!/ssvep-status|data-status-only/.test(sec) && !/in progress|join this page after review|进行中|结果经审核后加入本页/.test(visible(sec)), `${l}: no status wording`);
   }
 });
 check('methods and limits: definitions, intervals by card, disclosures, not run, not published', () => {
   const NEED = {
     en: ['Plain spectrum (L0)', 'Complex spectrum (L0c)', 'Frozen CBraMod features (L1)', 'm8', 'nn8', 'u3', 'an exact score tie selects the lowest frequency',
       'seed 20261007', 'seed 20261015', 'conditional on the fixed person folds and three seeds', 'computed before rounding',
-      'No interval is adjusted for multiple comparisons', 'compatibility reader', 'pre-freeze guard', 'Not run', 'Not published here', 'Measured compute'],
+      'Card 12’s primary family uses Bonferroni-adjusted 99.44% intervals over nine comparisons, and card 13’s equivalence test a 90% interval; no other interval is adjusted.',
+      'compatibility reader', 'pre-freeze guard', 'Not run', 'Not published here', 'Run times of whole evaluations and audits'],
     zh: ['普通频谱（L0）', '复数频谱（L0c）', '冻结的 CBraMod 特征（L1）', 'm8', 'nn8', 'u3', '选频率最低的一个', '种子 20261007', '种子 20261015',
-      '以固定的被试折与三个种子为条件', '舍入前', '没有任何区间做多重比较校正', '兼容读取器', '冻结前检查', '没有运行的部分', '这里不发布的内容', '实测的计算量'],
+      '以固定的被试折与三个种子为条件', '舍入前', '卡片 12 的主要比较族在九个比较上使用 Bonferroni 校正的 99.44% 区间，卡片 13 的等效检验使用 90% 区间；其余区间都没有校正。',
+      '兼容读取器', '冻结前检查', '没有运行的部分', '这里不发布的内容', '整轮评测与审计的运行时间'],
   };
+  const text = h => decode(h.replace(/<(?!\/?(?:span|a|code|strong|small)\b)[^>]+>/g, ' ').replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ');
   for (const l of ['en', 'zh']) {
-    const sec = sectionOf(html[l], 'methods-and-limits'), t = visible(sec);
+    const sec = sectionOf(html[l], 'methods-and-limits'), t = text(sec);
     for (const s of NEED[l]) ok(t.includes(s), `${l}: “${s}”`);
-    eq([...sec.matchAll(/data-interval-cards="([^"]+)"/g)].map(m => m[1]), ['1 2', '3 4', '5', '6', '7'], `${l}: interval lines by card`);
+    ok(!/No interval is adjusted for multiple comparisons|没有任何区间做多重比较校正/.test(t), `${l}: the earlier multiplicity sentence`);
+    eq([...sec.matchAll(/data-interval-cards="([^"]+)"/g)].map(m => m[1]), ['1 2', '3 4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'], `${l}: interval lines by card`);
     eq(figsIn(sec.slice(sec.indexOf('data-ssvep-note="intervals"'))).filter(f => f.fmt === 'count').map(f => f.raw).slice(0, 6), [2000, 2000, 2000, 2000, 2000, 105], `${l}: draws and the 105 source models`);
-    eq((sec.match(/<li data-not-run-card=/g) ?? []).length, [1, 3, 4, 5, 6, 7].length, `${l}: not-run lines (card 2 ran everything it declared)`);
-    eq((sec.slice(sec.indexOf('data-ssvep-note="not-published"')).match(/<li>/g) ?? []).length >= data.not_published.length, true, `${l}: not-published items`);
+    eq([...sec.matchAll(/<li data-not-run-card="(\d+)"/g)].map(m => Number(m[1])), [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], `${l}: not-run lines (card 2 ran everything it declared)`);
+    const np = n => (sec.match(new RegExp(`data-ssvep-note="${n}">([\\s\\S]*?)</ul>`))?.[1].match(/<li>/g) ?? []).length;
+    eq([np('not-published'), np('not-published-8-14')], [data.not_published.length - 3, more.not_published.length], `${l}: not-published items of both files`);
   }
 });
 check('credits: BETA, the corrigendum, CBraMod and Wearable-102, with their links', () => {
@@ -298,8 +336,8 @@ check('credits: BETA, the corrigendum, CBraMod and Wearable-102, with their link
 });
 
 // --- Site rules ----------------------------------------------------------------------------------------------------
-check('cite block names this release only', () => {
-  for (const l of ['en', 'zh']) eq(html[l].match(/<section class="cite-page"[^>]*data-releases="([^"]+)"/)?.[1], data.release_id, `${l}: cite releases`);
+check('cite block names both releases, newest first', () => {
+  for (const l of ['en', 'zh']) eq(html[l].match(/<section class="cite-page"[^>]*data-releases="([^"]+)"/)?.[1], `${more.release_id} ${data.release_id}`, `${l}: cite releases`);
 });
 check('hreflang reciprocal; structured data on the English page only', () => {
   ok(html.en.includes(`hreflang="zh-Hans" href="https://bci.report/zh/${PAGE}"`) && html.zh.includes(`hreflang="en" href="https://bci.report/${PAGE}"`), 'hreflang');
@@ -311,13 +349,16 @@ check('CSP: no inline style, inline script or event handler', () => {
     for (const m of html[l].matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) ok(/\ssrc=/.test(m[1]) || /type="application\/ld\+json"/.test(m[1]), `${l}: an inline script`);
   }
 });
-check('every table has a <thead>; a table inside <details> has at least four columns', () => {
+check('every table has a <thead>; a table inside <details> has at least four columns (the three-column name key excepted)', () => {
   for (const l of ['en', 'zh']) {
     const m = mainOf(html[l]);
     for (const t of m.matchAll(/<table\b[\s\S]*?<\/table>/g)) ok(/<thead>/.test(t[0]), `${l}: a table without <thead> at ${t.index}`);
     for (const d of m.matchAll(/<details\b[\s\S]*?<\/details>/g)) for (const t of d[0].matchAll(/<table\b[\s\S]*?<\/table>/g)) {
       const head = t[0].match(/<thead>[\s\S]*?<tr>([\s\S]*?)<\/tr>/)?.[1] ?? '';
       const cols = [...head.matchAll(/<th\b([^>]*)>/g)].reduce((s, x) => s + Number(x[1].match(/colspan="(\d+)"/)?.[1] ?? 1), 0);
+      // The name key (owner decision D31 collapsed it) has three columns and was never restacked: at 360 px it fits
+      // unstacked, open or closed (F3 review, measured in headless Chromium). Every other table in a panel stacks.
+      if (/^<table data-ssvep-table="name-key">/.test(t[0])) { eq(cols, 3, `${l}: the name key's columns`); continue; }
       ok(cols >= 4, `${l}: a table inside <details> has ${cols} columns`);
     }
   }
@@ -331,7 +372,7 @@ check('no private path, no venue or submission reference', () => {
     const p = s.match(PRIVATE); ok(!p, `${l} ${what}: private “${p?.[0]}”`);
     const v = s.match(VENUE); ok(!v, `${l} ${what}: “${v?.[0]}”`);
   }
-  const p = servedText.match(PRIVATE); ok(!p, `data file: private “${p?.[0]}”`);
+  const p = servedText.match(PRIVATE) ?? moreText.match(PRIVATE); ok(!p, `data file: private “${p?.[0]}”`);
 });
 check('no update date or version label; no ranking word', () => {
   // check-workbench.mjs's rules (owner decision 2026-10-08), on the visible text without the cite block.
@@ -345,8 +386,9 @@ check('no update date or version label; no ranking word', () => {
     /\b[Tt]his update\b|本次更新|这次更新/, new RegExp(`\\bgenerated:? (?:on )?(?:20\\d\\d|${DAY})|生成于 ?20\\d\\d`),
     /(?<![\w.\/#-])v\d+(?![\w.]|-\d)|\brelease v\d|第[一二三四五六七八九十]+轮/,
   ];
-  // "on top of" (card 6's title, "Learning on top of CCA") places one computation over another; it ranks nothing.
-  const RANK = { en: /\b(?:best|(?<!on )top(?! of)|winner|leader|outperform\w*|beats?|state of the art|SOTA|ranks?|ranked|ranking)\b/i, zh: /最佳|最好的|胜出|排名第|最先进|第一名/ };
+  // "on top of" (card 6's title, "Learning on top of CCA") places one computation over another, and "top-three ridge"
+  // (cards 10 and 11) names a readout of each harmonic's leading statistic, and JOINT-TOP is an export code; none ranks.
+  const RANK = { en: /\b(?:best|(?<!on |-)top(?! of|-three)|winner|leader|outperform\w*|beats?|state of the art|SOTA|ranks?|ranked|ranking)\b/i, zh: /最佳|最好的|胜出|排名第|最先进|第一名/ };
   for (const l of ['en', 'zh']) {
     const body = html[l].replace(/<section class="cite-page"[\s\S]*?<\/section>/g, '');
     const t = visible(body).replace(/https?:\/\/\S+/g, ' ');

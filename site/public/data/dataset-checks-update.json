@@ -1,0 +1,1183 @@
+{
+  "schema_version": "bci-report-dataset-checks-update-v1",
+  "release_id": "dataset-checks-update-20261028",
+  "generated_at": "2026-10-28",
+  "status": "aggregate_preview",
+  "title": "Dataset checks",
+  "question": "What do the files show once a public EEG dataset is checked end to end?",
+  "placement": {
+    "page": "/topics/data-quality/",
+    "group": "reliability",
+    "sections": [
+      "kim2025-beta-range",
+      "mind2026",
+      "damm",
+      "nebula"
+    ],
+    "page_order": [
+      "shin2022",
+      "kim2025-beta-range",
+      "mind2026",
+      "eldbeta",
+      "damm",
+      "nebula",
+      "zuco2"
+    ],
+    "one_person_lead_before": "eldbeta",
+    "leaderboard": false,
+    "core_matrix": false,
+    "dataset_pages": {
+      "kim2025-beta-range": "/datasets/kim2025-beta-range/"
+    }
+  },
+  "one_person": {
+    "sentence": "With one person every score is that person’s, so these three cases publish counts and file facts and hold every score.",
+    "cases": [
+      "eldbeta",
+      "damm",
+      "nebula"
+    ],
+    "decision": "the owner’s decisions for this release, keeping the one-person rule"
+  },
+  "metric_units": "accuracies, balanced accuracies, chance, differences and the bounds of intervals and ranges are proportions in [0,1]; percentiles are in percent; frequencies in Hz; counts of participants, record IDs, runs, trials, files, channels, markers and fits are whole numbers; null means not stated, never zero",
+  "scope": "Four public EEG datasets read from their files: Kim beta-range as a worked case with a training-free CCA baseline on all 40 participants, MIND as a conditional case on record IDs with its controls and label schedule, and Damm and NeBULA as one-person status cases with no score. Outside every leaderboard and the core matrix.",
+  "cases": [
+    {
+      "id": "kim2025-beta-range",
+      "kind": "worked_case",
+      "status": "released"
+    },
+    {
+      "id": "mind2026",
+      "kind": "conditional_worked_case",
+      "status": "released_conditional"
+    },
+    {
+      "id": "damm",
+      "kind": "status_case",
+      "status": "score_held"
+    },
+    {
+      "id": "nebula",
+      "kind": "status_case",
+      "status": "score_held"
+    }
+  ],
+  "kim2025-beta-range": {
+    "id": "kim2025-beta-range",
+    "kind": "worked_case",
+    "section": "kim2025-beta-range",
+    "status": "released",
+    "name": "Kim beta-range SSVEP",
+    "question": "What does training-free CCA give on 40 frequencies in the beta range?",
+    "task": "Which of 40 flickering targets from 14.0 to 21.8 Hz a participant attends, from a 2-second window, with no training data.",
+    "cohort": {
+      "participants": 40,
+      "blocks": 240,
+      "blocks_each": 6,
+      "recording_days_each": 1,
+      "trials": 9600,
+      "targets": 40,
+      "trials_per_target_each": 6,
+      "complete_cohort": true
+    },
+    "result": {
+      "metric": "mean participant accuracy; with six trials per target for every participant it equals balanced accuracy in this cohort",
+      "mean_participant_accuracy": 0.5339583333333333,
+      "equals_balanced_accuracy": true,
+      "chance": 0.025,
+      "chance_basis": "one in 40 balanced targets",
+      "difference_from_chance": 0.5089583333333333,
+      "difference_interval_95": [
+        0.4338541666666667,
+        0.5851041666666668
+      ],
+      "accuracy_interval_95": [
+        0.45885416666666673,
+        0.6101041666666668
+      ]
+    },
+    "interval": {
+      "kind": "participant bootstrap percentile interval",
+      "level": 0.95,
+      "resamples": 20000,
+      "seed": 20261026,
+      "unit": "participant",
+      "of": "the difference from the fixed chance level; the accuracy interval adds chance back",
+      "descriptive": true,
+      "test": false
+    },
+    "method": {
+      "algorithm": "standard CCA, largest canonical correlation over the stored target frequencies",
+      "training_free": true,
+      "tuning": false,
+      "trials_dropped": 0,
+      "channels": 11,
+      "channel_names": [
+        "OZ",
+        "O1",
+        "O2",
+        "POZ",
+        "PO3",
+        "PO4",
+        "PO7",
+        "PO8",
+        "PZ",
+        "P3",
+        "P4"
+      ],
+      "reference": "the stored mean of M1 and M2 subtracted; no unit conversion",
+      "sampling_hz": 1024,
+      "window_seconds": 2,
+      "window_samples": 2048,
+      "window": "a nominal 2-second window from the stored onset, with no visual-delay shift",
+      "band_hz": [
+        13,
+        44
+      ],
+      "filter_order": 2,
+      "filter": "second-order Butterworth band-pass, forward and backward, inside the window only",
+      "harmonics": 2,
+      "reference_signals": "sine and cosine at each stored target frequency and its second harmonic"
+    },
+    "intake": {
+      "task_files": 40,
+      "md5_checked": 40,
+      "md5_matched": 40,
+      "rest_and_questionnaire_acquired": false,
+      "frequency_lowest_hz": 14.0,
+      "frequency_highest_hz": 21.8,
+      "distinct_frequencies": 40,
+      "stored_target_order": "14 + j + 0.2·i Hz, for row i = 0…4 and column j = 0…7",
+      "stored_order_ascending": false,
+      "moabb_list_ascending": true,
+      "checks_before_any_score": true,
+      "text": "All 40 task files passed their MD5 checks; the rest and questionnaire files were not acquired. The files store the targets in the order 14 + j + 0.2·i Hz, which differs from the ascending list in MOABB’s metadata, and the references follow the stored order."
+    },
+    "how_checked": [
+      {
+        "id": "scope-review",
+        "state": "pass",
+        "text": "A separate review admitted the as-stored, scale-invariant CCA arm before any score, and kept amplitude-dependent models held."
+      },
+      {
+        "id": "all-files-checked",
+        "state": "pass",
+        "text": "Every file passed identity, shape, timing, frequency, phase, finite-value and rank checks before any score."
+      },
+      {
+        "id": "sealed-before-scoring",
+        "state": "pass",
+        "text": "All 9,600 outputs were sealed before a separate process scored them; this is process separation, not blinded labels, because the stored class order is known."
+      },
+      {
+        "id": "independent-audit",
+        "state": "pass",
+        "fixtures": 60,
+        "fixtures_matched": 60,
+        "fixture_design": {
+          "participants": 4,
+          "blocks": 3,
+          "targets": 5
+        },
+        "text": "An independent audit verified the counts and the bootstrap, and a separate CCA implementation reproduced every fixed fixture."
+      },
+      {
+        "id": "interpretation-review",
+        "state": "pass",
+        "text": "An independent review checked the figures and the wording against the audit aggregate."
+      }
+    ],
+    "caveats": [
+      {
+        "id": "as-stored-amplitudes",
+        "text": "The scores use amplitudes as stored. CCA does not depend on a common amplitude scale, but common channel gains, freedom from clipping and the saved reference history are not established, so models whose output depends on amplitude are held."
+      },
+      {
+        "id": "nominal-onset",
+        "text": "The onset is nominal: it is derived from the stored start of each epoch, 2 seconds before the cue, at 1,024 Hz, and no trigger trace is stored."
+      },
+      {
+        "id": "one-day",
+        "text": "Each participant’s six blocks were recorded on one day."
+      },
+      {
+        "id": "offline",
+        "text": "The filter runs forward and backward inside each window, so the pipeline is offline and gives no response-time figure."
+      },
+      {
+        "id": "own-pipeline",
+        "text": "The pipeline is BCI Report’s fixed recipe; it does not reproduce the paper’s processing."
+      },
+      {
+        "id": "other-ssvep-datasets",
+        "text": "Frequencies, people and channels differ from BETA and Wearable-102, so comparing absolute scores across those datasets does not isolate the frequency range."
+      },
+      {
+        "id": "interval",
+        "text": "The accuracy interval is the participant-bootstrap interval of the difference from the fixed 2.5% chance level, shifted up by 2.5 points; no algorithm was run as chance and no test was run."
+      },
+      {
+        "id": "fixtures",
+        "text": "The independent audit reproduced 60 of 60 fixed fixtures; it did not rerun every trial."
+      }
+    ],
+    "hold": {
+      "id": "kim-amplitude-dependent-models",
+      "what": "models whose output depends on amplitude, on these files"
+    },
+    "dataset_page": "/datasets/kim2025-beta-range/",
+    "method_link": false,
+    "aliases": [
+      "Kim2025BetaRange",
+      "Figshare 28806815",
+      "doi:10.1038/s41597-025-06032-2"
+    ],
+    "rights": {
+      "name": "Kim beta-range SSVEP: 40 targets from 14.0 to 21.8 Hz (Kim, Won, Ahn and Jun, Scientific Data)",
+      "task": "Forty-target SSVEP speller selection with stimuli from 14.0 to 21.8 Hz, six blocks per person on one day.",
+      "source": "https://doi.org/10.6084/m9.figshare.28806815.v3",
+      "version": "Figshare record 28806815, version 3, the latest of the 3 versions the record lists",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Heegyu Kim · SSVEP 40class dataset, figshare, doi:10.6084/m9.figshare.28806815.v3, CC BY 4.0. Paper: Heegyu Kim, Kyungho Won, Minkyu Ahn and Sung Chan Jun, A 40-Class SSVEP Speller Dataset: Beta Range Stimulation for Low-Fatigue BCI Applications, Scientific Data 12:1751 (2025), doi:10.1038/s41597-025-06032-2. Modifications: the 40 task files only; the mean of M1 and M2 subtracted, 11 channels, a 2-second window and a band-pass filter inside it; no data redistributed. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-28",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/28806815/versions/3",
+        "https://www.nature.com/articles/s41597-025-06032-2"
+      ],
+      "privacyReview": "Ethics: Institutional Review Board at Gwangju Institute of Science and Technology (GIST), approval 20211201-HR-64-02-04. Consent: signed consent forms, including consent for the use and open sharing of the data. The confidentiality clause of the consent forms excludes questionnaire-related personal data; the research acquired the 40 task files only and excluded the questionnaire and rest files. Published here: the mean participant accuracy with its participant-bootstrap interval and aggregate counts; no per-participant value, identifier, prediction or signal.",
+      "terms": {
+        "data_licence": {
+          "value": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "stated_by": "Figshare record 10.6084/m9.figshare.28806815.v3, licence field",
+          "read_from": "https://api.figshare.com/v2/articles/28806815/versions/3",
+          "read_at": "2026-10-28T10:26:46Z",
+          "capture_sha256": "9b68a2c10eb5531b5cc8dfa7071212a18fd46fa2d2ac2242751332a3b75d5f20",
+          "pinned_version": 3,
+          "versions_listed": 3,
+          "pinned_version_is_latest": true
+        },
+        "paper_licence": {
+          "value": "Creative Commons Attribution 4.0 International License",
+          "quote": "This article is licensed under a Creative Commons Attribution 4.0 International License",
+          "covers": "the data descriptor article; the data licence is the Figshare record's"
+        },
+        "paper_cited_version": {
+          "version": 2,
+          "licence": "CC BY 4.0",
+          "quote": "It is available at https://figshare.com/articles/dataset/SSVEP_40class_dataset/28806815/2",
+          "note": "The paper's Data availability links version 2; the research used version 3 (the latest), which adds a questionnaire. Both versions carry CC BY 4.0 in the licence field."
+        }
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "quote": "The Institutional Review Board at Gwangju Institute of Science and Technology (GIST) approved this experiment (20211201-HR-64-02-04)",
+        "body": "Institutional Review Board at Gwangju Institute of Science and Technology (GIST)",
+        "approval_number": "20211201-HR-64-02-04"
+      },
+      "informed_consent": {
+        "stated": true,
+        "kind": "signed consent forms, including consent for the use and open sharing of the data",
+        "quote": "all subjects were informed of all experimental procedures and signed consent forms",
+        "location": "data descriptor, Methods (participants paragraph) and Data availability",
+        "data_sharing_quote": "All research data has been consented to by participants, with explicit agreement for public sharing.",
+        "scope_note": "The confidentiality clause of the consent forms excludes questionnaire-related personal data; the research acquired the 40 task files only and excluded the questionnaire and rest files.",
+        "scope_note_quote": "excluding questionnaire-related personal data"
+      },
+      "read_from": "https://www.nature.com/articles/s41597-025-06032-2",
+      "read_section": "Methods, participants paragraph; Data availability",
+      "read_at": "2026-10-28T10:26:42Z",
+      "capture_sha256": "e8808eaa19f99c29ad5159d59c8fc6f62146aa4321fe536d30fc43460b350816",
+      "gaps": []
+    }
+  },
+  "mind2026": {
+    "id": "mind2026",
+    "kind": "conditional_worked_case",
+    "section": "mind2026",
+    "status": "released_conditional",
+    "name": "MIND",
+    "question": "What do stored markers support in a motor-imagery release?",
+    "task": "Stored class codes 4 versus 5 and 6 versus 7, each pair classified on its own, from the EEG of a four-class motor-imagery release; the codes are as stored and are not verified imagery.",
+    "unit": "record ID",
+    "coverage": [
+      {
+        "id": "runs_in_release",
+        "count": 90,
+        "record_ids": 30,
+        "runs_for_each_record_id": 3,
+        "text": "Runs in the release: three per record ID."
+      },
+      {
+        "id": "overfull_first_runs",
+        "count": 2,
+        "role": "excluded",
+        "class_markers_required": 40,
+        "text": "First runs holding more class markers than the 40 a run requires, excluded whole before any waveform was read; no trial was salvaged from them."
+      },
+      {
+        "id": "runs_evaluated",
+        "count": 88,
+        "trials": 3520,
+        "numeric_check_failures": 0,
+        "text": "Runs that passed the frozen finite and non-degenerate checks, which is every one; the checks do not clear artifacts."
+      },
+      {
+        "id": "primary_panel",
+        "count": 84,
+        "record_ids": 28,
+        "trials": 3360,
+        "text": "Record IDs with three runs each: the primary panel."
+      },
+      {
+        "id": "secondary_panel",
+        "count": 4,
+        "record_ids": 2,
+        "trials": 160,
+        "text": "The two record IDs whose first run was excluded keep two runs each: the secondary panel."
+      }
+    ],
+    "primary": {
+      "record_ids": 28,
+      "runs": 84,
+      "trials": 3360,
+      "folds_for_each_record_id": 3,
+      "design": "two whole runs train the pipeline and the third is held out, for each record ID and pair",
+      "statistic": "record-ID mean balanced accuracy: out-of-fold trials pooled within each record ID, then record IDs weighted equally",
+      "pairs": [
+        {
+          "pair": "4/5",
+          "codes": [
+            4,
+            5
+          ],
+          "csp_lda": 0.5696428571428571,
+          "ordinal_lookup": 0.4761904761904763,
+          "majority": 0.5
+        },
+        {
+          "pair": "6/7",
+          "codes": [
+            6,
+            7
+          ],
+          "csp_lda": 0.5184523809523809,
+          "ordinal_lookup": 0.45238095238095244,
+          "majority": 0.5
+        }
+      ]
+    },
+    "contrasts": [
+      {
+        "pair": "4/5",
+        "arm": "csp_lda",
+        "control": "ordinal_lookup",
+        "mean_difference": 0.09345238095238097,
+        "resampling_range": [
+          -0.02678571428571425,
+          0.2
+        ],
+        "range_spans_zero": true
+      },
+      {
+        "pair": "4/5",
+        "arm": "csp_lda",
+        "control": "majority",
+        "mean_difference": 0.06964285714285715,
+        "resampling_range": [
+          0.04047619047619049,
+          0.1
+        ],
+        "range_spans_zero": false
+      },
+      {
+        "pair": "6/7",
+        "arm": "csp_lda",
+        "control": "ordinal_lookup",
+        "mean_difference": 0.06607142857142859,
+        "resampling_range": [
+          -0.04047619047619048,
+          0.15952380952380954
+        ],
+        "range_spans_zero": true
+      },
+      {
+        "pair": "6/7",
+        "arm": "csp_lda",
+        "control": "majority",
+        "mean_difference": 0.018452380952380942,
+        "resampling_range": [
+          -0.004761904761904771,
+          0.04226190476190474
+        ],
+        "range_spans_zero": true
+      }
+    ],
+    "resampling": {
+      "kind": "record-ID resampling range",
+      "draws": 20000,
+      "percentiles": [
+        2.5,
+        97.5
+      ],
+      "seed": 20261028,
+      "shared_index_table": true,
+      "confidence_interval": false,
+      "test": false,
+      "text": "Descriptive sensitivity ranges for this fixed set of record IDs: the 2.5th and 97.5th percentiles of 20,000 paired record-ID resamples drawn from one shared index table. They are no confidence intervals and no test."
+    },
+    "schedule": {
+      "panel": "primary",
+      "pairs": [
+        {
+          "pair": "4/5",
+          "schedules": 2,
+          "trials_per_schedule": 20,
+          "complementary": true,
+          "primary_ids_repeating_one_schedule": 6,
+          "primary_ids_mixing_schedules": 22
+        },
+        {
+          "pair": "6/7",
+          "schedules": 2,
+          "trials_per_schedule": 20,
+          "complementary": true,
+          "primary_ids_repeating_one_schedule": 5,
+          "primary_ids_mixing_schedules": 23
+        }
+      ],
+      "text": "Each stored-code pair follows one of only two complementary 20-trial label schedules. In the primary panel, 6 record IDs for 4/5 and 5 for 6/7 repeat one schedule across all three runs; the others mix the two. Under the frozen ordinal lookup and its tie rule, this composition explains the ordinal values below 50%: they describe this lookup and schedule rather than a chance floor. No replacement control was fitted after the scores were seen."
+    },
+    "secondary": {
+      "record_ids": 2,
+      "runs": 4,
+      "trials": 160,
+      "design": "one run trains the pipeline and the other is held out",
+      "interval": null,
+      "pooled_with_primary": false,
+      "pairs": [
+        {
+          "pair": "4/5",
+          "codes": [
+            4,
+            5
+          ],
+          "csp_lda": 0.5375,
+          "ordinal_lookup": 0.5,
+          "majority": 0.5
+        },
+        {
+          "pair": "6/7",
+          "codes": [
+            6,
+            7
+          ],
+          "csp_lda": 0.5,
+          "ordinal_lookup": 0.5,
+          "majority": 0.5
+        }
+      ],
+      "text": "Reported apart with no interval and never pooled with the primary panel; its schedule composition is not printed because with two record IDs it would show each one’s outcome."
+    },
+    "processing": {
+      "channels": 64,
+      "sampling_hz": 1000,
+      "auxiliary_channels_used": false,
+      "band_hz": [
+        8,
+        30
+      ],
+      "filter": "FIR band-pass over each whole run, zero phase",
+      "resampled_hz": 200,
+      "window_after_marker_seconds": [
+        1,
+        9
+      ],
+      "window_samples": 1600,
+      "csp_components": 4,
+      "csp_regularisation": "OAS",
+      "classifier": "shrinkage LDA on the four CSP log-power features",
+      "fitted_on_training_runs_only": true,
+      "search": false,
+      "not_applied": "ICA, interpolation, rereferencing, amplitude clipping, channel search and trial exclusion",
+      "controls": [
+        {
+          "id": "ordinal_lookup",
+          "input": "no EEG",
+          "text": "For each of the 20 positions of a pair within a run, the code the training runs hold most often at that position, ties to the lower code."
+        },
+        {
+          "id": "majority",
+          "input": "no EEG",
+          "text": "The code the training runs hold most often, ties to the lower code."
+        }
+      ]
+    },
+    "how_checked": [
+      {
+        "id": "sealed-before-scoring",
+        "state": "pass",
+        "trials": 3520,
+        "text": "All out-of-fold outputs were sealed together before a separate scoring process."
+      },
+      {
+        "id": "independent-replay",
+        "state": "pass",
+        "max_decision_difference": 0.0,
+        "text": "An independent replay reproduced every hard output, decision value, metric and resampling output exactly."
+      },
+      {
+        "id": "interpretation-review",
+        "state": "pass",
+        "text": "An independent review approved the figures, the four contrasts, the schedule explanation and the wording."
+      }
+    ],
+    "caveats": [
+      {
+        "id": "stored-marker-windows",
+        "text": "Windows run from 1 to 9 seconds after each stored class marker. Most class markers have no cue marker before them and no cue marker sits exactly 2 seconds before its class marker, so the windows do not certify pure imagery."
+      },
+      {
+        "id": "record-ids",
+        "text": "The unit is the record ID. The release describes 30 participants, and whether record IDs and people match one to one was not reconciled, so no claim about people follows."
+      },
+      {
+        "id": "other-explanations",
+        "text": "Pair 4/5 above the majority control does not exclude temporal, visual or movement explanations."
+      },
+      {
+        "id": "offline-filtering",
+        "text": "Each run is filtered whole, offline and in both directions, so no response-time figure follows."
+      },
+      {
+        "id": "sealed-epochs",
+        "text": "The independent replay starts from the sealed epochs; raw preprocessing and the numerical checks were source-reviewed and bound by hash and were not recomputed."
+      },
+      {
+        "id": "reference",
+        "text": "The headers leave the reference field empty while the BIDS sidecars describe a parietal reference; the declared calibration and reference were kept as stored and were not verified physiologically."
+      },
+      {
+        "id": "terms",
+        "text": "The paper and the archive’s dataset description state CC BY 4.0; the MOABB adapter and the ScienceDB record page’s metadata state CC BY-NC 4.0. ScienceDB’s terms-of-use page was not read. Aggregate values only; no data are redistributed."
+      },
+      {
+        "id": "ethics",
+        "text": "Ethics and consent are quoted from the paper, which names no committee and gives no approval number."
+      }
+    ],
+    "dataset_page": false,
+    "rights": {
+      "name": "MIND: A Multimodal fNIRS-EEG Dataset for Unilateral Limb Motor Imagery (ScienceDB 10.57760/sciencedb.34326)",
+      "task": "Four-class directional motor imagery of the right upper limb with EEG and fNIRS; here the EEG of stored codes 4 versus 5 and 6 versus 7.",
+      "source": "https://doi.org/10.57760/sciencedb.34326",
+      "version": "ScienceDB record 10.57760/sciencedb.34326, record version 4.0.0",
+      "licenses_stated": [
+        "CC BY 4.0",
+        "CC BY-NC 4.0"
+      ],
+      "attribution": "Lufeng Feng, Baomin Xu, Haoran Zhang, Bihai Lin, Zuxuan Deng, Sidi Tao, Chenyu Liu, Shifan Jia, Li Duan and Ziyu Jia · MIND: A Multimodal fNIRS-EEG Dataset for Unilateral Limb Motor Imagery, Science Data Bank, doi:10.57760/sciencedb.34326. Paper: arXiv 2602.04299. Modifications: EEG only, filtered over each whole run, resampled and cut into stored-marker windows; no data redistributed. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-28",
+      "reviewBasis": [
+        "https://doi.org/10.57760/sciencedb.34326",
+        "https://arxiv.org/html/2602.04299v1"
+      ],
+      "privacyReview": "The paper states that the study protocol was approved by an ethics committee it does not name, with no approval number, and that participants signed written informed consent. Published here: record-ID mean balanced accuracies, record-ID resampling ranges and aggregate counts; no per-record-ID value, identifier, prediction or signal.",
+      "terms": {
+        "statements": [
+          {
+            "source": "paper",
+            "value": "CC BY 4.0",
+            "quote": "The released data are licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).",
+            "read_from": "https://arxiv.org/html/2602.04299v1",
+            "read_in_this_release": false,
+            "how_read": "quoted from the research intake receipt of the paper page"
+          },
+          {
+            "source": "archive dataset description",
+            "value": "CC BY 4.0",
+            "read_in_this_release": false,
+            "how_read": "as the research protocol records the dataset description inside the downloaded archive"
+          },
+          {
+            "source": "MOABB adapter",
+            "value": "CC BY-NC 4.0",
+            "read_in_this_release": false,
+            "how_read": "the licence field of the MOABB dataset adapter"
+          },
+          {
+            "source": "ScienceDB record page",
+            "value": "CC BY-NC 4.0",
+            "url": "https://creativecommons.org/licenses/by-nc/4.0/",
+            "quote": "\"license\":\"https://creativecommons.org/licenses/by-nc/4.0/\"",
+            "read_from": "https://doi.org/10.57760/sciencedb.34326",
+            "read_at": "2026-10-28T10:29:20Z",
+            "capture_sha256": "d23f5447b26f2938671df278dff8bab220421ed421a8a393aad13760e9130226",
+            "record_version": "4.0.0",
+            "read_in_this_release": true,
+            "how_read": "the schema.org metadata the record page serves"
+          }
+        ],
+        "terms_of_use_page_read": false,
+        "aggregate_only": true,
+        "redistributed": false,
+        "publisher_checksum_verified": false
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "quote": "The study protocol was approved by the Ethics Committee. All procedures followed institutional review board (IRB) guidelines and relevant privacy regulations.",
+        "body": null,
+        "approval_number": null
+      },
+      "informed_consent": {
+        "stated": true,
+        "kind": "written informed consent",
+        "quote": "After confirming that they understood the instructions, all participants voluntarily signed written informed consent forms.",
+        "location": "arXiv 2602.04299, participants paragraph"
+      },
+      "read_from": "https://arxiv.org/html/2602.04299v1",
+      "read_section": "participants paragraph",
+      "read_at": null,
+      "quoted_from": "the research intake receipt of the paper page",
+      "capture_sha256": "668114a22191068485572b9e32242be66977afbe0511f5a7b1f9d46af33ddfcb",
+      "gaps": [
+        {
+          "field": "ethics_committee_and_number",
+          "note": "The committee is not named and no approval number is given in the paper."
+        },
+        {
+          "field": "ethics_consent_source.captured_at",
+          "note": "The intake receipt records no capture time."
+        }
+      ]
+    }
+  },
+  "damm": {
+    "id": "damm",
+    "kind": "status_case",
+    "section": "damm",
+    "status": "score_held",
+    "name": "Damm finger motor imagery",
+    "design": {
+      "participants_run": 1,
+      "published_participants": 20,
+      "runs_used": 2,
+      "run_condition": "random cue order",
+      "classes": 5,
+      "class_names": [
+        "thumb",
+        "index",
+        "middle",
+        "ring",
+        "little"
+      ],
+      "delivered_cues": 150,
+      "trials_per_held_out_run": 75,
+      "trials_per_class_per_run": 15,
+      "directions": 2,
+      "evaluation": "trained on one random-order run and tested on the other, in both directions",
+      "pipeline": "log band power from an 8–30 Hz filter on each epoch, with fixed shrinkage LDA fitted on the training run only"
+    },
+    "files": {
+      "edf_channels": 65,
+      "scalp_channels": 62,
+      "excluded_channels": [
+        "Ref1",
+        "Ref2",
+        "Marker"
+      ],
+      "sampling_hz": 512,
+      "run_seconds": 916,
+      "samples_per_run": 468992,
+      "state_blocks_per_run": 227,
+      "white_seconds": 3,
+      "fixation_seconds": 3,
+      "cue_seconds": 6,
+      "sample_column_present": false,
+      "cue_samples_reconstructed": true,
+      "edf_scaling_applied_once": true,
+      "reference": "linked mastoids as the source states; no second mastoid subtraction",
+      "text": "Each random-order run is 916 seconds of 65 EDF channels at 512 Hz: 62 scalp channels, two reference channels and a marker channel. The event stream of each run holds 227 state blocks, and every cue follows a 3-second white screen and a 3-second fixation cross and lasts 6 seconds. The files carry no sample column, so cue samples are reconstructed from the stored onsets."
+    },
+    "variants": [
+      {
+        "id": "primary_all62",
+        "role": "primary",
+        "name": "All 62 scalp channels, 1 to 5 seconds after the cue",
+        "signal_input": true,
+        "channels": 62,
+        "window_seconds": [
+          1,
+          5
+        ]
+      },
+      {
+        "id": "sensitivity_all62",
+        "role": "window sensitivity",
+        "name": "All 62 scalp channels over the full cue interval, 0 to 6 seconds",
+        "signal_input": true,
+        "channels": 62,
+        "window_seconds": [
+          0,
+          6
+        ]
+      },
+      {
+        "id": "precue_all62",
+        "role": "precue control",
+        "name": "All 62 scalp channels in the 2 seconds before the cue",
+        "signal_input": true,
+        "channels": 62,
+        "window_seconds": [
+          -2,
+          0
+        ]
+      },
+      {
+        "id": "primary_central15",
+        "role": "channel sensitivity",
+        "name": "A fixed central subset of 15 channels, 1 to 5 seconds after the cue",
+        "signal_input": true,
+        "channels": 15,
+        "window_seconds": [
+          1,
+          5
+        ]
+      },
+      {
+        "id": "order_index",
+        "role": "order control",
+        "name": "The trial index alone, with no signal input",
+        "signal_input": false,
+        "channels": null,
+        "window_seconds": null
+      },
+      {
+        "id": "order_modulo5",
+        "role": "order control",
+        "name": "The trial index modulo five, with no signal input",
+        "signal_input": false,
+        "channels": null,
+        "window_seconds": null
+      },
+      {
+        "id": "order_previous_delivered_cue",
+        "role": "order control",
+        "name": "The previous delivered cue, with no signal input: privileged context that no live system would have",
+        "signal_input": false,
+        "channels": null,
+        "window_seconds": null
+      },
+      {
+        "id": "primary_all62_shuffle",
+        "role": "shuffle sanity check",
+        "name": "The primary features with the training labels shuffled once with a fixed seed",
+        "signal_input": true,
+        "channels": 62,
+        "window_seconds": [
+          1,
+          5
+        ]
+      }
+    ],
+    "variant_directions_audited": 16,
+    "flags": {
+      "variants_fixed_before_scoring": true,
+      "all_variants_retained": true,
+      "independent_audit_passed": true,
+      "score_published": false,
+      "sequential_runs_evaluated": false,
+      "physical_trigger_timing_validated": false,
+      "additional_participant_acquired": false
+    },
+    "status_text": "One participant’s two random-order runs, end to end: 150 delivered cues over five fingers, 75 balanced trials in each held-out run, 62 scalp channels at 512 Hz, and 227 state blocks per run checked against the fixed white, fixation and cue durations. A fixed log-bandpower and shrinkage-LDA pipeline was trained on one run and tested on the other, in both directions; eight variants and controls were fixed before scoring, and an independent audit rebuilt all 16 reports.",
+    "held": {
+      "id": "damm-one-participant-score",
+      "what": "every variant’s score in both directions",
+      "rule": "one-person",
+      "decision": "the owner’s decisions for this release, keeping the one-person rule"
+    },
+    "holds": [
+      "Cue samples are reconstructed from the stored onsets; physical trigger timing is not validated.",
+      "The EEG sidecars and the counterbalancing log disagree on which condition came first, so no order effect is inferred.",
+      "The sequential-order runs were not evaluated: their two annotation tables are byte-identical copies of one file, and no transfer between the random and sequential orders was tested.",
+      "The other 19 participants in the record are neither acquired nor evaluated."
+    ],
+    "rights": {
+      "name": "Damm finger motor imagery: Random and Sequential Order Finger Motor Imagery (OpenNeuro ds008446)",
+      "task": "Five-finger motor imagery cued in random and in sequential order; here the random-order runs only.",
+      "source": "https://doi.org/10.18112/openneuro.ds008446.v1.0.1",
+      "version": "OpenNeuro ds008446 at its latest snapshot, read at a pinned commit of its mirror",
+      "pinned_snapshot": "1.0.1",
+      "pinned_commit": "8d8448e2dcd731b251f2f3c85b98cce5847cb000",
+      "license": "CC0",
+      "licenseUrl": null,
+      "attribution": "Laura Marie Damm, Dai Jiang and Andreas Demosthenous · Random and Sequential Order Finger Motor Imagery, OpenNeuro ds008446, doi:10.18112/openneuro.ds008446.v1.0.1, CC0. Funding: Engineering and Physical Sciences Research Council (EPSRC) grant EP/S022139/1. Modifications: the first participant’s two random-order runs only; no score from these data is published. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-28",
+      "reviewBasis": [
+        "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/dataset_description.json",
+        "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/README.md"
+      ],
+      "privacyReview": "Ethics: UCL Humanities, Arts and Sciences Research Ethics Committee, approval 26907/001. No consent statement was found in the dataset files or its metadata, and no paper is named. Published here: design, counts and file facts for one participant’s recordings and no score; no identifier, per-trial value or signal.",
+      "terms": {
+        "data_licence": {
+          "value": "CC0",
+          "quote": "\"License\": \"CC0\"",
+          "stated_by": "dataset_description.json at the pinned commit, License field",
+          "read_from": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/dataset_description.json",
+          "read_at": "2026-10-28T10:27:19Z",
+          "capture_sha256": "81f0b938d4297375b269824f2137b9d1753b4407886e54c5fdbf44c5fa6288ef"
+        },
+        "readme": {
+          "quote": "See LICENSE file for usage terms.",
+          "read_from": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/README.md",
+          "read_at": "2026-10-28T10:27:24Z",
+          "capture_sha256": "2621d510b6c57b3e55941d1c6b7839c0c2bae3826a60827d7f6a0b30867a1a74"
+        },
+        "license_file_present": false,
+        "license_file_note": "The README cites a LICENSE file that the tree at the pinned commit does not hold; the only licence statement is CC0 in dataset_description.json."
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "quote": "UCL Humanities, Arts and Sciences Research Ethics Committee; Approval Number: 26907/001",
+        "body": "UCL Humanities, Arts and Sciences Research Ethics Committee",
+        "approval_number": "26907/001"
+      },
+      "informed_consent": {
+        "stated": false,
+        "kind": null,
+        "quote": null,
+        "location": null
+      },
+      "read_from": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/dataset_description.json",
+      "read_section": "dataset_description.json, EthicsApprovals and License",
+      "read_at": "2026-10-28T10:27:19Z",
+      "capture_sha256": "81f0b938d4297375b269824f2137b9d1753b4407886e54c5fdbf44c5fa6288ef",
+      "gaps": [
+        {
+          "field": "consent",
+          "note": "No consent statement in README.md, dataset_description.json, CHANGES or the OpenNeuro dataset metadata at the pinned commit; neither the README nor the metadata names a paper, so no paper was read."
+        }
+      ]
+    }
+  },
+  "nebula": {
+    "id": "nebula",
+    "kind": "status_case",
+    "section": "nebula",
+    "status": "score_held",
+    "name": "NeBULA",
+    "design": {
+      "participants_run": 1,
+      "participant_counts": {
+        "paper_and_record_description": 40,
+        "participant_archives_in_record": 39,
+        "moabb_catalog": 39,
+        "text": "The paper and the Figshare record’s description state 40 participants; the record’s files hold 39 participant archives, and MOABB lists 39."
+      },
+      "targets": 3,
+      "assistance_conditions": [
+        "free",
+        "low",
+        "high"
+      ],
+      "trials": 89,
+      "trials_by_condition": {
+        "free": 29,
+        "low": 30,
+        "high": 30
+      },
+      "missing_trial_fabricated": false,
+      "folds": 3,
+      "evaluation": "trained on two assistance runs and tested on the third; the assistance level is the held-out run and the target is the class",
+      "task_line": "The source describes executed reaching with an upper-limb exoskeleton; the open register keeps MOABB’s imagery label as MOABB lists it."
+    },
+    "eeg": {
+      "channels": 127,
+      "sampling_hz": 1000,
+      "window_ms": [
+        0,
+        2000
+      ],
+      "precue_window_ms": [
+        -500,
+        0
+      ],
+      "band_hz": [
+        8,
+        30
+      ],
+      "reference": "FCz as the paper states; the header reference fields are blank, and the data keep the delivered reference"
+    },
+    "emg": {
+      "rows": 11,
+      "sampling_hz": 1000,
+      "window_ms": [
+        0,
+        2000
+      ],
+      "precue_window_ms": [
+        -500,
+        0
+      ],
+      "band_hz": [
+        20,
+        350
+      ],
+      "units": "1,000 Hz and microvolts as the source declares"
+    },
+    "arms": {
+      "eeg": [
+        {
+          "id": "primary",
+          "name": "EEG, all 127 channels, 0 to 2 seconds after the Go cue",
+          "signal_input": true
+        },
+        {
+          "id": "precue",
+          "name": "EEG, all 127 channels, the 500 milliseconds before the Go cue",
+          "signal_input": true
+        },
+        {
+          "id": "central",
+          "name": "EEG, a fixed set of central channels, 0 to 2 seconds after the Go cue",
+          "signal_input": true
+        },
+        {
+          "id": "order",
+          "name": "Order diagnostic: trial position and the previous delivered target, with no signal input; privileged context that no live system would have",
+          "signal_input": false
+        },
+        {
+          "id": "shuffle",
+          "name": "The primary EEG features with the training labels shuffled once with a fixed seed",
+          "signal_input": true
+        }
+      ],
+      "eeg_fits": 15,
+      "emg_and_fusion": [
+        {
+          "id": "emg",
+          "name": "EMG, 11 rows, 0 to 2 seconds after the Go cue",
+          "signal_input": true
+        },
+        {
+          "id": "fusion",
+          "name": "The 127 EEG features and the 11 EMG features concatenated in a fixed order",
+          "signal_input": true
+        },
+        {
+          "id": "emg_precue",
+          "name": "EMG, the 500 milliseconds before the Go cue",
+          "signal_input": true
+        },
+        {
+          "id": "emg_shuffle",
+          "name": "The EMG features with the training labels shuffled once",
+          "signal_input": true
+        },
+        {
+          "id": "fusion_shuffle",
+          "name": "The concatenated features with the same shuffled training labels",
+          "signal_input": true
+        }
+      ],
+      "emg_and_fusion_fits": 15,
+      "pretrained_model": false,
+      "eeg_features_recomputed_for_fusion": false,
+      "independently_audited": true
+    },
+    "file_facts": {
+      "boundary_ties": 25,
+      "boundary_ties_by_condition": {
+        "free": 7,
+        "low": 9,
+        "high": 9
+      },
+      "backward_overlaps": 0,
+      "first_parse_stopped_before_features": true,
+      "parser_fix_reviewed": true,
+      "rerun_within_original_budget": true,
+      "emg_channel_rows": 11,
+      "emg_channels_in_metadata": 16,
+      "emg_rows_relabelled": false,
+      "stored_markers": 356,
+      "complete_quartets": 89,
+      "markers_match_eeg_files": true,
+      "emg_eeg_sample_lengths_equal": true,
+      "text": [
+        "The original markers hold 25 boundary ties where one trial’s end and the next trial’s start share a sample (7 free, 9 low, 9 high), with no backward overlap. The first parse stopped on them before any feature, model or score; a reviewed fix that accepts a shared boundary reran within the original budget.",
+        "The EMG files hold 11 channel rows where their metadata states 16; the rows were not relabelled or mapped to muscles.",
+        "All 356 stored markers of the 89 trials match the EEG marker files in label, order and sample position.",
+        "The EMG and EEG files of each run have equal sample lengths."
+      ]
+    },
+    "flags": {
+      "score_published": false,
+      "order_diagnostic_comparison_published": false,
+      "additional_participant_acquired": false,
+      "physical_synchronisation_verified": false,
+      "amplitude_calibration_verified": false
+    },
+    "status_text": "One participant reaching to three targets under free, low and high assistance: 89 delivered trials (29, 30 and 30), 127 EEG channels at 1,000 Hz. The EEG pilot was trained on two assistance runs and tested on the third, beside an order diagnostic with no signal input, a precue window and a label shuffle. EMG and EEG plus EMG arms (15 new fits, no pretrained model) were run on the same trials. An independent audit rebuilt every arm.",
+    "held": {
+      "id": "nebula-one-participant-scores",
+      "what": "every EEG, EMG and EEG plus EMG score, and every control",
+      "rule": "one-person",
+      "decision": "the owner’s decisions for this release, keeping the one-person rule"
+    },
+    "holds": [
+      "Go is a cue and the reach marker marks reaching the target; neither certifies physical movement onset.",
+      "Stored marker agreement between the EEG and EMG files does not certify clock synchronisation or amplitude calibration.",
+      "The other participants’ files in the record are neither acquired nor evaluated."
+    ],
+    "rights": {
+      "name": "NeBULA (Neuromechanical Biomarkers for Upper Limb Assessment): an EEG-EMG dataset from a standardized reaching task (Garro et al., Scientific Data 12, 831)",
+      "task": "Reaching to three targets with an upper-limb exoskeleton under free, low and high assistance, with EEG and EMG.",
+      "source": "https://doi.org/10.6084/m9.figshare.27301629.v1",
+      "version": "Figshare record 27301629, version 1, the only version the record lists",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Florencia Garro, Elena Fenoglio, Indya Ceroni, Inna Forsiuk, Michele Canepa, Michael Mozzon, Agnese Bruschi, Francesco Zippo, Matteo Laffranchi, Lorenzo De Michieli, Stefano Buccelli, Michela Chiappalone and Marianna Semprini · An EEG-EMG Dataset from a Standardized Reaching Task for Biomarker Research in Upper Limb Assessment, figshare, doi:10.6084/m9.figshare.27301629.v1, CC BY 4.0. Paper: Florencia Garro, Elena Fenoglio, Indya Ceroni, Inna Forsiuk, Michele Canepa, Michael Mozzon, Agnese Bruschi, Francesco Zippo, Matteo Laffranchi, Lorenzo De Michieli, Stefano Buccelli, Michela Chiappalone and Marianna Semprini, An EEG-EMG dataset from a standardized reaching task for biomarker research in upper limb assessment, Scientific Data 12:831 (2025), doi:10.1038/s41597-025-05042-4. Modifications: the first participant’s files only; no score from these data is published. Derived analysis by BCI Report; not endorsed by the authors.",
+      "reviewedAt": "2026-10-28",
+      "reviewBasis": [
+        "https://api.figshare.com/v2/articles/27301629/versions/1",
+        "https://www.nature.com/articles/s41597-025-05042-4"
+      ],
+      "privacyReview": "Ethics: local ethical committee CER Liguria, approval 784/2022 (database id 12044). Consent: informed consent before participation, including consent to share the data openly. Published here: design, counts and file facts for one participant’s recordings and no score; no identifier, per-trial value or signal.",
+      "terms": {
+        "data_licence": {
+          "value": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "stated_by": "Figshare record 10.6084/m9.figshare.27301629.v1, licence field",
+          "read_from": "https://api.figshare.com/v2/articles/27301629/versions/1",
+          "read_at": "2026-10-28T10:28:02Z",
+          "capture_sha256": "80f8a310f23aeaf89a34c6c73f3bed44f47a9e95b77cc02116b62ad2260d86ea",
+          "pinned_version": 1,
+          "versions_listed": 1,
+          "pinned_version_is_latest": true,
+          "as_named_by_figshare": "CC BY"
+        },
+        "paper_licence": {
+          "value": "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License",
+          "quote": "This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License",
+          "covers": "the data descriptor article only; the data licence is the Figshare record's"
+        },
+        "repository_quote": "The dataset is publicly available in the open-access repository Figshare",
+        "zenodo_13627307": {
+          "named_by": "the dataset description inside the data files",
+          "registered_public_record": false,
+          "terms": null,
+          "text": "The files’ own dataset description names Zenodo 13627307, which is no registered public record: the Zenodo API, the record page, DataCite and doi.org each return 404. The paper names Figshare alone."
+        }
+      }
+    },
+    "consent_and_ethics": {
+      "ethics_approval": {
+        "stated": true,
+        "quote": "The study’s experimental procedures were approved by the local ethical committee (CER Liguria:784/2022 - DB id 12044).",
+        "body": "local ethical committee CER Liguria",
+        "approval_number": "784/2022",
+        "database_id": "12044"
+      },
+      "informed_consent": {
+        "stated": true,
+        "kind": "informed consent before participation, including consent to share the data openly",
+        "quote": "All participants gave consent to participate and openly share the data collected.",
+        "location": "data descriptor, Methods (participants and inclusion criteria)",
+        "second_quote": "were required to provide informed consent before participation"
+      },
+      "read_from": "https://www.nature.com/articles/s41597-025-05042-4",
+      "read_section": "Methods, participants and inclusion criteria; Data Records; Rights and permissions",
+      "read_at": "2026-10-28T10:28:51Z",
+      "capture_sha256": "7e5a512240ced897e953eb4969806f3f554ae4e2679c9d6e6be3b6602c6f7101",
+      "gaps": []
+    }
+  },
+  "holds": [
+    {
+      "id": "kim-amplitude-dependent-models",
+      "case": "kim2025-beta-range",
+      "state": "held",
+      "reason": "Amplitude units, channel gains and the saved reference history are not established, so models whose output depends on amplitude are held on these files."
+    },
+    {
+      "id": "damm-one-participant-score",
+      "case": "damm",
+      "state": "score held",
+      "reason": "One participant; scores held under the site’s one-person rule."
+    },
+    {
+      "id": "nebula-one-participant-scores",
+      "case": "nebula",
+      "state": "scores held",
+      "reason": "One participant; EEG, EMG and EEG plus EMG scores held under the site’s one-person rule."
+    }
+  ],
+  "not_published": [
+    "Values per person, per record ID, per fold, per run or per trial: identifiers, file and run names, fold assignments, features, fitted models, decision values and predictions; raw signals from any of the four datasets.",
+    "Every Damm and NeBULA score: accuracies, balanced accuracies, control values, differences, paired correctness counts and diagnostic fractions, held by the owner’s decision under the one-person rule; and any comparison of NeBULA’s order diagnostic with its EEG or EMG arms.",
+    "MIND’s pooled metrics, confusion matrices and macro-F1, the secondary panel’s schedule census and differences, the overfull runs’ marker counts and the model-fit counts.",
+    "Kim’s per-participant accuracies, the fixture identities of the independent audit and the stored-value ranges of the schema record.",
+    "Compute times, CPU and memory accounting, storage sizes, hosts and storage locations.",
+    "The research aggregates, audits, reviews, protocols and handoffs themselves: each is pinned by SHA-256 in the release manifest and checked by the export, never published, because several carry private storage paths."
+  ],
+  "release_record": {
+    "date": "2026-10-28",
+    "decided": "2026-10-28",
+    "decision": "Publish four dataset checks on the data-quality page: Kim beta-range’s training-free CCA baseline on all 40 participants, MIND’s stored-marker baseline as a conditional case on record IDs, and Damm and NeBULA as one-person status cases with no score.",
+    "kim2025-beta-range": "Worked case: mean participant accuracy with its participant-bootstrap interval against the fixed chance of 40 targets; amplitude-dependent models on these files stay held.",
+    "mind2026": "Conditional worked case: CSP + LDA beside an ordinal lookup and a majority control for each stored-code pair, with record-ID resampling ranges and the label-schedule facts; a separate secondary panel with no interval.",
+    "damm": "Status case: design, counts, file and timing facts and the eight variants run; the scores are held.",
+    "nebula": "Status case: design, counts, file facts for the EEG and EMG files, and the EEG, EMG and EEG plus EMG arms run; the scores are held.",
+    "placement": "Four sections on /topics/data-quality/ after Shin2022 and before ZuCo 2.0, outside every leaderboard and the core matrix; the one-person sentence once, before eldBETA, Damm and NeBULA; a dataset page for Kim beta-range with no method link."
+  },
+  "provenance": {
+    "manifest_sha256": "fce3cacdbf811855fd224a4704c392becf8829673b6967826a558ece8cbe6202",
+    "source_export_sha256": {
+      "kim2025-beta-range": "b3043fb059da18d94cbf423a5f0c0c40a266a63ef6f13f3d5b7f165eebab60de",
+      "mind2026": "ff43f57febaa21e2e5e48dc8ff5095dd856ba1fed18de80278b76bb7b0f77ef7"
+    },
+    "release_approval_sha256": {
+      "kim2025-beta-range": "93e4ac9ed5bfe632e464ead0ddf3543d95e928b02e4d3dfd210fc2d54bf1600c",
+      "mind2026": "8fd28353b6d8e98d8fc210675c498d2f9b053a951ca5e79c2fa185b3a60af98c",
+      "damm": "913f9bb8cbff33d2f632289c6e5f8dc6ce2514c6aa368d3b5e2d5c0b616dbc82",
+      "nebula_eeg": "9ce592d2d602882a3676c42023e91e9cade8bce972fe0a3b040a5b11508da007",
+      "nebula_emg_intake": "cd00dec43cb3461b221bed95cc1ebf9d8f78dc375e4737b2c04934f8362a5378",
+      "nebula_emg_pilot": "68374609bc3c8b6bd9d731e0f973a95b3849a55548d29f60ad3b00f5b81e80e0"
+    },
+    "protocol_sha256": {
+      "kim2025-beta-range": "c35fdf87b835a6144964bc751828f7e80550a2742f57919331536cff9d6e31aa",
+      "mind2026": "e642711eb6453d9907765135b0cb55a3521965617e1e31d3c60b87b883e6dbc9",
+      "damm": "89f2f0f4ac2d8f4f0690c57d65f891f70431888dfe5c6de4d2390734d316f8e6",
+      "nebula_eeg": "860e7046657a580ab4d842061a79d1e0d31f1d463dae1f696aa73a55f393ef5c",
+      "nebula_emg_pilot": "818000075ed2c6598f9d95c73573d3c892b6848c984d6e37c184453d14ef513c"
+    },
+    "evidence_sha256": {
+      "consent_statements": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+      "kim_asset_manifest": "0c03688866a6fd567cb908baa5ad158d43ea703045a7646167993c0e0dc8b5d1",
+      "mind_schedule_structure": "0df417452495f338a840ae5607b93b172ffffe5889120c2e91fa44467d1c2481",
+      "mind_workflow_closure": "1cfcf25e1e9611dc2ffc5922337d52cb8e755d8854b2e72691ef0ca4dab531ee",
+      "nebula_emg_structure_receipt": "b360511ef6722e8959369eef17831e7bac31e1118ca0a0ba140a3d502211cc26"
+    },
+    "released_files_unchanged": [
+      "data-quality-update.json"
+    ],
+    "released_file_sha256": {
+      "data-quality-update.json": "fbfb8fb59dc80397d0c4331a3067cf640b27522af6687dd5b3132c8f4e928bda"
+    },
+    "holds": [
+      "kim-amplitude-dependent-models",
+      "damm-one-participant-score",
+      "nebula-one-participant-scores"
+    ]
+  }
+}

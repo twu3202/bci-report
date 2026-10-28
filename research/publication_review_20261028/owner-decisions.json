@@ -1,0 +1,31 @@
+{
+  "freeze_date": "20261028",
+  "recorded_at": "2026-10-28",
+  "plan": "research/site_release_plan_20261028/Release Layout Plan v3.md",
+  "handoff": "research/autonomous_validation_20261026/handoff_20261028/BCI Report Consolidated Research and Website Handoff.md",
+  "owner_request": "又可以开始一轮新的网站更新了，你看看这份handoff，然后除了这份handoff里给的模型&数据，我们也可以对网站上的Releases tab更更新删减一下",
+  "decisions": {
+    "D14": {"plan_question": "Q1", "question": "Which reviewed aggregates of this round to publish", "answer": "All: the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33), NeuroRVQ on EEGMAT, MI and P300 (aggregate scores only, CC BY-NC, no weights), the EEG-Captioner and AXON ten-second EEGMAT probes, and the Kim beta-range CCA baseline", "source": "owner, chat 2026-10-28"},
+    "D15": {"plan_question": "Q2", "question": "MIND stored-marker baseline (its handoff requires separate authorization)", "answer": "Publish now as a conditional case on /topics/data-quality/: record IDs, not verified people; both licence statements side by side (paper and archive CC BY 4.0, MOABB CC BY-NC 4.0); the ScienceDB terms page stated as not read", "source": "owner, chat 2026-10-28"},
+    "D16": {"plan_question": "Q3", "question": "One-person rule (D2) for the Damm and NeBULA pilots", "answer": "Keep the rule: design, counts, file and timing facts and holds only; the scores stay held, as for eldBETA", "source": "owner, chat 2026-10-28"},
+    "D17": {"plan_question": "Q15", "question": "Releases tab", "answer": "A short /releases/ index (the three newest release days, at most three short changes each, one visible line per earlier release id) plus /releases/archive/ carrying every original record verbatim (summaries, notes, manifests, SHA-256); old /releases/#<id> links land on a visible line", "source": "owner, chat 2026-10-28"},
+    "defaults_stated_to_owner_and_not_objected": {
+      "D18 (Q4)": "Damm and NeBULA status cases on /topics/data-quality/ beside eldBETA, with the one-person sentence stated once",
+      "D19 (Q5)": "NeuroRVQ: one uncounted panel on /topics/pilot-studies/ with EEGMAT, MI and P300 blocks, and figure-free pointers from the three protocol pages; no method page",
+      "D20 (Q6)": "Five releases on one day, shown as one entry in the release log",
+      "D21 (Q7)": "A dataset page for Kim beta-range with no method link; MIND gets a section only",
+      "D22 (Q8)": "The new-ssvep-frequencies short answer gains one sentence on untrained filter-bank CCA and the harmonic sum matching the learned eigenvalue head",
+      "D23 (Q9)": "Thread predictions stay on card 4 only; new cards state only their prespecified criteria",
+      "D24 (Q10)": "Practical B/D: a figure-free pointer from /topics/fewer-electrodes/ only",
+      "D25 (Q11)": "CPU component timings in card 11's details, as warm single-thread component measurements, never summed, no host label",
+      "D26 (Q12)": "The five refresh model rows (FAME, EEG-PRIME, STST-JEPA, BandVQ, USE-FM) at register step 1 with holds; the catalog rows needing new vocabulary wait",
+      "D27 (Q13)": "The ten register use statements stay internal",
+      "D28 (Q14)": "new-ssvep-frequencies-update.json keeps its bytes; the new payload supersedes card 8's status entry",
+      "D29 (Q16)": "Release-log highlight drafts as in plan section 4, with counts computed from the payloads"
+    },
+    "carried_over": "D2 (one-person scores held), D4 (ICLR 2027 rows wait until after 2026-12-16), D6 (the HF commenter is not named) and the 2026-10-19/20 decisions remain in force"
+  },
+  "gates": {
+    "A1": {"status": "done", "what": "xspec aggregate copied read-only from the workstation run's metrics/aggregate.json", "local": "research/publication_review_20261028/inputs/xspec-aggregate.json", "sha256": "272bac552fdf509b4cc9bae930782de6a5673194a4989bcbdcbef3b4f1214a0c", "matches_handoff": true}
+  }
+}

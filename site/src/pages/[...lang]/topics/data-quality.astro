@@ -1,17 +1,21 @@
 ---
 /**
- * What do the files show once a public EEG dataset is checked end to end? (owner decisions D1 and D2): Shin2022 as the
- * worked case, a participant-held-out diagnostic with three arms beside the coverage chain that counts its runs and
- * windows from the files; eldBETA as a status case with counts and no score; ZuCo 2.0 as a status case with no figure.
- * In "Reliability & clinical", last.
+ * What do the files show once a public EEG dataset is checked end to end? (owner decisions D1, D2, D15, D16, D18, D21):
+ * seven public datasets, in the order the dataset-checks file sets. Shin2022 is the first worked case, a participant-
+ * held-out diagnostic with three arms beside the coverage chain that counts its runs and windows from the files; Kim
+ * beta-range the second, training-free CCA on all its participants beside chance, with its intake, checks and caveats;
+ * MIND a conditional case on record IDs, CSP + LDA beside two controls that read no EEG, with record-ID resampling ranges
+ * and its secondary panel apart; then the one-person sentence, once, before eldBETA, Damm and NeBULA, status cases with
+ * counts and file facts and no score; ZuCo 2.0 a status case with no figure. In "Reliability & clinical", last.
  *
- * Every figure is a leaf of data-quality-update.json, printed with data-fig (Fig.astro); the words for the export's
- * own English, and the facts each sentence rests on, are in src/data/data-quality.ts. Rules: the coverage chain is
- * printed once, in its table; the duration control is labelled retrospective and set apart; Shin2022's caveat sits
- * once, beside its table; eldBETA prints counts and the holds line, "header calibration applied", and no score; the
- * ZuCo 2.0 case prints no figure; each case links its row in the open register only while the register file is served
- * and its page built, and the catalog line says MOABB's counts are on Shin2022's row only while that row carries them.
- * The sentences that summarise the export are checked against it here, and the page refuses to build without them.
+ * Every figure is a leaf of data-quality-update.json or dataset-checks-update.json, printed with data-fig (Fig.astro);
+ * the words for the exports' own English, and the facts each sentence rests on, are in src/data/data-quality.ts. Rules:
+ * each coverage chain is printed once, in its table; the duration control is labelled retrospective and set apart; each
+ * caveat sits once, beside its evidence; eldBETA, Damm and NeBULA print counts, file facts and their holds and no score;
+ * the ZuCo 2.0 case prints no figure; hold reasons stay on /releases/#holds, and each section names its hold and links
+ * it; each case links its row in the open register only while the register file is served and its page built, and the
+ * catalog line says MOABB's counts are on Shin2022's row only while that row carries them. The sentences that summarise
+ * the exports are checked against them here, and the page refuses to build without them.
  */
 import TopicLayout from '../../../components/TopicLayout.astro';
 import Fig from '../../../components/Fig.astro';
@@ -19,9 +23,10 @@ import Parts from '../../../components/Parts.astro';
 import { chrome, hrefFor, localeOf, localeParams, registerCopy, topicCards, topicChrome } from '../../../data/i18n';
 import { datasetBySlug, formatFig, type Fig as FigValue } from '../../../data/entities';
 import {
-  DQ, DQ_ANCHOR, DQ_PATH, chainLabel, dqCatalogFinding, dqFig, dqNotPublishedShown, dqRegisterRows, dqSay, dqSchema, dqText, duration, eld,
-  eldHold, eldHolds, prior, shin, shinArms, shinChain, singlemSource, spectral, step, zuco, zucoCase, zucoHold, type ChainStep, type Part,
-  type ShinArm,
+  DC, DQ, DQ_ANCHOR, DQ_PATH, assistanceZh, chainLabel, damm, dammHold, dammHolds, dammRole, dcFig, dcNotPublishedShown, dcSchema, dqCatalogFinding,
+  dqFig, dqNotPublishedShown, dqRegisterRows, dqSay, dqSchema, dqSections, dqText, duration, eld, eldHold, eldHolds, fingerZh, kim, kimHold, mind,
+  mindSourceName, mindStepLabel, nebula, nebulaHold, onePerson, prior, shin, shinArms, shinChain, singlemSource, spectral, step, word, Word,
+  zuco, zucoCase, zucoHold, type ChainStep, type DqSection, type Part, type ShinArm,
 } from '../../../data/data-quality';
 
 export const getStaticPaths = localeParams;
@@ -31,10 +36,16 @@ const tc = topicChrome[locale];
 const t = chrome[locale];
 // The space between two sentences, or a sentence and its link: none in Chinese, after a full-width mark.
 const sp = zh ? '' : ' ';
+const colon = zh ? '：' : ': ';
 const pct = (raw: number): FigValue => dqFig(raw, 'pct2');
 const n = (raw: number): FigValue => dqFig(raw, 'count');
+const cp = (raw: number): FigValue => dcFig(raw, 'pct2');
+const cn = (raw: number): FigValue => dcFig(raw, 'count');
 const F = (x: FigValue) => formatFig(x);
 const ans = (x: FigValue) => `[[${F(x)}]]`;
+const cap = (s: string) => s.replace(/^./, c => c.toUpperCase());
+// An English list: "a, b and c".
+const andList = (xs: string[]) => xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
 
 // --- The facts the page's own sentences state, beyond those data-quality.ts asserts. -----------------------------
 const need = (ok: unknown, what: string) => { if (!ok) throw new Error(`topics/data-quality: the copy says ${what}`); };
@@ -60,6 +71,17 @@ need(eld.rights.terms.other_terms_stated.length === 1 && eld.rights.terms.other_
 need(zuco.source.licence_as_stated === 'CC-BY-4.0' && zuco.source.licence_stated_by === 'the dataset_description.json of that version'
   && zuco.source.terms_unverified.length === 2, 'ZuCo 2.0’s stated licence, and the two terms unverified');
 need(eld.related.model === 'singlem' && eld.related.dataset === 'beta', 'the SingLEM exposure row on BETA');
+// The dataset checks: the lede facts each section states in the page's own words.
+const K = kim, KR = kim.result, KC = kim.consent_and_ethics, M = mind, MP = mind.primary, MS = mind.secondary, MC = mind.consent_and_ethics;
+const D = damm.design, DCE = damm.consent_and_ethics, N = nebula.design, NCE = nebula.consent_and_ethics;
+need(K.cohort.participants === K.intake.task_files && K.result.chance === 1 / K.cohort.targets, 'Kim beta-range: all its participants, chance one in its targets');
+need(KR.metric.startsWith('mean participant accuracy;'), 'Kim beta-range: the figure is the mean participant accuracy');
+need(MP.design.startsWith('two whole runs') && MS.design.startsWith('one run') && M.processing.controls.map((x: any) => x.id).join() === 'ordinal_lookup,majority',
+  'MIND: the designs and the two controls the lede names');
+need(D.directions === 2 && D.evaluation.endsWith('in both directions') && damm.variants.length === 8 && damm.files.excluded_channels.length === 3, 'Damm: both directions, eight variants');
+need(N.targets === 3 && N.assistance_conditions.length === 3 && nebula.arms.eeg.some((a: any) => a.id === 'precue') && nebula.arms.eeg.some((a: any) => a.id === 'shuffle'),
+  'NeBULA: three targets, three assistance runs, the precue window and the label shuffle');
+const dsN = dqSections.length;
 
 // The arms table: the reference and the EEG arm, then the retrospective control under its own heading.
 type ArmRow = { kind: 'arm'; a: ShinArm } | { kind: 'sub' };
@@ -68,21 +90,30 @@ const armRows: ArmRow[] = [...shinArms.filter(a => a.role !== 'retrospective_con
 need(shinArms.filter(a => a.role === 'retrospective_control').length === 1, 'one retrospective control');
 // The chain's per-target column: instructed right, then left, with a no-break space each side of the dot so a stacked
 // cell never strands it on a line of its own.
-const dot = '\u00a0·\u00a0';
+const dot = ' · ';
 const targets = (c: ChainStep): Part[] => c.by_target ? [n(c.by_target['1']), dot, n(c.by_target['2'])]
-  : c.windows_per_run_by_target ? [n(c.windows_per_run_by_target['1']), dot, n(c.windows_per_run_by_target['2']), zh ? '（每个 run）' : '\u00a0per run'] : ['—'];
+  : c.windows_per_run_by_target ? [n(c.windows_per_run_by_target['1']), dot, n(c.windows_per_run_by_target['2']), zh ? '（每个 run）' : ' per run'] : ['—'];
 const shinPage = datasetBySlug['shin2022'] ? hrefFor('/datasets/shin2022/', locale) : null;
+const kimPage = datasetBySlug[K.id] ? hrefFor(K.dataset_page, locale) : null;
 // In-page pointers as full paths: the Markdown copy drops in-page jump links.
 const here = (anchor: string) => `${hrefFor(DQ_PATH, locale)}#${anchor}`;
 const registerRow = (id: string) => hrefFor(`/datasets/register/#${id}`, locale);
 const rc = registerCopy[locale];
+// A source's sentence in the page's language, with its English beside it on a Chinese page.
+const said = (en: string) => dqText(en, locale);
+// MIND's caveats beside its evidence: the terms and ethics caveats print in its source block.
+const mindCaveats = M.caveats.filter((x: any) => x.id !== 'terms' && x.id !== 'ethics');
+const mindCaveat = (id: string) => M.caveats.find((x: any) => x.id === id).text as string;
+const mindContrastName = (x: any) => `CSP + LDA − ${zh ? { ordinal_lookup: '按位置查表', majority: '多数类' }[x.control as string] : { ordinal_lookup: 'ordinal lookup', majority: 'majority' }[x.control as string]}`;
+const assistance = N.assistance_conditions as string[];
+const fingers = D.class_names as string[];
 
 const copy = {
   en: {
-    description: `Shin2022, read from its files: for a held-out participant, alpha and beta band power reached ${F(pct(spectral.mean))} balanced accuracy, a control reading only trial duration ${F(pct(duration.mean))}, the training prior ${F(pct(prior.mean))}. eldBETA: one person’s recordings pass every check, score held. ZuCo 2.0: a timing hold.`,
+    description: `${Word(dsN)} public EEG datasets, read from their files. Shin2022: for a held-out participant, alpha and beta band power reached ${F(pct(spectral.mean))} balanced accuracy, a trial-duration control ${F(pct(duration.mean))}, the training prior ${F(pct(prior.mean))}. Kim beta-range: training-free CCA ${F(cp(KR.mean_participant_accuracy))}, chance ${F(cp(KR.chance))}. eldBETA, Damm, NeBULA: one person each, scores held.`,
     answer: `Shin2022’s files repeat some runs byte for byte, and some feedback windows end early or carry a flat channel; on the windows that remain, a participant-held-out check put alpha and beta band power at ${ans(pct(spectral.mean))} balanced accuracy, beside ${ans(pct(duration.mean))} for a control that reads only how long each trial lasted and ${ans(pct(prior.mean))} for the training prior. eldBETA’s raw recordings for one participant pass every check, and with one person the score is held. In one converted ZuCo 2.0 run some fixation times fall outside the recording, so no EEG–text score is computed.`,
-    eyebrow: 'Data quality and reproducibility · three public EEG datasets, read from their files',
-    dek: 'Shin2022 is the worked case: its runs, duplicates and windows counted from the files, then a participant-held-out check beside a control that reads only trial duration. eldBETA and ZuCo 2.0 are status cases, with what their files showed and no score.',
+    eyebrow: `Data quality and reproducibility · ${word(dsN, 'en')} public EEG datasets, read from their files`,
+    dek: 'Shin2022 and Kim beta-range are worked cases: their files counted and checked first, then a fixed baseline beside its reference. MIND is a conditional case on record IDs, with two controls that read no EEG. eldBETA, Damm and NeBULA have one participant each and publish counts and file facts; ZuCo 2.0 carries a timing hold.',
     // Shin2022
     shinEyebrow: 'Worked case · Shin2022 · closed-loop cursor control, dry electrodes',
     shinH2: shin.question,
@@ -103,7 +134,7 @@ const copy = {
       signal_invalid: [' Flat on all channels: ', n(invalid.flat_on_all_channels!), '; on some: ', n(invalid.flat_on_some_channels!), '. Windows with non-finite input: ', n(invalid.non_finite_input_windows!), '.'],
       signal_valid: [' That is ', dqFig(valid.percent_of_closed_windows!, 'pct1raw'), ' of the closed windows and ', dqFig(valid.percent_of_duration_eligible!, 'pct2raw'), ' of those lasting at least one second; all ', n(valid.participants_with_both_targets!), ' participants keep windows of both targets.'],
     } as Record<string, Part[]>,
-    catalog: (): Part[] => ['MOABB’s dataset summary gives a trial length of ', n(shin.catalog.catalog_trial_seconds), '\u00a0s: that is the feedback cap (MaxFeedbackDuration) set in the header of each of the ', n(shin.catalog.headers_read), ' runs read.'],
+    catalog: (): Part[] => ['MOABB’s dataset summary gives a trial length of ', n(shin.catalog.catalog_trial_seconds), ' s: that is the feedback cap (MaxFeedbackDuration) set in the header of each of the ', n(shin.catalog.headers_read), ' runs read.'],
     catalogRegister: ['MOABB’s trial and run counts for Shin2022 are findings on ', 'its row in the open register', '.'],
     checkedH3: 'How it was checked',
     state: { pass: 'Pass', held: 'Held' } as Record<string, string>,
@@ -118,15 +149,58 @@ const copy = {
     recordLink: 'Dataset record ↗',
     paperLink: 'Paper, with its ethics statement ↗',
     descriptorLink: 'Data descriptor, with its ethics statement ↗',
+    descriptionLink: 'Dataset description, with its ethics statement ↗',
     codeLink: 'Simulator code ↗',
     datasetPage: 'Dataset page →',
+    // Kim beta-range
+    kimEyebrow: 'Worked case · Kim beta-range SSVEP · training-free CCA',
+    kimLede: (): Part[] => [said(K.task).text, ' Standard CCA ran on every trial of all ', cn(K.cohort.participants), ' participants (', cn(K.cohort.blocks), ' blocks, ', cn(K.cohort.trials), ' trials) and reached ', cp(KR.mean_participant_accuracy), ' mean participant accuracy (', cp(KR.accuracy_interval_95[0]), '–', cp(KR.accuracy_interval_95[1]), '). Chance is ', cp(KR.chance), ', ', said(KR.chance_basis).text, '.'],
+    intakeH3: 'Intake: what the files hold',
+    caveatsH3: 'Caveats',
+    // MIND
+    mindEyebrow: 'Conditional case · MIND · stored codes on record IDs',
+    mindLede: (): Part[] => [said(M.task).text, ' In the primary panel of ', cn(MP.record_ids), ' record IDs (', cn(MP.runs), ' runs, ', cn(MP.trials), ' trials), ', said(MP.design).text, '. CSP + LDA stands beside two controls that read no EEG: an ordinal lookup and the majority code.'],
+    mindRegion: 'MIND, primary panel, scrolls horizontally',
+    mindCols: ['Stored codes', 'CSP + LDA', 'Ordinal lookup (no EEG)', 'Majority (no EEG)'],
+    contrastsH3: `${Word(M.contrasts.length)} contrasts, with record-ID resampling ranges`,
+    contrastsRegion: 'MIND, contrasts, scrolls horizontally',
+    contrastCols: ['Stored codes', 'Contrast', 'Mean difference', 'Record-ID resampling range'],
+    to: ' to ',
+    secondaryH3: 'Secondary panel, apart',
+    secondaryLede: (): Part[] => ['The ', cn(MS.record_ids), ' record IDs whose first run was excluded (', cn(MS.runs), ' runs, ', cn(MS.trials), ' trials): ', said(MS.design).text, '. ', said(MS.text).text],
+    secondaryRegion: 'MIND, secondary panel, scrolls horizontally',
+    coverageH3: 'From the runs in the release to the two panels',
+    coverageRegion: 'MIND coverage, scrolls horizontally',
+    coverageCols: ['Step', 'Runs', 'Record IDs', 'Trials', 'What the files show'],
+    licenceH3: 'Licence statements, side by side',
+    licenceRegion: 'MIND licence statements, scrolls horizontally',
+    licenceCols: ['Source', 'Licence as stated', 'How it was read'],
+    gapsH: 'Gaps:',
+    // The one-person cases
+    onePersonEyebrow: 'Status cases · one participant each',
+    onePersonH2: `${Word(onePerson.cases.length)} cases with one participant each`,
     // eldBETA
     eldEyebrow: 'Status case · eldBETA · SSVEP selection by older adults',
     eldH2: 'One participant’s raw recordings, end to end',
-    eldLede: (): Part[] => ['The raw-recording route runs end to end on one participant’s ', n(C.blocks), ' blocks of ', n(C.targets), ' targets: all ', n(C.trials), ' trials pass the reader and the quality checks, none dropped. The continuous recordings hold ', n(C.non_finite_values_outside_analysed_windows), ' non-finite values outside the analysed windows, left as recorded, and none inside them. With one person every score is that person’s, so the accuracy is held.'],
+    eldLede: (): Part[] => ['The raw-recording route runs end to end on one participant’s ', n(C.blocks), ' blocks of ', n(C.targets), ' targets: all ', n(C.trials), ' trials pass the reader and the quality checks, none dropped. The continuous recordings hold ', n(C.non_finite_values_outside_analysed_windows), ' non-finite values outside the analysed windows, left as recorded, and none inside them.'],
     paperListLink: 'SingLEM paper, Table I ↗',
     factLink: 'SingLEM’s pretraining-exposure rows →',
     holdLink: 'Its entry in the holds register →',
+    // Damm
+    dammEyebrow: 'Status case · Damm finger motor imagery · random cue order',
+    dammH2: `One participant’s ${word(D.runs_used, 'en')} random-order runs, end to end`,
+    dammLede: (): Part[] => ['The runs hold ', cn(D.delivered_cues), ' delivered cues over ', word(D.classes, 'en'), ' fingers (', andList(fingers), '): ', cn(D.trials_per_held_out_run), ' balanced trials in each held-out run. A fixed pipeline (', said(D.pipeline).text, ') was trained on one run and tested on the other, in both directions; ', word(damm.variants.length, 'en'), ' variants and controls were fixed before scoring, and an independent audit rebuilt all ', cn(damm.variant_directions_audited), ' reports.'],
+    filesH3: 'What the files show',
+    variantsH3: 'Variants and controls, fixed before scoring',
+    licenceStated: (lic: string): Part[] => ['Licence: ', lic, ', as dataset_description.json states it.'],
+    // NeBULA
+    nebulaEyebrow: 'Status case · NeBULA · reaching with exoskeleton assistance, EEG and EMG',
+    nebulaH2: `One participant’s reaches under ${word(assistance.length, 'en')} levels of assistance`,
+    nebulaLede: (): Part[] => ['One participant reaching to ', word(N.targets, 'en'), ' targets under ', andList(assistance), ' assistance: ', cn(N.trials), ' delivered trials (', ...assistance.flatMap((a, i) => [i === 0 ? '' : i === assistance.length - 1 ? ' and ' : ', ', cn(N.trials_by_condition[a])]), '), ', cn(nebula.eeg.channels), ' EEG channels at ', cn(nebula.eeg.sampling_hz), ' Hz. The EEG arms were trained on two assistance runs and tested on the third (', cn(nebula.arms.eeg_fits), ' fits), beside an order diagnostic with no signal input, a precue window and a label shuffle; EMG and EEG plus EMG arms (', cn(nebula.arms.emg_and_fusion_fits), ' fits, no pretrained model) ran on the same trials. An independent audit rebuilt every arm.'],
+    armsRunH3: 'Arms run',
+    eegArms: 'EEG pilot:',
+    emgArms: 'EMG and EEG plus EMG:',
+    paperLicence: ['The paper’s own licence, ', ', covers ', '.'],
     // ZuCo 2.0
     zucoEyebrow: 'Status case · ZuCo 2.0 on NEMAR · no score',
     zucoH2: 'A timing hold on one converted run',
@@ -135,28 +209,52 @@ const copy = {
     // The register
     registerH2: 'Each case in the open register',
     registerLede: 'Each case has a row in the open register, with the furthest step checked and the gaps that remain.',
-    caseNames: { shin2022: 'Shin2022', eldbeta: 'eldBETA', zuco2: 'ZuCo 2.0' } as Record<string, string>,
+    caseNames: { shin2022: 'Shin2022', 'kim2025-beta-range': 'Kim beta-range SSVEP', mind2026: 'MIND', eldbeta: 'eldBETA', damm: 'Damm finger motor imagery',
+                 nebula: 'NeBULA', zuco2: 'ZuCo 2.0' } as Record<DqSection, string>,
     // Methods and limits
     limitsH2: 'Methods and limits',
     methodH3: 'Shin2022: how the check was run',
     method: (): Part[] => ['Leave one participant out: ', n(shin.method.folds), ' folds, each fitted on ', n(shin.method.training_participants_each_fold), ' participants. The window is ', dqSay(shin.method.window, 'en'), ': ', n(shin.method.window_samples), ' samples at ', n(shin.scope.sampling_hz), ' Hz from a ', shin.scope.hardware, ' headset with dry electrodes (', dqSay(shin.method.channel_names, 'en'), '). The label is the instructed target as each run stores it (', shin.labels.state, '); the trial’s outcome is never read.'],
+    kimMethodH3: 'Kim beta-range: how the baseline was run',
+    kimMethod: (): [string, Part[]][] => [
+      ['Algorithm', [cap(said(K.method.algorithm).text), '; nothing is trained or tuned, and no trial is dropped.']],
+      ['Channels', [cn(K.method.channels), ' (', K.method.channel_names.join(', '), '); ', said(K.method.reference).text, '.']],
+      ['Window', [cap(said(K.method.window).text), ': ', cn(K.method.window_samples), ' samples at ', cn(K.method.sampling_hz), ' Hz.']],
+      ['Filter', [cn(K.method.band_hz[0]), '–', cn(K.method.band_hz[1]), ' Hz, ', said(K.method.filter).text, '.']],
+      ['References', [cap(said(K.method.reference_signals).text), '.']],
+      ['Metric', [cap(said(KR.metric).text), '.']],
+    ],
+    mindMethodH3: 'MIND: how the pipeline was run',
+    mindMethod: (): [string, Part[]][] => [
+      ['Channels', [cn(M.processing.channels), ' EEG channels at ', cn(M.processing.sampling_hz), ' Hz; the auxiliary channels are left out.']],
+      ['Filter', [said(M.processing.filter).text, ', ', cn(M.processing.band_hz[0]), '–', cn(M.processing.band_hz[1]), ' Hz; resampled to ', cn(M.processing.resampled_hz), ' Hz.']],
+      ['Window', ['After each stored class marker, ', cn(M.processing.window_samples), ' samples.']],
+      ['Classifier', ['CSP with ', cn(M.processing.csp_components), ' components and ', M.processing.csp_regularisation, ' regularisation, then ', said(M.processing.classifier).text, '; fitted on the training runs only, with no search.']],
+      ['Not applied', [said(M.processing.not_applied).text, '.']],
+      ['Ordinal lookup (no EEG)', [said(M.processing.controls[0].text).text]],
+      ['Majority (no EEG)', [said(M.processing.controls[1].text).text]],
+    ],
     intervalH3: 'The intervals',
-    interval: (): Part[] => ['Each interval resamples the ', n(shin.scope.participants), ' participants ', n(shin.interval.resamples), ' times, with one resampling index for all three arms, and reads its percentiles by linear interpolation.'],
+    interval: (): Part[] => ['Shin2022: each interval resamples the ', n(shin.scope.participants), ' participants ', n(shin.interval.resamples), ' times, with one resampling index for all three arms, and reads its percentiles by linear interpolation.'],
+    kimInterval: (): Part[] => ['Kim beta-range: its interval resamples the ', cn(K.cohort.participants), ' participants ', cn(K.interval.resamples), ' times.'],
     notPubH3: 'What is not published',
+    notPubDq: 'Shin2022, eldBETA and ZuCo 2.0:',
+    notPubDc: 'Kim beta-range, MIND, Damm and NeBULA:',
     zucoSourceH3: 'ZuCo 2.0: source and stated terms',
     zucoRecord: `${zuco.source.repository} accession ${zuco.source.accession}, version ${zuco.source.version}, doi:${zuco.source.doi}.`,
     zucoLicence: `Licence as stated: ${zuco.source.licence_as_stated}, in the dataset_description.json of that version. Not yet verified:`,
     relatedH2: 'Related',
     related: [
       { text: '', href: '/data-use/#sources-data-quality', link: 'How each source’s licence, consent and ethics statement was read →', english: true },
+      { text: '', href: '/data-use/#sources-dataset-checks', link: 'How the licences and statements of Kim beta-range, MIND, Damm and NeBULA were read →', english: true },
       { text: 'Small pilot studies, each with its own limits: ', href: '/topics/pilot-studies/', link: topicCards.en['pilot-studies'].question, english: false },
     ],
   },
   zh: {
-    description: `Shin2022 从文件读起：整名被试留出时，alpha 与 beta 频带功率的平衡准确率为 ${F(pct(spectral.mean))}，只读试次时长的对照为 ${F(pct(duration.mean))}，训练集先验为 ${F(pct(prior.mean))}。eldBETA：一名被试的记录通过全部检查，分数暂缓。ZuCo 2.0：时间问题暂缓。`,
+    description: `${word(dsN, 'zh')}个公开 EEG 数据集，从文件读起。Shin2022：整名被试留出时，alpha 与 beta 频带功率的平衡准确率为 ${F(pct(spectral.mean))}，只读试次时长的对照为 ${F(pct(duration.mean))}，训练集先验为 ${F(pct(prior.mean))}。Kim beta 频段：不需要训练的 CCA 为 ${F(cp(KR.mean_participant_accuracy))}，随机水平 ${F(cp(KR.chance))}。eldBETA、Damm、NeBULA：各一名被试，分数暂缓。`,
     answer: `Shin2022 的文件里有些 run 逐字节重复，有些反馈时间窗不足一秒或有一个通道恒定不变；在剩下的时间窗上做整名被试留出的检验，alpha 与 beta 频带功率的平衡准确率为 ${ans(pct(spectral.mean))}，只读每个试次持续多久的对照为 ${ans(pct(duration.mean))}，训练集先验为 ${ans(pct(prior.mean))}。eldBETA 一名被试的原始记录通过了全部检查；只有一个人，所以分数暂缓。ZuCo 2.0 的一个转换后记录中，有些注视时间落在记录之外，所以不计算 EEG–文本分数。`,
-    eyebrow: '数据质量与可复现性 · 三个公开 EEG 数据集，从文件读起',
-    dek: 'Shin2022 是完整的案例：先从文件里清点 run、重复文件与时间窗，再做整名被试留出的检验，旁边配一个只读试次时长的对照。eldBETA 与 ZuCo 2.0 是状态案例：写明文件里看到了什么，不给分数。',
+    eyebrow: `数据质量与可复现性 · ${word(dsN, 'zh')}个公开 EEG 数据集，从文件读起`,
+    dek: 'Shin2022 与 Kim beta 频段是完整的案例：先清点并核查文件，再把一个固定的基线与它的参照并列。MIND 是以记录编号为单位的有条件案例，附两个不读 EEG 的对照。eldBETA、Damm 与 NeBULA 各只有一名被试，只发布计数与文件事实；ZuCo 2.0 有一项时间问题暂缓。',
     shinEyebrow: '完整案例 · Shin2022 · 闭环光标控制，干电极',
     shinH2: '整名被试留出后，还剩下什么？',
     shinLede: (): Part[] => ['任务是在光标反馈的第一秒内判断指示目标是右还是左，被检验的被试完全不参与训练：', n(shin.scope.participants), ' 名被试轮流留出一次，用其余 ', n(shin.method.training_participants_each_fold), ' 人拟合的岭回归给其时间窗打分。在下文清点出的信号有效时间窗上，alpha 与 beta 频带功率按被试平均的平衡准确率为 ', pct(spectral.mean), '（', pct(spectral.interval[0]), '–', pct(spectral.interval[1]), '）。只读每个试次整段反馈时长的对照为 ', pct(duration.mean), '（', pct(duration.interval[0]), '–', pct(duration.interval[1]), '）。训练集先验为 ', pct(prior.mean), '。'],
@@ -191,33 +289,95 @@ const copy = {
     recordLink: '数据集记录 ↗',
     paperLink: '论文及其伦理声明 ↗',
     descriptorLink: '数据描述论文及其伦理声明 ↗',
+    descriptionLink: '数据集说明及其伦理声明 ↗',
     codeLink: '模拟器代码 ↗',
     datasetPage: '数据集页面 →',
+    kimEyebrow: '完整案例 · Kim beta 频段 SSVEP · 不需要训练的 CCA',
+    kimLede: (): Part[] => [said(K.task).text, '标准 CCA 在全部 ', cn(K.cohort.participants), ' 名被试的每个试次上运行（', cn(K.cohort.blocks), ' 个组块，', cn(K.cohort.trials), ' 个试次），按被试平均的准确率为 ', cp(KR.mean_participant_accuracy), '（', cp(KR.accuracy_interval_95[0]), '–', cp(KR.accuracy_interval_95[1]), '）。随机水平为 ', cp(KR.chance), '，即 ', said(KR.chance_basis).text, '。'],
+    intakeH3: '数据接收：文件里有什么',
+    caveatsH3: '注意事项',
+    mindEyebrow: '有条件的案例 · MIND · 以记录编号为单位的存储编码',
+    mindLede: (): Part[] => [said(M.task).text, '主面板有 ', cn(MP.record_ids), ' 个记录编号（', cn(MP.runs), ' 个 run，', cn(MP.trials), ' 个试次），', said(MP.design).text, '。CSP + LDA 与两个不读 EEG 的对照并列：按位置查表与多数类。'],
+    mindRegion: 'MIND 主面板，可横向滚动',
+    mindCols: ['存储编码', 'CSP + LDA', '按位置查表（不读 EEG）', '多数类（不读 EEG）'],
+    contrastsH3: `${word(M.contrasts.length, 'zh')}个对比，附记录编号重抽样范围`,
+    contrastsRegion: 'MIND 的对比，可横向滚动',
+    contrastCols: ['存储编码', '对比', '平均差值', '记录编号重抽样范围'],
+    to: ' 至 ',
+    secondaryH3: '次要面板，单独列出',
+    secondaryLede: (): Part[] => ['第一个 run 被排除的 ', cn(MS.record_ids), ' 个记录编号（', cn(MS.runs), ' 个 run，', cn(MS.trials), ' 个试次）：', said(MS.design).text, '。', said(MS.text).text],
+    secondaryRegion: 'MIND 次要面板，可横向滚动',
+    coverageH3: '从发布中的 run 到两个面板',
+    coverageRegion: 'MIND 的覆盖情况，可横向滚动',
+    coverageCols: ['步骤', 'run 数', '记录编号数', '试次数', '文件里看到的'],
+    licenceH3: '各来源所述的许可，并列给出',
+    licenceRegion: 'MIND 的许可声明，可横向滚动',
+    licenceCols: ['来源', '所述许可', '读取方式'],
+    gapsH: '缺口：',
+    onePersonEyebrow: '状态案例 · 各只有一名被试',
+    onePersonH2: `${word(onePerson.cases.length, 'zh')}个各只有一名被试的案例`,
     eldEyebrow: '状态案例 · eldBETA · 老年人的 SSVEP 选择',
     eldH2: '一名被试的原始记录，从头到尾',
-    eldLede: (): Part[] => ['从原始记录读起的流程，在一名被试的 ', n(C.blocks), ' 个组块（', n(C.targets), ' 个目标）上从头到尾跑通：全部 ', n(C.trials), ' 个试次都通过了读取与质量检查，没有一个被剔除。连续记录中，分析时间窗之外有 ', n(C.non_finite_values_outside_analysed_windows), ' 个非有限值，按记录原样保留，分析时间窗之内一个也没有。只有一个人时，任何分数都是这个人的分数，所以准确率暂缓。'],
+    eldLede: (): Part[] => ['从原始记录读起的流程，在一名被试的 ', n(C.blocks), ' 个组块（', n(C.targets), ' 个目标）上从头到尾跑通：全部 ', n(C.trials), ' 个试次都通过了读取与质量检查，没有一个被剔除。连续记录中，分析时间窗之外有 ', n(C.non_finite_values_outside_analysed_windows), ' 个非有限值，按记录原样保留，分析时间窗之内一个也没有。'],
     paperListLink: 'SingLEM 论文的表 I ↗',
     factLink: 'SingLEM 的“是否出现在预训练数据中”各行 →',
     holdLink: '它在暂缓登记表中的条目 →',
+    dammEyebrow: '状态案例 · Damm 手指运动想象 · 随机顺序提示',
+    dammH2: `一名被试的${word(D.runs_used, 'zh')}个随机顺序 run，从头到尾`,
+    dammLede: (): Part[] => ['在', word(D.classes, 'zh'), '个手指（', fingers.map(f => fingerZh[f]).join('、'), '）上共有 ', cn(D.delivered_cues), ' 个实际呈现的提示，每个留出的 run 有 ', cn(D.trials_per_held_out_run), ' 个均衡的试次。一个固定的流程（', said(D.pipeline).text, '）在一个 run 上训练、在另一个 run 上测试，两个方向各做一次；', word(damm.variants.length, 'zh'), '种变体与对照在评分之前就已固定，一次独立审计重建了全部 ', cn(damm.variant_directions_audited), ' 份报告。'],
+    filesH3: '文件里看到的',
+    variantsH3: '评分之前固定的变体与对照',
+    licenceStated: (lic: string): Part[] => ['许可：', lic, '，见 dataset_description.json。'],
+    nebulaEyebrow: '状态案例 · NeBULA · 外骨骼辅助下的伸手动作，EEG 与 EMG',
+    nebulaH2: `一名被试在${word(assistance.length, 'zh')}种辅助水平下的伸手动作`,
+    nebulaLede: (): Part[] => ['一名被试在', assistance.map(a => assistanceZh[a]).join('、').replace(/、([^、]+)$/, '与$1'), word(assistance.length, 'zh'), '种辅助水平下伸手够向', word(N.targets, 'zh'), '个目标：', cn(N.trials), ' 个实际进行的试次（', ...assistance.flatMap((a, i) => [i === 0 ? '' : '、', `${assistanceZh[a]}${a === 'free' ? '' : '辅助'} `, cn(N.trials_by_condition[a]), ' 个']), '），', cn(nebula.eeg.channels), ' 个 EEG 通道，采样率 ', cn(nebula.eeg.sampling_hz), ' Hz。EEG 各组用两个辅助水平的 run 训练、在第三个上测试（', cn(nebula.arms.eeg_fits), ' 次拟合），旁边配一个不输入任何信号的顺序诊断、一个提示前时间窗与一次标签打乱；EMG 与 EEG 加 EMG 各组（', cn(nebula.arms.emg_and_fusion_fits), ' 次拟合，不用预训练模型）在同样的试次上运行。一次独立审计重建了每一组。'],
+    armsRunH3: '已运行的各组',
+    eegArms: 'EEG 试点：',
+    emgArms: 'EMG 与 EEG 加 EMG：',
+    paperLicence: ['论文自己的许可（', '）', '。'],
     zucoEyebrow: '状态案例 · NEMAR 上的 ZuCo 2.0 · 没有分数',
     zucoH2: '一个转换后记录的时间问题',
     clearsH3: '具备以下条件后解除暂缓',
     zucoSourceLink: '来源与所述条款 ↓',
-    registerH2: '三个案例在开放登记册中的行',
+    registerH2: '各案例在开放登记册中的行',
     registerLede: '每个案例在开放登记册中都有一行，写明核验到了哪一步，以及还有哪些缺口。',
-    caseNames: { shin2022: 'Shin2022', eldbeta: 'eldBETA', zuco2: 'ZuCo 2.0' } as Record<string, string>,
+    caseNames: { shin2022: 'Shin2022', 'kim2025-beta-range': 'Kim beta 频段 SSVEP', mind2026: 'MIND', eldbeta: 'eldBETA', damm: 'Damm 手指运动想象',
+                 nebula: 'NeBULA', zuco2: 'ZuCo 2.0' } as Record<DqSection, string>,
     limitsH2: '方法与局限',
     methodH3: 'Shin2022：检验是怎样做的',
     method: (): Part[] => ['每次留出一名被试：共 ', n(shin.method.folds), ' 折，每折用 ', n(shin.method.training_participants_each_fold), ' 名被试拟合。时间窗是', dqSay(shin.method.window, 'zh'), '：', n(shin.method.window_samples), ' 个采样点，采样率 ', n(shin.scope.sampling_hz), ' Hz，来自一套干电极的 ', shin.scope.hardware, ' 头戴设备（', dqSay(shin.method.channel_names, 'zh'), '）。标签是每个 run 存储的指示目标（', shin.labels.state, '）；从不读取试次的结果。'],
+    kimMethodH3: 'Kim beta 频段：基线是怎样运行的',
+    kimMethod: (): [string, Part[]][] => [
+      ['算法', [said(K.method.algorithm).text, '；不训练、不调参，也不剔除任何试次。']],
+      ['通道', [cn(K.method.channels), ' 个（', K.method.channel_names.join('、'), '）；', said(K.method.reference).text, '。']],
+      ['时间窗', [said(K.method.window).text, '：', cn(K.method.window_samples), ' 个采样点，采样率 ', cn(K.method.sampling_hz), ' Hz。']],
+      ['滤波', [cn(K.method.band_hz[0]), '–', cn(K.method.band_hz[1]), ' Hz，', said(K.method.filter).text, '。']],
+      ['参考信号', [said(K.method.reference_signals).text, '。']],
+      ['指标', [said(KR.metric).text, '。']],
+    ],
+    mindMethodH3: 'MIND：流程是怎样运行的',
+    mindMethod: (): [string, Part[]][] => [
+      ['通道', [cn(M.processing.channels), ' 个 EEG 通道，采样率 ', cn(M.processing.sampling_hz), ' Hz；不使用辅助通道。']],
+      ['滤波', [said(M.processing.filter).text, '，', cn(M.processing.band_hz[0]), '–', cn(M.processing.band_hz[1]), ' Hz；重采样到 ', cn(M.processing.resampled_hz), ' Hz。']],
+      ['时间窗', ['每个存储的类别标记之后，', cn(M.processing.window_samples), ' 个采样点。']],
+      ['分类器', ['CSP 取 ', cn(M.processing.csp_components), ' 个成分，用 ', M.processing.csp_regularisation, ' 正则化，再', said(M.processing.classifier).text, '；只在训练 run 上拟合，不做任何搜索。']],
+      ['未做的处理', [said(M.processing.not_applied).text, '。']],
+      ['按位置查表（不读 EEG）', [said(M.processing.controls[0].text).text]],
+      ['多数类（不读 EEG）', [said(M.processing.controls[1].text).text]],
+    ],
     intervalH3: '区间',
-    interval: (): Part[] => ['每个区间对 ', n(shin.scope.participants), ' 名被试有放回地重抽样 ', n(shin.interval.resamples), ' 次，三个组共用同一套重抽样下标，百分位按线性插值读取。'],
+    interval: (): Part[] => ['Shin2022：每个区间对 ', n(shin.scope.participants), ' 名被试有放回地重抽样 ', n(shin.interval.resamples), ' 次，三个组共用同一套重抽样下标，百分位按线性插值读取。'],
+    kimInterval: (): Part[] => ['Kim beta 频段：区间对 ', cn(K.cohort.participants), ' 名被试有放回地重抽样 ', cn(K.interval.resamples), ' 次。'],
     notPubH3: '不发布的内容',
+    notPubDq: 'Shin2022、eldBETA 与 ZuCo 2.0：',
+    notPubDc: 'Kim beta 频段、MIND、Damm 与 NeBULA：',
     zucoSourceH3: 'ZuCo 2.0：来源与所述条款',
     zucoRecord: `${zuco.source.repository} 登录号 ${zuco.source.accession}，版本 ${zuco.source.version}，doi:${zuco.source.doi}。`,
     zucoLicence: `所述许可：${zuco.source.licence_as_stated}，见该版本的 dataset_description.json。尚未核实：`,
     relatedH2: '相关',
     related: [
       { text: '', href: '/data-use/#sources-data-quality', link: '每个数据源的许可、知情同意与伦理声明是怎样读取的 →', english: true },
+      { text: '', href: '/data-use/#sources-dataset-checks', link: 'Kim beta 频段、MIND、Damm 与 NeBULA 的许可与声明是怎样读取的 →', english: true },
       { text: '小规模试点研究，各有各的局限：', href: '/topics/pilot-studies/', link: topicCards.zh['pilot-studies'].question, english: false },
     ],
   },
@@ -231,6 +391,8 @@ const eldEthics = dqText(EC.ethics_approval.statement, locale), eldConsent = dqT
 const rows = dqRegisterRows;
 // MOABB's counts are named as findings on Shin2022's register row only while that row carries them and its page is built.
 const catalogOnRow = rows !== null && dqCatalogFinding;
+// A hold, named and linked: its item and state from the holds register, never its reason.
+const holdOf = (h: typeof eldHold) => h!;
 ---
 <TopicLayout
   locale={locale}
@@ -241,7 +403,7 @@ const catalogOnRow = rows !== null && dqCatalogFinding;
   dek={copy.dek}
   activeSlug="data-quality"
   answer={copy.answer}
-  dataFiles={[`/data/${DQ}`]}
+  dataFiles={[`/data/${DQ}`, `/data/${DC}`]}
 >
   <section class="topic-section" id={DQ_ANCHOR.shin} aria-labelledby="shin-heading" data-dq="shin2022">
     <div class="topic-heading"><div><p class="eyebrow">{copy.shinEyebrow}</p><h2 id="shin-heading">{copy.shinH2}</h2></div><p><Parts p={copy.shinLede()}/></p></div>
@@ -277,7 +439,7 @@ const catalogOnRow = rows !== null && dqCatalogFinding;
     <p class="roadmap-p" data-dq-note="catalog"><Parts p={copy.catalog()}/>{catalogOnRow && <span data-dq-part="catalog-register">{sp}{copy.catalogRegister[0]}<a href={registerRow(rows!.shin2022)}>{copy.catalogRegister[1]}</a>{copy.catalogRegister[2]}</span>}</p>
 
     <h3 class="roadmap-h3" id="shin2022-checks">{copy.checkedH3}</h3>
-    <ol class="rd-rules" data-dq-list="how-checked">{shin.how_checked.map(h => <li data-state={h.state}><strong>{copy.state[h.state]}</strong>{zh ? '：' : ': '}{dqSay(h.text, locale)}</li>)}</ol>
+    <ol class="rd-rules" data-dq-list="how-checked">{shin.how_checked.map(h => <li data-state={h.state}><strong>{copy.state[h.state]}</strong>{colon}{dqSay(h.text, locale)}</li>)}</ol>
 
     <h3 class="roadmap-h3" id="shin2022-holds">{copy.holdsH3}</h3>
     <ul class="rd-rules" data-dq-list="shin-holds">{shin.holds.map(h => <li>{dqSay(h, locale)}</li>)}</ul>
@@ -299,6 +461,135 @@ const catalogOnRow = rows !== null && dqCatalogFinding;
         <p><a href={SC.read_from} target="_blank" rel="noreferrer">{copy.paperLink}</a></p>
       </article>
     </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.kim} aria-labelledby="kim-heading" data-dq="kim2025-beta-range">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.kimEyebrow}</p><h2 id="kim-heading">{said(K.question).text}</h2></div><p data-dq-note="kim-lede"><Parts p={copy.kimLede()}/></p></div>
+
+    <h3 class="roadmap-h3" id="kim2025-beta-range-intake">{copy.intakeH3}</h3>
+    <p class="roadmap-p" data-dq-note="kim-intake">{said(K.intake.text).text}</p>
+
+    <h3 class="roadmap-h3" id="kim2025-beta-range-checks">{copy.checkedH3}</h3>
+    <ol class="rd-rules" data-dq-list="kim-how-checked">{K.how_checked.map((h: any) => <li data-state={h.state}><strong>{copy.state[h.state]}</strong>{colon}{said(h.text).text}</li>)}</ol>
+
+    <h3 class="roadmap-h3" id="kim2025-beta-range-caveats">{copy.caveatsH3}</h3>
+    <ul class="rd-rules" data-dq-list="kim-caveats">{K.caveats.map((x: any) => <li data-caveat={x.id}>{said(x.text).text}</li>)}</ul>
+    <p class="protocol-note" data-dq-hold={holdOf(kimHold).id}><strong>{holdOf(kimHold).item[locale]} · {holdOf(kimHold).state[locale]}{tc.period}</strong>{sp}<a href={hrefFor(`/releases/#hold-${holdOf(kimHold).id}`, locale)}>{copy.holdLink}</a></p>
+
+    <h3 class="roadmap-h3" id="kim2025-beta-range-source">{copy.sourceH3}</h3>
+    <div class="citation-list" data-dq-credit="kim2025-beta-range">
+      <article>
+        <h3 lang="en">{K.rights.name}</h3>
+        <p>{said(K.rights.task).text}{sp}{said(K.rights.version).text}{tc.period}</p>
+        <p lang="en" data-dq-attribution="kim2025-beta-range">{K.rights.attribution}</p>
+        <p>{said(K.rights.terms.paper_cited_version.note).text}</p>
+        <p><a href={K.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={K.rights.licenseUrl} target="_blank" rel="noreferrer">{K.rights.license}</a>{kimPage && <> · <a href={kimPage}>{copy.datasetPage}</a></>}</p>
+      </article>
+      <article data-dq-consent="kim2025-beta-range">
+        <h3>{copy.consentArticleH}</h3>
+        {[[copy.ethicsH, KC.ethics_approval.quote], [copy.consentH, KC.informed_consent.quote]].map(([h, q]) => { const s = said(q); return <p><strong>{h}</strong>{sp}“{s.text}”{s.original && <span class="note-original" lang="en">“{s.original}”</span>}</p>; })}
+        {(() => { const s = said(KC.informed_consent.data_sharing_quote); return <p>{copy.descriptorStates}{sp}“{s.text}”{s.original && <span class="note-original" lang="en">“{s.original}”</span>}</p>; })()}
+        <p>{said(KC.informed_consent.scope_note).text}</p>
+        <p><a href={KC.read_from} target="_blank" rel="noreferrer">{copy.descriptorLink}</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.mind} aria-labelledby="mind-heading" data-dq="mind2026">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.mindEyebrow}</p><h2 id="mind-heading">{said(M.question).text}</h2></div><p data-dq-note="mind-lede"><Parts p={copy.mindLede()}/></p></div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.mindRegion}>
+      <table data-dq-table="mind-primary">
+        <caption>{zh ? `${said(MP.statistic).text}。` : `${cap(said(MP.statistic).text)}.`}</caption>
+        <thead><tr>{copy.mindCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{MP.pairs.map((p: any) => <tr data-dq-pair={p.pair}>
+          <th scope="row">{p.pair}</th>
+          <td data-cell="csp_lda"><Fig f={cp(p.csp_lda)} cls="metric"/></td>
+          <td data-cell="ordinal_lookup"><Fig f={cp(p.ordinal_lookup)} cls="metric"/></td>
+          <td data-cell="majority"><Fig f={cp(p.majority)} cls="metric"/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-dq-note="mind-schedule">{said(M.schedule.text).text}</p>
+
+    <h3 class="roadmap-h3" id="mind2026-contrasts">{copy.contrastsH3}</h3>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.contrastsRegion}>
+      <table data-dq-table="mind-contrasts">
+        <caption>{said(M.resampling.text).text}</caption>
+        <thead><tr>{copy.contrastCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{M.contrasts.map((x: any) => <tr data-dq-contrast={`${x.pair}:${x.control}`}>
+          <th scope="row">{x.pair}</th>
+          <td data-cell="contrast">{mindContrastName(x)}</td>
+          <td data-cell="mean"><Fig f={dcFig(x.mean_difference, 'pp2')} cls="metric"/></td>
+          <td data-cell="range"><Fig f={dcFig(x.resampling_range[0], 'sgn2')}/>{copy.to}<Fig f={dcFig(x.resampling_range[1], 'pp2')}/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+
+    <h3 class="roadmap-h3" id="mind2026-secondary">{copy.secondaryH3}</h3>
+    <p class="roadmap-p" data-dq-note="mind-secondary"><Parts p={copy.secondaryLede()}/></p>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.secondaryRegion}>
+      <table data-dq-table="mind-secondary">
+        <thead><tr>{copy.mindCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{MS.pairs.map((p: any) => <tr data-dq-pair={p.pair}>
+          <th scope="row">{p.pair}</th>
+          <td data-cell="csp_lda"><Fig f={cp(p.csp_lda)} cls="metric"/></td>
+          <td data-cell="ordinal_lookup"><Fig f={cp(p.ordinal_lookup)} cls="metric"/></td>
+          <td data-cell="majority"><Fig f={cp(p.majority)} cls="metric"/></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+
+    <h3 class="roadmap-h3" id="mind2026-coverage">{copy.coverageH3}</h3>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.coverageRegion}>
+      <table data-dq-table="mind-coverage">
+        <thead><tr>{copy.coverageCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{M.coverage.map((s: any) => <tr data-dq-step={s.id} data-role={s.role}>
+          <th scope="row">{mindStepLabel[s.id][locale]}{s.role && <small>{copy.stepRole[s.role]}</small>}</th>
+          <td data-cell="runs"><Fig f={cn(s.count)} cls="metric"/></td>
+          <td data-cell="record-ids">{s.record_ids !== undefined ? <Fig f={cn(s.record_ids)}/> : '—'}</td>
+          <td data-cell="trials">{s.trials !== undefined ? <Fig f={cn(s.trials)}/> : '—'}</td>
+          <td data-cell="shows">{said(s.text).text}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+
+    <h3 class="roadmap-h3" id="mind2026-checks">{copy.checkedH3}</h3>
+    <ol class="rd-rules" data-dq-list="mind-how-checked">{M.how_checked.map((h: any) => <li data-state={h.state}><strong>{copy.state[h.state]}</strong>{colon}{said(h.text).text}</li>)}</ol>
+
+    <h3 class="roadmap-h3" id="mind2026-caveats">{copy.caveatsH3}</h3>
+    <ul class="rd-rules" data-dq-list="mind-caveats">{mindCaveats.map((x: any) => <li data-caveat={x.id}>{said(x.text).text}</li>)}</ul>
+
+    <h3 class="roadmap-h3" id="mind2026-source">{copy.sourceH3}</h3>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.licenceRegion}>
+      <table data-dq-table="mind-licences">
+        <caption>{copy.licenceH3}</caption>
+        <thead><tr>{copy.licenceCols.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{M.rights.terms.statements.map((s: any) => <tr data-dq-licence={s.source}>
+          <th scope="row">{mindSourceName[s.source][locale]}</th>
+          <td data-cell="licence" lang="en">{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.value}</a> : s.value}</td>
+          <td data-cell="how">{said(s.how_read).text}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-dq-note="mind-terms">{said(mindCaveat('terms')).text}</p>
+    <div class="citation-list" data-dq-credit="mind2026">
+      <article>
+        <h3 lang="en">{M.rights.name}</h3>
+        <p>{said(M.rights.task).text}{sp}{said(M.rights.version).text}{tc.period}</p>
+        <p lang="en" data-dq-attribution="mind2026">{M.rights.attribution}</p>
+        <p><a href={M.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a></p>
+      </article>
+      <article data-dq-consent="mind2026">
+        <h3>{copy.consentArticleH}</h3>
+        {[[copy.ethicsH, MC.ethics_approval.quote], [copy.consentH, MC.informed_consent.quote]].map(([h, q]) => { const s = said(q); return <p><strong>{h}</strong>{sp}“{s.text}”{s.original && <span class="note-original" lang="en">“{s.original}”</span>}</p>; })}
+        <p><strong>{copy.gapsH}</strong>{sp}{said(mindCaveat('ethics')).text}{sp}{said(MC.gaps[1].note).text}</p>
+        <p><a href={MC.read_from} target="_blank" rel="noreferrer">{copy.paperLink}</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.onePerson} aria-labelledby="one-person-heading" data-dq="one-person">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.onePersonEyebrow}</p><h2 id="one-person-heading">{copy.onePersonH2}</h2></div><p data-dq-note="one-person">{said(onePerson.sentence).text}</p></div>
   </section>
 
   <section class="topic-section" id={DQ_ANCHOR.eldbeta} aria-labelledby="eldbeta-heading" data-dq="eldbeta">
@@ -325,6 +616,64 @@ const catalogOnRow = rows !== null && dqCatalogFinding;
     </div>
   </section>
 
+  <section class="topic-section" id={DQ_ANCHOR.damm} aria-labelledby="damm-heading" data-dq="damm">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.dammEyebrow}</p><h2 id="damm-heading">{copy.dammH2}</h2></div><p data-dq-note="damm-lede"><Parts p={copy.dammLede()}/></p></div>
+    <h3 class="roadmap-h3" id="damm-files">{copy.filesH3}</h3>
+    <p class="roadmap-p" data-dq-note="damm-files">{said(damm.files.text).text}</p>
+    <h3 class="roadmap-h3" id="damm-variants">{copy.variantsH3}</h3>
+    <ul class="rd-rules" data-dq-list="damm-variants">{damm.variants.map((v: any) => <li data-variant={v.id}><strong>{dammRole[v.role][locale]}</strong>{colon}{said(v.name).text}</li>)}</ul>
+    <h3 class="roadmap-h3" id="damm-holds">{copy.holdsH3}</h3>
+    <ul class="rd-rules" data-dq-list="damm-holds">{dammHolds(locale).map(h => <li><Parts p={h}/></li>)}</ul>
+    <p class="protocol-note" data-dq-hold={holdOf(dammHold).id}><strong>{holdOf(dammHold).item[locale]} · {holdOf(dammHold).state[locale]}{tc.period}</strong>{sp}<a href={hrefFor(`/releases/#hold-${holdOf(dammHold).id}`, locale)}>{copy.holdLink}</a></p>
+    <h3 class="roadmap-h3" id="damm-source">{copy.sourceH3}</h3>
+    <div class="citation-list" data-dq-credit="damm">
+      <article>
+        <h3 lang="en">{damm.rights.name}</h3>
+        <p>{said(damm.rights.task).text}{sp}{said(damm.rights.version).text}{tc.period}</p>
+        <p lang="en" data-dq-attribution="damm">{damm.rights.attribution}</p>
+        <p><Parts p={copy.licenceStated(damm.rights.license)}/>{sp}{said(damm.rights.terms.license_file_note).text}</p>
+        <p><a href={damm.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a></p>
+      </article>
+      <article data-dq-consent="damm">
+        <h3>{copy.consentArticleH}</h3>
+        {(() => { const s = said(DCE.ethics_approval.quote); return <p><strong>{copy.ethicsH}</strong>{sp}“{s.text}”{s.original && <span class="note-original" lang="en">“{s.original}”</span>}</p>; })()}
+        {(() => { const s = said(DCE.gaps[0].note); return <p><strong>{copy.consentH}</strong>{sp}{s.text}{s.original && <span class="note-original" lang="en">{s.original}</span>}</p>; })()}
+        <p><a href={DCE.read_from} target="_blank" rel="noreferrer">{copy.descriptionLink}</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic-section" id={DQ_ANCHOR.nebula} aria-labelledby="nebula-heading" data-dq="nebula">
+    <div class="topic-heading"><div><p class="eyebrow">{copy.nebulaEyebrow}</p><h2 id="nebula-heading">{copy.nebulaH2}</h2></div><p data-dq-note="nebula-lede"><Parts p={copy.nebulaLede()}/></p></div>
+    <p class="roadmap-p" data-dq-note="nebula-counts">{said(N.participant_counts.text).text}{sp}{said(N.task_line).text}</p>
+    <h3 class="roadmap-h3" id="nebula-arms">{copy.armsRunH3}</h3>
+    <p class="roadmap-p"><strong>{copy.eegArms}</strong></p>
+    <ul class="rd-rules" data-dq-list="nebula-eeg-arms">{nebula.arms.eeg.map((a: any) => <li data-arm={a.id}>{said(a.name).text}</li>)}</ul>
+    <p class="roadmap-p"><strong>{copy.emgArms}</strong></p>
+    <ul class="rd-rules" data-dq-list="nebula-emg-arms">{nebula.arms.emg_and_fusion.map((a: any) => <li data-arm={a.id}>{said(a.name).text}</li>)}</ul>
+    <h3 class="roadmap-h3" id="nebula-files">{copy.filesH3}</h3>
+    <ul class="rd-rules" data-dq-list="nebula-files">{nebula.file_facts.text.map((x: string) => <li>{said(x).text}</li>)}</ul>
+    <h3 class="roadmap-h3" id="nebula-holds">{copy.holdsH3}</h3>
+    <ul class="rd-rules" data-dq-list="nebula-holds">{nebula.holds.map((x: string) => <li>{said(x).text}</li>)}</ul>
+    <p class="protocol-note" data-dq-hold={holdOf(nebulaHold).id}><strong>{holdOf(nebulaHold).item[locale]} · {holdOf(nebulaHold).state[locale]}{tc.period}</strong>{sp}<a href={hrefFor(`/releases/#hold-${holdOf(nebulaHold).id}`, locale)}>{copy.holdLink}</a></p>
+    <h3 class="roadmap-h3" id="nebula-source">{copy.sourceH3}</h3>
+    <div class="citation-list" data-dq-credit="nebula">
+      <article>
+        <h3 lang="en">{nebula.rights.name}</h3>
+        <p>{said(nebula.rights.task).text}{sp}{said(nebula.rights.version).text}{tc.period}</p>
+        <p lang="en" data-dq-attribution="nebula">{nebula.rights.attribution}</p>
+        <p data-dq-note="nebula-paper-licence">{copy.paperLicence[0]}<span lang="en">{nebula.rights.terms.paper_licence.value}</span>{copy.paperLicence[1]}{said(nebula.rights.terms.paper_licence.covers).text}{copy.paperLicence[2]}</p>
+        <p data-dq-note="nebula-zenodo">{said(nebula.rights.terms.zenodo_13627307.text).text}</p>
+        <p><a href={nebula.rights.source} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={nebula.rights.licenseUrl} target="_blank" rel="noreferrer">{nebula.rights.license}</a></p>
+      </article>
+      <article data-dq-consent="nebula">
+        <h3>{copy.consentArticleH}</h3>
+        {[[copy.ethicsH, NCE.ethics_approval.quote], [copy.consentH, NCE.informed_consent.quote]].map(([h, q]) => { const s = said(q); return <p><strong>{h}</strong>{sp}“{s.text}”{s.original && <span class="note-original" lang="en">“{s.original}”</span>}</p>; })}
+        <p><a href={NCE.read_from} target="_blank" rel="noreferrer">{copy.descriptorLink}</a></p>
+      </article>
+    </div>
+  </section>
+
   <section class="topic-section" id={DQ_ANCHOR.zuco} aria-labelledby="zuco-heading" data-dq="zuco2">
     <div class="topic-heading"><div><p class="eyebrow">{copy.zucoEyebrow}</p><h2 id="zuco-heading">{copy.zucoH2}</h2></div><p>{zucoCase[locale]}{sp}{dqSay(zuco.scope, locale)}</p></div>
     <h3 class="roadmap-h3" id="zuco2-clears">{copy.clearsH3}</h3>
@@ -335,23 +684,31 @@ const catalogOnRow = rows !== null && dqCatalogFinding;
 
   {rows && <section class="topic-section" id={DQ_ANCHOR.register} aria-labelledby="register-heading" data-dq="register">
     <div class="topic-heading"><div><h2 id="register-heading">{copy.registerH2}</h2></div><p>{copy.registerLede}</p></div>
-    <ul class="rd-rules" data-dq-list="register">{(Object.keys(rows) as (keyof typeof rows)[]).map(k => <li data-dq-row={rows[k]}><span lang="en">{copy.caseNames[k]}</span>{zh ? '：' : ': '}<a href={registerRow(rows[k])}>{rc.rowLink}</a></li>)}</ul>
+    <ul class="rd-rules" data-dq-list="register">{(Object.keys(rows) as DqSection[]).map(k => <li data-dq-row={rows[k]}><span lang={/[\u4e00-\u9fff]/.test(copy.caseNames[k]) ? undefined : 'en'}>{copy.caseNames[k]}</span>{colon}<a href={registerRow(rows[k])}>{rc.rowLink}</a></li>)}</ul>
   </section>}
 
   <section class="topic-section" id={DQ_ANCHOR.methods} aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <h3 class="roadmap-h3">{copy.methodH3}</h3>
     <p class="roadmap-p" data-dq-note="method"><Parts p={copy.method()}/></p>
+    <h3 class="roadmap-h3">{copy.kimMethodH3}</h3>
+    <ul class="rd-rules" data-dq-list="kim-method">{copy.kimMethod().map(([label, p]) => <li><strong>{label}</strong>{colon}<Parts p={p}/></li>)}</ul>
+    <h3 class="roadmap-h3">{copy.mindMethodH3}</h3>
+    <ul class="rd-rules" data-dq-list="mind-method">{copy.mindMethod().map(([label, p]) => <li><strong>{label}</strong>{colon}<Parts p={p}/></li>)}</ul>
     <h3 class="roadmap-h3">{copy.intervalH3}</h3>
     <p class="roadmap-p" data-dq-note="interval"><Parts p={copy.interval()}/></p>
+    <p class="roadmap-p" data-dq-note="kim-interval"><Parts p={copy.kimInterval()}/></p>
     <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <p class="roadmap-p"><strong>{copy.notPubDq}</strong></p>
     <ul class="rd-rules" data-dq-list="not-published">{dqNotPublishedShown(locale).map(x => <li>{x}</li>)}</ul>
+    <p class="roadmap-p"><strong>{copy.notPubDc}</strong></p>
+    <ul class="rd-rules" data-dq-list="dc-not-published">{dcNotPublishedShown(locale).map(x => <li>{x}</li>)}</ul>
     <h3 class="roadmap-h3" id={DQ_ANCHOR.zucoSource}>{copy.zucoSourceH3}</h3>
     <div data-dq-credit="zuco2">
       <p class="roadmap-p">{copy.zucoRecord}{sp}{copy.zucoLicence}{sp}{zuco.source.terms_unverified.map((x, i) => <>{i > 0 && (zh ? '；' : '; ')}{dqSay(x, locale)}</>)}{tc.period}{sp}<a href={zuco.source.url} target="_blank" rel="noreferrer">{copy.recordLink}</a></p>
       <p class="citation-note" lang="en">{zuco.source.citation}</p>
     </div>
-    <p class="citation-note">{tc.dataSource} <a href={`/data/${DQ}`} download>{DQ}</a> · {tc.schema} {dqSchema}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href={`/data/${DQ}`} download>{DQ}</a> · {tc.schema} {dqSchema} · <a href={`/data/${DC}`} download>{DC}</a> · {tc.schema} {dcSchema}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="related" aria-labelledby="related-heading">

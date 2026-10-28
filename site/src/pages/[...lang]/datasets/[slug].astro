@@ -14,6 +14,8 @@ import { topicPages } from '../../../data/topics';
 import { protocolLinkLabel } from '../../../data/protocols';
 import { creator } from '../../../data/structured';
 import { boasConditions, boasStatements, srText } from '../../../data/shared-encoder';
+import Fig from '../../../components/Fig.astro';
+import { DQ_PATH, dcFig, dqText, kim } from '../../../data/data-quality';
 
 // Every dataset page links its row in the open register (/datasets/register/#r-site-<slug>). The rows are read from the
 // bytes the site serves, by the name releases.ts gives the newest register file, and only when that file is served
@@ -82,6 +84,23 @@ const bingo = d.rightsNote === 'bingo' ? bingoRights() : null;
 const handwriting = d.rightsNote === 'handwriting' ? handwritingRights() : null;
 // A source that states no licence has none to link or to compute under.
 const noLicence = d.license === 'No licence stated';
+// Kim beta-range (owner decision D21, 2026-10-28): its facts and names, a pointer to its worked case on the data-quality
+// page, and its ethics and consent as the data descriptor states them, read from dataset-checks-update.json (data-quality.ts
+// holds them to the export's fields). The page links no method page. Its subtitle is its entity profile's summary; the
+// facts block below stands in for the profile's own (names and sources), so the names print once.
+const kimCase = d.slug === kim.id ? (() => {
+  const said = (en: string) => dqText(en, locale);
+  const KC = kim.consent_and_ethics;
+  if (kim.dataset_page !== path || kim.method_link !== false || d.groups.some(g => g.rows.some(r => r.methodSlug)))
+    throw new Error(`datasets/[slug]: ${path} is Kim beta-range's page, with no method link`);
+  return {
+    said, aliases: kim.aliases as string[], task: said(kim.rights.task), version: said(kim.rights.version), intake: said(kim.intake.text),
+    cohort: [kim.cohort.participants, kim.cohort.blocks, kim.cohort.trials].map((x: number) => dcFig(x, 'count')),
+    sources: [kim.rights.source, KC.read_from] as string[], question: said(kim.question).text, href: hrefFor(`${DQ_PATH}#${kim.section}`, locale),
+    ethics: said(KC.ethics_approval.quote), consent: said(KC.informed_consent.quote), sharing: said(KC.informed_consent.data_sharing_quote),
+    scope: said(KC.informed_consent.scope_note), cited: said(kim.rights.terms.paper_cited_version.note), readFrom: KC.read_from as string,
+  };
+})() : null;
 // A dataset that is not EEG names its own signal in its title (2026-10-12).
 const signal = d.signal ? tr(d.signal, locale) : undefined;
 const structured = {
@@ -107,14 +126,27 @@ const structured = {
   structured={structured}
   cite={{ files: figFiles, upstream: 'dataset' }}
 >
-  {profile && <section class="entity-profile" aria-label={c.whatItIs}>
+  {profile && !kimCase && <section class="entity-profile" aria-label={c.whatItIs}>
     {profile.aliases.length > 0 && <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{profile.aliases.join(' · ')}</span></p>}
     <p class="citation-note">{c.profileSource} {profile.facts_sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname}</a></>)}</p>
+  </section>}
+  {kimCase && <section class="entity-profile" aria-label={c.whatItIs} data-dataset-facts={d.slug}>
+    <p class="entity-aliases"><strong>{c.alsoKnownAs}</strong> <span lang="en">{kimCase.aliases.join(' · ')}</span></p>
+    <ul class="rd-rules" data-kim-facts="true">
+      <li>{kimCase.task.text}</li>
+      <li>{c.kimCohort[0]}<Fig f={kimCase.cohort[0]} cls="num"/>{c.kimCohort[1]}<Fig f={kimCase.cohort[1]} cls="num"/>{c.kimCohort[2]}<Fig f={kimCase.cohort[2]} cls="num"/>{c.kimCohort[3]}</li>
+      <li>{kimCase.intake.text}</li>
+      <li>{kimCase.version.text}{zh ? '。' : '.'}</li>
+    </ul>
+    <p class="citation-note">{c.profileSource} {kimCase.sources.map((u, i) => <>{i > 0 && ' · '}<a href={u} target="_blank" rel="noreferrer">{new URL(u).hostname}</a></>)}</p>
   </section>}
   <section class="topic-section" aria-labelledby="appears-heading">
     <h2 id="appears-heading">{c.appearsIn}</h2>
     <ul class="entity-links">{pages.map(p => <li><a href={hrefFor(p, locale)}>{pageLabel(p)}</a></li>)}</ul>
     {ssvepFollowUps && <p class="citation-note" id="ssvep-follow-ups">{ssvepFollowUps.lead}<a href={hrefFor('/topics/new-ssvep-frequencies/', locale)}>{ssvepFollowUps.question}</a></p>}
+    {/* A dataset's figure-free line to topic sections that read it without a group here (entities.ts `related`). */}
+    {d.related && <p class="citation-note" id="related-follow-ups">{tr(d.related.lead, locale)}{d.related.links.map((x, i) => <>{i > 0 && ' · '}<a href={hrefFor(x.href, locale)}>{tr(x.label, locale)}</a></>)}</p>}
+    {kimCase && <p class="citation-note" id="cca-baseline">{c.kimCase}{zh ? '' : ' '}<a href={kimCase.href}>{kimCase.question} →</a></p>}
   </section>
   <section class="topic-section" aria-labelledby="results-heading">
     <div class="topic-heading"><div><h2 id="results-heading">{c.results}</h2></div><p>{c.resultsLede}</p></div>
@@ -140,6 +172,15 @@ const structured = {
       <p>{c.bingoEthics}{zh ? '' : ' '}{tr(bingo.ethics, locale)}{zh && <span class="note-original" lang="en">{bingo.ethics.en}</span>}</p>
       <p>{c.bingoConsent}{zh ? '' : ' '}{tr(bingo.consent, locale)}{zh && <span class="note-original" lang="en">{bingo.consent.en}</span>}</p>
       <p>{c.bingoBasis}{zh ? '' : ' '}{c.bingoReadFrom}{zh ? '' : ' '}<a href={bingo.readFrom} target="_blank" rel="noreferrer" lang="en">{bingo.readFromTitle} ↗</a>{zh ? '。' : '.'} <a href="/data-use/#bingo-rights">{c.bingoDataUse}</a></p>
+    </article>}
+    {kimCase && <article data-rights-note={d.slug}>
+      <h3>{c.kimRightsH}</h3>
+      <p><strong>{c.kimEthics}</strong>{zh ? '' : ' '}“{kimCase.ethics.text}”{kimCase.ethics.original && <span class="note-original" lang="en">“{kimCase.ethics.original}”</span>}</p>
+      <p><strong>{c.kimConsent}</strong>{zh ? '' : ' '}“{kimCase.consent.text}”{kimCase.consent.original && <span class="note-original" lang="en">“{kimCase.consent.original}”</span>}</p>
+      <p>{c.kimAlsoStates}{zh ? '' : ' '}“{kimCase.sharing.text}”{kimCase.sharing.original && <span class="note-original" lang="en">“{kimCase.sharing.original}”</span>}</p>
+      <p>{kimCase.scope.text}</p>
+      <p>{kimCase.cited.text}</p>
+      <p><a href={kimCase.readFrom} target="_blank" rel="noreferrer">{c.kimDescriptor}</a></p>
     </article>}
     {handwriting && <article data-rights-note="handwriting">
       <h3>{c.handwritingRightsH}</h3>

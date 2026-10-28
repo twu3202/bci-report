@@ -1,37 +1,48 @@
 ---
 /**
  * What lets a decoder answer an SSVEP frequency it never trained on? (owner decision D1): route 3's follow-ups on
- * frequencies the trained part of a decoder never saw. Six follow-ups on route 3's BETA cohort, each testing one idea
- * (how the question is asked, the head, stimulus phase, the matching computation, a learned correction to CCA), and a
- * seventh that runs that correction unchanged on Wearable-102; card 8 holds the place of the cross-spectral round,
- * with no figures. Its own question in "Adapting models", right after questions-in-language, whose #unseen-frequency
- * links here with no figure.
+ * frequencies the trained part of a decoder never saw. Cards 1 to 7 are the 2026-10-20 release's
+ * (new-ssvep-frequencies-update.json, which keeps its bytes); cards 8 to 14 are the 2026-10-28 release's
+ * (ssvep-followups-update.json, owner decisions D14, D22, D23, D25 and D28), whose card 8 takes the place of the
+ * released status entry. Its own question in "Adapting models", right after questions-in-language, whose
+ * #unseen-frequency links here with no figure.
  *
- * The page is the shell (plan §2.1, package P-SS1): the short answer, the intro line that links the public thread
- * once (the commenter is not named), the endpoint strip, the cards 1–6 scope line given once, the name key, card 8,
- * #methods-and-limits and the credits. Cards 1–7 are the three components in src/components/ssvep/, each owning its
- * cards' <section>s (QueryCards 1–2, PhaseCards 3–4, CcaCards 5–7).
+ * The page is the shell (plan §2.1): the short answer (with D22's sentence), the intro line that links the public
+ * thread once (the commenter is not named), the endpoint strip, the scope lines (cards 1–6; cards 8–14, where "not
+ * external replication" is said once), the name key (both files' names; "joint CCA" an alias of the CCA scores),
+ * #methods-and-limits and the credits (FBCCA added). The cards are five components in src/components/ssvep/, each
+ * owning its cards' <section>s: QueryCards 1–2, PhaseCards 3–4, CcaCards 5–7, MechanismCards 8, 9 and 12,
+ * PracticalCards 10, 11, 13 and 14 (the last two interleaved so the cards run in order).
  *
- * Every figure is a leaf of new-ssvep-frequencies-update.json (src/data/new-ssvep-frequencies.ts), printed with
- * data-fig and re-read by scripts/checks/new-ssvep-frequencies.mjs; the cite block names this release only. The
- * sentences that summarise the export are checked against it below, and the page refuses to build if the numbers
- * stop supporting them. Copy rules (the plan, superseded where the reviews say so): the short answer as the adapter
- * binding review words its first sentence (no ranking word); no update date or version label; each caveat once,
- * beside its evidence; no figure of the commenter's own confidence anywhere; the bet only on card 4.
+ * Every figure is a leaf of one of the two files: cards 1–7 through src/data/new-ssvep-frequencies.ts (data-fig),
+ * cards 8–14 through src/data/ssvep-followups.ts (data-at, the field's path, and data-fig). scripts/checks/
+ * new-ssvep-frequencies.mjs re-reads the shell and cards 1–7, scripts/checks/ssvep-followups.mjs cards 8–14; the cite
+ * block names both releases. The sentences that summarise the exports are checked against them below, and the page
+ * refuses to build if the numbers stop supporting them. Copy rules: no ranking word; no update date or version label;
+ * each caveat once, beside its evidence; no figure of the commenter's own confidence anywhere; the bet only on card 4.
  */
 import TopicLayout from '../../../components/TopicLayout.astro';
 import QueryCards from '../../../components/ssvep/QueryCards.astro';
 import PhaseCards from '../../../components/ssvep/PhaseCards.astro';
 import CcaCards from '../../../components/ssvep/CcaCards.astro';
+import MechanismCards from '../../../components/ssvep/MechanismCards.astro';
+import PracticalCards from '../../../components/ssvep/PracticalCards.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import ql from '../../../data/questions-in-language-update.json';
 import mvp from '../../../data/mvp.json';
+import { ssvepFollowUps } from '../../../data/questions-in-language';
 import {
   SSVEP, SSVEP_PATH, SSVEP_DATA, ssvepRelease, need, pct2, pp2, sgn2, count, ans, formatSsvep, figAttr,
   study, level, contrast, cardChrome, cardOfStudy, cardsOfName, codesOf, endpoints, endpoint, cohort, wearable, thread,
   rights, nameKey, siteName, notPublished, intervalText, notRunOf, STUDY_IDS,
   type Part, type SsvepFig, type CardNumber, type StudyId, type Endpoint,
 } from '../../../data/new-ssvep-frequencies';
+import {
+  SC, SC_PATH, SC_DATA, scRelease, need as scNeed, level as scLevel, contrast as scContrast, ans as scAns, toHtml, figAt as scFig,
+  NEW_CARDS, ALL_CARDS, anchorOf, newCardsOf, scNameKey, scName, codesNote, aliasWords, cardsOfName as scCardsOfName, intervalText as scIntervalText,
+  STUDY_LABEL, scChrome, notRunOf as scNotRunOf, disclosures, disclosureBits, scNotPublished, notPublishedWords, RELEASED_REPLACED, fbcca,
+  scRights, betaPeople, wearPeople, said, bonferroni, marginTest, cardOfStudy as scCardOfStudy, type NewCard, type Bit, type ScStudy,
+} from '../../../data/ssvep-followups';
 
 export const getStaticPaths = localeParams;
 const locale = localeOf(Astro.params.lang);
@@ -116,8 +127,10 @@ need(study('ref2').limitations_keys.includes('compatibility_reader_recovery') &&
   && cardOfStudy('ref2') === 2 && cardOfStudy('softmax') === 2, 'the two engineering disclosures, both card 2’s');
 need(['ref', 'ref2', 'cca_diagnostics', 'cca_adapter'].every(id => study(id as StudyId).limitations_keys.includes('unadjusted_intervals'))
   && study('phase_jitter').intervals?.secondary_intervals === 'Descriptive; unadjusted for multiplicity.'
-  && study('phase_ramp').multiplicity === 'Six primary and seven secondary paired contrasts; no multiplicity correction.',
-  'no interval is adjusted for multiple comparisons');
+  && study('phase_ramp').multiplicity === 'Six primary and seven secondary paired contrasts; no multiplicity correction.'
+  && SC_DATA.interval_adjustment.other_intervals_adjusted === false && SC_DATA.interval_adjustment.adjusted.map((a: { card: number }) => a.card).join() === '12,13'
+  && bonferroni.applies_to === 'the primary family' && marginTest.applies_to === 'the prespecified margin test of the primary contrast',
+  'card 12’s primary family is Bonferroni-adjusted and card 13’s margin test uses a 90% interval; no other interval is adjusted');
 need(STUDY_IDS.every(id => study(id).interval_method.level === 0.95), 'every interval is a 95% interval');
 const beta = rights.datasets.beta, wear = rights.datasets.wearable_102, corr = rights.corrigendum, cbm = rights.cbramod;
 need(beta.license === 'CC BY 4.0' && /Liu et al\./.test(beta.citation) && /\(2020\)/.test(beta.citation) && wear.license === 'CC BY 4.0'
@@ -129,9 +142,10 @@ const cbmRecord = mvp.models.find((m: { name: string }) => m.name === 'CBraMod')
 need(cbm.method_page === '/methods/cbramod/' && cbmRecord?.license === cbm.license && cbmRecord?.url === cbm.repository && cbm.cards.join() === '1',
   'CBraMod’s licence as the method record states it');
 need(/no weights are distributed/.test(SSVEP_DATA.release_record.rights), 'no CBraMod weights are distributed');
-// Card 8: the status card names no figure (its English and Chinese below carry no digit).
-need(cardChrome(8, locale).statusOnly && notPublished.some(x => /^The cross-spectral round: in progress at the freeze;/.test(x)),
-  'the cross-spectral round is in progress and ships as its own release');
+// Card 8: the released file's status entry, which ssvep-followups-update.json replaces with results (D28).
+need(cardChrome(8, locale).statusOnly && notPublished.some(x => /^The cross-spectral round: in progress at the freeze;/.test(x))
+  && SC_DATA.placement.cards[0].supersedes?.entry === 'status_only' && scChrome(8, locale).title === cardChrome(8, locale).title,
+  'card 8 keeps its place and title, and carries the cross-spectral round’s results');
 
 // --- English the Chinese page translates, keyed to the export so a changed export fails the build. ----------
 const NOT_PUBLISHED: Record<string, { en: string; zh: string }> = {
@@ -155,6 +169,10 @@ const NOT_PUBLISHED: Record<string, { en: string; zh: string }> = {
   },
 };
 for (const x of notPublished) need(x in NOT_PUBLISHED, `words for the not-published item "${x.slice(0, 60)}…"`);
+// The released list as it still applies: without the two items ssvep-followups-update.json replaces (card 8's status
+// entry; measured compute, narrowed now that card 11 prints CPU component timings, D25) or repeats word for word.
+const releasedNotPub = notPublished.filter(x => !(x in RELEASED_REPLACED) && !scNotPublished.includes(x));
+need(releasedNotPub.length === notPublished.length - 3, 'the released list without card 8’s status, measured compute and the repeated name item');
 const CONDITIONS_ZH: Record<string, string> = {
   'Attribution required. Participant consent described use for non-commercial scientific research, a narrower operational boundary than the copyright license; minors required parental consent.':
     '须署名。被试知情同意所描述的用途是非商业科学研究，这一使用边界比版权许可更窄；未成年被试须征得监护人同意。',
@@ -175,9 +193,26 @@ const fGainLo = sgn2(gain.interval[0]), fGainHi = sgn2(gain.interval[1]), fPeopl
 const fDry = pp2(dry.estimate), fDryLo = sgn2(dry.interval[0]), fDryHi = sgn2(dry.interval[1]);
 const fWet = pp2(wet.estimate), fWetLo = sgn2(wet.interval[0]), fWetHi = sgn2(wet.interval[1]);
 need(dry.interval[0] < 0 && dry.interval[1] > 0 && wet.interval[0] < 0 && wet.interval[1] > 0, 'both Wearable-102 intervals span zero');
+// D22: untrained filter-bank CCA against CCA on the same held-out task, and the harmonic sum against the learned eigenvalue head.
+const fbL = scLevel('practical_settings', 'w500-c8/FBCCA-M3-N7-H5/u8'), fbC = scLevel('practical_settings', 'w500-c8/CCA-RAW-H3/u8');
+const fbG = scContrast('practical_settings', 'w500-c8/FBCCA-M3-N7-H5 minus w500-c8/CCA-RAW-H3/u8');
+const eigS = scContrast('coherence_eigen', 'EIG-RAW minus RAW-HARM-SUM/u8');
+need(fbG.lo.raw > 0 && eigS.lo.raw < 0 && eigS.hi.raw > 0 && fbC.est.raw === ccaAlone.estimate && SC_DATA.studies.practical_settings.design.fbcca.trained_head === false
+  && SC_DATA.studies.practical_settings.levels['w500-c8/FBCCA-M3-N7-H5/u8'].seeds === 'no training'
+  && SC_DATA.studies.coherence_eigen.levels['RAW-HARM-SUM/u8'].seeds === 'no training' && SC_DATA.studies.coherence_eigen.levels['EIG-RAW/u8'].seeds === 'deterministic fit',
+  'D22: untrained filter-bank CCA above CCA on the same task; the learned eigenvalue head and the untrained harmonic sum unresolved');
+// The dek counts the cards of both files: those on BETA's cohort, those that reach Wearable-102, and the one only there
+// (card 7). The same counts as the topic card and the #unseen-frequency line (questions-in-language.ts), so the page and
+// the card never disagree.
+const betaCards = [...cohort.cards, ...newCardsOf('u8')], wearCards = [...wearable.cards, ...newCardsOf('wearable_12')];
+const nCards = ALL_CARDS.length, nBeta = betaCards.length, nWear = wearCards.length, nWearOnly = wearCards.filter(n => !betaCards.includes(n)).length;
+need(nCards === 14 && nBeta === 13 && nWear === 5 && nWearOnly === 1 && wearable.cards.join() === '7'
+  && nCards === ssvepFollowUps.total && nBeta === ssvepFollowUps.beta && nWear === ssvepFollowUps.wearable && nWearOnly === ssvepFollowUps.wearableOnly,
+  'fourteen cards: thirteen on BETA, five on Wearable-102, one of them only there, as the topic card counts them');
+const capFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // --- The chrome around the cards. ------------------------------------------------------------------------------
-const cardLinks = (ns: number[]): { href: string; text: string }[] => ns.map(n => ({ href: `#${cardChrome(n as CardNumber, locale).anchor}`, text: String(n) }));
+const cardLinks = (ns: number[]): { href: string; text: string }[] => ns.map(n => ({ href: `#${anchorOf(n)}`, text: String(n) }));
 const protocolName: Record<string, Record<'en' | 'zh', string>> = {
   '/protocols/beta-8ch/': { en: 'BETA, eight channels', zh: 'BETA，八个通道' },
   '/protocols/beta-4ch/': { en: 'BETA, four channels', zh: 'BETA，四个通道' },
@@ -198,9 +233,9 @@ const ENDPOINT_COPY: Record<Endpoint['id'], Record<'en' | 'zh', { task: string; 
 const copy = {
   en: {
     description: `On BETA’s held-out frequencies, CCA with a small learned correction reached ${F(fAdapted)} against ${F(fCca)} for CCA alone; run unchanged on Wearable-102, the same models changed CCA’s score by ${F(fDry)} dry and ${F(fWet)} wet. Heads that read reference spectra or stimulus phase stayed far below CCA.`,
-    answer: `On BETA’s held-out frequencies, temporal CCA with a small learned correction reached ${ans(fAdapted)} against ${ans(fCca)} for CCA alone, choosing among ${ans(fK)} frequencies (${ans(fGain)}, ${ans(fGainLo)} to ${ans(fGainHi)}; ${ans(fPeople)} people). Run unchanged on Wearable-102, the same models changed CCA’s score by ${ans(fDry)} on dry electrodes (${ans(fDryLo)} to ${ans(fDryHi)}) and ${ans(fWet)} on wet (${ans(fWetLo)} to ${ans(fWetHi)}). Learned heads that read reference spectra or stimulus phase stayed far below CCA.`,
+    answer: `On BETA’s held-out frequencies, temporal CCA with a small learned correction reached ${ans(fAdapted)} against ${ans(fCca)} for CCA alone, choosing among ${ans(fK)} frequencies (${ans(fGain)}, ${ans(fGainLo)} to ${ans(fGainHi)}; ${ans(fPeople)} people). Run unchanged on Wearable-102, the same models changed CCA’s score by ${ans(fDry)} on dry electrodes (${ans(fDryLo)} to ${ans(fDryHi)}) and ${ans(fWet)} on wet (${ans(fWetLo)} to ${ans(fWetHi)}). Learned heads that read reference spectra or stimulus phase stayed far below CCA. On the same held-out task, filter-bank CCA, which needs no training, reached ${scAns(fbL.est)} against ${scAns(fbC.est)} for CCA (${scAns(fbG.est)}, ${scAns(fbG.lo)} to ${scAns(fbG.hi)}), and the untrained harmonic sum came out nearly level with the learned eigenvalue head (the head minus the sum: ${scAns(eigS.est)}, ${scAns(eigS.lo)} to ${scAns(eigS.hi)}).`,
     eyebrow: 'Route 3 follow-ups · SSVEP frequencies the decoder never trained on',
-    dek: 'Six follow-ups on route 3’s BETA cohort each test one idea — how the question is asked, the head, stimulus phase, the matching computation and a learned correction to CCA — and a seventh runs that correction unchanged on Wearable-102.',
+    dek: `${capFirst(said(nCards, 'en'))} follow-ups to route 3 each test one idea: how the question is asked, the head, stimulus phase, the matching computation, learned corrections to CCA, cross-spectral and eigenvalue readouts, pooling CCA’s per-harmonic statistics, filter-bank CCA with shorter windows and fewer electrodes, and weights on the harmonics. ${capFirst(said(nBeta, 'en'))} run on its BETA cohort and ${said(nWear, 'en')} on Wearable-102, ${said(nWearOnly, 'en')} of them only there.`,
     setupEyebrow: 'Tasks, cohort and names',
     setupH2: 'How the follow-ups are set up',
     intro: ['These follow-ups answer questions from ', 'a reader’s comments on Hugging Face', '.'],
@@ -216,10 +251,14 @@ const copy = {
       [' already studied. “Unseen” means unseen by the trained part of the decoder.'],
     ],
     scopeLink: 'route 3',
+    scope8: (): Bit[] => [`Cards ${NEW_CARDS[0]} to ${NEW_CARDS.at(-1)}: the same BETA cohort, `, scFig(['studies', 'xspec', 'design', 'dataset', 'people'], 'count'),
+      ` people, and on cards ${newCardsOf('wearable_12').slice(0, -1).join(', ')} and ${newCardsOf('wearable_12').at(-1)} Wearable-102’s `,
+      scFig(['studies', 'harmonic_pooling_wearable', 'design', 'dataset', 'people'], 'count'),
+      ' people, dry and wet. They are repeated analyses of data these pages already studied, not external replication. Each card names its windows, set-ups and interval method.'],
+    namesSummary: 'The names this page uses, their export codes and the cards that use them',
     namesRegion: 'The names this page uses and the export codes behind them, scrolls horizontally',
     namesCaption: 'The names this page uses, with the codes the data file uses for them.',
     colName: 'Name on this page', colCodes: 'Export code', colUsed: 'Cards',
-    card8: 'Next in the thread: one set of learned weights scores each candidate’s channel-by-channel matrices at the fundamental and two harmonics, with no per-frequency parameters: fixed learned linear readouts of cross-spectral features, with prescribed trial-dependent normalization or whitening. The design is frozen and the run is in progress; its results join this page after review.',
     limitsH2: 'Methods and limits',
     defsH3: 'Definitions',
     defs: [
@@ -234,14 +273,22 @@ const copy = {
     ] as [string, string][],
     intervalsH3: 'Intervals, card by card',
     intervalCards: (ns: number[]) => ns.length > 1 ? `Cards ${ns[0]} and ${ns[1]}` : `Card ${ns[0]}`,
-    intervalsNote: 'No interval is adjusted for multiple comparisons. Differences are paired and computed before rounding, so a printed difference can differ in its last digit from the difference of the printed levels.',
-    disclosuresH3: 'Two engineering disclosures',
+    intervalsNote: (): Bit[] => [`Card ${bonferroni.card}’s primary family uses Bonferroni-adjusted `, scFig(['interval_adjustment', 'adjusted', 0, 'level'], 'pct2'),
+      ` intervals over ${said(bonferroni.comparisons, 'en')} comparisons, and card ${marginTest.card}’s equivalence test a `, scFig(['interval_adjustment', 'adjusted', 1, 'level'], 'pct0'),
+      ' interval; no other interval is adjusted. Differences are paired and computed before rounding, so a printed difference can differ in its last digit from the difference of the printed levels.'],
+    disclosuresH3: 'Engineering disclosures',
     disclosures: 'Card 2 scored the earlier question-number and numeric-code runs through a reviewed compatibility reader, because those files lacked a field listing their questions. The softmax run’s pre-freeze guard was changed to hash file contents. Neither change touched training, predictions or results.',
+    disclosure8: 'Card 8, before scoring: ', disclosure8Tail: '. Neither changed the scientific protocol or used supervised accuracy.',
+    disclosure9: 'Card 9, before execution: ', disclosure9Tail: '; no real input had been processed before the edge correction.',
+    notPubReleased: 'Cards 1 to 7 (new-ssvep-frequencies-update.json)', notPubNew: 'Cards 8 to 14 (ssvep-followups-update.json)',
     notRunH3: 'Not run',
     runIn: (n: number) => ` (run in card ${n})`,
     notPubH3: 'Not published here',
     creditsH3: 'Credits, licences and consent',
-    betaUse: 'Cards 1 to 6, and the source of the models card 7 runs on Wearable-102.',
+    betaUse: `Cards 1 to 6 and ${NEW_CARDS[0]} to ${NEW_CARDS.at(-1)}, and the source of the models card 7 runs on Wearable-102.`,
+    wearUse: `Cards ${[...wearable.cards, ...newCardsOf('wearable_12')].slice(0, -1).join(', ')} and ${newCardsOf('wearable_12').at(-1)}.`,
+    fbccaUse: `Cards ${fbcca.cards.join(' and ')}: ${fbcca.used_for}. No code is distributed.`,
+    fbccaPage: 'FBCCA’s page', paperLink: 'Paper ↗',
     corrName: 'BETA authors’ corrigendum (Description.pdf)',
     corrUse: (rev: string): Part[] => ['The stimulus phases of the reference with stimulus phase (cards 2 and 3), converted to the cosine convention with zero latency. Read from the Hugging Face mirror Bingchuan/BETA (revision ', rev, ').'],
     corrLink: 'Description.pdf ↗',
@@ -259,9 +306,9 @@ const copy = {
   },
   zh: {
     description: `在 BETA 的留出频率上，加一个小的学习修正的 CCA 达到 ${F(fAdapted)}，CCA 单独为 ${F(fCca)}；同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${F(fDry)}、湿电极 ${F(fWet)}。读参考谱或刺激相位的分类头远低于 CCA。`,
-    answer: `在 BETA 的留出频率上，时域 CCA 加一个小的学习修正达到 ${ans(fAdapted)}，CCA 单独为 ${ans(fCca)}，两者都在 ${ans(fK)} 个频率中选择（${ans(fGain)}，${ans(fGainLo)} 至 ${ans(fGainHi)}；${ans(fPeople)} 名被试；pp 即百分点）。同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${ans(fDry)}（${ans(fDryLo)} 至 ${ans(fDryHi)}）、湿电极 ${ans(fWet)}（${ans(fWetLo)} 至 ${ans(fWetHi)}）。读参考谱或刺激相位的学习型分类头远低于 CCA。`,
+    answer: `在 BETA 的留出频率上，时域 CCA 加一个小的学习修正达到 ${ans(fAdapted)}，CCA 单独为 ${ans(fCca)}，两者都在 ${ans(fK)} 个频率中选择（${ans(fGain)}，${ans(fGainLo)} 至 ${ans(fGainHi)}；${ans(fPeople)} 名被试；pp 即百分点）。同一批模型原样用于 Wearable-102，相对 CCA 的变化为干电极 ${ans(fDry)}（${ans(fDryLo)} 至 ${ans(fDryHi)}）、湿电极 ${ans(fWet)}（${ans(fWetLo)} 至 ${ans(fWetHi)}）。读参考谱或刺激相位的学习型分类头远低于 CCA。在同一留出任务上，不需要训练的滤波器组 CCA 达到 ${scAns(fbL.est)}，CCA 为 ${scAns(fbC.est)}（${scAns(fbG.est)}，${scAns(fbG.lo)} 至 ${scAns(fbG.hi)}）；不需要训练的谐波求和与学习得到的特征值分类头几乎持平（分类头减去求和：${scAns(eigS.est)}，${scAns(eigS.lo)} 至 ${scAns(eigS.hi)}）。`,
     eyebrow: '第三条路线 · 后续检验 · 解码器没训练过的 SSVEP 频率',
-    dek: '在第三条路线的 BETA 队列上，六项后续检验各检验一个想法——提问方式、分类头、刺激相位、匹配计算，以及对 CCA 的学习修正；第七项把这个修正原样用于 Wearable-102。',
+    dek: `第三条路线的${said(nCards, 'zh')}项后续检验各检验一个想法：提问方式、分类头、刺激相位、匹配计算、对 CCA 的学习修正、互谱与特征值读出、汇总 CCA 的逐谐波统计量、更短时间窗与更少电极下的滤波器组 CCA，以及谐波的权重。其中${said(nBeta, 'zh')}项在它的 BETA 队列上运行，${said(nWear, 'zh')}项在 Wearable-102 上运行，有${said(nWearOnly, 'zh')}项只在 Wearable-102 上运行。`,
     setupEyebrow: '任务、队列与名称',
     setupH2: '这些后续检验怎样设置',
     intro: ['这些后续检验回答的是一位读者在 ', 'Hugging Face 帖子下的评论', '中提出的问题。'],
@@ -277,10 +324,13 @@ const copy = {
       ['已经研究过的队列。“没见过”指解码器中经过训练的部分没有见过。'],
     ],
     scopeLink: '第三条路线',
+    scope8: (): Bit[] => [`卡片 ${NEW_CARDS[0]} 至 ${NEW_CARDS.at(-1)}：同一个 BETA 队列，`, scFig(['studies', 'xspec', 'design', 'dataset', 'people'], 'count'),
+      ` 名被试；卡片 ${newCardsOf('wearable_12').join('、')} 还用到 Wearable-102 的 `, scFig(['studies', 'harmonic_pooling_wearable', 'design', 'dataset', 'people'], 'count'),
+      ' 名被试，干电极与湿电极。它们是对本页已经研究过的数据所做的重复分析，不是外部重复验证。每张卡片写明各自的时间窗、设置与区间方法。'],
+    namesSummary: '本页使用的名称、对应的导出代码与使用它们的卡片',
     namesRegion: '本页使用的名称及其导出代码，可横向滚动',
     namesCaption: '本页使用的名称，以及数据文件中对应的代码。',
     colName: '本页名称', colCodes: '导出代码', colUsed: '卡片',
-    card8: '讨论串中的下一项：用一组共享的学习权重给每个候选频率在基频及两个谐波上的通道×通道矩阵打分，不设逐频率参数，即在互谱特征上固定的学习线性读出，并按规定做逐试次归一化或白化。设计已冻结，正在运行；结果经审核后加入本页。',
     limitsH2: '方法与局限',
     defsH3: '定义',
     defs: [
@@ -295,14 +345,22 @@ const copy = {
     ] as [string, string][],
     intervalsH3: '各卡片的区间',
     intervalCards: (ns: number[]) => ns.length > 1 ? `卡片 ${ns[0]} 与 ${ns[1]}` : `卡片 ${ns[0]}`,
-    intervalsNote: '没有任何区间做多重比较校正。差值为配对差，在舍入前计算，因此印出的差值可能与印出水平之差在最后一位上不同。',
-    disclosuresH3: '两项工程说明',
+    intervalsNote: (): Bit[] => [`卡片 ${bonferroni.card} 的主要比较族在${said(bonferroni.comparisons, 'zh')}个比较上使用 Bonferroni 校正的 `, scFig(['interval_adjustment', 'adjusted', 0, 'level'], 'pct2'),
+      ` 区间，卡片 ${marginTest.card} 的等效检验使用 `, scFig(['interval_adjustment', 'adjusted', 1, 'level'], 'pct0'),
+      ' 区间；其余区间都没有校正。差值为配对差，在舍入前计算，因此印出的差值可能与印出水平之差在最后一位上不同。'],
+    disclosuresH3: '工程说明',
     disclosures: '卡片 2 通过一个经过审查的兼容读取器，为此前的题号与数值编码运行评分，因为那些文件缺少列出其问题的字段。softmax 运行的冻结前检查改为对文件内容计算哈希。两项改动都没有涉及训练、预测或结果。',
+    disclosure8: '卡片 8，评分之前：', disclosure8Tail: '。两项都没有改变科学方案，也没有用到有监督的准确率。',
+    disclosure9: '卡片 9，执行之前：', disclosure9Tail: '；边界更正之前没有处理过任何真实输入。',
+    notPubReleased: '卡片 1 至 7（new-ssvep-frequencies-update.json）', notPubNew: '卡片 8 至 14（ssvep-followups-update.json）',
     notRunH3: '没有运行的部分',
     runIn: (n: number) => `（卡片 ${n} 中已运行）`,
     notPubH3: '这里不发布的内容',
     creditsH3: '署名、许可与知情同意',
-    betaUse: '卡片 1 至 6，以及卡片 7 在 Wearable-102 上运行的模型的来源。',
+    betaUse: `卡片 1 至 6 与 ${NEW_CARDS[0]} 至 ${NEW_CARDS.at(-1)}，以及卡片 7 在 Wearable-102 上运行的模型的来源。`,
+    wearUse: `卡片 ${[...wearable.cards, ...newCardsOf('wearable_12')].join('、')}。`,
+    fbccaUse: `卡片 ${fbcca.cards.join(' 与 ')}：${SC_DATA.studies.practical_settings.design.fbcca.description.zh}。不分发任何代码。`,
+    fbccaPage: 'FBCCA 的页面', paperLink: '论文 ↗',
     corrName: 'BETA 作者的更正说明（Description.pdf）',
     corrUse: (rev: string): Part[] => ['带刺激相位的参考谱（卡片 2 与 3）所用的刺激相位，换算为余弦约定、零潜伏期。读自 Hugging Face 镜像 Bingchuan/BETA（固定版本 ', rev, '）。'],
     corrLink: 'Description.pdf ↗',
@@ -323,19 +381,36 @@ const copy = {
 // Chinese for the export's licence string, as the model directory prints it.
 const CBRAMOD_LICENCE_ZH: Record<string, string> = { 'Code: MIT · Weights: Apache-2.0 (official model card)': '代码：MIT · 权重：Apache-2.0（官方模型卡）' };
 need(cbm.license in CBRAMOD_LICENCE_ZH, 'Chinese for CBraMod’s licence string');
-// Card 8 carries no digit in either language; the thread link carries no figure.
-need(!/\d/.test(copy.card8) && !/\d/.test(copy.intro.join('')), 'card 8 and the intro line print no figure');
+// The thread link carries no figure.
+need(!/\d/.test(copy.intro.join('')), 'the intro line prints no figure');
 
 // The endpoint strip, the scope line and the name key.
 const stripRows = endpoints.map(e => ({
   e, words: ENDPOINT_COPY[e.id][locale],
   candidates: e.candidates === null ? null : count(e.candidates),
   chance: e.chance === null ? null : pct2(e.chance),
-  links: e.id === 'core_40' ? (e.pages ?? []).map(p => ({ href: hrefFor(p, locale), text: protocolName[p][locale] })) : cardLinks(e.cards),
+  links: e.id === 'core_40' ? (e.pages ?? []).map(p => ({ href: hrefFor(p, locale), text: protocolName[p][locale] })) : cardLinks([...e.cards, ...newCardsOf(e.id)]),
 }));
+need(newCardsOf('u8').join() === '8,9,10,11,12,13,14' && newCardsOf('seen_ba').join() === '8,9,10,11,13,14' && newCardsOf('wearable_12').join() === '10,12,13,14',
+  'the strip: held-out on cards 8–14, seen on 8–11, 13 and 14, Wearable-102 on 10 and 12–14');
 const [scopeBefore, scopeLink, scopeAfter] = copy.scope(copy.scopeLink);
-const keyRows = nameKey.filter(n => n.in_page_key).map(n => ({ n, name: siteName(n.site_name, locale), ...codesOf(n, locale), used: cardLinks(cardsOfName(n)) }));
-need(keyRows.length === 21, 'the name key’s 21 names');
+// The name key: the released file's in-page names, each joined by the new file's codes and cards where the new file reuses
+// it ("released"), then the new file's own names ("new"); names that only one card uses ("card") stay on that card.
+const keyRows = [
+  ...nameKey.filter(n => n.in_page_key).map(n => {
+    const more = scNameKey.find(x => x.key === 'released' && x.site_name === n.site_name), base = codesOf(n, locale);
+    return { site: n.site_name, name: siteName(n.site_name, locale), codes: [...new Set([...base.codes, ...(more ? more.codes.map(c => c.code) : [])])],
+      notes: [base.note, more ? codesNote(more, locale) : undefined].filter(Boolean) as string[],
+      used: cardLinks([...cardsOfName(n), ...(more ? scCardsOfName(more) : [])]) };
+  }),
+  ...scNameKey.filter(x => x.key === 'new').map(x => ({ site: x.site_name, name: scName(x.site_name, locale), codes: [...new Set(x.codes.map(c => c.code))],
+    notes: [aliasWords(x, locale), codesNote(x, locale)].filter(Boolean) as string[], used: cardLinks(scCardsOfName(x)) })),
+];
+const releasedOffKey = scNameKey.filter(x => x.key === 'released' && !nameKey.some(n => n.in_page_key && n.site_name === x.site_name));
+need(releasedOffKey.map(x => x.site_name).join() === 'matched CCA' && !nameKey.find(n => n.site_name === 'matched CCA')?.in_page_key,
+  'every reused name joins its released row, except matched CCA, which the released key keeps on card 7');
+need(keyRows.length === nameKey.filter(n => n.in_page_key).length + scNameKey.filter(x => x.key === 'new').length && new Set(keyRows.map(r => r.site)).size === keyRows.length,
+  'the name key grows by the new file’s names, one row per set of scores');
 
 // Methods: intervals by card, not run by card.
 const intervalGroups: { cards: number[]; id: StudyId }[] = [
@@ -344,16 +419,23 @@ const intervalGroups: { cards: number[]; id: StudyId }[] = [
 const sameMethod = (a: StudyId, b: StudyId) => JSON.stringify(study(a).interval_method) === JSON.stringify(study(b).interval_method);
 need(sameMethod('ref', 'ref2') && sameMethod('ref', 'softmax') && sameMethod('phase_jitter', 'phase_ramp'),
   'cards 1 and 2 share one interval method, cards 3 and 4 another');
-const notRunRows = ([1, 2, 3, 4, 5, 6, 7] as CardNumber[]).map(n => ({
-  n, items: cardChrome(n, locale).studies.flatMap(id => notRunOf(id, locale)),
-})).filter(r => r.items.length > 0);
-const notPubRows = notPublished.map(x => NOT_PUBLISHED[x][locale]);
+const notRunRows = [...([1, 2, 3, 4, 5, 6, 7] as CardNumber[]).map(n => ({
+  n, items: cardChrome(n, locale).studies.flatMap(id => notRunOf(id, locale)).map(x => ({ text: x.text, runIn: x.runIn as number | undefined })),
+})), ...NEW_CARDS.map(n => ({ n: n as number, items: scNotRunOf(n, locale).map(text => ({ text, runIn: undefined as number | undefined })) }))].filter(r => r.items.length > 0);
+const notPubRows = releasedNotPub.map(x => NOT_PUBLISHED[x][locale]);
+const notPubNewRows = scNotPublished.map(x => notPublishedWords(x, locale));
+// Intervals of cards 8 to 14: one line per card; card 10 names its two blocks.
+const scIntervalRows = NEW_CARDS.map(n => ({ n, parts: scChrome(n, locale).studies.flatMap((id, i) => [
+  ...(i > 0 ? [zh ? '；' : '; '] : []), ...(STUDY_LABEL[id] ? [`${STUDY_LABEL[id]![locale]}${zh ? '：' : ': '}`] : []), ...scIntervalText(id, locale)]) }));
+const H = (bits: Bit[]) => toHtml(bits);
+const fmtCardList = (ns: number[]) => zh ? ns.join('、') : ns.length > 1 ? `${ns.slice(0, -1).join(', ')} and ${ns.at(-1)}` : String(ns[0]);
 const conditions = beta.publication_conditions.map(x => zh ? CONDITIONS_ZH[x] : x);
-const card8 = cardChrome(8, locale);
 const card = topicCards[locale]['new-ssvep-frequencies'];
 const sep = zh ? '；' : '; ';
 const rev = corr.revision.slice(0, 8);
 need(wear.license === beta.license, 'Wearable-102 and BETA share the licence whose deed the BETA record links');
+need(scRights.datasets.beta.citation === beta.citation && fbcca.cards.every((n: number) => n === 11 || n === 13) && scCardOfStudy('practical_settings') === 11,
+  'the credits: BETA’s released record; FBCCA for cards 11 and 13');
 ---
 <TopicLayout
   locale={locale}
@@ -364,7 +446,7 @@ need(wear.license === beta.license, 'Wearable-102 and BETA share the licence who
   dek={copy.dek}
   activeSlug="new-ssvep-frequencies"
   answer={copy.answer}
-  dataFiles={[SSVEP_PATH]}
+  dataFiles={[SSVEP_PATH, SC_PATH]}
 >
   <section class="topic-section" id="setup" aria-labelledby="setup-heading" data-ssvep="setup">
     <div class="topic-heading"><div><p class="eyebrow">{copy.setupEyebrow}</p><h2 id="setup-heading">{copy.setupH2}</h2></div>
@@ -383,41 +465,53 @@ need(wear.license === beta.license, 'Wearable-102 and BETA share the licence who
       </table>
     </div>
     <p class="roadmap-p ssvep-scope" data-ssvep-scope="cards-1-6">{scopeBefore.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}<a href={hrefFor('/topics/questions-in-language/', locale)}>{scopeLink}</a>{scopeAfter.map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}</p>
-    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.namesRegion}>
-      <table data-ssvep-table="name-key">
-        <caption>{copy.namesCaption}</caption>
-        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colCodes}</th><th scope="col">{copy.colUsed}</th></tr></thead>
-        <tbody>{keyRows.map(r => <tr data-name={r.n.site_name}>
-          <th scope="row">{r.name}</th>
-          <td>{r.codes.map((c, i) => <>{i > 0 && ' · '}<code>{c}</code></>)}{r.note && <small>{r.note}</small>}</td>
-          <td>{r.used.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.text}</a></>)}</td>
-        </tr>)}</tbody>
-      </table>
-    </div>
+    <p class="roadmap-p ssvep-scope" data-ssvep-scope="cards-8-14" set:html={H(copy.scope8())}/>
+    {/* Owner decision D31: the key grew to one row per set of scores across both files, several screens at phone width
+        before card 1, so it is a collapsed panel; every row, code and card link is unchanged inside it. */}
+    <details class="rd-panel" data-ssvep-details="name-key">
+      <summary>{copy.namesSummary}</summary>
+      <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.namesRegion}>
+        <table data-ssvep-table="name-key">
+          <caption>{copy.namesCaption}</caption>
+          <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colCodes}</th><th scope="col">{copy.colUsed}</th></tr></thead>
+          <tbody>{keyRows.map(r => <tr data-name={r.site}>
+            <th scope="row">{r.name}</th>
+            <td>{r.codes.map((c, i) => <>{i > 0 && ' · '}<code>{c}</code></>)}{r.notes.map(n => <small>{n}</small>)}</td>
+            <td>{r.used.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.text}</a></>)}</td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+    </details>
   </section>
 
   <QueryCards locale={locale}/>
   <PhaseCards locale={locale}/>
   <CcaCards locale={locale}/>
-
-  <section class="topic-section ssvep-card" id={card8.anchor} aria-labelledby={card8.headingId} data-ssvep-card="8" data-status-only="true">
-    <div class="topic-heading"><div><p class="eyebrow">{card8.eyebrow}</p><h2 id={card8.headingId}>{card8.title}</h2></div></div>
-    <p class="roadmap-p ssvep-status">{copy.card8}</p>
-  </section>
+  <MechanismCards locale={locale} cards={[8, 9]}/>
+  <PracticalCards locale={locale} cards={[10, 11]}/>
+  <MechanismCards locale={locale} cards={[12]}/>
+  <PracticalCards locale={locale} cards={[13, 14]}/>
 
   <section class="topic-section" id="methods-and-limits" aria-labelledby="limits-heading">
     <div class="topic-heading"><div><p class="eyebrow">{tc.methodsEyebrow}</p><h2 id="limits-heading">{copy.limitsH2}</h2></div></div>
     <h3 class="roadmap-h3">{copy.defsH3}</h3>
     <ul class="rd-rules" data-ssvep-note="definitions">{copy.defs.map(([term, def]) => <li><strong>{term}</strong>{zh ? '：' : '. '}{def}</li>)}</ul>
     <h3 class="roadmap-h3">{copy.intervalsH3}</h3>
-    <ul class="rd-rules" data-ssvep-note="intervals">{intervalGroups.map(g => <li data-interval-cards={g.cards.join(' ')}><strong>{copy.intervalCards(g.cards)}</strong>{zh ? '：' : '. '}{intervalText(g.id, locale).map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}{zh ? '。' : '.'}</li>)}</ul>
-    <p class="roadmap-p" data-ssvep-note="rounding">{copy.intervalsNote}</p>
+    <ul class="rd-rules" data-ssvep-note="intervals">{intervalGroups.map(g => <li data-interval-cards={g.cards.join(' ')}><strong>{copy.intervalCards(g.cards)}</strong>{zh ? '：' : '. '}{intervalText(g.id, locale).map(p => typeof p === 'string' ? p : <span data-fig={figAttr(p)}>{F(p)}</span>)}{zh ? '。' : '.'}</li>)}{scIntervalRows.map(r => <li data-interval-cards={String(r.n)}><strong>{copy.intervalCards([r.n])}</strong>{zh ? '：' : '. '}<Fragment set:html={H(r.parts)}/>{zh ? '。' : '.'}</li>)}</ul>
+    <p class="roadmap-p" data-ssvep-note="rounding" set:html={H(copy.intervalsNote())}/>
     <h3 class="roadmap-h3">{copy.disclosuresH3}</h3>
     <p class="roadmap-p" data-ssvep-note="disclosures">{copy.disclosures}</p>
+    <ul class="rd-rules" data-ssvep-note="disclosures-8-9">
+      <li data-disclosure-card="8">{copy.disclosure8}<Fragment set:html={H(disclosures.flatMap((d, i) => d.card === 8 ? [...(i > 0 ? [zh ? '；' : '; '] : []), ...disclosureBits(i, locale)] : []))}/>{copy.disclosure8Tail}</li>
+      <li data-disclosure-card="9">{copy.disclosure9}<Fragment set:html={H(disclosures.flatMap((d, i) => d.card === 9 ? [...(disclosures[i - 1]?.card === 9 ? [zh ? '；' : '; '] : []), ...disclosureBits(i, locale)] : []))}/>{copy.disclosure9Tail}</li>
+    </ul>
     <h3 class="roadmap-h3">{copy.notRunH3}</h3>
     <ul class="rd-rules" data-ssvep-note="not-run">{notRunRows.map(r => <li data-not-run-card={r.n}><strong>{copy.cardWord}{r.n}</strong>{zh ? '：' : ': '}{r.items.map((x, i) => <>{i > 0 && sep}{x.text}{x.runIn && copy.runIn(x.runIn)}</>)}{zh ? '。' : '.'}</li>)}</ul>
     <h3 class="roadmap-h3">{copy.notPubH3}</h3>
+    <p class="roadmap-p" data-ssvep-note="not-published-released"><strong>{copy.notPubReleased}</strong></p>
     <ul class="rd-rules" data-ssvep-note="not-published">{notPubRows.map(x => <li>{x}</li>)}</ul>
+    <p class="roadmap-p" data-ssvep-note="not-published-new"><strong>{copy.notPubNew}</strong></p>
+    <ul class="rd-rules" data-ssvep-note="not-published-8-14">{notPubNewRows.map(x => <li>{x}</li>)}</ul>
     <h3 class="roadmap-h3">{copy.creditsH3}</h3>
     <div class="citation-list" id="credits">
       <article data-credit="beta">
@@ -442,13 +536,20 @@ need(wear.license === beta.license, 'Wearable-102 and BETA share the licence who
         <h3 lang="en">{wear.name} · {wear.title}</h3>
         <p lang="en">{wear.paper_citation}</p>
         <p lang="en">{wear.dataset_citation}</p>
+        <p>{copy.wearUse}</p>
         <p>{copy.wearConsent}{zh && <span class="note-original" lang="en">{wear.consent_scope}</span>}</p>
         <p>{copy.wearMirror}</p>
         <p><a href={`https://doi.org/${wear.canonical_version_doi}`} target="_blank" rel="noreferrer">{copy.recordLink}</a> · <a href={wear.readme} target="_blank" rel="noreferrer">{copy.readmeLink}</a> · <a href={beta.licenseUrl} target="_blank" rel="noreferrer">{wear.license}</a></p>
       </article>
+      <article data-credit="fbcca">
+        <h3 lang="en">{fbcca.name} · {fbcca.short}</h3>
+        <p lang="en">{fbcca.reference}</p>
+        <p>{copy.fbccaUse}</p>
+        <p><a href={hrefFor(fbcca.method_page, locale)}>{copy.fbccaPage}</a> · <a href={fbcca.reference_url} target="_blank" rel="noreferrer">{copy.paperLink}</a></p>
+      </article>
     </div>
     <p class="citation-note">{copy.derived}</p>
-    <p class="citation-note">{tc.dataSource} <a href={SSVEP_PATH} download>{SSVEP}</a> · {tc.schema} {ssvepRelease.schema}{tc.period}</p>
+    <p class="citation-note">{tc.dataSource} <a href={SSVEP_PATH} download>{SSVEP}</a> · {tc.schema} {ssvepRelease.schema}{zh ? '；' : '; '}<a href={SC_PATH} download>{SC}</a> · {tc.schema} {scRelease.schema}{tc.period}</p>
   </section>
 
   <section class="topic-section" id="related" aria-labelledby="related-heading">
@@ -464,8 +565,6 @@ need(wear.license === beta.license, 'Wearable-102 and BETA share the licence who
      selector outranks .roadmap-p, which topics.css loads after this file. */
   p.ssvep-scope{max-width:900px;margin:16px 0;padding:1px 0 1px 14px;border-left:2px solid var(--rule)}
   .ssvep-scope a,[data-ssvep-table] a{color:var(--accent)}
-  /* Card 8 holds a place: its status sentence reads as a plan, with no figure. */
-  p.ssvep-status{padding:14px 16px;border:1px solid var(--line);border-top:3px solid var(--accent-deep);background:var(--panel);max-width:860px}
   [data-ssvep-table="name-key"] td small{display:block;margin-top:3px;font-size:.7rem;color:var(--muted);line-height:1.4}
   [data-credit="beta-corrigendum"] code{font-family:var(--mono);font-size:.76rem}
 </style>

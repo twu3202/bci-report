@@ -243,6 +243,14 @@ const protocolPages = by('/protocols/').sort((a, b) => protocolOrder.indexOf(a.p
 const api = en.find(p => p.path === '/api/');
 const apiFiles = [...api.md.matchAll(/^\| \[`([^`]+)`\]\(([^)]+)\) \| ([^|]+) \|/gm)].map(m => `- [${m[1]}](${m[2]}): ${m[3].trim()}`);
 const one = path => en.find(p => p.path === path);
+// The release log is two pages: /releases/, the short index (the newest release days, one line for every earlier
+// release, the corrections and the holds), and /releases/archive/, every release's record as released with the SHA-256
+// of each file it ships. Both are listed in llms.txt and both copies go into llms-full.txt, the index first.
+const releaseLog = ['/releases/', '/releases/archive/'].map(path => {
+  const p = one(path);
+  if (!p) throw new Error(`build-agent-files: the build has no ${path}`);
+  return p;
+});
 
 // Citation and mirrors, read from what the pages publish: the release and the
 // other homes from the home page's Dataset markup (release log, site.ts), the
@@ -304,13 +312,13 @@ ${apiFiles.join('\n')}
 
 - [Full text](${origin}/llms-full.txt): every English page listed here, as Markdown in one file.
 ${line(home, home.description)}
-${line(one('/releases/'), one('/releases/').description)}
+${releaseLog.map(p => line(p, p.description)).join('\n')}
 ${line(one('/data-use/'), one('/data-use/').description)}
 `;
 writeFileSync(join(dist, 'llms.txt'), llms);
 
 // --- llms-full.txt: every English page in one file ------------------------------------------
-const full = [home, one('/topics/'), ...topics, one('/jev-style/'), one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), protocolsIndex, ...protocolPages, api, one('/releases/'), one('/data-use/')]
+const full = [home, one('/topics/'), ...topics, one('/jev-style/'), one('/datasets/'), ...by('/datasets/'), one('/methods/'), ...by('/methods/'), protocolsIndex, ...protocolPages, api, ...releaseLog, one('/data-use/')]
   .map(p => p.md.trim()).join('\n\n');
 writeFileSync(join(dist, 'llms-full.txt'), `# BCI Report — full text\n\n> Every English page of ${origin} as Markdown, in the order of ${origin}/llms.txt.\n\n${full}\n`);
 

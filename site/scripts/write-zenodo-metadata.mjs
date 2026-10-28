@@ -2,7 +2,9 @@
 // release is archived. (When .zenodo.json exists Zenodo ignores CITATION.cff
 // entirely, so the two have to agree; this file is derived from it.)
 //
-//     npm run build && node scripts/write-zenodo-metadata.mjs
+//     npm run build && node scripts/write-zenodo-metadata.mjs [dist]
+//
+// (dist defaults to site/dist/; pass a build directory to derive the file from that build instead.)
 //
 // Nothing here is typed twice:
 // - title, author and keywords come from CITATION.cff;
@@ -12,6 +14,9 @@
 //   records of the recordings this project's figures were computed on. Only
 //   datasets with released results have a page, so a held source cannot get in.
 //   Listed as isDerivedFrom so the archive credits them in the DOI graph too.
+// - the release log and the record of every release with its files' SHA-256 are
+//   the built /releases/ and /releases/archive/ pages, so the description links
+//   only pages the build has.
 //
 // check-workbench.mjs fails when the committed file differs from what this
 // writes, so a new dataset page cannot leave the archive's credits behind.
@@ -41,6 +46,11 @@ export function zenodoMetadata(dist) {
     for (const node of ld(readFileSync(page, 'utf8')))
       if (node['@type'] === 'Dataset') for (const u of node.isBasedOn ?? []) upstream.add(u);
   }
+  const link = path => {
+    if (!existsSync(new URL(`${path.slice(1)}index.html`, dist))) throw new Error(`write-zenodo-metadata: the build has no ${path}`);
+    const href = new URL(path, home.url).href;
+    return `<a href="${href}">${href}</a>`;
+  };
   return {
     upload_type: 'dataset',
     title,
@@ -51,8 +61,8 @@ export function zenodoMetadata(dist) {
       'known limitations. No raw recordings, no ' +
       'per-participant scores, no model weights and no overall ranking.</p>' +
       `<p>The site, with every figure in context: <a href="${home.url}">${home.url}</a>. ` +
-      'The release log, with the SHA-256 of every file: ' +
-      `<a href="${new URL('/releases/', home.url).href}">${new URL('/releases/', home.url).href}</a>.</p>` +
+      `The release log: ${link('/releases/')}. ` +
+      `Every release as released, with the SHA-256 of every file it ships: ${link('/releases/archive/')}.</p>` +
       '<p>Cite BCI Report and the release you used (this archive’s version is the release id), and the ' +
       'upstream dataset each figure was computed on: every dataset page gives its credit, ' +
       `<a href="${new URL('/datasets/', home.url).href}">${new URL('/datasets/', home.url).href}</a>.</p>`,
@@ -72,7 +82,7 @@ export function zenodoMetadata(dist) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const dist = new URL('../dist/', import.meta.url);
+  const dist = process.argv[2] ? pathToFileURL(process.argv[2].replace(/\/?$/, '/')) : new URL('../dist/', import.meta.url);
   const out = new URL('.zenodo.json', ROOT);
   writeFileSync(out, JSON.stringify(zenodoMetadata(dist), null, 2) + '\n');
   console.log(`wrote ${fileURLToPath(out)}`);

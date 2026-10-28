@@ -50,10 +50,10 @@ identifiers:
     description: "Zenodo concept DOI: resolves to the newest archived release"
   - type: url
     value: "https://bci.report/releases/"
-    description: "Every release, with the SHA-256 of each file it ships"
+    description: "The release log, one line per release; every release's full record, with the SHA-256 of each file it ships, is at https://bci.report/releases/archive/"
 license: CC-BY-4.0
-version: "open-register-update-20261020"
-date-released: "2026-10-20"
+version: "open-register-update-20261028"
+date-released: "2026-10-28"
 keywords:
   - EEG
   - electroencephalography

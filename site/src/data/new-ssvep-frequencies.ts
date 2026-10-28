@@ -2,7 +2,8 @@
  * Route 3's follow-ups on SSVEP frequencies a decoder never trained on (owner decision D1): what
  * /topics/new-ssvep-frequencies/ and its three card components (src/components/ssvep/QueryCards.astro, cards 1–2;
  * PhaseCards.astro, cards 3–4; CcaCards.astro, cards 5–7) read from new-ssvep-frequencies-update.json. Card 8, the
- * cross-spectral status card, has no study block and is written on the page.
+ * cross-spectral card, has no study block in this file: its results are ssvep-followups-update.json's (owner decision
+ * D28; src/data/ssvep-followups.ts reads cards 8 to 14), and this file keeps its bytes.
  *
  * Every figure is a leaf of that one file: an `SsvepFig`, printed as <span data-fig="<file>|<format>|<raw>"> and
  * re-read by the page's check (scripts/checks/new-ssvep-frequencies.mjs) and, once wired, by check-workbench.mjs.
@@ -188,8 +189,9 @@ const CARD_COPY: Record<CardNumber, Record<Locale, { eyebrow: string; title: str
        zh: { eyebrow: '卡片 6 · 对 CCA 的学习修正', title: '在 CCA 之上学习修正' } },
   7: { en: { eyebrow: 'Card 7 · a second dataset', title: 'The same correction on Wearable-102' },
        zh: { eyebrow: '卡片 7 · 第二个数据集', title: '同一修正用于 Wearable-102' } },
-  8: { en: { eyebrow: 'Card 8 · in progress', title: 'A shared scorer on the cross-spectral matrix' },
-       zh: { eyebrow: '卡片 8 · 进行中', title: '互谱矩阵上的共享打分器' } },
+  // Card 8's results are read from ssvep-followups-update.json (src/data/ssvep-followups.ts, D28); its chrome stays here.
+  8: { en: { eyebrow: 'Card 8 · a shared learned scorer', title: 'A shared scorer on the cross-spectral matrix' },
+       zh: { eyebrow: '卡片 8 · 共享的学习型打分器', title: '互谱矩阵上的共享打分器' } },
 };
 export interface CardChrome {
   card: CardNumber; anchor: string; headingId: string; eyebrow: string; title: string; studies: StudyId[]; statusOnly: boolean;

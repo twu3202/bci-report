@@ -5,12 +5,16 @@ to be the one the site and CITATION.cff ask for. It is generated from
 CITATION.cff; these tests pin that it names the same release, title and site,
 and that the BibTeX is the /api/ page's (same key and fields).
 """
+import csv
+import hashlib
 import json
 import re
+import tempfile
 import unittest
 from pathlib import Path
 
-from build_hf_dataset import PUBLISHED, card, citation_section, load_tables, topic_payload
+from build_hf_dataset import (PUBLISHED, build, card, citation_section, load_tables, release_20261028_section,
+                              topic_payload)
 
 PROJECT = Path(__file__).resolve().parents[2]
 
@@ -268,7 +272,9 @@ class CardEegptCore(unittest.TestCase):
         cls.card = card(snapshot, len(rows), topic_payload())
         text = ' '.join(cls.card.split())
         start = text.index('`eegpt-core-update.json`:')
-        cls.eegpt = text[start:text.index('catalogued methods have been scored', start)]
+        # The EEGPT paragraph alone: the 2026-10-20 and 2026-10-28 paragraphs follow it, and the second of those states
+        # EEG-Captioner's and AXON's Apache-2.0 weight terms, which the rule below exists to keep away from EEGPT.
+        cls.eegpt = text[start:text.index('`new-ssvep-frequencies-update.json`:', start)]
         cls.ec = json.loads((PUBLISHED/'eegpt-core-update.json').read_text())
 
     def test_what_the_file_holds(self):
@@ -309,6 +315,179 @@ class CardEegptCore(unittest.TestCase):
     def test_the_exposure_bullet_names_eegpt(self):
         text = ' '.join(self.card.split())
         self.assertIn('nor for EEGPT (checked 12 October 2026; in `eegpt-core-update.json`)', text)
+
+
+def _pp(x):
+    return f'{100 * x:+.2f}'
+
+
+def _ppi(i):
+    return f'[{100 * i[0]:+.2f}, {100 * i[1]:+.2f}]'
+
+
+def _pct(x):
+    return f'{100 * x:.2f}%'
+
+
+def _pcti(i):
+    return f'[{100 * i[0]:.2f}, {100 * i[1]:.2f}]'
+
+
+def _sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+class CardRelease20261028(unittest.TestCase):
+    """The 2026-10-28 release on the card (owner decisions D14-D29): one paragraph per batch of the day, in the release
+    log's order; every figure, count, licence and credit is the served file's; the files ship as files and add no row to
+    the merged CSVs; both dated register CSVs ship; the thread commenter is never named and the figure never appears
+    (read through blocks_cca.REFUSED_TEXT and the NeuroRVQ export's token, no literal here); thread predictions stay on
+    card 4 of the site (D23); nothing tied to ICLR 2027 (D4); no update date, version label or Jev."""
+
+    FILES = ('ssvep-followups-update.json', 'neurorvq-update.json', 'eegmat-ten-second-update.json',
+             'dataset-checks-update.json', 'open-register-20261028.csv')
+
+    @classmethod
+    def setUpClass(cls):
+        snapshot = json.loads((PUBLISHED/'experiments.json').read_text())
+        _, rows = load_tables()
+        cls.card = card(snapshot, len(rows), topic_payload())
+        cls.section = release_20261028_section()
+        cls.paragraphs = dict(zip(cls.FILES, cls.section.split('\n\n')))
+        cls.flat = {k: ' '.join(v.split()) for k, v in cls.paragraphs.items()}
+        cls.data = {n: json.loads((PUBLISHED/n).read_text()) for n in cls.FILES if n.endswith('.json')}
+
+    def test_one_paragraph_per_batch_in_the_card(self):
+        self.assertEqual(len(self.section.split('\n\n')), len(self.FILES))
+        for name, text in self.paragraphs.items():
+            self.assertTrue(text.startswith(f'`{name}`: **'), name)
+        self.assertEqual(self.card.count(self.section), 1)
+        flat = ' '.join(self.card.split())
+        self.assertLess(flat.index('`open-register-20261020.csv`:'), flat.index('`ssvep-followups-update.json`:'))
+        self.assertLess(flat.index('`open-register-20261028.csv`:'), flat.index('catalogued methods have been scored'))
+        for name, d in self.data.items():
+            self.assertTrue(d['release_id'].endswith('-20261028'), name)
+
+    def test_the_files_ship_as_files_and_no_row_joins_the_merged_csvs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            result = build(out)
+            for name in self.FILES + ('open-register-20261020.csv', 'new-ssvep-frequencies-update.json'):
+                self.assertEqual((out/name).read_bytes(), (PUBLISHED/name).read_bytes(), name)
+            # The register's JSON, with its findings about other uploads, stays on bci.report (owner decision D3).
+            self.assertFalse(list(out.glob('open-register-*.json')))
+            _, rows = load_tables()
+            self.assertEqual(result['rows'], len(rows))
+            with (out/'results.csv').open() as fh:
+                self.assertEqual(sum(1 for _ in csv.reader(fh)) - 1, len(rows))
+            topics = topic_payload()
+            with (out/'topics.csv').open() as fh:
+                self.assertEqual(sum(1 for _ in csv.reader(fh)) - 1, len(topics['rows']))
+            header = (out/'foundation-models.csv').read_text().splitlines()[0]
+            self.assertEqual(header, (PUBLISHED/'foundation-models-sleep-scalp.csv').read_text().splitlines()[0])
+            self.assertIn(self.section, (out/'README.md').read_text())
+            configs = (out/'README.md').read_text().split('---')[1]
+            self.assertEqual(configs.count('config_name:'), 5)
+
+    def test_each_file_is_the_audited_one(self):
+        review = PROJECT/'research/publication_review_20261028'
+        for name in self.FILES[:4]:
+            stem = name.removesuffix('-update.json')
+            audit = json.loads((review/f'{stem}-export-audit.json').read_text())
+            self.assertEqual(audit['status'], 'pass', name)
+            self.assertEqual(_sha(PUBLISHED/name), audit['export_sha256'], name)
+            self.assertEqual(_sha(review/f'{stem}-release-manifest.json'), audit['manifest_sha256'], name)
+        reg = json.loads((review/'register/open-register-export-audit.json').read_text())
+        self.assertEqual(_sha(PUBLISHED/'open-register-20261028.csv'), reg['csv_sha256'])
+        self.assertEqual(_sha(PUBLISHED/'open-register-20261020.csv'), reg['previous_version']['csv_sha256'])
+        self.assertEqual(_sha(PUBLISHED/'open-register-20261020.json'), reg['previous_version']['json_sha256'])
+        # D28: the released SSVEP file keeps its bytes, and card 8's results replace its status entry.
+        ssvep = json.loads((review/'ssvep-followups-export-audit.json').read_text())
+        self.assertEqual(_sha(PUBLISHED/'new-ssvep-frequencies-update.json'), ssvep['released_file_sha256'])
+        self.assertIn('kept byte for byte; card 8\'s results here replace the status entry it carries',
+                      self.flat['ssvep-followups-update.json'])
+
+    def test_figures_are_the_files(self):
+        f = self.flat['ssvep-followups-update.json']
+        ps = self.data['ssvep-followups-update.json']['studies']['practical_settings']
+        level = ps['levels']['w500-c8/FBCCA-M3-N7-H5/u8']
+        diff = ps['contrasts']['w500-c8/FBCCA-M3-N7-H5 minus w500-c8/CCA-RAW-H3/u8']
+        self.assertIn(f"reached {_pct(level['estimate'])} {_pcti(level['interval'])} on the held-out 8-way task "
+                      'with 2-second windows and eight electrodes, '
+                      f"{_pp(diff['estimate'])} pp {_ppi(diff['interval'])} over CCA on the same windows", f)
+        self.assertIn('(five Butterworth sub-bands)', f)
+        self.assertIn('Bonferroni-adjusted 99.44% intervals over nine comparisons', f)
+        self.assertIn('no other interval is adjusted', f)
+        n = self.flat['neurorvq-update.json']
+        for b in self.data['neurorvq-update.json']['blocks']:
+            d = b['paired_difference']
+            self.assertIn(f"({b['dataset']}, {b['cohort']['people']} people): {d['label']}, {_pp(d['difference'])} pp "
+                          f"{_ppi(d['interval_95'])}; {d['reading']}.", n)
+        t = self.flat['eegmat-ten-second-update.json']
+        ts = self.data['eegmat-ten-second-update.json']
+        diffs = [ts[k]['paired_difference'] for k in ('eeg_captioner', 'axon')]
+        self.assertIn(', and '.join(f"{d['label']}, {_pp(d['difference'])} pp {_ppi(d['interval_95'])}" for d in diffs)
+                      + f": for each, {diffs[0]['reading']}. {ts['source_annotation_qc']['beside_every_score']}", t)
+        c = self.flat['dataset-checks-update.json']
+        kim = self.data['dataset-checks-update.json']['kim2025-beta-range']['result']
+        self.assertIn(f"mean participant accuracy of {_pct(kim['mean_participant_accuracy'])} "
+                      f"{_pcti(kim['accuracy_interval_95'])} against a chance level of 2.5%", c)
+        r = self.flat['open-register-20261028.csv']
+        with (PUBLISHED/'open-register-20261028.csv').open() as fh:
+            self.assertIn(f"**the open register's dataset ladder**, {sum(1 for _ in csv.DictReader(fh))} rows", r)
+
+    def test_scores_held_and_licences_as_the_files_state(self):
+        c = self.flat['dataset-checks-update.json']
+        held = c[c.index('Damm finger motor imagery and NeBULA are status cases'):c.index('Licences:')]
+        self.assertNotRegex(held, r'\d+(?:\.\d+)?\s*%|\bpp\b')
+        self.assertIn('hold every score', held)
+        # D15: MIND's two licence statements side by side, and the ScienceDB terms page stated as not read.
+        self.assertIn('state CC BY 4.0; the MOABB adapter and the ScienceDB record page’s metadata state CC BY-NC 4.0', c)
+        self.assertIn('terms-of-use page was not read', c)
+        self.assertIn('The unit is the record ID', c)
+        # Damm's rights gap stays beside its licence.
+        self.assertIn('MIND as above. For Damm, the README cites a LICENSE file that the tree at the pinned commit does not '
+                      'hold; the only licence statement is CC0 in dataset_description.json.', c)
+        n = self.flat['neurorvq-update.json']
+        # Exposure is a property of the datasets, each named or not in NeuroRVQ's published pretraining list.
+        self.assertIn('Pretraining exposure is unknown for all three datasets: none is named', n)
+        self.assertIn('CC BY-NC 4.0', n)
+        self.assertIn('no weights distributed', n)
+        self.assertNotIn('Apache', n)
+        t = self.flat['eegmat-ten-second-update.json']
+        for sentence in re.split(r'(?<=[.;])\s+', t):
+            if 'Apache' in sentence:
+                self.assertRegex(sentence, r'EEG-Captioner|AXON', sentence)
+        self.assertIn('No weights distributed', t)
+        # EEGPT's weights are never called Apache-2.0 anywhere on the card.
+        for sentence in re.split(r'(?<=[.;])\s+', ' '.join(self.card.split())):
+            if 'EEGPT' in sentence and 'Apache' in sentence:
+                self.assertIn('source code only', sentence)
+
+    def test_thread_rules(self):
+        from ssvep_followups import blocks_cca
+        from export_neurorvq_update import CONFIDENCE_TOKEN, HASH
+        text = re.sub(r'https?://\S+', ' ', self.section)
+        self.assertEqual({m.group(0).lower() for m in blocks_cca.REFUSED_TEXT.finditer(text)}, set())
+        self.assertIsNone(CONFIDENCE_TOKEN.search(HASH.sub('', text)))
+        hits = {m.group(0).lower() for m in blocks_cca.REFUSED_TEXT.finditer(re.sub(r'https?://\S+', ' ', self.card))}
+        self.assertEqual(hits, set())
+        # D23: thread predictions stay on card 4 of the site; the card names no thread, comment or prediction (card
+        # 11's CPU components ran on one processor thread, the only thread it mentions).
+        self.assertNotRegex(self.section.replace('on one thread', ''), r'(?i)\bbet\b|thread|comment|discussion')
+        # A head's predictions may be named elsewhere (the ten-second Welch row reuses them); the SSVEP cards name none.
+        self.assertNotRegex(self.paragraphs['ssvep-followups-update.json'], r'(?i)predict')
+
+    def test_no_date_version_label_update_marker_jev_or_iclr(self):
+        prose = re.sub(r'https?://\S+', ' ', re.sub(r'`[^`]+`', '', self.section))
+        self.assertNotRegex(prose, r'\b20\d\d-\d\d-\d\d\b|\b(?:January|February|March|April|May|June|July|August|'
+                                   r'September|October|November|December)\b')
+        self.assertNotRegex(prose, r'(?<![./\w-])v\d+\b|\b(?:updated?|added|new|newly)\b')
+        self.assertNotIn('Jev', prose)
+        self.assertNotRegex(self.section, r'(?i)ICLR|submission|openreview')
+        self.assertNotRegex(self.section, r'(?i)\b(?:best|winner|state of the art|outperform\w*|beats?|superior)\b')
+        for path in ('/Users', '/home', '/Volumes', '/mnt', '/root', '/private'):
+            self.assertNotIn(path, self.card)
 
 
 class CardJevStyle(unittest.TestCase):

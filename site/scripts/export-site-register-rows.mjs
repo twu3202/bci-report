@@ -1,9 +1,11 @@
-// The open register's site rows at the freeze (package B8b of the 20261020 release): one row for each dataset source
-// this site lists, and one for each model or method it names, built from what the site itself serves (entities.ts,
-// read through Vite as the build reads it) and from the A5 step-evidence census, re-read against the live files.
+// The open register's site rows at the freeze (package B8b of the 20261020 release; package R5 of the 20261028 round): one
+// row for each dataset source this site lists, and one for each model or method it names, built from what the site itself
+// serves (entities.ts, read through Vite as the build reads it) and from the step-evidence census, re-read against the
+// live files. The census is the 20261020 A5 census and the 20261028 A3 census that extends it (the four dataset checks
+// this round promotes from MOABB catalog rows: Kim beta-range, MIND, Damm finger imagery and NeBULA).
 //
-//   node scripts/export-site-register-rows.mjs            write research/publication_review_20261020/register/
-//                                                          site-register-rows-20261020.json
+//   node scripts/export-site-register-rows.mjs            write research/publication_review_20261028/register/
+//                                                          site-register-rows-20261028.json
 //   node scripts/export-site-register-rows.mjs --check    build the rows and compare with that file and with the site
 //                                                          rows of the served register; write nothing (exit 1 on drift)
 //
@@ -23,8 +25,9 @@
 //     it), with every earlier missing item a gap; it must equal the census's level, and its gaps the census's gaps;
 //  5. every model and method fact (terms by part, records, checkpoints) is read from the file and field this script
 //     names for it, and stops the build if that field no longer says what the row says;
-//  6. the holds this release opens on eldBETA and ZuCo 2.0 are findings (code `hold` with a reason code), sourced to the
-//     hold in releases.ts and data-quality-update.json; the exporter serves them once the page words the code.
+//  6. the holds opened on this site's rows are findings (code `hold` with a reason code), sourced to the hold in releases.ts
+//     and in the payload that opens it (eldBETA and ZuCo 2.0: data-quality-update.json; Kim beta-range, Damm and NeBULA:
+//     dataset-checks-update.json); the exporter serves each once the page words its code.
 //
 // Nothing here is free text from a source: rows carry names, licence identifiers, tokens, paths with selectors and
 // counts that the served files already print. Paths in the output are repo-relative; the exporter turns research paths
@@ -36,12 +39,17 @@ import { fileURLToPath } from 'node:url';
 
 const SITE = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT = resolve(SITE, '..');
-const D = '20261020';
+const D = '20261028';
 const FREEZE_DAY = `${D.slice(0, 4)}-${D.slice(4, 6)}-${D.slice(6)}`;
 const REVIEW = `research/publication_review_${D}`;
 const OUT = `${REVIEW}/register/site-register-rows-${D}.json`;
-const A5_PATH = `${REVIEW}/notes/site-step-evidence.json`;
-const A3_PATH = `${REVIEW}/evidence/consent-statements.json`;
+// The 20261020 census (A5) and the consent record it read; the 20261028 census (A3) extends it, with its own consent record.
+const PREV = '20261020';
+const A5_PATH = `research/publication_review_${PREV}/notes/site-step-evidence.json`;
+const A3_PATH = `research/publication_review_${PREV}/evidence/consent-statements.json`;
+const SUPP_PATH = `${REVIEW}/register/site-step-evidence-${D}.json`;
+const A3_NOW_PATH = `${REVIEW}/evidence/consent-statements.json`;
+const DQ = 'site/src/data/data-quality-update.json', DC = 'site/src/data/dataset-checks-update.json';
 const SCHEMA = 'bci-report-site-register-rows-v1';
 
 const fail = msg => { throw new Error(`export-site-register-rows: ${msg}`); };
@@ -135,11 +143,20 @@ function rereadCensus(a5, mods) {
     for (const fnd of s.findings ?? []) for (const fact of fnd.facts ?? []) for (const src of fact.sources ?? []) visit(src, `${s.id}/finding/${fnd.code}`);
     if (s.identity?.aliases_source) visit(s.identity.aliases_source, `${s.id}/aliases`);
   }
-  // A3, which the census read for Shin2022, eldBETA, IESSEEG and BI2013a: the record as it stands at the freeze.
-  const a3Now = sha(readFileSync(abs(A3_PATH)));
-  const a3Then = a5.summary.consent_record_from_A3.sha256;
+  // The consent record the census read (A5: Shin2022, eldBETA, IESSEEG and BI2013a; A3 of 20261028: the four dataset
+  // checks), as it stands at the freeze.
+  const rec = a5.summary.consent_record_from_A3 ?? a5.consent_record;
+  const a3Now = sha(readFileSync(abs(rec.file)));
   return { inputs_hashed: a5.inputs.length, drift, values_checked: checked, fields_present: fieldsChecked, mismatches, unresolved,
-           a3: { file: A3_PATH, census_sha256: a3Then, freeze_sha256: a3Now, unchanged: a3Now === a3Then } };
+           a3: { file: rec.file, census_sha256: rec.sha256, freeze_sha256: a3Now, unchanged: a3Now === rec.sha256 } };
+}
+
+/** The two censuses re-read as one: their counts added, each consent record kept (the 20261020 one under `a3`). */
+function rereadBoth(a5, supp, mods) {
+  const a = rereadCensus(a5, mods), b = rereadCensus(supp, mods);
+  return { inputs_hashed: a.inputs_hashed + b.inputs_hashed, drift: [...a.drift, ...b.drift], values_checked: a.values_checked + b.values_checked,
+           fields_present: a.fields_present + b.fields_present, mismatches: [...a.mismatches, ...b.mismatches],
+           unresolved: [...a.unresolved, ...b.unresolved], a3: a.a3, a3_20261028: b.a3 };
 }
 
 /* --- Dataset rows ----------------------------------------------------------------------------------------------- */
@@ -198,22 +215,31 @@ function gapsOf(steps, level, defs) {
 }
 
 /**
- * The holds this release opens on two of the site's rows: the hold's id (releases.ts, data-quality-update.json) and
- * its reason code (register_findings.py SITE_HOLD_REASONS, which the exporter checks this table against). The served
- * file carries the finding once the page has words for the code (open-register.ts holdReason).
+ * The holds open on the site's rows, one per row: the hold's id (releases.ts, and the payload that opens it) and its
+ * reason code (register_findings.py SITE_HOLD_REASONS, which takes the same row-by-row hold ids and which the exporter
+ * checks this table against). The served file carries the finding once the page has words for the code
+ * (open-register.ts holdReason). Kim beta-range's replaces the catalog's onset-timing hold on its MOABB row.
  */
 const SITE_HOLD = {
-  eldbeta: { id: 'eldbeta-one-participant-score', reason_code: 'one_person_score' },
-  zuco2: { id: 'zuco2-converted-run-timing', reason_code: 'converted_run_timing' },
+  eldbeta: { id: 'eldbeta-one-participant-score', reason_code: 'one_person_score', file: DQ },
+  zuco2: { id: 'zuco2-converted-run-timing', reason_code: 'converted_run_timing', file: DQ },
+  'kim2025-beta-range': { id: 'kim-amplitude-dependent-models', reason_code: 'amplitude_units_unresolved', file: DC },
+  'damm-finger-imagery': { id: 'damm-one-participant-score', reason_code: 'one_person_score', file: DC },
+  nebula: { id: 'nebula-one-participant-scores', reason_code: 'one_person_score', file: DC },
 };
 
-/** A licence as a name, from a census value: a string, or a deposit record's {name}. */
-const licenceName = v => (typeof v === 'string' ? v : v && typeof v === 'object' && typeof v.name === 'string' ? v.name : null);
+/**
+ * A licence as a name, from a census value: a string, a deposit record's {name}, or a list of licences this site's
+ * rights record states side by side (MIND's two).
+ */
+const licenceName = v => (typeof v === 'string' ? v : Array.isArray(v) && v.length && v.every(x => typeof x === 'string') ? v.join(', ')
+  : v && typeof v === 'object' && typeof v.name === 'string' ? v.name : null);
 
-function datasetRows(a5, mods, notes) {
+function datasetRows(a5, supp, mods, notes) {
   const E = mods.entities;
   const profiles = readJson('site/src/data/entity-profiles.json').datasets;
-  const dq = readJson('site/src/data/data-quality-update.json');
+  const dq = readJson(DQ), dc = readJson(DC);
+  const payloadHolds = { [DQ]: dq.holds, [DC]: dc.holds };
   const ies = readJson('site/src/data/clinical-iesseeg-update.json');
   const shortlist = readJson('research/moabb_expansion_20261019/evidence/moabb-shortlist-verified.json');
   const holdsById = new Map(mods.releases.holds.map(h => [h.id, h]));
@@ -227,10 +253,12 @@ function datasetRows(a5, mods, notes) {
   };
   // The data-quality page's three cases (data-quality-update.json `cases`).
   const dqCases = new Map(dq.cases.map(c => [c.id ?? c.case ?? c, c]));
-  for (const src of a5.sources) {
+  for (const src of [...a5.sources, ...supp.sources]) {
     if (src.census_group === 'adjacent_moabb') continue;
     const slug = siteSlug(src);
-    const entity = E.datasetBySlug[slug];
+    // A dataset page that waits on the register version carrying its row (entities.ts pendingDatasets: Kim beta-range
+    // until releases.ts names this register) is read from the same record, so the row is the same either side.
+    const entity = E.datasetBySlug[slug] ?? (E.pendingDatasets ?? []).find(d => d.slug === slug);
     const steps = JSON.parse(JSON.stringify(src.steps));
     const where = src.id;
 
@@ -251,9 +279,9 @@ function datasetRows(a5, mods, notes) {
         need(ies.placement?.section === 'iesseeg' && existsSync(join(SITE, 'public/data/clinical-iesseeg-update.json')), 'IESSEEG: no served section');
         setItem('4', 'result_or_hold_on_page', [['site/src/data/clinical-iesseeg-update.json', 'placement.section']]);
       } else if (SITE_HOLD[slug]) {
-        const { id } = SITE_HOLD[slug];
-        need(dq.holds.some(h => h.id === id) && holdsById.get(id) && !holdsById.get(id).closed, `${slug}: the hold ${id} is not open on the site`);
-        setItem('4', 'result_or_hold_on_page', [['site/src/data/data-quality-update.json', `holds[id=${id}]`],
+        const { id, file } = SITE_HOLD[slug];
+        need(payloadHolds[file].some(h => h.id === id) && holdsById.get(id) && !holdsById.get(id).closed, `${slug}: the hold ${id} is not open on the site`);
+        setItem('4', 'result_or_hold_on_page', [[file, `holds[id=${id}]`],
                                                 ['site/src/data/releases.ts', `holds[id=${id}]`]]);
       } else fail(`${where}: an at_freeze item this script does not know`);
     }
@@ -316,12 +344,14 @@ function datasetRows(a5, mods, notes) {
       findings.push({ code: 'named_in_corpus', params: { models, release_resolved: /release resolved|resolved by name/.test(cm.text) },
                       sources: [`${cm.source.file}#${cm.source.field}`] });
     }
+    if (src.hold) need(SITE_HOLD[slug]?.id === src.hold.id && SITE_HOLD[slug].reason_code === src.hold.reason_code,
+      `${where}: the census's hold ${src.hold.id} (${src.hold.reason_code}) is not this script's`);
     if (SITE_HOLD[slug]) {
-      // The hold this release opens on the row (releases.ts and the data-quality page), as a finding with its reason code.
-      const { id, reason_code } = SITE_HOLD[slug];
-      need(holdsById.get(id) && !holdsById.get(id).closed, `${slug}: the hold ${id} is not open on the site`);
+      // The hold open on the row (releases.ts and the payload that opens it), as a finding with its reason code.
+      const { id, reason_code, file } = SITE_HOLD[slug];
+      need(holdsById.get(id) && !holdsById.get(id).closed && payloadHolds[file].some(h => h.id === id), `${slug}: the hold ${id} is not open on the site`);
       findings.push({ code: 'hold', params: { reason_code },
-                      sources: [`site/src/data/releases.ts#holds[id=${id}]`, `site/src/data/data-quality-update.json#holds[id=${id}]`] });
+                      sources: [`site/src/data/releases.ts#holds[id=${id}]`, `${file}#holds[id=${id}]`] });
     }
     if (slug === 'shin2022') {
       // MOABB's catalog counts for Shin2022, which differ from what its files hold (plan section 2.3; the data-quality case).
@@ -341,7 +371,13 @@ function datasetRows(a5, mods, notes) {
     if (page) links.page = page;
     else if (section) links.page = section;
     if (['shin2022', 'eldbeta', 'zuco2'].includes(slug)) links.case = `${E.DATA_QUALITY_PATH}#${slug}`;
-    else if (src.site.hold && holdsById.get(src.site.hold)?.href) links.case = holdsById.get(src.site.hold).href;
+    else if (src.census_group === 'dataset_checks') {
+      // The four dataset checks: each row's case is its section on the data-quality page (entities.ts DATA_QUALITY_ANCHOR).
+      const anchor = E.DATA_QUALITY_ANCHOR?.[slug];
+      need(anchor && dc.placement.sections.includes(anchor) && src.site.case === `${E.DATA_QUALITY_PATH}#${anchor}`,
+        `${where}: its case ${src.site.case} is not its section on the data-quality page`);
+      links.case = src.site.case;
+    } else if (src.site.hold && holdsById.get(src.site.hold)?.href) links.case = holdsById.get(src.site.hold).href;
     else if (STATUS_SECTION[src.id]) links.case = STATUS_SECTION[src.id];
     // The pretraining-exposure block sits on each core protocol page.
     const CORE_TRACK = { beta: 'beta-8ch', ds003810: 'mi-rest', ds005342: 'idle', ds006593: 'p300-target', eegmat: 'arithmetic-rest', tmnred: 'semantic-target', eesm19: 'sleep-scalp' };
@@ -627,17 +663,22 @@ function modelRow({ key, kind, name, aliases, urls, model_kind, terms, ev, page,
 
 async function main() {
   const check = process.argv.includes('--check');
-  const a5 = readJson(A5_PATH);
-  need(a5.release_freeze === D, `the census is for ${a5.release_freeze}, not ${D}`);
+  const a5 = readJson(A5_PATH), supp = readJson(SUPP_PATH);
+  need(a5.release_freeze === PREV, `the census is for ${a5.release_freeze}, not ${PREV}`);
+  need(supp.release_freeze === D && supp.extends?.file === A5_PATH && supp.extends.sha256 === sha(readFileSync(abs(A5_PATH))),
+    `${SUPP_PATH} is not the ${D} census extending ${A5_PATH} as it stands`);
+  need(supp.consent_record?.file === A3_NOW_PATH, `${SUPP_PATH} names another consent record than ${A3_NOW_PATH}`);
+  const ids = new Set(a5.sources.map(s => s.id));
+  for (const s of supp.sources) need(!ids.has(s.id) && s.census_group === 'dataset_checks', `${s.id}: already in the A5 census, or not a dataset check`);
   const mods = await siteModules();
-  const reread = rereadCensus(a5, mods);
+  const reread = rereadBoth(a5, supp, mods);
   if (reread.mismatches.length) fail(`the census no longer matches the live files:\n${reread.mismatches.map(m => JSON.stringify(m)).join('\n')}`);
   const notes = [];
-  const datasets = datasetRows(a5, mods, notes);
+  const datasets = datasetRows(a5, supp, mods, notes);
   const models = modelRows(mods, notes);
   // The ladders and rules as the pages print them (i18n.ts), which the frozen file must state word for word.
   const ladder = l => l.map(s => ({ step: s.step, en: s.name.en, zh: s.name.zh, needs_en: s.needs.en, needs_zh: s.needs.zh }));
-  const inputs = [A5_PATH, A3_PATH, 'site/src/data/entities.ts', 'site/src/data/entity-profiles.json', 'site/src/data/i18n.ts',
+  const inputs = [A5_PATH, A3_PATH, SUPP_PATH, A3_NOW_PATH, DC, 'site/src/data/entities.ts', 'site/src/data/entity-profiles.json', 'site/src/data/i18n.ts',
     'site/src/data/releases.ts', MVP, FMU, EGP, 'site/src/data/data-quality-update.json', 'site/src/data/clinical-iesseeg-update.json',
     'research/moabb_expansion_20261019/evidence/moabb-shortlist-verified.json',
     ...['luna', 'brainomni', 'codebrain', 'eegmamba', 'steegformer', 'eeg-fm-masking', 'erp-fm', 'singlem', 'zuna', 'mirepnet', 'eeg-dino']
@@ -646,6 +687,7 @@ async function main() {
   const doc = {
     schema_version: SCHEMA, freeze: D, freeze_day: FREEZE_DAY, producer: 'site/scripts/export-site-register-rows.mjs',
     census: { file: A5_PATH, generated_at: a5.generated_at, sha256: sha(readFileSync(abs(A5_PATH))) },
+    census_supplement: { file: SUPP_PATH, generated_at: supp.generated_at, sha256: sha(readFileSync(abs(SUPP_PATH))) },
     reread, notes, inputs,
     ladders: { dataset: ladder(mods.i18n.datasetLadder), model: ladder(mods.i18n.modelLadder) },
     rules: { en: mods.i18n.registerCopy.en.rules, zh: mods.i18n.registerCopy.zh.rules },

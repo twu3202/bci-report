@@ -31,9 +31,80 @@ import export_pilot_studies_update as pilot_studies
 import audit_pilot_studies_export as pilot_studies_audit
 import export_eegpt_core_update as eegpt_core
 import audit_eegpt_core_export as eegpt_core_audit
+from ssvep_followups import blocks_cca
 
 PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT/'research/publication_review_20260920/build-release-audit.json'
+
+# The 2026-10-28 release (owner decisions D14-D29): four result exports and the open register's second dated version,
+# five releases on one day. Each served file is held to its own audit and manifest in this review folder.
+REVIEW_1028 = PROJECT/'research/publication_review_20261028'
+RELEASE_1028 = (
+    ('ssvep-followups-update.json', 'ssvep-followups-export-audit.json', 'ssvep-followups-release-manifest.json'),
+    ('neurorvq-update.json', 'neurorvq-export-audit.json', 'neurorvq-release-manifest.json'),
+    ('eegmat-ten-second-update.json', 'eegmat-ten-second-export-audit.json', 'eegmat-ten-second-release-manifest.json'),
+    ('dataset-checks-update.json', 'dataset-checks-export-audit.json', 'dataset-checks-release-manifest.json'),
+    ('open-register-20261028.json', 'register/open-register-export-audit.json', 'register/open-register-release-manifest.json'))
+# blocks_cca.REFUSED_TEXT (private path roots, host and volume words, the thread commenter's name and figure; no literal
+# of the name here) also matches ordinary words and decimal figures that end in 55. Those are allowed site-wide, where
+# released tables legitimately carry them (an AUROC floor of 0.55, a level of 30.55%); on the files and the page of the
+# 2026-10-28 SSVEP follow-ups a 55 is allowed only as the tail of a decimal or signed figure (+0.55 pp, 30.55%).
+ORDINARY_WORDS = {'pending', 'superseded'}
+ORDINARY_FIGURES = {'0.55', '55%'}
+
+
+def thread_hits(text, strict):
+    """REFUSED_TEXT's matches in `text` (web addresses removed) that are not ordinary."""
+    # A web address is not a path, and a built asset's hashed file name is not prose (a hash may spell any word).
+    text = re.sub(r'https?://[^\s"\'<>)]+|/?_astro/[\w.-]+', ' ', text)
+    out = set()
+    for m in blocks_cca.REFUSED_TEXT.finditer(text):
+        hit, before = m.group(0).lower(), text[max(m.start() - 1, 0):m.start()]
+        if hit in ORDINARY_WORDS:
+            continue
+        if hit in ORDINARY_FIGURES and (not strict or (before and (before in '.+-−' or before.isdigit()))):
+            continue
+        out.add(hit)
+    return out
+
+
+def release_1028_pages(root):
+    """The pages the 2026-10-28 release adds or extends, in English and Chinese, each with its Markdown copy, read from
+    the served payloads' placements: every card, panel and section anchor, the figure-free pointers from the protocol
+    pages, the Kim beta-range dataset page, the release archive, and the register pages linking the newest dated file.
+    The SSVEP page and the day's files carry no unqualified 55 and nothing else of the thread rule."""
+    data = lambda name: json.loads((root/'data'/name).read_text())
+    ss, nr, ts, dc = (data(n) for n, _, _ in RELEASE_1028[:4])
+    anchors = {}
+    anchors.setdefault(ss['placement']['page'], []).extend(c['anchor'] for c in ss['placement']['cards'])
+    for p in (nr, ts):
+        anchors.setdefault(p['placement']['page'], []).append(p['placement']['anchor'])
+    anchors.setdefault(dc['placement']['page'], []).extend(dc['placement']['sections'])
+    pointers = {}
+    for page in nr['placement']['pointers_from']:
+        pointers.setdefault(page, []).append(f"{nr['placement']['page']}#{nr['placement']['anchor']}")
+    pointers.setdefault(ts['placement']['pointer_from'], []).append(f"{ts['placement']['page']}#{ts['placement']['anchor']}")
+    registers = ('/datasets/register/', '/methods/register/')
+    pages = set(anchors) | set(pointers) | set(dc['placement']['dataset_pages'].values()) | {'/releases/archive/', *registers}
+    newest = RELEASE_1028[4][0]
+    checked = []
+    for lang in ('', '/zh'):
+        for page in sorted(pages):
+            html = root/(lang + page).lstrip('/')/'index.html'
+            assert html.is_file() and html.with_suffix('.md').is_file(), f'release 20261028: no page {lang}{page}'
+            text = html.read_text()
+            for anchor in anchors.get(page, ()):
+                assert f'id="{anchor}"' in text, f'{lang}{page}: no #{anchor}'
+            for target in pointers.get(page, ()):
+                assert f'href="{lang}{target}"' in text, f'{lang}{page}: no pointer to {target}'
+            if page in registers:
+                assert f'href="/data/{newest}"' in text, f'{lang}{page}: does not link /data/{newest}'
+            checked.append(f'{lang}{page}')
+    strict = [root/'data'/n for n, _, _ in RELEASE_1028] + [root/'data/open-register-20261028.csv']
+    strict += [root/(lang + ss['placement']['page']).lstrip('/')/f'index.{ext}' for lang in ('', '/zh') for ext in ('html', 'md')]
+    for path in strict:
+        assert not thread_hits(path.read_text(), strict=True), (path, thread_hits(path.read_text(), strict=True))
+    return checked
 
 # Text is scanned for leaks; binary is inventoried and hashed only.
 # .md: the Markdown copy of every page (site/scripts/build-agent-files.mjs), scanned like the page.
@@ -268,6 +339,31 @@ def check(root):
     reg_audit = json.loads((review_0420/'register/open-register-export-audit.json').read_text())
     assert hashlib.sha256((root/'data/open-register-20261020.csv').read_bytes()).hexdigest() == reg_audit['csv_sha256'], 'Unreviewed register CSV'
     expected.add('open-register-20261020.csv')
+    # The 2026-10-28 release: four result exports and the register's second dated version, each served exactly as its
+    # audit bound it, and the earlier files they rest on kept to the bytes those audits name (D28: the released SSVEP
+    # file keeps its bytes; the 20261020 register files stay served unchanged; data-quality-update.json is untouched).
+    sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+    for served, audit_path, manifest_path in RELEASE_1028:
+        audit = json.loads((REVIEW_1028/audit_path).read_text())
+        payload = (root/'data'/served).read_bytes()
+        assert audit['status'] == 'pass', f'{served}: its audit did not pass'
+        assert hashlib.sha256(payload).hexdigest() == audit['export_sha256'], f'Unreviewed download {served}'
+        assert sha(REVIEW_1028/manifest_path) == audit['manifest_sha256'], f'{served}: manifest is not the audited one'
+        assert (PROJECT/'site/src/data'/served).read_bytes() == payload, f'{served}: source/download drift'
+        assert audit['release_id'] == json.loads(payload)['release_id'] and audit['release_id'].endswith('-20261028'), served
+        expected.add(served)
+    reg_1028 = json.loads((REVIEW_1028/'register/open-register-export-audit.json').read_text())
+    assert sha(root/'data/open-register-20261028.csv') == reg_1028['csv_sha256'], 'Unreviewed register CSV (20261028)'
+    expected.add('open-register-20261028.csv')
+    prev = reg_1028['previous_version']
+    assert prev['release_id'] == reg_audit['release_id'] and prev['served_unchanged'] is True, 'Register: previous version'
+    assert sha(root/'data/open-register-20261020.json') == prev['json_sha256'], 'Register JSON 20261020 changed'
+    assert sha(root/'data/open-register-20261020.csv') == prev['csv_sha256'], 'Register CSV 20261020 changed'
+    ssvep_audit = json.loads((REVIEW_1028/'ssvep-followups-export-audit.json').read_text())
+    assert sha(root/'data/new-ssvep-frequencies-update.json') == ssvep_audit['released_file_sha256'], 'Released SSVEP file changed'
+    for served, digest in json.loads((REVIEW_1028/'dataset-checks-export-audit.json').read_text())['released_file_unchanged'].items():
+        assert sha(root/'data'/served) == digest, f'{served} changed under the dataset checks'
+    pages_1028 = release_1028_pages(root)
     assert {p.name for p in (root/'data').iterdir()} == expected, 'Unexpected download route'
     files = sorted((p for p in root.rglob('*') if p.is_file()), key=lambda p: str(p))
     # Path roots, not one machine's spellings. The list used to name this
@@ -284,6 +380,9 @@ def check(root):
         content = path.read_text()
         # A web address is not a filesystem path: the SEED terms page lives at bcmi.sjtu.edu.cn/home/seed/ (2026-10-20).
         assert not any(term in re.sub(r'https?://[^\s"\'<>]+', '', content) for term in forbidden), path
+        # Private path roots (/mnt, /root, /private, ...), host and volume words and the thread commenter, everywhere.
+        assert not thread_hits(content, strict=False), (path, thread_hits(content, strict=False))
+        assert not re.search(r'ICLR\s*2027', content, re.IGNORECASE), path      # D4: nothing tied to those submissions
         assert not re.search(r'\bsub-\d{2,}\b',content), path
         if path.suffix=='.json': validate_public(json.loads(content))
     for path in root.rglob('*.html'):
@@ -332,6 +431,13 @@ def check(root):
                   ('eegpt-core-update payload reproduced from its own manifest, and its independent audit re-run'
                    if eegpt_rederived
                    else 'eegpt-core-update payload matched to its audit hash (private inputs not present)'),
+                  'the 2026-10-28 release: four result payloads and the 20261028 register JSON and CSV matched to their '
+                  'audits and manifests, source and download copies identical; the released SSVEP file, the 20261020 '
+                  'register files and data-quality-update.json kept to the bytes those audits name',
+                  f'the 2026-10-28 pages present in English and Chinese with their Markdown copies ({len(pages_1028)}), '
+                  'with every anchor and pointer their payloads place and the register pages linking the newest file',
+                  'no private path root, host or volume word, thread commenter or ICLR 2027 reference in any built '
+                  'file; no unqualified 55 in the 2026-10-28 files or on the SSVEP page',
                   'no symlinks in payload','hashes compared against the previous audit record'],
         'built_artifact_sha256':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     }

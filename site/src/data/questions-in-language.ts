@@ -20,6 +20,8 @@ import qlw from './questions-in-language-wordings.json';
 import type { Locale } from './i18n';
 import { jevStyle, typesafeJev } from './decision-research';
 import type { Fig, Fmt } from './entities';
+import ssvepFirst from './new-ssvep-frequencies-update.json';
+import ssvepMore from './ssvep-followups-update.json';
 
 export const QL = 'questions-in-language-update.json';
 export const QLW = 'questions-in-language-wordings.json';
@@ -338,4 +340,80 @@ export function qlGroupLimits(id: 'beta' | 'boas', locale: Locale): { text: stri
     if (hits.length !== 1) throw new Error(`questions-in-language.ts: the export has no single limitation starting "${start}"`);
     return qlText(hits[0], locale);
   });
+}
+
+/*
+ * Route 3's follow-ups on SSVEP frequencies a decoder never trained on, counted across the two releases that carry
+ * them (owner decisions D1 and D28): new-ssvep-frequencies-update.json, cards 1 to 7 and a status entry for card 8,
+ * and ssvep-followups-update.json, cards 8 to 14, whose card 8 takes that status entry's place. The topic card
+ * (i18n.ts), the line #unseen-frequency ends with and /jev-style/ print these counts as words, so no digit is typed for
+ * them; each count is computed here from the two files, and the build fails if the files stop fitting together or stop
+ * supporting the card's two sentences on filter-bank CCA and the harmonic sum.
+ */
+const followUpFail = (what: string): never => { throw new Error(`questions-in-language.ts: route 3's follow-ups: ${what}`); };
+type FollowUpCard = { card: number; anchor: string; studies: string[]; status_only?: boolean; supersedes?: { release_id: string; file: string; entry: string } };
+type FollowUpEndpoint = { id: string; task: string; candidates: number | null; cards: number[] };
+const firstCards = ssvepFirst.placement.cards as FollowUpCard[], moreCards = ssvepMore.placement.cards as FollowUpCard[];
+const firstRun = firstCards.filter(c => !c.status_only).map(c => c.card), firstStatus = firstCards.filter(c => c.status_only).map(c => c.card);
+const moreRun = moreCards.map(c => c.card);
+if (ssvepMore.placement.page !== ssvepFirst.placement.page || ssvepMore.placement.reads_with.release_id !== ssvepFirst.release_id
+    || ssvepMore.placement.reads_with.file !== 'new-ssvep-frequencies-update.json' || ssvepMore.placement.reads_with.cards.join() !== firstRun.join())
+  followUpFail('the later file reads with the earlier one, on the same page');
+{ const sup = moreCards.filter(c => c.supersedes);
+  if (sup.map(c => c.card).join() !== firstStatus.join() || !sup.every(c => c.supersedes!.release_id === ssvepFirst.release_id && c.supersedes!.entry === 'status_only'))
+    followUpFail('the later file\'s results take the place of the earlier status entry, and of nothing else'); }
+const followUpCards = [...firstRun, ...moreRun];
+if (followUpCards.some((k, i) => k !== i + 1)) followUpFail('cards 1 to N, each counted once');
+const epOf = (eps: unknown, id: string) => (eps as FollowUpEndpoint[]).find(e => e.id === id) ?? followUpFail(`no ${id} endpoint`);
+const [u8a, u8b, wa, wb] = [epOf(ssvepFirst.endpoints, 'u8'), epOf(ssvepMore.endpoints, 'u8'), epOf(ssvepFirst.endpoints, 'wearable_12'), epOf(ssvepMore.endpoints, 'wearable_12')];
+if (u8a.task !== u8b.task || u8a.candidates !== u8b.candidates || u8a.cards.join() !== ssvepFirst.cohort.cards.join() || ssvepFirst.cohort.dataset !== 'BETA'
+    || u8b.cards.join() !== moreRun.join())
+  followUpFail('BETA\'s held-out task: cards 1 to 6 in the earlier file, every card of the later one');
+if (ssvepFirst.wearable.dataset !== 'Wearable-102' || wa.cards.join() !== ssvepFirst.wearable.cards.join() || wa.task !== wb.task || !wb.task.startsWith(ssvepFirst.wearable.dataset))
+  followUpFail('Wearable-102\'s task, in both files');
+const betaCards = [...u8a.cards, ...u8b.cards], wearableCards = [...wa.cards, ...wb.cards];
+const wearableOnly = wearableCards.filter(k => !betaCards.includes(k));
+// The one card on Wearable-102 alone runs card 6's learned correction to CCA there, unchanged: the card says so.
+if (wearableOnly.join() !== ssvepFirst.wearable.cards.join() || firstCards.find(c => c.card === wearableOnly[0])?.studies.join() !== 'wearable_transfer'
+    || ssvepFirst.wearable.retraining !== false || firstCards.find(c => c.card === 6)?.studies.join() !== 'cca_adapter'
+    || betaCards.length + wearableOnly.length !== followUpCards.length || [...new Set([...betaCards, ...wearableCards])].length !== followUpCards.length)
+  followUpFail('every card on BETA, Wearable-102 or both, and the one on Wearable-102 alone is the learned correction run unchanged');
+// The card's sentences on the later file: filter-bank CCA, untrained, above CCA in every setting of card 11 (every
+// window and electrode count; held out, each interval above zero; seen, each level above), and the untrained harmonic
+// sum within half a point of the learned eigenvalue head on card 9, the interval spanning zero.
+{ const ps = ssvepMore.studies.practical_settings, fb = ps.design.fbcca, names = ps.display_names as Record<string, string>;
+  const cca = Object.keys(names).find(k => names[k] === 'CCA (no training)') ?? followUpFail('card 11 names CCA');
+  const pc = ps.contrasts as Record<string, { estimate: number; interval: number[] }>;
+  const pl = ps.levels as Record<string, { estimate: number }>;
+  if (fb.trained_head !== false || !ps.design.cells.length || !ps.design.cells.every(c => (pc[`${c.id}/${fb.code} minus ${c.id}/${cca}/u8`]?.interval[0] ?? -1) > 0
+      && (pl[`${c.id}/${fb.code}/seen_ba`]?.estimate ?? -1) > (pl[`${c.id}/${cca}/seen_ba`]?.estimate ?? 2)))
+    followUpFail('untrained filter-bank CCA above CCA in every setting tested: each window and electrode count, held-out and seen');
+  const ce = ssvepMore.studies.coherence_eigen, cn = ce.display_names as Record<string, string>;
+  const eh = (ce.contrasts as Record<string, { estimate: number; interval: number[]; left: string; right: string }>)['EIG-RAW minus RAW-HARM-SUM/u8'];
+  if (cn['EIG-RAW'] !== 'eigenvalue head' || cn['RAW-HARM-SUM'] !== 'harmonic sum (no training)' || !ce.design.arms.some(a => a.code === 'EIG-RAW' && a.training !== 'no training')
+      || !eh || !(eh.interval[0] < 0 && eh.interval[1] > 0 && Math.abs(eh.estimate) < 0.005))
+    followUpFail('the untrained harmonic sum nearly level with the learned eigenvalue head'); }
+
+/** How many follow-ups, on which data, across both files. */
+export const ssvepFollowUps = { total: followUpCards.length, beta: betaCards.length, wearable: wearableCards.length,
+  wearableOnly: wearableOnly.length } as const;
+const COUNT_WORDS: Record<Locale, string[]> = {
+  en: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen',
+       'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'],
+  zh: ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'],
+};
+/** A count as a word ("fourteen", 十四): the card, #unseen-frequency and /jev-style/ type no digit for it. */
+export const countWord = (n: number, locale: Locale, capital = false): string => {
+  const w = COUNT_WORDS[locale][n] ?? followUpFail(`no word for ${n}`);
+  return capital && locale === 'en' ? w[0].toUpperCase() + w.slice(1) : w;
+};
+/**
+ * The line #unseen-frequency ends with, and /jev-style/ under route 3, before its link to the follow-ups' question page.
+ * "A second dataset" rather than its name: /jev-style/ prints no digit.
+ */
+export function ssvepFollowUpLine(locale: Locale): string {
+  const F = ssvepFollowUps, w = (n: number, capital = false) => countWord(n, locale, capital);
+  return locale === 'zh'
+    ? `${w(F.total)}项后续实验（${w(F.beta)}项在同一批 BETA 被试上）检验了提问方式、分类头、相位、匹配计算、对 CCA 的学习修正、互谱矩阵、CCA 统计量的合并与加权方式，以及更短时间窗、更少电极下的滤波器组 CCA；${w(F.wearable)}项用到第二个数据集，其中${w(F.wearableOnly)}项只在那里运行：`
+    : `${w(F.total, true)} follow-up experiments, ${w(F.beta)} of them on the same BETA cohort, tested how the question is asked, the head, phase, the matching computation, a learned correction to CCA, the cross-spectral matrix, how CCA’s statistics are pooled and weighted, and filter-bank CCA with shorter windows and fewer electrodes; ${w(F.wearable)} ran on a second dataset, ${w(F.wearableOnly)} of them only there: `;
 }

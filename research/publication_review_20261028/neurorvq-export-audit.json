@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "release_id": "neurorvq-update-20261028",
+  "export_sha256": "6ae57314d029016cc5934d7c24d8330f33b9afeaf82ff4380f9c4fae38e5f24d",
+  "manifest_sha256": "876311164c20374afa7c085710df03877a31d778e3e88e33028888127d898391",
+  "auditor": "pipeline/publication/audit_neurorvq_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins. The scores, differences and intervals are the study audit receipts’ values, the only full-precision record, and must also match the figures each interpretation review checked and each handoff prints. Every other figure is derived by its own reading: restore counts from the prospective protocols and the approval’s gate name, cohorts from the header summary and the released core tracks, resampling ratios and dimensions from the protocols’ text, the EEGMAT core rate from the released NeuroLM panel, and the exposure counts from the contract’s corpus list.",
+  "figures_compared": 176,
+  "copied_exactly": 23,
+  "recomputed": 144,
+  "nulls_kept": 9,
+  "reviewed_text_sha256": "499ca7d8c2fbead97c6fe44df87f7a62e0bbe7ac60630b4fdf59eaf1c04807dc",
+  "withheld_values_checked_absent": 39,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "scores, paired differences and intervals equal the study audit receipts and round to the figures the interpretation reviews checked and the handoffs print",
+    "restore counts, pooled size, cohorts, resampling ratios, dimensions, fits, audit coverage and exposure counts are recomputed from the protocols, queues, header summary, released core tracks and contract",
+    "labels, readings, licences, licence links, the released dataset records, hashes, caveat keys and the not-published list are checked as strings",
+    "the figures the limitation texts, the scope, the arm definitions and the audit boundaries quote equal the figures derived here",
+    "the EEGMAT filtering extent, the P300 cache’s unrepeated preparation and the EEGMAT audit’s reach, as the texts state them, follow from the protocol, the P300 receipt and the EEGMAT audit program",
+    "every text in the file outside provenance, added keys included, hashes to the reviewed text the manifest pins",
+    "no measured compute, no above-50% count, no private path, no private user, host or volume name and no third-party conversion in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "each study’s audit receipt, handoff and interpretation review: pinned in the manifest and bound by the study’s release approval, which the export checks",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves",
+      "the reader-visible text: bound as a whole to the SHA-256 the manifest records for the reviewed text, and its quoted figures to the figures derived here"
+    ],
+    "not_bound": [
+      "the extracted values themselves: the EEGMAT audit read both arms’ values from the producer’s sealed files without re-extracting them; this audit opens no sealed file",
+      "the wording itself: the export’s text rules check claims, hedges, labels and names; this audit only holds the text to the reviewed bytes"
+    ]
+  }
+}

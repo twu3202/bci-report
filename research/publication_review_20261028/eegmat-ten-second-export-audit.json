@@ -1,0 +1,31 @@
+{
+  "status": "pass",
+  "release_id": "eegmat-ten-second-update-20261028",
+  "export_sha256": "b26e1934e8569ac8de8f51f815dad1dcc74a0734f9090b5e2a70572ea1cc5fe0",
+  "manifest_sha256": "3f22f09009af5b2dd989504f21c6776b1c2b38b9a559ed4a6d9257219918cd0f",
+  "auditor": "pipeline/publication/audit_eegmat_ten_second_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins. AXON’s scores, difference and interval come from the corrected audit’s independent scores (the export reads the released aggregate); EEG-Captioner’s from the audit outcome, required equal to the interpretation review’s verified percentage points and to the figures AXON’s frozen protocol recorded as known beforehand. Every other figure is derived by its own reading of AXON’s protocol, the QC summary by fold, the handoffs’ text, the strict-load packet and the access record.",
+  "figures_compared": 133,
+  "copied_exactly": 10,
+  "recomputed": 123,
+  "nulls_kept": 0,
+  "withheld_values_checked_absent": 48,
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "scores, paired differences and intervals equal the corrected audit’s independent scores (AXON) and the audit outcome, the interpretation review and AXON’s protocol (EEG-Captioner); the AXON baseline equals the EEG-Captioner run’s",
+    "cohort counts, preprocessing, the QC totals and rule, the head, the bootstrap, dimensions and the audit flags are recomputed from AXON’s protocol, the QC summary by fold and the handoffs",
+    "titles, baseline notes, readings, the beside-score lines, identities, the licences per part, the EEGMAT rights record, the hashes, the limitation lists, the research-release wording and the not-published list are checked as strings",
+    "no per-fold, pooled, confusion, QC-breakdown or accounting value, no private path and no private user, host or volume name in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "EEG-Captioner’s audit outcome, handoff and interpretation review: bound by its release approval; AXON’s aggregate and handoff: bound by its independent release review, which pins the corrected audit, the feature comparison and the frozen protocol; the export checks both",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves"
+    ],
+    "not_bound": [
+      "the encoders’ features themselves: both research audits recomputed them from sealed arrays this audit does not open, and neither recomputed the raw preprocessing or the source QC",
+      "prose, the limitation texts and the release record are checked by the export; this audit checks the limitation lists by id and the research-release wording only"
+    ]
+  }
+}

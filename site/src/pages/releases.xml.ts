@@ -1,10 +1,7 @@
 import type { APIRoute } from 'astro';
-import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { site } from '../data/site';
 import { releases } from '../data/releases';
-import { registerCopy, topicCards } from '../data/i18n';
+import { fileFacts, pageTitle } from '../data/release-record';
 
 /**
  * /releases.xml — an Atom feed of the release log, one entry per reviewed
@@ -12,53 +9,38 @@ import { registerCopy, topicCards } from '../data/i18n';
  * itself. It lets a researcher or an aggregator subscribe to the change log
  * instead of re-reading the page.
  *
- * English only, like the downloads it describes. Each entry links to its place
- * on /releases/, to the pages it added, and to every file it ships with that
- * file's size and the SHA-256 of the served bytes — computed at build time from
- * public/data, as the releases page does, so the feed cannot list a hash for a
- * file the site does not serve. Dates are release dates at 00:00 UTC: a release
- * is a day, not a moment.
+ * English only, like the downloads it describes. Each entry links to its record
+ * in the release archive (/releases/archive/, owner decision D17, 2026-10-28; its
+ * <id> keeps the /releases/#<id> it has always had, which still lands on the
+ * release's line on /releases/), to the pages it added, and to every file it
+ * ships with that file's size and the SHA-256 of the served bytes — computed at
+ * build time from public/data, as the archive does (release-record.ts), so the
+ * feed cannot list a hash for a file the site does not serve. Dates are release
+ * dates at 00:00 UTC: a release is a day, not a moment.
  */
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const stamp = (date: string) => `${date}T00:00:00Z`;
-const facts = (file: string) => {
-  const bytes = readFileSync(resolve('public/data', file));
-  return { file, length: bytes.length, sha: createHash('sha256').update(bytes).digest('hex') };
-};
 const typeOf = (file: string) => (file.endsWith('.csv') ? 'text/csv' : 'application/json');
-// Since 2026-10-04 a release can name a hub (the v9 rows: every protocol page, the method pages),
-// titled as releases.astro titles them.
-const hubName: Record<string, string> = { '/protocols/': 'Protocols', '/methods/': 'Methods', '/datasets/': 'Datasets' };
-// The open register's two pages (2026-10-20), titled as releases.astro titles them.
-const registerName: Record<string, string> = {
-  '/datasets/register/': registerCopy.en.datasets.title, '/methods/register/': registerCopy.en.methods.title,
-};
-const pageName = (p: string) => {
-  const slug = p.match(/^\/topics\/([^/]+)\//)?.[1];
-  if (slug) return topicCards.en[slug].title;
-  if (hubName[p]) return hubName[p];
-  if (registerName[p]) return registerName[p];
-  if (p !== '/') throw new Error(`releases.xml.ts: no title for the page ${p}`);
-  return 'Core matrix (home page)';
-};
+// Pages are titled as the release log titles them.
+const pageName = (p: string) => pageTitle(p, 'en');
 
 export const GET: APIRoute = ({ site: origin }) => {
   const base = String(origin ?? new URL(site.origin));
   const abs = (p: string) => new URL(p, base).href;
   const entries = releases.map(r => {
-    const files = r.files.map(facts);
+    const files = r.files.map(fileFacts);
     const content =
       `<p>${esc(r.summary.en)}</p>` +
       r.notes.map(n => `<p>${esc(n.en)}</p>`).join('') +
       `<p>Pages: ${r.pages.map(p => `<a href="${abs(p)}">${esc(pageName(p))}</a>`).join(' · ')}</p>` +
-      `<ul>${files.map(f => `<li><a href="${abs(`/data/${f.file}`)}">${f.file}</a> — ${f.length} bytes, SHA-256 of the file as served <code>${f.sha}</code></li>`).join('')}</ul>`;
+      `<ul>${files.map(f => `<li><a href="${abs(`/data/${f.file}`)}">${f.file}</a> — ${f.bytes} bytes, SHA-256 of the file as served <code>${f.sha}</code></li>`).join('')}</ul>`;
     return [
       '  <entry>',
       `    <title>${esc(`${r.id} (${r.date})`)}</title>`,
       `    <id>${abs(`/releases/#${r.id}`)}</id>`,
-      `    <link rel="alternate" type="text/html" href="${abs(`/releases/#${r.id}`)}"/>`,
+      `    <link rel="alternate" type="text/html" href="${abs(`/releases/archive/#${r.id}`)}"/>`,
       ...r.pages.map(p => `    <link rel="related" type="text/html" href="${abs(p)}"/>`),
-      ...files.map(f => `    <link rel="enclosure" type="${typeOf(f.file)}" length="${f.length}" href="${abs(`/data/${f.file}`)}"/>`),
+      ...files.map(f => `    <link rel="enclosure" type="${typeOf(f.file)}" length="${f.bytes}" href="${abs(`/data/${f.file}`)}"/>`),
       `    <published>${stamp(r.date)}</published>`,
       `    <updated>${stamp(r.date)}</updated>`,
       `    <summary>${esc(r.summary.en)}</summary>`,

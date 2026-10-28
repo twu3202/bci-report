@@ -104,7 +104,7 @@ What each file holds, loading examples and how to cite a release:
 | Sleep staging | EESM19 | 20 | 20% |
 | Idle false activation | ds005342 | 4 | — |
 
-Fifteen questions sit alongside, each with its own protocol:
+Seventeen questions sit alongside, each with its own protocol:
 [dry vs. wet electrodes](https://bci.report/topics/dry-vs-wet/) ·
 [screen to VR](https://bci.report/topics/screen-to-vr/) ·
 [fewer electrodes](https://bci.report/topics/fewer-electrodes/) ·
@@ -118,6 +118,8 @@ Fifteen questions sit alongside, each with its own protocol:
 [does pretraining help](https://bci.report/topics/does-pretraining-help/) ·
 [one model, several questions](https://bci.report/topics/shared-encoder/) ·
 [questions asked in words](https://bci.report/topics/questions-in-language/) ·
+[SSVEP frequencies a decoder never trained on](https://bci.report/topics/new-ssvep-frequencies/) ·
+[what the files show when checked end to end](https://bci.report/topics/data-quality/) ·
 [beyond scalp EEG](https://bci.report/topics/beyond-scalp-eeg/) ·
 [what a small pilot can show](https://bci.report/topics/pilot-studies/)
 
@@ -155,8 +157,10 @@ asks whether this holds up on EEG in three routes, all run on public data, and
 [questions in language](https://bci.report/topics/questions-in-language/), mostly a
 negative result for questions the EEG head was never trained on.
 
-Every reviewed release, each download with its SHA-256, and a dated register of
-what was held back: [bci.report/releases](https://bci.report/releases/).
+What the newest releases changed, one line for every earlier release, and a
+dated register of what was held back: [bci.report/releases](https://bci.report/releases/).
+Every reviewed release as released, each download with its SHA-256:
+[bci.report/releases/archive](https://bci.report/releases/archive/).
 
 ## Read this before ranking anything
 

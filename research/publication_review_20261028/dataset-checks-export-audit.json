@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "release_id": "dataset-checks-update-20261028",
+  "export_sha256": "80c504fed02f4aadad33ee5c3151a54a16ac3f4b09ddae3f1805c9073184104d",
+  "manifest_sha256": "fce3cacdbf811855fd224a4704c392becf8829673b6967826a558ece8cbe6202",
+  "auditor": "pipeline/publication/audit_dataset_checks_export.py",
+  "independence": "A separate program from the export, importing nothing from it. It reads the served bytes, the release manifest and the files the manifest pins, and takes Kim’s design from the gate review’s scope and its bootstrap settings from the audit readiness record (the export reads the aggregate and the protocol), MIND’s counts from the workflow closure and its processing facts and resampling settings from the handoff’s prose (the export reads the frozen protocol), Damm’s counts from the independent audit, the README capture and the execution review, NeBULA’s from the EEG audit, the EMG structure admission, the EMG metadata and the handoffs (the export reads the boundary diagnostics, the protocols and the structure receipt) and its participant counts from the paper, the research file manifest and MOABB’s catalogue (the export reads the record’s description and the A2 capture of its files), and every derived figure from its own arithmetic on those.",
+  "cases": [
+    "kim2025-beta-range",
+    "mind2026",
+    "damm",
+    "nebula"
+  ],
+  "figures_compared": 293,
+  "copied_exactly": 29,
+  "recomputed": 159,
+  "flags": 90,
+  "nulls_kept": 15,
+  "withheld_values_checked_absent": 86,
+  "released_file_unchanged": {
+    "data-quality-update.json": "fbfb8fb59dc80397d0c4331a3067cf640b27522af6687dd5b3132c8f4e928bda"
+  },
+  "checks": [
+    "the two served copies are byte-identical, and the served file names the manifest it was built from",
+    "every pinned input is the file the manifest names, and every A2 capture has the SHA-256 the record and its shasum sidecar give",
+    "data-quality-update.json keeps the bytes the 2026-10-20 export audit recorded, in both served copies",
+    "every number, flag and null in the served file has an expected value derived here, type included, and every expected value is in the file",
+    "Kim’s figures are the audit aggregate’s, its accuracy interval the difference interval plus chance, and its headline figures the handoff’s prose at four decimals",
+    "MIND’s panels and contrasts are the aggregate’s and agree with the arithmetic review; the secondary panel carries no interval and no schedule field",
+    "no Damm or NeBULA case holds a fraction, a percentage, a held-score field or a held value as text, and no comparison word in its text, hold line or record line",
+    "consent, ethics and terms are the A2 record’s, and every quotation is found verbatim in its capture",
+    "the one-person sentence is stated once, and no hold reason restates it",
+    "Kim’s sealing is stated once, with the limit the execution approval and the handoff give",
+    "no withheld pooled metric, accounting figure, private host, storage name, path, file or participant identifier, register-only content or submission reference is in the served file"
+  ],
+  "audit_bindings": {
+    "bound": [
+      "research aggregates, release approvals, reviews, protocols and handoffs: pinned in the manifest, with the aggregates, approvals and protocols named in the served provenance",
+      "every figure: equal to a pinned source leaf, or recomputed here from pinned source leaves",
+      "consent and ethics: the A2 record, pinned in the manifest, and its captures, pinned by the record"
+    ],
+    "not_bound": [
+      "sealed predictions and private score files are verified by the research audits, whose records are pinned; this audit does not open them",
+      "prose, the arm and variant names, the caveats, the holds and the release record are checked by the export; this audit checks only the one-person sentence, Kim’s sealing limit and the comparison words of the one-person cases"
+    ]
+  }
+}

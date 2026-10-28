@@ -1,0 +1,671 @@
+{
+ "release_id": "open-register-update-20261028",
+ "release_date": "2026-10-28",
+ "freeze_date": "20261028",
+ "reviewer": "publishing session, package R5 of the 20261028 round",
+ "scope": "The open register's 20261028 version (plan section 3): a new dated file, open-register-20261028.json, and the dataset ladder flat in open-register-20261028.csv; open-register-20261020.json and .csv stay served byte-identical. Four MOABB record groups become this site's rows (Kim beta-range, MIND, Damm finger imagery, NeBULA), each checked end to end on the data-quality page; three models scored on the pilot studies page enter at step 4 (NeuroRVQ, EEG-Captioner, AXON); five models of the 2026-10-25 refresh enter at step 1 with holds. Every other row is rebuilt from the frozen 20261020 inputs.",
+ "approval": {
+  "D1": "All three: the seven SSVEP follow-ups (new-ssvep-frequencies), Shin2022 with the data-quality page, and IESSEEG with the NeuroLM results (clinical-groups section and the NeuroLM EEGMAT pilot panel)",
+  "D2": "Status and counts only; the score is held, keeping the one-person rule (Stieger, FALCON H2)",
+  "D3": "Yes, only facts confirmed by an independent check and backed by a captured original-terms page; factual wording only; a correction route on every row; no prior contact with uploaders",
+  "D3_default_kept": "HF dataset CSV and card carry no comparison findings unless the owner asks",
+  "D4": "Rows tied to ICLR 2027 submissions wait until after the 16 December 2026 decisions",
+  "D5": "The 737 EEGDash mirrors are one family row; the full map stays in the JSON",
+  "D11": "Hugging Face group = repos the classifier marked in_scope (brain-signal data) from the frozen 28-term + 20-tag snapshot; counts printed for that snapshot with its evidence date",
+  "D12": "Step 4 'share above chance' shown as 'not computed' until counts exist; own pages for step-2/3 rows deferred",
+  "D13": "A section on /topics/clinical-groups/ with its own question heading; the Parkinson's h1, short answer and card unchanged",
+  "source": "research/publication_review_20261020/owner-decisions.json",
+  "round_20261028": {
+   "D14": "All: the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33), NeuroRVQ on EEGMAT, MI and P300 (aggregate scores only, CC BY-NC, no weights), the EEG-Captioner and AXON ten-second EEGMAT probes, and the Kim beta-range CCA baseline",
+   "D15": "Publish now as a conditional case on /topics/data-quality/: record IDs, not verified people; both licence statements side by side (paper and archive CC BY 4.0, MOABB CC BY-NC 4.0); the ScienceDB terms page stated as not read",
+   "D16": "Keep the rule: design, counts, file and timing facts and holds only; the scores stay held, as for eldBETA",
+   "D19": "NeuroRVQ: one uncounted panel on /topics/pilot-studies/ with EEGMAT, MI and P300 blocks, and figure-free pointers from the three protocol pages; no method page",
+   "D21": "A dataset page for Kim beta-range with no method link; MIND gets a section only",
+   "D26": "The five refresh model rows (FAME, EEG-PRIME, STST-JEPA, BandVQ, USE-FM) at register step 1 with holds; the catalog rows needing new vocabulary wait",
+   "D27": "The ten register use statements stay internal",
+   "carried_over": "D2 (one-person scores held), D4 (ICLR 2027 rows wait until after 2026-12-16), D6 (the HF commenter is not named) and the 2026-10-19/20 decisions remain in force",
+   "source": "research/publication_review_20261028/owner-decisions.json"
+  }
+ },
+ "sources": {
+  "site_rows": {
+   "path": "research/publication_review_20261028/register/site-register-rows-20261028.json",
+   "sha256": "94f37bbbb0aab8a3a8696c10baa482550462d6ed51d0e3b7bf3f337ee364e332",
+   "note": "export-site-register-rows.mjs at the freeze: the site rows from entities.ts and the A5 and A3 censuses, every census value re-read in the live files"
+  },
+  "external_rows": {
+   "path": "research/publication_review_20261028/register/open-register-external-20261028.json",
+   "sha256": "f061657ee87a39013b290c16735442c4e1154daf55bb25e26c2fc5b345747fa0",
+   "note": "the external rows (Hugging Face, EEGDash, MOABB, agreement corpora, models), rebuilt in this run from the inputs below"
+  },
+  "register_ids": {
+   "path": "research/publication_review_20261028/register/register-ids.json",
+   "sha256": "7c55e36b5d44bc1195005bdac6678a24b4eac8a789728e2c65970b636693cf85",
+   "note": "the persisted opaque-id map, continuing the 20261020 map; never served"
+  },
+  "register_ids_20261020": {
+   "path": "research/publication_review_20261020/register/register-ids.json",
+   "sha256": "b4314b7a6095a19b386b18f2dc45e1a439e9305626adad57a42c37c8fa4aa9af",
+   "note": "the 20261020 id map this one continues"
+  },
+  "export-site-register-rows.mjs": {
+   "path": "site/scripts/export-site-register-rows.mjs",
+   "sha256": "61982b6dba03f22686382dac63143ef7d53222e46c3a2cd9d80bf44bc40a4c88",
+   "note": "the site-row exporter"
+  },
+  "export_open_register.py": {
+   "path": "pipeline/publication/export_open_register.py",
+   "sha256": "62bc515f41262c4621d6fd81d37ee8878e200758798ceeb8183695de7b0d36db",
+   "note": "this exporter"
+  },
+  "register_findings.py": {
+   "path": "pipeline/publication/register_findings.py",
+   "sha256": "bf713dfbe54376eb613cc9c09ea70a14d32124e6684e53759a334b01f7f281db",
+   "note": "finding codes, site holds and the D3 gate"
+  },
+  "register_ids.py": {
+   "path": "pipeline/publication/register_ids.py",
+   "sha256": "25f5aa3da000dc1d06ecb2f5c98834fb07155fbc10074e19cd4157e8c3a127f8",
+   "note": "opaque ids"
+  },
+  "open-register.ts": {
+   "path": "site/src/data/open-register.ts",
+   "sha256": "e80d84ae8f625043e91ce512b4b8fc80c9cc73bfe47978463f1d16d16d2f36eb",
+   "note": "the page module; its holdReason table decides which site holds are declared"
+  },
+  "build_site_step_evidence.py": {
+   "path": "research/publication_review_20261028/register/build_site_step_evidence.py",
+   "sha256": "98597c4b08e4f00f53997e0cd2407d40e4cb3e0b9e6df9a9339d2d42e3e79d8f",
+   "note": "the A3 census builder"
+  },
+  "hf_listing_snapshot": {
+   "path": "research/open_register_20261019/raw/hf-dataset-listing.json",
+   "sha256": "da5838f870e40eef55a21a6563e928a198554dcfd0c106c65e1138e54b01ba8b",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "eegdash_map": {
+   "path": "research/open_register_20261019/eegdash-openneuro-map.json",
+   "sha256": "a7f14bc53905d9baf290f64e6bbfcd55d286cd66a662ab472d9ea98906c6d3e6",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "prefilter_dropped": {
+   "path": "research/open_register_20261019/prefilter-dropped.json",
+   "sha256": "68c61ba393d419d541d60e6d647252d3427545dbb649d8e4022cc88113abb405",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "known_sources": {
+   "path": "research/open_register_20261019/known-sources.json",
+   "sha256": "c81cf40fc223c936ec9b76cbd85119c8314f126862c7495fddeb888682d0f13b",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "hf_model_listing": {
+   "path": "research/open_register_20261019/raw/hf-model-listing.json",
+   "sha256": "3916aa14cc8ac46c85a8f81552c200d3b348f5a9f222e8e3c36176b68cf2f7da",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "moabb_catalog_snapshot": {
+   "path": "research/moabb_expansion_20261019/evidence/moabb-catalog.json",
+   "sha256": "bb6ecaf38505b585b3417196d8cfa54556fececb4bede58b7a5317f77c03aada",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "moabb_shortlist_check": {
+   "path": "research/moabb_expansion_20261019/evidence/moabb-shortlist-verified.json",
+   "sha256": "02a7708b8f3db4b59df4bf5ed1904e2629afd60cec5f2913c055f54f73c045fc",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "moabb_site_coverage": {
+   "path": "research/moabb_expansion_20261019/evidence/existing-dataset-coverage.json",
+   "sha256": "9ab2e347004b376c86a74565caf72a732205759b1a693e8733191f931a14e145",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "access_terms_index": {
+   "path": "research/publication_review_20261020/evidence/access-terms/index.json",
+   "sha256": "29b5b8a1f508fa5f6cccbc57fae5c7b7a7a79162aea2a58d83da5158238fe0ff",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "site_step_census": {
+   "path": "research/publication_review_20261020/notes/site-step-evidence.json",
+   "sha256": "f16b0f4e80e238090a7405cb4a7c204186f4da7fc1f288a047712124c8447223",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "consent_record": {
+   "path": "research/publication_review_20261020/evidence/consent-statements.json",
+   "sha256": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "owner_decisions": {
+   "path": "research/publication_review_20261020/owner-decisions.json",
+   "sha256": "3661cb4d54f2daa8512e994865cab20a93c6a6d2ba0e9b31b81092b1bd9ff3b7",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "hf_model_metadata": {
+   "path": "research/publication_review_20261020/register/hf-model-metadata-20261020.json",
+   "sha256": "2d596acdb513166612f741893c518241602582d88a41dc1efd22da30e3d5a0a4",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "model_evidence_review": {
+   "path": "research/iclr_bci_expansion_20261016/Additional ICLR BCI Opportunities.json",
+   "sha256": "8eb247abba7977fc4e6a00ea552c797e0c05f312f2f88c826461344ce5ffa5b1",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "fm_update": {
+   "path": "site/src/data/foundation-models-update.json",
+   "sha256": "eaaaaccb2e8b70cacc85db71726d63de036c83c3d60b7b4a9097f9aafafad13a",
+   "note": "served site file"
+  },
+  "neurolm_update": {
+   "path": "site/src/data/neurolm-eegmat-update.json",
+   "sha256": "4e7001b2b69ea2578d1db5c9617dc1b99e8f3985f13b2e2fb1b11f32024d6a55",
+   "note": "served site file"
+  },
+  "iesseeg_update": {
+   "path": "site/src/data/clinical-iesseeg-update.json",
+   "sha256": "c2302fe6945276de8f9183340c165245bc4c5097c9ebe60fa7ac389725b2427d",
+   "note": "served site file"
+  },
+  "profiles": {
+   "path": "site/src/data/entity-profiles.json",
+   "sha256": "9947ca2682076d5bc06244e8286c6f3bc34088ed0e62658eefb6728af001d3a9",
+   "note": "served site file"
+  },
+  "mvp": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0",
+   "note": "served site file"
+  },
+  "site_step_census_20261028": {
+   "path": "research/publication_review_20261028/register/site-step-evidence-20261028.json",
+   "sha256": "a66f3fa8cc108131094a17fe7e9fd9103b4cf56faf8bfa8a4fae485755c310d0",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "consent_record_20261028": {
+   "path": "research/publication_review_20261028/evidence/consent-statements.json",
+   "sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "owner_decisions_20261028": {
+   "path": "research/publication_review_20261028/owner-decisions.json",
+   "sha256": "031ad4e32fa2186e607d4e2fbf9b0ff6d99102d9d8a0300af2aea28279fae313",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "neurorvq_update": {
+   "path": "site/src/data/neurorvq-update.json",
+   "sha256": "6ae57314d029016cc5934d7c24d8330f33b9afeaf82ff4380f9c4fae38e5f24d",
+   "note": "served site file"
+  },
+  "ten_second_update": {
+   "path": "site/src/data/eegmat-ten-second-update.json",
+   "sha256": "b26e1934e8569ac8de8f51f815dad1dcc74a0734f9090b5e2a70572ea1cc5fe0",
+   "note": "served site file"
+  },
+  "dataset_checks_update": {
+   "path": "site/src/data/dataset-checks-update.json",
+   "sha256": "80c504fed02f4aadad33ee5c3151a54a16ac3f4b09ddae3f1805c9073184104d",
+   "note": "served site file"
+  },
+  "model_refresh_evidence": {
+   "path": "research/research_refresh_20261025/models/EEG model refresh evidence.json",
+   "sha256": "42510f2b6662687fc2e765a1f33b7c730f98276b747f454218437257cb5b22ce",
+   "note": "research or review record (served by label and hash only)"
+  },
+  "model_refresh_approval": {
+   "path": "research/research_refresh_20261025/state/research-handoff-approval.json",
+   "sha256": "64d04b19b5b8858dd2bd9120bded3f436764c84222b716f42e92ccb403b0c3bc",
+   "note": "the research approval of the 2026-10-25 refresh handoff the five step-1 model rows rest on (D26)"
+  },
+  "a3:Final Checkpoint Intake Result Admission.json": {
+   "path": "research/autonomous_validation_20261026/axon_load_admission_20261027/Final Checkpoint Intake Result Admission.json",
+   "sha256": "3cf635e6d1100c8b2ab59ce2e64f2ed8521968e95d7f6ea7740dea1a5b146076",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "a3:EEG-Captioner Encoder Intake Handoff.md": {
+   "path": "research/autonomous_validation_20261026/eeg_captioner/EEG-Captioner Encoder Intake Handoff.md",
+   "sha256": "f4cd42aade6607d12028b698eb1d16dee7b8d85991c8b0bfa67a35637eea7470",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "a3:strict-load-acceptance.json": {
+   "path": "research/autonomous_validation_20261026/neurorvq/review/strict-load-acceptance.json",
+   "sha256": "ca1b2d734fb7bdf152f15df4ad09844fa74fa60ab0b7fbbfc9260f1349cbf73f",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "a3:axon.json": {
+   "path": "research/autonomous_validation_20261026/scans/models/axon.json",
+   "sha256": "b1d7e2ed74ff1b6fd8f58f880a4db9636d09d0ed51d6381359d556c9356bfe78",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "a3:captioner.json": {
+   "path": "research/autonomous_validation_20261026/scans/models/captioner.json",
+   "sha256": "5bd52f4619bda1fb1ff4c43c962af398c63c5ee0612e9d4258bb817f9461c97b",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "a3:releases.ts": {
+   "path": "site/src/data/releases.ts",
+   "sha256": "cc96d906a7cd18be6dee1d05e7929ce03accddc02b6624714c7422965646e2c9",
+   "note": "a record the A3 census cites (served by record hash only)"
+  },
+  "previous_served_json_src": {
+   "path": "site/src/data/open-register-20261020.json",
+   "sha256": "c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558",
+   "note": "the 20261020 register file, served unchanged"
+  },
+  "previous_served_json_public": {
+   "path": "site/public/data/open-register-20261020.json",
+   "sha256": "c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558",
+   "note": "the 20261020 register file, served unchanged"
+  },
+  "previous_served_csv": {
+   "path": "site/public/data/open-register-20261020.csv",
+   "sha256": "aef5cffcac9fa23b14a0276ee0a8d9cb79aecf1d0f81eb95613f7d7874b7a9fe",
+   "note": "the 20261020 register file, served unchanged"
+  },
+  "classifier_audit": {
+   "path": "research/publication_review_20261020/reviews/register-classifier-audit.json",
+   "sha256": "ce1752760cf818fd99dd33f0fdbb091580bd3b1dd53f34893b63a4228c683954",
+   "note": "the classifier audit (R2) whose population re-check the Hugging Face group applies"
+  }
+ },
+ "source_directories": [
+  {
+   "label": "classifier_rows",
+   "path": "research/open_register_20261019/classified/",
+   "files": 28,
+   "digest_sha256": "19289a3936a51e716b4bed57ca37ee3137fed947b952f183a26b7bd3a92922f7"
+  },
+  {
+   "label": "hf_detail_records",
+   "path": "research/open_register_20261019/raw/details/",
+   "files": 368,
+   "digest_sha256": "9836710989e72cae742ca54d1573f86357f51e83b7d689eab9023f56ab7293b8"
+  },
+  {
+   "label": "verification_results",
+   "path": "research/open_register_20261019/verified/",
+   "files": 95,
+   "digest_sha256": "3e6de2482149f6464d533e1931ea0768c5a93bb527d6ec8c7caa765fb71a2487"
+  },
+  {
+   "label": "access_terms_families",
+   "path": "research/publication_review_20261020/evidence/access-terms/",
+   "files": 60,
+   "digest_sha256": "3a14054134599a1f3315d322a776c50bcbf05cf586926a49074ce598a6e0a8da"
+  }
+ ],
+ "site_row_inputs": [
+  {
+   "path": "research/publication_review_20261020/notes/site-step-evidence.json",
+   "sha256": "f16b0f4e80e238090a7405cb4a7c204186f4da7fc1f288a047712124c8447223"
+  },
+  {
+   "path": "research/publication_review_20261020/evidence/consent-statements.json",
+   "sha256": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69"
+  },
+  {
+   "path": "research/publication_review_20261028/register/site-step-evidence-20261028.json",
+   "sha256": "a66f3fa8cc108131094a17fe7e9fd9103b4cf56faf8bfa8a4fae485755c310d0"
+  },
+  {
+   "path": "research/publication_review_20261028/evidence/consent-statements.json",
+   "sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be"
+  },
+  {
+   "path": "site/src/data/dataset-checks-update.json",
+   "sha256": "80c504fed02f4aadad33ee5c3151a54a16ac3f4b09ddae3f1805c9073184104d"
+  },
+  {
+   "path": "site/src/data/entities.ts",
+   "sha256": "1179a84bd448da35f67220ea8112de196ceb02c7c0f167007df4ff470c7bfb67"
+  },
+  {
+   "path": "site/src/data/entity-profiles.json",
+   "sha256": "9947ca2682076d5bc06244e8286c6f3bc34088ed0e62658eefb6728af001d3a9"
+  },
+  {
+   "path": "site/src/data/i18n.ts",
+   "sha256": "dc7a1e3601042a93e306b7e7f8b69d9f3cc2fbeb92abb0113bf22a5db3a8d493"
+  },
+  {
+   "path": "site/src/data/releases.ts",
+   "sha256": "cc96d906a7cd18be6dee1d05e7929ce03accddc02b6624714c7422965646e2c9"
+  },
+  {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  },
+  {
+   "path": "site/src/data/foundation-models-update.json",
+   "sha256": "eaaaaccb2e8b70cacc85db71726d63de036c83c3d60b7b4a9097f9aafafad13a"
+  },
+  {
+   "path": "site/src/data/eegpt-core-update.json",
+   "sha256": "8563862b961a226636d1349ec62f5bfd4fe922bda326c27fbcf7557e2d277a26"
+  },
+  {
+   "path": "site/src/data/data-quality-update.json",
+   "sha256": "fbfb8fb59dc80397d0c4331a3067cf640b27522af6687dd5b3132c8f4e928bda"
+  },
+  {
+   "path": "site/src/data/clinical-iesseeg-update.json",
+   "sha256": "c2302fe6945276de8f9183340c165245bc4c5097c9ebe60fa7ac389725b2427d"
+  },
+  {
+   "path": "research/moabb_expansion_20261019/evidence/moabb-shortlist-verified.json",
+   "sha256": "02a7708b8f3db4b59df4bf5ed1904e2629afd60cec5f2913c055f54f73c045fc"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-luna.json",
+   "sha256": "84ca1287a7cded602cf22182e317e26c6c2d6de1e293ee83019cb2451e4704d2"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-brainomni.json",
+   "sha256": "502b4b089cec4e0734a01e92184a876c13753f74e5b43462314880069bcd5ffa"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-codebrain.json",
+   "sha256": "d4cfaeee3d6e8351f7a05f3c59a4f6fd38c3bd96280e52c22746003e861d42ef"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-eegmamba.json",
+   "sha256": "7160489efb9aaf029785d65a70679906fe3e54edaed1a6f0e5310945623abfc8"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-steegformer.json",
+   "sha256": "1fc7dfc53688dbefcd3019af34f5d4dd4954d23cd8889838a93bba6a21e9221e"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-eeg-fm-masking.json",
+   "sha256": "2913eef8dbf6635f201c5ae5c5f77330f615fab790ba81a82ea7029fcc1d8161"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-erp-fm.json",
+   "sha256": "a3c7376c02803ae6743a9588ec5a79b94f48efd39901b8e16d69e3b74152806c"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-singlem.json",
+   "sha256": "fb7d448a6fe38203a878cb1e3eff0c7fc9280bc6360404231f08532a8efe02d1"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-zuna.json",
+   "sha256": "20d78942651e3ddf44b01a24b2708ce86bcd0586cc856c7276a9fd1340985e2b"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-mirepnet.json",
+   "sha256": "aa828b1855178d96e3a221eded39315320037b054e4287094014c9018788df1b"
+  },
+  {
+   "path": "research/expansion_v8_20261001/models/verify-eeg-dino.json",
+   "sha256": "69c482d282c5020f8268e5152573a3581fb9a1e2e3e93f28050123936cadaa54"
+  }
+ ],
+ "freeze": {
+  "census": {
+   "file": "research/publication_review_20261020/notes/site-step-evidence.json",
+   "generated_at": "2026-10-19T16:02:04+00:00",
+   "sha256": "f16b0f4e80e238090a7405cb4a7c204186f4da7fc1f288a047712124c8447223"
+  },
+  "census_supplement": {
+   "file": "research/publication_review_20261028/register/site-step-evidence-20261028.json",
+   "generated_at": "2026-10-28T15:04:54+00:00",
+   "sha256": "a66f3fa8cc108131094a17fe7e9fd9103b4cf56faf8bfa8a4fae485755c310d0"
+  },
+  "values_rechecked": 697,
+  "fields_rechecked": 219,
+  "mismatches": [],
+  "inputs_changed_since_census": [
+   "site/src/data/entities.ts",
+   "site/src/data/entity-profiles.json",
+   "site/src/data/releases.ts",
+   "site/src/pages/data-use.astro"
+  ],
+  "consent_record": {
+   "file": "research/publication_review_20261020/evidence/consent-statements.json",
+   "census_sha256": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69",
+   "freeze_sha256": "911250efcdcf4da22cfc3a351ea85e34c3ed553595fe6899a17830ffff8b3c69",
+   "unchanged": true
+  },
+  "consent_record_20261028": {
+   "file": "research/publication_review_20261028/evidence/consent-statements.json",
+   "census_sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+   "freeze_sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+   "unchanged": true
+  },
+  "notes": [
+   "site-register-bnci2014-004: at step 3 by the plan rule, with files opened as a gap at step 2; the census recommended its contiguous step 1",
+   "site-register-physionet-eegmmidb-1.0.0: at step 3 by the plan rule, with files opened as a gap at step 2; the census recommended its contiguous step 1"
+  ]
+ },
+ "rules": {
+  "level": "A row's level is the furthest step whose anchor item is on file (plan section 2.6, as both register pages state it); items missing at or below the level are its gaps. Three rows traced from their host records whose files were never opened (BNCI2014-004, PhysioNet eegmmidb, BI2013a) stand at step 3 with files opened as a gap at step 2. MIND stands at step 4 with its original terms (four statements that disagree) and its pinned version as gaps at step 3.",
+  "share_above_chance": "not computed (D12): a gap on every step-4 row where a chance level applies; not applicable on a one-person row (eldBETA, Damm, NeBULA)",
+  "merges": "external rows with merge_into are not rendered; their repo ids, MOABB loaders, DOIs and EEGDash mirror ids become aliases of the site row, and their source group is added to it",
+  "terms": "a site dataset row states its dataset page's terms (entities.ts), or the census's licence item (MIND: both licences side by side, D15); a model row states code, weights and data separately, each from the record it names",
+  "aliases": "NeBULA's files name a Zenodo DOI (10.5281/zenodo.13627307) that is no registered record: it is not an alias of the row, and its derivation evidence cites the record that says so. NeuroRVQ's row lists the authors' weights only, as its payload cites them.",
+  "checked": "each row carries the day its evidence was checked: a row the 20261020 file holds unchanged in every other field keeps that file's date, because this freeze's re-read of its census values checked nothing new; new rows, and rows whose evidence changed, carry this freeze's day; external rows keep their evidence dates",
+  "checked_kept_from_previous": 78
+ },
+ "site_holds": {
+  "codes": {
+   "amplitude_units_unresolved": {
+    "r-site-kim2025-beta-range": "kim-amplitude-dependent-models"
+   },
+   "converted_run_timing": {
+    "r-site-zuco2": "zuco2-converted-run-timing"
+   },
+   "one_person_score": {
+    "r-site-damm-finger-imagery": "damm-one-participant-score",
+    "r-site-eldbeta": "eldbeta-one-participant-score",
+    "r-site-nebula": "nebula-one-participant-scores"
+   }
+  },
+  "rows": {
+   "r-site-zuco2": [
+    "converted_run_timing",
+    "zuco2-converted-run-timing"
+   ],
+   "r-site-eldbeta": [
+    "one_person_score",
+    "eldbeta-one-participant-score"
+   ],
+   "r-site-kim2025-beta-range": [
+    "amplitude_units_unresolved",
+    "kim-amplitude-dependent-models"
+   ],
+   "r-site-damm-finger-imagery": [
+    "one_person_score",
+    "damm-one-participant-score"
+   ],
+   "r-site-nebula": [
+    "one_person_score",
+    "nebula-one-participant-scores"
+   ]
+  },
+  "worded_on_site": [
+   "amplitude_units_unresolved",
+   "converted_run_timing",
+   "one_person_score"
+  ],
+  "attached": [
+   "r-site-damm-finger-imagery:one_person_score",
+   "r-site-eldbeta:one_person_score",
+   "r-site-kim2025-beta-range:amplitude_units_unresolved",
+   "r-site-nebula:one_person_score",
+   "r-site-zuco2:converted_run_timing"
+  ],
+  "withheld_until_worded": [],
+  "note": "Each site row's hold is a finding with a reason code, sourced to its hold in releases.ts and in the payload that opens it (data-quality-update.json for eldBETA and ZuCo 2.0, dataset-checks-update.json for Kim beta-range, Damm and NeBULA), row by row (register_findings.SITE_HOLDS). A code is declared and attached only once site/src/data/open-register.ts words it in its holdReason table; until then the row's status and its case link state the hold. Kim beta-range's hold (amplitude units) replaces the onset-timing hold its MOABB record group carried."
+ },
+ "published": {
+  "json": "open-register-20261028.json: both ladders, 487 dataset rows and 48 model rows",
+  "csv": "open-register-20261028.csv: the dataset ladder only, one row per entry, no findings",
+  "counts": {
+   "total": 535,
+   "dataset": 487,
+   "model": 48,
+   "dataset_by_group": {
+    "corpus": 6,
+    "eegdash": 1,
+    "hf": 293,
+    "moabb": 136,
+    "site": 51
+   },
+   "dataset_by_level": {
+    "1": 435,
+    "2": 4,
+    "3": 10,
+    "4": 31,
+    "5": 7
+   },
+   "model_by_level": {
+    "1": 16,
+    "2": 6,
+    "4": 17,
+    "5": 9
+   },
+   "by_status": {
+    "listed": 463,
+    "planned": 1,
+    "published": 60,
+    "score_held": 4,
+    "status_only": 7
+   }
+  }
+ },
+ "changes": {
+  "previous": {
+   "release_id": "open-register-update-20261020",
+   "json_sha256": "c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558",
+   "csv_sha256": "aef5cffcac9fa23b14a0276ee0a8d9cb79aecf1d0f81eb95613f7d7874b7a9fe",
+   "served_unchanged": true
+  },
+  "rows_added": [
+   "r-model-axon",
+   "r-model-bandvq",
+   "r-model-eeg-captioner",
+   "r-model-eeg-prime",
+   "r-model-fame",
+   "r-model-neurorvq",
+   "r-model-stst-jepa",
+   "r-model-use-fm",
+   "r-site-damm-finger-imagery",
+   "r-site-kim2025-beta-range",
+   "r-site-mind2026",
+   "r-site-nebula"
+  ],
+  "rows_folded_into_site_rows": [
+   {
+    "row": "r-moabb-0048",
+    "into": "r-site-damm-finger-imagery"
+   },
+   {
+    "row": "r-moabb-0071",
+    "into": "r-site-kim2025-beta-range"
+   },
+   {
+    "row": "r-moabb-0095",
+    "into": "r-site-mind2026"
+   },
+   {
+    "row": "r-moabb-0106",
+    "into": "r-site-nebula"
+   }
+  ],
+  "levels_changed": [],
+  "holds_opened": [
+   "r-model-bandvq:no_release_found",
+   "r-model-eeg-prime:code_not_reachable",
+   "r-model-fame:no_release_found",
+   "r-model-stst-jepa:no_release_found",
+   "r-model-use-fm:no_release_found",
+   "r-site-damm-finger-imagery:one_person_score",
+   "r-site-kim2025-beta-range:amplitude_units_unresolved",
+   "r-site-nebula:one_person_score"
+  ],
+  "holds_closed": [
+   "r-moabb-0071:onset_timing_unresolved"
+  ],
+  "counts_before": {
+   "rows": 527,
+   "dataset": 487,
+   "model": 40,
+   "dataset_by_group": {
+    "corpus": 6,
+    "eegdash": 1,
+    "hf": 293,
+    "moabb": 140,
+    "site": 47
+   },
+   "dataset_by_level": {
+    "1": 439,
+    "2": 4,
+    "3": 10,
+    "4": 27,
+    "5": 7
+   },
+   "model_by_level": {
+    "1": 11,
+    "2": 6,
+    "4": 14,
+    "5": 9
+   },
+   "by_status": {
+    "listed": 462,
+    "planned": 1,
+    "published": 55,
+    "score_held": 2,
+    "status_only": 7
+   },
+   "moabb_merged_into_site_rows": 18,
+   "model_external_rows": 22
+  },
+  "counts_after": {
+   "rows": 535,
+   "dataset": 487,
+   "model": 48,
+   "dataset_by_group": {
+    "corpus": 6,
+    "eegdash": 1,
+    "hf": 293,
+    "moabb": 136,
+    "site": 51
+   },
+   "dataset_by_level": {
+    "1": 435,
+    "2": 4,
+    "3": 10,
+    "4": 31,
+    "5": 7
+   },
+   "model_by_level": {
+    "1": 16,
+    "2": 6,
+    "4": 17,
+    "5": 9
+   },
+   "by_status": {
+    "listed": 463,
+    "planned": 1,
+    "published": 60,
+    "score_held": 4,
+    "status_only": 7
+   },
+   "moabb_merged_into_site_rows": 22,
+   "model_external_rows": 30
+  }
+ },
+ "population": {
+  "hf_classifier_in_scope": 400,
+  "hf_in_scope_after_recheck": 368,
+  "recheck_signoff": "pending",
+  "note": "D11: the Hugging Face group is the uploads the classifier marked in scope in the frozen snapshot. The classifier audit's re-check (simulated signals, the EMG rule, no evidence beyond names) is applied and its sign-off is pending; the page prints the in-scope count beside its basis."
+ },
+ "notPublished": [
+  "Classifier fields (modality, paradigm, content kind) and its one-line descriptions: research file only until the owner approves their display.",
+  "Hugging Face card text, download counts, likes and modification or creation dates; demographics from the MOABB catalog.",
+  "Comparison findings (matches_metadata_of, terms_differ) in the CSV and on the Hugging Face and Zenodo mirrors (D3 default).",
+  "Verifier and census free text and notes; research paths (served by label and record hash only).",
+  "Repo ids that look like participant ids (family rows only, counted, never listed); the uploads held back under D4 and the release copy rule.",
+  "eldBETA's one-person score (D2); Damm's and NeBULA's one-person scores (D16); any ZuCo 2.0 run code or row value.",
+  "The register use statements of ten rows (D27): internal drafts.",
+  "Third-party conversions of NeuroRVQ's checkpoint, and AXON's paper reference until it is checked.",
+  "Model refresh rows tied to review submissions (D4): none of the five rows added is."
+ ]
+}

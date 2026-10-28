@@ -1,0 +1,1980 @@
+{
+ "schema_version": "bci-report-site-step-evidence-v1",
+ "package": "A3",
+ "release_freeze": "20261028",
+ "generated_at": "2026-10-28T15:04:54+00:00",
+ "purpose": "Step evidence for the four dataset rows the 20261028 round promotes from MOABB catalog rows to this site's rows (Kim beta-range, MIND, Damm finger imagery, NeBULA) and for the three model rows it scores (NeuroRVQ, EEG-Captioner, AXON), for the open register (plan section 3, package A3). Read-only census in the shape of the 20261020 census (A5), which it extends: every item is pass, gap or not-applicable with the file and field it rests on.",
+ "extends": {
+  "file": "research/publication_review_20261020/notes/site-step-evidence.json",
+  "sha256": "f16b0f4e80e238090a7405cb4a7c204186f4da7fc1f288a047712124c8447223"
+ },
+ "how_to_read": {
+  "states": {
+   "pass": "Evidence for the item is on file.",
+   "gap": "The item applies and its evidence is missing.",
+   "not-applicable": "The item does not apply to this source (for example no human participant, a regression outcome, or one participant for a share)."
+  },
+  "level": "The furthest step whose anchor item passes (plan section 2.6: \"the furthest step whose own evidence is on file\").",
+  "anchors": {
+   "1": "host_record",
+   "2": "files_opened",
+   "3": "original_terms",
+   "4": "fixed_protocol_baseline",
+   "5": "comparable_on_protocol_page"
+  },
+  "gaps": "Items in a gap state at or below the level (plan: \"gaps[] lists any earlier items that are missing\"). Each gap carries a short EN and ZH label for the badge.",
+  "level_contiguous": "The highest step k with every anchor 1..k passing. Where it is lower than level, an earlier anchor is a gap; the plan rule keeps level and lists the gap.",
+  "level_recommended": "This census's recommendation where the two differ: the plan rule, except that a row whose files were never opened (step-2 anchor a gap) takes its contiguous level. Four rows differ; see summary.level_not_contiguous. B8a/B8b decide.",
+  "next_step_gaps": "Gap items at the step above the level: what stops the row moving up.",
+  "open_above_level": "Every gap item above the level, by name.",
+  "at_freeze": "Present only where a package of this release changes an item before the freeze (a page, a section or a hold). B8b re-reads the live files at freeze; these are the expected states, with the package and the owner decision behind each.",
+  "served": "true where the source file is a served site file (site/src/data); false for research and review records. The register JSON becomes the served file for any fact it carries.",
+  "sources": "Repo-relative file plus a selector: dotted keys, [key=value] filters, [n] indices. TS and Markdown sources give the text matched. The builder resolved every selector and needle against the file hashed in inputs[].",
+  "ids": "Census ids (site-<slug>). They are not the register's opaque row ids; B8a assigns those through register-ids.json."
+ },
+ "step_definitions": {
+  "1": {
+   "en": "Listed",
+   "zh": "已列出",
+   "anchor": "host_record",
+   "needs": "Host record read: host, licence as stated and by whom, size, whether access is gated",
+   "items": [
+    "host_record",
+    "licence_as_stated"
+   ]
+  },
+  "2": {
+   "en": "Read",
+   "zh": "已读取",
+   "anchor": "files_opened",
+   "needs": "Files opened; a specification sheet from the files, compared with the card",
+   "items": [
+    "files_opened"
+   ]
+  },
+  "3": {
+   "en": "Traced",
+   "zh": "已追溯",
+   "anchor": "original_terms",
+   "needs": "Derivation, original terms against declared terms, consent or ethics statement, pinned revision",
+   "items": [
+    "rights_reviewed",
+    "derivation",
+    "original_terms",
+    "consent_ethics",
+    "pinned_version"
+   ]
+  },
+  "4": {
+   "en": "Run",
+   "zh": "已运行",
+   "anchor": "fixed_protocol_baseline",
+   "needs": "Fixed-protocol baseline here, chance from trial counts, share of participants above chance (D12), result or hold on a page",
+   "items": [
+    "fixed_protocol_baseline",
+    "chance_stated",
+    "share_above_chance",
+    "result_or_hold_on_page"
+   ]
+  },
+  "5": {
+   "en": "In the matrix",
+   "zh": "已进入核心矩阵",
+   "anchor": "comparable_on_protocol_page",
+   "needs": "Comparable on a protocol page",
+   "items": [
+    "comparable_on_protocol_page"
+   ]
+  }
+ },
+ "item_definitions": {
+  "host_record": {
+   "step": 1,
+   "label_en": "host record",
+   "label_zh": "托管记录",
+   "rule": "pass: the host record was read in a rights or intake review (URL recorded; size and gating noted where the source states them)."
+  },
+  "licence_as_stated": {
+   "step": 1,
+   "label_en": "licence as stated",
+   "label_zh": "声明的许可",
+   "rule": "pass: the licence statement as the host gives it is recorded, including \"no licence stated\"; gap: not yet read."
+  },
+  "files_opened": {
+   "step": 2,
+   "label_en": "files opened",
+   "label_zh": "文件读取",
+   "rule": "pass: files were opened and described (a scored or audited result computed from them, or an intake, QC or acquisition record); gap: no record of reading the files."
+  },
+  "rights_reviewed": {
+   "step": 3,
+   "label_en": "rights review",
+   "label_zh": "权利审查",
+   "rule": "pass: a rights review records a decision on publishing aggregates (publish, status only, withhold); gap: terms recorded without a decision, or the review is open."
+  },
+  "derivation": {
+   "step": 3,
+   "label_en": "derivation",
+   "label_zh": "来源链",
+   "rule": "pass: where the analysed copy comes from is recorded (original deposit, or the mirror or conversion and its source); gap: the relation to the creators' release is not recorded."
+  },
+  "original_terms": {
+   "step": 3,
+   "label_en": "original terms",
+   "label_zh": "原始条款",
+   "rule": "pass: the terms of the original release were read and recorded against any declared terms of the copy used; gap: only a copy's declaration is on file, or the original's terms are unverified. Anchor of step 3."
+  },
+  "consent_ethics": {
+   "step": 3,
+   "label_en": "consent or ethics statement",
+   "label_zh": "知情同意或伦理声明",
+   "rule": "Two parts, consent and ethics, each pass, gap or not-applicable; the item is a gap when either part is."
+  },
+  "pinned_version": {
+   "step": 3,
+   "label_en": "pinned version",
+   "label_zh": "固定版本",
+   "rule": "pass: the analysed release is fixed by a version, DOI, revision or commit; gap: an unversioned page or mirror."
+  },
+  "fixed_protocol_baseline": {
+   "step": 4,
+   "label_en": "fixed-protocol baseline",
+   "label_zh": "固定协议基线",
+   "rule": "pass: a fixed-protocol baseline was run here and audited, whether its result is published or held. Anchor of step 4."
+  },
+  "chance_stated": {
+   "step": 4,
+   "label_en": "chance level",
+   "label_zh": "随机水平",
+   "rule": "pass: a chance-level value is stored in the export (chance_level, chanceLevel, chance); gap: none is stored, even where a prior or random reference arm is published; not-applicable: regression, coverage or trade-off outcomes."
+  },
+  "share_above_chance": {
+   "step": 4,
+   "label_en": "share above chance",
+   "label_zh": "高于随机水平的被试比例",
+   "rule": "Gap everywhere it applies: no export carries a count of participants above chance (D12, \"not computed\"); not-applicable for one participant or no chance level."
+  },
+  "result_or_hold_on_page": {
+   "step": 4,
+   "label_en": "result or hold on a page",
+   "label_zh": "页面上的结果或暂缓说明",
+   "rule": "pass: a result, a status entry or a hold is printed on a site page or in the releases register."
+  },
+  "comparable_on_protocol_page": {
+   "step": 5,
+   "label_en": "protocol page",
+   "label_zh": "协议页",
+   "rule": "pass: the dataset is a core-matrix protocol page (/protocols/<id>/). Anchor of step 5."
+  }
+ },
+ "census_groups": [
+  {
+   "id": "dataset_checks",
+   "description": "The four dataset checks of dataset-checks-update.json; each merges its MOABB record group",
+   "count": 4
+  }
+ ],
+ "consent_record": {
+  "file": "research/publication_review_20261028/evidence/consent-statements.json",
+  "sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+  "affects": [
+   "site-kim2025-beta-range",
+   "site-mind2026",
+   "site-damm-finger-imagery",
+   "site-nebula"
+  ]
+ },
+ "summary": {
+  "sources": 4,
+  "models": 3,
+  "by_level": {
+   "4": 4
+  },
+  "gaps_by_item": {
+   "chance_stated": 3,
+   "consent_ethics": 1,
+   "original_terms": 1,
+   "pinned_version": 1,
+   "rights_reviewed": 1,
+   "share_above_chance": 2
+  },
+  "model_levels": {
+   "r-model-neurorvq": 4,
+   "r-model-eeg-captioner": 4,
+   "r-model-axon": 4
+  }
+ },
+ "sources": [
+  {
+   "id": "site-kim2025-beta-range",
+   "name": "Kim beta-range SSVEP",
+   "census_group": "dataset_checks",
+   "site": {
+    "page": null,
+    "status": "published at freeze",
+    "register_status": "published",
+    "page_at_freeze": "/datasets/kim2025-beta-range/",
+    "case": "/topics/data-quality/#kim2025-beta-range"
+   },
+   "identity": {
+    "record": "https://doi.org/10.6084/m9.figshare.28806815.v3",
+    "moabb_loader": "Kim2025BetaRange",
+    "moabb_row_merged": "r-moabb-0071"
+   },
+   "hold": {
+    "id": "kim-amplitude-dependent-models",
+    "reason_code": "amplitude_units_unresolved",
+    "replaces_catalog_hold": "onset_timing_unresolved"
+   },
+   "steps": {
+    "1": [
+     {
+      "item": "host_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.read_from",
+        "served": false,
+        "value": "https://api.figshare.com/v2/articles/28806815/versions/3"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.capture_sha256",
+        "served": false,
+        "value": "9b68a2c10eb5531b5cc8dfa7071212a18fd46fa2d2ac2242751332a3b75d5f20"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.source",
+        "served": true,
+        "value": "https://doi.org/10.6084/m9.figshare.28806815.v3"
+       }
+      ]
+     },
+     {
+      "item": "licence_as_stated",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.license",
+        "served": true,
+        "value": "CC BY 4.0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.value",
+        "served": false,
+        "value": "CC BY 4.0"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "files_opened",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.intake.task_files",
+        "served": true,
+        "value": 40
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.intake.md5_matched",
+        "served": true,
+        "value": 40
+       }
+      ],
+      "note": "All task files passed their MD5 checks before any score; the rest and questionnaire files were not acquired."
+     }
+    ],
+    "3": [
+     {
+      "item": "rights_reviewed",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/owner-decisions.json",
+        "field": "decisions.D14.answer",
+        "served": false,
+        "value": "All: the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33), NeuroRVQ on EEGMAT, MI and P300 (aggregate scores only, CC BY-NC, no weights), the EEG-Captioner and AXON ten-second EEGMAT probes, and the Kim beta-range CCA baseline"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.reviewedAt",
+        "served": true,
+        "value": "2026-10-28"
+       }
+      ]
+     },
+     {
+      "item": "derivation",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.version",
+        "served": true,
+        "value": "Figshare record 28806815, version 3, the latest of the 3 versions the record lists"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.intake.rest_and_questionnaire_acquired",
+        "served": true,
+        "value": false
+       }
+      ],
+      "note": "The authors' Figshare deposit at its latest version, the task files only."
+     },
+     {
+      "item": "original_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.value",
+        "served": false,
+        "value": "CC BY 4.0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.stated_by",
+        "served": false,
+        "value": "Figshare record 10.6084/m9.figshare.28806815.v3, licence field"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.licence.data.paper_cited_version.licence",
+        "served": false,
+        "value": "CC BY 4.0"
+       }
+      ],
+      "note": "The record's licence field at the version used and at the version the paper cites."
+     },
+     {
+      "item": "consent_ethics",
+      "state": "pass",
+      "parts": {
+       "consent": "pass",
+       "ethics": "pass"
+      },
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.consent_quote",
+        "served": false,
+        "value": "all subjects were informed of all experimental procedures and signed consent forms"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.ethics_quote",
+        "served": false,
+        "value": "The Institutional Review Board at Gwangju Institute of Science and Technology (GIST) approved this experiment (20211201-HR-64-02-04)"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.kim2025-beta-range.capture_sha256",
+        "served": false,
+        "value": "e8808eaa19f99c29ad5159d59c8fc6f62146aa4321fe536d30fc43460b350816"
+       }
+      ],
+      "note": "Signed consent, including open sharing, and the GIST IRB approval, quoted from the data descriptor."
+     },
+     {
+      "item": "pinned_version",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.terms.data_licence.pinned_version",
+        "served": true,
+        "value": 3
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.rights.terms.data_licence.pinned_version_is_latest",
+        "served": true,
+        "value": true
+       }
+      ]
+     }
+    ],
+    "4": [
+     {
+      "item": "fixed_protocol_baseline",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "provenance.source_export_sha256.kim2025-beta-range",
+        "served": true,
+        "value": "b3043fb059da18d94cbf423a5f0c0c40a266a63ef6f13f3d5b7f165eebab60de"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.method.training_free",
+        "served": true,
+        "value": true
+       }
+      ],
+      "note": "Training-free CCA on every trial of every participant, independently audited."
+     },
+     {
+      "item": "chance_stated",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.result.chance",
+        "served": true,
+        "value": 0.025
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "kim2025-beta-range.result.chance_basis",
+        "served": true,
+        "value": "one in 40 balanced targets"
+       }
+      ]
+     },
+     {
+      "item": "share_above_chance",
+      "state": "gap",
+      "sources": [],
+      "note": "Not computed: no export carries a count of participants above chance (owner default D12)."
+     },
+     {
+      "item": "result_or_hold_on_page",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "placement.dataset_pages.kim2025-beta-range",
+        "served": true,
+        "value": "/datasets/kim2025-beta-range/"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "placement.sections",
+        "served": true,
+        "value": [
+         "kim2025-beta-range",
+         "mind2026",
+         "damm",
+         "nebula"
+        ]
+       },
+       {
+        "file": "site/src/data/releases.ts",
+        "field": "holds[id=kim-amplitude-dependent-models]",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "comparable_on_protocol_page",
+      "state": "gap",
+      "sources": [],
+      "note": "Outside the core matrix and every leaderboard."
+     }
+    ]
+   },
+   "level": 4,
+   "level_name": {
+    "en": "Run",
+    "zh": "已运行"
+   },
+   "level_contiguous": 4,
+   "level_recommended": 4,
+   "gaps": [
+    {
+     "step": 4,
+     "item": "share_above_chance",
+     "label_en": "share above chance",
+     "label_zh": "高于随机水平的被试比例",
+     "note": "Not computed: no export carries a count of participants above chance (owner default D12)."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "comparable_on_protocol_page",
+     "label_en": "protocol page",
+     "label_zh": "协议页",
+     "note": "Outside the core matrix and every leaderboard."
+    }
+   ]
+  },
+  {
+   "id": "site-mind2026",
+   "name": "MIND · multimodal fNIRS-EEG unilateral limb motor imagery (ScienceDB 34326)",
+   "census_group": "dataset_checks",
+   "site": {
+    "page": null,
+    "status": "published at freeze",
+    "register_status": "published",
+    "case": "/topics/data-quality/#mind2026"
+   },
+   "identity": {
+    "record": "https://doi.org/10.57760/sciencedb.34326",
+    "moabb_loader": "MIND2026",
+    "moabb_row_merged": "r-moabb-0095"
+   },
+   "steps": {
+    "1": [
+     {
+      "item": "host_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.licence.sciencedb_record.read_from",
+        "served": false,
+        "value": "https://doi.org/10.57760/sciencedb.34326"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.licence.sciencedb_record.capture_sha256",
+        "served": false,
+        "value": "d23f5447b26f2938671df278dff8bab220421ed421a8a393aad13760e9130226"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.source",
+        "served": true,
+        "value": "https://doi.org/10.57760/sciencedb.34326"
+       }
+      ]
+     },
+     {
+      "item": "licence_as_stated",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.licenses_stated",
+        "served": true,
+        "value": [
+         "CC BY 4.0",
+         "CC BY-NC 4.0"
+        ]
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.licence.sciencedb_record.value",
+        "served": false,
+        "value": "CC BY-NC 4.0"
+       }
+      ],
+      "note": "Both licences side by side, as this site's rights record states them (owner decision D15)."
+     }
+    ],
+    "2": [
+     {
+      "item": "files_opened",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.coverage[id=runs_in_release].count",
+        "served": true,
+        "value": 90
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.coverage[id=runs_evaluated].count",
+        "served": true,
+        "value": 88
+       }
+      ]
+     }
+    ],
+    "3": [
+     {
+      "item": "rights_reviewed",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/owner-decisions.json",
+        "field": "decisions.D15.answer",
+        "served": false,
+        "value": "Publish now as a conditional case on /topics/data-quality/: record IDs, not verified people; both licence statements side by side (paper and archive CC BY 4.0, MOABB CC BY-NC 4.0); the ScienceDB terms page stated as not read"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.reviewedAt",
+        "served": true,
+        "value": "2026-10-28"
+       }
+      ]
+     },
+     {
+      "item": "derivation",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.source",
+        "served": true,
+        "value": "https://doi.org/10.57760/sciencedb.34326"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.processing.auxiliary_channels_used",
+        "served": true,
+        "value": false
+       }
+      ],
+      "note": "The authors' ScienceDB deposit, its EEG only."
+     },
+     {
+      "item": "original_terms",
+      "state": "gap",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.terms.statements",
+        "served": true
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.terms.terms_of_use_page_read",
+        "served": true,
+        "value": false
+       }
+      ],
+      "note": "Four statements disagree: the paper and the archive's dataset description state CC BY 4.0, the MOABB adapter and the ScienceDB record's metadata CC BY-NC 4.0; the ScienceDB terms-of-use page was not read."
+     },
+     {
+      "item": "consent_ethics",
+      "state": "pass",
+      "parts": {
+       "consent": "pass",
+       "ethics": "pass"
+      },
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.consent_quote",
+        "served": false,
+        "value": "After confirming that they understood the instructions, all participants voluntarily signed written informed consent forms."
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.ethics_quote",
+        "served": false,
+        "value": "The study protocol was approved by the Ethics Committee. All procedures followed institutional review board (IRB) guidelines and relevant privacy regulations."
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.mind2026.ethics_consent_source.capture_sha256",
+        "served": false,
+        "value": "668114a22191068485572b9e32242be66977afbe0511f5a7b1f9d46af33ddfcb"
+       }
+      ],
+      "note": "Written consent and an ethics approval stated in the paper; the committee is not named and no approval number is given."
+     },
+     {
+      "item": "pinned_version",
+      "state": "gap",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.version",
+        "served": true,
+        "value": "ScienceDB record 10.57760/sciencedb.34326, record version 4.0.0"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.rights.terms.publisher_checksum_verified",
+        "served": true,
+        "value": false
+       }
+      ],
+      "note": "The record version is named, and the files used are matched by local hashes only, with no publisher checksum."
+     }
+    ],
+    "4": [
+     {
+      "item": "fixed_protocol_baseline",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "provenance.source_export_sha256.mind2026",
+        "served": true,
+        "value": "ff43f57febaa21e2e5e48dc8ff5095dd856ba1fed18de80278b76bb7b0f77ef7"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.primary.pairs",
+        "served": true
+       }
+      ],
+      "note": "CSP + LDA with two controls on stored codes, independently audited."
+     },
+     {
+      "item": "chance_stated",
+      "state": "gap",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "mind2026.processing.controls",
+        "served": true
+       }
+      ],
+      "note": "No chance-level field; the majority and ordinal-lookup controls are published beside the model."
+     },
+     {
+      "item": "share_above_chance",
+      "state": "gap",
+      "sources": [],
+      "note": "Not computed: no export carries a count of record IDs above chance (owner default D12)."
+     },
+     {
+      "item": "result_or_hold_on_page",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "placement.sections",
+        "served": true,
+        "value": [
+         "kim2025-beta-range",
+         "mind2026",
+         "damm",
+         "nebula"
+        ]
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "comparable_on_protocol_page",
+      "state": "gap",
+      "sources": [],
+      "note": "Outside the core matrix and every leaderboard."
+     }
+    ]
+   },
+   "level": 4,
+   "level_name": {
+    "en": "Run",
+    "zh": "已运行"
+   },
+   "level_contiguous": 2,
+   "level_recommended": 4,
+   "gaps": [
+    {
+     "step": 3,
+     "item": "original_terms",
+     "label_en": "original terms",
+     "label_zh": "原始条款",
+     "note": "Four statements disagree: the paper and the archive's dataset description state CC BY 4.0, the MOABB adapter and the ScienceDB record's metadata CC BY-NC 4.0; the ScienceDB terms-of-use page was not read."
+    },
+    {
+     "step": 3,
+     "item": "pinned_version",
+     "label_en": "pinned version",
+     "label_zh": "固定版本",
+     "note": "The record version is named, and the files used are matched by local hashes only, with no publisher checksum."
+    },
+    {
+     "step": 4,
+     "item": "chance_stated",
+     "label_en": "chance level",
+     "label_zh": "随机水平",
+     "note": "No chance-level field; the majority and ordinal-lookup controls are published beside the model."
+    },
+    {
+     "step": 4,
+     "item": "share_above_chance",
+     "label_en": "share above chance",
+     "label_zh": "高于随机水平的被试比例",
+     "note": "Not computed: no export carries a count of record IDs above chance (owner default D12)."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "comparable_on_protocol_page",
+     "label_en": "protocol page",
+     "label_zh": "协议页",
+     "note": "Outside the core matrix and every leaderboard."
+    }
+   ]
+  },
+  {
+   "id": "site-damm-finger-imagery",
+   "name": "Damm finger motor imagery · random and sequential order (OpenNeuro ds008446)",
+   "census_group": "dataset_checks",
+   "site": {
+    "page": null,
+    "status": "score held at freeze",
+    "register_status": "score held",
+    "case": "/topics/data-quality/#damm"
+   },
+   "identity": {
+    "record": "https://doi.org/10.18112/openneuro.ds008446.v1.0.1",
+    "moabb_loader": "Damm2026",
+    "moabb_row_merged": "r-moabb-0048"
+   },
+   "hold": {
+    "id": "damm-one-participant-score",
+    "reason_code": "one_person_score"
+   },
+   "steps": {
+    "1": [
+     {
+      "item": "host_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.data.read_from",
+        "served": false,
+        "value": "https://raw.githubusercontent.com/OpenNeuroDatasets/ds008446/8d8448e2dcd731b251f2f3c85b98cce5847cb000/dataset_description.json"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.data.capture_sha256",
+        "served": false,
+        "value": "81f0b938d4297375b269824f2137b9d1753b4407886e54c5fdbf44c5fa6288ef"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.source",
+        "served": true,
+        "value": "https://doi.org/10.18112/openneuro.ds008446.v1.0.1"
+       }
+      ]
+     },
+     {
+      "item": "licence_as_stated",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.license",
+        "served": true,
+        "value": "CC0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.data.value",
+        "served": false,
+        "value": "CC0"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "files_opened",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.files.edf_channels",
+        "served": true,
+        "value": 65
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.files.state_blocks_per_run",
+        "served": true,
+        "value": 227
+       }
+      ],
+      "note": "One participant's two random-order runs read end to end."
+     }
+    ],
+    "3": [
+     {
+      "item": "rights_reviewed",
+      "state": "gap",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.license_file.present",
+        "served": false,
+        "value": false
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.terms.license_file_present",
+        "served": true,
+        "value": false
+       }
+      ],
+      "note": "The rights review stays open: the README cites a LICENSE file that the tree at the pinned commit does not hold."
+     },
+     {
+      "item": "derivation",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.version",
+        "served": true,
+        "value": "OpenNeuro ds008446 at its latest snapshot, read at a pinned commit of its mirror"
+       }
+      ],
+      "note": "The authors' OpenNeuro deposit, read at a pinned commit of its mirror."
+     },
+     {
+      "item": "original_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.data.value",
+        "served": false,
+        "value": "CC0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.licence.data.stated_by",
+        "served": false,
+        "value": "dataset_description.json at the pinned commit, License field"
+       }
+      ],
+      "note": "CC0 in dataset_description.json at the pinned commit, the only licence statement."
+     },
+     {
+      "item": "consent_ethics",
+      "state": "gap",
+      "parts": {
+       "consent": "gap",
+       "ethics": "pass"
+      },
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.ethics_quote",
+        "served": false,
+        "value": "UCL Humanities, Arts and Sciences Research Ethics Committee; Approval Number: 26907/001"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.damm.consent.stated",
+        "served": false,
+        "value": false
+       }
+      ],
+      "note": "The ethics approval is stated; no consent statement was found in the dataset files or metadata, and no paper is named."
+     },
+     {
+      "item": "pinned_version",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.pinned_commit",
+        "served": true,
+        "value": "8d8448e2dcd731b251f2f3c85b98cce5847cb000"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.rights.pinned_snapshot",
+        "served": true,
+        "value": "1.0.1"
+       }
+      ]
+     }
+    ],
+    "4": [
+     {
+      "item": "fixed_protocol_baseline",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "provenance.protocol_sha256.damm",
+        "served": true,
+        "value": "89f2f0f4ac2d8f4f0690c57d65f891f70431888dfe5c6de4d2390734d316f8e6"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "damm.flags.independent_audit_passed",
+        "served": true,
+        "value": true
+       }
+      ],
+      "note": "A fixed pipeline with variants and controls set before scoring, independently audited; the score is held (owner decision D16)."
+     },
+     {
+      "item": "chance_stated",
+      "state": "gap",
+      "sources": [],
+      "note": "No chance-level field; the scores are held."
+     },
+     {
+      "item": "share_above_chance",
+      "state": "not-applicable",
+      "sources": [],
+      "note": "One participant: a share would be that person's held result."
+     },
+     {
+      "item": "result_or_hold_on_page",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "holds[id=damm-one-participant-score].state",
+        "served": true,
+        "value": "score held"
+       },
+       {
+        "file": "site/src/data/releases.ts",
+        "field": "holds[id=damm-one-participant-score]",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "comparable_on_protocol_page",
+      "state": "gap",
+      "sources": [],
+      "note": "Outside the core matrix and every leaderboard."
+     }
+    ]
+   },
+   "level": 4,
+   "level_name": {
+    "en": "Run",
+    "zh": "已运行"
+   },
+   "level_contiguous": 4,
+   "level_recommended": 4,
+   "gaps": [
+    {
+     "step": 3,
+     "item": "rights_reviewed",
+     "label_en": "rights review",
+     "label_zh": "权利审查",
+     "note": "The rights review stays open: the README cites a LICENSE file that the tree at the pinned commit does not hold."
+    },
+    {
+     "step": 3,
+     "item": "consent_ethics",
+     "label_en": "consent or ethics statement",
+     "label_zh": "知情同意或伦理声明",
+     "note": "The ethics approval is stated; no consent statement was found in the dataset files or metadata, and no paper is named."
+    },
+    {
+     "step": 4,
+     "item": "chance_stated",
+     "label_en": "chance level",
+     "label_zh": "随机水平",
+     "note": "No chance-level field; the scores are held."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "comparable_on_protocol_page",
+     "label_en": "protocol page",
+     "label_zh": "协议页",
+     "note": "Outside the core matrix and every leaderboard."
+    }
+   ]
+  },
+  {
+   "id": "site-nebula",
+   "name": "NeBULA · EEG-EMG standardized reaching task (Figshare 27301629)",
+   "census_group": "dataset_checks",
+   "site": {
+    "page": null,
+    "status": "score held at freeze",
+    "register_status": "score held",
+    "case": "/topics/data-quality/#nebula"
+   },
+   "identity": {
+    "record": "https://doi.org/10.6084/m9.figshare.27301629.v1",
+    "moabb_loader": "NeBULA2025",
+    "moabb_row_merged": "r-moabb-0106",
+    "not_an_alias": {
+     "value": "10.5281/zenodo.13627307",
+     "why": "named by the files' own dataset description; no registered public record"
+    }
+   },
+   "hold": {
+    "id": "nebula-one-participant-scores",
+    "reason_code": "one_person_score"
+   },
+   "steps": {
+    "1": [
+     {
+      "item": "host_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.data.read_from",
+        "served": false,
+        "value": "https://api.figshare.com/v2/articles/27301629/versions/1"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.data.capture_sha256",
+        "served": false,
+        "value": "80f8a310f23aeaf89a34c6c73f3bed44f47a9e95b77cc02116b62ad2260d86ea"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.source",
+        "served": true,
+        "value": "https://doi.org/10.6084/m9.figshare.27301629.v1"
+       }
+      ]
+     },
+     {
+      "item": "licence_as_stated",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.license",
+        "served": true,
+        "value": "CC BY 4.0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.data.value",
+        "served": false,
+        "value": "CC BY 4.0"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "files_opened",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.design.participant_counts",
+        "served": true,
+        "value": {
+         "paper_and_record_description": 40,
+         "participant_archives_in_record": 39,
+         "moabb_catalog": 39,
+         "text": "The paper and the Figshare record’s description state 40 participants; the record’s files hold 39 participant archives, and MOABB lists 39."
+        }
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.file_facts.markers_match_eeg_files",
+        "served": true,
+        "value": true
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.file_facts.emg_channel_rows",
+        "served": true,
+        "value": 11
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.file_facts.emg_channels_in_metadata",
+        "served": true,
+        "value": 16
+       }
+      ],
+      "note": "One participant's EEG and EMG files read end to end: the EMG layout, and the stored markers against the EEG marker files; participants as the record states them and as its files hold them."
+     }
+    ],
+    "3": [
+     {
+      "item": "rights_reviewed",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/owner-decisions.json",
+        "field": "decisions.D16.answer",
+        "served": false,
+        "value": "Keep the rule: design, counts, file and timing facts and holds only; the scores stay held, as for eldBETA"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.reviewedAt",
+        "served": true,
+        "value": "2026-10-28"
+       }
+      ]
+     },
+     {
+      "item": "derivation",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.version",
+        "served": true,
+        "value": "Figshare record 27301629, version 1, the only version the record lists"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.zenodo_13627307.resolves",
+        "served": false,
+        "value": false
+       }
+      ],
+      "note": "The authors' Figshare record, its only version; the Zenodo DOI the files' own description names resolves to no registered record."
+     },
+     {
+      "item": "original_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.data.value",
+        "served": false,
+        "value": "CC BY 4.0"
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.licence.data.stated_by",
+        "served": false,
+        "value": "Figshare record 10.6084/m9.figshare.27301629.v1, licence field"
+       }
+      ]
+     },
+     {
+      "item": "consent_ethics",
+      "state": "pass",
+      "parts": {
+       "consent": "pass",
+       "ethics": "pass"
+      },
+      "sources": [
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.consent_quote",
+        "served": false,
+        "value": "All participants gave consent to participate and openly share the data collected."
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.ethics_quote",
+        "served": false,
+        "value": "The study’s experimental procedures were approved by the local ethical committee (CER Liguria:784/2022 - DB id 12044)."
+       },
+       {
+        "file": "research/publication_review_20261028/evidence/consent-statements.json",
+        "field": "sources.nebula.capture_sha256",
+        "served": false,
+        "value": "7e5a512240ced897e953eb4969806f3f554ae4e2679c9d6e6be3b6602c6f7101"
+       }
+      ],
+      "note": "Consent to take part and to share the data openly, and the CER Liguria approval, quoted from the data descriptor."
+     },
+     {
+      "item": "pinned_version",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.terms.data_licence.pinned_version",
+        "served": true,
+        "value": 1
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.rights.terms.data_licence.versions_listed",
+        "served": true,
+        "value": 1
+       }
+      ]
+     }
+    ],
+    "4": [
+     {
+      "item": "fixed_protocol_baseline",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "provenance.protocol_sha256.nebula_eeg",
+        "served": true,
+        "value": "860e7046657a580ab4d842061a79d1e0d31f1d463dae1f696aa73a55f393ef5c"
+       },
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "nebula.arms.independently_audited",
+        "served": true,
+        "value": true
+       }
+      ],
+      "note": "EEG, EMG and EEG plus EMG arms with controls, independently audited; the scores are held (owner decision D16)."
+     },
+     {
+      "item": "chance_stated",
+      "state": "gap",
+      "sources": [],
+      "note": "No chance-level field; the scores are held."
+     },
+     {
+      "item": "share_above_chance",
+      "state": "not-applicable",
+      "sources": [],
+      "note": "One participant: a share would be that person's held result."
+     },
+     {
+      "item": "result_or_hold_on_page",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/dataset-checks-update.json",
+        "field": "holds[id=nebula-one-participant-scores].state",
+        "served": true,
+        "value": "scores held"
+       },
+       {
+        "file": "site/src/data/releases.ts",
+        "field": "holds[id=nebula-one-participant-scores]",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "comparable_on_protocol_page",
+      "state": "gap",
+      "sources": [],
+      "note": "Outside the core matrix and every leaderboard."
+     }
+    ]
+   },
+   "level": 4,
+   "level_name": {
+    "en": "Run",
+    "zh": "已运行"
+   },
+   "level_contiguous": 4,
+   "level_recommended": 4,
+   "gaps": [
+    {
+     "step": 4,
+     "item": "chance_stated",
+     "label_en": "chance level",
+     "label_zh": "随机水平",
+     "note": "No chance-level field; the scores are held."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "comparable_on_protocol_page",
+     "label_en": "protocol page",
+     "label_zh": "协议页",
+     "note": "Outside the core matrix and every leaderboard."
+    }
+   ]
+  }
+ ],
+ "models": [
+  {
+   "key": "neurorvq",
+   "row": "r-model-neurorvq",
+   "name": "NeuroRVQ",
+   "case": "/topics/pilot-studies/#neurorvq",
+   "steps": {
+    "1": [
+     {
+      "item": "official_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/research_refresh_20261025/models/EEG model refresh evidence.json",
+        "field": "candidates[id=neurorvq].paper",
+        "served": false,
+        "value": "https://arxiv.org/html/2510.13068v3"
+       },
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "model.paper",
+        "served": true,
+        "value": "https://arxiv.org/abs/2510.13068"
+       },
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "model.repository",
+        "served": true,
+        "value": "https://github.com/KonstantinosBarmpas/NeuroRVQ"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "code_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "rights.code.licence",
+        "served": true,
+        "value": "CC BY-NC 4.0"
+       },
+       {
+        "file": "research/research_refresh_20261025/models/EEG model refresh evidence.json",
+        "field": "candidates[id=neurorvq].access.code_license",
+        "served": false,
+        "value": "CC BY-NC 4.0, actual LICENSE"
+       }
+      ]
+     },
+     {
+      "item": "weights_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "rights.weights.licence",
+        "served": true,
+        "value": "CC BY-NC 4.0"
+       },
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "rights.weights.same_file_as_code",
+        "served": true,
+        "value": true
+       }
+      ]
+     },
+     {
+      "item": "data_terms",
+      "state": "gap",
+      "sources": [
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "pretraining_exposure.published_pretraining_list",
+        "served": true,
+        "value": {
+         "corpora": 13,
+         "public": 12,
+         "proprietary": 1
+        }
+       }
+      ],
+      "note": "The paper lists its pretraining corpora, one of them proprietary, whose terms are not public."
+     },
+     {
+      "item": "file_listing",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/research_refresh_20261025/models/EEG model refresh evidence.json",
+        "field": "candidates[id=neurorvq].access.checkpoint_files",
+        "served": false
+       },
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "model.checkpoint.revision",
+        "served": true,
+        "value": "d944b87f44ae0ba2923b2f10d0518f23f6803b76"
+       }
+      ]
+     }
+    ],
+    "3": [
+     {
+      "item": "files_checked",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "model.checkpoint.sha256",
+        "served": true,
+        "value": "d14ef4eae2d4594d5f1f709226a3bb5f362afd84b68050d5da0fa0586aea886a"
+       },
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "model.restore.trained_tensors",
+        "served": true,
+        "value": 263
+       },
+       {
+        "file": "research/autonomous_validation_20261026/neurorvq/review/strict-load-acceptance.json",
+        "field": "decision",
+        "served": false,
+        "value": "PASS_STRICT_BACKBONE_LOAD_AND_SYNTHETIC_ACCEPTANCE"
+       }
+      ],
+      "note": "The checkpoint matched its SHA-256 and the backbone restored strictly; the authors' wrapper does not."
+     }
+    ],
+    "4": [
+     {
+      "item": "scored_here",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/neurorvq-update.json",
+        "field": "blocks",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "in_matrix",
+      "state": "gap",
+      "sources": [],
+      "note": "A separate pilot panel, outside the core matrix (owner decision D19)."
+     }
+    ]
+   },
+   "level": 4,
+   "level_contiguous": 4,
+   "gaps": [
+    {
+     "step": 2,
+     "item": "data_terms",
+     "label_en": "data terms",
+     "label_zh": "数据条款",
+     "note": "The paper lists its pretraining corpora, one of them proprietary, whose terms are not public."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "in_matrix",
+     "label_en": "core matrix",
+     "label_zh": "核心矩阵",
+     "note": "A separate pilot panel, outside the core matrix (owner decision D19)."
+    }
+   ]
+  },
+  {
+   "key": "eeg-captioner",
+   "row": "r-model-eeg-captioner",
+   "name": "EEG-Captioner",
+   "case": "/topics/pilot-studies/#eegmat-ten-second",
+   "steps": {
+    "1": [
+     {
+      "item": "official_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.identity.hf_repository",
+        "served": true,
+        "value": "https://huggingface.co/LyJinAoki/EEG-Captioner"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.identity.hf_revision",
+        "served": true,
+        "value": "1d56a371d68a108dd56c362cc41205c5b511cc76"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.identity.source_repository",
+        "served": true,
+        "value": "https://github.com/lyJinAoki/EEG-Captioner"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.identity.source_revision",
+        "served": true,
+        "value": "088d9af2dedcb181534f7fdcff7c913a19e10f04"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "code_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.rights.code.licence",
+        "served": true,
+        "value": "MIT"
+       }
+      ]
+     },
+     {
+      "item": "weights_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.rights.weights.licence",
+        "served": true,
+        "value": "Apache-2.0"
+       },
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/captioner.json",
+        "field": "cardData.license",
+        "served": false,
+        "value": "apache-2.0"
+       }
+      ]
+     },
+     {
+      "item": "data_terms",
+      "state": "gap",
+      "sources": [],
+      "note": "No terms for the training data are recorded on this row."
+     },
+     {
+      "item": "file_listing",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/captioner.json",
+        "field": "siblings",
+        "served": false
+       },
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/captioner.json",
+        "field": "sha",
+        "served": false,
+        "value": "1d56a371d68a108dd56c362cc41205c5b511cc76"
+       }
+      ]
+     }
+    ],
+    "3": [
+     {
+      "item": "files_checked",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.identity.encoder_sha256",
+        "served": true,
+        "value": "060a5c0d9ac11543470038adbcbc5d9ba5828c1dc7c7d5097549435fbe28e989"
+       },
+       {
+        "file": "research/autonomous_validation_20261026/eeg_captioner/EEG-Captioner Encoder Intake Handoff.md",
+        "field": "text: All 98 state entries matched exactly by key, shape, dtype and value",
+        "served": false
+       }
+      ],
+      "note": "The encoder matched its SHA-256 and restored strictly; only the encoder was loaded."
+     }
+    ],
+    "4": [
+     {
+      "item": "scored_here",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "eeg_captioner.arms",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "in_matrix",
+      "state": "gap",
+      "sources": [],
+      "note": "A separate pilot panel, outside the core matrix."
+     }
+    ]
+   },
+   "level": 4,
+   "level_contiguous": 4,
+   "gaps": [
+    {
+     "step": 2,
+     "item": "data_terms",
+     "label_en": "data terms",
+     "label_zh": "数据条款",
+     "note": "No terms for the training data are recorded on this row."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "in_matrix",
+     "label_en": "core matrix",
+     "label_zh": "核心矩阵",
+     "note": "A separate pilot panel, outside the core matrix."
+    }
+   ]
+  },
+  {
+   "key": "axon",
+   "row": "r-model-axon",
+   "name": "AXON",
+   "case": "/topics/pilot-studies/#eegmat-ten-second",
+   "steps": {
+    "1": [
+     {
+      "item": "official_record",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.identity.hf_repository",
+        "served": true,
+        "value": "https://huggingface.co/MannasAI/axon-eeg"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.identity.hf_revision",
+        "served": true,
+        "value": "fe7f85239e6018f393039a10a103bf7075c93aa6"
+       },
+       {
+        "file": "research/open_register_20261019/raw/hf-model-listing.json",
+        "field": "models.MannasAI/axon-eeg.listing.sha",
+        "served": false,
+        "value": "fe7f85239e6018f393039a10a103bf7075c93aa6"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.identity.source_revision",
+        "served": true,
+        "value": "8c618f15a702f63d4899e3e8bc2e6f10a5f54151"
+       }
+      ]
+     }
+    ],
+    "2": [
+     {
+      "item": "code_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.rights.module.licence",
+        "served": true,
+        "value": "Apache-2.0"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.rights.project.licence",
+        "served": true,
+        "value": "BSD-3-Clause"
+       }
+      ]
+     },
+     {
+      "item": "weights_terms",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.rights.checkpoint.licence",
+        "served": true,
+        "value": "Apache-2.0"
+       },
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/axon.json",
+        "field": "cardData.license",
+        "served": false,
+        "value": "apache-2.0"
+       }
+      ]
+     },
+     {
+      "item": "data_terms",
+      "state": "gap",
+      "sources": [],
+      "note": "The model card does not name its full pretraining corpus."
+     },
+     {
+      "item": "file_listing",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/axon.json",
+        "field": "siblings",
+        "served": false
+       },
+       {
+        "file": "research/autonomous_validation_20261026/scans/models/axon.json",
+        "field": "sha",
+        "served": false,
+        "value": "fe7f85239e6018f393039a10a103bf7075c93aa6"
+       }
+      ]
+     }
+    ],
+    "3": [
+     {
+      "item": "files_checked",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.identity.checkpoint_sha256",
+        "served": true,
+        "value": "89c864a3ed947588ffc740cd4b342a2158661b13898c0dd9a86abebd33ffc882"
+       },
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.identity.checkpoint_bytes",
+        "served": true,
+        "value": 474574184
+       },
+       {
+        "file": "research/autonomous_validation_20261026/axon_load_admission_20261027/Final Checkpoint Intake Result Admission.json",
+        "field": "status",
+        "served": false,
+        "value": "PASS"
+       }
+      ],
+      "note": "The checkpoint matched its size and SHA-256; its header was checked before a strict load."
+     }
+    ],
+    "4": [
+     {
+      "item": "scored_here",
+      "state": "pass",
+      "sources": [
+       {
+        "file": "site/src/data/eegmat-ten-second-update.json",
+        "field": "axon.arms",
+        "served": true
+       }
+      ]
+     }
+    ],
+    "5": [
+     {
+      "item": "in_matrix",
+      "state": "gap",
+      "sources": [],
+      "note": "A separate pilot panel, outside the core matrix."
+     }
+    ]
+   },
+   "level": 4,
+   "level_contiguous": 4,
+   "gaps": [
+    {
+     "step": 2,
+     "item": "data_terms",
+     "label_en": "data terms",
+     "label_zh": "数据条款",
+     "note": "The model card does not name its full pretraining corpus."
+    }
+   ],
+   "next_step_gaps": [
+    {
+     "step": 5,
+     "item": "in_matrix",
+     "label_en": "core matrix",
+     "label_zh": "核心矩阵",
+     "note": "A separate pilot panel, outside the core matrix."
+    }
+   ]
+  }
+ ],
+ "inputs": [
+  {
+   "file": "research/autonomous_validation_20261026/axon_load_admission_20261027/Final Checkpoint Intake Result Admission.json",
+   "sha256": "3cf635e6d1100c8b2ab59ce2e64f2ed8521968e95d7f6ea7740dea1a5b146076",
+   "bytes": 4218,
+   "served": false
+  },
+  {
+   "file": "research/autonomous_validation_20261026/eeg_captioner/EEG-Captioner Encoder Intake Handoff.md",
+   "sha256": "f4cd42aade6607d12028b698eb1d16dee7b8d85991c8b0bfa67a35637eea7470",
+   "bytes": 5797,
+   "served": false
+  },
+  {
+   "file": "research/autonomous_validation_20261026/neurorvq/review/strict-load-acceptance.json",
+   "sha256": "ca1b2d734fb7bdf152f15df4ad09844fa74fa60ab0b7fbbfc9260f1349cbf73f",
+   "bytes": 6181,
+   "served": false
+  },
+  {
+   "file": "research/autonomous_validation_20261026/scans/models/axon.json",
+   "sha256": "b1d7e2ed74ff1b6fd8f58f880a4db9636d09d0ed51d6381359d556c9356bfe78",
+   "bytes": 1451,
+   "served": false
+  },
+  {
+   "file": "research/autonomous_validation_20261026/scans/models/captioner.json",
+   "sha256": "5bd52f4619bda1fb1ff4c43c962af398c63c5ee0612e9d4258bb817f9461c97b",
+   "bytes": 2534,
+   "served": false
+  },
+  {
+   "file": "research/open_register_20261019/raw/hf-model-listing.json",
+   "sha256": "3916aa14cc8ac46c85a8f81552c200d3b348f5a9f222e8e3c36176b68cf2f7da",
+   "bytes": 11951076,
+   "served": false
+  },
+  {
+   "file": "research/publication_review_20261020/notes/site-step-evidence.json",
+   "sha256": "f16b0f4e80e238090a7405cb4a7c204186f4da7fc1f288a047712124c8447223",
+   "bytes": 395136,
+   "served": false
+  },
+  {
+   "file": "research/publication_review_20261028/evidence/consent-statements.json",
+   "sha256": "7b2cf08f7f8e2e623933e8b58b57f1fd7f71af12e9424ddfe3c277f7da6b09be",
+   "bytes": 32540,
+   "served": false
+  },
+  {
+   "file": "research/publication_review_20261028/owner-decisions.json",
+   "sha256": "031ad4e32fa2186e607d4e2fbf9b0ff6d99102d9d8a0300af2aea28279fae313",
+   "bytes": 3978,
+   "served": false
+  },
+  {
+   "file": "research/research_refresh_20261025/models/EEG model refresh evidence.json",
+   "sha256": "42510f2b6662687fc2e765a1f33b7c730f98276b747f454218437257cb5b22ce",
+   "bytes": 12123,
+   "served": false
+  },
+  {
+   "file": "site/src/data/dataset-checks-update.json",
+   "sha256": "80c504fed02f4aadad33ee5c3151a54a16ac3f4b09ddae3f1805c9073184104d",
+   "bytes": 53482,
+   "served": true
+  },
+  {
+   "file": "site/src/data/eegmat-ten-second-update.json",
+   "sha256": "b26e1934e8569ac8de8f51f815dad1dcc74a0734f9090b5e2a70572ea1cc5fe0",
+   "bytes": 23451,
+   "served": true
+  },
+  {
+   "file": "site/src/data/neurorvq-update.json",
+   "sha256": "6ae57314d029016cc5934d7c24d8330f33b9afeaf82ff4380f9c4fae38e5f24d",
+   "bytes": 32109,
+   "served": true
+  },
+  {
+   "file": "site/src/data/releases.ts",
+   "sha256": "cc96d906a7cd18be6dee1d05e7929ce03accddc02b6624714c7422965646e2c9",
+   "bytes": 204314,
+   "served": true
+  }
+ ],
+ "boundaries": [
+  "Read-only: no site file or research folder of another session was changed; no network.",
+  "No participant-level rows, identifiers, demographics or signal values are carried; values are licence strings, versions, counts the served files already print, quotes of consent and ethics statements, and hashes.",
+  "No private absolute paths: every path is repo-relative. Research files reach a served file by record hash only."
+ ]
+}

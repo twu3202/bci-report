@@ -1,0 +1,840 @@
+{
+  "release_id": "ssvep-followups-update-20261028",
+  "freeze_date": "2026-10-28",
+  "reviewed_at": "2026-10-28",
+  "reviewer": "publishing session",
+  "scope": "Editorial decisions for the seven SSVEP follow-ups of this round, cards 8 to 14 of /topics/new-ssvep-frequencies/: the cross-spectral scorer (card 8, queue row 21), the coherence and eigenvalue heads (card 9, row 12), the pooling of CCA’s per-harmonic statistics on BETA and Wearable-102 (card 10, row 32), filter-bank CCA with shorter windows and fewer electrodes and the CPU component measurements (card 11, rows 33 and 30), the harmonic gap (card 12, row 15), the fixed decay weighting (card 13, row 14) and the rising harmonic weights (card 14, row 20). Its own manifest: it amends no earlier review and changes no released file. new-ssvep-frequencies-update.json keeps its bytes (D28); the new file, ssvep-followups-update.json, supersedes that file’s card 8 status entry. Every figure is read from the audited aggregate of its study, pinned by SHA-256 here and bound by that study’s release approval and reviews, through the five block modules (blocks_xspec.py, blocks_eigen.py, blocks_pooling.py, blocks_practical.py, blocks_weights.py), which select named fields and declare what they leave out. Nothing was re-run: no model was loaded, no score recomputed and no network used.",
+  "approval": {
+    "date": "2026-10-28",
+    "decision": "aggregate_preview",
+    "basis": "The owner’s decision D14 in chat on 2026-10-28, recorded in owner-decisions.json: publish this round’s reviewed aggregates, among them the seven SSVEP studies (rows 12, 14, 15, 20, 21, 32, 33). Each study’s release approval approves an aggregate handoff and leaves website publication to the site; publication on the site rests on D14. Defaults stated to the owner and not objected to: the short answer gains one sentence (D22); thread predictions stay on card 4 and the new cards state only their prespecified criteria (D23); the CPU component timings sit in card 11’s details as warm single-thread component measurements, never summed, with no host label (D25); new-ssvep-frequencies-update.json keeps its bytes and the new file supersedes its card 8 status entry (D28). Carried over: the commenter is not named (D6). Gate A1: the cross-spectral aggregate was copied read-only and matched to its SHA-256. Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+    "ownerDecisions": {
+      "path": "research/publication_review_20261028/owner-decisions.json",
+      "sha256": "031ad4e32fa2186e607d4e2fbf9b0ff6d99102d9d8a0300af2aea28279fae313"
+    },
+    "previewDefaults": [
+      "Placement: cards 8 to 14 of /topics/new-ssvep-frequencies/; cards 1 to 8 keep their numbers and anchors; card 8 becomes a result card, read from this file, and the released file keeps its status entry.",
+      "Each study block keeps its own source interval: 2,000 paired person draws with seed 20261015 for cards 8, 9, 10 (BETA) and 11; 2,000 with seed 20261020 for card 10 (Wearable-102), conditional on the fixed source heads; 20,000 with seeds 20261021 and 20261022 (card 12), 2026102201 and 2026102202 (card 13), 2026102501 and 2026102502 (card 14).",
+      "A level several cards share prints its interval on its home card only and names that card elsewhere: interval_home in shared_estimates is card 5 or card 7 for a level released on 2026-10-20, else the first card of this release that gives an interval (card 9 for the harmonic sum on BETA); intervals_differ_by_card marks the rows whose cards give different intervals.",
+      "Card 12’s primary family uses Bonferroni-adjusted 99.44% intervals over nine comparisons and card 13’s margin test a 90% interval; no other interval is adjusted.",
+      "Thread predictions stay on card 4 of the released file (D23); the commenter’s figure and name are absent from the file, the page and this manifest.",
+      "Names: the plan’s name key, site names first and export codes second; one set of scores, one primary site name; aliases are listed in the name key (“joint CCA”, JOINT-TOP on card 9 and J on card 12, is an alias of “CCA (no training)” and of card 7’s “matched CCA”); where the plan’s key conflicts with a released name, the released name stands (CCA-RAW stays “CCA (no training)”, card 7’s CCA stays “matched CCA”).",
+      "Counts: no new page, dataset, model or leaderboard row."
+    ],
+    "decisionsOfThisReview": [
+      "Values: every level and contrast is its study aggregate’s own double, through the block modules; units stay fractions, squared-correlation score units for card 12’s G and R, milliseconds for the CPU components. The export audit re-derives every figure from the pinned research files without the block modules.",
+      "Release status is read from each study’s release approval and reviews, never from an aggregate’s own frozen status field.",
+      "Reused comparators: CCA, the shared ridge scorer, the cropped-spectrum match and the channel-energy average equal card 5’s released levels, the cross-spectral readouts card 8’s, the eigenvalue heads and harmonic sum card 9’s, card 10’s Wearable-102 CCA card 7’s level; each is labelled with its card.",
+      "The handoffs are context and never a copy source; each is pinned here with the hash its release approval binds and its queue row names.",
+      "Credits: BETA’s and Wearable-102’s released records from new-ssvep-frequencies-update.json; FBCCA (Chen et al. 2015) from the site’s method profile.",
+      "Context: the receipts and records the harmonic-gap and timing approvals bind, and the reviews and record behind the engineering disclosures, are pinned under contextPins, each checked bound by a pinned record; queue row 30 names the parent handoff that asked for the CPU component timings, pinned beside the timing handoff."
+    ]
+  },
+  "releaseRecord": {
+    "date": "2026-10-28",
+    "decision": "Publish the seven SSVEP follow-ups of this round as their audited aggregates, cards 8 to 14 of the new-SSVEP-frequencies page, outside every leaderboard.",
+    "rights": "BETA keeps its released record: CC BY 4.0, cohort aggregates only, with participant consent described for noncommercial scientific research. Wearable-102 keeps its released record: CC BY 4.0, cohort aggregates only. Filter-bank CCA is credited to Chen et al. 2015; the code that ran is the project’s own SciPy realisation, and no code or weights are distributed.",
+    "researchRelease": "Each study’s release approval approves an aggregate handoff and binds its aggregate, protocol and reviews by SHA-256; website publication rests on the owner’s decision D14.",
+    "binding": "This record approves the served file the export audit names."
+  },
+  "blocks": {
+    "xspec": {
+      "module": "pipeline/publication/ssvep_followups/blocks_xspec.py",
+      "studies": [
+        "xspec"
+      ],
+      "pins": {
+        "xspec_export": {
+          "path": "research/publication_review_20261028/inputs/xspec-aggregate.json",
+          "sha256": "272bac552fdf509b4cc9bae930782de6a5673194a4989bcbdcbef3b4f1214a0c"
+        },
+        "xspec_protocol": {
+          "path": "research/decision_route3_xspec_20261019/protocol.json",
+          "sha256": "c54fcef3bb1d281e4e210a665f9b880caf45523f7f8df45adac188f403a13fed"
+        },
+        "xspec_freeze": {
+          "path": "research/decision_route3_xspec_20261019/execution-freeze.json",
+          "sha256": "0f670e30dfa837cb319be0b714e31176953ebc5e49bf97b80ac702fc7c812682"
+        },
+        "xspec_execution_review": {
+          "path": "research/decision_route3_xspec_20261019/execution-review.json",
+          "sha256": "c8d5d41a23d3376bb8549e866da894feb91dcc30f6d57ecba4f77a6a7fde253e"
+        },
+        "xspec_review": {
+          "path": "research/decision_route3_xspec_20261019/review/Independent Results Release Review.md",
+          "sha256": "1e2231f6dd551fc5105ead5bd48f656e9d26b491d52b441d071ad61c0270763e"
+        },
+        "xspec_audit": {
+          "path": "research/decision_route3_xspec_20261019/evidence/Release Audit Summary.json",
+          "sha256": "c9af237dee103388f1313f5ed57b3516c26cd17668ab10198838dccdd3c859d7"
+        },
+        "xspec_approval": {
+          "path": "research/decision_route3_xspec_20261019/state/release-approval.json",
+          "sha256": "46de8d019dfa6bc0d66dc2b6d94d126585bcea21641abbc8acdd93b0228c3e26"
+        },
+        "xspec_caveats": {
+          "path": "research/decision_route3_xspec_20261019/state/pre-score-interpretation-caveats.json",
+          "sha256": "c77f984cb667112cf2bbea4f2a685d6884c8bd1566779c0c2735226c0fd5e5b4"
+        },
+        "xspec_handoff": {
+          "path": "research/decision_route3_xspec_20261019/Cross-Spectral Shared-Weight Scorer Results Handoff.md",
+          "sha256": "884565105c98c0a9bee005f6d6857838b42c19eb8a5e88d96055bec347306cb4"
+        },
+        "xspec_runner": {
+          "path": "research/decision_route3_xspec_20261019/scripts/run_xspec.py",
+          "sha256": "624388668471e8d20f60772556fcef0d4f362685655e0ac531363f93dff7aef5"
+        },
+        "released": {
+          "path": "site/src/data/new-ssvep-frequencies-update.json",
+          "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+        }
+      }
+    },
+    "eigen": {
+      "module": "pipeline/publication/ssvep_followups/blocks_eigen.py",
+      "studies": [
+        "coherence_eigen"
+      ],
+      "pins": {
+        "eigen_export": {
+          "path": "research/decision_route3_coherence_eigen_20261020/evidence/Completed Aggregate Results.json",
+          "sha256": "9ee6cc3a9a46c76faeec00b3d7b57a5fb66993389f85d001a443507becc6717d"
+        },
+        "eigen_protocol": {
+          "path": "research/decision_route3_coherence_eigen_20261020/protocol.json",
+          "sha256": "79ce887cdae5f929f8a42a9a997b85d1d212c205e9d890a2169e8795b55c5a0f"
+        },
+        "eigen_freeze": {
+          "path": "research/decision_route3_coherence_eigen_20261020/execution-freeze.json",
+          "sha256": "ca3638544774e8e76f2a429d9b042cd65d598fc40a4782c3df5602a197d75896"
+        },
+        "eigen_execution_review": {
+          "path": "research/decision_route3_coherence_eigen_20261020/execution-review.json",
+          "sha256": "e4f9255da482baf0d9e4aba1f6c0d6f64a9e77b77ee1e7bec2c4bb1cad712f6b"
+        },
+        "eigen_audit": {
+          "path": "research/decision_route3_coherence_eigen_20261020/evidence/Release Audit Summary.json",
+          "sha256": "cbc4adf361d0f1b364f0341168ddea484c3585b5cf388517299130f0d09a9c92"
+        },
+        "eigen_numerical_review": {
+          "path": "research/decision_route3_coherence_eigen_20261020/review/Independent Numerical Release Review.md",
+          "sha256": "69febd8c5db88c3cceb7e5a95c03cc949774327d894f7466002031e72e9b1eab"
+        },
+        "eigen_review": {
+          "path": "research/decision_route3_coherence_eigen_20261020/review/Independent Interpretation Release Review.md",
+          "sha256": "103ca974bd8ca4083f15e4028b7abeddd2d0aac7b74b720db2d4baa0aae67508"
+        },
+        "eigen_approval": {
+          "path": "research/decision_route3_coherence_eigen_20261020/state/release-approval.json",
+          "sha256": "4a0beb364285bdf3c4550eb7c89a1180acf5e565175c40195cc951d8c0a42702"
+        },
+        "eigen_handoff": {
+          "path": "research/decision_route3_coherence_eigen_20261020/Coherence and Eigenvalue Results Handoff.md",
+          "sha256": "a53819bd7f7e4c61275017ff955aabd73e933b16aa9e0e0d6175b422c1494db0"
+        },
+        "eigen_runner": {
+          "path": "research/decision_route3_coherence_eigen_20261020/scripts/run_coherence_eigen.py",
+          "sha256": "621f215be034b6641a30dca9e1b63a184b57f80c588f63bbba2f26ec5addfd75"
+        },
+        "released": {
+          "path": "site/src/data/new-ssvep-frequencies-update.json",
+          "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+        }
+      },
+      "reads_pins_of": "xspec"
+    },
+    "pooling": {
+      "module": "pipeline/publication/ssvep_followups/blocks_pooling.py",
+      "studies": [
+        "harmonic_pooling",
+        "harmonic_pooling_wearable"
+      ],
+      "pins": {
+        "ac_summary": {
+          "path": "research/ssvep_practical_suite_20261020/evidence/AC Release Audit Summary.json",
+          "sha256": "daaa8dedbc8bcbf220b4c7788632ff71405827154f82ad0ef396c8590b682923"
+        },
+        "ac_approval": {
+          "path": "research/ssvep_practical_suite_20261020/state/AC-release-approval.json",
+          "sha256": "f690cddd9670b5def27f84ab8bbb34a696db07b559d52197d85c256a11bf6e95"
+        },
+        "ac_release_review": {
+          "path": "research/ssvep_practical_suite_20261020/review/Independent A and C Release Review.md",
+          "sha256": "01004af64d42f9d63ff9c45872ecb41533b6e750b2a41911f9d26df5bc834cf9"
+        },
+        "ac_interpretation_review": {
+          "path": "research/ssvep_practical_suite_20261020/review/Independent A and C Interpretation Review.md",
+          "sha256": "50da109cadf47c46551d20e854d4b03360863b19ac106dbe43b3b5a2d34bbd6c"
+        },
+        "ac_handoff": {
+          "path": "research/ssvep_practical_suite_20261020/Practical SSVEP A and C Results Handoff.md",
+          "sha256": "aa6cdfd4b43bc9111545057104ce7a58cb5bafbbb3b8eaf85685293462e3dc0f"
+        },
+        "ac_protocol": {
+          "path": "research/ssvep_practical_suite_20261020/protocol.json",
+          "sha256": "af34d538e689a6c9d49124d828b59989bb5ddf359a862818949ae7ce5f840ae5"
+        },
+        "ac_freeze": {
+          "path": "research/ssvep_practical_suite_20261020/execution-freeze.json",
+          "sha256": "0eb0cf8d07f4a560aa3842d6351e06369ac5c999d8238dec1ad3e411ba97bc78"
+        },
+        "ac_execution_review": {
+          "path": "research/ssvep_practical_suite_20261020/execution-review.json",
+          "sha256": "b608a5189605c49cb654f83c2dc7bbe1708a0d59335e5e739433b1dfe9fc4dbe"
+        },
+        "pooling_runner": {
+          "path": "research/ssvep_practical_suite_20261020/scripts/run_pooling.py",
+          "sha256": "de76ba6e3b437dcc226c61a94b099a732f007c406d9dea71a77ac9bcfef6add3"
+        },
+        "transfer_runner": {
+          "path": "research/ssvep_practical_suite_20261020/scripts/run_transfer.py",
+          "sha256": "00d9a0a5eaa25eb4d9ecc634a1d70eca9f7aea76e576c42339c81e76a8fe6c81"
+        },
+        "coherence_aggregate": {
+          "path": "research/decision_route3_coherence_eigen_20261020/evidence/Completed Aggregate Results.json",
+          "sha256": "9ee6cc3a9a46c76faeec00b3d7b57a5fb66993389f85d001a443507becc6717d"
+        },
+        "coherence_approval": {
+          "path": "research/decision_route3_coherence_eigen_20261020/state/release-approval.json",
+          "sha256": "4a0beb364285bdf3c4550eb7c89a1180acf5e565175c40195cc951d8c0a42702"
+        },
+        "wear_protocol": {
+          "path": "research/decision_route3_external_20261015/protocol.json",
+          "sha256": "079acad5374eb1b45245bb57c51ba384c5532eb7046d3b246634a592d02e223b"
+        },
+        "wear_freeze": {
+          "path": "research/decision_route3_external_20261015/freeze.json",
+          "sha256": "d24ddc66a542c80c06196935f5a6183e33782e0bbe72a7c0c53a80258cc1de30"
+        },
+        "released": {
+          "path": "site/src/data/new-ssvep-frequencies-update.json",
+          "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+        }
+      }
+    },
+    "practical": {
+      "module": "pipeline/publication/ssvep_followups/blocks_practical.py",
+      "studies": [
+        "practical_settings"
+      ],
+      "pins": {
+        "bd_aggregate": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/BD Aggregate Results.json",
+          "sha256": "21495d28ed65606aed7e8b41b3c2e565ac4789aaa43109557d1e662bf0c94fd7"
+        },
+        "bd_approval": {
+          "path": "research/ssvep_practical_suite_20261020/state/BD-release-approval.json",
+          "sha256": "e6c4bb2d48aa0b4d1473f63582182c78d336faf86251790fa61d237a09602e01"
+        },
+        "bd_numerical_review": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/Independent B D Supplemental Numerical and Provenance Review.md",
+          "sha256": "ab12e5096fcde5d7ca3e37dd1c60340bf59d4fe25adc6dbe89b4f093facef23c"
+        },
+        "bd_audit_receipt": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/Independent B D Complete Vectorized Audit Receipt.json",
+          "sha256": "576abf521a85769ab37e5f5e33484ab62cd86a9b4947ce20de80c4ed812c5c22"
+        },
+        "bd_interpretation_review": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/Independent B D Interpretation Review.md",
+          "sha256": "3e61084b1c444ccc030eba582f827080204754ea03e5dc4f735d0475e5554864"
+        },
+        "bd_text_review": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/B D English Text Review Receipt.json",
+          "sha256": "c54b968c63d8f8e58e4f81adea78accc714ed5aac6972105a6d8ac10defe8fd0"
+        },
+        "bd_text_rebind": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/Final B D Handoff Text Rebind.json",
+          "sha256": "d965f94f155f199205ce015afd3231a68fa14cd20a6c193f9ac4477e04a106db"
+        },
+        "bd_handoff": {
+          "path": "research/ssvep_practical_suite_20261020/Practical SSVEP B and D Results Handoff.md",
+          "sha256": "1b30a3e1d5dc7fe96cf199b63c05c85a711dc87ef90fcb3131b61ede19e728f5"
+        },
+        "bd_protocol": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/bd-mac-protocol.json",
+          "sha256": "5963bbf7a0efb2267238a581b73170df3afa5861d950cf3a48abe58e04989aef"
+        },
+        "bd_freeze": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/bd-mac-freeze.json",
+          "sha256": "9483f1536604f27ab97cfa80ea47976f667db1cb9382fed021d024187f659ba2"
+        },
+        "fbcca_core": {
+          "path": "research/ssvep_practical_suite_20261020/scripts/fbcca_core.py",
+          "sha256": "803d62deb56a0210b1180d8ed97337f241631441b144b8c6fd99d9a2e99cd48d"
+        },
+        "ac_summary": {
+          "path": "research/ssvep_practical_suite_20261020/evidence/AC Release Audit Summary.json",
+          "sha256": "daaa8dedbc8bcbf220b4c7788632ff71405827154f82ad0ef396c8590b682923"
+        },
+        "coherence_aggregate": {
+          "path": "research/decision_route3_coherence_eigen_20261020/evidence/Completed Aggregate Results.json",
+          "sha256": "9ee6cc3a9a46c76faeec00b3d7b57a5fb66993389f85d001a443507becc6717d"
+        },
+        "released": {
+          "path": "site/src/data/new-ssvep-frequencies-update.json",
+          "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+        },
+        "route3_protocol": {
+          "path": "research/decision_route3_20261007/protocol.json",
+          "sha256": "922dc0848f58f379bd68f99a4c2d982253a9e7fa8693eed54466f0f9d368a223"
+        },
+        "route3": {
+          "path": "site/src/data/questions-in-language-update.json",
+          "sha256": "2583b5958c24e02898929c354e16653e50e33704aaaee37927e158f9d72d01dd"
+        },
+        "timing_aggregate": {
+          "path": "research/product_direction_20261020/timing/results/Component Timing Aggregates.json",
+          "sha256": "b0d16d93103ac66427fb62b7b0505e106c4e31db04bbd8d349fe80959b4b5f57"
+        },
+        "timing_approval": {
+          "path": "research/product_direction_20261020/timing/results/Component Timing Release Approval.json",
+          "sha256": "362049bbec64325f6c26af012834d3aaf77e9327512082f55dbc99e27e02e553"
+        },
+        "timing_review": {
+          "path": "research/product_direction_20261020/timing/review/Independent Component Timing Result Review.md",
+          "sha256": "bdf86512e63a7e015ce792986de8a4a0bb909fb3812c83eb086b578946834b05"
+        },
+        "timing_receipt": {
+          "path": "research/product_direction_20261020/timing/review/Independent Component Timing Result Receipt.json",
+          "sha256": "87ed43b2dd9945d0e3f05232fb7a95ebbe5e5c1b51be2669a2092037f1d7edfb"
+        },
+        "timing_handoff": {
+          "path": "research/product_direction_20261020/timing/CPU Component Timing Results Handoff.md",
+          "sha256": "4790aa0d4470c8c2228ad6057060c429f25c3fbc13212a2a6cff0331702ea940"
+        },
+        "timing_protocol": {
+          "path": "research/product_direction_20261020/timing/execution/protocol.frozen.json",
+          "sha256": "95eecd8b34fd8158c2e6f605ce03c344f8cf87c2800e7798392a33b501c93385"
+        }
+      }
+    },
+    "weights": {
+      "module": "pipeline/publication/ssvep_followups/blocks_weights.py",
+      "studies": [
+        "harmonic_gap",
+        "fixed_decay",
+        "rising_weights"
+      ],
+      "pins": {
+        "gap_export": {
+          "path": "research/decision_route3_harmonic_gap_20261021/results/Harmonic Gap Aggregate Results.json",
+          "sha256": "32d9337e915bf062e2ad49c049e8313d5bf55f23afe07e77901ccef74c30a9e8"
+        },
+        "gap_reference_qc": {
+          "path": "research/decision_route3_harmonic_gap_20261021/results/Reference Geometry QC Aggregate.json",
+          "sha256": "1cc54ee70bc3e9cf304c8ce4b4dfa2e85869ee0422275caadfd24ed256b96bea"
+        },
+        "gap_protocol": {
+          "path": "research/decision_route3_harmonic_gap_20261021/protocol.json",
+          "sha256": "b555200c9bfbaa6e9ea6ee601a48575977abf5f1005f8553d4186359fc629cd7"
+        },
+        "gap_freeze": {
+          "path": "research/decision_route3_harmonic_gap_20261021/execution-freeze.json",
+          "sha256": "979037d30298cec69f4cdcaf3a0ed63deacdfae3ec23b4ab57ea3de53cc83c2a"
+        },
+        "gap_numerical_review": {
+          "path": "research/decision_route3_harmonic_gap_20261021/review/Independent Harmonic Gap Numerical Result Review.json",
+          "sha256": "83ff4212d2022e663268b08f80541508d4a0bb8d3d0b107b38efa7e38be84ad5"
+        },
+        "gap_interpretation_receipt": {
+          "path": "research/decision_route3_harmonic_gap_20261021/review/Interpretation Review Receipt.json",
+          "sha256": "912504d6f30956a9421b9cfd5b3642534916276746ebb509aad6b1811c8424c5"
+        },
+        "gap_interpretation_review": {
+          "path": "research/decision_route3_harmonic_gap_20261021/review/Interpretation Review.md",
+          "sha256": "88ea82716046c1ce04fdd4516b65984cb7c2ab3aa0142087d02c241cd100e1e9"
+        },
+        "gap_text_receipt": {
+          "path": "research/decision_route3_harmonic_gap_20261021/review/Handoff Text Review Receipt.json",
+          "sha256": "515ee5ba93f24f55f6852569a8ca886fc98942ebf31af096aabf01796b0f6b98"
+        },
+        "gap_text_review": {
+          "path": "research/decision_route3_harmonic_gap_20261021/review/Handoff Text Review.md",
+          "sha256": "968cbfce24c9f6e576ffee2d70c748919951ee8fa50a25f25c0edc3f345bb1b2"
+        },
+        "gap_release_approval": {
+          "path": "research/decision_route3_harmonic_gap_20261021/state/release-approval.json",
+          "sha256": "c20938849706faf5b73326e8bde3f09f510e085b317039f27ad49f3078689904"
+        },
+        "decay_export": {
+          "path": "research/decision_route3_fixed_decay_20261022/results/Fixed Decay Aggregate Results.json",
+          "sha256": "c33ef5084a2c4892e60676ef37c0ddc856f7c2d632c4ceaa1b1a35e53cc3016d"
+        },
+        "decay_protocol": {
+          "path": "research/decision_route3_fixed_decay_20261022/protocol.json",
+          "sha256": "cc75d31490a4d9ede1cac848f9bde587e4cadfb190a2dc48de084716416fefb5"
+        },
+        "decay_freeze": {
+          "path": "research/decision_route3_fixed_decay_20261022/execution-freeze.json",
+          "sha256": "74e2b933815d6f68b1b2949d8e2d67e10bf904c4270174b8402461570f204a73"
+        },
+        "decay_execution_review": {
+          "path": "research/decision_route3_fixed_decay_20261022/execution-review.json",
+          "sha256": "8fab5f60dfdd1322fc71296a951b8fcbd7644c387b44b6085ad7b478b11bfaec"
+        },
+        "decay_audit_receipt": {
+          "path": "research/decision_route3_fixed_decay_20261022/review/independent-result-audit-receipt.json",
+          "sha256": "59a7cfa486cd0861b4d10e7d0738075d1555e4957223eac496c7eb1a91576525"
+        },
+        "decay_review": {
+          "path": "research/decision_route3_fixed_decay_20261022/review/Interpretation and Handoff Review.json",
+          "sha256": "f172c2c9e78e1f5bf82ec888bb910d3247943f843d86a3d3d238d8485426e41f"
+        },
+        "decay_release_approval": {
+          "path": "research/decision_route3_fixed_decay_20261022/state/release-approval.json",
+          "sha256": "af311af29820703ae186b72b6986e5758f2910f16cd2cb42869b76ab5629a610"
+        },
+        "rise_export": {
+          "path": "research/decision_route3_rising_weights_20261025/results/Rising Weight Aggregate Results.json",
+          "sha256": "13eb89eaee9e64f0f7a7465ae6ae7a97110e034f1ea01cd684051e3573dbb882"
+        },
+        "rise_protocol": {
+          "path": "research/decision_route3_rising_weights_20261025/protocol.json",
+          "sha256": "0839e4432a6cd49fa5c3379633207e1d5a3acae3f79c17287b1570f7a2488676"
+        },
+        "rise_freeze": {
+          "path": "research/decision_route3_rising_weights_20261025/execution-freeze.json",
+          "sha256": "b209b4c60e1d4db35d088b93407c3a5df0d8d4e95dedbd930d59d31aadd51d2f"
+        },
+        "rise_execution_review": {
+          "path": "research/decision_route3_rising_weights_20261025/execution-review.json",
+          "sha256": "b38516cbf0780d53ee59971ddf8de4ade1326fc09e300b9a3fb614aa0c6bccd7"
+        },
+        "rise_audit_receipt": {
+          "path": "research/decision_route3_rising_weights_20261025/review/result-audit-receipt.json",
+          "sha256": "364aa2284ac65643725c7d3e39eb3aa23ae97afad2f44f66f14b1a46c999cb51"
+        },
+        "rise_review": {
+          "path": "research/decision_route3_rising_weights_20261025/review/interpretation-review.json",
+          "sha256": "f4ab241ec1a3312f3cc602b6d962f1a92b616618e560db5b14d33369a0a15572"
+        },
+        "rise_release_approval": {
+          "path": "research/decision_route3_rising_weights_20261025/state/release-approval.json",
+          "sha256": "86eee3ca1ca3bd3a002860936594c545aac4da05781d9218ca044a6aa320a302"
+        },
+        "released": {
+          "path": "site/src/data/new-ssvep-frequencies-update.json",
+          "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+        },
+        "coherence_export": {
+          "path": "research/decision_route3_coherence_eigen_20261020/evidence/Completed Aggregate Results.json",
+          "sha256": "9ee6cc3a9a46c76faeec00b3d7b57a5fb66993389f85d001a443507becc6717d"
+        },
+        "practical_bd_export": {
+          "path": "research/ssvep_practical_suite_20261020/raw_followup/review/BD Aggregate Results.json",
+          "sha256": "21495d28ed65606aed7e8b41b3c2e565ac4789aaa43109557d1e662bf0c94fd7"
+        }
+      }
+    }
+  },
+  "sources": {
+    "xspec": {
+      "card": 8,
+      "block": "xspec",
+      "export": "xspec_export",
+      "review": "xspec_review",
+      "approval": "xspec_approval",
+      "queue_row": 21
+    },
+    "coherence_eigen": {
+      "card": 9,
+      "block": "eigen",
+      "export": "eigen_export",
+      "review": "eigen_review",
+      "approval": "eigen_approval",
+      "queue_row": 12
+    },
+    "harmonic_pooling": {
+      "card": 10,
+      "block": "pooling",
+      "export": "ac_summary",
+      "review": "ac_release_review",
+      "approval": "ac_approval",
+      "queue_row": 32
+    },
+    "harmonic_pooling_wearable": {
+      "card": 10,
+      "block": "pooling",
+      "export": "ac_summary",
+      "review": "ac_release_review",
+      "approval": "ac_approval",
+      "queue_row": 32
+    },
+    "practical_settings": {
+      "card": 11,
+      "block": "practical",
+      "export": "bd_aggregate",
+      "review": "bd_numerical_review",
+      "approval": "bd_approval",
+      "queue_row": 33
+    },
+    "harmonic_gap": {
+      "card": 12,
+      "block": "weights",
+      "export": "gap_export",
+      "review": "gap_interpretation_receipt",
+      "approval": "gap_release_approval",
+      "queue_row": 15
+    },
+    "fixed_decay": {
+      "card": 13,
+      "block": "weights",
+      "export": "decay_export",
+      "review": "decay_review",
+      "approval": "decay_release_approval",
+      "queue_row": 14
+    },
+    "rising_weights": {
+      "card": 14,
+      "block": "weights",
+      "export": "rise_export",
+      "review": "rise_review",
+      "approval": "rise_release_approval",
+      "queue_row": 20
+    }
+  },
+  "componentSource": {
+    "cpu_components": {
+      "card": 11,
+      "block": "practical",
+      "export": "timing_aggregate",
+      "review": "timing_review",
+      "approval": "timing_approval",
+      "queue_row": 30
+    }
+  },
+  "declaredEdits": {
+    "xspec": {
+      "applied_by": "xspec",
+      "not_selected": [
+        "release_status not selected; state/release-approval.json records the approval",
+        "prediction_seal_sha256 not selected; it is checked against the release audit",
+        "per_seed_descriptive not selected (per-seed MLP means)",
+        "random_pairing not selected (random-pairing accuracies); the chance levels come from the protocol",
+        "canary_real_label_accuracy_descriptive_only not selected (canary accuracies)",
+        "MLP_aggregation and multiplicity strings not selected; the page writes its own copy from limitations_keys",
+        "held8 and seen32 named u8 and seen_ba in ids (card 5's spelling of the same two tasks, checked through CCA's own value)",
+        "ridge arms carry \"deterministic fit\", training-free comparators \"no training\", XS-MLP its seed count",
+        "the handoff's historical-point and band lines not selected (thread predictions stay on card 4, D23)",
+        "the handoff's CCA identity approximation table not selected; the identity pair count is kept under checks",
+        "descriptive_gaps holds XS-RIDGE-W minus CCA-RAW as the difference of the two source levels, with no interval, as the handoff's descriptive table states it"
+      ]
+    },
+    "coherence_eigen": {
+      "applied_by": "eigen",
+      "not_selected": [
+        "release_status not selected; state/release-approval.json records the approval",
+        "prediction_seal_sha256 not selected; it is checked against the approval and the release audit",
+        "existing_normalized_xs_ridge_bet not selected (a thread prediction; thread predictions stay on card 4, D23)",
+        "prespecified_eigenvalue_claim: its two prespecified rules kept as flags on EIG-RAW minus CCA-RAW; point_absolute_gap_within5pp and the repeated paired_difference not selected",
+        "canary_real_label_accuracy_descriptive_only and evaluation_random_pairing_descriptive not selected",
+        "main_fits, additional_fits and multiplicity not selected from the aggregate; fit counts come from the protocol, the release audit and the approval under checks",
+        "held8 and seen32 named u8 and seen_ba in ids (card 5's spelling of the same two tasks, checked through CCA's own value)",
+        "ridge heads carry \"deterministic fit\", the analytic controls \"no training\"; reused comparators carry the levels, seeds and names of card 5 or card 8"
+      ]
+    },
+    "harmonic_pooling": {
+      "applied_by": "pooling",
+      "not_selected": [
+        "status, root_final_release_approval_pending and verified_A_aggregate.release_status not selected; state/AC-release-approval.json and the two reviews it binds supersede them",
+        "private_root, timestamps, stage completion times, ledgers, budget accounting, verification records and elapsed seconds not selected",
+        "payload byte counts, read caps, seal hashes and the permutation canary target count not selected; fit operation counts and reconstruction errors kept as checks",
+        "held8 and seen32 named u8 and seen_ba in ids (route 3 spelling of the same tasks)",
+        "above_zero and below_zero restated as interval_includes_zero and direction, both derived from the interval",
+        "training-free arms carry \"no training\" and ridge heads \"deterministic fit\" in place of seeds",
+        "the separate A aggregate file is not on this machine; its verified copy embedded in the summary is used and the approval must bind the hash the summary names"
+      ]
+    },
+    "harmonic_pooling_wearable": {
+      "applied_by": "pooling",
+      "not_selected": [
+        "the CCA-RAW intervals (seed 20261020) not selected: the row is card 7 matched CCA, a level only",
+        "claim_scope, model_collection and multiplicity free text not selected; the page writes its own copy from limitations_keys",
+        "the twelve candidate frequencies not selected; their count, range and native order rule are kept",
+        "prediction seal, reconstruction and freeze hashes not selected; the summary is pinned by its own hash",
+        "per-arm score reconstruction errors kept as checks; payload byte counts not selected",
+        "the separate C aggregate file is not on this machine; its verified copy embedded in the summary is used and the approval must bind the hash the summary names"
+      ]
+    },
+    "practical_settings": {
+      "applied_by": "practical",
+      "not_selected": [
+        "release_status not selected; state/BD-release-approval.json and the reviews it binds supersede it",
+        "interpretation, multiplicity and population strings not selected; the page writes its own copy from limitations_keys",
+        "above_zero, below_zero and interpretation restated as interval_includes_zero and direction, both derived from the interval and checked against the source labels",
+        "global prediction seal and fit-count summary not selected; the aggregate is pinned by its own hash",
+        "held8 and seen32 named u8 and seen_ba in ids (route 3 spelling of the same tasks)",
+        "training-free pipelines carry \"no training\" and ridge heads \"deterministic fit\" in place of seeds",
+        "whole-evaluation and audit run times not selected; they are not latency",
+        "the descriptive 2 s / 8 electrode difference of filter-bank CCA against the top-three ridge not selected: no paired interval was registered (undefined)"
+      ]
+    },
+    "harmonic_gap": {
+      "applied_by": "weights",
+      "not_selected": [
+        "schema and intervals strings not selected; the interval method is read from the frozen protocol",
+        "the nominal 95% intervals of the nine family contrasts not selected; their 99.44% family intervals govern",
+        "increment_J_to_shared and increment_shared_to_free not selected: the same values as the two family bridge contrasts",
+        "Delta metrics and the margins against the strongest joint-CCA distractor not selected",
+        "primary_positive not selected; the flags are derived from the family interval and checked against it",
+        "BETA edges published as shares of the 11,200 held-out decisions (count / 11,200); the counts not selected",
+        "Wearable-102 edges not selected",
+        "the reference check published as counts and its threshold; the candidate frequencies, norms and residuals not selected",
+        "independent_audit implementation strings not selected; pass flags and maximum errors kept",
+        "accuracy_shared and accuracy_free named B and S, prediction_change named changed, stable_correct named unchanged_right and stable_wrong named wrong_both",
+        "BETA-held8, Wearable-dry and Wearable-wet named u8, dry and wet in ids (route 3 and card 7 spelling of the same tasks)",
+        "every level carries \"no training\" in place of seeds"
+      ]
+    },
+    "fixed_decay": {
+      "applied_by": "weights",
+      "not_selected": [
+        "retrospective_gap_ratio not selected: the ratio table and the dry reconstruction stay in the research folder",
+        "transitions not selected",
+        "point_inside_margin not selected: the point bet of the comment thread (D23); the equivalence interval kept",
+        "role strings not selected; roles read from the frozen protocol",
+        "the release approval names the numerical audit by a private path; its receipt is pinned by its own hash",
+        "H3 and FBCCA flat and decay arms named H3-FLAT, H3-DECAY, FBCCA-FLAT and FBCCA-DECAY; BETA-held8, BETA-seen32, Wearable-dry and Wearable-wet named u8, seen_ba, dry and wet in ids",
+        "levels carry interval null: the aggregate gives arm accuracies without intervals",
+        "every level carries \"no training\" in place of seeds"
+      ]
+    },
+    "rising_weights": {
+      "applied_by": "weights",
+      "not_selected": [
+        "the accuracy block not selected; arm_levels kept (the same accuracies to the last place, with intervals)",
+        "transitions not selected",
+        "supports_primary_benefit and role not selected; the criterion is derived from the interval and checked",
+        "the release approval point-bet fields not selected (D23); the prespecified criterion kept",
+        "BETA-held8, BETA-seen32, Wearable-dry and Wearable-wet named u8, seen_ba, dry and wet in ids",
+        "every level carries \"no training\" in place of seeds"
+      ]
+    },
+    "cpu_components": {
+      "applied_by": "practical",
+      "not_selected": [
+        "cpu_ms_per_call and cpu_ms_per_trial not selected: zero readings at this scale; the handoff says to use wall times",
+        "host, processor, core count, operating system, storage and runtime versions not selected (D25: no host label)",
+        "accounting, quiescence, bindings, launcher and audit seconds not selected",
+        "component codes renamed to site codes; the head the readouts used is described, its fold and rotation are not named",
+        "wall_ms_per_trial published as wall_ms_amortised (batch cost divided by the batch size)"
+      ]
+    }
+  },
+  "handoffContext": {
+    "xspec": {
+      "path": "research/decision_route3_xspec_20261019/Cross-Spectral Shared-Weight Scorer Results Handoff.md",
+      "sha256": "884565105c98c0a9bee005f6d6857838b42c19eb8a5e88d96055bec347306cb4",
+      "block": "xspec",
+      "bound_by": "xspec_approval",
+      "queue_row": 21,
+      "role": "context only, never a copy source"
+    },
+    "coherence_eigen": {
+      "path": "research/decision_route3_coherence_eigen_20261020/Coherence and Eigenvalue Results Handoff.md",
+      "sha256": "a53819bd7f7e4c61275017ff955aabd73e933b16aa9e0e0d6175b422c1494db0",
+      "block": "eigen",
+      "bound_by": "eigen_approval",
+      "queue_row": 12,
+      "role": "context only, never a copy source"
+    },
+    "harmonic_pooling": {
+      "path": "research/ssvep_practical_suite_20261020/Practical SSVEP A and C Results Handoff.md",
+      "sha256": "aa6cdfd4b43bc9111545057104ce7a58cb5bafbbb3b8eaf85685293462e3dc0f",
+      "block": "pooling",
+      "bound_by": "ac_approval",
+      "queue_row": 32,
+      "role": "context only, never a copy source"
+    },
+    "harmonic_pooling_wearable": {
+      "path": "research/ssvep_practical_suite_20261020/Practical SSVEP A and C Results Handoff.md",
+      "sha256": "aa6cdfd4b43bc9111545057104ce7a58cb5bafbbb3b8eaf85685293462e3dc0f",
+      "block": "pooling",
+      "bound_by": "ac_approval",
+      "queue_row": 32,
+      "role": "context only, never a copy source"
+    },
+    "practical_settings": {
+      "path": "research/ssvep_practical_suite_20261020/Practical SSVEP B and D Results Handoff.md",
+      "sha256": "1b30a3e1d5dc7fe96cf199b63c05c85a711dc87ef90fcb3131b61ede19e728f5",
+      "block": "practical",
+      "bound_by": "bd_approval",
+      "queue_row": 33,
+      "role": "context only, never a copy source"
+    },
+    "cpu_components": {
+      "path": "research/product_direction_20261020/timing/CPU Component Timing Results Handoff.md",
+      "sha256": "4790aa0d4470c8c2228ad6057060c429f25c3fbc13212a2a6cff0331702ea940",
+      "block": "practical",
+      "bound_by": "timing_approval",
+      "queue_row": 30,
+      "role": "context only, never a copy source",
+      "queue_handoff": {
+        "path": "research/product_direction_20261020/BCI Report Next Release Data and Analysis Handoff.md",
+        "sha256": "db647d6b7ea80e1ab7ac146988fbeaac9edb0c28539754c440440bdbff898cd6",
+        "role": "context only, never a copy source",
+        "states": "measure practical compute separately from scientific auditing"
+      }
+    },
+    "harmonic_gap": {
+      "path": "research/decision_route3_harmonic_gap_20261021/Harmonic Gap Mechanism Results Handoff.md",
+      "sha256": "a266d13aaa8f7c8b25b7445f106d887bb916fcabb31a8ff39ed6f85bcee0a900",
+      "block": "weights",
+      "bound_by": "gap_release_approval",
+      "queue_row": 15,
+      "role": "context only, never a copy source"
+    },
+    "fixed_decay": {
+      "path": "research/decision_route3_fixed_decay_20261022/Fixed Decay Weighting Results Handoff.md",
+      "sha256": "eba5bbe96eff8adb1d569f2601dcca6906ed007216491800e48a3f81c78db9ab",
+      "block": "weights",
+      "bound_by": "decay_release_approval",
+      "queue_row": 14,
+      "role": "context only, never a copy source"
+    },
+    "rising_weights": {
+      "path": "research/decision_route3_rising_weights_20261025/Rising Harmonic Weight Results Handoff.md",
+      "sha256": "c193eb076aa2a65f780d230b51ca45e6b716cfaf9974bc212d5fdf5e052013e8",
+      "block": "weights",
+      "bound_by": "rise_release_approval",
+      "queue_row": 20,
+      "role": "context only, never a copy source"
+    }
+  },
+  "contextPins": {
+    "gap_execution_review": {
+      "path": "research/decision_route3_harmonic_gap_20261021/execution-review.json",
+      "sha256": "00f114f2a068c9148446a24ab046eddf98bbd8ba0ac6283d5fda767b87c6bd30",
+      "block": "weights",
+      "bound_by": "gap_release_approval",
+      "binding": "sha256",
+      "what": "card 12: the execution readiness review receipt",
+      "role": "context only, never a copy source"
+    },
+    "gap_binding_receipt": {
+      "path": "research/decision_route3_harmonic_gap_20261021/review/Final Harmonic Gap Scientific Binding Receipt.json",
+      "sha256": "15d858e85fdfd3fd4acada7a2a09fc97d10acd779b1a721e4d6e6e00a4aa9a80",
+      "block": "weights",
+      "bound_by": "gap_release_approval",
+      "binding": "sha256",
+      "what": "card 12: the final scientific binding receipt",
+      "role": "context only, never a copy source"
+    },
+    "gap_synthetic_receipt": {
+      "path": "research/decision_route3_harmonic_gap_20261021/evidence/TRX Synthetic Receipt.json",
+      "sha256": "6cc8c84d9e75039d906a7cfd56acc10d07f355c479ec28e7b76fa30027b8c816",
+      "block": "weights",
+      "bound_by": "gap_release_approval",
+      "binding": "sha256",
+      "what": "card 12: the synthetic test receipt",
+      "role": "context only, never a copy source"
+    },
+    "gap_audit_timing_evidence": {
+      "path": "research/decision_route3_harmonic_gap_20261021/review/Independent Audit Timing Evidence.json",
+      "sha256": "997774e0b616bc7185e1d769acd51e03f6590adf6078fce5570323fd99c23ed6",
+      "block": "weights",
+      "bound_by": "gap_release_approval",
+      "binding": "sha256",
+      "what": "card 12: the independent audit’s run-time evidence",
+      "role": "context only, never a copy source"
+    },
+    "timing_text_approval": {
+      "path": "research/product_direction_20261020/timing/review/Component Timing Handoff Text Approval.json",
+      "sha256": "4c758beffb36fd8ee530c6af462c68aff19f031081b345e384cebbc8d667ec7b",
+      "block": "practical",
+      "bound_by": "timing_approval",
+      "binding": "sha256",
+      "what": "card 11: the CPU component handoff’s text approval",
+      "role": "context only, never a copy source"
+    },
+    "timing_launch_receipt": {
+      "path": "research/product_direction_20261020/timing/execution/Launch Receipt.json",
+      "sha256": "6ed644f5dcd2f99850f71b1d5e0ec7a843413f5a99c7dfea51d7156fe12d358e",
+      "block": "practical",
+      "bound_by": "timing_approval",
+      "binding": "sha256",
+      "what": "card 11: the CPU component run’s launch receipt",
+      "role": "context only, never a copy source"
+    },
+    "xspec_startup_declaration_review": {
+      "path": "research/decision_route3_xspec_20261019/review/Startup Version Declaration Correction Review.md",
+      "sha256": "c8a2cf724d0af0c1ad34775f55035f29d041597772f52f94276898fabb6e7b94",
+      "block": "xspec",
+      "bound_by": "xspec_freeze",
+      "binding": "sha256",
+      "what": "card 8: the review behind the first engineering disclosure (the version declaration corrected before BETA was processed)",
+      "role": "context only, never a copy source"
+    },
+    "xspec_scalar_precision_review": {
+      "path": "research/decision_route3_xspec_20261019/review/Scalar Precision Correction Review.md",
+      "sha256": "1628962b48faa7220c34a706000cc7d0d9c5db0164248e4a7a1f1c8f490044eb",
+      "block": "xspec",
+      "bound_by": "xspec_freeze",
+      "binding": "sha256",
+      "what": "card 8: the review behind the second engineering disclosure (float32 centring corrected to float64)",
+      "role": "context only, never a copy source"
+    },
+    "eigen_synthetic_timeout": {
+      "path": "research/decision_route3_coherence_eigen_20261020/review/Bigdata-Synthetic-Test-Timeout.json",
+      "sha256": "77fed0f83bb1b3cab7a46190dee25080bb8ddf427db282a5d51e00d6bb10b82a",
+      "block": "eigen",
+      "bound_by": "eigen_handoff",
+      "binding": "file name",
+      "what": "card 9: the record behind the fourth engineering disclosure (the synthetic suite that timed out, not counted as a pass)",
+      "role": "context only, never a copy source"
+    }
+  },
+  "planning": {
+    "plan": {
+      "path": "research/site_release_plan_20261028/Release Layout Plan v3.md",
+      "sha256": "95a1dd0dd4df71ec06f6338e3cfec9af6894ac21a454fafa3edf2423c6fbd560"
+    },
+    "consolidatedHandoff": {
+      "path": "research/autonomous_validation_20261026/handoff_20261028/BCI Report Consolidated Research and Website Handoff.md",
+      "sha256": "21d078bc5a4c4bd0e876e8f548b8209e7d7c665f6c7634f3eb5e090b154e5462"
+    },
+    "queue": {
+      "path": "research/autonomous_validation_20261026/handoff_20261028/Website Integration Queue.json",
+      "sha256": "9162bfd39467cbe138ae256e8e4a4fe9d8d3af0cf2cdc935305c159668a6085c"
+    }
+  },
+  "published": {
+    "released": {
+      "path": "site/src/data/new-ssvep-frequencies-update.json",
+      "sha256": "197028bdc4dadd9713f6d408bb64204147fdfe39a686e7e119e4988aaf863ee0"
+    },
+    "releasedManifest": {
+      "path": "research/publication_review_20261020/new-ssvep-frequencies-release-manifest.json",
+      "sha256": "54cc10869787ca8af1b9bff5e7306eadc5bb1e5c277f27ae95c8f1127702981a"
+    },
+    "releasedAudit": {
+      "path": "research/publication_review_20261020/new-ssvep-frequencies-export-audit.json",
+      "sha256": "8a84b3343b49aef851c26dc9bca2d1c2648f7978936232269787b143678c4fdc"
+    }
+  },
+  "credits": {
+    "entityProfiles": {
+      "path": "site/src/data/entity-profiles.json",
+      "sha256": "9947ca2682076d5bc06244e8286c6f3bc34088ed0e62658eefb6728af001d3a9"
+    }
+  },
+  "crossChecks": {
+    "cca_diagnostics": {
+      "path": "research/decision_route3_cca_diagnostics_20261015/exports/aggregate-evidence.json",
+      "sha256": "fae60f74c73c99c441aedca3ad0d8c2fe7a9360e83fec0348e53962c4a53b1cf"
+    }
+  },
+  "notPublished": [
+    "Per-person, per-fold, per-rotation, per-seed and per-window values of any kind, predictions, scores, features, fitted heads and the sealed run files: only cohort levels, paired contrasts with their intervals, gap statistics, decision-change shares, check counts and CPU component medians are published.",
+    "Per-frequency values of any kind, including the reference check’s candidate frequencies: the check is published as counts.",
+    "The cross-spectral per-seed MLP accuracies, the canary accuracies and the random-pairing accuracies of cards 8 and 9.",
+    "The fixed-decay retrospective gap-to-gain ratio table and its dry reconstruction.",
+    "All-trial decision counts: the harmonic-gap decision changes on BETA held-out are published as shares of the 11,200 decisions; the Wearable-102 decision changes and the fixed-decay and rising-weight transitions are not published.",
+    "The harmonic-gap Delta means and the margins against the strongest joint-CCA distractor.",
+    "Run times of whole evaluations and audits, memory and process identifiers; the CPU-time readings of the component measurements and every host, processor, system and runtime label.",
+    "Predictions from the comment thread on cards 8 to 14: each new card states its prespecified criteria only, and the thread’s prediction stays on card 4 of the released file.",
+    "The commenter’s name.",
+    "The handoffs, protocols, freezes, receipts, reviews and approvals themselves: each is pinned by SHA-256 in the release manifest and checked by the export; several carry private storage paths."
+  ],
+  "holds": []
+}

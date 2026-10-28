@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-10-28",
+  "source": "owner, chat 2026-10-28: “拍板的几件事”都按你说的做；审查可以简化，很多内容老版本已经检查过",
+  "note": "Kept apart from owner-decisions.json, whose bytes the register manifest pins.",
+  "decisions": {
+    "D30": "MIND terms: the four licence statements side by side (paper and archive description CC BY 4.0; ScienceDB record metadata and MOABB CC BY-NC 4.0), with ScienceDB's terms-of-use page stated as not read",
+    "D31": "/topics/new-ssvep-frequencies/ size (about 512 KB after cards 8-14): check it at phone width; if needed, move detail tables into <details>",
+    "D32": "Card 11 points to route 3's S11 FBCCA recipe without printing 90.4%",
+    "D33": "Release-log highlight wording as built: 'extended to match' for the register (no 'updated'); the ten-second windows are arithmetic and rest windows / 心算与静息窗口",
+    "D34": "Fill the two gaps found: a figure-free NeBULA line on /topics/beyond-scalp-eeg/; reword the home directory band's Releases text now that the SHA-256 values are on /releases/archive/",
+    "D35": "Review this round against the diff from the deployed commit 76a1d33 only; content unchanged since the 2026-10-20 release was reviewed then and is covered by the automated checks"
+  }
+}

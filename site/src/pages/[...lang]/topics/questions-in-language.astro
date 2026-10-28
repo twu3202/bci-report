@@ -24,7 +24,7 @@ import QlRow from '../../../components/QlRow.astro';
 import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import { formatFig, type Fig as FigValue, type Fmt } from '../../../data/entities';
 import { R3, QL, QLW, DELTA, RATIO, block, entry, level, part, qlFig, qlwFig, qlRelease, qlwRelease, QL_DATASETS, QL_BOAS, qlText,
-         visualJev, differenceText, marginText, type QlEntry, type QlLevel, type QlRow as QlRowT } from '../../../data/questions-in-language';
+         visualJev, differenceText, marginText, ssvepFollowUpLine, type QlEntry, type QlLevel, type QlRow as QlRowT } from '../../../data/questions-in-language';
 import wordings from '../../../data/questions-in-language-wordings.json';
 import { fmModelById, fmTermsSentence } from '../../../data/foundation-models';
 import { jevStyle } from '../../../data/decision-research';
@@ -590,10 +590,11 @@ const credits = (['beta', 'boas', 'eesm19', 'openbmi', 'wearable-ssvep-102'] as 
 need(credits.filter(c => c.computed_from).map(c => c.id).join() === 'wearable-ssvep-102' && QL_DATASETS['wearable-ssvep-102'].computed_from === `Official Tsinghua BCI Lab author mirror snapshot acquired 2026-09-20; the mirror itself has no separate DOI or version number.`
   && !!QL_DATASETS['wearable-ssvep-102'].paper?.includes('10.3390/s21041256'), 'Wearable-102: its Sensors paper and the author mirror it was computed from');
 const entryKeyOrder = (p: string) => (S(p).entries ?? []);
-// The one link to route 3's follow-ups (owner decision D1), at the end of #unseen-frequency, with no figure: six
-// follow-ups on this BETA cohort (cards 1 to 6) and a seventh that runs card 6's learned correction to CCA, unchanged,
-// on a second dataset (card 7). Its counts are words, held to new-ssvep-frequencies-update.json here; its link text
-// is the follow-up page's question. /jev-style/ carries the same line.
+// The one link to route 3's follow-ups (owner decision D1), at the end of #unseen-frequency, with no figure. The guard
+// below holds the first release (new-ssvep-frequencies-update.json): six follow-ups on this BETA cohort (cards 1 to 6)
+// and a seventh that runs card 6's learned correction to CCA, unchanged, on a second dataset (card 7). The line counts
+// both releases (ssvep-followups-update.json adds cards 8 to 14), in words computed in questions-in-language.ts
+// (`ssvepFollowUpLine`); its link text is the follow-up page's question. /jev-style/ carries the same line.
 const fcards = ssvep.placement.cards, fcard = (k: number) => fcards.find(c => c.card === k);
 need(topicPages.some(t => t.slug === 'new-ssvep-frequencies') && ssvep.placement.page === '/topics/new-ssvep-frequencies/'
   && ssvep.placement.linked_from === '/topics/questions-in-language/#unseen-frequency', 'route 3’s follow-ups have their own question page, linked from #unseen-frequency');
@@ -604,10 +605,7 @@ need(ssvep.cohort.dataset === 'BETA' && ssvep.cohort.same_cohort_as === qlReleas
   && ssvep.wearable.source_dataset === ssvep.cohort.dataset && ssvep.wearable.retraining === false,
   'six follow-ups on the same BETA cohort, one idea each, and a seventh that tried the learned correction to CCA on a second dataset');
 const followQ = topicCards[locale]['new-ssvep-frequencies'].question.replace(/[?？]$/, '');
-const followUps = {
-  en: ['Six follow-up experiments on the same BETA cohort each tested one idea (the question, the head, phase, the matching computation, a learned correction to CCA), and a seventh tried the correction on a second dataset: ', `${followQ.charAt(0).toLowerCase()}${followQ.slice(1)} →`],
-  zh: ['在同一批 BETA 被试上，六项后续实验各检验一个想法（提问方式、分类头、相位、匹配计算、对 CCA 的学习修正），第七项则在第二个数据集上检验了这个修正：', `${followQ} →`],
-}[locale];
+const followUps = [ssvepFollowUpLine(locale), zh ? `${followQ} →` : `${followQ.charAt(0).toLowerCase()}${followQ.slice(1)} →`] as const;
 ---
 <TopicLayout
   locale={locale}

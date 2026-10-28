@@ -8,7 +8,7 @@ import { siteUpdates } from '../data/releases';
 import { alternates, locales, localizePath, translatedPaths } from '../data/i18n';
 import { entityPaths } from '../data/entities';
 import { protocolPagesDate, protocolPaths } from '../data/protocols';
-import { modelRegisterPageBuilt, registerPageBuilt } from '../data/files';
+import { modelRegisterPageBuilt, registerPageBuilt, releaseArchiveBuilt } from '../data/files';
 
 /**
  * `lastmod` only, taken from the release each page actually renders.
@@ -45,8 +45,10 @@ const updatedOn = (path: string) => siteUpdates.find(u =>
   (u.paths as readonly string[]).includes(path) || ('entityPages' in u && u.entityPages && ENTITY.test(path))
   || ('datasetPages' in u && u.datasetPages && DATASET.test(path)))?.date;
 // The register pages are built only while the register file is served and their routes exist (files.ts); the
-// sitemap lists a register page only when it is built.
-const unbuilt = new Set([...(registerPageBuilt ? [] : ['/datasets/register/']), ...(modelRegisterPageBuilt ? [] : ['/methods/register/'])]);
+// sitemap lists a register page only when it is built. The release archive (2026-10-28, translatedPaths) likewise,
+// once its route exists.
+const unbuilt = new Set([...(registerPageBuilt ? [] : ['/datasets/register/']), ...(modelRegisterPageBuilt ? [] : ['/methods/register/']),
+                         ...(releaseArchiveBuilt ? [] : ['/releases/archive/'])]);
 // Dataset and method pages that no update names keep the date they were first published.
 const ENTITY_FIRST_PUBLISHED = siteUpdates[siteUpdates.length - 1].date;
 const lastmodOf = (path: string) =>

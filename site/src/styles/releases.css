@@ -1,0 +1,31 @@
+/* The release log's index and its archive (owner decision D17, 2026-10-28). The archive's entries keep the
+   .release-entry rules in topics.css; this file adds the index: the newest days, one line per earlier release,
+   and the resolved holds collapsed under the open ones. */
+#latest>h2,#earlier>h2{font-size:1.85rem;margin:5px 0 8px}
+.release-latest{padding:20px 0 22px;border-bottom:1px solid var(--line)}
+.release-latest:last-of-type{border-bottom:0;padding-bottom:0}
+.release-latest h3 time{font-family:var(--serif);font-size:1.25rem;font-weight:600}
+.release-changes{margin:10px 0 0;padding-left:1.2em;max-width:820px}
+.release-changes li{margin-top:7px;line-height:1.55}
+.release-changes li::marker{color:var(--muted)}
+.release-changes a,.release-ids a,.release-earlier a{color:var(--accent)}
+.release-ids{list-style:none;margin:14px 0 0;padding:0;font-size:.82rem;color:var(--muted)}
+.release-ids li{margin-top:5px;overflow-wrap:anywhere}
+.release-ids code,.release-earlier code{font-family:var(--mono);font-size:.78rem}
+.release-earlier{list-style:none;margin:10px 0 0;padding:0;font-size:.875rem;max-width:900px}
+.release-earlier li{padding:9px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.release-earlier li:last-child{border-bottom:0}
+.release-earlier time{font-weight:600}
+.holds-resolved{margin-top:18px;border:1px solid var(--line);background:var(--panel);padding:0 14px 12px}
+.holds-resolved>summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:.9rem;color:var(--ink)}
+.holds-resolved[open]>summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+:lang(zh-Hans) .release-changes{max-width:38em}
+@media(max-width:640px){
+  #latest>h2,#earlier>h2{font-size:1.45rem}
+  .release-changes{padding-left:1.05em}
+  .holds-resolved{padding:0 10px 10px}
+  /* Chinese breaks anywhere, so the three-column corrections table fitted a phone unstacked, each date broken over four
+     lines. Kept whole, its dates and file names make it wider than the phone, and stack-tables.ts stacks it with cell
+     labels, as it does the English. */
+  #corrections table:not([data-stack]) :is(time,code){white-space:nowrap}
+}

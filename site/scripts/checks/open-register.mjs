@@ -1,5 +1,6 @@
-// The open register's dataset ladder (release open-register-update-20261020, owner decisions D3, D5 and D11):
-// /datasets/register/ in both languages and the /datasets/ link line, checked in a built site.
+// The open register's dataset ladder (owner decisions D3, D5 and D11; the newest register file, which since the
+// 20261028 round is open-register-20261028.json, owner decisions D14–D16 and D21): /datasets/register/ in both languages and
+// the /datasets/ link line, checked in a built site.
 //
 //   node scripts/checks/open-register.mjs <build dir>        (or import { checkOpenRegister } and pass the dir)
 //
@@ -33,7 +34,13 @@
 //  9. the Markdown copy carries the table with every row and every figure;
 // 10. /datasets/: one link line to the register with the dataset row count as a figure; its results table keeps its
 //     five columns;
-// 11. the page's weight, reported.
+// 11. the page's weight, reported;
+// 12. the register's earlier files stay served byte for byte (open-register-20261020.json, whose bytes cite that release's
+//     hold ids), and the page reads the newest; the four dataset checks of the 20261028 round are this site's rows at
+//     step 4, each with its MOABB record folded in (its loader among its names, the MOABB row gone), linking its case on
+//     the data-quality page (Kim beta-range also its dataset page), with the holds the file gives, and no figure in a
+//     row whose scores are held; NeBULA's row names no Zenodo record; a row an earlier file holds unchanged keeps that
+//     file's checked date, so no row claims a check it did not get.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -42,7 +49,16 @@ import { createHash as hash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const PATH = 'datasets/register/';
-const RELEASE = 'open-register-update-20261020';
+// The register's earlier files, served unchanged: name -> SHA-256 of the bytes released.
+const EARLIER = { 'open-register-20261020.json': 'c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558',
+                  'open-register-20261020.csv': 'aef5cffcac9fa23b14a0276ee0a8d9cb79aecf1d0f81eb95613f7d7874b7a9fe' };
+// The 20261028 round's dataset checks (dataset-checks-update.json): row -> [MOABB row folded in, its loader, status, case, page].
+const ROUND = {
+  'r-site-kim2025-beta-range': ['r-moabb-0071', 'Kim2025BetaRange', 'published', '/topics/data-quality/#kim2025-beta-range', '/datasets/kim2025-beta-range/'],
+  'r-site-mind2026': ['r-moabb-0095', 'MIND2026', 'published', '/topics/data-quality/#mind2026', null],
+  'r-site-damm-finger-imagery': ['r-moabb-0048', 'Damm2026', 'score_held', '/topics/data-quality/#damm', null],
+  'r-site-nebula': ['r-moabb-0106', 'NeBULA2025', 'score_held', '/topics/data-quality/#nebula', null],
+};
 const H1 = { en: 'Every EEG dataset we know of, and how far we checked it', zh: '我们知道的每个 EEG 数据集，以及核验到了哪一步' };
 const TITLE = { en: 'Open register · datasets', zh: '开放登记册 · 数据集' };
 const COLUMNS = { en: ['Dataset', 'Signal · task', 'Terms as stated', 'Checked to', 'What we found'], zh: ['数据集', '信号 · 任务', '所述条款', '核验到', '核验所见'] };
@@ -113,6 +129,8 @@ export function checkOpenRegister(distDir) {
   const text = read(`data/${FILE}`);
   assert.equal(text, readFileSync(fileURLToPath(new URL(`../../public/data/${FILE}`, import.meta.url)), 'utf8'), `${FILE}: the served copy is public/data's`);
   const R = JSON.parse(text);
+  // The release that ships the newest file is named by its date.
+  const RELEASE = `open-register-update-${FILE.match(/(\d{8})/)[1]}`;
   assert.equal(R.release_id, RELEASE, 'the release');
   const leaves = new Set(); (function walk(v) { if (typeof v === 'number') leaves.add(v); else if (v && typeof v === 'object') Object.values(v).forEach(walk); })(R);
   const rows = R.entries.filter(e => e.ladder === 'dataset');
@@ -381,6 +399,35 @@ export function checkOpenRegister(distDir) {
     ok(figAttrs(line).join() === `${FILE}|count|${C.rows.dataset}`, `${where}: the line prints the dataset row count`);
     ok(main.indexOf(line) < main.indexOf('<table'), `${where}: the line sits above the results table`);
     ok(count(el(el(main, /<table>/, where), /<thead>/, where), '<th scope="col">') === 5, `${where}: the results table keeps its five columns`);
+  }
+
+  // 12. The earlier files, unchanged, and the round's rows.
+  for (const [f, want] of Object.entries(EARLIER)) {
+    ok(existsSync(join(DIST, 'data', f)) && hash('sha256').update(readFileSync(join(DIST, 'data', f))).digest('hex') === want, `data/${f}: served byte for byte`);
+    ok(f.replace(/\.(json|csv)$/, '') < FILE.replace(/\.json$/, ''), `data/${f}: an earlier file than ${FILE}`);
+  }
+  // A row's checked date is the day its evidence was checked: a row an earlier file holds unchanged in every other field
+  // keeps that file's date (the exporter's carry_checked), on both ladders.
+  for (const f of Object.keys(EARLIER).filter(f => f.endsWith('.json'))) {
+    const rest = e => JSON.stringify(Object.fromEntries(Object.entries(e).filter(([k]) => k !== 'checked').sort(([a], [b]) => a < b ? -1 : 1)));
+    const moved = JSON.parse(read(`data/${f}`)).entries.filter(p => byId.has(p.id) && rest(byId.get(p.id)) === rest(p) && byId.get(p.id).checked !== p.checked);
+    ok(moved.length === 0, `${FILE}: ${moved.length} rows that ${f} holds unchanged carry a later checked date (${moved.slice(0, 3).map(p => p.id).join(', ')})`);
+  }
+  if (Object.keys(ROUND).some(id => byId.has(id))) {
+    for (const [id, [moabb, loader, status, caseLink, page]] of Object.entries(ROUND)) {
+      const e = byId.get(id);
+      ok(e && e.group === 'site' && e.level === 4 && e.status === status, `${id}: this site's row at step 4, ${status}`);
+      ok(!byId.has(moabb) && e.aliases.some(a => a.kind === 'moabb_loader' && a.value === loader) && e.source_groups.includes('moabb'),
+        `${id}: ${moabb} folded in, ${loader} among its names`);
+      ok(e.links.case === caseLink && (e.links.page ?? null) === page, `${id}: its case ${caseLink}${page ? ` and its page ${page}` : ''}`);
+      for (const lang of ['en', 'zh']) {
+        const pfx = lang === 'zh' ? '/zh' : '';
+        const tr = mains[lang].slice(mains[lang].indexOf(`<tr id="${id}"`), spanEnd(mains[lang], mains[lang].indexOf(`<tr id="${id}"`)));
+        ok(tr.includes(`href="${pfx}${caseLink}"`) && (!page || tr.includes(`href="${pfx}${page}"`)), `${pfx}/${PATH}#${id}: links its case${page ? ' and its page' : ''}`);
+        if (status === 'score_held') ok(figAttrs(tr).length === 0, `${pfx}/${PATH}#${id}: no figure in a row whose scores are held`);
+        ok(!/13627307/.test(tr), `${pfx}/${PATH}#${id}: no Zenodo record that does not resolve`);
+      }
+    }
   }
 
   // 11. Weight.

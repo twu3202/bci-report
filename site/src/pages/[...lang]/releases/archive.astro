@@ -1,0 +1,119 @@
+---
+/**
+ * /releases/archive/: every release's full record as released (owner decision D17, 2026-10-28), moved here from
+ * /releases/ unchanged: the summary, the pages it added, its notes, its review manifest and the SHA-256 of every file
+ * it ships, computed at build time from the bytes served. The holds register and the corrections stay on /releases/.
+ */
+import SiteHeader from '../../../components/SiteHeader.astro';
+import AgentLinks from '../../../components/AgentLinks.astro';
+import ShareImage from '../../../components/ShareImage.astro';
+import FooterElsewhere from '../../../components/FooterElsewhere.astro';
+import { site } from '../../../data/site';
+import { date, kib, pageTitle, records } from '../../../data/release-record';
+import { alternates, chrome, hrefFor, htmlLang, localeOf, localeParams, localizePath, ogLocale, topicChrome } from '../../../data/i18n';
+import '../../../styles/global.css';
+import '../../../styles/topics.css';
+import '../../../styles/releases.css';
+
+export const getStaticPaths = localeParams;
+const locale = localeOf(Astro.params.lang);
+const t = chrome[locale];
+const tc = topicChrome[locale];
+const path = '/releases/archive/';
+const origin = Astro.site ?? site.origin;
+const canonical = new URL(localizePath(path, locale), origin).href;
+const log = hrefFor('/releases/', locale);
+
+const copy = {
+  en: {
+    title: 'Release archive', log: 'Releases',
+    description: 'Every reviewed BCI Report release as released: what it added, what it held back, its review manifest and the SHA-256 of every file it ships.',
+    eyebrow: 'Release log',
+    dek: 'Newest first: what each reviewed batch added and held back, with the SHA-256 of every file it ships.',
+    elsewhere: ['The ', 'holds register', ' and the ', 'corrections', ' are on the release log.'],
+    home: 'Home',
+    releasesH2: 'Releases',
+    added: 'Pages', notes: 'Notes', files: 'Downloads', manifest: 'Review manifest SHA-256',
+    colFile: 'File', colSize: 'Size', colSha: 'SHA-256 of the file as served',
+    filesRegion: (id: string) => `Downloads in ${id}, scrolls horizontally`,
+    rights: 'Each batch’s source terms, consent and privacy review:',
+    rightsLink: 'Data use & privacy',
+  },
+  zh: {
+    title: '发布归档', log: '发布记录',
+    description: 'BCI Report 每一次经过审核的发布的原始记录：新增了什么、暂缓了什么，审核清单，以及所附每个文件的 SHA-256。',
+    eyebrow: '发布记录',
+    dek: '最新的在前：每一批经过审核的发布新增和暂缓了什么，以及所附每个文件的 SHA-256。',
+    elsewhere: ['', '暂缓登记册', '与', '更正', '在发布记录页。'],
+    home: '首页',
+    releasesH2: '各次发布',
+    added: '页面', notes: '说明', files: '下载', manifest: '审核清单 SHA-256',
+    colFile: '文件', colSize: '大小', colSha: '所提供文件的 SHA-256',
+    filesRegion: (id: string) => `${id} 的下载文件，可横向滚动`,
+    rights: '每一批的来源条款、同意书与隐私审查：',
+    rightsLink: '数据使用与隐私（英文）',
+  },
+}[locale];
+const pageTitleFull = `${copy.title} · ${site.name}`;
+const entries = records();
+---
+<!doctype html>
+<html lang={htmlLang[locale]}>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="description" content={copy.description}/>
+  <meta name="theme-color" content="#b3450e"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="/favicon.ico" sizes="32x32"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="canonical" href={canonical}/>
+  <AgentLinks href={localizePath(path, locale)}/>
+  {alternates(path, String(origin)).map(l => <link rel="alternate" hreflang={l.hreflang} href={l.href}/>)}
+  <title>{pageTitleFull}</title>
+  <meta property="og:type" content="article"/>
+  <meta property="og:site_name" content={site.name}/>
+  <meta property="og:locale" content={ogLocale[locale]}/>
+  <meta property="og:title" content={pageTitleFull}/>
+  <meta property="og:description" content={copy.description}/>
+  <meta property="og:url" content={canonical}/>
+  <ShareImage locale={locale}/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content={pageTitleFull}/>
+  <meta name="twitter:description" content={copy.description}/>
+</head>
+<body>
+  <a class="skip" href="#release-content">{t.skipToEvidence}</a>
+  <SiteHeader locale={locale} path={path} active="releases"/>
+  <main class="topic-page" id="release-content">
+    <nav class="breadcrumbs" aria-label={tc.breadcrumb}><ol><li><a href={hrefFor('/', locale)}>{copy.home}</a></li><li><a href={log}>{copy.log}</a></li><li aria-current="page">{copy.title}</li></ol></nav>
+    <section class="topic-hero">
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.title}</h1>
+      <p class="topic-dek">{copy.dek}</p>
+      <p class="topic-dek">{copy.elsewhere[0]}<a href={`${log}#holds`}>{copy.elsewhere[1]}</a>{copy.elsewhere[2]}<a href={`${log}#corrections`}>{copy.elsewhere[3]}</a>{copy.elsewhere[4]}</p>
+    </section>
+
+    <section class="topic-section" aria-labelledby="releases-heading">
+      <h2 id="releases-heading" class="visually-hidden">{copy.releasesH2}</h2>
+      {entries.map(r => (
+        <article class="release-entry" id={r.id}>
+          <header><time datetime={r.date}>{date(r.date, locale)}</time><code>{r.id}</code></header>
+          <p class="release-summary">{r.summary[locale]}</p>
+          <p class="release-meta"><strong>{copy.added}</strong> {r.pages.map((p, i) => <>{i > 0 && ' · '}<a href={hrefFor(p, locale)}>{pageTitle(p, locale)}</a></>)}</p>
+          {r.notes.map(n => <p class="release-meta"><strong>{copy.notes}</strong> {n[locale]}</p>)}
+          {r.manifest && <p class="release-meta"><strong>{copy.manifest}</strong> <code class="hash">{r.manifest}</code></p>}
+          <div class="topic-table scroll release-files" tabindex="0" role="region" aria-label={copy.filesRegion(r.id)}>
+            <table>
+              <thead><tr><th scope="col">{copy.colFile}</th><th scope="col">{copy.colSize}</th><th scope="col">{copy.colSha}</th></tr></thead>
+              <tbody>{r.facts.map(f => <tr><th scope="row"><a href={`/data/${f.file}`} download>{f.file}</a></th><td>{kib(f.bytes)}</td><td><code class="hash" data-file={f.file}>{f.sha}</code></td></tr>)}</tbody>
+            </table>
+          </div>
+        </article>
+      ))}
+      <p class="citation-note">{copy.rights} <a href="/data-use/">{copy.rightsLink}</a></p>
+    </section>
+  </main>
+  <footer><a class="brand" href={hrefFor('/', locale)}>{site.name}</a><p>{t.footerTagline}</p><a href="/data-use/">{t.footerDataUse}{t.englishMark}</a><a href="#release-content">{t.footerTop}</a><FooterElsewhere locale={locale}/></footer>
+</body>
+</html>

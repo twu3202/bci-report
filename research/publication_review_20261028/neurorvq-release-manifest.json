@@ -1,0 +1,240 @@
+{
+ "release_id": "neurorvq-update-20261028",
+ "freeze_date": "2026-10-28",
+ "reviewed_at": "2026-10-28",
+ "reviewer": "publishing session",
+ "scope": "Editorial decisions for NeuroRVQ’s frozen-backbone probes on three existing tasks: the released NeuroRVQ backbone, restored strictly with parameter-free branch normalisation and mean-token pooling, read by one fixed ridge head per fold on EEGMAT (rest against mental arithmetic), ds003810 (motor imagery against rest) and ds006593 (P300 target against non-target), each beside simple features of the same windows, scored as participant means with one paired participant-bootstrap difference per task. Its own manifest: it amends no earlier review and changes no released file. mvp.json, pilot-studies-update.json, neurolm-eegmat-update.json, eegpt-core-update.json and foundation-models-update.json keep their bytes; the panel sits in its own file, neurorvq-update.json. Every figure is read from a file this manifest pins by SHA-256: each study’s independent audit receipt, bound by that study’s release approval and interpretation review and equal to the figures its handoff and the consolidated handoff print; cohort, input-chain and dimension facts from the frozen protocols and input queues; the restore counts from the strict-load acceptance; the licences from the licence files of the two repositories; the exposure facts from the loader and exposure contract. Nothing was re-run: NeuroRVQ was not loaded, no value was extracted, no head was refitted and no network was used.",
+ "approval": {
+  "date": "2026-10-28",
+  "decision": "aggregate_preview",
+  "basis": "The owner’s decisions in chat on 2026-10-28, recorded in owner-decisions.json: D14 publishes NeuroRVQ on EEGMAT, MI and P300 as aggregate scores only, CC BY-NC, no weights; D19 places the three in one uncounted panel on /topics/pilot-studies/ with figure-free pointers from the three protocol pages and no method page. Each study’s release approval passes an internal aggregate handoff and leaves publication to the owner (publication not authorised by the research session, website not modified). Local build only: no deployment, GitHub, Hugging Face or Zenodo action.",
+  "ownerDecisions": {
+   "path": "research/publication_review_20261028/owner-decisions.json",
+   "sha256": "031ad4e32fa2186e607d4e2fbf9b0ff6d99102d9d8a0300af2aea28279fae313"
+  },
+  "previewDefaults": [
+   "Placement: one panel, #neurorvq on /topics/pilot-studies/, after #neurolm-eegmat and outside the pilot count, with pointers that carry no figures from /protocols/arithmetic-rest/, /protocols/mi-rest/ and /protocols/p300-target/. No row in the core matrix, the foundation-encoder table, the EEGPT section, the home table or the foundation-models CSVs; no method page.",
+   "Labels: “NeuroRVQ backbone”, “band power” and “temporal means”; the motor-imagery band-power arm is descriptive and the temporal means are the primary comparator, as the protocols declare.",
+   "Variant wording: the released backbone with parameter-free branch normalisation and mean-token pooling; the authors’ affine inference wrapper failed a strict restore with eight normalisation tensors missing. No version label in any text.",
+   "Interval wording: the EEGMAT interval spans zero and takes the pilot-studies sentence; the motor-imagery and P300 intervals lie below zero and are described as descriptive, from one cohort.",
+   "Licences per part: code and weights CC BY-NC 4.0, the licence file of both repositories at the pinned revisions; each dataset keeps its released record; no weights distributed.",
+   "Exposure unknown for all three datasets.",
+   "Counts: no new dataset, model or pilot in any counter."
+  ],
+  "decisionsOfThisReview": [
+   "Values: every score, paired difference and interval is the full-precision value of the study’s independent audit receipt, which the study’s release approval and interpretation review bind by SHA-256. The export requires each to round to the figures the study handoff and the consolidated handoff print.",
+   "Release status is read from each study’s release approval (PASS_INTERNAL_AGGREGATE_HANDOFF), never from a pending-review field of an aggregate.",
+   "Only the balanced-accuracy paired difference has an interval in the sources; the arms carry point estimates and the macro-F1 differences are not published.",
+   "Dimensions from the frozen protocols and input queues: NeuroRVQ 800 (four 200-value branches), EEGMAT band power 95 (19 channels by 5 bands), motor-imagery temporal means 1,500 (15 channels by 100 bins) and band power 75 (15 by 5), P300 temporal means 950 (19 by 50). The plan’s dimensions caveat omits the 75; the export states it.",
+   "Restore facts from the strict-load acceptance: 263 trained tensors and 5,869,088 elements restored strictly out of 330 tensors and 58,560,632 elements in the checkpoint, 67 unused, and eight source-default normalisation entries the authors’ wrapper expects and the checkpoint lacks.",
+   "Licences from the repository licence files the research refresh fetched on 2026-10-25: the GitHub LICENSE at the source revision and the Hugging Face LICENSE at the weights revision are the same bytes, the Creative Commons Attribution-NonCommercial 4.0 International text. Not refetched here. No hash of a source or Hugging Face file is published beyond the checkpoint SHA-256 and the two revisions.",
+   "Exposure unknown: none of EEGMAT, ds003810 and ds006593 is named in the paper’s 13-corpus pretraining list, which includes one proprietary collection, and no per-checkpoint corpus or participant list exists.",
+   "Caveats beyond the plan, because the sources require them and the sources win: an input-scale caveat on all three blocks (the checkpoint and the paper do not establish the amplitude scale or reference NeuroRVQ was pretrained on; every chain feeds microvolts as an adaptation; the motor-imagery and P300 chains leave out the notch, band-pass and clip of the example preprocessing in NeuroRVQ’s code; no score reproduces the published pipeline or separates the representation from an input mismatch), which the EEGMAT and P300 interpretation reviews, the three handoffs, the consolidated handoff, website-queue rows 7 to 9, the motor-imagery and P300 protocols and the loader contract state, where the plan’s units bullet names only the motor-imagery and P300 source calibration; the known-development-cohort caveat on EEGMAT; and a scope caveat on all three (offline, the EEGMAT chain record-local, no cognitive-workload, clinical or online-decoding claim, one variant rather than every use of NeuroRVQ). The input-cache caveat names the matrix rows exactly: the motor-imagery band power beside that protocol’s Spectral ridge row, the P300 temporal means beside that protocol’s Temporal ridge row.",
+   "Withheld by this review: the above-50% participant counts and fractions, every workflow, audit and CPU time, memory figure and bound-file list, and the third-party conversion of the checkpoint with its licence tag.",
+   "Fixes after the independent review of the export: the scope caveat says the EEGMAT chain filters the retained first minute of each recording as one block before windowing (the protocol filters the first 30,000 native samples of each recording, and the recordings last 62 to 188 seconds); the units caveat adds that the P300 cache’s original preparation from the raw files was not re-run (the P300 handoff, its audit receipt and consolidated C3 state it); the EEGMAT audit boundary says the audit read both arms’ values from the producer’s sealed files and did not re-extract them, checked against the audit program, now pinned beside its receipt; the development-cohort caveat reads “is not an untouched external confirmation”.",
+   "For the page, payload unchanged: the pilot page prints the leaderboard statement once, from the limitation with id “separation”, which every block’s caveat_keys names; placement.text and release_record.decision say the same of the placement and of the release record, and the pilot page prints neither beside it. Every score, difference and interval (blocks[].arms[].balanced_accuracy and .macro_f1, blocks[].paired_difference.difference and .interval_95) is a full-precision proportion that the page prints at two decimals of percent, never at whole-percent precision."
+  ]
+ },
+ "releaseRecord": {
+  "date": "2026-10-28",
+  "decision": "Publish NeuroRVQ’s frozen-backbone probes on EEGMAT, on motor imagery against rest and on P300 target against non-target as their approved aggregates: one panel on the pilot studies page, outside the pilot count and every leaderboard, with pointers from three protocol pages that carry no figures.",
+  "rights": "NeuroRVQ’s code and weights are CC BY-NC 4.0, the licence file of both repositories at the pinned revisions; only aggregate figures are published, no weights are distributed, and no endorsement by NeuroRVQ’s authors is implied. EEGMAT, ds003810 and ds006593 keep their released records.",
+  "researchRelease": "Each study’s release approval passes an internal aggregate handoff and binds its handoff, independent audit and interpretation review by SHA-256; publication on the site rests on the owner’s decisions D14 and D19.",
+  "binding": "This record approves the served file the export audit names."
+ },
+ "research": {
+  "eegmat": {
+   "audit": {
+    "path": "research/autonomous_validation_20261026/neurorvq/review/independent-result-audit.json",
+    "sha256": "bd672fb7035dd8c4347d7a57678c4747e11db21953ae5fe8540171775818e07a"
+   },
+   "auditProgram": {
+    "path": "research/autonomous_validation_20261026/neurorvq/review/independent_result_audit.py",
+    "sha256": "3483f4cc363ec9ed8de1add2d3190252f3800dcea29ad3b65e4589331fe16f8b"
+   },
+   "approval": {
+    "path": "research/autonomous_validation_20261026/neurorvq/state/release-approval.json",
+    "sha256": "42ad73cfef0ac3055d6f774f08fc7fa0525ee0a88eaba4236d1489975a5afba2"
+   },
+   "handoff": {
+    "path": "research/autonomous_validation_20261026/neurorvq/NeuroRVQ EEGMAT Results Handoff.md",
+    "sha256": "83db9e1fea94ca9ae31af00314849dc55be8703854a898432626f783c5603bb6"
+   },
+   "interpretationReview": {
+    "path": "research/autonomous_validation_20261026/neurorvq/review/interpretation-review.json",
+    "sha256": "47d494d3ed90d444c06f9297f7e75d2f70f839a2f5861e770348d6b7aab5f4a0"
+   },
+   "protocol": {
+    "path": "research/autonomous_validation_20261026/neurorvq/protocols/NeuroRVQ EEGMAT Frozen Pilot Protocol.json",
+    "sha256": "7ff3be8737af9757a6aa14d330f74d445bb0bba8f233eb960534987f0574b72d"
+   },
+   "config": {
+    "path": "research/autonomous_validation_20261026/neurorvq/evaluation/frozen-config.json",
+    "sha256": "6da4fe2bc149270a34d1bc887eb102ef8c06d0bf850700a3b4bbdabdf3b2c385"
+   },
+   "headerSummary": {
+    "path": "research/autonomous_validation_20261026/neurorvq/state/EEGMAT Header Admission Summary.json",
+    "sha256": "248d88f87c169b7bddc7cb743c13b6466edd984d69606c76aad26410ac254643"
+   }
+  },
+  "mi-rest": {
+   "audit": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/review/mi_result_audit/receipt.json",
+    "sha256": "711faa01804f5a517b66b8f9110c9dbf1ed9d725f09c51cbfe7e6f7ba2e9bce6"
+   },
+   "neuralAudit": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/review/mi_result_audit/neural-receipt.json",
+    "sha256": "457c429b33cf330e96fbe2a57b277982116699f7bbb3752e3987d21dda4231bd"
+   },
+   "approval": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/mi-release-approval.json",
+    "sha256": "42c93cfd57574dff18ce36aa1a1be1cea1dfb9c4ed772b5c39ba6f397af8b57f"
+   },
+   "handoff": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/NeuroRVQ MI Results Handoff.md",
+    "sha256": "4013b3e52e472b9fbf0bd0a1d48b94da87bf02453e39fc48833b487f4a6b288c"
+   },
+   "interpretationReview": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/review/mi-interpretation-review.json",
+    "sha256": "982f6bd347df2e1a675a342e2c42d4755da30271bd951a476906c4bcab22c5b0"
+   },
+   "protocol": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/NeuroRVQ MI-only Prospective Protocol.json",
+    "sha256": "2ce987ef88df95f4bef70caa746b44da317905df94db1008362e4b10ab8b22ec"
+   },
+   "config": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/mi-frozen-config.json",
+    "sha256": "8c729be1415328a782755488d80fbe22ab58fd5ebdeb007311aa013532d6bb20"
+   },
+   "queue": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/NeuroRVQ MI-only Frozen Input Queue.json",
+    "sha256": "85d6e58fc968c5d2b76f91acb74de6f48036623e523c5edc29332ad7f650d712"
+   }
+  },
+  "p300-target": {
+   "audit": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/review/external_result_audit/receipt.json",
+    "sha256": "a213f1e80c87941273e2cc5138c1fceb0a73b0731fc17f9232739db0e10db6ed"
+   },
+   "approval": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/release-approval.json",
+    "sha256": "a0c5babaf161ff6444beb1679639f5877d7411c478d39441237703aa74445b39"
+   },
+   "handoff": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/NeuroRVQ P300 Results Handoff.md",
+    "sha256": "2fb9710c2bf470614cb06f70cbf65823e522aadcb730355aad64ba9da659e045"
+   },
+   "interpretationReview": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/review/interpretation-review.json",
+    "sha256": "26741a6872bf393fcc8e98e40c6b1cd20c724cdb6fcf925c82f3c09ad0e6fe68"
+   },
+   "protocol": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/NeuroRVQ P300-only Prospective Protocol.json",
+    "sha256": "56e3a4466b06e10e35f27f37914992b94256bfbdf932c48f79626d43cc47b146"
+   },
+   "config": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/frozen-config.json",
+    "sha256": "c246361ded6015ec676dde5b3583ccb6a23ad59f032827ba1783fa65c500d41a"
+   },
+   "queue": {
+    "path": "research/autonomous_validation_20261026/neurorvq/next_core/p300_candidate/NeuroRVQ P300-only Frozen Input Queue.json",
+    "sha256": "129042cd2232c0a131aab697f48990a7deba91b6b93098b5b1418a7db95579a8"
+   }
+  },
+  "backbone": {
+   "strictLoad": {
+    "path": "research/autonomous_validation_20261026/neurorvq/review/strict-load-acceptance.json",
+    "sha256": "ca1b2d734fb7bdf152f15df4ad09844fa74fa60ab0b7fbbfc9260f1349cbf73f"
+   }
+  }
+ },
+ "model": {
+  "contract": {
+   "path": "research/research_refresh_20261025/models/NeuroRVQ Loader and Exposure Contract.json",
+   "sha256": "0cefcfe677ba90032a16a95f28dd792059d5ffb6c9d2562faf4f12e8875ffc81"
+  },
+  "codeLicence": {
+   "path": "research/research_refresh_20261025/models/LICENSE",
+   "sha256": "c84442114f4da9b2593efa430845e11a0605b0c16259feb906661bc0bd504fb8"
+  },
+  "weightsLicence": {
+   "path": "research/research_refresh_20261025/models/hf_LICENSE.txt",
+   "sha256": "c84442114f4da9b2593efa430845e11a0605b0c16259feb906661bc0bd504fb8"
+  },
+  "licenceReceipts": {
+   "path": "research/research_refresh_20261025/models/metadata_receipts.json",
+   "sha256": "86333ef76bc19df916cdb692de047001b89a0e4acfc46d20c4a1de326ec8ada6"
+  },
+  "weightsListing": {
+   "path": "research/research_refresh_20261025/models/neurorvq_hf.txt",
+   "sha256": "91e5d927314940b1d551c25b9294cde96d4c017801f1068a8c545ccf8e2846bd"
+  },
+  "codeListing": {
+   "path": "research/research_refresh_20261025/models/neurorvq_repo.txt",
+   "sha256": "42108df1ed0b5f8fd83e8617a0be6630914a7569e1d3671a0ed138b676de1792"
+  },
+  "download": {
+   "path": "research/autonomous_validation_20261026/state/neurorvq-download.json",
+   "sha256": "3f473e32d46371d7fd3eb740669ab16047187193bdfa9592d48245cf59bb8c73"
+  }
+ },
+ "handoff": {
+  "consolidated": {
+   "path": "research/autonomous_validation_20261026/handoff_20261028/BCI Report Consolidated Research and Website Handoff.md",
+   "sha256": "21d078bc5a4c4bd0e876e8f548b8209e7d7c665f6c7634f3eb5e090b154e5462"
+  },
+  "queue": {
+   "path": "research/autonomous_validation_20261026/handoff_20261028/Website Integration Queue.json",
+   "sha256": "9162bfd39467cbe138ae256e8e4a4fe9d8d3af0cf2cdc935305c159668a6085c",
+   "rows": [
+    7,
+    8,
+    9
+   ]
+  },
+  "openItems": {
+   "path": "research/autonomous_validation_20261026/handoff_20261028/Research Closure and Open Items.json",
+   "sha256": "cca240f90e42555dd0ad7a238f08f3a920abd379471bc62c782c67f8f566732a"
+  }
+ },
+ "published": {
+  "coreMatrix": {
+   "path": "site/src/data/mvp.json",
+   "sha256": "113de335c17043bd9f720cf6e46663ff8bb2a11ddedaa49282765ed732807cd0"
+  },
+  "pilotStudies": {
+   "path": "site/src/data/pilot-studies-update.json",
+   "sha256": "c93a344b7111b2335565b4a2819c0f4be6a93ba8d6970a8fd4fcb0cf9caf2bca"
+  },
+  "neurolmEegmat": {
+   "path": "site/src/data/neurolm-eegmat-update.json",
+   "sha256": "4e7001b2b69ea2578d1db5c9617dc1b99e8f3985f13b2e2fb1b11f32024d6a55"
+  },
+  "eegptCore": {
+   "path": "site/src/data/eegpt-core-update.json",
+   "sha256": "8563862b961a226636d1349ec62f5bfd4fe922bda326c27fbcf7557e2d277a26"
+  },
+  "foundationModels": {
+   "path": "site/src/data/foundation-models-update.json",
+   "sha256": "eaaaaccb2e8b70cacc85db71726d63de036c83c3d60b7b4a9097f9aafafad13a"
+  }
+ },
+ "notPublished": [
+  "Per-person, per-fold and per-window values of any kind, fold assignments, participant identifiers, labels, extracted values, fitted heads, predictions and the sealed files: only participant-mean scores, one paired difference per task with its interval, and cohort counts are published.",
+  "How many people each arm scored above 50%, which the sources give as descriptive point-estimate counts.",
+  "Per-arm intervals and macro-F1 differences: none were computed, so each arm has a point estimate only.",
+  "Measured compute: workflow, audit and CPU times, memory, budgets and process counts from the handoffs and receipts. None of them measures inference speed.",
+  "The checkpoint and the authors’ source: no weights are distributed; the checkpoint SHA-256 identifies the file used and grants nothing. No hash of a source or Hugging Face file is published beyond the checkpoint SHA-256 and the two revisions.",
+  "Third-party conversions of the checkpoint and the licence tags they carry: only the authors’ repositories are cited.",
+  "The handoffs, protocols, configurations, input queues, receipts and reviews themselves: each is pinned by SHA-256 in this manifest and checked by the export, and none is published, because several carry private storage paths."
+ ],
+ "holds": [],
+ "reviewedText": {
+  "covers": "every string in neurorvq-update.json outside provenance, as a compact JSON list of [path, text] pairs in file order, UTF-8; the export audit recomputes it from the served bytes",
+  "excludes": [
+   "provenance"
+  ],
+  "reviewed": "the limitation texts, scope, question, placement, split, arm definitions, audit boundaries, input chains, protocols-not-run gates, rights, release record and not-published list of this build",
+  "sha256": "499ca7d8c2fbead97c6fe44df87f7a62e0bbe7ac60630b4fdf59eaf1c04807dc"
+ }
+}

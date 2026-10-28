@@ -9,9 +9,9 @@ What it covers
 
   The result and protocol files published in site/public/data/ — served at
   https://bci.report/data/ and listed with the SHA-256 of each file at
-  https://bci.report/releases/ — the copies of the same exports the pages are
-  built from in site/src/data/ (mvp.json is experiments.json), and the same
-  tables on the Hugging Face mirror
+  https://bci.report/releases/archive/ — the copies of the same exports the
+  pages are built from in site/src/data/ (mvp.json is experiments.json), and
+  the same tables on the Hugging Face mirror
   https://huggingface.co/datasets/Twu31/bci-report. These are cohort-level
   measurements computed by BCI Report: scores, intervals, cohort sizes and the
   protocol descriptors that produced them.

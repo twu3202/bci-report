@@ -1,8 +1,21 @@
-"""Build the open register (wave 1): every EEG dataset and model we know of, and how far we checked it.
+"""Build the open register: every EEG dataset and model we know of, and how far we checked it.
 
     python3 pipeline/publication/export_open_register.py               # the frozen register (B8b, the default)
     python3 pipeline/publication/export_open_register.py --provisional # B8a's provisional site file (placeholders)
     python3 pipeline/publication/export_open_register.py --check       # build and compare with the files on disk
+
+The 20261028 version (package R5 of that round, release open-register-update-20261028) is a new dated file:
+open-register-20261028.json and .csv. The 20261020 files stay served byte-identical, because their bytes cite the hold
+ids of that release. This version is built from the same frozen inputs as the 20261020 one (the Hugging Face and model
+snapshots, the classifier audit, A4's captures, the A5 census and the MOABB catalog, all in their 20261020 folders),
+plus this round's records: the A3 census research/publication_review_20261028/register/site-step-evidence-20261028.json,
+which extends A5 with the four dataset checks this round promotes from MOABB catalog rows (Kim beta-range, MIND, Damm
+finger imagery, NeBULA; each merges its MOABB record group) and the step evidence of the three models it scores
+(NeuroRVQ, EEG-Captioner, AXON); this round's consent record (A2) and owner decisions (D14-D29); the NeuroRVQ, ten-second
+and dataset-checks payloads; and the 2026-10-25 model refresh (FAME, EEG-PRIME, STST-JEPA, BandVQ and USE-FM at step 1
+with holds, owner decision D26). The opaque-id map continues the 20261020 map (register-ids.json, now in the 20261028
+register folder). Kim beta-range's MOABB hold (onset timing) becomes a site hold on its row (amplitude units), and the
+site holds are row by row (register_findings.SITE_HOLDS).
 
 Packages B8a and B8b of the 20261020 release. B8a built the external rows and a provisional site file; B8b freezes
 the site rows. At the freeze (the default) this script first runs site/scripts/export-site-register-rows.mjs, which
@@ -125,7 +138,10 @@ Entry (one register row)
                         the source family (VERIFIED_SOURCES), an A4 capture, and no withheld reason.
   links                 {page?, case?, cases?[], parent_row?, exposure?}
   correction            {mailto}  every row: mailto:contact@bci.report?subject=Register%20row%20<id>
-  checked               evidence date (YYYY-MM-DD) of the row's furthest step
+  checked               evidence date (YYYY-MM-DD) of the row's furthest step. A site row carries the freeze day of
+                        the version that last checked its evidence: a row the previous served file holds unchanged in
+                        every other field keeps that file's date (carry_checked); new and changed rows carry this
+                        freeze's day; external rows keep their evidence dates
   merge_into?           external file only: the site slug (dataset) or site method slug (model) this row folds into
   placeholder?          true on provisional site rows (B8b replaces them)
 
@@ -154,26 +170,33 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from register_findings import (FindingError, SITE_HOLD_REASONS, comparison_allowed, finding,  # noqa: E402
+from register_findings import (FindingError, SITE_HOLD_REASONS, SITE_HOLDS, comparison_allowed, finding,  # noqa: E402
                                schema as finding_schema, validate)
 from register_ids import IdMap  # noqa: E402
 
 PROJECT = Path(__file__).resolve().parents[2]
-D = '20261020'
+D = '20261028'
 RELEASE_ID = f'open-register-update-{D}'
 SCHEMA = 'bci-report-open-register-v1'
+# The register's first version: its frozen inputs (snapshots, captures, the A5 census, the classifier audit) stay in its
+# review folder, and this version reads them there. Its served files stay as they are.
+PREV = '20261020'
 OPEN = PROJECT / 'research/open_register_20261019'
 REVIEW = PROJECT / f'research/publication_review_{D}'
+REVIEW_PREV = PROJECT / f'research/publication_review_{PREV}'
 REGISTER = REVIEW / 'register'
+REGISTER_PREV = REVIEW_PREV / 'register'
 MOABB_EV = PROJECT / 'research/moabb_expansion_20261019/evidence'
 ICLR = PROJECT / 'research/iclr_bci_expansion_20261016'
+REFRESH = PROJECT / 'research/research_refresh_20261025'
 SITE_DATA = PROJECT / 'site/src/data'
 
 EXTERNAL_OUT = REGISTER / f'open-register-external-{D}.json'
 IDS_PATH = REGISTER / 'register-ids.json'
+IDS_PREV = REGISTER_PREV / 'register-ids.json'
 SITE_OUTS = (SITE_DATA / f'open-register-{D}.json', PROJECT / f'site/public/data/open-register-{D}.json')
 CSV_OUT = PROJECT / f'site/public/data/open-register-{D}.csv'
-AUDIT = REVIEW / 'reviews/register-classifier-audit.json'
+AUDIT = REVIEW_PREV / 'reviews/register-classifier-audit.json'
 # B8b: the site rows as re-read at the freeze, the script that writes them, and the release manifest.
 SITE_ROWS = REGISTER / f'site-register-rows-{D}.json'
 SITE_ROWS_SCRIPT = PROJECT / 'site/scripts/export-site-register-rows.mjs'
@@ -191,17 +214,26 @@ INPUTS = {
     'moabb_catalog': MOABB_EV / 'moabb-catalog.json',
     'moabb_shortlist': MOABB_EV / 'moabb-shortlist-verified.json',
     'moabb_coverage': MOABB_EV / 'existing-dataset-coverage.json',
-    'a4_index': REVIEW / 'evidence/access-terms/index.json',
-    'a5': REVIEW / 'notes/site-step-evidence.json',
-    'a3': REVIEW / 'evidence/consent-statements.json',
-    'owner': REVIEW / 'owner-decisions.json',
-    'hf_model_metadata': REGISTER / f'hf-model-metadata-{D}.json',
+    'a4_index': REVIEW_PREV / 'evidence/access-terms/index.json',
+    'a5': REVIEW_PREV / 'notes/site-step-evidence.json',
+    'a3': REVIEW_PREV / 'evidence/consent-statements.json',
+    'owner': REVIEW_PREV / 'owner-decisions.json',
+    'hf_model_metadata': REGISTER_PREV / f'hf-model-metadata-{PREV}.json',
     'model_evidence': ICLR / 'Additional ICLR BCI Opportunities.json',
     'fm_update': SITE_DATA / 'foundation-models-update.json',
     'neurolm_update': SITE_DATA / 'neurolm-eegmat-update.json',
     'iesseeg_update': SITE_DATA / 'clinical-iesseeg-update.json',
     'profiles': SITE_DATA / 'entity-profiles.json',
     'mvp': SITE_DATA / 'mvp.json',
+    # The 20261028 round: the A3 census that extends A5, this round's consent record (A2) and owner decisions, the three
+    # payloads its rows rest on, and the 2026-10-25 model refresh (D26).
+    'a3_census': REGISTER / f'site-step-evidence-{D}.json',
+    'consent_round': REVIEW / 'evidence/consent-statements.json',
+    'owner_round': REVIEW / 'owner-decisions.json',
+    'neurorvq_update': SITE_DATA / 'neurorvq-update.json',
+    'ten_second_update': SITE_DATA / 'eegmat-ten-second-update.json',
+    'dataset_checks_update': SITE_DATA / 'dataset-checks-update.json',
+    'model_refresh': REFRESH / 'models/EEG model refresh evidence.json',
 }
 
 # Served files name research inputs by label and hash only (their paths and folder names never reach a page).
@@ -214,11 +246,14 @@ INPUT_LABELS = {
     'fm_update': 'site/src/data/foundation-models-update.json', 'neurolm_update': 'site/src/data/neurolm-eegmat-update.json',
     'iesseeg_update': 'site/src/data/clinical-iesseeg-update.json', 'profiles': 'site/src/data/entity-profiles.json',
     'mvp': 'site/src/data/mvp.json',
+    'a3_census': f'site_step_census_{D}', 'consent_round': f'consent_record_{D}', 'owner_round': f'owner_decisions_{D}',
+    'neurorvq_update': 'site/src/data/neurorvq-update.json', 'ten_second_update': 'site/src/data/eegmat-ten-second-update.json',
+    'dataset_checks_update': 'site/src/data/dataset-checks-update.json', 'model_refresh': 'model_refresh_evidence',
 }
 DIR_LABELS = {'research/open_register_20261019/classified': 'classifier_rows',
               'research/open_register_20261019/verified': 'verification_results',
               'research/open_register_20261019/raw/details': 'hf_detail_records',
-              'research/publication_review_20261020/evidence/access-terms': 'access_terms_families'}
+              f'research/publication_review_{PREV}/evidence/access-terms': 'access_terms_families'}
 
 CONTACT = 'contact@bci.report'
 HF_SEARCH = 'https://huggingface.co/datasets?search='
@@ -303,8 +338,8 @@ VOCAB = {
     'access': ['open', 'gated', 'signed_agreement', 'request_based', 'registration', 'catalog_only', 'unknown'],
     'status': ['listed', 'planned', 'published', 'score_held', 'status_only'],
     'by': ['hf_licence_tag', 'moabb_catalog', 'deposit_record', 'a4_capture', 'zenodo_record', 'host_record',
-           'repository_licence_file', 'model_card_metadata', 'dataset_card', 'paper', 'project_page', 'site_release',
-           'none'],
+           'repository_licence_file', 'module_and_project_licence', 'model_card_metadata', 'dataset_card', 'paper',
+           'project_page', 'site_release', 'none'],
     'terms_state': ['stated', 'not_found', 'per_source', 'not_applicable', 'application_required'],
     'signal': ['human_scalp_eeg', 'human_ieeg', 'human_fmri', 'mouse_calcium_imaging', 'mouse_spiking',
                'ecg', 'ppg', 'emg', 'human_meg'],
@@ -606,7 +641,14 @@ class Build:
         self.site_holds_withheld: list[str] = []
         self.raw = {k: p.read_bytes() for k, p in INPUTS.items()}
         self.inputs = [{'path': rel(p), 'sha256': sha(self.raw[k])} for k, p in INPUTS.items()]
-        self.ids = IdMap.fresh(IDS_PATH) if fresh_ids else IdMap.load(IDS_PATH)
+        if fresh_ids:
+            self.ids = IdMap.fresh(IDS_PATH)
+        elif IDS_PATH.exists():
+            self.ids = IdMap.load(IDS_PATH)
+        else:
+            # The first build of this version continues the 20261020 map: every id it issued keeps its key.
+            self.ids = IdMap.load(IDS_PREV)
+            self.ids.path = IDS_PATH
         self.entries: list[dict] = []
         self.families: list[dict] = []
         self.audit = None
@@ -632,9 +674,17 @@ class Build:
         for fam in self.a4['families']:
             path = PROJECT / fam['json_file']
             self.a4_families[fam['slug']] = {**json.loads(path.read_text()), **fam}
-            self.dir_files[rel(REVIEW / 'evidence/access-terms')].append((path.name, sha(path.read_bytes())))
+            self.dir_files[rel(REVIEW_PREV / 'evidence/access-terms')].append((path.name, sha(path.read_bytes())))
         self.a4_by_repo = {v['id']: v for v in self.a4['verifier_results_read']}
         self.a5 = load('a5')
+        # The 20261028 A3 census: it extends A5 with the four dataset checks and carries the three scored models' steps.
+        self.a3c = load('a3_census')
+        if (self.a3c.get('release_freeze') != D or self.a3c['extends']['file'] != rel(INPUTS['a5'])
+                or self.a3c['extends']['sha256'] != sha(self.raw['a5'])):
+            raise ValueError(f'{rel(INPUTS["a3_census"])}: not the {D} census extending the A5 census as pinned here')
+        if {s['id'] for s in self.a3c['sources']} & {s['id'] for s in self.a5['sources']}:
+            raise ValueError('the A3 census repeats a source of the A5 census')
+        self.census_sources = self.a5['sources'] + self.a3c['sources']
         self.site_rows: dict[str, dict] = {}       # A5 census id -> placeholder row
         self.site_tokens: dict[str, set] = {}      # A5 census id -> identity tokens
         self.merges: list[dict] = []
@@ -715,7 +765,7 @@ class Build:
         ks = load('known_sources')
         page_links = {p['slug']: p['source_links'] for p in ks['site_dataset_pages']}
         mvp = load('mvp')
-        for src in self.a5['sources']:
+        for src in self.census_sources:
             if src['census_group'] == 'adjacent_moabb':
                 continue
             t: set[str] = set()
@@ -1018,7 +1068,7 @@ class Build:
                 '5': {'state': 'not_reached'}}
 
     def site_row_id(self, census_id: str) -> str:
-        src = next(s for s in self.a5['sources'] if s['id'] == census_id)
+        src = next(s for s in self.census_sources if s['id'] == census_id)
         return f'r-site-{self.site_slug(src)}'
 
     # ======================================================================= MOABB
@@ -1031,9 +1081,11 @@ class Build:
             k = (e.get('DOI') or '').strip().lower() or 'loader:' + e['Dataset']
             groups.setdefault(k, []).append(e)
         self.moabb_counts = {'release': MOABB_RELEASE, 'loaders': len(cat['entries']), 'record_groups': len(groups)}
+        # Catalog holds on MOABB record groups. Kim2025BetaRange's (onset timing) left with its row in the 20261028 round:
+        # the row merges into r-site-kim2025-beta-range, whose hold is the site hold on amplitude units (SITE_HOLDS).
         holds = {'Liu2024': 'released_ids_duplicated', 'Schrag2026Pediatric': 'targets_stored_with_outputs',
-                 'Hinss2021': 'deposits_differ', 'Kim2025BetaRange': 'onset_timing_unresolved',
-                 'Dreyer2023': 'release_family_unchecked', 'Alawieh2025': 'one_offline_session'}
+                 'Hinss2021': 'deposits_differ', 'Dreyer2023': 'release_family_unchecked',
+                 'Alawieh2025': 'one_offline_session'}
         brain_invaders = re.compile(r'^BI20\d\d[ab]?$')
         out = []
         merged_n = 0
@@ -1120,7 +1172,7 @@ class Build:
             if hits:
                 if len(hits) > 1:
                     raise ValueError(f'MOABB {loaders} matches two site rows {hits}')
-                entry['merge_into'] = self.site_slug(next(s for s in self.a5['sources'] if s['id'] == hits[0]))
+                entry['merge_into'] = self.site_slug(next(s for s in self.census_sources if s['id'] == hits[0]))
                 for x in loaders:
                     self.site_aliases[hits[0]].append({'value': x, 'kind': 'moabb_loader'})
                 # The record group's DOI goes with it (B8b): every identifier of a merged row is an alias of its site row.
@@ -1134,7 +1186,7 @@ class Build:
         return out
 
     def bi2013a_steps(self, entry: dict) -> None:
-        src = next(s for s in self.a5['sources'] if s['id'] == 'moabb-bi2013a')
+        src = next(s for s in self.census_sources if s['id'] == 'moabb-bi2013a')
         entry['step_evidence'] = self.a5_steps(src)
         # The plan rule, as the dataset register states it (B8b): the furthest step whose own evidence is on file, with
         # files opened listed as a gap at step 2 (the census's contiguous step is 1).
@@ -1209,7 +1261,7 @@ class Build:
         """Placeholder site rows from the A5 census, so pages can build against the real shape (B8b replaces)."""
         self.site_aliases = defaultdict(list)
         self.site_groups = defaultdict(set)
-        for src in self.a5['sources']:
+        for src in self.census_sources:
             if src['census_group'] == 'adjacent_moabb':
                 continue
             cid = src['id']
@@ -1507,6 +1559,119 @@ class Build:
               {'paper': proc_url(o), 'code': o['code_url'], 'weights': o['weights_url']},
               [hf_alias('vandijklab/brainlm', 'official_weights')],
               venue=venue('ICLR 2024', 'official_proceedings', proc_url(o)))
+
+        # ---- The 20261028 round. Three models scored here (owner decisions D14, D19): each row's step evidence is the
+        # A3 census's, every value it records re-read in its file here (census_model_items); terms, addresses and the
+        # official weights are read from the payload that publishes the scores. No method page and no venue; a weights
+        # copy by a third party is not listed (the NeuroRVQ payload cites only the authors' repositories).
+        cm = self.census_model_items()
+        nr, ts = load('neurorvq_update'), load('ten_second_update')
+        hf_repo = lambda url: re.fullmatch(r'https://huggingface\.co/([\w.-]+/[\w.-]+)', url).group(1)
+        m, r = nr['model'], nr['rights']
+        if not (r['code']['licence'] == r['weights']['licence'] and r['weights']['same_file_as_code']
+                and r['weights']['weights_distributed'] is False and nr['pretraining_exposure']['status'] == 'unknown'):
+            raise ValueError('neurorvq-update.json: the code and weights licences, or the exposure, are not as this row states them')
+        model('neurorvq', m['name'], 'foundation_model', ['human_scalp_eeg'],
+              {'code': part('stated', r['code']['licence'], 'repository_licence_file'),
+               'weights': part('stated', r['weights']['licence'], 'repository_licence_file'),
+               # The paper lists its pretraining corpora, each with its own terms; one is proprietary (a gap at step 2).
+               'data': part('per_source', None, 'paper')},
+              cm['neurorvq']['items'], [],
+              {'paper': m['paper'], 'code': m['repository'], 'weights': m['checkpoint']['repository']},
+              [{'value': hf_repo(m['checkpoint']['repository']), 'kind': 'official_weights',
+                'licence_tag': cm['neurorvq']['licence_tag'] or 'none'}],
+              links={'cases': [cm['neurorvq']['case']]}, exposure=nr['pretraining_exposure']['status'],
+              checked=nr['release_record']['date'])
+        c = ts['eeg_captioner']
+        if c['encoder_only'] is not True or c['identity']['weights_distributed'] is not False:
+            raise ValueError('eegmat-ten-second-update.json: EEG-Captioner is not its encoder alone, or its weights are distributed')
+        model('eeg-captioner', 'EEG-Captioner', 'foundation_model', ['human_scalp_eeg'],
+              {'code': part('stated', c['rights']['code']['licence'], 'repository_licence_file'),
+               'weights': part('stated', c['rights']['weights']['licence'], 'hf_licence_tag'),
+               'data': part('not_found')},
+              cm['eeg-captioner']['items'], [],
+              {'code': c['identity']['source_repository'], 'weights': c['identity']['hf_repository']},
+              [{'value': hf_repo(c['identity']['hf_repository']), 'kind': 'official_weights',
+                'licence_tag': cm['eeg-captioner']['licence_tag'] or 'none'}],
+              links={'cases': [cm['eeg-captioner']['case']]}, exposure=c['pretraining_exposure'],
+              checked=ts['release_record']['date'])
+        a = ts['axon']
+        if a['identity']['weights_distributed'] is not False or a['rights']['checkpoint']['gated'] is not False:
+            raise ValueError('eegmat-ten-second-update.json: AXON\'s weights are distributed or gated')
+        # Its code: the AXON module's per-file terms inside the Braindecode project's root licence, both as values in
+        # that order, with no words of their own (the page words the by token in each language). No paper is cited
+        # until it is checked (the payload's not_published).
+        if not (a['rights']['module']['scope'].startswith('the per-file terms') and a['rights']['project']['scope'].startswith('the licence at')):
+            raise ValueError('eegmat-ten-second-update.json: AXON\'s code terms are no longer the module\'s file terms and the project\'s root licence')
+        model('axon', a['name'], 'foundation_model', ['human_scalp_eeg'],
+              {'code': part('stated', f'{a["rights"]["module"]["licence"]}, {a["rights"]["project"]["licence"]}',
+                            'module_and_project_licence'),
+               'weights': part('stated', a['rights']['checkpoint']['licence'], 'hf_licence_tag'),
+               'data': part('not_found')},
+              cm['axon']['items'], [],
+              {'code': a['identity']['source_repository'], 'weights': a['identity']['hf_repository']},
+              [{'value': hf_repo(a['identity']['hf_repository']), 'kind': 'official_weights',
+                'licence_tag': cm['axon']['licence_tag'] or 'none'}],
+              links={'cases': [cm['axon']['case']]}, exposure=a['pretraining_exposure'],
+              checked=ts['release_record']['date'])
+
+        # Five models the 2026-10-25 refresh identified (owner decision D26): step 1, each with its hold, a paper link and
+        # no venue. EEG-PRIME's claimed repository returned 404; FAME, STST-JEPA, BandVQ and USE-FM have no official
+        # release of code or weights on record. None is tied to a review submission (checked against the refresh's
+        # sources and the D4 ledger); FAME is a model, distinct from the L-FAME dataset row.
+        refresh = load('model_refresh')
+        rf = {x['id']: x for x in refresh['candidates']}
+        rf_file = rel(INPUTS['model_refresh'])
+        REFRESH_ROWS = (('fame', 'FAME', 0, 'no_release_found'), ('eeg-prime', 'EEG-PRIME', None, 'code_not_reachable'),
+                        ('stst-jepa', 'STST-JEPA', 0, 'no_release_found'), ('bandvq', 'BandVQ', None, 'no_release_found'),
+                        ('use-fm', 'USE-FM', 0, 'no_release_found'))
+        for key, name, alias_at, hold in REFRESH_ROWS:
+            o = rf[key]
+            acc = o['access']
+            if (o['status'] != 'research_candidate_not_run' or acc.get('weights_url') or acc.get('code_license') != 'unknown'
+                    or acc.get('weights_license') != 'unknown' or VENUE_REFS.search(json.dumps(o))):
+                raise ValueError(f'{rf_file}: {key} is no longer an unreleased candidate with unknown terms')
+            if (hold == 'code_not_reachable') != bool(acc.get('code_url')) or (
+                    hold == 'code_not_reachable' and '404' not in acc.get('code_access', '')):
+                raise ValueError(f'{rf_file}: {key}\'s code address and its hold disagree')
+            aliases = []
+            if alias_at is not None:
+                a_ = o['aliases'][alias_at]
+                if re.search(r'[;:]|\b(?:is|are|not|Not|Distinct|separate)\b', a_):
+                    raise ValueError(f'{rf_file}: {key}\'s alias {a_!r} is not a name')
+                aliases = [{'value': a_, 'kind': 'name'}]
+            model(key, name, 'foundation_model', ['human_scalp_eeg'],
+                  {'code': part('not_found'), 'weights': part('not_found'), 'data': part('per_source', None, 'paper')},
+                  {'official_record': ('pass', rf_file + f'#candidates[id={key}].paper'),
+                   'code_terms': ('gap', rf_file + f'#candidates[id={key}].access.code_license'),
+                   'weights_terms': ('gap', rf_file + f'#candidates[id={key}].access.weights_license'),
+                   'data_terms': ('pass', rf_file + f'#candidates[id={key}].overlap'),
+                   'file_listing': ('gap', None)},
+                  [finding('hold', reason_code=hold)], {'paper': o['paper']}, aliases, checked=o['checked_on'])
+        return out
+
+    def census_model_items(self) -> dict[str, dict]:
+        """The A3 census's three model entries as model() takes them: {item: (state, [file#field, ...] | None)}, with the
+        row's case, and the licence tag of its official weights where the census reads one (a model card's licence).
+        Every value the census recorded is read again in its file; a value that changed stops the build."""
+        out = {}
+        for m in self.a3c['models']:
+            items = {}
+            tag = None
+            for step, its in m['steps'].items():
+                for it in its:
+                    if MODEL_STEPS[step]['items'].count(it['item']) != 1:
+                        raise ValueError(f'{m["row"]}: {it["item"]} is not a step-{step} item')
+                    srcs = []
+                    for s in it['sources']:
+                        census_reread(s, f'{m["row"]}/{it["item"]}')
+                        srcs.append(f'{s["file"]}#{s["field"]}')
+                        if s['field'] == 'cardData.license':
+                            tag = s['value']
+                    items[it['item']] = (it['state'], srcs or None)
+            out[m['key']] = {'items': items, 'case': m['case'], 'licence_tag': tag, 'level': m['level']}
+            if f'r-model-{m["key"]}' != m['row']:
+                raise ValueError(f'{m["row"]}: not the row of {m["key"]}')
         return out
 
     # --------------------------------------------------------------------------- weight copies
@@ -1644,6 +1809,8 @@ class Build:
             raise ValueError(f'{rel(SITE_ROWS)}: the census did not re-read cleanly at the freeze')
         if fz['census']['sha256'] != sha(INPUTS['a5'].read_bytes()):
             raise ValueError(f'{rel(SITE_ROWS)}: built from another A5 census than the one pinned here')
+        if (fz.get('census_supplement') or {}).get('sha256') != sha(INPUTS['a3_census'].read_bytes()):
+            raise ValueError(f'{rel(SITE_ROWS)}: built from another A3 census than the one pinned here')
         rows = {r['census_id']: r for r in fz['datasets']}
         if set(rows) != set(self.site_rows):
             raise ValueError(f'site rows {sorted(set(rows) ^ set(self.site_rows))} are in one of the census and the frozen rows only')
@@ -1666,7 +1833,10 @@ class Build:
             for f in r['findings']:
                 if f['code'] == 'hold' and f['params']['reason_code'] in SITE_HOLD_REASONS:
                     code = f['params']['reason_code']
-                    hold_id = SITE_HOLD_REASONS[code]
+                    # Row by row: the reason and the hold id this row's hold is opened under (SITE_HOLDS).
+                    if SITE_HOLDS.get(rid, (None,))[0] != code:
+                        raise ValueError(f'{rid}: a site hold {code} that SITE_HOLDS does not give this row')
+                    hold_id = SITE_HOLDS[rid][1]
                     if not f.get('sources') or not all(x.endswith(f'#holds[id={hold_id}]') for x in f['sources']):
                         raise ValueError(f'{rid}: the site hold {code} rests on {f.get("sources")}, not the hold {hold_id}')
                     if code not in self.site_hold_words:
@@ -1676,6 +1846,11 @@ class Build:
             e['links'] = dict(r['links'])
             e['checked'] = r['checked']
             self.site_rows[cid] = e
+        # Every row SITE_HOLDS names carries its hold in the site rows (served once the page words the code).
+        for rid, (code, hold_id) in SITE_HOLDS.items():
+            r = next((x for x in fz['datasets'] if f'r-site-{x["slug"]}' == rid), None)
+            if not r or not any(f['code'] == 'hold' and f['params']['reason_code'] == code for f in r['findings']):
+                raise ValueError(f'{rid}: SITE_HOLDS names the hold {hold_id} ({code}), and the frozen row does not carry it')
 
     @staticmethod
     def frozen_finding(f: dict) -> dict:
@@ -1875,7 +2050,7 @@ class Build:
             e['_verdict'] = extra['verdict']
             if i in self.hf_merged:
                 cid = self.hf_merged[i]
-                e['merge_into'] = self.site_slug(next(s for s in self.a5['sources'] if s['id'] == cid))
+                e['merge_into'] = self.site_slug(next(s for s in self.census_sources if s['id'] == cid))
                 self.site_aliases[cid].append({'value': i, 'kind': 'hf_repo'})
                 self.site_groups[cid].add('hf')
             out.append(e)
@@ -2003,9 +2178,11 @@ class Build:
                           'catalog_checked': '2026-10-19'},
                 # Only the captures a served row cites: the six corpus rows and the captures in served findings.
                 'access_terms': [x for x in self.access_terms_sources() if x['capture_id'] in self.cited_captures()],
-                'site_census': {'record': INPUT_LABELS['a5'], 'generated_at': self.a5['generated_at']},
+                'site_census': {'record': INPUT_LABELS['a5'], 'generated_at': self.a5['generated_at'],
+                                'extended_by': {'record': INPUT_LABELS['a3_census'], 'generated_at': self.a3c['generated_at']}},
                 'models': {'evidence_checked': '2026-10-16',
-                           'hf_metadata_retrieved_at': load('hf_model_metadata')['retrieved_at']},
+                           'hf_metadata_retrieved_at': load('hf_model_metadata')['retrieved_at'],
+                           'refresh_checked': load('model_refresh')['checked_on']},
                 'inputs': self.public_inputs(),
             }),
         ])
@@ -2080,7 +2257,7 @@ class Build:
         return sorted(out, key=lambda x: x['label'])
 
     def documents(self):
-        self.a5_hashes = {i['file']: i['sha256'] for i in self.a5['inputs']}
+        self.a5_hashes = {i['file']: i['sha256'] for i in self.a5['inputs'] + self.a3c['inputs']}
         ext_entries = [self.publicize(_clean(e)) for e in self.entries]
         ext = self.header('external')
         ext['counts'] = self.counts(ext_entries)
@@ -2141,6 +2318,8 @@ class Build:
             site_entries.append(self.publicize(_clean(m)))
         order = {'hf': 0, 'eegdash': 1, 'site': 2, 'moabb': 3, 'corpus': 4, 'model': 5}
         site_entries.sort(key=lambda e: (e['ladder'] != 'dataset', order[e['group']], e['id']))
+        # A row the previous version holds unchanged was not checked again: it keeps that version's date.
+        self.checked_carried = carry_checked(site_entries) if self.freeze else []
         site = self.header('frozen' if self.freeze else 'provisional')
         if not self.freeze:
             site['note'] = ('Provisional register for page builds. External rows are final for this release; site rows '
@@ -2287,6 +2466,51 @@ def _find_text(d, rx):
     return m.group(0) if m else None
 
 
+def census_select(root, selector: str):
+    """The census's selector grammar (A5, A3): dotted keys, [key=value] filters, [n] indices; None where a step is missing."""
+    cur = root
+    for m in re.finditer(r'([^.\[\]]+)|\[([^\]]+)\]', selector):
+        if cur is None:
+            return None
+        if m.group(1) is not None:
+            cur = cur.get(m.group(1)) if isinstance(cur, dict) else None
+            continue
+        inner = m.group(2)
+        if inner.isdigit():
+            cur = cur[int(inner)] if isinstance(cur, list) and int(inner) < len(cur) else None
+            continue
+        k, eq, v = inner.partition('=')
+        if not eq:
+            return None
+        cur = next((x for x in cur if isinstance(x, dict) and str(x.get(k)) == v), None) if isinstance(cur, list) else None
+    return cur
+
+
+_census_files: dict[str, object] = {}
+
+
+def census_reread(s: dict, where: str) -> None:
+    """One census source read again in the live file: its recorded value, its quoted text, or the field's presence."""
+    path = PROJECT / s['file']
+    if not path.is_file():
+        raise ValueError(f'{where}: {s["file"]} is missing')
+    if s['field'].startswith('text: '):
+        if s['field'][6:] not in path.read_text():
+            raise ValueError(f'{where}: {s["file"]} no longer says {s["field"][6:]!r}')
+        return
+    if s['file'].endswith('.ts'):
+        # A TypeScript source names a hold in releases.ts: the hold must still be there.
+        m = re.fullmatch(r'holds\[id=([a-z0-9-]+)\]', s['field'])
+        if not m or f"id: '{m.group(1)}'" not in path.read_text():
+            raise ValueError(f'{where}: {s["file"]}#{s["field"]} names no hold there')
+        return
+    if s['file'] not in _census_files:
+        _census_files[s['file']] = json.loads(path.read_text())
+    live = census_select(_census_files[s['file']], s['field'])
+    if live is None or ('value' in s and live != s['value']):
+        raise ValueError(f'{where}: {s["file"]}#{s["field"]} is {str(live)[:80]!r}, the census says {str(s.get("value"))[:80]!r}')
+
+
 # Alias kinds from most to least specific: when one value appears twice in a row, the more specific kind stays.
 ALIAS_KIND_RANK = {'official_weights': 0, 'weights_copy': 1, 'hf_repo': 2, 'eegdash_mirror': 3, 'moabb_loader': 4,
                    'accession': 5, 'doi': 6, 'name': 9}
@@ -2326,7 +2550,7 @@ def _clean(e: dict) -> dict:
 DOI_PREFIX_HOST = {
     '10.18112': 'OpenNeuro', '10.5281': 'Zenodo', '10.6084': 'Figshare', '10.25452': 'Figshare',
     '10.48324': 'DANDI', '10.82901': 'NEMAR', '10.13026': 'PhysioNet', '10.5524': 'GigaDB', '10.1184': 'KiltHub',
-    '10.22002': 'CaltechDATA',
+    '10.22002': 'CaltechDATA', '10.57760': 'ScienceDB',
 }
 DOI_RESOLVERS = {'doi.org', 'dx.doi.org'}
 
@@ -2440,30 +2664,93 @@ def refresh_site_rows(check: bool) -> None:
         raise SystemExit(f'export-site-register-rows.mjs failed ({r.returncode})')
 
 
+# The register version this one follows: served unchanged, its bytes citing that release's hold ids.
+PREV_SERVED = (SITE_DATA / f'open-register-{PREV}.json', PROJECT / f'site/public/data/open-register-{PREV}.json',
+               PROJECT / f'site/public/data/open-register-{PREV}.csv')
+PREV_SERVED_SHA256 = 'c131c470df881e51389aca58d17ec3c0ac37eb4244c082ff7ffe20582b77d558'
+
+
+def carry_checked(entries: list[dict]) -> list[str]:
+    """Each row's checked date is the day its evidence was checked. The site-row exporter stamps every site row with the
+    freeze day, the day its census values were re-read against the live files; that re-read confirms a row's evidence
+    still stands and checks nothing new. So a row that the previous served file holds unchanged in every field but its
+    date keeps that file's date; new rows, and rows whose evidence changed, keep this freeze's day. Returns the ids of the
+    rows that keep an earlier date."""
+    prev = {e['id']: e for e in json.loads(PREV_SERVED[0].read_text())['entries']}
+    rest = lambda e: {k: v for k, v in e.items() if k != 'checked'}
+    kept = []
+    for e in entries:
+        p = prev.get(e['id'])
+        if p and p['checked'] < e['checked'] and rest(p) == rest(e):
+            e['checked'] = p['checked']
+            kept.append(e['id'])
+    return kept
+
+
+def changes_from_previous(site: dict) -> OrderedDict:
+    """What this version changes against the 20261020 file: rows added and folded in, counts before and after, holds."""
+    old = json.loads(PREV_SERVED[0].read_text())
+    old_ids, new_ids = {e['id'] for e in old['entries']}, {e['id'] for e in site['entries']}
+    by_new = {e['id']: e for e in site['entries']}
+    folded = sorted(old_ids - new_ids)
+    holds = lambda doc: {e['id']: sorted(f['params']['reason_code'] for f in e['findings'] if f['code'] == 'hold')
+                         for e in doc['entries'] if any(f['code'] == 'hold' for f in e['findings'])}
+    ho, hn = holds(old), holds(site)
+    pick = lambda c: OrderedDict([('rows', c['rows']['total']), ('dataset', c['rows']['dataset']), ('model', c['rows']['model']),
+                                  ('dataset_by_group', c['rows']['dataset_by_group']), ('dataset_by_level', c['rows']['dataset_by_level']),
+                                  ('model_by_level', c['rows']['model_by_level']), ('by_status', c['rows']['by_status']),
+                                  ('moabb_merged_into_site_rows', c['moabb']['merged_into_site_rows']),
+                                  ('model_external_rows', c['models']['external_rows'])])
+    return OrderedDict([
+        ('previous', OrderedDict([('release_id', old['release_id']), ('json_sha256', sha(PREV_SERVED[0].read_bytes())),
+                                  ('csv_sha256', sha(PREV_SERVED[2].read_bytes())), ('served_unchanged', True)])),
+        ('rows_added', sorted(new_ids - old_ids)),
+        ('rows_folded_into_site_rows', [OrderedDict([('row', r), ('into', next(
+            (e['id'] for e in site['entries'] if any(a['kind'] == 'moabb_loader' and a['value'] in
+             next(x for x in old['entries'] if x['id'] == r)['moabb']['loaders'] for a in e['aliases'])), None))]) for r in folded]),
+        ('levels_changed', sorted(i for i in old_ids & new_ids if
+                                  next(x for x in old['entries'] if x['id'] == i)['level'] != by_new[i]['level'])),
+        ('holds_opened', sorted(f'{i}:{c}' for i, cs in hn.items() for c in cs if c not in ho.get(i, []))),
+        ('holds_closed', sorted(f'{i}:{c}' for i, cs in ho.items() for c in cs if c not in hn.get(i, []))),
+        ('counts_before', pick(old['counts'])), ('counts_after', pick(site['counts'])),
+    ])
+
+
 def release_manifest(b: 'Build', site: dict, ext_bytes: bytes, ids_bytes: bytes) -> dict:
     """The release manifest: the owner's decisions this file rests on, every input pinned by SHA-256, the freeze's
     re-read, what the file publishes and what it leaves out. Written before the served file, which carries its hash."""
     owner = load('owner')
+    owner_round = load('owner_round')
     fz = b.frozen
     dec = owner['decisions']
     defaults = dec['defaults_stated_to_owner_and_not_objected']
+    rd = owner_round['decisions']
+    rd_defaults = rd['defaults_stated_to_owner_and_not_objected']
     pins = OrderedDict()
 
     def pin(label, path: Path, note, data: bytes | None = None):
         pins[label] = {'path': rel(path), 'sha256': sha(data if data is not None else path.read_bytes()), 'note': note}
-    pin('site_rows', SITE_ROWS, 'export-site-register-rows.mjs at the freeze: the site rows from entities.ts and the A5 '
-        'census, every census value re-read in the live files')
-    pin('external_rows', EXTERNAL_OUT, 'B8a\'s external rows (Hugging Face, EEGDash, MOABB, agreement corpora, models), '
+    pin('site_rows', SITE_ROWS, 'export-site-register-rows.mjs at the freeze: the site rows from entities.ts and the A5 and '
+        'A3 censuses, every census value re-read in the live files')
+    pin('external_rows', EXTERNAL_OUT, 'the external rows (Hugging Face, EEGDash, MOABB, agreement corpora, models), '
         'rebuilt in this run from the inputs below', ext_bytes)
-    pin('register_ids', IDS_PATH, 'the persisted opaque-id map; never served', ids_bytes)
+    pin('register_ids', IDS_PATH, 'the persisted opaque-id map, continuing the 20261020 map; never served', ids_bytes)
+    pin('register_ids_20261020', IDS_PREV, 'the 20261020 id map this one continues')
     for path, note in ((SITE_ROWS_SCRIPT, 'the site-row exporter'), (Path(__file__).resolve(), 'this exporter'),
-                       (Path(__file__).resolve().parent / 'register_findings.py', 'finding codes and the D3 gate'),
+                       (Path(__file__).resolve().parent / 'register_findings.py', 'finding codes, site holds and the D3 gate'),
                        (Path(__file__).resolve().parent / 'register_ids.py', 'opaque ids'),
-                       (SITE_REGISTER_MODULE, 'the page module; its holdReason table decides which site holds are declared')):
+                       (SITE_REGISTER_MODULE, 'the page module; its holdReason table decides which site holds are declared'),
+                       (REGISTER / 'build_site_step_evidence.py', 'the A3 census builder')):
         pin(path.name, path, note)
     for k, path in INPUTS.items():
         pin(INPUT_LABELS[k] if '/' not in INPUT_LABELS[k] else k, path, 'served site file' if rel(path).startswith('site/')
             else 'research or review record (served by label and hash only)', b.raw[k])
+    pin('model_refresh_approval', REFRESH / 'state/research-handoff-approval.json',
+        'the research approval of the 2026-10-25 refresh handoff the five step-1 model rows rest on (D26)')
+    for f in sorted({i['file'] for i in b.a3c['inputs']} - {rel(p) for p in INPUTS.values()}):
+        pin(f'a3:{Path(f).name}', PROJECT / f, 'a record the A3 census cites (served by record hash only)')
+    for i, p in enumerate(PREV_SERVED):
+        pin(f'previous_served_{["json_src", "json_public", "csv"][i]}', p, 'the 20261020 register file, served unchanged')
     if b.audit is not None:
         pin('classifier_audit', AUDIT, 'the classifier audit (R2) whose population re-check the Hugging Face group applies')
     dirs = [{'label': DIR_LABELS[d], 'path': d + '/', 'files': len(v), 'digest_sha256': sha(json.dumps(sorted(v)).encode())}
@@ -2473,44 +2760,63 @@ def release_manifest(b: 'Build', site: dict, ext_bytes: bytes, ids_bytes: bytes)
     c = site['counts']
     return OrderedDict([
         ('release_id', RELEASE_ID), ('release_date', f'{D[:4]}-{D[4:6]}-{D[6:]}'), ('freeze_date', D),
-        ('reviewer', 'publishing session, package B8b'),
-        ('scope', 'Register wave 1 (owner decision D1): the dataset ladder and the model ladder in one file, '
-                  f'open-register-{D}.json, and the dataset ladder flat in open-register-{D}.csv. B8b freezes this '
-                  'site\'s rows from entities.ts and the A5 census re-read at the freeze, and merges the external rows '
-                  'B8a built: MOABB record groups, Hugging Face repos and EEGDash mirrors that are this site\'s datasets '
-                  'become aliases of its rows.'),
+        ('reviewer', 'publishing session, package R5 of the 20261028 round'),
+        ('scope', f'The open register\'s {D} version (plan section 3): a new dated file, open-register-{D}.json, and the '
+                  f'dataset ladder flat in open-register-{D}.csv; open-register-{PREV}.json and .csv stay served '
+                  'byte-identical. Four MOABB record groups become this site\'s rows (Kim beta-range, MIND, Damm finger '
+                  'imagery, NeBULA), each checked end to end on the data-quality page; three models scored on the pilot '
+                  'studies page enter at step 4 (NeuroRVQ, EEG-Captioner, AXON); five models of the 2026-10-25 refresh '
+                  'enter at step 1 with holds. Every other row is rebuilt from the frozen 20261020 inputs.'),
         ('approval', OrderedDict([
             ('D1', dec['D1']['answer']), ('D2', dec['D2']['answer']), ('D3', dec['D3']['answer']),
             ('D3_default_kept', dec['D3']['default_kept']), ('D4', defaults['D4']), ('D5', defaults['D5']),
             ('D11', owner['decisions']['D11_population']), ('D12', defaults['D12']), ('D13', dec['D13']['answer']),
-            ('source', rel(INPUTS['owner']))])),
+            ('source', rel(INPUTS['owner'])),
+            ('round_20261028', OrderedDict([
+                ('D14', rd['D14']['answer']), ('D15', rd['D15']['answer']), ('D16', rd['D16']['answer']),
+                ('D19', rd_defaults['D19 (Q5)']), ('D21', rd_defaults['D21 (Q7)']), ('D26', rd_defaults['D26 (Q12)']),
+                ('D27', rd_defaults['D27 (Q13)']), ('carried_over', rd['carried_over']), ('source', rel(INPUTS['owner_round']))])),
+        ])),
         ('sources', pins), ('source_directories', dirs), ('site_row_inputs', site_row_inputs),
         ('freeze', OrderedDict([
-            ('census', fz['census']), ('values_rechecked', rr['values_checked']), ('fields_rechecked', rr['fields_present']),
+            ('census', fz['census']), ('census_supplement', fz['census_supplement']),
+            ('values_rechecked', rr['values_checked']), ('fields_rechecked', rr['fields_present']),
             ('mismatches', rr['mismatches']), ('inputs_changed_since_census', [x['file'] for x in rr['drift']]),
-            ('consent_record', rr['a3']), ('notes', fz['notes'])])),
+            ('consent_record', rr['a3']), ('consent_record_20261028', rr.get('a3_20261028')), ('notes', fz['notes'])])),
         ('rules', OrderedDict([
             ('level', 'A row\'s level is the furthest step whose anchor item is on file (plan section 2.6, as both '
                       'register pages state it); items missing at or below the level are its gaps. Three rows traced '
                       'from their host records whose files were never opened (BNCI2014-004, PhysioNet eegmmidb, BI2013a) '
-                      'stand at step 3 with files opened as a gap at step 2; the census had recommended their contiguous '
-                      'step 1.'),
-            ('share_above_chance', 'not computed (D12): a gap on every step-4 row where a chance level applies'),
+                      'stand at step 3 with files opened as a gap at step 2. MIND stands at step 4 with its original '
+                      'terms (four statements that disagree) and its pinned version as gaps at step 3.'),
+            ('share_above_chance', 'not computed (D12): a gap on every step-4 row where a chance level applies; not '
+                                   'applicable on a one-person row (eldBETA, Damm, NeBULA)'),
             ('merges', 'external rows with merge_into are not rendered; their repo ids, MOABB loaders, DOIs and EEGDash '
                        'mirror ids become aliases of the site row, and their source group is added to it'),
-            ('terms', 'a site dataset row states its dataset page\'s terms (entities.ts), or the census\'s licence item; a '
-                      'model row states code, weights and data separately, each from the record it names'),
+            ('terms', 'a site dataset row states its dataset page\'s terms (entities.ts), or the census\'s licence item (MIND: '
+                      'both licences side by side, D15); a model row states code, weights and data separately, each from '
+                      'the record it names'),
+            ('aliases', 'NeBULA\'s files name a Zenodo DOI (10.5281/zenodo.13627307) that is no registered record: it is '
+                        'not an alias of the row, and its derivation evidence cites the record that says so. NeuroRVQ\'s '
+                        'row lists the authors\' weights only, as its payload cites them.'),
+            ('checked', 'each row carries the day its evidence was checked: a row the 20261020 file holds unchanged in every '
+                        'other field keeps that file\'s date, because this freeze\'s re-read of its census values checked '
+                        'nothing new; new rows, and rows whose evidence changed, carry this freeze\'s day; external rows keep '
+                        'their evidence dates'),
+            ('checked_kept_from_previous', len(b.checked_carried)),
         ])),
         ('site_holds', OrderedDict([
-            ('codes', dict(sorted(SITE_HOLD_REASONS.items()))),
+            ('codes', SITE_HOLD_REASONS), ('rows', OrderedDict((k, list(v)) for k, v in SITE_HOLDS.items())),
             ('worded_on_site', sorted(b.site_hold_words)),
             ('attached', sorted(f'{e["id"]}:{f["params"]["reason_code"]}' for e in site['entries'] for f in e['findings']
                                 if f['code'] == 'hold' and f['params']['reason_code'] in SITE_HOLD_REASONS)),
             ('withheld_until_worded', sorted(b.site_holds_withheld)),
-            ('note', 'The holds this release opens on the eldBETA and ZuCo 2.0 rows are findings with a reason code, each '
-                     'sourced to its hold in releases.ts and data-quality-update.json. A code is declared and attached '
-                     f'only once {rel(SITE_REGISTER_MODULE)} words it in its holdReason table (the page refuses a '
-                     'declared reason it cannot say); until then the row\'s status and its case link state the hold.'),
+            ('note', 'Each site row\'s hold is a finding with a reason code, sourced to its hold in releases.ts and in the '
+                     'payload that opens it (data-quality-update.json for eldBETA and ZuCo 2.0, dataset-checks-update.json '
+                     'for Kim beta-range, Damm and NeBULA), row by row (register_findings.SITE_HOLDS). A code is declared '
+                     f'and attached only once {rel(SITE_REGISTER_MODULE)} words it in its holdReason table; until then '
+                     'the row\'s status and its case link state the hold. Kim beta-range\'s hold (amplitude units) replaces '
+                     'the onset-timing hold its MOABB record group carried.'),
         ])),
         ('published', OrderedDict([
             ('json', f'open-register-{D}.json: both ladders, {c["rows"]["dataset"]} dataset rows and '
@@ -2518,6 +2824,7 @@ def release_manifest(b: 'Build', site: dict, ext_bytes: bytes, ids_bytes: bytes)
             ('csv', f'open-register-{D}.csv: the dataset ladder only, one row per entry, no findings'),
             ('counts', c['rows']),
         ])),
+        ('changes', changes_from_previous(site)),
         ('population', OrderedDict([
             ('hf_classifier_in_scope', c['hf']['classifier_in_scope']), ('hf_in_scope_after_recheck', c['hf']['in_scope']),
             ('recheck_signoff', c['hf']['recheck_signoff']),
@@ -2534,7 +2841,11 @@ def release_manifest(b: 'Build', site: dict, ext_bytes: bytes, ids_bytes: bytes)
             'Verifier and census free text and notes; research paths (served by label and record hash only).',
             'Repo ids that look like participant ids (family rows only, counted, never listed); the uploads held back '
             'under D4 and the release copy rule.',
-            'eldBETA\'s one-person score (D2); any ZuCo 2.0 run code or row value.',
+            'eldBETA\'s one-person score (D2); Damm\'s and NeBULA\'s one-person scores (D16); any ZuCo 2.0 run code or row '
+            'value.',
+            'The register use statements of ten rows (D27): internal drafts.',
+            'Third-party conversions of NeuroRVQ\'s checkpoint, and AXON\'s paper reference until it is checked.',
+            'Model refresh rows tied to review submissions (D4): none of the five rows added is.',
         ]),
     ])
 

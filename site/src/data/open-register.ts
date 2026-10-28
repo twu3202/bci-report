@@ -169,6 +169,8 @@ const byLabel: Record<string, T> = {
   zenodo_record: { en: 'the Zenodo record', zh: 'Zenodo 记录' },
   host_record: { en: 'the host’s record', zh: '托管方记录' },
   repository_licence_file: { en: 'the repository’s licence file', zh: '仓库的许可文件' },
+  // Two values in this order: a module's own file terms, then its project's root licence (AXON, 2026-10-28).
+  module_and_project_licence: { en: 'the module’s file terms and the project’s root licence, in that order', zh: '依次为模块文件中的条款与项目根目录的许可' },
   model_card_metadata: { en: 'the model card’s metadata', zh: '模型卡片元数据' },
   dataset_card: { en: 'the dataset card', zh: '数据卡片' },
   paper: { en: 'the paper', zh: '论文' },
@@ -259,6 +261,9 @@ const holdReason: Record<string, T> = {
   converted_run_timing: { en: 'Held: in one converted run, some fixation times fall outside the recording.',
                           zh: '暂缓：在一个转换后记录中，有些注视时间落在记录之外。' },
   one_person_score: { en: 'Held: with one person, every score is that person’s.', zh: '暂缓：只有一个人时，任何分数都是这个人的分数。' },
+  amplitude_units_unresolved: { en: 'Held: models whose output depends on amplitude, because amplitude units, channel gains and the saved reference history are not established.',
+                                zh: '暂缓：输出依赖幅值的模型，因为幅值单位、通道增益与保存下来的参考历史都没有确立。' },
+  no_release_found: { en: 'Held: no official release of code or weights was found.', zh: '暂缓：没有找到官方发布的代码或权重。' },
 };
 /** policy_note findings, by source. */
 const policyNote: Record<string, T> = {

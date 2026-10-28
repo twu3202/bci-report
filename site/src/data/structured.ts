@@ -41,6 +41,11 @@ import ssvepFollowUps from './new-ssvep-frequencies-update.json';
 import dataQuality from './data-quality-update.json';
 import clinicalIesseeg from './clinical-iesseeg-update.json';
 import neurolmEegmat from './neurolm-eegmat-update.json';
+// The 2026-10-28 round's four result files (owner decisions D14–D29).
+import ssvepCards from './ssvep-followups-update.json';
+import neurorvq from './neurorvq-update.json';
+import eegmatTen from './eegmat-ten-second-update.json';
+import datasetChecks from './dataset-checks-update.json';
 import { archive, site } from './site';
 import { plainAnswer } from './answer';
 import { latestRelease, releases } from './releases';
@@ -176,27 +181,44 @@ const iesseegExport: LaterExport = { file: '/data/clinical-iesseeg-update.json',
 const neurolmExport: LaterExport = { file: '/data/neurolm-eegmat-update.json', release: neurolmEegmat.release_id,
                                      generated: neurolmEegmat.generated_at,
                                      metrics: ['balanced_accuracy', 'macro_f1', 'paired_difference_balanced_accuracy'] };
+// The 2026-10-28 round (owner decisions D14–D29): each page that prints the round's figures names the round's export
+// after the page's earlier one, whose release opened the page and keeps its question, short answer and card. The
+// protocol pages, fewer-electrodes, questions-in-language, /jev-style/ and Wearable-102's page point to them with no figure.
+const ssvepCardsExport: LaterExport = { file: '/data/ssvep-followups-update.json', release: ssvepCards.release_id, generated: ssvepCards.generated_at,
+  metrics: ['accuracy', 'balanced_accuracy', 'paired_difference_accuracy', 'paired_difference_balanced_accuracy', 'decision_change_share',
+            'harmonic_gap_squared_correlation', 'pairwise_win_fraction', 'component_wall_time_ms'] };
+const neurorvqExport: LaterExport = { file: '/data/neurorvq-update.json', release: neurorvq.release_id, generated: neurorvq.generated_at,
+  metrics: ['balanced_accuracy', 'macro_f1', 'paired_difference_balanced_accuracy'] };
+const eegmatTenExport: LaterExport = { file: '/data/eegmat-ten-second-update.json', release: eegmatTen.release_id, generated: eegmatTen.generated_at,
+  metrics: ['balanced_accuracy', 'paired_difference_balanced_accuracy'] };
+const datasetChecksExport: LaterExport = { file: '/data/dataset-checks-update.json', release: datasetChecks.release_id, generated: datasetChecks.generated_at,
+  metrics: ['mean_participant_accuracy', 'record_id_mean_balanced_accuracy', 'difference_balanced_accuracy'] };
 const LATER_EXPORTS: Record<string, LaterExport | LaterExport[]> = {
-  // Route 3's follow-ups on SSVEP frequencies the decoder never trained on: its own export only. The route 3 page links
-  // it with no figure, so questions-in-language's entry below is unchanged.
-  'new-ssvep-frequencies': { file: '/data/new-ssvep-frequencies-update.json', release: ssvepFollowUps.release_id,
-                             generated: ssvepFollowUps.generated_at,
-                             metrics: ['accuracy', 'balanced_accuracy', 'paired_difference_accuracy', 'paired_difference_balanced_accuracy',
-                                       'decision_transition_share'] },
-  // Public datasets checked end to end: its own export only (Shin2022's arms and coverage chain; eldBETA's counts).
-  'data-quality': { file: '/data/data-quality-update.json', release: dataQuality.release_id, generated: dataQuality.generated_at,
-                    metrics: ['participant_mean_balanced_accuracy', 'pooled_balanced_accuracy', 'window_counts'] },
+  // Route 3's follow-ups on SSVEP frequencies the decoder never trained on: its own export, and since 2026-10-28 cards 8
+  // to 14 from theirs (ssvep-followups-update.json supersedes card 8's status entry; the earlier file keeps its bytes).
+  // The route 3 page links it with no figure, so questions-in-language's entry below is unchanged.
+  'new-ssvep-frequencies': [{ file: '/data/new-ssvep-frequencies-update.json', release: ssvepFollowUps.release_id,
+                              generated: ssvepFollowUps.generated_at,
+                              metrics: ['accuracy', 'balanced_accuracy', 'paired_difference_accuracy', 'paired_difference_balanced_accuracy',
+                                        'decision_transition_share'] },
+                            ssvepCardsExport],
+  // Public datasets checked end to end: its own export (Shin2022's arms and coverage chain; eldBETA's counts), and since
+  // 2026-10-28 the dataset checks (Kim beta-range's CCA baseline, MIND's conditional case; Damm and NeBULA held).
+  'data-quality': [{ file: '/data/data-quality-update.json', release: dataQuality.release_id, generated: dataQuality.generated_at,
+                     metrics: ['participant_mean_balanced_accuracy', 'pooled_balanced_accuracy', 'window_counts'] },
+                   datasetChecksExport],
   // Beyond scalp EEG (owner decision, 2026-10-12): its own export only — human fNIRS, one macaque's intracortical
   // spiking and an fNIRS coverage check, each its own species, signal and metric; two sources status only.
   'beyond-scalp-eeg': { file: '/data/beyond-scalp-update.json', release: beyond.release_id, generated: beyond.generated_at,
                         metrics: ['balanced_accuracy', 'class_recall', 'r_squared', 'rmse', 'mae', 'optical_value_counts'] },
   // The pilot studies (owner decision, 2026-10-12): its own export only, every pilot outside every leaderboard and
   // model ranking. EEGPT's directory card on /methods/ links the Orthosis section and prints none of its figures.
-  // Since 2026-10-20 also NeuroLM's frozen features on EEGMAT, a separate panel outside the pilot count (its own export).
+  // Since 2026-10-20 also NeuroLM's frozen features on EEGMAT, a separate panel outside the pilot count (its own export);
+  // since 2026-10-28 two more such panels, NeuroRVQ on three tasks and the ten-second EEGMAT probes (D19), each its own export.
   'pilot-studies': [{ file: '/data/pilot-studies-update.json', release: pilot.release_id, generated: pilot.generated_at,
                       metrics: ['balanced_accuracy', 'auroc', 'average_precision', 'paired_difference_balanced_accuracy',
                                 'top3_accuracy', 'equal_axis_mae'] },
-                    neurolmExport],
+                    neurolmExport, neurorvqExport, eegmatTenExport],
   // A decoder trained on an earlier session, tested on a later one: its own export only (WBCIC-SHU, the longitudinal
   // RSVP source and Forenzo). does-pretraining-help links the page and prints none of its figures.
   'later-sessions': { file: '/data/later-sessions-update.json', release: later.release_id, generated: later.generated_at,

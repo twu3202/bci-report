@@ -4,7 +4,7 @@ import TopicLayout from '../../../components/TopicLayout.astro';
 import ScoreBar from '../../../components/ScoreBar.astro';
 import IntervalPlot from '../../../components/IntervalPlot.astro';
 import { intervalPct, intervalPp, pct, pp } from '../../../data/topics';
-import { localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
+import { hrefFor, localeOf, localeParams, topicCards, topicChrome } from '../../../data/i18n';
 import MontageV9 from '../../../components/MontageV9.astro';
 import { formatFig } from '../../../data/entities';
 import { cca4, montageRows } from '../../../data/foundation-topics';
@@ -103,6 +103,7 @@ const copy = {
     datasetLink: 'OpenNeuro dataset ↗', paperLink: 'Scientific Data paper ↗', exportLink: 'Processed export ↗',
     alphaConsent: 'According to the primary report, every participant gave written informed consent covering the experimental process, the data management procedures and the right to withdraw at any moment. The report names no ethics committee. Only cohort aggregates appear here.',
     zenodoLink: 'Zenodo record ↗', reportLink: 'HAL report ↗', codeLink: 'Authors’ code ↗',
+    ssvepPointer: ['Filter-bank CCA, CCA and learned heads on CCA’s statistics are also compared with fewer of BETA’s posterior electrodes and with shorter windows, on SSVEP frequencies held out of training: ', ''] as const,
   },
   zh: {
     description: `睡眠分期上，耳道内通道不如头皮电极：同样 ${cov.people} 名被试，平衡准确率 ${earBa} 对 ${scalpBa}。后部 4 个电极对全部 16 个：没有一致的差异（${alphaGap}）。在 BETA 上，单通道与逐通道基础模型编码器在 4 个电极时准确率下降。`,
@@ -157,6 +158,7 @@ const copy = {
     datasetLink: 'OpenNeuro 数据集 ↗', paperLink: 'Scientific Data 论文 ↗', exportLink: '处理后导出版本 ↗',
     alphaConsent: '据原始报告，每名被试都签署了书面知情同意，内容涵盖实验流程、数据管理方式以及随时退出实验的权利。报告未提及伦理委员会。这里只发布队列级聚合结果。',
     zenodoLink: 'Zenodo 记录 ↗', reportLink: 'HAL 报告 ↗', codeLink: '作者代码 ↗',
+    ssvepPointer: ['滤波器组 CCA、CCA 以及基于 CCA 统计量的学习分类头，也在 BETA 上用更少的后部电极和更短的时间窗做了比较，所用 SSVEP 频率不参与训练。见「', '」。'] as const,
   },
 }[locale];
 const card = topicCards[locale]['fewer-electrodes'];
@@ -239,6 +241,8 @@ const basis = e.rights.reviewBasis;
     <div class="method-grid-wide">{copy.limits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
     <p class="eyebrow limits-label">{copy.alphaLimitsLabel}</p>
     <div class="method-grid-wide">{copy.alphaLimits.map(([h, p]) => <article><h3>{h}</h3><p>{p}</p></article>)}</div>
+    {/* One figure-free pointer (owner decision D24): card 11 of the SSVEP follow-ups, fewer electrodes and shorter windows. */}
+    <p class="citation-note" data-practical-pointer="true">{copy.ssvepPointer[0]}<a href={hrefFor('/topics/new-ssvep-frequencies/#practical-settings', locale)}>{topicCards[locale]['new-ssvep-frequencies'].question}</a>{copy.ssvepPointer[1]}</p>
     <div class="citation-list">
       <article><h3 lang="en">{e.rights.name}</h3><p lang="en">{e.rights.attribution}</p><p>{copy.consent}</p><p><a href={basis[0]} target="_blank" rel="noreferrer">{copy.datasetLink}</a> · <a href={basis[1]} target="_blank" rel="noreferrer">{copy.paperLink}</a> · <a href={basis[3]} target="_blank" rel="noreferrer">{copy.exportLink}</a> · <a href={e.rights.licenseUrl} target="_blank" rel="noreferrer">{e.rights.license}</a></p></article>
       <article><h3 lang="en">{a.rights.name}</h3><p lang="en">{a.rights.attribution}</p><p>{copy.alphaConsent}</p><p><a href={aBasis[1]} target="_blank" rel="noreferrer">{copy.zenodoLink}</a> · <a href={aBasis[0]} target="_blank" rel="noreferrer">{copy.reportLink}</a> · <a href={aBasis[2]} target="_blank" rel="noreferrer">{copy.codeLink}</a> · <a href={a.rights.licenseUrl} target="_blank" rel="noreferrer">{a.rights.license}</a></p></article>

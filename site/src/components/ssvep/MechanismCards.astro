@@ -1,0 +1,406 @@
+---
+/**
+ * Cards 8, 9 and 12 of /topics/new-ssvep-frequencies/ (plan §2.1, package P-SS): #cross-spectral (the cross-spectral
+ * scorer, whose results take the place of the released status entry, D28), #eigenvalue-pooling (coherence and
+ * eigenvalue heads) and #harmonic-gap (where the harmonic sum's gain over joint CCA comes from).
+ *
+ * Every figure is a field of ssvep-followups-update.json, made by src/data/ssvep-followups.ts from its path and
+ * printed with data-at and data-fig; scripts/checks/ssvep-followups.mjs holds each to its field and format. A level
+ * that several cards share prints its interval on its home card only and links that card elsewhere; every contrast
+ * prints its own interval. The cards state their prespecified criteria only (D23); each caveat sits once, beside its
+ * evidence, and every caveat sentence is guarded on the study's own limitation key.
+ *
+ * Props
+ *   locale: Locale — 'en' or 'zh'.
+ *   cards: number[] — which of its cards (8, 9, 12) to render here; the page interleaves the two components so
+ *     the cards run in number order.
+ */
+import type { Locale } from '../../data/i18n';
+import { hrefFor } from '../../data/i18n';
+import {
+  need, figAt, countAt, st, scChrome, level, contrast, spansZero, lvBits, ctBits, levelCell, contrastCell, figCell, toHtml,
+  nameOf, trainingWords, roleWords, taskWords, contrastName, intervalText, cardLink, keyed, codeOf, said, bonferroni,
+  type Bit, type AnyBit, type ScStudy, type ContrastFigs,
+} from '../../data/ssvep-followups';
+
+interface Props { locale: Locale; cards?: number[] }
+const { locale, cards = [8, 9, 12] } = Astro.props;
+const show = (n: number) => cards.includes(n);
+const zh = locale === 'zh';
+const H = (bits: AnyBit[]) => toHtml(bits);
+const to = zh ? ' 至 ' : ' to ';
+const [c8, c9, c12] = ([8, 9, 12] as const).map(n => scChrome(n, locale));
+const X: ScStudy = 'xspec', E: ScStudy = 'coherence_eigen', G: ScStudy = 'harmonic_gap';
+const nm = (id: ScStudy, code: string) => nameOf(id, code, locale);
+const ln = (n: number) => cardLink(n, locale);
+const lnC = (n: number) => cardLink(n, locale, false, true);
+
+// --- Card 8: the cross-spectral scorer ------------------------------------------------------------------------------
+const x = st(X);
+need(x.design.harmonics === 3 && x.design.arms.map((a: any) => a.code).join() === 'XS-RIDGE,XS-RIDGE-W,XS-MLP,XS-RIDGE-Q'
+  && x.design.comparators.every((c: any) => c.card === 5), 'card 8: four new arms on the fundamental and two harmonics; four comparators from card 5');
+const xRidge = level(X, 'XS-RIDGE/u8'), xShared = level(X, 'SHARED-RIDGE/u8'), xMlp = level(X, 'XS-MLP/u8'), xCca = level(X, 'CCA-RAW/u8');
+const xW = level(X, 'XS-RIDGE-W/u8'), xCcaSeen = level(X, 'CCA-RAW/seen_ba');
+const xP1 = contrast(X, 'XS-RIDGE minus SHARED-RIDGE/u8'), xP2 = contrast(X, 'XS-MLP minus CCA-RAW/u8'), xQ = contrast(X, 'XS-RIDGE-Q minus XS-RIDGE/u8');
+need(Object.values(x.contrasts).filter((c: any) => c.role === 'primary').length === 2 && xP1.role === 'primary' && xP2.role === 'primary'
+  && xP1.lo.raw > 0 && xP2.hi.raw < 0 && xP2.flags.prespecified_noninferiority_to_CCA === false,
+  'card 8: two primary contrasts, the ridge above the shared ridge scorer, the MLP below CCA and short of its non-inferiority test');
+need(x.design.arms.every((a: any) => x.levels[`${a.code}/seen_ba`].estimate < x.levels['CCA-RAW/seen_ba'].estimate), 'card 8: every new arm is below CCA on the seen task');
+need(spansZero(xQ) && xQ.role === 'secondary', 'card 8: the quadrature contrast’s interval includes zero');
+const gapU8 = figAt(['studies', X, 'descriptive_gaps', 'XS-RIDGE-W minus CCA-RAW/u8', 'estimate'], 'pp2');
+const gapSeen = figAt(['studies', X, 'descriptive_gaps', 'XS-RIDGE-W minus CCA-RAW/seen_ba', 'estimate'], 'pp2');
+need(Object.values(x.descriptive_gaps).every((g: any) => g.basis === 'difference of the two levels; no planned contrast and no interval'
+  && Math.abs(g.estimate - (x.levels[g.left].estimate - x.levels[g.right].estimate)) < 1e-12)
+  && x.undefined.some((u: any) => u.contrast === 'XS-RIDGE-W minus CCA-RAW' && u.reason === 'not_a_planned_contrast'),
+  'card 8: the whitened readout against CCA is the difference of two levels, with no planned contrast and no interval');
+keyed(X, 'whitened_vs_cca_descriptive', 'not_a_fixed_quadratic_form', 'whitening_composite_recipe', 'mlp_ridge_bundled_changes', 'mlp_seeds_averaged',
+  'spectral_coordinates_vs_raw_cca', 'within_harmonic_matrices_only', 'quadrature_direction_unresolved', 'cropped_match_not_a_ceiling',
+  'comparators_reused', 'nested_gain_scope', 'release_audit_scope');
+need(x.checks.same_scores_as_card_5.passed === true && x.checks.same_scores_as_card_5.max_absolute_difference === 0
+  && x.checks.same_scores_as_card_5.codes.join() === x.design.comparators.map((c: any) => c.code).join(), 'card 8: the comparators are card 5’s scores, unchanged');
+need(x.checks.release_audit.passed && x.checks.fits.total === x.checks.fits.main + x.checks.fits.additional && x.levels['XS-MLP/u8'].seeds === 3,
+  'card 8: the fit counts add up; the MLP has three seeds');
+const c8Arms = [...x.design.arms, ...x.design.comparators].map((a: any) => ({
+  code: a.code, name: nm(X, a.code),
+  training: [trainingWords(a.training, locale), ...(a.code === 'XS-MLP' ? (zh ? ['，', countAt('studies', X, 'levels', 'XS-MLP/u8', 'seeds'), ' 个种子取平均'] : [', ', countAt('studies', X, 'levels', 'XS-MLP/u8', 'seeds'), ' seeds averaged']) : [])] as Bit[],
+  cells: ['u8', 'seen_ba'].map(t => levelCell(level(X, `${a.code}/${t}`), locale)),
+}));
+const contrastRows = (id: ScStudy, ivFor: (c: ContrastFigs) => Bit[] = () => ['95%']) => Object.keys(st(id).contrasts).map(k => {
+  const c = contrast(id, k);
+  return { k, name: contrastName(id, c, locale), task: taskWords(k, locale), role: roleWords(c.role, locale), cell: contrastCell(c, locale, ivFor(c)) };
+});
+const c8Rows = contrastRows(X);
+
+// --- Card 9: coherence and eigenvalue heads ----------------------------------------------------------------------------
+const e = st(E);
+const eRaw = level(E, 'EIG-RAW/u8'), eCca = level(E, 'CCA-RAW/u8'), eSum = level(E, 'RAW-HARM-SUM/u8');
+const eCoh = level(E, 'COH-ABS/u8'), eXs = level(E, 'XS-RIDGE/u8'), eSpec = level(E, 'EIG-SPEC/u8'), eXsW = level(E, 'XS-RIDGE-W/u8');
+const eP1 = contrast(E, 'EIG-RAW minus CCA-RAW/u8'), eHS = contrast(E, 'EIG-RAW minus RAW-HARM-SUM/u8');
+const eP2 = contrast(E, 'COH-ABS minus XS-RIDGE/u8'), eP3 = contrast(E, 'EIG-SPEC minus XS-RIDGE-W/u8'), eSS = contrast(E, 'EIG-SPEC minus SPEC-HARM-SUM/u8');
+need(Object.values(e.contrasts).filter((c: any) => c.role === 'primary').length === 3 && [eP1, eP2, eP3].every(c => c.role === 'primary')
+  && eP1.lo.raw > 0 && eP1.flags.strict_5pp_equivalence === true && eP1.flags.strict_5pp_noninferiority === true && eP2.hi.raw < 0 && eP3.hi.raw < 0,
+  'card 9: three primary contrasts; the eigenvalue head above CCA inside both prespecified margins, the coherence and spectral heads below their comparators');
+need(spansZero(eHS) && eHS.role === 'secondary' && spansZero(eSS) && eSS.lo.fmt === 'sgn5' && eSS.flags.bound_below_two_decimals?.join() === 'lower',
+  'card 9: the head minus the sum is unresolved; the spectral head minus the spectral sum has a lower bound below two decimals');
+need(eCca.home === 5 && eXs.home === 8 && eXsW.home === 8 && eSum.home === 9 && eRaw.home === 9, 'card 9: CCA from card 5, the cross-spectral readouts from card 8, its own heads and sum');
+keyed(E, 'cca_statistics_supplied', 'coherence_is_projection_cosine', 'no_general_coherence_claim', 'sign_and_normalization', 'spectral_vs_whitened_bundled',
+  'spectral_not_validated_by_raw', 'raw_vs_spectral_bundled', 'harmonic_sum_vs_joint_bundled', 'per_harmonic_discards_subspace', 'lower_bound_not_rounded',
+  'learned_head_gain_unresolved', 'held_and_seen_separate', 'comparators_reused', 'release_audit_scope');
+const ans9 = e.answers_not_run[0];
+need(e.answers_not_run.length === 1 && ans9.card === 6 && ans9.item === 'simpler learned head on the CCA features' && ans9.same_inputs_as_card_6 === false
+  && ans9.arms.join() === 'EIG-RAW,EIG-JOINT' && ans9.inputs === 'squared canonical correlations between the raw window and the harmonic references'
+  && st(E).levels['EIG-JOINT/u8'] && (st(E) as any).design.arms.some((a: any) => a.code === 'EIG-JOINT'),
+  'card 9 runs a simpler learned head on CCA statistics, which card 6 did not run, on other inputs');
+need(e.checks.fits.total === 361 && e.checks.fits.main + e.checks.fits.independent_refits + e.checks.fits.bridges + e.checks.fits.canaries === e.checks.fits.total
+  && e.checks.cca_identity.decisions_identical === true && e.checks.joint_top_equals_cca.passed && e.checks.same_scores_as_card_5.passed
+  && e.checks.same_scores_as_card_8.passed && e.checks.coherence_zero_gate.gated_pairs === 0, 'card 9: the checks');
+const c9Arms = [...e.design.arms, ...e.design.controls, ...e.design.comparators].map((a: any) => ({
+  code: a.code, name: nm(E, a.code), training: [trainingWords(a.training, locale)] as Bit[],
+  cells: ['u8', 'seen_ba'].map(t => levelCell(level(E, `${a.code}/${t}`), locale)),
+}));
+const c9Rows = contrastRows(E);
+
+// --- Card 12: the harmonic gap ---------------------------------------------------------------------------------------
+const g = st(G);
+const gl = (code: string, t: string) => level(G, `${code}/${t}`);
+const gJB = contrast(G, 'B minus J/u8'), gBS = contrast(G, 'S minus B/u8');
+const gJBd = contrast(G, 'B minus J/dry'), gBSd = contrast(G, 'S minus B/dry'), gJBw = contrast(G, 'B minus J/wet'), gBSw = contrast(G, 'S minus B/wet');
+need(g.family.members.join() === ['G true minus mean distractor/u8', 'B minus J/u8', 'S minus B/u8', 'G true minus mean distractor/dry', 'B minus J/dry', 'S minus B/dry',
+  'G true minus mean distractor/wet', 'B minus J/wet', 'S minus B/wet'].join() && g.family.comparisons === bonferroni.comparisons
+  && [gJB, gBS, gJBd, gBSd, gJBw, gBSw].every(c => c.role === 'primary' && c.flags.family_member === true && g.contrasts[c.key].interval_level === g.family.interval_level),
+  'card 12: the nine-member primary family, its contrasts at the family level');
+need(spansZero(gJB) && gBS.lo.raw > 0 && spansZero(gBSd) && gBSw.lo.raw > 0 && gJBd.lo.raw <= 0 && gJBd.hi.raw >= 0 && spansZero(gJBw)
+  && g.family.resolved.join() === 'G true minus mean distractor/u8,S minus B/u8,G true minus mean distractor/dry,G true minus mean distractor/wet,S minus B/wet',
+  'card 12: J to B unresolved in every cohort; B to S resolved on BETA and wet, not dry');
+const gap = (k: string, t: string, fmtLo = 'sig3') => {
+  const base = ['studies', G, 'gap', `${k}/${t}`];
+  return { est: figAt([...base, 'estimate'], 'sig3'), lo: figAt([...base, 'interval', 0], 'sig3'), hi: figAt([...base, 'interval', 1], 'sig3'),
+           level: g.gap[`${k}/${t}`].interval_level as number, base };
+};
+const T3 = ['u8', 'dry', 'wet'] as const;
+need(T3.every(t => g.gap[`G true minus mean distractor/${t}`].role === 'primary' && g.gap[`G true minus mean distractor/${t}`].interval[0] > 0
+  && g.gap[`G true minus mean distractor/${t}`].unit === 'difference of squared correlations') && g.family.all_gap_intervals_above_zero === true,
+  'card 12: the true candidate’s gap exceeds the distractors’ mean in all three cohorts, in squared-correlation units');
+need(g.identity.joint_cca_equals_top_eigenvalue_of_sum === false && g.identity.residual_reported_beside_gap === true
+  && g.identity.reason === 'separate harmonic reference subspaces are generally not orthogonal over a finite window', 'card 12: the identity line');
+need(g.transitions.decisions === 11200 && g.transitions.unit === 'share of all decisions on the task'
+  && Object.values(g.transitions.edges).every((x: any) => Math.abs(x.wrong_to_right + x.right_to_wrong + x.unchanged_right + x.wrong_both - 1) < 1e-12
+    && x.changed >= x.wrong_to_right + x.right_to_wrong - 1e-12), 'card 12: decision changes as shares of the 11,200 held-out decisions');
+need(g.reference_check.BETA.candidates === 40 && g.reference_check.BETA.at_or_below_threshold === 8 && g.reference_check['Wearable-102'].at_or_below_threshold === 0
+  && g.reference_check.label_free === true && g.reference_check.outcome_subgroups === false
+  && g.reference_check.measure === 'cross-block Frobenius norm between the harmonic reference blocks' && g.reference_check.threshold <= 1e-10
+  && g.reference_check.BETA.at_or_below_threshold + g.reference_check.BETA.above_threshold === g.reference_check.BETA.candidates
+  && g.reference_check['Wearable-102'].at_or_below_threshold + g.reference_check['Wearable-102'].above_threshold === g.reference_check['Wearable-102'].candidates,
+  'card 12: the reference check as counts, on the cross-block norm at a numerical-precision threshold; the other candidates above it');
+need(Object.values(g.win_fractions).every((w: any) => w.accuracy === false && w.label === 'pairwise win fraction (not an accuracy)')
+  && g.allocation.label === 'descriptive accounting', 'card 12: win fractions are not accuracies; the allocation is descriptive accounting');
+keyed(G, 'family_intervals_govern', 'dry_bridge_unresolved', 'no_b_over_j_resolved', 'allocation_not_a_cause', 'no_training', 'joint_cca_not_top_eigenvalue_of_sum',
+  'residual_signed', 'gap_in_score_units', 'win_fractions_not_accuracies', 'allocation_descriptive', 'secondary_intervals_descriptive', 'transitions_not_disjoint',
+  'mean_distractor_not_strongest', 'gap_is_an_association', 'same_people_dry_wet', 'no_wet_dry_test', 'reference_check_label_free');
+need(g.design.training_fits === 0 && g.design.scores.every((s: any) => s.training === 'no training'), 'card 12: no score is trained');
+const famLevel = (k: string) => figAt(['studies', G, 'contrasts', k, 'interval_level'], 'pct2');
+const c12Levels = ['J', 'B', 'S', 'JplusG'].map(code => ({ code, name: nm(G, code), cells: T3.map(t => levelCell(gl(code, t), locale)) }));
+const c12Rows = contrastRows(G, c => c.flags.family_member ? [famLevel(c.key)] : ['95%']).map(r => ({ ...r,
+  role: g.contrasts[r.k].flags.family_member ? (zh ? '主要（比较族）' : 'primary (family)') : r.role }));
+need(Object.values(g.contrasts).every((c: any) => c.interval_level === (c.flags.family_member ? g.family.interval_level : 0.95)), 'card 12: family intervals at 99.44%, the rest at 95%');
+const GAP_ROWS: [string, Record<'en' | 'zh', string>][] = [
+  ['G true', { en: 'G, true candidate', zh: 'G，真实候选' }],
+  ['G mean distractor', { en: 'G, mean of the distractors', zh: 'G，干扰项均值' }],
+  ['G true minus mean distractor', { en: 'G, true minus mean distractor', zh: 'G，真实减去干扰项均值' }],
+  ['R true minus mean distractor', { en: 'R, true minus mean distractor', zh: 'R，真实减去干扰项均值' }],
+];
+const gapRows = GAP_ROWS.map(([k, w]) => ({ k, name: w[locale], cells: T3.map(t => { const q = gap(k, t);
+  return figCell(q.est, q.lo, q.hi, locale, [q.level === g.family.interval_level ? figAt([...q.base, 'interval_level'], 'pct2') : '95%'], to); }) }));
+need(T3.every(t => g.gap[`R true minus mean distractor/${t}`].interval_level === 0.95 && g.gap[`G true/${t}`].interval_level === 0.95), 'card 12: the other gap rows at 95%');
+const winRow = T3.map(t => { const b = ['studies', G, 'win_fractions', t]; return figCell(figAt([...b, 'estimate'], 'auc3'), figAt([...b, 'interval', 0], 'auc3'), figAt([...b, 'interval', 1], 'auc3'), locale, ['95%'], to); });
+need(T3.every(t => g.win_fractions[t].interval_level === 0.95 && g.allocation[t].G.interval_level === 0.95 && g.allocation[t].R.interval_level === 0.95), 'card 12: 95% intervals on win fractions and the allocation');
+const allocRows = (['G', 'R'] as const).map(q => ({ q, cells: T3.map(t => { const b = ['studies', G, 'allocation', t, q];
+  return figCell(figAt([...b, 'estimate'], 'pp2'), figAt([...b, 'interval', 0], 'sgn2'), figAt([...b, 'interval', 1], 'sgn2'), locale, ['95%'], to); }) }));
+const EDGE_FIELDS = ['wrong_to_right', 'right_to_wrong', 'changed', 'unchanged_right', 'wrong_both'] as const;
+const edgeRows = Object.entries(g.transitions.edges as Record<string, any>).map(([k, x]) => ({ k,
+  name: `${nm(G, x.from)} → ${nm(G, x.to)}`, cells: EDGE_FIELDS.map(f => figAt(['studies', G, 'transitions', 'edges', k, f], 'pct2')) }));
+need(edgeRows.map(r => r.k).join() === 'J to B,B to S,J to S,J to JplusG,JplusG to S', 'card 12: the five steps');
+
+const copy = {
+  en: {
+    q8: 'One set of learned weights, shared by every candidate frequency, scores each candidate’s channel-by-channel matrices at the fundamental and two harmonics. How far does that get?',
+    lead8a: (): Bit[] => ['The cross-spectral ridge, one ridge readout over those matrices, reached ', ...lvBits(xRidge, locale), ' on held-out frequencies against ',
+      ...lvBits(xShared, locale), ' for the shared ridge scorer: ', ...ctBits(xP1, locale), ', the first primary contrast. The cross-spectral MLP reached ',
+      ...lvBits(xMlp, locale), ' against CCA’s ', ...lvBits(xCca, locale), ': ', ...ctBits(xP2, locale),
+      ', the second primary contrast; it did not pass its prespecified non-inferiority test against CCA.'],
+    lead8b: (): Bit[] => ['The whitened cross-spectral ridge reached ', ...lvBits(xW, locale), ': ', gapU8, ' from CCA on held-out frequencies and ', gapSeen,
+      ' on seen ones. Each is the difference of two levels, with no planned contrast and no interval, so neither shows equivalence or non-inferiority. On the seen 32-way task every new arm is below CCA’s ',
+      ...lvBits(xCcaSeen, locale), '.'],
+    c8Summary: 'Every set-up on both tasks, and the contrasts with their roles',
+    c8LevelsCaption: 'Card 8: accuracy on held-out frequencies and balanced accuracy on seen ones. The last four rows are card 5’s scores, which carry their intervals there.',
+    c8ContrastsCaption: 'Card 8: paired differences, each with its own interval.',
+    cap8: (): Bit[] => ['The scorer is not a fixed quadratic form of the raw EEG: its diagonals are logged and its normalisation depends on the trial. The MLP differs from the ridge in nonlinearity, loss, regularisation, optimiser and capacity at once, and its seeds are averaged, not ensembled. Whitening changes the features and what the scorer is given at the same time. The cross-spectral arms keep the Hann-tapered, cropped spectral coordinates while CCA reads the raw window, so a contrast against CCA changes the representation as well. The matrices hold within-harmonic terms only, not every second-order interaction across harmonics. The quadrature arm minus the plain ridge is ',
+      ...ctBits(xQ, locale), ': the interval includes zero, so the direction is unresolved, which does not show quadrature information is useless to every model. The gain over the shared ridge scorer does not explain every earlier head’s failure. The cropped-spectrum match is context, not a ceiling for learned scorers. CCA, the shared ridge scorer, the cropped-spectrum match and the channel-energy average are ',
+      ln(5), '’s scores, reused unchanged. ', ...intervalText(X, locale), '.'],
+    checks8: (): Bit[] => ['Checks: ', countAt('studies', X, 'checks', 'fits', 'total'), ' fits (', countAt('studies', X, 'checks', 'fits', 'main'), ' main); CCA’s identity reproduced over ',
+      countAt('studies', X, 'checks', 'cca_identity', 'pairs'), ' pairs; the release audit recomputed ', countAt('studies', X, 'checks', 'release_audit', 'metric_entries_recomputed'),
+      ' metric entries without repeating the supervised fits.'],
+    q9: 'A head on the eigenvalues of each harmonic’s matrix, learned or simply summed: what does learning add?',
+    lead9a: (): Bit[] => ['A ridge head on the eigenvalues of the raw harmonic matrices, the eigenvalue head, reached ', ...lvBits(eRaw, locale),
+      ' on held-out frequencies against CCA’s ', ...lvBits(eCca, locale), ': ', ...ctBits(eP1, locale),
+      ', the first primary contrast, above zero and inside the equivalence and non-inferiority margins the protocol set in advance. The harmonic sum of the same statistics, with no training, reached ',
+      ...lvBits(eSum, locale), '; the head minus the sum is ', ...ctBits(eHS, locale), ', unresolved.'],
+    lead9b: (): Bit[] => ['The other two primary contrasts are negative. The coherence head reached ', ...lvBits(eCoh, locale), ' against the cross-spectral ridge’s ',
+      ...lvBits(eXs, locale), ': ', ...ctBits(eP2, locale), '. The spectral eigenvalue head reached ', ...lvBits(eSpec, locale), ' against the whitened cross-spectral ridge’s ',
+      ...lvBits(eXsW, locale), ': ', ...ctBits(eP3, locale), '.'],
+    answers9: (): Bit[] => [lnC(6), ' listed a simpler learned head on the CCA features among the things it did not run. The eigenvalue head and the joint eigenvalue head are such heads; they read the squared canonical correlations between the raw window and the harmonic references, not card 6’s inputs.'],
+    c9Summary: 'Every set-up on both tasks, and the contrasts with their roles',
+    c9LevelsCaption: 'Card 9: accuracy on held-out frequencies and balanced accuracy on seen ones, a separate task. Comparators from cards 5 and 8 carry their intervals there.',
+    c9ContrastsCaption: 'Card 9: paired differences, each with its own interval.',
+    cap9: (): Bit[] => ['The eigenvalue head and the joint eigenvalue head are given statistics derived from CCA for each trial, so their contrasts against CCA and joint CCA do not isolate what learning adds. The coherence arms use normalised projection cosines, not a conventional (Welch) coherence estimate, so they say nothing about coherence in general. The coherence head against the signed one isolates sign removal; against the cross-spectral ridge it changes normalisation and sign handling together. The spectral eigenvalue head against the whitened ridge also changes the feature dimension and the effective regularisation, and it differs from the raw eigenvalue head in more than whitening, so the raw head’s result does not validate the spectral one. The harmonic sum against joint CCA changes pooling, spatial weights and overlapping subspaces together, and eigenvalues taken harmonic by harmonic discard how the harmonic subspaces relate. The spectral head minus the spectral harmonic sum is ',
+      ...ctBits(eSS, locale), ': its lower bound is printed to five decimals because at two it would read as zero. ', ...intervalText(E, locale), '.'],
+    checks9: (): Bit[] => ['Checks: ', countAt('studies', E, 'checks', 'fits', 'total'), ' fit operations (', countAt('studies', E, 'checks', 'fits', 'main'), ' main, ',
+      countAt('studies', E, 'checks', 'fits', 'independent_refits'), ' independent refits); the eigenvalue identity reproduces CCA’s squared correlation, with identical decisions, over ',
+      countAt('studies', E, 'checks', 'cca_identity', 'pairs'), ' pairs; the zero-energy rule gated ', countAt('studies', E, 'checks', 'coherence_zero_gate', 'gated_pairs'), ' of ',
+      countAt('studies', E, 'checks', 'coherence_zero_gate', 'of'), ' pairs. The comparators equal the scores of ', ln(5), ' and ', ln(8), '.'],
+    q12: 'Joint CCA and the harmonic sum read the same three harmonic references. Which step gives the sum its gain?',
+    lead12a: (): Bit[] => ['On BETA’s held-out frequencies the path runs from joint CCA, ', ...lvBits(gl('J', 'u8'), locale), ', to the common-direction sum, ', ...lvBits(gl('B', 'u8'), locale),
+      ', to the harmonic sum, ', ...lvBits(gl('S', 'u8'), locale), '. Joint CCA to the common-direction sum: ', ...ctBits(gJB, locale), '; the common-direction sum to the harmonic sum: ',
+      ...ctBits(gBS, locale), '. Both are ', famLevel(gJB.key), ' intervals of a Bonferroni family over ', said(g.family.comparisons, locale), ' comparisons, the primary family.'],
+    lead12b: (): Bit[] => { const q = (t: string) => gap('G true minus mean distractor', t);
+      return ['The true candidate’s relaxation gap G exceeds the distractors’ mean in all three cohorts, in squared-correlation units, not percentages: BETA ', q('u8').est, ' (', q('u8').lo, to, q('u8').hi,
+        '), Wearable-102 dry ', q('dry').est, ' (', q('dry').lo, to, q('dry').hi, ') and wet ', q('wet').est, ' (', q('wet').lo, to, q('wet').hi, ').']; },
+    lead12c: (): Bit[] => ['On Wearable-102 the common-direction sum to the harmonic sum is ', ...ctBits(gBSd, locale), ' dry, unresolved, and ', ...ctBits(gBSw, locale),
+      ' wet; joint CCA to the common-direction sum is ', ...ctBits(gJBd, locale), ' dry and ', ...ctBits(gJBw, locale), ' wet. No step from joint CCA to the common-direction sum is resolved in any cohort.'],
+    identity12: 'Separate harmonic references are not orthogonal over a finite window, so joint CCA squared is not in general the largest eigenvalue of the summed matrices; the coupling residual R = B − J is reported beside G = S − B, and R takes either sign.',
+    c12Summary: 'The three cohorts, the gap statistics, the allocation and the decision changes',
+    c12LevelsCaption: 'Card 12: accuracy of the four scores, none trained. Joint CCA and the harmonic sum carry their intervals on the cards named.',
+    c12ContrastsCaption: 'Card 12: paired differences. The primary family’s intervals are Bonferroni-adjusted; the secondary intervals are descriptive.',
+    c12GapCaption: 'Card 12: gap statistics in squared-correlation units, and the pairwise win fraction of the true candidate’s G over each distractor’s, half credit for exact ties (not an accuracy).',
+    winName: 'Pairwise win fraction (not an accuracy)',
+    c12AllocCaption: 'Card 12: descriptive accounting of the harmonic sum’s gain over joint CCA, the average of the two prespecified orders; not a cause.',
+    allocName: { G: 'Share through G', R: 'Share through R' } as Record<string, string>,
+    c12TransCaption: (): Bit[] => ['Card 12: decisions that change between scores, as shares of all ', countAt('studies', G, 'transitions', 'decisions'), ' BETA held-out decisions. The rescued and harmed sets of different steps can overlap.'],
+    edgeHeads: ['Wrong to right', 'Right to wrong', 'Any change of choice', 'Right in both', 'Wrong in both'],
+    cap12: (): Bit[] => ['G is an association: a larger gap for the true candidate fits harmonic-specific spatial structure but does not show a cause, and the mean distractor is not the strongest competitor. Wet and dry gaps come from the same people and were not tested against each other. ',
+      ...intervalText(G, locale), '.'],
+    refcheck12: (): Bit[] => ['Reference check, label-free and with no outcome subgroups: for ', countAt('studies', G, 'reference_check', 'BETA', 'at_or_below_threshold'), ' of ',
+      countAt('studies', G, 'reference_check', 'BETA', 'candidates'), ' BETA candidates and ', countAt('studies', G, 'reference_check', 'Wearable-102', 'at_or_below_threshold'), ' of ',
+      countAt('studies', G, 'reference_check', 'Wearable-102', 'candidates'), ' Wearable-102 candidates the cross-block norm between the harmonic reference blocks falls at or below the threshold, so those blocks are orthogonal to numerical precision; for the other candidates they are not.'],
+    colName: 'Set-up', colTraining: 'Training', colHeld: 'Held-out 8-way', colSeen: 'Seen 32-way, balanced', colContrast: 'Contrast', colTask: 'Task', colRole: 'Role',
+    colDiff: 'Difference', colScore: 'Score', colQuantity: 'Quantity', colStep: 'Step', colShare: 'Share',
+    colBeta: 'BETA held-out', colDry: 'Wearable-102 dry', colWet: 'Wearable-102 wet',
+    region: (n: number, what: string) => `Card ${n}: ${what}, scrolls horizontally`,
+  },
+  zh: {
+    q8: '一组由所有候选频率共享的学习权重，给每个候选频率在基频与两个谐波上的通道×通道矩阵打分，能走多远？',
+    lead8a: (): Bit[] => ['互谱矩阵岭回归，即在这些矩阵上的一个岭回归读出，在留出频率上达到 ', ...lvBits(xRidge, locale), '，共享岭回归打分器为 ',
+      ...lvBits(xShared, locale), '：', ...ctBits(xP1, locale), '，这是第一项主要对比。互谱 MLP 达到 ',
+      ...lvBits(xMlp, locale), '，CCA 为 ', ...lvBits(xCca, locale), '：', ...ctBits(xP2, locale),
+      '，这是第二项主要对比；它没有通过预先设定的相对 CCA 的非劣效检验。'],
+    lead8b: (): Bit[] => ['白化互谱矩阵岭回归达到 ', ...lvBits(xW, locale), '：在留出频率上与 CCA 相差 ', gapU8, '，在见过的频率上相差 ', gapSeen,
+      '。两者都是两个水平之差，没有计划内的对比，也没有区间，因此都不说明等效或非劣效。在见过频率的 32 选 1 任务上，每个新设置都低于 CCA 的 ',
+      ...lvBits(xCcaSeen, locale), '。'],
+    c8Summary: '两项任务上的全部设置，以及各对比及其角色',
+    c8LevelsCaption: '卡片 8：留出频率上的准确率与见过频率上的平衡准确率。最后四行是卡片 5 的分数，区间在卡片 5 上。',
+    c8ContrastsCaption: '卡片 8：配对差值，各带自己的区间。',
+    cap8: (): Bit[] => ['这个打分器不是原始 EEG 的固定二次型：对角项取了对数，归一化随试次而变。MLP 与岭回归同时在非线性、损失函数、正则化、优化器和容量上不同，它的各随机种子取平均，而不是做集成。白化同时改变了特征和打分器得到的信息。互谱各组保留 Hann 窗、裁剪后的频谱坐标，而 CCA 读的是原始时间窗，所以相对 CCA 的对比同时也改变了表示方式。这些矩阵只含谐波内部的项，并非跨谐波的全部二阶交互。带正交分量的岭回归减去普通岭回归为 ',
+      ...ctBits(xQ, locale), '：区间包含零，方向未定，这并不说明正交分量的信息对所有模型都无用。相对共享岭回归打分器的增益也不能解释此前每个分类头的失败。裁剪谱匹配只作参照，不是学习型打分器的上限。CCA、共享岭回归打分器、裁剪谱匹配和通道能量平均是',
+      ln(5), ' 的分数，原样沿用。', ...intervalText(X, locale), '。'],
+    checks8: (): Bit[] => ['检查：共 ', countAt('studies', X, 'checks', 'fits', 'total'), ' 次拟合（主要拟合 ', countAt('studies', X, 'checks', 'fits', 'main'), ' 次）；CCA 的恒等式在 ',
+      countAt('studies', X, 'checks', 'cca_identity', 'pairs'), ' 个配对上得到复现；发布审计重新计算了 ', countAt('studies', X, 'checks', 'release_audit', 'metric_entries_recomputed'),
+      ' 项指标，没有重做有监督的拟合。'],
+    q9: '在每个谐波矩阵的特征值上，学习一个分类头或直接求和：学习多带来了什么？',
+    lead9a: (): Bit[] => ['在原始谐波矩阵的特征值上的岭回归分类头，即特征值分类头，在留出频率上达到 ', ...lvBits(eRaw, locale),
+      '，CCA 为 ', ...lvBits(eCca, locale), '：', ...ctBits(eP1, locale),
+      '，这是第一项主要对比，高于零，且落在协议事先设定的等效界值与非劣效界值之内。对同样的统计量直接求和、无需训练的谐波求和达到 ',
+      ...lvBits(eSum, locale), '；分类头减去求和为 ', ...ctBits(eHS, locale), '，方向未定。'],
+    lead9b: (): Bit[] => ['另外两项主要对比为负。相干分类头达到 ', ...lvBits(eCoh, locale), '，互谱矩阵岭回归为 ',
+      ...lvBits(eXs, locale), '：', ...ctBits(eP2, locale), '。频谱特征值分类头达到 ', ...lvBits(eSpec, locale), '，白化互谱矩阵岭回归为 ',
+      ...lvBits(eXsW, locale), '：', ...ctBits(eP3, locale), '。'],
+    answers9: (): Bit[] => [ln(6), ' 把“在 CCA 特征上更简单的学习型分类头”列为没有运行的部分。特征值分类头与联合特征值分类头正是这样的分类头；它们读取原始时间窗与谐波参考之间的典型相关平方，而不是卡片 6 的输入。'],
+    c9Summary: '两项任务上的全部设置，以及各对比及其角色',
+    c9LevelsCaption: '卡片 9：留出频率上的准确率与见过频率上的平衡准确率，后者是另一项任务。来自卡片 5 和 8 的对照，区间在原卡片上。',
+    c9ContrastsCaption: '卡片 9：配对差值，各带自己的区间。',
+    cap9: (): Bit[] => ['特征值分类头与联合特征值分类头得到的是逐试次从 CCA 导出的统计量，所以它们相对 CCA 与联合 CCA 的对比不能单独说明学习的作用。相干各组用的是归一化的投影余弦，不是常规的（Welch）相干估计，因此不涉及一般意义上的相干。相干分类头与带符号的相干分类头相比，只去掉了符号；与互谱矩阵岭回归相比，则同时改变了归一化和符号处理。频谱特征值分类头与白化岭回归相比，还改变了特征维度和实际的正则化强度；它与原始特征值分类头的差别也不止白化，所以原始分类头的结果不能验证频谱分类头。谐波求和与联合 CCA 相比，同时改变了汇总方式、空间权重和相互重叠的子空间；逐个谐波取特征值，会丢掉各谐波子空间之间的关系。频谱分类头减去频谱谐波求和为 ',
+      ...ctBits(eSS, locale), '：下界印到五位小数，因为保留两位时会显示为零。', ...intervalText(E, locale), '。'],
+    checks9: (): Bit[] => ['检查：共 ', countAt('studies', E, 'checks', 'fits', 'total'), ' 次拟合操作（主要拟合 ', countAt('studies', E, 'checks', 'fits', 'main'), ' 次，独立重新拟合 ',
+      countAt('studies', E, 'checks', 'fits', 'independent_refits'), ' 次）；特征值恒等式在 ',
+      countAt('studies', E, 'checks', 'cca_identity', 'pairs'), ' 个配对上复现了 CCA 的相关平方，决策完全一致；零能量规则在 ', countAt('studies', E, 'checks', 'coherence_zero_gate', 'of'), ' 个配对中拦下 ',
+      countAt('studies', E, 'checks', 'coherence_zero_gate', 'gated_pairs'), ' 个。各对照与', ln(5), ' 和', ln(8), ' 的分数一致。'],
+    q12: '联合 CCA 与谐波求和读取的是同样三个谐波参考。谐波求和的增益来自哪一步？',
+    lead12a: (): Bit[] => ['在 BETA 的留出频率上，路径从联合 CCA 的 ', ...lvBits(gl('J', 'u8'), locale), '，到共同方向求和的 ', ...lvBits(gl('B', 'u8'), locale),
+      '，再到谐波求和的 ', ...lvBits(gl('S', 'u8'), locale), '。联合 CCA 到共同方向求和：', ...ctBits(gJB, locale), '；共同方向求和到谐波求和：',
+      ...ctBits(gBS, locale), '。两者都是主要比较族的区间，即对', said(g.family.comparisons, locale), '个比较做 Bonferroni 校正的 ', famLevel(gJB.key), ' 区间。'],
+    lead12b: (): Bit[] => { const q = (t: string) => gap('G true minus mean distractor', t);
+      return ['在全部三个队列中，真实候选的松弛差距 G 都超过干扰项的均值，单位是相关平方，不是百分比：BETA ', q('u8').est, '（', q('u8').lo, to, q('u8').hi,
+        '），Wearable-102 干电极 ', q('dry').est, '（', q('dry').lo, to, q('dry').hi, '），湿电极 ', q('wet').est, '（', q('wet').lo, to, q('wet').hi, '）。']; },
+    lead12c: (): Bit[] => ['在 Wearable-102 上，共同方向求和到谐波求和在干电极上为 ', ...ctBits(gBSd, locale), '，方向未定；在湿电极上为 ', ...ctBits(gBSw, locale),
+      '。联合 CCA 到共同方向求和在干电极上为 ', ...ctBits(gJBd, locale), '，湿电极上为 ', ...ctBits(gJBw, locale), '。在任何队列中，从联合 CCA 到共同方向求和这一步都没有确定的方向。'],
+    identity12: '在有限长的时间窗上，各谐波的参考彼此并不正交，所以联合 CCA 的平方一般不等于各谐波矩阵之和的最大特征值；耦合残差 R = B − J 与 G = S − B 并列报告，R 可正可负。',
+    c12Summary: '三个队列、差距统计量、增益分配与决策变化',
+    c12LevelsCaption: '卡片 12：四种分数的准确率，都不需要训练。联合 CCA 与谐波求和的区间在所注明的卡片上。',
+    c12ContrastsCaption: '卡片 12：配对差值。主要比较族的区间做了 Bonferroni 校正；次要区间仅作描述。',
+    c12GapCaption: '卡片 12：以相关平方为单位的差距统计量，以及真实候选的 G 胜过各干扰项 G 的成对胜率，完全相同时各计一半（不是准确率）。',
+    winName: '成对胜率（不是准确率）',
+    c12AllocCaption: '卡片 12：谐波求和相对联合 CCA 增益的描述性分配，取两种预先设定顺序的平均；不代表原因。',
+    allocName: { G: '经由 G 的部分', R: '经由 R 的部分' } as Record<string, string>,
+    c12TransCaption: (): Bit[] => ['卡片 12：两种分数之间改变的决策，占全部 ', countAt('studies', G, 'transitions', 'decisions'), ' 个 BETA 留出决策的比例。不同步骤中被救回与被弄错的决策可能重叠。'],
+    edgeHeads: ['错改对', '对改错', '选择有变', '两者都对', '两者都错'],
+    cap12: (): Bit[] => ['G 是一种关联：真实候选的差距更大，与谐波特有的空间结构相符，但不说明原因；干扰项均值也不是最强的竞争者。湿电极与干电极的差距来自同一批被试，两者之间没有做检验。',
+      ...intervalText(G, locale), '。'],
+    refcheck12: (): Bit[] => ['参考检查，不看标签，也不分结果子组：BETA 的 ', countAt('studies', G, 'reference_check', 'BETA', 'candidates'), ' 个候选中有 ',
+      countAt('studies', G, 'reference_check', 'BETA', 'at_or_below_threshold'), ' 个、Wearable-102 的 ', countAt('studies', G, 'reference_check', 'Wearable-102', 'candidates'), ' 个候选中有 ',
+      countAt('studies', G, 'reference_check', 'Wearable-102', 'at_or_below_threshold'), ' 个，各谐波参考块之间的跨块范数不超过阈值，即这些候选的参考块在数值精度内正交；其余候选的参考块并不正交。'],
+    colName: '设置', colTraining: '训练', colHeld: '留出频率 8 选 1', colSeen: '见过的频率 32 选 1（平衡）', colContrast: '对比', colTask: '任务', colRole: '角色',
+    colDiff: '差值', colScore: '分数', colQuantity: '统计量', colStep: '步骤', colShare: '比例',
+    colBeta: 'BETA 留出', colDry: 'Wearable-102 干电极', colWet: 'Wearable-102 湿电极',
+    region: (n: number, what: string) => `卡片 ${n}：${what}，可横向滚动`,
+  },
+}[locale];
+const R = zh ? { levels: '各设置的水平', contrasts: '配对对比', gap: '差距统计量', alloc: '增益分配', trans: '决策变化' }
+             : { levels: 'levels of each set-up', contrasts: 'paired contrasts', gap: 'gap statistics', alloc: 'allocation of the gain', trans: 'decision changes' };
+---
+{show(8) && <section class="topic-section ssvep-card" id={c8.anchor} aria-labelledby={c8.headingId} data-ssvep-card="8">
+  <div class="topic-heading"><div><p class="eyebrow">{c8.eyebrow}</p><h2 id={c8.headingId}>{c8.title}</h2></div><p data-ssvep-note="question">{copy.q8}</p></div>
+  <p class="roadmap-p" data-ssvep-lead="8" set:html={H(copy.lead8a())}/>
+  <p class="roadmap-p" data-ssvep-lead="8b" set:html={H(copy.lead8b())}/>
+  <details class="rd-panel" data-ssvep-details="c8-tables">
+    <summary>{copy.c8Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(8, R.levels)}>
+      <table data-ssvep-table="c8-levels">
+        <caption>{copy.c8LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colTraining}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th></tr></thead>
+        <tbody>{c8Arms.map(r => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th><td set:html={H(r.training)}/>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(8, R.contrasts)}>
+      <table data-ssvep-table="c8-contrasts">
+        <caption>{copy.c8ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{c8Rows.map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="8" set:html={H(copy.cap8())}/>
+  <p class="protocol-note" data-ssvep-checks="8" set:html={H(copy.checks8())}/>
+</section>}
+
+{show(9) && <section class="topic-section ssvep-card" id={c9.anchor} aria-labelledby={c9.headingId} data-ssvep-card="9">
+  <div class="topic-heading"><div><p class="eyebrow">{c9.eyebrow}</p><h2 id={c9.headingId}>{c9.title}</h2></div><p data-ssvep-note="question">{copy.q9}</p></div>
+  <p class="roadmap-p" data-ssvep-lead="9" set:html={H(copy.lead9a())}/>
+  <p class="roadmap-p" data-ssvep-lead="9b" set:html={H(copy.lead9b())}/>
+  <p class="roadmap-p" data-ssvep-note="answers-not-run" set:html={H(copy.answers9())}/>
+  <details class="rd-panel" data-ssvep-details="c9-tables">
+    <summary>{copy.c9Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(9, R.levels)}>
+      <table data-ssvep-table="c9-levels">
+        <caption>{copy.c9LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colName}</th><th scope="col">{copy.colTraining}</th><th scope="col">{copy.colHeld}</th><th scope="col">{copy.colSeen}</th></tr></thead>
+        <tbody>{c9Arms.map(r => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th><td set:html={H(r.training)}/>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(9, R.contrasts)}>
+      <table data-ssvep-table="c9-contrasts">
+        <caption>{copy.c9ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{c9Rows.map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="9" set:html={H(copy.cap9())}/>
+  <p class="protocol-note" data-ssvep-checks="9" set:html={H(copy.checks9())}/>
+</section>}
+
+{show(12) && <section class="topic-section ssvep-card" id={c12.anchor} aria-labelledby={c12.headingId} data-ssvep-card="12">
+  <div class="topic-heading"><div><p class="eyebrow">{c12.eyebrow}</p><h2 id={c12.headingId}>{c12.title}</h2></div><p data-ssvep-note="question">{copy.q12}</p></div>
+  <p class="roadmap-p" data-ssvep-lead="12" set:html={H(copy.lead12a())}/>
+  <p class="roadmap-p" data-ssvep-lead="12b" set:html={H(copy.lead12b())}/>
+  <p class="roadmap-p" data-ssvep-lead="12c" set:html={H(copy.lead12c())}/>
+  <p class="roadmap-p" data-ssvep-note="identity">{copy.identity12}</p>
+  <details class="rd-panel" data-ssvep-details="c12-tables">
+    <summary>{copy.c12Summary}</summary>
+    <div class="topic-table scroll" tabindex="0" role="region" aria-label={copy.region(12, R.levels)}>
+      <table data-ssvep-table="c12-levels">
+        <caption>{copy.c12LevelsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colScore}</th><th scope="col">{copy.colBeta}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{c12Levels.map(r => <tr data-arm={r.code}><th scope="row">{r.name}<small><code>{r.code}</code></small></th>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(12, R.contrasts)}>
+      <table data-ssvep-table="c12-contrasts">
+        <caption>{copy.c12ContrastsCaption}</caption>
+        <thead><tr><th scope="col">{copy.colContrast}</th><th scope="col">{copy.colTask}</th><th scope="col">{copy.colRole}</th><th scope="col">{copy.colDiff}</th></tr></thead>
+        <tbody>{c12Rows.map(r => <tr data-contrast={r.k}><th scope="row">{r.name}</th><td>{r.task}</td><td>{r.role}</td><td set:html={r.cell}/></tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(12, R.gap)}>
+      <table data-ssvep-table="c12-gap">
+        <caption>{copy.c12GapCaption}</caption>
+        <thead><tr><th scope="col">{copy.colQuantity}</th><th scope="col">{copy.colBeta}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{gapRows.map(r => <tr data-gap={r.k}><th scope="row">{r.name}</th>{r.cells.map(c => <td set:html={c}/>)}</tr>)}
+          <tr data-gap="win fraction"><th scope="row">{copy.winName}</th>{winRow.map(c => <td set:html={c}/>)}</tr></tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(12, R.alloc)}>
+      <table data-ssvep-table="c12-allocation">
+        <caption>{copy.c12AllocCaption}</caption>
+        <thead><tr><th scope="col">{copy.colQuantity}</th><th scope="col">{copy.colBeta}</th><th scope="col">{copy.colDry}</th><th scope="col">{copy.colWet}</th></tr></thead>
+        <tbody>{allocRows.map(r => <tr data-allocation={r.q}><th scope="row">{copy.allocName[r.q]}</th>{r.cells.map(c => <td set:html={c}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="topic-table scroll topic-table-spaced" tabindex="0" role="region" aria-label={copy.region(12, R.trans)}>
+      <table data-ssvep-table="c12-transitions">
+        <caption set:html={H(copy.c12TransCaption())}/>
+        <thead><tr><th scope="col">{copy.colStep}</th>{copy.edgeHeads.map(h => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>{edgeRows.map(r => <tr data-transition={r.k}><th scope="row">{r.name}</th>{r.cells.map(f => <td set:html={H([f])}/>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <p class="protocol-note" data-ssvep-note="reference-check" set:html={H(copy.refcheck12())}/>
+  </details>
+  <p class="protocol-note" data-ssvep-caption="12" set:html={H(copy.cap12())}/>
+</section>}
+
+<style is:global>
+  /* Global, not scoped (the page's contract: a scoped style would add data-astro-cid-* to every element, and
+     check-workbench.mjs reads figures by their exact markup). Every selector starts from one of these cards. */
+  :is([data-ssvep-card="8"],[data-ssvep-card="9"],[data-ssvep-card="12"]) .topic-table th[scope=row] small{display:block;margin-top:3px;font-size:.7rem;font-weight:400;color:var(--muted);line-height:1.4}
+  :is([data-ssvep-card="8"],[data-ssvep-card="9"],[data-ssvep-card="12"]) .topic-table code{font-family:var(--mono);font-size:.72rem}
+  :is([data-ssvep-card="8"],[data-ssvep-card="9"],[data-ssvep-card="12"]) p.roadmap-p a,:is([data-ssvep-card="8"],[data-ssvep-card="9"],[data-ssvep-card="12"]) p.protocol-note a{color:var(--accent)}
+  :is([data-ssvep-card="8"],[data-ssvep-card="9"],[data-ssvep-card="12"]) .topic-table .interval a{color:inherit;text-decoration:underline}
+</style>
